@@ -14,11 +14,11 @@ import java.util.Collection;
 
 /**
  * This is the interface for implementations representing
- * devices capable of executing operations on tensors, namely the Tsr class.
+ * devices capable of executing operations on tensors, namely the Tsr<ValueType> class.
  * Such instances are also components of tensors, which is why
- * the it extends the Component &lt; Tsr &gt; interface.
+ * the it extends the Component &lt; Tsr<ValueType> &gt; interface.
  */
-public interface Device extends Component<Tsr>
+public interface Device<ValueType> extends Component<Tsr<ValueType>>
 {
     /**
      * This method return Device instances matching
@@ -64,36 +64,35 @@ public interface Device extends Component<Tsr>
 
     void dispose();
 
-    Device get( Tsr tensor );
+    Device get( Tsr<ValueType> tensor );
 
-    Device add( Tsr tensor );
+    Device add( Tsr<ValueType> tensor );
 
-    Device add( Tsr tensor, Tsr parent );
+    Device add( Tsr<ValueType> tensor, Tsr<ValueType> parent );
 
-    boolean has( Tsr tensor );
+    boolean has( Tsr<ValueType> tensor );
 
-    Device rmv( Tsr tensor );
+    Device rmv( Tsr<ValueType> tensor );
 
-    Device cleaning( Tsr tensor, Runnable action );
+    Device cleaning( Tsr<ValueType> tensor, Runnable action );
 
-    Device overwrite64( Tsr tensor, double[] value );
+    Device overwrite64( Tsr<ValueType> tensor, double[] value );
 
-    Device overwrite32( Tsr tensor, float[] value );
+    Device overwrite32( Tsr<ValueType> tensor, float[] value );
 
-    Device swap( Tsr former, Tsr replacement );
+    Device swap( Tsr<ValueType> former, Tsr<ValueType> replacement );
 
-    //Device execute( Tsr[] Tsrs, OperationType type, int d );
     Device execute( ExecutionCall call );
 
-    double[] value64f( Tsr tensor );
+    double[] value64f( Tsr<ValueType> tensor );
 
-    float[] value32f( Tsr tensor );
+    float[] value32f( Tsr<ValueType> tensor );
 
-    double value64f( Tsr tensor, int index );
+    double value64f( Tsr<ValueType> tensor, int index );
 
-    float value32f( Tsr tensor, int index );
+    float value32f( Tsr<ValueType> tensor, int index );
 
-    Collection< Tsr > tensors();
+    Collection< Tsr<ValueType> > tensors();
 
 
 

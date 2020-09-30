@@ -4,7 +4,7 @@ import neureka.Tsr;
 import neureka.calculus.Function;
 import neureka.optimization.Optimizer;
 
-public class SGD implements Optimizer
+public class SGD<ValueType> implements Optimizer<ValueType>
 {
     private final double _learningRate;
     private final Function _function;
@@ -16,7 +16,7 @@ public class SGD implements Optimizer
     }
 
     @Override
-    public void optimize( Tsr w ) {
+    public void optimize( Tsr<ValueType> w ) {
         Tsr g = w.find(Tsr.class);
         Function.Detached.IDY.call(_function.call( g ));
     }
@@ -26,7 +26,7 @@ public class SGD implements Optimizer
     }
 
     @Override
-    public void update( Tsr oldOwner, Tsr newOwner ) {
+    public void update( Tsr<ValueType> oldOwner, Tsr<ValueType> newOwner ) {
 
     }
 }

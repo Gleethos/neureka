@@ -28,7 +28,7 @@ public class KernelBuilder
      * @param t
      * @return
      */
-    public KernelBuilder pass(Tsr t){
+    public KernelBuilder pass(Tsr<Number> t){
         _inputs.add(t);
         clSetKernelArg(_kernel, _argId, Sizeof.cl_mem, Pointer.to(t.find(OpenCLDevice.cl_tsr.class).value.data));
         _argId++;
@@ -69,7 +69,7 @@ public class KernelBuilder
     }
 
     private void _releaseEvents(Tsr[] tsrs){
-        for(Tsr t : tsrs){
+        for(Tsr<Number> t : tsrs){
             if( t.find(OpenCLDevice.cl_tsr.class).value.event != null ){
                 clReleaseEvent(t.find(OpenCLDevice.cl_tsr.class).value.event);
                 t.find(OpenCLDevice.cl_tsr.class).value.event = null;
@@ -79,7 +79,7 @@ public class KernelBuilder
 
     private cl_event[] _getWaitList(Tsr[] tsrs){
         List<cl_event> list = new ArrayList<>();
-        for (Tsr t : tsrs) {
+        for (Tsr<Number> t : tsrs) {
             cl_event event = t.find(OpenCLDevice.cl_tsr.class).value.event;
             if (event != null && !list.contains(event)) {
                 list.add(event);

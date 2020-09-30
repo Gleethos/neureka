@@ -6,16 +6,16 @@ import neureka.Tsr;
 import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
 
-public class Relation implements Component<Tsr> {
+public class Relation<ValueType> implements Component<Tsr<ValueType>> {
 
-    private Tsr _parent;// Children need their parents. They shall not be garbage collected.
+    private Tsr<ValueType> _parent;// Children need their parents. They shall not be garbage collected.
 
-    private WeakReference<Tsr>[] _children;// Children may be garbage collected if not needed.
+    private WeakReference<Tsr<ValueType>>[] _children;// Children may be garbage collected if not needed.
 
     @Override
-    public void update(Tsr oldOwner, Tsr newOwner){
+    public void update(Tsr<ValueType> oldOwner, Tsr<ValueType> newOwner){
         if (_parent != null) {
-            Relation pr = _parent.find(Relation.class);
+            Relation<ValueType> pr = _parent.find(Relation.class);
             for (int i=0; i < pr._children.length; i++) {
                 if (pr._children[i].get() == oldOwner) {
                     pr._children[i] = new WeakReference<>(newOwner);
@@ -23,10 +23,10 @@ public class Relation implements Component<Tsr> {
             }
         }
         if (_children != null) {
-            for (WeakReference<Tsr> c : _children) {
+            for (WeakReference<Tsr<ValueType>> c : _children) {
                 Tsr t = c.get();
                 if ( t != null ) {
-                    Relation cr = t.find(Relation.class);
+                    Relation<ValueType> cr = (Relation<ValueType>) t.find(Relation.class);
                     if ( cr != null ) cr._parent = newOwner;
                 }
             }
@@ -40,11 +40,11 @@ public class Relation implements Component<Tsr> {
     }
 
 
-    public Relation addChild(Tsr child){
+    public Relation<ValueType> addChild(Tsr<ValueType> child){
         if ( _children == null ) {
             _children = new WeakReference[]{new WeakReference(child)};
         } else {
-            WeakReference<Tsr>[] newChildren = new WeakReference[_children.length+1];
+            WeakReference<Tsr<ValueType>>[] newChildren = new WeakReference[_children.length+1];
             System.arraycopy(_children, 0, newChildren, 0, _children.length);
             newChildren[_children.length] = new WeakReference(child);
             _children = newChildren;
@@ -53,13 +53,13 @@ public class Relation implements Component<Tsr> {
     }
 
 
-    public Relation foreachChild(Consumer<Tsr> action){
+    public Relation<ValueType> foreachChild(Consumer<Tsr<ValueType>> action){
         if ( _children != null ) {
-            for ( WeakReference<Tsr> r : _children ) {
+            for ( WeakReference<Tsr<ValueType>> r : _children ) {
                 Tsr c = r.get();
                 if ( c != null ) {
                     action.accept(c);
-                    Relation relation = (Relation) c.find(Relation.class);
+                    Relation relation = (Relation<ValueType>) c.find(Relation.class);
                     if ( relation != null ) relation.foreachChild(action);
                 }
             }

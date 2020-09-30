@@ -7,8 +7,9 @@ import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
 
 import java.lang.ref.Cleaner;
+import java.time.temporal.ValueRange;
 
-public abstract class AbstractDevice implements Device, Component<Tsr>
+public abstract class AbstractDevice<ValueType> implements Device<ValueType>, Component<Tsr<ValueType>>
 {
     private static final Cleaner _CLEANER = Cleaner.create();
 

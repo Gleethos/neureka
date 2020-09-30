@@ -1,7 +1,9 @@
 package neureka;
 
 import groovy.lang.IntRange;
+import neureka.autograd.ADAgent;
 import neureka.calculus.backend.ExecutionCall;
+import neureka.dtype.DataType;
 import neureka.ndim.AbstractNDArray;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
@@ -16,11 +18,13 @@ import neureka.ndim.config.virtual.VirtualNDConfiguration;
 import neureka.optimization.Optimizer;
 import neureka.utility.DataHelper;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.IntFunction;
 
-public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
+public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> implements Component<Tsr<ValueType>>
 {
     static { _CPU = HostCPU.instance(); }
 
@@ -49,7 +53,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         return _version;
     }
 
-    public Tsr incrementVersionBecauseOf( ExecutionCall call ){
+    public Tsr<ValueType> incrementVersionBecauseOf( ExecutionCall call ){
         if ( Neureka.instance().settings().autograd().isPreventingInlineOperations() ) {
             _version ++;
             GraphNode node = find( GraphNode.class );
@@ -67,7 +71,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public Tsr setRqsGradient( boolean rqsGradient ) {
+    public Tsr<ValueType> setRqsGradient( boolean rqsGradient ) {
         if ( rqsGradient() != rqsGradient && !rqsGradient ) this.remove(Tsr.class);
         _setRqsGradient(rqsGradient);
         return this;
@@ -86,7 +90,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
     //------------------------------------------------------------------------------------------------------------------
 
-    public Tsr setIsOutsourced( boolean isOutsourced ) {
+    public Tsr<ValueType> setIsOutsourced( boolean isOutsourced ) {
         _setIsOutsourced( isOutsourced );
         if ( isOutsourced ) {
             _value = null;
@@ -99,10 +103,12 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
                         forComponent(
                             Tsr.class,
                             gradient ->
-                            gradient.forComponent( Device.class, gd -> {
-                                if ( gd.has(gradient) ) gd.get(gradient);
-                                gradient.remove(Device.class);
-                            })
+                            gradient.forComponent(
+                                Device.class,
+                                gd -> {
+                                    if ( ((Device)gd).has(gradient) ) ((Device)gd).get(gradient);
+                                    gradient.remove(Device.class);
+                                })
                         );
                     }
                 ) && _value == null
@@ -125,14 +131,14 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
     //------------------------------------------------------------------------------------------------------------------
 
-    public Tsr setIsVirtual( boolean isVirtual ) {
+    public Tsr<ValueType> setIsVirtual( boolean isVirtual ) {
         if ( isVirtual() != isVirtual ) {
             Device device = this.find( Device.class );
             if ( device != null ) device.get( this );
             double v = ( _value == null ) ? 0 : ((this.is64())?((double[])_value)[0]:((float[])_value)[0]);
             if ( isVirtual ) {
                 _value = new double[]{v};
-                Relation parent = find( Relation.class );
+                Relation<ValueType> parent = find( Relation.class );
                 if ( parent!=null ) parent.foreachChild( c -> c._value=_value);
             } else {
                 _value = ( this.is64() ) ? new double[this.size()] : new float[this.size()];
@@ -162,7 +168,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
     //------------------------------------------------------------------------------------------------------------------
 
-    public Tsr setGradientApplyRqd( boolean applyRequested ) {
+    public Tsr<ValueType> setGradientApplyRqd( boolean applyRequested ) {
         if ( gradientApplyRqd() != applyRequested ) {
             if ( applyRequested ) {
                 if (
@@ -193,18 +199,18 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
      * @return The unchanged object or maybe in future versions: null (component rejected)
      */
     @Override
-    protected < T extends Component<Tsr> > T _addOrReject( T newComponent )
+    protected < T extends Component<Tsr<ValueType>> > T _addOrReject( T newComponent )
     {
         if (newComponent instanceof Device && !((Device)newComponent).has(this))
         {
             if ( this.has( Relation.class ) ) {
                 Relation relation = find( Relation.class );
                 if ( relation.hasParent() ) { // Root needs to be found ! :
-                    Tsr root = relation.findRootTensor();
+                    Tsr<ValueType> root = relation.findRootTensor();
                     ((Device)newComponent).add(root);
-                    root.find( Relation.class ).foreachChild( c -> c.setIsOutsourced(true) );
+                    root.find( Relation.class ).foreachChild( c -> ((Tsr)c).setIsOutsourced(true) );
                 } else { // This is root ! :
-                    relation.foreachChild( c -> c.setIsOutsourced(true) );
+                    relation.foreachChild( c -> ((Tsr)c).setIsOutsourced(true) );
                     ((Device)newComponent).add(this);
                 }
             } else {
@@ -230,7 +236,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
      * @return The unchanged object or when rejected: null (component rejected)
      */
     @Override
-    protected <T extends Component<Tsr>> T _removeOrReject(T newComponent)
+    protected <T extends Component<Tsr<ValueType>>> T _removeOrReject(T newComponent)
     {
         if ( newComponent instanceof Device ) {
 
@@ -280,7 +286,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         return this.has( Tsr.class );
     }
 
-    public Tsr getGradient() {
+    public Tsr<ValueType> getGradient() {
         return this.find( Tsr.class );
     }
 
@@ -314,7 +320,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-    protected Tsr _become( Tsr tensor ) {
+    protected Tsr<ValueType> _become( Tsr<ValueType> tensor ) {
         if ( tensor == null ) return this;
         _value = tensor._value;
         _conf = tensor._conf;
@@ -322,8 +328,8 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         _flags = tensor._flags;
         if ( tensor._components != null ) { // Inform components about their new owner:
             _components.addAll( tensor._components );
-            List<Component<Tsr>> snapshot = new ArrayList<>( tensor._components );
-            for ( Component<Tsr> o : snapshot ) o.update( tensor, this );
+            List<Component<Tsr<ValueType>>> snapshot = new ArrayList<>( tensor._components );
+            for ( Component<Tsr<ValueType>> o : snapshot ) o.update( tensor, this );
         }
         tensor._value = null;
         tensor._conf = null;
@@ -332,7 +338,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         return this;
     }
 
-    public Tsr delete() {
+    public Tsr<ValueType> delete() {
         forComponent(GraphNode.class, n -> {
             if ( n.isUsedAsDerivative() ) {
                 throw new IllegalStateException("Cannot delete a tensor which is used as derivative by the AD computation graph!");
@@ -356,7 +362,12 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     protected void _configureFromNewShape(int[] newShape, boolean makeVirtual) {
         int size = Utility.Indexing.szeOfShp(newShape);
         _value = (_value==null) ? new double[size] : _value;
-        int length = (this.is64())?((double[])_value).length:((float[])_value).length;
+        int length = ( !(_value instanceof float[]) && !(_value instanceof double[]) )
+                ?   ((Object[])_value).length
+                :   (this.is64())
+                        ?((double[])_value).length
+                        :((float[])_value).length;
+
         if (size != length && (!this.isVirtual() || !makeVirtual)) {
             throw new IllegalArgumentException("Size of shape does not match stored value64!");
         }
@@ -392,13 +403,14 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     }
 
     public Tsr(List arg1, String arg2) {
-        if ((arg1).get(0) instanceof Integer) {
+        java.util.function.Function<Class, Boolean> isType = (Class c) -> arg1.stream().allMatch(e -> e.getClass() == c);
+        if ( isType.apply(Integer.class) ) {
             List<Integer> shape = arg1;
             int[] shp = new int[shape.size()];
             for (int i=0; i<shp.length; i++) shp[i] = shape.get(i);
             _construct(shp, arg2);
-        } else if ((arg1).get(0) instanceof Tsr) {
-            _construct(((List<Tsr>)arg1).toArray(new Tsr[0]), arg2, true);
+        } else if ( isType.apply(Tsr.class) ) {
+            _construct(((List<Tsr<ValueType>>)arg1).toArray(new Tsr[0]), arg2, true);
         } else {
             _construct(
                     ((List<Object>)arg1).stream().map(Tsr::new).toArray(Tsr[]::new),
@@ -408,22 +420,49 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         }
     }
 
-    public Tsr(List<Integer> shape, List range){
+    public Tsr(List<Integer> shape, List<ValueType> range)
+    {
         int[] shp = new int[shape.size()];
         for(int i=0; i<shp.length; i++) shp[i] = shape.get(i);
-        double[] value = new double[Utility.Indexing.szeOfShp(shp)];
         if(range.size()==1 && range.get(0) instanceof IntRange) range = (List) range.get(0);
-        for(int i=0; i<value.length; i++){
-            if(range.get(i%range.size()) instanceof BigDecimal){
-                value[i] = ((BigDecimal)range.get(i%range.size())).doubleValue();
-            } else if (range.get(i%range.size()) instanceof Integer){
-                value[i] = (Integer)range.get(i%range.size());
+
+        if ( !range.isEmpty() && !(range.get(0) instanceof Number) ) {
+            Class givenClass = range.get(0).getClass();
+            @SuppressWarnings("unchecked")
+            final ValueType[] value = (ValueType[]) Array.newInstance(givenClass, Utility.Indexing.szeOfShp(shp));
+            for(int i=0; i<value.length; i++) {
+                value[i] = range.get(i%range.size());
             }
+            _value = value;
+            this.add( DataType.instance(givenClass) );
+            _construct(shp, value);
+        } else {
+            double[] value = new double[Utility.Indexing.szeOfShp(shp)];
+
+            for(int i=0; i<value.length; i++) {
+                if(range.get(i%range.size()) instanceof BigDecimal){
+                    value[i] = ((BigDecimal)range.get(i%range.size())).doubleValue();
+                } else if (range.get(i%range.size()) instanceof Integer){
+                    value[i] = (Integer)range.get(i%range.size());
+                }
+            }
+            _construct(shp, value);
         }
-        _construct(shp, value);
     }
 
-    public Tsr(List conf){
+    private void _construct(int[] shape, ValueType[] value) {
+        int size = Utility.Indexing.szeOfShp(shape);
+        if (size!=value.length) {
+            Class givenClass = value[0].getClass();
+            @SuppressWarnings("unchecked")
+            final ValueType[] newValue = (ValueType[]) Array.newInstance(givenClass, Utility.Indexing.szeOfShp(shape));
+            for(int i=0; i<newValue.length; i++) newValue[i] = value[i%value.length];
+            _value = newValue;
+        } else _value = value;
+        this._configureFromNewShape(shape, false);
+    }
+
+    public Tsr(List<Object> conf){
         boolean isNatural = !(conf.size() > 64);
         for(Object e : conf){
             if(!isNatural) break;
@@ -454,13 +493,13 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
     }
 
-    public Tsr(Object arg1, Object arg2) {
+    public Tsr(List<Integer> arg1, Object arg2) {
         _construct(new Object[]{arg1, arg2});
     }
     public Tsr(Object arg1, Object arg2, Object arg3){
         _construct(new Object[]{arg1, arg2, arg3});
     }
-    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4){
+    public Tsr(Object arg1, Object arg2, Object arg3, String arg4){
         _construct(new Object[]{arg1, arg2, arg3, arg4});
     }
     public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5){
@@ -469,13 +508,13 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6){
         _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6});
     }
-    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7){
+    public Tsr(Tsr arg1, Object arg2, Tsr arg3, Object arg4, Tsr arg5, String arg6, Object arg7){
         _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7});
     }
-    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8){
+    public Tsr(Tsr arg1, Object arg2, Tsr arg3, Object arg4, Tsr arg5, String arg6, Object arg7, String arg8){
         _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8});
     }
-    public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8, Object arg9){
+    public Tsr(Object arg1, Tsr arg2, String arg3, Object arg4, Object arg5, Tsr arg6, String arg7, Object arg8, Object arg9){
         _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9});
     }
     public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8, Object arg9, Object arg10){
@@ -557,7 +596,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         //EQUATION:
         boolean containsString = false;
         int numberOfTensors = 0;
-        ArrayList<Tsr> tsrList = new ArrayList<>();
+        ArrayList<Tsr<ValueType>> tsrList = new ArrayList<>();
         for (Object o : args) {
             containsString = (o instanceof String) || containsString;
             if (o instanceof Tsr) {
@@ -621,7 +660,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
     // TRACKED COMPUTATION :
     //=========================
-    public Tsr(Tsr tensor, String operation) {
+    public Tsr(Tsr<ValueType> tensor, String operation) {
         if (tensor == null) return;
         _construct(new Tsr[]{tensor}, operation, true);
     }
@@ -636,14 +675,14 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
     private void _construct(Tsr[] tensors, String operation, boolean doAD) {
         if (tensors == null || tensors.length == 0 || tensors[0] == null) return;
-        Tsr result = Function.Setup.commit(this, tensors, operation, doAD);
+        Tsr<ValueType> result = Function.Setup.commit(this, tensors, operation, doAD);
         this._become(result);
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public Tsr mean() {
-        Tsr ones = new Tsr(this.getNDConf().shape(), 1);
-        Tsr sum = Function.X.call(new Tsr[]{this,ones});
+    public Tsr<ValueType> mean() {
+        Tsr<ValueType> ones = new Tsr<>(this.getNDConf().shape(), 1);
+        Tsr<ValueType> sum = Function.X.call(new Tsr[]{this,ones});
         return Function.DIV.call(new Tsr[]{sum, new Tsr(this.size())});
         //TODO :Function.DIV.call(new Tsr[]{sum, new Tsr(this.size())});
     }
@@ -657,7 +696,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
      * @param error A tensor which is back-propagated to gradients. Must match the size og this tensor.
      * @return The tensor on which this method was called. (factory pattern)
      */
-    public Tsr backward(Tsr error) {
+    public Tsr<ValueType> backward(Tsr<ValueType> error) {
         if (!forComponent(GraphNode.class, node -> node.backward(error)) && this.rqsGradient()) {
             addToGradient(error);
         }
@@ -673,7 +712,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
      * @param value A scalar which is back-propagated to gradients. Must match the size og this tensor.
      * @return The tensor on which this method was called. (factory pattern)
      */
-    public Tsr backward(double value) {
+    public Tsr<ValueType> backward(double value) {
         backward(new Tsr(_conf.shape(), value));
         return this;
     }
@@ -685,7 +724,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
      *
      * @return The tensor on which this method was called. (factory pattern)
      */
-    public Tsr backward() {
+    public Tsr<ValueType> backward() {
         backward(1);
         return this;
     }
@@ -707,71 +746,71 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         this.remove(GraphNode.class);
     }
 
-    //TENSOR OPERATION (OVERLOADABLE):
+    // TENSOR OPERATION (OVERLOADABLE):
     //=================================
-    public Tsr T() {//Transposed!
+    public Tsr<ValueType> T() {//Transposed!
         StringBuilder operation = new StringBuilder();
         for ( int i = rank()-1; i >= 0; i-- ) operation.append(i).append((i == 0) ? "" : ", ");
         operation = new StringBuilder("[" + operation + "]:(I[0])");
-        return new Tsr(this, operation.toString());
+        return new Tsr<>(this, operation.toString());
     }
 
-    public Tsr plus(Tsr other) {
+    public Tsr<ValueType> plus(Tsr<ValueType> other) {
         return Function.PLUS.call(new Tsr[]{this, other});
     }
-    public Tsr plusAssign(Tsr other){
+    public Tsr<ValueType> plusAssign(Tsr<ValueType> other){
         return Function.Detached.PLUS_ASSIGN.call(new Tsr[]{this, other});
     }
-    public Tsr plus(Double value) {
-        return plus(new Tsr(this.shape(), value));
+    public Tsr<ValueType> plus(Double value) {
+        return plus(new Tsr<>(this.shape(), value));
     }
-    public Tsr minus(Tsr other) {
+    public Tsr<ValueType> minus(Tsr<ValueType> other) {
         return Function.MINUS.call(new Tsr[]{this, other});
     }
-    public Tsr minusAssign(Tsr other){
+    public Tsr<ValueType> minusAssign(Tsr<ValueType> other){
         return Function.Detached.MINUS_ASSIGN.call(new Tsr[]{this, other});
     }
-    public Tsr negative(){
+    public Tsr<ValueType> negative(){
         return Function.NEG.call(new Tsr[]{this});
     }
-    public Tsr multiply(Tsr other) {
+    public Tsr<ValueType> multiply(Tsr<ValueType> other) {
         return Function.MUL.call(new Tsr[]{this, other});
     }
-    public Tsr timesAssign(Tsr other){
+    public Tsr<ValueType> timesAssign(Tsr<ValueType> other){
         return Function.Detached.MUL_ASSIGN.call(new Tsr[]{this, other});
     }
-    public Tsr multiply(Double value) {
-        return multiply(new Tsr(this.shape(), value));
+    public Tsr<ValueType> multiply(Double value) {
+        return multiply(new Tsr<>(this.shape(), value));
     }
-    public Tsr div(Tsr other) {
+    public Tsr<ValueType> div(Tsr<ValueType> other) {
         return Function.DIV.call(new Tsr[]{this, other});
     }
-    public Tsr div(Double value) {
-        return div(new Tsr(this.shape(), value));
+    public Tsr<ValueType> div(Double value) {
+        return div(new Tsr<>(this.shape(), value));
     }
-    public Tsr divAssign(Tsr other){
+    public Tsr<ValueType> divAssign(Tsr<ValueType> other){
         return Function.Detached.DIV_ASSIGN.call(new Tsr[]{this, other});
     }
-    public Tsr mod(Tsr other) {
+    public Tsr<ValueType> mod(Tsr<ValueType> other) {
         return Function.MOD.call(new Tsr[]{this, other});
     }
-    public Tsr modAssign(Tsr other){
+    public Tsr<ValueType> modAssign(Tsr<ValueType> other){
         return Function.Detached.MOD_ASSIGN.call(new Tsr[]{this, other});
     }
-    public Tsr power(Tsr other) {
+    public Tsr<ValueType> power(Tsr<ValueType> other) {
         return Function.POW.call(new Tsr[]{this, other});
     }
-    public Tsr power(Double value){
-        return power(new Tsr(this.shape(), value));
+    public Tsr<ValueType> power(Double value){
+        return power(new Tsr<>(this.shape(), value));
     }
-    public Tsr xor(Tsr other) {
+    public Tsr<ValueType> xor(Tsr<ValueType> other) {
         return Function.POW.call(new Tsr[]{this, other});
     }
-    public Tsr xor(Double value) {
-        return xor(new Tsr(this.shape(), value));
+    public Tsr<ValueType> xor(Double value) {
+        return xor(new Tsr<>(this.shape(), value));
     }
-    public Tsr dot(Tsr b){
-        Tsr a = this;
+    public Tsr<ValueType> dot(Tsr<ValueType> b){
+        Tsr<ValueType> a = this;
         int[][] fitter = AbstractNDArray.Utility.Indexing.makeFit(a.getNDConf().shape(), b.getNDConf().shape());
         boolean doReshape = false;
         for(int i=0; i<fitter[0].length && !doReshape; i++) if(fitter[0][i]!=i) doReshape = true;
@@ -782,18 +821,18 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         }
         return Function.X.call(new Tsr[]{a, b});
     }
-    public boolean isCase(Tsr t){
+    public boolean isCase(Tsr<ValueType> t){
         boolean[] found = {false};
         this.forComponent(Relation.class, r -> r.foreachChild( c -> {
                 if (c.equals(t)) found[0]=true;
             }));
         return found[0];
     }
-    public boolean contains(Tsr t){
+    public boolean contains(Tsr<ValueType> t){
         return isCase(t);
     }
 
-    public Tsr label(String[][] labels) {
+    public Tsr<ValueType> label(String[][] labels) {
         IndexAlias indexAlias = find(IndexAlias.class);
         if (indexAlias ==null) {
             indexAlias = new IndexAlias(this.rank());
@@ -809,20 +848,20 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         return this;
     }
 
-    public Tsr label(List<List<Object>> labels) {
+    public Tsr<ValueType> label(List<List<Object>> labels) {
         IndexAlias indexAlias = find(IndexAlias.class);
         if (indexAlias ==null) add(new IndexAlias(labels));
         return this;
     }
 
-    public Tsr label(Map<Object, List<Object>> labels) {
-        this.add(new IndexAlias(labels, this));
+    public Tsr<ValueType> label(Map<Object, List<Object>> labels) {
+        this.add(new IndexAlias<>(labels, this));
         return this;
     }
 
-    public Tsr putAt(Object key, Tsr value) {
+    public Tsr<ValueType> putAt(Object key, Tsr<ValueType> value) {
         if (value.isEmpty()) throw new IllegalArgumentException("Provided tensor is empty!");
-        Tsr slice = ( key==null ) ? this : (Tsr)getAt(key);
+        Tsr<ValueType> slice = ( key==null ) ? this : (Tsr)getAt(key);
         boolean valueIsDeviceVisitor = false;
         if (slice.isOutsourced() && !value.isOutsourced()){
             Device device = slice.find(Device.class);
@@ -842,6 +881,10 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     public Object getAt(Object i1, Object i2) {
         List<Object> args = Arrays.asList(i1, i2);
         return getAt(args);
+    }
+
+    public Object getAt(int i) {
+        return getAt((Integer)i);
     }
 
     public Object getAt(Object key) {
@@ -897,7 +940,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
                 newShape[i-rank()] /= (Integer)steps[i-rank()];
             }
         }
-        Tsr subset = new Tsr();
+        Tsr<ValueType> subset = new Tsr<>();
         subset._value = this._value;
         int[] newTranslation = this._conf.translation();
         int[] newIdxmap = Utility.Indexing.newTlnOf(newShape);
@@ -1096,7 +1139,16 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-    public Tsr setValue64(double[] value) {
+    @Override
+    public Object getValueAt(int i) {
+        if ( this.is32() ) return value32(i);
+        else if ( this.is64() ) return value64(i);
+        else {
+            return ((ValueType[])_value)[i];
+        }
+    }
+
+    public Tsr<ValueType> setValue64(double[] value) {
         if (this.isOutsourced()) this.find(Device.class).overwrite64(this, value);
         else if ( _value==null ) _value = value;
         else if ( _value instanceof float[] ) for ( int i=0; i<value.length; i++ ) ((float[])_value)[i] = (float) value[i];
@@ -1104,7 +1156,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         return this;
     }
 
-    public Tsr setValue32(float[] value) {
+    public Tsr<ValueType> setValue32(float[] value) {
         if (this.isOutsourced()) this.find(Device.class).overwrite32(this, value);
         else if ( _value==null ) _value = value;
         else if ( _value instanceof float[] ) for ( int i=0; i<value.length; i++ ) ((float[])_value)[i] = value[i];
@@ -1112,7 +1164,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         return this;
     }
 
-    public Tsr setValue(Object value) {
+    public Tsr<ValueType> setValue(Object value) {
         if (value instanceof float[]) this.setValue32((float[])value);
         else if(value instanceof  double[]) this.setValue64((double[])value);
         else if(value instanceof Float) {
@@ -1136,18 +1188,18 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
     }
 
     public double[] gradient64() {
-        Tsr gradient = this.find(Tsr.class);
+        Tsr<ValueType> gradient = this.find(Tsr.class);
         if(gradient==null) return new double[0];
         return (this.is32())? DataHelper.floatToDouble(gradient.value32()):gradient.value64();
     }
 
     public float[] gradient32(){
-        Tsr gradient = this.find(Tsr.class);
+        Tsr<ValueType> gradient = this.find(Tsr.class);
         if(gradient==null) return new float[0];
         return (this.is64())?DataHelper.doubleToFloat(gradient.value64()): gradient.value32();
     }
 
-    public Tsr addToGradient(Tsr error) {
+    public Tsr<ValueType> addToGradient(Tsr<ValueType> error) {
         if(!forComponent(Tsr.class,  g ->
             this.add(Function.Detached.PLUS_ASSIGN.call(new Tsr[]{g, error}))
         )){
@@ -1156,7 +1208,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         return this;
     }
 
-    public Tsr to32() {
+    public Tsr<ValueType> to32() {
         if (this.is64()){
             Device device = this.find(Device.class);
             if (device!=null) device.get(this);
@@ -1167,7 +1219,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         return this;
     }
 
-    public Tsr to64() {
+    public Tsr<ValueType> to64() {
         if (this.is32()) {
             Device device = this.find(Device.class);
             if (device!=null) device.get(this);
@@ -1255,7 +1307,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         );
         if (mode.contains("shape") || mode.contains("shp")) return strShape.toString();
         String asString = "";
-        asString += _stringified((value64()), compact, max);
+        asString += _stringified(_value, compact, max);
         asString = strShape +
                 (
                         (Neureka.instance().settings().view().isUsingLegacyView())
@@ -1264,12 +1316,12 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
                 );
         if ( mode.contains("g") && (this.rqsGradient() || this.hasGradient()) ) {
             asString += ":g:";
-            Tsr gradient = this.find(Tsr.class);
+            Tsr<ValueType> gradient = this.find(Tsr.class);
             if (gradient!=null) asString += gradient.toString("c").replace(strShape+":","");
             else asString+= ((Neureka.instance().settings().view().isUsingLegacyView())?"(null)":"[null]");
         }
         if (mode.contains("r") && this.has(GraphNode.class) && this.find(GraphNode.class).size() > 0) {
-            GraphNode node = this.find(GraphNode.class);
+            GraphNode<ValueType> node = this.find(GraphNode.class);
             AtomicReference<String> enclosed = new AtomicReference<>("; ");
             node.forEachDerivative((t, agent) -> {
                 if (agent.derivative()==null){
@@ -1286,7 +1338,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
             asString += enclosed.get();
         }
         if (mode.contains("d") && this.has(GraphNode.class) && this.find(GraphNode.class).size() > 0) {
-            GraphNode node = this.find(GraphNode.class);
+            GraphNode<ValueType> node = this.find(GraphNode.class);
             if (node.mode() != 0) {
                 AtomicReference<String> asAR = new AtomicReference<>("; ");
                 node.forEachDerivative((t, agent) -> {
@@ -1299,15 +1351,45 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
         return asString;
     }
 
-    private String _stringified(double[] v, boolean format, int max){
+    private String _stringified(
+            Object v,
+            boolean format,
+            int max
+    ) {
+        if ( v instanceof double[] ) return _stringified(
+                i -> (format)
+                        ? Utility.Stringify.formatFP(((double[]) v)[i])
+                        : String.valueOf(((double[]) v)[i]),
+                max
+        );
+        else if ( v instanceof float[] ) return _stringified(
+                i -> (format)
+                        ? Utility.Stringify.formatFP(((float[]) v)[i])
+                        : String.valueOf(((float[]) v)[i]),
+                max
+        );
+        else if ( v == null ) return _stringified(
+                    i -> (format)
+                            ? Utility.Stringify.formatFP(value64(i))
+                            : String.valueOf((value64(i))),
+                    max
+            );
+        else return _stringified(
+                    i -> String.valueOf(((Object[]) v)[i]),
+                    max
+            );
+    }
+
+    private String _stringified(
+            IntFunction<String> getter,
+            int max
+    ){
         StringBuilder asString = new StringBuilder();
         int size = this.size();
         int trim = (size-max);
         size = (trim > 0) ? max : size;
         for (int i = 0; i < size; i++) {
-            String vStr;
-            if (format) vStr = Utility.Stringify.formatFP(v[(this.isVirtual()) ? 0 : i_of_i(i)]);
-            else vStr = String.valueOf(v[(this.isVirtual()) ? 0 : i_of_i(i)]);
+            String vStr = getter.apply( (this.isVirtual()) ? 0 : i_of_i(i) );
             asString.append(vStr);
             if (i < size - 1) asString.append(", ");
             else if (trim > 0) asString.append(", ... + ").append(trim).append(" more");
@@ -1360,7 +1442,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
             Tsr t = _newEmptyLike(template);
             if (template.is32()) t.setValue((float)value);
             else t.setValue(value);
-            if (template.isOutsourced()) template.find(Device.class).add(t);
+            if (template.isOutsourced()) ((Device<Object>)template.find(Device.class)).add(t);
             return t;
         }
 
@@ -1368,7 +1450,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
             Tsr t = _newEmptyLike(template);
             if (template.is32()) t.setValue32(new float[template.size()]);
             else t.setValue64(new double[template.size()]);
-            if (template.isOutsourced()) template.find(Device.class).add(t);
+            if (template.isOutsourced()) ((Device<Object>)template.find(Device.class)).add(t);
             return t;
         }
 
@@ -1383,7 +1465,7 @@ public class Tsr extends AbstractNDArray<Tsr> implements Component<Tsr>
 
 
     @Override
-    public void update(Tsr oldOwner, Tsr newOwner) {
+    public void update(Tsr<ValueType> oldOwner, Tsr<ValueType> newOwner) {
 
     }
 

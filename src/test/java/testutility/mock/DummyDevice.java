@@ -6,7 +6,7 @@ import neureka.calculus.backend.ExecutionCall;
 
 import java.util.Collection;
 
-public class DummyDevice implements Device
+public class DummyDevice implements Device<Object>
 {
     @Override
     public void dispose() {
@@ -84,7 +84,7 @@ public class DummyDevice implements Device
     }
 
     @Override
-    public Collection<Tsr> tensors() {
+    public Collection<Tsr<Object>> tensors() {
         return null;
     }
 

@@ -5,7 +5,7 @@ import neureka.Tsr;
 import java.util.*;
 import java.util.function.Function;
 
-public class IndexAlias implements Component<Tsr>
+public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
 {
 
     private Map<Object, Object> _mapping;
@@ -27,7 +27,7 @@ public class IndexAlias implements Component<Tsr>
         for(int i=0; i<size; i++) _mapping.put(i, new LinkedHashMap<>());
     }
 
-    public IndexAlias(Map<Object, List<Object>> labels, Tsr host){
+    public IndexAlias(Map<Object, List<Object>> labels, Tsr<ValueType> host){
         _mapping = new LinkedHashMap<>(labels.size()*3);
         int[] index = {0};
         labels.forEach((k, v)->{
@@ -190,7 +190,7 @@ public class IndexAlias implements Component<Tsr>
 
 
     @Override
-    public void update(Tsr oldOwner, Tsr newOwner) {
+    public void update(Tsr<ValueType> oldOwner, Tsr<ValueType> newOwner) {
         
     }
 }

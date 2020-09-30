@@ -2,15 +2,16 @@ package neureka.ndim;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.dtype.DataType;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import javax.management.ObjectName;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.function.Consumer;
 
 
 /**
@@ -22,11 +23,78 @@ import java.util.Locale;
  *  are not extended more than once.
  *
  */
-public abstract class AbstractNDArray<InstanceType> extends AbstractComponentOwner<InstanceType>
+public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractComponentOwner<InstanceType> implements Iterable<ValueType>
 {
+
     protected NDConfiguration _conf;
     
     protected Object _value;
+
+    public Class getValueClass(){
+        DataType dt = find(DataType.class);
+        if ( dt != null ) return dt.getTypeClass();
+        else return null;
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @NotNull
+    @Override
+    public Iterator<ValueType> iterator() {
+        return new Iterator<ValueType>() {
+
+            private int _count = 0;
+            private final int _size = size();
+
+            @Override
+            public boolean hasNext() {
+                return _count != _size - 1;
+            }
+
+            @Override
+            public ValueType next() {
+                Object o = getValueAt(_conf.i_of_i(_count));
+                _count ++;
+                return (ValueType) o;
+            }
+        };
+    }
+
+    @Override
+    public void forEach(Consumer<? super ValueType> action) {
+        if ( this.is32() ) for ( float v : (float[])_value ) action.accept((ValueType) Float.valueOf(v));
+        else if ( this.is64() ) for ( double v : (double[])_value ) action.accept((ValueType) Double.valueOf(v));
+        else {
+            for ( ValueType v : (ValueType[])_value ) action.accept(v);
+        }
+    }
+
+    @Override
+    public Spliterator<ValueType> spliterator() {
+        return new Spliterator<ValueType>() {
+            @Override
+            public boolean tryAdvance(Consumer<? super ValueType> action) {
+                return false;
+            }
+
+            @Override
+            public Spliterator<ValueType> trySplit() {
+                return null;
+            }
+
+            @Override
+            public long estimateSize() {
+                return 0;
+            }
+
+            @Override
+            public int characteristics() {
+                return 0;
+            }
+        };
+    }
+
+    public abstract Object getValueAt(int i);
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -102,6 +170,7 @@ public abstract class AbstractNDArray<InstanceType> extends AbstractComponentOwn
         for (int i : array) intList.add(i);
         return intList;
     }
+
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

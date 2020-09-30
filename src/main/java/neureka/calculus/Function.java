@@ -66,40 +66,40 @@ public interface Function
 
     class Setup
     {
-        public static Tsr commit(Tsr[] tensors, String operation, boolean doAD) {
+        public static <T> Tsr<T> commit(Tsr<T>[] tensors, String operation, boolean doAD) {
             return commit(null, tensors, FunctionBuilder.build(operation, doAD));
         }
 
-        public static Tsr commit(Tsr drain, Tsr[] tensors, String operation, boolean doAD) {
+        public static <T> Tsr<T> commit(Tsr<T> drain, Tsr<T>[] tensors, String operation, boolean doAD) {
             return commit(drain, tensors, FunctionBuilder.build(operation, doAD));
         }
 
-        public static Tsr commit(Tsr[] inputs, Function function) {
+        public static <T> Tsr<T> commit(Tsr<T>[] inputs, Function function) {
             return commit(null, inputs, function);
         }
 
-        public static Tsr commit(Tsr drain, Tsr[] inputs, Function function) {
+        public static <T> Tsr<T> commit(Tsr<T> drain, Tsr<T>[] inputs, Function function) {
             return commit(drain, inputs, function, null);
         }
 
-        public static Tsr commit(Tsr drain, Tsr[] inputs, Function function, Supplier<Tsr> activation){
+        public static <T> Tsr<T> commit(Tsr<T> drain, Tsr<T>[] inputs, Function function, Supplier<Tsr<T>> activation){
 
             Tsr.makeFit(inputs);// reshaping if needed
 
             GraphLock newLock = new GraphLock(function, inputs);
-            for (Tsr t : inputs) {
+            for (Tsr<T> t : inputs) {
                 if( t.has(GraphNode.class) ) t.find(GraphNode.class).obtainLocking( newLock );
                 else new GraphNode( function, newLock, () -> t );
             }
-            Tsr result = null;
-            if( activation == null ) result = function.call(inputs);
-            else result = activation.get();
+            Tsr<T> result = null;
+            if( activation == null ) result = (Tsr<T>) function.call((Tsr<T>[])inputs);
+            else result = (Tsr<T>) activation.get();
 
             Function.CACHE.free(newLock);
             boolean resultIsUnique = true;
             if(drain!=null){
-                for(Tsr t : inputs){
-                    Tsr g = (Tsr)t.find(Tsr.class);
+                for(Tsr<T> t : inputs){
+                    Tsr<T> g = t.find(Tsr.class);
                     if (t == result || (g!=null && g==result)) {
                         resultIsUnique = false;
                         break;
@@ -144,30 +144,30 @@ public interface Function
 
     //------------------------------------------------------------------------------------------------------------------
 
-    Tsr call(Tsr input);
-    Tsr invoke(Tsr input);
+    <T> Tsr<T> call(Tsr<T> input);
+    <T> Tsr<T> invoke(Tsr<T> input);
 
-    Tsr call(List<Tsr> input);
-    Tsr invoke(List<Tsr> input);
+    <T> Tsr<T> call(List<Tsr<T>> input);
+    <T> Tsr<T> invoke(List<Tsr<T>> input);
 
     //------------------------------------------------------------------------------------------------------------------
 
-    Tsr call(Tsr[] inputs, int j);
-    Tsr invoke(Tsr[] inputs, int j);
+    <T> Tsr<T> call(Tsr<T>[] inputs, int j);
+    <T> Tsr<T> invoke(Tsr<T>[] inputs, int j);
 
-    Tsr call(Tsr[] inputs);
-    Tsr invoke(Tsr[] inputs);
+    <T> Tsr<T> call(Tsr<T>[] inputs);
+    <T> Tsr<T> invoke(Tsr<T>[] inputs);
 
 
-    Tsr derive(Tsr[] inputs, int index, int j);
+    <T> Tsr<T> derive(Tsr<T>[] inputs, int index, int j);
 
-    Tsr derive(Tsr[] inputs, int index);
+    <T> Tsr<T> derive(Tsr<T>[] inputs, int index);
 
     //---
 
-    Tsr derive(List<Tsr> inputs, int index, int j);
+    <T> Tsr<T> derive(List<Tsr<T>> inputs, int index, int j);
 
-    Tsr derive(List<Tsr> inputs, int index);
+    <T> Tsr<T> derive(List<Tsr<T>> inputs, int index);
 
     //---
 

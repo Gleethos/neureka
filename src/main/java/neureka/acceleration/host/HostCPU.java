@@ -11,13 +11,11 @@ import neureka.calculus.backend.ExecutionCall;
 import java.util.Collection;
 import java.util.concurrent.*;
 
-public class HostCPU extends AbstractDevice
+public class HostCPU extends AbstractDevice<Number>
 {
     private static final HostCPU _instance;
 
-    static {
-        _instance = new HostCPU();
-    }
+    static {  _instance = new HostCPU();  }
 
     private final NativeExecutor _executor;
 
@@ -112,7 +110,7 @@ public class HostCPU extends AbstractDevice
     }
 
     @Override
-    public Collection<Tsr> tensors() {
+    public Collection<Tsr<Number>> tensors() {
         return null;
     }
 

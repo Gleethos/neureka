@@ -58,16 +58,18 @@ class Tensor_NDConfiguration_Integration_Tests extends Specification
             y[1.1].NDConf != x[2].NDConf
             y[1.1].NDConf == z[1].NDConf
 
-        when : x = x[new BigDecimal(2)]
-        then :
+        when : 'We try to extract a slice by using a BigDecimal instance...'
+            x = x[new BigDecimal(2)]
+        then : 'This also produces a valid slice with the expected properties :'
             x.NDConf.shape(0) == 1
             x.NDConf.translation(0) == 1
             x.NDConf.idxmap(0) == 1
             x.NDConf.offset(0) == 2
             x.NDConf.spread(0) == 1
 
-        when : y = y[1..2]
-        then :
+        when : 'We try using a Range instance to extract a slice...'
+            y = y[1..2]
+        then : 'This produces the expected slice.'
             y.toString().contains("(2):[4.5, 2.0]")
             y.NDConf instanceof D1Configuration
             y.NDConf.shape(0) == 2

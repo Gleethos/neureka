@@ -14,6 +14,7 @@ public class CrossDeviceSystemTest
 
     public static boolean on( Device gpu, boolean legacyIndexing )
     {
+
         UnitTester_Tensor tester = new UnitTester_Tensor("");
 
         List<Tsr> listOfTensors = new ArrayList<>();

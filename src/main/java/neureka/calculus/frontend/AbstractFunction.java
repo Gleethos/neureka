@@ -312,7 +312,7 @@ public abstract class AbstractFunction extends AbstractBaseFunction
         return tsrs;
     }
 
-    private Device _device( Tsr[] inputs )
+    private Device _device( Tsr<Object>[] inputs )
     {
         if ( inputs.length == 0 ) return HostCPU.instance();
         Device device = inputs[0].find( Device.class );
@@ -325,7 +325,7 @@ public abstract class AbstractFunction extends AbstractBaseFunction
     {
         boolean onSameGuestDevice = true;
         Device device = null;
-        for ( Tsr tsr : tsrs ) device = ( tsr.isOutsourced() ) ? tsr.find( Device.class ) : device;
+        for ( Tsr<Object> tsr : tsrs ) device = ( tsr.isOutsourced() ) ? tsr.find( Device.class ) : device;
 
         if ( device != null ) {
             for ( Tsr tsr : tsrs ) {

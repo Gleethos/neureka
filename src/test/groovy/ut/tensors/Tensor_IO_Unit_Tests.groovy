@@ -282,20 +282,21 @@ class Tensor_IO_Unit_Tests extends  Specification
 
     def 'Adding OpenCL device to tensor makes tensor be "outsourced" and contain the Device instance as component.'()
     {
-        given :
+        given : 'Neureka can access OpenCL (JOCL).'
             if ( !Neureka.instance().canAccessOpenCL() ) return
             Neureka.instance().reset()
             Device gpu = Device.find("nvidia")
             Tsr t = new Tsr([3, 4, 1], 3)
 
-        expect :
+        expect : 'The following is to be expected with respect to the given :'
             !t.has(Device.class)
             !t.isOutsourced()
             !gpu.has(t)
 
-        when : t.add(gpu)
+        when : 'The tensor is being added to the OpenCL device...'
+            t.add(gpu)
 
-        then :
+        then : 'The now "outsourced" tensor has a reference to the device and vice versa!'
             t.has(Device.class)
             t.isOutsourced()
             gpu.has(t)

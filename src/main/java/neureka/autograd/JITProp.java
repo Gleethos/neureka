@@ -7,13 +7,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class JITProp implements Component<Tsr>
+public class JITProp<ValueType> implements Component<Tsr<ValueType>>
 {
-    private Set<GraphNode> _finished;
+    private Set<GraphNode<ValueType>> _finished;
 
-    private  Set<GraphNode> _pending;
+    private  Set<GraphNode<ValueType>> _pending;
 
-    public JITProp(Set<GraphNode> pendings){
+    public JITProp(Set<GraphNode<ValueType>> pendings){
         _pending = new HashSet<>();
         _pending.addAll(pendings); // Every JITProp component has their own Set.
         //... otherwise this would lead to finished JIT-Propagations where in fact traversals are still pending...
@@ -21,9 +21,9 @@ public class JITProp implements Component<Tsr>
 
     /**
      *
-     * @param pendings A set of GraphNode instance which are saved for future backprop continuation.
+     * @param pendings A set of GraphNode<ValueType> instance which are saved for future backprop continuation.
      */
-    public void addPending(Set<GraphNode> pendings){
+    public void addPending(Set<GraphNode<ValueType>> pendings){
         if(pendings.isEmpty()) throw new IllegalStateException("Trying to add empty pending errors set to JITProp.");
         if(!isDone()) throw new IllegalStateException("Trying to add pending errors to JITProp which is done.");
         _pending.addAll(pendings);
@@ -33,11 +33,11 @@ public class JITProp implements Component<Tsr>
      *
      * @param finishedJITProps The reference to a GraphNote which has finished (JITed) backpropation.
      */
-    public void noteFinished(GraphNode finishedJITProps){
+    public void noteFinished(GraphNode<ValueType> finishedJITProps){
         if(_finished==null) _finished = new HashSet<>();
         _finished.add(finishedJITProps);
         if (_pending!=null) {
-            Set<GraphNode> intersection = _finished.stream().filter(_pending::contains).collect(Collectors.toSet());
+            Set<GraphNode<ValueType>> intersection = _finished.stream().filter(_pending::contains).collect(Collectors.toSet());
             _finished.removeAll(intersection);
             _pending.removeAll(intersection);
             if(_finished.isEmpty()) _finished = null;
@@ -90,7 +90,7 @@ public class JITProp implements Component<Tsr>
 
 
     @Override
-    public void update(Tsr oldOwner, Tsr newOwner) {
+    public void update(Tsr<ValueType> oldOwner, Tsr<ValueType> newOwner) {
 
     }
 }

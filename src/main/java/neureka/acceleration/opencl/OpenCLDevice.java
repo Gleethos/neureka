@@ -16,19 +16,21 @@ import neureka.framing.Relation;
 import neureka.utility.DataHelper;
 import org.jocl.*;
 
-public class OpenCLDevice extends AbstractDevice
+public class OpenCLDevice extends AbstractDevice<Number>
 {
-    static class cl_value {
+    static class cl_value
+    {
         public cl_mem data;
         public int size = 0;
         public cl_event event;
     }
 
-    static class cl_config {
+    static class cl_config
+    {
         public cl_mem data;
     }
 
-    static class cl_tsr implements Component<Tsr> {
+    static class cl_tsr implements Component<Tsr<Number>> {
         public int fp = 1;
         public cl_config config = new cl_config();// Tensor configurations are always unique!
         public cl_value value;
@@ -92,9 +94,9 @@ public class OpenCLDevice extends AbstractDevice
      * @return A collection of all tensors currently stored on the device.
      */
     @Override
-    public synchronized Collection<Tsr> tensors() {
+    public synchronized Collection<Tsr<Number>> tensors() {
         Collection<Collection<Tsr>> collection = Collections.singleton(_tensors);
-        Collection<Tsr> extracted = new ArrayList<>();
+        Collection<Tsr<Number>> extracted = new ArrayList<>();
         collection.forEach(c -> c.forEach(t->{ if (t != null) extracted.add(t); }));
         return extracted;
     }
@@ -106,7 +108,7 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     @Override
-    public Device get( Tsr tensor ) {
+    public Device get( Tsr<Number> tensor ) {
         double[] value = ( tensor.isVirtual() ) ? _value64f(tensor.find(cl_tsr.class), 1, 0) : value64f(tensor);
         rmv(tensor);
         tensor.forComponent(Tsr.class, this::get);
@@ -115,7 +117,7 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     @Override
-    public Device add(Tsr tensor) {
+    public Device<Number> add(Tsr<Number> tensor) {
         Tsr root = null;
         if ( tensor.has( Relation.class ) ) root = tensor.find( Relation.class ).findRootTensor();
         if ( root != null ) add( tensor, root );
@@ -124,7 +126,7 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     @Override
-    public Device add(Tsr tensor, Tsr parent) {
+    public Device add(Tsr<Number> tensor, Tsr<Number> parent) {
         if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
         _add(tensor, parent.find(cl_tsr.class));
         _tensors.add(tensor);
@@ -132,7 +134,7 @@ public class OpenCLDevice extends AbstractDevice
         return this;
     }
 
-    private void _add(Tsr tensor, cl_tsr parent)
+    private void _add(Tsr<Number> tensor, cl_tsr parent)
     {
         cl_tsr newClt = new cl_tsr();
         {
@@ -203,7 +205,7 @@ public class OpenCLDevice extends AbstractDevice
             execute(
                 new ExecutionCall(
                         this,
-                        new Tsr[]{tensor, new Tsr(value).add(this)},
+                        new Tsr[]{tensor, (Tsr) new Tsr(value).add(this)},
                         -1,
                         OperationType.instance("<")
                 )
@@ -259,7 +261,7 @@ public class OpenCLDevice extends AbstractDevice
 
 
     @Override
-    public Device rmv(Tsr tensor) {
+    public Device<Number> rmv(Tsr<Number> tensor) {
         cl_tsr clt = tensor.find(cl_tsr.class);
         if ( clt == null ) return this;
         _tensors.remove(tensor);
@@ -278,7 +280,7 @@ public class OpenCLDevice extends AbstractDevice
     //}
 
     @Override
-    public Device overwrite64(Tsr tensor, double[] value) {
+    public Device<Number> overwrite64(Tsr<Number> tensor, double[] value) {
         cl_tsr clt = tensor.find(cl_tsr.class);
         if (clt.fp == 1) {
             overwrite32(tensor, DataHelper.doubleToFloat(value));
@@ -301,7 +303,7 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     private void _releaseEvents(Tsr[] tsrs){
-        for(Tsr t : tsrs){
+        for(Tsr<Number> t : tsrs){
             if( t.find(cl_tsr.class).value.event != null ){
                 clReleaseEvent(t.find(cl_tsr.class).value.event);
                 t.find(cl_tsr.class).value.event = null;
@@ -311,7 +313,7 @@ public class OpenCLDevice extends AbstractDevice
 
     private cl_event[] _getWaitList(Tsr[] tsrs){
         List<cl_event> list = new ArrayList<>();
-        for (Tsr t : tsrs) {
+        for (Tsr<Number> t : tsrs) {
             cl_event event = t.find(cl_tsr.class).value.event;
             if (event != null && !list.contains(event)) {
                 list.add(event);
@@ -321,7 +323,7 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     @Override
-    public Device overwrite32(Tsr tensor, float[] value) {
+    public Device overwrite32(Tsr<Number> tensor, float[] value) {
         cl_tsr clt = tensor.find(cl_tsr.class);
         if (clt.fp == 1) {
             if(clt.value.event!=null){
@@ -346,7 +348,7 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     @Override
-    public Device swap(Tsr former, Tsr replacement) {
+    public Device swap(Tsr<Number> former, Tsr<Number> replacement) {
         cl_tsr clTsr = former.find(cl_tsr.class);
         former.remove(cl_tsr.class);
         replacement.add(clTsr);
@@ -356,21 +358,21 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     @Override
-    public double[] value64f(Tsr tensor) {
+    public double[] value64f(Tsr<Number> tensor) {
         cl_tsr clt = tensor.find(cl_tsr.class);
         return _value64f(clt, clt.value.size, 0);
     }
 
     private double[] _value64f(cl_tsr clt , int size, int offset) {
         if (clt.fp == 1) {
-            return DataHelper.floatToDouble(_value32f(clt, clt.value.size, 0));
+            return DataHelper.floatToDouble(_value32f(clt, size, offset));
         } else {
             double[] data = new double[size];//clt.value.size];
             clEnqueueReadBuffer(
                     _queue,
                     clt.value.data,
                     CL_TRUE,
-                    offset,
+                    offset * 8, // one double == eight byte
                     Sizeof.cl_double * data.length,
                     Pointer.to(data),
                     0,
@@ -382,7 +384,7 @@ public class OpenCLDevice extends AbstractDevice
     }
 
     @Override
-    public float[] value32f(Tsr tensor) {
+    public float[] value32f(Tsr<Number> tensor) {
         cl_tsr clt = tensor.find(cl_tsr.class);
         return _value32f(clt, clt.value.size, 0);
     }
@@ -395,7 +397,7 @@ public class OpenCLDevice extends AbstractDevice
                     _queue,
                     clt.value.data,
                     CL_TRUE,
-                    offset,
+                    offset * 4, // one float == four bytes !
                     (long)Sizeof.cl_float * data.length,
                     Pointer.to(data),
                     0,
@@ -404,18 +406,18 @@ public class OpenCLDevice extends AbstractDevice
             );
             return data;
         } else {
-            return DataHelper.doubleToFloat(_value64f(clt, clt.value.size, 0));
+            return DataHelper.doubleToFloat(_value64f(clt, size, offset));
         }
     }
 
     @Override
-    public double value64f(Tsr tensor, int index){
+    public double value64f(Tsr<Number> tensor, int index){
         cl_tsr clt = tensor.find(cl_tsr.class);
         return _value64f(clt, 1, index)[0];
     }
 
     @Override
-    public float value32f(Tsr tensor, int index){
+    public float value32f(Tsr<Number> tensor, int index){
         cl_tsr clt = tensor.find(cl_tsr.class);
         return _value32f(clt, 1, index)[0];
     }

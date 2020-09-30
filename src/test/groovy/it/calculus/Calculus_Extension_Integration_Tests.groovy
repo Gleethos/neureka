@@ -30,8 +30,8 @@ class Calculus_Extension_Integration_Tests extends Specification
         given :
             Tsr t1 = new Tsr([row_sze, com_sze], -3..8)
             Tsr t2 = new Tsr([com_sze, col_sze], -7..4)
-            def clContext = new CLContext(lws, rws, com_sze, row_sze, col_sze)
-            def kernel = new GEMMKernelReferenceImplementation( clContext )
+            //def clContext = new CLContext(lws, rws, com_sze, row_sze, col_sze)
+            //def kernel = new GEMMKernelReferenceImplementation( clContext )
 
             OperationContext oldContext = OperationContext.instance()
             OperationContext testContext = oldContext.clone()
@@ -133,6 +133,9 @@ class Calculus_Extension_Integration_Tests extends Specification
         then :
             t3 != null
             //t3.toString() == "..."
+
+        cleanup : 'The original OperationContext instance must be set!'
+            OperationContext.setInstance(oldContext)
 
         where :
             lws | rws | com_sze | row_sze | col_sze

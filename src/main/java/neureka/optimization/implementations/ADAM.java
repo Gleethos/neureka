@@ -4,7 +4,7 @@ import neureka.Tsr;
 import neureka.calculus.Function;
 import neureka.optimization.Optimizer;
 
-public class ADAM implements Optimizer {
+public class ADAM<ValueType> implements Optimizer<ValueType> {
 
     //VARIABLES...
     private final Tsr a;
@@ -14,7 +14,7 @@ public class ADAM implements Optimizer {
     Tsr m;
     Tsr v;
 
-    ADAM(Tsr target){
+    ADAM(Tsr<ValueType> target){
         int[] shape = target.getNDConf().shape();
         m = new Tsr(shape, 0);
         v = new Tsr(shape, 0);
@@ -24,7 +24,7 @@ public class ADAM implements Optimizer {
         e = new Tsr(shape, 1e-7);
     }
 
-    private void _optimize(Tsr w){
+    private void _optimize(Tsr<ValueType> w){
         Tsr g = w.find(Tsr.class);
         m = new Tsr(b1, "*", m, " + ( 1-", b1, ") *", g);
         v = new Tsr(b2, "*", v, " + ( 1-", b2, ") * (", g,"^2 )");
@@ -35,12 +35,12 @@ public class ADAM implements Optimizer {
     }
 
     @Override
-    public void optimize(Tsr t) {
+    public void optimize(Tsr<ValueType> t) {
         _optimize(t);
     }
 
     @Override
-    public void update(Tsr oldOwner, Tsr newOwner) {
+    public void update(Tsr<ValueType> oldOwner, Tsr<ValueType> newOwner) {
         
     }
 }
