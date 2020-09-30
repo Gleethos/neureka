@@ -18,6 +18,14 @@ import org.jocl.*;
 
 public class OpenCLDevice extends AbstractDevice<Number>
 {
+    /**
+     * This class is responsible for representing the
+     * data of a tensor stored on the device.
+     * Instances of this class lend their identity to utilize garbage collection
+     * of the data that they reference via their "cl_mem" field.
+     * Meaning this inner memory object "cl_mem" will
+     * be freed via a call hook stored inside a Cleaner instance...
+     */
     static class cl_value
     {
         public cl_mem data;
@@ -25,11 +33,27 @@ public class OpenCLDevice extends AbstractDevice<Number>
         public cl_event event;
     }
 
+    /**
+     * This is the class responsible for representing NDConfiguration data.
+     * Instances of this class lend their identity to utilize garbage collection
+     * of the data that they reference via their "cl_mem" field.
+     * Meaning this inner memory object "cl_mem" will
+     * be freed via a call hook stored inside a Cleaner instance...
+     */
     static class cl_config
     {
         public cl_mem data;
     }
 
+    /**
+     * This class is an OpenCL-Device specific tensor component
+     * used to store
+     * the floating point size ( 1:float, 2:double, ...),
+     * a reference to a wrapper containing a pointer to the tensors configuration (cl_config)
+     * and
+     * a reference to a wrapper containing a pointer to the tensors data (cl_data)
+     * The latter two lend their identity for garbage collection!
+     */
     static class cl_tsr implements Component<Tsr<Number>> {
         public int fp = 1;
         public cl_config config = new cl_config();// Tensor configurations are always unique!
@@ -108,7 +132,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public Device get( Tsr<Number> tensor ) {
+    public Device<Number> get( Tsr<Number> tensor ) {
         double[] value = ( tensor.isVirtual() ) ? _value64f(tensor.find(cl_tsr.class), 1, 0) : value64f(tensor);
         rmv(tensor);
         tensor.forComponent(Tsr.class, this::get);
@@ -126,7 +150,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public Device add(Tsr<Number> tensor, Tsr<Number> parent) {
+    public Device<Number> add(Tsr<Number> tensor, Tsr<Number> parent) {
         if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
         _add(tensor, parent.find(cl_tsr.class));
         _tensors.add(tensor);
@@ -213,10 +237,20 @@ public class OpenCLDevice extends AbstractDevice<Number>
         } else tensor.setIsOutsourced(true);
     }
 
+    /**
+     * This method check if the passed tensor
+     * is stored on this very OpenCLDevice instance.
+     * "Stored" means that the data of the tensor is represented as
+     * cl_mem objects which are stored inside tensors as components...
+     *
+     * @param tensor The tensor in question.
+     * @return The truth value of the fact that the provided tensor is on this device.
+     */
     @Override
-    public boolean has(Tsr tensor) {
+    public boolean has(Tsr<Number> tensor) {
         return _tensors.contains(tensor);
     }
+
 
     private void _store(Tsr tensor, cl_tsr newClTsr, int fp) {
         Pointer p = null;

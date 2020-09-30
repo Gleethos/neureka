@@ -101,12 +101,12 @@ public class HostCPU extends AbstractDevice<Number>
 
     @Override
     public double value64f(Tsr tensor, int index) {
-        return 0;
+        return tensor.value64(index);
     }
 
     @Override
     public float value32f(Tsr tensor, int index) {
-        return 0;
+        return tensor.value32(index);
     }
 
     @Override

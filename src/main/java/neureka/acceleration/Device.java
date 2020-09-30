@@ -41,7 +41,7 @@ public interface Device<ValueType> extends Component<Tsr<ValueType>>
             } else return HostCPU.instance();
         }
 
-        Device result = HostCPU.instance();
+        Device<Number> result = HostCPU.instance();
         double score = FunctionParser.similarity( "jvm native host cpu threaded", search );
         if ( probablyWantsGPU ) score /= 10; // HostCPU instance is most likely not meant!
 
@@ -56,7 +56,7 @@ public interface Device<ValueType> extends Component<Tsr<ValueType>>
             }
         }
         if ( result == HostCPU.instance() && name.equals("first") ) {
-            Device first = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
+            Device<Number> first = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
             if( first!=null ) result = first;
         }
         return result;

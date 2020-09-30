@@ -1,7 +1,6 @@
 package neureka;
 
 import groovy.lang.IntRange;
-import neureka.autograd.ADAgent;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.dtype.DataType;
 import neureka.ndim.AbstractNDArray;
@@ -31,7 +30,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     /**
      *  Default device (host cpu)
      */
-    private static final Device _CPU;
+    private static final Device<Number> _CPU;
 
     /**
      *  Flag Fields
@@ -424,7 +423,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     {
         int[] shp = new int[shape.size()];
         for(int i=0; i<shp.length; i++) shp[i] = shape.get(i);
-        if(range.size()==1 && range.get(0) instanceof IntRange) range = (List) range.get(0);
+        if(range.size()==1 && range.get(0) instanceof IntRange) range = (List<ValueType>) range.get(0);
 
         if ( !range.isEmpty() && !(range.get(0) instanceof Number) ) {
             Class givenClass = range.get(0).getClass();
@@ -508,13 +507,13 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6){
         _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6});
     }
-    public Tsr(Tsr arg1, Object arg2, Tsr arg3, Object arg4, Tsr arg5, String arg6, Object arg7){
+    public Tsr(Tsr arg1, Object arg2, Tsr arg3, Object arg4, Tsr arg5, String arg6, Tsr arg7){
         _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7});
     }
-    public Tsr(Tsr arg1, Object arg2, Tsr arg3, Object arg4, Tsr arg5, String arg6, Object arg7, String arg8){
+    public Tsr(Tsr arg1, String arg2, Tsr arg3, Object arg4, Tsr arg5, String arg6, Tsr arg7, String arg8){
         _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8});
     }
-    public Tsr(Object arg1, Tsr arg2, String arg3, Object arg4, Object arg5, Tsr arg6, String arg7, Object arg8, Object arg9){
+    public Tsr(String arg1, Tsr arg2, String arg3, Object arg4, Object arg5, Tsr arg6, String arg7, Object arg8, Object arg9){
         _construct(new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9});
     }
     public Tsr(Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8, Object arg9, Object arg10){

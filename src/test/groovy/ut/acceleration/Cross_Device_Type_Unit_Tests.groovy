@@ -50,7 +50,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
         given : 'Neureka is being reset.'
             Neureka.instance().reset()
         and : 'A 2D tensor is being instantiated..'
-            Tsr t = new Tsr(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).add(device)
+            Tsr t = new Tsr<>(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).add(device)
 
         when : 'A numeric array is passed to said tensor...'
             if( data1 instanceof float[] ) t.setValue32(data1)
@@ -74,6 +74,39 @@ class Cross_Device_Type_Unit_Tests extends Specification
             Device.find("openCL") | new float[]{3, 5, 6}       | new float[]{4, 2, 3}       || "(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]"
             Device.find("openCL") | new double[]{9, 4, 7, -12} | new double[]{-5, -2, 1}    || "(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]"
             Device.find("openCL") | new float[]{22, 24, 35, 80}| new double[]{-1, -1, -1}   || "(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]"
+    }
+
+    def 'Tensor data can be fetched from device if the tensor is stored on it...'(
+            Device device, int[] shape, Object data, List<Float> expected
+    ) {
+        given : 'Neureka is being reset.'
+            Neureka.instance().reset()
+
+        when : 'A 2D tensor is being instantiated by passing the given shape and data...'
+            Tsr t = new Tsr<>(shape, data).add(device)
+
+        then : 'The tensor values (as List) are as expected.'
+            (t.value64() as List<Float>) == expected
+
+        when : 'The same underlying data is being queried by calling the device...'
+            def result = (0..<t.size()).collect{device.value32f(t, it)}
+
+        then : 'This new result also contains the same elements.'
+            result == expected
+
+        when : 'This procedure is now repeated using the method for double precision...'
+            result = (0..<t.size()).collect{device.value64f(t, it)}
+
+        then : 'Again the values are the same!'
+            result == expected as List<Double>
+
+        where : 'The following data is being used for tensor instantiation :'
+            device                | shape           | data                                               || expected
+            Device.find("cpu")    | new int[]{3, 2} | new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}    || [-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]
+            Device.find("cpu")    | new int[]{3, 2} | new double[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}    || [-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]
+
+            Device.find("openCL") | new int[]{3, 2} | new double[]{-5.0, -2.0, 1.0, -12.0, 3.0, -2.0}    || [-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]
+            Device.find("openCL") | new int[]{3, 2} | new double[]{-1.0, -1.0, -1.0, 80.0, 3.0, -2.0}    || [-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]
     }
 
     /**

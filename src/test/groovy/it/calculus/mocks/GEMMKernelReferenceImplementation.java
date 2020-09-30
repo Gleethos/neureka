@@ -1,12 +1,7 @@
 package it.calculus.mocks;
 
 import neureka.Neureka;
-import neureka.acceleration.opencl.utility.DispatchUtility;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 
 public class GEMMKernelReferenceImplementation
@@ -239,7 +234,6 @@ public class GEMMKernelReferenceImplementation
         // Loop over all tiles
         int numTiles = max_com / max_ts_com;
         for ( int t_i = 0; t_i < numTiles; t_i++ ) {
-
             // Load one tile of src1 and src2 into local memory
             for ( int la = 0; la < max_lpt_src1; la++ ) {
                 int tid = tid_col * max_rts_row + tid_row;
