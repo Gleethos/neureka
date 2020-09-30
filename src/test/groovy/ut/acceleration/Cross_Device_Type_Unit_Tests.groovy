@@ -82,6 +82,9 @@ class Cross_Device_Type_Unit_Tests extends Specification
         given : 'Neureka is being reset.'
             Neureka.instance().reset()
 
+        and : 'Because in some environments OpenCL might not be available, the test will be stopped!'
+            if ( device == null ) return
+
         when : 'A 2D tensor is being instantiated by passing the given shape and data...'
             Tsr t = new Tsr<>(shape, data).add(device)
 
