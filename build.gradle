@@ -10,9 +10,11 @@
         6. LOADING AND COMPILING DEPENDENCIES
         7. CONFIGURING TEST EXECUTION
         8. CONFIGURING TEST REPORTING
-        9. CUSTOM DEPLOYMENT TASKS
-        10. JAR CREATION AND MINIFICATION
-        11. MAVEN DEPLOYMENT CONFIGURATION: (! WIP ! WIP ! WIP !)
+        9. CONFIGURING MUTATION TESTING
+        10. CUSTOM DEPLOYMENT TASKS
+        11. JAR CREATION AND MINIFICATION
+        12. CONFIGURING JDOC GENERATION
+        13. MAVEN DEPLOYMENT CONFIGURATION : (! WIP ! WIP ! WIP !)
 
 */
 //______________________________________________________________________________________________________________________
@@ -38,6 +40,9 @@ plugins {
 
     // Test reporting :
     id 'jacoco'
+
+    // Mutation testing : (pitest)
+    id 'info.solidsoft.pitest' version '1.5.1'
 
     // Public deployment :
     id 'java-library'
@@ -150,9 +155,28 @@ jacocoTestReport {
 }
 check.dependsOn jacocoTestReport
 
+//----------------------------------------------------------------------------------------------------------------------
+// 9. CONFIGURING MUTATION TESTING :
+
+
+
+pitest {
+    junit5PluginVersion = '0.12'
+    //jvmArgs = ['-Xmx1024m', '-ea']
+    useClasspathFile = true     // useful with bigger projects on Windows
+    testSourceSets = [sourceSets.test]
+    mainSourceSets = [sourceSets.main]
+    targetClasses = ["neureka*"]  // by default "${project.group}.*" //:= com.github.gleethos.*
+    targetTests = ["ut.*", "it.*", "st.*"]
+    pitestVersion = '1.5.1' // not needed when a default PIT version should be used
+    threads = (int) Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
+    outputFormats = ['XML', 'HTML']
+    timestampedReports = false
+}
+
 
 //----------------------------------------------------------------------------------------------------------------------
-// 9. CUSTOM DEPLOYMENT TASKS :
+// 10. CUSTOM DEPLOYMENT TASKS :
 
 task cleanForDeployment(type: Delete) {
     delete "$rootDir/build"
@@ -199,7 +223,7 @@ task deploy() {
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// 10. JAR CREATION AND MINIFICATION :
+// 11. JAR CREATION AND MINIFICATION :
 
 
 jar {
@@ -290,7 +314,7 @@ task ('proguard', type: proguard.gradle.ProGuardTask) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// CONFIGURING JDOC GENERATION:
+// 12. CONFIGURING JDOC GENERATION:
 
 task createJDocs(type: Javadoc){
     destinationDir = new File("$projectDir/docs/jdocs")
@@ -300,7 +324,7 @@ task createJDocs(type: Javadoc){
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// 11. MAVEN DEPLOYMENT CONFIGURATION: (! WIP !)
+// 13. MAVEN DEPLOYMENT CONFIGURATION: (! WIP !)
 
 task sourceJar(type: Jar) {
     classifier "sources"
