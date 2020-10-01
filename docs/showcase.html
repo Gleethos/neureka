@@ -42,43 +42,43 @@
         function animateTop( modifier ) {
             let sig = 1-modifier;
             let newTop = sig*65+5;
-            $('.gaadiexp').animate({top:(sig*50)}, 100);
+            $('#navbar_menu').animate({top:newTop-10}, 300);
             $('#neureka_title').animate({'font-size':(2+sig/2)+"rem"}, 200);
             $('#top_most_nav_bar').animate({top: newTop-70}, 555);
-            $('.side-nav').animate({top:90+((1-sig)*30)}, 100);
-            $('#navbar_menu').animate({top:newTop-10}, 300);
         }
     </script>
 </head>
 <body>
 <div id="header">
     <div id="NetBox" class="MainFrame">
-        <nav class="" id="top_most_nav_bar">
-            <div id="navigation_container" class="">
-                <div style="" class="TopBarGradient DynamicSideMargin">
-                    <h1 id="neureka_title">NEUREKA</h1>
-                </div>
-                <div class="pull-right NightBox" id="navbar_menu">
-                    <ul class="nav navbar-right" id="navbar_list">
-                        <li>
-                            <a href="index.html">
-                                <img src="src/img/icons/house.png">
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://github.com/Gleethos/neureka">
-                                <img src="src/img/icons/github-logo.png">
-                            </a>
-                        </li>
-                        <li>
-                            <a href="jdocs/index.html">
-                                <img src="src/img/icons/cogwheel.png">
-                            </a>
-                        </li>
-                    </ul>
+        <nav class="FloatsUp">
+            <div id="top_most_nav_bar">
+                <div id="navigation_container" class="">
+                    <div style="" class="TopBarGradient DynamicSideMargin">
+                        <h1 id="neureka_title">NEUREKA</h1>
+                    </div>
+                    <div class="pull-right NightBox" id="navbar_menu">
+                        <ul class="nav navbar-right" id="navbar_list">
+                            <li>
+                                <a href="index.html">
+                                    <img src="src/img/icons/house.png">
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://github.com/Gleethos/neureka">
+                                    <img src="src/img/icons/github-logo.png">
+                                </a>
+                            </li>
+                            <li>
+                                <a href="jdocs/index.html">
+                                    <img src="src/img/icons/cogwheel.png">
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div id="navi">
+            <div id="navi" class="DynamicPillarWidth">
                 <input type="checkbox" name="mobile-nav" id="mobile-nav" class="gaadiexp-check" onchange="this.blur()">
                 <label for="mobile-nav" class="gaadiexp white" tabindex="0"
                        style="margin-left: 0;"><span></span></label>
