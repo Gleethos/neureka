@@ -5,6 +5,7 @@ import neureka.dtype.AbstractNumericType;
 import java.io.IOException;
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.nio.ByteBuffer;
 
 public class I32 extends AbstractNumericType<Integer, int[]>
 {
@@ -35,7 +36,8 @@ public class I32 extends AbstractNumericType<Integer, int[]>
 
     @Override
     public Integer convert(byte[] bytes) {
-        return Utility.unsignedByteArrayToInt(_data);
+        return ByteBuffer.wrap(bytes).getInt();
+        //return Utility.unsignedByteArrayToInt(_data);
     }
 
     @Override

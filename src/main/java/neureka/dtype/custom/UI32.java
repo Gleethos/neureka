@@ -1,26 +1,24 @@
 package neureka.dtype.custom;
 
-import neureka.dtype.AbstractNumericType;
+import neureka.dtype.NumericType;
 
-import java.io.IOException;
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.math.BigInteger;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class I64 extends AbstractNumericType<Long, long[]>
+public class UI32 implements NumericType<Long, long[]>
 {
 
-    public I64() { super(); }
 
     @Override
     public boolean signed() {
-        return true;
+        return false;
     }
 
     @Override
     public int numberOfBytes() {
-        return 8;
+        return 4;
     }
 
     @Override
@@ -35,7 +33,10 @@ public class I64 extends AbstractNumericType<Long, long[]>
 
     @Override
     public Long convert(byte[] bytes) {
-        return ByteBuffer.wrap(bytes).getLong();
+        int asInt = ByteBuffer.wrap(bytes).getInt();
+        return ( asInt >= 0 )
+                    ? (long) asInt
+                    : (long)(0x40000000 + asInt);
     }
 
     @Override
@@ -53,4 +54,8 @@ public class I64 extends AbstractNumericType<Long, long[]>
 
     }
 
+    @Override
+    public <T> T convert(long[] from, Class<T> to) {
+        return null;
+    }
 }

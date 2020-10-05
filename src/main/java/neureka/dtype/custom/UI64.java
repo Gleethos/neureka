@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 
 public class UI64 extends AbstractNumericType<BigInteger, BigInteger[]>
 {
@@ -34,7 +35,11 @@ public class UI64 extends AbstractNumericType<BigInteger, BigInteger[]>
 
     @Override
     public BigInteger convert(byte[] bytes) {
-        return null;
+        // use "import static java.math.BigInteger.ONE;" to shorten this line
+        BigInteger UNSIGNED_LONG_MASK = BigInteger.ONE.shiftLeft(Long.SIZE).subtract(BigInteger.ONE);
+        long unsignedLong = new BigInteger(bytes).longValue(); // sample input value
+        BigInteger bi =  BigInteger.valueOf(unsignedLong).and(UNSIGNED_LONG_MASK);
+        return bi;
     }
 
     @Override

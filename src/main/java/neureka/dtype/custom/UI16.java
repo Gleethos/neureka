@@ -5,6 +5,8 @@ import neureka.dtype.AbstractNumericType;
 import java.io.IOException;
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 
 public class UI16 extends AbstractNumericType<Integer, int[]>
 {
