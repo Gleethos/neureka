@@ -57,7 +57,8 @@ public class DataType
     }
 
     public boolean typeClassImplements(Class<?> interfaceClass){
-        return _type.isAssignableFrom(interfaceClass);
+        //return _type.isAssignableFrom(interfaceClass);
+        return interfaceClass.isAssignableFrom(_type);
     }
 
 }

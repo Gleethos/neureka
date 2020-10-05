@@ -13,8 +13,20 @@ import neureka.dtype.custom.UI64
 import neureka.dtype.custom.UI8;
 import spock.lang.Specification;
 
-class Data_Type_Unit_Tests extends Specification
+class NumericType_Unit_Tests extends Specification
 {
+
+    def setupSpec()
+    {
+        reportHeader """
+            This specification covers implementations
+            of the "NumericType" interface.
+            Such classes are responsible for
+            representing all numeric types including the ones
+            which are foreign to the JVM, namely : 
+            unsigned integer types.
+        """
+    }
 
     def 'NumericType implementations return their expected properties.'(
             NumericType type, int bytes, Class<?> target, Class<?> array, boolean signed
