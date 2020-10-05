@@ -3,6 +3,7 @@ package neureka;
 import groovy.lang.IntRange;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.dtype.DataType;
+import neureka.dtype.custom.*;
 import neureka.ndim.AbstractNDArray;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
@@ -15,7 +16,7 @@ import neureka.autograd.JITProp;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.virtual.VirtualNDConfiguration;
 import neureka.optimization.Optimizer;
-import neureka.utility.DataHelper;
+import neureka.utility.DataConverter;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -322,6 +323,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     protected Tsr<ValueType> _become( Tsr<ValueType> tensor ) {
         if ( tensor == null ) return this;
         _value = tensor._value;
+        _type = tensor._type;
         _conf = tensor._conf;
         _components = Collections.synchronizedList(new ArrayList<>());
         _flags = tensor._flags;
@@ -331,6 +333,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             for ( Component<Tsr<ValueType>> o : snapshot ) o.update( tensor, this );
         }
         tensor._value = null;
+        tensor._type = null;
         tensor._conf = null;
         tensor._components = null;
         tensor._flags = -1;
@@ -355,20 +358,28 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    private int _dataLength(){
+        if ( !(_value instanceof float[]) && !(_value instanceof double[]) ) {
+            if ( _value instanceof Object[] ) return ((Object[])_value).length;
+            else return -1;
+        } else if (this.is64()) {
+            return ((double[])_value).length;
+        } else {
+            return ((float[])_value).length;
+        }
+    }
+
     /**
      * @param newShape
      */
     protected void _configureFromNewShape(int[] newShape, boolean makeVirtual) {
         int size = Utility.Indexing.szeOfShp(newShape);
         _value = (_value==null) ? new double[size] : _value;
-        int length = ( !(_value instanceof float[]) && !(_value instanceof double[]) )
-                ?   ((Object[])_value).length
-                :   (this.is64())
-                        ?((double[])_value).length
-                        :((float[])_value).length;
-
-        if (size != length && (!this.isVirtual() || !makeVirtual)) {
-            throw new IllegalArgumentException("Size of shape does not match stored value64!");
+        int length = _dataLength();
+        if ( length >= 0 ) {
+            if (size != length && (!this.isVirtual() || !makeVirtual)) {
+                throw new IllegalArgumentException("Size of shape does not match stored value64!");
+            }
         }
         if(makeVirtual) {
             _conf = VirtualNDConfiguration.construct(newShape);
@@ -433,11 +444,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 value[i] = range.get(i%range.size());
             }
             _value = value;
-            this.add( DataType.instance(givenClass) );
+            _type = DataType.instance(givenClass);
             _construct(shp, value);
         } else {
             double[] value = new double[Utility.Indexing.szeOfShp(shp)];
-
+            _type = DataType.instance(F64.class);
             for(int i=0; i<value.length; i++) {
                 if(range.get(i%range.size()) instanceof BigDecimal){
                     value[i] = ((BigDecimal)range.get(i%range.size())).doubleValue();
@@ -457,7 +468,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             final ValueType[] newValue = (ValueType[]) Array.newInstance(givenClass, Utility.Indexing.szeOfShp(shape));
             for(int i=0; i<newValue.length; i++) newValue[i] = value[i%value.length];
             _value = newValue;
-        } else _value = value;
+            _type = DataType.instance(givenClass);
+        }
+        else _value = value;
         this._configureFromNewShape(shape, false);
     }
 
@@ -526,7 +539,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     private void _construct(int[] shape, String seed) {
         _construct(shape);
-        _value = DataHelper.seededDoubleArray((double[])_value, seed);
+        _value = DataConverter.Utility.seededDoubleArray((double[])_value, seed);
     }
 
     private int[] _intArray(Object[] arg) {
@@ -638,6 +651,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     private void _construct(int[] shape, double value){
         int size = Utility.Indexing.szeOfShp(shape);
         _value = new double[1];
+        _type = DataType.instance(F64.class);
         this.setIsVirtual( size > 1 );
         this._configureFromNewShape(shape, size > 1);
         ((double[])_value)[0] = value;
@@ -655,6 +669,12 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             _value = newValue;
         } else _value = value;
         this._configureFromNewShape(shape, false);
+    }
+
+    public Tsr( int[] shape, DataType dataType, Object value ){
+        _value = value;
+        _type = dataType;
+        _configureFromNewShape( shape, false );
     }
 
     // TRACKED COMPUTATION :
@@ -941,6 +961,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         }
         Tsr<ValueType> subset = new Tsr<>();
         subset._value = this._value;
+        subset._type = this._type;
         int[] newTranslation = this._conf.translation();
         int[] newIdxmap = Utility.Indexing.newTlnOf(newShape);
         int[] newSpread = new int[rank()];
@@ -1149,7 +1170,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public Tsr<ValueType> setValue64(double[] value) {
         if (this.isOutsourced()) this.find(Device.class).overwrite64(this, value);
-        else if ( _value==null ) _value = value;
+        else if ( _value==null ) {
+            _value = value;
+            _type = DataType.instance(F64.class);
+        }
         else if ( _value instanceof float[] ) for ( int i=0; i<value.length; i++ ) ((float[])_value)[i] = (float) value[i];
         else if ( _value instanceof double[] ) for ( int i=0; i<value.length; i++ ) ((double[])_value)[i] = value[i];
         return this;
@@ -1157,7 +1181,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public Tsr<ValueType> setValue32(float[] value) {
         if (this.isOutsourced()) this.find(Device.class).overwrite32(this, value);
-        else if ( _value==null ) _value = value;
+        else if ( _value==null ) {
+            _value = value;
+            _type = DataType.instance(F32.class);
+        }
         else if ( _value instanceof float[] ) for ( int i=0; i<value.length; i++ ) ((float[])_value)[i] = value[i];
         else if ( _value instanceof double[] ) for ( int i=0; i<value.length; i++ ) ((double[])_value)[i] = value[i];
         return this;
@@ -1189,13 +1216,13 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public double[] gradient64() {
         Tsr<ValueType> gradient = this.find(Tsr.class);
         if(gradient==null) return new double[0];
-        return (this.is32())? DataHelper.floatToDouble(gradient.value32()):gradient.value64();
+        return (this.is32())? DataConverter.Utility.floatToDouble(gradient.value32()):gradient.value64();
     }
 
     public float[] gradient32(){
         Tsr<ValueType> gradient = this.find(Tsr.class);
         if(gradient==null) return new float[0];
-        return (this.is64())?DataHelper.doubleToFloat(gradient.value64()): gradient.value32();
+        return (this.is64())? DataConverter.Utility.doubleToFloat(gradient.value64()): gradient.value32();
     }
 
     public Tsr<ValueType> addToGradient(Tsr<ValueType> error) {
@@ -1211,7 +1238,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if (this.is64()){
             Device device = this.find(Device.class);
             if (device!=null) device.get(this);
-            _value = DataHelper.doubleToFloat((double[])_value);
+            _value = DataConverter.Utility.doubleToFloat((double[])_value);
             forComponent(Tsr.class, Tsr::to32);
             if (device!=null) device.add(this);
         }
@@ -1222,11 +1249,37 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if (this.is32()) {
             Device device = this.find(Device.class);
             if (device!=null) device.get(this);
-            _value = DataHelper.floatToDouble((float[])_value);
+            _value = DataConverter.Utility.floatToDouble((float[])_value);
             forComponent(Tsr.class, Tsr::to64);
             if (device!=null) device.add(this);
         }
         return this;
+    }
+
+
+    public <T> Tsr<T> asType(Class<T> typeClass)
+    {
+        Class<?> realTypeClass = typeClass;
+        if ( typeClass == Double.class ) realTypeClass = F64.class;
+        else if ( typeClass == Float.class ) realTypeClass = F32.class;
+        else if ( typeClass == Integer.class ) realTypeClass = I32.class;
+        else if ( typeClass == Short.class ) realTypeClass = I16.class;
+
+        if ( this.isOutsourced() ) {
+            _type = DataType.instance(realTypeClass);
+            return (Tsr<T>) this;
+        }
+        // else conversion :
+        DataType newDT = DataType.instance(realTypeClass);
+        if (
+                newDT.typeClassImplements(NumericType.class) &&
+                        _type.typeClassImplements(NumericType.class)
+        ) {
+            NumericType<?,Object> instance   = (NumericType<?, Object>) newDT.getTypeClassInstance();
+            NumericType<?,Object> originType = (NumericType<?, Object>) _type.getTypeClassInstance();
+            instance.convert(_value, originType.targetArrayType());
+        }
+        return (Tsr<T>) this;
     }
 
     public double value64( int i ) {
@@ -1244,10 +1297,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if ( _value == null && this.isOutsourced() && this.has(Device.class) ) {
             return this.find(Device.class).value64f(this);
         }
-        double[] newValue = (this.is64())?(double[])_value: DataHelper.floatToDouble((float[])_value);
+        double[] newValue = (this.is64())?(double[])_value: DataConverter.Utility.floatToDouble((float[])_value);
         if ( this.isVirtual() && newValue != null && this.size() > 1 ) {
             newValue = new double[this.size()];
-            double[] value = (this.is64())?(double[])_value:DataHelper.floatToDouble((float[])_value);
+            double[] value = (this.is64())?(double[])_value: DataConverter.Utility.floatToDouble((float[])_value);
             Arrays.fill(newValue, value[0]);
         }
         return newValue;
@@ -1268,7 +1321,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if (_value == null && this.isOutsourced() && this.has(Device.class)) {
             return this.find(Device.class).value32f(this);
         }
-        float[] newValue = (this.is64())?DataHelper.doubleToFloat((double[])_value):(float[])_value;
+        float[] newValue = (this.is64())? DataConverter.Utility.doubleToFloat((double[])_value):(float[])_value;
         if (this.isVirtual() && newValue!=null) {
             newValue = new float[this.size()];
             Arrays.fill(newValue, newValue[0]);
@@ -1367,6 +1420,12 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                         : String.valueOf(((float[]) v)[i]),
                 max
         );
+        else if ( v instanceof short[] )  return _stringified(
+                i -> (format)
+                        ? Utility.Stringify.formatFP(((short[]) v)[i])
+                        : String.valueOf(((short[]) v)[i]),
+                max
+        );
         else if ( v == null ) return _stringified(
                     i -> (format)
                             ? Utility.Stringify.formatFP(value64(i))
@@ -1434,7 +1493,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
         public static Tsr newRandom(int[] shape, long seed){
             int size = Utility.Indexing.szeOfShp(shape);
-            return new Tsr(shape, DataHelper.newSeededDoubleArray(seed, size));
+            return new Tsr(shape, DataConverter.Utility.newSeededDoubleArray(seed, size));
         }
 
         public static Tsr newTsrLike(Tsr template, double value) {

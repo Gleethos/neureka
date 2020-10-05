@@ -12,8 +12,9 @@ import neureka.acceleration.Device;
 import neureka.acceleration.opencl.execution.CLExecutor;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.operations.OperationType;
+import neureka.dtype.custom.F32;
 import neureka.framing.Relation;
-import neureka.utility.DataHelper;
+import neureka.utility.DataConverter;
 import org.jocl.*;
 
 public class OpenCLDevice extends AbstractDevice<Number>
@@ -235,6 +236,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 )
             );
         } else tensor.setIsOutsourced(true);
+        tensor.asType(F32.class);
     }
 
     /**
@@ -317,7 +319,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     public Device<Number> overwrite64(Tsr<Number> tensor, double[] value) {
         cl_tsr clt = tensor.find(cl_tsr.class);
         if (clt.fp == 1) {
-            overwrite32(tensor, DataHelper.doubleToFloat(value));
+            overwrite32(tensor, DataConverter.Utility.doubleToFloat(value));
         } else {
             if(clt.value.event!=null) clWaitForEvents(1, new cl_event[]{clt.value.event});
             clt.value.event = new cl_event();
@@ -376,7 +378,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     clt.value.event
             );
         } else {
-            overwrite64(tensor, DataHelper.floatToDouble(value));
+            overwrite64(tensor, DataConverter.Utility.floatToDouble(value));
         }
         return this;
     }
@@ -399,7 +401,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     private double[] _value64f(cl_tsr clt , int size, int offset) {
         if (clt.fp == 1) {
-            return DataHelper.floatToDouble(_value32f(clt, size, offset));
+            return DataConverter.Utility.floatToDouble(_value32f(clt, size, offset));
         } else {
             double[] data = new double[size];//clt.value.size];
             clEnqueueReadBuffer(
@@ -440,7 +442,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             );
             return data;
         } else {
-            return DataHelper.doubleToFloat(_value64f(clt, size, offset));
+            return DataConverter.Utility.doubleToFloat(_value64f(clt, size, offset));
         }
     }
 

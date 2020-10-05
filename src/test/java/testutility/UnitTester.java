@@ -89,7 +89,7 @@ public class UnitTester extends Assert
                     :"not contains")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test failed!"));
             _positive_assertions = (_positive_assertions <0)? _positive_assertions -1:-1;
             println(BAR + LINE);
-            //failSession();
+            failSession();
             return false;
         }
     }

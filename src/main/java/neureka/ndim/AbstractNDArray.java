@@ -3,6 +3,7 @@ package neureka.ndim;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.dtype.DataType;
+import neureka.dtype.custom.*;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -27,13 +28,19 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
 {
 
     protected NDConfiguration _conf;
+
+    protected DataType _type;
     
     protected Object _value;
 
     public Class getValueClass(){
-        DataType dt = find(DataType.class);
+        DataType dt = _type;
         if ( dt != null ) return dt.getTypeClass();
         else return null;
+    }
+
+    public DataType getDataType(){
+        return _type;
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

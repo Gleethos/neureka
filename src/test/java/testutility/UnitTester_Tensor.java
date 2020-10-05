@@ -4,11 +4,13 @@ import neureka.Tsr;
 import neureka.acceleration.host.HostCPU;
 import neureka.acceleration.Device;
 import neureka.acceleration.host.execution.HostExecutor;
+import neureka.acceleration.opencl.OpenCLDevice;
 import neureka.autograd.GraphNode;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.backend.implementations.functional.Broadcast;
 import neureka.calculus.backend.implementations.functional.Convolution;
+import neureka.dtype.DataType;
 
 import java.util.List;
 
@@ -30,12 +32,22 @@ public class UnitTester_Tensor extends UnitTester
         return (printSessionEnd()>0)?1:0;
     }
 
-    public int testTensor(Tsr tensor, List<String> expected){
+    public int testTensor(
+            Tsr tensor,
+            List<String> expected
+    ){
         Object[] array = expected.toArray();
         String[] strings = new String[expected.size()];
         for(int i=0; i<strings.length; i++){
             strings[i] = (String)array[i];
         }
+        DataType type = tensor.getDataType();
+        if ( type != null ) {
+            if ( tensor.device() instanceof OpenCLDevice ) {
+                this.assertStringContains("Tensor data type :", type.getTypeClass().getName(), "F32");
+            } else this.assertStringContains("Tensor data type :", type.getTypeClass().getName(), "F64");
+        }
+        else this.assertStringContains("Tensor data type :", "null", "F64");
         return testTensor(tensor, strings);
     }
 
