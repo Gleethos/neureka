@@ -3,6 +3,7 @@ package neureka;
 import groovy.lang.IntRange;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.dtype.DataType;
+import neureka.dtype.NumericType;
 import neureka.dtype.custom.*;
 import neureka.ndim.AbstractNDArray;
 import neureka.acceleration.host.HostCPU;

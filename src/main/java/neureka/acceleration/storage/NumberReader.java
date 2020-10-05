@@ -1,6 +1,6 @@
 package neureka.acceleration.storage;
 
-import neureka.dtype.custom.NumericType;
+import neureka.dtype.NumericType;
 
 import java.io.FileInputStream;
 import java.io.IOException;

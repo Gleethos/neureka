@@ -1,4 +1,4 @@
-package neureka.dtype.custom;
+package neureka.dtype;
 
 import java.io.*;
 import java.nio.ByteBuffer;

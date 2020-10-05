@@ -3,7 +3,7 @@ package neureka.acceleration.storage;
 
 import neureka.Tsr;
 import neureka.dtype.DataType;
-import neureka.dtype.custom.NumericType;
+import neureka.dtype.NumericType;
 import neureka.dtype.custom.*;
 
 import java.io.*;

@@ -1,7 +1,5 @@
 package neureka.dtype;
 
-import neureka.dtype.custom.NumericType;
-
 import java.util.HashMap;
 import java.util.Map;
 
