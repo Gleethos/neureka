@@ -8,7 +8,7 @@ import spock.lang.Specification
 
 class DataLoader_Unit_Tests extends Specification
 {
-
+    /*
     def 'Test MNIST loading.'(){
         given :
             Neureka.instance().reset()
@@ -37,7 +37,7 @@ class DataLoader_Unit_Tests extends Specification
 
 
     }
-
+    */
 
     /*
     def 'some tests'(){
