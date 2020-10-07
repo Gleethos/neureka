@@ -2,6 +2,7 @@ package neureka.dtype;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 
 public interface NumericType<TargetType, ArrayType>
 {
@@ -19,7 +20,7 @@ public interface NumericType<TargetType, ArrayType>
 
     ArrayType readDataFrom(DataInput stream, int size) throws IOException;
 
-    void writeDataTo(DataOutput stream, ArrayType data) throws IOException;
+    void writeDataTo(DataOutput stream, Iterator<TargetType> iterator) throws IOException;
 
     <T> T convert(ArrayType from, Class<T> to);
 

@@ -1,6 +1,10 @@
 package neureka.dtype;
 
+import java.io.DataOutput;
+import java.io.IOException;
+import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public abstract class AbstractNumericType<TargetType, ArrayType> implements NumericType<TargetType, ArrayType>
@@ -35,6 +39,14 @@ public abstract class AbstractNumericType<TargetType, ArrayType> implements Nume
     @Override
     public <T> T convert(ArrayType from, Class<T> to) {
         return (T) _converters.get( to ).go( from );
+    }
+
+    @Override
+    public void writeDataTo(DataOutput stream, Iterator<TargetType> iterator) throws IOException {
+        while(iterator.hasNext()) {
+            _data = convert(iterator.next());
+            stream.write(_data);
+        }
     }
 
 }

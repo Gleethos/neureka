@@ -55,7 +55,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
 
             @Override
             public boolean hasNext() {
-                return _count != _size - 1;
+                return _count != _size;
             }
 
             @Override
@@ -69,11 +69,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
 
     @Override
     public void forEach(Consumer<? super ValueType> action) {
-        if ( this.is32() ) for ( float v : (float[])_value ) action.accept((ValueType) Float.valueOf(v));
-        else if ( this.is64() ) for ( double v : (double[])_value ) action.accept((ValueType) Double.valueOf(v));
-        else {
-            for ( ValueType v : (ValueType[])_value ) action.accept(v);
-        }
+        for ( ValueType v : this ) action.accept(v);
     }
 
     @Override

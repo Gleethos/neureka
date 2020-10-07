@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class I16 extends AbstractNumericType<Short, short[]>
 {
+    private final ByteBuffer buffer = ByteBuffer.allocate(Short.BYTES);
 
     public I16(){ super(); }
 
@@ -34,12 +36,17 @@ public class I16 extends AbstractNumericType<Short, short[]>
 
     @Override
     public Short convert(byte[] bytes) {
-        return ByteBuffer.wrap(bytes).getShort();
+        buffer.put(bytes, 0, bytes.length);
+        buffer.flip();//need flip
+        return buffer.getShort();
+        //return ByteBuffer.wrap(bytes).order(ByteOrder.).getShort();
     }
 
     @Override
     public byte[] convert(Short number) {
-        return new byte[]{(byte)(number & 0xff),(byte)((number >> 8) & 0xff)};
+        buffer.putShort(0, number);
+        return buffer.array();
+        //return new byte[]{(byte)(number & 0xff),(byte)((number >> 8) & 0xff)};
     }
 
     @Override
@@ -50,11 +57,6 @@ public class I16 extends AbstractNumericType<Short, short[]>
             data[i] = convert(_data);
         }
         return data;
-    }
-
-    @Override
-    public void writeDataTo(DataOutput stream, short[] data) throws IOException {
-
     }
 
 

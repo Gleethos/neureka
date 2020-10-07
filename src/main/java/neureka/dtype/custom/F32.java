@@ -5,6 +5,8 @@ import neureka.dtype.AbstractNumericType;
 import java.io.IOException;
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 public class F32 extends AbstractNumericType<Float, float[]>
 {
@@ -32,12 +34,18 @@ public class F32 extends AbstractNumericType<Float, float[]>
 
     @Override
     public Float convert(byte[] bytes) {
-        return null;
+        return ByteBuffer.wrap(bytes).getFloat();
     }
 
     @Override
     public byte[] convert(Float number) {
-        return new byte[0];
+        int intBits =  Float.floatToIntBits(number);
+        return new byte[] {
+                (byte) (intBits >> 24),
+                (byte) (intBits >> 16),
+                (byte) (intBits >> 8),
+                (byte) (intBits)
+        };
     }
 
     @Override
@@ -45,9 +53,5 @@ public class F32 extends AbstractNumericType<Float, float[]>
         return new float[0];
     }
 
-    @Override
-    public void writeDataTo(DataOutput stream, float[] data) throws IOException {
-
-    }
 
 }

@@ -8,12 +8,14 @@ import neureka.dtype.custom.*;
 
 import java.io.*;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class IDXHead implements FileHead
 {
-    private int _dataPointer;
+    private int _dataOffset;
     private int _bodySize;
     private String _fileName;
     private DataType _dtype;
@@ -38,17 +40,26 @@ public class IDXHead implements FileHead
                                                                 )
                                                         );
 
-    public IDXHead(String fileName)
+    public IDXHead( String fileName )
     {
         _fileName = fileName;
         try {
-            _construct(fileName);
+            _load(fileName);
         } catch(Exception e) {
             System.err.print("Failed reading IDX file!");
         }
     }
 
-    private void _construct(String fileName) throws IOException {
+    public IDXHead( Tsr<?> t, String filename ) throws IOException {
+        _fileName = filename;
+        _shape = t.getNDConf().shape();
+        _dtype = t.getDataType();
+        t.setIsVirtual(false);
+        persist(t.iterator());
+    }
+
+    private void _load(String fileName) throws IOException
+    {
         FileInputStream f = null;
         try
         {
@@ -61,25 +72,27 @@ public class IDXHead implements FileHead
         }
         NumberReader numre = new NumberReader(f);
 
-        int zeros = numre.readIntegerInByteNumber((byte) 2);
+        int zeros = numre.read( new UI16() );
         assert zeros == 0;
 
-        int typeId = numre.readIntegerInByteNumber((byte) 1);
+        int typeId = numre.read( new UI8() );
         Class<?> typeClass = TYPE_MAP.get(typeId);
         _dtype = DataType.instance(typeClass);
 
-        int rank = numre.readIntegerInByteNumber((byte)1);
+        int rank = numre.read( new UI8() );
         int[] shape = new int[rank];
 
         int size = 1;
         for ( int i = 0; i < rank; i++ ) {
-            shape[i] = numre.readIntegerInByteNumber((byte)4);
+            shape[i] = numre.read( new UI32() ).intValue();
             size *= shape[i];
         }
+
+
         _shape = shape;
         _bodySize = size;
 
-        _dataPointer = numre.bytesRead();
+        _dataOffset = numre.bytesRead();
 
         //byte[] data = new byte[size];
         //assert f.read(data) == data.length;
@@ -89,8 +102,8 @@ public class IDXHead implements FileHead
 
 
     @Override
-    public void persist(Tsr<?> t) throws IOException {
-
+    public <T> void persist( Iterator<T> data ) throws IOException
+    {
         FileOutputStream fos;
         try
         {
@@ -102,48 +115,46 @@ public class IDXHead implements FileHead
         }
         BufferedOutputStream f = new BufferedOutputStream(fos);
 
-        f.write(new byte[]{0, 0});
-        f.write(CODE_MAP.get(t.getValueClass()).byteValue());
-        byte rank = (byte) t.rank();
-        f.write(rank);
-        int[] shape = t.getNDConf().shape();
-        for ( int i = 0; i < rank; i++ ) {
-            f.write(BigInteger.valueOf(shape[i]).toByteArray());
-        }
+        int offset = 0;
 
-        //Class<?> clazz = _dtype.getTypeClass();
-        //if ( NumericType.class.isAssignableFrom(clazz) ) {
-        //    NumericType<?,?> type = ((NumericType<?,?>)_dtype.getTypeClassInstance());
-        //    DataInput stream = new DataInputStream(
-        //            new BufferedInputStream(
-        //                    fs,
-        //                    _dataPointer + _bodySize * type.numberOfBytes()
-        //            )
-        //    );
-        //    stream.skipBytes(_dataPointer);
-        //    Object value = type.readDataFrom(
-        //            stream,
-        //            _bodySize
-        //    );
-        //    return new Tsr<>(_shape, _dtype, value);
-        //}
+        f.write(new byte[]{0, 0});
+        offset += 2;
+        f.write( CODE_MAP.get( _dtype.getTypeClass() ).byteValue() );
+        offset += 1;
+        byte rank = (byte) _shape.length;
+        f.write(rank);
+        offset += 1;
+        int bodySize = 1;
+        for ( int i = 0; i < rank; i++ ) {
+            byte[] integer = ByteBuffer.allocate(4).putInt(_shape[i]).array();
+            assert integer.length == 4;
+            f.write(integer);
+            bodySize *= _shape[i];
+            offset += 4;
+        }
+        _dataOffset = offset;
+        _bodySize = bodySize;
+        NumericType<T,Object> type = ( NumericType<T, Object> ) _dtype.getTypeClassInstance();
+
+        type.writeDataTo( new DataOutputStream(f), data);
+        f.close();
 
     }
 
     @Override
-    public Tsr<?> load() throws IOException {
+    public Tsr<?> load() throws IOException
+    {
         FileInputStream fs = new FileInputStream(_fileName);
-
         Class<?> clazz = _dtype.getTypeClass();
         if ( NumericType.class.isAssignableFrom(clazz) ) {
             NumericType<?,?> type = ((NumericType<?,?>)_dtype.getTypeClassInstance());
             DataInput stream = new DataInputStream(
                     new BufferedInputStream(
                             fs,
-                            _dataPointer + _bodySize * type.numberOfBytes()
+                            _dataOffset + _bodySize * type.numberOfBytes()
                     )
             );
-            stream.skipBytes(_dataPointer);
+            stream.skipBytes(_dataOffset);
             Object value = type.readDataFrom(
                     stream,
                     _bodySize

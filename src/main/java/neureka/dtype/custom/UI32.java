@@ -1,15 +1,13 @@
 package neureka.dtype.custom;
 
-import neureka.dtype.NumericType;
+import neureka.dtype.AbstractNumericType;
 
 import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class UI32 implements NumericType<Long, long[]>
+public class UI32 extends AbstractNumericType<Long, long[]>
 {
-
 
     @Override
     public boolean signed() {
@@ -41,7 +39,10 @@ public class UI32 implements NumericType<Long, long[]>
 
     @Override
     public byte[] convert(Long number) {
-        return new byte[0];
+        final ByteBuffer buf = ByteBuffer.allocate(8);
+        buf.putLong( number );
+        byte[] b = buf.array();
+        return new byte[]{ b[4], b[5], b[6], b[7] };
     }
 
     @Override
@@ -49,10 +50,6 @@ public class UI32 implements NumericType<Long, long[]>
         return new long[0];
     }
 
-    @Override
-    public void writeDataTo(DataOutput stream, long[] data) throws IOException {
-
-    }
 
     @Override
     public <T> T convert(long[] from, Class<T> to) {

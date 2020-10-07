@@ -45,7 +45,7 @@ public class UI8 extends AbstractNumericType<Short, short[]>
 
     @Override
     public byte[] convert(Short number) {
-        return new byte[0];
+        return new byte[]{(byte)(number & 0xFF)};
     }
 
     @Override
@@ -56,11 +56,6 @@ public class UI8 extends AbstractNumericType<Short, short[]>
             data[i] = convert(_data);
         }
         return data;
-    }
-
-    @Override
-    public void writeDataTo(DataOutput stream, short[] data) {
-        //stream.wr
     }
 
 }

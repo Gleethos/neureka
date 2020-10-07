@@ -45,7 +45,7 @@ public class I8 extends AbstractNumericType<Byte, byte[]>
 
     @Override
     public byte[] convert(Byte number) {
-        return new byte[0];
+        return new byte[]{number};
     }
 
     @Override
@@ -53,11 +53,6 @@ public class I8 extends AbstractNumericType<Byte, byte[]>
         byte[] bytes = new byte[size];
         stream.readFully(bytes, size, size);
         return bytes;
-    }
-
-    @Override
-    public void writeDataTo(DataOutput stream, byte[] data) throws IOException {
-        stream.write(data);
     }
 
 

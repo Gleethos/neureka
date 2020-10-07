@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 
 public class I64 extends AbstractNumericType<Long, long[]>
 {
+    private final ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
 
     public I64() { super(); }
 
@@ -35,22 +36,31 @@ public class I64 extends AbstractNumericType<Long, long[]>
 
     @Override
     public Long convert(byte[] bytes) {
-        return ByteBuffer.wrap(bytes).getLong();
+        buffer.put(bytes, 0, bytes.length);
+        buffer.flip();//need flip
+        return buffer.getLong();
+        //return ByteBuffer.wrap(bytes).getLong();
     }
 
     @Override
     public byte[] convert(Long number) {
-        return new byte[0];
+        buffer.putLong(0, number);
+        return buffer.array();
+        //return new byte[] {
+        //        (byte) (number >> 0),
+        //        (byte) (number >> 8),
+        //        (byte) (number >> 16),
+        //        (byte) (number >> 24),
+        //        (byte) (number >> 32),
+        //        (byte) (number >> 40),
+        //        (byte) (number >> 48),
+        //        (byte) (number >> 56)
+        //};
     }
 
     @Override
     public long[] readDataFrom(DataInput stream, int size) throws IOException {
         return new long[0];
-    }
-
-    @Override
-    public void writeDataTo(DataOutput stream, long[] data) throws IOException {
-
     }
 
 }

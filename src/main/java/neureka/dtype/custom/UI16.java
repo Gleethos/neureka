@@ -36,13 +36,16 @@ public class UI16 extends AbstractNumericType<Integer, int[]>
     }
 
     @Override
-    public Integer convert(byte[] bytes) {
-        return Utility.unsignedByteArrayToInt(bytes);
+    public Integer convert(byte[] b) {
+        return 0x00 << 24 | 0x00 << 16 | (b[0] & 0xff) << 8 | (b[1] & 0xff);
+        //return Utility.unsignedByteArrayToInt(bytes);
     }
 
     @Override
     public byte[] convert(Integer number) {
-        return new byte[0];
+        final ByteBuffer buf = ByteBuffer.allocate(2);
+        buf.putShort( (short) number.intValue() );
+        return buf.array();
     }
 
     @Override
@@ -55,9 +58,5 @@ public class UI16 extends AbstractNumericType<Integer, int[]>
         return data;
     }
 
-    @Override
-    public void writeDataTo(DataOutput stream, int[] data) throws IOException {
-
-    }
 
 }

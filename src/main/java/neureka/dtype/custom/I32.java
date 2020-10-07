@@ -42,7 +42,12 @@ public class I32 extends AbstractNumericType<Integer, int[]>
 
     @Override
     public byte[] convert(Integer number) {
-        return new byte[0];
+        return new byte[] {
+                (byte)((number >> 24) & 0xff),
+                (byte)((number >> 16) & 0xff),
+                (byte)((number >> 8) & 0xff),
+                (byte)((number >> 0) & 0xff),
+        };
     }
 
     @Override
@@ -53,11 +58,6 @@ public class I32 extends AbstractNumericType<Integer, int[]>
             data[i] = convert(_data);
         }
         return data;
-    }
-
-    @Override
-    public void writeDataTo(DataOutput stream, int[] data) throws IOException {
-
     }
 
 

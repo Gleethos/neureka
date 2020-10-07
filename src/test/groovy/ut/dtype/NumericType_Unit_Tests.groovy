@@ -60,9 +60,12 @@ class NumericType_Unit_Tests extends Specification
     def 'NumericType implementations behaive as expected.'(
             NumericType type, List<Byte> data, Number converted
     ){
+        given :
+            def result = type.convert(data as byte[])
 
         expect : 'The array of bytes  is being converted to a fitting JVM type.'
-            type.convert(data as byte[]) == converted
+            result == converted
+        //and : type.convert(result) == (data as byte[]) // TODO!
 
         where : 'The following NumericType instances and bytes are being used :'
             type      | data                         || converted

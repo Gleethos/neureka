@@ -1164,6 +1164,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public Object getValueAt(int i) {
         if ( this.is32() ) return value32(i);
         else if ( this.is64() ) return value64(i);
+        else if ( _value instanceof short[] ) return ((short[])_value)[i];
         else {
             return ((ValueType[])_value)[i];
         }

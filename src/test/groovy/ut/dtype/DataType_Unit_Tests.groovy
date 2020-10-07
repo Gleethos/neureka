@@ -16,7 +16,7 @@ class DataType_Unit_Tests extends Specification
         """
     }
 
-    def 'DataType multiton instances behaive as expected.'(
+    def 'DataType multiton instances behave as expected.'(
       Class<?> typeClass, boolean isNumericType
     ) {
         given : 'A "DataType" instance representing / wrapping the relevant datatype Class passed to "instance(...)."'

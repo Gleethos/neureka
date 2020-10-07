@@ -7,6 +7,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 
 public class UI64 extends AbstractNumericType<BigInteger, BigInteger[]>
 {
@@ -52,10 +53,6 @@ public class UI64 extends AbstractNumericType<BigInteger, BigInteger[]>
         return new BigInteger[0];
     }
 
-    @Override
-    public void writeDataTo(DataOutput stream, BigInteger[] data) throws IOException {
-
-    }
 
 
 }
