@@ -6,6 +6,7 @@ import neureka.calculus.Function;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class ADAgent
 {
@@ -20,6 +21,13 @@ public class ADAgent
 
     public ADAgent(  Tsr derivative  ){
         _context.put( "derivative", derivative );
+    }
+
+    public ADAgent(){ }
+
+    public ADAgent withContext(  Map<String, Object> context  ) {
+        _context.putAll( context );
+        return this;
     }
 
     public ADAgent withForward(ADAction fad) {
@@ -55,6 +63,12 @@ public class ADAgent
         }
         if(this.isForward()){
 
+        }
+        if ( _context != null ) {
+            String mapAsString = _context.keySet().stream()
+                    .map(key -> key + "=" + _context.get(key))
+                    .collect(Collectors.joining(", ", "{", "}"));
+            return mapAsString;
         }
         return "null";
     }

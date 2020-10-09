@@ -1396,7 +1396,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             if (node.mode() != 0) {
                 AtomicReference<String> asAR = new AtomicReference<>("; ");
                 node.forEachDerivative((t, agent) -> {
-                    if (agent.derivative()==null) asAR.set(asAR.get() + "->d(null), ");
+                    if (agent.derivative()==null) asAR.set(asAR.get() + "->d("+agent.toString()+"), ");
                     else asAR.set(asAR.get() + "->d" + agent.derivative()._toString(mode, deeper) + ", ");
                 });
                 asString += asAR.get();

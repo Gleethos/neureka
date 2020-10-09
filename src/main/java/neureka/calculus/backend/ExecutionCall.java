@@ -15,6 +15,9 @@ import java.util.TreeMap;
  * arguments needed to execute on a targeted Device which
  * is specified by the type parameter below.
  *
+ * It also holds a context map responsible for storing
+ * operation specific variables.
+ *
  * @param <DeviceType> The Device implementation targeted by an instance of this ExecutionCall!
  */
 public class ExecutionCall< DeviceType extends Device >
@@ -70,7 +73,19 @@ public class ExecutionCall< DeviceType extends Device >
     public Tsr[] getTensors() {return _tensors;}
     
     public Tsr getTensor(int i) {return _tensors[i];}
-    
+
+    /**
+     * This method returns an import property whose
+     * role might not be clear at first :
+     * An operation can have multiple inputs, however
+     * when calculating the derivative for a forward or backward pass
+     * then one must know which derivative ought to be calculated.
+     * So the "derivative index" targets said input.
+     * This property is -1 when no derivative should be calculated,
+     * however 0... when targeting an input to calculate the derivative of.
+     *
+     * @return The index of the input whose derivative ought to be calculated.
+     */
     public int getDerivativeIndex() {return _d;}
     
     public OperationType getType() {return _type;}
@@ -95,7 +110,7 @@ public class ExecutionCall< DeviceType extends Device >
             call._context.putAll(this._context);
         }
         if( derivative != null ) assert (call._context != null && call._context.containsKey("derivative"));
-        else assert call._context == null;
+        else assert call._context == null || !call._context.containsKey("derivative");
         return getImplementation().supplyADAgentFor(function, call, forward);
     }
     
@@ -121,7 +136,7 @@ public class ExecutionCall< DeviceType extends Device >
         return _context.get(varName);
     }
 
-    public ExecutionCall<DeviceType> putAt(String s, Tsr o){
+    public <T> ExecutionCall<DeviceType> putAt(String s, T o){
         if ( _context == null ) _context = new TreeMap<>();
         _context.put(s,o);
         return this;

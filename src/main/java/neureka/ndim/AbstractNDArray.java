@@ -33,7 +33,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
     
     protected Object _value;
 
-    public Class getValueClass(){
+    public Class<?> getValueClass(){
         DataType dt = _type;
         if ( dt != null ) return dt.getTypeClass();
         else return null;

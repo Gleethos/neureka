@@ -71,17 +71,13 @@ public class Reshape extends AbstractOperationType
                 .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
-                        Tsr ctxDerivative = (Tsr)call.getAt("derivative");
+                        //Tsr ctxDerivative = (Tsr)call.getAt("derivative");
                         if(forward){
                             throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                         }
-                        return new ADAgent(
-                                null
-                        ).withForward(
-                                (t, derivative) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0)
-                        ).withBackward(
-                                (t, error) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0)
-                        );
+                        return new ADAgent(null)
+                                .withForward((t, derivative) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0))
+                                .withBackward((t, error) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0));
                     }
                 ).setCallHock(
                     ( caller, call ) ->
@@ -111,54 +107,9 @@ public class Reshape extends AbstractOperationType
                         Tsr t = inputs[inputs.length - 1];
                         return reshaped(t, newForm, true);
                     }
-                ).setRJAgent(
-                    ( call, goDeeperWith ) ->
-                    {
-                        Tsr[] inputs = call.getTensors();
-                        Device device = call.getDevice();
-                        int d = call.getDerivativeIndex();
-                        OperationType type = call.getType();
-
-                        //inputs = _src_acti(inputs, j, -1, 0);
-                        int[] newForm = new int[inputs.length - 1];
-                        for ( int i = 0; i < inputs.length - 1; i++ ) {
-                            newForm[i] = (int) Tsr.IO.getFrom(inputs[i], 0);//_src.get(i).call(inputs)
-                        }
-                        if ( d >= 0 ) {//reverse reshape:
-                            int reverseLength = 0;
-                            for ( int e : newForm ) {
-                                if ( e >= 0 ) reverseLength++;
-                            }
-                            int[] reversed = new int[reverseLength];
-                            int reshape_i = 0;
-                            int reverse_i = 0;
-                            while ( reverse_i < reverseLength ) {
-                                if ( newForm[ reshape_i ] >= 0 ) {
-                                    reversed[ newForm[reshape_i] ] = reshape_i;
-                                    reverse_i++;
-                                }
-                                reshape_i++;
-                            }
-                            newForm = reversed;
-                        }
-                        Tsr t = inputs[inputs.length - 1];
-                        return reshaped( t, newForm, true );
-                    }
-                ).setDrainInstantiation(
-                    call -> {
-                        Tsr[] tsrs = call.getTensors();
-                        Device device = call.getDevice();
-                        if ( tsrs[0] == null ) // Creating a new tensor:
-                        {
-                            int[] shp = tsrs[1].getNDConf().shape();
-                            Tsr output = new Tsr( shp, 0.0 );
-                            output.setIsVirtual( false );
-                            device.add(output);
-                            tsrs[0] = output;
-                        }
-                        return call;
-                    }
-                );
+                )
+                .setRJAgent( ( call, goDeeperWith ) -> null )
+                .setDrainInstantiation( call -> call);
 
         setImplementation(
                 GenericImplementation.class,

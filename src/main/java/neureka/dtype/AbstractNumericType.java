@@ -43,7 +43,7 @@ public abstract class AbstractNumericType<TargetType, ArrayType> implements Nume
 
     @Override
     public void writeDataTo(DataOutput stream, Iterator<TargetType> iterator) throws IOException {
-        while(iterator.hasNext()) {
+        while( iterator.hasNext() ) {
             _data = convert(iterator.next());
             stream.write(_data);
         }

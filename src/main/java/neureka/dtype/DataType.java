@@ -47,9 +47,6 @@ public class DataType
         try {
             ctor.setAccessible(true);
             return ctor.newInstance();
-        //try {
-        //    Constructor<?> ctor = _type.getConstructor(String.class);
-        //    return ctor.newInstance();
         } catch ( Exception e ) {
             e.printStackTrace();
         }
@@ -57,7 +54,6 @@ public class DataType
     }
 
     public boolean typeClassImplements(Class<?> interfaceClass){
-        //return _type.isAssignableFrom(interfaceClass);
         return interfaceClass.isAssignableFrom(_type);
     }
 

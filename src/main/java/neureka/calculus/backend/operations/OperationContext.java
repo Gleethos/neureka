@@ -7,6 +7,7 @@ import neureka.calculus.backend.operations.indexer.Summation;
 import neureka.calculus.backend.operations.operator.*;
 import neureka.calculus.backend.operations.other.CopyLeft;
 import neureka.calculus.backend.operations.other.CopyRight;
+import neureka.calculus.backend.operations.other.DimTrim;
 import neureka.calculus.backend.operations.other.Reshape;
 
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ public class OperationContext implements Cloneable
         new XMultiplication();
 
         new Reshape();
+        new DimTrim();
         new CopyLeft();
         new CopyRight();
     }
