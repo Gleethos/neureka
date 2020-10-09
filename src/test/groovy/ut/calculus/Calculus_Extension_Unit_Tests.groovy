@@ -10,6 +10,7 @@ import neureka.calculus.backend.operations.OperationType
 import neureka.calculus.backend.implementations.OperationTypeImplementation
 import neureka.calculus.frontend.implementations.FunctionNode
 import neureka.calculus.frontend.implementations.FunctionInput
+import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 
 class Calculus_Extension_Unit_Tests extends Specification
@@ -79,6 +80,7 @@ class Calculus_Extension_Unit_Tests extends Specification
             Tsr output = Mock(Tsr)
             Tsr input = Mock(Tsr)
             GraphNode node = Mock(GraphNode)
+            def ndc = Mock(NDConfiguration)
 
         and : 'A mocked operation implementation.'
             def implementation = Mock(OperationTypeImplementation)
@@ -95,6 +97,8 @@ class Calculus_Extension_Unit_Tests extends Specification
             def result = function.call([input])
 
         then : 'The custom call hook is being accessed as outlined below.'
+            (1.._) * input.getNDConf() >> ndc
+            (1.._) * ndc.shape() >> new int[]{1,2}
             (1.._) * type.isDifferentiable() >> true
             (1.._) * type.implementationOf(_) >> implementation
             (1.._) * implementation.handleInsteadOfDevice(_,_) >> output

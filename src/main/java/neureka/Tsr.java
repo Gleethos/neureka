@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 
 public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> implements Component<Tsr<ValueType>>
 {
@@ -475,8 +476,37 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         this._configureFromNewShape(shape, false);
     }
 
+    private void _construct( List<List<Object>> matrix ) {
+        boolean isNumeric = matrix.stream().allMatch(e -> e.stream().allMatch(ie -> ie instanceof Number));
+        if ( isNumeric ) {
+            int n = matrix.get(0).size();
+            boolean isHomogenius = matrix.stream().allMatch( e -> e.size() == n );
+            if ( isHomogenius ) {
+                int m = matrix.size();
+                double[] value = new double[m*n];
+                boolean isLegacy = Neureka.instance().settings().indexing().isUsingLegacyIndexing();
+                int[] shape = ( isLegacy )
+                        ? new int[]{n, m}
+                        : new int[]{m, n};
+
+                for ( int mi = 0; mi < m; mi++ ) {
+                    for ( int ni = 0; ni < n; ni++ ) {
+                        int i = (isLegacy) ? m * ni + mi : n * mi + ni;
+                        value[ i ] = DataConverter.instance().convert(matrix.get(mi).get(ni), Double.class);
+                    }
+                }
+                _construct( shape, value );
+            } else throw new IllegalArgumentException("Provided nested list(s) do not form a regular matrix.");
+        }
+    }
+
     public Tsr(List<Object> conf){
-        boolean isNatural = !(conf.size() > 64);
+        boolean isMatric = conf.stream().allMatch(e -> e instanceof List);
+        if ( isMatric ) {
+            _construct(conf.stream().map(e -> (List<Object>)e).collect(Collectors.toList()));
+            return;
+        }
+        boolean isNatural = ( conf.size() <= 64 );
         for(Object e : conf){
             if(!isNatural) break;
             double asNum = (e instanceof BigDecimal)? ((BigDecimal)e).doubleValue() : (e instanceof Double) ?(Double)e : (Integer)e;
@@ -839,7 +869,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             a = Function.create(AbstractNDArray.Utility.Stringify.strConf(fitter[0])+":(I[0])").call(a);
             b = Function.create(AbstractNDArray.Utility.Stringify.strConf(fitter[1])+":(I[0])").call(b);
         }
-        return Function.X.call(new Tsr[]{a, b});
+        return Function.X.call(new Tsr[]{a, b}).dimtrim();
+    }
+    public Tsr<ValueType> dimtrim(){
+        return Function.DIMTRIM.call(this);
     }
     public boolean isCase(Tsr<ValueType> t){
         boolean[] found = {false};
@@ -1463,19 +1496,30 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
 
     public static void makeFit(Tsr[] tsrs){
-        int largest = 0;
-        for (Tsr t : tsrs) if (t.rank()>largest) largest = t.rank();
+        int largest = -1;
+        int[] shape = null;
+        for (Tsr t : tsrs) if ( t.rank() > largest ) {
+            largest = t.rank();
+            shape = t.getNDConf().shape();
+        }
+        int prefix = 0;
+        for ( int s : shape ) if ( s == 1 ) prefix++; else break;
+        int postfix = 0;
+        for ( int i = shape.length-1; i>=0; i-- ) if ( shape[i] == 1 ) postfix++; else break;
         for (int i=0; i<tsrs.length; i++) {
             if (tsrs[i].rank()!=largest) {
                 int[] oldShape = tsrs[i].getNDConf().shape();
                 int[] newReshape = new int[largest];
                 int padding = largest-oldShape.length;
-                for (int ii=0; ii<padding; ii++) newReshape[ii] = -1;
-                for (int ii=padding; ii<largest; ii++) newReshape[ii] = i-padding;
+
+                int handle = ( postfix <= prefix )? padding : largest-padding;
+                for (int ii=0; ii<handle; ii++) newReshape[ii]       = ( postfix <= prefix )? -1 : ii;
+                for (int ii=handle; ii<largest; ii++) newReshape[ii] = ( postfix <= prefix )? ii-padding : -1;
+
                 Function f = Function.create(
                     AbstractNDArray.Utility.Stringify.strConf(newReshape) +":(I[0])"
                 );
-                tsrs[i] = f.call(tsrs[i]);
+                tsrs[i] = f.call( tsrs[i] );
             }
         }
 

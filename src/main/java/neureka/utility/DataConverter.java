@@ -1,5 +1,7 @@
 package neureka.utility;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,8 @@ public class DataConverter
         set( List.class, int[].class, thing -> thing.stream().mapToInt(i-> (int) i).toArray() );
         set( List.class, double[].class, thing -> thing.stream().mapToDouble(i-> (double) i).toArray() );
         set( List.class, long[].class, thing -> thing.stream().mapToLong(i-> (long) i).toArray() );
+        set(BigInteger.class, Double.class, BigInteger::doubleValue);
+        set(BigDecimal.class, Double.class, BigDecimal::doubleValue);
     }
 
 

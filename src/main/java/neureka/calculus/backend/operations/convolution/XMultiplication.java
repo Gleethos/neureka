@@ -149,6 +149,7 @@ public class XMultiplication extends AbstractOperationType
                     } else {
                         if (call.getDerivativeIndex() < 0) {
                             Tsr[] tsrs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
+                            Tsr.makeFit(tsrs); // This might not fit here... (fitting should probably be a setup thing...)
                             for ( Tsr t : tsrs ) t.setIsVirtual(false);
                             call.getDevice().execute( new ExecutionCall( call.getDevice(), tsrs, 0, call.getType() ) );
                             if ( call.getType().getId() == OperationType.instance("x>>").getId()) return tsrs[2];

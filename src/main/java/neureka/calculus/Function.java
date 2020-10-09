@@ -16,6 +16,8 @@ public interface Function
     //Global context and cache:
     Cache CACHE = Cache.instance();
 
+    Function DIMTRIM = create("dimtrim(I[0])");
+
     Function IDY = create("I[0]<-I[1]");
 
     Function X = create("I[0]xI[1]");

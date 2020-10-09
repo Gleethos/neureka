@@ -73,7 +73,7 @@ class Tensor_Operation_Integration_Tests extends Specification
             Tsr c = a.dot(b)
 
         then : 'The result tensor contains the expected shape.'
-            c.toString().contains("(1x4x2x5x2x1)")
+            c.toString().contains("(4x2x5x2)")
     }
 
     def 'New method "asFunction" of String added at runtime is callable by groovy and also works.'(

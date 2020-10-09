@@ -13,16 +13,16 @@ import neureka.ndim.config.AbstractNDC;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DimTrim extends AbstractOperationType
+public class DimFit extends AbstractOperationType
 {
 
-    public DimTrim()
+    public DimFit()
     {
 
         super(
-                "dimtrim",
-                "dimtrim",
-                1,
+                "dimfit",
+                "dimfit",
+                -1,
                 false,
                 false,
                 true,
@@ -33,9 +33,9 @@ public class DimTrim extends AbstractOperationType
                 children -> {
                     String expression = String.join( ", ", children );
                     if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                        return "dimtrim" + expression;
+                        return "dimfit" + expression;
                     }
-                    return "dimtrim" + "(" + expression + ")";
+                    return "dimfit" + "(" + expression + ")";
                 }
         );
 
@@ -44,20 +44,21 @@ public class DimTrim extends AbstractOperationType
                 .setBackwardADAnalyzer( call -> true )
                 .setForwardADAnalyzer( call -> false )
                 .setADAgentSupplier(
-                        ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                        {
-                            int prefix = ((int[]) call.getAt("ends"))[0];
-                            int postfix = ((int[]) call.getAt("ends"))[1];
-                            if(forward){
-                                throw new IllegalArgumentException("Dim-Trim operation does not support forward-AD!");
-                            }
-                            return new ADAgent()
-                                    .withContext(call.getContext())
-                                    .withForward((t, derivative) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0))
-                                    .withBackward(
-                                            (t, error) -> pad(error, new int[]{prefix, postfix}, true)
-                                    );
+                    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                    {
+                        int index = call.getDerivativeIndex();
+                        int prefix = ((int[]) call.getAt("ends"))[0];
+                        int postfix = ((int[]) call.getAt("ends"))[1];
+                        if(forward) {
+                            throw new IllegalArgumentException("Dim-Fit operation does not support forward-AD!");
                         }
+                        return new ADAgent()
+                                .withContext(call.getContext())
+                                .withForward(null)
+                                .withBackward(
+                                        (t, error) -> pad(error, new int[]{prefix, postfix}, true)
+                                );
+                    }
                 )
                 .setCallHock(
                         ( caller, call ) ->
