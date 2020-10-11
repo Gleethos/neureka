@@ -16,7 +16,7 @@ public final class D1Configuration extends AbstractNDC //:= IMMUTABLE
     /**
      *  The mapping of idx array.
      */
-    private final int _idxmap; // Used to avoid distortion when reshaping!
+    private final int _idxmap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
     /**
      *  Produces the strides of a tensor subset / slice
      */

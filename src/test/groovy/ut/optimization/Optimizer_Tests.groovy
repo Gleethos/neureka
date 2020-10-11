@@ -25,7 +25,7 @@ class Optimizer_Tests extends Specification{
                                      -4, -4, 2, 4
 
         ])
-        def X = data[0..-1, 0..2]
+        def X = data[0..-1, 0..2].T()
         //def Y = data[0..-1, 3   ]
 
         def w1 = new Tsr([8, 3], ":-)").setRqsGradient(true)
@@ -37,15 +37,21 @@ class Optimizer_Tests extends Specification{
         //def dox = Function.create("I[0]xI[1]")
 
         when :
-        def y = w3.dot(f(w2.dot(f(w1.dot(X)))))
+        Tsr s = w1.dot(X)
+        Tsr a = f(s)
+        Tsr b = f(w2.dot(a))
+        def y = w3.dot(b)
         //dox(new Tsr[]{abs(y-Y), new Tsr(y.shape(), 1,)}) // TODO!
 
         then:
             y.toString().contains(
-                    "(6x3):[-0.72226E0, 8.09081E0, 0.53085E0, 13.9085E0, -0.76121E0, 92.1329E0, 73.4495E0, " +
-                            "93.7233E0, -3.23894E0, -0.31264E0, -1.49487E0, 82.8246E0, -0.19767E0, 21.0283E0, " +
-                            "-0.34664E0, -1.4782E0, -2.6672E0, 4.5934E0]"
+                    "(8):[0.31170E0, 26.1058E0, -0.76121E0, 82.0447E0, 0.22348E0, 26.5363E0, 6.02289E0, 57.1377E0]"
             )
+            //y.toString().contains(
+            //        "(6x3):[-0.72226E0, 8.09081E0, 0.53085E0, 13.9085E0, -0.76121E0, 92.1329E0, 73.4495E0, " +
+            //                "93.7233E0, -3.23894E0, -0.31264E0, -1.49487E0, 82.8246E0, -0.19767E0, 21.0283E0, " +
+            //                "-0.34664E0, -1.4782E0, -2.6672E0, 4.5934E0]"
+            //)
 
 
     }

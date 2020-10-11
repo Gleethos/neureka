@@ -40,9 +40,13 @@ public final class DefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
      */
     private final int[] _translation;
     /**
-     *  The mapping of idx array.
+     *  The mapping of an index to an index array.
+     *  The index array is created and filled
+     *  during iteration and passed to this configuration for element access...
+     *  However it is also possible to creat an index array from an index integer.
+     *  This is what the following property does :
      */
-    private final int[] _idxmap; // Used to avoid distortion when reshaping!
+    private final int[] _idxmap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
     /**
      *  Produces the strides of a tensor subset / slice
      */

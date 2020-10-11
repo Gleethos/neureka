@@ -1,7 +1,7 @@
-package neureka.acceleration.opencl.execution;
+package neureka.device.opencl.execution;
 
 import neureka.Neureka;
-import neureka.acceleration.opencl.OpenCLDevice;
+import neureka.device.opencl.OpenCLDevice;
 import neureka.calculus.backend.executions.ExecutorFor;
 import neureka.calculus.backend.operations.AbstractOperationType;
 

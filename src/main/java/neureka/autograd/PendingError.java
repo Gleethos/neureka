@@ -8,15 +8,15 @@ public class PendingError {
     private int _toBeReceived;
     private Tsr _error;
 
-    public PendingError(Tsr error, int toBeReceived){
+    public PendingError( Tsr error, int toBeReceived ) {
         _toBeReceived = toBeReceived;
         _error = error;
     }
 
-    public void accumulate(Tsr error){
+    public void accumulate( Tsr error ) {
         FunctionBuilder.build(
                 "I[0]<-(I[0]+I[1])", false
-        ).call(new Tsr[]{_error, error});
+        ).call( new Tsr[]{ _error, error } );
         _toBeReceived--;
     }
 

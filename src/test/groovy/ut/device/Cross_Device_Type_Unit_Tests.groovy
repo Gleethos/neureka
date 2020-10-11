@@ -1,10 +1,10 @@
-package ut.acceleration
+package ut.device
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.acceleration.Device
-import neureka.acceleration.host.HostCPU
-import neureka.acceleration.opencl.OpenCLDevice
+import neureka.device.Device
+import neureka.device.host.HostCPU
+import neureka.device.opencl.OpenCLDevice
 import neureka.calculus.backend.ExecutionCall
 import neureka.calculus.backend.implementations.OperationTypeImplementation
 import spock.lang.Specification

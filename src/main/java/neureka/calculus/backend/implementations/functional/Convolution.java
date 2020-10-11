@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.operations.OperationType;
+import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 public class Convolution extends AbstractFunctionalOperationTypeImplementation< Convolution >
@@ -85,7 +86,7 @@ public class Convolution extends AbstractFunctionalOperationTypeImplementation< 
                 }//setInto _value in drn:
                 t0_value[t0_drn.i_of_idx(t0Idx)] = value;
                 //increment on drain:
-                Tsr.Utility.Indexing.increment(t0Idx, t0Shp);
+                NDConfiguration.Utility.increment(t0Idx, t0Shp);
 
                 i++;
             }
@@ -156,7 +157,7 @@ public class Convolution extends AbstractFunctionalOperationTypeImplementation< 
                 //set value in drn:
                 t0_value[t0_drn.i_of_idx(t0Idx)] = value;
                 //increment on drain:
-                Tsr.Utility.Indexing.increment(t0Idx, t0Shp);
+                NDConfiguration.Utility.increment(t0Idx, t0Shp);
                 i++;
             }
         }

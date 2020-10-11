@@ -1,4 +1,4 @@
-package neureka.acceleration;
+package neureka.device;
 
 import neureka.Component;
 import neureka.Tsr;
@@ -7,7 +7,6 @@ import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
 
 import java.lang.ref.Cleaner;
-import java.time.temporal.ValueRange;
 
 public abstract class AbstractDevice<ValueType> implements Device<ValueType>, Component<Tsr<ValueType>>
 {

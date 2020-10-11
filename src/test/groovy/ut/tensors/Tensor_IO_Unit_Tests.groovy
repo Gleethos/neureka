@@ -2,8 +2,8 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.acceleration.Device
-import neureka.acceleration.host.HostCPU
+import neureka.device.Device
+import neureka.device.host.HostCPU
 import neureka.calculus.Function
 import spock.lang.Specification
 
@@ -64,15 +64,14 @@ class Tensor_IO_Unit_Tests extends  Specification
 
     def 'Indexing after reshaping works as expected.'()
     {
-        given :
+        given : 'Neureka is being reset and the indexing mode is set to "legacy".'
             Neureka.instance().reset()
             Neureka.instance().settings().view().isUsingLegacyView = true
 
-        and :
+        and : 'A new tensor instance with the shape (4x3).'
             Tsr t1 = new Tsr([4, 3], 1..12)
 
-        when :
-
+        when : 'Recording the index behavior before and after a reshape operation...'
             def t1_ioi_1 = t1.i_of_idx(new int[]{2, 1})
             def t1_ioi_2 = t1.i_of_idx(new int[]{1, 2})
             def t1_idx   = t1.idx_of_i(5)
@@ -84,7 +83,7 @@ class Tensor_IO_Unit_Tests extends  Specification
             def t1_ioi_3 = t1.i_of_idx(t1.idx_of_i(7)) // Element 7 '8.0' is at index 7!
             def t2_ioi_2 =  t2.i_of_idx(t2.idx_of_i(7)) // Element 7 '11.0' is at index 10!
 
-        then :
+        then : 'These recorded values are as one would expect.'
             t1_ioi_1 == 7
             t1_ioi_2 == 5
             t1_idx[0] == 1
@@ -112,28 +111,29 @@ class Tensor_IO_Unit_Tests extends  Specification
 
     def 'Tensor value type can not be changed by passing float or double arrays to it.'()
     {
-        given :
+        given : 'Neureka is being reset and the indexing mode is set to "legacy".'
             Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
+        and : 'A new tensor instance.'
             Tsr x = new Tsr(3)
 
-        when :
+        when : 'Setting the value of the tensor...'
             float[] value32 = new float[1]
             value32[0] = 5
             x.setValue(value32)
 
-        then :
+        then : '...the tensor will change as expected.'
             !(x.getValue() instanceof float[])
             !x.is32()
             x.value32(0)==5.0f
             x.value64(0)==5.0d
 
-        when :
+        when : 'Doing the same with double array...'
             double[] value64 = new double[1]
             value64[0] = 4.0
             x.setValue(value64)
 
-        then :
+        then : '...once again the tensor changes as expected.'
             x.getValue() instanceof double[]
             x.is64()
             x.value32(0)==4.0f
@@ -171,7 +171,7 @@ class Tensor_IO_Unit_Tests extends  Specification
 
     def 'Tensors value type can be changed by calling "to64()" and "to32()".'()
     {
-        given :
+        given : 'Neureka is being reset.'
             Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             Tsr x = new Tsr(3)

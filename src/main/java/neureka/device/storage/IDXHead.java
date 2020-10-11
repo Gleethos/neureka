@@ -1,4 +1,4 @@
-package neureka.acceleration.storage;
+package neureka.device.storage;
 
 
 import neureka.Tsr;
@@ -7,7 +7,6 @@ import neureka.dtype.NumericType;
 import neureka.dtype.custom.*;
 
 import java.io.*;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.Map;

@@ -1,11 +1,11 @@
-package neureka.acceleration;
+package neureka.device;
 
 import neureka.Component;
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.acceleration.host.HostCPU;
-import neureka.acceleration.opencl.OpenCLDevice;
-import neureka.acceleration.opencl.OpenCLPlatform;
+import neureka.device.host.HostCPU;
+import neureka.device.opencl.OpenCLDevice;
+import neureka.device.opencl.OpenCLPlatform;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.frontend.assembly.FunctionParser;
 

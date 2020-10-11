@@ -2,8 +2,8 @@ package st
 
 
 import neureka.Neureka
-import neureka.acceleration.Device
-import neureka.acceleration.opencl.OpenCLPlatform
+import neureka.device.Device
+import neureka.device.opencl.OpenCLPlatform
 import spock.lang.Specification
 import st.tests.CrossDeviceSlicedTensorSystemTest
 import testutility.mock.DummyDevice

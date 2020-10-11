@@ -1,16 +1,13 @@
 package neureka.calculus.backend.operations.other;
 
 import neureka.Tsr;
-import neureka.acceleration.Device;
+import neureka.device.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.operations.AbstractOperationType;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.functional.GenericImplementation;
-import neureka.calculus.frontend.assembly.FunctionBuilder;
-import neureka.ndim.config.AbstractNDC;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DimFit extends AbstractOperationType
@@ -46,9 +43,9 @@ public class DimFit extends AbstractOperationType
                 .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
-                        int index = call.getDerivativeIndex();
-                        int prefix = ((int[]) call.getAt("ends"))[0];
-                        int postfix = ((int[]) call.getAt("ends"))[1];
+                        //int index = call.getDerivativeIndex();
+                        //int prefix = ((int[]) call.getAt("ends"))[0];
+                        //int postfix = ((int[]) call.getAt("ends"))[1];
                         if(forward) {
                             throw new IllegalArgumentException("Dim-Fit operation does not support forward-AD!");
                         }
@@ -56,7 +53,7 @@ public class DimFit extends AbstractOperationType
                                 .withContext(call.getContext())
                                 .withForward(null)
                                 .withBackward(
-                                        (t, error) -> pad(error, new int[]{prefix, postfix}, true)
+                                        null//(t, error) -> pad(error, new int[]{prefix, postfix}, true)
                                 );
                     }
                 )
@@ -64,17 +61,60 @@ public class DimFit extends AbstractOperationType
                         ( caller, call ) ->
                         {
                             Tsr<?>[] inputs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
-                            assert inputs.length == 1;
-                            Tsr<?> t = inputs[0];
-                            if ( call.getDerivativeIndex() == 0 ) {
-                                int prefix = ((int[]) call.getAt("ends"))[0];
-                                int postfix = ((int[]) call.getAt("ends"))[0];
-                                return pad(t, new int[]{prefix, postfix}, true);
-                            } else {
-                                int[] ends = new int[2];
-                                call.putAt("ends", ends);
-                                return trim(t, ends, true);
+                            assert call.getDerivativeIndex() < 0;
+
+                            int largest = -1;
+                            int[] shape = null;
+                            for ( Tsr<?> t : inputs ) if ( t.rank() > largest ) {
+                                largest = t.rank();
+                                shape = t.getNDConf().shape();
                             }
+                            int prefix = 0;
+                            for ( int s : shape ) if ( s == 1 ) prefix++; else break;
+                            int postfix = 0;
+                            for ( int i = shape.length-1; i>=0; i-- ) if ( shape[i] == 1 ) postfix++; else break;
+
+                            int[][] change = new int[inputs.length][];
+
+
+                            for (int i=0; i<inputs.length; i++)
+                            {
+                                if (inputs[i].rank()!=largest)
+                                {
+                                    int[] oldShape = inputs[i].getNDConf().shape();
+                                    int[] newReshape = new int[largest];
+                                    int padding = largest-oldShape.length;
+
+                                    int handle = ( postfix <= prefix )? padding : largest-padding;
+                                    for (int ii=0; ii<handle; ii++) newReshape[ii]       = ( postfix <= prefix )? -1 : ii;
+                                    for (int ii=handle; ii<largest; ii++) newReshape[ii] = ( postfix <= prefix )? ii-padding : -1;
+
+                                    change[i] = newReshape;
+                                    //Function f = Function.create(
+                                    //        AbstractNDArray.Utility.Stringify.strConf(newReshape) +":(I[0])"
+                                    //);
+                                    //inputs[i] = f.call( inputs[i] );
+
+                                    //inputs[i].setNDConf(inputs[i].getNDConf().view())
+                                }
+                            }
+
+
+
+
+                            return null;
+
+
+                            //Tsr<?> t = inputs[0];
+                            //if ( call.getDerivativeIndex() == 0 ) {
+                            //    int prefix = ((int[]) call.getAt("ends"))[0];
+                            //    int postfix = ((int[]) call.getAt("ends"))[0];
+                            //    return pad(t, new int[]{prefix, postfix}, true);
+                            //} else {
+                            //    int[] ends = new int[2];
+                            //    call.putAt("ends", ends);
+                            //    return trim(t, ends, true);
+                            //}
                         }
                 )
                 .setRJAgent( ( call, goDeeperWith ) -> null )
@@ -85,83 +125,6 @@ public class DimFit extends AbstractOperationType
                 implementation
         );
 
-    }
-
-    public static Tsr pad(Tsr tensor, int[] ends, boolean newTsr) {
-        tensor = (newTsr) ? (Tsr)tensor.getAt(new ArrayList<>()) : tensor;
-        List<Integer> newShape = new ArrayList<>();
-        List<Integer> newTranslation = new ArrayList<>();
-        List<Integer> newIdxmap = new ArrayList<>();
-        List<Integer> newSpread = new ArrayList<>();
-        List<Integer> newOffset = new ArrayList<>();
-        int[] shape = tensor.getNDConf().shape();
-        int prefix = ends[0];
-        int postfix = ends[1];
-        for ( int i = 0; i < prefix; i++ ) {
-            newShape.add(1);
-            newTranslation.add(1);
-            newIdxmap.add(1);
-            newSpread.add(0);
-            newOffset.add(0);
-        }
-        for ( int i = 0; i < shape.length; i++ ) {
-            newShape.add(shape[i]);
-            newTranslation.add(tensor.getNDConf().translation(i));
-            newIdxmap.add(tensor.getNDConf().idxmap(i));
-            newSpread.add(tensor.getNDConf().spread(i));
-            newOffset.add(tensor.getNDConf().offset(i));
-        }
-        for ( int i = 0; i < postfix; i++ ) {
-            newShape.add(1);
-            newTranslation.add(1);
-            newIdxmap.add(1);
-            newSpread.add(0);
-            newOffset.add(0);
-        }
-        tensor.setNDConf(
-                AbstractNDC.construct(
-                        newShape.stream().mapToInt(i->i).toArray(),
-                        newTranslation.stream().mapToInt(i->i).toArray(),
-                        newIdxmap.stream().mapToInt(i->i).toArray(),
-                        newSpread.stream().mapToInt(i->i).toArray(),
-                        newOffset.stream().mapToInt(i->i).toArray()
-                )
-        );
-        return tensor;
-    }
-
-    public static Tsr<?> trim(Tsr<?> tensor, int[] ends, boolean newTsr)
-    {
-        tensor = (newTsr) ? (Tsr<?>)tensor.getAt(new ArrayList<>()) : tensor;
-        List<Integer> newShape = new ArrayList<>();
-        List<Integer> newTranslation = new ArrayList<>();
-        List<Integer> newIdxmap = new ArrayList<>();
-        List<Integer> newSpread = new ArrayList<>();
-        List<Integer> newOffset = new ArrayList<>();
-        int[] shape = tensor.getNDConf().shape();
-        int prefix = 0;
-        for (int s : shape) if (s == 1) prefix++; else break;
-        int postfix = 0;
-        for ( int i=shape.length-1; i>=0; i-- ) if ( shape[i] == 1 ) postfix++; else break;
-        for ( int i = prefix; i < shape.length-postfix; i++ ) {
-            newShape.add(shape[i]);
-            newTranslation.add(tensor.getNDConf().translation(i));
-            newIdxmap.add(tensor.getNDConf().idxmap(i));
-            newSpread.add(tensor.getNDConf().spread(i));
-            newOffset.add(tensor.getNDConf().offset(i));
-        }
-        tensor.setNDConf(
-                AbstractNDC.construct(
-                        newShape.stream().mapToInt(i->i).toArray(),
-                        newTranslation.stream().mapToInt(i->i).toArray(),
-                        newIdxmap.stream().mapToInt(i->i).toArray(),
-                        newSpread.stream().mapToInt(i->i).toArray(),
-                        newOffset.stream().mapToInt(i->i).toArray()
-                )
-        );
-        ends[0] = prefix;
-        ends[1] = postfix;
-        return tensor;
     }
 
 

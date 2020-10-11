@@ -1,7 +1,7 @@
 package neureka.calculus.backend.implementations;
 
 import neureka.Tsr;
-import neureka.acceleration.Device;
+import neureka.device.Device;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.executions.ExecutorFor;
 import neureka.calculus.backend.operations.OperationType;

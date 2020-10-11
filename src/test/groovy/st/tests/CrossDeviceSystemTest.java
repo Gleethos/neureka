@@ -1,8 +1,8 @@
 package st.tests;
 
 import neureka.Tsr;
-import neureka.acceleration.Device;
-import neureka.acceleration.opencl.OpenCLDevice;
+import neureka.device.Device;
+import neureka.device.opencl.OpenCLDevice;
 import testutility.UnitTester_Tensor;
 
 import java.util.ArrayList;

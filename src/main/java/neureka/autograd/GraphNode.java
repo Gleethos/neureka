@@ -3,8 +3,8 @@ package neureka.autograd;
 import neureka.Component;
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.acceleration.Device;
-import neureka.acceleration.opencl.utility.WeakTensorReference;
+import neureka.device.Device;
+import neureka.device.opencl.utility.WeakTensorReference;
 import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
 

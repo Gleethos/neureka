@@ -2,7 +2,7 @@ package st.tests
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.acceleration.Device
+import neureka.device.Device
 
 class SimpleNNSystemTest {
     static void on(Device device)

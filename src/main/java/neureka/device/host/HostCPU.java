@@ -1,10 +1,10 @@
-package neureka.acceleration.host;
+package neureka.device.host;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.acceleration.AbstractDevice;
-import neureka.acceleration.Device;
-import neureka.acceleration.host.execution.HostExecutor;
+import neureka.device.AbstractDevice;
+import neureka.device.Device;
+import neureka.device.host.execution.HostExecutor;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.backend.ExecutionCall;
 

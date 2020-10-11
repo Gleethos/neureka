@@ -2,8 +2,8 @@
 package neureka.calculus.backend.operations;
 
 import neureka.Tsr;
-import neureka.acceleration.Device;
-import neureka.acceleration.host.execution.HostExecutor;
+import neureka.device.Device;
+import neureka.device.host.execution.HostExecutor;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;

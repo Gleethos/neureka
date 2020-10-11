@@ -1,4 +1,4 @@
-package neureka.acceleration.opencl.utility;
+package neureka.device.opencl.utility;
 
 import static org.jocl.CL.*;
 

@@ -56,7 +56,7 @@ public final class D3Configuration extends AbstractNDC //:= IMMUTABLE
      *  The mapping of idx array.
      */
     private final int _idxmap1;
-    private final int _idxmap2; // Used to avoid distortion when reshaping!
+    private final int _idxmap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
     private final int _idxmap3;
     /**
      *  Produces the strides of a tensor subset / slice

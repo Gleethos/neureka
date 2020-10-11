@@ -1,4 +1,4 @@
-package neureka.acceleration.opencl;
+package neureka.device.opencl;
 
 import static org.jocl.CL.*;
 
@@ -7,9 +7,9 @@ import java.util.*;
 
 import neureka.Component;
 import neureka.Tsr;
-import neureka.acceleration.AbstractDevice;
-import neureka.acceleration.Device;
-import neureka.acceleration.opencl.execution.CLExecutor;
+import neureka.device.AbstractDevice;
+import neureka.device.Device;
+import neureka.device.opencl.execution.CLExecutor;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.dtype.custom.F32;

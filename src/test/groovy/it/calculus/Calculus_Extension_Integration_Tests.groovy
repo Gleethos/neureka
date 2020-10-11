@@ -4,9 +4,9 @@ import it.calculus.mocks.CLContext
 import it.calculus.mocks.GEMMKernelReferenceImplementation
 import neureka.Neureka
 import neureka.Tsr
-import neureka.acceleration.Device
-import neureka.acceleration.host.execution.HostExecutor
-import neureka.acceleration.opencl.utility.DispatchUtility
+import neureka.device.Device
+import neureka.device.host.execution.HostExecutor
+import neureka.device.opencl.utility.DispatchUtility
 import neureka.autograd.ADAgent
 import neureka.calculus.Function
 import neureka.calculus.backend.ExecutionCall

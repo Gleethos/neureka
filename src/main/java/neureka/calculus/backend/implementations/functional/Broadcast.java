@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.operations.OperationType;
+import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Broadcast >
@@ -70,7 +71,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                 //setInto _value in drn:
                 t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, t2Idx);
                 //increment on drain:
-                Tsr.Utility.Indexing.increment(t0Idx, t0Shp);
+                NDConfiguration.Utility.increment(t0Idx, t0Shp);
                 i++;
             }
         }
@@ -120,7 +121,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                 //set value in drn:
                 t0_value[t0_drn.i_of_idx(t0Idx)] = value;
                 //increment on drain:
-                Tsr.Utility.Indexing.increment(t0Idx, t0Shp);
+                NDConfiguration.Utility.increment(t0Idx, t0Shp);
                 i++;
             }
         }

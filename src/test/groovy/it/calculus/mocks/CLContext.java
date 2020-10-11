@@ -1,6 +1,6 @@
 package it.calculus.mocks;
 
-import neureka.acceleration.opencl.utility.DispatchUtility;
+import neureka.device.opencl.utility.DispatchUtility;
 
 public class CLContext {
 

@@ -1,8 +1,8 @@
-package it.acceleration
+package it.device
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.acceleration.Device
+import neureka.device.Device
 import spock.lang.Specification
 
 class OpenCLDevice_Integration_Testing extends Specification

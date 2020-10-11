@@ -1,4 +1,4 @@
-package neureka.acceleration.opencl;
+package neureka.device.opencl;
 
 import neureka.Tsr;
 import org.jocl.*;

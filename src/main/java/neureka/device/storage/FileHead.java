@@ -1,7 +1,6 @@
-package neureka.acceleration.storage;
+package neureka.device.storage;
 
 import neureka.Tsr;
-import neureka.dtype.NumericType;
 
 import java.io.IOException;
 import java.util.Iterator;

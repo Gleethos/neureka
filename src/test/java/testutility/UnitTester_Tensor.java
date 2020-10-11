@@ -1,16 +1,17 @@
 package testutility;
 
 import neureka.Tsr;
-import neureka.acceleration.host.HostCPU;
-import neureka.acceleration.Device;
-import neureka.acceleration.host.execution.HostExecutor;
-import neureka.acceleration.opencl.OpenCLDevice;
+import neureka.device.host.HostCPU;
+import neureka.device.Device;
+import neureka.device.host.execution.HostExecutor;
+import neureka.device.opencl.OpenCLDevice;
 import neureka.autograd.GraphNode;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.backend.implementations.functional.Broadcast;
 import neureka.calculus.backend.implementations.functional.Convolution;
 import neureka.dtype.DataType;
+import neureka.ndim.config.NDConfiguration;
 
 import java.util.List;
 
@@ -94,14 +95,14 @@ public class UnitTester_Tensor extends UnitTester
 
 
     public int testTensorUtility_reshape(int[] dim, int[] newForm, int[] expected){
-        int[] result = Tsr.Utility.Indexing.rearrange(dim, newForm);
+        int[] result = NDConfiguration.Utility.rearrange(dim, newForm);
         printSessionStart("Testing Tsr.indexing: dimension reshaping!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
     }
 
     public int testTensorUtility_translation(int[] dim, int[] expected){
-        int [] result =  Tsr.Utility.Indexing.newTlnOf(dim);
+        int [] result =  NDConfiguration.Utility.newTlnOf(dim);
         printSessionStart("Testing Tsr.indexing: dimension _translation!");
         assertIsEqual(stringified(result), stringified(expected));
         return (printSessionEnd()>0)?1:0;
@@ -125,7 +126,7 @@ public class UnitTester_Tensor extends UnitTester
     public int testTensCon(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
-        double[] rsltData = new double[Tsr.Utility.Indexing.szeOfShp(drnMxd)];
+        double[] rsltData = new double[NDConfiguration.Utility.szeOfShp(drnMxd)];
         OperationType.instance("x")
                 .getImplementation(Convolution.class)
                 .getExecutor(HostExecutor.class)
@@ -173,7 +174,7 @@ public class UnitTester_Tensor extends UnitTester
     public int testTensBroadcast(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
-        double[] rsltData = new double[Tsr.Utility.Indexing.szeOfShp(drnMxd)];
+        double[] rsltData = new double[NDConfiguration.Utility.szeOfShp(drnMxd)];
 
         OperationType.instance("*")
                 .getImplementation(Broadcast.class)

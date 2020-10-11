@@ -1,7 +1,7 @@
 package testutility.mock;
 
 import neureka.Tsr;
-import neureka.acceleration.Device;
+import neureka.device.Device;
 import neureka.calculus.backend.ExecutionCall;
 
 import java.util.Collection;

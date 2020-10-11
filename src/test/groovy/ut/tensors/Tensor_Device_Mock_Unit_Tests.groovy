@@ -1,7 +1,7 @@
 package ut.tensors
 
 import neureka.Tsr
-import neureka.acceleration.Device
+import neureka.device.Device
 import spock.lang.Specification
 
 class Tensor_Device_Mock_Unit_Tests extends Specification

@@ -1,9 +1,9 @@
 package neureka.calculus.backend.operations.convolution;
 
 import neureka.Tsr;
-import neureka.acceleration.Device;
-import neureka.acceleration.host.execution.HostExecutor;
-import neureka.acceleration.opencl.execution.CLExecutor;
+import neureka.device.Device;
+import neureka.device.host.execution.HostExecutor;
+import neureka.device.opencl.execution.CLExecutor;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.operations.AbstractOperationType;
@@ -12,6 +12,7 @@ import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
 import neureka.calculus.backend.implementations.functional.Convolution;
 import neureka.calculus.frontend.assembly.FunctionBuilder;
+import neureka.ndim.AbstractNDArray;
 
 import java.util.List;
 
@@ -149,7 +150,7 @@ public class XMultiplication extends AbstractOperationType
                     } else {
                         if (call.getDerivativeIndex() < 0) {
                             Tsr[] tsrs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
-                            Tsr.makeFit(tsrs); // This might not fit here... (fitting should probably be a setup thing...)
+                            Tsr.makeFit(tsrs, caller.doesAD()); // This might not fit here... (fitting should probably be a setup thing...)
                             for ( Tsr t : tsrs ) t.setIsVirtual(false);
                             call.getDevice().execute( new ExecutionCall( call.getDevice(), tsrs, 0, call.getType() ) );
                             if ( call.getType().getId() == OperationType.instance("x>>").getId()) return tsrs[2];

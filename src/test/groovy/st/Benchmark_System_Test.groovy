@@ -2,8 +2,8 @@ package st
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.acceleration.Device
-import neureka.acceleration.host.HostCPU
+import neureka.device.Device
+import neureka.device.host.HostCPU
 import spock.lang.Specification
 import testutility.Utility
 

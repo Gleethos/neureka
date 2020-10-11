@@ -6,8 +6,8 @@ import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.dtype.custom.*;
 import neureka.ndim.AbstractNDArray;
-import neureka.acceleration.host.HostCPU;
-import neureka.acceleration.Device;
+import neureka.device.host.HostCPU;
+import neureka.device.Device;
 import neureka.framing.IndexAlias;
 import neureka.framing.Relation;
 import neureka.calculus.Function;
@@ -15,6 +15,7 @@ import neureka.calculus.frontend.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.virtual.VirtualNDConfiguration;
 import neureka.optimization.Optimizer;
 import neureka.utility.DataConverter;
@@ -375,7 +376,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param newShape
      */
     protected void _configureFromNewShape(int[] newShape, boolean makeVirtual) {
-        int size = Utility.Indexing.szeOfShp(newShape);
+        int size = NDConfiguration.Utility.szeOfShp(newShape);
         _value = (_value==null) ? new double[size] : _value;
         int length = _dataLength();
         if ( length >= 0 ) {
@@ -386,7 +387,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if(makeVirtual) {
             _conf = VirtualNDConfiguration.construct(newShape);
         } else {
-            int[] newTranslation = Utility.Indexing.newTlnOf(newShape);
+            int[] newTranslation = NDConfiguration.Utility.newTlnOf(newShape);
             int[] newIdxmap = newTranslation;
             int[] newSpread = new int[newShape.length];
             Arrays.fill(newSpread, 1);
@@ -441,7 +442,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if ( !range.isEmpty() && !(range.get(0) instanceof Number) ) {
             Class givenClass = range.get(0).getClass();
             @SuppressWarnings("unchecked")
-            final ValueType[] value = (ValueType[]) Array.newInstance(givenClass, Utility.Indexing.szeOfShp(shp));
+            final ValueType[] value = (ValueType[]) Array.newInstance(givenClass, NDConfiguration.Utility.szeOfShp(shp));
             for(int i=0; i<value.length; i++) {
                 value[i] = range.get(i%range.size());
             }
@@ -449,7 +450,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             _type = DataType.instance(givenClass);
             _construct(shp, value);
         } else {
-            double[] value = new double[Utility.Indexing.szeOfShp(shp)];
+            double[] value = new double[NDConfiguration.Utility.szeOfShp(shp)];
             _type = DataType.instance(F64.class);
             for(int i=0; i<value.length; i++) {
                 if(range.get(i%range.size()) instanceof BigDecimal){
@@ -463,11 +464,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     private void _construct(int[] shape, ValueType[] value) {
-        int size = Utility.Indexing.szeOfShp(shape);
+        int size = NDConfiguration.Utility.szeOfShp(shape);
         if (size!=value.length) {
             Class givenClass = value[0].getClass();
             @SuppressWarnings("unchecked")
-            final ValueType[] newValue = (ValueType[]) Array.newInstance(givenClass, Utility.Indexing.szeOfShp(shape));
+            final ValueType[] newValue = (ValueType[]) Array.newInstance(givenClass, NDConfiguration.Utility.szeOfShp(shape));
             for(int i=0; i<newValue.length; i++) newValue[i] = value[i%value.length];
             _value = newValue;
             _type = DataType.instance(givenClass);
@@ -671,7 +672,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     private void _construct(int[] shape){
-        _value = new double[Utility.Indexing.szeOfShp(shape)];
+        _value = new double[NDConfiguration.Utility.szeOfShp(shape)];
         this._configureFromNewShape(shape, false);
     }
 
@@ -680,7 +681,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     private void _construct(int[] shape, double value){
-        int size = Utility.Indexing.szeOfShp(shape);
+        int size = NDConfiguration.Utility.szeOfShp(shape);
         _value = new double[1];
         _type = DataType.instance(F64.class);
         this.setIsVirtual( size > 1 );
@@ -693,7 +694,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     private void _construct(int[] shape, double[] value) {
-        int size = Utility.Indexing.szeOfShp(shape);
+        int size = NDConfiguration.Utility.szeOfShp(shape);
         if (size!=value.length) {
             double[] newValue = new double[size];
             for(int i=0; i<newValue.length; i++) newValue[i] = value[i%value.length];
@@ -997,7 +998,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         subset._value = this._value;
         subset._type = this._type;
         int[] newTranslation = this._conf.translation();
-        int[] newIdxmap = Utility.Indexing.newTlnOf(newShape);
+        int[] newIdxmap = NDConfiguration.Utility.newTlnOf(newShape);
         int[] newSpread = new int[rank()];
         int[] newOffset = new int[rank()];
         Arrays.fill(newSpread, 1);
@@ -1006,7 +1007,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         }
         for(int i=0; i<idxbase.length; i++){
             if(i>=rank()) newSpread[i-rank()] = idxbase[i];
-            else newOffset[i] = idxbase[i];
+            else newOffset[i] = idxbase[i] + getNDConf().offset(i); // Offset is being inherited!
         }
         subset._conf = AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
 
@@ -1173,7 +1174,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 int size = t.size();
                 for (int i = 0; i < size; i++) {
                     IO.subInto(t, index, IO.getFrom(source, index));
-                    Utility.Indexing.increment(index, t.getNDConf().shape());
+                    NDConfiguration.Utility.increment(index, t.getNDConf().shape());
                 }
             }
         }
@@ -1495,7 +1496,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
 
-    public static void makeFit(Tsr[] tsrs){
+    public static void makeFit( Tsr[] tsrs, boolean doesAD ) {
         int largest = -1;
         int[] shape = null;
         for (Tsr t : tsrs) if ( t.rank() > largest ) {
@@ -1517,7 +1518,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 for (int ii=handle; ii<largest; ii++) newReshape[ii] = ( postfix <= prefix )? ii-padding : -1;
 
                 Function f = Function.create(
-                    AbstractNDArray.Utility.Stringify.strConf(newReshape) +":(I[0])"
+                    AbstractNDArray.Utility.Stringify.strConf(newReshape) +":(I[0])", doesAD
                 );
                 tsrs[i] = f.call( tsrs[i] );
             }
@@ -1538,7 +1539,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         }
 
         public static Tsr newRandom(int[] shape, long seed){
-            int size = Utility.Indexing.szeOfShp(shape);
+            int size = NDConfiguration.Utility.szeOfShp(shape);
             return new Tsr(shape, DataConverter.Utility.newSeededDoubleArray(seed, size));
         }
 

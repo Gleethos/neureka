@@ -1,10 +1,10 @@
-package ut.acceleration
+package ut.device
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.acceleration.Device
-import neureka.acceleration.opencl.OpenCLDevice
-import neureka.acceleration.opencl.utility.DeviceQuery
+import neureka.device.Device
+import neureka.device.opencl.OpenCLDevice
+import neureka.device.opencl.utility.DeviceQuery
 import neureka.framing.Relation
 import spock.lang.Specification
 

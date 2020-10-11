@@ -1,7 +1,7 @@
 package st.tests
 
 import neureka.Tsr
-import neureka.acceleration.Device
+import neureka.device.Device
 import testutility.UnitTester_Tensor
 import testutility.mock.DummyDevice
 

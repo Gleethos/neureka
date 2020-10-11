@@ -1,14 +1,14 @@
 package neureka.ndim.config;
 
 import neureka.Neureka;
+import neureka.Tsr;
 import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.complex.*;
 import neureka.ndim.config.simple.*;
+import neureka.ndim.config.views.SimpleReshapeView;
+import org.jetbrains.annotations.Contract;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
 
 public abstract class AbstractNDC implements NDConfiguration
 {
@@ -108,7 +108,7 @@ public abstract class AbstractNDC implements NDConfiguration
             int[] spread,
             int[] offset
     ) {
-        if(Neureka.instance().settings().ndim().isOnlyUsingDefaultNDConfiguration()){
+        if( Neureka.instance().settings().ndim().isOnlyUsingDefaultNDConfiguration() ){
             return DefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);
         }
         boolean isSimple = _isSimpleConfiguration(shape, translation, idxmap, spread, offset);
@@ -156,7 +156,7 @@ public abstract class AbstractNDC implements NDConfiguration
             int[] spread,
             int[] offset
     ) {
-        int[] newTranslation = AbstractNDArray.Utility.Indexing.newTlnOf(shape);
+        int[] newTranslation = Utility.newTlnOf(shape);
         int[] newSpread = new int[shape.length];
         Arrays.fill(newSpread, 1);
         return  Arrays.equals(translation, newTranslation) &&
@@ -176,6 +176,37 @@ public abstract class AbstractNDC implements NDConfiguration
                     "spread : "+Arrays.toString(spread())+", "+
                     "offset : "+Arrays.toString(offset())+" "+
                 "}";
+    }
+
+    protected static NDConfiguration _simpleReshape( int[] newForm, NDConfiguration ndc ) {
+        int[] newShape = Utility.rearrange(ndc.shape(), newForm);
+        int[] newTranslation = Utility.rearrange(ndc.translation(), newShape, newForm);
+        int[] newIdxmap = Utility.newTlnOf(newShape);
+        int[] newSpread = new int[newForm.length];
+        for (int i = 0; i < newForm.length; i++) {
+            if (newForm[i] < 0) newSpread[i] = 1;
+            else if (newForm[i] >= 0) newSpread[i] = ndc.spread(newForm[i]);
+        }
+        int[] newOffset = new int[newForm.length];
+        for (int i = 0; i < newForm.length; i++) {
+            if (newForm[i] < 0) newOffset[i] = 0;
+            else if (newForm[i] >= 0) newOffset[i] = ndc.offset(newForm[i]);
+        }
+        return AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
+    }
+
+    @Override
+    public NDConfiguration newReshaped( int[] newForm )
+    {
+        //TODO : shape check!
+        if ( this._isSimpleConfiguration(shape(),translation(),idxmap(),spread(),offset()) ) {
+            return _simpleReshape( newForm, this );
+        } else {
+            return new SimpleReshapeView( newForm, this );
+            //throw new IllegalStateException("Not ready");
+        }
+
+
     }
 
 
