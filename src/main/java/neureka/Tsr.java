@@ -230,7 +230,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     /**
-     * This method is executed when a is being removed from the tensor.
+     * This method is executed when a component is being removed from the tensor.
      * The public remove method is implemented in the super class
      * 'AbstractComponentOwner' from which this class inherits.
      * In this super class the component logic is implemented.

@@ -17,22 +17,15 @@ public class Sigmoid extends AbstractOperationType
 {
 
     private DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
-            (inputs, d)->{
+            ( inputs, d ) -> {
                 double[] t1_val = inputs[1].value64();
-                if (d < 0) {
-                    return (t0Idx, t1Idx, t2Idx) -> 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));
-                } else {
-                    return (t0Idx, t1Idx, t2Idx) -> {
-                        double input = t1_val[inputs[1].i_of_idx(t1Idx)];
-                        return (1 - Math.pow(((input) / Math.pow((1 + Math.pow((input), 2)), 0.5)), 2));
-                    };
-                }
+                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> calculate( t1_val[inputs[1].i_of_idx(t1Idx)], false );
+                else return (t0Idx, t1Idx, t2Idx) ->  calculate( t1_val[inputs[1].i_of_idx(t1Idx)], true );
             };
 
 
     public Sigmoid()
     {
-
         super(
                 "sig",
                 "sig" ,
@@ -65,67 +58,55 @@ public class Sigmoid extends AbstractOperationType
                     return true;
                 }
         ).setADAgentSupplier(
-    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
                 Tsr ctxDerivative = (Tsr)call.getAt("derivative");
-        Function mul = Function.Detached.MUL;
-        if (
-            ctxDerivative != null
-        ) {
-            return new ADAgent(
-                    ctxDerivative
-                ).withForward(
-                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                ).withBackward(
-                    null
-                );
-        }
-        Tsr[] inputs = call.getTensors();
-        int d = call.getDerivativeIndex();
-        if( forward )
-        {
-            Tsr deriv = f.derive(inputs, d);
-            return new ADAgent(
-                    deriv
-                ).withForward(
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                ).withBackward(
-                    null
-                );
-        }
-        else
-        {
-
-            {
-                Tsr deriv = f.derive(inputs, d);
-                return new ADAgent(
+                Function mul = Function.Detached.MUL;
+                if (
+                    ctxDerivative != null
+                ) {
+                    return new ADAgent( ctxDerivative )
+                            .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                            .withBackward( null);
+                }
+                Tsr[] inputs = call.getTensors();
+                int d = call.getDerivativeIndex();
+                if( forward )
+                {
+                    Tsr deriv = f.derive(inputs, d);
+                    return new ADAgent(
                             deriv
-).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-);
+                        ).withForward(
+                            ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
+                        ).withBackward(
+                            null
+                        );
+                }
+                else
+                {
+                    Tsr deriv = f.derive(inputs, d);
+                    return new ADAgent( deriv )
+                            .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                            .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                }
             }
-        }
-    }
-        ).setCallHock(
-                ( caller, call ) -> null
-        ).setRJAgent(
-                ( call, goDeeperWith ) -> null
-        ).setDrainInstantiation(
-                        call -> {
-                            Tsr[] tsrs = call.getTensors();
-                            Device device = call.getDevice();
-                            if ( tsrs[0] == null ) // Creating a new tensor:
-                            {
-                                int[] shp = tsrs[1].getNDConf().shape();
-                                Tsr output = new Tsr( shp, 0.0 );
-                                output.setIsVirtual(false);
-                                device.add(output);
-                                tsrs[0] = output;
-                            }
-                            return call;
-                        }
+        )
+        .setCallHock( ( caller, call ) -> null )
+        .setRJAgent( ( call, goDeeperWith ) -> null )
+        .setDrainInstantiation(
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = tsrs[1].getNDConf().shape();
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual(false);
+                        device.add(output);
+                        tsrs[0] = output;
+                    }
+                    return call;
+                }
         );
 
 
@@ -184,10 +165,10 @@ public class Sigmoid extends AbstractOperationType
 
     @Contract(pure = true)
     public static double calculate(double input, boolean derive ) {
-        if ( !derive ) {
-            return 1 / (1 + Math.pow(Math.E, -input));
-        } else {
-            return (Math.pow(Math.E, -input)) / (Math.pow((1 + Math.pow(Math.E, -input)), 2) + 2 * Math.pow(Math.E, -input));
+        if ( !derive ) return 1 / (1 + Math.pow(Math.E, -input));
+        else {
+            double sig = calculate(input, false);
+            return sig * (1 - sig);
         }
     }
 
