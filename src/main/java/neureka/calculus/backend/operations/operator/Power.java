@@ -25,9 +25,9 @@ public class Power extends AbstractOperationType
     {
         double[] t1_val = inputs[1].value64();
         double[] t2_val = inputs[2].value64();
-        if (d < 0) {
-            return (t0Idx, t1Idx, t2Idx) -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], t2_val[inputs[2].i_of_idx(t2Idx)]);
-        } else {
+        if (d < 0) return (t0Idx, t1Idx, t2Idx) ->
+                    Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], t2_val[inputs[2].i_of_idx(t2Idx)]);
+        else {
             return (t0Idx, t1Idx, t2Idx) -> {
                 if (d == 0) {
                     return t2_val[inputs[2].i_of_idx(t2Idx)]
@@ -55,9 +55,7 @@ public class Power extends AbstractOperationType
                     StringBuilder reconstructed = new StringBuilder();
                     for ( int i = 0; i < children.size(); ++i ) {
                         reconstructed.append( children.get(i) );
-                        if ( i < children.size() - 1 ) {
-                            reconstructed.append(" ^ ");
-                        }
+                        if ( i < children.size() - 1 ) reconstructed.append(" ^ ");
                     }
                     return "(" + reconstructed + ")";
                 }
@@ -70,23 +68,21 @@ public class Power extends AbstractOperationType
         {
             double[] t1_val = inputs[1].value64();
             double[] t2_val = inputs[2].value64();
-            if (d < 0) {
-                return t1Idx -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], t2_val[inputs[2].i_of_idx(t1Idx)]);
-            } else {
+            if (d < 0) return t1Idx ->
+                    Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], t2_val[inputs[2].i_of_idx(t1Idx)]);
+            else {
                 return t1Idx ->
                 {
-                    if ( d == 0 ) {
-                        return t2_val[inputs[2].i_of_idx(t1Idx)]
-                                * Math.pow(
+                    if ( d == 0 ) return
+                            t2_val[inputs[2].i_of_idx(t1Idx)] * Math.pow(
                                 t1_val[inputs[1].i_of_idx(t1Idx)],
                                 t2_val[inputs[2].i_of_idx(t1Idx)] - 1
-                        );
-                    } else {
-                        return Math.pow(
+                            );
+                    else return
+                            Math.pow(
                                 t1_val[inputs[1].i_of_idx(t1Idx)],
                                 t2_val[inputs[2].i_of_idx(t1Idx)]
-                        ) * Math.log(t1_val[inputs[1].i_of_idx(t1Idx)]);
-                    }
+                            ) * Math.log(t1_val[inputs[1].i_of_idx(t1Idx)]);
                 };
             }
         };
@@ -163,54 +159,14 @@ public class Power extends AbstractOperationType
 
         Operator operator = new Operator()
                 .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
-                    call -> true
-                ).setADAgentSupplier(
+                .setForwardADAnalyzer( call -> true )
+                .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                    {
-                                Tsr ctxDerivative = (Tsr)call.getAt("derivative");
-                        Function mul = Function.Detached.MUL;
-                        if (
-                            ctxDerivative != null
-                        ) {
-                            return new ADAgent(
-                                    ctxDerivative
-                                ).withForward(
-                                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                                ).withBackward(
-                                    null
-                                );
-                        }
-                        Tsr[] inputs = call.getTensors();
-                        int d = call.getDerivativeIndex();
-                        if( forward )
-                        {
-                            Tsr deriv = f.derive(inputs, d);
-                            return new ADAgent(
-                                    deriv
-                                ).withForward(
-                                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                                ).withBackward(
-                                    null
-                                );
-                        }
-                        else
-                        {
-                            Tsr deriv = f.derive(inputs, d);
-                            return new ADAgent(
-                                        deriv
-                                ).withForward(
-                                        (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                                ).withBackward(
-                                        (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                                );
-                        }
-                    }
-                ).setCallHock(
-                    (caller, call) -> null
-                ).setRJAgent(
-                    rja
-                ).setDrainInstantiation(
+                        defaultImplementation().supplyADAgentFor( f, call, forward )
+                )
+                .setCallHock( (caller, call) -> null )
+                .setRJAgent( rja )
+                .setDrainInstantiation(
                     call ->
                     {
                         Tsr[] tsrs = call.getTensors();
@@ -282,9 +238,8 @@ public class Power extends AbstractOperationType
 
         Broadcast broadcast = new Broadcast()
                 .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
-                    call -> true
-                ).setADAgentSupplier(
+                .setForwardADAnalyzer( call -> true )
+                .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
@@ -305,11 +260,10 @@ public class Power extends AbstractOperationType
                                     .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
                         }
                     }
-                ).setCallHock(
-                        (caller, call) -> null
-                ).setRJAgent(
-                    rja
-                ).setDrainInstantiation(
+                )
+                .setCallHock( (caller, call) -> null )
+                .setRJAgent( rja )
+                .setDrainInstantiation(
                         call -> {
                             Tsr[] tsrs = call.getTensors();
                             Device device = call.getDevice();
@@ -374,27 +328,22 @@ public class Power extends AbstractOperationType
         // TENSOR SCALAR OPERATION :
 
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarCreator =
-                ( inputs, value, d )->{
+                ( inputs, value, d ) -> {
                     double[] t1_val = inputs[1].value64();
-                    if (d < 0) {
-                        return t1Idx -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);
-                    } else {
-                        if(d==0){
-                            return t1Idx -> value*Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value-1);
-                        } else {
-                            return t1Idx -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value)*Math.log(value);
-                        }
+                    if (d < 0) return t1Idx -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value);
+                    else {
+                        if(d==0) return t1Idx -> value*Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value-1);
+                        else return t1Idx -> Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], value)*Math.log(value);
                     }
                 };
 
 
         Scalarization scalarization = new Scalarization()
                 .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
-                    call -> true
-                ).setADAgentSupplier(
+                .setForwardADAnalyzer( call -> true )
+                .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                    defaultImplementation().supplyADAgentFor(f, call, forward)
+                        defaultImplementation().supplyADAgentFor(f, call, forward)
                 )
                 .setCallHock( (caller, call) -> null )
                 .setRJAgent( rja )
@@ -484,7 +433,7 @@ public class Power extends AbstractOperationType
 
         new AbstractOperationType(
                 "power", "p", 2, true, false, false, false
-){
+        ){
             @Override
             public double calculate(double[] inputs, int j, int d, List<Function> src){
                 return 0;
