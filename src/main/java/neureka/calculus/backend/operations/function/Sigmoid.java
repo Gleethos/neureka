@@ -67,26 +67,24 @@ public class Sigmoid extends AbstractOperationType
                 ) {
                     return new ADAgent( ctxDerivative )
                             .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                            .withBackward( null);
+                            .withBackward( null );
                 }
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
                 if( forward )
                 {
                     Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent(
-                            deriv
-                        ).withForward(
-                            ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                        ).withBackward(
-                            null
-                        );
+                    return new ADAgent( deriv )
+                            .withForward( ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}) )
+                            .withBackward( null );
                 }
                 else
                 {
                     Tsr deriv = f.derive(inputs, d);
                     return new ADAgent( deriv )
-                            .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                            .withForward(
+                                    null//(node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                            )
                             .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
                 }
             }

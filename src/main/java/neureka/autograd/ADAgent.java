@@ -19,7 +19,7 @@ public class ADAgent
     private ADAction _bad;
     private Map<String, Object> _context = new TreeMap<>();
 
-    public ADAgent(  Tsr derivative  ){
+    public ADAgent(  Tsr<?> derivative  ){
         _context.put( "derivative", derivative );
     }
 

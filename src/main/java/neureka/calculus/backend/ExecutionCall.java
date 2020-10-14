@@ -104,13 +104,13 @@ public class ExecutionCall< DeviceType extends Device >
         return getImplementation().canImplementationPerformBackwardADFor(this);
     }
 
-    public ADAgent getADAgentFrom(Function function, Tsr derivative, ExecutionCall<Device> call, boolean forward ) {
+    public ADAgent getADAgentFrom(Function function, ExecutionCall<Device> call, boolean forward ) {
         if ( this._context != null ) {
             if ( call._context ==null ) call._context = new TreeMap<>();
             call._context.putAll(this._context);
         }
-        if( derivative != null ) assert (call._context != null && call._context.containsKey("derivative"));
-        else assert call._context == null || !call._context.containsKey("derivative");
+        //if( derivative != null ) assert (call._context != null && call._context.containsKey("derivative"));
+        //else assert call._context == null || !call._context.containsKey("derivative");
         return getImplementation().supplyADAgentFor(function, call, forward);
     }
     

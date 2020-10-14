@@ -71,31 +71,22 @@ public class Identity extends AbstractOperationType
                 if ( forward )
                 {
                     Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent(
-                            deriv
-                        ).withForward(
-                            ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                        ).withBackward(
-                            null
-                        );
+                    return new ADAgent( deriv )
+                        .withForward( ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}) )
+                        .withBackward( null );
                 }
                 else
                 {
                     Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent(
-                                deriv
-                        ).withForward(
-                                (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                        ).withBackward(
-                                (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                        );
+                    return new ADAgent( deriv )
+                            .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                            .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
                 }
             }
-        ).setCallHock(
-                ( caller, call ) -> null
-        ).setRJAgent(
-                ( call, goDeeperWith ) -> null
-        ).setDrainInstantiation(
+        )
+        .setCallHock( ( caller, call ) -> null )
+        .setRJAgent( ( call, goDeeperWith ) -> null )
+        .setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[0] == null ) ? 1 : 0;

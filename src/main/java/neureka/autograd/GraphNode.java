@@ -260,7 +260,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      * Note: values can be null if the recorded function is of type 'reshape'!
      * Why? => because reshape operation does not need variables for _backward pass!
      */
-    private TreeMap<GraphNode, List<ADAgent>> _targets_derivatives;
+    private TreeMap<GraphNode<ValueType>, List<ADAgent>> _targets_derivatives;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -458,7 +458,6 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                                     srcNode,
                                     call.getADAgentFrom(
                                             function,
-                                            null,
                                             new ExecutionCall<>(
                                                     call.getDevice(),
                                                     call.getTensors(),
@@ -474,42 +473,23 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                             int finalI = i;
                             Tsr<Object> localDerivative = function.derive( inputs, i );
                             srcNode.forEachTargetAgentPair(
-                                ( targetNode, localAgent ) -> {
-                                    Tsr targetDerivative = MUL.call( new Tsr[]{localDerivative,  ((ADAgent)localAgent).derivative()});
-                                    if ( this.has(targetNode) ) {
-                                            this.put(
-                                                    targetNode,
-                                                    call.getADAgentFrom(
-                                                            function,
-                                                            targetDerivative,
-                                                            new ExecutionCall<>(
-                                                                    call.getDevice(),
-                                                                    call.getTensors(),
-                                                                    finalI,
-                                                                    call.getJ(),
-                                                                    call.getType()
-                                                            ).putAt( "derivative",targetDerivative ),
-                                                            true
-                                                    )
-                                            );
-
-                                    } else {
-                                        this.put(
-                                                targetNode,
-                                                call.getADAgentFrom(
-                                                        function,
-                                                        targetDerivative,
-                                                        new ExecutionCall<>(
-                                                                call.getDevice(),
-                                                                call.getTensors(),
-                                                                finalI,
-                                                                call.getJ(),
-                                                                call.getType()
-                                                        ).putAt("derivative",targetDerivative),
-                                                        true
-                                                )
-                                        );
-                                    }
+                                ( targetNode, localAgent ) ->
+                                {
+                                    Tsr targetDerivative = MUL.call( new Tsr[]{localDerivative,  localAgent.derivative()} );
+                                    this.put(
+                                            targetNode,
+                                            call.getADAgentFrom(
+                                                    function,
+                                                    new ExecutionCall<>(
+                                                            call.getDevice(),
+                                                            call.getTensors(),
+                                                            finalI,
+                                                            call.getJ(),
+                                                            call.getType()
+                                                    ).putAt( "derivative",targetDerivative ),
+                                                    true
+                                            )
+                                    );
                                     // TODO: flag within src Tsr<ValueType>s that grant that the tensor
                                     // has been created by function constructor!
                                 }
@@ -525,7 +505,6 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                                 srcNode,
                                 call.getADAgentFrom(
                                         function,
-                                        null,
                                         new ExecutionCall<>(
                                                 call.getDevice(),
                                                 call.getTensors(),
@@ -665,12 +644,12 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      *
      * @param pendingBackProp
      */
-    private void _carryPendingBackPropToGradients( Set<GraphNode> pendingBackProp ) {
+    private void _carryPendingBackPropToGradients( Set<GraphNode<ValueType>> pendingBackProp ) {
         _relies_on_JIPProp = true; //:=> Shall be traversed at a later point in time...
         this.forEachTarget( t -> t._carryPendingBackPropToGradients( pendingBackProp ) );
         if ( this.isLeave() && getPayload().rqsGradient() ) {
-            JITProp jit = getPayload().find(JITProp.class);
-            if ( jit == null ) jit = new JITProp( pendingBackProp );
+            JITProp<ValueType> jit = getPayload().find(JITProp.class);
+            if ( jit == null ) jit = new JITProp<>( pendingBackProp );
             else jit.addPending( pendingBackProp );
             getPayload().add( jit );
         }
@@ -694,10 +673,10 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
         _deleteDerivativesRecursively();// Cleanup after back-propagation!
     }
 
-    private void _backwardJIT(Tsr<ValueType> error, GraphNode source) {
+    private void _backwardJIT(Tsr<ValueType> error, GraphNode<ValueType> source) {
         _relies_on_JIPProp = false; // JITProp is currently being handled in this method. Afterwards it is not relying on it anymore!
         _migrateAndOrApplyError( error, payload -> {
-            JITProp jit = payload.find( JITProp.class );//Get JIT-Prop node.
+            JITProp<ValueType> jit = payload.find( JITProp.class );//Get JIT-Prop node.
             if ( jit != null ) {
                 jit.noteFinished( source );//note pending errors and store them as 'done'
                 if ( jit.isDone() ) payload.remove( JITProp.class );
@@ -729,7 +708,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      * Deletion is forbidden if this node is flagged
      * as JITProp job. This means that the node is on the path between gradients
      * and pending error objects.
-     * Only if JITProp is enabled (Neureka.instance().settings().AutoDiff()...) this flag will
+     * Only if JITProp is enabled (Neureka.instance().settings().autograd()...) this flag will
      * deviate from its default state, namely: true!
      */
     private void _deleteDerivativesRecursively() {
@@ -792,7 +771,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      * @param target
      * @return Tsr<ValueType>
      */
-    public List<ADAgent> get( GraphNode target ) {
+    public List<ADAgent> get( GraphNode<ValueType> target ) {
         if ( _targets_derivatives == null ) return null;
         return _targets_derivatives.get( target );
     }
@@ -804,7 +783,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      * @param target
      * @return boolean
      */
-    public boolean has( GraphNode target ) {
+    public boolean has( GraphNode<ValueType> target ) {
         if ( _targets_derivatives == null ) return false;
         return _targets_derivatives.containsKey( target );
     }
@@ -822,17 +801,17 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
     /**
      * @param action
      */
-    public void forEachDerivative(BiConsumer<GraphNode, ADAgent> action) {
+    public void forEachDerivative(BiConsumer<GraphNode<ValueType>, ADAgent> action) {
         if ( _targets_derivatives == null ) return;
         _targets_derivatives.forEach(
-                (t, agents)->agents.forEach( a -> action.accept(t,a) )
+                ( t, agents ) -> agents.forEach( a -> action.accept(t,a) )
         );
     }
 
     /**
      * @param action A lambda action providing derivative and target node as parameter.
      */
-    public void forEachBackward( Tsr<ValueType> error, BiConsumer<GraphNode, Tsr<ValueType>> action ) {
+    public void forEachBackward( Tsr<ValueType> error, BiConsumer<GraphNode<ValueType>, Tsr<ValueType>> action ) {
         if ( _targets_derivatives == null ) return;
         _targets_derivatives.forEach( ( t, agents ) -> {
             for ( ADAgent a : agents ) {
@@ -844,11 +823,10 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
     /**
      * @param action
      */
-    public void forEachForward( Tsr<ValueType> error, BiConsumer<GraphNode, Tsr<ValueType>> action ) {
+    public void forEachForward( Tsr<ValueType> error, BiConsumer<GraphNode<ValueType>, Tsr<ValueType>> action ) {
         if ( _targets_derivatives == null ) return;
         _targets_derivatives.forEach( ( t, agents ) -> {
             for ( ADAgent a : agents ) {
-                //if ( o.isForward() ) action.accept( t, MUL.call( new Tsr<ValueType>[]{error, o.derivative()} ) );
                 if ( a.isForward() ) action.accept( t, a.forward(t, error) );
             }
         });
@@ -857,7 +835,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
     /**
      * @param action
      */
-    public void forEachTarget(Consumer<GraphNode> action) {
+    public void forEachTarget(Consumer<GraphNode<ValueType>> action) {
         if ( _targets_derivatives == null ) return;
         _targets_derivatives.forEach( ( t, o ) -> action.accept( t ) );
     }
@@ -910,13 +888,15 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      */
     public String toString( String m ) {
         if ( m.contains("g") ) {
-            return "]> LOCK: " + lock() + " |> GRAPH:\n]\n" + _toString("]    0", true) + "\n]\n]|END|>";
+            String flags = m.replace("g", "");
+            return "]> LOCK: " + lock() + " |> GRAPH:\n]\n" + _toString("]    0", true, flags) + "\n]\n]|END|>";
         }
+        String nid = (m.contains("n")) ? "NID:" + Long.toHexString(nid()) : "NODE";
         if ( m.contains("v") ) {
-            return "(" + this.type() + "): [NID:" + Long.toHexString(nid()) + "]:<(  "
+            return "(" + this.type() + "): [" + nid + "]:<(  "
                     + "f" + ((_function == null) ? "(NONE)" : _function) + " => " + ((getPayload() == null) ? "NULL" : getPayload().toString("cs")) + "  )>";
         } else {
-            return "[NID:" + Long.toHexString(nid()) + "]:( " + ((getPayload() == null) ? "NULL" : getPayload().toString("cs")) + " )";
+            return "[" + nid + "]:( " + ((getPayload() == null) ? "NULL" : getPayload().toString("cs")) + " )";
         }
 
     }
@@ -931,17 +911,17 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      * @param isLast Tells if this is the last parent node of this child.
      * @return A indented multi-line tree-like String representation of the computation graph.
      */
-    private String _toString( String deep, boolean isLast ) {
+    private String _toString( String deep, boolean isLast, String flags ) {
         String delimiter = ((isLast) ? ("    ") : ("|   "));
         String arrow = ((char) 187) + "" + ((_parents != null) ? (String.valueOf(_parents.length)) : "0") + ((char) 187);
-        StringBuilder asString = new StringBuilder(deep + arrow + toString("v"));
+        StringBuilder asString = new StringBuilder(deep + arrow + toString(flags));
         deep = deep.substring(0, deep.length() - 1);
         if ( _parents != null ) {
             asString.append("\n").append( deep ).append( (isLast) ? "   \\\n" : "|  \\\n" );
             for ( int i = 0; i < _parents.length; i++ ) {
                 boolean last = (i == _parents.length - 1);
                 asString.append( ( i != 0 ) ? deep + delimiter + "|\n" : "" );
-                asString.append( _parents[i]._toString(deep + delimiter + i, last) ).append("\n");
+                asString.append( _parents[i]._toString(deep + delimiter + i, last, flags) ).append("\n");
             }
             asString = new StringBuilder( asString.substring(0, asString.length() - 1) );
         }
