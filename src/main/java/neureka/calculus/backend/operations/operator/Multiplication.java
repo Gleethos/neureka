@@ -512,7 +512,7 @@ public class Multiplication extends AbstractOperationType {
 
         xBroadcast = new Broadcast()
             .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
+            .setForwardADAnalyzer(
                     call -> {
                         Tsr last = null;
                         for ( Tsr t : call.getTensors() ) {
@@ -521,21 +521,16 @@ public class Multiplication extends AbstractOperationType {
                         }
                         return true;
                     }
-            ).setADAgentSupplier(
+            )
+            .setADAgentSupplier(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                 {
-                    Tsr ctxDerivative = (Tsr)call.getAt("derivative");
+                    Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
                     Function mul = Function.Detached.MUL;
-                    if (
-                        ctxDerivative != null
-                    ) {
-                        return new ADAgent(
-                                    ctxDerivative
-                           ).withForward(
-                                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                           ).withBackward(
-                                   null
-                           );
+                    if ( ctxDerivative != null ) {
+                        return new ADAgent( ctxDerivative )
+                                .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                                .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                     }
                     Tsr[] inputs = call.getTensors();
                     int d = call.getDerivativeIndex();
@@ -543,20 +538,15 @@ public class Multiplication extends AbstractOperationType {
                     else
                     {
                         Tsr deriv = f.derive(inputs, d);
-                        return new ADAgent(
-                                deriv
-                            ).withForward(
-                                (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                            ).withBackward(
-                                (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                            );
+                        return new ADAgent( deriv )
+                                .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
                     }
                 }
-            ).setCallHock(
-                    ( caller, call ) -> null
-            ).setRJAgent(
-                    ( call, goDeeperWith ) -> null
-            ).setDrainInstantiation(
+            )
+            .setCallHock( ( caller, call ) -> null )
+            .setRJAgent( ( call, goDeeperWith ) -> null )
+            .setDrainInstantiation(
                     call -> {
                         Tsr[] tsrs = call.getTensors();
                         int offset = ( tsrs[0] == null ) ? 1 : 0;

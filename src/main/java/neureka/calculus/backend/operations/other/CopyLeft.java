@@ -19,7 +19,11 @@ public class CopyLeft extends AbstractOperationType {
     public CopyLeft(){
 
         super(
-                "left_inline", "<", 2,true, false, false, true
+                "left_inline", "<", 2,
+                true,
+                false,
+                false,
+                true
         );
 
         setStringifier(
@@ -48,46 +52,9 @@ public class CopyLeft extends AbstractOperationType {
                 .setForwardADAnalyzer( call -> false )
                 .setADAgentSupplier(
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                        {
-                            Tsr ctxDerivative = (Tsr)call.getAt("derivative");
-                            Function mul = Function.Detached.MUL;
-                            if (
-                                    ctxDerivative != null
-                            ) {
-                                return new ADAgent(
-                                        ctxDerivative
-                                ).withForward(
-                                        ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                                ).withBackward(
-                                        null
-                                );
-                            }
-                            Tsr[] inputs = call.getTensors();
-                            int d = call.getDerivativeIndex();
-                            if( forward )
-                            {
-                                Tsr deriv = f.derive(inputs, d);
-                                return new ADAgent(
-                                        deriv
-                                ).withForward(
-                                        ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                                ).withBackward(
-                                        null
-                                );
-                            }
-                            else
-                            {
-                                Tsr deriv = f.derive(inputs, d);
-                                return new ADAgent(
-                                        deriv
-                                ).withForward(
-                                        (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                                ).withBackward(
-                                        (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                                );
-                            }
-                        }
-                ).setCallHock( ( caller, call ) -> null )
+                                defaultImplementation().supplyADAgentFor( f, call, forward )
+                )
+                .setCallHock( ( caller, call ) -> null )
                 .setRJAgent( ( call, goDeeperWith ) -> null )
                 .setDrainInstantiation(
                         call ->
@@ -155,65 +122,24 @@ public class CopyLeft extends AbstractOperationType {
                 )
         );
 
-
-
         Activation activation = new Activation()
-        .setBackwardADAnalyzer( call -> false )
-        .setForwardADAnalyzer( call -> false )
-        .setADAgentSupplier(
-            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-            {
-                Tsr ctxDerivative = (Tsr)call.getAt("derivative");
-                Function mul = Function.Detached.MUL;
-                if (
-                    ctxDerivative != null
-                ) {
-                    return new ADAgent(
-                            ctxDerivative
-                        ).withForward(
-                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                        ).withBackward(
-                            null
-                        );
-                }
-                Tsr[] inputs = call.getTensors();
-                int d = call.getDerivativeIndex();
-                if( forward )
-                {
-                    Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent(
-                            deriv
-                        ).withForward(
-                            ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                        ).withBackward(
-                            null
-                        );
-                }
-                else
-                {
-                    Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent(
-                                    deriv
-                                ).withForward(
-                                    (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                                ).withBackward(
-                                    (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                                );
-                }
-            }
-        ).setCallHock(
-                ( caller, call ) -> null
-        ).setRJAgent(
-                ( call, goDeeperWith ) -> null
-        ).setDrainInstantiation(
-                call ->
-                {
-                    Tsr[] tsrs = call.getTensors();
-                    int offset = ( tsrs[0] == null ) ? 1 : 0;
-                    call.getTensor(offset).incrementVersionBecauseOf(call);
-                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
-                }
-        );
+            .setBackwardADAnalyzer( call -> false )
+            .setForwardADAnalyzer( call -> false )
+            .setADAgentSupplier(
+                ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                        defaultImplementation().supplyADAgentFor( f, call, forward )
+            )
+            .setCallHock( ( caller, call ) -> null )
+            .setRJAgent( ( call, goDeeperWith ) -> null )
+            .setDrainInstantiation(
+                    call ->
+                    {
+                        Tsr[] tsrs = call.getTensors();
+                        int offset = ( tsrs[0] == null ) ? 1 : 0;
+                        call.getTensor(offset).incrementVersionBecauseOf(call);
+                        return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
+                    }
+            );
 
         setImplementation(
                 Activation.class,
