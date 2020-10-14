@@ -106,23 +106,17 @@ public abstract class AbstractOperationType implements OperationType
             @Override
             public ADAgent supplyADAgentFor(Function f, ExecutionCall<Device> call, boolean forward)
             {
-                Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
+                Tsr<?> ctxDerivative = (Tsr<?>) call.getAt("derivative");
                 Function mul = Function.Detached.MUL;
                 if ( ctxDerivative != null ) {
                     return new ADAgent( ctxDerivative )
-                            .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                            .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
+                            .withForward( ( node, forwardDerivative ) -> mul.call( new Tsr[]{forwardDerivative, ctxDerivative} ) )
+                            .withBackward( ( node, backwardError ) -> mul.call( new Tsr[]{backwardError, ctxDerivative} ) );
                 }
-                Tsr[] inputs = call.getTensors();
-                int d = call.getDerivativeIndex();
-                if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                else
-                {
-                    Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent( deriv )
-                            .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                            .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
-                }
+                Tsr<?> localDerivative = f.derive(call.getTensors(), call.getDerivativeIndex());
+                return new ADAgent( localDerivative )
+                        .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
+                        .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
             }
 
             @Override

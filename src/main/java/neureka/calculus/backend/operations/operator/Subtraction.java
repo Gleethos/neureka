@@ -210,19 +210,7 @@ public class Subtraction extends AbstractOperationType
                 .setForwardADAnalyzer( call -> true )
                 .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                    {
-                        Tsr<?> ctxDerivative = (Tsr<?>) call.getAt("derivative");
-                        Function mul = Function.Detached.MUL;
-                        if ( ctxDerivative != null ) {
-                            return new ADAgent( ctxDerivative )
-                                    .withForward( ( node, forwardDerivative ) -> mul.call( new Tsr[]{forwardDerivative, ctxDerivative} ) )
-                                    .withBackward( ( node, backwardError ) -> mul.call( new Tsr[]{backwardError, ctxDerivative} ) );
-                        }
-                        Tsr<?> localDerivative = f.derive(call.getTensors(), call.getDerivativeIndex());
-                        return new ADAgent( localDerivative )
-                                .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
-                                .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
-                    }
+                    defaultImplementation().supplyADAgentFor(f, call, forward)
                 )
                 .setCallHock( (caller, call) -> null )
                 .setRJAgent( rja )
