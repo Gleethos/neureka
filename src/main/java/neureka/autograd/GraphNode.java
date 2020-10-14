@@ -452,7 +452,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                         if (
                                 srcNode.size() == 0 && this.size() == 0
                                     ||// Sources created by for example dot/mm or x-mul are reverse-mode cases!
-                                !srcNode.isLeave() && !srcNode._allows_forward//Was : src_node.function().type().allowsForward( inputs )
+                                !srcNode.isLeave() && !srcNode._allows_forward
                         ) {
                             this.put(
                                     srcNode,
@@ -475,7 +475,8 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                             srcNode.forEachTargetAgentPair(
                                 ( targetNode, localAgent ) ->
                                 {
-                                    Tsr targetDerivative = MUL.call( new Tsr[]{localDerivative,  localAgent.derivative()} );
+                                    // This should become part of the ad-agent!! : This should be forward!
+                                    Tsr<?> targetDerivative = MUL.call( new Tsr[]{localDerivative,  localAgent.derivative()} );
                                     this.put(
                                             targetNode,
                                             call.getADAgentFrom(
@@ -499,7 +500,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                 }
             } else if ( this.usesReverseAD() ) {
                 for ( int i = 0; i < inputs.length; i++ ) {
-                    GraphNode srcNode = inputs[i].find(GraphNode.class);
+                    GraphNode<ValueType> srcNode = inputs[i].find(GraphNode.class);
                     if ( srcNode.usesAD() || inputs[i].rqsGradient() ) {
                         this.put(
                                 srcNode,
