@@ -108,37 +108,26 @@ public class Product extends AbstractOperationType {
                     {
                         Tsr ctxDerivative = (Tsr)call.getAt("derivative");
                         Function mul = Function.Detached.MUL;
-                        if (
-                            ctxDerivative != null
-                        ) {
-                                return new ADAgent(
-                                    ctxDerivative
-                                ).withForward(
-                                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                                ).withBackward(
-                                   null
-                                );
+                        if ( ctxDerivative != null ) {
+                                return new ADAgent( ctxDerivative )
+                                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                                    .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                         }
                         Tsr[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
                         if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr deriv = f.derive(inputs, d);
-                            return new ADAgent(
-                                    deriv
-                                ).withForward(
-                                    (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                                ).withBackward(
-                                    (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                                );
+                            Tsr<?> deriv = f.derive(inputs, d);
+                            return new ADAgent( deriv )
+                                    .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                    .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
                         }
                     }
-                ).setCallHock(
-                        (caller, call) -> null
-                ).setRJAgent(
-                        rja
-                ).setDrainInstantiation(
+                )
+                .setCallHock( (caller, call) -> null )
+                .setRJAgent( rja )
+                .setDrainInstantiation(
                         call -> {
                             Tsr[] tsrs = call.getTensors();
                             Device device = call.getDevice();
@@ -216,66 +205,47 @@ public class Product extends AbstractOperationType {
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         Tsr ctxDerivative = (Tsr)call.getAt("derivative");
-                Function mul = Function.Detached.MUL;
-                if (
-                    ctxDerivative != null
-                ) {
-                    return new ADAgent(
-                            ctxDerivative
-                        ).withForward(
-                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                        ).withBackward(
-                            null
-                        );
-                }
-                Tsr[] inputs = call.getTensors();
-                int d = call.getDerivativeIndex();
-                if( forward )
-                {
-                    Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent(
-                            deriv
-                        ).withForward(
-                            ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                        ).withBackward(
-                            null
-                        );
-                }
-                else
-                {
-                    if ( this.supports(Convolution.class) )
-                    {
-                        Function invX = FunctionBuilder.build(
-                                "I[0]" + getOperator() + ">>I[1]" + getOperator() + ">>I[2]",
-                                false
-                        );
-                        Tsr deriv = f.derive(inputs, d);
-                        return new ADAgent(
-                                deriv
-                        ).withForward(
-                                (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                        ).withBackward(
-                                (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)})
-                        );
+                        Function mul = Function.Detached.MUL;
+                        if ( ctxDerivative != null ) {
+                            return new ADAgent( ctxDerivative )
+                                .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                                .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
+                        }
+                        Tsr[] inputs = call.getTensors();
+                        int d = call.getDerivativeIndex();
+                        if( forward )
+                        {
+                            Tsr deriv = f.derive(inputs, d);
+                            return new ADAgent( deriv )
+                                    .withForward( ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}) )
+                                    .withBackward( ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}) );
+                        }
+                        else
+                        {
+                            if ( this.supports(Convolution.class) )
+                            {
+                                Function invX = FunctionBuilder.build(
+                                        "I[0]" + getOperator() + ">>I[1]" + getOperator() + ">>I[2]",
+                                        false
+                                );
+                                Tsr deriv = f.derive(inputs, d);
+                                return new ADAgent( deriv )
+                                        .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                        .withBackward( (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)}) );
+                            }
+                            else
+                            {
+                                Tsr deriv = f.derive(inputs, d);
+                                return new ADAgent( deriv )
+                                        .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                        .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                            }
+                        }
                     }
-                    else
-                    {
-                        Tsr deriv = f.derive(inputs, d);
-                        return new ADAgent(
-                                    deriv
-                            ).withForward(
-                                    (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                            ).withBackward(
-                                    (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                            );
-                    }
-                }
-            }
-        ).setCallHock(
-                (caller, call) -> null
-        ).setRJAgent(
-                rja
-        ).setDrainInstantiation(
+        )
+        .setCallHock( (caller, call) -> null )
+        .setRJAgent( rja )
+        .setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();

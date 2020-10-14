@@ -125,13 +125,9 @@ public class XMultiplication extends AbstractOperationType
                         false
                 );
                 Tsr deriv = f.derive(inputs, d);
-                return new ADAgent(
-                        deriv
-                ).withForward(
-                        (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                ).withBackward(
-                        (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)})
-                );
+                return new ADAgent( deriv )
+                        .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                        .withBackward( (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)}) );
             }
         ).setCallHock(
                 (caller, call) -> {

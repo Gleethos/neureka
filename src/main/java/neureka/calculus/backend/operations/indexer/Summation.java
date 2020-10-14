@@ -93,35 +93,22 @@ public class Summation extends AbstractOperationType
                 ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
-                        Tsr ctxDerivative = (Tsr)call.getAt("derivative");
+                        Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
                         Function mul = Function.Detached.MUL;
-                        if (
-                            ctxDerivative != null
-                        ) {
-                                return new ADAgent(
-                                    ctxDerivative
-                                ).withForward(
-                                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                                ).withBackward(
-                                   null
-                                );
+                        if ( ctxDerivative != null ) {
+                            return new ADAgent( ctxDerivative )
+                                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                                    .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                         }
                         Tsr[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
-                        if ( forward )
-                        {
-                            throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                        }
+                        if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
                             Tsr deriv = f.derive(inputs, d);
-                            return new ADAgent(
-                                    deriv
-                                ).withForward(
-                                    (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                                ).withBackward(
-                                    (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                                );
+                            return new ADAgent( deriv )
+                                    .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                    .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
                         }
                     }
                 ).setCallHock(
@@ -212,13 +199,9 @@ public class Summation extends AbstractOperationType
                 if (
                     ctxDerivative != null
                 ) {
-                    return new ADAgent(
-                            ctxDerivative
-                        ).withForward(
-                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                        ).withBackward(
-                            null
-                        );
+                    return new ADAgent( ctxDerivative )
+                            .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                            .withBackward( ( node, backwardError ) -> mul.call( new Tsr[]{backwardError, ctxDerivative} ) );
                 }
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
@@ -230,7 +213,7 @@ public class Summation extends AbstractOperationType
                         ).withForward(
                             ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
                         ).withBackward(
-                            null
+                            ( t, derivative ) -> mul.call( new Tsr[]{derivative, deriv} )
                         );
                 }
                 else
@@ -242,32 +225,23 @@ public class Summation extends AbstractOperationType
                                 false
                         );
                         Tsr deriv = f.derive(inputs, d);
-                        return new ADAgent(
-                                deriv
-                        ).withForward(
-                                (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                        ).withBackward(
-                                (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)})
-                        );
+                        return new ADAgent( deriv )
+                                .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                .withBackward( (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)}) );
                     }
                     else
                     {
                         Tsr deriv = f.derive(inputs, d);
-                        return new ADAgent(
-                                    deriv
-                                ).withForward(
-                                    (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                                ).withBackward(
-                                    (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                                );
+                        return new ADAgent( deriv )
+                                .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
                     }
                 }
             }
-        ).setCallHock(
-                (caller, call) -> null
-        ).setRJAgent(
-                rja
-        ).setDrainInstantiation(
+        )
+        .setCallHock( (caller, call) -> null )
+        .setRJAgent( rja )
+        .setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();

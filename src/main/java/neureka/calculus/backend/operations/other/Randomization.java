@@ -26,7 +26,6 @@ public class Randomization extends AbstractOperationType
 
         ScalarOperatorCreator< PrimaryNDXConsumer > creator =
                 ( inputs, value, d ) -> {
-                    //double[] t1_val = inputs[1].value64();
                     return t1Idx -> {
                         int sum = 0;
                         for (int idx : t1Idx) sum += idx;
@@ -49,52 +48,14 @@ public class Randomization extends AbstractOperationType
                     }
                     return true;
                 }
-        ).setADAgentSupplier(
-    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-            {
-                Tsr ctxDerivative = (Tsr)call.getAt("derivative");
-        Function mul = Function.Detached.MUL;
-        if (
-            ctxDerivative != null
-        ) {
-            return new ADAgent(
-                    ctxDerivative
-                ).withForward(
-                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                ).withBackward(
-                    null
-                );
-        }
-        Tsr[] inputs = call.getTensors();
-        int d = call.getDerivativeIndex();
-        if( forward )
-        {
-            Tsr deriv = f.derive(inputs, d);
-            return new ADAgent(
-                    deriv
-                ).withForward(
-                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                ).withBackward(
-                    null
-                );
-        }
-        else
-        {
-            Tsr deriv = f.derive(inputs, d);
-            return new ADAgent(
-                     deriv
-                ).withForward(
-                     (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                ).withBackward(
-                     (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                );
-        }
-    }
-        ).setCallHock(
-                ( caller, call ) -> null
-        ).setRJAgent(
-                ( call, goDeeperWith ) -> null
-        ).setDrainInstantiation(
+        )
+        .setADAgentSupplier(
+            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                    defaultImplementation().supplyADAgentFor( f, call, forward )
+        )
+        .setCallHock( ( caller, call ) -> null )
+        .setRJAgent( ( call, goDeeperWith ) -> null )
+        .setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[0] == null ) ? 1 : 0;

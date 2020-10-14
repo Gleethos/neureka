@@ -54,9 +54,7 @@ public class DimTrim extends AbstractOperationType
                             return new ADAgent()
                                     .withContext(call.getContext())
                                     .withForward((t, derivative) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0))
-                                    .withBackward(
-                                            (t, error) -> pad(error, new int[]{prefix, postfix}, true)
-                                    );
+                                    .withBackward( (t, error) -> pad(error, new int[]{prefix, postfix}, true) );
                         }
                 )
                 .setCallHock(
