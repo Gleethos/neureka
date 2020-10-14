@@ -475,8 +475,9 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                             srcNode.forEachTargetAgentPair(
                                 ( targetNode, localAgent ) ->
                                 {
-                                    // This should become part of the ad-agent!! : This should be forward!
-                                    Tsr<?> targetDerivative = MUL.call( new Tsr[]{localDerivative,  localAgent.derivative()} );
+                                    // The agent multiplies the local derivative with its stored partial derivative...
+                                    Tsr<?> targetDerivative = localAgent.forward(this, localDerivative);
+                                    // ...this is now the new partial derivative with respect to the target node!
                                     this.put(
                                             targetNode,
                                             call.getADAgentFrom(
@@ -487,7 +488,8 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                                                             finalI,
                                                             call.getJ(),
                                                             call.getType()
-                                                    ).putAt( "derivative",targetDerivative ),
+                                                    )
+                                                    .putAt( "derivative",targetDerivative ),
                                                     true
                                             )
                                     );
@@ -813,10 +815,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
     public void forEachBackward( Tsr<ValueType> error, BiConsumer<GraphNode<ValueType>, Tsr<ValueType>> action ) {
         if ( _targets_derivatives == null ) return;
         _targets_derivatives.forEach( ( t, agents ) -> {
-            for ( ADAgent a : agents ) {
-                 if (a.hasBackward()) action.accept( t, a.backward( t, error ) );
-                 else  action.accept( t, a.forward( t, error ) );
-            }
+            for ( ADAgent a : agents ) action.accept( t, a.backward( t, error ) );
         });
     }
 
