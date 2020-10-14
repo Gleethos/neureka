@@ -202,61 +202,31 @@ public class Subtraction extends AbstractOperationType
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[1].value64();
                     if ( d < 0 ) return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] - value;
-                    else {
-                        if ( d == 0 ) return t1Idx -> 1; else return t1Idx -> -1;
-                    }
+                    else if ( d == 0 ) return t1Idx -> 1; else return t1Idx -> -1;
                 };
 
         Scalarization scalarization = new Scalarization()
                 .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
-                    call -> true
-                ).setADAgentSupplier(
+                .setForwardADAnalyzer( call -> true )
+                .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
-                        Tsr ctxDerivative = (Tsr)call.getAt("derivative");
+                        Tsr<?> ctxDerivative = (Tsr<?>) call.getAt("derivative");
                         Function mul = Function.Detached.MUL;
-                        if (
-                            ctxDerivative != null
-                        ) {
-                            return new ADAgent(
-                                    ctxDerivative
-                            ).withForward(
-                                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                            ).withBackward(
-                                   null
-                            );
+                        if ( ctxDerivative != null ) {
+                            return new ADAgent( ctxDerivative )
+                                    .withForward( ( node, forwardDerivative ) -> mul.call( new Tsr[]{forwardDerivative, ctxDerivative} ) )
+                                    .withBackward( ( node, backwardError ) -> mul.call( new Tsr[]{backwardError, ctxDerivative} ) );
                         }
-                        Tsr[] inputs = call.getTensors();
-                        int d = call.getDerivativeIndex();
-                        if( forward )
-                        {
-                            Tsr deriv = f.derive(inputs, d);
-                            return new ADAgent(
-                                deriv
-                            ).withForward(
-                                ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                            ).withBackward(
-                                null
-                            );
-                        }
-                        else
-                        {
-                            Tsr deriv = f.derive(inputs, d);
-                            return new ADAgent(
-                                    deriv
-                                ).withForward(
-                                    (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                                ).withBackward(
-                                    (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                                );
-                        }
+                        Tsr<?> localDerivative = f.derive(call.getTensors(), call.getDerivativeIndex());
+                        return new ADAgent( localDerivative )
+                                .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
+                                .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
                     }
-                ).setCallHock(
-                    (caller, call) -> null
-                ).setRJAgent(
-                    rja
-                ).setDrainInstantiation(
+                )
+                .setCallHock( (caller, call) -> null )
+                .setRJAgent( rja )
+                .setDrainInstantiation(
                     call -> {
                         Tsr[] tsrs = call.getTensors();
                         Device device = call.getDevice();
@@ -327,23 +297,16 @@ public class Subtraction extends AbstractOperationType
                 Broadcast.class,
                 new Broadcast()
                         .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
-                            call -> true
-                        ).setADAgentSupplier(
+                        .setForwardADAnalyzer( call -> true )
+                        .setADAgentSupplier(
                             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                             {
-                                Tsr ctxDerivative = (Tsr)call.getAt("derivative");
+                                Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
                                 Function mul = Function.Detached.MUL;
-                                if (
-                                    ctxDerivative != null
-                                ) {
-                                    return new ADAgent(
-                                            ctxDerivative
-                                        ).withForward(
-                                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                                        ).withBackward(
-                                           null
-                                        );
+                                if ( ctxDerivative != null ) {
+                                    return new ADAgent( ctxDerivative )
+                                            .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                                            .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                                 }
                                 Tsr[] inputs = call.getTensors();
                                 int d = call.getDerivativeIndex();
@@ -351,20 +314,15 @@ public class Subtraction extends AbstractOperationType
                                 else
                                 {
                                     Tsr deriv = f.derive(inputs, d);
-                                    return new ADAgent(
-                                            deriv
-                                        ).withForward(
-                                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                                        ).withBackward(
-                                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                                        );
+                                    return new ADAgent( deriv )
+                                            .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                            .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
                                 }
                             }
-                        ).setCallHock(
-                            (caller, call) -> null
-                        ).setRJAgent(
-                            rja
-                        ).setDrainInstantiation(
+                        )
+                        .setCallHock( (caller, call) -> null )
+                        .setRJAgent( rja )
+                        .setDrainInstantiation(
                             call -> {
                                 Tsr[] tsrs = call.getTensors();
                                 Device device = call.getDevice();

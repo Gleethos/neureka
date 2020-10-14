@@ -287,32 +287,22 @@ public class Power extends AbstractOperationType
                 ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
-                        Tsr ctxDerivative = (Tsr)call.getAt("derivative");
+                        Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
                         Function mul = Function.Detached.MUL;
-                        if (
-                            ctxDerivative != null
-                        ) {
-                            return new ADAgent(
-                                    ctxDerivative
-                                ).withForward(
-                                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                                ).withBackward(
-                                   null
-                                );
+                        if ( ctxDerivative != null ) {
+                            return new ADAgent( ctxDerivative )
+                                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                                    .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                         }
                         Tsr[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
                         if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr deriv = f.derive(inputs, d);
-                            return new ADAgent(
-                                    deriv
-                                ).withForward(
-                                    (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                                ).withBackward(
-                                    (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                            );
+                            Tsr<?> deriv = f.derive(inputs, d);
+                            return new ADAgent( deriv )
+                                    .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                    .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
                         }
                     }
                 ).setCallHock(
@@ -405,49 +395,22 @@ public class Power extends AbstractOperationType
                 ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
-                        Tsr ctxDerivative = (Tsr)call.getAt("derivative");
+                        Tsr<?> ctxDerivative = (Tsr<?>) call.getAt("derivative");
                         Function mul = Function.Detached.MUL;
-                        if (
-                            ctxDerivative != null
-                        ) {
-                            return new ADAgent(
-                                    ctxDerivative
-                           ).withForward(
-                                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                           ).withBackward(
-                                   null
-                           );
+                        if ( ctxDerivative != null ) {
+                            return new ADAgent( ctxDerivative )
+                                    .withForward( ( node, forwardDerivative ) -> mul.call( new Tsr[]{forwardDerivative, ctxDerivative} ) )
+                                    .withBackward( ( node, backwardError ) -> mul.call( new Tsr[]{backwardError, ctxDerivative} ) );
                         }
-                        Tsr[] inputs = call.getTensors();
-                        int d = call.getDerivativeIndex();
-                        if( forward )
-                        {
-                            Tsr deriv = f.derive(inputs, d);
-                            return new ADAgent(
-                                deriv
-                            ).withForward(
-                                ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                            ).withBackward(
-                                null
-                            );
-                        }
-                        else
-                        {
-                            Tsr deriv = f.derive(inputs, d);
-                            return new ADAgent(
-                                    deriv
-                                ).withForward(
-                                    (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                                ).withBackward(
-                                    (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                                );
-                        }
+                        Tsr<?> localDerivative = f.derive(call.getTensors(), call.getDerivativeIndex());
+                        return new ADAgent( localDerivative )
+                                .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
+                                .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
                     }
-                ).setCallHock(
-                    (caller, call) -> null
-                ).setRJAgent(
-                    rja
-                ).setDrainInstantiation(
+                )
+                .setCallHock( (caller, call) -> null )
+                .setRJAgent( rja )
+                .setDrainInstantiation(
                     call -> {
                         Tsr[] tsrs = call.getTensors();
                         Device device = call.getDevice();
@@ -542,7 +505,7 @@ public class Power extends AbstractOperationType
                 Convolution.class,
                 new Convolution()
                     .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
+                    .setForwardADAnalyzer(
                             call -> {
                                 Tsr last = null;
                                 for ( Tsr t : call.getTensors() ) {
@@ -554,49 +517,37 @@ public class Power extends AbstractOperationType
                     ).setADAgentSupplier(
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                         {
-                            Tsr ctxDerivative = (Tsr)call.getAt("derivative");
+                            Tsr<?> ctxDerivative = (Tsr<?>) call.getAt("derivative");
                             Function mul = Function.Detached.MUL;
-                            if (
-                                ctxDerivative != null
-                            ) {
-                                return new ADAgent(
-                                        ctxDerivative
-                                    ).withForward(
-                                        ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                                    ).withBackward(
-                                        null
-                                    );
+                            if ( ctxDerivative != null ) {
+                                return new ADAgent( ctxDerivative )
+                                        .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                                        .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                             }
                             Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
                             if( forward )
-                            {
                                 throw new IllegalArgumentException("Convolution of does not support forward-AD!");
-                            }
                             else
                             {
-                                Tsr deriv = f.derive(inputs, d);
-                                return new ADAgent(
-                                        deriv
-                                    ).withForward(
-                                        (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                                    ).withBackward(
-                                        (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
-                                    );
+                                Tsr<?> localDerivative = f.derive(inputs, d);
+                                return new ADAgent( localDerivative )
+                                        .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
+                                        .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
                             }
                         }
-                    ).setCallHock(
-                            ( caller, call ) -> null
-                    ).setRJAgent(
-                            ( call, goDeeperWith ) -> null
-                    ).setDrainInstantiation(
+                    )
+                    .setCallHock( ( caller, call ) -> null )
+                    .setRJAgent( ( call, goDeeperWith ) -> null )
+                    .setDrainInstantiation(
                             call -> {
                                 Tsr[] tsrs = call.getTensors();
                                 int offset = ( tsrs[0] == null ) ? 1 : 0;
                                 return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                             }
                     )
-        ).setStringifier(
+        )
+        .setStringifier(
                 children -> {
                     StringBuilder reconstructed = new StringBuilder();
                     for ( int i = 0; i < children.size(); ++i ) {

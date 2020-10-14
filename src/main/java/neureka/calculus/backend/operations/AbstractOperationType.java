@@ -75,6 +75,7 @@ public abstract class AbstractOperationType implements OperationType
             }
         }
 
+
         _defaultImplementation = new AbstractBaseOperationTypeImplementation<OperationTypeImplementation>("default")
         {
             @Override
@@ -105,25 +106,16 @@ public abstract class AbstractOperationType implements OperationType
             @Override
             public ADAgent supplyADAgentFor(Function f, ExecutionCall<Device> call, boolean forward)
             {
-                Tsr ctxDerivative = (Tsr)call.getAt("derivative");
+                Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
                 Function mul = Function.Detached.MUL;
                 if ( ctxDerivative != null ) {
                     return new ADAgent( ctxDerivative )
-                            .withForward(
-                                ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                            ).withBackward(
-                                null
-                            );
+                            .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                            .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                 }
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
-                if ( forward )
-                {
-                    Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent( deriv )
-                            .withForward( ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}) )
-                            .withBackward( null );
-                }
+                if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                 else
                 {
                     Tsr deriv = f.derive(inputs, d);
@@ -183,6 +175,12 @@ public abstract class AbstractOperationType implements OperationType
                 )
         );
 
+    }
+
+    //==================================================================================================================
+
+    public OperationTypeImplementation defaultImplementation() {
+        return _defaultImplementation;
     }
 
     //==================================================================================================================
