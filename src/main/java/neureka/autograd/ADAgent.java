@@ -53,7 +53,14 @@ public class ADAgent
     }
 
     public boolean isForward(){
-        return (_bad==null);
+        return (
+                _context != null &&
+                _context.containsKey("derivative")//_bad==null
+        );
+    }
+
+    public boolean hasBackward() {
+        return _bad != null;
     }
 
     @Override
@@ -61,14 +68,11 @@ public class ADAgent
         if(this.derivative()!=null){
             return derivative().toString();
         }
-        if(this.isForward()){
 
-        }
         if ( _context != null ) {
-            String mapAsString = _context.keySet().stream()
+            return _context.keySet().stream()
                     .map(key -> key + "=" + _context.get(key))
                     .collect(Collectors.joining(", ", "{", "}"));
-            return mapAsString;
         }
         return "null";
     }

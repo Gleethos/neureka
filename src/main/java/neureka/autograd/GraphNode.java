@@ -629,9 +629,8 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                     */
                 }
             }
-            // Using forward-AutoDiff size for reverse-mode AutoDiff!
-            if ( this.usesForwardAD() ) this.forEachForward( error, ( t, d ) -> t._backward(d, pendingNodes, true) );
-            else if ( this.usesReverseAD() ) this.forEachBackward( error, ( t, e ) -> t._backward(e, pendingNodes, true) );
+            // The following call ADAgents for reverse-mode AutoDiff!
+            this.forEachBackward( error, ( t, e ) -> t._backward(e, pendingNodes, true) );
             // Standard reverse mode-AutoDiff!
         }
     }
@@ -696,10 +695,9 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
             return;// This node will continue its propagation via a JIT-Prop component later!
         }
         if ( this.usesAD() ) {
-            // Using forward-AutoDiff size for reverse-mode AutoDiff!
-            if ( this.usesForwardAD() ) this.forEachForward( error, ( t, e ) -> t._backwardJIT( e, source ) );
-            else if ( this.usesReverseAD() ) this.forEachBackward( error, ( t, e ) -> t._backwardJIT( e, source ) );
-            // Standard reverse mode-AutoDiff!
+            // The following call ADAgents for reverse-mode AutoDiff!
+            this.forEachBackward( error, ( t, e ) -> t._backwardJIT( e, source ) );
+            // JITProp reverse mode-AutoDiff!
         }
     }
 
@@ -816,7 +814,8 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
         if ( _targets_derivatives == null ) return;
         _targets_derivatives.forEach( ( t, agents ) -> {
             for ( ADAgent a : agents ) {
-                 if ( !a.isForward() ) action.accept( t, a.backward( t, error ) );
+                 if (a.hasBackward()) action.accept( t, a.backward( t, error ) );
+                 else  action.accept( t, a.forward( t, error ) );
             }
         });
     }
@@ -828,7 +827,8 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
         if ( _targets_derivatives == null ) return;
         _targets_derivatives.forEach( ( t, agents ) -> {
             for ( ADAgent a : agents ) {
-                if ( a.isForward() ) action.accept( t, a.forward(t, error) );
+                //if ( a.isForward() )
+                    action.accept( t, a.forward(t, error) );
             }
         });
     }

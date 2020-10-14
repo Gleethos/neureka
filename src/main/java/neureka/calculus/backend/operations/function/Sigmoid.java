@@ -60,33 +60,17 @@ public class Sigmoid extends AbstractOperationType
         ).setADAgentSupplier(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
-                Tsr ctxDerivative = (Tsr)call.getAt("derivative");
+                Tsr<?> ctxDerivative = (Tsr<?>) call.getAt("derivative");
                 Function mul = Function.Detached.MUL;
-                if (
-                    ctxDerivative != null
-                ) {
+                if ( ctxDerivative != null ) {
                     return new ADAgent( ctxDerivative )
-                            .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                            .withBackward( null );
+                            .withForward( ( node, forwardDerivative ) -> mul.call( new Tsr[]{forwardDerivative, ctxDerivative} ) )
+                            .withBackward( ( node, backwardError ) -> mul.call( new Tsr[]{backwardError, ctxDerivative} ) );
                 }
-                Tsr[] inputs = call.getTensors();
-                int d = call.getDerivativeIndex();
-                if( forward )
-                {
-                    Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent( deriv )
-                            .withForward( ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}) )
-                            .withBackward( null );
-                }
-                else
-                {
-                    Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent( deriv )
-                            .withForward(
-                                    null//(node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                            )
-                            .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
-                }
+                Tsr<?> localDerivative = f.derive(call.getTensors(), call.getDerivativeIndex());
+                return new ADAgent( localDerivative )
+                        .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
+                        .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
             }
         )
         .setCallHock( ( caller, call ) -> null )
