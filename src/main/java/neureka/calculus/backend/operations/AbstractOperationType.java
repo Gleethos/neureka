@@ -2,9 +2,10 @@
 package neureka.calculus.backend.operations;
 
 import neureka.Tsr;
+import neureka.autograd.ADAgent;
 import neureka.device.Device;
 import neureka.device.host.execution.HostExecutor;
-import neureka.autograd.ADAgent;
+import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.AbstractBaseOperationTypeImplementation;
@@ -109,12 +110,12 @@ public abstract class AbstractOperationType implements OperationType
                 Tsr<?> ctxDerivative = (Tsr<?>) call.getAt("derivative");
                 Function mul = Function.Detached.MUL;
                 if ( ctxDerivative != null ) {
-                    return new ADAgent( ctxDerivative )
+                    return new DefaultADAgent( ctxDerivative )
                             .withForward( ( node, forwardDerivative ) -> mul.call( new Tsr[]{forwardDerivative, ctxDerivative} ) )
                             .withBackward( ( node, backwardError ) -> mul.call( new Tsr[]{backwardError, ctxDerivative} ) );
                 }
                 Tsr<?> localDerivative = f.derive(call.getTensors(), call.getDerivativeIndex());
-                return new ADAgent( localDerivative )
+                return new DefaultADAgent( localDerivative )
                         .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
                         .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
             }

@@ -4,7 +4,7 @@ import neureka.Tsr;
 import neureka.device.Device;
 import neureka.device.host.execution.HostExecutor;
 import neureka.device.opencl.execution.CLExecutor;
-import neureka.autograd.ADAgent;
+import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.implementations.functional.Activation;
 import neureka.calculus.backend.operations.AbstractOperationType;

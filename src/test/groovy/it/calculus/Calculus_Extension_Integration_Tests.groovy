@@ -4,6 +4,7 @@ import it.calculus.mocks.CLContext
 import it.calculus.mocks.GEMMKernelReferenceImplementation
 import neureka.Neureka
 import neureka.Tsr
+import neureka.autograd.DefaultADAgent
 import neureka.device.Device
 import neureka.device.host.execution.HostExecutor
 import neureka.device.opencl.utility.DispatchUtility
@@ -64,7 +65,7 @@ class Calculus_Extension_Integration_Tests extends Specification
                                             (Function f, ExecutionCall<Device> call, boolean forward ) ->
                                             {
                                                 if(forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
-                                                return new ADAgent(null)
+                                                return new DefaultADAgent(null)
                                                         .withForward((t, derivative) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0))
                                                         .withBackward((t, error) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0));
                                             }

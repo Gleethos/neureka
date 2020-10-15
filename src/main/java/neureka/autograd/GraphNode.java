@@ -762,7 +762,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
             _targets_derivatives.get( target ).add( agent );
         } else _targets_derivatives.put( target, new ArrayList<>(Arrays.asList(agent)) );
 
-        Tsr<ValueType> d = agent.derivative();
+        Tsr<?> d = agent.derivative();
         if ( d != null && d.has(GraphNode.class) ) d.find( GraphNode.class )._is_used_as_derivative = true;
     }
 

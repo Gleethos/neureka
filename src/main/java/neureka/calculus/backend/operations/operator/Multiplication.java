@@ -4,7 +4,7 @@ import neureka.Tsr;
 import neureka.device.Device;
 import neureka.device.host.execution.HostExecutor;
 import neureka.device.opencl.execution.CLExecutor;
-import neureka.autograd.ADAgent;
+import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.implementations.functional.Broadcast;
 import neureka.calculus.backend.implementations.functional.Operator;
@@ -195,7 +195,7 @@ public class Multiplication extends AbstractOperationType {
                         Tsr ctxDerivative = (Tsr)call.getAt("derivative");
                         Function mul = Function.Detached.MUL;
                         if ( ctxDerivative != null ) {
-                            return new ADAgent( ctxDerivative )
+                            return new DefaultADAgent( ctxDerivative )
                                     .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
                                     .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                         }
@@ -205,7 +205,7 @@ public class Multiplication extends AbstractOperationType {
                         else
                         {
                             Tsr deriv = f.derive(inputs, d);
-                            return new ADAgent( deriv )
+                            return new DefaultADAgent( deriv )
                                     .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
                                     .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
                         }
@@ -298,7 +298,7 @@ public class Multiplication extends AbstractOperationType {
                         if (
                             ctxDerivative != null
                         ) {
-                            return new ADAgent(
+                            return new DefaultADAgent(
                                     ctxDerivative
                                 ).withForward(
                                     ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
@@ -311,7 +311,7 @@ public class Multiplication extends AbstractOperationType {
                         if( forward )
                         {
                             Tsr deriv = f.derive(inputs, d);
-                            return new ADAgent(
+                            return new DefaultADAgent(
                                     deriv
                                 ).withForward(
                                     ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
@@ -322,7 +322,7 @@ public class Multiplication extends AbstractOperationType {
                         else
                         {
                             Tsr deriv = f.derive(inputs, d);
-                            return new ADAgent(
+                            return new DefaultADAgent(
                                         deriv
                                 ).withForward(
                                         (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
@@ -427,7 +427,7 @@ public class Multiplication extends AbstractOperationType {
                 if (
                     ctxDerivative != null
                 ) {
-                    return new ADAgent(
+                    return new DefaultADAgent(
                                 ctxDerivative
                        ).withForward(
                                 ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
@@ -441,7 +441,7 @@ public class Multiplication extends AbstractOperationType {
                 else
                 {
                     Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent(
+                    return new DefaultADAgent(
                             deriv
                         ).withForward(
                             (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
@@ -528,7 +528,7 @@ public class Multiplication extends AbstractOperationType {
                     Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
                     Function mul = Function.Detached.MUL;
                     if ( ctxDerivative != null ) {
-                        return new ADAgent( ctxDerivative )
+                        return new DefaultADAgent( ctxDerivative )
                                 .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
                                 .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                     }
@@ -538,7 +538,7 @@ public class Multiplication extends AbstractOperationType {
                     else
                     {
                         Tsr deriv = f.derive(inputs, d);
-                        return new ADAgent( deriv )
+                        return new DefaultADAgent( deriv )
                                 .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
                                 .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
                     }

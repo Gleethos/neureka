@@ -4,7 +4,7 @@ import neureka.Tsr;
 import neureka.device.Device;
 import neureka.device.host.execution.HostExecutor;
 import neureka.device.opencl.execution.CLExecutor;
-import neureka.autograd.ADAgent;
+import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.operations.AbstractOperationType;
 import neureka.calculus.backend.ExecutionCall;
@@ -126,7 +126,7 @@ public class XMultiplication extends AbstractOperationType
                             false
                     );
                     Tsr deriv = f.derive(inputs, d);
-                    return new ADAgent( deriv )
+                    return new DefaultADAgent( deriv )
                     .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
                     .withBackward( (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)}) );
                 }

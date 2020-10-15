@@ -4,7 +4,7 @@ import neureka.Tsr;
 import neureka.device.Device;
 import neureka.device.host.execution.HostExecutor;
 import neureka.device.opencl.execution.CLExecutor;
-import neureka.autograd.ADAgent;
+import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.implementations.functional.Broadcast;
 import neureka.calculus.backend.implementations.functional.Convolution;
@@ -245,7 +245,7 @@ public class Power extends AbstractOperationType
                         Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
                         Function mul = Function.Detached.MUL;
                         if ( ctxDerivative != null ) {
-                            return new ADAgent( ctxDerivative )
+                            return new DefaultADAgent( ctxDerivative )
                                     .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
                                     .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                         }
@@ -255,7 +255,7 @@ public class Power extends AbstractOperationType
                         else
                         {
                             Tsr<?> deriv = f.derive(inputs, d);
-                            return new ADAgent( deriv )
+                            return new DefaultADAgent( deriv )
                                     .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
                                     .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
                         }
@@ -457,7 +457,7 @@ public class Power extends AbstractOperationType
                             Tsr<?> ctxDerivative = (Tsr<?>) call.getAt("derivative");
                             Function mul = Function.Detached.MUL;
                             if ( ctxDerivative != null ) {
-                                return new ADAgent( ctxDerivative )
+                                return new DefaultADAgent( ctxDerivative )
                                         .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
                                         .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                             }
@@ -468,7 +468,7 @@ public class Power extends AbstractOperationType
                             else
                             {
                                 Tsr<?> localDerivative = f.derive(inputs, d);
-                                return new ADAgent( localDerivative )
+                                return new DefaultADAgent( localDerivative )
                                         .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
                                         .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
                             }

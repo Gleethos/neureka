@@ -6,7 +6,7 @@ import neureka.device.host.HostCPU;
 import neureka.device.host.execution.HostExecutor;
 import neureka.device.opencl.OpenCLDevice;
 import neureka.device.opencl.execution.CLExecutor;
-import neureka.autograd.ADAgent;
+import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.operations.AbstractOperationType;

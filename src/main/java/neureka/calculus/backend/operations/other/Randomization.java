@@ -3,7 +3,7 @@ package neureka.calculus.backend.operations.other;
 import neureka.Tsr;
 import neureka.device.Device;
 import neureka.device.host.execution.HostExecutor;
-import neureka.autograd.ADAgent;
+import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.functional.Convolution;
