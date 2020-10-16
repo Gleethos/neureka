@@ -36,7 +36,7 @@ public final class D1Configuration extends AbstractNDC //:= IMMUTABLE
             int[] spread,
             int[] offset
     ){
-        return _cached(new D1Configuration(shape[0], translation[0],  idxmap[0], spread[0], offset[0]));
+        return _cached(new D1Configuration(shape[ 0 ], translation[ 0 ],  idxmap[ 0 ], spread[ 0 ], offset[ 0 ]));
     }
 
     private D1Configuration(
@@ -120,7 +120,7 @@ public final class D1Configuration extends AbstractNDC //:= IMMUTABLE
     }
     @Override
     public int i_of_idx(int[] idx) {
-        return (idx[0] * _spread + _offset) * _translation;
+        return (idx[ 0 ] * _spread + _offset) * _translation;
     }
 
 

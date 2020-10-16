@@ -58,7 +58,7 @@ public class Randomization extends AbstractOperationType
         .setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
-                    int offset = ( tsrs[0] == null ) ? 1 : 0;
+                    int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                     return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                 }
         );
@@ -70,14 +70,14 @@ public class Randomization extends AbstractOperationType
                         new HostExecutor (
                                 call -> call.getDevice().getExecutor()
                                         .threaded (
-                                                call.getTensor(0).size(),
+                                                call.getTensor( 0 ).size(),
                                                 ( start, end ) ->
                                                         Scalarization.scalarize (
-                                                                call.getTensor(0),
+                                                                call.getTensor( 0 ),
                                                                 start, end,
                                                                 creator.create(
                                                                         call.getTensors(),
-                                                                        call.getTensor(1).value64(0),
+                                                                        call.getTensor(1).value64( 0 ),
                                                                         call.getDerivativeIndex()
                                                                 )
                                                         )
@@ -90,7 +90,7 @@ public class Randomization extends AbstractOperationType
     }
 
     @Override
-    public double calculate(double[] inputs, int j, int d, List<Function> src) {
-            return src.get(0).call( inputs, j );
+    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            return src.get( 0 ).call( inputs, j );
     }
 }

@@ -400,7 +400,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                     );
                 }
             }
-            _construct( payloadSupplier.get(), function, call, inputs[0].find(GraphNode.class).lock() );
+            _construct( payloadSupplier.get(), function, call, inputs[ 0 ].find(GraphNode.class).lock() );
         } else {
             throw new IllegalArgumentException(
                     "The passed context object for the GraphNode constructor is of type '" + context.getClass().getName() + "'.\n" +

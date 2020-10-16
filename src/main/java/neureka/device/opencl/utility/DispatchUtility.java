@@ -12,50 +12,50 @@ public class DispatchUtility {
     {
         double root = Math.pow(size, 1/(double)shape.length);
         int center = (int) root;
-        int[] current = new int[shape.length];
+        int[] current = new int[ shape.length ];
         Arrays.fill(current, center);
-        for ( int i=0; i < shape.length; i++ ) if ( current[i] > shape[i] ) current[i] = shape[i];
+        for ( int i=0; i < shape.length; i++ ) if ( current[ i ] > shape[ i ] ) current[ i ] = shape[ i ];
         List<List<Integer>> factors = new ArrayList<>();
         for ( int s : shape ) factors.add( primeFactors(s) );
-        int[] indices = new int[shape.length];
+        int[] indices = new int[ shape.length ];
         for ( int i=0; i<shape.length; i++){
             int index = -1;
             int product = 1;
             do {
                 index++;
-                int previousDelta = Math.abs(current[i]-product);
-                product *= factors.get(i).get(index);
-                int newDelta = Math.abs(current[i]-product);
-                if ( product > shape[i] || previousDelta <= newDelta ) {
-                    product /= factors.get(i).get(index);
+                int previousDelta = Math.abs(current[ i ]-product);
+                product *= factors.get( i ).get(index);
+                int newDelta = Math.abs(current[ i ]-product);
+                if ( product > shape[ i ] || previousDelta <= newDelta ) {
+                    product /= factors.get( i ).get(index);
                     break;
                 }
-            } while( product < current[i] );
+            } while( product < current[ i ] );
 
             int intermediateProduct = product;
             int intermediateIndex = index;
 
             // Now the same in reverse :
 
-            index = factors.get(i).size();
+            index = factors.get( i ).size();
             product = 1;
             do {
                 index--;
-                int previousDelta = Math.abs(current[i]-product);
-                product *= factors.get(i).get(index);
-                int newDelta = Math.abs(current[i]-product);
-                if ( product > shape[i] || previousDelta <= newDelta ) {
-                    product /= factors.get(i).get(index);
-                    Collections.reverse(factors.get(i));
-                    index = factors.get(i).size() - 1 - index;
+                int previousDelta = Math.abs(current[ i ]-product);
+                product *= factors.get( i ).get(index);
+                int newDelta = Math.abs(current[ i ]-product);
+                if ( product > shape[ i ] || previousDelta <= newDelta ) {
+                    product /= factors.get( i ).get(index);
+                    Collections.reverse(factors.get( i ));
+                    index = factors.get( i ).size() - 1 - index;
                     break;
                 }
-            } while( product < current[i] );
+            } while( product < current[ i ] );
 
-            boolean firstWasBetter = (Math.abs(current[i]-intermediateProduct)<Math.abs(Math.abs(current[i]-product)));
+            boolean firstWasBetter = (Math.abs(current[ i ]-intermediateProduct)<Math.abs(Math.abs(current[ i ]-product)));
 
-            current[i] = (firstWasBetter) ? intermediateProduct : product;
-            indices[i] = (firstWasBetter) ? intermediateIndex : index;
+            current[ i ] = (firstWasBetter) ? intermediateProduct : product;
+            indices[ i ] = (firstWasBetter) ? intermediateIndex : index;
         }
 
         // Setup done, we've got a basic set of tile dimensions!
@@ -71,12 +71,12 @@ public class DispatchUtility {
             double bestRatio = 1.0;
             for ( int i=0; i<shape.length; i++)
             {
-                int found = ( factors.get(i).size() > indices[i] + 1 )
-                        ? factors.get(i).get(indices[i]+1)
+                int found = ( factors.get( i ).size() > indices[ i ] + 1 )
+                        ? factors.get( i ).get(indices[ i ]+1)
                         : Integer.MAX_VALUE ;
                 double ratio = (found == Integer.MAX_VALUE)
                         ? 1.0
-                        : (double)current[i] / (double)shape[i];
+                        : (double)current[ i ] / (double)shape[ i ];
                 if (
                         lowest == -1 ||
                                 found < lowest ||
@@ -183,7 +183,7 @@ public class DispatchUtility {
         for (int i = 3; i <= Math.sqrt(n); i += 2) {
             // While i divides n, print i and divide n
             while (n % i == 0) {
-                factors.add(i);
+                factors.add( i );
                 n /= i;
             }
         }
@@ -206,12 +206,12 @@ public class DispatchUtility {
         //=================
         // GOALS :
         int[] row_com_col = bestMatMulMatch(local_size, row, col, com);
-        int max_ts_row = row_com_col[0];//   = 128, // ts := tile size
+        int max_ts_row = row_com_col[ 0 ];//   = 128, // ts := tile size
         int max_ts_col = row_com_col[2];//   = 128,
         int max_ts_com = row_com_col[1];//   = 16,
 
         int[] wpt_row_col = parseTile(reg_size, new int[]{max_ts_row, max_ts_col});
-        int max_wpt_row = wpt_row_col[0];//  = 8,   // wpt := work per thread
+        int max_wpt_row = wpt_row_col[ 0 ];//  = 8,   // wpt := work per thread
         int max_wpt_col = wpt_row_col[1]; // = 8,
         //---
 
@@ -224,11 +224,11 @@ public class DispatchUtility {
         int[] row_com = DispatchUtility.parseTile(size, new int[]{row, com});
         int[] col_com = DispatchUtility.parseTile(size, new int[]{col, com});
 
-        int delta1 = Math.abs((row_com[0] * row_com[1] + row_com[0] * col_com[0])-size);
-        int delta2 = Math.abs((col_com[0] * col_com[1] + col_com[0] * row_com[0])-size);
+        int delta1 = Math.abs((row_com[ 0 ] * row_com[1] + row_com[ 0 ] * col_com[ 0 ])-size);
+        int delta2 = Math.abs((col_com[ 0 ] * col_com[1] + col_com[ 0 ] * row_com[ 0 ])-size);
 
-        if ( delta1 > delta2 ) return new int[]{ row_com[0], col_com[1], col_com[0] };
-        else return new int[]{ row_com[0], row_com[1], col_com[0] };
+        if ( delta1 > delta2 ) return new int[]{ row_com[ 0 ], col_com[1], col_com[ 0 ] };
+        else return new int[]{ row_com[ 0 ], row_com[1], col_com[ 0 ] };
     }
 
 

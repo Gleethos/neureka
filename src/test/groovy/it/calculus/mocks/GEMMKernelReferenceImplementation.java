@@ -296,9 +296,9 @@ public class GEMMKernelReferenceImplementation
         for(int i=0; i<rank*5; i++)
         {
             if(i>=rank*3 && i<rank*4){
-                new_cfg[i+2*rank] = cfg[i];
+                new_cfg[i+2*rank] = cfg[ i ];
             } else {
-                new_cfg[i] = cfg[i];
+                new_cfg[ i ] = cfg[ i ];
             }
         }
     }

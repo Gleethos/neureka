@@ -46,7 +46,7 @@ public class Multiplication extends AbstractOperationType {
                 children -> {
                     StringBuilder reconstructed = new StringBuilder();
                     for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get(i) );
+                        reconstructed.append( children.get( i ) );
                         if ( i < children.size() - 1 ) {
                             reconstructed.append(" * ");
                         }
@@ -65,26 +65,26 @@ public class Multiplication extends AbstractOperationType {
             Tsr alternative = null;
             if (tsrs.length > 3) {
                 if (d < 0) {
-                    Tsr[] reduction = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
+                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[1], tsrs[2]};
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
-                    tsrs[0] = reduction[0];
+                    tsrs[ 0 ] = reduction[ 0 ];
 
                     reduction = Utility.offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
-                    tsrs[0] = reduction[0];
+                    tsrs[ 0 ] = reduction[ 0 ];
                 } else {
                     Tsr[] reduction = Utility.without(tsrs, 1+d);
                     if ( reduction.length > 2 ) {
-                        reduction[0] = ( reduction[0] == null ) ? Tsr.Create.newTsrLike(tsrs[1]) : reduction[0];
+                        reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tsrs[1]) : reduction[ 0 ];
                         alternative = goDeeperWith.apply(
                                 new ExecutionCall<>( device, reduction, -1, OperationType.instance("*") )
                         );
-                        tsrs[0] = reduction[0];
-                    } else tsrs[0] = reduction[1];
+                        tsrs[ 0 ] = reduction[ 0 ];
+                    } else tsrs[ 0 ] = reduction[1];
                 }
                 return alternative;
             } else {
@@ -126,13 +126,13 @@ public class Multiplication extends AbstractOperationType {
                     call -> {
                         Tsr[] tsrs = call.getTensors();
                         Device device = call.getDevice();
-                        if ( tsrs[0] == null ) // Creating a new tensor:
+                        if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                         {
                             int[] shp = tsrs[1].getNDConf().shape();
                             Tsr output = new Tsr( shp, 0.0 );
                             output.setIsVirtual(false);
                             device.add(output);
-                            tsrs[0] = output;
+                            tsrs[ 0 ] = output;
                         }
                         return call;
                     }
@@ -145,10 +145,10 @@ public class Multiplication extends AbstractOperationType {
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor(0).size(),
+                                                        call.getTensor( 0 ).size(),
                                                         ( start, end ) ->
                                                                 Operator.operate (
-                                                                        call.getTensor(0),
+                                                                        call.getTensor( 0 ),
                                                                         call.getTensor(1),
                                                                         call.getTensor(2),
                                                                         call.getDerivativeIndex(),
@@ -162,13 +162,13 @@ public class Multiplication extends AbstractOperationType {
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor(offset))
                                             .pass(call.getTensor(offset + 1))
                                             .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getTensor( 0 ).rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
                                 },
@@ -218,13 +218,13 @@ public class Multiplication extends AbstractOperationType {
                     call -> {
                         Tsr[] tsrs = call.getTensors();
                         Device device = call.getDevice();
-                        if ( tsrs[0] == null ) // Creating a new tensor:
+                        if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                         {
                             int[] shp = tsrs[1].getNDConf().shape();
                             Tsr output = new Tsr( shp, 0.0 );
                             output.setIsVirtual(false);
                             device.add(output);
-                            tsrs[0] = output;
+                            tsrs[ 0 ] = output;
                         }
                         return call;
                     }
@@ -237,10 +237,10 @@ public class Multiplication extends AbstractOperationType {
                             call ->
                                     call.getDevice().getExecutor()
                                             .threaded (
-                                                    call.getTensor(0).size(),
+                                                    call.getTensor( 0 ).size(),
                                                     ( start, end ) ->
                                                             Broadcast.broadcast (
-                                                                    call.getTensor(0), call.getTensor(1), call.getTensor(2),
+                                                                    call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
                                                                     call.getDerivativeIndex(), start, end,
                                                                     _creator.create(call.getTensors(), call.getDerivativeIndex())
                                                             )
@@ -251,13 +251,13 @@ public class Multiplication extends AbstractOperationType {
                     CLExecutor.class,
                     new CLExecutor(
                             call -> {
-                                int offset = (call.getTensor(0) != null) ? 0 : 1;
-                                int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
+                                int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                 call.getDevice().getKernel(call)
                                         .pass(call.getTensor(offset))
                                         .pass(call.getTensor(offset + 1))
                                         .pass(call.getTensor(offset + 2))
-                                        .pass(call.getTensor(0).rank())
+                                        .pass(call.getTensor( 0 ).rank())
                                         .pass(call.getDerivativeIndex())
                                         .call(gwz);
                             },
@@ -339,13 +339,13 @@ public class Multiplication extends AbstractOperationType {
                         call -> {
                             Tsr[] tsrs = call.getTensors();
                             Device device = call.getDevice();
-                            if ( tsrs[0] == null ) // Creating a new tensor:
+                            if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                             {
                                 int[] shp = tsrs[1].getNDConf().shape();
                                 Tsr output = new Tsr( shp, 0.0 );
                                 output.setIsVirtual(false);
                                 device.add(output);
-                                tsrs[0] = output;
+                                tsrs[ 0 ] = output;
                             }
                             return call;
                         }
@@ -357,13 +357,13 @@ public class Multiplication extends AbstractOperationType {
                         HostExecutor.class,
                         new HostExecutor(
                                 call -> {
-                                    double value = call.getTensor(0).value64(2);
+                                    double value = call.getTensor( 0 ).value64(2);
                                     call.getDevice().getExecutor()
                                             .threaded (
-                                                    call.getTensor(0).size(),
+                                                    call.getTensor( 0 ).size(),
                                                     ( start, end ) ->
                                                             Scalarization.scalarize (
-                                                                    call.getTensor(0),
+                                                                    call.getTensor( 0 ),
                                                                     start, end,
                                                                     scalarOperatorCreator.create(call.getTensors(), value, -1)
                                                             )
@@ -376,12 +376,12 @@ public class Multiplication extends AbstractOperationType {
                         new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1)?1:0;
-                                    int gwz = call.getTensor(0).size();
+                                    int gwz = call.getTensor( 0 ).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(0))
-                                            .pass(call.getTensor(0))
-                                            .pass((float)call.getTensor(1+offset).value64(0))
-                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getTensor( 0 ))
+                                            .pass(call.getTensor( 0 ))
+                                            .pass((float)call.getTensor(1+offset).value64( 0 ))
+                                            .pass(call.getTensor( 0 ).rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
                                 },
@@ -457,7 +457,7 @@ public class Multiplication extends AbstractOperationType {
         ).setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
-                    int offset = ( tsrs[0] == null ) ? 1 : 0;
+                    int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                     return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                 }
         );
@@ -466,7 +466,7 @@ public class Multiplication extends AbstractOperationType {
                 "", ((char) 171) + "*", 3, true, false, false, false
 ){
             @Override
-            public double calculate(double[] inputs, int j, int d, List<Function> src){
+            public double calculate( double[] inputs, int j, int d, List<Function> src ){
                 return 0;
             }
         }.setImplementation(
@@ -477,10 +477,10 @@ public class Multiplication extends AbstractOperationType {
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor(0).size(),
+                                                        call.getTensor( 0 ).size(),
                                                         ( start, end ) ->
                                                                 Broadcast.broadcast (
-                                                                        call.getTensor(0), call.getTensor(1), call.getTensor(2),
+                                                                        call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
                                                                         call.getDerivativeIndex(), start, end,
                                                                         xCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
@@ -491,13 +491,13 @@ public class Multiplication extends AbstractOperationType {
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor(offset))
                                             .pass(call.getTensor(offset + 1))
                                             .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getTensor( 0 ).rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
                                 },
@@ -549,7 +549,7 @@ public class Multiplication extends AbstractOperationType {
             .setDrainInstantiation(
                     call -> {
                         Tsr[] tsrs = call.getTensors();
-                        int offset = ( tsrs[0] == null ) ? 1 : 0;
+                        int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                         return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                     }
             );
@@ -558,7 +558,7 @@ public class Multiplication extends AbstractOperationType {
                 "", "*" + ((char) 187), 3, true, false, false, false
 ){
             @Override
-            public double calculate(double[] inputs, int j, int d, List<Function> src){
+            public double calculate( double[] inputs, int j, int d, List<Function> src ){
                 return 0;
             }
         }.setImplementation(
@@ -569,10 +569,10 @@ public class Multiplication extends AbstractOperationType {
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor(0).size(),
+                                                        call.getTensor( 0 ).size(),
                                                         ( start, end ) ->
                                                                 Broadcast.broadcast (
-                                                                        call.getTensor(0), call.getTensor(1), call.getTensor(2),
+                                                                        call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
                                                                         call.getDerivativeIndex(), start, end,
                                                                         xCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
@@ -583,13 +583,13 @@ public class Multiplication extends AbstractOperationType {
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor(offset))
                                             .pass(call.getTensor(offset + 1))
                                             .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getTensor( 0 ).rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
                                 },
@@ -614,19 +614,19 @@ public class Multiplication extends AbstractOperationType {
     @Contract(pure = true)
 
     @Override
-    public double calculate(double[] inputs, int j, int d, List<Function> src) {
+    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
         if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
-            double result = src.get(0).call(inputs, j);
+            double result = src.get( 0 ).call(inputs, j);
             for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get(i).call(inputs, j);
+                final double current = src.get( i ).call(inputs, j);
                 result *= current;
             }
             return result;
         } else {
             double u, ud, v, vd;
-            u = src.get(0).call(inputs, j);
-            ud = src.get(0).derive(inputs, d, j);
+            u = src.get( 0 ).call(inputs, j);
+            ud = src.get( 0 ).derive(inputs, d, j);
 
             for ( int ji = 1; ji < src.size(); ji++ ) {
                 v = src.get(ji).call(inputs, j);
@@ -641,16 +641,16 @@ public class Multiplication extends AbstractOperationType {
     @Contract(pure = true)
     public static double calculate(double[] inputs, int d, List<Function> src) {
         if ( d < 0 ) {
-            double result = src.get(0).call(inputs);
+            double result = src.get( 0 ).call(inputs);
             for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get(i).call(inputs);
+                final double current = src.get( i ).call(inputs);
                 result *= current;
             }
             return result;
         } else {
             double u, ud, v, vd;
-            u = src.get(0).call(inputs);
-            ud = src.get(0).derive(inputs, d);
+            u = src.get( 0 ).call(inputs);
+            ud = src.get( 0 ).derive(inputs, d);
             for ( int j = 1; j < src.size(); j++ ) {
                 v = src.get(j).call(inputs);
                 vd = src.get(j).derive(inputs, d);

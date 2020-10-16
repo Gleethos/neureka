@@ -72,7 +72,7 @@ public class ExecutionCall< DeviceType extends Device >
     
     public Tsr[] getTensors() {return _tensors;}
     
-    public Tsr getTensor(int i) {return _tensors[i];}
+    public Tsr getTensor(int i) {return _tensors[ i ];}
 
     /**
      * This method returns an import property whose

@@ -59,7 +59,7 @@ class CrossDeviceSlicedTensorSystemTest
                                 ?"2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
                                 :"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
                 ], "Testing slicing")
-        tester.testContains(((b.spread()!=null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
+        tester.testContains(((b.spread() != null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
         b = a[-3..-1, 0..3]
         s = a[1, -2]
         assert s==((legacyIndexing)?9.0:2.0)
@@ -69,7 +69,7 @@ class CrossDeviceSlicedTensorSystemTest
                                 ?"2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
                                 :"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
                 ], "Testing slicing")
-        tester.testContains(((b.spread()!=null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
+        tester.testContains(((b.spread() != null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
         /**
          * 2, 3, 4,
          * 6, 7, 8,
@@ -144,7 +144,7 @@ class CrossDeviceSlicedTensorSystemTest
                 ],
                 "Testing slicing"
         )
-        tester.testContains(((b.spread()!=null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
+        tester.testContains(((b.spread() != null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
         /**
          1, 12, 3, 4,
          5, 6, 7, 16,
@@ -167,7 +167,7 @@ class CrossDeviceSlicedTensorSystemTest
                                 ?"5.0, 7.0, 4.0, 6.0"
                                 :"12.0, 4.0, 5.0, 7.0"
                 ], "Testing slicing")
-        tester.testContains(((b.spread()!=null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
+        tester.testContains(((b.spread() != null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
         /**
          1, 12, 3, 4,
          5, 6, 7, 16, => 5,  7,

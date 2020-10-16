@@ -12,20 +12,32 @@ public abstract class AbstractDevice<ValueType> implements Device<ValueType>, Co
 {
     private static final Cleaner _CLEANER = Cleaner.create();
 
-    protected abstract void _enqueue(Tsr[] tsrs, int d, OperationType type);
+    /**
+     *  This method is the internal execution routine called by it's public counterpart
+     *  and implemented by classes extending this very abstract class.
+     *  It substitutes the implementation of this public "execute" method
+     *  in order to make any execution call on any device extending this class
+     *  checked before execution.
+     *  The checking occurs in the public "execute" method of this class.
+     *
+     * @param tsrs An array of input tensors.
+     * @param d The index of the input which ought to be derived.
+     * @param type The type of operation.
+     */
+    protected abstract void _execute(Tsr[] tsrs, int d, OperationType type );
 
     @Override
-    public void update(Tsr oldOwner, Tsr newOwner){
+    public void update( Tsr oldOwner, Tsr newOwner ){
         swap(oldOwner, newOwner);
     }
 
     @Override
-    public Device cleaning(Tsr tensor, Runnable action){
-        _CLEANER.register(tensor, action);
+    public Device cleaning( Tsr tensor, Runnable action ) {
+        _cleaning(tensor, action);
         return this;
     }
 
-    protected void _cleaning(Object o, Runnable action){
+    protected void _cleaning( Object o, Runnable action ){
         _CLEANER.register(o, action);
     }
 
@@ -39,10 +51,10 @@ public abstract class AbstractDevice<ValueType> implements Device<ValueType>, Co
                             "One or more tensor arguments within the given ExecutionCall instance is null."
             );
         }
-        ((OperationTypeImplementation<Object>)call.getImplementation())
+        ( (OperationTypeImplementation<Object>)call.getImplementation() )
                 .recursiveReductionOf(
                     call,
-                    c -> _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType())
+                    c -> _execute( c.getTensors(), c.getDerivativeIndex(), c.getType() )
                 );
         return this;
     }

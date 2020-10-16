@@ -58,7 +58,7 @@ public class F64 extends AbstractNumericType<Double, double[]>
         double[] data = new double[size];
         for ( int i=0; i<size; i++ ) {
             stream.readFully(_data);
-            data[i] = convert(_data);
+            data[ i ] = convert(_data);
         }
         return data;
     }

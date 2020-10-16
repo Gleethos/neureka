@@ -12,7 +12,7 @@ public class SGD<ValueType> implements Optimizer<ValueType>
     public SGD( double leaningRate )
     {
         _learningRate = leaningRate;
-        _function = Function.create("I[0] <- (-1 * (I[0] - "+leaningRate+"))", false);
+        _function = Function.create("I[ 0 ] <- (-1 * (I[ 0 ] - "+leaningRate+"))", false);
     }
 
     @Override

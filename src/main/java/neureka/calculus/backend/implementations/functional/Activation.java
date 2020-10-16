@@ -27,7 +27,7 @@ public class Activation extends AbstractFunctionalOperationTypeImplementation< A
     ) {
         int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         int rank = t0Shp.length;
-        int[] t0Idx = t0_drn.idx_of_i(i);
+        int[] t0Idx = t0_drn.idx_of_i( i );
         int[] t1Idx = new int[rank];
         double[] t0_value = t0_drn.value64();
         while ( i < end ) {//increment on drain accordingly:

@@ -20,7 +20,7 @@ __kernel void convolution_template(
         int p_tln = 1 * rank;
         int p_idm = 2 * rank;
         int p_idx = 3 * rank;
-        int di = _i_of_i(get_global_id(0), prv_drn_cfg, rank);
+        int di = _i_of_i(get_global_id( 0 ), prv_drn_cfg, rank);
 
         //increment src accordingly:
         int ri = 0;
@@ -48,7 +48,7 @@ __kernel void convolution_template(
                 if (incrementing == false) {
                     bool isMatch = true;
                     for(int i=0; i<rank; i++){
-                        isMatch = (prv_src1_cfg[p_idx+ri] < prv_src1_cfg[i] && prv_src1_cfg[p_idx+ri]>=0) && isMatch;
+                        isMatch = (prv_src1_cfg[p_idx+ri] < prv_src1_cfg[ i ] && prv_src1_cfg[p_idx+ri]>=0) && isMatch;
                     }
                     if(isMatch){
 //-=<OPERATION>=-//

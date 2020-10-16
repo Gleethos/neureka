@@ -13,7 +13,7 @@
         int prv_src1_cfg[32];
         _cfg_of_cfg(src1_conf, prv_src1_cfg, rank);
 
-        unsigned int i = get_global_id(0);
+        unsigned int i = get_global_id( 0 );
 
         if(d<0){
 //-=<OPERATION>=-//

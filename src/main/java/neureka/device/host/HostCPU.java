@@ -32,7 +32,7 @@ public class HostCPU extends AbstractDevice<Number>
     }
 
     @Override
-    protected void _enqueue(Tsr[] tsrs, int d, OperationType type)
+    protected void _execute(Tsr[] tsrs, int d, OperationType type)
     {
         ExecutionCall<HostCPU> call =
                 new ExecutionCall<>(
@@ -65,7 +65,7 @@ public class HostCPU extends AbstractDevice<Number>
     }
 
     @Override
-    public boolean has(Tsr tensor) {
+    public boolean has( Tsr tensor ) {
         return false;
     }
 
@@ -142,7 +142,7 @@ public class HostCPU extends AbstractDevice<Number>
                     final int start = i * chunk;
                     final int end = ( i == cores - 1 ) ? sze : ( (i + 1) * chunk );
                     Neureka neureka = Neureka.instance();
-                    futures[i] = _pool.submit(() -> {
+                    futures[ i ] = _pool.submit(() -> {
                         Neureka.setContext( neureka );
                         range.execute(start, end);
                     });

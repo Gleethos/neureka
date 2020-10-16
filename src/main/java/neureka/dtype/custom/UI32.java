@@ -47,7 +47,7 @@ public class UI32 extends AbstractNumericType<Long, long[]>
 
     @Override
     public long[] readDataFrom(DataInput stream, int size) throws IOException {
-        return new long[0];
+        return new long[ 0 ];
     }
 
 

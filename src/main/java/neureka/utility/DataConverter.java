@@ -75,7 +75,7 @@ public class DataConverter
         public static double[] seededDoubleArray(double[] array, long seed){
             Random dice = new Random();
             dice.setSeed(seed);
-            for(int i=0; i<array.length; i++) array[i] = dice.nextGaussian();
+            for(int i=0; i<array.length; i++) array[ i ] = dice.nextGaussian();
             return array;
         }
 
@@ -94,7 +94,7 @@ public class DataConverter
         public static float[] seededFloatArray(float[] array, long seed){
             Random dice = new Random();
             dice.setSeed(seed);
-            for(int i=0; i<array.length; i++) array[i] = (float)dice.nextGaussian();
+            for(int i=0; i<array.length; i++) array[ i ] = (float)dice.nextGaussian();
             return array;
         }
 
@@ -102,21 +102,21 @@ public class DataConverter
         {
             long h = 1125899906842597L; // prime
             int len = string.length();
-            for (int i = 0; i < len; i++) h = 31*h + string.charAt(i);
+            for (int i = 0; i < len; i++) h = 31*h + string.charAt( i );
             return h;
         }
 
         public static float[] doubleToFloat(double[] data){
             if(data==null) return null;
             float[] newData = new float[data.length];
-            for(int i=0; i<data.length; i++) newData[i] = (float) data[i];
+            for(int i=0; i<data.length; i++) newData[ i ] = (float) data[ i ];
             return newData;
         }
 
         public static double[] floatToDouble(float[] data){
             if(data==null) return null;
             double[] newData = new double[data.length];
-            for(int i=0; i<data.length; i++) newData[i] = (double)data[i];
+            for(int i=0; i<data.length; i++) newData[ i ] = (double)data[ i ];
             return newData;
         }
 
@@ -124,84 +124,84 @@ public class DataConverter
         public static double[] shortToDouble(short[] data){
             if(data==null) return null;
             double[] newData = new double[data.length];
-            for(int i=0; i<data.length; i++) newData[i] = data[i];
+            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static double[] byteToDouble(byte[] data){
             if(data==null) return null;
             double[] newData = new double[data.length];
-            for(int i=0; i<data.length; i++) newData[i] = data[i];
+            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static float[] byteToFloat(byte[] data){
             if(data==null) return null;
             float[] newData = new float[data.length];
-            for(int i=0; i<data.length; i++) newData[i] = data[i];
+            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static float[] shortToFloat(short[] data){
             if(data==null) return null;
             float[] newData = new float[data.length];
-            for(int i=0; i<data.length; i++) newData[i] = data[i];
+            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static int[] byteToInt(byte[] data){
             if(data==null) return null;
             int[] newData = new int[data.length];
-            for(int i=0; i<data.length; i++) newData[i] = data[i];
+            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static int[] shortToInt(short[] data){
             if(data==null) return null;
             int[] newData = new int[data.length];
-            for(int i=0; i<data.length; i++) newData[i] = data[i];
+            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static long[] byteToLong(byte[] data){
             if(data==null) return null;
             long[] newData = new long[data.length];
-            for(int i=0; i<data.length; i++) newData[i] = data[i];
+            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static long[] shortToLong(short[] data){
             if(data==null) return null;
             long[] newData = new long[data.length];
-            for(int i=0; i<data.length; i++) newData[i] = data[i];
+            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static float[] intToFloat(int[] data) {
             if ( data == null ) return null;
             float[] newData = new float[data.length];
-            for(int i=0; i<data.length; i++) newData[i] = (float) data[i];
+            for(int i=0; i<data.length; i++) newData[ i ] = (float) data[ i ];
             return newData;
         }
 
         public static int[] floatToInt(float[] data) {
             if ( data == null ) return null;
             int[] newData = new int[data.length];
-            for(int i=0; i<data.length; i++) newData[i] = (int) data[i];
+            for(int i=0; i<data.length; i++) newData[ i ] = (int) data[ i ];
             return newData;
         }
 
         public static int[] doubleToInt(double[] data) {
             if ( data == null ) return null;
             int[] newData = new int[data.length];
-            for(int i=0; i<data.length; i++) newData[i] = (int) data[i];
+            for(int i=0; i<data.length; i++) newData[ i ] = (int) data[ i ];
             return newData;
         }
 
         public static double[] intToDouble(int[] data) {
             if ( data == null ) return null;
             double[] newData = new double[data.length];
-            for(int i=0; i<data.length; i++) newData[i] = data[i];
+            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 

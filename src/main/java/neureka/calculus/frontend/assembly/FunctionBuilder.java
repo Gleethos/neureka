@@ -26,11 +26,11 @@ public class FunctionBuilder {
             return new FunctionNode(type, srcs, doAD);
         }
         if ( type.getId() < 10 ) {
-            return build(type.getFunction() + "(I[0])", doAD);
+            return build(type.getFunction() + "(I[ 0 ])", doAD);
         } else if ( type.isIndexer() ) {
             return build(type.getFunction() + "I[j]", doAD);
         } else {
-            StringBuilder expression = new StringBuilder("I[0]");
+            StringBuilder expression = new StringBuilder("I[ 0 ]");
             for (int i = 0; i < size - 1; i++) {
                 expression.append(type.getOperator()).append("I[").append(i + 1).append("]");
             }
@@ -46,7 +46,7 @@ public class FunctionBuilder {
     public static Function build(String expression, boolean doAD) {
         expression =
                 (expression.length() > 0
-                        && (expression.charAt(0) != '(' || expression.charAt(expression.length() - 1) != ')'))
+                        && (expression.charAt( 0 ) != '(' || expression.charAt(expression.length() - 1) != ')'))
                         ? ("(" + expression + ")")
                         : expression;
         String k = (doAD) ? "d" + expression : expression;
@@ -115,7 +115,7 @@ public class FunctionBuilder {
                 boolean groupingOccured = false;
                 boolean enoughtPresent = FunctionParser.numberOfOperationsWithin(foundJunctors) > 1;// Otherwise: I[j]^4 goes nuts!
                 if (enoughtPresent) {
-                    String[] ComponentsArray = foundComponents.toArray(new String[0]);
+                    String[] ComponentsArray = foundComponents.toArray(new String[ 0 ]);
                     int length = ComponentsArray.length;
                     for (int Ci = 0; Ci < length; Ci++) {
                         String currentComponent;
@@ -162,7 +162,7 @@ public class FunctionBuilder {
         int typeId = 0;
         if (foundJunctors.size() >= 1) {
             for (int id = 0; id < OperationType.COUNT(); ++id) {
-                if (OperationType.instance(id).getOperator().equals(foundJunctors.get(0))) {
+                if (OperationType.instance(id).getOperator().equals(foundJunctors.get( 0 ))) {
                     typeId = id;
                 }
             }
@@ -170,7 +170,7 @@ public class FunctionBuilder {
         // building sources and function:
         if (foundComponents.size() == 1) {
             String possibleFunction = FunctionParser.parsedOperation(
-                    foundComponents.get(0),
+                    foundComponents.get( 0 ),
                     0
             );
             if (possibleFunction != null && possibleFunction.length() > 1) {
@@ -179,7 +179,7 @@ public class FunctionBuilder {
                     if (OperationType.instance(oi).getOperator().toLowerCase().equals(possibleFunction.toLowerCase())) {
                         typeId = oi;
                         List<String> parameters = FunctionParser.findParametersIn(
-                                foundComponents.get(0),
+                                foundComponents.get( 0 ),
                                 possibleFunction.length()
                         );
                         for (String p : parameters) {
@@ -191,13 +191,13 @@ public class FunctionBuilder {
                 }
             }
             //---
-            String component = FunctionParser.unpackAndCorrect(foundComponents.get(0));
+            String component = FunctionParser.unpackAndCorrect(foundComponents.get( 0 ));
             boolean possiblyInverseInput = (component.length()>1 && component.toLowerCase().substring(0,2).equals("-i"));
             if (!possiblyInverseInput &&
                     (
-                            ((component.charAt(0) <= '9') && (component.charAt(0) >= '0')) ||
-                                    (component.charAt(0) == '-') ||
-                                    (component.charAt(0) == '+')
+                            ((component.charAt( 0 ) <= '9') && (component.charAt( 0 ) >= '0')) ||
+                                    (component.charAt( 0 ) == '-') ||
+                                    (component.charAt( 0 ) == '+')
                     )
                 ) {
                 if (
@@ -215,8 +215,8 @@ public class FunctionBuilder {
             }
             if (
                     possiblyInverseInput ||
-                            (component.charAt(0) == 'i') ||
-                            (component.charAt(0) == 'I') ||
+                            (component.charAt( 0 ) == 'i') ||
+                            (component.charAt( 0 ) == 'I') ||
                             (
                                     component.contains("[") && component.contains("]")
                                             && component.matches(".[0-9]+.")
@@ -236,9 +236,9 @@ public class FunctionBuilder {
         } else {// More than one component left:
             if (OperationType.instance(typeId).getOperator().equals("x") || OperationType.instance(typeId).getOperator().equals("<") || OperationType.instance(typeId).getOperator().equals(">")) {
                 foundComponents = _rebindPairwise(foundComponents, typeId);
-            } else if (OperationType.instance(typeId).getOperator().equals(",") && foundComponents.get(0).startsWith("[")) {
+            } else if (OperationType.instance(typeId).getOperator().equals(",") && foundComponents.get( 0 ).startsWith("[")) {
 
-                foundComponents.set(0, foundComponents.get(0).substring(1));
+                foundComponents.set(0, foundComponents.get( 0 ).substring(1));
                 String[] splitted;
                 if (foundComponents.get(foundComponents.size() - 1).contains("]")) {
                     int offset = 1;
@@ -249,7 +249,7 @@ public class FunctionBuilder {
                         splitted = foundComponents.get(foundComponents.size() - 1).split("]");
                     }
                     if (splitted.length > 1) {
-                        splitted = new String[]{splitted[0], foundComponents.get(foundComponents.size() - 1).substring(splitted[0].length() + offset)};
+                        splitted = new String[]{splitted[ 0 ], foundComponents.get(foundComponents.size() - 1).substring(splitted[ 0 ].length() + offset)};
                         foundComponents.remove(foundComponents.size() - 1);
                         foundComponents.addAll(Arrays.asList(splitted));
                     }
@@ -260,7 +260,7 @@ public class FunctionBuilder {
                 sources.add(newCore2);
             }
             sources.trimToSize();
-            if (sources.size() == 1) return sources.get(0);
+            if (sources.size() == 1) return sources.get( 0 );
             if (sources.size() == 0) return null;
             ArrayList<Function> newVariable = new ArrayList<>();
             for (Function source : sources) {
@@ -279,9 +279,9 @@ public class FunctionBuilder {
      */
     private static List<String> _rebindPairwise(List<String> components, int f_id) {
         if (components.size() > 2) {
-            String newComponent = "(" + components.get(0) + OperationType.instance(f_id).getOperator() + components.get(1) + ")";
-            components.remove(components.get(0));
-            components.remove(components.get(0));
+            String newComponent = "(" + components.get( 0 ) + OperationType.instance(f_id).getOperator() + components.get(1) + ")";
+            components.remove(components.get( 0 ));
+            components.remove(components.get( 0 ));
             components.add(0, newComponent);
             components = _rebindPairwise(components, f_id);
         }

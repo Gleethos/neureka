@@ -11,10 +11,10 @@ public final class SimpleD3Configuration extends AbstractNDC //:= IMMUTABLE
             int[] shape,
             int[] translation
     ) {
-        _shape1 = shape[0];
+        _shape1 = shape[ 0 ];
         _shape2 = shape[1];
         _shape3 = shape[2];
-        _translation1 = translation[0];
+        _translation1 = translation[ 0 ];
         _translation2 = translation[1];
         _translation3 = translation[2];
     }
@@ -139,7 +139,7 @@ public final class SimpleD3Configuration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int i_of_idx(int[] idx) {
-        return idx[0] * _translation1 +
+        return idx[ 0 ] * _translation1 +
                 idx[1] * _translation2 +
                 idx[2] * _translation3;
     }

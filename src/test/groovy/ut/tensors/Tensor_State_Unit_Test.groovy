@@ -18,7 +18,7 @@ class Tensor_State_Unit_Test extends Specification
             t.value32()==null;
         when : t.setIsOutsourced(false);
         then :
-            t.value64()!=null;
+            t.value64() != null;
             t.isVirtual();
         when : t = new Tsr(new int[]{2}, 5);
         then : !t.isOutsourced();
@@ -30,7 +30,7 @@ class Tensor_State_Unit_Test extends Specification
             t.value32()==null;
         when : t.setIsOutsourced(false);
         then :
-            t.value64()!=null;
+            t.value64() != null;
             t.isVirtual();
     }
 

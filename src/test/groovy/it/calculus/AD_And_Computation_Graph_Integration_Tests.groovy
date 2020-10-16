@@ -42,7 +42,7 @@ class AD_And_Computation_Graph_Integration_Tests extends Specification{
             assert !na.lock().isLocked()
 
             assert !nb.isLeave()
-            assert nb.function()!=null
+            assert nb.function() != null
             assert nb.mode() == -1
             assert nb.size()==0
             assert nb.nid()!=1
@@ -70,9 +70,9 @@ class AD_And_Computation_Graph_Integration_Tests extends Specification{
 
         and :
             for (int i = 0; i < n.parents.length; i++) {
-                assert n.parents[i].payload != null
+                assert n.parents[ i ].payload != null
                 boolean[] exists = {false}
-                n.parents[i].forEachTarget({ t -> exists[0] = true })
+                n.parents[ i ].forEachTarget({ t -> exists[0] = true })
                 assert exists[0]
             }
 

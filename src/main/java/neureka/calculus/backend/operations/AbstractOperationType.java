@@ -151,13 +151,13 @@ public abstract class AbstractOperationType implements OperationType
             public ExecutionCall instantiateNewTensorsForExecutionIn(ExecutionCall call) {
                 Tsr[] tensors = call.getTensors();
                 Device device = call.getDevice();
-                if ( tensors[0] == null ) // Creating a new tensor:
+                if ( tensors[ 0 ] == null ) // Creating a new tensor:
                 {
                     int[] shp = tensors[1].getNDConf().shape();
                     Tsr output = new Tsr( shp, 0.0 );
                     output.setIsVirtual(false);
                     device.add(output);
-                    tensors[0] = output;
+                    tensors[ 0 ] = output;
                 }
                 return call;
             }
@@ -171,13 +171,13 @@ public abstract class AbstractOperationType implements OperationType
                                 .getDevice()
                                 .getExecutor()
                                 .threaded (
-                                        call.getTensor(0).size(),
+                                        call.getTensor( 0 ).size(),
                                         ( start, end ) -> {
                                             for ( int i = start; i < end; i++ ) {
                                                 for ( int ii = 0; ii < inputs.length; ii++ ) {
-                                                    inputs[ii] = call.getTensor(1+ii).value64(i);
+                                                    inputs[ii] = call.getTensor(1+ii).value64( i );
                                                 }
-                                                call.getTensor(0).value64()[i] = f.call(inputs);
+                                                call.getTensor( 0 ).value64()[ i ] = f.call(inputs);
                                             }
                                         }
                                 );

@@ -16,7 +16,7 @@ __kernel void operator_template(
         int prv_src2_cfg[32];
         _cfg_of_cfg(src2_conf, prv_src2_cfg, rank);
 
-        unsigned int i = get_global_id(0);
+        unsigned int i = get_global_id( 0 );
 
         if(d<0){
 //-=<OPERATION>=-//

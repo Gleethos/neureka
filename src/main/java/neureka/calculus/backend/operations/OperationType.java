@@ -21,7 +21,7 @@ public interface OperationType
     }
 
     static AbstractOperationType[] ALL() {
-        return OperationContext.instance().getRegister().toArray(new AbstractOperationType[0]);
+        return OperationContext.instance().getRegister().toArray(new AbstractOperationType[ 0 ]);
     }
 
     static int COUNT() {
@@ -133,7 +133,7 @@ public interface OperationType
      * @param src The child nodes of the Function node to which this very OperationType belongs.
      * @return The result of the calculation.
      */
-    double calculate(double[] inputs, int j, int d, List<Function> src);
+    double calculate( double[] inputs, int j, int d, List<Function> src );
 
 
     /**
@@ -156,23 +156,23 @@ public interface OperationType
 
         public static Tsr<?>[] without(Tsr<?>[] tsrs, int index) {
             Tsr<?>[] newTsrs = new Tsr[tsrs.length - 1];
-            for (int i = 0; i < newTsrs.length; i++) newTsrs[i] = tsrs[i + ((i < index) ? 0 : 1)];
+            for (int i = 0; i < newTsrs.length; i++) newTsrs[ i ] = tsrs[i + ((i < index) ? 0 : 1)];
             return newTsrs;
         }
 
         public static Tsr<?>[] offsetted(Tsr<?>[] tsrs, int offset) {
             Tsr<?>[] newTsrs = new Tsr[tsrs.length - offset];
-            newTsrs[0] = Tsr.Create.newTsrLike(tsrs[1]);
-            if (!tsrs[1].has(GraphNode.class) && tsrs[1] != tsrs[0]) {//Deleting intermediate results!
+            newTsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[1]);
+            if (!tsrs[1].has(GraphNode.class) && tsrs[1] != tsrs[ 0 ]) {//Deleting intermediate results!
                 tsrs[1].delete();
                 tsrs[1] = null;
             }
-            if (!tsrs[2].has(GraphNode.class) && tsrs[2] != tsrs[0]) {//Deleting intermediate results!
+            if (!tsrs[2].has(GraphNode.class) && tsrs[2] != tsrs[ 0 ]) {//Deleting intermediate results!
                 tsrs[2].delete();
                 tsrs[2] = null;
             }
             System.arraycopy(tsrs, 1 + offset, newTsrs, 1, tsrs.length - 1 - offset);
-            newTsrs[1] = tsrs[0];
+            newTsrs[1] = tsrs[ 0 ];
             return newTsrs;
         }
 

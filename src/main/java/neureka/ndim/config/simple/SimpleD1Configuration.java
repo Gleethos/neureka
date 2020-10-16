@@ -20,7 +20,7 @@ public final class SimpleD1Configuration extends AbstractNDC //:= IMMUTABLE
             int[] shape,
             int[] translation
     ){
-        return _cached(new SimpleD1Configuration(shape[0], translation[0]));
+        return _cached(new SimpleD1Configuration(shape[ 0 ], translation[ 0 ]));
     }
 
     private SimpleD1Configuration(
@@ -98,7 +98,7 @@ public final class SimpleD1Configuration extends AbstractNDC //:= IMMUTABLE
     }
     @Override
     public int i_of_idx(int[] idx) {
-        return idx[0] * _translation_and_idxmap;
+        return idx[ 0 ] * _translation_and_idxmap;
     }
 
 

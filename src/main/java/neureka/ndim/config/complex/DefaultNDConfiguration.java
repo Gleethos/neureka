@@ -71,7 +71,7 @@ public final class DefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int shape(int i) {
-        return _shape[i];
+        return _shape[ i ];
     }
 
     @Override
@@ -81,7 +81,7 @@ public final class DefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int idxmap(int i) {
-        return _idxmap[i];
+        return _idxmap[ i ];
     }
 
     @Override
@@ -91,7 +91,7 @@ public final class DefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int translation(int i) {
-        return _translation[i];
+        return _translation[ i ];
     }
 
     @Override
@@ -101,7 +101,7 @@ public final class DefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int spread(int i) {
-        return _spread[i];
+        return _spread[ i ];
     }
 
     @Override
@@ -111,7 +111,7 @@ public final class DefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int offset(int i) {
-        return _offset[i];
+        return _offset[ i ];
     }
 
 
@@ -119,7 +119,7 @@ public final class DefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int i_of_i(int i){
-        return i_of_idx(idx_of_i(i));
+        return i_of_idx(idx_of_i( i ));
     }
 
     @Override

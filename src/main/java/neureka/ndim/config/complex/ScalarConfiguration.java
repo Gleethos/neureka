@@ -24,7 +24,7 @@ public final class ScalarConfiguration extends AbstractNDC //:= IMMUTABLE
             // spread, does not matter!
             int[] offset
     ) {
-        return _cached(new ScalarConfiguration(shape[0], offset[0]));
+        return _cached(new ScalarConfiguration(shape[ 0 ], offset[ 0 ]));
     }
 
     private ScalarConfiguration(
@@ -103,7 +103,7 @@ public final class ScalarConfiguration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int i_of_idx(int[] idx) {
-        return idx[0] + _offset;
+        return idx[ 0 ] + _offset;
     }
 
 

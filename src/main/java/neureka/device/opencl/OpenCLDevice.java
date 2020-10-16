@@ -61,12 +61,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
         public cl_value value;
 
         @Override
-        public void update(Tsr oldOwner, Tsr newOwner) {
+        public void update( Tsr oldOwner, Tsr newOwner ) {
             // Update not needed....
         }
     }
 
-    private final Set<Tsr> _tensors = Collections.newSetFromMap(new WeakHashMap<Tsr, Boolean>());
+    private final Set<Tsr> _tensors = Collections.newSetFromMap( new WeakHashMap<Tsr, Boolean>() );
 
     private final cl_device_id _did;
 
@@ -90,7 +90,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * @param platform
      * @param did
      */
-    private OpenCLDevice(OpenCLPlatform platform, cl_device_id did)
+    private OpenCLDevice( OpenCLPlatform platform, cl_device_id did )
     {
         _did = did;
         _platform = platform;
@@ -110,9 +110,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
         //}));
     }
 
-    public static OpenCLDevice instance(OpenCLPlatform platform, cl_device_id did){
-        if(!platform.has(did)) platform.put(did,  new OpenCLDevice(platform, did));
-        return platform.get(did);
+    public static OpenCLDevice instance( OpenCLPlatform platform, cl_device_id did ) {
+        if( !platform.has( did ) ) platform.put( did,  new OpenCLDevice( platform, did ) );
+        return platform.get( did );
     }
 
     /**
@@ -120,65 +120,67 @@ public class OpenCLDevice extends AbstractDevice<Number>
      */
     @Override
     public synchronized Collection<Tsr<Number>> tensors() {
-        Collection<Collection<Tsr>> collection = Collections.singleton(_tensors);
+        Collection<Collection<Tsr>> collection = Collections.singleton( _tensors );
         Collection<Tsr<Number>> extracted = new ArrayList<>();
-        collection.forEach(c -> c.forEach(t->{ if (t != null) extracted.add(t); }));
+        collection.forEach( c -> c.forEach( t -> { if ( t != null ) extracted.add( t ); }));
         return extracted;
     }
 
     @Override
     public void dispose() {
-        _tensors.forEach(this::get);
-        clFinish(_queue);
+        _tensors.forEach( this::get );
+        clFinish( _queue );
     }
 
     @Override
     public Device<Number> get( Tsr<Number> tensor ) {
-        double[] value = ( tensor.isVirtual() ) ? _value64f(tensor.find(cl_tsr.class), 1, 0) : value64f(tensor);
-        rmv(tensor);
-        tensor.forComponent(Tsr.class, this::get);
-        tensor.setValue(value);
+        double[] value = ( tensor.isVirtual() )
+                ? _value64f( tensor.find( cl_tsr.class ), 1, 0 )
+                : value64f( tensor );
+        rmv( tensor );
+        tensor.forComponent( Tsr.class, this::get );
+        tensor.setValue( value );
         return this;
     }
 
     @Override
-    public Device<Number> add(Tsr<Number> tensor) {
+    public Device<Number> add( Tsr<Number> tensor ) {
         Tsr root = null;
         if ( tensor.has( Relation.class ) ) root = tensor.find( Relation.class ).findRootTensor();
         if ( root != null ) add( tensor, root );
-        else _add(tensor, null);
+        else _add( tensor, null );
         return this;
     }
 
     @Override
-    public Device<Number> add(Tsr<Number> tensor, Tsr<Number> parent) {
-        if (!parent.isOutsourced()) throw new IllegalStateException("Data parent is not outsourced!");
-        _add(tensor, parent.find(cl_tsr.class));
-        _tensors.add(tensor);
-        tensor.add(this);
+    public Device<Number> add( Tsr<Number> tensor, Tsr<Number> parent ) {
+        if ( !parent.isOutsourced() ) throw new IllegalStateException( "Data parent is not outsourced!" );
+        _add( tensor, parent.find( cl_tsr.class ) );
+        _tensors.add( tensor );
+        tensor.add( this );
         return this;
     }
 
-    private void _add(Tsr<Number> tensor, cl_tsr parent)
+    private void _add( Tsr<Number> tensor, cl_tsr parent )
     {
         cl_tsr newClt = new cl_tsr();
         {
             final cl_mem clConfMem = newClt.config.data;
-            _cleaning(newClt.config, () ->clReleaseMemObject(clConfMem));
+            _cleaning( newClt.config, () -> clReleaseMemObject( clConfMem ) );
         }
         //VALUE TRANSFER:
-        if (parent == null) {
+        if ( parent == null ) {
             newClt.value = new cl_value();
-            _store(tensor, newClt, 1);
-            if (tensor.rqsGradient() && tensor.has(Tsr.class)) {
-                this.add(tensor.find(Tsr.class));
+            _store( tensor, newClt, 1 );
+            if ( tensor.rqsGradient() && tensor.has( Tsr.class ) ) {
+                this.add( tensor.find( Tsr.class ) );
             }
             {
                 final cl_mem clValMem = newClt.value.data;
                 cl_event clValEvent = newClt.value.event;
-                _cleaning(newClt.value, () -> {
-                    if(clValEvent!=null) clWaitForEvents(1, new cl_event[]{clValEvent});
-                    clReleaseMemObject(clValMem);//Removing value.. from device!
+                _cleaning( newClt.value, () -> {
+                    if(clValEvent!=null) clWaitForEvents( 1, new cl_event[]{ clValEvent } );
+                    clReleaseMemObject( clValMem );//Removing value.. from device!
                 });
             }
         } else {//tensor is a subset tensor of parent:
@@ -207,7 +209,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 null
         );
         cl_mem[] memos;
-        memos = new cl_mem[]{newClt.value.data, newClt.config.data};
+        memos = new cl_mem[]{ newClt.value.data, newClt.config.data };
 
         clEnqueueMigrateMemObjects(
                 _queue,
@@ -219,24 +221,24 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 null
         );
 
-        _tensors.add(tensor);
+        _tensors.add( tensor );
 
-        tensor.add(newClt);
-        tensor.add(this);
+        tensor.add( newClt );
+        tensor.add( this );
 
-        if (tensor.isVirtual()) {
-            double value = tensor.value64(0);
-            tensor.setIsOutsourced(true);
+        if ( tensor.isVirtual() ) {
+            double value = tensor.value64( 0 );
+            tensor.setIsOutsourced( true );
             execute(
                 new ExecutionCall(
                         this,
-                        new Tsr[]{tensor, (Tsr) new Tsr(value).add(this)},
+                        new Tsr[]{ tensor, (Tsr) new Tsr( value ).add( this ) },
                         -1,
-                        OperationType.instance("<")
+                        OperationType.instance( "<" )
                 )
             );
-        } else tensor.setIsOutsourced(true);
-        tensor.asType(F32.class);
+        } else tensor.setIsOutsourced( true );
+        tensor.asType( F32.class );
     }
 
     /**
@@ -249,7 +251,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * @return The truth value of the fact that the provided tensor is on this device.
      */
     @Override
-    public boolean has(Tsr<Number> tensor) {
+    public boolean has( Tsr<Number> tensor ) {
         return _tensors.contains(tensor);
     }
 
@@ -355,7 +357,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 list.add(event);
             }
         }
-        return list.toArray(new cl_event[0]);
+        return list.toArray(new cl_event[ 0 ]);
     }
 
     @Override
@@ -449,13 +451,13 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     public double value64f(Tsr<Number> tensor, int index){
         cl_tsr clt = tensor.find(cl_tsr.class);
-        return _value64f(clt, 1, index)[0];
+        return _value64f(clt, 1, index)[ 0 ];
     }
 
     @Override
     public float value32f(Tsr<Number> tensor, int index){
         cl_tsr clt = tensor.find(cl_tsr.class);
-        return _value32f(clt, 1, index)[0];
+        return _value32f(clt, 1, index)[ 0 ];
     }
 
     public KernelBuilder getKernel(ExecutionCall call){
@@ -465,7 +467,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected void _enqueue(Tsr[] tsrs, int d, OperationType type)
+    protected void _execute(Tsr[] tsrs, int d, OperationType type)
     {
         ExecutionCall<OpenCLDevice> call =
                 new ExecutionCall<OpenCLDevice>(
@@ -474,7 +476,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                         d,
                         type
                 );
-        tsrs[0].setIsVirtual(false);
+        tsrs[ 0 ].setIsVirtual(false);
         call.getImplementation().getExecutor(CLExecutor.class).getExecution().run(call);
     }
 
@@ -634,7 +636,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
          * @return The value64
          */
         public static int getInt(cl_device_id device, int paramName) {
-            return getInts(device, paramName, 1)[0];
+            return getInts(device, paramName, 1)[ 0 ];
         }
 
         /**
@@ -659,7 +661,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
          * @return The value64
          */
         public static long getLong(cl_device_id device, int paramName) {
-            return getLongs(device, paramName, 1)[0];
+            return getLongs(device, paramName, 1)[ 0 ];
         }
 
         /**
@@ -689,7 +691,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             clGetDeviceInfo(device, paramName, 0, null, size);
 
             // Create a buffer of the appropriate size and fill it with the info
-            byte[] buffer = new byte[(int) size[0]];
+            byte[] buffer = new byte[(int) size[ 0 ]];
             clGetDeviceInfo(device, paramName, buffer.length, Pointer.to(buffer), null);
 
             // Create a string from the buffer (excluding the trailing \0 byte)
@@ -709,7 +711,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             clGetPlatformInfo(platform, paramName, 0, null, size);
 
             // Create a buffer of the appropriate size and fill it with the info
-            byte[] buffer = new byte[(int) size[0]];
+            byte[] buffer = new byte[(int) size[ 0 ]];
             clGetPlatformInfo(platform, paramName, buffer.length, Pointer.to(buffer), null);
 
             // Create a string from the buffer (excluding the trailing \0 byte)
@@ -724,7 +726,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
          * @return The value64
          */
         public static long getSize(cl_device_id device, int paramName) {
-            return getSizes(device, paramName, 1)[0];
+            return getSizes(device, paramName, 1)[ 0 ];
         }
 
         /**
@@ -745,11 +747,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
             long[] values = new long[numValues];
             if (Sizeof.size_t == 4) {
                 for (int i = 0; i < numValues; i++) {
-                    values[i] = buffer.getInt(i * Sizeof.size_t);
+                    values[ i ] = buffer.getInt(i * Sizeof.size_t);
                 }
             } else {
                 for (int i = 0; i < numValues; i++) {
-                    values[i] = buffer.getLong(i * Sizeof.size_t);
+                    values[ i ] = buffer.getLong(i * Sizeof.size_t);
                 }
             }
             return values;

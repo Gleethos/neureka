@@ -15,7 +15,7 @@ public class PendingError {
 
     public void accumulate( Tsr error ) {
         FunctionBuilder.build(
-                "I[0]<-(I[0]+I[1])", false
+                "I[ 0 ]<-(I[ 0 ]+I[1])", false
         ).call( new Tsr[]{ _error, error } );
         _toBeReceived--;
     }

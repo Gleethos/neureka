@@ -36,7 +36,7 @@ public class Product extends AbstractOperationType {
         setStringifier(
                 children -> {
                     String expression = String.join( ", ", children );
-                    if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                    if (expression.charAt( 0 ) == '(' && expression.charAt(expression.length() - 1) == ')') {
                         return "prodJs" + expression;
                     }
                     return "prodJs" + "(" + expression + ")";
@@ -53,26 +53,26 @@ public class Product extends AbstractOperationType {
             Tsr alternative = null;
             if (tsrs.length > 3) {
                 if (d < 0) {
-                    Tsr[] reduction = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
+                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[1], tsrs[2]};
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
-                    tsrs[0] = reduction[0];
+                    tsrs[ 0 ] = reduction[ 0 ];
 
                     reduction = Utility.offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
-                    tsrs[0] = reduction[0];
+                    tsrs[ 0 ] = reduction[ 0 ];
                 } else {
                     Tsr[] reduction = Utility.without(tsrs, 1+d);
                     if ( reduction.length > 2 ) {
-                        reduction[0] = ( reduction[0] == null ) ? Tsr.Create.newTsrLike(tsrs[1]) : reduction[0];
+                        reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tsrs[1]) : reduction[ 0 ];
                         alternative = goDeeperWith.apply(
                                 new ExecutionCall<>( device, reduction, -1, OperationType.instance("*") )
                         );
-                        tsrs[0] = reduction[0];
-                    } else tsrs[0] = reduction[1];
+                        tsrs[ 0 ] = reduction[ 0 ];
+                    } else tsrs[ 0 ] = reduction[1];
                 }
                 return alternative;
             } else {
@@ -131,13 +131,13 @@ public class Product extends AbstractOperationType {
                         call -> {
                             Tsr[] tsrs = call.getTensors();
                             Device device = call.getDevice();
-                            if ( tsrs[0] == null ) // Creating a new tensor:
+                            if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                             {
                                 int[] shp = tsrs[1].getNDConf().shape();
                                 Tsr output = new Tsr( shp, 0.0 );
                                 output.setIsVirtual(false);
                                 device.add(output);
-                                tsrs[0] = output;
+                                tsrs[ 0 ] = output;
                             }
                             return call;
                         }
@@ -151,10 +151,10 @@ public class Product extends AbstractOperationType {
                                 call  ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor(0).size(),
+                                                        call.getTensor( 0 ).size(),
                                                         ( start, end ) ->
                                                                 Broadcast.broadcast (
-                                                                        call.getTensor(0),
+                                                                        call.getTensor( 0 ),
                                                                         call.getTensor(1),
                                                                         call.getTensor(2),
                                                                         call.getDerivativeIndex(),
@@ -168,13 +168,13 @@ public class Product extends AbstractOperationType {
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = ( call.getTensor(0) != null ) ? 0 : 1;
-                                    int gwz = ( call.getTensor(0) != null ) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    int offset = ( call.getTensor( 0 ) != null ) ? 0 : 1;
+                                    int gwz = ( call.getTensor( 0 ) != null ) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor(offset))
                                             .pass(call.getTensor(offset + 1))
                                             .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getTensor( 0 ).rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
                                 },
@@ -225,7 +225,7 @@ public class Product extends AbstractOperationType {
                             if ( this.supports(Convolution.class) )
                             {
                                 Function invX = FunctionBuilder.build(
-                                        "I[0]" + getOperator() + ">>I[1]" + getOperator() + ">>I[2]",
+                                        "I[ 0 ]" + getOperator() + ">>I[1]" + getOperator() + ">>I[2]",
                                         false
                                 );
                                 Tsr deriv = f.derive(inputs, d);
@@ -249,13 +249,13 @@ public class Product extends AbstractOperationType {
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();
-                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[1].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
                         output.setIsVirtual(false);
                         device.add(output);
-                        tsrs[0] = output;
+                        tsrs[ 0 ] = output;
                     }
                     return call;
                 }
@@ -268,10 +268,10 @@ public class Product extends AbstractOperationType {
                                 call  ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor(0).size(),
+                                                        call.getTensor( 0 ).size(),
                                                         ( start, end ) ->
                                                                 Activation.activate (
-                                                                        call.getTensor(0),
+                                                                        call.getTensor( 0 ),
                                                                         start, end,
                                                                         activationCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
@@ -282,12 +282,12 @@ public class Product extends AbstractOperationType {
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor(offset))
                                             .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getTensor( 0 ).rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
                                 },
@@ -314,18 +314,18 @@ public class Product extends AbstractOperationType {
             double prod = 1;
             boolean nothingDone = true;
             for ( int Ii = 0; Ii < inputs.length; Ii++ ) {
-                prod *= src.get(0).call( inputs, Ii );
+                prod *= src.get( 0 ).call( inputs, Ii );
                 nothingDone = false;
             }
-            if ( nothingDone ) return src.get(0).call(inputs, j);
+            if ( nothingDone ) return src.get( 0 ).call(inputs, j);
             return prod;
         } else {
             double u, ud, v, vd;
-            u = src.get(0).call( inputs, 0 );
-            ud = src.get(0).derive(inputs, d, 0);
+            u = src.get( 0 ).call( inputs, 0 );
+            ud = src.get( 0 ).derive(inputs, d, 0);
             for (int ji = 1; ji < inputs.length; ji++) {
-                v = src.get(0).call( inputs, ji );
-                vd = src.get(0).derive( inputs, d, ji );
+                v = src.get( 0 ).call( inputs, ji );
+                vd = src.get( 0 ).derive( inputs, d, ji );
                 ud = u * vd + v * ud;
                 u *= v;
             }
@@ -339,18 +339,18 @@ public class Product extends AbstractOperationType {
             double prod = 1;
             boolean nothingDone = true;
             for ( int i = 0; i < inputs.length; i++ ) {
-                prod *= src.get(0).call(inputs, i);
+                prod *= src.get( 0 ).call(inputs, i);
                 nothingDone = false;
             }
-            if ( nothingDone ) return src.get(0).call(inputs);
+            if ( nothingDone ) return src.get( 0 ).call(inputs);
             return prod;
         } else {
             double u, ud, v, vd;
-            u = src.get(0).call(inputs, 0);
-            ud = src.get(0).derive(inputs, d, 0);
+            u = src.get( 0 ).call(inputs, 0);
+            ud = src.get( 0 ).derive(inputs, d, 0);
             for ( int j = 1; j < inputs.length; j++ ) {
-                v = src.get(0).call(inputs, j);
-                vd = src.get(0).derive(inputs, d, j);
+                v = src.get( 0 ).call(inputs, j);
+                vd = src.get( 0 ).derive(inputs, d, j);
                 ud = u * vd + v * ud;
                 u *= v;
             }

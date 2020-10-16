@@ -37,19 +37,19 @@ public abstract class AbstractBaseOperationTypeImplementation<FinalType> impleme
 
         Consumer<Tsr>[] rollbacks = new Consumer[tsrs.length];
         for (int i=0; i<tsrs.length; i++) {
-            if ( tsrs[i] != null && !tsrs[i].isOutsourced() ) {
-                device.add(tsrs[i]);
-                rollbacks[i] = device::get;
+            if ( tsrs[ i ] != null && !tsrs[ i ].isOutsourced() ) {
+                device.add(tsrs[ i ]);
+                rollbacks[ i ] = device::get;
             }
-            else rollbacks[i] = t -> {};
+            else rollbacks[ i ] = t -> {};
         }
 
         /* For the following operations with the correct arity RJAgent should do: ...
-            case ("s" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
-            case ("d" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
-            case ("p" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
-            case ("m" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[0]};
-            case ">": tsrs = new Tsr[]{tsrs[1], tsrs[0]};
+            case ("s" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[ 0 ]};
+            case ("d" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[ 0 ]};
+            case ("p" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[ 0 ]};
+            case ("m" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[ 0 ]};
+            case ">": tsrs = new Tsr[]{tsrs[1], tsrs[ 0 ]};
          */
         /*
             Below is the core lambda of recursive preprocessing
@@ -65,9 +65,9 @@ public abstract class AbstractBaseOperationTypeImplementation<FinalType> impleme
 
 
         for ( int i = 0; i < tsrs.length; i++ ) {
-            if ( tsrs[i] != null && !tsrs[i].isUndefined() ) rollbacks[i].accept(tsrs[i]);
+            if ( tsrs[ i ] != null && !tsrs[ i ].isUndefined() ) rollbacks[ i ].accept(tsrs[ i ]);
         }
-        return tsrs[0];
+        return tsrs[ 0 ];
     }
 
 

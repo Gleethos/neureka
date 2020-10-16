@@ -11,9 +11,9 @@ public final class SimpleD2Configuration extends AbstractNDC //:= IMMUTABLE
             int[] shape,
             int[] translation
     ) {
-        _shape1 = shape[0];
+        _shape1 = shape[ 0 ];
         _shape2 = shape[1];
-        _translation1 = translation[0];
+        _translation1 = translation[ 0 ];
         _translation2 = translation[1];
     }
 
@@ -111,9 +111,9 @@ public final class SimpleD2Configuration extends AbstractNDC //:= IMMUTABLE
         if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){
             idx[1] += i / _translation2;
             i %= _translation2;
-            idx[0] += i / _translation1;
+            idx[ 0 ] += i / _translation1;
         } else {
-            idx[0] += i / _translation1;
+            idx[ 0 ] += i / _translation1;
             i %= _translation1;
             idx[1] += i / _translation2;
         }
@@ -123,7 +123,7 @@ public final class SimpleD2Configuration extends AbstractNDC //:= IMMUTABLE
     @Override
     public int i_of_idx(int[] idx) {
         int i = 0;
-        i += idx[0] * _translation1;
+        i += idx[ 0 ] * _translation1;
         i += idx[1] * _translation2;
         return i;
     }

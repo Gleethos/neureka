@@ -25,7 +25,7 @@ public class Identity extends AbstractOperationType
         setStringifier(
                 children -> {
                     String expression = String.join( ", ", children );
-                    if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                    if (expression.charAt( 0 ) == '(' && expression.charAt(expression.length() - 1) == ')') {
                         return "idy" + expression;
                     }
                     return "idy" + "(" + expression + ")";
@@ -59,7 +59,7 @@ public class Identity extends AbstractOperationType
         .setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
-                    int offset = ( tsrs[0] == null ) ? 1 : 0;
+                    int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                     return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                 }
         );
@@ -71,10 +71,10 @@ public class Identity extends AbstractOperationType
                                 call  ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor(0).size(),
+                                                        call.getTensor( 0 ).size(),
                                                         ( start, end ) ->
                                                                 Activation.activate (
-                                                                        call.getTensor(0),
+                                                                        call.getTensor( 0 ),
                                                                         start, end,
                                                                         activationCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
@@ -85,14 +85,14 @@ public class Identity extends AbstractOperationType
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     // Drain tensor needs to be 'actual'! :
                                     if(!call.getTensor(offset + 1).isVirtual()) call.getTensor(offset).setIsVirtual(false);
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor(offset))
                                             .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getTensor( 0 ).rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
                                 },
@@ -132,13 +132,13 @@ public class Identity extends AbstractOperationType
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();
-                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[1].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
                         output.setIsVirtual(false);
                         device.add(output);
-                        tsrs[0] = output;
+                        tsrs[ 0 ] = output;
                     }
                     return call;
                 }
@@ -149,13 +149,13 @@ public class Identity extends AbstractOperationType
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -> {
-                                    double value = call.getTensor(0).value64(2);
+                                    double value = call.getTensor( 0 ).value64(2);
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor(0).size(),
+                                                        call.getTensor( 0 ).size(),
                                                         (start, end) ->
                                                                 Scalarization.scalarize(
-                                                                        call.getTensor(0), start, end,
+                                                                        call.getTensor( 0 ), start, end,
                                                                         scalarizationCreator.create(
                                                                                 call.getTensors(), value, call.getDerivativeIndex()
                                                                         )
@@ -168,12 +168,12 @@ public class Identity extends AbstractOperationType
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    Tsr t = call.getTensor(0);
+                                    Tsr t = call.getTensor( 0 );
                                     int gwz = t.size();
                                     call.getDevice().getKernel(call)
                                             .pass(t)
                                             .pass(t)
-                                            .pass((float)call.getTensor(1).value64(0))
+                                            .pass((float)call.getTensor(1).value64( 0 ))
                                             .pass(t.rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
@@ -191,11 +191,11 @@ public class Identity extends AbstractOperationType
     }
 
     @Override
-    public double calculate(double[] inputs, int j, int d, List<Function> src) {
+    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
         return calculate(
-                src.get(0).call( inputs, j ),
+                src.get( 0 ).call( inputs, j ),
                 d >= 0
-        ) * ( ( d < 0 ) ? 1 : src.get(0).derive( inputs, d, j ) );
+        ) * ( ( d < 0 ) ? 1 : src.get( 0 ).derive( inputs, d, j ) );
     }
 
     @Contract(pure = true)

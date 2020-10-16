@@ -58,7 +58,7 @@ public class Cache
             if ( t.has(GraphNode.class) ) t.find(GraphNode.class).obtainLocking(lock);
             else new GraphNode( function, lock, ()->t );
         }
-        GraphNode<Object> node = inputs[0].find(GraphNode.class);
+        GraphNode<Object> node = inputs[ 0 ].find(GraphNode.class);
         Tsr<Object> result = null;
 
         if ( !function.getOperation().isInline() ) result = _get(inputs, d, j);
@@ -76,7 +76,7 @@ public class Cache
         GraphLock lock = null;
         long key = 0;
         for( int i = 0; i < tsrs.length; i++ ) {
-            GraphNode<Object> node = tsrs[i].find( GraphNode.class );
+            GraphNode<Object> node = tsrs[ i ].find( GraphNode.class );
             lock = node.lock();
             key += ( (i+1) * node.nid() ) + _keyed(d) * 31 + _keyed(j);
         }

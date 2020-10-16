@@ -53,7 +53,7 @@ public class UI8 extends AbstractNumericType<Short, short[]>
         short[] data = new short[size];
         for ( int i=0; i<size; i++ ) {
             stream.readFully(_data);
-            data[i] = convert(_data);
+            data[ i ] = convert(_data);
         }
         return data;
     }

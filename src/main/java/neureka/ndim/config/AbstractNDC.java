@@ -115,7 +115,7 @@ public abstract class AbstractNDC implements NDConfiguration
         NDConfiguration ndc = null;
         if ( isSimple ) {
             if (shape.length == 1) {
-                if(shape[0]==1) ndc = SimpleScalarConfiguration.construct();
+                if(shape[ 0 ]==1) ndc = SimpleScalarConfiguration.construct();
                 else ndc = SimpleD1Configuration.construct(shape, translation);
             } else if (shape.length == 2) {
                 ndc = SimpleD2Configuration.construct(shape, translation);
@@ -124,7 +124,7 @@ public abstract class AbstractNDC implements NDConfiguration
             } else ndc = SimpleDefaultNDConfiguration.construct(shape, translation);
         } else {
             if (shape.length == 1) {
-                if(shape[0]==1) ndc = ScalarConfiguration.construct(shape, offset);
+                if(shape[ 0 ]==1) ndc = ScalarConfiguration.construct(shape, offset);
                 else ndc = D1Configuration.construct(shape, translation, idxmap, spread, offset);
             } else if (shape.length == 2) {
                 ndc = D2Configuration.construct(shape, translation, idxmap, spread, offset);
@@ -157,11 +157,11 @@ public abstract class AbstractNDC implements NDConfiguration
             int[] offset
     ) {
         int[] newTranslation = Utility.newTlnOf(shape);
-        int[] newSpread = new int[shape.length];
+        int[] newSpread = new int[ shape.length ];
         Arrays.fill(newSpread, 1);
         return  Arrays.equals(translation, newTranslation) &&
                 Arrays.equals(idxmap, newTranslation) &&
-                Arrays.equals(offset, new int[shape.length]) &&
+                Arrays.equals(offset, new int[ shape.length ]) &&
                 Arrays.equals(spread, newSpread);
     }
 
@@ -184,13 +184,13 @@ public abstract class AbstractNDC implements NDConfiguration
         int[] newIdxmap = Utility.newTlnOf(newShape);
         int[] newSpread = new int[newForm.length];
         for (int i = 0; i < newForm.length; i++) {
-            if (newForm[i] < 0) newSpread[i] = 1;
-            else if (newForm[i] >= 0) newSpread[i] = ndc.spread(newForm[i]);
+            if (newForm[ i ] < 0) newSpread[ i ] = 1;
+            else if (newForm[ i ] >= 0) newSpread[ i ] = ndc.spread(newForm[ i ]);
         }
         int[] newOffset = new int[newForm.length];
         for (int i = 0; i < newForm.length; i++) {
-            if (newForm[i] < 0) newOffset[i] = 0;
-            else if (newForm[i] >= 0) newOffset[i] = ndc.offset(newForm[i]);
+            if (newForm[ i ] < 0) newOffset[ i ] = 0;
+            else if (newForm[ i ] >= 0) newOffset[ i ] = ndc.offset(newForm[ i ]);
         }
         return AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);
     }

@@ -23,8 +23,8 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                         for( Tsr t : call.getTensors() )
                         {
                             if( t!=null && i < t.rank() ) {
-                                if ( currentDim == -1 ) currentDim = t.shape(i);
-                                else if ( currentDim != t.shape(i) && currentDim != 1 && t.shape(i) != 1 ) return 0.0f;
+                                if ( currentDim == -1 ) currentDim = t.shape( i );
+                                else if ( currentDim != t.shape( i ) && currentDim != 1 && t.shape( i ) != 1 ) return 0.0f;
                             }
                         }
                     }
@@ -47,7 +47,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
         int[] t1Shp = t1_src.getNDConf().shape();
         int[] t2Shp = (t2_src != null) ? t2_src.getNDConf().shape() : t1Shp;
         int rank = t0Shp.length;
-        int[] t0Idx = t0_drn.idx_of_i(i);
+        int[] t0Idx = t0_drn.idx_of_i( i );
         int[] t1Idx = new int[rank];
         int[] t2Idx = new int[rank];
         double[] t0_value = t0_drn.value64();

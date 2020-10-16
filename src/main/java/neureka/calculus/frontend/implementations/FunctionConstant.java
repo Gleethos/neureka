@@ -40,13 +40,13 @@ public class FunctionConstant extends AbstractBaseFunction
 		String number = "";
 		for(int i=0; i<expression.length(); i++) 
 		{
-			if(expression.charAt(i)>='0' 
-			|| expression.charAt(i)<='9' 
-			|| expression.charAt(i)=='.' 
-			|| expression.charAt(i)=='-' 
-			|| expression.charAt(i)=='+') 
+			if(expression.charAt( i )>='0'
+			|| expression.charAt( i )<='9'
+			|| expression.charAt( i )=='.'
+			|| expression.charAt( i )=='-'
+			|| expression.charAt( i )=='+')
 			{
-				number += expression.charAt(i);
+				number += expression.charAt( i );
 			}
 		}
 		_value = Double.parseDouble(number);
@@ -79,22 +79,22 @@ public class FunctionConstant extends AbstractBaseFunction
 
 	@Override
 	public Tsr call(Tsr[] inputs, int j) {
-		return new Tsr(inputs[0].shape(), this._value);
+		return new Tsr(inputs[ 0 ].shape(), this._value);
 	}
 
 	@Override
 	public Tsr call(Tsr[] inputs) {
-		return new Tsr(inputs[0].shape(), this._value);
+		return new Tsr(inputs[ 0 ].shape(), this._value);
 	}
 
 	@Override
 	public Tsr derive(Tsr[] inputs, int index, int j) {
-		return new Tsr(inputs[0].shape(), 0.0);
+		return new Tsr(inputs[ 0 ].shape(), 0.0);
 	}
 
 	@Override
 	public Tsr derive(Tsr[] inputs, int index) {
-		return new Tsr(inputs[0].shape(), 0.0);
+		return new Tsr(inputs[ 0 ].shape(), 0.0);
 	}
 
 	//------------------------------------------------------------------------------------------------------------------

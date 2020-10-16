@@ -39,8 +39,8 @@ public class FunctionParser
         StringBuilder component = new StringBuilder();
         for (int i = index; i < exp.length(); ++i)
         {
-            if (exp.charAt(i) == ')') --bracketDepth;
-            else if (exp.charAt(i) == '(') ++bracketDepth;
+            if (exp.charAt( i ) == ')') --bracketDepth;
+            else if (exp.charAt( i ) == '(') ++bracketDepth;
             if (bracketDepth == 0) {
                 String possibleOperation = "";
                 for (int ii = exp.length()-1; ii >= i+1; ii--) {
@@ -54,15 +54,15 @@ public class FunctionParser
                     } else {
                         possibleOperation = exp.substring(i+1, ii);
                         if (FunctionParser.isAnyOperation(possibleOperation)) {
-                            if (exp.charAt(i)=='j' || !Character.isLetter(exp.charAt(i))) {
-                                component.append(exp.charAt(i));
+                            if (exp.charAt( i )=='j' || !Character.isLetter(exp.charAt( i ))) {
+                                component.append(exp.charAt( i ));
                                 return component.toString();
                             }
                         }
                     }
                 }
             }
-            component.append(exp.charAt(i));
+            component.append(exp.charAt( i ));
         }
         return component.toString();
     }
@@ -75,18 +75,18 @@ public class FunctionParser
         StringBuilder component = new StringBuilder();
         for (int i = index; i < exp.length(); ++i)
         {
-            if (exp.charAt(i) == '(' || exp.charAt(i) == '[') {
-                if (bracketDepth != 0) component.append(exp.charAt(i));
+            if (exp.charAt( i ) == '(' || exp.charAt( i ) == '[') {
+                if (bracketDepth != 0) component.append(exp.charAt( i ));
                 ++bracketDepth;
-            } else if (exp.charAt(i) == ')' || exp.charAt(i) == ']') {
+            } else if (exp.charAt( i ) == ')' || exp.charAt( i ) == ']') {
                 --bracketDepth;
-                if (bracketDepth != 0) component.append(exp.charAt(i));
+                if (bracketDepth != 0) component.append(exp.charAt( i ));
             } else {
-                component.append(exp.charAt(i));
+                component.append(exp.charAt( i ));
             }
             if (bracketDepth == 0) {
                 parameters.add(component.toString());
-            } else if (bracketDepth == 1 && exp.charAt(i)==',' ) {
+            } else if (bracketDepth == 1 && exp.charAt( i )==',' ) {
                 parameters.add(component.toString());
                 component = new StringBuilder();
             }
@@ -143,10 +143,10 @@ public class FunctionParser
             exp = updated.toString();
         }
         if (exp.length() > 0) {
-            if (exp.charAt(0) == '(' && exp.charAt(exp.length() - 1) != ')') {
+            if (exp.charAt( 0 ) == '(' && exp.charAt(exp.length() - 1) != ')') {
                 exp = exp.substring(1, exp.length()-1);
             }
-            if (exp.charAt(exp.length() - 1) == ')' && exp.charAt(0) != '(') {
+            if (exp.charAt(exp.length() - 1) == ')' && exp.charAt( 0 ) != '(') {
                 exp = exp.substring(1, exp.length()-1);
             }
         }
@@ -193,12 +193,12 @@ public class FunctionParser
         }
         boolean parsing = true;
         boolean needsStitching = false;
-        while (parsing && (exp.charAt(0) == '(') && (exp.charAt(exp.length() - 1) == ')')) {
+        while (parsing && (exp.charAt( 0 ) == '(') && (exp.charAt(exp.length() - 1) == ')')) {
             bracketDepth = 0;
             needsStitching = true;
             for (int i = 0; i < exp.length(); ++i) {
-                if (exp.charAt(i) == ')') --bracketDepth;
-                else if (exp.charAt(i) == '(') ++bracketDepth;
+                if (exp.charAt( i ) == ')') --bracketDepth;
+                else if (exp.charAt( i ) == '(') ++bracketDepth;
                 if (bracketDepth == 0 && i != exp.length() - 1) needsStitching = false;
             }
             if (needsStitching) exp = exp.substring(1, exp.length()-1);
@@ -211,7 +211,7 @@ public class FunctionParser
         double largest = -1;
         int best = 0;
         for (int i = 0; i< OperationType.COUNT(); i++){
-            double s = similarity(expression, OperationType.instance(i).getOperator());
+            double s = similarity(expression, OperationType.instance( i ).getOperator());
             if (largest==-1) largest = s;
             else if (s > largest) {
                 best = i;
@@ -234,25 +234,25 @@ public class FunctionParser
             double weightSum = 0;
             double modifier = delta / (double)longer.length();
             for ( int i=0; i<(delta+1); i++ ){
-                weights[i] = currentWeight;
+                weights[ i ] = currentWeight;
                 weightSum += currentWeight;
                 currentWeight *= modifier;
                 for (int si=0; si<shorter.length(); si++) {
-                    if (longer.charAt(i+si)==shorter.charAt(si)) alignment[i] ++;
+                    if (longer.charAt(i+si)==shorter.charAt(si)) alignment[ i ] ++;
                     else if (
                             Character.toLowerCase(longer.charAt(i+si)) == Character.toLowerCase(shorter.charAt(si))
-                    ) alignment[i] += 0.5;
+                    ) alignment[ i ] += 0.5;
                     else if (
                             Character.isAlphabetic(longer.charAt(i+si)) != Character.isAlphabetic(shorter.charAt(si))
-                    ) alignment[i] -= 0.13571113;
+                    ) alignment[ i ] -= 0.13571113;
                 }
-                alignment[i] /= longer.length();
-                alignment[i] = Math.min(Math.max(alignment[i], 0.0), 1.0);
+                alignment[ i ] /= longer.length();
+                alignment[ i ] = Math.min(Math.max(alignment[ i ], 0.0), 1.0);
             }
             Arrays.sort(alignment);
             Arrays.sort(weights);
             double similarity = 0;
-            for (int i=0; i<(delta+1); i++) similarity += alignment[i] * (weights[i]/weightSum);
+            for (int i=0; i<(delta+1); i++) similarity += alignment[ i ] * (weights[ i ]/weightSum);
             assert similarity <= 1.0;
             return similarity;
     }

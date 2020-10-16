@@ -29,8 +29,8 @@
         int prv_src2_cfg[ 2 * 5 ]; _cfg_of_cfg(src2_conf, prv_src2_cfg, rank);
 
         const int max_row = prv_drn_cfg[ 0 ];
-        const int max_col = prv_drn_cfg[ 1 ];   //:= prv_src1_cfg[0]
-        const int max_com = prv_src1_cfg[ 1 ];  //:= prv_src2_cfg[0]
+        const int max_col = prv_drn_cfg[ 1 ];   //:= prv_src1_cfg[ 0 ]
+        const int max_com = prv_src1_cfg[ 1 ];  //:= prv_src2_cfg[ 0 ]
 
         // Thread identifiers
         const int tid_row = get_local_id( 0 );        //:= Local row ID (max: max_ts_row/max_wpt_row)

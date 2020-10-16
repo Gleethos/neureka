@@ -202,7 +202,7 @@ class Tensor_Framing_Integration_Tests extends Specification
             }
 
         then : 'The weak reference is null because the tensor had no string reference to it! (No memory leak!)'
-            weak.get()!=null
+            weak.get() != null
 
     }
 

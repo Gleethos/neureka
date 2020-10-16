@@ -25,7 +25,7 @@ public class CopyRight extends AbstractOperationType {
                 children -> {
                     StringBuilder reconstructed = new StringBuilder();
                     for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get(i) );
+                        reconstructed.append( children.get( i ) );
                         if ( i < children.size() - 1 ) {
                             reconstructed.append(" -> ");
                         }
@@ -53,7 +53,7 @@ public class CopyRight extends AbstractOperationType {
         .setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
-                    int offset = ( tsrs[0] == null ) ? 1 : 0;
+                    int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                     return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[1+offset], tsrs[offset]}, -1, OperationType.instance("idy") );
                 }
         );
@@ -63,7 +63,7 @@ public class CopyRight extends AbstractOperationType {
                         HostExecutor.class,
                         new HostExecutor(
                                 call -> {
-                                    int offset = ( call.getTensor(0) == null ) ? 1 : 0;
+                                    int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
                                     ExecutionCall<HostCPU> newCall = new ExecutionCall<>(
                                             call.getDevice(),
                                             new Tsr[]{call.getTensor(1+offset), call.getTensor(offset)},
@@ -81,7 +81,7 @@ public class CopyRight extends AbstractOperationType {
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = ( call.getTensor(0) == null ) ? 1 : 0;
+                                    int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
                                     ExecutionCall<OpenCLDevice> newCall = new ExecutionCall<>(
                                             call.getDevice(),
                                             new Tsr[]{call.getTensor(1+offset), call.getTensor(offset)},
@@ -100,7 +100,7 @@ public class CopyRight extends AbstractOperationType {
     }
 
     @Override
-    public double calculate(double[] inputs, int j, int d, List<Function> src) {
-            return src.get(0).call( inputs, j );
+    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            return src.get( 0 ).call( inputs, j );
     }
 }

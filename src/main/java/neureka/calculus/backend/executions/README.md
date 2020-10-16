@@ -33,11 +33,11 @@ Here is a simplified example using opencl as backend : <br>
 def executor = new CLExecutor( // implements 'ExecutionFor<OpenCLDevice>'
     call -> 
     {
-       int gwz = call.getTensor(0).size();
+       int gwz = call.getTensor( 0 ).size();
        call.getDevice().getKernel(call)
-               .pass(call.getTensor(0))
+               .pass(call.getTensor( 0 ))
                .pass(call.getTensor(1))
-               .pass(call.getTensor(0).rank())
+               .pass(call.getTensor( 0 ).rank())
                .pass(call.getDerivativeIndex())
                .call(gwz);
    },

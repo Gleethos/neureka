@@ -45,15 +45,15 @@ public class Reshape extends AbstractOperationType
                 for ( int i = 0; i < children.size(); ++i ) {
                     if ( i == children.size() - 1 ) {
                         reconstructed.append("]:(").append(
-                                ( isConstantNumeric.apply(children.get(i)) )
-                                        ? children.get(i).split("\\.")[0]
-                                        : children.get(i)
+                                ( isConstantNumeric.apply( children.get( i ) ) )
+                                        ? children.get( i ).split("\\.")[ 0 ]
+                                        : children.get( i )
                         ).append(")");
                     } else {
                         reconstructed.append(
-                                ( isConstantNumeric.apply(children.get(i)) )
-                                        ? children.get(i).split("\\.")[0]
-                                        : children.get(i)
+                                ( isConstantNumeric.apply( children.get( i ) ) )
+                                        ? children.get( i ).split("\\.")[ 0 ]
+                                        : children.get( i )
                         );
                     }
                     if ( i < children.size() - 2 ) {
@@ -64,7 +64,7 @@ public class Reshape extends AbstractOperationType
             }
         );
 
-        GenericImplementation implementation = new GenericImplementation("reshape")
+        GenericImplementation implementation = new GenericImplementation( "reshape" )
                 .setSuitabilityChecker( call -> 1.0f )
                 .setBackwardADAnalyzer( call -> true )
                 .setForwardADAnalyzer(call -> false )
@@ -72,10 +72,10 @@ public class Reshape extends AbstractOperationType
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         //Tsr ctxDerivative = (Tsr)call.getAt("derivative");
-                        if(forward){
+                        if ( forward ) {
                             throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                         }
-                        return new DefaultADAgent(null)
+                        return new DefaultADAgent( null )
                                 .withForward( ( t, derivative ) -> FunctionBuilder.build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
                                 .withBackward( ( t, error ) -> FunctionBuilder.build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
                     }
@@ -97,14 +97,14 @@ public class Reshape extends AbstractOperationType
                             int reverse_i = 0;
                             while ( reverse_i < reverseLength ) {
                                 if ( newForm[ reshape_i ] >= 0 ) {
-                                    reversed[ newForm[reshape_i] ] = reshape_i;
+                                    reversed[ newForm[ reshape_i ] ] = reshape_i;
                                     reverse_i++;
                                 }
                                 reshape_i++;
                             }
                             newForm = reversed;
                         }
-                        Tsr t = inputs[inputs.length - 1];
+                        Tsr t = inputs[ inputs.length - 1 ];
                         return reshaped(t, newForm, true);
                     }
                 )
@@ -119,18 +119,18 @@ public class Reshape extends AbstractOperationType
     }
 
 
-    public static Tsr reshaped(Tsr tensor, int[] newForm, boolean newTsr)
+    public static Tsr reshaped( Tsr tensor, int[] newForm, boolean newTsr )
     {
-        tensor = (newTsr) ? (Tsr)tensor.getAt(new ArrayList<>()) : tensor;
-        NDConfiguration newNDC = tensor.getNDConf().newReshaped(newForm);
-        AbstractNDArray.Utility.Indexing.shpCheck(newNDC.shape(), tensor);
+        tensor = (newTsr) ? (Tsr) tensor.getAt(new ArrayList<>()) : tensor;
+        NDConfiguration newNDC = tensor.getNDConf().newReshaped( newForm );
+        AbstractNDArray.Utility.Indexing.shpCheck( newNDC.shape(), tensor );
         tensor.setNDConf( newNDC );
         return tensor;
     }
 
 
     @Override
-    public double calculate(double[] inputs, int j, int d, List<Function> src) {
-            return src.get(0).call( inputs, j );
+    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            return src.get( 0 ).call( inputs, j );
     }
 }

@@ -85,7 +85,7 @@ public class CLExecutor implements ExecutorFor<OpenCLDevice>
         );
         boolean templateFound;
         if (kernelSource.contains("__kernel")) {
-            String[] parts = kernelSource.split("__kernel")[1].split("\\(")[0].split(" ");
+            String[] parts = kernelSource.split("__kernel")[1].split("\\(")[ 0 ].split(" ");
 
             templateFound = parts[parts.length - 1].contains("template");
             if (!templateFound) {
@@ -98,8 +98,8 @@ public class CLExecutor implements ExecutorFor<OpenCLDevice>
                         differentiationSource,
                         type
                 );
-                _name = map.keySet().toArray(new String[0])[0];
-                _source = map.values().toArray(new String[0])[0];
+                _name = map.keySet().toArray(new String[ 0 ])[ 0 ];
+                _source = map.values().toArray(new String[ 0 ])[ 0 ];
             }
         }
     }
@@ -122,7 +122,7 @@ public class CLExecutor implements ExecutorFor<OpenCLDevice>
 
         Parser parser = (n, f, s) -> {
             String convcode =
-                    parts[0].replace(preName, preName + n) +
+                    parts[ 0 ].replace(preName, preName + n) +
                             _aliasSwapper.apply(f) +
                             parts[2] +
                             _aliasSwapper.apply(s) +

@@ -37,7 +37,7 @@ public class Summation extends AbstractOperationType
                 children ->
                 {
                     String expression = String.join( ", ", children );
-                    if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                    if (expression.charAt( 0 ) == '(' && expression.charAt(expression.length() - 1) == ')') {
                         return "sumJs" + expression;
                     }
                     return "sumJs" + "(" + expression + ")";
@@ -54,19 +54,19 @@ public class Summation extends AbstractOperationType
             Tsr alternative = null;
             if (tsrs.length > 3) {
                 if (d < 0) {
-                    Tsr[] reduction = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
+                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[1], tsrs[2]};
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
-                    tsrs[0] = reduction[0];
+                    tsrs[ 0 ] = reduction[ 0 ];
 
                     reduction = Utility.offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
-                    tsrs[0] = reduction[0];
+                    tsrs[ 0 ] = reduction[ 0 ];
                 } else {
-                    tsrs[0] = Tsr.Create.newTsrLike(tsrs[1]).setValue(1.0f);
+                    tsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[1]).setValue(1.0f);
                 }
                 return alternative;
             } else {
@@ -119,13 +119,13 @@ public class Summation extends AbstractOperationType
                     call -> {
                         Tsr[] tsrs = call.getTensors();
                         Device device = call.getDevice();
-                        if ( tsrs[0] == null ) // Creating a new tensor:
+                        if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                         {
                             int[] shp = tsrs[1].getNDConf().shape();
                             Tsr output = new Tsr( shp, 0.0 );
                             output.setIsVirtual(false);
                             device.add(output);
-                            tsrs[0] = output;
+                            tsrs[ 0 ] = output;
                         }
                         return call;
                     }
@@ -140,10 +140,10 @@ public class Summation extends AbstractOperationType
                                 call  ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor(0).size(),
+                                                        call.getTensor( 0 ).size(),
                                                         ( start, end ) ->
                                                                 Broadcast.broadcast (
-                                                                        call.getTensor(0),
+                                                                        call.getTensor( 0 ),
                                                                         call.getTensor(1),
                                                                         call.getTensor(2),
                                                                         call.getDerivativeIndex(),
@@ -157,13 +157,13 @@ public class Summation extends AbstractOperationType
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor(offset))
                                             .pass(call.getTensor(offset + 1))
                                             .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getTensor( 0 ).rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
                                 },
@@ -221,7 +221,7 @@ public class Summation extends AbstractOperationType
                     if ( this.supports(Convolution.class) )
                     {
                         Function invX = FunctionBuilder.build(
-                                "I[0]" + getOperator() + ">>I[1]" + getOperator() + ">>I[2]",
+                                "I[ 0 ]" + getOperator() + ">>I[1]" + getOperator() + ">>I[2]",
                                 false
                         );
                         Tsr deriv = f.derive(inputs, d);
@@ -245,13 +245,13 @@ public class Summation extends AbstractOperationType
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();
-                    if ( tsrs[0] == null ) // Creating a new tensor:
+                    if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[1].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
                         output.setIsVirtual(false);
                         device.add(output);
-                        tsrs[0] = output;
+                        tsrs[ 0 ] = output;
                     }
                     return call;
                 }
@@ -264,10 +264,10 @@ public class Summation extends AbstractOperationType
                                 call  ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor(0).size(),
+                                                        call.getTensor( 0 ).size(),
                                                         ( start, end ) ->
                                                                 Activation.activate (
-                                                                        call.getTensor(0),
+                                                                        call.getTensor( 0 ),
                                                                         start, end,
                                                                         activationCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
@@ -278,15 +278,15 @@ public class Summation extends AbstractOperationType
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = ( call.getTensor(0) != null ) ? 0 : 1;
+                                    int offset = ( call.getTensor( 0 ) != null ) ? 0 : 1;
                                     int gwz =
-                                            ( call.getTensor(0) != null )
-                                                    ? call.getTensor(0).size()
+                                            ( call.getTensor( 0 ) != null )
+                                                    ? call.getTensor( 0 ).size()
                                                     : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor(offset))
                                             .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getTensor( 0 ).rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
                                 },
@@ -308,15 +308,15 @@ public class Summation extends AbstractOperationType
             double sum = 0;
             boolean nothingDone = true;
             for ( int i = 0; i < inputs.length; i++ ) {
-                sum += src.get(0).call( inputs, i );
+                sum += src.get( 0 ).call( inputs, i );
                 nothingDone = false;
             }
             if ( nothingDone ) {
-                return src.get(0).call( inputs );
+                return src.get( 0 ).call( inputs );
             }
             return sum;
         } else {
-            return src.get(0).derive( inputs, d, j );
+            return src.get( 0 ).derive( inputs, d, j );
         }
     }
 
@@ -326,23 +326,23 @@ public class Summation extends AbstractOperationType
             double sum = 0;
             boolean nothingDone = true;
             for (int i = 0; i < inputs.length; i++) {
-                sum += src.get(0).call( inputs, i );
+                sum += src.get( 0 ).call( inputs, i );
                 nothingDone = false;
             }
             if ( nothingDone ) {
-                return src.get(0).call( inputs );
+                return src.get( 0 ).call( inputs );
             }
             return sum;
         } else {
             double sum = 0;
             boolean nothingDone = true;
             for ( int i = 0; i < inputs.length; i++ ) {
-                double r = src.get(0).derive( inputs, d, i );
+                double r = src.get( 0 ).derive( inputs, d, i );
                 sum += r;
                 nothingDone = false;
             }
             if ( nothingDone ) {
-                return src.get(0).call(inputs);
+                return src.get( 0 ).call(inputs);
             }
             return sum;
         }

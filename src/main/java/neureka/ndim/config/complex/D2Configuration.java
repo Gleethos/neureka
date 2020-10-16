@@ -13,15 +13,15 @@ public final class D2Configuration extends AbstractNDC //:= IMMUTABLE
             int[] spread,
             int[] offset
     ) {
-        _shape1 = shape[0];
+        _shape1 = shape[ 0 ];
         _shape2 = shape[1];
-        _translation1 = translation[0];
+        _translation1 = translation[ 0 ];
         _translation2 = translation[1];
-        _idxmap1 = idxmap[0];
+        _idxmap1 = idxmap[ 0 ];
         _idxmap2 = idxmap[1];
-        _spread1 = spread[0];
+        _spread1 = spread[ 0 ];
         _spread2 = spread[1];
-        _offset1 = offset[0];
+        _offset1 = offset[ 0 ];
         _offset2 = offset[1];
     }
 
@@ -139,9 +139,9 @@ public final class D2Configuration extends AbstractNDC //:= IMMUTABLE
         if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){
             idx[1] += i / _idxmap2;
             i %= _idxmap2;
-            idx[0] += i / _idxmap1;
+            idx[ 0 ] += i / _idxmap1;
         } else {
-            idx[0] += i / _idxmap1;
+            idx[ 0 ] += i / _idxmap1;
             i %= _idxmap1;
             idx[1] += i / _idxmap2;
         }
@@ -151,7 +151,7 @@ public final class D2Configuration extends AbstractNDC //:= IMMUTABLE
     @Override
     public int i_of_idx(int[] idx) {
         int i = 0;
-        i += (idx[0] * _spread1 + _offset1) * _translation1;
+        i += (idx[ 0 ] * _spread1 + _offset1) * _translation1;
         i += (idx[1] * _spread2 + _offset2) * _translation2;
         return i;
     }

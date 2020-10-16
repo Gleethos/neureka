@@ -83,8 +83,8 @@ public class IDXHead implements FileHead
 
         int size = 1;
         for ( int i = 0; i < rank; i++ ) {
-            shape[i] = numre.read( new UI32() ).intValue();
-            size *= shape[i];
+            shape[ i ] = numre.read( new UI32() ).intValue();
+            size *= shape[ i ];
         }
 
 
@@ -125,10 +125,10 @@ public class IDXHead implements FileHead
         offset += 1;
         int bodySize = 1;
         for ( int i = 0; i < rank; i++ ) {
-            byte[] integer = ByteBuffer.allocate(4).putInt(_shape[i]).array();
+            byte[] integer = ByteBuffer.allocate(4).putInt(_shape[ i ]).array();
             assert integer.length == 4;
             f.write(integer);
-            bodySize *= _shape[i];
+            bodySize *= _shape[ i ];
             offset += 4;
         }
         _dataOffset = offset;

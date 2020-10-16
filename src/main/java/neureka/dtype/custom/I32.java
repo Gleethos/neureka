@@ -55,7 +55,7 @@ public class I32 extends AbstractNumericType<Integer, int[]>
         int[] data = new int[size];
         for ( int i=0; i<size; i++ ) {
             stream.readFully(_data);
-            data[i] = convert(_data);
+            data[ i ] = convert(_data);
         }
         return data;
     }

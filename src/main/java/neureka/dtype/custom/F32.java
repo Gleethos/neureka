@@ -50,7 +50,7 @@ public class F32 extends AbstractNumericType<Float, float[]>
 
     @Override
     public float[] readDataFrom(DataInput stream, int size) throws IOException {
-        return new float[0];
+        return new float[ 0 ];
     }
 
 

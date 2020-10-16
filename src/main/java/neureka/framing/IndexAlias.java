@@ -14,9 +14,9 @@ public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
         _mapping = new LinkedHashMap<>(labels.size());
         for(int i=0; i<labels.size(); i++) _mapping.put(i, new LinkedHashMap<>());
         for(int i=0; i<labels.size(); i++){
-            if(labels.get(i)!=null){
-                for(int ii=0; ii<labels.get(i).size(); ii++){
-                    if(labels.get(i).get(ii)!=null) set(i, labels.get(i).get(ii), ii);
+            if(labels.get( i ) != null){
+                for(int ii=0; ii<labels.get( i ).size(); ii++){
+                    if(labels.get( i ).get(ii) != null) set(i, labels.get( i ).get(ii), ii);
                 }
             }
         }
@@ -33,12 +33,12 @@ public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
         labels.forEach((k, v)->{
             if(v!=null){
                 Map<Object, Integer> idxmap = new LinkedHashMap<>(v.size()*3);
-                for(int i=0; i<v.size(); i++) idxmap.put(v.get(i), i);
+                for(int i=0; i<v.size(); i++) idxmap.put(v.get( i ), i);
                 _mapping.put(k, idxmap);
             } else {
-                _mapping.put(k, host.getNDConf().shape()[index[0]]);
+                _mapping.put(k, host.getNDConf().shape()[index[ 0 ]]);
             }
-            index[0]++;
+            index[ 0 ]++;
         });
     }
 
@@ -49,13 +49,13 @@ public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
     public int[] get(Object[] keys){//Todo: iterate over _mapping
         int[] idx = new int[keys.length];//_mapping.length];
         for(int i=0; i<idx.length; i++){
-            Object am =  _mapping.get(i);
+            Object am =  _mapping.get( i );
             if(am instanceof Map){
-                idx[i] = ((Map<Object, Integer>)am).get(keys[i]);
+                idx[ i ] = ((Map<Object, Integer>)am).get(keys[ i ]);
             } else if (am instanceof Integer){
 
             }
-            //idx[i] = _mapping.get(i).get(keys[i]);
+            //idx[ i ] = _mapping.get( i ).get(keys[ i ]);
 
         }
         return idx;
@@ -96,7 +96,7 @@ public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
         List<Object> keys = new ArrayList<>();
         Object am =  _mapping.get(axis);
         if(am instanceof Map) ((Map<Object, Integer>)am).forEach((k, v)->keys.add(k));
-        else for(int i=0; i<((Integer)am); i++) keys.add(i);
+        else for(int i=0; i<((Integer)am); i++) keys.add( i );
         return keys;
     }
 
@@ -131,7 +131,7 @@ public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
 
         int indexShift = (WALL.length()/2);
         int crossMod = WIDTH+WALL.length();
-        Function<Integer, Boolean> isCross = (i)->(i-indexShift)%crossMod==0;
+        Function<Integer, Boolean> isCross = ( i )->(i-indexShift)%crossMod==0;
         StringBuilder builder = new StringBuilder();
         builder.append(WALL);
 
@@ -140,43 +140,43 @@ public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
         _mapping.forEach((k, v)->{
             String axisHeader = k.toString();
             axisHeader = _fixed(axisHeader, WIDTH);
-            axisLabelSizes[axisCounter[0]] = axisHeader.length();
+            axisLabelSizes[axisCounter[ 0 ]] = axisHeader.length();
             builder.append(axisHeader);
             builder.append(WALL);
-            axisCounter[0]++;
+            axisCounter[ 0 ]++;
         });
         int lineLength = builder.length();
         builder.append("\n");
-        for(int i=0; i<lineLength; i++) builder.append((isCross.apply(i))?CROSS:HEADLINE);
+        for(int i=0; i<lineLength; i++) builder.append((isCross.apply( i ))?CROSS:HEADLINE);
         builder.append("\n");
         boolean[] hasMoreIndexes = {true};
         int[] depth = {0};
-        while (hasMoreIndexes[0]){
-            axisCounter[0] = 0;
+        while (hasMoreIndexes[ 0 ]){
+            axisCounter[ 0 ] = 0;
             Object[] keyOfDepth = {null};
             builder.append(WALL);
             _mapping.forEach((k, v)->{
-                keyOfDepth[0] = null;
+                keyOfDepth[ 0 ] = null;
                 if(v instanceof Map){
                     ((Map<Object, Integer>)v).forEach((ik, iv)->{
-                        if(iv.intValue()==depth[0]) keyOfDepth[0] = ik;
+                        if(iv.intValue()==depth[ 0 ]) keyOfDepth[ 0 ] = ik;
                     });
                 } else if(v instanceof Integer){
-                    if(depth[0]<((Integer)v)) keyOfDepth[0] = depth[0];
+                    if(depth[ 0 ]<((Integer)v)) keyOfDepth[ 0 ] = depth[ 0 ];
                 }
-                if(keyOfDepth[0]!=null){
-                    builder.append(_fixed((keyOfDepth[0]).toString(), WIDTH));
+                if(keyOfDepth[ 0 ]!=null){
+                    builder.append(_fixed((keyOfDepth[ 0 ]).toString(), WIDTH));
                 } else {
                     builder.append(_fixed("---", WIDTH));
                 }
                 builder.append(WALL);
-                axisCounter[0] ++;
+                axisCounter[ 0 ] ++;
             });
-            depth[0]++;
+            depth[ 0 ]++;
             builder.append("\n");
-            for(int i=0; i<lineLength; i++) builder.append((isCross.apply(i))?CROSS:ROWLINE);
+            for(int i=0; i<lineLength; i++) builder.append((isCross.apply( i ))?CROSS:ROWLINE);
             builder.append("\n");
-            if(keyOfDepth[0]==null) hasMoreIndexes[0] = false;
+            if(keyOfDepth[ 0 ]==null) hasMoreIndexes[ 0 ] = false;
         }
 
         StringBuilder result = new StringBuilder().append("\nTensor IndexAlias: axis/indexes");

@@ -58,7 +58,7 @@ class DataLoader_Unit_Tests extends Specification
                 else if(norm < 0.5) s.append(".");
                 else if (norm < 0.7) s.append("*");
                 else s.append("#");
-                if ((i)%28==27) s.append("\n");
+                if (( i )%28==27) s.append("\n");
                 i ++;
             })
 

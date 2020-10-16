@@ -78,7 +78,7 @@ public final class SimpleScalarConfiguration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int i_of_idx(int[] idx) {
-        return idx[0];
+        return idx[ 0 ];
     }
 
 }

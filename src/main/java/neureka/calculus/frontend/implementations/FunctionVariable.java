@@ -74,19 +74,19 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
 
     @Override
     public <T> Tsr<T> call(Tsr<T>[] inputs) {
-        String exp = "I[0]";
+        String exp = "I[ 0 ]";
         for(int i=1; i<inputs.length; i++)exp += "+I["+i+"]";
         return FunctionBuilder.build(exp, false).call(inputs);
     }
 
     @Override
     public <T> Tsr<T> derive(Tsr<T>[] inputs, int index, int j) {
-        return (j != index) ? new Tsr<T>(inputs[0].shape(), 0.0) : derive(inputs, index);
+        return (j != index) ? new Tsr<T>(inputs[ 0 ].shape(), 0.0) : derive(inputs, index);
     }
 
     @Override
     public <T> Tsr<T> derive(Tsr<T>[] inputs, int index) {
-        return new Tsr<T>(inputs[0].shape(), 1.0);
+        return new Tsr<T>(inputs[ 0 ].shape(), 1.0);
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -157,7 +157,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if ( isVirtual() != isVirtual ) {
             Device device = this.find( Device.class );
             if ( device != null ) device.get( this );
-            double v = ( _value == null ) ? 0 : ((this.is64())?((double[])_value)[0]:((float[])_value)[0]);
+            double v = ( _value == null ) ? 0 : ((this.is64())?((double[])_value)[ 0 ]:((float[])_value)[ 0 ]);
             if ( isVirtual ) {
                 _value = new double[]{v};
                 Relation<ValueType> parent = find( Relation.class );
@@ -166,8 +166,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 _value = ( this.is64() ) ? new double[this.size()] : new float[this.size()];
                 int length = ( this.is64() ) ? ((double[])_value).length : ((float[])_value).length;
                 for ( int i = 0; i < length; i++ ) {
-                    if ( this.is64() ) ((double[])_value)[i] = v;
-                    else ((float[])_value)[i] = (float)v;
+                    if ( this.is64() ) ((double[])_value)[ i ] = v;
+                    else ((float[])_value)[ i ] = (float)v;
                 }
             }
             _setIsVirtual( isVirtual );
@@ -444,10 +444,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if ( isType.apply( Integer.class ) ) {
             List<Integer> shape = arg1;
             int[] shp = new int[shape.size()];
-            for (int i=0; i<shp.length; i++) shp[i] = shape.get(i);
+            for (int i=0; i<shp.length; i++) shp[ i ] = shape.get( i );
             _construct(shp, arg2);
         } else if ( isType.apply(Tsr.class) ) {
-            _construct( ((List<Tsr<ValueType>>)arg1).toArray( new Tsr[0] ), arg2, true );
+            _construct( ((List<Tsr<ValueType>>)arg1).toArray( new Tsr[ 0 ] ), arg2, true );
         } else {
             _construct(
                     ( (List<Object>) arg1 ).stream().map( Tsr::new ).toArray( Tsr[]::new ),
@@ -460,18 +460,18 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public Tsr( List<Integer> shape, List<ValueType> range )
     {
         int[] shp = new int[shape.size()];
-        for(int i=0; i<shp.length; i++) shp[i] = shape.get(i);
-        if ( range.size()==1 && range.get(0) instanceof IntRange ) range = (List<ValueType>) range.get(0);
+        for(int i=0; i<shp.length; i++) shp[ i ] = shape.get( i );
+        if ( range.size()==1 && range.get( 0 ) instanceof IntRange ) range = (List<ValueType>) range.get( 0 );
 
-        if ( !range.isEmpty() && !( range.get(0) instanceof Number ) ) {
-            Class<?> givenClass = range.get(0).getClass();
+        if ( !range.isEmpty() && !( range.get( 0 ) instanceof Number ) ) {
+            Class<?> givenClass = range.get( 0 ).getClass();
             @SuppressWarnings("unchecked")
             final ValueType[] value = (ValueType[]) Array.newInstance(
                     givenClass,
                     NDConfiguration.Utility.szeOfShp( shp )
             );
             for(int i=0; i<value.length; i++) {
-                value[i] = range.get(i%range.size());
+                value[ i ] = range.get(i%range.size());
             }
             _value = value;
             _type = DataType.instance( givenClass );
@@ -481,9 +481,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             _type = DataType.instance( F64.class );
             for ( int i = 0; i < value.length; i++ ) {
                 if ( range.get( i % range.size() ) instanceof BigDecimal ) {
-                    value[i] = ( (BigDecimal) range.get( i % range.size() ) ).doubleValue();
+                    value[ i ] = ( (BigDecimal) range.get( i % range.size() ) ).doubleValue();
                 } else if ( range.get( i % range.size() ) instanceof Integer ) {
-                    value[i] = (Integer) range.get( i % range.size() );
+                    value[ i ] = (Integer) range.get( i % range.size() );
                 }
             }
             _construct( shp, value );
@@ -550,17 +550,17 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if ( isNatural ) {
             int[] shape = new int[ conf.size() ];
             for ( int i = 0; i < shape.length; i++ ) {
-                shape[ i ] = ( conf.get(i) instanceof BigDecimal )
+                shape[ i ] = ( conf.get( i ) instanceof BigDecimal )
                         ? ( (BigDecimal) conf.get( i ) ).intValue() :
                             ( conf.get( i ) instanceof Double )
-                                    ? ( (Double) conf.get(i) ).intValue()
-                                    :( (Integer) conf.get(i) );
+                                    ? ( (Double) conf.get( i ) ).intValue()
+                                    :( (Integer) conf.get( i ) );
             }
             _construct( shape );
         } else {
             double[] value = new double[ conf.size() ];
             for (int i = 0; i < value.length; i++ ) {
-                value[ i ] = ( conf.get(i) instanceof BigDecimal )
+                value[ i ] = ( conf.get( i ) instanceof BigDecimal )
                         ? ( (BigDecimal) conf.get( i ) ).doubleValue() :
                             ( conf.get( i ) instanceof Double )
                                 ? ( (Double) conf.get( i ) ).doubleValue()
@@ -660,7 +660,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         args[ 0 ] = ( args[ 0 ] instanceof ArrayList ) ? ( (ArrayList) args[ 0 ] ).toArray() : args[ 0 ];
         args[ 1 ] = ( args[ 1 ] instanceof ArrayList ) ? ( (ArrayList) args[ 1 ] ).toArray() : args[ 1 ];
         if ( args[ 0 ] instanceof Object[] ) {
-            if ( ( (Object[]) args[0] )[ 0 ] instanceof Integer || ((Object[])args[0])[0] instanceof Double) {
+            if ( ( (Object[]) args[ 0 ] )[ 0 ] instanceof Integer || ((Object[])args[ 0 ])[ 0 ] instanceof Double) {
                 args[ 0 ] = _intArray( (Object[]) args[ 0 ] );
             }
         }
@@ -765,7 +765,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     private void _construct( Tsr[] tensors, String operation, boolean doAD ) {
-        if ( tensors == null || tensors.length == 0 || tensors[0] == null ) return;
+        if ( tensors == null || tensors.length == 0 || tensors[ 0 ] == null ) return;
         Tsr<ValueType> result = Function.Setup.commit( this, tensors, operation, doAD );
         this._become( result );
     }
@@ -849,8 +849,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public Tsr<ValueType> T() { // Transposed!
         StringBuilder operation = new StringBuilder();
-        for ( int i = rank()-1; i >= 0; i-- ) operation.append(i).append( (i == 0) ? "" : ", " );
-        operation = new StringBuilder( "[" + operation + "]:(I[0])" );
+        for ( int i = rank()-1; i >= 0; i-- ) operation.append( i ).append( (i == 0) ? "" : ", " );
+        operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
         return new Tsr<>( this, operation.toString() );
     }
 
@@ -933,8 +933,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         for ( int i = 0; i < fitter[ 0 ].length && !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;
         for ( int i = 0; i < fitter[ 1 ].length && !doReshape; i++ ) if ( fitter[ 1 ][ i ] != i ) doReshape = true;
         if ( doReshape ) {
-            a = Function.create( AbstractNDArray.Utility.Stringify.strConf( fitter[0] ) + ":(I[0])" ).call( a );
-            b = Function.create( AbstractNDArray.Utility.Stringify.strConf( fitter[1] ) + ":(I[0])" ).call( b );
+            a = Function.create( AbstractNDArray.Utility.Stringify.strConf( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
+            b = Function.create( AbstractNDArray.Utility.Stringify.strConf( fitter[1] ) + ":(I[ 0 ])" ).call( b );
         }
         return Function.X.call( new Tsr[]{ a, b } ).dimtrim();
     }
@@ -992,7 +992,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             valueIsDeviceVisitor = true;
         }
         if ( this.isEmpty() && slice.isEmpty() || slice.size()!=value.size() ) _become( value ); // TODO: Rethink this a little
-        else new Tsr( new Tsr[]{ slice, value }, "I[0]<-I[1]", false );
+        else new Tsr( new Tsr[]{ slice, value }, "I[ 0 ]<-I[1]", false );
         if ( valueIsDeviceVisitor ) value.find( Device.class ).get( value );
         return this;
     }
@@ -1120,8 +1120,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                     for ( int ii : (int[]) ranges[ i ] ) intList.add( ii );
                     ranges[ i ] = intList;
                 }
-            } else if ( ranges[i] instanceof String[] ) {
-                if ( ranges[i] instanceof String[] ) {
+            } else if ( ranges[ i ] instanceof String[] ) {
+                if ( ranges[ i ] instanceof String[] ) {
                     List<String> strList = new ArrayList<>( ( (String[]) ranges[ i ] ).length);
                     for ( String ii : (String[]) ranges[ i ] ) strList.add( ii );
                     ranges[ i ] = strList;
@@ -1158,10 +1158,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                         : ( (Object[]) ranges[ i ] );
                 if (
                         !( ( (Object[]) ( ranges[ i ] ) )[ 0 ] instanceof Integer )
-                                || !( ( (Object[]) ranges[ i ] )[ ( (Object[]) ( ranges[i] ) ).length - 1 ] instanceof Integer )
+                                || !( ( (Object[]) ranges[ i ] )[ ( (Object[]) ( ranges[ i ] ) ).length - 1 ] instanceof Integer )
                 ) {
                     IndexAlias indexAlias = find( IndexAlias.class );
-                    if ( !( ( (Object[]) (ranges[i]) )[ 0 ] instanceof Integer ) ) {
+                    if ( !( ( (Object[]) (ranges[ i ]) )[ 0 ] instanceof Integer ) ) {
                         if ( indexAlias != null ) {
                             first = indexAlias.get( ( (Object[]) ranges[ i ])[ 0 ], i + offset );
                         }
@@ -1233,7 +1233,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
         public static Tsr addInto( Tsr t, Tsr source ) {
             if ( t.isVirtual() && source.isVirtual() ) t.value64()[ 0 ] += source.value64()[ 0 ];
-            else FunctionBuilder.build( "I[0]<-(I[0]+I[1])", false ).call( new Tsr[]{ t, source } );
+            else FunctionBuilder.build( "I[ 0 ]<-(I[ 0 ]+I[1])", false ).call( new Tsr[]{ t, source } );
             return source;
         }
 
@@ -1575,7 +1575,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         else if ( v == null ) return _stringified(
                     i -> ( format )
                             ? Utility.Stringify.formatFP( value64( i ) )
-                            : String.valueOf( value64(i) ),
+                            : String.valueOf( value64( i ) ),
                     max
             );
         else return _stringified(
@@ -1616,7 +1616,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         int prefix = 0;
         for ( int s : shape ) if ( s == 1 ) prefix++; else break;
         int postfix = 0;
-        for ( int i = shape.length-1; i>=0; i-- ) if ( shape[i] == 1 ) postfix++; else break;
+        for ( int i = shape.length-1; i>=0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;
         for ( int i = 0; i < tsrs.length; i++ ) {
             if ( tsrs[ i ].rank() != largest ) {
                 int[] oldShape = tsrs[ i ].getNDConf().shape();
@@ -1628,7 +1628,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 for ( int ii = handle; ii < largest; ii++ ) newReshape[ ii ] = ( postfix <= prefix ) ? ii - padding : -1;
 
                 Function f = Function.create(
-                    AbstractNDArray.Utility.Stringify.strConf( newReshape ) + ":(I[0])",
+                    AbstractNDArray.Utility.Stringify.strConf( newReshape ) + ":(I[ 0 ])",
                         doesAD
                 );
                 tsrs[ i ] = f.call( tsrs[ i ] );

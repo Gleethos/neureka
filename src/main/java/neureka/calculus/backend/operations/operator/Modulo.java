@@ -29,7 +29,7 @@ public class Modulo extends AbstractOperationType {
                 children -> {
                     StringBuilder reconstructed = new StringBuilder();
                     for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get(i) );
+                        reconstructed.append( children.get( i ) );
                         if ( i < children.size() - 1 ) {
                             reconstructed.append(" % ");
                         }
@@ -79,13 +79,13 @@ public class Modulo extends AbstractOperationType {
                         call -> {
                             Tsr[] tsrs = call.getTensors();
                             Device device = call.getDevice();
-                            if ( tsrs[0] == null ) // Creating a new tensor:
+                            if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                             {
                                 int[] shp = tsrs[1].getNDConf().shape();
                                 Tsr output = new Tsr( shp, 0.0 );
                                 output.setIsVirtual(false);
                                 device.add(output);
-                                tsrs[0] = output;
+                                tsrs[ 0 ] = output;
                             }
                             return call;
                         }
@@ -99,10 +99,10 @@ public class Modulo extends AbstractOperationType {
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor(0).size(),
+                                                        call.getTensor( 0 ).size(),
                                                         ( start, end ) ->
                                                                 Operator.operate (
-                                                                        call.getTensor(0),
+                                                                        call.getTensor( 0 ),
                                                                         call.getTensor(1),
                                                                         call.getTensor(2),
                                                                         call.getDerivativeIndex(),
@@ -116,13 +116,13 @@ public class Modulo extends AbstractOperationType {
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor(offset))
                                             .pass(call.getTensor(offset + 1))
                                             .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getTensor( 0 ).rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
                                 },
@@ -203,13 +203,13 @@ public class Modulo extends AbstractOperationType {
                         call -> {
                             Tsr[] tsrs = call.getTensors();
                             Device device = call.getDevice();
-                            if ( tsrs[0] == null ) // Creating a new tensor:
+                            if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                             {
                                 int[] shp = tsrs[1].getNDConf().shape();
                                 Tsr output = new Tsr( shp, 0.0 );
                                 output.setIsVirtual(false);
                                 device.add(output);
-                                tsrs[0] = output;
+                                tsrs[ 0 ] = output;
                             }
                             return call;
                         }
@@ -223,10 +223,10 @@ public class Modulo extends AbstractOperationType {
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor(0).size(),
+                                                        call.getTensor( 0 ).size(),
                                                         ( start, end ) ->
                                                                 Broadcast.broadcast (
-                                                                        call.getTensor(0), call.getTensor(1), call.getTensor(2),
+                                                                        call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
                                                                         call.getDerivativeIndex(), start, end,
                                                                         creator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
@@ -237,13 +237,13 @@ public class Modulo extends AbstractOperationType {
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor(offset))
                                             .pass(call.getTensor(offset + 1))
                                             .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getTensor( 0 ).rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
                                 },
@@ -295,7 +295,7 @@ public class Modulo extends AbstractOperationType {
             .setDrainInstantiation(
                     call -> {
                         Tsr[] tsrs = call.getTensors();
-                        int offset = ( tsrs[0] == null ) ? 1 : 0;
+                        int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                         return new ExecutionCall<>(call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1 + offset]}, -1, OperationType.instance("idy"));
                     }
             );
@@ -306,13 +306,13 @@ public class Modulo extends AbstractOperationType {
                         HostExecutor.class,
                         new HostExecutor(
                                 call -> {
-                                    double value = call.getTensor(0).value64(2);
+                                    double value = call.getTensor( 0 ).value64(2);
                                     call.getDevice().getExecutor()
                                             .threaded (
-                                                    call.getTensor(0).size(),
+                                                    call.getTensor( 0 ).size(),
                                                     ( start, end ) ->
                                                             Scalarization.scalarize (
-                                                                    call.getTensor(0),
+                                                                    call.getTensor( 0 ),
                                                                     start, end,
                                                                     scalarCreator.create(call.getTensors(), value, -1)
                                                             )
@@ -325,12 +325,12 @@ public class Modulo extends AbstractOperationType {
                         new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1)?1:0;
-                                    int gwz = call.getTensor(0).size();
+                                    int gwz = call.getTensor( 0 ).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(0))
-                                            .pass(call.getTensor(0))
-                                            .pass((float)call.getTensor(1+offset).value64(0))
-                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getTensor( 0 ))
+                                            .pass(call.getTensor( 0 ))
+                                            .pass((float)call.getTensor(1+offset).value64( 0 ))
+                                            .pass(call.getTensor( 0 ).rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
                                 },
@@ -356,16 +356,16 @@ public class Modulo extends AbstractOperationType {
                 "", ((char) 171) + "%", 3, true, false, false, false
         ) {
             @Override
-            public double calculate(double[] inputs, int j, int d, List<Function> src) {
-            return src.get(0).call( inputs, j );
+            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            return src.get( 0 ).call( inputs, j );
             }
         };
         new AbstractOperationType(
                 "", "%" + ((char) 187), 3, true, false, false, false
         ) {
             @Override
-            public double calculate(double[] inputs, int j, int d, List<Function> src) {
-            return src.get(0).call( inputs, j );
+            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            return src.get( 0 ).call( inputs, j );
             }
         };
     }
@@ -375,29 +375,29 @@ public class Modulo extends AbstractOperationType {
     @Contract(pure = true)
     public static double calculate(double[] inputs, int d, List<Function> src) {
         if ( d < 0 ) {
-            double result = src.get(0).call(inputs);
+            double result = src.get( 0 ).call(inputs);
             for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get(i).call(inputs);
+                final double current = src.get( i ).call(inputs);
                 result %= current;
             }
             return result;
-        } else return src.get(0).derive(inputs, d);
+        } else return src.get( 0 ).derive(inputs, d);
     }
 
     @Contract(pure = true)
 
     @Override
-    public double calculate(double[] inputs, int j, int d, List<Function> src) {
+    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
         if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
-            double result = src.get(0).call(inputs, j);
+            double result = src.get( 0 ).call(inputs, j);
             for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get(i).call(inputs, j);
+                final double current = src.get( i ).call(inputs, j);
                 result %= current;
             }
             return result;
         } else {
-            return src.get(0).derive(inputs, d, j);// j ?
+            return src.get( 0 ).derive(inputs, d, j);// j ?
         }
     }
 

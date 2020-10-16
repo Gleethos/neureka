@@ -60,8 +60,8 @@ public interface NDConfiguration
             int[] shpTln = newTlnOf(shp);
             int[] newTln = new int[newForm.length];
             for (int i = 0; i < newForm.length; i++) {
-                if (newForm[i] < 0) newTln[i] = shpTln[i];
-                else if (newForm[i] >= 0) newTln[i] = tln[newForm[i]];
+                if (newForm[ i ] < 0) newTln[ i ] = shpTln[ i ];
+                else if (newForm[ i ] >= 0) newTln[ i ] = tln[newForm[ i ]];
             }
             return newTln;
         }
@@ -70,25 +70,25 @@ public interface NDConfiguration
         public static int[] rearrange(@NotNull int[] array, @NotNull int[] ptr) {
             int[] newShp = new int[ptr.length];
             for (int i = 0; i < ptr.length; i++) {
-                if (ptr[i] < 0) newShp[i] = Math.abs(ptr[i]);
-                else if (ptr[i] >= 0) newShp[i] = array[ptr[i]];
+                if (ptr[ i ] < 0) newShp[ i ] = Math.abs(ptr[ i ]);
+                else if (ptr[ i ] >= 0) newShp[ i ] = array[ptr[ i ]];
             }
             return newShp;
         }
 
         @Contract(pure = true)
         public static int[] newTlnOf(int[] shape) {
-            int[] tln = new int[shape.length];
+            int[] tln = new int[ shape.length ];
             int prod = 1;
             if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
                 for (int i = 0; i < tln.length; i++) {
-                    tln[i] = prod;
-                    prod *= shape[i];
+                    tln[ i ] = prod;
+                    prod *= shape[ i ];
                 }
             } else {
                 for (int i = tln.length-1; i >= 0; i--) {
-                    tln[i] = prod;
-                    prod *= shape[i];
+                    tln[ i ] = prod;
+                    prod *= shape[ i ];
                 }
             }
             return tln;
@@ -105,10 +105,10 @@ public interface NDConfiguration
         @Contract(pure = true)
         private static int _incrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
             if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
-                if (shpIdx[i] < (shape[i])) {
-                    shpIdx[i]++;
-                    if (shpIdx[i] == (shape[i])) {
-                        shpIdx[i] = 0;
+                if (shpIdx[ i ] < (shape[ i ])) {
+                    shpIdx[ i ]++;
+                    if (shpIdx[ i ] == (shape[ i ])) {
+                        shpIdx[ i ] = 0;
                         i++;
                     } else {
                         i = -1;
@@ -118,10 +118,10 @@ public interface NDConfiguration
                 }
                 return i;
             } else {
-                if (shpIdx[i] < (shape[i])) {
-                    shpIdx[i]++;
-                    if (shpIdx[i] == (shape[i])) {
-                        shpIdx[i] = 0;
+                if (shpIdx[ i ] < (shape[ i ])) {
+                    shpIdx[ i ]++;
+                    if (shpIdx[ i ] == (shape[ i ])) {
+                        shpIdx[ i ] = 0;
                         i--;
                     } else {
                         i = -1;

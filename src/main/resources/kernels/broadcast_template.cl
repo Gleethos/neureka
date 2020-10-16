@@ -20,7 +20,7 @@ __kernel void broadcast_template(
         int p_tln = 1 * rank;
         int p_idm = 2 * rank;
         int p_idx = 3 * rank;
-        int di = _i_of_i(get_global_id(0), prv_drn_cfg, rank);
+        int di = _i_of_i(get_global_id( 0 ), prv_drn_cfg, rank);
 
         //increment src accordingly:
         int ri = 0;

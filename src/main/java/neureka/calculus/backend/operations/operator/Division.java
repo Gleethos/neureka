@@ -53,7 +53,7 @@ public class Division extends AbstractOperationType
                 children -> {
                     StringBuilder reconstructed = new StringBuilder();
                     for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get(i) );
+                        reconstructed.append( children.get( i ) );
                         if ( i < children.size() - 1 ) {
                             reconstructed.append(" / ");
                         }
@@ -72,44 +72,44 @@ public class Division extends AbstractOperationType
             Tsr alternative = null;
             if (tsrs.length > 3) {
                 if (d < 0) {
-                    Tsr[] reduction = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
+                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[1], tsrs[2]};
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
-                    tsrs[0] = reduction[0];
+                    tsrs[ 0 ] = reduction[ 0 ];
 
                     reduction = Utility.offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
-                    tsrs[0] = reduction[0];
+                    tsrs[ 0 ] = reduction[ 0 ];
                 } else {
                     Tsr a;
                     if ( d > 1 ) {
                         Tsr[] reduction = Utility.subset(tsrs, 1, 1, d+1);
-                        reduction[0] =  Tsr.Create.newTsrLike(tsrs[1]);
+                        reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[1]);
                         alternative = goDeeperWith.apply(
                                 new ExecutionCall<>( device, reduction, -1, OperationType.instance("/") )
                         );
-                        a = reduction[0];
+                        a = reduction[ 0 ];
                     } else if ( d == 1 ) a = tsrs[1];
                     else a = Tsr.Create.newTsrLike(tsrs[1], 1.0);
                     Tsr b;
                     if ( tsrs.length -  d - 2  > 1 ) {
                         Tsr[] reduction = Utility.subset(tsrs, 2, d+2, tsrs.length-(d+2));
                         reduction[1] =  Tsr.Create.newTsrLike(tsrs[1], 1.0);
-                        reduction[0] = reduction[1];
+                        reduction[ 0 ] = reduction[1];
                         alternative = goDeeperWith.apply(
                                 new ExecutionCall<>( device, reduction, -1, OperationType.instance("/") )
                         );
-                        b = reduction[0];
+                        b = reduction[ 0 ];
                     } else b = Tsr.Create.newTsrLike(tsrs[1], 1.0);
 
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>( device, new Tsr[]{tsrs[0], a, b}, -1, OperationType.instance("*") )
+                            new ExecutionCall<>( device, new Tsr[]{tsrs[ 0 ], a, b}, -1, OperationType.instance("*") )
                     );
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>( device, new Tsr[]{tsrs[0], tsrs[0], tsrs[d+1]}, 1, OperationType.instance("/") )
+                            new ExecutionCall<>( device, new Tsr[]{tsrs[ 0 ], tsrs[ 0 ], tsrs[d+1]}, 1, OperationType.instance("/") )
                     );
                     if ( d == 0 ) a.delete();
                     b.delete();
@@ -144,13 +144,13 @@ public class Division extends AbstractOperationType
                     call -> {
                         Tsr[] tsrs = call.getTensors();
                         Device device = call.getDevice();
-                        if ( tsrs[0] == null ) // Creating a new tensor:
+                        if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                         {
                             int[] shp = tsrs[1].getNDConf().shape();
                             Tsr output = new Tsr( shp, 0.0 );
                             output.setIsVirtual(false);
                             device.add(output);
-                            tsrs[0] = output;
+                            tsrs[ 0 ] = output;
                         }
                         return call;
                     }
@@ -163,10 +163,10 @@ public class Division extends AbstractOperationType
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor(0).size(),
+                                                        call.getTensor( 0 ).size(),
                                                         ( start, end ) ->
                                                                 Broadcast.broadcast (
-                                                                        call.getTensor(0),
+                                                                        call.getTensor( 0 ),
                                                                         call.getTensor(1),
                                                                         call.getTensor(2),
                                                                         call.getDerivativeIndex(),
@@ -180,13 +180,13 @@ public class Division extends AbstractOperationType
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor(offset))
                                             .pass(call.getTensor(offset + 1))
                                             .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getTensor( 0 ).rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
                                 },
@@ -240,13 +240,13 @@ public class Division extends AbstractOperationType
                     call -> {
                         Tsr[] tsrs = call.getTensors();
                         Device device = call.getDevice();
-                        if ( tsrs[0] == null ) // Creating a new tensor:
+                        if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                         {
                             int[] shp = tsrs[1].getNDConf().shape();
                             Tsr output = new Tsr( shp, 0.0 );
                             output.setIsVirtual(false);
                             device.add(output);
-                            tsrs[0] = output;
+                            tsrs[ 0 ] = output;
                         }
                         return call;
                     }
@@ -260,10 +260,10 @@ public class Division extends AbstractOperationType
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor(0).size(),
+                                                        call.getTensor( 0 ).size(),
                                                         ( start, end ) ->
                                                                 Broadcast.broadcast (
-                                                                        call.getTensor(0), call.getTensor(1), call.getTensor(2),
+                                                                        call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
                                                                         call.getDerivativeIndex(), start, end,
                                                                         _creator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
@@ -274,13 +274,13 @@ public class Division extends AbstractOperationType
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor(offset))
                                             .pass(call.getTensor(offset + 1))
                                             .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getTensor( 0 ).rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
                                 },
@@ -324,13 +324,13 @@ public class Division extends AbstractOperationType
                     call -> {
                         Tsr[] tsrs = call.getTensors();
                         Device device = call.getDevice();
-                        if ( tsrs[0] == null ) // Creating a new tensor:
+                        if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                         {
                             int[] shp = tsrs[1].getNDConf().shape();
                             Tsr output = new Tsr( shp, 0.0 );
                             output.setIsVirtual(false);
                             device.add(output);
-                            tsrs[0] = output;
+                            tsrs[ 0 ] = output;
                         }
                         return call;
                     }
@@ -342,13 +342,13 @@ public class Division extends AbstractOperationType
                         HostExecutor.class,
                         new HostExecutor(
                                 call -> {
-                                    double value = call.getTensor(0).value64(2);
+                                    double value = call.getTensor( 0 ).value64(2);
                                     call.getDevice().getExecutor()
                                             .threaded (
-                                                    call.getTensor(0).size(),
+                                                    call.getTensor( 0 ).size(),
                                                     ( start, end ) ->
                                                             Scalarization.scalarize (
-                                                                    call.getTensor(0),
+                                                                    call.getTensor( 0 ),
                                                                     start, end,
                                                                     scalarCreator.create(call.getTensors(), value, call.getDerivativeIndex())
                                                             )
@@ -361,12 +361,12 @@ public class Division extends AbstractOperationType
                         new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1)?1:0;
-                                    int gwz = call.getTensor(0).size();
+                                    int gwz = call.getTensor( 0 ).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(0))
-                                            .pass(call.getTensor(0))
-                                            .pass((float)call.getTensor(1+offset).value64(0))
-                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getTensor( 0 ))
+                                            .pass(call.getTensor( 0 ))
+                                            .pass((float)call.getTensor(1+offset).value64( 0 ))
+                                            .pass(call.getTensor( 0 ).rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
                                 },
@@ -391,16 +391,16 @@ public class Division extends AbstractOperationType
                 "inv_division_left", ((char) 171) + "/", 3, true, false, false, false
         ) {
             @Override
-            public double calculate(double[] inputs, int j, int d, List<Function> src) {
-            return src.get(0).call( inputs, j );
+            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            return src.get( 0 ).call( inputs, j );
             }
         };
         new AbstractOperationType(
                 "inv_division_right", "/" + ((char) 187), 3, true, false, false, false
         ) {
             @Override
-            public double calculate(double[] inputs, int j, int d, List<Function> src) {
-            return src.get(0).call( inputs, j );
+            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            return src.get( 0 ).call( inputs, j );
             }
         };
 
@@ -410,7 +410,7 @@ public class Division extends AbstractOperationType
                 "divide", "d", 2, true, false, true, false
         ){
             @Override
-            public double calculate(double[] inputs, int j, int d, List<Function> src){
+            public double calculate( double[] inputs, int j, int d, List<Function> src ){
                 return 0;
             }
         }.setImplementation(
@@ -454,7 +454,7 @@ public class Division extends AbstractOperationType
                     .setDrainInstantiation(
                             call -> {
                                 Tsr[] tsrs = call.getTensors();
-                                int offset = ( tsrs[0] == null ) ? 1 : 0;
+                                int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                                 return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                             }
                     )
@@ -462,7 +462,7 @@ public class Division extends AbstractOperationType
                         children -> {
                             StringBuilder reconstructed = new StringBuilder();
                             for ( int i = 0; i < children.size(); ++i ) {
-                                reconstructed.append( children.get(i) );
+                                reconstructed.append( children.get( i ) );
                                 if ( i < children.size() - 1 ) {
                                     reconstructed.append(" d ");
                                 }
@@ -475,14 +475,14 @@ public class Division extends AbstractOperationType
                 "", ((char) 171) + "d", 3, true, false, true, false
         ) {
             @Override
-            public double calculate(double[] inputs, int j, int d, List<Function> src) {
-            return src.get(0).call( inputs, j );
+            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            return src.get( 0 ).call( inputs, j );
             }
         }.setStringifier(
                 children -> {
                     StringBuilder reconstructed = new StringBuilder();
                     for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get(i) );
+                        reconstructed.append( children.get( i ) );
                         if ( i < children.size() - 1 ) {
                             reconstructed.append(" "+((char) 171) + "d ");
                         }
@@ -494,14 +494,14 @@ public class Division extends AbstractOperationType
                 "", "d" + ((char) 187), 3, true, false, true, false
         ) {
             @Override
-            public double calculate(double[] inputs, int j, int d, List<Function> src) {
-            return src.get(0).call( inputs, j );
+            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            return src.get( 0 ).call( inputs, j );
             }
         }.setStringifier(
                 children -> {
                     StringBuilder reconstructed = new StringBuilder();
                     for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get(i) );
+                        reconstructed.append( children.get( i ) );
                         if ( i < children.size() - 1 ) {
                             reconstructed.append(" d" + ((char) 187)+" ");
                         }
@@ -517,10 +517,10 @@ public class Division extends AbstractOperationType
     @Contract(pure = true)
 
     @Override
-    public double calculate(double[] inputs, int j, int d, List<Function> src) {
+    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
         if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
-            double result = src.get(0).call(inputs, j);
+            double result = src.get( 0 ).call(inputs, j);
             for (int Vi = 1; Vi < src.size(); Vi++) {
                 final double current = src.get(Vi).call(inputs, j);
                 result /= current;
@@ -528,8 +528,8 @@ public class Division extends AbstractOperationType
             return result;
         } else {
             double u, ud, v, vd;
-            u = src.get(0).call(inputs, j);
-            ud = src.get(0).derive(inputs, d, j);
+            u = src.get( 0 ).call(inputs, j);
+            ud = src.get( 0 ).derive(inputs, d, j);
             for (int i = 0; i < src.size() - 1; i++) {
                 v = src.get(i + 1).call(inputs, j);
                 vd = src.get(i + 1).derive(inputs, d, j);
@@ -543,16 +543,16 @@ public class Division extends AbstractOperationType
     @Contract(pure = true)
     public static double calculate(double[] inputs, int d, List<Function> src) {
         if ( d < 0 ) {
-            double result = src.get(0).call(inputs);
+            double result = src.get( 0 ).call(inputs);
             for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get(i).call(inputs);
+                final double current = src.get( i ).call(inputs);
                 result /= current;
             }
             return result;
         } else {
             double derivative = 0;
-            double tempVar = src.get(0).call(inputs);
-            derivative = src.get(0).derive(inputs, d);
+            double tempVar = src.get( 0 ).call(inputs);
+            derivative = src.get( 0 ).derive(inputs, d);
 
             for ( int i = 0; i < src.size() - 1; i++ ) {
                 double u, ud, v, vd;

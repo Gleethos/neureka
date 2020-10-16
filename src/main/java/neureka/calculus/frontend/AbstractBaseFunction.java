@@ -34,7 +34,7 @@ public abstract class AbstractBaseFunction implements Function
 
     @Override
     public <T> Tsr<T> call( List<Tsr<T>> inputs ) {
-        return call(inputs.toArray(new Tsr[0]));
+        return call(inputs.toArray(new Tsr[ 0 ]));
     }
 
     @Override
@@ -80,12 +80,12 @@ public abstract class AbstractBaseFunction implements Function
 
     @Override
     public <T> Tsr<T> derive(List<Tsr<T>> inputs, int index, int j){
-        return derive(inputs.toArray(new Tsr[0]), index, j);
+        return derive(inputs.toArray(new Tsr[ 0 ]), index, j);
     }
 
     @Override
     public <T> Tsr<T> derive(List<Tsr<T>> inputs, int index){
-        return derive(inputs.toArray(new Tsr[0]), index);
+        return derive(inputs.toArray(new Tsr[ 0 ]), index);
     }
 
 

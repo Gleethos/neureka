@@ -30,7 +30,7 @@ public class CopyLeft extends AbstractOperationType {
                 children -> {
                     StringBuilder reconstructed = new StringBuilder();
                     for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get(i) );
+                        reconstructed.append( children.get( i ) );
                         if ( i < children.size() - 1 ) reconstructed.append(" <- ");
                     }
                     return "(" + reconstructed + ")";
@@ -60,7 +60,7 @@ public class CopyLeft extends AbstractOperationType {
                         call ->
                         {
                             Tsr[] tsrs = call.getTensors();
-                            int offset = ( tsrs[0] == null ) ? 1 : 0;
+                            int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                             call.getTensor(offset).incrementVersionBecauseOf(call);
                             return new ExecutionCall(
                                     call.getDevice(),
@@ -85,13 +85,13 @@ public class CopyLeft extends AbstractOperationType {
                         new HostExecutor(
                                 call ->
                                 {
-                                    double value = call.getTensor(1).value64(0);
+                                    double value = call.getTensor(1).value64( 0 );
                                     call.getDevice().getExecutor()
                                             .threaded (
-                                                    call.getTensor(0).size(),
+                                                    call.getTensor( 0 ).size(),
                                                     ( start, end ) ->
                                                             Scalarization.scalarize (
-                                                                    call.getTensor(0),
+                                                                    call.getTensor( 0 ),
                                                                     start, end,
                                                                     scalarCreator.create(call.getTensors(), value, -1)
                                                             )
@@ -103,12 +103,12 @@ public class CopyLeft extends AbstractOperationType {
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    Tsr t = call.getTensor(0);
+                                    Tsr t = call.getTensor( 0 );
                                     int gwz = t.size();
                                     call.getDevice().getKernel(call)
                                             .pass(t)
                                             .pass(t)
-                                            .pass(call.getTensor(1).value32(0))
+                                            .pass(call.getTensor(1).value32( 0 ))
                                             .pass(t.rank())
                                             .pass(call.getDerivativeIndex())
                                             .call(gwz);
@@ -135,7 +135,7 @@ public class CopyLeft extends AbstractOperationType {
                     call ->
                     {
                         Tsr[] tsrs = call.getTensors();
-                        int offset = ( tsrs[0] == null ) ? 1 : 0;
+                        int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                         call.getTensor(offset).incrementVersionBecauseOf(call);
                         return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                     }
@@ -149,7 +149,7 @@ public class CopyLeft extends AbstractOperationType {
                         new HostExecutor(
                                 call ->
                                 {
-                                    call.getTensor(0).setIsVirtual(false);
+                                    call.getTensor( 0 ).setIsVirtual(false);
                                     OperationType.instance("idy")
                                             .getImplementation(Activation.class)
                                             .getExecutor(HostExecutor.class)
@@ -162,7 +162,7 @@ public class CopyLeft extends AbstractOperationType {
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    call.getTensor(0).setIsVirtual(false);
+                                    call.getTensor( 0 ).setIsVirtual(false);
                                     OperationType.instance("idy")
                                             .getImplementation(Activation.class)
                                             .getExecutor(CLExecutor.class)
@@ -176,7 +176,7 @@ public class CopyLeft extends AbstractOperationType {
 
 
     @Override
-    public double calculate(double[] inputs, int j, int d, List<Function> src) {
-            return src.get(0).call( inputs, j );
+    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            return src.get( 0 ).call( inputs, j );
     }
 }

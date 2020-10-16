@@ -30,7 +30,7 @@ public class Convolution extends AbstractFunctionalOperationTypeImplementation< 
         int[] t1Shp = t1_src.getNDConf().shape();
         int[] t2Shp = t2_src.getNDConf().shape();
         int rank = t0Shp.length;
-        int[] t0Idx = t0_drn.idx_of_i(i);
+        int[] t0Idx = t0_drn.idx_of_i( i );
         int[] t1Idx = new int[rank];
         int[] t2Idx = new int[rank];
         double[] t0_value = t0_drn.value64();

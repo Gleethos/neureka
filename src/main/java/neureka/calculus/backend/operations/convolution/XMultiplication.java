@@ -34,7 +34,7 @@ public class XMultiplication extends AbstractOperationType
                 children -> {
                     StringBuilder reconstructed = new StringBuilder();
                     for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get(i) );
+                        reconstructed.append( children.get( i ) );
                         if ( i < children.size() - 1 ) {
                             reconstructed.append(" x ");
                         }
@@ -53,30 +53,30 @@ public class XMultiplication extends AbstractOperationType
             Tsr alternative = null;
             if (tsrs.length > 3) {
                 if (d < 0) {
-                    Tsr[] reduction = new Tsr[]{tsrs[0], tsrs[1], tsrs[2]};
+                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[1], tsrs[2]};
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
-                    tsrs[0] = reduction[0];
+                    tsrs[ 0 ] = reduction[ 0 ];
 
                     reduction = Utility.offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
-                    tsrs[0] = reduction[0];
+                    tsrs[ 0 ] = reduction[ 0 ];
                 }
                 return alternative;
             } else {
                 if ( call.getType().getOperator().equals("x") ) {
                     if (d >= 0) {
-                        if (d == 0) tsrs[0] = tsrs[2];
-                        else tsrs[0] = tsrs[1];
-                        return tsrs[0];
+                        if (d == 0) tsrs[ 0 ] = tsrs[2];
+                        else tsrs[ 0 ] = tsrs[1];
+                        return tsrs[ 0 ];
                     } else {
-                        call.mutateArguments( t -> new Tsr[]{t[0], t[1], t[2]} );
+                        call.mutateArguments( t -> new Tsr[]{t[ 0 ], t[1], t[2]} );
                     }
                 } else if ( call.getType().getOperator().equals("x"+ ((char) 187)) ) {
-                    call.mutateArguments( t -> new Tsr[]{t[2], t[1], t[0]} );
+                    call.mutateArguments( t -> new Tsr[]{t[2], t[1], t[ 0 ]} );
                 }
                 return alternative;
             }
@@ -121,7 +121,7 @@ public class XMultiplication extends AbstractOperationType
                     int d = call.getDerivativeIndex();
 
                     Function invX = FunctionBuilder.build(
-                            "I[0]" + getOperator() + ">>I[1]" + getOperator() + ">>I[2]",
+                            "I[ 0 ]" + getOperator() + ">>I[1]" + getOperator() + ">>I[2]",
                             false
                     );
                     Tsr deriv = f.derive(inputs, d);
@@ -136,14 +136,14 @@ public class XMultiplication extends AbstractOperationType
                         if ( call.getType().getOperator().equals("x") ) {
 
                             Tsr[] inputs = call.getTensors();
-                            Tsr[] tsrs = new Tsr[]{null, inputs[0], inputs[1]};
-                            tsrs[0] = (call.getDerivativeIndex() < 0)
+                            Tsr[] tsrs = new Tsr[]{null, inputs[ 0 ], inputs[1]};
+                            tsrs[ 0 ] = (call.getDerivativeIndex() < 0)
                                     ? new Tsr(Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape()))
                                     : null;
 
                             for (Tsr t : tsrs) if (t != null) t.setIsVirtual(false);
                             call.getDevice().execute(call.withNew(tsrs));
-                            return tsrs[0];
+                            return tsrs[ 0 ];
                         } else {
                             if (call.getDerivativeIndex() < 0) {
                                 Tsr[] tsrs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
@@ -151,7 +151,7 @@ public class XMultiplication extends AbstractOperationType
                                 for ( Tsr t : tsrs ) t.setIsVirtual(false);
                                 call.getDevice().execute( new ExecutionCall( call.getDevice(), tsrs, 0, call.getType() ) );
                                 if ( call.getType().getId() == OperationType.instance("x>>").getId()) return tsrs[2];
-                                else return tsrs[0];
+                                else return tsrs[ 0 ];
                             }
                         }
                         return null;
@@ -162,13 +162,13 @@ public class XMultiplication extends AbstractOperationType
                     call -> {
                         Tsr[] tsrs = call.getTensors();
                         Device device = call.getDevice();
-                        if ( tsrs[0] == null ) // Creating a new tensor:
+                        if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                         {
                             int[] shp = Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape());
                             Tsr output = new Tsr( shp, 0.0 );
                             output.setIsVirtual(false);
                             device.add(output);
-                            tsrs[0] = output;
+                            tsrs[ 0 ] = output;
                         }
                         return call;
                     }
@@ -183,10 +183,10 @@ public class XMultiplication extends AbstractOperationType
                                         call ->
                                                 call.getDevice().getExecutor()
                                                         .threaded (
-                                                                call.getTensor(0).size(),
+                                                                call.getTensor( 0 ).size(),
                                                                 ( start, end ) ->
                                                                         Convolution.convolve (
-                                                                                call.getTensor(0), call.getTensor(1), call.getTensor(2),
+                                                                                call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
                                                                                 call.getDerivativeIndex(), start, end,
                                                                                 convolutionCreator.create(
                                                                                         call.getTensors(),
@@ -200,13 +200,13 @@ public class XMultiplication extends AbstractOperationType
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = (call.getTensor(0) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor(0) != null) ? call.getTensor(0).size() : call.getTensor(1).size();
+                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor(offset))
                                             .pass(call.getTensor(offset + 1))
                                             .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor(0).rank())
+                                            .pass(call.getTensor( 0 ).rank())
                                             .pass(call.getDerivativeIndex())//call.getDerivativeIndex()
                                             .call(gwz);
                                 },
@@ -228,8 +228,8 @@ public class XMultiplication extends AbstractOperationType
         ){
 
             @Override
-            public double calculate(double[] inputs, int j, int d, List<Function> src) {
-            return src.get(0).call( inputs, j );
+            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            return src.get( 0 ).call( inputs, j );
             }
         }
                 .setImplementation(Convolution.class, convolution)
@@ -237,7 +237,7 @@ public class XMultiplication extends AbstractOperationType
                     children -> {
                         StringBuilder reconstructed = new StringBuilder();
                         for ( int i = 0; i < children.size(); ++i ) {
-                            reconstructed.append( children.get(i) );
+                            reconstructed.append( children.get( i ) );
                             if ( i < children.size() - 1 ) {
                                 reconstructed.append(" "+((char) 171) + "x ");
                             }
@@ -255,7 +255,7 @@ public class XMultiplication extends AbstractOperationType
                 false
         ){
             @Override
-            public double calculate(double[] inputs, int j, int d, List<Function> src){
+            public double calculate( double[] inputs, int j, int d, List<Function> src ){
                 return 0;
             }
         }.setImplementation(Convolution.class, convolution)
@@ -263,7 +263,7 @@ public class XMultiplication extends AbstractOperationType
                         children -> {
                             StringBuilder reconstructed = new StringBuilder();
                             for ( int i = 0; i < children.size(); ++i ) {
-                                reconstructed.append( children.get(i) );
+                                reconstructed.append( children.get( i ) );
                                 if ( i < children.size() - 1 ) {
                                     reconstructed.append(" x" + ((char) 187)+" ");
                                 }
@@ -279,7 +279,7 @@ public class XMultiplication extends AbstractOperationType
 
 
     @Override
-    public double calculate(double[] inputs, int j, int d, List<Function> src) {
-            return src.get(0).call( inputs, j );
+    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            return src.get( 0 ).call( inputs, j );
     }
 }

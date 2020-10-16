@@ -112,11 +112,11 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public int i_of_i(int i){
-        return _conf.i_of_i(i);
+        return _conf.i_of_i( i );
     }
 
     public int[] idx_of_i(int i) {
-        return _conf.idx_of_i(i);
+        return _conf.idx_of_i( i );
     }
 
     public int i_of_idx(int[] idx) {
@@ -145,7 +145,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
     }
 
     public int shape(int i){
-        return _conf.shape()[i];
+        return _conf.shape()[ i ];
     }
 
     public List<Integer> idxmap(){
@@ -170,7 +170,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
 
     protected static List<Integer> _asList(int[] array){
         List<Integer> intList = new ArrayList<>(array.length);
-        for (int i : array) intList.add(i);
+        for (int i : array) intList.add( i );
         return intList;
     }
 
@@ -208,7 +208,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
             @Contract(pure = true)
             public static String strConf(int[] conf) {
                 StringBuilder str = new StringBuilder();
-                for (int i=0; i<conf.length; i++) str.append(conf[i]).append((i != conf.length - 1) ? ", " : "");
+                for (int i=0; i<conf.length; i++) str.append(conf[ i ]).append((i != conf.length - 1) ? ", " : "");
                 return "[" + str + "]";
             }
         }
@@ -235,14 +235,14 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
             public static int[][] makeFit(int[] sA, int[] sB){
                 int lastIndexOfA = 0;
                 for (int i=sA.length-1; i>=0; i--) {
-                    if(sA[i]!=1){
+                    if(sA[ i ]!=1){
                         lastIndexOfA = i;
                         break;
                     }
                 }
                 int firstIndexOfB = 0;
                 for (int i=0; i<sB.length; i++){
-                    if(sB[i]!=1){
+                    if(sB[ i ]!=1){
                         firstIndexOfB = i;
                         break;
                     }
@@ -251,8 +251,8 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
                 int[] rsA = new int[newSize];
                 int[] rsB = new int[newSize];
                 for(int i=0; i<newSize; i++) {
-                    if(i<=lastIndexOfA) rsA[i] = i; else rsA[i] = -1;
-                    if(i>=lastIndexOfA) rsB[i] = i-lastIndexOfA+firstIndexOfB; else rsB[i] = -1;
+                    if(i<=lastIndexOfA) rsA[ i ] = i; else rsA[ i ] = -1;
+                    if(i>=lastIndexOfA) rsB[ i ] = i-lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
                 }
                 return new int[][]{rsA, rsB};
             }
@@ -260,7 +260,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
             @Contract(pure = true)
             public static int[] shpOfCon(int[] shp1, int[] shp2) {
                 int[] shape = new int[(shp1.length + shp2.length) / 2];
-                for (int i = 0; i < shp1.length && i < shp2.length; i++) shape[i] = Math.abs(shp1[i] - shp2[i]) + 1;
+                for (int i = 0; i < shp1.length && i < shp2.length; i++) shape[ i ] = Math.abs(shp1[ i ] - shp2[ i ]) + 1;
                 return shape;
             }
 
@@ -268,8 +268,8 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
             public static int[] shpOfBrc(int[] shp1, int[] shp2) {
                 int[] shape = new int[(shp1.length + shp2.length) / 2];
                 for (int i = 0; i < shp1.length && i < shp2.length; i++) {
-                    shape[i] = Math.max(shp1[i], shp2[i]);
-                    if (Math.min(shp1[i], shp2[i])!=1&&Math.max(shp1[i], shp2[i])!=shape[i]) {
+                    shape[ i ] = Math.max(shp1[ i ], shp2[ i ]);
+                    if (Math.min(shp1[ i ], shp2[ i ])!=1&&Math.max(shp1[ i ], shp2[ i ])!=shape[ i ]) {
                         throw new IllegalStateException("Broadcast not possible. Shapes do not match!");
                     }
                 }

@@ -37,7 +37,7 @@ public class UI16 extends AbstractNumericType<Integer, int[]>
 
     @Override
     public Integer convert(byte[] b) {
-        return 0x00 << 24 | 0x00 << 16 | (b[0] & 0xff) << 8 | (b[1] & 0xff);
+        return 0x00 << 24 | 0x00 << 16 | (b[ 0 ] & 0xff) << 8 | (b[1] & 0xff);
         //return Utility.unsignedByteArrayToInt(bytes);
     }
 
@@ -53,7 +53,7 @@ public class UI16 extends AbstractNumericType<Integer, int[]>
         int[] data = new int[size];
         for ( int i=0; i<size; i++ ) {
             stream.readFully(_data);
-            data[i] = convert(_data);
+            data[ i ] = convert(_data);
         }
         return data;
     }

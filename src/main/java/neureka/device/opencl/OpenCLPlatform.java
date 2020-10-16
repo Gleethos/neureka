@@ -26,8 +26,8 @@ public class OpenCLPlatform {
         // Obtain the number of devices for the current platform
         int[] numDevices = new int[1];
         clGetDeviceIDs(pid, CL_DEVICE_TYPE_ALL, 0, null, numDevices);
-        cl_device_id[] devicesArray = new cl_device_id[numDevices[0]];
-        clGetDeviceIDs(pid, CL_DEVICE_TYPE_ALL, numDevices[0], devicesArray, null);
+        cl_device_id[] devicesArray = new cl_device_id[numDevices[ 0 ]];
+        clGetDeviceIDs(pid, CL_DEVICE_TYPE_ALL, numDevices[ 0 ], devicesArray, null);
 
         // Enable exceptions and subsequently omit error checks in this sample
         CL.setExceptionsEnabled(true);
@@ -54,7 +54,7 @@ public class OpenCLPlatform {
     public void recompile() {
         List<OpenCLDevice> devices = getDevices();
         cl_device_id[] devicesArray = new cl_device_id[devices.size()];
-        for (int i = 0; i < devicesArray.length; i++) devicesArray[i] = devices.get(i).CLDeviceID();
+        for (int i = 0; i < devicesArray.length; i++) devicesArray[ i ] = devices.get( i ).CLDeviceID();
         _compile(devicesArray);
     }
 
@@ -78,7 +78,7 @@ public class OpenCLPlatform {
         ArrayList<String> sources = new ArrayList<>();
         for ( int i = 0; i < fileNames.length; i++ )
         {
-            String kernelSource = templateSources.get(i);
+            String kernelSource = templateSources.get( i );
             kernelSource = kernelSource.replace(
                     "Neureka.instance().settings().indexing().REVERSE_INDEX_TRANSLATION",
                     (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) ? "true" : "false"
@@ -86,7 +86,7 @@ public class OpenCLPlatform {
             boolean templateFound = false;
             if ( kernelSource.contains("__kernel") )
             {
-                String[] parts = kernelSource.split("__kernel")[1].split("\\(")[0].split(" ");
+                String[] parts = kernelSource.split("__kernel")[1].split("\\(")[ 0 ].split(" ");
 
                 templateFound = parts[parts.length - 1].contains("template");
                 if ( !templateFound ) names.add(parts[parts.length - 1]);
@@ -119,7 +119,7 @@ public class OpenCLPlatform {
                         ) { // TODO: cover!
                             exec = type.getImplementation(GenericImplementation.class).getExecutor(CLExecutor.class);
                         }
-                        if(exec!=null && exec.getSource()!=null) code.put(exec.getName(), exec.getSource());
+                        if(exec!=null && exec.getSource() != null) code.put(exec.getName(), exec.getSource());
                     }
                     code.forEach((n, s) -> {
                                 names.add(n);
@@ -135,7 +135,7 @@ public class OpenCLPlatform {
         cl_program cpProgram = clCreateProgramWithSource(
                 _context,
                 sources.size(),
-                sources.toArray(new String[0]),
+                sources.toArray(new String[ 0 ]),
                 null,
                 null
         );
@@ -203,7 +203,7 @@ public class OpenCLPlatform {
             clGetPlatformIDs(0, null, numPlatforms);
 
             // Obtain the platform IDs
-            cl_platform_id[] platforms = new cl_platform_id[numPlatforms[0]];
+            cl_platform_id[] platforms = new cl_platform_id[numPlatforms[ 0 ]];
             clGetPlatformIDs(platforms.length, platforms, null);
 
             List<OpenCLPlatform> list = new ArrayList<>();

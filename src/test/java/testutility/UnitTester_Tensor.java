@@ -40,7 +40,7 @@ public class UnitTester_Tensor extends UnitTester
         Object[] array = expected.toArray();
         String[] strings = new String[expected.size()];
         for(int i=0; i<strings.length; i++){
-            strings[i] = (String)array[i];
+            strings[ i ] = (String)array[ i ];
         }
         DataType type = tensor.getDataType();
         if ( type != null ) {
@@ -87,7 +87,7 @@ public class UnitTester_Tensor extends UnitTester
             this.assertStringContains("result", result, element);
         }
         for(int i=0; i<source.length; i++){
-            this.assertIsEqual(stringified(source[i].gradient64()), stringified(expectedGradient[i]));
+            this.assertIsEqual(stringified(source[ i ].gradient64()), stringified(expectedGradient[ i ]));
         }
         product.delete();
         return (printSessionEnd()>0)?1:0;
@@ -252,9 +252,9 @@ public class UnitTester_Tensor extends UnitTester
         assert result[0].find(GraphNode.class) == null; // Because "doAD" is false!
         System.arraycopy(tensors, 0, result, 1, result.length - 1);
         for(int i=0; i<result.length; i++){
-            if(expected[i]!=null && expected[i].length!=0){
-                String[] parts = expected[i];
-                String str = result[i].toString("rdgc");
+            if(expected[ i ]!=null && expected[ i ].length!=0){
+                String[] parts = expected[ i ];
+                String str = result[ i ].toString("rdgc");
                 for(String part : parts){
                     this.assertStringContains("tensor["+i+"]", str, part);
                 }

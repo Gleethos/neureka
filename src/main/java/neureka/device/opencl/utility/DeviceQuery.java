@@ -25,10 +25,10 @@ public class DeviceQuery
         int[] numPlatforms = new int[1];
         clGetPlatformIDs(0, null, numPlatforms);
 
-        result+=("Number of platforms: "+numPlatforms[0]+"\n");
+        result+=("Number of platforms: "+numPlatforms[ 0 ]+"\n");
 
         // Obtain the platform IDs
-        cl_platform_id[] platforms = new cl_platform_id[numPlatforms[0]];
+        cl_platform_id[] platforms = new cl_platform_id[numPlatforms[ 0 ]];
         clGetPlatformIDs(platforms.length, platforms, null);
 
         // Collect all devices of all platforms
@@ -41,10 +41,10 @@ public class DeviceQuery
             int[] numDevices = new int[1];
             clGetDeviceIDs(platform, CL_DEVICE_TYPE_ALL, 0, null, numDevices);
 
-            result += ("Number of devices in platform " + platformName + ": " + numDevices[0] + "\n");
+            result += ("Number of devices in platform " + platformName + ": " + numDevices[ 0 ] + "\n");
 
-            cl_device_id[] devicesArray = new cl_device_id[numDevices[0]];
-            clGetDeviceIDs(platform, CL_DEVICE_TYPE_ALL, numDevices[0], devicesArray, null);
+            cl_device_id[] devicesArray = new cl_device_id[numDevices[ 0 ]];
+            clGetDeviceIDs(platform, CL_DEVICE_TYPE_ALL, numDevices[ 0 ], devicesArray, null);
 
             devices.addAll(Arrays.asList(devicesArray));
         }
@@ -83,7 +83,7 @@ public class DeviceQuery
 
             // CL_DEVICE_MAX_WORK_ITEM_SIZES
             long[] maxWorkItemSizes = getSizes(device, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3);
-            result += ("CL_DEVICE_MAX_WORK_ITEM_SIZES: "+maxWorkItemSizes[0]+", "+ maxWorkItemSizes[1]+", "+maxWorkItemSizes[2]+"\n");
+            result += ("CL_DEVICE_MAX_WORK_ITEM_SIZES: "+maxWorkItemSizes[ 0 ]+", "+ maxWorkItemSizes[1]+", "+maxWorkItemSizes[2]+"\n");
 
             // CL_DEVICE_MAX_WORK_GROUP_SIZE
             long maxWorkGroupSize = getSize(device, CL_DEVICE_MAX_WORK_GROUP_SIZE);
@@ -191,7 +191,7 @@ public class DeviceQuery
      */
     private static int getInt(cl_device_id device, int paramName)
     {
-        return getInts(device, paramName, 1)[0];
+        return getInts(device, paramName, 1)[ 0 ];
     }
 
     /**
@@ -218,7 +218,7 @@ public class DeviceQuery
      */
     private static long getLong(cl_device_id device, int paramName)
     {
-        return getLongs(device, paramName, 1)[0];
+        return getLongs(device, paramName, 1)[ 0 ];
     }
 
     /**
@@ -250,7 +250,7 @@ public class DeviceQuery
         clGetDeviceInfo(device, paramName, 0, null, size);
 
         // Create a buffer of the appropriate size and fill it with the info
-        byte buffer[] = new byte[(int)size[0]];
+        byte buffer[] = new byte[(int)size[ 0 ]];
         clGetDeviceInfo(device, paramName, buffer.length, Pointer.to(buffer), null);
 
         // Create a string from the buffer (excluding the trailing \0 byte)
@@ -271,7 +271,7 @@ public class DeviceQuery
         clGetPlatformInfo(platform, paramName, 0, null, size);
 
         // Create a buffer of the appropriate size and fill it with the info
-        byte buffer[] = new byte[(int)size[0]];
+        byte buffer[] = new byte[(int)size[ 0 ]];
         clGetPlatformInfo(platform, paramName, buffer.length, Pointer.to(buffer), null);
 
         // Create a string from the buffer (excluding the trailing \0 byte)
@@ -287,7 +287,7 @@ public class DeviceQuery
      */
     private static long getSize(cl_device_id device, int paramName)
     {
-        return getSizes(device, paramName, 1)[0];
+        return getSizes(device, paramName, 1)[ 0 ];
     }
 
     /**
@@ -311,14 +311,14 @@ public class DeviceQuery
         {
             for (int i=0; i<numValues; i++)
             {
-                values[i] = buffer.getInt(i * Sizeof.size_t);
+                values[ i ] = buffer.getInt(i * Sizeof.size_t);
             }
         }
         else
         {
             for (int i=0; i<numValues; i++)
             {
-                values[i] = buffer.getLong(i * Sizeof.size_t);
+                values[ i ] = buffer.getLong(i * Sizeof.size_t);
             }
         }
         return values;

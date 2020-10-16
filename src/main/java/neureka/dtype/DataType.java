@@ -39,7 +39,7 @@ public class DataType
         Constructor[] ctors = _type.getDeclaredConstructors();
         Constructor ctor = null;
         for (int i = 0; i < ctors.length; i++) {
-            ctor = ctors[i];
+            ctor = ctors[ i ];
             if (ctor.getGenericParameterTypes().length == 0)
                 break;
         }

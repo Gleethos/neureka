@@ -36,7 +36,7 @@ public class SettingsLoader
         try {
 
             String version = GroovySystem.getVersion();
-            if(Integer.parseInt(version.split("\\.")[0]) < 3) {
+            if(Integer.parseInt(version.split("\\.")[ 0 ]) < 3) {
                 throw new IllegalCallerException(
                         "Wrong groovy version "+version+" found! Version 3.0.0 or greater required."
                 );

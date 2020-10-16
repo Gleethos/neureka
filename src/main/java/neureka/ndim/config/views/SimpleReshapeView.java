@@ -31,10 +31,10 @@ public class SimpleReshapeView extends AbstractNDC
         List<Integer> _translator = new ArrayList<>();
 
         for ( int i=0; i < form.length; i++ )
-                if ( form[i] < -1 ) throw new IllegalArgumentException(
+                if ( form[ i ] < -1 ) throw new IllegalArgumentException(
                     "SimpleReshapeView may not view a NDConfiguration beyond reshaping and or padding!"
                 );
-            else if ( form[i] >= 0 )  _translator.add(form[i]);
+            else if ( form[ i ] >= 0 )  _translator.add(form[ i ]);
 
         _formTranslator = _translator.stream().mapToInt(e -> e).toArray();
 
@@ -59,7 +59,7 @@ public class SimpleReshapeView extends AbstractNDC
 
     @Override
     public int shape(int i) {
-        return _shape[i];
+        return _shape[ i ];
     }
 
     @Override
@@ -69,7 +69,7 @@ public class SimpleReshapeView extends AbstractNDC
 
     @Override
     public int idxmap(int i) {
-        return _idxmap[i];
+        return _idxmap[ i ];
     }
 
     @Override
@@ -79,7 +79,7 @@ public class SimpleReshapeView extends AbstractNDC
 
     @Override
     public int translation(int i) {
-        return _translation[i];
+        return _translation[ i ];
     }
 
     @Override
@@ -89,7 +89,7 @@ public class SimpleReshapeView extends AbstractNDC
 
     @Override
     public int spread(int i) {
-        return _spread[i];
+        return _spread[ i ];
     }
 
     @Override
@@ -99,11 +99,11 @@ public class SimpleReshapeView extends AbstractNDC
 
     @Override
     public int offset(int i) {
-        return _offset[i];
+        return _offset[ i ];
     }
     @Override
     public int i_of_i(int i) {
-        return i_of_idx(idx_of_i(i));
+        return i_of_idx(idx_of_i( i ));
     }
 
     @Override
@@ -132,7 +132,7 @@ public class SimpleReshapeView extends AbstractNDC
     @Contract(pure = true)
     private static int[] _rearrange(@NotNull int[] array, @NotNull int[] ptr, @NotNull int[] idx) {
         for (int i = 0; i < ptr.length; i++) {
-            if (ptr[i] >= 0) idx[ptr[i]] = array[i];
+            if (ptr[ i ] >= 0) idx[ptr[ i ]] = array[ i ];
         }
         return idx;
     }

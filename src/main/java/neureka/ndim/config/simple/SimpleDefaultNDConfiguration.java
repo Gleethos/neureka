@@ -45,7 +45,7 @@ public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTAB
 
     @Override
     public int shape(int i) {
-        return _shape[i];
+        return _shape[ i ];
     }
 
     @Override
@@ -55,7 +55,7 @@ public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTAB
 
     @Override
     public int idxmap(int i) {
-        return _translation_and_idxmap[i];
+        return _translation_and_idxmap[ i ];
     }
 
     @Override
@@ -65,7 +65,7 @@ public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTAB
 
     @Override
     public int translation(int i) {
-        return _translation_and_idxmap[i];
+        return _translation_and_idxmap[ i ];
     }
 
     @Override
@@ -95,7 +95,7 @@ public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTAB
 
     @Override
     public int i_of_i(int i){
-        return i_of_idx(idx_of_i(i));
+        return i_of_idx(idx_of_i( i ));
     }
 
     @Override

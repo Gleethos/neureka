@@ -45,12 +45,12 @@ public class UI64 extends AbstractNumericType<BigInteger, BigInteger[]>
 
     @Override
     public byte[] convert(BigInteger number) {
-        return new byte[0];
+        return new byte[ 0 ];
     }
 
     @Override
     public BigInteger[] readDataFrom(DataInput stream, int size) throws IOException {
-        return new BigInteger[0];
+        return new BigInteger[ 0 ];
     }
 
 

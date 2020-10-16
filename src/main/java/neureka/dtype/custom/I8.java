@@ -40,7 +40,7 @@ public class I8 extends AbstractNumericType<Byte, byte[]>
 
     @Override
     public Byte convert(byte[] bytes) {
-        return bytes[0];
+        return bytes[ 0 ];
     }
 
     @Override

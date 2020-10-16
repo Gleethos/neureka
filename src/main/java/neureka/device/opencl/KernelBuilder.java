@@ -51,10 +51,10 @@ public class KernelBuilder
 
     public void call(int globalWorkSize)
     {
-        cl_event[] events = _getWaitList(_inputs.toArray(new Tsr[0]));
+        cl_event[] events = _getWaitList(_inputs.toArray(new Tsr[ 0 ]));
         if(events.length>0){
             clWaitForEvents(events.length, events);
-            _releaseEvents(_inputs.toArray(new Tsr[0]));
+            _releaseEvents(_inputs.toArray(new Tsr[ 0 ]));
         }
         clEnqueueNDRangeKernel(
                 _queue, _kernel,
@@ -85,7 +85,7 @@ public class KernelBuilder
                 list.add(event);
             }
         }
-        return list.toArray(new cl_event[0]);
+        return list.toArray(new cl_event[ 0 ]);
     }
 
 }

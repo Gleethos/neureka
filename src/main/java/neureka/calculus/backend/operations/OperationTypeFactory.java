@@ -42,8 +42,8 @@ public class OperationTypeFactory
                     _isInline
             ) {
                 @Override
-                public double calculate(double[] inputs, int j, int d, List<Function> src) {
-                    return src.get(0).call( inputs, j );
+                public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+                    return src.get( 0 ).call( inputs, j );
                 }
             };
         }

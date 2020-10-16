@@ -26,7 +26,7 @@ public interface Device<ValueType> extends Component<Tsr<ValueType>>
      * @param name The search parameter and name of the requested Device instance.
      * @return The found Device instance or simply the HostCPU instance by default.
      */
-    static Device find(String name)
+    static Device find( String name )
     {
         String search = name.toLowerCase();
         boolean probablyWantsGPU = Arrays.stream(
@@ -56,7 +56,7 @@ public interface Device<ValueType> extends Component<Tsr<ValueType>>
             }
         }
         if ( result == HostCPU.instance() && name.equals("first") ) {
-            Device<Number> first = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0);
+            Device<Number> first = OpenCLPlatform.PLATFORMS().get( 0 ).getDevices().get( 0 );
             if( first!=null ) result = first;
         }
         return result;
