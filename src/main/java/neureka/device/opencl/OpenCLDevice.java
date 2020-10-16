@@ -467,16 +467,16 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected void _execute(Tsr[] tsrs, int d, OperationType type)
+    protected void _execute(Tsr[] tensors, int d, OperationType type)
     {
         ExecutionCall<OpenCLDevice> call =
                 new ExecutionCall<OpenCLDevice>(
                         this,
-                        tsrs,
+                        tensors,
                         d,
                         type
                 );
-        tsrs[ 0 ].setIsVirtual(false);
+        tensors[ 0 ].setIsVirtual(false);
         call.getImplementation().getExecutor(CLExecutor.class).getExecution().run(call);
     }
 

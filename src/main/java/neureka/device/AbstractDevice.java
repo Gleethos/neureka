@@ -8,6 +8,20 @@ import neureka.calculus.backend.implementations.OperationTypeImplementation;
 
 import java.lang.ref.Cleaner;
 
+/**
+ *  The is the abstract precursor class providing
+ *  some useful implementations for core concepts which are most likely
+ *  applicable to most concrete implementations of the Device interface.
+ *  These class provides the following features :
+ *
+ *  - A Cleaner instance used for freeing resources of the device.
+ *
+ *  - An component update implementations which simply calls the swap method of the device.
+ *
+ *  - An implementation for the execution method which calls the underlying calculus backend.
+ *
+ * @param <ValueType>
+ */
 public abstract class AbstractDevice<ValueType> implements Device<ValueType>, Component<Tsr<ValueType>>
 {
     private static final Cleaner _CLEANER = Cleaner.create();
@@ -20,15 +34,15 @@ public abstract class AbstractDevice<ValueType> implements Device<ValueType>, Co
      *  checked before execution.
      *  The checking occurs in the public "execute" method of this class.
      *
-     * @param tsrs An array of input tensors.
+     * @param tensors An array of input tensors.
      * @param d The index of the input which ought to be derived.
      * @param type The type of operation.
      */
-    protected abstract void _execute(Tsr[] tsrs, int d, OperationType type );
+    protected abstract void _execute( Tsr[] tensors, int d, OperationType type );
 
     @Override
     public void update( Tsr oldOwner, Tsr newOwner ){
-        swap(oldOwner, newOwner);
+        swap( oldOwner, newOwner );
     }
 
     @Override
@@ -42,16 +56,16 @@ public abstract class AbstractDevice<ValueType> implements Device<ValueType>, Co
     }
 
     @Override
-    public Device execute( ExecutionCall call )
+    public Device<ValueType> execute( ExecutionCall call )
     {
         call = call.getImplementation().instantiateNewTensorsForExecutionIn(call);
-        for ( Tsr t : call.getTensors() ) {
+        for ( Tsr<?> t : call.getTensors() ) {
             if ( t == null ) throw new IllegalArgumentException(
                     "Device arguments may not be null!\n" +
                             "One or more tensor arguments within the given ExecutionCall instance is null."
             );
         }
-        ( (OperationTypeImplementation<Object>)call.getImplementation() )
+        ( (OperationTypeImplementation<Object>) call.getImplementation() )
                 .recursiveReductionOf(
                     call,
                     c -> _execute( c.getTensors(), c.getDerivativeIndex(), c.getType() )
