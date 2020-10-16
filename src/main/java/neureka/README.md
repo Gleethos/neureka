@@ -15,7 +15,7 @@ The rules are as follows :
 
 
 
-**1. The names of thing's may be as long and as descriptive as they are non-trivial and known.**
+**1. The names of things may be as long and as descriptive as they are non-trivial and known.**
 
 >```
 >   Tsr<Double> tensor = new Tsr(...);

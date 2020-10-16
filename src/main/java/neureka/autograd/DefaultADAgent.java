@@ -48,41 +48,41 @@ public class DefaultADAgent implements ADAgent
 
     public DefaultADAgent(){ }
 
-    public DefaultADAgent withContext(  Map<String, Object> context  ) {
+    public DefaultADAgent withContext( Map<String, Object> context  ) {
         _context.putAll( context );
         return this;
     }
 
-    public DefaultADAgent withForward(ADAction fad) {
+    public DefaultADAgent withForward( ADAction fad ) {
         _fad = fad;
         return this;
     }
 
-    public DefaultADAgent withBackward(ADAction bad){
+    public DefaultADAgent withBackward( ADAction bad ) {
         _bad = bad;
         return this;
     }
 
     @Override
-    public <T> Tsr<T> forward(GraphNode<T> t, Tsr<T> error){
-        return (Tsr<T>) _fad.execute(t, error);
+    public <T> Tsr<T> forward( GraphNode<T> t, Tsr<T> error ) {
+        return (Tsr<T>) _fad.execute( t, error );
     }
 
     @Override
-    public <T> Tsr<T> backward(GraphNode<T> t, Tsr<T> error){
-        return (Tsr<T>) _bad.execute(t, error);
+    public <T> Tsr<T> backward( GraphNode<T> t, Tsr<T> error ){
+        return (Tsr<T>) _bad.execute( t, error );
     }
 
     @Override
     public Tsr<?> derivative(){
-        return (Tsr<?>) _context.get("derivative");
+        return (Tsr<?>) _context.get( "derivative" );
     }
 
     @Override
     public boolean hasForward(){
         return (
                 _context != null &&
-                _context.containsKey("derivative")
+                _context.containsKey( "derivative" )
         );
     }
 
@@ -92,15 +92,15 @@ public class DefaultADAgent implements ADAgent
     }
 
     @Override
-    public String toString(){
-        if(this.derivative()!=null){
+    public String toString() {
+        if( this.derivative() != null ) {
             return derivative().toString();
         }
 
         if ( _context != null ) {
             return _context.keySet().stream()
-                    .map(key -> key + "=" + _context.get(key))
-                    .collect(Collectors.joining(", ", "{", "}"));
+                    .map( key -> key + "=" + _context.get( key ) )
+                    .collect( Collectors.joining( ", ", "{", "}" ) );
         }
         return "null";
     }
