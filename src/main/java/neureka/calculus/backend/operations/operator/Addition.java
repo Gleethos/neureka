@@ -120,7 +120,7 @@ public class Addition extends AbstractOperationType {
                     );
                     tsrs[0] = reduction[0];
 
-                    reduction = Utility._offsetted(tsrs, 1);
+                    reduction = Utility.offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );

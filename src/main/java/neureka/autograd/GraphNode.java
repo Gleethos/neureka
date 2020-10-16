@@ -214,11 +214,10 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
     }
 
     private void _setPayload( Tsr<ValueType> p ) {
-        if ( p == null ) {
-            _payload = null;
-        } else {
+        if ( p == null ) _payload = null;
+        else {
             _payload = new WeakReference<>(p);
-            p.device().cleaning(p, () -> {
+            p.device().cleaning( p, () -> {
                 if (this.getPayload() == null) {
                     boolean allChildrenUseForwardAD = true;
                     if ( _children != null ) {
@@ -279,7 +278,8 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
-     *
+     *  The children are GraphNode instances which represent computations
+     *  performed on at least the payload of this very node.
      */
     public List<WeakReference<GraphNode>> getChildren() {
         return _children;
@@ -406,6 +406,14 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
         }
     }
 
+    /**
+     * This method handles the construction of a GraphNode instance.
+     *
+     * @param output
+     * @param function
+     * @param call
+     * @param lock
+     */
     private void _construct(  Tsr<ValueType> output, Function function, ExecutionCall<Device> call, GraphLock lock )
     {
         Tsr<Object>[] inputs = ( call == null ) ? null : call.getTensors();
@@ -471,7 +479,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                         } else {
                             /*  Chain rule (forward) for every derivative w.r.t. leaves (reverseAD or user leaves): */
                             int finalI = i;
-                            Tsr<Object> localDerivative = function.derive( inputs, i );
+                            Tsr<ValueType> localDerivative = (Tsr<ValueType>) function.derive( inputs, i );
                             srcNode.forEachTargetAgentPair(
                                 ( targetNode, localAgent ) ->
                                 {
@@ -822,19 +830,6 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
     /**
      * @param action
      */
-    public void forEachForward( Tsr<ValueType> error, BiConsumer<GraphNode<ValueType>, Tsr<ValueType>> action ) {
-        if ( _targets_derivatives == null ) return;
-        _targets_derivatives.forEach( ( t, agents ) -> {
-            for ( ADAgent a : agents ) {
-                //if ( a.isForward() )
-                    action.accept( t, a.forward(t, error) );
-            }
-        });
-    }
-
-    /**
-     * @param action
-     */
     public void forEachTarget(Consumer<GraphNode<ValueType>> action) {
         if ( _targets_derivatives == null ) return;
         _targets_derivatives.forEach( ( t, o ) -> action.accept( t ) );
@@ -849,11 +844,8 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                 .forEach(
                     ( targetNode, agents ) ->
                         agents.forEach(
-                            a -> action.accept(
-                                    targetNode,
-                                    a//MUL.call( new Tsr<ValueType>[]{localDerivative, a.derivative()})
-                            )
-                    )
+                            a -> action.accept( targetNode, a )
+                        )
                 );
     }
 

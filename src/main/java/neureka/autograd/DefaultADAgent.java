@@ -8,24 +8,41 @@ import java.util.stream.Collectors;
 
 
 /**
+ * This class implements the ADAgent interface.
  * ADAgent stands for "Auto-Differentiation-Agent", meaning
- * that instances of this class are responsible for managing
+ * that implementations of this class are responsible for managing
  * forward- and reverse- mode differentiation actions.
- * These actions are stored inside the agent as lambda instances.
+ * These actions are accessible through the "forward(...)"
+ * and "backward(...)" method which are being triggered
+ * by instances of the GraphNode class during propagation.
+ *
+ * This class stores implementations for these methods
+ * inside the agent as lambda instances.
+ *
+ * So in essence this class is a container for lambda actions
+ * allowing for easy instantiation of ADAgents.
+ * Additionally this class the class manages a variable context
+ * for storing useful data used by a particular operation to
+ * perform propagation.
  *
  */
 public class DefaultADAgent implements ADAgent
 {
+    /**
+     * This interface is the declaration for
+     * lambda actions for both the "forward(...)"
+     * and "backward(...)" method of the ADAgent interface.
+     */
     public interface ADAction
     {
-        Tsr execute(GraphNode t, Tsr error);
+         Tsr<?> execute(GraphNode<?> t, Tsr<?> error);
     }
 
     private ADAction _fad;
     private ADAction _bad;
-    private Map<String, Object> _context = new TreeMap<>();
+    private final Map<String, Object> _context = new TreeMap<>();
 
-    public DefaultADAgent(  Tsr<?> derivative  ){
+    public DefaultADAgent(  Tsr<?> derivative  ) {
         _context.put( "derivative", derivative );
     }
 
@@ -47,13 +64,13 @@ public class DefaultADAgent implements ADAgent
     }
 
     @Override
-    public <T> Tsr<T> forward(GraphNode t, Tsr<T> error){
-        return _fad.execute(t, error);
+    public <T> Tsr<T> forward(GraphNode<T> t, Tsr<T> error){
+        return (Tsr<T>) _fad.execute(t, error);
     }
 
     @Override
-    public <T> Tsr<T> backward(GraphNode t, Tsr<T> error){
-        return _bad.execute(t, error);
+    public <T> Tsr<T> backward(GraphNode<T> t, Tsr<T> error){
+        return (Tsr<T>) _bad.execute(t, error);
     }
 
     @Override
@@ -62,10 +79,10 @@ public class DefaultADAgent implements ADAgent
     }
 
     @Override
-    public boolean isForward(){
+    public boolean hasForward(){
         return (
                 _context != null &&
-                _context.containsKey("derivative")//_bad==null
+                _context.containsKey("derivative")
         );
     }
 

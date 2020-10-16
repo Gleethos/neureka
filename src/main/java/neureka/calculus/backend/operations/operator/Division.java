@@ -78,7 +78,7 @@ public class Division extends AbstractOperationType
                     );
                     tsrs[0] = reduction[0];
 
-                    reduction = Utility._offsetted(tsrs, 1);
+                    reduction = Utility.offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
@@ -86,7 +86,7 @@ public class Division extends AbstractOperationType
                 } else {
                     Tsr a;
                     if ( d > 1 ) {
-                        Tsr[] reduction = Utility._subset(tsrs, 1, 1, d+1);
+                        Tsr[] reduction = Utility.subset(tsrs, 1, 1, d+1);
                         reduction[0] =  Tsr.Create.newTsrLike(tsrs[1]);
                         alternative = goDeeperWith.apply(
                                 new ExecutionCall<>( device, reduction, -1, OperationType.instance("/") )
@@ -96,7 +96,7 @@ public class Division extends AbstractOperationType
                     else a = Tsr.Create.newTsrLike(tsrs[1], 1.0);
                     Tsr b;
                     if ( tsrs.length -  d - 2  > 1 ) {
-                        Tsr[] reduction = Utility._subset(tsrs, 2, d+2, tsrs.length-(d+2));
+                        Tsr[] reduction = Utility.subset(tsrs, 2, d+2, tsrs.length-(d+2));
                         reduction[1] =  Tsr.Create.newTsrLike(tsrs[1], 1.0);
                         reduction[0] = reduction[1];
                         alternative = goDeeperWith.apply(

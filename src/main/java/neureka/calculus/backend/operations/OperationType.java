@@ -48,11 +48,11 @@ public interface OperationType
     //---
 
     interface DefaultOperatorCreator<T> {
-        T create(Tsr[] inputs, int d);
+        T create(Tsr<?>[] inputs, int d);
     }
 
     interface ScalarOperatorCreator<T> {
-        T create(Tsr[] inputs, double scalar, int d);
+        T create(Tsr<?>[] inputs, double scalar, int d);
     }
 
     //==================================================================================================================
@@ -107,28 +107,61 @@ public interface OperationType
 
     boolean supports(Class implementation);
 
+    /**
+     * This method mainly ought to serve as a reference- and fallback- implementation for tensor backends and also
+     * as the backend for handling the calculation of scalar inputs passed to a given abstract syntax tree of
+     * Function instances...
+     * ( (almost) every Function instance contains an OperationType reference to which it passes scalar executions... )
+     *
+     * This is also the reason why the last parameter of this method is a list of Function objects :
+     * The list stores the child nodes of the Function node that is currently being processed.
+     * Therefore when implementing this method one should first call the child nodes in
+     * order to get the "real inputs" of this current node.
+     *
+     * One might ask : Why does that not happen automatically?
+     * The answer is to that question lies in the other parameters of this method.
+     * Specifically the parameter "d" !
+     * This argument determines if the derivative ought to be calculated and
+     * also which value is being targeted within the input array.
+     * Depending on this variable and also the nature of the operation,
+     * the execution calls to the child nodes of this node change considerably!
+     *
+     *
+     * @param inputs An array of scalar input variables.
+     * @param j The index variable for indexed execution on the input array. (-1 if no indexing should occur)
+     * @param d The index of the variable of which a derivative ought to be calculated.
+     * @param src The child nodes of the Function node to which this very OperationType belongs.
+     * @return The result of the calculation.
+     */
     double calculate(double[] inputs, int j, int d, List<Function> src);
 
+
+    /**
+     *  This static utility class contains simple methods used for creating slices of plain old
+     *  arrays of tensor objects...
+     *  These slices may be used for many reasons, however mainly when iterating over
+     *  inputs to a Function recursively in order to execute them pairwise for example...
+     */
     class Utility
     {
-        public static Tsr[] _subset(Tsr[] tsrs, int padding, int index, int offset) {
+        public static Tsr<?>[] subset(Tsr<?>[] tsrs, int padding, int index, int offset) {
             if (offset < 0) {
                 index += offset;
                 offset *= -1;
             }
-            Tsr[] newTsrs = new Tsr[offset + padding];
+            Tsr<?>[] newTsrs = new Tsr[offset + padding];
             System.arraycopy(tsrs, index, newTsrs, padding, offset);
             return newTsrs;
         }
 
-        public static Tsr[] _without(Tsr[] tsrs, int index) {
-            Tsr[] newTsrs = new Tsr[tsrs.length - 1];
+        public static Tsr<?>[] without(Tsr<?>[] tsrs, int index) {
+            Tsr<?>[] newTsrs = new Tsr[tsrs.length - 1];
             for (int i = 0; i < newTsrs.length; i++) newTsrs[i] = tsrs[i + ((i < index) ? 0 : 1)];
             return newTsrs;
         }
 
-        public static Tsr[] _offsetted(Tsr[] tsrs, int offset) {
-            Tsr[] newTsrs = new Tsr[tsrs.length - offset];
+        public static Tsr<?>[] offsetted(Tsr<?>[] tsrs, int offset) {
+            Tsr<?>[] newTsrs = new Tsr[tsrs.length - offset];
             newTsrs[0] = Tsr.Create.newTsrLike(tsrs[1]);
             if (!tsrs[1].has(GraphNode.class) && tsrs[1] != tsrs[0]) {//Deleting intermediate results!
                 tsrs[1].delete();

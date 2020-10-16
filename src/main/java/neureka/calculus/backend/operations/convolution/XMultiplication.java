@@ -12,7 +12,6 @@ import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
 import neureka.calculus.backend.implementations.functional.Convolution;
 import neureka.calculus.frontend.assembly.FunctionBuilder;
-import neureka.ndim.AbstractNDArray;
 
 import java.util.List;
 
@@ -60,7 +59,7 @@ public class XMultiplication extends AbstractOperationType
                     );
                     tsrs[0] = reduction[0];
 
-                    reduction = Utility._offsetted(tsrs, 1);
+                    reduction = Utility.offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );

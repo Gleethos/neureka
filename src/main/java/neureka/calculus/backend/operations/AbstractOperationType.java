@@ -38,6 +38,23 @@ public abstract class AbstractOperationType implements OperationType
     protected boolean _isInline;
 
     private final Map<Class, OperationTypeImplementation> _implementations = new LinkedHashMap<>();
+
+    /**
+     *  This is the default implementation for every OperationType extending this class.
+     *  It may not fit the purpose of every OperationType implementation,
+     *  however for most types it will provide useful functionality to use.
+     *
+     *  The default implementation assumes an operation that is either a function or operator.
+     *  Meaning that it assumes that the operation is also differentiable.
+     *  Therefore it contains functionality that goes alongside this assumption,
+     *  just to name a few :
+     *
+     *  - An ADAgent supplier returning ADAgent instances capable of performing both forwrd- and reverse- mode AD.
+     *
+     *  - A simple result tensor instantiation implementation.
+     *
+     *  - A basic threaded execution based on the AST of a given Function object.
+     */
     private final OperationTypeImplementation _defaultImplementation;
 
     public AbstractOperationType(
@@ -76,13 +93,12 @@ public abstract class AbstractOperationType implements OperationType
             }
         }
 
-
         _defaultImplementation = new AbstractBaseOperationTypeImplementation<OperationTypeImplementation>("default")
         {
             @Override
             public float isImplementationSuitableFor(ExecutionCall call) {
                 int[] shape = null;
-                for ( Tsr t : call.getTensors() ) {
+                for ( Tsr<?> t : call.getTensors() ) {
                     if ( shape == null ) if ( t != null ) shape = t.getNDConf().shape();
                     else if ( t != null && !Arrays.equals( shape, t.getNDConf().shape() ) ) return 0.0f;
                 }
