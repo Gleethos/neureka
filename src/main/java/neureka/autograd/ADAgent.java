@@ -13,9 +13,9 @@ import neureka.Tsr;
 public interface ADAgent
 {
 
-    <T> Tsr<T> forward(GraphNode<T> t, Tsr<T> error);
+    <T> Tsr<T> forward( GraphNode<T> t, Tsr<T> error );
 
-    <T> Tsr<T> backward(GraphNode<T> t, Tsr<T> error);
+    <T> Tsr<T> backward( GraphNode<T> t, Tsr<T> error );
 
     Tsr<?> derivative();
 

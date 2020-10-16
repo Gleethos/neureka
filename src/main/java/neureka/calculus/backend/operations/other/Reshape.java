@@ -76,16 +76,16 @@ public class Reshape extends AbstractOperationType
                             throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                         }
                         return new DefaultADAgent(null)
-                                .withForward((t, derivative) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0))
-                                .withBackward((t, error) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0));
+                                .withForward( ( t, derivative ) -> FunctionBuilder.build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
+                                .withBackward( ( t, error ) -> FunctionBuilder.build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
                     }
                 ).setCallHock(
                     ( caller, call ) ->
                     {
-                        Tsr[] inputs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
-                        int[] newForm = new int[inputs.length - 1];
+                        Tsr[] inputs = caller.srcActivation( call.getTensors(), call.getJ(), -1, 0 );
+                        int[] newForm = new int[ inputs.length - 1 ];
                         for ( int i = 0; i < inputs.length - 1; i++ ) {
-                            newForm[i] = (int) Tsr.IO.getFrom(inputs[i], 0);//_src.get(i).call(inputs)
+                            newForm[ i ] = (int) Tsr.IO.getFrom( inputs[ i ], 0 );
                         }
                         if ( call.getDerivativeIndex() >= 0 ) {//reverse reshape:
                             int reverseLength = 0;
