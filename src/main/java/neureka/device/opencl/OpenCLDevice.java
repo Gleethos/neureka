@@ -61,12 +61,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
         public cl_value value;
 
         @Override
-        public void update( Tsr oldOwner, Tsr newOwner ) {
+        public void update( Tsr<Number> oldOwner, Tsr<Number> newOwner ) {
             // Update not needed....
         }
     }
 
-    private final Set<Tsr> _tensors = Collections.newSetFromMap( new WeakHashMap<Tsr, Boolean>() );
+    private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap( new WeakHashMap<Tsr<Number>, Boolean>() );
 
     private final cl_device_id _did;
 
@@ -120,7 +120,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      */
     @Override
     public synchronized Collection<Tsr<Number>> tensors() {
-        Collection<Collection<Tsr>> collection = Collections.singleton( _tensors );
+        Collection<Collection<Tsr<Number>>> collection = Collections.singleton( _tensors );
         Collection<Tsr<Number>> extracted = new ArrayList<>();
         collection.forEach( c -> c.forEach( t -> { if ( t != null ) extracted.add( t ); }));
         return extracted;

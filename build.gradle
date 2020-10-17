@@ -161,7 +161,7 @@ check.dependsOn jacocoTestReport
 
 
 pitest {
-    junit5PluginVersion = '0.12'
+    junit5PluginVersion = '0.12' // This is important, otherwise pitest will not run.
     //jvmArgs = ['-Xmx1024m', '-ea']
     useClasspathFile = true     // useful with bigger projects on Windows
     testSourceSets = [sourceSets.test]

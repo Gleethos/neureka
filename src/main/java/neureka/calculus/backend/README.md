@@ -20,7 +20,7 @@ which are themselves components of those defined in the 'operations' package. <b
 
 The 3 interfaces which govern this described relationship are the following :
 
-- execution.ExecutionFor< TargetDeice extends Device >
+- executions.ExecutionFor< TargetDeice extends Device >
 
 - implementations.OperationTypeImplementation< FinalType >
 
@@ -29,7 +29,7 @@ The 3 interfaces which govern this described relationship are the following :
 So to restate this relationship for clarity : <br>
 Instances implementing the ExecutionFor interface are components <br>
 of instances implementing the OperationTypeImplementation interface <br>
-which are themselves ultimately components of a OperationType instance. <br>
+which are themselves ultimately components of an OperationType instance. <br>
 
 ## ExecutionCall ##
 
@@ -46,7 +46,7 @@ given request to execute, namely : <br>
 - ... 
 
 Instances of this class are being routed through this three tier <br>
-architecture for final execution on instances of the ExecutionFor class! <br>
+architecture for final execution on instances of the ExecutionFor< TargetDeice extends Device > class! <br>
 
 
 

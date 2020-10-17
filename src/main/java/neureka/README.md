@@ -1,22 +1,23 @@
 
-# Neureka - Source #
 
----
+# Code Conventions #
 
-## Code Conventions ##
-
-The code of this project deviates just slightly from official or common coding conventions.
-These deviations boil down to 4 simple rules which were chosen purposefully and are 
-in no way to be mistaken with arbitrariness or a lack of though.
+The code of this project deviates just slightly from official or common coding conventions
+as one would recognize them in typical Java code.
+These deviations boil down to just 3 simple rules which were chosen purposefully and are 
+in no way to be mistaken with arbitrariness, or a lack of thought.
 To the contrary, the code of this project borrows conventions which are standard
 in other languages, namely : C#, C++ and Python.
 
-The rules are as follows : 
+---
 
+## The rules are as follows : ##
 
+---
 
-**1. The names of things may be as long and as descriptive as they are non-trivial and known.**
+***1. The names of things may be as long and as descriptive, as their purpose is non-trivial and unknown.***
 
+> **Example :**
 >```
 >   Tsr<Double> tensor = new Tsr(...);
 >   int number = 345335;
@@ -38,9 +39,10 @@ The rules are as follows :
 >   names is simply nonsensical.
 >   
 
-**2. Private or protected variable and method names always start with an underscore.**
+***2. Private or protected variable and method names always start with an underscore.***
 
-> ```
+> **Example :** 
+>```
 >    private String _stringVariable;
 > 
 >    protected int _intVariable;
@@ -53,20 +55,20 @@ The rules are as follows :
 > 
 >    public void someOuterAccess() {...}
 > ```
->   This rule, as one would typically find it in C++, C# and Python code,
+>   This rule, as one would typically find it in C++, C# or Python code,
 >   improves the readability of code in this repository in one 
 >   very considerable way : <br>
->   One can **immediately distinguish local- from a field- variables**! 
->   Meaning : <br>
+>   One can **immediately distinguish local- from field-variables**! 
+>   Meaning the code improves in terms of : <br>
 >   1. Clearer scope.
 >   2. Clearer access levels.
 >
->   Why not just use ``this.fieldVar;``?! : <br>
+>   **Why not just use ``this.fieldVar;`` instead?! :** <br>
 >   Because of rule 1 : ``_`` is shorter than ``this`` and the meaning of both is trivial
 >   and common enough to not fear confusion. 
 >
 
-**3. Round brackets have a white space padding for improved readability.**
+***3. Round brackets have a white space padding for improved readability.***
 
 >```
 >    a += c + d;
@@ -84,4 +86,6 @@ The rules are as follows :
 
 
 ---
+
+
 
