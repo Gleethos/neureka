@@ -1,7 +1,7 @@
 package neureka.calculus.backend.operations.other;
 
 import neureka.Tsr;
-import neureka.device.Device;
+import neureka.devices.Device;
 import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.operations.AbstractOperationType;
@@ -9,7 +9,6 @@ import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.functional.GenericImplementation;
 import neureka.calculus.frontend.assembly.FunctionBuilder;
 import neureka.ndim.AbstractNDArray;
-import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package neureka.device;
+package neureka.devices;
 
 import neureka.Component;
 import neureka.Tsr;
@@ -22,7 +22,7 @@ import java.lang.ref.Cleaner;
  *
  * @param <ValueType>
  */
-public abstract class AbstractDevice<ValueType> implements Device<ValueType>, Component<Tsr<ValueType>>
+public abstract class AbstractDevice<ValueType> extends AbstractBaseDevice<ValueType>
 {
     private static final Cleaner _CLEANER = Cleaner.create();
 

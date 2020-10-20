@@ -1,14 +1,16 @@
-package neureka.device.storage;
+package neureka.devices.storage;
 
 import neureka.Component;
 import neureka.Tsr;
 import neureka.calculus.backend.ExecutionCall;
-import neureka.device.Device;
+import neureka.devices.AbstractBaseDevice;
+import neureka.devices.Device;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  *  This Device implementation is responsible for reading and or writing
@@ -22,11 +24,11 @@ import java.util.function.Function;
  *  The "get(..)" method has to be called instead.
  *
  */
-public class FileDevice implements Device<Number>, Component<Tsr<Number>>
+public class FileDevice extends AbstractBaseDevice<Number>
 {
     private static Map<String, Function<String, FileHead>> _LOADERS = Map.of(
             "idx", name -> {
-                return new IDXHead(name);
+                return new IDXHead( name );
             },
             "jpg", name -> {
                 return null;
@@ -52,17 +54,44 @@ public class FileDevice implements Device<Number>, Component<Tsr<Number>>
     }
 
     @Override
-    public Device get( Tsr<Number> tensor ) {
+    public Device restore(Tsr<Number> tensor ) {
+        if ( !this.has( tensor ) )
+            throw new IllegalStateException( "The given tensor is not stored on this file device." );
+        FileHead head = _stored.get( tensor );
+        try {
+            head.restore( tensor );
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
         return null;
     }
 
     @Override
-    public Device add( Tsr<Number> tensor ) {
-        return null;
+    public Device store(Tsr<Number> tensor ) {
+        if ( this.has( tensor ) ) {
+            FileHead head = _stored.get( tensor );
+            try {
+                head.store( tensor );
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
+            return this;
+        }
+        String filename = tensor.shape().stream().map( Object::toString ).collect(Collectors.joining("x"));
+        filename = "tensor_" + filename + "_" + tensor.getDataType().getTypeClass().getSimpleName().toLowerCase();
+        filename = filename + "_" + java.time.LocalDate.now().toString();
+        filename = filename + "_" + java.time.LocalTime.now().toString() + "_.idx";
+        try {
+            FileHead head = new IDXHead( tensor, _directory + "/" + filename );
+            _stored.put( tensor, head );
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        return this;
     }
 
     @Override
-    public Device add( Tsr<Number> tensor, Tsr<Number> parent ) {
+    public Device store(Tsr<Number> tensor, Tsr<Number> parent ) {
         return null;
     }
 
@@ -72,7 +101,7 @@ public class FileDevice implements Device<Number>, Component<Tsr<Number>>
     }
 
     @Override
-    public Device rmv( Tsr<Number> tensor ) {
+    public Device free(Tsr<Number> tensor ) {
         return null;
     }
 
@@ -97,7 +126,7 @@ public class FileDevice implements Device<Number>, Component<Tsr<Number>>
     }
 
     @Override
-    public Device execute(ExecutionCall call) {
+    public Device execute( ExecutionCall call ) {
         return null;
     }
 
@@ -122,7 +151,7 @@ public class FileDevice implements Device<Number>, Component<Tsr<Number>>
     }
 
     @Override
-    public Collection<Tsr<Number>> tensors() {
+    public Collection<Tsr<Number>> getTensors() {
         return null;
     }
 
@@ -130,4 +159,6 @@ public class FileDevice implements Device<Number>, Component<Tsr<Number>>
     public void update( Tsr<Number> oldOwner, Tsr<Number> newOwner ) {
 
     }
+
+
 }

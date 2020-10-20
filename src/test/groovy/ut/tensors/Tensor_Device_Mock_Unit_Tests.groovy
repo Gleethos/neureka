@@ -1,7 +1,7 @@
 package ut.tensors
 
 import neureka.Tsr
-import neureka.device.Device
+import neureka.devices.Device
 import spock.lang.Specification
 
 class Tensor_Device_Mock_Unit_Tests extends Specification
@@ -18,7 +18,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
             t.add(device)
 
         then : '...the tensor should try to add itself to the given device.'
-            1 * device.add(t)
+            1 * device.store(t)
 
         and : 'It "views itself" as outsourced.'
             t.isOutsourced()
@@ -38,7 +38,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
             t.isOutsourced = false
 
         then : '...the tensor should try to remove itself from the given device.'
-            1 * device.get(t)
+            1 * device.restore(t)
 
         and : 'The device should not be a tensor component anymore.'
             !t.has(Device.class)
@@ -72,7 +72,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
             t.add(device)
 
         then : '...this tensor should try to add itself to the given device.'
-            1 * device.add(t)
+            1 * device.store(t)
 
         and : 'The child should become outsourced.'
             s.isOutsourced()

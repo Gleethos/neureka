@@ -131,7 +131,7 @@ GPU execution:
                         -1, 3,
                         2, 3,
                 });
-        gpu.add(x).add(y);        
+        gpu.store(x).store(y);        
         z = new Tsr(new Tsr[]{x, y}, "I0xi1"); // <= executed on gpu!
 
         // z.toString(): "(2x2):[15.0, 15.0, 18.0, 8.0], "

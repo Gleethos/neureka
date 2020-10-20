@@ -1,7 +1,7 @@
 package neureka.calculus.backend.implementations;
 
 import neureka.Tsr;
-import neureka.device.Device;
+import neureka.devices.Device;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.executions.ExecutorFor;
 import neureka.calculus.backend.operations.OperationType;
@@ -38,8 +38,22 @@ public abstract class AbstractBaseOperationTypeImplementation<FinalType> impleme
         Consumer<Tsr>[] rollbacks = new Consumer[tsrs.length];
         for (int i=0; i<tsrs.length; i++) {
             if ( tsrs[ i ] != null && !tsrs[ i ].isOutsourced() ) {
-                device.add(tsrs[ i ]);
-                rollbacks[ i ] = device::get;
+                try {
+                    device.store(tsrs[i]);
+                } catch ( Exception e ) {
+                    e.printStackTrace();
+                }
+
+                rollbacks[ i ] = tensor -> {
+                    try {
+                    device.restore( tensor );
+                    } catch ( Exception e ) {
+                        e.printStackTrace();
+                    }
+                };
+
+
+
             }
             else rollbacks[ i ] = t -> {};
         }

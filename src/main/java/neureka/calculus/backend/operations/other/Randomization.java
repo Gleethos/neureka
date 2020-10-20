@@ -1,9 +1,8 @@
 package neureka.calculus.backend.operations.other;
 
 import neureka.Tsr;
-import neureka.device.Device;
-import neureka.device.host.execution.HostExecutor;
-import neureka.autograd.DefaultADAgent;
+import neureka.devices.Device;
+import neureka.devices.host.execution.HostExecutor;
 import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.functional.Convolution;

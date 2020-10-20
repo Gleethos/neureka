@@ -2,7 +2,7 @@ package ut.utility
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.device.storage.IDXHead
+import neureka.devices.storage.IDXHead
 import neureka.dtype.NumericType
 import neureka.dtype.custom.F64
 import neureka.dtype.custom.UI8

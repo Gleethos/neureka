@@ -1,13 +1,14 @@
-package neureka.device;
+package neureka.devices;
 
 import neureka.Component;
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.device.host.HostCPU;
-import neureka.device.opencl.OpenCLDevice;
-import neureka.device.opencl.OpenCLPlatform;
+import neureka.devices.host.HostCPU;
+import neureka.devices.opencl.OpenCLDevice;
+import neureka.devices.opencl.OpenCLPlatform;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.frontend.assembly.FunctionParser;
+import neureka.devices.storage.Storage;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,7 +19,7 @@ import java.util.Collection;
  * Such instances are also components of tensors, which is why
  * this interface extends the Component &lt; Tsr<ValueType> &gt; interface.
  */
-public interface Device<ValueType> extends Component<Tsr<ValueType>>
+public interface Device<ValueType> extends Component<Tsr<ValueType>>, Storage<ValueType>, Collection<Tsr<ValueType>>
 {
     /**
      * This method return Device instances matching
@@ -64,15 +65,11 @@ public interface Device<ValueType> extends Component<Tsr<ValueType>>
 
     void dispose();
 
-    Device get( Tsr<ValueType> tensor );
-
-    Device add( Tsr<ValueType> tensor );
-
-    Device add( Tsr<ValueType> tensor, Tsr<ValueType> parent );
+    Device store( Tsr<ValueType> tensor, Tsr<ValueType> parent );
 
     boolean has( Tsr<ValueType> tensor );
 
-    Device rmv( Tsr<ValueType> tensor );
+    Device free( Tsr<ValueType> tensor );
 
     Device cleaning( Tsr<ValueType> tensor, Runnable action );
 
@@ -92,9 +89,6 @@ public interface Device<ValueType> extends Component<Tsr<ValueType>>
 
     float value32f( Tsr<ValueType> tensor, int index );
 
-    Collection< Tsr<ValueType> > tensors();
-
-
-
+    Collection< Tsr<ValueType> > getTensors();
 
 }

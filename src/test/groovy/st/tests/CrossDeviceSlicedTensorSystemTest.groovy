@@ -1,7 +1,7 @@
 package st.tests
 
 import neureka.Tsr
-import neureka.device.Device
+import neureka.devices.Device
 import testutility.UnitTester_Tensor
 import testutility.mock.DummyDevice
 
@@ -14,7 +14,7 @@ class CrossDeviceSlicedTensorSystemTest
         Tsr x = new Tsr([1], 3).setRqsGradient(true)
         Tsr b = new Tsr([1], -4)
         Tsr w = new Tsr([1], 2)
-        device.add(x).add(b).add(w)
+        device.store(x).store(b).store(w)
         /**
          *      ((3-4)*2)^2 = 4
          *  dx:   8*3 - 32  = -8
@@ -49,7 +49,7 @@ class CrossDeviceSlicedTensorSystemTest
             1, 2, 3, 4, 5, 6  => 1, 2, 3, 4
          */
 
-        device.add(a)
+        device.store(a)
         b = a[[-1..-3, -6..-3]]
         def s = a[[1, -2]]
         assert s==((legacyIndexing)?9.0:2.0)
@@ -89,7 +89,7 @@ class CrossDeviceSlicedTensorSystemTest
                     1, 1, 1, 1,
                     1, 1, 1, 1
             ])
-            device.add(k)
+            device.store(k)
             a[] = a*k
         }
         tester.testContains(b.toString(), [
@@ -269,7 +269,7 @@ class CrossDeviceSlicedTensorSystemTest
                 -2, 3,//-2 + 24 + 3 + 8
                 1, 2,
         ])
-        device.add(b).add(c)//-2+6+8+8 = 22
+        device.store(b).store(c)//-2+6+8+8 = 22
         x = new Tsr(b, "x", c)//This test is important!
         tester.testContains(x.toString(),
                 [

@@ -1,4 +1,4 @@
-package neureka.device.storage;
+package neureka.devices.storage;
 
 
 import neureka.Tsr;
@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class IDXHead implements FileHead
+public class IDXHead implements FileHead<IDXHead, Number>
 {
     private int _dataOffset;
     private int _bodySize;
@@ -43,21 +43,21 @@ public class IDXHead implements FileHead
     {
         _fileName = fileName;
         try {
-            _load(fileName);
+            _loadHead(fileName);
         } catch(Exception e) {
             System.err.print("Failed reading IDX file!");
         }
     }
 
-    public IDXHead( Tsr<?> t, String filename ) throws IOException {
+    public IDXHead( Tsr<Number> t, String filename ) throws IOException {
         _fileName = filename;
         _shape = t.getNDConf().shape();
         _dtype = t.getDataType();
-        t.setIsVirtual(false);
-        persist(t.iterator());
+        t.setIsVirtual( false );
+        store( t );
     }
 
-    private void _load(String fileName) throws IOException
+    private void _loadHead( String fileName ) throws IOException
     {
         FileInputStream f = null;
         try
@@ -93,16 +93,13 @@ public class IDXHead implements FileHead
 
         _dataOffset = numre.bytesRead();
 
-        //byte[] data = new byte[size];
-        //assert f.read(data) == data.length;
-        //f.close();
-        //return data;
     }
 
 
     @Override
-    public <T> void persist( Iterator<T> data ) throws IOException
+    public IDXHead store(Tsr<Number> tensor )
     {
+        Iterator<Number> data = tensor.iterator();
         FileOutputStream fos;
         try
         {
@@ -110,56 +107,87 @@ public class IDXHead implements FileHead
         }
         catch (FileNotFoundException e)
         {
-            fos = new FileOutputStream(new File(_fileName));
+            try {
+                fos = new FileOutputStream(new File(_fileName));
+            } catch ( Exception innerException ) {
+                innerException.printStackTrace();
+                return this;
+            }
         }
         BufferedOutputStream f = new BufferedOutputStream(fos);
 
         int offset = 0;
 
-        f.write(new byte[]{0, 0});
-        offset += 2;
-        f.write( CODE_MAP.get( _dtype.getTypeClass() ).byteValue() );
-        offset += 1;
-        byte rank = (byte) _shape.length;
-        f.write(rank);
-        offset += 1;
-        int bodySize = 1;
-        for ( int i = 0; i < rank; i++ ) {
-            byte[] integer = ByteBuffer.allocate(4).putInt(_shape[ i ]).array();
-            assert integer.length == 4;
-            f.write(integer);
-            bodySize *= _shape[ i ];
-            offset += 4;
+        try {
+            f.write(new byte[]{0, 0});
+            offset += 2;
+            f.write(CODE_MAP.get(_dtype.getTypeClass()).byteValue());
+            offset += 1;
+            byte rank = (byte) _shape.length;
+            f.write(rank);
+            offset += 1;
+            int bodySize = 1;
+            for (int i = 0; i < rank; i++) {
+                byte[] integer = ByteBuffer.allocate(4).putInt(_shape[i]).array();
+                assert integer.length == 4;
+                f.write(integer);
+                bodySize *= _shape[i];
+                offset += 4;
+            }
+            _dataOffset = offset;
+            _bodySize = bodySize;
+            NumericType<Number, Object> type = (NumericType<Number, Object>) _dtype.getTypeClassInstance();
+
+            type.writeDataTo(new DataOutputStream(f), data);
+            f.close();
+        } catch ( Exception e ) {
+            e.printStackTrace();
         }
-        _dataOffset = offset;
-        _bodySize = bodySize;
-        NumericType<T,Object> type = ( NumericType<T, Object> ) _dtype.getTypeClassInstance();
-
-        type.writeDataTo( new DataOutputStream(f), data);
-        f.close();
-
+        return this;
     }
 
-    @Override
-    public Tsr<?> load() throws IOException
-    {
-        FileInputStream fs = new FileInputStream(_fileName);
+    private Object _loadData() throws IOException {
+        FileInputStream fs = new FileInputStream( _fileName );
         Class<?> clazz = _dtype.getTypeClass();
-        if ( NumericType.class.isAssignableFrom(clazz) ) {
-            NumericType<?,?> type = ((NumericType<?,?>)_dtype.getTypeClassInstance());
+        if ( NumericType.class.isAssignableFrom( clazz ) ) {
+            NumericType<?,?> type = ( (NumericType<?,?>) _dtype.getTypeClassInstance() );
             DataInput stream = new DataInputStream(
                     new BufferedInputStream(
                             fs,
                             _dataOffset + _bodySize * type.numberOfBytes()
                     )
             );
-            stream.skipBytes(_dataOffset);
+            stream.skipBytes( _dataOffset );
             Object value = type.readDataFrom(
                     stream,
                     _bodySize
             );
-            return new Tsr<>(_shape, _dtype, value);
+            return value;
         }
         return null;
+    }
+
+    @Override
+    public Tsr<Number> load() throws IOException
+    {
+        Object value = _loadData();
+        return new Tsr<>( _shape, _dtype, value );
+    }
+
+    @Override
+    public IDXHead free() {
+        return this;
+    }
+
+    @Override
+    public IDXHead restore( Tsr<Number> tensor )
+    {
+        try {
+            Object value = _loadData();
+            tensor.setValue( value );
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        return this;
     }
 }

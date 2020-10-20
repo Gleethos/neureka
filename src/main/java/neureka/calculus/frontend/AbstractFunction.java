@@ -1,8 +1,8 @@
 package neureka.calculus.frontend;
 
 import neureka.Tsr;
-import neureka.device.Device;
-import neureka.device.host.HostCPU;
+import neureka.devices.Device;
+import neureka.devices.host.HostCPU;
 import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.functional.Activation;

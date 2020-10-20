@@ -3,8 +3,8 @@ package neureka.autograd;
 import neureka.Component;
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.device.Device;
-import neureka.device.opencl.utility.WeakTensorReference;
+import neureka.devices.Device;
+import neureka.devices.opencl.utility.WeakTensorReference;
 import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
 
@@ -581,7 +581,11 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
     private void _migrateAndOrApplyError( Tsr<ValueType> e, Consumer<Tsr<ValueType>> also ) {
         Tsr<ValueType> payload = getPayload();
         if ( payload == null ) return; // Garbage collected!
-        if ( payload.isOutsourced() ) payload.device().add(e);
+        try {
+            if (payload.isOutsourced()) payload.device().store(e);
+        } catch ( Exception exception ) {
+            exception.printStackTrace();
+        }
         if ( payload.rqsGradient() ) payload.addToGradient(e);
         if ( also!=null ) also.accept(payload);
     }

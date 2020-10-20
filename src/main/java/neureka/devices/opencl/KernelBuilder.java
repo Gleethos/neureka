@@ -1,4 +1,4 @@
-package neureka.device.opencl;
+package neureka.devices.opencl;
 
 import neureka.Tsr;
 import org.jocl.*;

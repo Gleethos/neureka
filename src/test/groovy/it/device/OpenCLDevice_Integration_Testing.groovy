@@ -2,7 +2,7 @@ package it.device
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.device.Device
+import neureka.devices.Device
 import spock.lang.Specification
 
 class OpenCLDevice_Integration_Testing extends Specification
@@ -19,7 +19,7 @@ class OpenCLDevice_Integration_Testing extends Specification
             Tsr s = t[1..3, 1..2]
 
         when : 'We try to add the slice to the device.'
-        device.add(s)
+        device.store(s)
 
         then : 'An exception is being thrown.'
         def exception = thrown(IllegalStateException)

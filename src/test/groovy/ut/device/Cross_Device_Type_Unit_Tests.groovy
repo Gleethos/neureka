@@ -2,9 +2,9 @@ package ut.device
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.device.Device
-import neureka.device.host.HostCPU
-import neureka.device.opencl.OpenCLDevice
+import neureka.devices.Device
+import neureka.devices.host.HostCPU
+import neureka.devices.opencl.OpenCLDevice
 import neureka.calculus.backend.ExecutionCall
 import neureka.calculus.backend.implementations.OperationTypeImplementation
 import spock.lang.Specification
@@ -102,6 +102,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
 
         then : 'Again the values are the same!'
             result == expected as List<Double>
+
 
         where : 'The following data is being used for tensor instantiation :'
             device                | shape           | data                                               || expected

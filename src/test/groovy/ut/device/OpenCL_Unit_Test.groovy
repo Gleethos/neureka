@@ -2,9 +2,9 @@ package ut.device
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.device.Device
-import neureka.device.opencl.OpenCLDevice
-import neureka.device.opencl.utility.DeviceQuery
+import neureka.devices.Device
+import neureka.devices.opencl.OpenCLDevice
+import neureka.devices.opencl.utility.DeviceQuery
 import neureka.framing.Relation
 import spock.lang.Specification
 
@@ -95,7 +95,7 @@ class OpenCL_Unit_Test extends Specification
             r.findRootTensor() >> t
 
         when : 'We try to add the slice to the device.'
-            device.add(s)
+            device.store(s)
 
         then : 'An exception is being thrown.'
             def exception = thrown(IllegalStateException)

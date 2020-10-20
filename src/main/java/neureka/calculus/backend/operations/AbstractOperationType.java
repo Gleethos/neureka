@@ -3,8 +3,8 @@ package neureka.calculus.backend.operations;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.device.Device;
-import neureka.device.host.execution.HostExecutor;
+import neureka.devices.Device;
+import neureka.devices.host.execution.HostExecutor;
 import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
@@ -156,7 +156,11 @@ public abstract class AbstractOperationType implements OperationType
                     int[] shp = tensors[1].getNDConf().shape();
                     Tsr output = new Tsr( shp, 0.0 );
                     output.setIsVirtual(false);
-                    device.add(output);
+                    try {
+                        device.store(output);
+                    } catch ( Exception e ) {
+                        e.printStackTrace();
+                    }
                     tensors[ 0 ] = output;
                 }
                 return call;

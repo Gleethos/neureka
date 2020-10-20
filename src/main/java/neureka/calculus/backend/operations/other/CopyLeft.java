@@ -1,10 +1,9 @@
 package neureka.calculus.backend.operations.other;
 
 import neureka.Tsr;
-import neureka.device.Device;
-import neureka.device.host.execution.HostExecutor;
-import neureka.device.opencl.execution.CLExecutor;
-import neureka.autograd.DefaultADAgent;
+import neureka.devices.Device;
+import neureka.devices.host.execution.HostExecutor;
+import neureka.devices.opencl.execution.CLExecutor;
 import neureka.calculus.Function;
 import neureka.calculus.backend.operations.AbstractOperationType;
 import neureka.calculus.backend.ExecutionCall;

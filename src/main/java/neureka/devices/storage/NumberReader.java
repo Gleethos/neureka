@@ -1,4 +1,4 @@
-package neureka.device.storage;
+package neureka.devices.storage;
 
 import neureka.dtype.NumericType;
 

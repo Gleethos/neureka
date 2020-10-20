@@ -1,7 +1,7 @@
 package neureka.calculus.backend.operations.other;
 
 import neureka.Tsr;
-import neureka.device.Device;
+import neureka.devices.Device;
 import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.operations.AbstractOperationType;

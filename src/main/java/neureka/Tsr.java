@@ -6,8 +6,8 @@ import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.dtype.custom.*;
 import neureka.ndim.AbstractNDArray;
-import neureka.device.host.HostCPU;
-import neureka.device.Device;
+import neureka.devices.host.HostCPU;
+import neureka.devices.Device;
 import neureka.framing.IndexAlias;
 import neureka.framing.Relation;
 import neureka.calculus.Function;
@@ -120,7 +120,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 !forComponent(
                     Device.class,
                     d -> {
-                        if ( d.has(this) ) d.get( this );
+                        try {
+                            if ( d.has(this) ) d.restore( this );
+                        } catch ( Exception e ) {
+                            e.printStackTrace();
+                        }
                         this.remove( Device.class );
                         forComponent(
                             Tsr.class,
@@ -128,7 +132,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                             gradient.forComponent(
                                 Device.class,
                                 gd -> {
-                                    if ( ((Device)gd).has(gradient) ) ((Device)gd).get(gradient);
+                                    try {
+                                        if ( ((Device)gd).has(gradient) ) ((Device)gd).restore(gradient);
+                                    } catch ( Exception e ) {
+                                        e.printStackTrace();
+                                    }
                                     gradient.remove(Device.class);
                                 })
                         );
@@ -156,7 +164,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public Tsr<ValueType> setIsVirtual( boolean isVirtual ) {
         if ( isVirtual() != isVirtual ) {
             Device device = this.find( Device.class );
-            if ( device != null ) device.get( this );
+            try {
+                if ( device != null ) device.restore( this );
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
             double v = ( _value == null ) ? 0 : ((this.is64())?((double[])_value)[ 0 ]:((float[])_value)[ 0 ]);
             if ( isVirtual ) {
                 _value = new double[]{v};
@@ -172,7 +184,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             }
             _setIsVirtual( isVirtual );
             if( _conf!=null ) _configureFromNewShape( _conf.shape(), isVirtual );
-            if( device!=null ) device.add(this);
+            try {
+                if( device!=null ) device.store(this);
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
         } else if (isVirtual && _value==null) _value = new double[]{0};
         return this;
     }
@@ -234,14 +250,26 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 Relation relation = find( Relation.class );
                 if ( relation.hasParent() ) { // Root needs to be found ! :
                     Tsr<ValueType> root = relation.findRootTensor();
-                    ((Device)newComponent).add(root);
+                    try {
+                        ((Device)newComponent).store(root);
+                    } catch ( Exception e ) {
+                        e.printStackTrace();
+                    }
                     root.find( Relation.class ).foreachChild( c -> ((Tsr)c).setIsOutsourced(true) );
                 } else { // This is root ! :
                     relation.foreachChild( c -> ((Tsr)c).setIsOutsourced(true) );
-                    ((Device)newComponent).add(this);
+                    try {
+                        ((Device)newComponent).store(this);
+                    } catch ( Exception e ) {
+                        e.printStackTrace();
+                    }
                 }
             } else {
-                ((Device)newComponent).add(this);
+                try {
+                    ((Device)newComponent).store(this);
+                } catch ( Exception e ) {
+                    e.printStackTrace();
+                }
             }
             if ( ((Device)newComponent).has(this) ) setIsOutsourced(true);
         } else if (newComponent instanceof Tsr) {
@@ -373,7 +401,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 throw new IllegalStateException("Cannot delete a tensor which is used as derivative by the AD computation graph!");
             }
         });
-        forComponent( Device.class, d -> d.rmv( this ) );
+        forComponent( Device.class, d -> d.free( this ) );
         _flags = -1;
         _value = null;
         _conf = null;
@@ -988,12 +1016,20 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         boolean valueIsDeviceVisitor = false;
         if ( slice.isOutsourced() && !value.isOutsourced() ) {
             Device device = slice.find( Device.class );
-            device.add( value );
+            try {
+                device.store( value );
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
             valueIsDeviceVisitor = true;
         }
         if ( this.isEmpty() && slice.isEmpty() || slice.size()!=value.size() ) _become( value ); // TODO: Rethink this a little
         else new Tsr( new Tsr[]{ slice, value }, "I[ 0 ]<-I[1]", false );
-        if ( valueIsDeviceVisitor ) value.find( Device.class ).get( value );
+        try {
+            if ( valueIsDeviceVisitor ) value.find( Device.class ).restore( value );
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
         return this;
     }
 
@@ -1087,7 +1123,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
         if ( this.isOutsourced() ) {
             Device device = this.find( Device.class );
-            device.add( subset, this );
+            device.store( subset, this );
             subset.setIsOutsourced( true );
         }
         if ( this.isVirtual() ) subset.setIsVirtual( true );
@@ -1364,17 +1400,31 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                                         )
                         )
                 )
-        ) add( error ).forComponent( Device.class, d -> d.add( error ) );
+        ) add( error ).forComponent( Device.class, d -> {
+            try {
+                d.store( error ) ;
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
+        });
         return this;
     }
 
     public Tsr<ValueType> to32() {
         if ( this.is64() ) {
             Device device = this.find( Device.class );
-            if ( device != null ) device.get( this );
+            try {
+                if ( device != null ) device.restore( this );
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
             _value = DataConverter.Utility.doubleToFloat( (double[]) _value );
             forComponent( Tsr.class, Tsr::to32 );
-            if ( device != null ) device.add( this );
+            try {
+            if ( device != null ) device.store( this );
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
         }
         return this;
     }
@@ -1382,10 +1432,18 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public Tsr<ValueType> to64() {
         if ( this.is32() ) {
             Device device = this.find( Device.class );
-            if ( device != null ) device.get( this );
+            try {
+                if (device != null) device.restore(this);
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
             _value = DataConverter.Utility.floatToDouble( (float[]) _value );
             forComponent( Tsr.class, Tsr::to64 );
-            if ( device != null ) device.add( this );
+            try {
+                if (device != null) device.store(this);
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
         }
         return this;
     }
@@ -1658,7 +1716,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             Tsr t = _newEmptyLike( template );
             if ( template.is32() ) t.setValue( (float) value );
             else t.setValue( value );
-            if ( template.isOutsourced() ) ( (Device<Object>) template.find( Device.class ) ).add( t );
+            try {
+                if ( template.isOutsourced() ) ( (Device<Object>) template.find( Device.class ) ).store( t );
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
             return t;
         }
 
@@ -1666,7 +1728,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             Tsr t = _newEmptyLike( template );
             if ( template.is32() ) t.setValue32( new float[ template.size() ] );
             else t.setValue64( new double[ template.size() ] );
-            if ( template.isOutsourced() ) ( (Device<Object>) template.find( Device.class ) ).add( t );
+            try {
+                if ( template.isOutsourced() ) ( (Device<Object>) template.find( Device.class ) ).store( t );
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
             return t;
         }
 

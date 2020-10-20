@@ -1,10 +1,10 @@
-package neureka.device.host;
+package neureka.devices.host;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.device.AbstractDevice;
-import neureka.device.Device;
-import neureka.device.host.execution.HostExecutor;
+import neureka.devices.AbstractDevice;
+import neureka.devices.Device;
+import neureka.devices.host.execution.HostExecutor;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.backend.ExecutionCall;
 
@@ -50,17 +50,17 @@ public class HostCPU extends AbstractDevice<Number>
     }
 
     @Override
-    public Device get(Tsr tensor) {
+    public Device restore(Tsr tensor) {
         return this;
     }
 
     @Override
-    public Device add(Tsr tensor) {
+    public Device store(Tsr tensor) {
         return this;
     }
 
     @Override
-    public Device add(Tsr tensor, Tsr parent) {
+    public Device store(Tsr tensor, Tsr parent) {
         return this;
     }
 
@@ -70,7 +70,7 @@ public class HostCPU extends AbstractDevice<Number>
     }
 
     @Override
-    public Device rmv(Tsr tensor) {
+    public Device free(Tsr tensor) {
         return this;
     }
 
@@ -110,7 +110,7 @@ public class HostCPU extends AbstractDevice<Number>
     }
 
     @Override
-    public Collection<Tsr<Number>> tensors() {
+    public Collection<Tsr<Number>> getTensors() {
         return null;
     }
 

@@ -1,9 +1,9 @@
 package neureka.calculus.backend.operations.indexer;
 
 import neureka.Tsr;
-import neureka.device.Device;
-import neureka.device.host.execution.HostExecutor;
-import neureka.device.opencl.execution.CLExecutor;
+import neureka.devices.Device;
+import neureka.devices.host.execution.HostExecutor;
+import neureka.devices.opencl.execution.CLExecutor;
 import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.implementations.functional.Activation;
@@ -122,10 +122,14 @@ public class Summation extends AbstractOperationType
                         if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                         {
                             int[] shp = tsrs[1].getNDConf().shape();
-                            Tsr output = new Tsr( shp, 0.0 );
-                            output.setIsVirtual(false);
-                            device.add(output);
-                            tsrs[ 0 ] = output;
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual(false);
+                        try {
+                            device.store(output);
+                        } catch( Exception e ) {
+                            e.printStackTrace();
+                        }
+                        tsrs[ 0 ] = output;
                         }
                         return call;
                     }
@@ -250,7 +254,11 @@ public class Summation extends AbstractOperationType
                         int[] shp = tsrs[1].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
                         output.setIsVirtual(false);
-                        device.add(output);
+                        try {
+                            device.store(output);
+                        } catch( Exception e ) {
+                            e.printStackTrace();
+                        }
                         tsrs[ 0 ] = output;
                     }
                     return call;

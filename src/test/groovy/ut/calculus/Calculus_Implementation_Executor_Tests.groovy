@@ -2,11 +2,11 @@ package ut.calculus
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.device.host.HostCPU
-import neureka.device.host.execution.HostExecutor
-import neureka.device.opencl.KernelBuilder
-import neureka.device.opencl.OpenCLDevice
-import neureka.device.opencl.execution.CLExecutor
+import neureka.devices.host.HostCPU
+import neureka.devices.host.execution.HostExecutor
+import neureka.devices.opencl.KernelBuilder
+import neureka.devices.opencl.OpenCLDevice
+import neureka.devices.opencl.execution.CLExecutor
 import neureka.calculus.backend.ExecutionCall
 import neureka.calculus.backend.implementations.OperationTypeImplementation
 import neureka.calculus.backend.implementations.functional.Activation

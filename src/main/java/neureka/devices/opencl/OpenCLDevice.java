@@ -1,4 +1,4 @@
-package neureka.device.opencl;
+package neureka.devices.opencl;
 
 import static org.jocl.CL.*;
 
@@ -7,9 +7,9 @@ import java.util.*;
 
 import neureka.Component;
 import neureka.Tsr;
-import neureka.device.AbstractDevice;
-import neureka.device.Device;
-import neureka.device.opencl.execution.CLExecutor;
+import neureka.devices.AbstractDevice;
+import neureka.devices.Device;
+import neureka.devices.opencl.execution.CLExecutor;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.dtype.custom.F32;
@@ -99,6 +99,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 null,
                 null
         );
+        _cleaning( this, () -> {
+            clReleaseCommandQueue(_queue);
+        } );
         //Runtime.getRuntime().addShutdownHook(new Thread(()->{
         //    _mapping.forEach((k, v)->{
         //        if(v.value.event!=null) clWaitForEvents(1, new cl_event[]{v.value.event});
@@ -119,7 +122,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * @return A collection of all tensors currently stored on the device.
      */
     @Override
-    public synchronized Collection<Tsr<Number>> tensors() {
+    public synchronized Collection<Tsr<Number>> getTensors() {
         Collection<Collection<Tsr<Number>>> collection = Collections.singleton( _tensors );
         Collection<Tsr<Number>> extracted = new ArrayList<>();
         collection.forEach( c -> c.forEach( t -> { if ( t != null ) extracted.add( t ); }));
@@ -128,32 +131,32 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     public void dispose() {
-        _tensors.forEach( this::get );
+        _tensors.forEach( this::restore);
         clFinish( _queue );
     }
 
     @Override
-    public Device<Number> get( Tsr<Number> tensor ) {
+    public Device<Number> restore(Tsr<Number> tensor ) {
         double[] value = ( tensor.isVirtual() )
                 ? _value64f( tensor.find( cl_tsr.class ), 1, 0 )
                 : value64f( tensor );
-        rmv( tensor );
-        tensor.forComponent( Tsr.class, this::get );
+        free( tensor );
+        tensor.forComponent( Tsr.class, this::restore);
         tensor.setValue( value );
         return this;
     }
 
     @Override
-    public Device<Number> add( Tsr<Number> tensor ) {
+    public Device<Number> store(Tsr<Number> tensor ) {
         Tsr root = null;
         if ( tensor.has( Relation.class ) ) root = tensor.find( Relation.class ).findRootTensor();
-        if ( root != null ) add( tensor, root );
+        if ( root != null ) store( tensor, root );
         else _add( tensor, null );
         return this;
     }
 
     @Override
-    public Device<Number> add( Tsr<Number> tensor, Tsr<Number> parent ) {
+    public Device<Number> store(Tsr<Number> tensor, Tsr<Number> parent ) {
         if ( !parent.isOutsourced() ) throw new IllegalStateException( "Data parent is not outsourced!" );
         _add( tensor, parent.find( cl_tsr.class ) );
         _tensors.add( tensor );
@@ -173,7 +176,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             newClt.value = new cl_value();
             _store( tensor, newClt, 1 );
             if ( tensor.rqsGradient() && tensor.has( Tsr.class ) ) {
-                this.add( tensor.find( Tsr.class ) );
+                this.store( tensor.find( Tsr.class ) );
             }
             {
                 final cl_mem clValMem = newClt.value.data;
@@ -299,7 +302,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
 
     @Override
-    public Device<Number> rmv(Tsr<Number> tensor) {
+    public Device<Number> free(Tsr<Number> tensor) {
         cl_tsr clt = tensor.find(cl_tsr.class);
         if ( clt == null ) return this;
         _tensors.remove(tensor);

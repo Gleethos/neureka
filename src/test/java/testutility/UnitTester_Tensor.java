@@ -1,10 +1,10 @@
 package testutility;
 
 import neureka.Tsr;
-import neureka.device.host.HostCPU;
-import neureka.device.Device;
-import neureka.device.host.execution.HostExecutor;
-import neureka.device.opencl.OpenCLDevice;
+import neureka.devices.host.HostCPU;
+import neureka.devices.Device;
+import neureka.devices.host.execution.HostExecutor;
+import neureka.devices.opencl.OpenCLDevice;
 import neureka.autograd.GraphNode;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.operations.OperationType;

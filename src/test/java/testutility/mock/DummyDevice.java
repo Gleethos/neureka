@@ -1,12 +1,13 @@
 package testutility.mock;
 
 import neureka.Tsr;
-import neureka.device.Device;
+import neureka.devices.AbstractBaseDevice;
+import neureka.devices.Device;
 import neureka.calculus.backend.ExecutionCall;
 
 import java.util.Collection;
 
-public class DummyDevice implements Device<Object>
+public class DummyDevice extends AbstractBaseDevice<Object>
 {
     @Override
     public void dispose() {
@@ -14,17 +15,17 @@ public class DummyDevice implements Device<Object>
     }
 
     @Override
-    public Device get(Tsr tensor) {
+    public Device restore(Tsr tensor) {
         return this;
     }
 
     @Override
-    public Device add(Tsr tensor) {
+    public Device store(Tsr tensor) {
         return this;
     }
 
     @Override
-    public Device add(Tsr tensor, Tsr parent) {
+    public Device store(Tsr tensor, Tsr parent) {
         return this;
     }
 
@@ -34,7 +35,7 @@ public class DummyDevice implements Device<Object>
     }
 
     @Override
-    public Device rmv(Tsr tensor) {
+    public Device free(Tsr tensor) {
         return this;
     }
 
@@ -84,7 +85,7 @@ public class DummyDevice implements Device<Object>
     }
 
     @Override
-    public Collection<Tsr<Object>> tensors() {
+    public Collection<Tsr<Object>> getTensors() {
         return null;
     }
 

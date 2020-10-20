@@ -2,7 +2,7 @@ package ut.calculus
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.device.Device
+import neureka.devices.Device
 import neureka.autograd.ADAgent
 import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode

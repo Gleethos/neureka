@@ -1,6 +1,6 @@
 
    import neureka.Tsr
-   import neureka.device.Device
+   import neureka.devices.Device
 
    import java.nio.file.Files
    import java.nio.file.Paths

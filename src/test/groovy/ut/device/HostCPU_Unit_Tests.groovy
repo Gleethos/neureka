@@ -2,8 +2,8 @@ package ut.device
 
 import neureka.Neureka
 import neureka.Tsr;
-import neureka.device.Device;
-import neureka.device.host.HostCPU
+import neureka.devices.Device;
+import neureka.devices.host.HostCPU
 import spock.lang.Specification;
 
 class HostCPU_Unit_Tests extends Specification

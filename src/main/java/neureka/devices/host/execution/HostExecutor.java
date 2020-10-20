@@ -1,6 +1,6 @@
-package neureka.device.host.execution;
+package neureka.devices.host.execution;
 
-import neureka.device.host.HostCPU;
+import neureka.devices.host.HostCPU;
 import neureka.calculus.backend.executions.ExecutorFor;
 
 /**

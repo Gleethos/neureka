@@ -1,14 +1,11 @@
 package it.calculus
 
 import it.calculus.mocks.CLContext
-import it.calculus.mocks.GEMMKernelReferenceImplementation
-import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.DefaultADAgent
-import neureka.device.Device
-import neureka.device.host.execution.HostExecutor
-import neureka.device.opencl.utility.DispatchUtility
-import neureka.autograd.ADAgent
+import neureka.devices.Device
+import neureka.devices.host.execution.HostExecutor
+import neureka.devices.opencl.utility.DispatchUtility
 import neureka.calculus.Function
 import neureka.calculus.backend.ExecutionCall
 import neureka.calculus.backend.implementations.functional.GenericImplementation
@@ -82,7 +79,7 @@ class Calculus_Extension_Integration_Tests extends Specification
                                                     int[] shp = tsrs[1].getNDConf().shape();
                                                     Tsr output = new Tsr( shp, 0.0 );
                                                     output.setIsVirtual( false );
-                                                    device.add(output);
+                                                    device.store(output);
                                                     tsrs[0] = output;
                                                 }
                                                 return call;

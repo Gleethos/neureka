@@ -4,10 +4,10 @@ import groovy.transform.CompileDynamic
 import st.tests.CrossDeviceSystemTest
 import neureka.Neureka
 import neureka.Tsr
-import neureka.device.Device
-import neureka.device.host.HostCPU
-import neureka.device.opencl.OpenCLDevice
-import neureka.device.opencl.OpenCLPlatform
+import neureka.devices.Device
+import neureka.devices.host.HostCPU
+import neureka.devices.opencl.OpenCLDevice
+import neureka.devices.opencl.OpenCLPlatform
 import spock.lang.Specification
 import st.tests.SimpleNNSystemTest
 import testutility.mock.DummyDevice

@@ -1,8 +1,8 @@
 package st.tests;
 
 import neureka.Tsr;
-import neureka.device.Device;
-import neureka.device.opencl.OpenCLDevice;
+import neureka.devices.Device;
+import neureka.devices.opencl.OpenCLDevice;
 import testutility.UnitTester_Tensor;
 
 import java.util.ArrayList;
@@ -14,7 +14,6 @@ public class CrossDeviceSystemTest
 
     public static boolean on( Device gpu, boolean legacyIndexing )
     {
-
         UnitTester_Tensor tester = new UnitTester_Tensor("");
 
         List<Tsr> listOfTensors = new ArrayList<>();
@@ -28,7 +27,7 @@ public class CrossDeviceSystemTest
                 -1, 7,
                 -2, 3,
         });
-        gpu.add(tensor1).add(tensor2);
+        gpu.store(tensor1).store(tensor2);
         listOfTensors.add(tensor1);
         listOfTensors.add(tensor2);
 
@@ -53,7 +52,7 @@ public class CrossDeviceSystemTest
                 2,  4, -1,
                 1,  2,  7
         });
-        gpu.add(tensor1);
+        gpu.store(tensor1);
         listOfTensors.add(tensor1);
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1}, "lig(I[0])",
@@ -63,7 +62,7 @@ public class CrossDeviceSystemTest
         //===================
         tensor1 = new Tsr(new int[]{2}, 3);
         tensor2 = new Tsr(new int[]{2}, 4);
-        gpu.add(tensor1).add(tensor2);
+        gpu.store(tensor1).store(tensor2);
         listOfTensors.add(tensor1);
         listOfTensors.add(tensor2);
         //result = new Tsr(new Tsr[]{tensor1, tensor2}, "i0*i1");
@@ -85,8 +84,8 @@ public class CrossDeviceSystemTest
                         4, -1, 3,
                         2, 3, -1
                 });
-        gpu.add(tensor1);
-        gpu.add(tensor2);
+        gpu.store(tensor1);
+        gpu.store(tensor2);
         listOfTensors.add(tensor1);
         listOfTensors.add(tensor2);
         tester.testTensorAutoGrad(
@@ -102,8 +101,8 @@ public class CrossDeviceSystemTest
         tensor2 = new Tsr(
                 new int[]{1, 300, 200},
                 3);
-        gpu.add(tensor1);
-        gpu.add(tensor2);
+        gpu.store(tensor1);
+        gpu.store(tensor2);
         listOfTensors.add(tensor1);
         listOfTensors.add(tensor2);
         tester.testTensorAutoGrad(
@@ -120,7 +119,7 @@ public class CrossDeviceSystemTest
                 -2, 3, //  0  7
                 1, 2,  // -7  0
         });
-        gpu.add(tensor1).add(tensor2);
+        gpu.store(tensor1).store(tensor2);
         listOfTensors.add(tensor1);
         listOfTensors.add(tensor2);
         tester.testTensorAutoGrad(//4, 5, -13, -4 <= result values
@@ -141,7 +140,7 @@ public class CrossDeviceSystemTest
         Tsr x = new Tsr(new int[]{1}, 3).setRqsGradient(true);
         Tsr b = new Tsr(new int[]{1}, -4);
         Tsr w = new Tsr(new int[]{1}, 2);
-        gpu.add(x).add(b).add(w);
+        gpu.store(x).store(b).store(w);
         listOfTensors.add(x);
         listOfTensors.add(b);
         listOfTensors.add(w);
@@ -158,7 +157,7 @@ public class CrossDeviceSystemTest
         x = new Tsr(new int[]{1}, 4).setRqsGradient(true);
         b = new Tsr(new int[]{1}, 0.5);
         w = new Tsr(new int[]{1}, 0.5);
-        gpu.add(x).add(b).add(w);
+        gpu.store(x).store(b).store(w);
         listOfTensors.add(x);
         listOfTensors.add(b);
         listOfTensors.add(w);
@@ -170,7 +169,7 @@ public class CrossDeviceSystemTest
         x = new Tsr(new int[]{1}, 3);
         b = new Tsr(new int[]{1}, -5);
         w = new Tsr(new int[]{1}, -2);
-        gpu.add(x).add(b).add(w);
+        gpu.store(x).store(b).store(w);
         listOfTensors.add(x);
         listOfTensors.add(b);
         listOfTensors.add(w);
@@ -182,7 +181,7 @@ public class CrossDeviceSystemTest
         x = new Tsr(new int[]{1}, 3).setRqsGradient(true);
         b = new Tsr(new int[]{1}, 0.5);
         w = new Tsr(new int[]{1}, 4);
-        gpu.add(x).add(b).add(w);
+        gpu.store(x).store(b).store(w);
         listOfTensors.add(x);
         listOfTensors.add(b);
         listOfTensors.add(w);
@@ -207,7 +206,7 @@ public class CrossDeviceSystemTest
 
         if(gpu instanceof OpenCLDevice)
         {
-            Collection<Tsr> outsourced = gpu.tensors();
+            Collection<Tsr> outsourced = gpu.getTensors();
 
             String sentence = "Number of outsourced tensors: ";
             tester.testContains(
@@ -225,10 +224,10 @@ public class CrossDeviceSystemTest
                     "Testing for memory leaks!"
             );
             //---
-            listOfTensors.forEach(gpu::rmv);
+            listOfTensors.forEach(gpu::free);
             sentence = "Number of tensors after deleting: ";
             tester.testContains(
-                    sentence +gpu.tensors().size(),
+                    sentence +gpu.getTensors().size(),
                     new String[]{sentence+"0"},
                     "Testing if all tensors have been deleted!"
             );

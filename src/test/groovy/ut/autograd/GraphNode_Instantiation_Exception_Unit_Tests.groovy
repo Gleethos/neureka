@@ -1,7 +1,7 @@
 package ut.autograd
 
 import neureka.Tsr
-import neureka.device.Device
+import neureka.devices.Device
 import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
 import neureka.calculus.Function
