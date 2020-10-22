@@ -1,5 +1,6 @@
 package neureka;
 
+import neureka.dtype.custom.F64;
 import neureka.utility.SettingsLoader;
 
 import java.io.BufferedReader;
@@ -105,6 +106,7 @@ public class Neureka
         private final Indexing _indexing;
         private final View _view;
         private final NDim _ndim;
+        private final DType _dtype;
 
         private boolean _isLocked = false;
 
@@ -114,6 +116,7 @@ public class Neureka
             _indexing = new Indexing();
             _view = new View();
             _ndim = new NDim();
+            _dtype = new DType();
         }
 
         public Debug debug() {
@@ -129,8 +132,8 @@ public class Neureka
             return _autograd;
         }
 
-        public AutoGrad autograd(Object closure) {
-            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _autograd);
+        public AutoGrad autograd( Object closure ) {
+            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn( closure, _autograd );
             return _autograd;
         }
 
@@ -138,8 +141,8 @@ public class Neureka
             return _indexing;
         }
 
-        public Indexing indexing(Object closure) {
-            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _indexing);
+        public Indexing indexing( Object closure ) {
+            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn( closure, _indexing );
             return _indexing;
         }
 
@@ -147,8 +150,8 @@ public class Neureka
             return _view;
         }
 
-        public View view(Object closure) {
-            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _view);
+        public View view( Object closure ) {
+            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn( closure, _view );
             return _view;
         }
 
@@ -156,9 +159,18 @@ public class Neureka
             return _ndim;
         }
 
-        public NDim ndim(Object closure) {
-            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _ndim);
+        public NDim ndim( Object closure ) {
+            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn( closure, _ndim );
             return _ndim;
+        }
+
+        public DType dtype() {
+            return _dtype;
+        }
+
+        public DType dtype( Object closure ) {
+            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn( closure, _dtype );
+            return _dtype;
         }
 
         public boolean isLocked(){
@@ -327,6 +339,21 @@ public class Neureka
             public void setIsOnlyUsingDefaultNDConfiguration(boolean enabled){
                 if(_isLocked || !_currentThreadIsAuthorized()) return;
                 _isOnlyUsingDefaultNDConfiguration = enabled;
+            }
+
+        }
+
+        public class DType {
+
+            private Class<?> _defaultDataTypeClass = F64.class;
+
+            public Class getDefaultDataTypeClass(){
+                return _defaultDataTypeClass;
+            }
+
+            public void setDefaultDataTypeClass( Class dtype ){
+                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                _defaultDataTypeClass = dtype;
             }
 
         }

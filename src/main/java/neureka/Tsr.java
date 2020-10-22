@@ -244,7 +244,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     @Override
     protected < T extends Component<Tsr<ValueType>> > T _addOrReject( T newComponent )
     {
-        if (newComponent instanceof Device && !((Device)newComponent).has(this))
+        if ( newComponent.getClass() == HostCPU.class ) return null;
+        if ( newComponent instanceof Device && !( (Device) newComponent ).has(this) )
         {
             if ( this.has( Relation.class ) ) {
                 Relation relation = find( Relation.class );
@@ -1373,6 +1374,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return _value;
     }
 
+    public Object getData() {
+        return _value;
+    }
+
     public double[] gradient64() {
         Tsr<ValueType> gradient = this.find( Tsr.class );
         if ( gradient == null ) return new double[ 0 ];
@@ -1486,8 +1491,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     public double[] value64() {
-        if ( _value == null && this.isOutsourced() && this.has(Device.class) ) {
-            return this.find( Device.class ).value64f( this );
+        Device found = this.find( Device.class );
+        if ( _value == null && this.isOutsourced() && found != null ) {
+            return found.value64f( this );
         }
         double[] newValue = ( this.is64() )
                 ? (double[]) _value
@@ -1514,8 +1520,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     public float[] value32() {
-        if ( _value == null && this.isOutsourced() && this.has( Device.class ) ) {
-            return this.find( Device.class ).value32f( this );
+        Device found = this.find( Device.class );
+        if ( _value == null && this.isOutsourced() && found != null ) {
+            return found.value32f( this );
         }
         float[] newValue = ( this.is64() )
                 ? DataConverter.Utility.doubleToFloat( (double[]) _value )

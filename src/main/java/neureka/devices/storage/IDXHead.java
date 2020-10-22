@@ -108,7 +108,8 @@ public class IDXHead implements FileHead<IDXHead, Number>
         catch (FileNotFoundException e)
         {
             try {
-                fos = new FileOutputStream(new File(_fileName));
+                File newFile = new File( _fileName );
+                fos = new FileOutputStream( newFile );
             } catch ( Exception innerException ) {
                 innerException.printStackTrace();
                 return this;

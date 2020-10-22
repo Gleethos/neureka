@@ -75,7 +75,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     /**
-     * The OpenCLPlaform
+     * The OpenCLPlatform
      */
     private final OpenCLPlatform _platform;
 

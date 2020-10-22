@@ -8,8 +8,9 @@ import neureka.devices.host.execution.HostExecutor;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.backend.ExecutionCall;
 
-import java.util.Collection;
+import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 public class HostCPU extends AbstractDevice<Number>
 {
@@ -18,6 +19,7 @@ public class HostCPU extends AbstractDevice<Number>
     static {  _instance = new HostCPU();  }
 
     private final NativeExecutor _executor;
+    private Set<Tsr<Number>> _tensors = Collections.newSetFromMap(new WeakHashMap<Tsr<Number>, Boolean>());
 
     private HostCPU() {
         _executor = new NativeExecutor();
@@ -32,7 +34,7 @@ public class HostCPU extends AbstractDevice<Number>
     }
 
     @Override
-    protected void _execute(Tsr[] tensors, int d, OperationType type)
+    protected void _execute( Tsr[] tensors, int d, OperationType type )
     {
         ExecutionCall<HostCPU> call =
                 new ExecutionCall<>(
@@ -50,42 +52,46 @@ public class HostCPU extends AbstractDevice<Number>
     }
 
     @Override
-    public Device restore(Tsr tensor) {
+    public Device restore( Tsr tensor ) {
         return this;
     }
 
     @Override
-    public Device store(Tsr tensor) {
+    public Device store( Tsr tensor ) {
+        _tensors.add( tensor );
         return this;
     }
 
     @Override
-    public Device store(Tsr tensor, Tsr parent) {
+    public Device store( Tsr tensor, Tsr parent ) {
+        _tensors.add( tensor );
+        _tensors.add( parent );
         return this;
     }
 
     @Override
     public boolean has( Tsr tensor ) {
-        return false;
+        return _tensors.contains( tensor );
     }
 
     @Override
     public Device free(Tsr tensor) {
+        _tensors.remove( tensor );
         return this;
     }
 
     @Override
-    public Device overwrite64(Tsr tensor, double[] value) {
+    public Device overwrite64( Tsr tensor, double[] value ) {
         return this;
     }
 
     @Override
-    public Device overwrite32(Tsr tensor, float[] value) {
+    public Device overwrite32( Tsr tensor, float[] value ) {
         return this;
     }
 
     @Override
-    public Device swap(Tsr former, Tsr replacement) {
+    public Device swap( Tsr former, Tsr replacement ) {
         return this;
     }
 
@@ -100,18 +106,19 @@ public class HostCPU extends AbstractDevice<Number>
     }
 
     @Override
-    public double value64f(Tsr tensor, int index) {
+    public double value64f( Tsr tensor, int index ) {
         return tensor.value64(index);
     }
 
     @Override
-    public float value32f(Tsr tensor, int index) {
+    public float value32f( Tsr tensor, int index ) {
         return tensor.value32(index);
     }
 
+
     @Override
     public Collection<Tsr<Number>> getTensors() {
-        return null;
+        return _tensors;
     }
 
     public interface Range {

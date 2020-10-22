@@ -1,4 +1,5 @@
 import neureka.Neureka
+import neureka.dtype.custom.F64
 
 Neureka.instance {
 
@@ -26,6 +27,10 @@ Neureka.instance {
 
         ndim {
             it.isOnlyUsingDefaultNDConfiguration = false
+        }
+
+        dtype {
+            it.defaultDataTypeClass = F64.class
         }
 
     }

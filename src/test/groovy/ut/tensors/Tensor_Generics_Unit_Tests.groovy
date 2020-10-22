@@ -1,18 +1,19 @@
 package ut.tensors
 
+import neureka.Neureka
 import neureka.Tsr
 import spock.lang.Specification
 
 class Tensor_Generics_Unit_Tests extends Specification
 {
 
-    def 'Anonymous tensor instance has no inherent generic type class.'() {
+    def 'Anonymous tensor instance has the default datatype class as defined in Neureka settings.'() {
 
         given :
             Tsr<Double> t = new Tsr()
 
         expect :
-            t.getValueClass() == null
+            t.getValueClass() == Neureka.instance().settings().dtype().defaultDataTypeClass
 
     }
 

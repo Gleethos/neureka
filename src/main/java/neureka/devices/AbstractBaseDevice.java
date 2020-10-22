@@ -5,6 +5,7 @@ import neureka.Tsr;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.IntFunction;
@@ -16,7 +17,9 @@ public abstract class AbstractBaseDevice<ValueType> implements Device<ValueType>
 
     @Override
     public int size() {
-        return this.getTensors().size();
+        Collection<Tsr<ValueType>> tensors = this.getTensors();
+        if ( tensors == null ) return 0;
+        return tensors.size();
     }
 
     @Override

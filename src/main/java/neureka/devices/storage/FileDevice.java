@@ -9,6 +9,7 @@ import neureka.devices.Device;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
  */
 public class FileDevice extends AbstractBaseDevice<Number>
 {
+    private static final Map<String, FileDevice> _DEVICES = new WeakHashMap<>();
+
     private static Map<String, Function<String, FileHead>> _LOADERS = Map.of(
             "idx", name -> {
                 return new IDXHead( name );
@@ -41,7 +44,15 @@ public class FileDevice extends AbstractBaseDevice<Number>
     private String _directory;
     private Map<Tsr<Number>, FileHead> _stored = new HashMap<>();
 
-    public FileDevice( String directory ) {
+    public static FileDevice instance( String path ) {
+        FileDevice device = _DEVICES.get( path );
+        if ( device != null ) return device;
+        device = new FileDevice( path );
+        _DEVICES.put( path, device );
+        return device;
+    }
+
+    private FileDevice( String directory ) {
         _directory = directory;
     }
 
@@ -80,10 +91,18 @@ public class FileDevice extends AbstractBaseDevice<Number>
         String filename = tensor.shape().stream().map( Object::toString ).collect(Collectors.joining("x"));
         filename = "tensor_" + filename + "_" + tensor.getDataType().getTypeClass().getSimpleName().toLowerCase();
         filename = filename + "_" + java.time.LocalDate.now().toString();
-        filename = filename + "_" + java.time.LocalTime.now().toString() + "_.idx";
+        filename = filename + "_" + java.time.LocalTime.now().toString();
+        filename = filename.replace( ".", "_" ).replace( ":","-" ) + "_.idx";
+        store( tensor, filename );
+        return this;
+    }
+
+    public Device store( Tsr<Number> tensor, String filename ) {
         try {
+            if ( !filename.endsWith(".idx") ) filename += ".idx";
             FileHead head = new IDXHead( tensor, _directory + "/" + filename );
             _stored.put( tensor, head );
+            tensor.setIsOutsourced( true );
         } catch ( Exception e ) {
             e.printStackTrace();
         }
@@ -91,22 +110,23 @@ public class FileDevice extends AbstractBaseDevice<Number>
     }
 
     @Override
-    public Device store(Tsr<Number> tensor, Tsr<Number> parent ) {
+    public Device store( Tsr<Number> tensor, Tsr<Number> parent ) {
         return null;
     }
 
     @Override
     public boolean has( Tsr<Number> tensor ) {
-        return false;
+        return _stored.containsKey( tensor );
     }
 
     @Override
-    public Device free(Tsr<Number> tensor ) {
-        return null;
+    public Device free( Tsr<Number> tensor ) {
+        _stored.remove( tensor );
+        return this;
     }
 
     @Override
-    public Device cleaning(Tsr<Number> tensor, Runnable action) {
+    public Device cleaning( Tsr<Number> tensor, Runnable action ) {
         return this;
     }
 
@@ -152,7 +172,7 @@ public class FileDevice extends AbstractBaseDevice<Number>
 
     @Override
     public Collection<Tsr<Number>> getTensors() {
-        return null;
+        return _stored.keySet();
     }
 
     @Override

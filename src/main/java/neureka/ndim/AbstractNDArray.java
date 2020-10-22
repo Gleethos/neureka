@@ -29,7 +29,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
 
     protected NDConfiguration _conf;
 
-    protected DataType _type;
+    protected DataType _type = DataType.instance( Neureka.instance().settings().dtype().getDefaultDataTypeClass() );
     
     protected Object _value;
 

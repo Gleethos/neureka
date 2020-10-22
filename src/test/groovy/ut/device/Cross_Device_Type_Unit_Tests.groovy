@@ -7,6 +7,7 @@ import neureka.devices.host.HostCPU
 import neureka.devices.opencl.OpenCLDevice
 import neureka.calculus.backend.ExecutionCall
 import neureka.calculus.backend.implementations.OperationTypeImplementation
+import neureka.devices.storage.FileDevice
 import spock.lang.Specification
 
 
@@ -144,6 +145,64 @@ class Cross_Device_Type_Unit_Tests extends Specification
             device << [
                     HostCPU.instance(),
                     Device.find("openCL")
+            ]
+
+    }
+
+
+
+    /**
+     *  Device implementations always also behave as storage units for tensors.
+     */
+    def 'Devices store tensors which can also be restored.'(
+            Device device
+    ) {
+
+        given : 'The given device is available and Neureka is being reset.'
+            if ( device == null ) return
+            Neureka.instance().reset()
+        and : 'Two tensors which will be transferred later on...'
+            int initialNumber = device.size()
+            Tsr a = new Tsr([2, 3], ";)")
+            Tsr b = new Tsr([3, 4], ":P")
+
+        expect : 'The given device is initially empty.'
+            device.isEmpty() == ( device.size() == 0 )
+            !device.has( a )
+            !device.has( b )
+
+        when : 'The the first tensor is being passed to the device...'
+            device.store( a )
+
+        then : '...tensor "a" is now on the device.'
+            !device.isEmpty()
+            device.size() == initialNumber + 1
+            device.has( a )
+            !device.has( b )
+
+        when : 'The the second tensor is being passed to the device...'
+            device.store( b )
+
+        then : '...tensor "b" is now also on the device.'
+            !device.isEmpty()
+            device.size() == initialNumber + 2
+            device.has( a )
+            device.has( b )
+
+        when : 'They are being removed again...'
+            device.free( a ).free( b )
+
+        then : '...the device is empty again.'
+            device.isEmpty() == ( initialNumber == 0 )
+            device.size() == initialNumber
+            !device.has( a )
+            !device.has( b )
+
+        where : 'The following Device instances are being tested :'
+            device << [
+                    HostCPU.instance(),
+                    Device.find("openCL"),
+                    FileDevice.instance("build")
             ]
 
     }
