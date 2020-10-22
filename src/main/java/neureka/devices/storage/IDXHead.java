@@ -14,9 +14,10 @@ import java.util.stream.Collectors;
 
 public class IDXHead implements FileHead<IDXHead, Number>
 {
+    private final String _fileName;
+
     private int _dataOffset;
     private int _bodySize;
-    private String _fileName;
     private DataType _dtype;
     private int[] _shape;
 
@@ -43,8 +44,8 @@ public class IDXHead implements FileHead<IDXHead, Number>
     {
         _fileName = fileName;
         try {
-            _loadHead(fileName);
-        } catch(Exception e) {
+            _loadHead( fileName );
+        } catch( Exception e ) {
             System.err.print("Failed reading IDX file!");
         }
     }
@@ -87,7 +88,6 @@ public class IDXHead implements FileHead<IDXHead, Number>
             size *= shape[ i ];
         }
 
-
         _shape = shape;
         _bodySize = size;
 
@@ -97,7 +97,7 @@ public class IDXHead implements FileHead<IDXHead, Number>
 
 
     @Override
-    public IDXHead store(Tsr<Number> tensor )
+    public IDXHead store( Tsr<Number> tensor )
     {
         Iterator<Number> data = tensor.iterator();
         FileOutputStream fos;
@@ -120,26 +120,26 @@ public class IDXHead implements FileHead<IDXHead, Number>
         int offset = 0;
 
         try {
-            f.write(new byte[]{0, 0});
+            f.write( new byte[]{ 0, 0 } );
             offset += 2;
-            f.write(CODE_MAP.get(_dtype.getTypeClass()).byteValue());
+            f.write( CODE_MAP.get( _dtype.getTypeClass() ).byteValue() );
             offset += 1;
             byte rank = (byte) _shape.length;
-            f.write(rank);
+            f.write( rank );
             offset += 1;
             int bodySize = 1;
-            for (int i = 0; i < rank; i++) {
-                byte[] integer = ByteBuffer.allocate(4).putInt(_shape[i]).array();
+            for ( int i = 0; i < rank; i++ ) {
+                byte[] integer = ByteBuffer.allocate( 4 ).putInt( _shape[ i ] ).array();
                 assert integer.length == 4;
                 f.write(integer);
-                bodySize *= _shape[i];
+                bodySize *= _shape[ i ];
                 offset += 4;
             }
             _dataOffset = offset;
             _bodySize = bodySize;
             NumericType<Number, Object> type = (NumericType<Number, Object>) _dtype.getTypeClassInstance();
 
-            type.writeDataTo(new DataOutputStream(f), data);
+            type.writeDataTo( new DataOutputStream( f ), data );
             f.close();
         } catch ( Exception e ) {
             e.printStackTrace();
@@ -178,6 +178,40 @@ public class IDXHead implements FileHead<IDXHead, Number>
     @Override
     public IDXHead free() {
         return this;
+    }
+
+    @Override
+    public int getValueSize() {
+        return _bodySize;
+    }
+
+    @Override
+    public int getDataSize() {
+        int bytes = ( _dtype.typeClassImplements( NumericType.class ) )
+                ? ( (NumericType) _dtype.getTypeClassInstance() ).numberOfBytes()
+                : 1;
+        return _bodySize * bytes;
+    }
+
+    @Override
+    public int getTotalSize() {
+        return getDataSize() + _dataOffset;
+    }
+
+    @Override
+    public String getFileName() {
+        String[] split = _fileName.replace( "\\","/" ).split( "/" );
+        return split[ split.length - 1 ];
+    }
+
+    @Override
+    public DataType getDataType() {
+        return _dtype;
+    }
+
+    @Override
+    public int[] getShape() {
+        return _shape;
     }
 
     @Override

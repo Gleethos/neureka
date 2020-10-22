@@ -6,6 +6,7 @@ import neureka.calculus.backend.ExecutionCall;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,6 +55,10 @@ public class FileDevice extends AbstractBaseDevice<Number>
 
     private FileDevice( String directory ) {
         _directory = directory;
+        File dir = new File( directory );
+        if ( ! dir.exists() ){
+            dir.mkdirs();
+        }
     }
 
 

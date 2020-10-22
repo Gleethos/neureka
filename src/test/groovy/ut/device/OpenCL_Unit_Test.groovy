@@ -38,23 +38,23 @@ class OpenCL_Unit_Test extends Specification
             OpenCLDevice cld = Device.find('first') as OpenCLDevice
 
        then : 'The device has realistic properties.'
-            cld.globalMemSize()>1000
-            cld.image2DMaxHeight()>100
-            cld.image2DMaxWidth()>100
-            cld.image3DMaxHeight()>100
-            cld.image3DMaxDepth()>0
-            cld.image3DMaxWidth()>100
-            cld.maxWorkGroupSize()>10
-            cld.maxClockFrequenzy()>100
-            cld.maxClockFrequenzy()>100
-            cld.maxConstantBufferSize()>1000
-            cld.maxWriteImageArgs()>1
-            cld.prefVecWidthChar()>0
-            cld.prefVecWidthDouble()>0
-            cld.prefVecWidthFloat()>0
-            cld.prefVecWidthInt()>0
-            cld.prefVecWidthLong()>0
-            cld.prefVecWidthShort()>0
+            cld.globalMemSize() > 1000
+            cld.image2DMaxHeight() > 100
+            cld.image2DMaxWidth() > 100
+            cld.image3DMaxHeight() > 100
+            cld.image3DMaxDepth() > 0
+            cld.image3DMaxWidth() > 100
+            cld.maxWorkGroupSize() > 10
+            cld.maxClockFrequenzy() > 100
+            cld.maxClockFrequenzy() > 100
+            cld.maxConstantBufferSize() > 1000
+            cld.maxWriteImageArgs() > 1
+            cld.prefVecWidthChar() > 0
+            cld.prefVecWidthDouble() > 0
+            cld.prefVecWidthFloat() > 0
+            cld.prefVecWidthInt() > 0
+            cld.prefVecWidthLong() > 0
+            cld.prefVecWidthShort() > 0
     }
 
     def 'First found OpenCLDevice will have realistic text properties.'()
@@ -101,7 +101,7 @@ class OpenCL_Unit_Test extends Specification
             def exception = thrown(IllegalStateException)
 
         and : 'It explains what went wrong.'
-            exception.message=="Data parent is not outsourced!"
+            exception.message == "Data parent is not outsourced!"
     }
 
 

@@ -201,8 +201,8 @@ class Cross_Device_Type_Unit_Tests extends Specification
         where : 'The following Device instances are being tested :'
             device << [
                     HostCPU.instance(),
-                    Device.find("openCL"),
-                    FileDevice.instance("build")
+                    Device.find( "openCL" ),
+                    FileDevice.instance( "build/test-can" )
             ]
 
     }

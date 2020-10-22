@@ -30,8 +30,8 @@ class FileDevice_Unit_Tests extends Specification
             a.data == null
 
         where :
-            path    | filename
-            "build" | "tensor_2x4_"
+            path             | filename
+            "build/test-can" | "tensor_2x4_"
 
 
 

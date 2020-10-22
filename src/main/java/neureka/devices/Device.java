@@ -18,6 +18,11 @@ import java.util.Collection;
  * devices capable of executing operations on tensors, namely the Tsr<ValueType> class.
  * Such instances are also components of tensors, which is why
  * this interface extends the Component &lt; Tsr<ValueType> &gt; interface.
+ * The device interface also extends the "Storage" interface because devices
+ * are also capable of storing tensors on them.
+ * Therefore a tensor which is stored on a device, meaning it holds a
+ * reference to it within its component system also has the "isOutsourced" property set to true!
+ *
  */
 public interface Device<ValueType> extends Component<Tsr<ValueType>>, Storage<ValueType>, Collection<Tsr<ValueType>>
 {
@@ -63,8 +68,23 @@ public interface Device<ValueType> extends Component<Tsr<ValueType>>, Storage<Va
         return result;
     }
 
+    /**
+     *  This method signals the device to get ready for garbage collection.
+     *  A given device may have resources which ought to be freed when it is no longer used.
+     *  One may also chose to do resource freeing manually.
+     */
     void dispose();
 
+    /**
+     *  Implementations of this method ought to store the value
+     *  of the given tensor and the "parent" tensor in whatever
+     *  formant suites the underlying implementation and or final type.
+     *  Device implementations are also tensor storages
+     *  which may also have to store tensors which are slices of bigger tensors.
+     *
+     * @param tensor The tensor whose data ought to be stored.
+     * @return A reference this object to allow for method chaining. (factory pattern)
+     */
     Device store( Tsr<ValueType> tensor, Tsr<ValueType> parent );
 
     boolean has( Tsr<ValueType> tensor );
