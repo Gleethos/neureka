@@ -105,8 +105,12 @@ public abstract class AbstractOperationType implements OperationType
                 return 1.0f;
             }
 
+            /**
+             * @param call The execution call which has been routed to this implementation...
+             * @return null because the default implementation is not outsourced.
+             */
             @Override
-            public Device findDeviceFor(ExecutionCall call) {
+            public Device findDeviceFor( ExecutionCall call ) {
                 return null;
             }
 

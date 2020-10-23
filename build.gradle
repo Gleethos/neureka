@@ -108,6 +108,10 @@ dependencies {
     implementation 'org.jocl:jocl:2.0.2' //-> Internal dependency!
     implementation 'org.jetbrains:annotations:16.0.2'
 
+    // Logging :
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
+    //implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.29' // adds log4j backend
+
     // Test suite : Groovy, Spock (+ sl4j, + Spock-Reports)
     testCompile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.5'
     testCompile group: 'org.spockframework', name: 'spock-core', version: '2.0-M2-groovy-3.0'
@@ -210,7 +214,7 @@ task injectSpockStyles(type: Task){
 
 task deploy() {
 
-     //Expected before : dependsOn 'cleanForDeployment'
+    // Expected before : dependsOn 'cleanForDeployment'
 
     dependsOn 'check'
     dependsOn 'jar'
