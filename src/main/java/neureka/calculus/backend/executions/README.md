@@ -37,9 +37,9 @@ def executor = new CLExecutor( // implements 'ExecutionFor<OpenCLDevice>'
        call.getDevice().getKernel(call)
                .pass(call.getTensor( 0 ))
                .pass(call.getTensor(1))
-               .pass(call.getTensor( 0 ).rank())
-               .pass(call.getDerivativeIndex())
-               .call(gwz);
+               .pass( call.getTensor( 0 ).rank() )
+               .pass( call.getDerivativeIndex() ) 
+               .call( gwz );
    },
    3, // Arity (for correctness)
    someKernelSource, // kernelSource (maybe a file?)

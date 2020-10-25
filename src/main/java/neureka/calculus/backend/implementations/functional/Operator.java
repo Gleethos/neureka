@@ -13,7 +13,7 @@ public class Operator extends AbstractFunctionalOperationTypeImplementation<Oper
         super("operator");
         setSuitabilityChecker(
                 call -> {
-                    int size = ( call.getTensors()[ 0 ] == null ) ? call.getTensors()[1].size() : call.getTensors()[ 0 ].size();
+                    int size = ( call.getTensors()[ 0 ] == null ) ? call.getTensors()[ 1 ].size() : call.getTensors()[ 0 ].size();
                     for ( Tsr t : call.getTensors() ) if ( t!=null && t.size() != size ) return 0.0f;
                     return 1.0f;
                 }

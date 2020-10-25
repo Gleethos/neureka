@@ -47,7 +47,7 @@ public class DimTrim extends AbstractOperationType
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                         {
                             int prefix = ((int[]) call.getAt("ends"))[ 0 ];
-                            int postfix = ((int[]) call.getAt("ends"))[1];
+                            int postfix = ((int[]) call.getAt("ends"))[ 1 ];
                             if ( forward ) {
                                 throw new IllegalArgumentException("Dim-Trim operation does not support forward-AD!");
                             }
@@ -68,7 +68,7 @@ public class DimTrim extends AbstractOperationType
                                 int postfix = ((int[]) call.getAt("ends"))[ 0 ];
                                 return pad(t, new int[]{prefix, postfix}, true);
                             } else {
-                                int[] ends = new int[2];
+                                int[] ends = new int[ 2 ];
                                 call.putAt("ends", ends);
                                 return trim(t, ends, true);
                             }
@@ -93,7 +93,7 @@ public class DimTrim extends AbstractOperationType
         List<Integer> newOffset = new ArrayList<>();
         int[] shape = tensor.getNDConf().shape();
         int prefix = ends[ 0 ];
-        int postfix = ends[1];
+        int postfix = ends[ 1 ];
         for ( int i = 0; i < prefix; i++ ) {
             newShape.add(1);
             newTranslation.add(1);
@@ -157,7 +157,7 @@ public class DimTrim extends AbstractOperationType
                 )
         );
         ends[ 0 ] = prefix;
-        ends[1] = postfix;
+        ends[ 1 ] = postfix;
         return tensor;
     }
 

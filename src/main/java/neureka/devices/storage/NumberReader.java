@@ -11,8 +11,8 @@ public class NumberReader
     private final FileInputStream _fileInputStream;
     private int _bytesRead = 0;
     private final Map<Integer, byte[]> _byteMap = Map.of(
-            1, new byte[1],
-            2, new byte[2],
+            1, new byte[ 1 ],
+            2, new byte[ 2 ],
             4, new byte[4],
             8, new byte[8]
     );

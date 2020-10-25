@@ -64,13 +64,13 @@ public class DefaultADAgent implements ADAgent
     }
 
     @Override
-    public <T> Tsr<T> forward( GraphNode<T> t, Tsr<T> error ) {
-        return (Tsr<T>) _fad.execute( t, error );
+    public <T> Tsr<T> forward( GraphNode<T> target, Tsr<T> derivative) {
+        return (Tsr<T>) _fad.execute(target, derivative);
     }
 
     @Override
-    public <T> Tsr<T> backward( GraphNode<T> t, Tsr<T> error ){
-        return (Tsr<T>) _bad.execute( t, error );
+    public <T> Tsr<T> backward( GraphNode<T> target, Tsr<T> error ){
+        return (Tsr<T>) _bad.execute(target, error );
     }
 
     @Override

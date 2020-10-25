@@ -15,10 +15,10 @@ import java.util.List;
 public class Absolute extends AbstractOperationType {
 
     private DefaultOperatorCreator<TertiaryNDXConsumer> _activationCreator =
-    (inputs, d)->{
-        double[] t1_val = inputs[1].value64();
-        if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.abs(t1_val[inputs[1].i_of_idx(t1Idx)]);
-        else return (t0Idx, t1Idx, t2Idx) -> (t1_val[inputs[1].i_of_idx(t1Idx)] < 0) ? -1 : 1;
+    ( inputs, d )->{
+        double[] t1_val = inputs[ 1 ].value64();
+        if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.abs(t1_val[inputs[ 1 ].i_of_idx(t1Idx)]);
+        else return (t0Idx, t1Idx, t2Idx) -> (t1_val[inputs[ 1 ].i_of_idx(t1Idx)] < 0) ? -1 : 1;
     };
 
     public Absolute()
@@ -39,8 +39,8 @@ public class Absolute extends AbstractOperationType {
         .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                 call -> {
-                    Tsr last = null;
-                    for ( Tsr t : call.getTensors() ) {
+                    Tsr<?> last = null;
+                    for ( Tsr<?> t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;
                         last = t; // Note: shapes are cached!
                     }
@@ -58,9 +58,9 @@ public class Absolute extends AbstractOperationType {
                     Device device = call.getDevice();
                     if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
-                        int[] shp = tsrs[1].getNDConf().shape();
+                        int[] shp = tsrs[ 1 ].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
+                        output.setIsVirtual( false );
                         try {
                             device.store(output);
                         } catch( Exception e ) {

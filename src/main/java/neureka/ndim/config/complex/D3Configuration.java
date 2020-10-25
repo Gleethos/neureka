@@ -14,20 +14,20 @@ public final class D3Configuration extends AbstractNDC //:= IMMUTABLE
             int[] offset
     ) {
         _shape1 = shape[ 0 ];
-        _shape2 = shape[1];
-        _shape3 = shape[2];
+        _shape2 = shape[ 1 ];
+        _shape3 = shape[ 2 ];
         _translation1 = translation[ 0 ];
-        _translation2 = translation[1];
-        _translation3 = translation[2];
+        _translation2 = translation[ 1 ];
+        _translation3 = translation[ 2 ];
         _idxmap1 = idxmap[ 0 ];
-        _idxmap2 = idxmap[1];
-        _idxmap3 = idxmap[2];
+        _idxmap2 = idxmap[ 1 ];
+        _idxmap3 = idxmap[ 2 ];
         _spread1 = spread[ 0 ];
-        _spread2 = spread[1];
-        _spread3 = spread[2];
+        _spread2 = spread[ 1 ];
+        _spread3 = spread[ 2 ];
         _offset1 = offset[ 0 ];
-        _offset2 = offset[1];
-        _offset3 = offset[2];
+        _offset2 = offset[ 1 ];
+        _offset3 = offset[ 2 ];
     }
 
     public static NDConfiguration construct(
@@ -175,8 +175,8 @@ public final class D3Configuration extends AbstractNDC //:= IMMUTABLE
     @Override
     public int i_of_idx(int[] idx) {
         return (idx[ 0 ] * _spread1 + _offset1) * _translation1 +
-                    (idx[1] * _spread2 + _offset2) * _translation2 +
-                        (idx[2] * _spread3 + _offset3) * _translation3;
+                    (idx[ 1 ] * _spread2 + _offset2) * _translation2 +
+                        (idx[ 2 ] * _spread3 + _offset3) * _translation3;
     }
 
 }

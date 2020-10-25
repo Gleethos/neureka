@@ -22,7 +22,7 @@ public class DeviceQuery
     {
         String result = "[DEVICE QUERY]:\n========================================================\n";
         // Obtain the number of platforms
-        int[] numPlatforms = new int[1];
+        int[] numPlatforms = new int[ 1 ];
         clGetPlatformIDs(0, null, numPlatforms);
 
         result+=("Number of platforms: "+numPlatforms[ 0 ]+"\n");
@@ -38,7 +38,7 @@ public class DeviceQuery
             String platformName = getString(platform, CL_PLATFORM_NAME);
 
             // Obtain the number of devices for the current platform
-            int[] numDevices = new int[1];
+            int[] numDevices = new int[ 1 ];
             clGetDeviceIDs(platform, CL_DEVICE_TYPE_ALL, 0, null, numDevices);
 
             result += ("Number of devices in platform " + platformName + ": " + numDevices[ 0 ] + "\n");
@@ -83,7 +83,7 @@ public class DeviceQuery
 
             // CL_DEVICE_MAX_WORK_ITEM_SIZES
             long[] maxWorkItemSizes = getSizes(device, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3);
-            result += ("CL_DEVICE_MAX_WORK_ITEM_SIZES: "+maxWorkItemSizes[ 0 ]+", "+ maxWorkItemSizes[1]+", "+maxWorkItemSizes[2]+"\n");
+            result += ("CL_DEVICE_MAX_WORK_ITEM_SIZES: "+maxWorkItemSizes[ 0 ]+", "+ maxWorkItemSizes[ 1 ]+", "+maxWorkItemSizes[ 2 ]+"\n");
 
             // CL_DEVICE_MAX_WORK_GROUP_SIZE
             long maxWorkGroupSize = getSize(device, CL_DEVICE_MAX_WORK_GROUP_SIZE);
@@ -246,7 +246,7 @@ public class DeviceQuery
     private static String getString(cl_device_id device, int paramName)
     {
         // Obtain the length of the string that will be queried
-        long size[] = new long[1];
+        long size[] = new long[ 1 ];
         clGetDeviceInfo(device, paramName, 0, null, size);
 
         // Create a buffer of the appropriate size and fill it with the info
@@ -267,7 +267,7 @@ public class DeviceQuery
     private static String getString(cl_platform_id platform, int paramName)
     {
         // Obtain the length of the string that will be queried
-        long size[] = new long[1];
+        long size[] = new long[ 1 ];
         clGetPlatformInfo(platform, paramName, 0, null, size);
 
         // Create a buffer of the appropriate size and fill it with the info

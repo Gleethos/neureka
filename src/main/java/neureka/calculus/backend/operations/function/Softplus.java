@@ -17,10 +17,10 @@ public class Softplus extends AbstractOperationType
 {
 
     private final DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
-            (inputs, d)->{
-                double[] t1_val = inputs[1].value64();
-                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.log(1 + Math.pow(Math.E, t1_val[inputs[1].i_of_idx(t1Idx)]));
-                else return (t0Idx, t1Idx, t2Idx) -> 1 / (1 + Math.pow(Math.E, -t1_val[inputs[1].i_of_idx(t1Idx)]));
+            ( inputs, d )->{
+                double[] t1_val = inputs[ 1 ].value64();
+                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.log(1 + Math.pow(Math.E, t1_val[inputs[ 1 ].i_of_idx(t1Idx)]));
+                else return (t0Idx, t1Idx, t2Idx) -> 1 / (1 + Math.pow(Math.E, -t1_val[inputs[ 1 ].i_of_idx(t1Idx)]));
             };
 
     public Softplus()
@@ -41,8 +41,8 @@ public class Softplus extends AbstractOperationType
         .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                 call -> {
-                    Tsr last = null;
-                    for ( Tsr t : call.getTensors() ) {
+                    Tsr<?> last = null;
+                    for ( Tsr<?> t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;
                         last = t; // Note: shapes are cached!
                     }
@@ -51,25 +51,24 @@ public class Softplus extends AbstractOperationType
         ).setADAgentSupplier(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             defaultImplementation().supplyADAgentFor(f, call, forward)
-        ).setCallHock(
-                ( caller, call ) -> null
-        ).setRJAgent(
-                ( call, goDeeperWith ) -> null
-        ).setDrainInstantiation(
-                        call -> {
+        )
+        .setCallHock( ( caller, call ) -> null )
+        .setRJAgent( ( call, goDeeperWith ) -> null )
+        .setDrainInstantiation(
+                call -> {
                             Tsr[] tsrs = call.getTensors();
                             Device device = call.getDevice();
                             if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                             {
-                                int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        try {
-                            device.store(output);
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
+                                int[] shp = tsrs[ 1 ].getNDConf().shape();
+                                Tsr output = new Tsr( shp, 0.0 );
+                                output.setIsVirtual( false );
+                                try {
+                                    device.store(output);
+                                } catch( Exception e ) {
+                                    e.printStackTrace();
+                                }
+                                tsrs[ 0 ] = output;
                             }
                             return call;
                         }
@@ -102,11 +101,11 @@ public class Softplus extends AbstractOperationType
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(offset))
-                                            .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getTensor( offset ) )
+                                            .pass( call.getTensor( offset + 1 ) )
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 typeImplementation.getKernelSource(), // kernelSource

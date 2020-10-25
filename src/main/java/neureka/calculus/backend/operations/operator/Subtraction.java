@@ -50,7 +50,7 @@ public class Subtraction extends AbstractOperationType
             Tsr alternative = null;
             if (tsrs.length > 3) {
                 if (d < 0) {
-                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[1], tsrs[2]};
+                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<Device>(device, reduction, d, type)
                     );
@@ -62,7 +62,7 @@ public class Subtraction extends AbstractOperationType
                     );
                     tsrs[ 0 ] = reduction[ 0 ];
                 } else {
-                    tsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[1]).setValue((d==0)?1.0f:-1.0f);
+                    tsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[ 1 ]).setValue((d==0)?1.0f:-1.0f);
                 }
                 return alternative;
             } else {
@@ -74,40 +74,38 @@ public class Subtraction extends AbstractOperationType
         // DEFAULT OPERATION :
 
         DefaultOperatorCreator<PrimaryNDXConsumer> operationCreator =
-                (inputs, d) -> {
-                    double[] t1_val = inputs[1].value64();
-                    double[] t2_val = inputs[2].value64();
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
                     if ( d < 0 ) {
-                        return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] - t2_val[inputs[2].i_of_idx(t1Idx)];
+                        return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] - t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
                     } else return t1Idx -> ( d == 0 ) ? 1.0 : -1.0;
                 };
 
         Operator operator = new Operator()
                 .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
-                        call -> true
-                ).setADAgentSupplier(
+                .setForwardADAnalyzer( call -> true )
+                .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                             defaultImplementation().supplyADAgentFor( f, call, forward )
-                ).setCallHock(
-                    (caller, call) -> null
-                ).setRJAgent(
-                    rja
-                ).setDrainInstantiation(
+                )
+                .setCallHock( ( caller, call ) -> null )
+                .setRJAgent( rja )
+                .setDrainInstantiation(
                         call -> {
                             Tsr[] tsrs = call.getTensors();
                             Device device = call.getDevice();
                             if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                             {
-                                int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        try {
-                            device.store(output);
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
+                                int[] shp = tsrs[ 1 ].getNDConf().shape();
+                                Tsr output = new Tsr( shp, 0.0 );
+                                output.setIsVirtual( false );
+                                try {
+                                    device.store(output);
+                                } catch( Exception e ) {
+                                    e.printStackTrace();
+                                }
+                                tsrs[ 0 ] = output;
                             }
                             return call;
                         }
@@ -141,12 +139,12 @@ public class Subtraction extends AbstractOperationType
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(offset))
-                                            .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getTensor( offset ) )
+                                            .pass( call.getTensor( offset + 1 ) )
+                                            .pass( call.getTensor( offset + 2 ) )
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 operator.getKernelSource(), // kernelSource
@@ -166,8 +164,8 @@ public class Subtraction extends AbstractOperationType
 
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarOperatorCreator =
                 (inputs, value, d) -> {
-                    double[] t1_val = inputs[1].value64();
-                    if ( d < 0 ) return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] - value;
+                    double[] t1_val = inputs[ 1 ].value64();
+                    if ( d < 0 ) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] - value;
                     else if ( d == 0 ) return t1Idx -> 1; else return t1Idx -> -1;
                 };
 
@@ -178,7 +176,7 @@ public class Subtraction extends AbstractOperationType
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     defaultImplementation().supplyADAgentFor(f, call, forward)
                 )
-                .setCallHock( (caller, call) -> null )
+                .setCallHock( ( caller, call ) -> null )
                 .setRJAgent( rja )
                 .setDrainInstantiation(
                     call -> {
@@ -186,9 +184,9 @@ public class Subtraction extends AbstractOperationType
                         Device device = call.getDevice();
                         if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                         {
-                            int[] shp = tsrs[1].getNDConf().shape();
+                            int[] shp = tsrs[ 1 ].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
+                        output.setIsVirtual( false );
                         try {
                             device.store(output);
                         } catch( Exception e ) {
@@ -231,9 +229,9 @@ public class Subtraction extends AbstractOperationType
                                             .pass(call.getTensor( 0 ))
                                             .pass(call.getTensor( 0 ))
                                             .pass((float)call.getTensor(1+offset).value64( 0 ))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 scalarization.getKernelSource(), // kernelSource
@@ -271,14 +269,14 @@ public class Subtraction extends AbstractOperationType
                                 if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                                 else
                                 {
-                                    Tsr deriv = f.derive(inputs, d);
+                                    Tsr deriv = f.derive( inputs, d );
                                     return new DefaultADAgent( deriv )
-                                            .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                            .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                            .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                            .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
                                 }
                             }
                         )
-                        .setCallHock( (caller, call) -> null )
+                        .setCallHock( ( caller, call ) -> null )
                         .setRJAgent( rja )
                         .setDrainInstantiation(
                             call -> {
@@ -286,16 +284,16 @@ public class Subtraction extends AbstractOperationType
                                 Device device = call.getDevice();
                                 if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                                 {
-                                    int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        try {
-                            device.store(output);
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
+                                    int[] shp = tsrs[ 1 ].getNDConf().shape();
+                                Tsr output = new Tsr( shp, 0.0 );
+                                output.setIsVirtual( false );
+                                try {
+                                    device.store(output);
+                                } catch( Exception e ) {
+                                    e.printStackTrace();
                                 }
+                                tsrs[ 0 ] = output;
+                            }
                                 return call;
                             }
                         )
@@ -372,9 +370,9 @@ public class Subtraction extends AbstractOperationType
     public double calculate( double[] inputs, int j, int d, List<Function> src ) {
         if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
-            double result = src.get( 0 ).call(inputs, j);
+            double result = src.get( 0 ).call( inputs, j );
             for ( int Vi = 1; Vi < src.size(); Vi++ ) {
-                final double current = src.get(Vi).call(inputs, j);
+                final double current = src.get(Vi).call( inputs, j );
                 result -= current;
             }
             return result;
@@ -382,9 +380,9 @@ public class Subtraction extends AbstractOperationType
             double derivative = 0;
             for ( int i = 0; i < src.size(); ++i ) {
                 if (i == 0) {
-                    derivative += src.get( i ).derive(inputs, d, j);
+                    derivative += src.get( i ).derive( inputs, d, j );
                 } else {
-                    derivative -= src.get( i ).derive(inputs, d, j);
+                    derivative -= src.get( i ).derive( inputs, d, j );
                 }
             }
             return derivative;
@@ -392,11 +390,11 @@ public class Subtraction extends AbstractOperationType
     }
 
     @Contract(pure = true)
-    public static double calculate(double[] inputs, int d, List<Function> src) {
+    public static double calculate( double[] inputs, int d, List<Function> src ) {
         if ( d < 0 ) {
-            double result = src.get( 0 ).call(inputs);
+            double result = src.get( 0 ).call( inputs );
             for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get( i ).call(inputs);
+                final double current = src.get( i ).call( inputs );
                 result -= current;
             }
             return result;
@@ -404,9 +402,9 @@ public class Subtraction extends AbstractOperationType
             double derivative = 0;
             for ( int i = 0; i < src.size(); ++i ) {
                 if ( i == 0 ) {
-                    derivative += src.get( i ).derive(inputs, d);
+                    derivative += src.get( i ).derive( inputs, d );
                 } else {
-                    derivative -= src.get( i ).derive(inputs, d);
+                    derivative -= src.get( i ).derive( inputs, d );
                 }
             }
             return derivative;

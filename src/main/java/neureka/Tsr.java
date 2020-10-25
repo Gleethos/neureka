@@ -997,7 +997,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         for ( int i = 0; i < fitter[ 1 ].length && !doReshape; i++ ) if ( fitter[ 1 ][ i ] != i ) doReshape = true;
         if ( doReshape ) {
             a = Function.create( AbstractNDArray.Utility.Stringify.strConf( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
-            b = Function.create( AbstractNDArray.Utility.Stringify.strConf( fitter[1] ) + ":(I[ 0 ])" ).call( b );
+            b = Function.create( AbstractNDArray.Utility.Stringify.strConf( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( b );
         }
         return Function.X.call( new Tsr[]{ a, b } ).dimtrim();
     }
@@ -1064,7 +1064,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             valueIsDeviceVisitor = true;
         }
         if ( this.isEmpty() && slice.isEmpty() || slice.size() != value.size() ) _become( value ); // TODO: Rethink this a little
-        else new Tsr( new Tsr[]{ slice, value }, "I[ 0 ]<-I[1]", false );
+        else new Tsr( new Tsr[]{ slice, value }, "I[ 0 ]<-I[ 1 ]", false );
         try {
             if ( valueIsDeviceVisitor ) value.find( Device.class ).restore( value );
         } catch ( Exception exception ) {
@@ -1319,7 +1319,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
         public static Tsr<?> addInto( Tsr<?> t, Tsr<?> source ) {
             if ( t.isVirtual() && source.isVirtual() ) t.value64()[ 0 ] += source.value64()[ 0 ];
-            else FunctionBuilder.build( "I[ 0 ]<-(I[ 0 ]+I[1])", false ).call( new Tsr[]{ t, source } );
+            else FunctionBuilder.build( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])", false ).call( new Tsr[]{ t, source } );
             return source;
         }
 

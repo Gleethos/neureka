@@ -116,7 +116,7 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
 
     @Override
     public Tsr handleInsteadOfDevice(AbstractFunction caller, ExecutionCall call) {
-        return _hook.handle(caller, call);
+        return _hook.handle( caller, call );
     }
 
     public InitialCallHook getCallHook(){

@@ -16,14 +16,14 @@ public class Quadratic extends AbstractOperationType
 {
 
     private DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
-            (inputs, d) -> {
-                double[] t1_val = inputs[1].value64();
+            ( inputs, d ) -> {
+                double[] t1_val = inputs[ 1 ].value64();
                 if (d < 0) {
                     return (t0Idx, t1Idx, t2Idx) -> {
-                        double input = t1_val[inputs[1].i_of_idx(t1Idx)];
+                        double input = t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
                         return input * input;
                     };
-                } else return (t0Idx, t1Idx, t2Idx) -> 2 * t1_val[inputs[1].i_of_idx(t1Idx)];
+                } else return (t0Idx, t1Idx, t2Idx) -> 2 * t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
             };
 
     public Quadratic(){
@@ -52,8 +52,8 @@ public class Quadratic extends AbstractOperationType
         .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                 call -> {
-                    Tsr last = null;
-                    for ( Tsr t : call.getTensors() ) {
+                    Tsr<?> last = null;
+                    for ( Tsr<?> t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;
                         last = t; // Note: shapes are cached!
                     }
@@ -71,9 +71,9 @@ public class Quadratic extends AbstractOperationType
                     Device device = call.getDevice();
                     if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
-                        int[] shp = tsrs[1].getNDConf().shape();
+                        int[] shp = tsrs[ 1 ].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
+                        output.setIsVirtual( false );
                         try {
                             device.store(output);
                         } catch( Exception e ) {
@@ -110,11 +110,11 @@ public class Quadratic extends AbstractOperationType
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(offset))
-                                            .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getTensor( offset ) )
+                                            .pass( call.getTensor( offset + 1 ) )
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 typeImplementation.getKernelSource(), // kernelSource

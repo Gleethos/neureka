@@ -59,11 +59,11 @@ public abstract class AbstractBaseOperationTypeImplementation<FinalType> impleme
         }
 
         /* For the following operations with the correct arity RJAgent should do: ...
-            case ("s" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[ 0 ]};
-            case ("d" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[ 0 ]};
-            case ("p" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[ 0 ]};
-            case ("m" + ((char) 187)): tsrs = new Tsr[]{tsrs[2], tsrs[1], tsrs[ 0 ]};
-            case ">": tsrs = new Tsr[]{tsrs[1], tsrs[ 0 ]};
+            case ("s" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
+            case ("d" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
+            case ("p" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
+            case ("m" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
+            case ">": tsrs = new Tsr[]{tsrs[ 1 ], tsrs[ 0 ]};
          */
         /*
             Below is the core lambda of recursive preprocessing

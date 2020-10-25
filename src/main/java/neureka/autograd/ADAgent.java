@@ -13,9 +13,18 @@ import neureka.Tsr;
 public interface ADAgent
 {
 
-    <T> Tsr<T> forward( GraphNode<T> t, Tsr<T> error );
+    /**
+     *  The auto-differentiation forward pass of an ADAgent
+     *  propagate partial differentiations forward into the computation graph.
+     *
+     * @param target The node which is targeted to hold the partial derivative
+     * @param derivative
+     * @param <T>
+     * @return
+     */
+    <T> Tsr<T> forward( GraphNode<T> target, Tsr<T> derivative );
 
-    <T> Tsr<T> backward( GraphNode<T> t, Tsr<T> error );
+    <T> Tsr<T> backward( GraphNode<T> target, Tsr<T> error );
 
     Tsr<?> derivative();
 

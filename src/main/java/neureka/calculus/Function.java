@@ -18,43 +18,43 @@ public interface Function
 
     Function DIMTRIM = create("dimtrim(I[ 0 ])");
 
-    Function IDY = create("I[ 0 ]<-I[1]");
+    Function IDY = create("I[ 0 ]<-I[ 1 ]");
 
-    Function X = create("I[ 0 ]xI[1]");
-    Function PLUS = create("(I[ 0 ]+I[1])");
-    Function PLUS_ASSIGN = create("I[ 0 ]<-(I[ 0 ]+I[1])");
-    Function MINUS = create("(I[ 0 ]-I[1])");
-    Function MINUS_ASSIGN = create("I[ 0 ]<-(I[ 0 ]-I[1])");
-    Function DIV = create("(I[ 0 ]/I[1])");
-    Function DIV_ASSIGN = create("I[ 0 ]<-(I[ 0 ]/I[1])");
-    Function POW = create("(I[ 0 ]^I[1])");
-    Function POW_ASSIGN = create("I[ 0 ]<-(I[ 0 ]^I[1])");
-    Function MUL = create("I[ 0 ]*I[1]");
-    Function MUL_ASSIGN = create("I[ 0 ]<-(I[ 0 ]*I[1])");
-    Function MOD = create("(I[ 0 ]%I[1])");
-    Function MOD_ASSIGN = create("I[ 0 ]<-(I[ 0 ]%I[1])");
+    Function X = create("I[ 0 ]xI[ 1 ]");
+    Function PLUS = create("(I[ 0 ]+I[ 1 ])");
+    Function PLUS_ASSIGN = create("I[ 0 ]<-(I[ 0 ]+I[ 1 ])");
+    Function MINUS = create("(I[ 0 ]-I[ 1 ])");
+    Function MINUS_ASSIGN = create("I[ 0 ]<-(I[ 0 ]-I[ 1 ])");
+    Function DIV = create("(I[ 0 ]/I[ 1 ])");
+    Function DIV_ASSIGN = create("I[ 0 ]<-(I[ 0 ]/I[ 1 ])");
+    Function POW = create("(I[ 0 ]^I[ 1 ])");
+    Function POW_ASSIGN = create("I[ 0 ]<-(I[ 0 ]^I[ 1 ])");
+    Function MUL = create("I[ 0 ]*I[ 1 ]");
+    Function MUL_ASSIGN = create("I[ 0 ]<-(I[ 0 ]*I[ 1 ])");
+    Function MOD = create("(I[ 0 ]%I[ 1 ])");
+    Function MOD_ASSIGN = create("I[ 0 ]<-(I[ 0 ]%I[ 1 ])");
     Function NEG = create("(-1*I[ 0 ])");
 
 
     class Detached
     {
-        public static Function IDY = create("I[ 0 ]<-I[1]", false);
+        public static Function IDY = create("I[ 0 ]<-I[ 1 ]", false);
 
-        public static Function X = create("I[ 0 ]xI[1]", false);
-        public static Function PLUS = create("(I[ 0 ]+I[1])", false);
-        public static Function PLUS_ASSIGN = create("I[ 0 ]<-(I[ 0 ]+I[1])", false);
-        public static Function MINUS = create("(I[ 0 ]-I[1])", false);
-        public static Function MINUS_ASSIGN = create("I[ 0 ]<-(I[ 0 ]-I[1])", false);
-        public static Function DIV = create("(I[ 0 ]/I[1])", false);
-        public static Function DIV_ASSIGN = create("I[ 0 ]<-(I[ 0 ]/I[1])", false);
-        public static Function POW = create("(I[ 0 ]^I[1])", false);
-        public static Function POW_ASSIGN = create("I[ 0 ]<-(I[ 0 ]^I[1])", false);
-        public static Function MUL = create("I[ 0 ]*I[1]", false);
-        public static Function MUL_ASSIGN = create("I[ 0 ]<-(I[ 0 ]*I[1])", false);
-        public static Function ADD = create("I[ 0 ]+I[1]", false);
-        public static Function ADD_ASSIGN = create("I[ 0 ]<-(I[ 0 ]+I[1])", false);
-        public static Function MOD = create("(I[ 0 ]%I[1])", false);
-        public static Function MOD_ASSIGN = create("I[ 0 ]<-(I[ 0 ]%I[1])", false);
+        public static Function X = create("I[ 0 ]xI[ 1 ]", false);
+        public static Function PLUS = create("(I[ 0 ]+I[ 1 ])", false);
+        public static Function PLUS_ASSIGN = create("I[ 0 ]<-(I[ 0 ]+I[ 1 ])", false);
+        public static Function MINUS = create("(I[ 0 ]-I[ 1 ])", false);
+        public static Function MINUS_ASSIGN = create("I[ 0 ]<-(I[ 0 ]-I[ 1 ])", false);
+        public static Function DIV = create("(I[ 0 ]/I[ 1 ])", false);
+        public static Function DIV_ASSIGN = create("I[ 0 ]<-(I[ 0 ]/I[ 1 ])", false);
+        public static Function POW = create("(I[ 0 ]^I[ 1 ])", false);
+        public static Function POW_ASSIGN = create("I[ 0 ]<-(I[ 0 ]^I[ 1 ])", false);
+        public static Function MUL = create("I[ 0 ]*I[ 1 ]", false);
+        public static Function MUL_ASSIGN = create("I[ 0 ]<-(I[ 0 ]*I[ 1 ])", false);
+        public static Function ADD = create("I[ 0 ]+I[ 1 ]", false);
+        public static Function ADD_ASSIGN = create("I[ 0 ]<-(I[ 0 ]+I[ 1 ])", false);
+        public static Function MOD = create("(I[ 0 ]%I[ 1 ])", false);
+        public static Function MOD_ASSIGN = create("I[ 0 ]<-(I[ 0 ]%I[ 1 ])", false);
         public static Function NEG = create("(-1*I[ 0 ])", false);
     }
 

@@ -136,8 +136,8 @@ public abstract class AbstractOperationType implements OperationType
                 }
                 Tsr<?> localDerivative = f.derive(call.getTensors(), call.getDerivativeIndex());
                 return new DefaultADAgent( localDerivative )
-                        .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
-                        .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
+                        .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
+                        .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
             }
 
             @Override
@@ -157,9 +157,9 @@ public abstract class AbstractOperationType implements OperationType
                 Device device = call.getDevice();
                 if ( tensors[ 0 ] == null ) // Creating a new tensor:
                 {
-                    int[] shp = tensors[1].getNDConf().shape();
+                    int[] shp = tensors[ 1 ].getNDConf().shape();
                     Tsr output = new Tsr( shp, 0.0 );
-                    output.setIsVirtual(false);
+                    output.setIsVirtual( false );
                     try {
                         device.store(output);
                     } catch ( Exception e ) {
@@ -185,7 +185,7 @@ public abstract class AbstractOperationType implements OperationType
                                                 for ( int ii = 0; ii < inputs.length; ii++ ) {
                                                     inputs[ii] = call.getTensor(1+ii).value64( i );
                                                 }
-                                                call.getTensor( 0 ).value64()[ i ] = f.call(inputs);
+                                                call.getTensor( 0 ).value64()[ i ] = f.call( inputs );
                                             }
                                         }
                                 );

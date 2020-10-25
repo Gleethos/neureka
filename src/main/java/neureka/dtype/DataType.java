@@ -45,7 +45,7 @@ public class DataType
         }
 
         try {
-            ctor.setAccessible(true);
+            ctor.setAccessible( true );
             return ctor.newInstance();
         } catch ( Exception e ) {
             e.printStackTrace();

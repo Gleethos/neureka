@@ -72,8 +72,8 @@ public class CopyLeft extends AbstractOperationType {
 
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarCreator =
                 (inputs, value, d) -> {
-                    double[] t1_val = inputs[1].value64();
-                    if (d < 0) return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] = value;
+                    double[] t1_val = inputs[ 1 ].value64();
+                    if (d < 0) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] = value;
                     else return null;
                 };
 
@@ -109,8 +109,8 @@ public class CopyLeft extends AbstractOperationType {
                                             .pass(t)
                                             .pass(call.getTensor(1).value32( 0 ))
                                             .pass(t.rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 scalarization.getKernelSource(), // kernelSource
@@ -148,7 +148,7 @@ public class CopyLeft extends AbstractOperationType {
                         new HostExecutor(
                                 call ->
                                 {
-                                    call.getTensor( 0 ).setIsVirtual(false);
+                                    call.getTensor( 0 ).setIsVirtual( false );
                                     OperationType.instance("idy")
                                             .getImplementation(Activation.class)
                                             .getExecutor(HostExecutor.class)
@@ -161,7 +161,7 @@ public class CopyLeft extends AbstractOperationType {
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    call.getTensor( 0 ).setIsVirtual(false);
+                                    call.getTensor( 0 ).setIsVirtual( false );
                                     OperationType.instance("idy")
                                             .getImplementation(Activation.class)
                                             .getExecutor(CLExecutor.class)

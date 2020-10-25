@@ -162,17 +162,17 @@ public interface OperationType
 
         public static Tsr<?>[] offsetted(Tsr<?>[] tsrs, int offset) {
             Tsr<?>[] newTsrs = new Tsr[tsrs.length - offset];
-            newTsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[1]);
-            if (!tsrs[1].has(GraphNode.class) && tsrs[1] != tsrs[ 0 ]) {//Deleting intermediate results!
-                tsrs[1].delete();
-                tsrs[1] = null;
+            newTsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[ 1 ]);
+            if (!tsrs[ 1 ].has(GraphNode.class) && tsrs[ 1 ] != tsrs[ 0 ]) {//Deleting intermediate results!
+                tsrs[ 1 ].delete();
+                tsrs[ 1 ] = null;
             }
-            if (!tsrs[2].has(GraphNode.class) && tsrs[2] != tsrs[ 0 ]) {//Deleting intermediate results!
-                tsrs[2].delete();
-                tsrs[2] = null;
+            if (!tsrs[ 2 ].has(GraphNode.class) && tsrs[ 2 ] != tsrs[ 0 ]) {//Deleting intermediate results!
+                tsrs[ 2 ].delete();
+                tsrs[ 2 ] = null;
             }
             System.arraycopy(tsrs, 1 + offset, newTsrs, 1, tsrs.length - 1 - offset);
-            newTsrs[1] = tsrs[ 0 ];
+            newTsrs[ 1 ] = tsrs[ 0 ];
             return newTsrs;
         }
 

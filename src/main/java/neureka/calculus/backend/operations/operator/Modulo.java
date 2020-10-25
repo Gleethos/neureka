@@ -42,16 +42,16 @@ public class Modulo extends AbstractOperationType {
         // DEFAULT OPERATION :
 
         DefaultOperatorCreator<PrimaryNDXConsumer> operationCreator =
-                (inputs, d) -> {
-                    double[] t1_val = inputs[1].value64();
-                    double[] t2_val = inputs[2].value64();
-                    if (d < 0) return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] % t2_val[inputs[2].i_of_idx(t1Idx)];
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
+                    if (d < 0) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] % t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
                     else {
                         return t1Idx -> {
                             if (d == 0) {
-                                return 1 / t2_val[inputs[2].i_of_idx(t1Idx)];
+                                return 1 / t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
                             } else {
-                                return -(t1_val[inputs[1].i_of_idx(t1Idx)] / Math.pow(t2_val[inputs[2].i_of_idx(t1Idx)], 2));
+                                return -(t1_val[inputs[ 1 ].i_of_idx(t1Idx)] / Math.pow(t2_val[inputs[ 2 ].i_of_idx(t1Idx)], 2));
                             }
                         };
                     }
@@ -61,12 +61,12 @@ public class Modulo extends AbstractOperationType {
             .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                     call -> {
-                        Tsr last = null;
-                        for ( Tsr t : call.getTensors() ) {
-                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                            last = t; // Note: shapes are cached!
-                        }
-                        return true;
+                        Tsr<?> last = null;
+                    for ( Tsr<?> t : call.getTensors() ) {
+                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                        last = t; // Note: shapes are cached!
+                    }
+                    return true;
                     }
             )
             .setADAgentSupplier(
@@ -81,15 +81,15 @@ public class Modulo extends AbstractOperationType {
                             Device device = call.getDevice();
                             if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                             {
-                                int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        try {
-                            device.store(output);
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
+                                int[] shp = tsrs[ 1 ].getNDConf().shape();
+                                Tsr output = new Tsr( shp, 0.0 );
+                                output.setIsVirtual( false );
+                                try {
+                                    device.store(output);
+                                } catch( Exception e ) {
+                                    e.printStackTrace();
+                                }
+                                tsrs[ 0 ] = output;
                             }
                             return call;
                         }
@@ -123,12 +123,12 @@ public class Modulo extends AbstractOperationType {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(offset))
-                                            .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getTensor( offset ) )
+                                            .pass( call.getTensor( offset + 1 ) )
+                                            .pass( call.getTensor( offset + 2 ) )
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 operator.getKernelSource(), // kernelSource
@@ -149,20 +149,20 @@ public class Modulo extends AbstractOperationType {
         // BROADCASTING :
 
         DefaultOperatorCreator<TertiaryNDXConsumer> creator =
-                (inputs, d) -> {
-                    double[] t1_val = inputs[1].value64();
-                    double[] t2_val = inputs[2].value64();
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
                     if (d < 0) {
-                        return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] % t2_val[inputs[2].i_of_idx(t2Idx)];
+                        return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] % t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
                     } else {
                         return (t0Idx, t1Idx, t2Idx) -> {
                             if (d == 0) {
-                                return 1 / t2_val[inputs[2].i_of_idx(t2Idx)];
+                                return 1 / t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
                             } else {
                                 return
-                                        -(t1_val[inputs[1].i_of_idx(t1Idx)]
+                                        -(t1_val[inputs[ 1 ].i_of_idx(t1Idx)]
                                                 /
-                                                Math.pow(t2_val[inputs[2].i_of_idx(t2Idx)], 2));
+                                                Math.pow(t2_val[inputs[ 2 ].i_of_idx(t2Idx)], 2));
                             }
                         };
                     }
@@ -172,12 +172,12 @@ public class Modulo extends AbstractOperationType {
             .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                     call -> {
-                        Tsr last = null;
-                        for ( Tsr t : call.getTensors() ) {
-                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                            last = t; // Note: shapes are cached!
-                        }
-                        return true;
+                        Tsr<?> last = null;
+                    for ( Tsr<?> t : call.getTensors() ) {
+                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                        last = t; // Note: shapes are cached!
+                    }
+                    return true;
                     }
             ).setADAgentSupplier(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
@@ -194,10 +194,10 @@ public class Modulo extends AbstractOperationType {
                     if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                     else
                     {
-                        Tsr deriv = f.derive(inputs, d);
+                        Tsr deriv = f.derive( inputs, d );
                         return new DefaultADAgent( deriv )
-                                .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
                     }
                 }
             )
@@ -209,15 +209,15 @@ public class Modulo extends AbstractOperationType {
                             Device device = call.getDevice();
                             if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                             {
-                                int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        try {
-                            device.store(output);
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
+                                int[] shp = tsrs[ 1 ].getNDConf().shape();
+                                Tsr output = new Tsr( shp, 0.0 );
+                                output.setIsVirtual( false );
+                                try {
+                                    device.store(output);
+                                } catch( Exception e ) {
+                                    e.printStackTrace();
+                                }
+                                tsrs[ 0 ] = output;
                             }
                             return call;
                         }
@@ -248,12 +248,12 @@ public class Modulo extends AbstractOperationType {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(offset))
-                                            .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getTensor( offset ) )
+                                            .pass( call.getTensor( offset + 1 ) )
+                                            .pass( call.getTensor( offset + 2 ) )
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 broadcast.getKernelSource(), // kernelSource
@@ -273,12 +273,12 @@ public class Modulo extends AbstractOperationType {
 
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarCreator =
                 (inputs, value, d) -> {
-                    double[] t1_val = inputs[1].value64();
+                    double[] t1_val = inputs[ 1 ].value64();
                     if (d < 0) {
-                        return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] % value;
+                        return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] % value;
                     } else {
                         if (d == 0) return t1Idx -> 1 / value;
-                        else return t1Idx -> -value / Math.pow(t1_val[inputs[1].i_of_idx(t1Idx)], 2);
+                        else return t1Idx -> -value / Math.pow(t1_val[inputs[ 1 ].i_of_idx(t1Idx)], 2);
                     }
                 };
 
@@ -286,12 +286,12 @@ public class Modulo extends AbstractOperationType {
             .setBackwardADAnalyzer( call -> true )
             .setForwardADAnalyzer(
                     call -> {
-                        Tsr last = null;
-                        for ( Tsr t : call.getTensors() ) {
-                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                            last = t; // Note: shapes are cached!
-                        }
-                        return true;
+                        Tsr<?> last = null;
+                    for ( Tsr<?> t : call.getTensors() ) {
+                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                        last = t; // Note: shapes are cached!
+                    }
+                    return true;
                     }
             )
             .setADAgentSupplier(
@@ -338,9 +338,9 @@ public class Modulo extends AbstractOperationType {
                                             .pass(call.getTensor( 0 ))
                                             .pass(call.getTensor( 0 ))
                                             .pass((float)call.getTensor(1+offset).value64( 0 ))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 scalarization.getKernelSource(), // kernelSource
@@ -381,15 +381,15 @@ public class Modulo extends AbstractOperationType {
 
 
     @Contract(pure = true)
-    public static double calculate(double[] inputs, int d, List<Function> src) {
+    public static double calculate( double[] inputs, int d, List<Function> src ) {
         if ( d < 0 ) {
-            double result = src.get( 0 ).call(inputs);
+            double result = src.get( 0 ).call( inputs );
             for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get( i ).call(inputs);
+                final double current = src.get( i ).call( inputs );
                 result %= current;
             }
             return result;
-        } else return src.get( 0 ).derive(inputs, d);
+        } else return src.get( 0 ).derive( inputs, d );
     }
 
     @Contract(pure = true)
@@ -398,14 +398,14 @@ public class Modulo extends AbstractOperationType {
     public double calculate( double[] inputs, int j, int d, List<Function> src ) {
         if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
-            double result = src.get( 0 ).call(inputs, j);
+            double result = src.get( 0 ).call( inputs, j );
             for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get( i ).call(inputs, j);
+                final double current = src.get( i ).call( inputs, j );
                 result %= current;
             }
             return result;
         } else {
-            return src.get( 0 ).derive(inputs, d, j);// j ?
+            return src.get( 0 ).derive( inputs, d, j );// j ?
         }
     }
 

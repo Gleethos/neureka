@@ -85,13 +85,13 @@ public class Neureka
         if (_GROOVY_AVAILABLE) {
             SettingsLoader.tryGroovyScriptsOn(this);
         } else {
-            settings().autograd().setIsRetainingPendingErrorForJITProp(true);
-            settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true);
-            settings().autograd().setIsApplyingGradientWhenRequested(true);
-            settings().indexing().setIsUsingLegacyIndexing(false);
-            settings().indexing().setIsUsingThoroughIndexing(true);
-            settings().debug().setIsKeepingDerivativeTargetPayloads(false);
-            settings().view().setIsUsingLegacyView(false);
+            settings().autograd().setIsRetainingPendingErrorForJITProp( true );
+            settings().autograd().setIsApplyingGradientWhenTensorIsUsed( true );
+            settings().autograd().setIsApplyingGradientWhenRequested( true );
+            settings().indexing().setIsUsingLegacyIndexing( false );
+            settings().indexing().setIsUsingThoroughIndexing( true );
+            settings().debug().setIsKeepingDerivativeTargetPayloads( false );
+            settings().view().setIsUsingLegacyView( false );
         }
     }
 

@@ -21,10 +21,10 @@ import java.util.List;
 public class Addition extends AbstractOperationType {
 
     private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
-            (inputs, d) -> {
-                double[] t1_val = inputs[1].value64();
-                double[] t2_val = inputs[2].value64();
-                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] + t2_val[inputs[2].i_of_idx(t2Idx)];
+            ( inputs, d ) -> {
+                double[] t1_val = inputs[ 1 ].value64();
+                double[] t2_val = inputs[ 2 ].value64();
+                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] + t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
                 else return (t0Idx, t1Idx, t2Idx) -> 1.0;
             };
 
@@ -32,8 +32,8 @@ public class Addition extends AbstractOperationType {
         .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                 call -> {
-                    Tsr last = null;
-                    for ( Tsr t : call.getTensors() ) {
+                    Tsr<?> last = null;
+                    for ( Tsr<?> t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;
                         last = t; // Note: shapes are cached!
                     }
@@ -54,10 +54,10 @@ public class Addition extends AbstractOperationType {
                 if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                 else
                 {
-                    Tsr deriv = f.derive(inputs, d);
+                    Tsr deriv = f.derive( inputs, d );
                     return new DefaultADAgent( deriv )
-                            .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                            .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                            .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                            .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
                 }
             }
         )
@@ -69,9 +69,9 @@ public class Addition extends AbstractOperationType {
                     Device device = call.getDevice();
                     if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
-                        int[] shp = tsrs[1].getNDConf().shape();
+                        int[] shp = tsrs[ 1 ].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
+                        output.setIsVirtual( false );
                         try {
                             device.store(output);
                         } catch( Exception e ) {
@@ -118,7 +118,7 @@ public class Addition extends AbstractOperationType {
             Tsr alternative = null;
             if (tsrs.length > 3) {
                 if (d < 0) {
-                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[1], tsrs[2]};
+                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
@@ -130,7 +130,7 @@ public class Addition extends AbstractOperationType {
                     );
                     tsrs[ 0 ] = reduction[ 0 ];
                 } else {
-                    tsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[1]).setValue(1.0f);
+                    tsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[ 1 ]).setValue(1.0f);
                 }
                 return alternative;
             } else {
@@ -142,10 +142,10 @@ public class Addition extends AbstractOperationType {
         // DEFAULT OPERATION :
 
         DefaultOperatorCreator<PrimaryNDXConsumer> operationCreator =
-                (inputs, d) -> {
-                    double[] t1_val = inputs[1].value64();
-                    double[] t2_val = inputs[2].value64();
-                    if (d < 0) return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] + t2_val[inputs[2].i_of_idx(t1Idx)];
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
+                    if (d < 0) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] + t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
                     else return t1Idx -> 1.0;
                 };
 
@@ -156,7 +156,7 @@ public class Addition extends AbstractOperationType {
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     defaultImplementation().supplyADAgentFor(f, call, forward)
             )
-            .setCallHock( (caller, call) -> null )
+            .setCallHock( ( caller, call ) -> null )
             .setRJAgent( rja )
             .setDrainInstantiation(
                 call -> {
@@ -164,9 +164,9 @@ public class Addition extends AbstractOperationType {
                     Device device = call.getDevice();
                     if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
-                        int[] shp = tsrs[1].getNDConf().shape();
+                        int[] shp = tsrs[ 1 ].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
+                        output.setIsVirtual( false );
                         try {
                             device.store(output);
                         } catch( Exception e ) {
@@ -207,12 +207,12 @@ public class Addition extends AbstractOperationType {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(offset))
-                                            .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getTensor( offset ) )
+                                            .pass( call.getTensor( offset + 1 ) )
+                                            .pass( call.getTensor( offset + 2 ) )
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 operator.getKernelSource(), // kernelSource
@@ -251,12 +251,12 @@ public class Addition extends AbstractOperationType {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(offset))
-                                            .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getTensor( offset ) )
+                                            .pass( call.getTensor( offset + 1 ) )
+                                            .pass( call.getTensor( offset + 2 ) )
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 _broadcast.getKernelSource(), // kernelSource
@@ -277,7 +277,7 @@ public class Addition extends AbstractOperationType {
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                             defaultImplementation().supplyADAgentFor(f, call, forward)
                 )
-                .setCallHock( (caller, call) -> null )
+                .setCallHock( ( caller, call ) -> null )
                 .setRJAgent( rja )
                 .setDrainInstantiation(
                         call -> {
@@ -285,15 +285,15 @@ public class Addition extends AbstractOperationType {
                             Device device = call.getDevice();
                             if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                             {
-                                int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        try {
-                            device.store(output);
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
+                                int[] shp = tsrs[ 1 ].getNDConf().shape();
+                                Tsr output = new Tsr( shp, 0.0 );
+                                output.setIsVirtual( false );
+                                try {
+                                    device.store(output);
+                                } catch( Exception e ) {
+                                    e.printStackTrace();
+                                }
+                                tsrs[ 0 ] = output;
                             }
                             return call;
                         }
@@ -301,8 +301,8 @@ public class Addition extends AbstractOperationType {
 
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarCreator =
                 (inputs, value, d) -> {
-                    double[] t1_val = inputs[1].value64();
-                    if (d < 0) return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] + value;
+                    double[] t1_val = inputs[ 1 ].value64();
+                    if (d < 0) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] + value;
                     else {
                         if (d == 0) return t1Idx -> 1;
                         else return t1Idx -> 1;
@@ -339,9 +339,9 @@ public class Addition extends AbstractOperationType {
                                             .pass(call.getTensor( 0 ))
                                             .pass(call.getTensor( 0 ))
                                             .pass((float)call.getTensor(1+offset).value64( 0 ))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 scalarization.getKernelSource(), // kernelSource
@@ -357,7 +357,7 @@ public class Addition extends AbstractOperationType {
 
         new AbstractOperationType(
                 "", ((char) 171) + "+", 3, true, false, false, false
-){
+        ){
             @Override
             public double calculate( double[] inputs, int j, int d, List<Function> src ){
                 return 0;
@@ -366,7 +366,7 @@ public class Addition extends AbstractOperationType {
 
         new AbstractOperationType(
                 "", "+" + ((char) 187), 3, true, false, false, false
-){
+        ){
             @Override
             public double calculate( double[] inputs, int j, int d, List<Function> src ){
                 return 0;
@@ -377,7 +377,7 @@ public class Addition extends AbstractOperationType {
 
         new AbstractOperationType(
                 "add", "a", 2, true, false, false, false
-        ){
+                ){
             @Override
             public double calculate( double[] inputs, int j, int d, List<Function> src ){
                 return 0;
@@ -389,12 +389,12 @@ public class Addition extends AbstractOperationType {
                     .setBackwardADAnalyzer( call -> true )
                     .setForwardADAnalyzer(
                             call -> {
-                                Tsr last = null;
-                                for ( Tsr t : call.getTensors() ) {
-                                    if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                                    last = t; // Note: shapes are cached!
-                                }
-                                return true;
+                                Tsr<?> last = null;
+                    for ( Tsr<?> t : call.getTensors() ) {
+                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                        last = t; // Note: shapes are cached!
+                    }
+                    return true;
                             }
                     )
                     .setADAgentSupplier(
@@ -413,10 +413,10 @@ public class Addition extends AbstractOperationType {
                                 throw new IllegalArgumentException("Convolution of does not support forward-AD!");
                             else
                             {
-                                Tsr<?> localDerivative = f.derive(inputs, d);
+                                Tsr<?> localDerivative = f.derive( inputs, d );
                                 return new DefaultADAgent( localDerivative )
-                                    .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
-                                    .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
+                                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
+                                    .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
                             }
                         }
                     )
@@ -471,27 +471,27 @@ public class Addition extends AbstractOperationType {
     public double calculate( double[] inputs, int j, int d, List<Function> src ) {
         if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
-            double result = src.get( 0 ).call(inputs, j);
+            double result = src.get( 0 ).call( inputs, j );
             for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get( i ).call(inputs, j);
+                final double current = src.get( i ).call( inputs, j );
                 result += current;
             }
             return result;
         } else {
             double derivative = 0;
             for ( int i = 0; i < src.size(); ++i ) {
-                derivative += src.get( i ).derive(inputs, d, j);
+                derivative += src.get( i ).derive( inputs, d, j );
             }
             return derivative;
         }
     }
 
     @Contract(pure = true)
-    public static double calculate(double[] inputs, int d, List<Function> src) {
+    public static double calculate( double[] inputs, int d, List<Function> src ) {
         if ( d < 0 ) {
-            double result = src.get( 0 ).call(inputs);
+            double result = src.get( 0 ).call( inputs );
             for ( int Vi = 1; Vi < src.size(); Vi++ ) {
-                final double current = src.get(Vi).call(inputs);
+                final double current = src.get(Vi).call( inputs );
                 result += current;
             }
             return result;

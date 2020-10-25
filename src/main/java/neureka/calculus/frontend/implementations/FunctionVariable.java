@@ -76,7 +76,7 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     public <T> Tsr<T> call(Tsr<T>[] inputs) {
         String exp = "I[ 0 ]";
         for(int i=1; i<inputs.length; i++)exp += "+I["+i+"]";
-        return FunctionBuilder.build(exp, false).call(inputs);
+        return FunctionBuilder.build(exp, false).call( inputs );
     }
 
     @Override

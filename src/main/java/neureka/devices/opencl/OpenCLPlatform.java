@@ -24,13 +24,13 @@ public class OpenCLPlatform {
         _id_device = new TreeMap<>(Comparator.comparingInt(NativePointerObject::hashCode));
         _pid = pid;
         // Obtain the number of devices for the current platform
-        int[] numDevices = new int[1];
+        int[] numDevices = new int[ 1 ];
         clGetDeviceIDs(pid, CL_DEVICE_TYPE_ALL, 0, null, numDevices);
         cl_device_id[] devicesArray = new cl_device_id[numDevices[ 0 ]];
         clGetDeviceIDs(pid, CL_DEVICE_TYPE_ALL, numDevices[ 0 ], devicesArray, null);
 
         // Enable exceptions and subsequently omit error checks in this sample
-        CL.setExceptionsEnabled(true);
+        CL.setExceptionsEnabled( true );
 
         // Initialize the context properties
         cl_context_properties contextProperties = new cl_context_properties();
@@ -86,7 +86,7 @@ public class OpenCLPlatform {
             boolean templateFound = false;
             if ( kernelSource.contains("__kernel") )
             {
-                String[] parts = kernelSource.split("__kernel")[1].split("\\(")[ 0 ].split(" ");
+                String[] parts = kernelSource.split("__kernel")[ 1 ].split("\\(")[ 0 ].split(" ");
 
                 templateFound = parts[parts.length - 1].contains("template");
                 if ( !templateFound ) names.add(parts[parts.length - 1]);
@@ -199,7 +199,7 @@ public class OpenCLPlatform {
         public static List<OpenCLPlatform> findAllPlatforms()
         {
             // Obtain the number of platforms
-            int[] numPlatforms = new int[1];
+            int[] numPlatforms = new int[ 1 ];
             clGetPlatformIDs(0, null, numPlatforms);
 
             // Obtain the platform IDs

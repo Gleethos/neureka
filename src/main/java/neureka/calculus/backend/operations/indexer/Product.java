@@ -53,7 +53,7 @@ public class Product extends AbstractOperationType {
             Tsr alternative = null;
             if (tsrs.length > 3) {
                 if (d < 0) {
-                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[1], tsrs[2]};
+                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
@@ -67,12 +67,12 @@ public class Product extends AbstractOperationType {
                 } else {
                     Tsr[] reduction = Utility.without(tsrs, 1+d);
                     if ( reduction.length > 2 ) {
-                        reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tsrs[1]) : reduction[ 0 ];
+                        reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tsrs[ 1 ]) : reduction[ 0 ];
                         alternative = goDeeperWith.apply(
                                 new ExecutionCall<>( device, reduction, -1, OperationType.instance("*") )
                         );
                         tsrs[ 0 ] = reduction[ 0 ];
-                    } else tsrs[ 0 ] = reduction[1];
+                    } else tsrs[ 0 ] = reduction[ 1 ];
                 }
                 return alternative;
             } else {
@@ -85,25 +85,24 @@ public class Product extends AbstractOperationType {
         // BROADCASTING :
 
         DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
-                (inputs, d) ->
+                ( inputs, d ) ->
                 {
-                    double[] t1_val = inputs[1].value64();
-                    double[] t2_val = inputs[2].value64();
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
                     if (d < 0) {
-                        return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
+                        return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
                     } else {
                         return (t0Idx, t1Idx, t2Idx) -> {
-                            if (d == 0) return t2_val[inputs[2].i_of_idx(t2Idx)];
-                            else return t1_val[inputs[1].i_of_idx(t1Idx)];
+                            if (d == 0) return t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                            else return t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
                         };
                     }
                 };
 
         Broadcast typeImplementation = new Broadcast()
                 .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
-                    call -> true
-                ).setADAgentSupplier(
+                .setForwardADAnalyzer( call -> true )
+                .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         Tsr ctxDerivative = (Tsr)call.getAt("derivative");
@@ -118,14 +117,14 @@ public class Product extends AbstractOperationType {
                         if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr<?> deriv = f.derive(inputs, d);
+                            Tsr<?> deriv = f.derive( inputs, d );
                             return new DefaultADAgent( deriv )
-                                    .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                    .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                    .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
                         }
                     }
                 )
-                .setCallHock( (caller, call) -> null )
+                .setCallHock( ( caller, call ) -> null )
                 .setRJAgent( rja )
                 .setDrainInstantiation(
                         call -> {
@@ -133,15 +132,15 @@ public class Product extends AbstractOperationType {
                             Device device = call.getDevice();
                             if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                             {
-                                int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        try {
-                            device.store(output);
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
+                                int[] shp = tsrs[ 1 ].getNDConf().shape();
+                                Tsr output = new Tsr( shp, 0.0 );
+                                output.setIsVirtual( false );
+                                try {
+                                    device.store(output);
+                                } catch( Exception e ) {
+                                    e.printStackTrace();
+                                }
+                                tsrs[ 0 ] = output;
                             }
                             return call;
                         }
@@ -175,12 +174,12 @@ public class Product extends AbstractOperationType {
                                     int offset = ( call.getTensor( 0 ) != null ) ? 0 : 1;
                                     int gwz = ( call.getTensor( 0 ) != null ) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(offset))
-                                            .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getTensor( offset ) )
+                                            .pass( call.getTensor( offset + 1 ) )
+                                            .pass( call.getTensor( offset + 2 ) )
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 typeImplementation.getKernelSource(), // kernelSource
@@ -195,10 +194,10 @@ public class Product extends AbstractOperationType {
         // ACTIVATION :
 
         DefaultOperatorCreator<TertiaryNDXConsumer> activationCreator =
-                (inputs, d) -> {
-                    double[] t1_val = inputs[1].value64();
-                    if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
-                    else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                    else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
                 };
 
         Activation activation = new Activation()
@@ -219,7 +218,7 @@ public class Product extends AbstractOperationType {
                         int d = call.getDerivativeIndex();
                         if( forward )
                         {
-                            Tsr deriv = f.derive(inputs, d);
+                            Tsr deriv = f.derive( inputs, d );
                             return new DefaultADAgent( deriv )
                                     .withForward( ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}) )
                                     .withBackward( ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}) );
@@ -229,25 +228,25 @@ public class Product extends AbstractOperationType {
                             if ( this.supports(Convolution.class) )
                             {
                                 Function invX = FunctionBuilder.build(
-                                        "I[ 0 ]" + getOperator() + ">>I[1]" + getOperator() + ">>I[2]",
+                                        "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
                                         false
                                 );
-                                Tsr deriv = f.derive(inputs, d);
+                                Tsr deriv = f.derive( inputs, d );
                                 return new DefaultADAgent( deriv )
-                                        .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                        .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
                                         .withBackward( (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)}) );
                             }
                             else
                             {
-                                Tsr deriv = f.derive(inputs, d);
+                                Tsr deriv = f.derive( inputs, d );
                                 return new DefaultADAgent( deriv )
-                                        .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                        .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                        .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                        .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
                             }
                         }
                     }
         )
-        .setCallHock( (caller, call) -> null )
+        .setCallHock( ( caller, call ) -> null )
         .setRJAgent( rja )
         .setDrainInstantiation(
                 call -> {
@@ -255,9 +254,9 @@ public class Product extends AbstractOperationType {
                     Device device = call.getDevice();
                     if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
-                        int[] shp = tsrs[1].getNDConf().shape();
+                        int[] shp = tsrs[ 1 ].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
+                        output.setIsVirtual( false );
                         try {
                             device.store(output);
                         } catch( Exception e ) {
@@ -293,11 +292,11 @@ public class Product extends AbstractOperationType {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(offset))
-                                            .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getTensor( offset ) )
+                                            .pass( call.getTensor( offset + 1 ) )
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 activation.getKernelSource(), // kernelSource
@@ -325,7 +324,7 @@ public class Product extends AbstractOperationType {
                 prod *= src.get( 0 ).call( inputs, Ii );
                 nothingDone = false;
             }
-            if ( nothingDone ) return src.get( 0 ).call(inputs, j);
+            if ( nothingDone ) return src.get( 0 ).call( inputs, j );
             return prod;
         } else {
             double u, ud, v, vd;
@@ -350,15 +349,15 @@ public class Product extends AbstractOperationType {
                 prod *= src.get( 0 ).call(inputs, i);
                 nothingDone = false;
             }
-            if ( nothingDone ) return src.get( 0 ).call(inputs);
+            if ( nothingDone ) return src.get( 0 ).call( inputs );
             return prod;
         } else {
             double u, ud, v, vd;
             u = src.get( 0 ).call(inputs, 0);
             ud = src.get( 0 ).derive(inputs, d, 0);
             for ( int j = 1; j < inputs.length; j++ ) {
-                v = src.get( 0 ).call(inputs, j);
-                vd = src.get( 0 ).derive(inputs, d, j);
+                v = src.get( 0 ).call( inputs, j );
+                vd = src.get( 0 ).derive( inputs, d, j );
                 ud = u * vd + v * ud;
                 u *= v;
             }

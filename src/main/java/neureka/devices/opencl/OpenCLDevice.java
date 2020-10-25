@@ -306,7 +306,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         cl_tsr clt = tensor.find(cl_tsr.class);
         if ( clt == null ) return this;
         _tensors.remove(tensor);
-        tensor.setIsOutsourced(false);
+        tensor.setIsOutsourced( false );
         tensor.remove(cl_tsr.class);
         return this;
     }
@@ -479,7 +479,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                         d,
                         type
                 );
-        tensors[ 0 ].setIsVirtual(false);
+        tensors[ 0 ].setIsVirtual( false );
         call.getImplementation().getExecutor(CLExecutor.class).getExecution().run(call);
     }
 
@@ -690,7 +690,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
          */
         public static String getString(cl_device_id device, int paramName) {
             // Obtain the length of the string that will be queried
-            long[] size = new long[1];
+            long[] size = new long[ 1 ];
             clGetDeviceInfo(device, paramName, 0, null, size);
 
             // Create a buffer of the appropriate size and fill it with the info
@@ -710,7 +710,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
          */
         public static String getString(cl_platform_id platform, int paramName) {
             // Obtain the length of the string that will be queried
-            long[] size = new long[1];
+            long[] size = new long[ 1 ];
             clGetPlatformInfo(platform, paramName, 0, null, size);
 
             // Create a buffer of the appropriate size and fill it with the info

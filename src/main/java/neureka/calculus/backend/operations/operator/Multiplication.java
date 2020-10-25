@@ -22,15 +22,15 @@ public class Multiplication extends AbstractOperationType {
 
 
     private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
-            (inputs, d) -> {
-                double[] t1_val = inputs[1].value64();
-                double[] t2_val = inputs[2].value64();
+            ( inputs, d ) -> {
+                double[] t1_val = inputs[ 1 ].value64();
+                double[] t2_val = inputs[ 2 ].value64();
                 if (d < 0) {
-                    return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
+                    return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
                 } else {
                     return (t0Idx, t1Idx, t2Idx) -> {
-                        if (d == 0) return t2_val[inputs[2].i_of_idx(t2Idx)];
-                        else return t1_val[inputs[1].i_of_idx(t1Idx)];
+                        if (d == 0) return t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                        else return t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
                     };
                 }
             };
@@ -65,7 +65,7 @@ public class Multiplication extends AbstractOperationType {
             Tsr alternative = null;
             if (tsrs.length > 3) {
                 if (d < 0) {
-                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[1], tsrs[2]};
+                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
@@ -79,12 +79,12 @@ public class Multiplication extends AbstractOperationType {
                 } else {
                     Tsr[] reduction = Utility.without(tsrs, 1+d);
                     if ( reduction.length > 2 ) {
-                        reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tsrs[1]) : reduction[ 0 ];
+                        reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tsrs[ 1 ]) : reduction[ 0 ];
                         alternative = goDeeperWith.apply(
                                 new ExecutionCall<>( device, reduction, -1, OperationType.instance("*") )
                         );
                         tsrs[ 0 ] = reduction[ 0 ];
-                    } else tsrs[ 0 ] = reduction[1];
+                    } else tsrs[ 0 ] = reduction[ 1 ];
                 }
                 return alternative;
             } else {
@@ -96,41 +96,39 @@ public class Multiplication extends AbstractOperationType {
         // DEFAULT OPERATION :
 
         DefaultOperatorCreator<PrimaryNDXConsumer> defaultOperatorcreator =
-                (inputs, d) -> {
-                    inputs[1].setIsVirtual(false);
-                    inputs[2].setIsVirtual(false);
-                    double[] t1_val = inputs[1].value64();
-                    double[] t2_val = inputs[2].value64();
+                ( inputs, d ) -> {
+                    inputs[ 1 ].setIsVirtual( false );
+                    inputs[ 2 ].setIsVirtual( false );
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
                     if ( d < 0 ) {
-                        return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t1Idx)];
+                        return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
                     } else {
                         return t1Idx -> {
-                            if ( d == 0 ) return t2_val[inputs[2].i_of_idx(t1Idx)];
-                            else return t1_val[inputs[1].i_of_idx(t1Idx)];
+                            if ( d == 0 ) return t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
+                            else return t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
                         };
                     }
                 };
 
         Operator operator = new Operator()
                 .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
-                    call -> true
-                ).setADAgentSupplier(
+                .setForwardADAnalyzer( call -> true )
+                .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                         defaultImplementation().supplyADAgentFor( f, call, forward )
-                ).setCallHock(
-                    (caller, call) -> null
-                ).setRJAgent(
-                    rja
-                ).setDrainInstantiation(
+                )
+                .setCallHock( ( caller, call ) -> null )
+                .setRJAgent( rja )
+                .setDrainInstantiation(
                     call -> {
                         Tsr[] tsrs = call.getTensors();
                         Device device = call.getDevice();
                         if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                         {
-                            int[] shp = tsrs[1].getNDConf().shape();
+                            int[] shp = tsrs[ 1 ].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
+                        output.setIsVirtual( false );
                         try {
                             device.store(output);
                         } catch( Exception e ) {
@@ -169,12 +167,12 @@ public class Multiplication extends AbstractOperationType {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(offset))
-                                            .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getTensor( offset ) )
+                                            .pass( call.getTensor( offset + 1 ) )
+                                            .pass( call.getTensor( offset + 2 ) )
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 operator.getKernelSource(), // kernelSource
@@ -191,9 +189,8 @@ public class Multiplication extends AbstractOperationType {
 
         Broadcast broadcast = new Broadcast()
                 .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
-                    call -> true
-                ).setADAgentSupplier(
+                .setForwardADAnalyzer( call -> true )
+                .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         Tsr ctxDerivative = (Tsr)call.getAt("derivative");
@@ -208,25 +205,24 @@ public class Multiplication extends AbstractOperationType {
                         if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr deriv = f.derive(inputs, d);
+                            Tsr deriv = f.derive( inputs, d );
                             return new DefaultADAgent( deriv )
-                                    .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                    .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                    .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
                         }
                     }
-                ).setCallHock(
-                    (caller, call) -> null
-                ).setRJAgent(
-                    rja
-                ).setDrainInstantiation(
+                )
+                .setCallHock( ( caller, call ) -> null )
+                .setRJAgent( rja )
+                .setDrainInstantiation(
                     call -> {
                         Tsr[] tsrs = call.getTensors();
                         Device device = call.getDevice();
                         if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                         {
-                            int[] shp = tsrs[1].getNDConf().shape();
+                            int[] shp = tsrs[ 1 ].getNDConf().shape();
                         Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
+                        output.setIsVirtual( false );
                         try {
                             device.store(output);
                         } catch( Exception e ) {
@@ -262,12 +258,12 @@ public class Multiplication extends AbstractOperationType {
                                 int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                 int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                 call.getDevice().getKernel(call)
-                                        .pass(call.getTensor(offset))
-                                        .pass(call.getTensor(offset + 1))
-                                        .pass(call.getTensor(offset + 2))
-                                        .pass(call.getTensor( 0 ).rank())
-                                        .pass(call.getDerivativeIndex())
-                                        .call(gwz);
+                                        .pass( call.getTensor( offset ) )
+                                        .pass( call.getTensor( offset + 1 ) )
+                                        .pass( call.getTensor( offset + 2 ) )
+                                        .pass( call.getTensor( 0 ).rank() )
+                                        .pass( call.getDerivativeIndex() )
+                                        .call( gwz );
                             },
                             3,
                             broadcast.getKernelSource(), // kernelSource
@@ -286,19 +282,18 @@ public class Multiplication extends AbstractOperationType {
 
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarOperatorCreator =
                 (inputs, value, d) -> {
-                    double[] t1_val = inputs[1].value64();
-                    if ( d < 0 ) return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)] * value;
+                    double[] t1_val = inputs[ 1 ].value64();
+                    if ( d < 0 ) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * value;
                     else {
                         if ( d == 0 ) return t1Idx -> value;
-                        else return t1Idx -> t1_val[inputs[1].i_of_idx(t1Idx)];
+                        else return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
                     }
                 };
 
         Scalarization scalarization = new Scalarization()
                 .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
-                    call -> true
-                ).setADAgentSupplier(
+                .setForwardADAnalyzer( call -> true )
+                .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                             {
                                 Tsr ctxDerivative = (Tsr)call.getAt("derivative");
@@ -318,7 +313,7 @@ public class Multiplication extends AbstractOperationType {
                         int d = call.getDerivativeIndex();
                         if( forward )
                         {
-                            Tsr deriv = f.derive(inputs, d);
+                            Tsr deriv = f.derive( inputs, d );
                             return new DefaultADAgent(
                                     deriv
                                 ).withForward(
@@ -329,35 +324,34 @@ public class Multiplication extends AbstractOperationType {
                         }
                         else
                         {
-                            Tsr deriv = f.derive(inputs, d);
+                            Tsr deriv = f.derive( inputs, d );
                             return new DefaultADAgent(
                                         deriv
                                 ).withForward(
-                                        (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                                        ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv})
                                 ).withBackward(
-                                        (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                                        ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv})
                                 );
                         }
                     }
-                ).setCallHock(
-                        (caller, call) -> null
-                ).setRJAgent(
-                    rja
-                ).setDrainInstantiation(
+                )
+                .setCallHock( ( caller, call ) -> null )
+                .setRJAgent( rja )
+                .setDrainInstantiation(
                         call -> {
                             Tsr[] tsrs = call.getTensors();
                             Device device = call.getDevice();
                             if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                             {
-                                int[] shp = tsrs[1].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual(false);
-                        try {
-                            device.store(output);
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
+                                int[] shp = tsrs[ 1 ].getNDConf().shape();
+                                Tsr output = new Tsr( shp, 0.0 );
+                                output.setIsVirtual( false );
+                                try {
+                                    device.store(output);
+                                } catch( Exception e ) {
+                                    e.printStackTrace();
+                                }
+                                tsrs[ 0 ] = output;
                             }
                             return call;
                         }
@@ -393,9 +387,9 @@ public class Multiplication extends AbstractOperationType {
                                             .pass(call.getTensor( 0 ))
                                             .pass(call.getTensor( 0 ))
                                             .pass((float)call.getTensor(1+offset).value64( 0 ))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 scalarization.getKernelSource(), // kernelSource
@@ -414,18 +408,19 @@ public class Multiplication extends AbstractOperationType {
 
 
         DefaultOperatorCreator<TertiaryNDXConsumer> xCreator =
-                (inputs, d) -> {
-                    double[] t1_val = inputs[1].value64();
-                    double[] t2_val = inputs[2].value64();
-                    return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
+                    return (t0Idx, t1Idx, t2Idx) ->
+                            t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
                 };
 
         Broadcast xBroadcast = new Broadcast()
         .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                 call -> {
-                    Tsr last = null;
-                    for ( Tsr t : call.getTensors() ) {
+                    Tsr<?> last = null;
+                    for ( Tsr<?> t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;
                         last = t; // Note: shapes are cached!
                     }
@@ -452,21 +447,20 @@ public class Multiplication extends AbstractOperationType {
                 if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                 else
                 {
-                    Tsr deriv = f.derive(inputs, d);
+                    Tsr deriv = f.derive( inputs, d );
                     return new DefaultADAgent(
                             deriv
                         ).withForward(
-                            (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv})
+                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv})
                         ).withBackward(
-                            (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv})
+                            ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv})
                         );
                 }
             }
-        ).setCallHock(
-                ( caller, call ) -> null
-        ).setRJAgent(
-                ( call, goDeeperWith ) -> null
-        ).setDrainInstantiation(
+        )
+        .setCallHock( ( caller, call ) -> null )
+        .setRJAgent( ( call, goDeeperWith ) -> null )
+        .setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
@@ -476,7 +470,7 @@ public class Multiplication extends AbstractOperationType {
 
         new AbstractOperationType(
                 "", ((char) 171) + "*", 3, true, false, false, false
-){
+        ){
             @Override
             public double calculate( double[] inputs, int j, int d, List<Function> src ){
                 return 0;
@@ -506,12 +500,12 @@ public class Multiplication extends AbstractOperationType {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(offset))
-                                            .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getTensor( offset ) )
+                                            .pass( call.getTensor( offset + 1 ) )
+                                            .pass( call.getTensor( offset + 2 ) )
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 xBroadcast.getKernelSource(), // kernelSource
@@ -526,12 +520,12 @@ public class Multiplication extends AbstractOperationType {
             .setBackwardADAnalyzer( call -> true )
             .setForwardADAnalyzer(
                     call -> {
-                        Tsr last = null;
-                        for ( Tsr t : call.getTensors() ) {
-                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                            last = t; // Note: shapes are cached!
-                        }
-                        return true;
+                        Tsr<?> last = null;
+                    for ( Tsr<?> t : call.getTensors() ) {
+                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                        last = t; // Note: shapes are cached!
+                    }
+                    return true;
                     }
             )
             .setADAgentSupplier(
@@ -549,10 +543,10 @@ public class Multiplication extends AbstractOperationType {
                     if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                     else
                     {
-                        Tsr deriv = f.derive(inputs, d);
+                        Tsr deriv = f.derive( inputs, d );
                         return new DefaultADAgent( deriv )
-                                .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                .withBackward( (node, backwardError) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
                     }
                 }
             )
@@ -568,7 +562,7 @@ public class Multiplication extends AbstractOperationType {
 
         new AbstractOperationType(
                 "", "*" + ((char) 187), 3, true, false, false, false
-){
+        ){
             @Override
             public double calculate( double[] inputs, int j, int d, List<Function> src ){
                 return 0;
@@ -598,12 +592,12 @@ public class Multiplication extends AbstractOperationType {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(offset))
-                                            .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())
-                                            .call(gwz);
+                                            .pass( call.getTensor( offset ) )
+                                            .pass( call.getTensor( offset + 1 ) )
+                                            .pass( call.getTensor( offset + 2 ) )
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
                                 },
                                 3,
                                 xBroadcast.getKernelSource(), // kernelSource
@@ -629,20 +623,20 @@ public class Multiplication extends AbstractOperationType {
     public double calculate( double[] inputs, int j, int d, List<Function> src ) {
         if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
-            double result = src.get( 0 ).call(inputs, j);
+            double result = src.get( 0 ).call( inputs, j );
             for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get( i ).call(inputs, j);
+                final double current = src.get( i ).call( inputs, j );
                 result *= current;
             }
             return result;
         } else {
             double u, ud, v, vd;
-            u = src.get( 0 ).call(inputs, j);
-            ud = src.get( 0 ).derive(inputs, d, j);
+            u = src.get( 0 ).call( inputs, j );
+            ud = src.get( 0 ).derive( inputs, d, j );
 
             for ( int ji = 1; ji < src.size(); ji++ ) {
-                v = src.get(ji).call(inputs, j);
-                vd = src.get(ji).derive(inputs, d, j);
+                v = src.get( ji ).call( inputs, j );
+                vd = src.get( ji ).derive( inputs, d, j );
                 ud = u * vd + v * ud;
                 u *= v;
             }
@@ -651,21 +645,21 @@ public class Multiplication extends AbstractOperationType {
     }
 
     @Contract(pure = true)
-    public static double calculate(double[] inputs, int d, List<Function> src) {
+    public static double calculate( double[] inputs, int d, List<Function> src ) {
         if ( d < 0 ) {
-            double result = src.get( 0 ).call(inputs);
+            double result = src.get( 0 ).call( inputs );
             for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get( i ).call(inputs);
+                final double current = src.get( i ).call( inputs );
                 result *= current;
             }
             return result;
         } else {
             double u, ud, v, vd;
-            u = src.get( 0 ).call(inputs);
-            ud = src.get( 0 ).derive(inputs, d);
+            u = src.get( 0 ).call( inputs );
+            ud = src.get( 0 ).derive( inputs, d );
             for ( int j = 1; j < src.size(); j++ ) {
-                v = src.get(j).call(inputs);
-                vd = src.get(j).derive(inputs, d);
+                v = src.get(j).call( inputs );
+                vd = src.get(j).derive( inputs, d );
 
                 ud = u * vd + v * ud;
                 u *= v; // ...this step can be avoided (TODO optimize)

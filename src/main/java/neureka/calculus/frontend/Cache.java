@@ -61,7 +61,7 @@ public class Cache
         GraphNode<Object> node = inputs[ 0 ].find(GraphNode.class);
         Tsr<Object> result = null;
 
-        if ( !function.getOperation().isInline() ) result = _get(inputs, d, j);
+        if ( !function.getOperation().isInline() ) result = _get( inputs, d, j );
 
         if( result == null ){
             result = activation.get();

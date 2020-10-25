@@ -53,7 +53,7 @@ public class XMultiplication extends AbstractOperationType
             Tsr alternative = null;
             if (tsrs.length > 3) {
                 if (d < 0) {
-                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[1], tsrs[2]};
+                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
                     );
@@ -69,29 +69,29 @@ public class XMultiplication extends AbstractOperationType
             } else {
                 if ( call.getType().getOperator().equals("x") ) {
                     if (d >= 0) {
-                        if (d == 0) tsrs[ 0 ] = tsrs[2];
-                        else tsrs[ 0 ] = tsrs[1];
+                        if (d == 0) tsrs[ 0 ] = tsrs[ 2 ];
+                        else tsrs[ 0 ] = tsrs[ 1 ];
                         return tsrs[ 0 ];
                     } else {
-                        call.mutateArguments( t -> new Tsr[]{t[ 0 ], t[1], t[2]} );
+                        call.mutateArguments( t -> new Tsr[]{t[ 0 ], t[ 1 ], t[ 2 ]} );
                     }
                 } else if ( call.getType().getOperator().equals("x"+ ((char) 187)) ) {
-                    call.mutateArguments( t -> new Tsr[]{t[2], t[1], t[ 0 ]} );
+                    call.mutateArguments( t -> new Tsr[]{t[ 2 ], t[ 1 ], t[ 0 ]} );
                 }
                 return alternative;
             }
         };
 
         DefaultOperatorCreator<TertiaryNDXConsumer> convolutionCreator =
-                (inputs, d) -> {
-                    double[] t1_val = inputs[1].value64();
-                    double[] t2_val = inputs[2].value64();
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
                     if (d < 0) {
-                        return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)] * t2_val[inputs[2].i_of_idx(t2Idx)];
+                        return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
                     } else {
                         return (t0Idx, t1Idx, t2Idx) -> {
-                            if (d == 0) return t2_val[inputs[2].i_of_idx(t2Idx)];
-                            else return t1_val[inputs[1].i_of_idx(t1Idx)];
+                            if (d == 0) return t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                            else return t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
                         };
                     }
                 };
@@ -102,8 +102,8 @@ public class XMultiplication extends AbstractOperationType
                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;
                     if ( call.getType().getOperator().equals(",") ) return false; //Reshape
-                    Tsr last = null;
-                    for ( Tsr t : call.getTensors() ) {
+                    Tsr<?> last = null;
+                    for ( Tsr<?> t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;
                         last = t; // Note: shapes are cached!
                     }
@@ -121,36 +121,36 @@ public class XMultiplication extends AbstractOperationType
                     int d = call.getDerivativeIndex();
 
                     Function invX = FunctionBuilder.build(
-                            "I[ 0 ]" + getOperator() + ">>I[1]" + getOperator() + ">>I[2]",
+                            "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
                             false
                     );
-                    Tsr deriv = f.derive(inputs, d);
+                    Tsr deriv = f.derive( inputs, d );
                     return new DefaultADAgent( deriv )
-                    .withForward( (node, forwardDerivative) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
                     .withBackward( (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)}) );
                 }
             )
             .setCallHock(
-                    (caller, call) -> {
+                    ( caller, call ) -> {
                         if ( !caller.isFlat() ) return null;
                         if ( call.getType().getOperator().equals("x") ) {
 
                             Tsr[] inputs = call.getTensors();
-                            Tsr[] tsrs = new Tsr[]{null, inputs[ 0 ], inputs[1]};
+                            Tsr[] tsrs = new Tsr[]{null, inputs[ 0 ], inputs[ 1 ]};
                             tsrs[ 0 ] = (call.getDerivativeIndex() < 0)
-                                    ? new Tsr(Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape()))
+                                    ? new Tsr(Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape()))
                                     : null;
 
-                            for (Tsr t : tsrs) if (t != null) t.setIsVirtual(false);
+                            for (Tsr t : tsrs) if (t != null) t.setIsVirtual( false );
                             call.getDevice().execute(call.withNew(tsrs));
                             return tsrs[ 0 ];
                         } else {
                             if (call.getDerivativeIndex() < 0) {
                                 Tsr[] tsrs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
                                 Tsr.makeFit(tsrs, caller.doesAD()); // This might not fit here... (fitting should probably be a setup thing...)
-                                for ( Tsr t : tsrs ) t.setIsVirtual(false);
+                                for ( Tsr t : tsrs ) t.setIsVirtual( false );
                                 call.getDevice().execute( new ExecutionCall( call.getDevice(), tsrs, 0, call.getType() ) );
-                                if ( call.getType().getId() == OperationType.instance("x>>").getId()) return tsrs[2];
+                                if ( call.getType().getId() == OperationType.instance("x>>").getId()) return tsrs[ 2 ];
                                 else return tsrs[ 0 ];
                             }
                         }
@@ -164,9 +164,9 @@ public class XMultiplication extends AbstractOperationType
                         Device device = call.getDevice();
                         if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                         {
-                            int[] shp = Tsr.Utility.Indexing.shpOfCon(tsrs[1].getNDConf().shape(), tsrs[2].getNDConf().shape());
+                            int[] shp = Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape());
                             Tsr output = new Tsr( shp, 0.0 );
-                            output.setIsVirtual(false);
+                            output.setIsVirtual( false );
                             try {
                                 device.store(output);
                             } catch ( Exception e ) {
@@ -207,12 +207,12 @@ public class XMultiplication extends AbstractOperationType
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor(offset))
-                                            .pass(call.getTensor(offset + 1))
-                                            .pass(call.getTensor(offset + 2))
-                                            .pass(call.getTensor( 0 ).rank())
-                                            .pass(call.getDerivativeIndex())//call.getDerivativeIndex()
-                                            .call(gwz);
+                                            .pass( call.getTensor( offset ) )
+                                            .pass( call.getTensor( offset + 1 ) )
+                                            .pass( call.getTensor( offset + 2 ) )
+                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() ) //call.getDerivativeIndex()
+                                            .call( gwz );
                                 },
                                 3,
                                 convolution.getKernelSource(), // kernelSource
@@ -229,8 +229,7 @@ public class XMultiplication extends AbstractOperationType
                 false,
                 false,
                 false
-        ){
-
+                ){
             @Override
             public double calculate( double[] inputs, int j, int d, List<Function> src ) {
             return src.get( 0 ).call( inputs, j );
@@ -257,7 +256,7 @@ public class XMultiplication extends AbstractOperationType
                 false,
                 false,
                 false
-        ){
+                ){
             @Override
             public double calculate( double[] inputs, int j, int d, List<Function> src ){
                 return 0;

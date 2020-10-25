@@ -34,10 +34,10 @@ public class CopyRight extends AbstractOperationType {
         );
 
         DefaultOperatorCreator<TertiaryNDXConsumer> activationCreator =
-                (inputs, d) -> {
-                    double[] t1_val = inputs[1].value64();
-                    if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
-                    else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[1].i_of_idx(t1Idx)];
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                    else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
                 };
 
         Activation activation = new Activation()
@@ -47,7 +47,7 @@ public class CopyRight extends AbstractOperationType {
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                 defaultImplementation().supplyADAgentFor( f, call, forward )
         )
-        .setCallHock( (caller, call) -> null )
+        .setCallHock( ( caller, call ) -> null )
         .setRJAgent( ( call, goDeeperWith ) -> null )
         .setDrainInstantiation(
                 call -> {

@@ -103,7 +103,7 @@ public class DispatchUtility {
             }
             else break;
 
-        } while (true);
+        } while ( true );
 
         // Maybe we went about some dimensions the wrong way...
         // Let's check if maybe could reverse product relations and get better configurations :
@@ -132,7 +132,7 @@ public class DispatchUtility {
             }
             else break;
 
-        } while (true);
+        } while ( true );
 
         return current;
     }
@@ -207,12 +207,12 @@ public class DispatchUtility {
         // GOALS :
         int[] row_com_col = bestMatMulMatch(local_size, row, col, com);
         int max_ts_row = row_com_col[ 0 ];//   = 128, // ts := tile size
-        int max_ts_col = row_com_col[2];//   = 128,
-        int max_ts_com = row_com_col[1];//   = 16,
+        int max_ts_col = row_com_col[ 2 ];//   = 128,
+        int max_ts_com = row_com_col[ 1 ];//   = 16,
 
         int[] wpt_row_col = parseTile(reg_size, new int[]{max_ts_row, max_ts_col});
         int max_wpt_row = wpt_row_col[ 0 ];//  = 8,   // wpt := work per thread
-        int max_wpt_col = wpt_row_col[1]; // = 8,
+        int max_wpt_col = wpt_row_col[ 1 ]; // = 8,
         //---
 
         return new int[]{max_ts_row, max_ts_col, max_ts_com, max_wpt_row, max_wpt_col};
@@ -224,11 +224,11 @@ public class DispatchUtility {
         int[] row_com = DispatchUtility.parseTile(size, new int[]{row, com});
         int[] col_com = DispatchUtility.parseTile(size, new int[]{col, com});
 
-        int delta1 = Math.abs((row_com[ 0 ] * row_com[1] + row_com[ 0 ] * col_com[ 0 ])-size);
-        int delta2 = Math.abs((col_com[ 0 ] * col_com[1] + col_com[ 0 ] * row_com[ 0 ])-size);
+        int delta1 = Math.abs((row_com[ 0 ] * row_com[ 1 ] + row_com[ 0 ] * col_com[ 0 ])-size);
+        int delta2 = Math.abs((col_com[ 0 ] * col_com[ 1 ] + col_com[ 0 ] * row_com[ 0 ])-size);
 
-        if ( delta1 > delta2 ) return new int[]{ row_com[ 0 ], col_com[1], col_com[ 0 ] };
-        else return new int[]{ row_com[ 0 ], row_com[1], col_com[ 0 ] };
+        if ( delta1 > delta2 ) return new int[]{ row_com[ 0 ], col_com[ 1 ], col_com[ 0 ] };
+        else return new int[]{ row_com[ 0 ], row_com[ 1 ], col_com[ 0 ] };
     }
 
 

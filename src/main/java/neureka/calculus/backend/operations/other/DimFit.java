@@ -45,7 +45,7 @@ public class DimFit extends AbstractOperationType
                     {
                         //int index = call.getDerivativeIndex();
                         //int prefix = ((int[]) call.getAt("ends"))[ 0 ];
-                        //int postfix = ((int[]) call.getAt("ends"))[1];
+                        //int postfix = ((int[]) call.getAt("ends"))[ 1 ];
                         if(forward) {
                             throw new IllegalArgumentException("Dim-Fit operation does not support forward-AD!");
                         }
@@ -111,7 +111,7 @@ public class DimFit extends AbstractOperationType
                             //    int postfix = ((int[]) call.getAt("ends"))[ 0 ];
                             //    return pad(t, new int[]{prefix, postfix}, true);
                             //} else {
-                            //    int[] ends = new int[2];
+                            //    int[] ends = new int[ 2 ];
                             //    call.putAt("ends", ends);
                             //    return trim(t, ends, true);
                             //}

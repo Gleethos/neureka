@@ -85,7 +85,7 @@ public class CLExecutor implements ExecutorFor<OpenCLDevice>
         );
         boolean templateFound;
         if (kernelSource.contains("__kernel")) {
-            String[] parts = kernelSource.split("__kernel")[1].split("\\(")[ 0 ].split(" ");
+            String[] parts = kernelSource.split("__kernel")[ 1 ].split("\\(")[ 0 ].split(" ");
 
             templateFound = parts[parts.length - 1].contains("template");
             if (!templateFound) {
@@ -124,7 +124,7 @@ public class CLExecutor implements ExecutorFor<OpenCLDevice>
             String convcode =
                     parts[ 0 ].replace(preName, preName + n) +
                             _aliasSwapper.apply(f) +
-                            parts[2] +
+                            parts[ 2 ] +
                             _aliasSwapper.apply(s) +
                             parts[4];
             boolean isAdvanced = s.contains("target")&&s.contains("drain")&&s.contains("handle")

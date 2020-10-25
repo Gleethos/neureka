@@ -171,7 +171,7 @@ public abstract class AbstractFunction extends AbstractBaseFunction
         }
         device.execute( new ExecutionCall<>( device, tsrs, d, _type ) );
 
-        return ( tsrs[ 0 ] == null ) ? tsrs[1] : tsrs[ 0 ];
+        return ( tsrs[ 0 ] == null ) ? tsrs[ 1 ] : tsrs[ 0 ];
     }
 
     /**
@@ -226,7 +226,7 @@ public abstract class AbstractFunction extends AbstractBaseFunction
                 }
             } else {
                 for ( int i = 1; i < tsrs.length; i++ ) {
-                    tsrs[ i ] = ( j >= 0 ) ? _src.get( i - 1 ).derive( inputs, d, j ) : _src.get( i - 1 ).derive(inputs, d);
+                    tsrs[ i ] = ( j >= 0 ) ? _src.get( i - 1 ).derive( inputs, d, j ) : _src.get( i - 1 ).derive( inputs, d );
                 }
             }
             //...then add them all together! (is possible because of linearity...)
@@ -239,7 +239,7 @@ public abstract class AbstractFunction extends AbstractBaseFunction
                     device.execute( new ExecutionCall<>( device, tsrs, -1, OperationType.instance("+") ) );
                     inner = tsrs[ 0 ];//this is now the inner derivative!
                 }
-            } else inner = tsrs[1];
+            } else inner = tsrs[ 1 ];
 
             tsrs[ 0 ] = null;
             //...then activate (No differentiation!) the source like so:
@@ -249,7 +249,7 @@ public abstract class AbstractFunction extends AbstractBaseFunction
                 }
             } else {
                 for ( int i = 1; i < tsrs.length; i++ ) {
-                    tsrs[ i ] = ( j >= 0 ) ? _src.get(i - 1).call(inputs, j) : _src.get(i - 1).call(inputs);
+                    tsrs[ i ] = ( j >= 0 ) ? _src.get(i - 1).call( inputs, j ) : _src.get(i - 1).call( inputs );
                 }
             }
             //...get derivative index within src list:
@@ -294,9 +294,9 @@ public abstract class AbstractFunction extends AbstractBaseFunction
         for ( int i = offset; i < tsrs.length; i++ ) {//constants need to be figured out!
             if ( !(_src.get(i - offset) instanceof FunctionConstant) ) {
                 if ( d < 0 ) {
-                    tsrs[ i ] = ( j >= 0 ) ? _src.get(i - offset).call(inputs, j) : _src.get(i - offset).call(inputs);
+                    tsrs[ i ] = ( j >= 0 ) ? _src.get(i - offset).call( inputs, j ) : _src.get(i - offset).call( inputs );
                 } else {
-                    tsrs[ i ] = ( j >= 0 ) ? _src.get(i - offset).derive(inputs, d, j) : _src.get(i - offset).derive(inputs, d);
+                    tsrs[ i ] = ( j >= 0 ) ? _src.get(i - offset).derive( inputs, d, j ) : _src.get(i - offset).derive( inputs, d );
                 }
                 tempShape = ( tempShape == null ) ? tsrs[ i ].getNDConf().shape() : tempShape;
             }
@@ -333,7 +333,7 @@ public abstract class AbstractFunction extends AbstractBaseFunction
             }
         } else onSameGuestDevice = false;
 
-        if ( device != null && tsrs.length == 2 && tsrs[1].size() == 1 ) {
+        if ( device != null && tsrs.length == 2 && tsrs[ 1 ].size() == 1 ) {
             onSameGuestDevice = true;
         }
         return onSameGuestDevice;

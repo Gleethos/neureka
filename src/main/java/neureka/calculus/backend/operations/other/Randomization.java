@@ -40,8 +40,8 @@ public class Randomization extends AbstractOperationType
                 call -> {
                     if ( call.getType().supports(Convolution.class) ) return false;
                     if ( call.getType().getOperator().equals(",") ) return false; //Reshape
-                    Tsr last = null;
-                    for ( Tsr t : call.getTensors() ) {
+                    Tsr<?> last = null;
+                    for ( Tsr<?> t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;
                         last = t; // Note: shapes are cached!
                     }
