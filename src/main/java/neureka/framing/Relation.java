@@ -13,7 +13,7 @@ public class Relation<ValueType> implements Component<Tsr<ValueType>> {
     private WeakReference<Tsr<ValueType>>[] _children;// Children may be garbage collected if not needed.
 
     @Override
-    public void update(Tsr<ValueType> oldOwner, Tsr<ValueType> newOwner){
+    public void update( Tsr<ValueType> oldOwner, Tsr<ValueType> newOwner ) {
         if (_parent != null) {
             Relation<ValueType> pr = _parent.find(Relation.class);
             for (int i=0; i < pr._children.length; i++) {
@@ -22,11 +22,11 @@ public class Relation<ValueType> implements Component<Tsr<ValueType>> {
                 }
             }
         }
-        if (_children != null) {
-            for (WeakReference<Tsr<ValueType>> c : _children) {
+        if ( _children != null ) {
+            for ( WeakReference<Tsr<ValueType>> c : _children ) {
                 Tsr t = c.get();
                 if ( t != null ) {
-                    Relation<ValueType> cr = (Relation<ValueType>) t.find(Relation.class);
+                    Relation<ValueType> cr = (Relation<ValueType>) t.find( Relation.class );
                     if ( cr != null ) cr._parent = newOwner;
                 }
             }
@@ -34,18 +34,18 @@ public class Relation<ValueType> implements Component<Tsr<ValueType>> {
     }
 
 
-    public Relation addParent(Tsr parent){
+    public Relation addParent( Tsr parent ) {
         _parent = parent;
         return this;
     }
 
 
-    public Relation<ValueType> addChild(Tsr<ValueType> child){
+    public Relation<ValueType> addChild( Tsr<ValueType> child ) {
         if ( _children == null ) {
-            _children = new WeakReference[]{new WeakReference(child)};
+            _children = new WeakReference[]{ new WeakReference( child ) };
         } else {
             WeakReference<Tsr<ValueType>>[] newChildren = new WeakReference[_children.length+1];
-            System.arraycopy(_children, 0, newChildren, 0, _children.length);
+            System.arraycopy( _children, 0, newChildren, 0, _children.length );
             newChildren[_children.length] = new WeakReference(child);
             _children = newChildren;
         }
@@ -53,14 +53,14 @@ public class Relation<ValueType> implements Component<Tsr<ValueType>> {
     }
 
 
-    public Relation<ValueType> foreachChild(Consumer<Tsr<ValueType>> action){
+    public Relation<ValueType> foreachChild( Consumer<Tsr<ValueType>> action ) {
         if ( _children != null ) {
             for ( WeakReference<Tsr<ValueType>> r : _children ) {
                 Tsr c = r.get();
                 if ( c != null ) {
-                    action.accept(c);
-                    Relation relation = (Relation<ValueType>) c.find(Relation.class);
-                    if ( relation != null ) relation.foreachChild(action);
+                    action.accept( c );
+                    Relation relation = (Relation<ValueType>) c.find( Relation.class );
+                    if ( relation != null ) relation.foreachChild( action );
                 }
             }
         }
@@ -68,24 +68,24 @@ public class Relation<ValueType> implements Component<Tsr<ValueType>> {
     }
 
     public Tsr findRootTensor() {
-        if ( _parent==null ) return null;
-        else if ( !_parent.has(Relation.class) ) return null;
-        else if ( !_parent.find(Relation.class).hasParent() ) return _parent;
+        if ( _parent == null ) return null;
+        else if ( !_parent.has( Relation.class ) ) return null;
+        else if ( !_parent.find( Relation.class ).hasParent() ) return _parent;
         else {
-            return _parent.find(Relation.class).findRootTensor();
+            return _parent.find( Relation.class ).findRootTensor();
         }
     }
 
     public boolean hasParent(){
-        return _parent!=null;
+        return _parent != null;
     }
 
     public boolean hasChildren(){
-        return _children!=null;
+        return _children != null;
     }
 
     public int childCount(){
-        return (_children==null) ? 0 : _children.length;
+        return ( _children == null ) ? 0 : _children.length;
     }
 
 }
