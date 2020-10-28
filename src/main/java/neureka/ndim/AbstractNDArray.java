@@ -191,11 +191,12 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
                 DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.US);
                 DecimalFormat Formatter = new DecimalFormat("##0.0##E0", formatSymbols);
                 String vStr = String.valueOf(v);
-                if (vStr.length()>7){
+                final int offset = 0;
+                if ( vStr.length() > ( 7 - offset ) ){
                     if (vStr.startsWith("0.")){
-                        vStr = vStr.substring(0, 7)+"E0";
+                        vStr = vStr.substring(0, 7-offset)+"E0";
                     } else if(vStr.startsWith("-0.")){
-                        vStr = vStr.substring(0, 8)+"E0";
+                        vStr = vStr.substring(0, 8-offset)+"E0";
                     } else {
                         vStr = Formatter.format(v);
                         vStr = (!vStr.contains(".0E0"))?vStr:vStr.replace(".0E0",".0");

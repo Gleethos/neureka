@@ -20,10 +20,10 @@ public class Quadratic extends AbstractOperationType
                 double[] t1_val = inputs[ 1 ].value64();
                 if (d < 0) {
                     return (t0Idx, t1Idx, t2Idx) -> {
-                        double input = t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                        double input = t1_val[t1Idx.i()];
                         return input * input;
                     };
-                } else return (t0Idx, t1Idx, t2Idx) -> 2 * t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                } else return (t0Idx, t1Idx, t2Idx) -> 2 * t1_val[t1Idx.i()];
             };
 
     public Quadratic(){

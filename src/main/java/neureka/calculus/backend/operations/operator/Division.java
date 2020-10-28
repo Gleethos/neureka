@@ -26,13 +26,13 @@ public class Division extends AbstractOperationType
         double[] t1_val = inputs[ 1 ].value64();
         double[] t2_val = inputs[ 2 ].value64();
         if (d < 0) {
-            return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] / t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+            return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()] / t2_val[t2Idx.i()];
         } else {
             return (t0Idx, t1Idx, t2Idx) -> {
                 if (d == 0) {//"    output = 1/input2;\n" +
-                    return 1 / t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                    return 1 / t2_val[t2Idx.i()];
                 } else {
-                    return -(t1_val[inputs[ 2 ].i_of_idx(t2Idx)] / Math.pow(t2_val[inputs[ 1 ].i_of_idx(t1Idx)], 2));
+                    return -(t1_val[t2Idx.i()] / Math.pow(t2_val[t1Idx.i()], 2));
                 }//"    output = -input2 /(float)pow(input1, 2.0f);\n" +
             };
         }
@@ -311,10 +311,10 @@ public class Division extends AbstractOperationType
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     if (d < 0) {
-                        return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] / value;
+                        return t1Idx -> t1_val[t1Idx.i()] / value;
                     } else {
                         if (d == 0) return t1Idx -> 1 / value;
-                        else return t1Idx -> -value / Math.pow(t1_val[inputs[ 1 ].i_of_idx(t1Idx)], 2);
+                        else return t1Idx -> -value / Math.pow(t1_val[t1Idx.i()], 2);
                     }
                 };
 

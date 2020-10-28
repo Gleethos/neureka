@@ -1,8 +1,6 @@
-package neureka.ndim.config.views;
+package neureka.ndim.config.types.views;
 
 import neureka.Neureka;
-import neureka.Tsr;
-import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
@@ -10,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SimpleReshapeView extends AbstractNDC
 {

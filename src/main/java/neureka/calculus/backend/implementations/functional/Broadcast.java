@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.NDIterator;
 import org.jetbrains.annotations.Contract;
 
 public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Broadcast >
@@ -47,31 +48,34 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
         int[] t1Shp = t1_src.getNDConf().shape();
         int[] t2Shp = (t2_src != null) ? t2_src.getNDConf().shape() : t1Shp;
         int rank = t0Shp.length;
-        int[] t0Idx = t0_drn.idx_of_i( i );
-        int[] t1Idx = new int[rank];
-        int[] t2Idx = new int[rank];
+        NDIterator t0Idx = NDIterator.of( t0_drn );//t0_drn.idx_of_i( i );
+        NDIterator t1Idx = NDIterator.of( t1_src );
+        t0Idx.set( t0_drn.idx_of_i( i ) );
+        t1Idx.set( t0_drn.idx_of_i( i ) );
+        NDIterator t2Idx = NDIterator.of( t2_src );
         double[] t0_value = t0_drn.value64();
         if ( d < 0 ) {
             while ( i < end ) {//increment on drain accordingly:
                 int ri = 0;
                 while ( ri < rank ) {
                     if ( t1Shp[ri] == t2Shp[ri] ) {//Equal shapes -> out index is t1 & t2 index!for this ri
-                        t1Idx[ri] = t0Idx[ri];
-                        t2Idx[ri] = t0Idx[ri];
+                        t1Idx.set( ri, t0Idx.get( ri ) );
+                        t2Idx.set( ri, t0Idx.get( ri ) );
                     } else if ( t1Shp[ri] > t2Shp[ri] ) {//Current shape axis of t2 must be 1 !
-                        t1Idx[ri] = t0Idx[ri];
-                        t2Idx[ri] = 0;//...therefore it can be set to 0!
+                        t1Idx.set( ri, t0Idx.get( ri ) );
+                        t2Idx.set( ri, 0 );//...therefore it can be set to 0!
                     } else if ( t1Shp[ri] < t2Shp[ri] ) {//same principle:
-                        t1Idx[ri] = 0;
-                        t2Idx[ri] = t0Idx[ri];
+                        t1Idx.set( ri, 0 );
+                        t2Idx.set( ri, t0Idx.get( ri ) );
                     }
                     ri++;
                 }
                 //----------
                 //setInto _value in drn:
-                t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, t2Idx);
+                t0_value[t0Idx.i()] = operation.execute(t0Idx, t1Idx, t2Idx);
                 //increment on drain:
-                NDConfiguration.Utility.increment(t0Idx, t0Shp);
+                t0Idx.increment();
+                //NDConfiguration.Utility.increment(t0Idx, t0Shp);
                 i++;
             }
         }
@@ -81,11 +85,11 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                 int ri = 0;
                 while ( ri < rank ) {
                     if (t0Shp[ri] == t1Shp[ri]) {
-                        t1Idx[ri] = t0Idx[ri];//all shapes are equal -> shape index can be inherited from origin!
-                        t2Idx[ri] = t0Idx[ri];
+                        t1Idx.set( ri, t0Idx.get( ri ) );//all shapes are equal -> shape index can be inherited from origin!
+                        t2Idx.set( ri, t0Idx.get( ri ) );
                     } else if (t0Shp[ri] > t1Shp[ri]) {
-                        t1Idx[ri] = 0;//Current origin index is larger: index can be inherited!
-                        t2Idx[ri] = t0Idx[ri];
+                        t1Idx.set( ri, 0 );//Current origin index is larger: index can be inherited!
+                        t2Idx.set( ri, t0Idx.get( ri ) );
                     }
                     ri++;
                 }
@@ -102,11 +106,11 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                         ri = 0;
                     } else {//incrementing:
                         if ( t0Shp[ri] < t1Shp[ri] ) {//Only if origin shape is smaller than handle and drain!
-                            t1Idx[ri]++;
-                            t2Idx[ri]++;
-                            if (t1Idx[ri] == t1Shp[ri]) {
-                                t1Idx[ri] = 0;
-                                t2Idx[ri] = 0;
+                            t1Idx.set( ri, t1Idx.get( ri ) + 1 );
+                            t2Idx.set( ri, t2Idx.get( ri ) + 1 );
+                            if (t1Idx.get( ri ) == t1Shp[ri]) {
+                                t1Idx.set( ri, 0 );
+                                t2Idx.set( ri, 0 );
                                 running = (ri != rank - 1);
                                 ri++;
                             } else {
@@ -119,9 +123,10 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                     }
                 }
                 //set value in drn:
-                t0_value[t0_drn.i_of_idx(t0Idx)] = value;
+                t0_value[t0Idx.i()] = value;
                 //increment on drain:
-                NDConfiguration.Utility.increment(t0Idx, t0Shp);
+                t0Idx.increment();
+                //NDConfiguration.Utility.increment(t0Idx, t0Shp);
                 i++;
             }
         }

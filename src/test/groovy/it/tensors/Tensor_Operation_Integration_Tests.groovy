@@ -3,6 +3,8 @@ package it.tensors
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.frontend.assembly.FunctionBuilder
+import neureka.devices.Device
+import neureka.devices.host.HostCPU
 import spock.lang.Specification
 
 class Tensor_Operation_Integration_Tests extends Specification
@@ -168,12 +170,12 @@ class Tensor_Operation_Integration_Tests extends Specification
             Tsr z = a[2..-1,0..-1]
 
         when :
-            Tsr rowconvol = x + y + z//(98, 100) (98, 100) (98, 100)
+            Tsr rowconvol = x + y + z // (98, 100) (98, 100) (98, 100)
             Tsr k = rowconvol[0..-1,1..-2]
             Tsr v = rowconvol[0..-1,0..-3]
             Tsr j = rowconvol[0..-1,2..-1]
             Tsr u = a[1..-2,1..-2]
-            Tsr colconvol = k + v + j - 9 * u//(98, 98)+(98, 98)+(98, 98)-9*(98, 98)
+            Tsr colconvol = k + v + j - 9 * u // (98, 98)+(98, 98)+(98, 98)-9*(98, 98)
             String xAsStr = x.toString()
             String yAsStr = y.toString()
             String zAsStr = z.toString()
@@ -213,6 +215,84 @@ class Tensor_Operation_Integration_Tests extends Specification
                     "-34.0, -68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, -34.0, " +
                     "-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, ... + 9554 more]")
     }
+
+
+    def 'Simple manual convolution produces expected result.'(
+         Device device
+    ) {
+        given :
+            Neureka.instance().reset()
+            Neureka.instance().settings().view().setIsUsingLegacyView(false)
+            Tsr a = new Tsr([4, 4], 0..16).add( device )
+            //a = a.mod( new Tsr(5).add( device ) )
+
+            Tsr x = a[1..-2,0..-1]
+            Tsr y = a[0..-3,0..-1]
+            Tsr z = a[2..-1,0..-1]
+
+        when :
+            Tsr rowconvol = x + y + z
+            Tsr k = rowconvol[0..-1,1..-2]
+            Tsr v = rowconvol[0..-1,0..-3]
+            Tsr j = rowconvol[0..-1,2..-1]
+            Tsr u = a[1..-2,1..-2]
+            Tsr colconvol = k + v + j - 9 * u
+            String xAsStr = x.toString()
+            String yAsStr = y.toString()
+            String zAsStr = z.toString()
+            String rcAsStr = rowconvol.toString()
+            String kAsStr = k.toString()
+            String vAsStr = v.toString()
+            String jAsStr = j.toString()
+            String uAsStr = u.toString()
+
+        then :
+            assert xAsStr.contains("(2x4):[4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0]")
+            assert yAsStr.contains("(2x4):[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]")
+            assert zAsStr.contains("(2x4):[8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0]")
+            assert rcAsStr.contains("(2x4):[12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0]")
+            assert kAsStr.contains("(2x2):[15.0, 18.0, 27.0, 30.0]")
+            assert vAsStr.contains("(2x2):[12.0, 15.0, 24.0, 27.0]")
+            assert jAsStr.contains("(2x2):[18.0, 21.0, 30.0, 33.0]")
+            assert uAsStr.contains("(2x2):[5.0, 6.0, 9.0, 10.0]")
+            String ccAsStr = colconvol.toString()
+            assert ccAsStr.contains("(2x2):[0.0, 0.0, 0.0, 0.0]")
+
+        where : 'The following data is being used for tensor instantiation :'
+            device  << [ HostCPU.instance(), Device.find("openCL") ]
+    }
+
+
+
+    def 'Simple slice addition produces expected result.'(
+            Device device
+    ) {
+        given :
+        Neureka.instance().reset()
+        Neureka.instance().settings().view().setIsUsingLegacyView(false)
+        Tsr a = new Tsr([11, 11], 3..19).add( device )
+        Tsr x = a[1..-2,0..-1]
+        Tsr y = a[0..-3,0..-1]
+
+        when :
+        Tsr rowconvol = x + y
+        String rcAsStr = rowconvol.toString()
+
+        then :
+        assert rcAsStr.contains("(9x11):[17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, " +
+                "26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, " +
+                "26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0, ... + 49 more]")
+
+        where : 'The following data is being used for tensor instantiation :'
+        device  << [
+                HostCPU.instance(),
+                Device.find("openCL")
+        ]
+    }
+
+
+
+
 
 
     def 'Auto reshape and broadcasting occurs.'()

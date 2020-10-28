@@ -16,7 +16,7 @@ import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.config.virtual.VirtualNDConfiguration;
+import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 import neureka.optimization.Optimizer;
 import neureka.utility.DataConverter;
 import org.slf4j.Logger;
@@ -1796,7 +1796,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
         private static Tsr _newEmptyLike( Tsr template ) {
             Tsr t = new Tsr();
-            t._conf = template._conf;
+            t._configureFromNewShape( template.getNDConf().shape(), false );
             return t;
         }
 

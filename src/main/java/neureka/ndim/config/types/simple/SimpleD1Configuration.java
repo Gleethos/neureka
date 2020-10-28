@@ -1,38 +1,34 @@
-package neureka.ndim.config.complex;
+package neureka.ndim.config.types.simple;
 
-import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.types.D1C;
 
-public final class ScalarConfiguration extends AbstractNDC //:= IMMUTABLE
+
+public final class SimpleD1Configuration extends D1C //:= IMMUTABLE
 {
     /**
      *  The shape of the NDArray.
      */
     private final int _shape;
     /**
-     *  Defines the position of a subset / slice tensor within its parent!
+     *  The translation from a shape index (idx) to the index of the underlying data array.
      */
-    private final int _offset;
-    /**
-     *  The value of this tensor. Usually a array of type double[] or float[].
-     */
+    private final int _translation_and_idxmap;
+
 
     public static NDConfiguration construct(
             int[] shape,
-            // translation, will always be 1
-            // idxmap, will also always be 1
-            // spread, does not matter!
-            int[] offset
-    ) {
-        return _cached(new ScalarConfiguration(shape[ 0 ], offset[ 0 ]));
+            int[] translation
+    ){
+        return _cached(new SimpleD1Configuration(shape[ 0 ], translation[ 0 ]));
     }
 
-    private ScalarConfiguration(
+    private SimpleD1Configuration(
             int shape,
-            int offset
+            int translation
     ) {
         _shape = shape;
-        _offset = offset;
+        _translation_and_idxmap = translation;
     }
 
     @Override
@@ -52,22 +48,22 @@ public final class ScalarConfiguration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int[] idxmap() {
-        return new int[]{1};
+        return new int[]{_translation_and_idxmap};
     }
 
     @Override
     public int idxmap(int i) {
-        return 1;
+        return _translation_and_idxmap;
     }
 
     @Override
     public int[] translation() {
-        return new int[]{1};
+        return new int[]{_translation_and_idxmap};
     }
 
     @Override
     public int translation(int i) {
-        return 1;
+        return _translation_and_idxmap;
     }
 
     @Override
@@ -82,29 +78,33 @@ public final class ScalarConfiguration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int[] offset() {
-        return new int[]{_offset};
+        return new int[]{0};
     }
 
     @Override
     public int offset(int i) {
-        return _offset;
+        return 0;
     }
 
 
     @Override
     public int i_of_i(int i) {
-        return i + _offset;
+        return i;
     }
 
     @Override
     public int[] idx_of_i(int i) {
-        return new int[]{i};
+        return new int[]{i / _translation_and_idxmap};
     }
 
     @Override
     public int i_of_idx(int[] idx) {
-        return idx[ 0 ] + _offset;
+        return idx[ 0 ] * _translation_and_idxmap;
     }
 
+    @Override
+    public int i_of_idx( int d1 ) {
+        return d1 * _translation_and_idxmap;
+    }
 
 }

@@ -41,17 +41,17 @@ public class Modulo extends AbstractOperationType {
         //_____________________
         // DEFAULT OPERATION :
 
-        DefaultOperatorCreator<PrimaryNDXConsumer> operationCreator =
+        DefaultOperatorCreator<SecondaryNDXConsumer> operationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
-                    if (d < 0) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] % t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
+                    if (d < 0) return ( t1Idx, t2Idx ) -> t1_val[t1Idx.i()] % t2_val[t2Idx.i()];
                     else {
-                        return t1Idx -> {
+                        return ( t1Idx, t2Idx ) -> {
                             if (d == 0) {
-                                return 1 / t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
+                                return 1 / t2_val[t2Idx.i()];
                             } else {
-                                return -(t1_val[inputs[ 1 ].i_of_idx(t1Idx)] / Math.pow(t2_val[inputs[ 2 ].i_of_idx(t1Idx)], 2));
+                                return -(t1_val[t1Idx.i()] / Math.pow(t2_val[t2Idx.i()], 2));
                             }
                         };
                     }
@@ -153,16 +153,16 @@ public class Modulo extends AbstractOperationType {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
                     if (d < 0) {
-                        return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] % t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                        return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()] % t2_val[t2Idx.i()];
                     } else {
                         return (t0Idx, t1Idx, t2Idx) -> {
                             if (d == 0) {
-                                return 1 / t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                                return 1 / t2_val[t2Idx.i()];
                             } else {
                                 return
-                                        -(t1_val[inputs[ 1 ].i_of_idx(t1Idx)]
+                                        -(t1_val[t1Idx.i()]
                                                 /
-                                                Math.pow(t2_val[inputs[ 2 ].i_of_idx(t2Idx)], 2));
+                                                Math.pow(t2_val[t2Idx.i()], 2));
                             }
                         };
                     }
@@ -275,10 +275,10 @@ public class Modulo extends AbstractOperationType {
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     if (d < 0) {
-                        return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] % value;
+                        return t1Idx -> t1_val[t1Idx.i()] % value;
                     } else {
                         if (d == 0) return t1Idx -> 1 / value;
-                        else return t1Idx -> -value / Math.pow(t1_val[inputs[ 1 ].i_of_idx(t1Idx)], 2);
+                        else return t1Idx -> -value / Math.pow(t1_val[t1Idx.i()], 2);
                     }
                 };
 

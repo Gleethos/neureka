@@ -104,7 +104,7 @@ public interface NDConfiguration
 
         @Contract(pure = true)
         private static int _incrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
-            if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
+            if ( Neureka.instance().settings().indexing().isUsingLegacyIndexing() ) {
                 if (shpIdx[ i ] < (shape[ i ])) {
                     shpIdx[ i ]++;
                     if (shpIdx[ i ] == (shape[ i ])) {

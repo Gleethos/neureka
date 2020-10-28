@@ -73,13 +73,13 @@ public class Subtraction extends AbstractOperationType
         //_____________________
         // DEFAULT OPERATION :
 
-        DefaultOperatorCreator<PrimaryNDXConsumer> operationCreator =
+        DefaultOperatorCreator<SecondaryNDXConsumer> operationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
                     if ( d < 0 ) {
-                        return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] - t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
-                    } else return t1Idx -> ( d == 0 ) ? 1.0 : -1.0;
+                        return ( t1Idx, t2Idx ) -> t1_val[t1Idx.i()] - t2_val[t2Idx.i()];
+                    } else return ( t1Idx, t2Idx ) -> ( d == 0 ) ? 1.0 : -1.0;
                 };
 
         Operator operator = new Operator()
@@ -165,7 +165,7 @@ public class Subtraction extends AbstractOperationType
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarOperatorCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if ( d < 0 ) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] - value;
+                    if ( d < 0 ) return t1Idx -> t1_val[t1Idx.i()] - value;
                     else if ( d == 0 ) return t1Idx -> 1; else return t1Idx -> -1;
                 };
 

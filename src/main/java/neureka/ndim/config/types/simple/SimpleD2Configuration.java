@@ -1,11 +1,12 @@
-package neureka.ndim.config.simple;
+package neureka.ndim.config.types.simple;
 
 import neureka.Neureka;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.types.D2C;
 
 
-public final class SimpleD2Configuration extends AbstractNDC //:= IMMUTABLE
+public final class SimpleD2Configuration extends D2C //:= IMMUTABLE
 {
     private SimpleD2Configuration(
             int[] shape,
@@ -128,4 +129,11 @@ public final class SimpleD2Configuration extends AbstractNDC //:= IMMUTABLE
         return i;
     }
 
+    @Override
+    public int i_of_idx( int d1, int d2 ) {
+        int i = 0;
+        i += d1 * _translation1;
+        i += d2 * _translation2;
+        return i;
+    }
 }

@@ -6,6 +6,7 @@ import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
+import neureka.ndim.config.NDIterator;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -34,15 +35,15 @@ public interface OperationType
     }
 
     interface TertiaryNDXConsumer {
-        double execute(int[] t0Idx, int[] t1Idx, int[] t2Idx);
+        double execute(NDIterator t0Idx, NDIterator t1Idx, NDIterator t2Idx);
     }
 
     interface SecondaryNDXConsumer {
-        double execute(int[] t0Idx, int[] t1Idx);
+        double execute(NDIterator t0Idx, NDIterator t1Idx);
     }
 
     interface PrimaryNDXConsumer {
-        double execute(int[] t0Idx);
+        double execute(NDIterator t0Idx);
     }
 
     //---

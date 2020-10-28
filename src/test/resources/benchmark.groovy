@@ -43,7 +43,7 @@
             Tsr D = new Tsr([size], "grapefruit").add(device)
             time = System.nanoTime()
             measure "vector_multiplication", {
-               for (int i; i < N; i++) tester("I[0]xI[1]" % [C, D])
+               for (int i=0; i < N; i++) tester("I[0]xI[1]" % [C, D])
             }
          }
          //==========================================================================#

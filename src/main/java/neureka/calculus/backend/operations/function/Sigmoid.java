@@ -18,8 +18,8 @@ public class Sigmoid extends AbstractOperationType
     private DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
-                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> calculate( t1_val[inputs[ 1 ].i_of_idx(t1Idx)], false );
-                else return (t0Idx, t1Idx, t2Idx) ->  calculate( t1_val[inputs[ 1 ].i_of_idx(t1Idx)], true );
+                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> calculate( t1_val[t1Idx.i()], false );
+                else return (t0Idx, t1Idx, t2Idx) ->  calculate( t1_val[t1Idx.i()], true );
             };
 
 

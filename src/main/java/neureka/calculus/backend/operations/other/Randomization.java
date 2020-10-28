@@ -27,7 +27,8 @@ public class Randomization extends AbstractOperationType
                 ( inputs, value, d ) -> {
                     return t1Idx -> {
                         int sum = 0;
-                        for (int idx : t1Idx) sum += idx;
+                        int[] idx = t1Idx.get();
+                        for (int i : idx) sum += i;
                         Random dice = new Random();
                         dice.setSeed(Double.doubleToLongBits(value+sum));
                         return dice.nextGaussian();

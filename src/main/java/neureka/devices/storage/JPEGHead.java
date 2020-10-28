@@ -50,7 +50,6 @@ public class JPEGHead implements FileHead<JPEGHead, Number>
             e.printStackTrace();
         }
 
-        System.out.println("done");
 
     }
 

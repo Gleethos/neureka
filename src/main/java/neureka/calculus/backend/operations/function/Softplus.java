@@ -19,8 +19,8 @@ public class Softplus extends AbstractOperationType
     private final DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
             ( inputs, d )->{
                 double[] t1_val = inputs[ 1 ].value64();
-                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.log(1 + Math.pow(Math.E, t1_val[inputs[ 1 ].i_of_idx(t1Idx)]));
-                else return (t0Idx, t1Idx, t2Idx) -> 1 / (1 + Math.pow(Math.E, -t1_val[inputs[ 1 ].i_of_idx(t1Idx)]));
+                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.log(1 + Math.pow(Math.E, t1_val[t1Idx.i()]));
+                else return (t0Idx, t1Idx, t2Idx) -> 1 / (1 + Math.pow(Math.E, -t1_val[t1Idx.i()]));
             };
 
     public Softplus()

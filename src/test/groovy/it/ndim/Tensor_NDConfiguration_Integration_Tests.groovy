@@ -2,10 +2,10 @@ package it.ndim
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.ndim.config.complex.D1Configuration
-import neureka.ndim.config.complex.ScalarConfiguration
-import neureka.ndim.config.simple.SimpleD1Configuration
-import neureka.ndim.config.simple.SimpleScalarConfiguration
+import neureka.ndim.config.types.complex.D1Configuration
+import neureka.ndim.config.types.complex.ScalarConfiguration
+import neureka.ndim.config.types.simple.SimpleD1Configuration
+import neureka.ndim.config.types.simple.SimpleScalarConfiguration
 import spock.lang.Specification
 
 class Tensor_NDConfiguration_Integration_Tests extends Specification

@@ -1,10 +1,11 @@
-package neureka.ndim.config.complex;
+package neureka.ndim.config.types.complex;
 
 import neureka.Neureka;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.types.D3C;
 
-public final class D3Configuration extends AbstractNDC //:= IMMUTABLE
+public final class D3Configuration extends D3C //:= IMMUTABLE
 {
     private D3Configuration(
             int[] shape,
@@ -179,4 +180,10 @@ public final class D3Configuration extends AbstractNDC //:= IMMUTABLE
                         (idx[ 2 ] * _spread3 + _offset3) * _translation3;
     }
 
+    @Override
+    public int i_of_idx( int d1, int d2, int d3 ) {
+        return (d1 * _spread1 + _offset1) * _translation1 +
+                (d2 * _spread2 + _offset2) * _translation2 +
+                (d3 * _spread3 + _offset3) * _translation3;
+    }
 }

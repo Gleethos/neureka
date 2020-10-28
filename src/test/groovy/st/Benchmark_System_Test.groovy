@@ -34,6 +34,12 @@ class Benchmark_System_Test extends Specification
     {
         given : 'Neureka instance is being reset.'
             Neureka.instance().reset()
+            def configuration = [
+                    "iterations":1,
+                    "sample_size":20,
+                    "difficulty":15,
+                    "intensifier":0
+            ]
 
         and : 'The benchmark script is being loaded into a GroovyShell instance.'
             def session = new GroovyShell().evaluate(Utility.readResource("benchmark.groovy", this))
@@ -43,13 +49,8 @@ class Benchmark_System_Test extends Specification
             String expected = "56b2eb74955e49cd777469c7dad0536e"
 
         when : 'The benchmark script is being called...'
-            session([
-                    "iterations":1,
-                    "sample_size":20,
-                    "difficulty":15,
-                    "intensifier":0
-            ],
-                    null,
+            session(
+                    configuration, null,
                     HostCPU.instance(),
                     tsr -> {
                         hash = (hash+tsr.toString()).md5()
@@ -64,13 +65,8 @@ class Benchmark_System_Test extends Specification
 
         when : 'The benchmark is now being executed with the first found OpenCLDevice instance...'
             hash = ""
-            session([
-                    "iterations":1,
-                    "sample_size":20,
-                    "difficulty":15,
-                    "intensifier":0
-            ],
-                    null,
+            session(
+                    configuration, null,
                     Device.find("first"),
                         tsr -> {
                             hash = (hash+tsr.toString()).md5()
@@ -78,7 +74,7 @@ class Benchmark_System_Test extends Specification
             )
 
         then : 'The calculated hash is as expected.'
-            hash==expected
+            hash==expected//"56b2eb74955e49cd777469c7dad0536e"
 
         //String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date())
         //session([

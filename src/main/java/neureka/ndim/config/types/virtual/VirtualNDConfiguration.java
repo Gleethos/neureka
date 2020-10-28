@@ -1,22 +1,33 @@
-package neureka.ndim.config.virtual;
+package neureka.ndim.config.types.virtual;
 
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.config.simple.SimpleD2Configuration;
+
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public class VirtualNDConfiguration extends AbstractNDC
 {
 
+    private static Map<int[], VirtualNDConfiguration> _Virtual_Cache = new WeakHashMap<>();
+
     private final int[] _shape;
 
-    private VirtualNDConfiguration(int[] shape){
+    private VirtualNDConfiguration( int[] shape ){
         _shape = _cacheArray( shape );
     }
 
     public static NDConfiguration construct(
             int[] shape
     ){
-        return _cached( new VirtualNDConfiguration( shape ) );
+        shape = _cacheArray( shape );
+        VirtualNDConfiguration found = _Virtual_Cache.get( shape );
+        if ( found != null ) {
+            return _Virtual_Cache.get( shape );
+        }
+        found = new VirtualNDConfiguration( shape );
+        _Virtual_Cache.put( shape, found );
+        return found;
     }
 
     @Override

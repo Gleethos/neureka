@@ -82,7 +82,7 @@ public class Summation extends AbstractOperationType
                 {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
-                    if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] + t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                    if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()] + t2_val[t2Idx.i()];
                     else return (t0Idx, t1Idx, t2Idx) -> 1.0;
                 };
 
@@ -185,8 +185,8 @@ public class Summation extends AbstractOperationType
         DefaultOperatorCreator<TertiaryNDXConsumer> activationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if ( d < 0 ) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
-                    else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                    if ( d < 0 ) return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()];
+                    else return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()];
                 };
 
         Activation activation = new Activation()

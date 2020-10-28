@@ -1,4 +1,4 @@
-package neureka.ndim.config.simple;
+package neureka.ndim.config.types.simple;
 
 import neureka.Neureka;
 import neureka.ndim.config.NDConfiguration;

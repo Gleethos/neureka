@@ -1,12 +1,10 @@
 package neureka.ndim.config;
 
 import neureka.Neureka;
-import neureka.Tsr;
-import neureka.ndim.AbstractNDArray;
-import neureka.ndim.config.complex.*;
-import neureka.ndim.config.simple.*;
-import neureka.ndim.config.views.SimpleReshapeView;
-import org.jetbrains.annotations.Contract;
+import neureka.ndim.config.types.complex.*;
+import neureka.ndim.config.types.simple.*;
+import neureka.ndim.config.types.views.SimpleReshapeView;
+import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 
 import java.util.*;
 
@@ -137,6 +135,7 @@ public abstract class AbstractNDC implements NDConfiguration
 
     protected static <T extends NDConfiguration> NDConfiguration _cached(T ndc)
     {
+        assert !( ndc instanceof VirtualNDConfiguration );
         long key = ndc.keyCode();
         NDConfiguration found = _CACHED_NDCS.get(key);
         if (

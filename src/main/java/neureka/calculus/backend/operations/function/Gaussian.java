@@ -34,10 +34,10 @@ public class Gaussian extends AbstractOperationType
                 {
                     double[] t1_val = inputs[ 1 ].value64();
                     if (d < 0) {
-                        return (t0Idx, t1Idx, t2Idx) -> Math.pow(Math.E, -Math.pow(t1_val[inputs[ 1 ].i_of_idx(t1Idx)], 2));
+                        return (t0Idx, t1Idx, t2Idx) -> Math.pow(Math.E, -Math.pow(t1_val[t1Idx.i()], 2));
                     } else {
                         return (t0Idx, t1Idx, t2Idx) -> {
-                            double input = t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                            double input = t1_val[t1Idx.i()];
                             return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));
                         };
 

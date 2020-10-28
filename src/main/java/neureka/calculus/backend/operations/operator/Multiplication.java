@@ -26,11 +26,11 @@ public class Multiplication extends AbstractOperationType {
                 double[] t1_val = inputs[ 1 ].value64();
                 double[] t2_val = inputs[ 2 ].value64();
                 if (d < 0) {
-                    return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                    return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()] * t2_val[t2Idx.i()];
                 } else {
                     return (t0Idx, t1Idx, t2Idx) -> {
-                        if (d == 0) return t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
-                        else return t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                        if (d == 0) return t2_val[t2Idx.i()];
+                        else return t1_val[t1Idx.i()];
                     };
                 }
             };
@@ -95,18 +95,18 @@ public class Multiplication extends AbstractOperationType {
         //_____________________
         // DEFAULT OPERATION :
 
-        DefaultOperatorCreator<PrimaryNDXConsumer> defaultOperatorcreator =
+        DefaultOperatorCreator<SecondaryNDXConsumer> defaultOperatorcreator =
                 ( inputs, d ) -> {
                     inputs[ 1 ].setIsVirtual( false );
                     inputs[ 2 ].setIsVirtual( false );
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
                     if ( d < 0 ) {
-                        return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
+                        return ( t1Idx, t2Idx ) -> t1_val[t1Idx.i()] * t2_val[t2Idx.i()];
                     } else {
-                        return t1Idx -> {
-                            if ( d == 0 ) return t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
-                            else return t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                        return ( t1Idx, t2Idx ) -> {
+                            if ( d == 0 ) return t2_val[t2Idx.i()];
+                            else return t1_val[t1Idx.i()];
                         };
                     }
                 };
@@ -283,10 +283,10 @@ public class Multiplication extends AbstractOperationType {
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarOperatorCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if ( d < 0 ) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * value;
+                    if ( d < 0 ) return t1Idx -> t1_val[t1Idx.i()] * value;
                     else {
                         if ( d == 0 ) return t1Idx -> value;
-                        else return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                        else return t1Idx -> t1_val[t1Idx.i()];
                     }
                 };
 
@@ -412,7 +412,7 @@ public class Multiplication extends AbstractOperationType {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
                     return (t0Idx, t1Idx, t2Idx) ->
-                            t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                            t1_val[t1Idx.i()] * t2_val[t2Idx.i()];
                 };
 
         Broadcast xBroadcast = new Broadcast()

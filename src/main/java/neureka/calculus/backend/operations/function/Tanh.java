@@ -21,12 +21,12 @@ public class Tanh extends AbstractOperationType
                 double[] t1_val = inputs[ 1 ].value64();
                 if (d < 0) {
                     return (t0Idx, t1Idx, t2Idx) -> {
-                        double input = t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                        double input = t1_val[t1Idx.i()];
                         return input / Math.pow(1 + Math.pow(input, 2), 0.5);
                     };
                 } else {
                     return (t0Idx, t1Idx, t2Idx) -> {
-                        double input = t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                        double input = t1_val[t1Idx.i()];
                         return 1 - Math.pow(input / Math.pow(1 + Math.pow(input, 2), 0.5), 2);
                     };
                 }
