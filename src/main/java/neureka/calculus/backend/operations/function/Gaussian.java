@@ -1,5 +1,6 @@
 package neureka.calculus.backend.operations.function;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
@@ -29,7 +30,7 @@ public class Gaussian extends AbstractOperationType
                 }
         );
 
-        DefaultOperatorCreator<TertiaryNDXConsumer> activationCreator =
+        DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
                 ( inputs, d ) ->
                 {
                     double[] t1_val = inputs[ 1 ].value64();
@@ -38,6 +39,21 @@ public class Gaussian extends AbstractOperationType
                     } else {
                         return (t0Idx, t1Idx, t2Idx) -> {
                             double input = t1_val[t1Idx.i()];
+                            return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));
+                        };
+
+                    }
+                };
+
+        DefaultOperatorCreator<TertiaryNDXConsumer> activationXCreator =
+                ( inputs, d ) ->
+                {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    if (d < 0) {
+                        return (t0Idx, t1Idx, t2Idx) -> Math.pow(Math.E, -Math.pow(t1_val[inputs[ 1 ].i_of_idx(t1Idx)], 2));
+                    } else {
+                        return (t0Idx, t1Idx, t2Idx) -> {
+                            double input = t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
                             return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));
                         };
 
@@ -91,7 +107,14 @@ public class Gaussian extends AbstractOperationType
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor( 0 ).size(),
-                                                        ( start, end ) ->
+                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        ? ( start, end ) ->
+                                                                Activation.activate (
+                                                                        call.getTensor( 0 ),
+                                                                        start, end,
+                                                                        activationXCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                        : ( start, end ) ->
                                                                 Activation.activate (
                                                                         call.getTensor( 0 ),
                                                                         start, end,

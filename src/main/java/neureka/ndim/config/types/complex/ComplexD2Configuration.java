@@ -1,13 +1,41 @@
 package neureka.ndim.config.types.complex;
 
 import neureka.Neureka;
-import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.D2C;
 
-public final class D2Configuration extends D2C //:= IMMUTABLE
+public class ComplexD2Configuration extends D2C //:= IMMUTABLE
 {
-    private D2Configuration(
+    /**
+     *  The shape of the NDArray.
+     */
+    protected final int _shape1;
+    protected final int _shape2;
+    /**
+     *  The translation from a shape index (idx) to the index of the underlying data array.
+     */
+    private final int _translation1;
+    private final int _translation2;
+    /**
+     *  The mapping of idx array.
+     */
+    private final int _idxmap1;
+    private final int _idxmap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
+    /**
+     *  Produces the strides of a tensor subset / slice
+     */
+    private final int _spread1;
+    private final int _spread2;
+    /**
+     *  Defines the position of a subset / slice tensor within its parent!
+     */
+    private final int _offset1;
+    private final int _offset2;
+    /**
+     *  The value of this tensor. Usually a array of type double[] or float[].
+     */
+
+    protected ComplexD2Configuration(
             int[] shape,
             int[] translation,
             int[] idxmap,
@@ -33,37 +61,8 @@ public final class D2Configuration extends D2C //:= IMMUTABLE
             int[] spread,
             int[] offset
     ){
-        return _cached(new D2Configuration(shape, translation, idxmap, spread, offset));
+        return _cached(new ComplexD2Configuration(shape, translation, idxmap, spread, offset));
     }
-
-    /**
-     *  The shape of the NDArray.
-     */
-    private final int _shape1;
-    private final int _shape2;
-    /**
-     *  The translation from a shape index (idx) to the index of the underlying data array.
-     */
-    private final int _translation1;
-    private final int _translation2;
-    /**
-     *  The mapping of idx array.
-     */
-    private final int _idxmap1;
-    private final int _idxmap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
-    /**
-     *  Produces the strides of a tensor subset / slice
-     */
-    private final int _spread1;
-    private final int _spread2;
-    /**
-     *  Defines the position of a subset / slice tensor within its parent!
-     */
-    private final int _offset1;
-    private final int _offset2;
-    /**
-     *  The value of this tensor. Usually a array of type double[] or float[].
-     */
 
     @Override
     public int rank() {

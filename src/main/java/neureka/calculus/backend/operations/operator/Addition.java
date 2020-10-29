@@ -1,5 +1,6 @@
 package neureka.calculus.backend.operations.operator;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
@@ -20,13 +21,22 @@ import java.util.List;
 
 public class Addition extends AbstractOperationType {
 
-    private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
+    private static final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 double[] t2_val = inputs[ 2 ].value64();
                 if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()] + t2_val[t2Idx.i()];
                 else return (t0Idx, t1Idx, t2Idx) -> 1.0;
             };
+
+    private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
+            ( inputs, d ) -> {
+                double[] t1_val = inputs[ 1 ].value64();
+                double[] t2_val = inputs[ 2 ].value64();
+                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] + t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                else return (t0Idx, t1Idx, t2Idx) -> 1.0;
+            };
+
 
     private static final Broadcast _broadcast = new Broadcast()
         .setBackwardADAnalyzer( call -> true )
@@ -141,12 +151,20 @@ public class Addition extends AbstractOperationType {
         //_____________________
         // DEFAULT OPERATION :
 
-        DefaultOperatorCreator<SecondaryNDXConsumer> operationCreator =
+        DefaultOperatorCreator<SecondaryNDIConsumer> operationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
                     if (d < 0) return ( t1Idx, t2Idx ) -> t1_val[t1Idx.i()] + t2_val[t2Idx.i()];
                     else return ( t1Idx, t2Idx ) -> 1.0;
+                };
+
+        DefaultOperatorCreator<PrimaryNDXConsumer> operationXCreator =
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
+                    if (d < 0) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] + t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
+                    else return t1Idx -> 1.0;
                 };
 
         Operator operator = new Operator()
@@ -188,7 +206,17 @@ public class Addition extends AbstractOperationType {
                                                 call.getDevice().getExecutor()
                                                         .threaded (
                                                                 call.getTensor( 0 ).size(),
-                                                                ( start, end ) ->
+                                                                (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                                ? ( start, end ) ->
+                                                                        Operator.operate (
+                                                                                call.getTensor( 0 ),
+                                                                                call.getTensor(1),
+                                                                                call.getTensor(2),
+                                                                                call.getDerivativeIndex(),
+                                                                                start, end,
+                                                                                operationXCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        )
+                                                                : ( start, end ) ->
                                                                         Operator.operate (
                                                                                 call.getTensor( 0 ),
                                                                                 call.getTensor(1),
@@ -235,7 +263,14 @@ public class Addition extends AbstractOperationType {
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor( 0 ).size(),
-                                                        ( start, end ) ->
+                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                               ? ( start, end ) ->
+                                                                Broadcast.broadcast (
+                                                                        call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                        call.getDerivativeIndex(), start, end,
+                                                                        _creatorX.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                : ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
                                                                         call.getDerivativeIndex(), start, end,
@@ -299,10 +334,20 @@ public class Addition extends AbstractOperationType {
                         }
                 );
 
-        ScalarOperatorCreator<PrimaryNDXConsumer> scalarCreator =
+        ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     if (d < 0) return t1Idx -> t1_val[t1Idx.i()] + value;
+                    else {
+                        if (d == 0) return t1Idx -> 1;
+                        else return t1Idx -> 1;
+                    }
+                };
+
+        ScalarOperatorCreator<PrimaryNDXConsumer> scalarXCreator =
+                (inputs, value, d) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    if (d < 0) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] + value;
                     else {
                         if (d == 0) return t1Idx -> 1;
                         else return t1Idx -> 1;
@@ -319,7 +364,14 @@ public class Addition extends AbstractOperationType {
                                             call.getDevice().getExecutor()
                                                     .threaded (
                                                             call.getTensor( 0 ).size(),
-                                                            ( start, end ) ->
+                                                            (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                            ? ( start, end ) ->
+                                                                    Scalarization.scalarize (
+                                                                            call.getTensor( 0 ),
+                                                                            start, end,
+                                                                            scalarXCreator.create(call.getTensors(), value, -1)
+                                                                    )
+                                                            : ( start, end ) ->
                                                                     Scalarization.scalarize (
                                                                             call.getTensor( 0 ),
                                                                             start, end,
@@ -377,7 +429,7 @@ public class Addition extends AbstractOperationType {
 
         new AbstractOperationType(
                 "add", "a", 2, true, false, false, false
-                ){
+        ){
             @Override
             public double calculate( double[] inputs, int j, int d, List<Function> src ){
                 return 0;

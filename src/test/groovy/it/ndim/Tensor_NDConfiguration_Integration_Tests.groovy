@@ -2,8 +2,8 @@ package it.ndim
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.ndim.config.types.complex.D1Configuration
-import neureka.ndim.config.types.complex.ScalarConfiguration
+import neureka.ndim.config.types.complex.ComplexD1Configuration
+import neureka.ndim.config.types.complex.ComplexScalarConfiguration
 import neureka.ndim.config.types.simple.SimpleD1Configuration
 import neureka.ndim.config.types.simple.SimpleScalarConfiguration
 import spock.lang.Specification
@@ -53,8 +53,8 @@ class Tensor_NDConfiguration_Integration_Tests extends Specification
             x.NDConf.idxmap(0) == 1
             x.NDConf.offset(0) == 0
             x.NDConf.spread(0) == 1
-            x[2].NDConf instanceof ScalarConfiguration
-            y[1.1].NDConf instanceof ScalarConfiguration
+            x[2].NDConf instanceof ComplexScalarConfiguration
+            y[1.1].NDConf instanceof ComplexScalarConfiguration
             y[1.1].NDConf != x[2].NDConf
             y[1.1].NDConf == z[1].NDConf
 
@@ -71,7 +71,7 @@ class Tensor_NDConfiguration_Integration_Tests extends Specification
             y = y[1..2]
         then : 'This produces the expected slice.'
             y.toString().contains("(2):[4.5, 2.0]")
-            y.NDConf instanceof D1Configuration
+            y.NDConf instanceof ComplexD1Configuration
             y.NDConf.shape(0) == 2
             y.NDConf.translation(0) == 1
             y.NDConf.idxmap(0) == 1

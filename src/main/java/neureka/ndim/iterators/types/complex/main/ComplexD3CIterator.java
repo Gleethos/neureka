@@ -1,39 +1,26 @@
-package neureka.ndim.iterators;
+package neureka.ndim.iterators.types.complex.main;
 
-import neureka.ndim.config.types.D3C;
+import neureka.ndim.config.NDIterator;
+import neureka.ndim.config.types.complex.ComplexD3Configuration;
 
-public class D3Iterator extends AbstractNDIterator
+public class ComplexD3CIterator extends ComplexD3Configuration implements NDIterator
 {
-    private int _d1;
-    private int _d2;
-    private int _d3;
-    private final int _s1;
-    private final int _s2;
-    private final int _s3;
-    private final D3C _conf;
+    protected int _d1 = 0;
+    protected int _d2 = 0;
+    protected int _d3 = 0;
 
-    public D3Iterator( D3C ndc ) {
-        _s1 = ndc.shape( 0 );
-        _s2 = ndc.shape( 1 );
-        _s3 = ndc.shape( 2 );
-        _d1 = 0;
-        _d2 = 0;
-        _d3 = 0;
-        _conf = ndc;
+    public ComplexD3CIterator(ComplexD3Configuration ndc) {
+        super( ndc.shape(), ndc.translation(), ndc.idxmap(), ndc.spread(), ndc.offset() );
     }
 
-    @Override
-    public int[] shape() {
-        return new int[]{ _s1, _s2, _s3 };
-    }
 
     @Override
     public void increment() {
         _d3++;
-        if ( _d3 == _s3 ) {
+        if ( _d3 == _shape3 ) {
             _d3 = 0;
             _d2++;
-            if ( _d2 == _s2 ) {
+            if ( _d2 == _shape2 ) {
                 _d2 = 0;
                 _d1++;
             }
@@ -43,7 +30,7 @@ public class D3Iterator extends AbstractNDIterator
     @Override
     public void decrement() {
         if ( _d3 == 0 ) {
-            _d3 = _s3 - 1;
+            _d3 = _shape3 - 1;
             if ( _d2 == 0 ) {
                 _d1--;
             } else _d2--;
@@ -52,7 +39,7 @@ public class D3Iterator extends AbstractNDIterator
 
     @Override
     public int i() {
-        return _conf.i_of_idx( _d1, _d2, _d3 );
+        return this.i_of_idx( _d1, _d2, _d3 );
     }
 
     @Override
@@ -78,11 +65,5 @@ public class D3Iterator extends AbstractNDIterator
         _d2 = idx[1];
         _d3 = idx[2];
     }
-
-    @Override
-    public int rank() {
-        return 3;
-    }
-
 
 }

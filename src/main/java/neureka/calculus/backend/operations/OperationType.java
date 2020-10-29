@@ -34,16 +34,25 @@ public interface OperationType
         return OperationContext.instance().getLookup().getOrDefault(identifier, null);
     }
 
-    interface TertiaryNDXConsumer {
+    interface TertiaryNDIConsumer {
         double execute(NDIterator t0Idx, NDIterator t1Idx, NDIterator t2Idx);
     }
-
-    interface SecondaryNDXConsumer {
-        double execute(NDIterator t0Idx, NDIterator t1Idx);
+    interface TertiaryNDXConsumer {
+        double execute(int[] t0Idx, int[] t1Idx, int[] t2Idx);
     }
 
-    interface PrimaryNDXConsumer {
+    interface SecondaryNDIConsumer {
+        double execute(NDIterator t0Idx, NDIterator t1Idx);
+    }
+    interface SecondaryNDXConsumer {
+        double execute(int[] t0Idx, int[] t1Idx);
+    }
+
+    interface PrimaryNDIConsumer {
         double execute(NDIterator t0Idx);
+    }
+    interface PrimaryNDXConsumer {
+        double execute(int[] t0Idx);
     }
 
     //---

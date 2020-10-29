@@ -1,15 +1,14 @@
 package neureka.ndim.config.types.complex;
 
 import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.types.D1C;
 
-public final class D1Configuration extends D1C //:= IMMUTABLE
+public class ComplexD1Configuration extends D1C //:= IMMUTABLE
 {
     /**
      *  The shape of the NDArray.
      */
-    private final int _shape;
+    protected final int _shape;
     /**
      *  The translation from a shape index (idx) to the index of the underlying data array.
      */
@@ -37,10 +36,10 @@ public final class D1Configuration extends D1C //:= IMMUTABLE
             int[] spread,
             int[] offset
     ){
-        return _cached(new D1Configuration(shape[ 0 ], translation[ 0 ],  idxmap[ 0 ], spread[ 0 ], offset[ 0 ]));
+        return _cached(new ComplexD1Configuration(shape[ 0 ], translation[ 0 ],  idxmap[ 0 ], spread[ 0 ], offset[ 0 ]));
     }
 
-    private D1Configuration(
+    protected ComplexD1Configuration(
             int shape,
             int translation,
             int idxmap,

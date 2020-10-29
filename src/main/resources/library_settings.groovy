@@ -18,7 +18,7 @@ Neureka.instance {
 
         indexing {
             it.isUsingLegacyIndexing = false
-            it.isUsingThoroughIndexing = true
+            it.isUsingArrayBasedIndexing = true
         }
 
         view {

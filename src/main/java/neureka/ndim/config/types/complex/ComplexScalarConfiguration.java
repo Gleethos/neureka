@@ -3,19 +3,17 @@ package neureka.ndim.config.types.complex;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 
-public final class ScalarConfiguration extends AbstractNDC //:= IMMUTABLE
+public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
 {
     /**
      *  The shape of the NDArray.
      */
-    private final int _shape;
+    protected final int _shape;
     /**
      *  Defines the position of a subset / slice tensor within its parent!
      */
     private final int _offset;
-    /**
-     *  The value of this tensor. Usually a array of type double[] or float[].
-     */
+
 
     public static NDConfiguration construct(
             int[] shape,
@@ -24,10 +22,10 @@ public final class ScalarConfiguration extends AbstractNDC //:= IMMUTABLE
             // spread, does not matter!
             int[] offset
     ) {
-        return _cached(new ScalarConfiguration(shape[ 0 ], offset[ 0 ]));
+        return _cached(new ComplexScalarConfiguration(shape[ 0 ], offset[ 0 ]));
     }
 
-    private ScalarConfiguration(
+    protected ComplexScalarConfiguration(
             int shape,
             int offset
     ) {

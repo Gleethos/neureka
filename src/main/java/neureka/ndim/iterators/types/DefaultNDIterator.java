@@ -1,9 +1,9 @@
-package neureka.ndim.iterators;
+package neureka.ndim.iterators.types;
 
-import neureka.Tsr;
 import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.NDIterator;
 
-public class DefaultNDIterator extends AbstractNDIterator
+public class DefaultNDIterator implements NDIterator
 {
     private final int[] _idx;
     private final int[] _shape;
@@ -13,6 +13,11 @@ public class DefaultNDIterator extends AbstractNDIterator
         _shape = ndc.shape();
         _idx = new int[ _shape.length ];
         _conf = ndc;
+    }
+
+    @Override
+    public int shape(int i) {
+        return _shape[i];
     }
 
     @Override

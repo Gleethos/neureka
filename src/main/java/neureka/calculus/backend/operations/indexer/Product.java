@@ -1,5 +1,6 @@
 package neureka.calculus.backend.operations.indexer;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
@@ -84,7 +85,7 @@ public class Product extends AbstractOperationType {
         //________________
         // BROADCASTING :
 
-        DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
+        DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
                 ( inputs, d ) ->
                 {
                     double[] t1_val = inputs[ 1 ].value64();
@@ -95,6 +96,21 @@ public class Product extends AbstractOperationType {
                         return (t0Idx, t1Idx, t2Idx) -> {
                             if (d == 0) return t2_val[t2Idx.i()];
                             else return t1_val[t1Idx.i()];
+                        };
+                    }
+                };
+
+        DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
+                ( inputs, d ) ->
+                {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
+                    if (d < 0) {
+                        return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                    } else {
+                        return (t0Idx, t1Idx, t2Idx) -> {
+                            if (d == 0) return t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                            else return t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
                         };
                     }
                 };
@@ -155,7 +171,17 @@ public class Product extends AbstractOperationType {
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor( 0 ).size(),
-                                                        ( start, end ) ->
+                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        ? ( start, end ) ->
+                                                                Broadcast.broadcast (
+                                                                        call.getTensor( 0 ),
+                                                                        call.getTensor(1),
+                                                                        call.getTensor(2),
+                                                                        call.getDerivativeIndex(),
+                                                                        start, end,
+                                                                        _creatorX.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                        :  ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTensor( 0 ),
                                                                         call.getTensor(1),
@@ -193,11 +219,18 @@ public class Product extends AbstractOperationType {
         //______________
         // ACTIVATION :
 
-        DefaultOperatorCreator<TertiaryNDXConsumer> activationCreator =
+        DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()];
                     else return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()];
+                };
+
+        DefaultOperatorCreator<TertiaryNDXConsumer> activationXCreator =
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                    else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
                 };
 
         Activation activation = new Activation()
@@ -276,7 +309,14 @@ public class Product extends AbstractOperationType {
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor( 0 ).size(),
-                                                        ( start, end ) ->
+                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        ? ( start, end ) ->
+                                                                Activation.activate (
+                                                                        call.getTensor( 0 ),
+                                                                        start, end,
+                                                                        activationXCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                        : ( start, end ) ->
                                                                 Activation.activate (
                                                                         call.getTensor( 0 ),
                                                                         start, end,

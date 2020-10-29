@@ -1,5 +1,6 @@
 package neureka.calculus.backend.operations.function;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
@@ -15,7 +16,7 @@ import java.util.List;
 public class ReLU extends AbstractOperationType
 {
 
-    private DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
+    private DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if (d < 0) {
@@ -26,6 +27,22 @@ public class ReLU extends AbstractOperationType
                 } else {
                     return (t0Idx, t1Idx, t2Idx) -> {
                         if(t1_val[t1Idx.i()]>=0) return 1;
+                        else return 0.01;
+                    };
+                }
+            };
+
+    private DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
+            ( inputs, d ) -> {
+                double[] t1_val = inputs[ 1 ].value64();
+                if (d < 0) {
+                    return (t0Idx, t1Idx, t2Idx) -> {
+                        if(t1_val[inputs[ 1 ].i_of_idx(t1Idx)]>=0) return t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                        else return t1_val[inputs[ 1 ].i_of_idx(t1Idx)]*0.01;
+                    };
+                } else {
+                    return (t0Idx, t1Idx, t2Idx) -> {
+                        if(t1_val[inputs[ 1 ].i_of_idx(t1Idx)]>=0) return 1;
                         else return 0.01;
                     };
                 }
@@ -99,7 +116,14 @@ public class ReLU extends AbstractOperationType
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor( 0 ).size(),
-                                                        ( start, end ) ->
+                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        ? ( start, end ) ->
+                                                                Activation.activate (
+                                                                        call.getTensor( 0 ),
+                                                                        start, end,
+                                                                        _creatorX.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                        : ( start, end ) ->
                                                                 Activation.activate (
                                                                         call.getTensor( 0 ),
                                                                         start, end,

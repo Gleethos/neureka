@@ -1,5 +1,6 @@
 package neureka.calculus.backend.operations.function;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
@@ -15,11 +16,18 @@ import java.util.List;
 public class Sigmoid extends AbstractOperationType
 {
 
-    private DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
+    private DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if (d < 0) return (t0Idx, t1Idx, t2Idx) -> calculate( t1_val[t1Idx.i()], false );
                 else return (t0Idx, t1Idx, t2Idx) ->  calculate( t1_val[t1Idx.i()], true );
+            };
+
+    private DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
+            ( inputs, d ) -> {
+                double[] t1_val = inputs[ 1 ].value64();
+                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> calculate( t1_val[inputs[ 1 ].i_of_idx(t1Idx)], false );
+                else return (t0Idx, t1Idx, t2Idx) ->  calculate( t1_val[inputs[ 1 ].i_of_idx(t1Idx)], true );
             };
 
 
@@ -92,7 +100,14 @@ public class Sigmoid extends AbstractOperationType
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor( 0 ).size(),
-                                                        ( start, end ) ->
+                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        ? ( start, end ) ->
+                                                                Activation.activate (
+                                                                        call.getTensor( 0 ),
+                                                                        start, end,
+                                                                        _creatorX.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                        : ( start, end ) ->
                                                                 Activation.activate (
                                                                         call.getTensor( 0 ),
                                                                         start, end,

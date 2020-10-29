@@ -1,5 +1,6 @@
 package neureka.calculus.backend.operations.other;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
@@ -70,10 +71,17 @@ public class CopyLeft extends AbstractOperationType {
                         }
                 );
 
-        ScalarOperatorCreator<PrimaryNDXConsumer> scalarCreator =
+        ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     if (d < 0) return t1Idx -> t1_val[t1Idx.i()] = value;
+                    else return null;
+                };
+
+        ScalarOperatorCreator<PrimaryNDXConsumer> scalarXCreator =
+                (inputs, value, d) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    if (d < 0) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] = value;
                     else return null;
                 };
 
@@ -88,7 +96,14 @@ public class CopyLeft extends AbstractOperationType {
                                     call.getDevice().getExecutor()
                                             .threaded (
                                                     call.getTensor( 0 ).size(),
-                                                    ( start, end ) ->
+                                                    (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                    ? ( start, end ) ->
+                                                            Scalarization.scalarize (
+                                                                    call.getTensor( 0 ),
+                                                                    start, end,
+                                                                    scalarXCreator.create(call.getTensors(), value, -1)
+                                                            )
+                                                    : ( start, end ) ->
                                                             Scalarization.scalarize (
                                                                     call.getTensor( 0 ),
                                                                     start, end,

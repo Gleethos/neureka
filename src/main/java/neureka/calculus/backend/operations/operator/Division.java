@@ -1,5 +1,6 @@
 package neureka.calculus.backend.operations.operator;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class Division extends AbstractOperationType
 {
-    private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
+    private static final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
     ( inputs, d ) -> {
         double[] t1_val = inputs[ 1 ].value64();
         double[] t2_val = inputs[ 2 ].value64();
@@ -37,6 +38,23 @@ public class Division extends AbstractOperationType
             };
         }
     };
+
+    private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
+            ( inputs, d ) -> {
+                double[] t1_val = inputs[ 1 ].value64();
+                double[] t2_val = inputs[ 2 ].value64();
+                if (d < 0) {
+                    return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] / t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                } else {
+                    return (t0Idx, t1Idx, t2Idx) -> {
+                        if (d == 0) {//"    output = 1/input2;\n" +
+                            return 1 / t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                        } else {
+                            return -(t1_val[inputs[ 2 ].i_of_idx(t2Idx)] / Math.pow(t2_val[inputs[ 1 ].i_of_idx(t1Idx)], 2));
+                        }//"    output = -input2 /(float)pow(input1, 2.0f);\n" +
+                    };
+                }
+            };
 
     public Division()
     {
@@ -123,16 +141,50 @@ public class Division extends AbstractOperationType
         //_____________________
         // DEFAULT OPERATION :
 
+        final DefaultOperatorCreator<SecondaryNDIConsumer> _operationCreator =
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
+                    if (d < 0) {
+                        return ( t1Idx, t2Idx ) -> t1_val[t1Idx.i()] / t2_val[t2Idx.i()];
+                    } else {
+                        return ( t1Idx, t2Idx ) -> {
+                            if (d == 0) {//"    output = 1/input2;\n" +
+                                return 1 / t2_val[t2Idx.i()];
+                            } else {
+                                return -(t1_val[t2Idx.i()] / Math.pow(t2_val[t1Idx.i()], 2));
+                            }//"    output = -input2 /(float)pow(input1, 2.0f);\n" +
+                        };
+                    }
+                };
+
+        final DefaultOperatorCreator<PrimaryNDXConsumer> _operationXCreator =
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
+                    if (d < 0) {
+                        return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] / t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
+                    } else {
+                        return t1Idx -> {
+                            if (d == 0) {//"    output = 1/input2;\n" +
+                                return 1 / t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
+                            } else {
+                                return -(t1_val[inputs[ 2 ].i_of_idx(t1Idx)] / Math.pow(t2_val[inputs[ 1 ].i_of_idx(t1Idx)], 2));
+                            }//"    output = -input2 /(float)pow(input1, 2.0f);\n" +
+                        };
+                    }
+                };
+
         Operator operator = new Operator()
                 .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
+                .setForwardADAnalyzer(
                     call -> {
                         Tsr<?> last = null;
-                    for ( Tsr<?> t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
-                    }
-                    return true;
+                        for ( Tsr<?> t : call.getTensors() ) {
+                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                            last = t; // Note: shapes are cached!
+                        }
+                        return true;
                     }
                 ).setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
@@ -161,26 +213,39 @@ public class Division extends AbstractOperationType
                 );
 
         setImplementation(
-                Operator.class, operator.setExecutor(
+                Operator.class,
+                operator
+                    .setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor( 0 ).size(),
-                                                        ( start, end ) ->
-                                                                Broadcast.broadcast (
-                                                                        call.getTensor( 0 ),
-                                                                        call.getTensor(1),
-                                                                        call.getTensor(2),
-                                                                        call.getDerivativeIndex(),
-                                                                        start, end,
-                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())
+                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                            ? ( start, end ) ->
+                                                                Operator.operate (
+                                                                    call.getTensor( 0 ),
+                                                                    call.getTensor(1),
+                                                                    call.getTensor(2),
+                                                                    call.getDerivativeIndex(),
+                                                                    start, end,
+                                                                    _operationXCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                            : ( start, end ) ->
+                                                                Operator.operate (
+                                                                    call.getTensor( 0 ),
+                                                                    call.getTensor(1),
+                                                                    call.getTensor(2),
+                                                                    call.getDerivativeIndex(),
+                                                                    start, end,
+                                                                    _operationCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 ),
                                 3
                         )
-                ).setExecutor(
+                    )
+                    .setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
@@ -204,7 +269,7 @@ public class Division extends AbstractOperationType
                                         "}",
                                 this // OperationType
                         )
-                )
+                    )
         );
 
 
@@ -268,7 +333,14 @@ public class Division extends AbstractOperationType
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor( 0 ).size(),
-                                                        ( start, end ) ->
+                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        ? ( start, end ) ->
+                                                                Broadcast.broadcast (
+                                                                        call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                        call.getDerivativeIndex(), start, end,
+                                                                        _creatorX.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                        : ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
                                                                         call.getDerivativeIndex(), start, end,
@@ -307,7 +379,7 @@ public class Division extends AbstractOperationType
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        ScalarOperatorCreator<PrimaryNDXConsumer> scalarCreator =
+        ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     if (d < 0) {
@@ -315,6 +387,17 @@ public class Division extends AbstractOperationType
                     } else {
                         if (d == 0) return t1Idx -> 1 / value;
                         else return t1Idx -> -value / Math.pow(t1_val[t1Idx.i()], 2);
+                    }
+                };
+
+        ScalarOperatorCreator<PrimaryNDXConsumer> scalarXCreator =
+                (inputs, value, d) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    if (d < 0) {
+                        return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] / value;
+                    } else {
+                        if (d == 0) return t1Idx -> 1 / value;
+                        else return t1Idx -> -value / Math.pow(t1_val[inputs[ 1 ].i_of_idx(t1Idx)], 2);
                     }
                 };
 
@@ -357,7 +440,14 @@ public class Division extends AbstractOperationType
                                     call.getDevice().getExecutor()
                                             .threaded (
                                                     call.getTensor( 0 ).size(),
-                                                    ( start, end ) ->
+                                                    (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                    ? ( start, end ) ->
+                                                            Scalarization.scalarize (
+                                                                    call.getTensor( 0 ),
+                                                                    start, end,
+                                                                    scalarXCreator.create(call.getTensors(), value, call.getDerivativeIndex())
+                                                            )
+                                                    : ( start, end ) ->
                                                             Scalarization.scalarize (
                                                                     call.getTensor( 0 ),
                                                                     start, end,

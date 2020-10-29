@@ -107,7 +107,7 @@ public abstract class AbstractNDC implements NDConfiguration
             int[] offset
     ) {
         if( Neureka.instance().settings().ndim().isOnlyUsingDefaultNDConfiguration() ){
-            return DefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);
+            return ComplexDefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);
         }
         boolean isSimple = _isSimpleConfiguration(shape, translation, idxmap, spread, offset);
         NDConfiguration ndc = null;
@@ -122,13 +122,13 @@ public abstract class AbstractNDC implements NDConfiguration
             } else ndc = SimpleDefaultNDConfiguration.construct(shape, translation);
         } else {
             if (shape.length == 1) {
-                if(shape[ 0 ]==1) ndc = ScalarConfiguration.construct(shape, offset);
-                else ndc = D1Configuration.construct(shape, translation, idxmap, spread, offset);
+                if(shape[ 0 ]==1) ndc = ComplexScalarConfiguration.construct(shape, offset);
+                else ndc = ComplexD1Configuration.construct(shape, translation, idxmap, spread, offset);
             } else if (shape.length == 2) {
-                ndc = D2Configuration.construct(shape, translation, idxmap, spread, offset);
+                ndc = ComplexD2Configuration.construct(shape, translation, idxmap, spread, offset);
             } else if(shape.length == 3) {
-                ndc = D3Configuration.construct(shape, translation, idxmap, spread, offset);
-            } else ndc = DefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);
+                ndc = ComplexD3Configuration.construct(shape, translation, idxmap, spread, offset);
+            } else ndc = ComplexDefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);
         }
         return ndc;
     }

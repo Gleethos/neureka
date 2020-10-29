@@ -1,5 +1,6 @@
 package neureka.calculus.backend.operations.operator;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
@@ -21,7 +22,7 @@ import java.util.List;
 public class Multiplication extends AbstractOperationType {
 
 
-    private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creator =
+    private static final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 double[] t2_val = inputs[ 2 ].value64();
@@ -31,6 +32,20 @@ public class Multiplication extends AbstractOperationType {
                     return (t0Idx, t1Idx, t2Idx) -> {
                         if (d == 0) return t2_val[t2Idx.i()];
                         else return t1_val[t1Idx.i()];
+                    };
+                }
+            };
+
+    private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
+            ( inputs, d ) -> {
+                double[] t1_val = inputs[ 1 ].value64();
+                double[] t2_val = inputs[ 2 ].value64();
+                if (d < 0) {
+                    return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                } else {
+                    return (t0Idx, t1Idx, t2Idx) -> {
+                        if (d == 0) return t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                        else return t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
                     };
                 }
             };
@@ -95,7 +110,7 @@ public class Multiplication extends AbstractOperationType {
         //_____________________
         // DEFAULT OPERATION :
 
-        DefaultOperatorCreator<SecondaryNDXConsumer> defaultOperatorcreator =
+        DefaultOperatorCreator<SecondaryNDIConsumer> defaultOperatorcreator =
                 ( inputs, d ) -> {
                     inputs[ 1 ].setIsVirtual( false );
                     inputs[ 2 ].setIsVirtual( false );
@@ -236,17 +251,24 @@ public class Multiplication extends AbstractOperationType {
 
         setImplementation(Broadcast.class,
             broadcast.setExecutor(
-                        HostExecutor.class,
+                    HostExecutor.class,
                     new HostExecutor(
                             call ->
                                     call.getDevice().getExecutor()
                                             .threaded (
                                                     call.getTensor( 0 ).size(),
-                                                    ( start, end ) ->
+                                                    (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                    ? ( start, end ) ->
                                                             Broadcast.broadcast (
-                                                                    call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
-                                                                    call.getDerivativeIndex(), start, end,
-                                                                    _creator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                call.getDerivativeIndex(), start, end,
+                                                                _creatorX.create(call.getTensors(), call.getDerivativeIndex())
+                                                            )
+                                                    : ( start, end ) ->
+                                                            Broadcast.broadcast (
+                                                                call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                call.getDerivativeIndex(), start, end,
+                                                                _creator.create(call.getTensors(), call.getDerivativeIndex())
                                                             )
                                             ),
                             3
@@ -280,13 +302,23 @@ public class Multiplication extends AbstractOperationType {
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        ScalarOperatorCreator<PrimaryNDXConsumer> scalarOperatorCreator =
+        ScalarOperatorCreator<PrimaryNDIConsumer> scalarOperatorCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     if ( d < 0 ) return t1Idx -> t1_val[t1Idx.i()] * value;
                     else {
                         if ( d == 0 ) return t1Idx -> value;
                         else return t1Idx -> t1_val[t1Idx.i()];
+                    }
+                };
+
+        ScalarOperatorCreator<PrimaryNDXConsumer> scalarOperatorXCreator =
+                (inputs, value, d) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    if ( d < 0 ) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * value;
+                    else {
+                        if ( d == 0 ) return t1Idx -> value;
+                        else return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
                     }
                 };
 
@@ -314,24 +346,20 @@ public class Multiplication extends AbstractOperationType {
                         if( forward )
                         {
                             Tsr deriv = f.derive( inputs, d );
-                            return new DefaultADAgent(
-                                    deriv
-                                ).withForward(
-                                    ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                                ).withBackward(
-                                    null
-                                );
+                            return new DefaultADAgent(  deriv )
+                                    .withForward( ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}) )
+                                    .withBackward( null );
                         }
                         else
                         {
                             Tsr deriv = f.derive( inputs, d );
-                            return new DefaultADAgent(
-                                        deriv
-                                ).withForward(
+                            return new DefaultADAgent(  deriv )
+                                    .withForward(
                                         ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                                ).withBackward(
+                                    )
+                                    .withBackward(
                                         ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv})
-                                );
+                                    );
                         }
                     }
                 )
@@ -367,7 +395,14 @@ public class Multiplication extends AbstractOperationType {
                                     call.getDevice().getExecutor()
                                             .threaded (
                                                     call.getTensor( 0 ).size(),
-                                                    ( start, end ) ->
+                                                    (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                    ? ( start, end ) ->
+                                                            Scalarization.scalarize (
+                                                                    call.getTensor( 0 ),
+                                                                    start, end,
+                                                                    scalarOperatorXCreator.create(call.getTensors(), value, -1)
+                                                            )
+                                                    : ( start, end ) ->
                                                             Scalarization.scalarize (
                                                                     call.getTensor( 0 ),
                                                                     start, end,
@@ -407,12 +442,20 @@ public class Multiplication extends AbstractOperationType {
         // RELATED OPERATION TYPES :
 
 
-        DefaultOperatorCreator<TertiaryNDXConsumer> xCreator =
+        DefaultOperatorCreator<TertiaryNDIConsumer> xBCCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
                     return (t0Idx, t1Idx, t2Idx) ->
                             t1_val[t1Idx.i()] * t2_val[t2Idx.i()];
+                };
+
+        DefaultOperatorCreator<TertiaryNDXConsumer> xBCCreatorX =
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
+                    return (t0Idx, t1Idx, t2Idx) ->
+                            t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
                 };
 
         Broadcast xBroadcast = new Broadcast()
@@ -484,11 +527,18 @@ public class Multiplication extends AbstractOperationType {
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor( 0 ).size(),
-                                                        ( start, end ) ->
+                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        ? ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
                                                                         call.getDerivativeIndex(), start, end,
-                                                                        xCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        xBCCreatorX.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                        : ( start, end ) ->
+                                                                Broadcast.broadcast (
+                                                                        call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                        call.getDerivativeIndex(), start, end,
+                                                                        xBCCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 ),
                                 3
@@ -576,11 +626,18 @@ public class Multiplication extends AbstractOperationType {
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor( 0 ).size(),
-                                                        ( start, end ) ->
+                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        ? ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
                                                                         call.getDerivativeIndex(), start, end,
-                                                                        xCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        xBCCreatorX.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                        : ( start, end ) ->
+                                                                Broadcast.broadcast (
+                                                                        call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                        call.getDerivativeIndex(), start, end,
+                                                                        xBCCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 ),
                                 3

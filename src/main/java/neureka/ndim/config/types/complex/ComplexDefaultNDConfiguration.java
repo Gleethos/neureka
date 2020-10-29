@@ -4,37 +4,13 @@ import neureka.Neureka;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.AbstractNDC;
 
-public final class DefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
+public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
 {
-
-    private DefaultNDConfiguration(
-            int[] shape,
-            int[] translation,
-            int[] idxmap,
-            int[] spread,
-            int[] offset
-    ) {
-        _shape = _cacheArray(shape);
-        _translation = _cacheArray(translation);
-        _idxmap = _cacheArray(idxmap);
-        _spread = _cacheArray(spread);
-        _offset = _cacheArray(offset);
-    }
-
-    public static NDConfiguration construct(
-            int[] shape,
-            int[] translation,
-            int[] idxmap,
-            int[] spread,
-            int[] offset
-    ){
-        return _cached(new DefaultNDConfiguration(shape, translation, idxmap, spread, offset));
-    }
 
     /**
      *  The shape of the NDArray.
      */
-    private final int[] _shape;
+    protected final int[] _shape;
     /**
      *  The translation from a shape index (idx) to the index of the underlying data array.
      */
@@ -58,6 +34,30 @@ public final class DefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
     /**
      *  The value of this tensor. Usually a array of type double[] or float[].
      */
+
+    protected ComplexDefaultNDConfiguration(
+            int[] shape,
+            int[] translation,
+            int[] idxmap,
+            int[] spread,
+            int[] offset
+    ) {
+        _shape = _cacheArray(shape);
+        _translation = _cacheArray(translation);
+        _idxmap = _cacheArray(idxmap);
+        _spread = _cacheArray(spread);
+        _offset = _cacheArray(offset);
+    }
+
+    public static NDConfiguration construct(
+            int[] shape,
+            int[] translation,
+            int[] idxmap,
+            int[] spread,
+            int[] offset
+    ){
+        return _cached(new ComplexDefaultNDConfiguration(shape, translation, idxmap, spread, offset));
+    }
 
     @Override
     public int rank() {

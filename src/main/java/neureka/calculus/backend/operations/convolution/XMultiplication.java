@@ -1,5 +1,6 @@
 package neureka.calculus.backend.operations.convolution;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
@@ -82,7 +83,7 @@ public class XMultiplication extends AbstractOperationType
             }
         };
 
-        DefaultOperatorCreator<TertiaryNDXConsumer> convolutionCreator =
+        DefaultOperatorCreator<TertiaryNDIConsumer> convolutionNDICreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
@@ -92,6 +93,19 @@ public class XMultiplication extends AbstractOperationType
                         return (t0Idx, t1Idx, t2Idx) -> {
                             if (d == 0) return t2_val[t2Idx.i()];
                             else return t1_val[t1Idx.i()];
+                        };
+                    }
+                };
+        DefaultOperatorCreator<TertiaryNDXConsumer> convolutionCreator =
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
+                    if (d < 0) {
+                        return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                    } else {
+                        return (t0Idx, t1Idx, t2Idx) -> {
+                            if (d == 0) return t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                            else return t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
                         };
                     }
                 };
@@ -188,11 +202,21 @@ public class XMultiplication extends AbstractOperationType
                                                 call.getDevice().getExecutor()
                                                         .threaded (
                                                                 call.getTensor( 0 ).size(),
-                                                                ( start, end ) ->
+                                                                (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                                ? ( start, end ) ->
                                                                         Convolution.convolve (
                                                                                 call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
                                                                                 call.getDerivativeIndex(), start, end,
                                                                                 convolutionCreator.create(
+                                                                                        call.getTensors(),
+                                                                                        -1//call.getDerivativeIndex()
+                                                                                )
+                                                                        )
+                                                                :  ( start, end ) ->
+                                                                        Convolution.convolve (
+                                                                                call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                                call.getDerivativeIndex(), start, end,
+                                                                                convolutionNDICreator.create(
                                                                                         call.getTensors(),
                                                                                         -1//call.getDerivativeIndex()
                                                                                 )
@@ -235,19 +259,19 @@ public class XMultiplication extends AbstractOperationType
             return src.get( 0 ).call( inputs, j );
             }
         }
-                .setImplementation(Convolution.class, convolution)
-                .setStringifier(
-                    children -> {
-                        StringBuilder reconstructed = new StringBuilder();
-                        for ( int i = 0; i < children.size(); ++i ) {
-                            reconstructed.append( children.get( i ) );
-                            if ( i < children.size() - 1 ) {
-                                reconstructed.append(" "+((char) 171) + "x ");
-                            }
-                        }
-                        return "(" + reconstructed + ")";
+        .setImplementation(Convolution.class, convolution)
+        .setStringifier(
+            children -> {
+                StringBuilder reconstructed = new StringBuilder();
+                for ( int i = 0; i < children.size(); ++i ) {
+                    reconstructed.append( children.get( i ) );
+                    if ( i < children.size() - 1 ) {
+                        reconstructed.append(" "+((char) 171) + "x ");
                     }
-                );
+                }
+                return "(" + reconstructed + ")";
+            }
+        );
 
         new AbstractOperationType(
                 "inv_convolve_mul_right", "x" + ((char) 187),

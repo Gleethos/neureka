@@ -26,7 +26,7 @@ public class Scalarization extends AbstractFunctionalOperationTypeImplementation
     public static void scalarize (
             Tsr t0_drn,
             int i, int end,
-            OperationType.PrimaryNDXConsumer operation
+            OperationType.PrimaryNDIConsumer operation
     ) {
         int[] t0Shp = t0_drn.getNDConf().shape();
         NDIterator t0Idx = NDIterator.of( t0_drn ); //t0_drn.idx_of_i( i );
@@ -43,6 +43,24 @@ public class Scalarization extends AbstractFunctionalOperationTypeImplementation
         }
     }
 
+    @Contract(pure = true)
+    public static void scalarize (
+            Tsr t0_drn,
+            int i, int end,
+            OperationType.PrimaryNDXConsumer operation
+    ) {
+        int[] t0Shp = t0_drn.getNDConf().shape();
+        int[] t0Idx = t0_drn.idx_of_i( i );
+        double[] t0_value = t0_drn.value64();
+        while (i < end) // increment on drain accordingly:
+        {
+            // setInto _value in drn:
+            t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute( t0Idx );
+            // increment on drain:
+            NDConfiguration.Utility.increment(t0Idx, t0Shp);
+            i++;
+        }
+    }
 
 
 }

@@ -1,5 +1,6 @@
 package neureka.calculus.backend.operations.operator;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
@@ -41,7 +42,7 @@ public class Modulo extends AbstractOperationType {
         //_____________________
         // DEFAULT OPERATION :
 
-        DefaultOperatorCreator<SecondaryNDXConsumer> operationCreator =
+        DefaultOperatorCreator<SecondaryNDIConsumer> operationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
@@ -56,17 +57,32 @@ public class Modulo extends AbstractOperationType {
                         };
                     }
                 };
+        DefaultOperatorCreator<PrimaryNDXConsumer> operationXCreator =
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
+                    if (d < 0) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] % t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
+                    else {
+                        return t1Idx -> {
+                            if (d == 0) {
+                                return 1 / t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
+                            } else {
+                                return -(t1_val[inputs[ 1 ].i_of_idx(t1Idx)] / Math.pow(t2_val[inputs[ 2 ].i_of_idx(t1Idx)], 2));
+                            }
+                        };
+                    }
+                };
 
         Operator operator = new Operator()
             .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
+            .setForwardADAnalyzer(
                     call -> {
                         Tsr<?> last = null;
-                    for ( Tsr<?> t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
-                    }
-                    return true;
+                        for ( Tsr<?> t : call.getTensors() ) {
+                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                            last = t; // Note: shapes are cached!
+                        }
+                        return true;
                     }
             )
             .setADAgentSupplier(
@@ -104,7 +120,17 @@ public class Modulo extends AbstractOperationType {
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor( 0 ).size(),
-                                                        ( start, end ) ->
+                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        ? ( start, end ) ->
+                                                                Operator.operate (
+                                                                        call.getTensor( 0 ),
+                                                                        call.getTensor(1),
+                                                                        call.getTensor(2),
+                                                                        call.getDerivativeIndex(),
+                                                                        start, end,
+                                                                        operationXCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                        : ( start, end ) ->
                                                                 Operator.operate (
                                                                         call.getTensor( 0 ),
                                                                         call.getTensor(1),
@@ -148,7 +174,7 @@ public class Modulo extends AbstractOperationType {
         //________________
         // BROADCASTING :
 
-        DefaultOperatorCreator<TertiaryNDXConsumer> creator =
+        DefaultOperatorCreator<TertiaryNDIConsumer> creator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
@@ -271,7 +297,7 @@ public class Modulo extends AbstractOperationType {
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        ScalarOperatorCreator<PrimaryNDXConsumer> scalarCreator =
+        ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     if (d < 0) {
@@ -279,6 +305,17 @@ public class Modulo extends AbstractOperationType {
                     } else {
                         if (d == 0) return t1Idx -> 1 / value;
                         else return t1Idx -> -value / Math.pow(t1_val[t1Idx.i()], 2);
+                    }
+                };
+
+        ScalarOperatorCreator<PrimaryNDXConsumer> scalarXCreator =
+                (inputs, value, d) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    if (d < 0) {
+                        return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] % value;
+                    } else {
+                        if (d == 0) return t1Idx -> 1 / value;
+                        else return t1Idx -> -value / Math.pow(t1_val[inputs[ 1 ].i_of_idx(t1Idx)], 2);
                     }
                 };
 
@@ -318,7 +355,14 @@ public class Modulo extends AbstractOperationType {
                                     call.getDevice().getExecutor()
                                             .threaded (
                                                     call.getTensor( 0 ).size(),
-                                                    ( start, end ) ->
+                                                    (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                    ? ( start, end ) ->
+                                                            Scalarization.scalarize (
+                                                                    call.getTensor( 0 ),
+                                                                    start, end,
+                                                                    scalarXCreator.create(call.getTensors(), value, -1)
+                                                            )
+                                                    : ( start, end ) ->
                                                             Scalarization.scalarize (
                                                                     call.getTensor( 0 ),
                                                                     start, end,

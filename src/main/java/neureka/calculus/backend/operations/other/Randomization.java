@@ -1,5 +1,6 @@
 package neureka.calculus.backend.operations.other;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
@@ -23,12 +24,23 @@ public class Randomization extends AbstractOperationType
                 true, false, false, true
         );
 
-        ScalarOperatorCreator< PrimaryNDXConsumer > creator =
+        ScalarOperatorCreator< PrimaryNDIConsumer > creator =
                 ( inputs, value, d ) -> {
                     return t1Idx -> {
                         int sum = 0;
                         int[] idx = t1Idx.get();
                         for (int i : idx) sum += i;
+                        Random dice = new Random();
+                        dice.setSeed(Double.doubleToLongBits(value+sum));
+                        return dice.nextGaussian();
+                    };
+                };
+
+        ScalarOperatorCreator< PrimaryNDXConsumer > creatorX =
+                ( inputs, value, d ) -> {
+                    return t1Idx -> {
+                        int sum = 0;
+                        for (int idx : t1Idx) sum += idx;
                         Random dice = new Random();
                         dice.setSeed(Double.doubleToLongBits(value+sum));
                         return dice.nextGaussian();
@@ -71,16 +83,27 @@ public class Randomization extends AbstractOperationType
                                 call -> call.getDevice().getExecutor()
                                         .threaded (
                                                 call.getTensor( 0 ).size(),
-                                                ( start, end ) ->
+                                                (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                ? ( start, end ) ->
                                                         Scalarization.scalarize (
                                                                 call.getTensor( 0 ),
                                                                 start, end,
-                                                                creator.create(
+                                                                creatorX.create(
                                                                         call.getTensors(),
                                                                         call.getTensor(1).value64( 0 ),
                                                                         call.getDerivativeIndex()
                                                                 )
                                                         )
+                                                : ( start, end ) ->
+                                                        Scalarization.scalarize (
+                                                            call.getTensor( 0 ),
+                                                            start, end,
+                                                            creator.create(
+                                                                    call.getTensors(),
+                                                                    call.getTensor(1).value64( 0 ),
+                                                                    call.getDerivativeIndex()
+                                                            )
+                                                )
                                         ),
                                 3
                         )

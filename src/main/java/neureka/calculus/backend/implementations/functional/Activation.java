@@ -24,25 +24,44 @@ public class Activation extends AbstractFunctionalOperationTypeImplementation< A
     public static void activate(
             Tsr t0_drn,
             int i, int end,
-            OperationType.TertiaryNDXConsumer operation
+            OperationType.TertiaryNDIConsumer operation
     ) {
-        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
-        int rank = t0Shp.length;
-        NDIterator t0Idx = NDIterator.of( t0_drn );//t0_drn.idx_of_i( i );
+        NDIterator t0Idx = NDIterator.of( t0_drn ); // t0_drn.idx_of_i( i );
         NDIterator t1Idx = NDIterator.of( t0_drn );
         t0Idx.set( t0_drn.idx_of_i( i ) );
         t1Idx.set( t0_drn.idx_of_i( i ) );
         double[] t0_value = t0_drn.value64();
-        while ( i < end ) {//increment on drain accordingly:
-            //System.arraycopy(t0Idx, 0, t1Idx, 0, rank);
+        while ( i < end ) { // increment on drain accordingly:
             //setInto _value in drn:
-            t0_value[t0Idx.i()] = operation.execute(t0Idx, t1Idx, null);
+            t0_value[t0Idx.i()] = operation.execute(null, t1Idx, null);
             //increment on drain:
             t0Idx.increment();
             t1Idx.increment();
-            //NDConfiguration.Utility.increment(t0Idx, t0Shp);
             i++;
         }
     }
+
+
+    @Contract(pure = true)
+    public static void activate(
+            Tsr t0_drn,
+            int i, int end,
+            OperationType.TertiaryNDXConsumer operation
+    ) {
+        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
+        int rank = t0Shp.length;
+        int[] t0Idx = t0_drn.idx_of_i( i );
+        int[] t1Idx = new int[rank];
+        double[] t0_value = t0_drn.value64();
+        while ( i < end ) {//increment on drain accordingly:
+            System.arraycopy(t0Idx, 0, t1Idx, 0, rank);
+            //setInto _value in drn:
+            t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, null);
+            //increment on drain:
+            NDConfiguration.Utility.increment(t0Idx, t0Shp);
+            i++;
+        }
+    }
+
 
 }

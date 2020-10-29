@@ -7,6 +7,8 @@ import neureka.devices.host.HostCPU
 import spock.lang.Specification
 import testutility.Utility
 
+import java.text.SimpleDateFormat
+
 class Benchmark_System_Test extends Specification
 {
 
@@ -76,7 +78,7 @@ class Benchmark_System_Test extends Specification
         then : 'The calculated hash is as expected.'
             hash==expected//"56b2eb74955e49cd777469c7dad0536e"
 
-        //String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date())
+        String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date())
         //session([
         //            "iterations":1,
         //            "sample_size":20,
@@ -97,6 +99,33 @@ class Benchmark_System_Test extends Specification
         //        HostCPU.instance(),
         //        tsr->{}
         //)
+
+        //when :
+        //session([
+        //            "iterations":1,
+        //            "sample_size":20,
+        //            "difficulty":15,
+        //            "intensifier":5
+        //        ],
+        //        null,//"neureka_bench_CPU_"+currentDate+".csv",
+        //        HostCPU.instance(),
+        //        tsr->{}
+        //)
+        //session([
+        //            "iterations":1,
+        //            "sample_size":20,
+        //            "difficulty":15,
+        //            "intensifier":50
+        //        ],
+        //        "neureka0.4.1_CPU_it1_ss20_dif_15_int50_"+currentDate+".csv",
+        //        HostCPU.instance(),
+        //        tsr->{}
+        //)
+//
+        //then : true
+
+
+
         //session([
         //            "iterations":1,
         //            "sample_size":100,

@@ -1,32 +1,22 @@
-package neureka.ndim.iterators;
+package neureka.ndim.iterators.types.complex.main;
 
-import neureka.ndim.config.types.D2C;
+import neureka.ndim.config.NDIterator;
+import neureka.ndim.config.types.complex.ComplexD2Configuration;
 
-public class D2Iterator extends AbstractNDIterator
+public class ComplexD2CIterator extends ComplexD2Configuration implements NDIterator
 {
-    private int _d1;
-    private int _d2;
-    private final int _s1;
-    private final int _s2;
-    private final D2C _conf;
+    protected int _d1 = 0;
+    protected int _d2 = 0;
 
-    public D2Iterator( D2C ndc ) {
-        _s1 = ndc.shape( 0 );
-        _s2 = ndc.shape( 1 );
-        _d1 = 0;
-        _d2 = 0;
-        _conf = ndc;
+    public ComplexD2CIterator(ComplexD2Configuration ndc) {
+        super( ndc.shape(), ndc.translation(), ndc.idxmap(), ndc.spread(), ndc.offset() );
     }
 
-    @Override
-    public int[] shape() {
-        return new int[]{ _s1, _s2 };
-    }
 
     @Override
     public void increment() {
         _d2++;
-        if ( _d2 == _s2 ) {
+        if ( _d2 == _shape2 ) {
             _d2 = 0;
             _d1++;
         }
@@ -36,13 +26,13 @@ public class D2Iterator extends AbstractNDIterator
     public void decrement() {
         if ( _d2 == 0 ) {
             _d1--;
-            _d2 = _s2 - 1;
+            _d2 = _shape2 - 1;
         }
     }
 
     @Override
     public int i() {
-        return _conf.i_of_idx( _d1, _d2 );
+        return this.i_of_idx( _d1, _d2 );
     }
 
     @Override
@@ -66,12 +56,5 @@ public class D2Iterator extends AbstractNDIterator
         _d1 = idx[0];
         _d2 = idx[1];
     }
-
-    @Override
-    public int rank() {
-        return 2;
-    }
-
-
 
 }

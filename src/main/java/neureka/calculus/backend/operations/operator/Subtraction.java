@@ -1,5 +1,6 @@
 package neureka.calculus.backend.operations.operator;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
@@ -73,13 +74,21 @@ public class Subtraction extends AbstractOperationType
         //_____________________
         // DEFAULT OPERATION :
 
-        DefaultOperatorCreator<SecondaryNDXConsumer> operationCreator =
+        DefaultOperatorCreator<SecondaryNDIConsumer> operationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
                     if ( d < 0 ) {
                         return ( t1Idx, t2Idx ) -> t1_val[t1Idx.i()] - t2_val[t2Idx.i()];
                     } else return ( t1Idx, t2Idx ) -> ( d == 0 ) ? 1.0 : -1.0;
+                };
+        DefaultOperatorCreator<PrimaryNDXConsumer> operationXCreator =
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
+                    if ( d < 0 ) {
+                        return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] - t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
+                    } else return t1Idx -> ( d == 0 ) ? 1.0 : -1.0;
                 };
 
         Operator operator = new Operator()
@@ -120,7 +129,17 @@ public class Subtraction extends AbstractOperationType
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor( 0 ).size(),
-                                                        ( start, end ) ->
+                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        ? ( start, end ) ->
+                                                                Operator.operate (
+                                                                        call.getTensor( 0 ),
+                                                                        call.getTensor(1),
+                                                                        call.getTensor(2),
+                                                                        call.getDerivativeIndex(),
+                                                                        start, end,
+                                                                        operationXCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                        : ( start, end ) ->
                                                                 Operator.operate (
                                                                         call.getTensor( 0 ),
                                                                         call.getTensor(1),
@@ -162,10 +181,17 @@ public class Subtraction extends AbstractOperationType
         //___________________________
         // TENSOR SCALAR OPERATION :
 
-        ScalarOperatorCreator<PrimaryNDXConsumer> scalarOperatorCreator =
+        ScalarOperatorCreator<PrimaryNDIConsumer> scalarOperatorCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     if ( d < 0 ) return t1Idx -> t1_val[t1Idx.i()] - value;
+                    else if ( d == 0 ) return t1Idx -> 1; else return t1Idx -> -1;
+                };
+
+        ScalarOperatorCreator<PrimaryNDXConsumer> scalarOperatorXCreator =
+                (inputs, value, d) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    if ( d < 0 ) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] - value;
                     else if ( d == 0 ) return t1Idx -> 1; else return t1Idx -> -1;
                 };
 
@@ -209,7 +235,14 @@ public class Subtraction extends AbstractOperationType
                                     call.getDevice().getExecutor()
                                             .threaded (
                                                     call.getTensor( 0 ).size(),
-                                                    ( start, end ) ->
+                                                    (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                    ? ( start, end ) ->
+                                                            Scalarization.scalarize (
+                                                                    call.getTensor( 0 ),
+                                                                    start, end,
+                                                                    scalarOperatorXCreator.create(call.getTensors(), value, -1)
+                                                            )
+                                                    : ( start, end ) ->
                                                             Scalarization.scalarize (
                                                                     call.getTensor( 0 ),
                                                                     start, end,

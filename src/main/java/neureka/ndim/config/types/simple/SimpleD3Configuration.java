@@ -5,9 +5,22 @@ import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.D3C;
 
-public final class SimpleD3Configuration extends D3C //:= IMMUTABLE
+public class SimpleD3Configuration extends D3C //:= IMMUTABLE
 {
-    private SimpleD3Configuration(
+    /**
+     *  The shape of the NDArray.
+     */
+    protected final int _shape1;
+    protected final int _shape2;
+    protected final int _shape3;
+    /**
+     *  The translation from a shape index (idx) to the index of the underlying data array.
+     */
+    private final int _translation1;
+    private final int _translation2;
+    private final int _translation3;
+
+    protected SimpleD3Configuration(
             int[] shape,
             int[] translation
     ) {
@@ -25,19 +38,6 @@ public final class SimpleD3Configuration extends D3C //:= IMMUTABLE
     ){
         return _cached(new SimpleD3Configuration(shape, translation));
     }
-
-    /**
-     *  The shape of the NDArray.
-     */
-    private final int _shape1;
-    private final int _shape2;
-    private final int _shape3;
-    /**
-     *  The translation from a shape index (idx) to the index of the underlying data array.
-     */
-    private final int _translation1;
-    private final int _translation2;
-    private final int _translation3;
 
     @Override
     public int rank() {

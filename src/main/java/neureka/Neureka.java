@@ -89,7 +89,7 @@ public class Neureka
             settings().autograd().setIsApplyingGradientWhenTensorIsUsed( true );
             settings().autograd().setIsApplyingGradientWhenRequested( true );
             settings().indexing().setIsUsingLegacyIndexing( false );
-            settings().indexing().setIsUsingThoroughIndexing( true );
+            settings().indexing().setIsUsingArrayBasedIndexing( true );
             settings().debug().setIsKeepingDerivativeTargetPayloads( false );
             settings().view().setIsUsingLegacyView( false );
         }
@@ -286,7 +286,9 @@ public class Neureka
         {
             private boolean _isUsingLegacyIndexing = false;
 
-            private boolean _isUsingThoroughIndexing;
+            private boolean _isUsingArrayBasedIndexing = true;
+
+
 
             public boolean isUsingLegacyIndexing(){
                 return _isUsingLegacyIndexing;
@@ -294,16 +296,16 @@ public class Neureka
 
             public void setIsUsingLegacyIndexing(boolean enabled) {
                 if(_isLocked || !_currentThreadIsAuthorized()) return;
-                _isUsingLegacyIndexing = enabled;//NOTE: gpu code must recompiled! (in OpenCLPlatform)
+                _isUsingLegacyIndexing = enabled; // NOTE: gpu code must recompiled! (in OpenCLPlatform)
             }
 
-            public boolean isUsingThoroughIndexing(){
-                return _isUsingThoroughIndexing;
+            public boolean isUsingArrayBasedIndexing(){
+                return _isUsingArrayBasedIndexing;
             }
 
-            public void setIsUsingThoroughIndexing(boolean thorough){
+            public void setIsUsingArrayBasedIndexing( boolean thorough ) {
                 if(_isLocked || !_currentThreadIsAuthorized()) return;
-                _isUsingThoroughIndexing = thorough;
+                _isUsingArrayBasedIndexing = thorough;
             }
 
         }

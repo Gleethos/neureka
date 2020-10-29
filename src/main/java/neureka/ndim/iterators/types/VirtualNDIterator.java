@@ -1,6 +1,5 @@
-package neureka.ndim.iterators;
+package neureka.ndim.iterators.types;
 
-import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.NDIterator;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 
@@ -10,6 +9,11 @@ public class VirtualNDIterator implements NDIterator
 
     public VirtualNDIterator( VirtualNDConfiguration ndc ) {
         _conf = ndc;
+    }
+
+    @Override
+    public int shape(int i) {
+        return _conf.shape(i);
     }
 
     @Override

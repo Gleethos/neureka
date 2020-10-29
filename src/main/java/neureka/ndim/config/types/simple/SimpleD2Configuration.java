@@ -6,9 +6,20 @@ import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.D2C;
 
 
-public final class SimpleD2Configuration extends D2C //:= IMMUTABLE
+public class SimpleD2Configuration extends D2C //:= IMMUTABLE
 {
-    private SimpleD2Configuration(
+    /**
+     *  The shape of the NDArray.
+     */
+    protected final int _shape1;
+    protected final int _shape2;
+    /**
+     *  The translation from a shape index (idx) to the index of the underlying data array.
+     */
+    private final int _translation1;
+    private final int _translation2;
+
+    protected SimpleD2Configuration(
             int[] shape,
             int[] translation
     ) {
@@ -24,17 +35,6 @@ public final class SimpleD2Configuration extends D2C //:= IMMUTABLE
     ){
         return _cached(new SimpleD2Configuration(shape, translation));
     }
-
-    /**
-     *  The shape of the NDArray.
-     */
-    private final int _shape1;
-    private final int _shape2;
-    /**
-     *  The translation from a shape index (idx) to the index of the underlying data array.
-     */
-    private final int _translation1;
-    private final int _translation2;
 
 
     @Override

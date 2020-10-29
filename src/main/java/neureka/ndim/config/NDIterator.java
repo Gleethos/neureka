@@ -6,10 +6,27 @@ import neureka.Tsr;
 import neureka.ndim.config.types.D1C;
 import neureka.ndim.config.types.D2C;
 import neureka.ndim.config.types.D3C;
+import neureka.ndim.config.types.complex.ComplexD1Configuration;
+import neureka.ndim.config.types.complex.ComplexD2Configuration;
+import neureka.ndim.config.types.complex.ComplexD3Configuration;
+import neureka.ndim.config.types.simple.SimpleD1Configuration;
+import neureka.ndim.config.types.simple.SimpleD2Configuration;
+import neureka.ndim.config.types.simple.SimpleD3Configuration;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
-import neureka.ndim.iterators.*;
-import neureka.ndim.iterators.legacy.LegacyD2Iterator;
-import neureka.ndim.iterators.legacy.LegacyD3Iterator;
+import neureka.ndim.iterators.types.*;
+import neureka.ndim.iterators.types.complex.ComplexD1CIterator;
+import neureka.ndim.iterators.types.complex.legacy.ComplexLegacyD2CIterator;
+import neureka.ndim.iterators.types.complex.legacy.ComplexLegacyD3CIterator;
+import neureka.ndim.iterators.types.complex.main.ComplexD2CIterator;
+import neureka.ndim.iterators.types.complex.main.ComplexD3CIterator;
+import neureka.ndim.iterators.types.simple.SimpleD1CIterator;
+import neureka.ndim.iterators.types.simple.legacy.SimpleLegacyD2CIterator;
+import neureka.ndim.iterators.types.simple.legacy.SimpleLegacyD3CIterator;
+import neureka.ndim.iterators.types.simple.main.SimpleD2CIterator;
+import neureka.ndim.iterators.types.simple.main.SimpleD3CIterator;
+
+import java.util.StringJoiner;
+import java.util.stream.IntStream;
 
 public interface NDIterator
 {
@@ -17,22 +34,28 @@ public interface NDIterator
 
         NDConfiguration ndc = t.getNDConf();
 
-        if ( ndc instanceof D1C ) return new D1Iterator( (D1C) ndc );
-        else if ( ndc instanceof D2C )
-            return ( Neureka.instance().settings().indexing().isUsingLegacyIndexing() )
-                    ? new LegacyD2Iterator( (D2C) ndc )
-                    : new D2Iterator( (D2C) ndc );
-        else if ( ndc instanceof D3C )
-            return ( Neureka.instance().settings().indexing().isUsingLegacyIndexing() )
-                    ? new LegacyD3Iterator( (D3C) ndc )
-                    : new D3Iterator( (D3C) ndc );
-        else if ( ndc instanceof VirtualNDConfiguration )
+        if ( ndc instanceof ComplexD1Configuration) return new ComplexD1CIterator((ComplexD1Configuration) ndc);
+        if ( ndc instanceof SimpleD1Configuration ) return new SimpleD1CIterator((SimpleD1Configuration) ndc);
+
+        if ( Neureka.instance().settings().indexing().isUsingLegacyIndexing() ) {
+            if ( ndc instanceof ComplexD2Configuration) return new ComplexLegacyD2CIterator((ComplexD2Configuration) ndc);
+            if ( ndc instanceof ComplexD3Configuration) return new ComplexLegacyD3CIterator((ComplexD3Configuration) ndc);
+            if ( ndc instanceof SimpleD2Configuration ) return new SimpleLegacyD2CIterator((SimpleD2Configuration) ndc);
+            if ( ndc instanceof SimpleD3Configuration ) return new SimpleLegacyD3CIterator((SimpleD3Configuration) ndc);
+        } else {
+            if ( ndc instanceof ComplexD2Configuration) return new ComplexD2CIterator((ComplexD2Configuration) ndc);
+            if ( ndc instanceof ComplexD3Configuration) return new ComplexD3CIterator((ComplexD3Configuration) ndc);
+            if ( ndc instanceof SimpleD2Configuration ) return new SimpleD2CIterator((SimpleD2Configuration) ndc);
+            if ( ndc instanceof SimpleD3Configuration ) return new SimpleD3CIterator((SimpleD3Configuration) ndc);
+        }
+
+        if ( ndc instanceof VirtualNDConfiguration )
             return new VirtualNDIterator( (VirtualNDConfiguration) ndc );
         else
             return new DefaultNDIterator( ndc );
-
     }
 
+    int shape( int i );
 
     int[] shape();
 
@@ -51,4 +74,22 @@ public interface NDIterator
     void set( int[] idx );
 
     int rank();
+
+
+    default String asString(){
+        StringBuilder b = new StringBuilder();
+
+        StringJoiner sj = new StringJoiner(",");
+        StringJoiner finalSj1 = sj;
+        IntStream.of( this.shape() ).forEach(x -> finalSj1.add(String.valueOf(x)));
+
+        b.append("S["+sj.toString()+"];");
+        sj = new StringJoiner(",");
+        StringJoiner finalSj = sj;
+        IntStream.of( this.get() ).forEach(x -> finalSj.add(String.valueOf(x)));
+        b.append("I["+sj.toString()+"];");
+        return b.toString();
+    }
+
+
 }

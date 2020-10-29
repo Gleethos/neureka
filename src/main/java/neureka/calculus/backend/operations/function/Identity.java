@@ -1,5 +1,6 @@
 package neureka.calculus.backend.operations.function;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
@@ -31,10 +32,17 @@ public class Identity extends AbstractOperationType
                 }
         );
 
-        DefaultOperatorCreator<TertiaryNDXConsumer> activationCreator =
+        DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()];
+                    else return (t0Idx, t1Idx, t2Idx) -> 1;
+                };
+
+        DefaultOperatorCreator<TertiaryNDXConsumer> activationXCreator =
+                ( inputs, d ) -> {
+                    double[] t1_val = inputs[ 1 ].value64();
+                    if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
                     else return (t0Idx, t1Idx, t2Idx) -> 1;
                 };
 
@@ -71,7 +79,14 @@ public class Identity extends AbstractOperationType
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor( 0 ).size(),
-                                                        ( start, end ) ->
+                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        ? ( start, end ) ->
+                                                                Activation.activate (
+                                                                        call.getTensor( 0 ),
+                                                                        start, end,
+                                                                        activationXCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                        : ( start, end ) ->
                                                                 Activation.activate (
                                                                         call.getTensor( 0 ),
                                                                         start, end,
@@ -104,7 +119,7 @@ public class Identity extends AbstractOperationType
                 )
         );
 
-        ScalarOperatorCreator<PrimaryNDXConsumer> scalarizationCreator =
+        ScalarOperatorCreator<PrimaryNDIConsumer> scalarizationCreator =
                 (inputs, value, d) -> {
                     if (d < 0) return t1Idx -> value;
                     else return t1Idx -> value;

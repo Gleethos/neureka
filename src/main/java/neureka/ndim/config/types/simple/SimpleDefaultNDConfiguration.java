@@ -9,7 +9,17 @@ import java.util.Arrays;
 public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
 {
 
-    private SimpleDefaultNDConfiguration(
+    /**
+     *  The shape of the NDArray.
+     */
+    protected final int[] _shape;
+    /**
+     *  The translation from a shape index (idx) to the index of the underlying data array.
+     */
+    private final int[] _translation_and_idxmap;
+
+
+    protected SimpleDefaultNDConfiguration(
             int[] shape, int[] translation
     ) {
         _shape = _cacheArray(shape);
@@ -22,16 +32,6 @@ public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTAB
     ) {
         return _cached(new SimpleDefaultNDConfiguration(shape, translation));
     }
-
-    /**
-     *  The shape of the NDArray.
-     */
-    private final int[] _shape;
-    /**
-     *  The translation from a shape index (idx) to the index of the underlying data array.
-     */
-    private final int[] _translation_and_idxmap;
-
 
     @Override
     public int rank() {

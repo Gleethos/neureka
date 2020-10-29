@@ -1,5 +1,6 @@
 package neureka.calculus.backend.operations.function;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
@@ -14,12 +15,18 @@ import java.util.List;
 
 public class Absolute extends AbstractOperationType {
 
-    private DefaultOperatorCreator<TertiaryNDXConsumer> _activationCreator =
+    private DefaultOperatorCreator<TertiaryNDIConsumer> _activationCreator =
     ( inputs, d )->{
         double[] t1_val = inputs[ 1 ].value64();
         if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.abs(t1_val[t1Idx.i()]);
         else return (t0Idx, t1Idx, t2Idx) -> (t1_val[t1Idx.i()] < 0) ? -1 : 1;
     };
+    private DefaultOperatorCreator<TertiaryNDXConsumer> _activationXCreator =
+            ( inputs, d )->{
+                double[] t1_val = inputs[ 1 ].value64();
+                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.abs(t1_val[inputs[ 1 ].i_of_idx(t1Idx)]);
+                else return (t0Idx, t1Idx, t2Idx) -> (t1_val[inputs[ 1 ].i_of_idx(t1Idx)] < 0) ? -1 : 1;
+            };
 
     public Absolute()
     {
@@ -77,17 +84,23 @@ public class Absolute extends AbstractOperationType {
                 typeImplementation.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
-                                call  ->
-                                        call.getDevice().getExecutor()
-                                        .threaded(
-                                            call.getTensor( 0 ).size(),
-                                            ( start, end ) ->
-                                                    Activation.activate(
-                                                            call.getTensor( 0 ),
-                                                            start, end,
-                                                            _activationCreator.create(call.getTensors(), call.getDerivativeIndex())
-                                                    )
-                                    ),
+                                call  -> call.getDevice().getExecutor()
+                                            .threaded(
+                                                call.getTensor( 0 ).size(),
+                                                   (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                      ? ( start, end ) ->
+                                                                Activation.activate(
+                                                                        call.getTensor( 0 ),
+                                                                        start, end,
+                                                                        _activationXCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                      : ( start, end ) ->
+                                                                Activation.activate(
+                                                                        call.getTensor( 0 ),
+                                                                        start, end,
+                                                                        _activationCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                ),
                                 3
                         )
                 ).setExecutor(
