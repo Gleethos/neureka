@@ -14,6 +14,7 @@ import neureka.calculus.backend.operations.AbstractOperationType;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
+import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
@@ -40,12 +41,14 @@ public class Multiplication extends AbstractOperationType {
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 double[] t2_val = inputs[ 2 ].value64();
+                NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
+                NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
                 if (d < 0) {
-                    return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                    return (t0Idx, t1Idx, t2Idx) -> t1_val[ndc1.i_of_idx(t1Idx)] * t2_val[ndc2.i_of_idx(t2Idx)];
                 } else {
                     return (t0Idx, t1Idx, t2Idx) -> {
-                        if (d == 0) return t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
-                        else return t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                        if (d == 0) return t2_val[ndc2.i_of_idx(t2Idx)];
+                        else return t1_val[ndc1.i_of_idx(t1Idx)];
                     };
                 }
             };
@@ -126,6 +129,25 @@ public class Multiplication extends AbstractOperationType {
                     }
                 };
 
+
+        DefaultOperatorCreator<PrimaryNDXConsumer> defaultOperatorXcreator =
+                ( inputs, d ) -> {
+                    inputs[ 1 ].setIsVirtual( false );
+                    inputs[ 2 ].setIsVirtual( false );
+                    double[] t1_val = inputs[ 1 ].value64();
+                    double[] t2_val = inputs[ 2 ].value64();
+                    NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
+                    NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
+                    if ( d < 0 ) {
+                        return t1Idx -> t1_val[ndc1.i_of_idx(t1Idx)] * t2_val[ndc2.i_of_idx(t1Idx)];
+                    } else {
+                        return t1Idx -> {
+                            if ( d == 0 ) return t2_val[ndc2.i_of_idx(t1Idx)];
+                            else return t1_val[ndc1.i_of_idx(t1Idx)];
+                        };
+                    }
+                };
+
         Operator operator = new Operator()
                 .setBackwardADAnalyzer( call -> true )
                 .setForwardADAnalyzer( call -> true )
@@ -163,7 +185,17 @@ public class Multiplication extends AbstractOperationType {
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor( 0 ).size(),
-                                                        ( start, end ) ->
+                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        ? ( start, end ) ->
+                                                                Operator.operate (
+                                                                        call.getTensor( 0 ),
+                                                                        call.getTensor(1),
+                                                                        call.getTensor(2),
+                                                                        call.getDerivativeIndex(),
+                                                                        start, end,
+                                                                        defaultOperatorXcreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                )
+                                                        : ( start, end ) ->
                                                                 Operator.operate (
                                                                         call.getTensor( 0 ),
                                                                         call.getTensor(1),
@@ -315,10 +347,11 @@ public class Multiplication extends AbstractOperationType {
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarOperatorXCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if ( d < 0 ) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * value;
+                    NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
+                    if ( d < 0 ) return t1Idx -> t1_val[ndc1.i_of_idx(t1Idx)] * value;
                     else {
                         if ( d == 0 ) return t1Idx -> value;
-                        else return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                        else return t1Idx -> t1_val[ndc1.i_of_idx(t1Idx)];
                     }
                 };
 
@@ -327,19 +360,13 @@ public class Multiplication extends AbstractOperationType {
                 .setForwardADAnalyzer( call -> true )
                 .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                            {
-                                Tsr ctxDerivative = (Tsr)call.getAt("derivative");
+                    {
+                        Tsr ctxDerivative = (Tsr)call.getAt("derivative");
                         Function mul = Function.Detached.MUL;
-                        if (
-                            ctxDerivative != null
-                        ) {
-                            return new DefaultADAgent(
-                                    ctxDerivative
-                                ).withForward(
-                                    ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                                ).withBackward(
-                                    null
-                                );
+                        if ( ctxDerivative != null ) {
+                            return new DefaultADAgent( ctxDerivative )
+                                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                                    .withBackward( null );
                         }
                         Tsr[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
@@ -354,12 +381,8 @@ public class Multiplication extends AbstractOperationType {
                         {
                             Tsr deriv = f.derive( inputs, d );
                             return new DefaultADAgent(  deriv )
-                                    .withForward(
-                                        ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                                    )
-                                    .withBackward(
-                                        ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv})
-                                    );
+                                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                    .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
                         }
                     }
                 )
@@ -446,16 +469,16 @@ public class Multiplication extends AbstractOperationType {
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
-                    return (t0Idx, t1Idx, t2Idx) ->
-                            t1_val[t1Idx.i()] * t2_val[t2Idx.i()];
+                    return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()] * t2_val[t2Idx.i()];
                 };
 
         DefaultOperatorCreator<TertiaryNDXConsumer> xBCCreatorX =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
-                    return (t0Idx, t1Idx, t2Idx) ->
-                            t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                    NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
+                    NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
+                    return (t0Idx, t1Idx, t2Idx) -> t1_val[ndc1.i_of_idx(t1Idx)] * t2_val[ndc2.i_of_idx(t2Idx)];
                 };
 
         Broadcast xBroadcast = new Broadcast()
@@ -474,16 +497,10 @@ public class Multiplication extends AbstractOperationType {
             {
                 Tsr ctxDerivative = (Tsr)call.getAt("derivative");
                 Function mul = Function.Detached.MUL;
-                if (
-                    ctxDerivative != null
-                ) {
-                    return new DefaultADAgent(
-                                ctxDerivative
-                       ).withForward(
-                                ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative})
-                       ).withBackward(
-                               null
-                       );
+                if ( ctxDerivative != null ) {
+                    return new DefaultADAgent( ctxDerivative )
+                            .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                            .withBackward( null );
                 }
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();

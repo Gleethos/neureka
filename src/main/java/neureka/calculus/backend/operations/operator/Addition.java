@@ -15,6 +15,7 @@ import neureka.calculus.backend.operations.AbstractOperationType;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
+import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
@@ -33,7 +34,9 @@ public class Addition extends AbstractOperationType {
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 double[] t2_val = inputs[ 2 ].value64();
-                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] + t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
+                NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
+                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[ndc1.i_of_idx(t1Idx)] + t2_val[ndc2.i_of_idx(t2Idx)];
                 else return (t0Idx, t1Idx, t2Idx) -> 1.0;
             };
 
@@ -163,7 +166,9 @@ public class Addition extends AbstractOperationType {
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
-                    if (d < 0) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] + t2_val[inputs[ 2 ].i_of_idx(t1Idx)];
+                    NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
+                    NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
+                    if (d < 0) return t1Idx -> t1_val[ndc1.i_of_idx(t1Idx)] + t2_val[ndc2.i_of_idx(t1Idx)];
                     else return t1Idx -> 1.0;
                 };
 
@@ -347,7 +352,8 @@ public class Addition extends AbstractOperationType {
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarXCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if (d < 0) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] + value;
+                    NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
+                    if (d < 0) return t1Idx -> t1_val[ndc1.i_of_idx(t1Idx)] + value;
                     else {
                         if (d == 0) return t1Idx -> 1;
                         else return t1Idx -> 1;

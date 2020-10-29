@@ -174,14 +174,17 @@ public class Convolution extends AbstractFunctionalOperationTypeImplementation< 
             int d, int i, int end,
             OperationType.TertiaryNDXConsumer operation
     ) {
-        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
-        int[] t1Shp = t1_src.getNDConf().shape();
-        int[] t2Shp = t2_src.getNDConf().shape();
+        NDConfiguration ndc0 = t0_drn.getNDConf();
+        NDConfiguration ndc1 = t1_src.getNDConf();
+        NDConfiguration ndc2 = t2_src.getNDConf();
+        int[] t0Shp = ndc0.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
+        int[] t1Shp = ndc1.shape();
+        int[] t2Shp = ndc2.shape();
         int rank = t0Shp.length;
-        int[] t0Idx = t0_drn.idx_of_i( i );
+        int[] t0Idx = ndc0.idx_of_i( i );
         int[] t1Idx = new int[rank];
         int[] t2Idx = new int[rank];
-        double[] t0_value = t0_drn.value64();
+        double[] t0_value = (double[]) t0_drn.getData();
 
         if (d < 0) {
             while (i < end)//drnSze)
@@ -232,7 +235,7 @@ public class Convolution extends AbstractFunctionalOperationTypeImplementation< 
                         } else ri++;
                     }
                 }//setInto _value in drn:
-                t0_value[t0_drn.i_of_idx(t0Idx)] = value;
+                t0_value[ndc0.i_of_idx(t0Idx)] = value;
                 //increment on drain:
                 NDConfiguration.Utility.increment(t0Idx, t0Shp);
 
@@ -303,7 +306,7 @@ public class Convolution extends AbstractFunctionalOperationTypeImplementation< 
                     }
                 }
                 //set value in drn:
-                t0_value[t0_drn.i_of_idx(t0Idx)] = value;
+                t0_value[ndc0.i_of_idx(t0Idx)] = value;
                 //increment on drain:
                 NDConfiguration.Utility.increment(t0Idx, t0Shp);
                 i++;

@@ -28,7 +28,6 @@ public class Scalarization extends AbstractFunctionalOperationTypeImplementation
             int i, int end,
             OperationType.PrimaryNDIConsumer operation
     ) {
-        int[] t0Shp = t0_drn.getNDConf().shape();
         NDIterator t0Idx = NDIterator.of( t0_drn ); //t0_drn.idx_of_i( i );
         t0Idx.set( t0_drn.idx_of_i( i ) );
         double[] t0_value = t0_drn.value64();

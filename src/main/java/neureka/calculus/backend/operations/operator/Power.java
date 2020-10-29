@@ -15,6 +15,7 @@ import neureka.calculus.backend.operations.AbstractOperationType;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
+import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
@@ -49,21 +50,18 @@ public class Power extends AbstractOperationType
     {
         double[] t1_val = inputs[ 1 ].value64();
         double[] t2_val = inputs[ 2 ].value64();
+        NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
+        NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
         if (d < 0) return (t0Idx, t1Idx, t2Idx) ->
-                Math.pow(t1_val[inputs[ 1 ].i_of_idx(t1Idx)], t2_val[inputs[ 2 ].i_of_idx(t2Idx)]);
+                Math.pow(t1_val[ndc1.i_of_idx(t1Idx)], t2_val[ndc2.i_of_idx(t2Idx)]);
         else {
             return (t0Idx, t1Idx, t2Idx) -> {
                 if (d == 0) {
-                    return t2_val[inputs[ 2 ].i_of_idx(t2Idx)]
-                            * Math.pow(
-                            t1_val[inputs[ 1 ].i_of_idx(t1Idx)],
-                            t2_val[inputs[ 2 ].i_of_idx(t2Idx)] - 1
-                    );
+                    double temp = t2_val[ndc2.i_of_idx(t2Idx)];
+                    return temp * Math.pow( t1_val[ndc1.i_of_idx(t1Idx)], temp - 1 );
                 } else {
-                    return Math.pow(
-                            t1_val[inputs[ 1 ].i_of_idx(t1Idx)],
-                            t2_val[inputs[ 2 ].i_of_idx(t2Idx)]
-                    ) * Math.log(t1_val[inputs[ 1 ].i_of_idx(t1Idx)]);
+                    double temp = t1_val[ndc1.i_of_idx(t1Idx)];
+                    return Math.pow( temp, t2_val[ndc2.i_of_idx(t2Idx)] )  * Math.log(temp);
                 }
             };
         }
@@ -115,21 +113,17 @@ public class Power extends AbstractOperationType
         {
             double[] t1_val = inputs[ 1 ].value64();
             double[] t2_val = inputs[ 2 ].value64();
+            NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
+            NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
             if (d < 0) return t1Idx ->
-                    Math.pow(t1_val[inputs[ 1 ].i_of_idx(t1Idx)], t2_val[inputs[ 2 ].i_of_idx(t1Idx)]);
+                    Math.pow(t1_val[ndc1.i_of_idx(t1Idx)], t2_val[ndc2.i_of_idx(t1Idx)]);
             else {
                 return t1Idx ->
                 {
-                    if ( d == 0 ) return
-                            t2_val[inputs[ 2 ].i_of_idx(t1Idx)] * Math.pow(
-                                    t1_val[inputs[ 1 ].i_of_idx(t1Idx)],
-                                    t2_val[inputs[ 2 ].i_of_idx(t1Idx)] - 1
-                            );
-                    else return
-                            Math.pow(
-                                    t1_val[inputs[ 1 ].i_of_idx(t1Idx)],
-                                    t2_val[inputs[ 2 ].i_of_idx(t1Idx)]
-                            ) * Math.log(t1_val[inputs[ 1 ].i_of_idx(t1Idx)]);
+                    double temp1 = t1_val[ndc1.i_of_idx(t1Idx)];
+                    double temp2 = t2_val[ndc2.i_of_idx(t1Idx)];
+                    if ( d == 0 ) return temp2 * Math.pow( temp1, temp2 - 1 );
+                    else return Math.pow( temp1, temp2 ) * Math.log(temp1);
                 };
             }
         };
@@ -221,14 +215,14 @@ public class Power extends AbstractOperationType
                         if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                         {
                             int[] shp = tsrs[ 1 ].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual( false );
-                        try {
-                            device.store(output);
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
+                            Tsr output = new Tsr( shp, 0.0 );
+                            output.setIsVirtual( false );
+                            try {
+                                device.store(output);
+                            } catch( Exception e ) {
+                                e.printStackTrace();
+                            }
+                            tsrs[ 0 ] = output;
                         }
                         return call;
                     }
@@ -412,10 +406,11 @@ public class Power extends AbstractOperationType
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarXCreator =
                 ( inputs, value, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if (d < 0) return t1Idx -> Math.pow(t1_val[inputs[ 1 ].i_of_idx(t1Idx)], value);
+                    NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
+                    if (d < 0) return t1Idx -> Math.pow(t1_val[ndc1.i_of_idx(t1Idx)], value);
                     else {
-                        if(d==0) return t1Idx -> value*Math.pow(t1_val[inputs[ 1 ].i_of_idx(t1Idx)], value-1);
-                        else return t1Idx -> Math.pow(t1_val[inputs[ 1 ].i_of_idx(t1Idx)], value)*Math.log(value);
+                        if(d==0) return t1Idx -> value*Math.pow(t1_val[ndc1.i_of_idx(t1Idx)], value-1);
+                        else return t1Idx -> Math.pow(t1_val[ndc1.i_of_idx(t1Idx)], value)*Math.log(value);
                     }
                 };
 

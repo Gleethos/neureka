@@ -15,6 +15,7 @@ import neureka.calculus.backend.operations.AbstractOperationType;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
+import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
@@ -43,14 +44,16 @@ public class Division extends AbstractOperationType
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 double[] t2_val = inputs[ 2 ].value64();
+                NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
+                NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
                 if (d < 0) {
-                    return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] / t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                    return (t0Idx, t1Idx, t2Idx) -> t1_val[ndc1.i_of_idx(t1Idx)] / t2_val[ndc2.i_of_idx(t2Idx)];
                 } else {
                     return (t0Idx, t1Idx, t2Idx) -> {
                         if (d == 0) {//"    output = 1/input2;\n" +
-                            return 1 / t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                            return 1 / t2_val[ndc2.i_of_idx(t2Idx)];
                         } else {
-                            return -(t1_val[inputs[ 2 ].i_of_idx(t2Idx)] / Math.pow(t2_val[inputs[ 1 ].i_of_idx(t1Idx)], 2));
+                            return -(t1_val[ndc2.i_of_idx(t2Idx)] / Math.pow(t2_val[ndc1.i_of_idx(t1Idx)], 2));
                         }//"    output = -input2 /(float)pow(input1, 2.0f);\n" +
                     };
                 }
@@ -393,11 +396,12 @@ public class Division extends AbstractOperationType
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarXCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
+                    NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                     if (d < 0) {
-                        return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] / value;
+                        return t1Idx -> t1_val[ndc1.i_of_idx(t1Idx)] / value;
                     } else {
                         if (d == 0) return t1Idx -> 1 / value;
-                        else return t1Idx -> -value / Math.pow(t1_val[inputs[ 1 ].i_of_idx(t1Idx)], 2);
+                        else return t1Idx -> -value / Math.pow(t1_val[ndc1.i_of_idx(t1Idx)], 2);
                     }
                 };
 

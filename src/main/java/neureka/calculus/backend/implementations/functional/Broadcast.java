@@ -140,14 +140,16 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
             int d, int i, int end,
             OperationType.TertiaryNDXConsumer operation
     ) {
-        int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
-        int[] t1Shp = t1_src.getNDConf().shape();
+        NDConfiguration ndc0 = t0_drn.getNDConf();
+        NDConfiguration ndc1 = t1_src.getNDConf();
+        int[] t0Shp = ndc0.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
+        int[] t1Shp = ndc1.shape();
         int[] t2Shp = (t2_src != null) ? t2_src.getNDConf().shape() : t1Shp;
         int rank = t0Shp.length;
-        int[] t0Idx = t0_drn.idx_of_i( i );
+        int[] t0Idx = ndc0.idx_of_i( i );
         int[] t1Idx = new int[rank];
         int[] t2Idx = new int[rank];
-        double[] t0_value = t0_drn.value64();
+        double[] t0_value = (double[]) t0_drn.getData();
         if ( d < 0 ) {
             while ( i < end ) {//increment on drain accordingly:
                 int ri = 0;
@@ -166,7 +168,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                 }
                 //----------
                 //setInto _value in drn:
-                t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, t2Idx);
+                t0_value[ndc0.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, t2Idx);
                 //increment on drain:
                 NDConfiguration.Utility.increment(t0Idx, t0Shp);
                 i++;
@@ -180,7 +182,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                     if (t0Shp[ri] == t1Shp[ri]) {
                         t1Idx[ri] = t0Idx[ri];//all shapes are equal -> shape index can be inherited from origin!
                         t2Idx[ri] = t0Idx[ri];
-                    } else if (t0Shp[ri] > t1Shp[ri]) {
+                    } else if ( t0Shp[ri] > t1Shp[ri] ) {
                         t1Idx[ri] = 0;//Current origin index is larger: index can be inherited!
                         t2Idx[ri] = t0Idx[ri];
                     }
@@ -216,7 +218,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                     }
                 }
                 //set value in drn:
-                t0_value[t0_drn.i_of_idx(t0Idx)] = value;
+                t0_value[ndc0.i_of_idx(t0Idx)] = value;
                 //increment on drain:
                 NDConfiguration.Utility.increment(t0Idx, t0Shp);
                 i++;

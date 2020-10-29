@@ -67,14 +67,15 @@ public class Operator extends AbstractFunctionalOperationTypeImplementation<Oper
         if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
             ((double[])t0_drn.getValue())[ 0 ] = operation.execute( new int[t0_drn.rank()] );
         } else {
-            int[] t0Shp = t0_drn.getNDConf().shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
-            int[] t0Idx = t0_drn.idx_of_i( i );
-            double[] t0_value = t0_drn.value64();
+            NDConfiguration ndc0 = t0_drn.getNDConf();
+            int[] t0Shp = ndc0.shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
+            int[] t0Idx = ndc0.idx_of_i( i );
+            double[] t0_value = (double[]) t0_drn.getData();
             while (i < end) {//increment on drain accordingly:
                 //setInto _value in drn:
-                t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute( t0Idx );
+                t0_value[ndc0.i_of_idx(t0Idx)] = operation.execute( t0Idx );
                 //increment on drain:
-                NDConfiguration.Utility.increment(t0Idx, t0Shp);
+                NDConfiguration.Utility.increment( t0Idx, t0Shp );
                 i++;
             }
         }
