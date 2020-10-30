@@ -62,6 +62,7 @@ public class CopyLeft extends AbstractOperationType {
                             Tsr[] tsrs = call.getTensors();
                             int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                             call.getTensor(offset).incrementVersionBecauseOf(call);
+                            call.getTensor(offset).setIsVirtual( false );
                             return new ExecutionCall(
                                     call.getDevice(),
                                     new Tsr[]{tsrs[offset], tsrs[1+offset]},

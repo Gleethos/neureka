@@ -22,12 +22,12 @@ public class Activation extends AbstractFunctionalOperationTypeImplementation< A
 
     @Contract(pure = true)
     public static void activate(
-            Tsr t0_drn,
+            Tsr t0_drn, Tsr t1_src,
             int i, int end,
             OperationType.TertiaryNDIConsumer operation
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn ); // t0_drn.idx_of_i( i );
-        NDIterator t1Idx = NDIterator.of( t0_drn );
+        NDIterator t1Idx = NDIterator.of( t1_src );
         t0Idx.set( t0_drn.idx_of_i( i ) );
         t1Idx.set( t0_drn.idx_of_i( i ) );
         double[] t0_value = t0_drn.value64();

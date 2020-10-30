@@ -6,11 +6,13 @@ import neureka.Tsr;
 import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
 
-public class Relation<ValueType> implements Component<Tsr<ValueType>> {
-
+public class Relation<ValueType> implements Component<Tsr<ValueType>>
+{
     private Tsr<ValueType> _parent;// Children need their parents. They shall not be garbage collected.
 
     private WeakReference<Tsr<ValueType>>[] _children;// Children may be garbage collected if not needed.
+
+    private int[][] _shapeRelations;
 
     @Override
     public void update( Tsr<ValueType> oldOwner, Tsr<ValueType> newOwner ) {
@@ -43,15 +45,39 @@ public class Relation<ValueType> implements Component<Tsr<ValueType>> {
     public Relation<ValueType> addChild( Tsr<ValueType> child ) {
         if ( _children == null ) {
             _children = new WeakReference[]{ new WeakReference( child ) };
+            _shapeRelations = new int[1][];
         } else {
             WeakReference<Tsr<ValueType>>[] newChildren = new WeakReference[_children.length+1];
+            int[][] newShapeRelations = new int[_children.length+1][];
             System.arraycopy( _children, 0, newChildren, 0, _children.length );
+            System.arraycopy( _shapeRelations, 0, newShapeRelations, 0, _children.length );
             newChildren[_children.length] = new WeakReference(child);
+            newShapeRelations[_children.length] = null;
             _children = newChildren;
+            _shapeRelations = newShapeRelations;
         }
         return this;
     }
 
+    public Relation<ValueType> addReshapeRelationFor( Tsr child, int[] reshape ) {
+        for ( int i=0; i<_shapeRelations.length; i++ ) {
+            Tsr c = _children[ i ].get();
+            if ( c != null && c == child ) {
+                _shapeRelations[ i ] = reshape;
+            }
+        }
+        return this;
+    }
+
+    public int[] getReshapeRelationFor( Tsr child ) {
+        for ( int i=0; i<_shapeRelations.length; i++ ) {
+            Tsr c = _children[ i ].get();
+            if ( c != null && c == child ) {
+                return _shapeRelations[ i ];
+            }
+        }
+        return null;
+    }
 
     public Relation<ValueType> foreachChild( Consumer<Tsr<ValueType>> action ) {
         if ( _children != null ) {
@@ -71,9 +97,11 @@ public class Relation<ValueType> implements Component<Tsr<ValueType>> {
         if ( _parent == null ) return null;
         else if ( !_parent.has( Relation.class ) ) return null;
         else if ( !_parent.find( Relation.class ).hasParent() ) return _parent;
-        else {
-            return _parent.find( Relation.class ).findRootTensor();
-        }
+        else return _parent.find( Relation.class ).findRootTensor();
+    }
+
+    public Tsr<?> getParent(){
+        return _parent;
     }
 
     public boolean hasParent(){
@@ -86,6 +114,11 @@ public class Relation<ValueType> implements Component<Tsr<ValueType>> {
 
     public int childCount(){
         return ( _children == null ) ? 0 : _children.length;
+    }
+
+    public Relation<ValueType> remove( Tsr<?> child ) {
+        //TODO!!
+        return this;
     }
 
 }

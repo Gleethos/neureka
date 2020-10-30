@@ -148,7 +148,7 @@ class Tensor_Framing_Integration_Tests extends Specification
             x in t
             t.contains(x)
             x.toString().contains("[1x2x2]:(7.0, 7.0, 7.0, 7.0)")
-            x.isVirtual()
+            !x.isVirtual() // This might change if possible (technically difficult)
             x.isSlice()
             t.isSliceParent()
 
@@ -157,7 +157,7 @@ class Tensor_Framing_Integration_Tests extends Specification
             x in t
             t.contains(x)
             x.toString().contains("[1x2x2]:(7.0, 7.0, 7.0, 7.0)")
-            x.isVirtual()
+            !x.isVirtual() // This might change if possible (technically difficult)
             x.isSlice()
             t.isSliceParent()
 
@@ -168,7 +168,7 @@ class Tensor_Framing_Integration_Tests extends Specification
             x in t
             t.contains(x)
             x.toString().contains("[1x2x2]:(7.0, 7.0, 7.0, 7.0)")
-            x.isVirtual()
+            !x.isVirtual() // This might change if possible (technically difficult)
             x.isSlice()
             t.isSliceParent()
             t.sliceCount()==3
@@ -187,7 +187,7 @@ class Tensor_Framing_Integration_Tests extends Specification
             x in t
             t.contains(x)
             x.toString().contains("[2x2x2]:(7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0)")
-            x.isVirtual()
+            !x.isVirtual() // This might change if possible (technically difficult)
             x.isSlice()
             t.isSliceParent()
             t.sliceCount()==4

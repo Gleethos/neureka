@@ -98,7 +98,7 @@ public class Sinus extends AbstractOperationType
                                                                 )
                                                         : ( start, end ) ->
                                                                 Activation.activate (
-                                                                        call.getTensor( 0 ),
+                                                                        call.getTensor( 0 ), call.getTensor( 1 ),
                                                                         start, end,
                                                                         _creator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )

@@ -19,6 +19,8 @@ public class OpenCLPlatform {
     private final cl_context _context;
     private final Map<String, cl_kernel> _kernels;
 
+    private boolean _isDoingLegacyIndexing = false;
+
     private OpenCLPlatform(cl_platform_id pid)
     {
         _id_device = new TreeMap<>(Comparator.comparingInt(NativePointerObject::hashCode));
@@ -51,6 +53,10 @@ public class OpenCLPlatform {
         _compile(devicesArray);
     }
 
+    public boolean isDoingLegacyIndexing() {
+        return _isDoingLegacyIndexing;
+    }
+
     public void recompile() {
         List<OpenCLDevice> devices = getDevices();
         cl_device_id[] devicesArray = new cl_device_id[devices.size()];
@@ -79,9 +85,10 @@ public class OpenCLPlatform {
         for ( int i = 0; i < fileNames.length; i++ )
         {
             String kernelSource = templateSources.get( i );
-            kernelSource = kernelSource.replace(
+            _isDoingLegacyIndexing = Neureka.instance().settings().indexing().isUsingLegacyIndexing();
+                    kernelSource = kernelSource.replace(
                     "Neureka.instance().settings().indexing().REVERSE_INDEX_TRANSLATION",
-                    (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) ? "true" : "false"
+                    ( _isDoingLegacyIndexing ) ? "true" : "false"
             );
             boolean templateFound = false;
             if ( kernelSource.contains("__kernel") )

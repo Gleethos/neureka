@@ -217,7 +217,7 @@ class Tensor_Operation_Integration_Tests extends Specification
     }
 
 
-    def 'Simple manual convolution produces expected result.'(
+    def 'Very simple manual convolution produces expected result.'(
          Device device
     ) {
         given :
@@ -262,6 +262,33 @@ class Tensor_Operation_Integration_Tests extends Specification
             device  << [ HostCPU.instance(), Device.find("openCL") ]
     }
 
+    //This needs verification!
+    //def 'Simple manual convolution produces expected result.'()
+    //{
+    //    given :
+    //        Neureka.instance().reset()
+    //        Neureka.instance().settings().view().setIsUsingLegacyView(false)
+    //        Tsr a = new Tsr([8, 8], 0..63)
+    //        Tsr x = a[1..-2,0..-1]
+    //        Tsr y = a[0..-3,0..-1]
+    //        Tsr z = a[2..-1,0..-1]
+//
+    //    when :
+    //        Tsr rowconvol = x + y + z
+    //        Tsr k = rowconvol[0..-1,1..-2]
+    //        Tsr v = rowconvol[0..-1,0..-3]
+    //        Tsr j = rowconvol[0..-1,2..-1]
+    //        Tsr u = a[1..-2,1..-2]
+    //        Tsr colconvol = k + v + j - 9 * u
+    //        String rcAsStr = rowconvol.toString()
+//
+    //    then :
+    //        assert rcAsStr.contains("(6x8)")
+    //        assert rcAsStr.contains("[0.0, 3.0, 6.0, 9.0, 12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0, 36.0, 39.0, 42.0, ")
+    //        String ccAsStr = colconvol.toString()
+    //        assert ccAsStr.contains("(6x6)")
+    //        assert ccAsStr.contains("[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]")
+    //}
 
 
     def 'Simple slice addition produces expected result.'(

@@ -8,6 +8,7 @@ import neureka.calculus.backend.operations.AbstractOperationType;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.functional.GenericImplementation;
 import neureka.calculus.frontend.assembly.FunctionBuilder;
+import neureka.framing.Relation;
 import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.NDConfiguration;
 
@@ -87,21 +88,7 @@ public class Reshape extends AbstractOperationType
                             newForm[ i ] = (int) Tsr.IO.getFrom( inputs[ i ], 0 );
                         }
                         if ( call.getDerivativeIndex() >= 0 ) {//reverse reshape:
-                            int reverseLength = 0;
-                            for ( int e : newForm ) {
-                                if ( e >= 0 ) reverseLength++;
-                            }
-                            int[] reversed = new int[reverseLength];
-                            int reshape_i = 0;
-                            int reverse_i = 0;
-                            while ( reverse_i < reverseLength ) {
-                                if ( newForm[ reshape_i ] >= 0 ) {
-                                    reversed[ newForm[ reshape_i ] ] = reshape_i;
-                                    reverse_i++;
-                                }
-                                reshape_i++;
-                            }
-                            newForm = reversed;
+                            newForm = invert( newForm );
                         }
                         Tsr t = inputs[ inputs.length - 1 ];
                         return reshaped(t, newForm, true);
@@ -120,13 +107,35 @@ public class Reshape extends AbstractOperationType
 
     public static Tsr reshaped( Tsr tensor, int[] newForm, boolean newTsr )
     {
+        Tsr parent = tensor;
         tensor = (newTsr) ? (Tsr) tensor.getAt(new ArrayList<>()) : tensor;
         NDConfiguration newNDC = tensor.getNDConf().newReshaped( newForm );
         AbstractNDArray.Utility.Indexing.shpCheck( newNDC.shape(), tensor );
         tensor.setNDConf( newNDC );
+        if ( newTsr ) {
+            Relation r = (Relation) parent.find(Relation.class);
+            r.addReshapeRelationFor( tensor, newForm );
+        }
         return tensor;
     }
 
+    public static int[] invert( int[] reshape ) {
+        int reverseLength = 0;
+        for ( int e : reshape ) {
+            if ( e >= 0 ) reverseLength++;
+        }
+        int[] reversed = new int[reverseLength];
+        int reshape_i = 0;
+        int reverse_i = 0;
+        while ( reverse_i < reverseLength ) {
+            if ( reshape[ reshape_i ] >= 0 ) {
+                reversed[ reshape[ reshape_i ] ] = reshape_i;
+                reverse_i++;
+            }
+            reshape_i++;
+        }
+        return reversed;
+    }
 
     @Override
     public double calculate( double[] inputs, int j, int d, List<Function> src ) {

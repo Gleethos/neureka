@@ -1,5 +1,6 @@
 package ut.tensors
 
+import neureka.Neureka
 import neureka.Tsr
 import org.slf4j.Logger
 import spock.lang.Shared
@@ -66,7 +67,30 @@ class Tensor_Exception_Unit_Tests extends Specification
     }
 
 
+    def 'Out of dimension bound causes descriptive exception!'()
+    {
+        given : 'Neureka isbeing reset.'
+            Neureka.instance().settings()
+        when : 'Some more complex slicing is being performed...'
+            Tsr t = new Tsr( [3, 3, 3, 3], 0 )
+            t[1..2, 1..3, 1..1, 0..2] = new Tsr( [2, 3, 1, 3], -4..2 )
 
+        then : 'The slice range 1..3 causes and exception!'
+            def exception = thrown(IllegalArgumentException)
+            exception.message == "java.lang.IllegalArgumentException: " +
+                    "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
+                    "At index '1' : offset '1' + shape '3' = '4',\n" +
+                    "which is larger than the target shape '3' at the same index!"
+
+        and : 'The logger logs the exception message!'
+            1 * Tsr._LOGGER.error(
+                    "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
+                    "At index '1' : offset '1' + shape '3' = '4',\n" +
+                    "which is larger than the target shape '3' at the same index!",
+                    _
+            )
+
+    }
 
 
 }

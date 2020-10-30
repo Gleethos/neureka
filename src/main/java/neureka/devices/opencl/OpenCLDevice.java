@@ -118,6 +118,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return platform.get( did );
     }
 
+    public OpenCLPlatform getPlatform() {
+        return _platform;
+    }
+
     /**
      * @return A collection of all tensors currently stored on the device.
      */

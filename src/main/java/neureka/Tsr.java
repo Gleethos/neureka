@@ -2,6 +2,7 @@ package neureka;
 
 import groovy.lang.IntRange;
 import neureka.calculus.backend.ExecutionCall;
+import neureka.calculus.backend.operations.other.Reshape;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.dtype.custom.*;
@@ -192,18 +193,22 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             double v = ( _value == null ) ? 0 : ((this.is64())?((double[])_value)[ 0 ]:((float[])_value)[ 0 ]);
             if ( isVirtual ) {
                 _value = new double[]{v};
-                Relation<ValueType> parent = find( Relation.class );
-                if ( parent!=null ) parent.foreachChild( c -> c._value=_value);
+                Relation<ValueType> relation = find( Relation.class );
+                if ( relation!=null ) relation.foreachChild( c -> c._value=_value);
             } else {
-                _value = ( this.is64() ) ? new double[this.size()] : new float[this.size()];
-                int length = ( this.is64() ) ? ((double[])_value).length : ((float[])_value).length;
-                for ( int i = 0; i < length; i++ ) {
-                    if ( this.is64() ) ((double[])_value)[ i ] = v;
-                    else ((float[])_value)[ i ] = (float)v;
+                Tsr<?> parentTensor = (this.isSlice())? find(Relation.class).getParent() : null;
+                if ( parentTensor != null ) {
+                    parentTensor.find(Relation.class).remove( this );
+                }
+                _value = (this.is64()) ? new double[this.size()] : new float[this.size()];
+                int length = (this.is64()) ? ((double[]) _value).length : ((float[]) _value).length;
+                for (int i = 0; i < length; i++) {
+                    if (this.is64()) ((double[]) _value)[i] = v;
+                    else ((float[]) _value)[i] = (float) v;
                 }
             }
             _setIsVirtual( isVirtual );
-            if( _conf!=null ) _configureFromNewShape( _conf.shape(), isVirtual );
+            if( _conf != null ) _configureFromNewShape( _conf.shape(), isVirtual );
             try {
                 if( device != null ) device.store( this );
             } catch ( Exception exception ) {
@@ -461,7 +466,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _value = ( _value == null ) ? new double[ size ] : _value;
         int length = _dataLength();
         if ( length >= 0 ) {
-            if ( size != length && (!this.isVirtual() || !makeVirtual) ) {
+            if ( size != length && ( !this.isVirtual() || !makeVirtual) ) {
                 String message = "Size of shape does not match stored value64!";
                 _LOGGER.error( message );
                 throw new IllegalArgumentException( message );
@@ -1064,7 +1069,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             valueIsDeviceVisitor = true;
         }
         if ( this.isEmpty() && slice.isEmpty() || slice.size() != value.size() ) _become( value ); // TODO: Rethink this a little
-        else new Tsr( new Tsr[]{ slice, value }, "I[ 0 ]<-I[ 1 ]", false );
+        else new Tsr( new Tsr[]{ slice, value }, "I[ 0 ] <- I[ 1 ]", false );
         try {
             if ( valueIsDeviceVisitor ) value.find( Device.class ).restore( value );
         } catch ( Exception exception ) {
@@ -1088,85 +1093,105 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     public Object getAt( Object key ) {
-        if ( key == null ) return this;
-        if ( key instanceof Object[] && ( (Object[]) key ).length == 0 ) key = new ArrayList();
-        if ( key instanceof List && ( (List) key ).isEmpty()){
-            if ( this.isEmpty() || this.isUndefined() ) return this;
-            for ( int e : this.shape() ) {
+        if (key == null) return this;
+        if (key instanceof Object[] && ((Object[]) key).length == 0) key = new ArrayList();
+        if (key instanceof List && ((List) key).isEmpty()) {
+            if (this.isEmpty() || this.isUndefined()) return this;
+            for (int e : this.shape()) {
                 List<Integer> rangeAsList = new ArrayList<>();
-                for ( int i = 0; i < e; i++ ) rangeAsList.add( i );
-                ( (List<Object>) key ).add( rangeAsList );
+                for (int i = 0; i < e; i++) rangeAsList.add(i);
+                ((List<Object>) key).add(rangeAsList);
             }
-        }
-        else if ( key instanceof Integer )
-            key = Arrays.asList( _conf.idx_of_i( (Integer) key ) );
-        else if ( key instanceof Double )
-            key = Arrays.asList( _conf.idx_of_i( (int) Math.floor( (Double) key ) ) );
-        else if ( key instanceof BigDecimal )
-            key = Arrays.asList( _conf.idx_of_i( ( (BigDecimal) key ).intValue() ) );
+        } else if (key instanceof Integer)
+            key = Arrays.asList(_conf.idx_of_i((Integer) key));
+        else if (key instanceof Double)
+            key = Arrays.asList(_conf.idx_of_i((int) Math.floor((Double) key)));
+        else if (key instanceof BigDecimal)
+            key = Arrays.asList(_conf.idx_of_i(((BigDecimal) key).intValue()));
 
         int[] idxbase = null;
-        int[] newShape = new int[ this.rank() ];
-        if ( key instanceof List || key instanceof Object[] ) {
-            if ( key instanceof  List ) key = ( (List) key ).toArray();
+        int[] newShape = new int[this.rank()];
+        if (key instanceof List || key instanceof Object[]) {
+            if (key instanceof List) key = ((List) key).toArray();
             boolean allInt = true;
-            for ( Object o : (Object[]) key ) allInt = allInt && o instanceof Integer;
-            if ( allInt && ( (Object[]) key ).length == rank() ) {
-                key = _intArray( (Object[]) key );
+            for (Object o : (Object[]) key) allInt = allInt && o instanceof Integer;
+            if (allInt && ((Object[]) key).length == rank()) {
+                key = _intArray((Object[]) key);
                 idxbase = (int[]) key;
-                if ( key != null ) {
-                    for ( int i = 0; i < this.rank(); i++ ) idxbase[ i ] = ( idxbase[ i ] < 0 )
-                            ? _conf.shape( i ) + idxbase[ i ]
-                            : idxbase[ i ];
-                    return IO.getFrom( this, idxbase );
+                if (key != null) {
+                    for (int i = 0; i < this.rank(); i++)
+                        idxbase[i] = (idxbase[i] < 0)
+                                ? _conf.shape(i) + idxbase[i]
+                                : idxbase[i];
+                    return IO.getFrom(this, idxbase);
                 }
             } else {
                 boolean hasScale = false;
-                for ( Object o : (Object[]) key ) hasScale = hasScale || o instanceof Map;
-                idxbase = new int[ ( (hasScale) ? 2 : 1 ) * this.rank() ];
-                if ( allInt ) _configureSubsetFromRanges(
-                            new Object[]{ _intArray( (Object[]) key ) },
-                            idxbase,
-                            newShape,
-                            0
-                    );
-                else _configureSubsetFromRanges( (Object[]) key, idxbase, newShape, 0 );
+                for (Object o : (Object[]) key) hasScale = hasScale || o instanceof Map;
+                idxbase = new int[((hasScale) ? 2 : 1) * this.rank()];
+                if (allInt) _configureSubsetFromRanges(
+                        new Object[]{_intArray((Object[]) key)},
+                        idxbase,
+                        newShape,
+                        0
+                );
+                else _configureSubsetFromRanges((Object[]) key, idxbase, newShape, 0);
 
             }
         } // ...not a simple slice... Advanced:
-        else if ( key instanceof Map ) // ==> i, j, k slicing!
+        else if (key instanceof Map) // ==> i, j, k slicing!
         {
-            idxbase = new int[ this.rank() * 2 ];
-            Object[] ranges = ( (Map<?,?>) key ).keySet().toArray();
-            _configureSubsetFromRanges( ranges, idxbase, newShape, 0 );
-            Object[] steps = ( (Map<?,?>) key ).values().toArray();
-            for ( int i = rank(); i < 2 * this.rank(); i++ ) {
-                idxbase[ i ] = (Integer) steps[ i - rank() ];
-                newShape[ i - rank() ] /= (Integer) steps[ i - rank() ];
+            idxbase = new int[this.rank() * 2];
+            Object[] ranges = ((Map<?, ?>) key).keySet().toArray();
+            _configureSubsetFromRanges(ranges, idxbase, newShape, 0);
+            Object[] steps = ((Map<?, ?>) key).values().toArray();
+            for (int i = rank(); i < 2 * this.rank(); i++) {
+                idxbase[i] = (Integer) steps[i - rank()];
+                newShape[i - rank()] /= (Integer) steps[i - rank()];
             }
-        }
-        else
-        {
+        } else {
             String message = "Cannot create tensor slice from key of type '" + key.getClass().getName() + "'!";
-            _LOGGER.error( message );
-            throw new IllegalArgumentException( message );
+            _LOGGER.error(message);
+            throw new IllegalArgumentException(message);
         }
+        this.setIsVirtual( false );
         Tsr<ValueType> subset = new Tsr<>();
         subset._value = this._value;
         subset._type = this._type;
         int[] newTranslation = this._conf.translation();
-        int[] newIdxmap = NDConfiguration.Utility.newTlnOf( newShape );
-        int[] newSpread = new int[ rank() ];
-        int[] newOffset = new int[ rank() ];
-        Arrays.fill( newSpread, 1 );
-        if ( idxbase.length == 2 * rank() ){
-            for ( int i = rank(); i < idxbase.length; i++ )
-                idxbase[ i ] = ( idxbase[ i ] == 0 ) ? 1 : idxbase[ i ];
+        int[] newIdxmap = NDConfiguration.Utility.newTlnOf(newShape);
+        int[] newSpread = new int[rank()];
+        int[] newOffset = new int[rank()];
+        Arrays.fill(newSpread, 1);
+        if (idxbase.length == 2 * rank()) {
+            for (int i = rank(); i < idxbase.length; i++)
+                idxbase[i] = (idxbase[i] == 0) ? 1 : idxbase[i];
         }
-        for ( int i = 0; i < idxbase.length; i++ ) {
-            if ( i >= rank() ) newSpread[ i - rank() ] = idxbase[ i ];
-            else newOffset[ i ] = idxbase[ i ] + getNDConf().offset( i ); // Offset is being inherited!
+        for (int i = 0; i < idxbase.length; i++) {
+            if (i >= rank()) newSpread[i - rank()] = idxbase[i];
+            else newOffset[i] = idxbase[i] + getNDConf().offset(i); // Offset is being inherited!
         }
+        Tsr<?> rootTensor = (this.isSlice()) ? find(Relation.class).findRootTensor() : this;
+        Tsr<?> parentTensor = (this.isSlice()) ? find(Relation.class).getParent() : this;
+        if ( parentTensor.rank() != newShape.length || rootTensor != parentTensor ) {
+            // TODO! This requires some more thought about how to check this!
+        } else {
+            int[] reshaped = (this.isSlice()) ? parentTensor.find(Relation.class).getReshapeRelationFor( this ) : null;
+            reshaped = ( reshaped != null ) ? Reshape.invert( reshaped ) : null;
+            for (int i = 0; i < parentTensor.rank(); i++) {
+                int ii = (reshaped != null) ? reshaped[ i ] : i;
+                int top = newOffset[i] + newShape[i];
+                if (top > parentTensor.shape(ii)) {
+                    String message = "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
+                            "At index '" + i + "' : offset '" + newOffset[i] + "' + shape '" + newShape[i] + "' = '" + top + "',\n" +
+                            "which is larger than the target shape '" + parentTensor.shape(ii) + "' at the same index!";
+                    Exception exception = new IllegalArgumentException(message);
+                    _LOGGER.error(message, exception);
+                    throw new IllegalArgumentException(exception);
+                }
+            }
+        }
+
         subset._conf = AbstractNDC.construct( newShape, newTranslation, newIdxmap, newSpread, newOffset );
 
         if ( this.isOutsourced() ) {
