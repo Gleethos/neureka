@@ -6,7 +6,7 @@ import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
-import neureka.ndim.config.NDIterator;
+import neureka.ndim.iterators.NDIterator;
 
 import java.util.List;
 import java.util.function.Consumer;

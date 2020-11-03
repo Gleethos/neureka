@@ -5,22 +5,29 @@
    import java.nio.file.Files
    import java.nio.file.Paths
 
-   return (Map<String, Integer> conf, String filename, Device device, Closure tester) ->
+   return (Map<String, Object> conf, String filename, Device device, Closure tester) ->
    {
       // CORE BENCHMARK CODE START:
       def benchmark =  (int iterations, int difficulty) ->
       {
          Map<String, List> map = [:]
-         int N, size
          long time
          double delta
-         Closure execute = (Closure c) -> c()
          Closure measure = (String attribute_name, Closure c) -> {
             time = System.nanoTime()
             c()
             delta = (System.nanoTime() - time) / 1_000_000_000
             map[attribute_name] = [delta]
          }
+         if ( conf.containsKey('custom_code') ) { // A benchmark for custom code is being performed!
+            conf['custom_code'].each( pair -> measure( pair.key, {pair.value(iterations, difficulty)} ) )
+            map["iterations"] = [iterations]
+            map["difficulty"] = [difficulty]
+            return map
+         }
+         Closure execute = (Closure c) -> c()
+         int N, size
+
          //==========================================================================#
          // Matrix multiplication
          N = 1 * iterations

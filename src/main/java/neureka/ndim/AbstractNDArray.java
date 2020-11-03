@@ -3,12 +3,9 @@ package neureka.ndim;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.dtype.DataType;
-import neureka.dtype.custom.*;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
-import javax.management.ObjectName;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
@@ -44,28 +41,6 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    @NotNull
-    @Override
-    public Iterator<ValueType> iterator() {
-        return new Iterator<ValueType>() {
-
-            private int _count = 0;
-            private final int _size = size();
-
-            @Override
-            public boolean hasNext() {
-                return _count != _size;
-            }
-
-            @Override
-            public ValueType next() {
-                Object o = getValueAt(_conf.i_of_i(_count));
-                _count ++;
-                return (ValueType) o;
-            }
-        };
-    }
 
     @Override
     public void forEach(Consumer<? super ValueType> action) {

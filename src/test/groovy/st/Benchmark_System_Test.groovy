@@ -76,100 +76,128 @@ class Benchmark_System_Test extends Specification
             )
 
         then : 'The calculated hash is as expected.'
-            hash==expected//"56b2eb74955e49cd777469c7dad0536e"
+            hash==expected // "56b2eb74955e49cd777469c7dad0536e"
 
         String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date())
-        //session([
-        //            "iterations":1,
-        //            "sample_size":20,
-        //            "difficulty":15,
-        //            "intensifier":50
-        //        ],
-        //        "neureka_bench_GPU_"+currentDate+".csv",
-        //        Device.find("nvidia"),
-        //        tsr->{}
-        //)
-        //session([
-        //            "iterations":1,
-        //            "sample_size":20,
-        //            "difficulty":15,
-        //            "intensifier":50
-        //        ],
-        //        "neureka_bench_CPU_"+currentDate+".csv",
-        //        HostCPU.instance(),
-        //        tsr->{}
-        //)
+        /*
+            session([
+                        "iterations":1,
+                        "sample_size":20,
+                        "difficulty":15,
+                        "intensifier":50
+                    ],
+                    "neureka_bench_GPU_"+currentDate+".csv",
+                    Device.find("nvidia"),
+                    tsr->{}
+            )
+            session([
+                        "iterations":1,
+                        "sample_size":20,
+                        "difficulty":15,
+                        "intensifier":50
+                    ],
+                    "neureka_bench_CPU_"+currentDate+".csv",
+                    HostCPU.instance(),
+                    tsr->{}
+            )
+    */
 
-        //when :
-        //session([
-        //            "iterations":1,
-        //            "sample_size":20,
-        //            "difficulty":15,
-        //            "intensifier":5
-        //        ],
-        //        null,//"neureka_bench_CPU_"+currentDate+".csv",
-        //        HostCPU.instance(),
-        //        tsr->{}
-        //)
-        //session([
-        //            "iterations":1,
-        //            "sample_size":20,
-        //            "difficulty":15,
-        //            "intensifier":50
-        //        ],
-        //        "neureka0.4.1_CPU_it1_ss20_dif_15_int50_"+currentDate+".csv",
-        //        HostCPU.instance(),
-        //        tsr->{}
-        //)
-//
-        //then : true
+    /* // Testing NDIterator vs array based iterator...
+            when :
+            session([
+                        "iterations":1,
+                        "sample_size":20,
+                        "difficulty":15,
+                        "intensifier":5
+                    ],
+                    null,//"neureka_bench_CPU_"+currentDate+".csv",
+                    HostCPU.instance(),
+                    tsr->{}
+            )
+            session([
+                        "iterations":1,
+                        "sample_size":20,
+                        "difficulty":15,
+                        "intensifier":50
+                    ],
+                    "neureka0.4.1_CPU_it1_ss20_dif_15_int50_"+currentDate+".csv",
+                    HostCPU.instance(),
+                    tsr->{}
+            )
+            then : true
+        */
 
 
+        /*
+        // Testing ND-iteration
+        session([
+                    "iterations":1,
+                    "sample_size":20,
+                    "difficulty":15,
+                    "intensifier":50,
+                    "custom_code":[
+                        "iterating":{
+                        iterations, difficulty ->
+                            iterations.times {
+                                Tsr t = new Tsr([difficulty,difficulty], -5..9)
+                                t.forEach( n -> n )
+                            }
+                    }]
+                ],
+                "neureka_1_CPU_it1_ss20_dif_15_int50_"+currentDate+".csv",
+                HostCPU.instance(),
+                tsr->{}
+        ) == null
+        */
 
-        //session([
-        //            "iterations":1,
-        //            "sample_size":100,
-        //            "difficulty":500,
-        //            "intensifier":0
-        //        ],
-        //        "neureka_bench_GPU_100x_cd100_"+currentDate+".csv",
-        //        Device.find("nvidia"),
-        //        tsr->{}
-        //)
-        //session([
-        //            "iterations":1,
-        //            "sample_size":500,
-        //            "difficulty":5,
-        //            "intensifier":0
-        //        ],
-        //        "neureka_bench_CPU_500x_cd5_"+currentDate+".csv",
-        //        HostCPU.instance(),
-        //        tsr->{}
-        //)
+        /*
+            session([
+                        "iterations":1,
+                        "sample_size":100,
+                        "difficulty":500,
+                        "intensifier":0
+                    ],
+                    "neureka_bench_GPU_100x_cd100_"+currentDate+".csv",
+                    Device.find("nvidia"),
+                    tsr->{}
+            )
+            session([
+                        "iterations":1,
+                        "sample_size":500,
+                        "difficulty":5,
+                        "intensifier":0
+                    ],
+                    "neureka_bench_CPU_500x_cd5_"+currentDate+".csv",
+                    HostCPU.instance(),
+                    tsr->{}
+            )
+        */
 
         // NDIM - BENCHMARK :
-        //Neureka.instance().settings().ndim().setIsOnlyUsingDefaultNDConfiguration(true)
-        //session([
-        //            "iterations":1,
-        //            "sample_size":250,
-        //            "difficulty":10,
-        //            "intensifier":0
-        //        ],
-        //        "ndim_default_bench_CPU_250x_cd10_"+currentDate+".csv",
-        //        HostCPU.instance(),
-        //        tsr->{}
-        //)
-        //Neureka.instance().settings().ndim().setIsOnlyUsingDefaultNDConfiguration(false)
-        //session([
-        //        "iterations":1,
-        //        "sample_size":250,
-        //        "difficulty":10,
-        //        "intensifier":0
-        //],
-        //        "ndim_optimized_bench_CPU_250x_cd10_"+currentDate+".csv",
-        //        HostCPU.instance(),
-        //        tsr->{}
-        //)
+        /*
+            Neureka.instance().settings().ndim().setIsOnlyUsingDefaultNDConfiguration(true)
+            session([
+                        "iterations":1,
+                        "sample_size":250,
+                        "difficulty":10,
+                        "intensifier":0
+                    ],
+                    "ndim_default_bench_CPU_250x_cd10_"+currentDate+".csv",
+                    HostCPU.instance(),
+                    tsr->{}
+            )
+            Neureka.instance().settings().ndim().setIsOnlyUsingDefaultNDConfiguration(false)
+            session([
+                    "iterations":1,
+                    "sample_size":250,
+                    "difficulty":10,
+                    "intensifier":0
+            ],
+                    "ndim_optimized_bench_CPU_250x_cd10_"+currentDate+".csv",
+                    HostCPU.instance(),
+                    tsr->{}
+            )
+         */
     }
 
 

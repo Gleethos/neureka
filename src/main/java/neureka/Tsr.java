@@ -17,9 +17,11 @@ import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.iterators.NDIterator;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 import neureka.optimization.Optimizer;
 import neureka.utility.DataConverter;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -844,6 +846,35 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         Tsr<ValueType> sum = Function.X.call( new Tsr[]{ this, ones } );
         return Function.DIV.call( new Tsr[]{ sum, new Tsr( this.size() ) } );
         //TODO :Function.DIV.call(new Tsr[]{sum, new Tsr(this.size())});
+    }
+
+
+    // ND-Iteration :
+    //=========================
+
+    @NotNull
+    @Override
+    public Iterator<ValueType> iterator()
+    {
+        NDIterator _ndi = NDIterator.of( this );
+        return new Iterator<ValueType>() 
+        {
+            private int _count = 0;
+            private final int _size = size();
+
+            @Override
+            public boolean hasNext() {
+                return _count != _size;
+            }
+
+            @Override
+            public ValueType next() {
+                Object o = getValueAt( _ndi.i() );
+                _ndi.increment();
+                _count ++;
+                return (ValueType) o;
+            }
+        };
     }
 
 

@@ -1,6 +1,6 @@
 package neureka.ndim.iterators.types.complex.legacy;
 
-import neureka.ndim.config.NDIterator;
+import neureka.ndim.iterators.NDIterator;
 import neureka.ndim.config.types.complex.ComplexD2Configuration;
 
 public class ComplexLegacyD2CIterator extends ComplexD2Configuration implements NDIterator
