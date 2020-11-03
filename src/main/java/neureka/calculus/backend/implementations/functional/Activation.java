@@ -30,7 +30,7 @@ public class Activation extends AbstractFunctionalOperationTypeImplementation< A
         NDIterator t1Idx = NDIterator.of( t1_src );
         t0Idx.set( t0_drn.idx_of_i( i ) );
         t1Idx.set( t0_drn.idx_of_i( i ) );
-        double[] t0_value = t0_drn.value64();
+        double[] t0_value = (double[]) t0_drn.getData();
         while ( i < end ) { // increment on drain accordingly:
             //setInto _value in drn:
             t0_value[t0Idx.i()] = operation.execute(null, t1Idx, null);

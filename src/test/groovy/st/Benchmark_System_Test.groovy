@@ -78,7 +78,7 @@ class Benchmark_System_Test extends Specification
         then : 'The calculated hash is as expected.'
             hash==expected // "56b2eb74955e49cd777469c7dad0536e"
 
-        String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date())
+        //String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date())
         /*
             session([
                         "iterations":1,

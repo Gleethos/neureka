@@ -1,7 +1,7 @@
 # The 'iterators' package #
 
 This package contains a custom 
-iterator interface type used
+iterator interface type implementations used
 for efficient general purpose iterating
 over the data which is stored in 'Tsr'
 instances...
@@ -27,8 +27,44 @@ for iterating on any tensor efficiently.
 Unfortunately this megamorphic
 architecture hinders inlining optimizations
 for the JVM. 
-However this is not the only type of iteration done by Neureka.
+However, this is not the only type of iteration done by Neureka.
 Alternatively an array based iteration approach is
-being performed for operations on tensors.
+being performed for operations on tensors when performance
+is important.<br>
+The difference between the two aproaches is being outlined below :
 
+**NDIterator approach :**
+```
+public void iterateOver( Tsr t, int times ) 
+{
+    NDIterator iter = NDIterator.of( t );
+    double[] tensorData = (double[]) t0_drn.getData();
+    for ( int i=0; i < times; i++ ) 
+    {
+        double current = tensorData[iter.i()];
+        // ... used somehow ...
+        // incrementing : 
+        iter.increment();
+    }
+}
+```
 
+**Array based approach :**
+```
+public void iterateOver( Tsr t, int times ) 
+{
+    NDConfiguration ndc = t.getNDConf();
+    int[] tensorShape = ndc.shape();
+    int rank = tensorShape.length;
+
+    double[] tensorData = (double[]) t0_drn.getData();
+    for ( int i=0; i < times; i++ ) 
+    { 
+        double current = tensorData[ ndc.i_of_idx( arrayIndex ) ];
+        // ... used somehow ...
+        // incrementing :
+        NDConfiguration.Utility.increment( arrayIndex, tensorShape );
+        i++;
+    }
+}
+```
