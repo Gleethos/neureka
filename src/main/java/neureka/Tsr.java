@@ -1123,10 +1123,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return getAt( (Integer) i );
     }
 
-    public Object getAt( Object key ) {
+    public Object getAt( Object key )
+    {
         if (key == null) return this;
-        if (key instanceof Object[] && ((Object[]) key).length == 0) key = new ArrayList();
-        if (key instanceof List && ((List) key).isEmpty()) {
+        if (key instanceof Object[] && ((Object[]) key).length == 0) key = new ArrayList<>();
+        if (key instanceof List && ((List<?>) key).isEmpty()) {
             if (this.isEmpty() || this.isUndefined()) return this;
             for (int e : this.shape()) {
                 List<Integer> rangeAsList = new ArrayList<>();
@@ -1140,45 +1141,42 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         else if (key instanceof BigDecimal)
             key = Arrays.asList(_conf.idx_of_i(((BigDecimal) key).intValue()));
 
-        int[] idxbase = null;
-        int[] newShape = new int[this.rank()];
+        int[] offset = new int[ this.rank() ];
+        int[] spread = new int[ this.rank() ];
+        int[] newShape = new int[ this.rank() ];
         if (key instanceof List || key instanceof Object[]) {
-            if (key instanceof List) key = ((List) key).toArray();
+            if (key instanceof List) key = ((List<?>) key).toArray();
             boolean allInt = true;
             for (Object o : (Object[]) key) allInt = allInt && o instanceof Integer;
             if (allInt && ((Object[]) key).length == rank()) {
                 key = _intArray((Object[]) key);
-                idxbase = (int[]) key;
+                offset = (int[]) key;
                 if (key != null) {
                     for (int i = 0; i < this.rank(); i++)
-                        idxbase[i] = (idxbase[i] < 0)
-                                ? _conf.shape(i) + idxbase[i]
-                                : idxbase[i];
-                    return IO.getFrom(this, idxbase);
+                        offset[i] = (offset[i] < 0) ? _conf.shape(i) + offset[i] : offset[i];
+                    return IO.getFrom(this, offset);
                 }
             } else {
                 boolean hasScale = false;
                 for (Object o : (Object[]) key) hasScale = hasScale || o instanceof Map;
-                idxbase = new int[((hasScale) ? 2 : 1) * this.rank()];
                 if (allInt) _configureSubsetFromRanges(
                         new Object[]{_intArray((Object[]) key)},
-                        idxbase,
+                        offset, spread, //idxbase,
                         newShape,
                         0
                 );
-                else _configureSubsetFromRanges((Object[]) key, idxbase, newShape, 0);
+                else _configureSubsetFromRanges((Object[]) key, offset, spread, newShape, 0);
 
             }
         } // ...not a simple slice... Advanced:
         else if (key instanceof Map) // ==> i, j, k slicing!
         {
-            idxbase = new int[this.rank() * 2];
             Object[] ranges = ((Map<?, ?>) key).keySet().toArray();
-            _configureSubsetFromRanges(ranges, idxbase, newShape, 0);
+            _configureSubsetFromRanges(ranges, offset, spread, newShape, 0);
             Object[] steps = ((Map<?, ?>) key).values().toArray();
-            for (int i = rank(); i < 2 * this.rank(); i++) {
-                idxbase[i] = (Integer) steps[i - rank()];
-                newShape[i - rank()] /= (Integer) steps[i - rank()];
+            for ( int i = 0; i < this.rank(); i++ ) {
+                spread[ i ] = (Integer) steps[ i ];
+                newShape[ i ] /= (Integer) steps[ i ];
             }
         } else {
             String message = "Cannot create tensor slice from key of type '" + key.getClass().getName() + "'!";
@@ -1191,17 +1189,14 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         subset._type = this._type;
         int[] newTranslation = this._conf.translation();
         int[] newIdxmap = NDConfiguration.Utility.newTlnOf(newShape);
-        int[] newSpread = new int[rank()];
+        int[] newSpread = spread;//new int[rank()];
         int[] newOffset = new int[rank()];
-        Arrays.fill(newSpread, 1);
-        if (idxbase.length == 2 * rank()) {
-            for (int i = rank(); i < idxbase.length; i++)
-                idxbase[i] = (idxbase[i] == 0) ? 1 : idxbase[i];
+        for (int i = 0; i < this.rank(); i++) spread[i] = (spread[i] == 0) ? 1 : spread[i];
+        for ( int i = 0; i < offset.length; i++ ) {
+            if ( i >= rank() ) newSpread[ i - rank() ] = offset[ i ];
+            else newOffset[ i ] = offset[ i ] + getNDConf().offset( i ); // Offset is being inherited!
         }
-        for (int i = 0; i < idxbase.length; i++) {
-            if (i >= rank()) newSpread[i - rank()] = idxbase[i];
-            else newOffset[i] = idxbase[i] + getNDConf().offset(i); // Offset is being inherited!
-        }
+
         Tsr<?> rootTensor = (this.isSlice()) ? find(Relation.class).findRootTensor() : this;
         Tsr<?> parentTensor = (this.isSlice()) ? find(Relation.class).getParent() : this;
         if ( parentTensor.rank() != newShape.length || rootTensor != parentTensor ) {
@@ -1245,16 +1240,17 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *               - A map whose first entry represents a mapping between range and steps.
      *               - A list from which a first and last entry will be interpreted as range.
      *               - Any other object which might bew found in a 'IndexAlias' component.
-     * @param idxbase Start index for every rank.
+     * @param offset Start index for every rank.
      * @param newShape New shape of the new sub-tensor.
-     * @param offset Rank offset incremented according to recursive calls.
+     * @param iOffset Rank offset incremented according to recursive calls.
      * @return A new rank index.
      */
     private int _configureSubsetFromRanges(
             Object[] ranges,
-            int[] idxbase,
+            //int[] idxbase,
+            int[] offset,  int[] spread,
             int[] newShape,
-            int offset
+            int iOffset
     ) {
         for ( int i = 0; i < ranges.length; i++ ) {
             int first = 0;
@@ -1276,10 +1272,14 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 if ( ranges[ i ] instanceof Map ) {
                     Object[] ks = ( (Map<?,?>) ranges[ i ] ).keySet().toArray();
                     Object[] steps = ( (Map<?,?>) ranges[ i ]).values().toArray();
-                    int newI = _configureSubsetFromRanges( ks, idxbase, newShape, i + offset );
-                    for ( int ii = rank(); ii < ( rank() + steps.length ); ii++ ) {
-                        idxbase[ ii + i + offset ] = (Integer) steps[ ii - rank() ];
-                        newShape[ ii + i + offset - rank() ] /= idxbase[ ii + i + offset ];
+                    int newI = _configureSubsetFromRanges( ks, offset, spread, newShape, i + iOffset );
+                    //for ( int ii = rank(); ii < ( rank() + steps.length ); ii++ ) {
+                    //    idxbase[ ii + i + offset ] = (Integer) steps[ ii - rank() ];
+                    //    newShape[ ii + i + offset - rank() ] /= idxbase[ ii + i + offset ];
+                    //}
+                    for ( int ii = 0; ii < steps.length; ii++ ) {
+                        spread[ ii + i + iOffset ] = (Integer) steps[ ii ];
+                        newShape[ ii + i + iOffset ] /= spread[ ii + i + iOffset ];
                     }
                     i = newI;
                     continue;
@@ -1287,13 +1287,13 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                     first = (Integer) ranges[ i ];
                     last = (Integer) ranges[ i ];
                 } else {
-                    IndexAlias indexAlias = find( IndexAlias.class );
+                    IndexAlias<?> indexAlias = find( IndexAlias.class );
                     if ( indexAlias != null ) {
-                        int position = indexAlias.get( ranges[ i ], i + offset );
+                        int position = indexAlias.get( ranges[ i ], i + iOffset );
                         first = position;
                         last = position;
                     } else {
-                        String message = "Given indexAlias key at axis " + ( i + offset ) + " not found!";
+                        String message = "Given indexAlias key at axis " + ( i + iOffset ) + " not found!";
                         _LOGGER.error( message );
                         throw new IllegalStateException( message );
                     }
@@ -1310,7 +1310,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                     IndexAlias<?> indexAlias = find( IndexAlias.class );
                     if ( !( ( (Object[]) (ranges[ i ]) )[ 0 ] instanceof Integer ) ) {
                         if ( indexAlias != null ) {
-                            first = indexAlias.get( ( (Object[]) ranges[ i ])[ 0 ], i + offset );
+                            first = indexAlias.get( ( (Object[]) ranges[ i ])[ 0 ], i + iOffset );
                         }
                     }
                     else first = (Integer) ( (Object[]) ranges[ i ] )[ 0 ];
@@ -1319,7 +1319,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                         if ( indexAlias != null ) {
                             last = indexAlias.get(
                                     ( (Object[]) ranges[ i ] )[ ( (Object[]) ranges[ i ] ).length - 1 ],
-                                    i + offset
+                                    i + iOffset
                             );
                         }
                     }
@@ -1337,10 +1337,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             }
             first = ( first < 0 ) ? _conf.shape( i ) + first : first;
             last = ( last < 0 ) ? _conf.shape( i ) + last : last;
-            newShape[ i + offset ] = ( last - first ) + 1;
-            idxbase[ i + offset ] = first;
+            newShape[ i + iOffset ] = ( last - first ) + 1;
+            offset[ i + iOffset ] = first;
         }
-        return ranges.length + offset - 1;
+        return ranges.length + iOffset - 1;
     }
 
     public static class IO
