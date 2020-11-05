@@ -105,13 +105,13 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public Tsr<ValueType> setRqsGradient( boolean rqsGradient ) {
-        if ( rqsGradient() != rqsGradient && !rqsGradient ) this.remove(Tsr.class);
-        _setRqsGradient(rqsGradient);
+        if ( rqsGradient() != rqsGradient && !rqsGradient ) this.remove( Tsr.class );
+        _setRqsGradient( rqsGradient );
         return this;
     }
 
     public boolean rqsGradient() {
-        return (_flags & RQS_GRADIENT_MASK) == RQS_GRADIENT_MASK;
+        return ( _flags & RQS_GRADIENT_MASK ) == RQS_GRADIENT_MASK;
     }
 
     protected void _setRqsGradient( boolean rqsGradient ) {
@@ -156,7 +156,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                                         );
                                         throw exception;
                                     }
-                                    gradient.remove(Device.class);
+                                    gradient.remove( Device.class );
                                 })
                         );
                     }
@@ -168,7 +168,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     public boolean isOutsourced() {
-        return (_flags & IS_OUTSOURCED_MASK) == IS_OUTSOURCED_MASK;
+        return ( _flags & IS_OUTSOURCED_MASK ) == IS_OUTSOURCED_MASK;
     }
 
     protected void _setIsOutsourced( boolean isOutsourced ) {
@@ -200,9 +200,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             } else {
                 Tsr<?> parentTensor = (this.isSlice())? find(Relation.class).getParent() : null;
                 if ( parentTensor != null ) {
-                    parentTensor.find(Relation.class).remove( this );
+                    parentTensor.find( Relation.class ).remove( this );
                 }
-                _value = (this.is64()) ? new double[this.size()] : new float[this.size()];
+                _value = (this.is64()) ? new double[ this.size() ] : new float[ this.size() ];
                 int length = (this.is64()) ? ((double[]) _value).length : ((float[]) _value).length;
                 for (int i = 0; i < length; i++) {
                     if (this.is64()) ((double[]) _value)[i] = v;
@@ -278,7 +278,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     protected < T extends Component<Tsr<ValueType>> > T _addOrReject( T newComponent )
     {
         if ( newComponent.getClass() == HostCPU.class ) return null;
-        if ( newComponent instanceof Device && !( (Device) newComponent ).has(this) )
+        if ( newComponent instanceof Device && !( (Device) newComponent ).has( this ) )
         {
             if ( this.has( Relation.class ) ) {
                 Relation relation = find( Relation.class );
@@ -1250,7 +1250,12 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param offset Rank offset incremented according to recursive calls.
      * @return A new rank index.
      */
-    private int _configureSubsetFromRanges( Object[] ranges, int[] idxbase, int[] newShape, int offset ) {
+    private int _configureSubsetFromRanges(
+            Object[] ranges,
+            int[] idxbase,
+            int[] newShape,
+            int offset
+    ) {
         for ( int i = 0; i < ranges.length; i++ ) {
             int first = 0;
             int last = 0;
@@ -1269,8 +1274,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             }
             if ( !( ranges[ i ] instanceof  List ) ) {
                 if ( ranges[ i ] instanceof Map ) {
-                    Object[] ks = ( (Map) ranges[ i ] ).keySet().toArray();
-                    Object[] steps = ( (Map) ranges[ i ]).values().toArray();
+                    Object[] ks = ( (Map<?,?>) ranges[ i ] ).keySet().toArray();
+                    Object[] steps = ( (Map<?,?>) ranges[ i ]).values().toArray();
                     int newI = _configureSubsetFromRanges( ks, idxbase, newShape, i + offset );
                     for ( int ii = rank(); ii < ( rank() + steps.length ); ii++ ) {
                         idxbase[ ii + i + offset ] = (Integer) steps[ ii - rank() ];
@@ -1294,15 +1299,15 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                     }
                 }
             } else {
-                ranges[ i ] = ( (List) ranges[ i ] ).toArray();
+                ranges[ i ] = ( (List<?>) ranges[ i ] ).toArray();
                 ranges[ i ] = ( ( (Object[]) ranges[ i ] )[ 0 ] instanceof List )
-                        ? ( (List) ( (Object[]) ranges[ i ] )[ 0 ] ).toArray()
+                        ? ( (List<?>) ( (Object[]) ranges[ i ] )[ 0 ] ).toArray()
                         : ( (Object[]) ranges[ i ] );
                 if (
                         !( ( (Object[]) ( ranges[ i ] ) )[ 0 ] instanceof Integer )
                                 || !( ( (Object[]) ranges[ i ] )[ ( (Object[]) ( ranges[ i ] ) ).length - 1 ] instanceof Integer )
                 ) {
-                    IndexAlias indexAlias = find( IndexAlias.class );
+                    IndexAlias<?> indexAlias = find( IndexAlias.class );
                     if ( !( ( (Object[]) (ranges[ i ]) )[ 0 ] instanceof Integer ) ) {
                         if ( indexAlias != null ) {
                             first = indexAlias.get( ( (Object[]) ranges[ i ])[ 0 ], i + offset );

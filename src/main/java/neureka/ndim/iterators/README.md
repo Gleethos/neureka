@@ -28,18 +28,21 @@ Unfortunately this megamorphic
 architecture hinders inlining optimizations
 for the JVM. 
 However, this is not the only type of iteration done by Neureka.
-Alternatively an array based iteration approach is
-being performed for operations on tensors when performance
+Alternatively an array based iteration approach is used 
+for operations on tensors when performance
 is important.<br>
-The difference between the two aproaches is being outlined below :
+The difference between the two approaches is being outlined below :
 
-**NDIterator approach :**
+**NDIterator approach :** <br>
+The 'iter' object contains all relevant
+context implementation for both an internal incremented index, 
+and a mapping to the "real index" used for data access.
 ```
 public void iterateOver( Tsr t, int times ) 
 {
     NDIterator iter = NDIterator.of( t );
     double[] tensorData = (double[]) t0_drn.getData();
-    for ( int i=0; i < times; i++ ) 
+    for ( int i = 0; i < times; i++ ) 
     {
         double current = tensorData[iter.i()];
         // ... used somehow ...
@@ -50,15 +53,21 @@ public void iterateOver( Tsr t, int times )
 ```
 
 **Array based approach :**
+This iteration method uses three components.
+It uses two int arrays, one constant shape array,
+and an index array which ought to be incremented according
+to the max values inside the shape array.
+The third component is an implementation instance of
+the NDConfiguration interface which is responsible for
+returning the "true scalar index" of the tensor data.
 ```
 public void iterateOver( Tsr t, int times ) 
 {
     NDConfiguration ndc = t.getNDConf();
     int[] tensorShape = ndc.shape();
-    int rank = tensorShape.length;
-
+    int[] arrayIndex = new int[ tensorShape.length ];
     double[] tensorData = (double[]) t0_drn.getData();
-    for ( int i=0; i < times; i++ ) 
+    for ( int i = 0; i < times; i++ ) 
     { 
         double current = tensorData[ ndc.i_of_idx( arrayIndex ) ];
         // ... used somehow ...

@@ -23,7 +23,7 @@ import java.util.function.Supplier;
  *  whereas children are the nodes (also) produced by said current node.
  *  Children are weakly referenced so that abandoned / detached
  *  graph branches (child nodes) can be garbage collected...
- *  ...whereas parents are strongly referenced in order to enable traversal.
+ *  ...whereas parents are strongly referenced in order to grant successful traversal.
  */
 public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
 {
@@ -210,7 +210,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      * @return the payload of this graph-node.
      */
     public Tsr<ValueType> getPayload() {
-        return (_payload == null) ? null : _payload.get();
+        return ( _payload == null ) ? null : _payload.get();
     }
 
     private void _setPayload( Tsr<ValueType> p ) {
@@ -382,7 +382,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
             for ( int i = 0; i < inputs.length; i++ ) {
                 GraphNode child = inputs[ i ].find( GraphNode.class );
                 if ( child == null ) throw new IllegalStateException(
-                        "Input tensor at index '"+i+"' did not return a GraphNode instance." +
+                        "Input tensor at index '" + i + "' did not return a GraphNode instance." +
                                 "Input tensors of a new GraphNode must be part of the computation graph!"
                 );
                 if ( foundLock == null ) foundLock = child.lock();
@@ -420,7 +420,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
     private void _construct(  Tsr<ValueType> output, Function function, ExecutionCall<Device> call, GraphLock lock )
     {
         Tsr<Object>[] inputs = ( call == null ) ? null : call.getTensors();
-        if ( output == null ) throw new NullPointerException("The supplied payload Tsr must no be null!");
+        if ( output == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
         _reference_payload_version = output.version();
         if ( !function.doesAD() ) return; // Only functions with AutoDiff enabled create computation graph!
         _lock = lock;

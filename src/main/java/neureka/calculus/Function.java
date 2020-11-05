@@ -58,64 +58,68 @@ public interface Function
         public static Function NEG = create("(-1*I[ 0 ])", false);
     }
 
-    static Function create(String expression){
+    static Function create( String expression ){
         return create(expression, true);
     }
 
-    static Function create(String expression, boolean doAD){
+    static Function create( String expression, boolean doAD ){
         return FunctionBuilder.build(expression, doAD);
     }
 
     class Setup
     {
-        public static <T> Tsr<T> commit(Tsr<T>[] tensors, String operation, boolean doAD) {
-            return commit(null, tensors, FunctionBuilder.build(operation, doAD));
+        public static <T> Tsr<T> commit( Tsr<T>[] tensors, String operation, boolean doAD )
+        {
+            return commit( null, tensors, FunctionBuilder.build( operation, doAD ) );
         }
 
-        public static <T> Tsr<T> commit(Tsr<T> drain, Tsr<T>[] tensors, String operation, boolean doAD) {
-            return commit(drain, tensors, FunctionBuilder.build(operation, doAD));
+        public static <T> Tsr<T> commit( Tsr<T> drain, Tsr<T>[] tensors, String operation, boolean doAD )
+        {
+            return commit( drain, tensors, FunctionBuilder.build( operation, doAD ) );
         }
 
-        public static <T> Tsr<T> commit(Tsr<T>[] inputs, Function function) {
-            return commit(null, inputs, function);
+        public static <T> Tsr<T> commit( Tsr<T>[] inputs, Function function )
+        {
+            return commit( null, inputs, function );
         }
 
-        public static <T> Tsr<T> commit(Tsr<T> drain, Tsr<T>[] inputs, Function function) {
-            return commit(drain, inputs, function, null);
+        public static <T> Tsr<T> commit( Tsr<T> drain, Tsr<T>[] inputs, Function function )
+        {
+            return commit( drain, inputs, function, null );
         }
 
-        public static <T> Tsr<T> commit(Tsr<T> drain, Tsr<T>[] inputs, Function function, Supplier<Tsr<T>> activation){
-
-            Tsr.makeFit(inputs, function.doesAD());// reshaping if needed
+        public static <T> Tsr<T> commit( Tsr<T> drain, Tsr<T>[] inputs, Function function, Supplier<Tsr<T>> activation )
+        {
+            Tsr.makeFit(inputs, function.doesAD()); // reshaping if needed
 
             GraphLock newLock = new GraphLock(function, inputs);
             for (Tsr<T> t : inputs) {
                 if( t.has(GraphNode.class) ) t.find(GraphNode.class).obtainLocking( newLock );
                 else new GraphNode( function, newLock, () -> t );
             }
-            Tsr<T> result = null;
-            if( activation == null ) result = (Tsr<T>) function.call((Tsr<T>[])inputs);
-            else result = (Tsr<T>) activation.get();
+            Tsr<T> result;
+            if( activation == null ) result = function.call( inputs );
+            else result = activation.get();
 
-            Function.CACHE.free(newLock);
+            Function.CACHE.free( newLock );
             boolean resultIsUnique = true;
-            if(drain!=null){
-                for(Tsr<T> t : inputs){
-                    Tsr<T> g = t.find(Tsr.class);
-                    if (t == result || (g!=null && g==result)) {
+            if ( drain != null ) {
+                for( Tsr<T> t : inputs ) {
+                    Tsr<T> g = t.find( Tsr.class );
+                    if (t == result || ( g != null && g == result ) ) {
                         resultIsUnique = false;
                         break;
                     }
                 }
             }
-            if(resultIsUnique) return result;
+            if ( resultIsUnique ) return result;
             else return null;
         }
     }
 
     //------------------------------------------------------------------------------------------------------------------
 
-    Function newBuild(String expression);
+    Function newBuild( String expression );
 
     boolean doesAD();//Note: only branch nodes can 'do Auto-Differentiation'
 
@@ -123,53 +127,53 @@ public interface Function
 
     OperationType getOperation();
 
-    boolean dependsOn(int index);
+    boolean dependsOn( int index );
 
     //------------------------------------------------------------------------------------------------------------------
 
-    double call(double input);
-    double invoke(double input);
+    double call( double input );
+    double invoke( double input );
 
     //------------------------------------------------------------------------------------------------------------------
 
-    double call(double[] inputs, int j);
-    double invoke(double[] inputs, int j);
+    double call( double[] inputs, int j );
+    double invoke( double[] inputs, int j );
 
 
-    double call(double[] inputs);
-    double invoke(double[] inputs);
+    double call( double[] inputs );
+    double invoke( double[] inputs );
 
 
-    double derive(double[] inputs, int index, int j);
+    double derive( double[] inputs, int index, int j );
 
-    double derive(double[] inputs, int index);
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    <T> Tsr<T> call(Tsr<T> input);
-    <T> Tsr<T> invoke(Tsr<T> input);
-
-    <T> Tsr<T> call(List<Tsr<T>> input);
-    <T> Tsr<T> invoke(List<Tsr<T>> input);
+    double derive( double[] inputs, int index );
 
     //------------------------------------------------------------------------------------------------------------------
 
-    <T> Tsr<T> call(Tsr<T>[] inputs, int j);
-    <T> Tsr<T> invoke(Tsr<T>[] inputs, int j);
+    <T> Tsr<T> call( Tsr<T> input );
+    <T> Tsr<T> invoke( Tsr<T> input );
 
-    <T> Tsr<T> call(Tsr<T>[] inputs);
-    <T> Tsr<T> invoke(Tsr<T>[] inputs);
+    <T> Tsr<T> call( List<Tsr<T>> input );
+    <T> Tsr<T> invoke( List<Tsr<T>> input );
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    <T> Tsr<T> call( Tsr<T>[] inputs, int j );
+    <T> Tsr<T> invoke( Tsr<T>[] inputs, int j );
+
+    <T> Tsr<T> call( Tsr<T>[] inputs );
+    <T> Tsr<T> invoke( Tsr<T>[] inputs );
 
 
-    <T> Tsr<T> derive(Tsr<T>[] inputs, int index, int j);
+    <T> Tsr<T> derive( Tsr<T>[] inputs, int index, int j );
 
-    <T> Tsr<T> derive(Tsr<T>[] inputs, int index);
+    <T> Tsr<T> derive( Tsr<T>[] inputs, int index );
 
     //---
 
-    <T> Tsr<T> derive(List<Tsr<T>> inputs, int index, int j);
+    <T> Tsr<T> derive( List<Tsr<T>> inputs, int index, int j );
 
-    <T> Tsr<T> derive(List<Tsr<T>> inputs, int index);
+    <T> Tsr<T> derive( List<Tsr<T>> inputs, int index );
 
     //---
 

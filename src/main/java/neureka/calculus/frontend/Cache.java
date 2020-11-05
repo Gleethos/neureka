@@ -4,7 +4,8 @@ import neureka.Tsr;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
-import neureka.calculus.backend.operations.OperationType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -12,8 +13,11 @@ import java.util.function.Supplier;
 public class Cache
 {
     private static Cache _cache = new Cache();
+    private Logger _logger = LoggerFactory.getLogger( Cache.class );
 
-    private Cache(){ }
+    private Cache(){
+        _logger.debug("New singleton instance of class 'Cache' created for function result caching.");
+    }
 
     public static Cache instance()
     {
@@ -28,7 +32,7 @@ public class Cache
         return this.FUNCTIONS;
     }
 
-    private final Map<GraphLock, TreeMap<Long, Tsr<Object>>> PROCESSING = Collections.synchronizedMap(new TreeMap<>((a, b)->((int)(a.hashCode()-b.hashCode()))));
+    private final Map<GraphLock, TreeMap<Long, Tsr<Object>>> PROCESSING = Collections.synchronizedMap( new TreeMap<>( ( a, b )-> a.hashCode() - b.hashCode() ) );
 
     public synchronized void free( GraphLock lock )
     {
@@ -39,26 +43,26 @@ public class Cache
     public synchronized Tsr<Object> preprocess( Tsr<Object>[] inputs, Function function, Supplier<Tsr<Object>> activation, int d, int j )
     {
         if ( !function.doesAD() ) {
-            return activation.get();//TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD => NO GRAPH NODES
+            return activation.get(); // TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD => NO GRAPH NODES
         }
         boolean locked = true;//input tensors might all have graph nodes but are left from previous computation. (=>need to locked again!)
         Tsr<Object> untracked = null;
         for ( Tsr<Object> t : inputs ) {
-            GraphNode<Object> node = t.find(GraphNode.class);
+            GraphNode<Object> node = t.find( GraphNode.class );
             if ( node != null ) {
                 untracked=t;
-                locked = (locked)&&node.lock().isLocked();
+                locked = (locked) && node.lock().isLocked();
             }
         }
-        if( untracked==null || !locked ){ // If graph tracking (nodes) has not yet been initialized!
-            return Function.Setup.commit(null, inputs, function, activation);
+        if( untracked == null || !locked ){ // If graph tracking (nodes) has not yet been initialized!
+            return Function.Setup.commit( null, inputs, function, activation );
         }
-        GraphLock lock =  untracked.find(GraphNode.class).lock();
+        GraphLock lock =  untracked.find( GraphNode.class ).lock();
         for ( Tsr<Object> t : inputs ){
-            if ( t.has(GraphNode.class) ) t.find(GraphNode.class).obtainLocking(lock);
+            if ( t.has(GraphNode.class) ) t.find( GraphNode.class ).obtainLocking( lock );
             else new GraphNode( function, lock, ()->t );
         }
-        GraphNode<Object> node = inputs[ 0 ].find(GraphNode.class);
+        GraphNode<Object> node = inputs[ 0 ].find( GraphNode.class );
         Tsr<Object> result = null;
 
         if ( !function.getOperation().isInline() ) result = _get( inputs, d, j );
@@ -71,33 +75,48 @@ public class Cache
         return result;
     }
 
-    private synchronized Tsr<Object> _get(Tsr<Object>[] tsrs, int d, int j)
+    private synchronized Tsr<Object> _get( Tsr<Object>[] tsrs, int d, int j )
     {
-        GraphLock lock = null;
-        long key = 0;
-        for( int i = 0; i < tsrs.length; i++ ) {
-            GraphNode<Object> node = tsrs[ i ].find( GraphNode.class );
-            lock = node.lock();
-            key += ( (i+1) * node.nid() ) + _keyed(d) * 31 + _keyed(j);
-        }
-        if ( PROCESSING.containsKey(lock) ) {
-            if (PROCESSING.get(lock).containsKey(key)) return PROCESSING.get(lock).get(key);
+        GraphLock lock = tsrs[ 0 ].find( GraphNode.class ).lock();
+        long key = _keyOf( tsrs, d, j );
+        if ( key != 0 && PROCESSING.containsKey( lock ) && PROCESSING.get( lock ).containsKey( key ) ) {
+                _logger.debug(
+                        "Result cache hit occurred! Function lock : '{}'; Key : '{}';", lock, key
+                );
+                return PROCESSING.get( lock ).get( key );
         }
         return null;
     }
 
-    private synchronized void _put( Tsr<Object> t, GraphNode node, int d, int j )
+    private synchronized void _put( Tsr<Object> t, GraphNode<Object> node, int d, int j )
     {
-        long key = node.nid() + _keyed(d) * 31 + _keyed(j);
-        if ( node.isCachable() ) {
+        GraphNode[] nodes = node.getParents();
+        Tsr[] tsrs = null;
+        if ( nodes != null ) {
+            tsrs = new Tsr[ nodes.length ];
+            for ( int i=0; i<nodes.length; i++ ) tsrs[i] = nodes[i].getPayload();
+        }
+        long key = _keyOf( tsrs, d, j );
+        if ( node.isCachable() && key != 0 ) {
             TreeMap<Long, Tsr<Object>> variables;
-            if ( PROCESSING.containsKey(node.lock()) ) variables = PROCESSING.get(node.lock());
+            if ( PROCESSING.containsKey( node.lock() ) ) variables = PROCESSING.get( node.lock() );
             else {
                 variables = new TreeMap<>((a, b) -> (a.hashCode() - b.hashCode()));
                 PROCESSING.put( node.lock(), variables );
             }
             variables.put( key, t );
         }
+    }
+
+    private long _keyOf( Tsr[] tsrs, int d, int j )
+    {
+        long key = 0;
+        if ( tsrs == null ) return 0;
+        for( int i = 0; i < tsrs.length; i++ ) {
+            if ( tsrs[ i ] == null ) return 0; // Tensor has probably been garbage collected!
+            key += ( ( i + 1 ) * tsrs[ i ].hashCode() ) + _keyed( d ) * 31 + _keyed( j );
+        }
+        return key;
     }
 
     private int _keyed( int number ){

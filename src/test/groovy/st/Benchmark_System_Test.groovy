@@ -2,8 +2,11 @@ package st
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.calculus.Function
+import neureka.calculus.frontend.Cache
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
+import org.slf4j.Logger
 import spock.lang.Specification
 import testutility.Utility
 
@@ -36,12 +39,11 @@ class Benchmark_System_Test extends Specification
     {
         given : 'Neureka instance is being reset.'
             Neureka.instance().reset()
-            def configuration = [
-                    "iterations":1,
-                    "sample_size":20,
-                    "difficulty":15,
-                    "intensifier":0
-            ]
+            def configuration = [ "iterations":1, "sample_size":20, "difficulty":15, "intensifier":0 ]
+
+        and : 'Function cache mocking is being prepared to test logging...'
+            Logger oldLogger = Function.CACHE._logger
+            Function.CACHE._logger = Mock( Logger )
 
         and : 'The benchmark script is being loaded into a GroovyShell instance.'
             def session = new GroovyShell().evaluate(Utility.readResource("benchmark.groovy", this))
@@ -62,21 +64,28 @@ class Benchmark_System_Test extends Specification
         then : 'The hash is as expected.'
             hash == expected
 
-        and : 'If system supports OpenCL.'
+        and : 'No logging occurs because the benchmark does not render a scenario where a cache hit could occur.'
+            0 * Function.CACHE._logger.debug(_)
+
+        when : 'The cache logging is being reverted to the original state...'
+            Function.CACHE._logger = oldLogger
+        and : 'Only continue if testing system supports OpenCL.'
             if ( !Neureka.instance().canAccessOpenCL() ) return
 
-        when : 'The benchmark is now being executed with the first found OpenCLDevice instance...'
+        and : 'The benchmark is now being executed with the first found OpenCLDevice instance...'
             hash = ""
             session(
                     configuration, null,
                     Device.find("first"),
                         tsr -> {
-                            hash = (hash+tsr.toString()).md5()
+                            hash = ( hash + tsr.toString() ).md5()
                         }
             )
 
         then : 'The calculated hash is as expected.'
-            hash==expected // "56b2eb74955e49cd777469c7dad0536e"
+            hash == expected
+
+
 
         //String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date())
         /*
