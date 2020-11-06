@@ -1081,13 +1081,28 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this;
     }
 
-    public Tsr<ValueType> putAt( Object key, Tsr<ValueType> value ) {
+    private void _putAtCheckFor( Tsr value ) {
         if ( value.isEmpty() ) {
             String message = "Provided tensor is empty! Empty tensors cannot be injected.";
             _LOGGER.error( message );
             throw new IllegalArgumentException( message );
         }
+    }
+
+    public Tsr<ValueType> putAt( List<?> key, Tsr<ValueType> value ) {
+        _putAtCheckFor( value );
         Tsr<ValueType> slice = ( key == null ) ? this : (Tsr) getAt( key );
+        return _putAt( slice, value );
+    }
+
+    public Tsr<ValueType> putAt( Map<?,?> key, Tsr<ValueType> value ) {
+        _putAtCheckFor( value );
+        Tsr<ValueType> slice = ( key == null ) ? this : (Tsr) getAt( key );
+        return _putAt( slice, value );
+    }
+
+    private Tsr<ValueType> _putAt( Tsr<ValueType> slice, Tsr<ValueType> value )
+    {
         boolean valueIsDeviceVisitor = false;
         if ( slice.isOutsourced() && !value.isOutsourced() ) {
             Device device = slice.find( Device.class );
@@ -1111,7 +1126,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     public double getAt( int[] idx ){
-        return value64()[ i_of_idx( idx ) ];
+        return value64( i_of_idx( idx ) );
     }
 
     public Object getAt( Object i1, Object i2 ) {
@@ -1120,100 +1135,164 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     public Object getAt( int i ) {
-        return getAt( (Integer) i );
+        return getAt( Arrays.asList(_conf.idx_of_i( i )).toArray() );
     }
 
-    public Object getAt( Object key )
-    {
-        if (key == null) return this;
-        if (key instanceof Object[] && ((Object[]) key).length == 0) key = new ArrayList<>();
-        if (key instanceof List && ((List<?>) key).isEmpty()) {
-            if (this.isEmpty() || this.isUndefined()) return this;
-            for (int e : this.shape()) {
-                List<Integer> rangeAsList = new ArrayList<>();
-                for (int i = 0; i < e; i++) rangeAsList.add(i);
-                ((List<Object>) key).add(rangeAsList);
-            }
-        } else if (key instanceof Integer)
-            key = Arrays.asList(_conf.idx_of_i((Integer) key));
-        else if (key instanceof Double)
-            key = Arrays.asList(_conf.idx_of_i((int) Math.floor((Double) key)));
-        else if (key instanceof BigDecimal)
-            key = Arrays.asList(_conf.idx_of_i(((BigDecimal) key).intValue()));
+    public Object getAt( double i ) {
+        return getAt( Arrays.asList( _conf.idx_of_i( (int) Math.floor( i ) ) ).toArray() );
+    }
 
-        int[] offset = new int[ this.rank() ];
-        int[] spread = new int[ this.rank() ];
+    public Object getAt( BigDecimal i ) {
+        return getAt( Arrays.asList( _conf.idx_of_i(( i ).intValue()) ).toArray() );
+    }
+
+    public Object getAt( Map<?,?> rangToStrides )
+    {
+        if ( rangToStrides == null ) return this;
+        int[] newOffset = new int[ this.rank() ]; // ...not a simple slice... Advanced:
+        int[] newSpread = new int[ this.rank() ];
         int[] newShape = new int[ this.rank() ];
-        if (key instanceof List || key instanceof Object[]) {
-            if (key instanceof List) key = ((List<?>) key).toArray();
+        Object[] ranges = rangToStrides.keySet().toArray();
+        _configureSubsetFromRanges( ranges, newOffset, newSpread, newShape, 0 );
+        Object[] steps = rangToStrides.values().toArray();
+        for ( int i = 0; i < this.rank(); i++ ) {
+            newSpread[ i ] = (Integer) steps[ i ];
+            newShape[ i ] /= (Integer) steps[ i ];
+        }
+        return _sliceOf( newShape, newOffset, newSpread );
+    }
+
+    public Tsr shallowCopy()
+    {
+        if ( this.isEmpty() || this.isUndefined() ) return this;
+        List<List<Integer>> ranges = new ArrayList<>();
+        for ( int e : this.shape() ) {
+            List<Integer> rangeAsList = new ArrayList<>();
+            for ( int i = 0; i < e; i++ ) rangeAsList.add( i );
+            ranges.add( rangeAsList);
+        }
+        return (Tsr) getAt( ranges.toArray() );
+    }
+
+    /**
+     *  This method enables tensor slicing!
+     *  It takes a key of various types and configures a slice
+     *  tensor which shares the same underlying data as the original tensor.
+     *
+     * @param key This object might be a wide range of objects including maps, lists or arrays...
+     * @return A slice tensor or scalar value.
+     */
+    public Object getAt( Object key ) {
+        if ( key == null ) return this;
+        if ( key instanceof Object[] && ((Object[]) key).length == 0 ) key = new ArrayList<>();
+        if ( key instanceof List && ( (List<?>) key ).isEmpty() ) {
+            /*
+                An empty List implementation instance is being interpreted as
+                the request to create an identical slice, meaning that the
+                resulting tensor views the same data as its parent while not
+                being the same instance. (In a sense, its a shallow copy!)
+             */
+            //if ( this.isEmpty() || this.isUndefined() ) return this;
+            //for ( int e : this.shape() ) {
+            //    List<Integer> rangeAsList = new ArrayList<>();
+            //    for (int i = 0; i < e; i++) rangeAsList.add(i);
+            //    ( (List<Object>) key ).add(rangeAsList);
+            //}
+            return shallowCopy();
+        }
+
+        int[] newOffset = new int[ this.rank() ];
+        int[] newSpread = new int[ this.rank() ];
+        int[] newShape = new int[ this.rank() ];
+        key = ( key instanceof List ) ? ((List<?>) key).toArray() : key;
+
+        if ( key instanceof Object[] ) {
             boolean allInt = true;
             for (Object o : (Object[]) key) allInt = allInt && o instanceof Integer;
-            if (allInt && ((Object[]) key).length == rank()) {
+            if ( allInt && ((Object[]) key).length == rank() ) {
                 key = _intArray((Object[]) key);
-                offset = (int[]) key;
-                if (key != null) {
-                    for (int i = 0; i < this.rank(); i++)
-                        offset[i] = (offset[i] < 0) ? _conf.shape(i) + offset[i] : offset[i];
-                    return IO.getFrom(this, offset);
+                newOffset = (int[]) key;
+                if ( key != null ) {
+                    for ( int i = 0; i < this.rank(); i++ )
+                        newOffset[i] = ( newOffset[i] < 0 ) ? _conf.shape( i ) + newOffset[ i ] : newOffset[ i ];
+                    return IO.getFrom( this, newOffset );
                 }
             } else {
                 boolean hasScale = false;
-                for (Object o : (Object[]) key) hasScale = hasScale || o instanceof Map;
-                if (allInt) _configureSubsetFromRanges(
-                        new Object[]{_intArray((Object[]) key)},
-                        offset, spread, //idxbase,
+                for ( Object o : (Object[]) key ) hasScale = hasScale || o instanceof Map;
+                if ( allInt ) _configureSubsetFromRanges(
+                        new Object[]{ _intArray( (Object[]) key ) },
+                        newOffset, newSpread, //idxbase,
                         newShape,
                         0
                 );
-                else _configureSubsetFromRanges((Object[]) key, offset, spread, newShape, 0);
-
-            }
-        } // ...not a simple slice... Advanced:
-        else if (key instanceof Map) // ==> i, j, k slicing!
-        {
-            Object[] ranges = ((Map<?, ?>) key).keySet().toArray();
-            _configureSubsetFromRanges(ranges, offset, spread, newShape, 0);
-            Object[] steps = ((Map<?, ?>) key).values().toArray();
-            for ( int i = 0; i < this.rank(); i++ ) {
-                spread[ i ] = (Integer) steps[ i ];
-                newShape[ i ] /= (Integer) steps[ i ];
+                else _configureSubsetFromRanges( (Object[]) key, newOffset, newSpread, newShape, 0 );
             }
         } else {
             String message = "Cannot create tensor slice from key of type '" + key.getClass().getName() + "'!";
-            _LOGGER.error(message);
-            throw new IllegalArgumentException(message);
+            _LOGGER.error( message );
+            throw new IllegalArgumentException( message );
         }
+        return _sliceOf( newShape, newOffset, newSpread );
+    }
+
+    private Tsr _sliceOf( int[] newShape, int[] newOffset, int[] newSpread ) {
         this.setIsVirtual( false );
         Tsr<ValueType> subset = new Tsr<>();
         subset._value = this._value;
         subset._type = this._type;
         int[] newTranslation = this._conf.translation();
-        int[] newIdxmap = NDConfiguration.Utility.newTlnOf(newShape);
-        int[] newSpread = spread;//new int[rank()];
-        int[] newOffset = new int[rank()];
-        for (int i = 0; i < this.rank(); i++) spread[i] = (spread[i] == 0) ? 1 : spread[i];
-        for ( int i = 0; i < offset.length; i++ ) {
-            if ( i >= rank() ) newSpread[ i - rank() ] = offset[ i ];
-            else newOffset[ i ] = offset[ i ] + getNDConf().offset( i ); // Offset is being inherited!
-        }
+        int[] newIdxmap = NDConfiguration.Utility.newTlnOf( newShape );
 
-        Tsr<?> rootTensor = (this.isSlice()) ? find(Relation.class).findRootTensor() : this;
-        Tsr<?> parentTensor = (this.isSlice()) ? find(Relation.class).getParent() : this;
+        for ( int i = 0; i < this.rank(); i++ )
+            newSpread[ i ] = ( newSpread[i] == 0 ) ? 1 : newSpread[ i ];
+
+        for ( int i = 0; i < newOffset.length; i++ )
+            newOffset[ i ] = newOffset[ i ] + getNDConf().offset( i ); // Offset is being inherited!
+
+        Tsr<?> rootTensor = ( this.isSlice() ) ? find( Relation.class ).findRootTensor() : this;
+        Tsr<?> parentTensor = ( this.isSlice() ) ? find( Relation.class ).getParent() : this;
+        /*
+            The following code check the validity of the slice shape ranges with
+            respect to the 'parentTensor' of this new slice.
+         */
         if ( parentTensor.rank() != newShape.length || rootTensor != parentTensor ) {
             // TODO! This requires some more thought about how to check this!
+            // THIS CASE HAS NOT YET BEEN THOUGHT TROUGH!
         } else {
-            int[] reshaped = (this.isSlice()) ? parentTensor.find(Relation.class).getReshapeRelationFor( this ) : null;
+            /*
+                1. We know that inside this else branch 'this' tensor is a first order slice!
+                (So it is not a slice of a slice... reason : 'rootTensor == parentTensor' )
+
+                2. There is however uncertainty about the 'true shape' of this parent tensor!
+                Meaning : It might have been reshaped and could therefore be distorted with
+                respect to the slice that is currently being prepared!
+                -> This means we have to take this possible reshaping into account!
+                Like so:
+
+                The following uses an int array also called 'reshapeRelation'.
+                This is simply the 'reshape array' which has been recorded inside the 'Relation' component
+                by the 'Reshape' operation! ( Hopefully! :) )
+
+                The following would occur when : "new Tsr(...).T().gatAt(...);"
+                Transposing a tensor performs an inline reshaping of an identical
+                slice of the original tensor! Then again slicing this tensor
+                via the 'getAt(...)' method leads us to a situation where
+                the following variable is NOT NULL! :
+             */
+            int[] reshaped = ( this.isSlice() ) ? parentTensor.find( Relation.class ).getReshapeRelationFor( this ) : null;
             reshaped = ( reshaped != null ) ? Reshape.invert( reshaped ) : null;
-            for (int i = 0; i < parentTensor.rank(); i++) {
-                int ii = (reshaped != null) ? reshaped[ i ] : i;
-                int top = newOffset[i] + newShape[i];
-                if (top > parentTensor.shape(ii)) {
-                    String message = "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
-                            "At index '" + i + "' : offset '" + newOffset[i] + "' + shape '" + newShape[i] + "' = '" + top + "',\n" +
-                            "which is larger than the target shape '" + parentTensor.shape(ii) + "' at the same index!";
-                    Exception exception = new IllegalArgumentException(message);
-                    _LOGGER.error(message, exception);
-                    throw new IllegalArgumentException(exception);
+            for ( int i = 0; i < parentTensor.rank(); i++ ) {
+                int ii = ( reshaped != null ) ? reshaped[ i ] : i;
+                int top = newOffset[ i ] + newShape[ i ];
+                if ( top > parentTensor.shape( ii ) ) {
+                    String message =
+                            "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
+                                    "At index '" + i + "' : offset '" + newOffset[ i ] + "' + shape '" + newShape[ i ] + "' = '" + top + "',\n" +
+                                    "which is larger than the target shape '" + parentTensor.shape( ii ) + "' at the same index!";
+                    Exception exception = new IllegalArgumentException( message );
+                    _LOGGER.error( message, exception );
+                    throw new IllegalArgumentException( exception );
                 }
             }
         }

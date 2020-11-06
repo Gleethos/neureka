@@ -26,7 +26,7 @@ public class Activation extends AbstractFunctionalOperationTypeImplementation< A
             int i, int end,
             OperationType.TertiaryNDIConsumer operation
     ) {
-        NDIterator t0Idx = NDIterator.of( t0_drn ); // t0_drn.idx_of_i( i );
+        NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src );
         t0Idx.set( t0_drn.idx_of_i( i ) );
         t1Idx.set( t0_drn.idx_of_i( i ) );

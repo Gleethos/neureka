@@ -82,7 +82,7 @@ public class Reshape extends AbstractOperationType
                 ).setCallHock(
                     ( caller, call ) ->
                     {
-                        Tsr[] inputs = caller.srcActivation( call.getTensors(), call.getJ(), -1, 0 );
+                        Tsr<?>[] inputs = caller.srcActivation( call.getTensors(), call.getJ(), -1, 0 );
                         int[] newForm = new int[ inputs.length - 1 ];
                         for ( int i = 0; i < inputs.length - 1; i++ ) {
                             newForm[ i ] = (int) Tsr.IO.getFrom( inputs[ i ], 0 );
@@ -90,8 +90,8 @@ public class Reshape extends AbstractOperationType
                         if ( call.getDerivativeIndex() >= 0 ) {//reverse reshape:
                             newForm = invert( newForm );
                         }
-                        Tsr t = inputs[ inputs.length - 1 ];
-                        return reshaped(t, newForm, true);
+                        Tsr<?> t = inputs[ inputs.length - 1 ];
+                        return reshaped( t, newForm, true );
                     }
                 )
                 .setRJAgent( ( call, goDeeperWith ) -> null )
