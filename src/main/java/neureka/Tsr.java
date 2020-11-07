@@ -841,6 +841,13 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    /**
+     *  This method performs various operations by calling Function instances
+     *  in order to ultimately calculate the mean value of all values
+     *  of this very tensor!
+     *
+     * @return A scalar tensor which is the mean value of all values of this very tensor.
+     */
     public Tsr<ValueType> mean() {
         Tsr<ValueType> ones = new Tsr<>( this.getNDConf().shape(), 1 );
         Tsr<ValueType> sum = Function.X.call( new Tsr[]{ this, ones } );
@@ -948,7 +955,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public Tsr<ValueType> T() { // Transposed!
         StringBuilder operation = new StringBuilder();
-        for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( (i == 0) ? "" : ", " );
+        for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( ( i == 0 ) ? "" : ", " );
         operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
         return new Tsr<>( this, operation.toString() );
     }
