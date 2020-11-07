@@ -492,7 +492,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public Tsr(){}
 
-    //Generic construction: (Groovy, Scala, ...)
+    //Generic construction: ( Groovy, Jython, ... )
     public Tsr( Object arg ){
         _construct( new Object[]{ arg } );
     }
@@ -505,15 +505,17 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         );
     }
 
-    public Tsr( List arg1, String arg2 ) {
-        java.util.function.Function<Class, Boolean> isType =  c -> arg1.stream().allMatch( e -> e.getClass() == c );
+    public Tsr( List<?> arg1, String arg2 )
+    {
+        java.util.function.Function<Class, Boolean> isType = c -> arg1.stream().allMatch( e -> e.getClass() == c );
+
         if ( isType.apply( Integer.class ) ) {
-            List<Integer> shape = arg1;
+            List<Integer> shape = (List<Integer>) arg1;
             int[] shp = new int[ shape.size() ];
             for ( int i=0; i < shp.length; i++ ) shp[ i ] = shape.get( i );
             _construct( shp, arg2 );
         } else if ( isType.apply( Tsr.class ) ) {
-            _construct( ((List<Tsr<ValueType>>)arg1).toArray( new Tsr[ 0 ] ), arg2, true );
+            _construct( arg1.toArray( new Tsr[ 0 ] ), arg2, true );
         } else {
             _construct(
                     ( (List<Object>) arg1 ).stream().map( Tsr::new ).toArray( Tsr[]::new ),
@@ -747,7 +749,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             _construct( (int[]) args[ 0 ], (double[]) args[ 1 ] );
             return;
         }
-        //EQUATION:
+        // EXPRESSION:
         boolean containsString = false;
         int numberOfTensors = 0;
         ArrayList<Tsr<ValueType>> tsrList = new ArrayList<>();
@@ -821,17 +823,62 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     // TRACKED COMPUTATION :
     //=========================
-    public Tsr( Tsr<ValueType> tensor, String operation ) {
+
+    /**
+     *  This method takes a tensor and a String expression describing
+     *  operations which ought to be applied to said tensor.
+     *  This expression will be parsed to a Function instance expecting one input,
+     *  namely : "I[0]"
+     *  An example would be the following :
+     *  'Tsr a = new Tsr( b, "sin( I[0] ) * 2" )'
+     *  Which takes the tensor 'b' and applies the function "f(x) = sin(x) * 2"
+     *  elementwise to produce a new tensor 'a'!
+     *
+     * @param tensor A tensor which serves as input to the Function instance parsed from the given expression.
+     * @param expression The expression describing operations applied to the provided tensor.
+     */
+    public Tsr( Tsr<ValueType> tensor, String expression ) {
         if ( tensor == null ) return;
-        _construct( new Tsr[]{ tensor }, operation, true );
+        _construct( new Tsr[]{ tensor }, expression, true );
     }
 
-    public Tsr( Tsr[] tensors, String operation ) {
-        _construct( tensors, operation, true );
+    /**
+     *  This method takes an array of tensors and a String expression describing
+     *  operations which ought to be applied to the tensors in said array.
+     *  This expression will be parsed to a Function instance expecting as many inputs
+     *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...
+     *  An example would be the following :
+     *  'Tsr a = new Tsr( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'
+     *  Which takes the tensor 'b' & 'c' and applies the function "f(x,y) = sin(x) / y"
+     *  elementwise to produce a new tensor 'a'!
+     *
+     * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
+     * @param expression The expression describing operations applied to the provided tensors.
+     */
+    public Tsr( Tsr<ValueType>[] tensors, String expression ) {
+        _construct( tensors, expression, true );
     }
 
-    public Tsr( Tsr[] tensors, String operation, boolean doAD ) {
-        _construct( tensors, operation, doAD );
+    /**
+     *  This method takes an array of tensors and a String expression describing
+     *  operations which ought to be applied to the tensors in said array.
+     *  This expression will be parsed to a Function instance expecting as many inputs
+     *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...
+     *  An example would be the following :
+     *  'Tsr a = new Tsr( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'
+     *  Which takes the tensor 'b' & 'c' and applies the function "f(x,y) = sin(x) / y"
+     *  elementwise to produce a new tensor 'a'!
+     *  Additionally there is a helpful flag which allows one to specify if the
+     *  parsed Function instance emerging from the provided expression
+     *  should also allow the tracking of computations via a computation graph (GraphNode instances).
+     *  This history tracking then enables auto-differentiation.
+     *
+     * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
+     * @param expression The expression describing operations applied to the provided tensors.
+     * @param doAD A flag which when set to true commands the creation of a computation graph during operation execution.
+     */
+    public Tsr( Tsr<ValueType>[] tensors, String expression, boolean doAD ) {
+        _construct( tensors, expression, doAD );
     }
 
     private void _construct( Tsr[] tensors, String operation, boolean doAD ) {
@@ -845,6 +892,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *  This method performs various operations by calling Function instances
      *  in order to ultimately calculate the mean value of all values
      *  of this very tensor!
+     *  This scalar tensor is then returned.
      *
      * @return A scalar tensor which is the mean value of all values of this very tensor.
      */
