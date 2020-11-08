@@ -1,3 +1,39 @@
+/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ __________
+ \__    ___\
+    |  |____ _ __
+    | /  ___/ '___\
+    | \___  \ |
+     \/_____/_|
+
+    This is the the core work-horse class of Neureka. The 'Tsr' class!
+    It is a three-letter abbreviation of the word "tensor"!
+
+*/
+
 package neureka;
 
 import groovy.lang.IntRange;
@@ -32,6 +68,21 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
+
+/**
+ *
+ *  A tensor is a container which can house data in N dimensions.
+ *  Usually elements of this container are numeric.
+ *  This means that:
+ *  ...a tensor of rank 0 is a scalar, a tensor of rank 1 is a vector and a tensor of rank 2 is a matrix, etc...
+ *
+ *  Therefore tensors are a perfect fit for applying various operations on them.
+ *  Such operations might be simple elementwise operations or more complex linear operations like
+ *  matrix- or even tensor multiplications.
+ *
+ *
+ * @param <ValueType>
+ */
 public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> implements Component<Tsr<ValueType>>
 {
     static {
@@ -39,6 +90,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _LOGGER = LoggerFactory.getLogger( Tsr.class );
     }
 
+    /**
+     *  An interface provided by sl4j which enables a modular logging backend!
+     */
     private static Logger _LOGGER; // Why is this not final ? : For unit testing!
 
     /**
@@ -76,15 +130,14 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     /*==================================================================================================================
-
-            §(1) : CONSTRUCTION
-        ---------------------------
-     */
+    |
+    |       §(1) : CONSTRUCTION
+    |   ---------------------------
+    */
 
     public Tsr(){}
 
-    //Generic construction: ( Groovy, Jython, ... )
-    public Tsr( Object arg ){
+    public Tsr( Object arg ) {
         _construct( new Object[]{ arg } );
     }
 
@@ -511,10 +564,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
 
     /*==================================================================================================================
-
-            §(2) : FLAGS
-        ----------------------
-     */
+    |
+    |       §(2) : FLAGS
+    |   ----------------------
+    */
 
     public Tsr<ValueType> setRqsGradient( boolean rqsGradient ) {
         if ( rqsGradient() != rqsGradient && !rqsGradient ) this.remove( Tsr.class );
@@ -676,10 +729,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     /*==================================================================================================================
-
-            §(3) : COMPONENT SYSTEM
-        --------------------------------
-     */
+    |
+    |       §(3) : COMPONENT SYSTEM
+    |   --------------------------------
+    */
 
     /**
      * This method is executed when a new Component is added to the tensor.
@@ -769,10 +822,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
 
     /*==================================================================================================================
-
-            §(4) : HIGH LEVEL PROPERTIES :
-        ---------------------------------------
-     */
+    |
+    |       §(4) : HIGH LEVEL PROPERTIES :
+    |   ---------------------------------------
+    */
 
     public boolean isEmpty() {
         return _value == null && !this.isOutsourced();
@@ -865,10 +918,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
 
     /*==================================================================================================================
-
-            §(5) : OBJECT STATE MODIFICATION :
-        ------------------------------------------
-     */
+    |
+    |       §(5) : OBJECT STATE MODIFICATION :
+    |   ------------------------------------------
+    */
 
 
 
@@ -939,10 +992,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
 
     /*==================================================================================================================
-
-            §(6) : ND-ITERATOR LOGIC :
-        ---------------------------------------
-     */
+    |
+    |       §(6) : ND-ITERATOR LOGIC :
+    |   ---------------------------------------
+    */
 
     @NotNull
     @Override
@@ -971,10 +1024,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
 
     /*==================================================================================================================
-
-            §(7) : COMPONENT SPECIFIC :
-        ---------------------------------------
-     */
+    |
+    |       §(7) : COMPONENT SPECIFIC :
+    |   ---------------------------------------
+    */
     /*
         -------------------------------
             §(7.1) : AUTO-GRAD :
@@ -1080,11 +1133,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
 
     /*==================================================================================================================
-
-            §(8) : (OVERLOADABLE) OPERATORS & OPERATIONS :
-        -----------------------------------------------------
-            ...for more context see package 'calculus'...
-     */
+    |
+    |       §(8) : (OVERLOADABLE) OPERATORS & OPERATIONS :
+    |   -----------------------------------------------------
+    |       ...for more context see package 'calculus'...
+    |*/
     /*
         -----------------------------
             §(8.1) : OPERATORS :
@@ -1222,11 +1275,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
 
     /*==================================================================================================================
-
-            §(9) : SLICING, INDEXING & INJECTING :
-        -----------------------------------------------------
-            ...for more context see package 'ndim.config'...
-     */
+    |
+    |       §(9) : SLICING, INDEXING & INJECTING :
+    |   -----------------------------------------------------
+    |       ...for more context see package 'ndim.config'...
+    */
     /*
         -----------------------------
             §(9.1) : SLICING :
@@ -1429,7 +1482,6 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      */
     private int _configureSubsetFromRanges(
             Object[] ranges,
-            //int[] idxbase,
             int[] offset,  int[] spread,
             int[] newShape,
             int iOffset
