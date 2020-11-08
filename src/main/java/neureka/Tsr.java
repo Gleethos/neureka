@@ -39,7 +39,6 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _LOGGER = LoggerFactory.getLogger( Tsr.class );
     }
 
-
     private static Logger _LOGGER; // Why is this not final ? : For unit testing!
 
     /**
@@ -76,419 +75,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return _version;
     }
 
-    /**
-     *  This method is responsible for incrementing
-     *  the "_version" field variable which represents the version of the data of this tensor.
-     *  Meaning :
-     *  Every time the underlying data (_value) changes this version ought to increment alongside.
-     *  The method is called during the execution procedure.
-     *
-     * @param call The context object containing all relevent informatin that defines a call for tensor execution.
-     * @return This very tensor instance. (factory pattern)
+    /*==================================================================================================================
+
+            §(1) : CONSTRUCTION
+        ---------------------------
      */
-    public Tsr<ValueType> incrementVersionBecauseOf( ExecutionCall call ){
-        if ( Neureka.instance().settings().autograd().isPreventingInlineOperations() ) {
-            _version ++;
-            GraphNode node = find( GraphNode.class );
-            if ( node != null && node.referenceVersion() != this._version ) {
-                if ( node.usesAD() || node.isUsedAsDerivative() ) {
-                    String error = "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\n" +
-                            "The following OperationType caused an internal version mismatch: '"+call.getType().getFunction()+"'";
-                    _LOGGER.error( error );
-                    throw new IllegalStateException( error );
-                }
-            }
-        }
-        return this;
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    public Tsr<ValueType> setRqsGradient( boolean rqsGradient ) {
-        if ( rqsGradient() != rqsGradient && !rqsGradient ) this.remove( Tsr.class );
-        _setRqsGradient( rqsGradient );
-        return this;
-    }
-
-    public boolean rqsGradient() {
-        return ( _flags & RQS_GRADIENT_MASK ) == RQS_GRADIENT_MASK;
-    }
-
-    protected void _setRqsGradient( boolean rqsGradient ) {
-        if ( rqsGradient() != rqsGradient ) {
-            if ( rqsGradient ) _flags += RQS_GRADIENT_MASK;
-            else _flags -= RQS_GRADIENT_MASK;
-        }
-    }
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    public Tsr<ValueType> setIsOutsourced( boolean isOutsourced ) {
-        _setIsOutsourced( isOutsourced );
-        if ( isOutsourced ) {
-            _value = null;
-        } else if (
-                !forComponent(
-                    Device.class,
-                    d -> {
-                        try {
-                            if ( d.has( this ) ) d.restore( this );
-                        } catch ( Exception exception ) {
-                            _LOGGER.error(
-                                    "Tensor could not be restored from device component when trying to migrate it back to RAM.",
-                                    exception
-                            );
-                            throw exception;
-                        }
-                        this.remove( Device.class );
-                        forComponent(
-                            Tsr.class,
-                            gradient ->
-                            gradient.forComponent(
-                                Device.class,
-                                gd -> {
-                                    try {
-                                        if ( ( (Device) gd ).has( gradient ) ) ( (Device) gd ).restore( gradient );
-                                    } catch ( Exception exception ) {
-                                        _LOGGER.error(
-                                                "Gradient could not be restored from device component when trying to migrate it back to RAM.",
-                                                exception
-                                        );
-                                        throw exception;
-                                    }
-                                    gradient.remove( Device.class );
-                                })
-                        );
-                    }
-                ) && _value == null
-        ){
-            setIsVirtual( true );
-        }
-        return this;
-    }
-
-    public boolean isOutsourced() {
-        return ( _flags & IS_OUTSOURCED_MASK ) == IS_OUTSOURCED_MASK;
-    }
-
-    protected void _setIsOutsourced( boolean isOutsourced ) {
-        if ( isOutsourced() != isOutsourced ) {
-            if ( isOutsourced ) _flags += IS_OUTSOURCED_MASK;
-            else _flags -= IS_OUTSOURCED_MASK;
-        }
-    }
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    public Tsr<ValueType> setIsVirtual( boolean isVirtual ) {
-        if ( isVirtual() != isVirtual ) {
-            Device device = this.find( Device.class );
-            try {
-                if ( device != null ) device.restore( this );
-            } catch ( Exception exception ) {
-                _LOGGER.error(
-                        "Tensor could not be restored from device component when changing flag 'isVirtual' to " + isVirtual + "."
-                        , exception
-                );
-                throw exception;
-            }
-            double v = ( _value == null ) ? 0 : ((this.is64())?((double[])_value)[ 0 ]:((float[])_value)[ 0 ]);
-            if ( isVirtual ) {
-                _value = new double[]{v};
-                Relation<ValueType> relation = find( Relation.class );
-                if ( relation!=null ) relation.foreachChild( c -> c._value=_value);
-            } else {
-                Tsr<?> parentTensor = (this.isSlice())? find(Relation.class).getParent() : null;
-                if ( parentTensor != null ) {
-                    parentTensor.find( Relation.class ).remove( this );
-                }
-                _value = (this.is64()) ? new double[ this.size() ] : new float[ this.size() ];
-                int length = (this.is64()) ? ((double[]) _value).length : ((float[]) _value).length;
-                for (int i = 0; i < length; i++) {
-                    if (this.is64()) ((double[]) _value)[i] = v;
-                    else ((float[]) _value)[i] = (float) v;
-                }
-            }
-            _setIsVirtual( isVirtual );
-            if( _conf != null ) _configureFromNewShape( _conf.shape(), isVirtual );
-            try {
-                if( device != null ) device.store( this );
-            } catch ( Exception exception ) {
-                String message =
-                        "Tensor could not be migrated back to host device after changing flag 'isVirtual' to "+isVirtual+".";
-                _LOGGER.error(
-                        message,
-                        exception
-                );
-                throw new IllegalStateException( message );
-            }
-        } else if ( isVirtual && _value == null ) _value = new double[]{0};
-        return this;
-    }
-
-    public boolean isVirtual() {
-        return (_flags & IS_VIRTUAL_MASK) == IS_VIRTUAL_MASK;
-    }
-
-    /**
-     *  This method is the inner counterpart to the public "setIsVirtual" method.
-     *  It actually performs the bit flipping by applying the corresponding bit mask.
-     * @param isVirtual The truth value which ought to be applied.
-     */
-    protected void _setIsVirtual( boolean isVirtual ) {
-        if ( isVirtual() != isVirtual ) {
-            if ( isVirtual ) _flags += IS_VIRTUAL_MASK;
-            else _flags -= IS_VIRTUAL_MASK;
-        }
-    }
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    public Tsr<ValueType> setGradientApplyRqd( boolean applyRequested ) {
-        if ( gradientApplyRqd() != applyRequested ) {
-            if ( applyRequested ) {
-                if (
-                        Neureka.instance().settings().autograd().isApplyingGradientWhenRequested() &&
-                        !Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed()
-                ) {
-                    this.applyGradient();
-                } else _flags += GRADIENT_APPLY_RQD_MASK;
-            }
-            else _flags -= GRADIENT_APPLY_RQD_MASK;
-        }
-        return this;
-    }
-
-    public boolean gradientApplyRqd() {
-        return (_flags & GRADIENT_APPLY_RQD_MASK) == GRADIENT_APPLY_RQD_MASK;
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     * This method is executed when a new Component is added to the tensor.
-     * The public add method is implemented in the super class
-     * 'AbstractComponentOwner' from which this class inherits.
-     * In this super class the component logic is implemented.
-     *
-     * @param newComponent A component used to access features. (GraphNode, IndexAlias, Relation, int[], ...)
-     * @return The unchanged object or maybe in future versions: null (component rejected)
-     */
-    @Override
-    protected < T extends Component<Tsr<ValueType>> > T _addOrReject( T newComponent )
-    {
-        if ( newComponent.getClass() == HostCPU.class ) return null;
-        if ( newComponent instanceof Device && !( (Device) newComponent ).has( this ) )
-        {
-            if ( this.has( Relation.class ) ) {
-                Relation relation = find( Relation.class );
-                if ( relation.hasParent() ) { // Root needs to be found ! :
-                    Tsr<ValueType> root = relation.findRootTensor();
-                    try {
-                        ((Device)newComponent).store( root );
-                    } catch ( Exception exception ) {
-                        _LOGGER.error( "Could not store tensor on device '" + newComponent.toString() +"'.", exception );
-                        throw exception;
-                    }
-                    root.find( Relation.class ).foreachChild( c -> ((Tsr)c).setIsOutsourced( true ) );
-                } else { // This is root ! :
-                    relation.foreachChild( c -> ((Tsr<?>)c).setIsOutsourced( true ) );
-                    try {
-                        ((Device)newComponent).store( this );
-                    } catch ( Exception exception ) {
-                        _LOGGER.error( "Could not store tensor on device '" + newComponent.toString() +"'.", exception );
-                        throw exception;
-                    }
-                }
-            } else {
-                try {
-                    ((Device)newComponent).store( this );
-                } catch ( Exception exception ) {
-                    _LOGGER.error( "Could not store tensor on device '" + newComponent.toString() +"'.", exception );
-                    throw exception;
-                }
-            }
-            if ( ((Device)newComponent).has( this ) ) setIsOutsourced( true );
-        } else if ( newComponent instanceof Tsr ) {
-            if (
-                    ((Tsr)newComponent).shape().hashCode() != this.shape().hashCode() ||
-                    Arrays.hashCode(((Tsr)newComponent).getNDConf().shape()) != Arrays.hashCode( _conf.shape() )
-            ) newComponent = null;
-        }
-        return newComponent;
-    }
-
-    /**
-     * This method is executed when a component is being removed from the tensor.
-     * The public remove method is implemented in the super class
-     * 'AbstractComponentOwner' from which this class inherits.
-     * In this super class the component logic is implemented.
-     *
-     * @param newComponent A component used to access features. (GraphNode, IndexAlias, Relation, int[], ...)
-     * @return The unchanged object or when rejected: null (component rejected)
-     */
-    @Override
-    protected <T extends Component<Tsr<ValueType>>> T _removeOrReject( T newComponent )
-    {
-        if ( newComponent instanceof Device ) {
-
-        }
-        return newComponent;
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // HIGH LEVEL PROPERTIES :
-
-    public boolean isEmpty() {
-        return _value == null && !this.isOutsourced();
-    }
-
-    public boolean isUndefined() {
-        return _conf==null || _conf.shape() == null;
-    }
-
-    public boolean isSlice() {
-        Relation<ValueType> child = find( Relation.class );
-        return ( child != null && child.hasParent() );
-    }
-
-    public int sliceCount() {
-        Relation<ValueType> child = find( Relation.class );
-        return ( child != null ) ? child.childCount() : 0;
-    }
-
-    public boolean isSliceParent(){
-        Relation<ValueType> parent = find( Relation.class );
-        return ( parent != null && parent.hasChildren() );
-    }
-
-    public boolean belongsToGraph() {
-        return this.has( GraphNode.class );
-    }
-
-    public boolean isLeave() {
-        return (!this.has( GraphNode.class )) || this.find( GraphNode.class ).isLeave();
-    }
-
-    public boolean isBranch() {
-        return !this.isLeave();
-    }
-
-    public boolean hasGradient() {
-        return this.has( Tsr.class );
-    }
-
-    public Tsr<ValueType> getGradient() {
-        return this.find( Tsr.class );
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    // Direct Access to component (Device)
-
-    /**
-     * @return The device on which this tensor is stored or 'CPU' if it is not outsourced.
-     */
-    public Device<ValueType> device() {
-        if ( this.isOutsourced() ) return this.find( Device.class );
-        return (Device<ValueType>) _CPU;
-    }
-
-    /**
-     *
-     * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
-     */
-    public GraphNode<ValueType> getGraphNode(){
-        return find( GraphNode.class );
-    }
-
-    /**
-     *
-     * @return Custom IndexAlias object.
-     */
-    public IndexAlias<ValueType> index(){
-        return find( IndexAlias.class );
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-    protected Tsr<ValueType> _become( Tsr<ValueType> tensor ) {
-        if ( tensor == null ) return this;
-        _value = tensor._value;
-        _type = tensor._type;
-        _conf = tensor._conf;
-        _components = Collections.synchronizedList( new ArrayList<>() );
-        _flags = tensor._flags;
-        if ( tensor._components != null ) { // Inform components about their new owner:
-            _components.addAll( tensor._components );
-            List<Component<Tsr<ValueType>>> snapshot = new ArrayList<>( tensor._components );
-            for ( Component<Tsr<ValueType>> o : snapshot ) o.update( tensor, this );
-        }
-        tensor._value = null;
-        tensor._type = null;
-        tensor._conf = null;
-        tensor._components = null;
-        tensor._flags = -1;
-        return this;
-    }
-
-    public Tsr<ValueType> delete() {
-        forComponent( GraphNode.class, n -> {
-            if ( n.isUsedAsDerivative() ) {
-                String message = "Cannot delete a tensor which is used as derivative by the AD computation graph!";
-                _LOGGER.error( message );
-                throw new IllegalStateException( message );
-            }
-        });
-        forComponent( Device.class, d -> d.free( this ) );
-        _flags = -1;
-        _value = null;
-        _conf = null;
-        forComponent( Tsr.class, Tsr::delete );
-        _components = null;
-        return this;
-    }
-
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    private int _dataLength(){
-        if ( !(_value instanceof float[]) && !(_value instanceof double[]) ) {
-            if ( _value instanceof Object[] ) return ((Object[])_value).length;
-            else return -1;
-        } else if ( this.is64() ) return ( (double[]) _value ).length;
-        else return ( (float[]) _value ).length;
-    }
-
-    /**
-     * @param newShape
-     */
-    protected void _configureFromNewShape( int[] newShape, boolean makeVirtual ) {
-        int size = NDConfiguration.Utility.szeOfShp( newShape );
-        _value = ( _value == null ) ? new double[ size ] : _value;
-        int length = _dataLength();
-        if ( length >= 0 ) {
-            if ( size != length && ( !this.isVirtual() || !makeVirtual) ) {
-                String message = "Size of shape does not match stored value64!";
-                _LOGGER.error( message );
-                throw new IllegalArgumentException( message );
-            }
-        }
-        if ( makeVirtual ) {
-            _conf = VirtualNDConfiguration.construct( newShape );
-        } else {
-            int[] newTranslation = NDConfiguration.Utility.newTlnOf( newShape );
-            int[] newIdxmap = newTranslation;
-            int[] newSpread = new int[ newShape.length ];
-            Arrays.fill( newSpread, 1 );
-            int[] newOffset = new int[ newShape.length ];
-            _conf = AbstractNDC.construct( newShape, newTranslation, newIdxmap, newSpread, newOffset );
-        }
-    }
-
-
-    //CONSTRUCTION :
-    //=========================
 
     public Tsr(){}
 
@@ -555,6 +146,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             _construct( shp, value );
         }
     }
+
+
 
     private void _construct( int[] shape, ValueType[] value ) {
         int size = NDConfiguration.Utility.szeOfShp( shape );
@@ -821,8 +414,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _configureFromNewShape( shape, false );
     }
 
-    // TRACKED COMPUTATION :
-    //=========================
+    /*
+        -------------------------------------------
+            §(1.1) : FUNCTION BASED CONSTRUCTION
+        --------------------------------------------
+     */
 
     /**
      *  This method takes a tensor and a String expression describing
@@ -886,26 +482,467 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         Tsr<ValueType> result = Function.Setup.commit( this, tensors, operation, doAD );
         this._become( result );
     }
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
-     *  This method performs various operations by calling Function instances
-     *  in order to ultimately calculate the mean value of all values
-     *  of this very tensor!
-     *  This scalar tensor is then returned.
-     *
-     * @return A scalar tensor which is the mean value of all values of this very tensor.
+     * @param newShape
      */
-    public Tsr<ValueType> mean() {
-        Tsr<ValueType> ones = new Tsr<>( this.getNDConf().shape(), 1 );
-        Tsr<ValueType> sum = Function.X.call( new Tsr[]{ this, ones } );
-        return Function.DIV.call( new Tsr[]{ sum, new Tsr( this.size() ) } );
-        //TODO :Function.DIV.call(new Tsr[]{sum, new Tsr(this.size())});
+    protected void _configureFromNewShape( int[] newShape, boolean makeVirtual ) {
+        int size = NDConfiguration.Utility.szeOfShp( newShape );
+        _value = ( _value == null ) ? new double[ size ] : _value;
+        int length = _dataLength();
+        if ( length >= 0 ) {
+            if ( size != length && ( !this.isVirtual() || !makeVirtual) ) {
+                String message = "Size of shape does not match stored value64!";
+                _LOGGER.error( message );
+                throw new IllegalArgumentException( message );
+            }
+        }
+        if ( makeVirtual ) {
+            _conf = VirtualNDConfiguration.construct( newShape );
+        } else {
+            int[] newTranslation = NDConfiguration.Utility.newTlnOf( newShape );
+            int[] newIdxmap = newTranslation;
+            int[] newSpread = new int[ newShape.length ];
+            Arrays.fill( newSpread, 1 );
+            int[] newOffset = new int[ newShape.length ];
+            _conf = AbstractNDC.construct( newShape, newTranslation, newIdxmap, newSpread, newOffset );
+        }
     }
 
 
-    // ND-Iteration :
-    //=========================
+    /*==================================================================================================================
+
+            §(2) : FLAGS
+        ----------------------
+     */
+
+    public Tsr<ValueType> setRqsGradient( boolean rqsGradient ) {
+        if ( rqsGradient() != rqsGradient && !rqsGradient ) this.remove( Tsr.class );
+        _setRqsGradient( rqsGradient );
+        return this;
+    }
+
+    public boolean rqsGradient() {
+        return ( _flags & RQS_GRADIENT_MASK ) == RQS_GRADIENT_MASK;
+    }
+
+    protected void _setRqsGradient( boolean rqsGradient ) {
+        if ( rqsGradient() != rqsGradient ) {
+            if ( rqsGradient ) _flags += RQS_GRADIENT_MASK;
+            else _flags -= RQS_GRADIENT_MASK;
+        }
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    public Tsr<ValueType> setIsOutsourced( boolean isOutsourced ) {
+        _setIsOutsourced( isOutsourced );
+        if ( isOutsourced ) {
+            _value = null;
+        } else if (
+                !forComponent(
+                        Device.class,
+                        d -> {
+                            try {
+                                if ( d.has( this ) ) d.restore( this );
+                            } catch ( Exception exception ) {
+                                _LOGGER.error(
+                                        "Tensor could not be restored from device component when trying to migrate it back to RAM.",
+                                        exception
+                                );
+                                throw exception;
+                            }
+                            this.remove( Device.class );
+                            forComponent(
+                                    Tsr.class,
+                                    gradient ->
+                                            gradient.forComponent(
+                                                    Device.class,
+                                                    gd -> {
+                                                        try {
+                                                            if ( ( (Device) gd ).has( gradient ) ) ( (Device) gd ).restore( gradient );
+                                                        } catch ( Exception exception ) {
+                                                            _LOGGER.error(
+                                                                    "Gradient could not be restored from device component when trying to migrate it back to RAM.",
+                                                                    exception
+                                                            );
+                                                            throw exception;
+                                                        }
+                                                        gradient.remove( Device.class );
+                                                    })
+                            );
+                        }
+                ) && _value == null
+        ){
+            setIsVirtual( true );
+        }
+        return this;
+    }
+
+    public boolean isOutsourced() {
+        return ( _flags & IS_OUTSOURCED_MASK ) == IS_OUTSOURCED_MASK;
+    }
+
+    protected void _setIsOutsourced( boolean isOutsourced ) {
+        if ( isOutsourced() != isOutsourced ) {
+            if ( isOutsourced ) _flags += IS_OUTSOURCED_MASK;
+            else _flags -= IS_OUTSOURCED_MASK;
+        }
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    public Tsr<ValueType> setIsVirtual( boolean isVirtual ) {
+        if ( isVirtual() != isVirtual ) {
+            Device device = this.find( Device.class );
+            try {
+                if ( device != null ) device.restore( this );
+            } catch ( Exception exception ) {
+                _LOGGER.error(
+                        "Tensor could not be restored from device component when changing flag 'isVirtual' to " + isVirtual + "."
+                        , exception
+                );
+                throw exception;
+            }
+            double v = ( _value == null ) ? 0 : ((this.is64())?((double[])_value)[ 0 ]:((float[])_value)[ 0 ]);
+            if ( isVirtual ) {
+                _value = new double[]{v};
+                Relation<ValueType> relation = find( Relation.class );
+                if ( relation!=null ) relation.foreachChild( c -> c._value=_value);
+            } else {
+                Tsr<?> parentTensor = (this.isSlice())? find(Relation.class).getParent() : null;
+                if ( parentTensor != null ) {
+                    parentTensor.find( Relation.class ).remove( this );
+                }
+                _value = (this.is64()) ? new double[ this.size() ] : new float[ this.size() ];
+                int length = (this.is64()) ? ((double[]) _value).length : ((float[]) _value).length;
+                for (int i = 0; i < length; i++) {
+                    if (this.is64()) ((double[]) _value)[i] = v;
+                    else ((float[]) _value)[i] = (float) v;
+                }
+            }
+            _setIsVirtual( isVirtual );
+            if( _conf != null ) _configureFromNewShape( _conf.shape(), isVirtual );
+            try {
+                if( device != null ) device.store( this );
+            } catch ( Exception exception ) {
+                String message =
+                        "Tensor could not be migrated back to host device after changing flag 'isVirtual' to "+isVirtual+".";
+                _LOGGER.error(
+                        message,
+                        exception
+                );
+                throw new IllegalStateException( message );
+            }
+        } else if ( isVirtual && _value == null ) _value = new double[]{0};
+        return this;
+    }
+
+    public boolean isVirtual() {
+        return (_flags & IS_VIRTUAL_MASK) == IS_VIRTUAL_MASK;
+    }
+
+    /**
+     *  This method is the inner counterpart to the public "setIsVirtual" method.
+     *  It actually performs the bit flipping by applying the corresponding bit mask.
+     * @param isVirtual The truth value which ought to be applied.
+     */
+    protected void _setIsVirtual( boolean isVirtual ) {
+        if ( isVirtual() != isVirtual ) {
+            if ( isVirtual ) _flags += IS_VIRTUAL_MASK;
+            else _flags -= IS_VIRTUAL_MASK;
+        }
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    public Tsr<ValueType> setGradientApplyRqd( boolean applyRequested ) {
+        if ( gradientApplyRqd() != applyRequested ) {
+            if ( applyRequested ) {
+                if (
+                        Neureka.instance().settings().autograd().isApplyingGradientWhenRequested() &&
+                                !Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed()
+                ) {
+                    this.applyGradient();
+                } else _flags += GRADIENT_APPLY_RQD_MASK;
+            }
+            else _flags -= GRADIENT_APPLY_RQD_MASK;
+        }
+        return this;
+    }
+
+    public boolean gradientApplyRqd() {
+        return (_flags & GRADIENT_APPLY_RQD_MASK) == GRADIENT_APPLY_RQD_MASK;
+    }
+
+    /*==================================================================================================================
+
+            §(3) : COMPONENT SYSTEM
+        --------------------------------
+     */
+
+    /**
+     * This method is executed when a new Component is added to the tensor.
+     * The public add method is implemented in the super class
+     * 'AbstractComponentOwner' from which this class inherits.
+     * In this super class the component logic is implemented.
+     *
+     * @param newComponent A component used to access features. (GraphNode, IndexAlias, Relation, int[], ...)
+     * @return The unchanged object or maybe in future versions: null (component rejected)
+     */
+    @Override
+    protected < T extends Component<Tsr<ValueType>> > T _addOrReject( T newComponent )
+    {
+        if ( newComponent.getClass() == HostCPU.class ) return null;
+        if ( newComponent instanceof Device && !( (Device) newComponent ).has( this ) )
+        {
+            if ( this.has( Relation.class ) ) {
+                Relation relation = find( Relation.class );
+                if ( relation.hasParent() ) { // Root needs to be found ! :
+                    Tsr<ValueType> root = relation.findRootTensor();
+                    try {
+                        ((Device)newComponent).store( root );
+                    } catch ( Exception exception ) {
+                        _LOGGER.error( "Could not store tensor on device '" + newComponent.toString() +"'.", exception );
+                        throw exception;
+                    }
+                    root.find( Relation.class ).foreachChild( c -> ((Tsr)c).setIsOutsourced( true ) );
+                } else { // This is root ! :
+                    relation.foreachChild( c -> ((Tsr<?>)c).setIsOutsourced( true ) );
+                    try {
+                        ((Device)newComponent).store( this );
+                    } catch ( Exception exception ) {
+                        _LOGGER.error( "Could not store tensor on device '" + newComponent.toString() +"'.", exception );
+                        throw exception;
+                    }
+                }
+            } else {
+                try {
+                    ((Device)newComponent).store( this );
+                } catch ( Exception exception ) {
+                    _LOGGER.error( "Could not store tensor on device '" + newComponent.toString() +"'.", exception );
+                    throw exception;
+                }
+            }
+            if ( ((Device)newComponent).has( this ) ) setIsOutsourced( true );
+        } else if ( newComponent instanceof Tsr ) {
+            if (
+                    ((Tsr)newComponent).shape().hashCode() != this.shape().hashCode() ||
+                            Arrays.hashCode(((Tsr)newComponent).getNDConf().shape()) != Arrays.hashCode( _conf.shape() )
+            ) newComponent = null;
+        }
+        return newComponent;
+    }
+
+    /**
+     * This method is executed when a component is being removed from the tensor.
+     * The public remove method is implemented in the super class
+     * 'AbstractComponentOwner' from which this class inherits.
+     * In this super class the component logic is implemented.
+     *
+     * @param newComponent A component used to access features. (GraphNode, IndexAlias, Relation, int[], ...)
+     * @return The unchanged object or when rejected: null (component rejected)
+     */
+    @Override
+    protected <T extends Component<Tsr<ValueType>>> T _removeOrReject( T newComponent )
+    {
+        if ( newComponent instanceof Device ) {
+
+        }
+        return newComponent;
+    }
+
+    /**
+     *  Important : Components of type Tsr are simply gradients!
+     *  This method does not need to have an implementation in this case.
+     *  (A gradient tensor "does not mind" an owner change...)
+     *
+     * @param oldOwner The previous owner type instance.
+     * @param newOwner The new owner type instance.
+     */
+    @Override
+    public void update( Tsr<ValueType> oldOwner, Tsr<ValueType> newOwner ) {
+        // This is means that this tensor is a gradient that is being
+        // transferred to another tensor to serve as gradient...
+        // No update task needs to occur. (This might change in the future...)
+    }
+
+
+    /*==================================================================================================================
+
+            §(4) : HIGH LEVEL PROPERTIES :
+        ---------------------------------------
+     */
+
+    public boolean isEmpty() {
+        return _value == null && !this.isOutsourced();
+    }
+
+    public boolean isUndefined() {
+        return _conf==null || _conf.shape() == null;
+    }
+
+    public boolean isSlice() {
+        Relation<ValueType> child = find( Relation.class );
+        return ( child != null && child.hasParent() );
+    }
+
+    public int sliceCount() {
+        Relation<ValueType> child = find( Relation.class );
+        return ( child != null ) ? child.childCount() : 0;
+    }
+
+    public boolean isSliceParent(){
+        Relation<ValueType> parent = find( Relation.class );
+        return ( parent != null && parent.hasChildren() );
+    }
+
+    public boolean belongsToGraph() {
+        return this.has( GraphNode.class );
+    }
+
+    public boolean isLeave() {
+        return (!this.has( GraphNode.class )) || this.find( GraphNode.class ).isLeave();
+    }
+
+    public boolean isBranch() {
+        return !this.isLeave();
+    }
+
+    public boolean hasGradient() {
+        return this.has( Tsr.class );
+    }
+
+
+    /*
+        --------------------------------------------
+            §(4.1) : COMPONENT PROPERTIES :
+        --------------------------------------------
+     */
+
+    public Tsr<ValueType> getGradient() {
+        return this.find( Tsr.class );
+    }
+
+    /**
+     * @return The device on which this tensor is stored or 'CPU' if it is not outsourced.
+     */
+    public Device<ValueType> device() {
+        if ( this.isOutsourced() ) return this.find( Device.class );
+        return (Device<ValueType>) _CPU;
+    }
+
+    /**
+     *
+     * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
+     */
+    public GraphNode<ValueType> getGraphNode(){
+        return find( GraphNode.class );
+    }
+
+    /**
+     *
+     * @return Custom IndexAlias object.
+     */
+    public IndexAlias<ValueType> index(){
+        return find( IndexAlias.class );
+    }
+
+
+    /*
+        ---------------------------------------
+            §(4.2) : INNER PROPERTIES :
+        ---------------------------------------
+     */
+
+    private int _dataLength(){
+        if ( !(_value instanceof float[]) && !(_value instanceof double[]) ) {
+            if ( _value instanceof Object[] ) return ((Object[])_value).length;
+            else return -1;
+        } else if ( this.is64() ) return ( (double[]) _value ).length;
+        else return ( (float[]) _value ).length;
+    }
+
+
+    /*==================================================================================================================
+
+            §(5) : OBJECT STATE MODIFICATION :
+        ------------------------------------------
+     */
+
+
+
+    /**
+     *  This method is responsible for incrementing
+     *  the "_version" field variable which represents the version of the data of this tensor.
+     *  Meaning :
+     *  Every time the underlying data (_value) changes this version ought to increment alongside.
+     *  The method is called during the execution procedure.
+     *
+     * @param call The context object containing all relevent informatin that defines a call for tensor execution.
+     * @return This very tensor instance. (factory pattern)
+     */
+    public Tsr<ValueType> incrementVersionBecauseOf( ExecutionCall call ){
+        if ( Neureka.instance().settings().autograd().isPreventingInlineOperations() ) {
+            _version ++;
+            GraphNode node = find( GraphNode.class );
+            if ( node != null && node.referenceVersion() != this._version ) {
+                if ( node.usesAD() || node.isUsedAsDerivative() ) {
+                    String error = "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\n" +
+                            "The following OperationType caused an internal version mismatch: '"+call.getType().getFunction()+"'";
+                    _LOGGER.error( error );
+                    throw new IllegalStateException( error );
+                }
+            }
+        }
+        return this;
+    }
+
+
+    public Tsr<ValueType> delete() {
+        forComponent( GraphNode.class, n -> {
+            if ( n.isUsedAsDerivative() ) {
+                String message = "Cannot delete a tensor which is used as derivative by the AD computation graph!";
+                _LOGGER.error( message );
+                throw new IllegalStateException( message );
+            }
+        });
+        forComponent( Device.class, d -> d.free( this ) );
+        _flags = -1;
+        _value = null;
+        _conf = null;
+        forComponent( Tsr.class, Tsr::delete );
+        _components = null;
+        return this;
+    }
+
+    protected Tsr<ValueType> _become( Tsr<ValueType> tensor ) {
+        if ( tensor == null ) return this;
+        _value = tensor._value;
+        _type = tensor._type;
+        _conf = tensor._conf;
+        _components = Collections.synchronizedList( new ArrayList<>() );
+        _flags = tensor._flags;
+        if ( tensor._components != null ) { // Inform components about their new owner:
+            _components.addAll( tensor._components );
+            List<Component<Tsr<ValueType>>> snapshot = new ArrayList<>( tensor._components );
+            for ( Component<Tsr<ValueType>> o : snapshot ) o.update( tensor, this );
+        }
+        tensor._value = null;
+        tensor._type = null;
+        tensor._conf = null;
+        tensor._components = null;
+        tensor._flags = -1;
+        return this;
+    }
+
+
+
+    /*==================================================================================================================
+
+            §(6) : ND-ITERATOR LOGIC :
+        ---------------------------------------
+     */
 
     @NotNull
     @Override
@@ -933,8 +970,17 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
 
-    //MODIFICATION :
-    //=========================
+    /*==================================================================================================================
+
+            §(7) : COMPONENT SPECIFIC :
+        ---------------------------------------
+     */
+    /*
+        -------------------------------
+            §(7.1) : AUTO-GRAD :
+        -------------------------------
+        ... for more context see package 'autograd' ...
+     */
 
     /**
      *
@@ -998,15 +1044,52 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         this.remove( GraphNode.class );
     }
 
-    // TENSOR OPERATION (OVERLOADABLE):
-    //=================================
+    /*
+        ----------------------------
+            §(7.2) : FRAMING :
+        ----------------------------
+        ... for more context see package 'framing'...
+     */
 
-    public Tsr<ValueType> T() { // Transposed!
-        StringBuilder operation = new StringBuilder();
-        for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( ( i == 0 ) ? "" : ", " );
-        operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
-        return new Tsr<>( this, operation.toString() );
+    public Tsr<ValueType> label( String[][] labels ) {
+        IndexAlias indexAlias = find( IndexAlias.class );
+        if ( indexAlias == null ) {
+            indexAlias = new IndexAlias( this.rank() );
+            add( indexAlias );
+        }
+        for( int i = 0; i < labels.length; i++ ) {
+            if ( labels[ i ] != null ) {
+                for ( int ii = 0; ii < labels[ i ].length; ii++ ) {
+                    if ( labels[ i ][ ii ] != null ) indexAlias.set( i, labels[ i ][ ii ], ii );
+                }
+            }
+        }
+        return this;
     }
+
+    public Tsr<ValueType> label( List<List<Object>> labels ) {
+        IndexAlias indexAlias = find( IndexAlias.class );
+        if ( indexAlias == null ) add( new IndexAlias( labels ) );
+        return this;
+    }
+
+    public Tsr<ValueType> label( Map<Object, List<Object>> labels ) {
+        this.add( new IndexAlias<>( labels, this ) );
+        return this;
+    }
+
+
+    /*==================================================================================================================
+
+            §(8) : (OVERLOADABLE) OPERATORS & OPERATIONS :
+        -----------------------------------------------------
+            ...for more context see package 'calculus'...
+     */
+    /*
+        -----------------------------
+            §(8.1) : OPERATORS :
+        -----------------------------
+     */
 
     public Tsr<ValueType> plus( Tsr<ValueType> other ) {
         return Function.PLUS.call( new Tsr[]{ this, other } );
@@ -1080,6 +1163,34 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return xor( new Tsr<>( this.shape(), value ) );
     }
 
+    /*
+        -----------------------------
+            §(8.2) : OPERATIONS :
+        -----------------------------
+     */
+
+    public Tsr<ValueType> T() { // Transposed!
+        StringBuilder operation = new StringBuilder();
+        for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( ( i == 0 ) ? "" : ", " );
+        operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
+        return new Tsr<>( this, operation.toString() );
+    }
+
+    /**
+     *  This method performs various operations by calling Function instances
+     *  in order to ultimately calculate the mean value of all values
+     *  of this very tensor!
+     *  This scalar tensor is then returned.
+     *
+     * @return A scalar tensor which is the mean value of all values of this very tensor.
+     */
+    public Tsr<ValueType> mean() {
+        Tsr<ValueType> ones = new Tsr<>( this.getNDConf().shape(), 1 );
+        Tsr<ValueType> sum = Function.X.call( new Tsr[]{ this, ones } );
+        return Function.DIV.call( new Tsr[]{ sum, new Tsr( this.size() ) } );
+        //TODO :Function.DIV.call(new Tsr[]{sum, new Tsr(this.size())});
+    }
+
     public Tsr<ValueType> dot( Tsr<ValueType> b ) {
         Tsr<ValueType> a = this;
         int[][] fitter = AbstractNDArray.Utility.Indexing.makeFit( a.getNDConf().shape(), b.getNDConf().shape() );
@@ -1109,76 +1220,18 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return isCase( t );
     }
 
-    public Tsr<ValueType> label( String[][] labels ) {
-        IndexAlias indexAlias = find( IndexAlias.class );
-        if ( indexAlias == null ) {
-            indexAlias = new IndexAlias( this.rank() );
-            add( indexAlias );
-        }
-        for( int i = 0; i < labels.length; i++ ) {
-            if ( labels[ i ] != null ) {
-                for ( int ii = 0; ii < labels[ i ].length; ii++ ) {
-                    if ( labels[ i ][ ii ] != null ) indexAlias.set( i, labels[ i ][ ii ], ii );
-                }
-            }
-        }
-        return this;
-    }
 
-    public Tsr<ValueType> label( List<List<Object>> labels ) {
-        IndexAlias indexAlias = find( IndexAlias.class );
-        if ( indexAlias == null ) add( new IndexAlias( labels ) );
-        return this;
-    }
+    /*==================================================================================================================
 
-    public Tsr<ValueType> label( Map<Object, List<Object>> labels ) {
-        this.add( new IndexAlias<>( labels, this ) );
-        return this;
-    }
-
-    private void _putAtCheckFor( Tsr value ) {
-        if ( value.isEmpty() ) {
-            String message = "Provided tensor is empty! Empty tensors cannot be injected.";
-            _LOGGER.error( message );
-            throw new IllegalArgumentException( message );
-        }
-    }
-
-    public Tsr<ValueType> putAt( List<?> key, Tsr<ValueType> value ) {
-        _putAtCheckFor( value );
-        Tsr<ValueType> slice = ( key == null ) ? this : (Tsr) getAt( key );
-        return _putAt( slice, value );
-    }
-
-    public Tsr<ValueType> putAt( Map<?,?> key, Tsr<ValueType> value ) {
-        _putAtCheckFor( value );
-        Tsr<ValueType> slice = ( key == null ) ? this : (Tsr) getAt( key );
-        return _putAt( slice, value );
-    }
-
-    private Tsr<ValueType> _putAt( Tsr<ValueType> slice, Tsr<ValueType> value )
-    {
-        boolean valueIsDeviceVisitor = false;
-        if ( slice.isOutsourced() && !value.isOutsourced() ) {
-            Device device = slice.find( Device.class );
-            try {
-                device.store( value );
-            } catch ( Exception exce ) {
-                _LOGGER.error( "Trying to migrate target slice tensor to device failed.", exce );
-                throw exce;
-            }
-            valueIsDeviceVisitor = true;
-        }
-        if ( this.isEmpty() && slice.isEmpty() || slice.size() != value.size() ) _become( value ); // TODO: Rethink this a little
-        else new Tsr( new Tsr[]{ slice, value }, "I[ 0 ] <- I[ 1 ]", false );
-        try {
-            if ( valueIsDeviceVisitor ) value.find( Device.class ).restore( value );
-        } catch ( Exception exception ) {
-            _LOGGER.error( "Trying to migrate source tensor back to original location failed.", exception );
-            throw exception;
-        }
-        return this;
-    }
+            §(9) : SLICING, INDEXING & INJECTING :
+        -----------------------------------------------------
+            ...for more context see package 'ndim.config'...
+     */
+    /*
+        -----------------------------
+            §(9.1) : SLICING :
+        -----------------------------
+     */
 
     public double getAt( int[] idx ){
         return value64( i_of_idx( idx ) );
@@ -1247,12 +1300,6 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 resulting tensor views the same data as its parent while not
                 being the same instance. (In a sense, its a shallow copy!)
              */
-            //if ( this.isEmpty() || this.isUndefined() ) return this;
-            //for ( int e : this.shape() ) {
-            //    List<Integer> rangeAsList = new ArrayList<>();
-            //    for (int i = 0; i < e; i++) rangeAsList.add(i);
-            //    ( (List<Object>) key ).add(rangeAsList);
-            //}
             return shallowCopy();
         }
 
@@ -1368,6 +1415,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return subset;
     }
 
+
     /**
      *
      * @param ranges Elements of this array might be multiple things:
@@ -1475,6 +1523,57 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             offset[ i + iOffset ] = first;
         }
         return ranges.length + iOffset - 1;
+    }
+
+
+    /*
+        -----------------------------
+            §(9.2) : INJECTING :
+        -----------------------------
+     */
+
+    public Tsr<ValueType> putAt( List<?> key, Tsr<ValueType> value ) {
+        _putAtCheckFor( value );
+        Tsr<ValueType> slice = ( key == null ) ? this : (Tsr) getAt( key );
+        return _putAt( slice, value );
+    }
+
+    public Tsr<ValueType> putAt( Map<?,?> key, Tsr<ValueType> value ) {
+        _putAtCheckFor( value );
+        Tsr<ValueType> slice = ( key == null ) ? this : (Tsr) getAt( key );
+        return _putAt( slice, value );
+    }
+
+    private void _putAtCheckFor( Tsr value ) {
+        if ( value.isEmpty() ) {
+            String message = "Provided tensor is empty! Empty tensors cannot be injected.";
+            _LOGGER.error( message );
+            throw new IllegalArgumentException( message );
+        }
+    }
+
+    private Tsr<ValueType> _putAt( Tsr<ValueType> slice, Tsr<ValueType> value )
+    {
+        boolean valueIsDeviceVisitor = false;
+        if ( slice.isOutsourced() && !value.isOutsourced() ) {
+            Device device = slice.find( Device.class );
+            try {
+                device.store( value );
+            } catch ( Exception exce ) {
+                _LOGGER.error( "Trying to migrate target slice tensor to device failed.", exce );
+                throw exce;
+            }
+            valueIsDeviceVisitor = true;
+        }
+        if ( this.isEmpty() && slice.isEmpty() || slice.size() != value.size() ) _become( value ); // TODO: Rethink this a little
+        else new Tsr( new Tsr[]{ slice, value }, "I[ 0 ] <- I[ 1 ]", false );
+        try {
+            if ( valueIsDeviceVisitor ) value.find( Device.class ).restore( value );
+        } catch ( Exception exception ) {
+            _LOGGER.error( "Trying to migrate source tensor back to original location failed.", exception );
+            throw exception;
+        }
+        return this;
     }
 
     public static class IO
@@ -1995,15 +2094,6 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             return t;
         }
 
-    }
-
-
-
-    @Override
-    public void update( Tsr<ValueType> oldOwner, Tsr<ValueType> newOwner ) {
-        // This is means that this tensor is a gradient that is being
-        // transferred to another tensor to serve as gradient...
-        // No update task needs to occur. (This might change in the future...)
     }
 
 
