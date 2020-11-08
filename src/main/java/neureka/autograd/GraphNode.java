@@ -1,3 +1,42 @@
+/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    _____                 _     _   _           _
+   / ____|               | |   | \ | |         | |
+  | |  __ _ __ __ _ _ __ | |__ |  \| | ___   __| | ___
+  | | |_ | '__/ _` | '_ \| '_ \| . ` |/ _ \ / _` |/ _ \
+  | |__| | | | (_| | |_) | | | | |\  | (_) | (_| |  __/
+   \_____|_|  \__,_| .__/|_| |_|_| \_|\___/ \__,_|\___|
+                   | |
+                   |_|
+
+    This class defines the nodes which form the computation graph used to track operations performed on tensors,
+    or more precisely :
+    instances of the 'Tsr' class!
+
+*/
+
 package neureka.autograd;
 
 import neureka.Component;
@@ -18,7 +57,7 @@ import java.util.function.Supplier;
 /**
  *  Instances of this class are components of tensors.
  *  GraphNodes form a computation graph during runtime which is traversed during backpropagation.
- *  Both parent and child references are use.
+ *  Both parent and child references are use for traversal.
  *  Parents are the GraphNodes of the tensors from which the tensor of the current node was formed,
  *  whereas children are the nodes (also) produced by said current node.
  *  Children are weakly referenced so that abandoned / detached
