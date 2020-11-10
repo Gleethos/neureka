@@ -46,6 +46,19 @@ import neureka.calculus.frontend.Cache;
 import java.util.List;
 import java.util.function.Supplier;
 
+/**
+ *  Besides the Tsr class, which is the core class of Neureka, this interface and its implementations
+ *  represents the second most important feature of this library.
+ *  Instances of Function implementations form an abstract syntax tree which is being built
+ *  from a provided expression String containing function syntax.
+
+    Just like functions in the mathematical sense, implementations of this
+    interface receive inputs.
+ *  Within the expression String needed for instantiation, these inputs are
+ *  recognized by 'I[j]', 'Ij' or 'ij', where j is the input index.
+ *  Functions accept arrays as their inputs,
+ *  which is why variables must be targeted in such a way.
+ */
 public interface Function
 {
     // Global context and cache:
@@ -53,22 +66,22 @@ public interface Function
 
     Function DIMTRIM = create("dimtrim(I[ 0 ])");
 
-    Function IDY = create("I[ 0 ]<-I[ 1 ]");
+    Function IDY = create("I[ 0 ] <- I[ 1 ]");
 
-    Function X = create("I[ 0 ]xI[ 1 ]");
-    Function PLUS = create("(I[ 0 ]+I[ 1 ])");
-    Function PLUS_ASSIGN = create("I[ 0 ]<-(I[ 0 ]+I[ 1 ])");
-    Function MINUS = create("(I[ 0 ]-I[ 1 ])");
-    Function MINUS_ASSIGN = create("I[ 0 ]<-(I[ 0 ]-I[ 1 ])");
+    Function X = create("I[ 0 ] x I[ 1 ]");
+    Function PLUS = create("(I[ 0 ] + I[ 1 ])");
+    Function PLUS_ASSIGN = create("I[ 0 ] <- (I[ 0 ] + I[ 1 ])");
+    Function MINUS = create("(I[ 0 ] - I[ 1 ])");
+    Function MINUS_ASSIGN = create("I[ 0 ] <- (I[ 0 ]-I[ 1 ])");
     Function DIV = create("(I[ 0 ]/I[ 1 ])");
-    Function DIV_ASSIGN = create("I[ 0 ]<-(I[ 0 ]/I[ 1 ])");
-    Function POW = create("(I[ 0 ]^I[ 1 ])");
-    Function POW_ASSIGN = create("I[ 0 ]<-(I[ 0 ]^I[ 1 ])");
-    Function MUL = create("I[ 0 ]*I[ 1 ]");
-    Function MUL_ASSIGN = create("I[ 0 ]<-(I[ 0 ]*I[ 1 ])");
-    Function MOD = create("(I[ 0 ]%I[ 1 ])");
-    Function MOD_ASSIGN = create("I[ 0 ]<-(I[ 0 ]%I[ 1 ])");
-    Function NEG = create("(-1*I[ 0 ])");
+    Function DIV_ASSIGN = create("I[ 0 ] <- (I[ 0 ] / I[ 1 ])");
+    Function POW = create("(I[ 0 ] ^ I[ 1 ])");
+    Function POW_ASSIGN = create("I[ 0 ] <- (I[ 0 ] ^ I[ 1 ])");
+    Function MUL = create("I[ 0 ] * I[ 1 ]");
+    Function MUL_ASSIGN = create("I[ 0 ] <- (I[ 0 ] * I[ 1 ])");
+    Function MOD = create("(I[ 0 ] % I[ 1 ])");
+    Function MOD_ASSIGN = create("I[ 0 ] <- (I[ 0 ] % I[ 1 ])");
+    Function NEG = create("(-1 * I[ 0 ])");
 
     /**
      *  This static nested class acts as namespace for pre-instantiated

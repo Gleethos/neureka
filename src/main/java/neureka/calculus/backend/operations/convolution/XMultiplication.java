@@ -19,8 +19,8 @@ import java.util.List;
 public class XMultiplication extends AbstractOperationType
 {
 
-    public XMultiplication(){
-
+    public XMultiplication()
+    {
         super(
                 "multiply",
                 "x",
@@ -224,27 +224,28 @@ public class XMultiplication extends AbstractOperationType
                                                         ),
                                         3
                                 )
-                        ).setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
-                                call -> {
-                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
-                                    call.getDevice().getKernel(call)
-                                            .pass( call.getTensor( offset ) )
-                                            .pass( call.getTensor( offset + 1 ) )
-                                            .pass( call.getTensor( offset + 2 ) )
-                                            .pass( call.getTensor( 0 ).rank() )
-                                            .pass( call.getDerivativeIndex() ) //call.getDerivativeIndex()
-                                            .call( gwz );
-                                },
-                                3,
-                                convolution.getKernelSource(), // kernelSource
-                                "value = src1 * src2;\n",
-                                "value += handle * drain;\n",
-                                this // OperationType
                         )
-                )
+                        .setExecutor(
+                            CLExecutor.class,
+                            new CLExecutor(
+                                    call -> {
+                                        int offset = ( call.getTensor( 0 ) != null ) ? 0 : 1;
+                                        int gwz = ( call.getTensor( 0 ) != null ) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                        call.getDevice().getKernel(call)
+                                                .pass( call.getTensor( offset ) )
+                                                .pass( call.getTensor( offset + 1 ) )
+                                                .pass( call.getTensor( offset + 2 ) )
+                                                .pass( call.getTensor( 0 ).rank() )
+                                                .pass( call.getDerivativeIndex() ) //call.getDerivativeIndex()
+                                                .call( gwz );
+                                    },
+                                    3,
+                                    convolution.getKernelSource(), // kernelSource
+                                    "value = src1 * src2;\n",
+                                    "value += handle * drain;\n",
+                                    this // OperationType
+                            )
+                        )
         );
         new AbstractOperationType(
                 "inv_convolve_mul_left", ((char) 171) + "x",
@@ -253,10 +254,10 @@ public class XMultiplication extends AbstractOperationType
                 false,
                 false,
                 false
-                ){
+        ) {
             @Override
             public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-            return src.get( 0 ).call( inputs, j );
+                return src.get( 0 ).call( inputs, j );
             }
         }
         .setImplementation(Convolution.class, convolution)
@@ -285,7 +286,8 @@ public class XMultiplication extends AbstractOperationType
             public double calculate( double[] inputs, int j, int d, List<Function> src ){
                 return 0;
             }
-        }.setImplementation(Convolution.class, convolution)
+        }
+        .setImplementation(Convolution.class, convolution)
                 .setStringifier(
                         children -> {
                             StringBuilder reconstructed = new StringBuilder();

@@ -1760,11 +1760,16 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public Object getValue() {
         if ( this.isOutsourced() ) {
             Device device = find( Device.class );
-            return ( this.is32() )
-                    ? device.value32f( this )
-                    : device.value64f( this );
+            if ( device != null ) {
+                return ( this.is32() )
+                        ? device.value32f( this )
+                        : device.value64f( this );
+            }
+            else return _value;
         }
-        return _value;
+        else if ( this.is64() ) return value64();
+        else if ( this.is32() ) return value32();
+        else return _value;
     }
 
     public Object getData() {
