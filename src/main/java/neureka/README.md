@@ -6,8 +6,8 @@ The code of this project deviates just slightly from official or common coding c
 as one would recognize them in typical Java code.
 These deviations boil down to just 3 simple rules which were chosen purposefully and are 
 in no way to be mistaken with arbitrariness, or a lack of thought.
-To the contrary, the code of this project borrows conventions which are standard
-in other languages, namely : C#, C++ and Python.
+To the contrary, the code of this project borrows carefully chosen conventions which are standard
+practice in other languages, namely : C#, C++ and Python.
 
 ---
 
@@ -24,10 +24,10 @@ in other languages, namely : C#, C++ and Python.
 >   char letter = 'h';
 >```
 >   This rule must not be misunderstood : <br>
->   Descriptive names for things in this code base are almost always preferred 
+>   Descriptive names for things in this code base are almost always the preferred choice
 >   over short abbreviations or arbitrary letters... 
 >   However ! <br>
->   Sometimes naming something that is generally well-known, widely-present and therefore 
+>   Sometimes the name of something that is generally well-known, widely-present and therefore 
 >   easy to understand can be shortened to improve readability by not bloating
 >   the code... <br>
 >   The reason why the class ``Tsr`` is not called ``Tensor`` is the same reason

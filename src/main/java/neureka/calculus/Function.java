@@ -32,7 +32,6 @@ SOFTWARE.
     Function instances represent an abstract syntax
     tree which performs operations on tensors or arrays of primitive scalars.
 
-
 */
 
 package neureka.calculus;
@@ -49,7 +48,7 @@ import java.util.function.Supplier;
 
 public interface Function
 {
-    //Global context and cache:
+    // Global context and cache:
     Cache CACHE = Cache.instance();
 
     Function DIMTRIM = create("dimtrim(I[ 0 ])");
@@ -71,7 +70,12 @@ public interface Function
     Function MOD_ASSIGN = create("I[ 0 ]<-(I[ 0 ]%I[ 1 ])");
     Function NEG = create("(-1*I[ 0 ])");
 
-
+    /**
+     *  This static nested class acts as namespace for pre-instantiated
+     *  Function instances which are configured to not track their computational history.
+     *  This means that no computation graph will be built by these instances.
+     *  ( Computation graphs in Neureka are made of instances of the "GraphNode" class... )
+     */
     class Detached
     {
         public static Function IDY = create("I[ 0 ]<-I[ 1 ]", false);
