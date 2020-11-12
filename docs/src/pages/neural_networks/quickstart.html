@@ -342,7 +342,7 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    def sig = Function.create("sig(I[0])")
+    def sig = Function.create('sig(I[0])')
 
                 </code></pre>
             </div>
@@ -401,10 +401,10 @@
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    private List<String> errors = new ArrayList<>();
-    private List<String> losses = new ArrayList<>();
+    private List errors = new ArrayList<>();
+    private List losses = new ArrayList<>();
 
-    public Tsr<?> forwardAndBackward( Tsr x )
+    public Tsr forwardAndBackward( Tsr x )
     {
         Tsr z1 = x.dot(W1);
         Tsr hidden = sig.call(z1);
