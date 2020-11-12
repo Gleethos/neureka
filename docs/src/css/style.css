@@ -158,6 +158,15 @@ main {
     padding-bottom: 5em;
 }
 
+hr {
+    border: 0;
+    clear: both;
+    display: block;
+    width: 100%;
+    background-color: #00B4D2;
+    height: 0.25em;
+}
+
 .MainFrame {
     margin: 0px;
     padding-left: 0%;
