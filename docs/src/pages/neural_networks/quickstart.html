@@ -1,0 +1,471 @@
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <h2 href="#">Let's build a simple Groovy NN :</h2>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <h3 href="#">1. Configuration</h3>
+        <p>
+            Before starting working with tensors it might be useful
+            to configure Neureka to fit your needs. <br>
+            Accessing settings can be done as follows :
+        </p>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+    def settings = Neureka.instance().settings()
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    Settings settings = Neureka.instance().settings();
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <p>
+            There is a lot of detail to the different types of settings
+            that can be adjusted, however let's just look at the most important start configuration :
+        </p>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+    Neureka.instance().reset() // First we reset everything, just in case! 👍
+    // Then we use the following autograd settings :
+    Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested( false )
+    Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
+    Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp( false )
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    Neureka.instance().reset(); // First we reset everything, just in case! 👍
+    // Then we use the following autograd settings :
+    Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested( false );
+    Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false );
+    Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp( false );
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <p>
+            You do do not need to know what these settings mean for what follows. <br>
+            So know that Neureka is configured properly let's continue with our neural network endeavour :
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <h3 href="#">2. Devices</h3>
+        <p>
+            Before getting started with tensors we first have to consider the following question :
+            **Where do we want our tensors to be stored and executed?**
+
+            The answer to this question is usually quite simple :
+            *By default, they are stored in primitive arrays on the JVM, so in your RAM!*
+            However!
+            What if you want them to run on your GPU?
+            In that case we have to use the "Device" interface to get a device on which our tensors ought to live :
+        </p>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+    def device = Device.find('first gpu')
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    Device device = Device.find("first gpu");
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <p>
+            Devices are components of tensors and tensors are elements of a device.
+            Therefore we can marry instances of these two types via the following two ways :
+        </p>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-12 col-lg-6">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+    device.store( myTensor )
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    device.store( myTensor );
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-6">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+    myTensor.set( device )
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    myTensor.set( device );
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <p>
+
+            For simplicity reasons the next steps will not include the Device type when handling tensors.
+
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <h3 href="#">3. Mock Data</h3>
+        <p>
+
+            Neural networks are known for their hunger for data.
+            So let's prepare a snack :
+
+        </p>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+    def X = new Tsr(
+        [[0.6667, 1.0000],
+         [0.3333, 0.5556],
+         [1.0000, 0.6667]]
+    )
+    def y = new Tsr(
+            [[0.9200],
+             [1.0000],
+             [0.8900]]
+    )
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    Tsr X = new Tsr(
+            new double[][]{
+                 {0.6667, 1.0000},
+                 {0.3333, 0.5556},
+                 {1.0000, 0.6667}
+            }
+        );
+    Tsr y = new Tsr(
+            new double[][]{
+                {0.9200},
+                {1.0000},
+                {0.8900}
+            }
+    )
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <p>
+
+            If you want to know more about feeding data into your tensors consider looking at the "FileDevice" class.
+
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <h3 href="#">4. Weights</h3>
+        <p>
+
+        </p>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+    def W1 = new Tsr(
+            [[-1.1843,  0.0146, -1.4647],
+             [-1.4020, -1.0129,  0.6256]]
+        ).setRqsGradient(true)
+
+    def W2 = new Tsr(
+            [[ 1.8095],
+             [-0.4269],
+             [-1.1110]]
+        ).setRqsGradient(true)
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    Tsr W1 = new Tsr(
+            new double[][]{
+                {-1.1843,  0.0146, -1.4647},
+                {-1.4020, -1.0129,  0.6256}
+            }
+        ).setRqsGradient(true);
+    def W2 = new Tsr(
+            new double[][]{
+                {1.8095},
+                {-0.4269},
+                {-1.1110}
+            }
+        ).setRqsGradient(true);
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <h3 href="#">5. Activation Function</h3>
+        <p>
+
+            The last setup step is the activation function.
+            For this little quickstart we will use the sigmoid activation function 👍
+
+        </p>
+    </div>
+</div>
+
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+    def sig = Function.create("sig(I[0])")
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    Function sig = Function.create("sig(I[0])");
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <h3 href="#">6. Finally! A neural network! 😃</h3>
+        <p>
+
+        </p>
+    </div>
+</div>
+
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+    def errors = []
+    def losses = []
+
+    def forwardAndBackward = ( Tsr x ) ->
+    {
+        def z1 = x.dot(W1)
+        def hidden = sig(z1)
+        def z2 = hidden.dot(W2)
+        def pred = sig(z2)
+        def error = (y - pred)
+        errors.add(error.toString())
+        def loss = (error**2).mean()
+        losses.add(loss.toString())
+        pred.backward(error) // This is where Neurekas autograd magic happend!
+        W1.applyGradient()
+        W2.applyGradient()
+        return loss
+    }
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    private List<String> errors = new ArrayList<>();
+    private List<String> losses = new ArrayList<>();
+
+    public Tsr<?> forwardAndBackward( Tsr x )
+    {
+        Tsr z1 = x.dot(W1);
+        Tsr hidden = sig.call(z1);
+        Tsr z2 = hidden.dot(W2);
+        Tsr pred = sig.call(z2);
+        Tsr error = y.minus(pred);
+        errors.add(error.toString());
+        Tsr loss = error.power(2).mean();
+        losses.add(loss.toString());
+        pred.backward(error); // This is where Neurekas autograd magic happend!
+        W1.applyGradient();
+        W2.applyGradient();
+        return loss;
+    }
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <h3 href="#">7. Training</h3>
+        <p>
+
+            Let's train it over 100 epochs :
+
+        </p>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+    100.times {
+        def loss = forwardAndBackward(X)
+        print(loss)
+    }
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    for ( int i = 0; i < 100; i++ ) {
+        Tsr loss = forwardAndBackward(X);
+        System.out.println(loss);
+    }
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
