@@ -119,7 +119,7 @@ class Cross_Device_System_Tests extends Specification
         then : SimpleNNSystemTest.on(gpu)
 
         // Some more asserts:
-        and : Tsr t = new Tsr([2, 2], 4).setRqsGradient(true).add(gpu)
+        and : Tsr t = new Tsr([2, 2], 4).setRqsGradient(true).set(gpu)
         when :
             t.backward(1)
             Tsr g = t.find(Tsr.class)

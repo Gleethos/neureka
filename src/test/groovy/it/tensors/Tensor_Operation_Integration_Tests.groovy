@@ -223,7 +223,7 @@ class Tensor_Operation_Integration_Tests extends Specification
         given :
             Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView(false)
-            Tsr a = new Tsr([4, 4], 0..16).add( device )
+            Tsr a = new Tsr([4, 4], 0..16).set( device )
 
             Tsr x = a[1..-2,0..-1]
             Tsr y = a[0..-3,0..-1]
@@ -296,7 +296,7 @@ class Tensor_Operation_Integration_Tests extends Specification
         given :
         Neureka.instance().reset()
         Neureka.instance().settings().view().setIsUsingLegacyView(false)
-        Tsr a = new Tsr([11, 11], 3..19).add( device )
+        Tsr a = new Tsr([11, 11], 3..19).set( device )
         Tsr x = a[1..-2,0..-1]
         Tsr y = a[0..-3,0..-1]
 

@@ -27,7 +27,7 @@ class GraphNode_Tensor_Exception_Unit_Tests extends Specification
             Tsr t = new Tsr( 1 )
         and : 'A GraphNode mock object which is being added to the tensor.'
             def node = Mock( GraphNode )
-            t.add( node )
+            t.set( node )
 
         when : 'We try to delete the tensor...'
             t.delete()

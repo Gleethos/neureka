@@ -14,7 +14,7 @@ class ADAM_Tests extends Specification
     @Shared Optimizer o = new ADAM(w)
 
     def setup() {
-        w.add(o)
+        w.set(o)
     }
 
 
@@ -26,7 +26,7 @@ class ADAM_Tests extends Specification
         and : 'A new scalar gradient tensor is being created.'
             Tsr g = new Tsr(gradient)
         and : 'The following input is being applied to the tensor (and internal optimizer)...'
-            w.add( new Tsr( input ) )
+            w.set( new Tsr( input ) )
             w.applyGradient()
 
         expect : 'The following state emerges:'

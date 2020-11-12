@@ -37,7 +37,7 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
 
         then : 'The mock objects are being called as expected.'
             1 * function.doesAD() >> true
-            1 * payload.add( _ )
+            1 * payload.set( _ )
             1 * device.cleaning( payload, _ )
 
     }
@@ -73,7 +73,7 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
             5 * inputsNodeMock.lock() >> Mock( GraphLock )
             1 * function.doesAD() >> true
             1 * payload.device() >> device
-            1 * payload.add( _ )
+            1 * payload.set( _ )
             1 * device.cleaning( payload, _ )
             4 * inputs[0].find(GraphNode.class) >> inputsNodeMock
             3 * inputs[1].find(GraphNode.class) >> inputsNodeMock

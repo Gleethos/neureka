@@ -294,7 +294,7 @@ class Tensor_IO_Unit_Tests extends  Specification
             !gpu.has(t)
 
         when : 'The tensor is being added to the OpenCL device...'
-            t.add(gpu)
+            t.set(gpu)
 
         then : 'The now "outsourced" tensor has a reference to the device and vice versa!'
             t.has(Device.class)

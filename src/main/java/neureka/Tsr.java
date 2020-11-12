@@ -744,7 +744,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @return The unchanged object or maybe in future versions: null (component rejected)
      */
     @Override
-    protected < T extends Component<Tsr<ValueType>> > T _addOrReject( T newComponent )
+    protected < T extends Component<Tsr<ValueType>> > T _setOrReject(T newComponent )
     {
         if ( newComponent.getClass() == HostCPU.class ) return null;
         if ( newComponent instanceof Device && !( (Device) newComponent ).has( this ) )
@@ -1108,7 +1108,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         IndexAlias indexAlias = find( IndexAlias.class );
         if ( indexAlias == null ) {
             indexAlias = new IndexAlias( this.rank() );
-            add( indexAlias );
+            set( indexAlias );
         }
         for( int i = 0; i < labels.length; i++ ) {
             if ( labels[ i ] != null ) {
@@ -1122,12 +1122,12 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public Tsr<ValueType> label( List<List<Object>> labels ) {
         IndexAlias indexAlias = find( IndexAlias.class );
-        if ( indexAlias == null ) add( new IndexAlias( labels ) );
+        if ( indexAlias == null ) set( new IndexAlias( labels ) );
         return this;
     }
 
     public Tsr<ValueType> label( Map<Object, List<Object>> labels ) {
-        this.add( new IndexAlias<>( labels, this ) );
+        this.set( new IndexAlias<>( labels, this ) );
         return this;
     }
 
@@ -1460,11 +1460,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             subset.setIsOutsourced( true );
         }
         if ( this.isVirtual() ) subset.setIsVirtual( true );
-        subset.add( new Relation().addParent( this ) );
+        subset.set( new Relation().addParent( this ) );
         Relation parent = find( Relation.class );
         parent = ( parent != null ) ? parent : new Relation();
         parent.addChild( subset );
-        this.add( parent );
+        this.set( parent );
         return subset;
     }
 
@@ -1797,11 +1797,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 !forComponent(
                     Tsr.class,
                         g ->
-                        this.add(
+                        this.set(
                                 Function.Detached.PLUS_ASSIGN.call( new Tsr[]{ g, error } )
                         )
                 )
-        ) add( error ).forComponent( Device.class, d -> {
+        ) set( error ).forComponent( Device.class, d -> {
             try {
                 d.store( error ) ;
             } catch ( Exception exception ) {

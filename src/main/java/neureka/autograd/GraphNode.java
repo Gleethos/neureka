@@ -464,7 +464,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
         if ( !function.doesAD() ) return; // Only functions with AutoDiff enabled create computation graph!
         _lock = lock;
         _setPayload( output );
-        output.add( this );
+        output.set( this );
         if ( inputs == null ) {
             _mode = ( output.rqsGradient() ) ? 1 : 0;
             _function = null;
@@ -709,7 +709,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
             JITProp<ValueType> jit = getPayload().find( JITProp.class );
             if ( jit == null ) jit = new JITProp<>( pendingBackProp );
             else jit.addPending( pendingBackProp );
-            getPayload().add( jit );
+            getPayload().set( jit );
         }
     }
 

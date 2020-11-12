@@ -164,7 +164,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         if ( !parent.isOutsourced() ) throw new IllegalStateException( "Data parent is not outsourced!" );
         _add( tensor, parent.find( cl_tsr.class ) );
         _tensors.add( tensor );
-        tensor.add( this );
+        tensor.set( this );
         return this;
     }
 
@@ -230,8 +230,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         _tensors.add( tensor );
 
-        tensor.add( newClt );
-        tensor.add( this );
+        tensor.set( newClt );
+        tensor.set( this );
 
         if ( tensor.isVirtual() ) {
             double value = tensor.value64( 0 );
@@ -239,7 +239,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             execute(
                 new ExecutionCall(
                         this,
-                        new Tsr[]{ tensor, (Tsr) new Tsr( value ).add( this ) },
+                        new Tsr[]{ tensor, (Tsr) new Tsr( value ).set( this ) },
                         -1,
                         OperationType.instance( "<" )
                 )
@@ -396,7 +396,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     public Device swap(Tsr<Number> former, Tsr<Number> replacement) {
         cl_tsr clTsr = former.find(cl_tsr.class);
         former.remove(cl_tsr.class);
-        replacement.add(clTsr);
+        replacement.set(clTsr);
         _tensors.remove(former);
         _tensors.add(replacement);
         return this;

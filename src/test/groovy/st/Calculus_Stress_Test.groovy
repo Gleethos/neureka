@@ -34,7 +34,7 @@ class Calculus_Stress_Test extends Specification
                 return t
             }
         and :
-            Tsr t = new Tsr( [3, 3, 3, 3], 0 ).add( device )
+            Tsr t = new Tsr( [3, 3, 3, 3], 0 ).set( device )
 
         when :
             t[1..2, 0..2, 1..1, 0..2] = new Tsr( [2, 3, 1, 3], -4..2 )

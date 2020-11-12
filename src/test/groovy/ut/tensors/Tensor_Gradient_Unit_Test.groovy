@@ -26,7 +26,7 @@ class Tensor_Gradient_Unit_Test extends Specification
             Tsr g = new Tsr(9)
 
         when : 'The gradient tensor is added to the prior tensor as component.'
-            t.add( g )
+            t.set( g )
 
         then : 'The prior tensor "hasGradient()" but does not "rqsGradient()"'
             t.has(Tsr.class)
@@ -47,7 +47,7 @@ class Tensor_Gradient_Unit_Test extends Specification
             Tsr g = new Tsr(9)
 
         when : 'The gradient tensor is added to the prior tensor as component.'
-            t.add( g )
+            t.set( g )
 
         then : 'The prior tensor will also include its gradient in the "toString()" result.'
             t.toString().contains("]:g:[")
@@ -67,7 +67,7 @@ class Tensor_Gradient_Unit_Test extends Specification
             Tsr g = new Tsr(9)
 
         and : 'The gradient tensor is added to the prior tensor as component.'
-            t.add( g )
+            t.set( g )
 
         when : 'The request to apply the gradient is being made.'
             t.applyGradient()

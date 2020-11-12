@@ -118,7 +118,7 @@ public abstract class AbstractComponentOwner<InstanceType>
      * @param newComponent The new component which should be added to the components list.
      * @return This very class.
      */
-    public InstanceType add(Component<InstanceType> newComponent)
+    public InstanceType set(Component<InstanceType> newComponent)
     {
         if (newComponent == null) return (InstanceType)this;
         Component<InstanceType> oldCompartment = null;
@@ -130,7 +130,7 @@ public abstract class AbstractComponentOwner<InstanceType>
             }
         } else _components = new ArrayList<>();
 
-        _components.add(_addOrReject(newComponent));
+        _components.add(_setOrReject(newComponent));
         return (InstanceType)this;
     }
 
@@ -147,7 +147,7 @@ public abstract class AbstractComponentOwner<InstanceType>
      * @param newComponent The component which should be added to the components list.
      * @return The same component or null if it has been rejected.
      */
-    protected abstract <T extends Component<InstanceType>> T _addOrReject(T newComponent);
+    protected abstract <T extends Component<InstanceType>> T _setOrReject(T newComponent);
 
 
     /**

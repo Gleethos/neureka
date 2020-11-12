@@ -51,7 +51,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
         given : 'Neureka is being reset.'
             Neureka.instance().reset()
         and : 'A 2D tensor is being instantiated..'
-            Tsr t = new Tsr<>(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).add(device)
+            Tsr t = new Tsr<>(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).set(device)
 
         when : 'A numeric array is passed to said tensor...'
             if( data1 instanceof float[] ) t.setValue32(data1)
@@ -87,7 +87,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             if ( device == null ) return
 
         when : 'A 2D tensor is being instantiated by passing the given shape and data...'
-            Tsr t = new Tsr<>(shape, data).add(device)
+            Tsr t = new Tsr<>(shape, data).set(device)
 
         then : 'The tensor values (as List) are as expected.'
             (t.value64() as List<Float>) == expected

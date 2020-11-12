@@ -74,7 +74,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
             if (t.rqsGradient()) {
                 if (gradient==null) {
                     gradient = new Tsr(t.shape(), 0);
-                    t.add(gradient);
+                    t.set(gradient);
                 }
                 return gradient;
             }

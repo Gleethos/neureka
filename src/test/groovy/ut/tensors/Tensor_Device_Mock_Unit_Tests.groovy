@@ -15,7 +15,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
             device.has(t) >>> [false, true, true]
 
         when : 'The mock device is being added to the tensor...'
-            t.add(device)
+            t.set(device)
 
         then : '...the tensor should try to add itself to the given device.'
             1 * device.store(t)
@@ -32,7 +32,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
         given : 'A simple tensor instance with a mock device as component.'
             def device = Mock(Device)
             device.has(_) >>> [false, true, true]
-            Tsr t = new Tsr(2).add(device)
+            Tsr t = new Tsr(2).set(device)
 
         when : 'The "isOutsourced" property is being set to false...'
             t.isOutsourced = false
@@ -49,7 +49,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
         given : 'A simple tensor having a device as component'
             def device = Mock(Device)
             device.has(_) >>> [false, true, true]
-            Tsr t = new Tsr(1).add(device)
+            Tsr t = new Tsr(1).set(device)
 
         when : 'The device is being accessed via the "device()" method...'
             Device found = t.device()
@@ -69,7 +69,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
             Tsr s = t[1..2, 0..2]
 
         and : 'The "parent tensor" is being migrated to the device...'
-            t.add(device)
+            t.set(device)
 
         then : '...this tensor should try to add itself to the given device.'
             1 * device.store(t)

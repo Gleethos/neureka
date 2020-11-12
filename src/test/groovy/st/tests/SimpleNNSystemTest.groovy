@@ -17,18 +17,18 @@ class SimpleNNSystemTest {
                         0, 1, 1,
                         1, 1, 1
                 ]
-        ).add(device)
+        ).set(device)
 
         Tsr y = new Tsr(// output values (labels)
                 [5, 1, 1],[0,1,1,1,0]
-        ).add(device)// [1, 5, 1],(0,1,1,1,0)
+        ).set(device)// [1, 5, 1],(0,1,1,1,0)
 
         Tsr input = X
         Tsr weights1 = new Tsr([1, input.shape()[1], 4],
                 [4.17022005e-01, 7.20324493e-01, 1.14374817e-04, 3.02332573e-01,
                  1.46755891e-01, 9.23385948e-02, 1.86260211e-01, 3.45560727e-01,
                  3.96767474e-01, 5.38816734e-01, 4.19194514e-01, 6.85219500e-01]
-        ).add(device)
+        ).set(device)
         /*
             [1x5x4]:(...)
             w1 (3, 4) :
@@ -36,7 +36,7 @@ class SimpleNNSystemTest {
              [1.46755891e-01 9.23385948e-02 1.86260211e-01 3.45560727e-01]
              [3.96767474e-01 5.38816734e-01 4.19194514e-01 6.85219500e-01]]
         */
-        Tsr weights2 = new Tsr([1, 1, 4], [0.20445225, 0.87811744, 0.02738759, 0.67046751]).add(device)
+        Tsr weights2 = new Tsr([1, 1, 4], [0.20445225, 0.87811744, 0.02738759, 0.67046751]).set(device)
         /*
             [1x1x4]:...
             w2 (4, 1) :
@@ -45,7 +45,7 @@ class SimpleNNSystemTest {
              [0.02738759]
              [0.67046751]]
          */
-        Tsr output = new Tsr(y.shape(), [0.0, 0.0, 0.0, 0.0, 0.0]).add(device)
+        Tsr output = new Tsr(y.shape(), [0.0, 0.0, 0.0, 0.0, 0.0]).set(device)
         /*
             out (5, 1) :
             [[0.0]

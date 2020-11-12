@@ -34,7 +34,7 @@ class OpenCLDevice_Integration_Testing extends Specification
         given : 'This system supports OpenCL'
             if (!Neureka.instance().canAccessOpenCL()) return
         and : 'A new tensor belonging to the first found OpenCLDevice instance.'
-            Tsr t = new Tsr([1, 2]).add(Device.find('first'))
+            Tsr t = new Tsr([1, 2]).set(Device.find('first'))
 
         when : 'The tensor value is being fetched...'
             def value = t.getValue()
@@ -60,7 +60,7 @@ class OpenCLDevice_Integration_Testing extends Specification
             t.data != null
 
         when : 'The tensor is being stored on the device...'
-            t.add(Device.find('first'))
+            t.set(Device.find('first'))
         and : 'The tensor value is being fetched...'
             def data = t.getData()
 
