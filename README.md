@@ -150,11 +150,13 @@ This library is being heavily inspired by [PyTorch](https://github.com/pytorch/p
 A powerful deep learning framework that combines
 [dynamic computation](https://medium.com/@omaraymanomar/dynamic-vs-static-computation-graph-2579d1934ecf), performance and debugging freedom!
 
-PyTorch however does not carry with it the benefit of *'write once run everywhere'* on <b>every Hardware</b>! 
+Popular deep learning frameworks like PyTorch and Tensorflow are heavy weight code bases
+which often do not carry with them the benefits of *'write once run everywhere'*.
+This is especially true for for accelerator <b>Hardware</b>! 
 
 [On the state of Deep Learning outside of CUDA’s walled garden.](https://towardsdatascience.com/on-the-state-of-deep-learning-outside-of-cudas-walled-garden-d88c8bbb4342)
 
-This is due to the fact that the backend of PyTorch has been written in nvidia's cuda and C++. 
+This is due to the fact that the backends of these frameworks have been written in nvidia's cuda and C++. 
 Which means that even developers willing to compile for all platforms
 would still be locked out of AMD and Intel Systems when it comes to performance.
 
@@ -163,12 +165,14 @@ Although performance will certainly be impacted
 by this choice, modularity, uncomplicated cross platform deployment and ease of 
 use are the benefits.
 Additionally, the use of OpenCl theoretically should allow for
-FPGA utilization. This however has not been tested.
+FPGA utilization.
 
 In general, the JVM ecosystem currently plays an underwhelming role in the Deep-Learning community despite
 the fact that it is among the most dominant platforms.
 
 [What Java needs for true Machine / Deep Learning support.](https://medium.com/@hsheil/what-java-needs-for-true-machine-deep-learning-support-1571ffdbb594)
+
+Neureka has been built for the JVM not for Java.
 
 ---
 
@@ -228,7 +232,7 @@ Although present, the documentation on this project still needs to mature.
 So if you have questions simply contact me or read through the test suite 
 of this project to understand what Neureka is supposed to be!
 
-Feedback is being greatly appreciated!
+Feedback is greatly appreciated!
 
 ---
 
