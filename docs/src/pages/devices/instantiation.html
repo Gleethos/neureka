@@ -84,3 +84,54 @@
         </div>
     </div>
 </div>
+
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <p>
+            Devices are components of tensors and tensors are elements of devices.
+            Therefore the following two options migrate tensors to a given device:
+        </p>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-6 col-lg-6">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+myTensor.set( device )
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+myTensor.set( device );
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm-12 col-md-6 col-lg-6">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+device.store( myTensor )
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+device.store( myTensor );
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
