@@ -37,7 +37,7 @@
         </div>
     </div>
 </div>
-<div class="col-sm-12 col-md-6">
+<div class="col-sm-12 col-md-6 col-lg-6">
     <div class="ContentBox">
         <p>
             There are multiple things that can put into this query string.
@@ -52,13 +52,14 @@
 <div class="col-sm-12 col-md-12 col-lg-12">
     <div class="ContentBox">
         <p>
-            If this way of using the hardware for your tensors then one can look
+            If this level of control for device selection for your tensors
+            is too shallow then you can look
             at concrete implementations :
         </p>
     </div>
 </div>
 
-<div class="col-sm-12 col-md-6">
+<div class="col-sm-12 col-md-7 col-lg-6">
     <div class="TabWrapper">
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
@@ -68,23 +69,31 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-        def platforms = OpenCLPlatform.PLATFORMS()
-        def devices = platforms.get(0).devices.get(0)
+    def platforms = OpenCLPlatform.PLATFORMS()
+    def devices = platforms.get(0).devices.get(0)
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-        List<OpenCLPlatform> platforms = OpenCLPlatform.PLATFORMS();
-        List<OpenCLDevice> devices = platforms.get(0).getDevices().get(0);
+    List<OpenCLPlatform> platforms = OpenCLPlatform.PLATFORMS();
+    List<OpenCLDevice> devices = platforms.get(0).getDevices().get(0);
 
                 </code></pre>
             </div>
         </div>
     </div>
 </div>
-
+<div class="col-sm-12 col-md-5 col-lg-6">
+    <div class="ContentBox">
+        <p>
+            OpenCLDevice instances are instantiated during class loading.
+            This is because a single instance of this class should
+            only represent a single real device.
+        </p>
+    </div>
+</div>
 
 <div class="col-sm-12 col-md-12 col-lg-12">
     <div class="ContentBox">
@@ -104,12 +113,12 @@
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs java">
-myTensor.set( device )
+    myTensor.set( device )
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
-myTensor.set( device );
+    myTensor.set( device );
                 </code></pre>
             </div>
         </div>
@@ -124,12 +133,12 @@ myTensor.set( device );
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs java">
-device.store( myTensor )
+    device.store( myTensor )
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
-device.store( myTensor );
+    device.store( myTensor );
                 </code></pre>
             </div>
         </div>
