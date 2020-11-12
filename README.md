@@ -67,7 +67,7 @@ A powerful deep learning framework that combines
 
 Popular deep learning frameworks like PyTorch and Tensorflow are heavy weight code bases
 which often do not carry with them the benefits of *'write once run everywhere'*.
-This is especially true for for accelerator <b>Hardware</b>! 
+This is especially true for dedicated <b>Hardware</b>! 
 
 [On the state of Deep Learning outside of CUDA’s walled garden.](https://towardsdatascience.com/on-the-state-of-deep-learning-outside-of-cudas-walled-garden-d88c8bbb4342)
 
