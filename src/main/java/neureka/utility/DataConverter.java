@@ -94,12 +94,15 @@ public class DataConverter
      *  Within the constructor the Converter lambdas are being set for a given
      *  "from"- and "to"- Class pair.
      */
-    private DataConverter(){
-        _set( float[].class, double[].class, Utility::floatToDouble);
-        _set( float[].class, int[].class,    Utility::floatToInt);
-        _set( double[].class, float[].class, Utility::doubleToFloat);
-        _set( int[].class, float[].class,    Utility::intToFloat);
-        _set( int[].class, double[].class,   Utility::intToDouble);
+    private DataConverter()
+    {
+        _set( byte[].class, short[].class, Utility::byteToShort );
+        _set( float[].class, double[].class, Utility::floatToDouble );
+        _set( float[].class, int[].class,    Utility::floatToInt );
+        _set( double[].class, float[].class, Utility::doubleToFloat );
+        _set( int[].class, float[].class,    Utility::intToFloat );
+        _set( int[].class, double[].class,   Utility::intToDouble );
+        _set( double[].class, byte[].class,  Utility::doubleToByte );
         _set( List.class, int[].class, thing -> thing.stream().mapToInt(i-> (int) i).toArray() );
         _set( List.class, double[].class, thing -> thing.stream().mapToDouble(i-> (double) i).toArray() );
         _set( List.class, long[].class, thing -> thing.stream().mapToLong(i-> (long) i).toArray() );
@@ -157,6 +160,7 @@ public class DataConverter
      */
     public static class Utility
     {
+
         public static double[] newSeededDoubleArray(String seed, int size){
             return newSeededDoubleArray(_longStringHash(seed), size);
         }
@@ -203,10 +207,25 @@ public class DataConverter
             return h;
         }
 
-        public static float[] doubleToFloat(double[] data){
-            if(data==null) return null;
+
+        public static short[] byteToShort( byte[] data ) {
+            if( data == null ) return null;
+            short[] newData = new short[data.length];
+            for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
+            return newData;
+        }
+
+        public static float[] doubleToFloat( double[] data ) {
+            if( data == null ) return null;
             float[] newData = new float[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (float) data[ i ];
+            return newData;
+        }
+
+        public static byte[] doubleToByte( double[] data ) {
+            if( data == null ) return null;
+            byte[] newData = new byte[data.length];
+            for(int i=0; i<data.length; i++) newData[ i ] = (byte) data[ i ];
             return newData;
         }
 

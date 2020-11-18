@@ -6,7 +6,7 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class UI32 extends AbstractNumericType<Long, long[]>
+public class UI32 extends AbstractNumericType<Long, long[], Integer, int[]>
 {
 
     @Override
@@ -30,11 +30,26 @@ public class UI32 extends AbstractNumericType<Long, long[]>
     }
 
     @Override
+    public Class<Integer> holderType() {
+        return Integer.class;
+    }
+
+    @Override
+    public Class<int[]> holderArrayType() {
+        return int[].class;
+    }
+
+    @Override
     public Long convert(byte[] bytes) {
         int asInt = ByteBuffer.wrap(bytes).getInt();
         return ( asInt >= 0 )
                     ? (long) asInt
                     : (long)(0x40000000 + asInt);
+    }
+
+    @Override
+    public Long toTarget(Integer original) {
+        return null;
     }
 
     @Override
@@ -46,8 +61,13 @@ public class UI32 extends AbstractNumericType<Long, long[]>
     }
 
     @Override
-    public long[] readDataFrom(DataInput stream, int size) throws IOException {
+    public long[] readAndConvertDataFrom(DataInput stream, int size) throws IOException {
         return new long[ 0 ];
+    }
+
+    @Override
+    public int[] readDataFrom(DataInput stream, int size) throws IOException {
+        return new int[0];
     }
 
 

@@ -39,7 +39,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-public interface NumericType<TargetType, ArrayType>
+public interface NumericType<TargetType, TargetArrayType, HolderType, HolderArrayType>
 {
     boolean signed();
 
@@ -47,21 +47,31 @@ public interface NumericType<TargetType, ArrayType>
 
     Class<TargetType> targetType();
 
-    Class<ArrayType> targetArrayType();
+    Class<TargetArrayType> targetArrayType();
 
-    TargetType convert(byte[] bytes);
+    Class<HolderType> holderType();
 
-    byte[] convert(TargetType number);
+    Class<HolderArrayType> holderArrayType();
 
-    ArrayType readDataFrom(DataInput stream, int size) throws IOException;
+    Class<NumericType<TargetType, TargetArrayType, TargetType, TargetArrayType>> getJVMType();
 
-    void writeDataTo(DataOutput stream, Iterator<TargetType> iterator) throws IOException;
+    TargetType convert( byte[] bytes );
 
-    <T> T convert(ArrayType from, Class<T> to);
+    TargetType toTarget( HolderType original );
+
+    byte[] convert( TargetType number );
+
+    TargetArrayType readAndConvertDataFrom( DataInput stream, int size ) throws IOException;
+
+    HolderArrayType readDataFrom( DataInput stream, int size ) throws IOException;
+
+    void writeDataTo( DataOutput stream, Iterator<TargetType> iterator ) throws IOException;
+
+    <T> T convert( TargetArrayType from, Class<T> to );
 
     class Utility
     {
-        public static int unsignedByteArrayToInt(byte[] b)
+        public static int unsignedByteArrayToInt( byte[] b )
         { // This views the given bytes as unsigned!
             if ( b.length == 4 ) return b[ 0 ] << 24 | (b[ 1 ] & 0xff) << 16 | (b[ 2 ] & 0xff) << 8 | (b[3] & 0xff);
             else if ( b.length == 2 ) return 0x00 << 24 | 0x00 << 16 | (b[ 0 ] & 0xff) << 8 | (b[ 1 ] & 0xff);
@@ -69,7 +79,7 @@ public interface NumericType<TargetType, ArrayType>
             return 0;
         }
 
-        public static byte[] integerToByteArray(int i) {
+        public static byte[] integerToByteArray( int i ) {
             return ByteBuffer.allocate(4).putInt( i ).array();
         }
 

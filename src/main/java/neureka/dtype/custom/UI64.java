@@ -4,12 +4,9 @@ import neureka.dtype.AbstractNumericType;
 
 import java.io.IOException;
 import java.io.DataInput;
-import java.io.DataOutput;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.util.Iterator;
 
-public class UI64 extends AbstractNumericType<BigInteger, BigInteger[]>
+public class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Long, long[]>
 {
 
     public UI64(){ super(); }
@@ -35,6 +32,16 @@ public class UI64 extends AbstractNumericType<BigInteger, BigInteger[]>
     }
 
     @Override
+    public Class<Long> holderType() {
+        return Long.class;
+    }
+
+    @Override
+    public Class<long[]> holderArrayType() {
+        return long[].class;
+    }
+
+    @Override
     public BigInteger convert(byte[] bytes) {
         // use "import static java.math.BigInteger.ONE;" to shorten this line
         BigInteger UNSIGNED_LONG_MASK = BigInteger.ONE.shiftLeft(Long.SIZE).subtract(BigInteger.ONE);
@@ -44,15 +51,24 @@ public class UI64 extends AbstractNumericType<BigInteger, BigInteger[]>
     }
 
     @Override
+    public BigInteger toTarget(Long original) {
+        return null;
+    }
+
+    @Override
     public byte[] convert(BigInteger number) {
         return new byte[ 0 ];
     }
 
     @Override
-    public BigInteger[] readDataFrom(DataInput stream, int size) throws IOException {
+    public BigInteger[] readAndConvertDataFrom(DataInput stream, int size) throws IOException {
         return new BigInteger[ 0 ];
     }
 
+    @Override
+    public long[] readDataFrom(DataInput stream, int size) throws IOException {
+        return new long[0];
+    }
 
 
 }

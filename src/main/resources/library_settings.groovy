@@ -31,6 +31,7 @@ Neureka.instance {
 
         dtype {
             it.defaultDataTypeClass = F64.class
+            it.isAutoConvertingExternalDataToJVMTypes = true
         }
 
     }

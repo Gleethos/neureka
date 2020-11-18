@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
-public class DataType
+public class DataType<Type>
 {
     private static Map<Class<?>, DataType> _instances = new WeakHashMap<>();
 
@@ -59,17 +59,17 @@ public class DataType
         );
     }
 
-    private Class<?> _type;
+    private Class<Type> _type;
 
-    private DataType(Class<?> type) {
+    private DataType(Class<Type> type) {
         _type = type;
     }
 
-    public Class getTypeClass(){
+    public Class<Type> getTypeClass(){
         return _type;
     }
 
-    public Object getTypeClassInstance(){
+    public Type getTypeClassInstance(){
 
         Constructor[] ctors = _type.getDeclaredConstructors();
         Constructor ctor = null;
@@ -81,7 +81,7 @@ public class DataType
 
         try {
             ctor.setAccessible( true );
-            return ctor.newInstance();
+            return (Type) ctor.newInstance();
         } catch ( Exception e ) {
             e.printStackTrace();
         }

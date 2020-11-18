@@ -429,6 +429,12 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _construct( shape );
     }
 
+    public Tsr( int[] shape, DataType<?> type ) {
+        _type = DataType.instance( type.getTypeClass() );
+        _construct( shape );
+    }
+
+
     private void _construct( int[] shape ) {
         _value = new double[ NDConfiguration.Utility.szeOfShp( shape ) ];
         _configureFromNewShape( shape, false );
@@ -1713,6 +1719,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if ( this.is32() ) return value32( i );
         else if ( this.is64() ) return value64( i );
         else if ( _value instanceof short[] ) return ( (short[]) _value )[ i ];
+        else if ( _value instanceof  int[] ) return ( (int[]) _value )[ i ];
         else return ( (ValueType[]) _value )[ i ];
     }
 
@@ -1753,6 +1760,12 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             this.setIsVirtual( true );
             if ( this.is64() ) ( (double[]) _value )[ 0 ] = (Double) value;
             else ( (float[]) _value )[ 0 ] = ( (Double) value ).floatValue();
+        } else if ( value instanceof int[] ) {
+            _type = DataType.instance(I32.class);
+            _value = value;
+        } else if ( value instanceof short[] ) {
+            _type = DataType.instance(I16.class);
+            _value = value;
         }
         return this;
     }
@@ -1873,8 +1886,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 newDT.typeClassImplements( NumericType.class ) &&
                         _type.typeClassImplements( NumericType.class )
         ) {
-            NumericType<?,Object> instance   = (NumericType<?, Object>) newDT.getTypeClassInstance();
-            NumericType<?,Object> originType = (NumericType<?, Object>) _type.getTypeClassInstance();
+            NumericType<?,Object, ?, Object> instance   = (NumericType<?, Object,?, Object>) newDT.getTypeClassInstance();
+            NumericType<?,Object,?, Object> originType = (NumericType<?, Object,?, Object>) _type.getTypeClassInstance();
             instance.convert( _value, originType.targetArrayType() );
         }
         return (Tsr<T>) this;
@@ -2031,10 +2044,16 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                         : String.valueOf( ( (float[]) v )[ i ] ),
                 max
         );
-        else if ( v instanceof short[] )  return _stringified(
+        else if ( v instanceof short[] ) return _stringified(
                 i -> ( format )
                         ? Utility.Stringify.formatFP( ( (short[]) v )[ i ] )
                         : String.valueOf( ( (short[]) v )[ i ] ),
+                max
+        );
+        else if ( v instanceof int[] ) return _stringified(
+                i -> ( format )
+                        ? Utility.Stringify.formatFP( ( (int[]) v )[ i ] )
+                        : String.valueOf( ( (int[]) v )[ i ] ),
                 max
         );
         else if ( v == null ) return _stringified(

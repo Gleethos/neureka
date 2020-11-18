@@ -8,7 +8,7 @@ import java.io.DataOutput;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
-public class UI16 extends AbstractNumericType<Integer, int[]>
+public class UI16 extends AbstractNumericType<Integer, int[], Short, short[]>
 {
 
     public UI16() {
@@ -36,9 +36,24 @@ public class UI16 extends AbstractNumericType<Integer, int[]>
     }
 
     @Override
+    public Class<Short> holderType() {
+        return null;
+    }
+
+    @Override
+    public Class<short[]> holderArrayType() {
+        return null;
+    }
+
+    @Override
     public Integer convert(byte[] b) {
         return 0x00 << 24 | 0x00 << 16 | (b[ 0 ] & 0xff) << 8 | (b[ 1 ] & 0xff);
         //return Utility.unsignedByteArrayToInt(bytes);
+    }
+
+    @Override
+    public Integer toTarget(Short original) {
+        return null;
     }
 
     @Override
@@ -49,13 +64,18 @@ public class UI16 extends AbstractNumericType<Integer, int[]>
     }
 
     @Override
-    public int[] readDataFrom(DataInput stream, int size)  throws IOException {
-        int[] data = new int[size];
+    public int[] readAndConvertDataFrom( DataInput stream, int size )  throws IOException {
+        int[] data = new int[ size ];
         for ( int i=0; i<size; i++ ) {
             stream.readFully(_data);
             data[ i ] = convert(_data);
         }
         return data;
+    }
+
+    @Override
+    public short[] readDataFrom(DataInput stream, int size) throws IOException {
+        return new short[0];
     }
 
 

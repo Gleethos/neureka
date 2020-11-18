@@ -4,11 +4,9 @@ import neureka.dtype.AbstractNumericType;
 
 import java.io.IOException;
 import java.io.DataInput;
-import java.io.DataOutput;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
-public class I64 extends AbstractNumericType<Long, long[]>
+public class I64 extends AbstractNumericType<Long, long[], Long, long[]>
 {
     private final ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
 
@@ -35,11 +33,26 @@ public class I64 extends AbstractNumericType<Long, long[]>
     }
 
     @Override
+    public Class<Long> holderType() {
+        return Long.class;
+    }
+
+    @Override
+    public Class<long[]> holderArrayType() {
+        return long[].class;
+    }
+
+    @Override
     public Long convert(byte[] bytes) {
         buffer.put(bytes, 0, bytes.length);
         buffer.flip();//need flip
         return buffer.getLong();
         //return ByteBuffer.wrap(bytes).getLong();
+    }
+
+    @Override
+    public Long toTarget(Long original) {
+        return null;
     }
 
     @Override
@@ -59,8 +72,13 @@ public class I64 extends AbstractNumericType<Long, long[]>
     }
 
     @Override
-    public long[] readDataFrom(DataInput stream, int size) throws IOException {
+    public long[] readAndConvertDataFrom(DataInput stream, int size) throws IOException {
         return new long[ 0 ];
+    }
+
+    @Override
+    public long[] readDataFrom(DataInput stream, int size) throws IOException {
+        return new long[0];
     }
 
 }

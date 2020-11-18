@@ -4,11 +4,9 @@ import neureka.dtype.AbstractNumericType;
 
 import java.io.IOException;
 import java.io.DataInput;
-import java.io.DataOutput;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
-public class F32 extends AbstractNumericType<Float, float[]>
+public class F32 extends AbstractNumericType<Float, float[], Float, float[]>
 {
     public F32() { super(); }
 
@@ -33,8 +31,23 @@ public class F32 extends AbstractNumericType<Float, float[]>
     }
 
     @Override
+    public Class<Float> holderType() {
+        return Float.class;
+    }
+
+    @Override
+    public Class<float[]> holderArrayType() {
+        return float[].class;
+    }
+
+    @Override
     public Float convert(byte[] bytes) {
         return ByteBuffer.wrap(bytes).getFloat();
+    }
+
+    @Override
+    public Float toTarget(Float original) {
+        return null;
     }
 
     @Override
@@ -49,8 +62,13 @@ public class F32 extends AbstractNumericType<Float, float[]>
     }
 
     @Override
-    public float[] readDataFrom(DataInput stream, int size) throws IOException {
+    public float[] readAndConvertDataFrom(DataInput stream, int size) throws IOException {
         return new float[ 0 ];
+    }
+
+    @Override
+    public float[] readDataFrom(DataInput stream, int size) throws IOException {
+        return new float[0];
     }
 
 

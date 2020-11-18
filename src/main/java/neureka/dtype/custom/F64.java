@@ -8,7 +8,7 @@ import java.io.DataOutput;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-public class F64 extends AbstractNumericType<Double, double[]>
+public class F64 extends AbstractNumericType<Double, double[], Double, double[]>
 {
 
     public F64() { super(); }
@@ -34,8 +34,23 @@ public class F64 extends AbstractNumericType<Double, double[]>
     }
 
     @Override
+    public Class<Double> holderType() {
+        return Double.class;
+    }
+
+    @Override
+    public Class<double[]> holderArrayType() {
+        return double[].class;
+    }
+
+    @Override
     public Double convert(byte[] bytes) {
         return ByteBuffer.wrap(bytes).getDouble();
+    }
+
+    @Override
+    public Double toTarget(Double original) {
+        return null;
     }
 
     @Override
@@ -54,7 +69,16 @@ public class F64 extends AbstractNumericType<Double, double[]>
     }
 
     @Override
+    public double[] readAndConvertDataFrom(DataInput stream, int size) throws IOException {
+        return _readFrom( stream, size );
+    }
+
+    @Override
     public double[] readDataFrom(DataInput stream, int size) throws IOException {
+        return _readFrom( stream, size );
+    }
+
+    private double[] _readFrom( DataInput stream, int size ) throws IOException {
         double[] data = new double[size];
         for ( int i=0; i<size; i++ ) {
             stream.readFully(_data);

@@ -8,7 +8,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 
 
-public class I8 extends AbstractNumericType<Byte, byte[]>
+public class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
 {
     public I8(){
         super();
@@ -39,13 +39,35 @@ public class I8 extends AbstractNumericType<Byte, byte[]>
     }
 
     @Override
+    public Class<Byte> holderType() {
+        return Byte.class;
+    }
+
+    @Override
+    public Class<byte[]> holderArrayType() {
+        return byte[].class;
+    }
+
+    @Override
     public Byte convert(byte[] bytes) {
         return bytes[ 0 ];
     }
 
     @Override
+    public Byte toTarget(Byte original) {
+        return null;
+    }
+
+    @Override
     public byte[] convert(Byte number) {
         return new byte[]{number};
+    }
+
+    @Override
+    public byte[] readAndConvertDataFrom(DataInput stream, int size) throws IOException {
+        byte[] bytes = new byte[size];
+        stream.readFully(bytes, size, size);
+        return bytes;
     }
 
     @Override

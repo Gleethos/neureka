@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -35,9 +36,20 @@ public class FileDevice extends AbstractBaseDevice<Number>
                 return new IDXHead( name );
             },
             "jpg", name -> {
-                return null;
+                return new JPEGHead( name );
             },
             "png", name -> {
+                return null;
+            }
+    );
+    private static Map<String, BiFunction<String, Tsr<Number>, FileHead>> _SAVERS = Map.of(
+            "idx", (name, tensor) -> {
+                return new IDXHead( tensor, name );
+            },
+            "jpg", (name, tensor) -> {
+                return new JPEGHead( tensor, name );
+            },
+            "png", (name, tensor) -> {
                 return null;
             }
     );
@@ -61,7 +73,9 @@ public class FileDevice extends AbstractBaseDevice<Number>
         }
     }
 
-
+    public FileHead<?, Number> fileHeadOf( Tsr<Number> tensor ) {
+        return _stored.get(tensor);
+    }
 
     @Override
     public void dispose() {
@@ -83,7 +97,8 @@ public class FileDevice extends AbstractBaseDevice<Number>
     }
 
     @Override
-    public Device store(Tsr<Number> tensor ) {
+    public Device store( Tsr<Number> tensor )
+    {
         if ( this.has( tensor ) ) {
             FileHead head = _stored.get( tensor );
             try {
@@ -102,15 +117,25 @@ public class FileDevice extends AbstractBaseDevice<Number>
         return this;
     }
 
-    public Device store( Tsr<Number> tensor, String filename ) {
-        try {
-            if ( !filename.endsWith(".idx") ) filename += ".idx";
-            FileHead head = new IDXHead( tensor, _directory + "/" + filename );
-            _stored.put( tensor, head );
-            tensor.setIsOutsourced( true );
-        } catch ( Exception e ) {
-            e.printStackTrace();
+    public Device store( Tsr<Number> tensor, String filename )
+    {
+        if ( filename.endsWith(".jpg") || filename.endsWith(".jpeg") ) {
+            try {
+                FileHead head = new JPEGHead( tensor, _directory + "/" + filename );
+                _stored.put( tensor, head );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                if ( !filename.endsWith(".idx") ) filename += ".idx";
+                FileHead head = new IDXHead( tensor, _directory + "/" + filename );
+                _stored.put( tensor, head );
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
         }
+        tensor.setIsOutsourced( true );
         return this;
     }
 
@@ -125,7 +150,16 @@ public class FileDevice extends AbstractBaseDevice<Number>
     }
 
     @Override
-    public Device free( Tsr<Number> tensor ) {
+    public Device free( Tsr<Number> tensor )
+    {
+        if ( !this.has( tensor ) )
+            throw new IllegalStateException( "The given tensor is not stored on this file device." );
+        FileHead head = _stored.get( tensor );
+        try {
+            head.free();
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
         _stored.remove( tensor );
         return this;
     }

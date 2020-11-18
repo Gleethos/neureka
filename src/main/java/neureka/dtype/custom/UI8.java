@@ -5,9 +5,8 @@ import neureka.utility.DataConverter;
 
 import java.io.IOException;
 import java.io.DataInput;
-import java.io.DataOutput;
 
-public class UI8 extends AbstractNumericType<Short, short[]>
+public class UI8 extends AbstractNumericType<Short, short[], Byte, byte[]>
 {
 
     public UI8() {
@@ -39,8 +38,23 @@ public class UI8 extends AbstractNumericType<Short, short[]>
     }
 
     @Override
+    public Class<Byte> holderType() {
+        return Byte.class;
+    }
+
+    @Override
+    public Class<byte[]> holderArrayType() {
+        return byte[].class;
+    }
+
+    @Override
     public Short convert(byte[] bytes) {
         return (short)Utility.unsignedByteArrayToInt(bytes);
+    }
+
+    @Override
+    public Short toTarget(Byte original) {
+        return (short) (original & 0xFF);
     }
 
     @Override
@@ -49,11 +63,21 @@ public class UI8 extends AbstractNumericType<Short, short[]>
     }
 
     @Override
-    public short[] readDataFrom(DataInput stream, int size) throws IOException {
+    public short[] readAndConvertDataFrom(DataInput stream, int size) throws IOException {
         short[] data = new short[size];
         for ( int i=0; i<size; i++ ) {
             stream.readFully(_data);
             data[ i ] = convert(_data);
+        }
+        return data;
+    }
+
+    @Override
+    public byte[] readDataFrom(DataInput stream, int size) throws IOException {
+        byte[] data = new byte[size];
+        for ( int i=0; i<size; i++ ) {
+            stream.readFully(_data);
+            data[ i ] = _data[0];
         }
         return data;
     }

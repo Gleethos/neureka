@@ -8,7 +8,7 @@ import java.io.DataOutput;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class I16 extends AbstractNumericType<Short, short[]>
+public class I16 extends AbstractNumericType<Short, short[], Short, short[]>
 {
     private final ByteBuffer buffer = ByteBuffer.allocate(Short.BYTES);
 
@@ -35,11 +35,26 @@ public class I16 extends AbstractNumericType<Short, short[]>
     }
 
     @Override
+    public Class<Short> holderType() {
+        return Short.class;
+    }
+
+    @Override
+    public Class<short[]> holderArrayType() {
+        return short[].class;
+    }
+
+    @Override
     public Short convert(byte[] bytes) {
         buffer.put(bytes, 0, bytes.length);
         buffer.flip();//need flip
         return buffer.getShort();
         //return ByteBuffer.wrap(bytes).order(ByteOrder.).getShort();
+    }
+
+    @Override
+    public Short toTarget(Short original) {
+        return null;
     }
 
     @Override
@@ -50,7 +65,16 @@ public class I16 extends AbstractNumericType<Short, short[]>
     }
 
     @Override
-    public short[] readDataFrom(DataInput stream, int size) throws IOException {
+    public short[] readAndConvertDataFrom( DataInput stream, int size ) throws IOException {
+        return _readData( stream, size );
+    }
+
+    @Override
+    public short[] readDataFrom( DataInput stream, int size ) throws IOException {
+        return _readData( stream, size );
+    }
+
+    private short[] _readData( DataInput stream, int size ) throws IOException {
         short[] data = new short[size];
         for ( int i=0; i<size; i++ ) {
             stream.readFully(_data);
@@ -58,6 +82,5 @@ public class I16 extends AbstractNumericType<Short, short[]>
         }
         return data;
     }
-
 
 }

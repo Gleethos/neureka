@@ -7,7 +7,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.nio.ByteBuffer;
 
-public class I32 extends AbstractNumericType<Integer, int[]>
+public class I32 extends AbstractNumericType<Integer, int[], Integer, int[]>
 {
 
     public I32() {
@@ -35,9 +35,24 @@ public class I32 extends AbstractNumericType<Integer, int[]>
     }
 
     @Override
+    public Class<Integer> holderType() {
+        return Integer.class;
+    }
+
+    @Override
+    public Class<int[]> holderArrayType() {
+        return int[].class;
+    }
+
+    @Override
     public Integer convert(byte[] bytes) {
         return ByteBuffer.wrap(bytes).getInt();
         //return Utility.unsignedByteArrayToInt(_data);
+    }
+
+    @Override
+    public Integer toTarget(Integer original) {
+        return null;
     }
 
     @Override
@@ -51,7 +66,16 @@ public class I32 extends AbstractNumericType<Integer, int[]>
     }
 
     @Override
-    public int[] readDataFrom(DataInput stream, int size) throws IOException {
+    public int[] readAndConvertDataFrom( DataInput stream, int size ) throws IOException {
+        return _readData( stream, size );
+    }
+
+    @Override
+    public int[] readDataFrom( DataInput stream, int size ) throws IOException {
+        return _readData( stream, size );
+    }
+
+    private int[] _readData( DataInput stream, int size ) throws IOException {
         int[] data = new int[size];
         for ( int i=0; i<size; i++ ) {
             stream.readFully(_data);
@@ -59,6 +83,5 @@ public class I32 extends AbstractNumericType<Integer, int[]>
         }
         return data;
     }
-
 
 }

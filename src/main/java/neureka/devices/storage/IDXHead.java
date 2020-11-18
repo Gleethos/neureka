@@ -1,6 +1,7 @@
 package neureka.devices.storage;
 
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
@@ -18,7 +19,7 @@ public class IDXHead implements FileHead<IDXHead, Number>
 
     private int _dataOffset;
     private int _bodySize;
-    private DataType _dtype;
+    private DataType<NumericType<?,?,?,?>> _dtype;
     private int[] _shape;
 
     private static Map<Integer, Class<?>> TYPE_MAP =  Map.of(
@@ -46,11 +47,12 @@ public class IDXHead implements FileHead<IDXHead, Number>
         try {
             _loadHead( fileName );
         } catch( Exception e ) {
+            e.printStackTrace();
             System.err.print("Failed reading IDX file!");
         }
     }
 
-    public IDXHead( Tsr<Number> t, String filename ) throws IOException {
+    public IDXHead( Tsr<Number> t, String filename ) {
         _fileName = filename;
         _shape = t.getNDConf().shape();
         _dtype = t.getDataType();
@@ -137,7 +139,7 @@ public class IDXHead implements FileHead<IDXHead, Number>
             }
             _dataOffset = offset;
             _bodySize = bodySize;
-            NumericType<Number, Object> type = (NumericType<Number, Object>) _dtype.getTypeClassInstance();
+            NumericType<Number, Object, Number, Object> type = (NumericType<Number, Object, Number, Object>) _dtype.getTypeClassInstance();
 
             type.writeDataTo( new DataOutputStream( f ), data );
             f.close();
@@ -151,19 +153,15 @@ public class IDXHead implements FileHead<IDXHead, Number>
         FileInputStream fs = new FileInputStream( _fileName );
         Class<?> clazz = _dtype.getTypeClass();
         if ( NumericType.class.isAssignableFrom( clazz ) ) {
-            NumericType<?,?> type = ( (NumericType<?,?>) _dtype.getTypeClassInstance() );
+            NumericType<?,?,?,?> type = _dtype.getTypeClassInstance();
             DataInput stream = new DataInputStream(
-                    new BufferedInputStream(
-                            fs,
-                            _dataOffset + _bodySize * type.numberOfBytes()
-                    )
+                    new BufferedInputStream( fs, _dataOffset + _bodySize * type.numberOfBytes() )
             );
             stream.skipBytes( _dataOffset );
-            Object value = type.readDataFrom(
-                    stream,
-                    _bodySize
-            );
-            return value;
+            if ( Neureka.instance().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )
+                return type.readAndConvertDataFrom( stream, _bodySize );
+            else
+                return type.readDataFrom( stream, _bodySize );
         }
         return null;
     }
@@ -172,11 +170,18 @@ public class IDXHead implements FileHead<IDXHead, Number>
     public Tsr<Number> load() throws IOException
     {
         Object value = _loadData();
-        return new Tsr<>( _shape, _dtype, value );
+        DataType<?> type = ( Neureka.instance().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )
+                ? DataType.instance( _dtype.getTypeClassInstance().getJVMType() )
+                : _dtype;
+        return new Tsr<>( _shape, type, value );
     }
 
     @Override
     public IDXHead free() {
+        boolean success = new File(_fileName).delete();
+        if ( !success ) {
+            System.err.println( "Freeing idx file '"+_fileName+"' failed!" );
+        }
         return this;
     }
 

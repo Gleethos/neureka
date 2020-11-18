@@ -248,7 +248,11 @@ public class Neureka
 
         public class AutoGrad // Auto-Grad/Differentiation
         {
-
+            /**
+             *  Inline operations are operations where the data of a tensor passed into an operation
+             *  is being modified.
+             *  Usually the result of an operation is stored inside a new tensor.
+             */
             private boolean _isPreventingInlineOperations = true;
 
             /**
@@ -384,7 +388,9 @@ public class Neureka
 
             private Class<?> _defaultDataTypeClass = F64.class;
 
-            public Class getDefaultDataTypeClass(){
+            private boolean _isAutoConvertingExternalDataToJVMTypes = true;
+
+            public Class<?> getDefaultDataTypeClass(){
                 return _defaultDataTypeClass;
             }
 
@@ -393,11 +399,21 @@ public class Neureka
                 _defaultDataTypeClass = dtype;
             }
 
+            public boolean getIsAutoConvertingExternalDataToJVMTypes() {
+                return _isAutoConvertingExternalDataToJVMTypes;
+            }
+
+            public void setIsAutoConvertingExternalDataToJVMTypes( boolean autoConvert ){
+                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                _isAutoConvertingExternalDataToJVMTypes = autoConvert;
+            }
+
         }
 
     }
 
-    public static class Utility {
+    public static class Utility
+    {
         /**
          * Helper method which reads the file with the given name and returns
          * the contents of this file as a String. Will exit the application
