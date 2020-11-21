@@ -4,7 +4,6 @@ import neureka.dtype.AbstractNumericType;
 
 import java.io.IOException;
 import java.io.DataInput;
-import java.io.DataOutput;
 import java.nio.ByteBuffer;
 
 public class I32 extends AbstractNumericType<Integer, int[], Integer, int[]>
@@ -35,28 +34,28 @@ public class I32 extends AbstractNumericType<Integer, int[], Integer, int[]>
     }
 
     @Override
-    public Class<Integer> holderType() {
+    public Class<Integer> foreignType() {
         return Integer.class;
     }
 
     @Override
-    public Class<int[]> holderArrayType() {
+    public Class<int[]> foreignArrayType() {
         return int[].class;
     }
 
     @Override
-    public Integer convert(byte[] bytes) {
+    public Integer foreignBytesToTarget(byte[] bytes) {
         return ByteBuffer.wrap(bytes).getInt();
         //return Utility.unsignedByteArrayToInt(_data);
     }
 
     @Override
     public Integer toTarget(Integer original) {
-        return null;
+        return original;
     }
 
     @Override
-    public byte[] convert(Integer number) {
+    public byte[] targetToForeignBytes(Integer number) {
         return new byte[] {
                 (byte)((number >> 24) & 0xff),
                 (byte)((number >> 16) & 0xff),
@@ -71,7 +70,7 @@ public class I32 extends AbstractNumericType<Integer, int[], Integer, int[]>
     }
 
     @Override
-    public int[] readDataFrom( DataInput stream, int size ) throws IOException {
+    public int[] readForeignDataFrom(DataInput stream, int size ) throws IOException {
         return _readData( stream, size );
     }
 
@@ -79,7 +78,7 @@ public class I32 extends AbstractNumericType<Integer, int[], Integer, int[]>
         int[] data = new int[size];
         for ( int i=0; i<size; i++ ) {
             stream.readFully(_data);
-            data[ i ] = convert(_data);
+            data[ i ] = foreignBytesToTarget(_data);
         }
         return data;
     }

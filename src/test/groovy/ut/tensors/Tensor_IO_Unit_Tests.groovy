@@ -9,6 +9,16 @@ import spock.lang.Specification
 
 class Tensor_IO_Unit_Tests extends  Specification
 {
+    def setupSpec()
+    {
+        reportHeader """
+            This specification covers some basic behaviour related to
+            tensor instantiation and modification.
+            This includes the instantiation of tensors with custom seeds, shapes and values...
+        """
+    }
+
+
     def 'Tensors can be instantiated with String seed.'()
     {
         given : 'The current Neureka instance configuration is being reset.'
@@ -18,8 +28,8 @@ class Tensor_IO_Unit_Tests extends  Specification
             Tsr t2 = new Tsr(new int[]{2, 3}, "I am a seed! :)")
             Tsr t3 = new Tsr(new int[]{2, 3}, "I am also a seed! But different. :)")
         expect : 'Equal seeds produce equal values.'
-            assert t1.toString()==t2.toString()
-            assert t1.toString()!=t3.toString()
+            t1.toString() == t2.toString()
+            t1.toString() != t3.toString()
     }
 
     def 'Smart tensor constructors yield expected results.'()

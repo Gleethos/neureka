@@ -31,27 +31,27 @@ public class F32 extends AbstractNumericType<Float, float[], Float, float[]>
     }
 
     @Override
-    public Class<Float> holderType() {
+    public Class<Float> foreignType() {
         return Float.class;
     }
 
     @Override
-    public Class<float[]> holderArrayType() {
+    public Class<float[]> foreignArrayType() {
         return float[].class;
     }
 
     @Override
-    public Float convert(byte[] bytes) {
+    public Float foreignBytesToTarget(byte[] bytes) {
         return ByteBuffer.wrap(bytes).getFloat();
     }
 
     @Override
     public Float toTarget(Float original) {
-        return null;
+        return original;
     }
 
     @Override
-    public byte[] convert(Float number) {
+    public byte[] targetToForeignBytes(Float number) {
         int intBits =  Float.floatToIntBits(number);
         return new byte[] {
                 (byte) (intBits >> 24),
@@ -67,7 +67,7 @@ public class F32 extends AbstractNumericType<Float, float[], Float, float[]>
     }
 
     @Override
-    public float[] readDataFrom(DataInput stream, int size) throws IOException {
+    public float[] readForeignDataFrom(DataInput stream, int size) throws IOException {
         return new float[0];
     }
 

@@ -33,17 +33,17 @@ public class I64 extends AbstractNumericType<Long, long[], Long, long[]>
     }
 
     @Override
-    public Class<Long> holderType() {
+    public Class<Long> foreignType() {
         return Long.class;
     }
 
     @Override
-    public Class<long[]> holderArrayType() {
+    public Class<long[]> foreignArrayType() {
         return long[].class;
     }
 
     @Override
-    public Long convert(byte[] bytes) {
+    public Long foreignBytesToTarget(byte[] bytes) {
         buffer.put(bytes, 0, bytes.length);
         buffer.flip();//need flip
         return buffer.getLong();
@@ -52,11 +52,11 @@ public class I64 extends AbstractNumericType<Long, long[], Long, long[]>
 
     @Override
     public Long toTarget(Long original) {
-        return null;
+        return original;
     }
 
     @Override
-    public byte[] convert(Long number) {
+    public byte[] targetToForeignBytes(Long number) {
         buffer.putLong(0, number);
         return buffer.array();
         //return new byte[] {
@@ -77,7 +77,7 @@ public class I64 extends AbstractNumericType<Long, long[], Long, long[]>
     }
 
     @Override
-    public long[] readDataFrom(DataInput stream, int size) throws IOException {
+    public long[] readForeignDataFrom(DataInput stream, int size) throws IOException {
         return new long[0];
     }
 

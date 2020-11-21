@@ -57,15 +57,16 @@ class NumericType_Unit_Tests extends Specification
     }
 
 
-    def 'NumericType implementations behaive as expected.'(
+    def 'NumericType implementations behave as expected.'(
             NumericType type, List<Byte> data, Number converted
     ){
         given :
-            def result = type.convert(data as byte[])
+            def result = type.foreignBytesToTarget( data as byte[] )
 
         expect : 'The array of bytes  is being converted to a fitting JVM type.'
             result == converted
-        //and : type.convert(result) == (data as byte[]) // TODO!
+        and : 'The original byte array can be recreated by converting with the inverse...'
+            type.targetToForeignBytes(result) == ( data as byte[] )
 
         where : 'The following NumericType instances and bytes are being used :'
             type      | data                         || converted
@@ -79,22 +80,71 @@ class NumericType_Unit_Tests extends Specification
 
             new UI16()| [2, 3]                       || new BigInteger(new byte[]{2, 3}).shortValueExact()
             new UI16()| [-16, -53]                   || (int)(0x10000 + ((short)-3893)) //:= https://stackoverflow.com/questions/7932701/read-byte-as-unsigned-short-java
-            new UI16()| [16, -53]                    || 4299
-            new UI16()| [-1, -1]                     || 65535
+            new UI16()| [16, -53]                    || 4_299
+            new UI16()| [-1, -1]                     || 65_535
 
-            new I32() | [22,-2, 3,-4]                || 385745916
-            new I32() | [-22,-2, -3,-4]              || -352387588
+            new I32() | [22,-2, 3,-4]                || 385_745_916
+            new I32() | [-22,-2, -3,-4]              || -352_387_588
 
-            new UI32()| [22,-2, 3,-4]                || 385745916
-            new UI32()| [-22,-2, -3,-4]              || 721354236
+            new UI32()| [22,-2, 3,-4]                || 385_745_916
+            new UI32()| [-22,-2, -3,-4]              || 3_942_579_708//721_354_236 ?
 
-            new I64() | [99, 2, 1, 35, 2, 5, 37, 22] || 7134266009577661718
-            new I64() | [-99, 2, 1, -35, 2,5,-37,22] || -7133136811068105962
+            new I64() | [99, 2, 1, 35, 2, 5, 37, 22] || 7_134_266_009_577_661_718
+            new I64() | [-99, 2, 1, -35, 2,5,-37,22] || - 7_133_136_811_068_105_962
 
-            new UI64()| [99, 2, 1, 35, 2, 5, 37, 22] || 7134266009577661718
-            new UI64()| [-99, 2, 1, -35, 2,5,-37,22] || 11313607262641445654
+            new UI64()| [99, 2, 1, 35, 2, 5, 37, 22] || 7_134_266_009_577_661_718
+            new UI64()| [-99, 2, 1, -35, 2,5,-37,22] || 11_313_607_262_641_445_654
     }
 
+
+
+    def 'Conversion goes both ways and produces expected numeric values.'(
+            NumericType num, Number original, byte[] rawOriginal, Number target
+    ) {
+        when : 'We apply a filter in order to guarantee that the right data type is being used.'
+            original = [
+                    'UI8' : { o -> o as Byte },
+                    'UI16': { o -> o as Short },
+                    'UI32': { o -> o as Integer },
+                    'UI64': { o -> o as Long },
+                    'I8' : { o -> o as Byte },
+                    'I16': { o -> o as Short },
+                    'I32': { o -> o as Integer },
+                    'I64': { o -> o as Long },
+                    'F32': { o -> o as Float },
+                    'F64': { o -> o as Double }
+            ][ num.class.simpleName ](original)
+        and : 'The convert the raw type (might represent unsigned value) to a JVM compatible target type...'
+            def resultTarget = num.foreignBytesToTarget( rawOriginal )
+        and : 'Then convert this result to the true byte array of the value...'
+            def backToRaw = num.targetToForeignBytes( resultTarget )
+
+        then : 'This produces the expected values which express the following relationships:'
+            resultTarget == target
+            backToRaw == rawOriginal
+            num.toTarget( original ) == target
+
+        where : 'The following "NumericType" implementation instances and numeric data is being used: '
+            num       |    original   |     rawOriginal                        || target
+            new UI8() |      -3       |       [-3]                             || 255 - 2
+            new UI16()|      -3       |      [255, 253]                        || 65_535 - 2
+            new UI32()|      -3       |[255, 255, 255, 253]                    || 4_294_967_295 - 2
+            new UI64()|      -3       |[255, 255, 255, 255, 255, 255, 255, 253]|| 18_446_744_073_709_551_615 - 2
+            new I8()  |      -3       |       [-3]                             || - 3
+            new I16() |      -3       |      [255, 253]                        || - 3
+            new I32() |      -3       |[255, 255, 255, 253]                    || - 3
+            new I64() |      -3       |[255, 255, 255, 255, 255, 255, 255, 253]|| - 3
+            new F32() |     -0.3      | [-66, -103, -103, -102]                || - 0.3 as Float
+            new F64() |     -0.3      | [-65, -45, 51, 51, 51, 51, 51, 51]     || - 0.3 as Double
+            new F32() |  -5432.39928  | [-59, -87, -61, 50]                    || -5432.39928 as Float
+            new F64() |  -5432.39928  | [-64, -75, 56, 102, 55, 54, -51, -14]  || -5432.39928 as Double
+        /*
+            Verify F32 & F64 byte arrays with the following :
+            ------------------------------------------------
+            print new I64().targetToForeignBytes( Double.doubleToLongBits( -8495432.3992898 ) )
+            print new I32().targetToForeignBytes( Float.floatToIntBits( -8495432.3992898 ) )
+        */
+    }
 
 
 }

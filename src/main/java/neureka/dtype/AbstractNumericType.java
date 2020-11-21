@@ -4,7 +4,6 @@ import neureka.dtype.custom.*;
 
 import java.io.DataOutput;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -49,7 +48,7 @@ implements NumericType<TargetType, TargetArrayType, HolderType, HolderArrayType>
         }
     }
 
-    public Class<NumericType<TargetType, TargetArrayType, TargetType, TargetArrayType>> getJVMType() {
+    public Class<NumericType<TargetType, TargetArrayType, TargetType, TargetArrayType>> getNumericTypeTarget() {
         return (Class<NumericType<TargetType, TargetArrayType, TargetType, TargetArrayType>>) _relations.get( this.getClass() );
     }
 
@@ -61,7 +60,7 @@ implements NumericType<TargetType, TargetArrayType, HolderType, HolderArrayType>
     @Override
     public void writeDataTo(DataOutput stream, Iterator<TargetType> iterator) throws IOException {
         while( iterator.hasNext() ) {
-            _data = convert(iterator.next());
+            _data = targetToForeignBytes(iterator.next());
             stream.write(_data);
         }
     }

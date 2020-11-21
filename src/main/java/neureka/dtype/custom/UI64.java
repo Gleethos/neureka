@@ -32,32 +32,41 @@ public class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Long, lo
     }
 
     @Override
-    public Class<Long> holderType() {
+    public Class<Long> foreignType() {
         return Long.class;
     }
 
     @Override
-    public Class<long[]> holderArrayType() {
+    public Class<long[]> foreignArrayType() {
         return long[].class;
     }
 
     @Override
-    public BigInteger convert(byte[] bytes) {
+    public BigInteger foreignBytesToTarget( byte[] bytes ) { // This is working but not optimal
         // use "import static java.math.BigInteger.ONE;" to shorten this line
         BigInteger UNSIGNED_LONG_MASK = BigInteger.ONE.shiftLeft(Long.SIZE).subtract(BigInteger.ONE);
         long unsignedLong = new BigInteger(bytes).longValue(); // sample input value
         BigInteger bi =  BigInteger.valueOf(unsignedLong).and(UNSIGNED_LONG_MASK);
+        System.out.println("To big integer : "+bi);
         return bi;
     }
 
     @Override
-    public BigInteger toTarget(Long original) {
-        return null;
+    public BigInteger toTarget( Long original ) {
+        System.out.println("To unsigned string : "+Long.toUnsignedString( original ));
+        return new BigInteger( Long.toUnsignedString( original ) );
     }
 
     @Override
-    public byte[] convert(BigInteger number) {
-        return new byte[ 0 ];
+    public byte[] targetToForeignBytes( BigInteger b ) {
+        byte[] unsignedbyteArray= b.toByteArray();
+        byte[] bytes = new byte[8];
+        System.arraycopy(
+                unsignedbyteArray, Math.max(0, unsignedbyteArray.length-8),
+                bytes, 0,
+                Math.min( 8, unsignedbyteArray.length )
+        );
+        return bytes;
     }
 
     @Override
@@ -66,7 +75,7 @@ public class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Long, lo
     }
 
     @Override
-    public long[] readDataFrom(DataInput stream, int size) throws IOException {
+    public long[] readForeignDataFrom(DataInput stream, int size) throws IOException {
         return new long[0];
     }
 

@@ -35,7 +35,10 @@ SOFTWARE.
 
 package neureka.dtype;
 
+import neureka.dtype.custom.*;
+
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
@@ -91,5 +94,67 @@ public class DataType<Type>
     public boolean typeClassImplements(Class<?> interfaceClass){
         return interfaceClass.isAssignableFrom(_type);
     }
+
+
+    public <TA> TA virtualize(TA value ) {
+        Object newValue;
+        if ( getTypeClass() == F64.class )
+            newValue = ( ((double[]) value).length <= 1 ) ? value : new double[]{ ((double[]) value)[0] };
+        else if ( getTypeClass() == F32.class )
+            newValue = ( ((float[]) value).length <= 1 ) ? value : new float[]{ ((float[]) value)[0] };
+        else if ( getTypeClass() == I32.class )
+            newValue = ( ((int[]) value).length <= 1 ) ? value : new int[]{ ((int[]) value)[0] };
+        else if ( getTypeClass() == I16.class )
+            newValue = ( ((short[]) value).length <= 1 ) ? value : new short[]{ ((short[]) value)[0] };
+        else if ( getTypeClass() == I8.class )
+            newValue = ( ((byte[]) value).length <= 1 ) ? value : new byte[]{ ((byte[]) value)[0] };
+        else
+            throw new IllegalStateException("Primitive array of type '"+getTypeClass().getSimpleName()+"' not supported.");
+        return (TA) newValue;
+    }
+
+    public <TA> TA actualize( TA value, int size ){
+        Object newValue = value;
+        if ( getTypeClass() == F64.class ) {
+            if ( ( (double[]) value ).length == size ) return value;
+            newValue = new double[ size ];
+            Arrays.fill( (double[]) newValue, ( (double[]) value )[ 0 ] );
+        } else if ( getTypeClass() == F32.class ) {
+            if ( ( (float[]) value ).length == size ) return value;
+            newValue = new float[size];
+            Arrays.fill((float[]) newValue, ((float[]) value)[0]);
+        } else if ( getTypeClass() == I32.class ) {
+            if ( ( (int[]) value ).length == size ) return value;
+            newValue = new int[size];
+            Arrays.fill((int[]) newValue, ((int[]) value)[0]);
+        } else if ( getTypeClass() == I16.class ) {
+            if ( ( (short[]) value ).length == size ) return value;
+            newValue = new short[size];
+            Arrays.fill((short[]) newValue, ((short[]) value)[0]);
+        } else if ( getTypeClass() == I8.class ) {
+            if ( ( (byte[]) value ).length == size ) return value;
+            newValue = new byte[size];
+            Arrays.fill((byte[]) newValue, ((byte[]) value)[0]);
+        } else
+            throw new IllegalStateException("Primitive array for type '"+getTypeClass().getSimpleName()+"' not supported.");
+        return (TA) newValue;
+    }
+
+    public Object allocate( int size )
+    {
+        if ( getTypeClass() == F64.class )
+            return new double[ size ];
+        else if ( getTypeClass() == F32.class )
+            return new float[ size ];
+        else if ( getTypeClass() == I32.class )
+            return new int[ size ];
+        else if ( getTypeClass() == I16.class )
+            return new short[ size ];
+        else if ( getTypeClass() == I8.class )
+            return new byte[ size ];
+        else
+            throw new IllegalStateException("Primitive array of type '"+getTypeClass().getSimpleName()+"' not supported.");
+    }
+
 
 }

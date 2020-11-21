@@ -35,6 +35,10 @@ SOFTWARE.
 
 package neureka.utility;
 
+import neureka.dtype.DataType;
+import neureka.dtype.NumericType;
+import neureka.dtype.custom.*;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -96,6 +100,8 @@ public class DataConverter
      */
     private DataConverter()
     {
+        _set( byte[].class, float[].class, Utility::byteToFloat );
+        _set( byte[].class, double[].class, Utility::byteToDouble );
         _set( byte[].class, short[].class, Utility::byteToShort );
         _set( float[].class, double[].class, Utility::floatToDouble );
         _set( float[].class, int[].class,    Utility::floatToInt );
@@ -149,6 +155,8 @@ public class DataConverter
      * @return The target object created by a Converter lambda.
      */
     public <T> T convert(Object from, Class<T> to) {
+        if ( from == null ) return null;
+        if ( from.getClass() == to ) return (T) from;
         return (T) _converters.get(from.getClass()).get(to).go(from);
     }
 

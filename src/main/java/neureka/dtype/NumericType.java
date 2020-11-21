@@ -39,7 +39,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-public interface NumericType<TargetType, TargetArrayType, HolderType, HolderArrayType>
+public interface NumericType<TargetType, TargetArrayType, ForeignType, ForeignArrayType>
 {
     boolean signed();
 
@@ -49,21 +49,21 @@ public interface NumericType<TargetType, TargetArrayType, HolderType, HolderArra
 
     Class<TargetArrayType> targetArrayType();
 
-    Class<HolderType> holderType();
+    Class<ForeignType> foreignType();
 
-    Class<HolderArrayType> holderArrayType();
+    Class<ForeignArrayType> foreignArrayType();
 
-    Class<NumericType<TargetType, TargetArrayType, TargetType, TargetArrayType>> getJVMType();
+    Class<NumericType<TargetType, TargetArrayType, TargetType, TargetArrayType>> getNumericTypeTarget();
 
-    TargetType convert( byte[] bytes );
+    TargetType foreignBytesToTarget( byte[] bytes );
 
-    TargetType toTarget( HolderType original );
+    TargetType toTarget( ForeignType original );
 
-    byte[] convert( TargetType number );
+    byte[] targetToForeignBytes( TargetType number );
 
     TargetArrayType readAndConvertDataFrom( DataInput stream, int size ) throws IOException;
 
-    HolderArrayType readDataFrom( DataInput stream, int size ) throws IOException;
+    ForeignArrayType readForeignDataFrom(DataInput stream, int size ) throws IOException;
 
     void writeDataTo( DataOutput stream, Iterator<TargetType> iterator ) throws IOException;
 

@@ -30,30 +30,41 @@ public class UI32 extends AbstractNumericType<Long, long[], Integer, int[]>
     }
 
     @Override
-    public Class<Integer> holderType() {
+    public Class<Integer> foreignType() {
         return Integer.class;
     }
 
     @Override
-    public Class<int[]> holderArrayType() {
+    public Class<int[]> foreignArrayType() {
         return int[].class;
     }
 
     @Override
-    public Long convert(byte[] bytes) {
-        int asInt = ByteBuffer.wrap(bytes).getInt();
-        return ( asInt >= 0 )
-                    ? (long) asInt
-                    : (long)(0x40000000 + asInt);
+    public Long foreignBytesToTarget(byte[] bytes) {
+        //int asInt = ByteBuffer.wrap(bytes).getInt();
+        //System.out.println("... "+asInt);
+        //return ( asInt >= 0 )
+        //            ? (long) asInt
+        //            : (((long)0x40000000) + (long)asInt);
+        return
+            //0x00L << 64 |
+            //0x00L << 56 |
+            //0x00L << 48 |
+            //0x00L << 40 |
+            //0x00L << 32 |
+            ((long)( bytes[ 0 ] & 0xff )) << 24 |
+            ((long)( bytes[ 1 ] & 0xff )) << 16 |
+            ( bytes[ 2 ] & 0xff ) << 8 |
+            ( bytes[ 3 ] & 0xff );
     }
 
     @Override
     public Long toTarget(Integer original) {
-        return null;
+        return Integer.toUnsignedLong( original );
     }
 
     @Override
-    public byte[] convert(Long number) {
+    public byte[] targetToForeignBytes(Long number) {
         final ByteBuffer buf = ByteBuffer.allocate(8);
         buf.putLong( number );
         byte[] b = buf.array();
@@ -66,7 +77,7 @@ public class UI32 extends AbstractNumericType<Long, long[], Integer, int[]>
     }
 
     @Override
-    public int[] readDataFrom(DataInput stream, int size) throws IOException {
+    public int[] readForeignDataFrom(DataInput stream, int size) throws IOException {
         return new int[0];
     }
 

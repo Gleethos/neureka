@@ -69,7 +69,7 @@ Popular deep learning frameworks like PyTorch and Tensorflow are heavy weight co
 which often do not carry with them the benefits of *'write once run everywhere'*.
 This is especially true for dedicated <b>Hardware</b>! 
 
-[On the state of Deep Learning outside of CUDA’s walled garden.](https://towardsdatascience.com/on-the-state-of-deep-learning-outside-of-cudas-walled-garden-d88c8bbb4342)
+[On the state of Deep Learning outside of CUDAs walled garden.](https://towardsdatascience.com/on-the-state-of-deep-learning-outside-of-cudas-walled-garden-d88c8bbb4342)
 
 This is due to the fact that the backends of these frameworks have been written in nvidia's cuda and C++. 
 Which means that even developers willing to compile for all platforms

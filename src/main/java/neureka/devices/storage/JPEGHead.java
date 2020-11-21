@@ -140,8 +140,14 @@ public class JPEGHead implements FileHead<JPEGHead, Number>
     }
 
     @Override
-    public String getFileName() {
+    public String getLocation() {
         return _fileName;
+    }
+
+    @Override
+    public String getFileName() {
+        String[] split = _fileName.replace( "\\","/" ).split( "/" );
+        return split[ split.length - 1 ];
     }
 
     @Override

@@ -1,6 +1,9 @@
 package ut.tensors
 
+import neureka.Neureka
 import neureka.Tsr
+import neureka.dtype.DataType
+import neureka.dtype.custom.I8
 import spock.lang.Specification
 
 class Tensor_State_Unit_Test extends Specification
@@ -58,6 +61,7 @@ class Tensor_State_Unit_Test extends Specification
         then : 'The tensor is now outsourced and its data is gone. (garbage collected)'
             t.isOutsourced()
             !t.is64() && !t.is32()
+            t.dataType.getTypeClass() == Neureka.instance().settings().dtype().defaultDataTypeClass
             t.value64() == null
             t.value32() == null
             t.data == null
@@ -72,5 +76,36 @@ class Tensor_State_Unit_Test extends Specification
             t.isVirtual()
     }
 
+
+    def 'Tensor created from shape and datatype has expected state.'()
+    {
+        given : 'A new vector tensor is being instantiated.'
+            Tsr t = new Tsr( new int[]{ 2 }, DataType.instance(I8.class ) )
+        expect : 'The tensor is not stored on another device, meaning that it is not "outsourced".'
+            !t.isOutsourced()
+            t.value64() == [0, 0] as double[]
+            t.value32() == [0, 0] as float[]
+            t.data == [0] as byte[]
+            t.value == [0, 0] as byte[]
+            t.isVirtual()
+        when : 'The flag "isOutsourced" is being set to false...'
+            t.setIsOutsourced( true )
+        then : 'The tensor is now outsourced and its data is gone. (garbage collected)'
+            t.isOutsourced()
+            !t.is64() && !t.is32()
+            t.dataType.getTypeClass() == I8.class
+            t.value64() == null
+            t.value32() == null
+            t.data == null
+            t.value == null
+        when : 'The "isOutsourced" flag is set to its original state...'
+            t.setIsOutsourced( false )
+        then : 'Internally the tensor reallocates an array of adequate size. (dependent on "isVirtual")'
+            t.value64() == [0, 0] as double[]
+            t.value32() == [0, 0] as float[]
+            t.data == [0] as byte[]
+            t.value == [0, 0] as byte[]
+            t.isVirtual()
+    }
 
 }

@@ -161,7 +161,7 @@ public class IDXHead implements FileHead<IDXHead, Number>
             if ( Neureka.instance().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )
                 return type.readAndConvertDataFrom( stream, _bodySize );
             else
-                return type.readDataFrom( stream, _bodySize );
+                return type.readForeignDataFrom( stream, _bodySize );
         }
         return null;
     }
@@ -171,7 +171,7 @@ public class IDXHead implements FileHead<IDXHead, Number>
     {
         Object value = _loadData();
         DataType<?> type = ( Neureka.instance().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )
-                ? DataType.instance( _dtype.getTypeClassInstance().getJVMType() )
+                ? DataType.instance( _dtype.getTypeClassInstance().getNumericTypeTarget() )
                 : _dtype;
         return new Tsr<>( _shape, type, value );
     }
@@ -201,6 +201,11 @@ public class IDXHead implements FileHead<IDXHead, Number>
     @Override
     public int getTotalSize() {
         return getDataSize() + _dataOffset;
+    }
+
+    @Override
+    public String getLocation() {
+        return _fileName;
     }
 
     @Override

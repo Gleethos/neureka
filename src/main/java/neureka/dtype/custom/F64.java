@@ -4,9 +4,7 @@ import neureka.dtype.AbstractNumericType;
 
 import java.io.IOException;
 import java.io.DataInput;
-import java.io.DataOutput;
 import java.nio.ByteBuffer;
-import java.util.Iterator;
 
 public class F64 extends AbstractNumericType<Double, double[], Double, double[]>
 {
@@ -34,27 +32,27 @@ public class F64 extends AbstractNumericType<Double, double[], Double, double[]>
     }
 
     @Override
-    public Class<Double> holderType() {
+    public Class<Double> foreignType() {
         return Double.class;
     }
 
     @Override
-    public Class<double[]> holderArrayType() {
+    public Class<double[]> foreignArrayType() {
         return double[].class;
     }
 
     @Override
-    public Double convert(byte[] bytes) {
+    public Double foreignBytesToTarget(byte[] bytes) {
         return ByteBuffer.wrap(bytes).getDouble();
     }
 
     @Override
     public Double toTarget(Double original) {
-        return null;
+        return original;
     }
 
     @Override
-    public byte[] convert(Double number) {
+    public byte[] targetToForeignBytes(Double number) {
         long data = Double.doubleToRawLongBits(number);
         return new byte[] {
                 (byte) ((data >> 56) & 0xff),
@@ -66,6 +64,10 @@ public class F64 extends AbstractNumericType<Double, double[], Double, double[]>
                 (byte) ((data >> 8) & 0xff),
                 (byte) ((data >> 0) & 0xff),
         };
+        //double d = 65.43;
+        //byte[] output = new byte[8];
+        //long lng = Double.doubleToLongBits(d);
+        //for(int i = 0; i < 8; i++) output[i] = (byte)((lng >> ((7 - i) * 8)) & 0xff);
     }
 
     @Override
@@ -74,7 +76,7 @@ public class F64 extends AbstractNumericType<Double, double[], Double, double[]>
     }
 
     @Override
-    public double[] readDataFrom(DataInput stream, int size) throws IOException {
+    public double[] readForeignDataFrom(DataInput stream, int size) throws IOException {
         return _readFrom( stream, size );
     }
 
@@ -82,7 +84,7 @@ public class F64 extends AbstractNumericType<Double, double[], Double, double[]>
         double[] data = new double[size];
         for ( int i=0; i<size; i++ ) {
             stream.readFully(_data);
-            data[ i ] = convert(_data);
+            data[ i ] = foreignBytesToTarget(_data);
         }
         return data;
     }

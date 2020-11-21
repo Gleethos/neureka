@@ -38,27 +38,29 @@ public class UI8 extends AbstractNumericType<Short, short[], Byte, byte[]>
     }
 
     @Override
-    public Class<Byte> holderType() {
+    public Class<Byte> foreignType() {
         return Byte.class;
     }
 
     @Override
-    public Class<byte[]> holderArrayType() {
+    public Class<byte[]> foreignArrayType() {
         return byte[].class;
     }
 
     @Override
-    public Short convert(byte[] bytes) {
-        return (short)Utility.unsignedByteArrayToInt(bytes);
+    public Short foreignBytesToTarget(byte[] bytes) {
+        return //toTarget( bytes[ 0 ] );
+        (short) Utility.unsignedByteArrayToInt(bytes);
     }
 
     @Override
     public Short toTarget(Byte original) {
-        return (short) (original & 0xFF);
+        return (short) Byte.toUnsignedInt( original );
+        //return (short) (original & 0xFF);
     }
 
     @Override
-    public byte[] convert(Short number) {
+    public byte[] targetToForeignBytes(Short number) {
         return new byte[]{(byte)(number & 0xFF)};
     }
 
@@ -67,13 +69,13 @@ public class UI8 extends AbstractNumericType<Short, short[], Byte, byte[]>
         short[] data = new short[size];
         for ( int i=0; i<size; i++ ) {
             stream.readFully(_data);
-            data[ i ] = convert(_data);
+            data[ i ] = foreignBytesToTarget(_data);
         }
         return data;
     }
 
     @Override
-    public byte[] readDataFrom(DataInput stream, int size) throws IOException {
+    public byte[] readForeignDataFrom(DataInput stream, int size) throws IOException {
         byte[] data = new byte[size];
         for ( int i=0; i<size; i++ ) {
             stream.readFully(_data);

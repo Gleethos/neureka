@@ -19,7 +19,7 @@ public interface Storage<ValueType>
      *  Implementations of this method ought to store the value
      *  of the given tensor in whatever formant suites the underlying
      *  implementation and or final type.
-     *  Classes like "OpenCLDevice" or "FileDevice" are also tensor storages.
+     *  Classes like "OpenCLDevice" or "FileDevice" for example are tensor storages.
      *
      * @param tensor The tensor whose data ought to be stored.
      * @return A reference this object to allow for method chaining. (factory pattern)

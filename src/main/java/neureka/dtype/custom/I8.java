@@ -39,27 +39,27 @@ public class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
     }
 
     @Override
-    public Class<Byte> holderType() {
+    public Class<Byte> foreignType() {
         return Byte.class;
     }
 
     @Override
-    public Class<byte[]> holderArrayType() {
+    public Class<byte[]> foreignArrayType() {
         return byte[].class;
     }
 
     @Override
-    public Byte convert(byte[] bytes) {
+    public Byte foreignBytesToTarget(byte[] bytes) {
         return bytes[ 0 ];
     }
 
     @Override
     public Byte toTarget(Byte original) {
-        return null;
+        return original;
     }
 
     @Override
-    public byte[] convert(Byte number) {
+    public byte[] targetToForeignBytes(Byte number) {
         return new byte[]{number};
     }
 
@@ -71,7 +71,7 @@ public class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
     }
 
     @Override
-    public byte[] readDataFrom(DataInput stream, int size) throws IOException {
+    public byte[] readForeignDataFrom(DataInput stream, int size) throws IOException {
         byte[] bytes = new byte[size];
         stream.readFully(bytes, size, size);
         return bytes;

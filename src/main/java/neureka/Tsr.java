@@ -135,6 +135,21 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     |   ---------------------------
     */
 
+    private void _allocate( int size )
+    {
+        _value = _type.allocate( size );
+    }
+
+    private void _virtualize()
+    {
+        _value = _type.virtualize( _value );
+    }
+
+    private void _actualize()
+    {
+        _value = _type.actualize( _value, this.size() );
+    }
+
     public Tsr(){}
 
     public Tsr( Object arg ) {
@@ -272,7 +287,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                                     ? ( (Double) conf.get( i ) ).intValue()
                                     :( (Integer) conf.get( i ) );
             }
-            _construct( shape );
+            _construct( shape, false, false );
         } else {
             double[] value = new double[ conf.size() ];
             for (int i = 0; i < value.length; i++ ) {
@@ -328,7 +343,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     private void _construct( int[] shape, String seed ) {
-        _construct( shape );
+        _construct( shape, false, false );
         _value = DataConverter.Utility.seededDoubleArray( (double[]) _value, seed );
     }
 
@@ -426,18 +441,20 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     public Tsr( int[] shape ) {
-        _construct( shape );
+        _construct( shape, true, true );
     }
 
     public Tsr( int[] shape, DataType<?> type ) {
         _type = DataType.instance( type.getTypeClass() );
-        _construct( shape );
+        _construct( shape, true, true );
     }
 
 
-    private void _construct( int[] shape ) {
-        _value = new double[ NDConfiguration.Utility.szeOfShp( shape ) ];
-        _configureFromNewShape( shape, false );
+    private void _construct( int[] shape, boolean allocate, boolean virtual ) {
+        //_value = new double[ NDConfiguration.Utility.szeOfShp( shape ) ];
+        if ( allocate ) _allocate( ( virtual ) ? 1 : NDConfiguration.Utility.szeOfShp( shape ) );
+        if ( virtual ) setIsVirtual( true );
+        _configureFromNewShape( shape, virtual );
     }
 
     public Tsr( int[] shape, double value ) {
@@ -446,8 +463,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     private void _construct( int[] shape, double value ) {
         int size = NDConfiguration.Utility.szeOfShp( shape );
-        _value = new double[ 1 ];
         _type = DataType.instance( F64.class );
+        //_value = new double[ 1 ];
+        _allocate( 1 );
         setIsVirtual( size > 1 );
         _configureFromNewShape( shape, size > 1 );
         ( (double[])_value )[ 0 ] = value;
@@ -464,6 +482,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             for ( int i = 0; i < newValue.length; i++ ) newValue[ i ] = value[ i % value.length ];
             _value = newValue;
         } else _value = value;
+        _type = DataType.instance( F64.class );
         _configureFromNewShape( shape, false );
     }
 
@@ -547,7 +566,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      */
     protected void _configureFromNewShape( int[] newShape, boolean makeVirtual ) {
         int size = NDConfiguration.Utility.szeOfShp( newShape );
-        _value = ( _value == null ) ? new double[ size ] : _value;
+        _value = ( _value == null ) ? new double[ size ] : _value; // TODO : use allocate
         int length = _dataLength();
         if ( length >= 0 ) {
             if ( size != length && ( !this.isVirtual() || !makeVirtual) ) {
@@ -557,6 +576,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             }
         }
         if ( makeVirtual ) {
+            //setIsVirtual( true );
             _conf = VirtualNDConfiguration.construct( newShape );
         } else {
             int[] newTranslation = NDConfiguration.Utility.newTlnOf( newShape );
@@ -663,22 +683,28 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 );
                 throw exception;
             }
-            double v = ( _value == null ) ? 0 : ((this.is64())?((double[])_value)[ 0 ]:((float[])_value)[ 0 ]);
+            //Object v = this.getValueAt( 0 );//( _value == null ) ? 0 : value64(0);
+                    //((this.is64())?((double[])_value)[ 0 ]:((float[])_value)[ 0 ]);
             if ( isVirtual ) {
-                _value = new double[]{v};
+                //_value = new double[]{v};
+                if ( _value == null ) _allocate( 1 );
+                else _virtualize();
                 Relation<ValueType> relation = find( Relation.class );
-                if ( relation!=null ) relation.foreachChild( c -> c._value=_value);
+                if ( relation!=null ) relation.foreachChild( c -> c._value = _value );
             } else {
                 Tsr<?> parentTensor = (this.isSlice())? find(Relation.class).getParent() : null;
                 if ( parentTensor != null ) {
                     parentTensor.find( Relation.class ).remove( this );
                 }
-                _value = (this.is64()) ? new double[ this.size() ] : new float[ this.size() ];
-                int length = (this.is64()) ? ((double[]) _value).length : ((float[]) _value).length;
-                for (int i = 0; i < length; i++) {
-                    if (this.is64()) ((double[]) _value)[i] = v;
-                    else ((float[]) _value)[i] = (float) v;
-                }
+                _actualize();
+                ///newValue = new double[ size ];
+                ///Arrays.fill( (double[]) newValue, ( (double[]) value )[ 0 ] );
+                //_value = (this.is64()) ? new double[ this.size() ] : new float[ this.size() ];
+                //int length = (this.is64()) ? ((double[]) _value).length : ((float[]) _value).length;
+                //for (int i = 0; i < length; i++) {
+                //    if (this.is64()) ((double[]) _value)[i] = (double) v;
+                //    else ((float[]) _value)[i] = (float) v;
+                //}
             }
             _setIsVirtual( isVirtual );
             if( _conf != null ) _configureFromNewShape( _conf.shape(), isVirtual );
@@ -693,7 +719,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 );
                 throw new IllegalStateException( message );
             }
-        } else if ( isVirtual && _value == null ) _value = new double[]{0};
+        } else if ( isVirtual && _value == null ) _allocate(1);//_value = //new double[]{0};
         return this;
     }
 
@@ -1719,7 +1745,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if ( this.is32() ) return value32( i );
         else if ( this.is64() ) return value64( i );
         else if ( _value instanceof short[] ) return ( (short[]) _value )[ i ];
-        else if ( _value instanceof  int[] ) return ( (int[]) _value )[ i ];
+        else if ( _value instanceof int[] ) return ( (int[]) _value )[ i ];
+        else if ( _value instanceof byte[] ) return ( (byte[]) _value )[ i ];
         else return ( (ValueType[]) _value )[ i ];
     }
 
@@ -1763,9 +1790,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         } else if ( value instanceof int[] ) {
             _type = DataType.instance(I32.class);
             _value = value;
+            setIsVirtual( false );
         } else if ( value instanceof short[] ) {
             _type = DataType.instance(I16.class);
             _value = value;
+            setIsVirtual( false );
         }
         return this;
     }
@@ -1780,9 +1809,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             }
             else return _value;
         }
-        else if ( this.is64() ) return value64();
-        else if ( this.is32() ) return value32();
-        else return _value;
+        else if ( !this.isVirtual() ) return _value;
+        else return _type.actualize( _value, this.size() );
+        //else if ( this.is64() ) return value64();
+        //else if ( this.is32() ) return value32();
+        //else return _value;
     }
 
     public Object getData() {
@@ -1909,15 +1940,19 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if ( _value == null && this.isOutsourced() && found != null ) {
             return found.value64f( this );
         }
-        double[] newValue = ( this.is64() )
-                ? (double[]) _value
-                : DataConverter.Utility.floatToDouble( (float[]) _value );
+        double[] newValue = DataConverter.instance().convert( _value, double[].class );
+                //( this.is64() )
+                //? (double[]) _value
+                //: DataConverter.Utility.floatToDouble( (float[]) _value );
         if ( this.isVirtual() && newValue != null && this.size() > 1 ) {
-            newValue = new double[ this.size() ];
-            double[] value = ( this.is64() )
-                    ? (double[]) _value
-                    : DataConverter.Utility.floatToDouble( (float[]) _value );
-            Arrays.fill( newValue, value[ 0 ] );
+
+            //newValue = new double[ this.size() ];
+            double[] value = new double[ this.size() ];
+                    //( this.is64() )
+                    //? (double[]) _value
+                    //: DataConverter.Utility.floatToDouble( (float[]) _value );
+            Arrays.fill( value, newValue[ 0 ] );
+            return value;
         }
         return newValue;
     }
@@ -1938,9 +1973,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if ( _value == null && this.isOutsourced() && found != null ) {
             return found.value32f( this );
         }
-        float[] newValue = ( this.is64() )
-                ? DataConverter.Utility.doubleToFloat( (double[]) _value )
-                : (float[]) _value;
+        float[] newValue = DataConverter.instance().convert( _value, float[].class );
+                //( this.is64() )
+                //? DataConverter.Utility.doubleToFloat( (double[]) _value )
+                //: (float[]) _value;
         if ( this.isVirtual() && newValue != null ) {
             newValue = new float[ this.size() ];
             Arrays.fill( newValue, newValue[ 0 ] );

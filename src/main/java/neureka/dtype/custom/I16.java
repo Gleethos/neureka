@@ -4,9 +4,7 @@ import neureka.dtype.AbstractNumericType;
 
 import java.io.IOException;
 import java.io.DataInput;
-import java.io.DataOutput;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 public class I16 extends AbstractNumericType<Short, short[], Short, short[]>
 {
@@ -35,17 +33,17 @@ public class I16 extends AbstractNumericType<Short, short[], Short, short[]>
     }
 
     @Override
-    public Class<Short> holderType() {
+    public Class<Short> foreignType() {
         return Short.class;
     }
 
     @Override
-    public Class<short[]> holderArrayType() {
+    public Class<short[]> foreignArrayType() {
         return short[].class;
     }
 
     @Override
-    public Short convert(byte[] bytes) {
+    public Short foreignBytesToTarget(byte[] bytes) {
         buffer.put(bytes, 0, bytes.length);
         buffer.flip();//need flip
         return buffer.getShort();
@@ -54,11 +52,11 @@ public class I16 extends AbstractNumericType<Short, short[], Short, short[]>
 
     @Override
     public Short toTarget(Short original) {
-        return null;
+        return original;
     }
 
     @Override
-    public byte[] convert(Short number) {
+    public byte[] targetToForeignBytes(Short number) {
         buffer.putShort(0, number);
         return buffer.array();
         //return new byte[]{(byte)(number & 0xff),(byte)((number >> 8) & 0xff)};
@@ -70,7 +68,7 @@ public class I16 extends AbstractNumericType<Short, short[], Short, short[]>
     }
 
     @Override
-    public short[] readDataFrom( DataInput stream, int size ) throws IOException {
+    public short[] readForeignDataFrom(DataInput stream, int size ) throws IOException {
         return _readData( stream, size );
     }
 
@@ -78,7 +76,7 @@ public class I16 extends AbstractNumericType<Short, short[], Short, short[]>
         short[] data = new short[size];
         for ( int i=0; i<size; i++ ) {
             stream.readFully(_data);
-            data[ i ] = convert(_data);
+            data[ i ] = foreignBytesToTarget(_data);
         }
         return data;
     }
