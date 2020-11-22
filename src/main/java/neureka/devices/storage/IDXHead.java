@@ -6,6 +6,7 @@ import neureka.Tsr;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.dtype.custom.*;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -13,9 +14,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class IDXHead implements FileHead<IDXHead, Number>
+public class IDXHead extends AbstractFileHead<IDXHead>
 {
-    private final String _fileName;
+    static {
+        _LOGGER = LoggerFactory.getLogger( IDXHead.class );
+    }
 
     private int _dataOffset;
     private int _bodySize;
@@ -43,7 +46,7 @@ public class IDXHead implements FileHead<IDXHead, Number>
 
     public IDXHead( String fileName )
     {
-        _fileName = fileName;
+        super( fileName );
         try {
             _loadHead( fileName );
         } catch( Exception e ) {
@@ -53,7 +56,7 @@ public class IDXHead implements FileHead<IDXHead, Number>
     }
 
     public IDXHead( Tsr<Number> t, String filename ) {
-        _fileName = filename;
+        super( filename );
         _shape = t.getNDConf().shape();
         _dtype = t.getDataType();
         t.setIsVirtual( false );
@@ -177,15 +180,6 @@ public class IDXHead implements FileHead<IDXHead, Number>
     }
 
     @Override
-    public IDXHead free() {
-        boolean success = new File(_fileName).delete();
-        if ( !success ) {
-            System.err.println( "Freeing idx file '"+_fileName+"' failed!" );
-        }
-        return this;
-    }
-
-    @Override
     public int getValueSize() {
         return _bodySize;
     }
@@ -204,17 +198,6 @@ public class IDXHead implements FileHead<IDXHead, Number>
     }
 
     @Override
-    public String getLocation() {
-        return _fileName;
-    }
-
-    @Override
-    public String getFileName() {
-        String[] split = _fileName.replace( "\\","/" ).split( "/" );
-        return split[ split.length - 1 ];
-    }
-
-    @Override
     public DataType getDataType() {
         return _dtype;
     }
@@ -222,6 +205,11 @@ public class IDXHead implements FileHead<IDXHead, Number>
     @Override
     public int[] getShape() {
         return _shape;
+    }
+
+    @Override
+    public String extension() {
+        return "idx";
     }
 
     @Override

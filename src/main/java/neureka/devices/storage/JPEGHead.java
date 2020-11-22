@@ -8,6 +8,7 @@ import neureka.dtype.custom.I16;
 import neureka.dtype.custom.I8;
 import neureka.dtype.custom.UI8;
 import neureka.utility.DataConverter;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -20,9 +21,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 
-public class JPEGHead implements FileHead<JPEGHead, Number>
+public class JPEGHead extends AbstractFileHead<JPEGHead>
 {
-    private final String _fileName;
+    static {
+        _LOGGER = LoggerFactory.getLogger( JPEGHead.class );
+    }
 
     int _width;
     int _height;
@@ -30,44 +33,54 @@ public class JPEGHead implements FileHead<JPEGHead, Number>
 
     public JPEGHead( String fileName )
     {
-        _fileName = fileName;
+        super( fileName );
         try {
-            _loadHead( fileName );
+            _loadHead();
         } catch( Exception e ) {
             System.err.print("Failed reading JPG file!");
         }
     }
 
     public JPEGHead( Tsr<Number> t, String filename ) {
+        super( filename );
         assert t.rank() == 3;
         assert t.shape( 2 ) == 3;
-        _fileName = filename;
         _height = t.shape(0);
         _width = t.shape(1);
-        //_shape = t.getNDConf().shape();
-        //_dtype = t.getDataType();
-        assert t.rank() == 3;
-        assert t.shape(2) == 3;
         t.setIsVirtual( false );
         store( t );
     }
 
 
-    private void _loadHead( String fileName )
+    private void _loadHead()
     {
-        File found = new File( fileName );
-        if ( !found.exists() ) return; // No file exists (yet)!
+        File found = _loadFile();
 
         BufferedImage image = null;
         Raster data;
-        try
-        {
-            image = ImageIO.read( found );
+
+        try {
+            image = ImageIO.read(found);
             data = image.getData();
             _height = data.getHeight();
             _width = data.getWidth();
+        } catch ( Exception exception ) {
+            String message = "JPEG '"+_fileName+"' could not be read from file!";
+            _LOGGER.error( message, exception );
+            exception.printStackTrace();
         }
-        catch ( IOException e )
+
+        try
+        {
+            if ( _height < 1 || _width < 1 ) {
+                String message = "The height and width of the jpeg at '"+_fileName+"' is "+_height+" & "+_width+"." +
+                        "However both dimensions must at least be of size 1!";
+                Exception e = new IOException( message );
+                _LOGGER.error( message, e );
+                throw e;
+            }
+        }
+        catch ( Exception e )
         {
             e.printStackTrace();
         }
@@ -76,15 +89,18 @@ public class JPEGHead implements FileHead<JPEGHead, Number>
     @Override
     public Tsr<Number> load() throws IOException {
         Object value = _loadData();
-        Tsr t = new Tsr( new int[]{_height, _width, 3} );
+        Tsr<Number> t = new Tsr<>( new int[]{_height, _width, 3} );
         t.setValue( value );
         return t;
     }
 
-    private Object _loadData()
-    {
+    private Object _loadData() throws IOException {
         File found = new File( _fileName );
-        if ( !found.exists() ) return null; // Throw exception+
+        if ( !found.exists() ) {
+
+
+            throw new IOException("File at '"+_fileName+"' not found. Tensor could not be loaded.");
+        }
 
         BufferedImage image = null;
         try
@@ -94,34 +110,19 @@ public class JPEGHead implements FileHead<JPEGHead, Number>
             short[] newData = new short[ data.length ];
 
             UI8 ui8 = new UI8();
-            //ui8.readAndConvertDataFrom( image.getRaster().getDataBuffer(), _height * _width * 3 );
             HostCPU.instance().getExecutor().threaded(
                     data.length,
                     ( start, end ) -> {
                         for ( int i=start; i<end; i++ ) newData[i] = ui8.toTarget( data[i] );
                     }
             );
-            //Raster data = image.getData();
-            //short[] value = new short[  _height * _width * 3 ]; //(H, W, D)
-            //data.getPixels( 0, 0, _width, _height, value );
-            return newData;//DataConverter.instance().convert( data, short[].class );
-           // return value;
+            return newData;
         }
         catch ( IOException e )
         {
             e.printStackTrace();
+            throw e;
         }
-
-        return null;
-    }
-
-    @Override
-    public JPEGHead free() {
-        boolean success = new File(_fileName).delete();
-        if ( !success ) {
-            System.err.println( "Freeing jpg file '"+_fileName+"' failed!" );
-        }
-        return this;
     }
 
     @Override
@@ -140,17 +141,6 @@ public class JPEGHead implements FileHead<JPEGHead, Number>
     }
 
     @Override
-    public String getLocation() {
-        return _fileName;
-    }
-
-    @Override
-    public String getFileName() {
-        String[] split = _fileName.replace( "\\","/" ).split( "/" );
-        return split[ split.length - 1 ];
-    }
-
-    @Override
     public DataType<?> getDataType() {
         return DataType.instance( UI8.class );
     }
@@ -161,12 +151,15 @@ public class JPEGHead implements FileHead<JPEGHead, Number>
     }
 
     @Override
+    public String extension() {
+        return "jpg";
+    }
+
+    @Override
     public Storage store( Tsr<Number> tensor )
     {
-        //Iterator<Number> data = tensor.iterator();
         byte[] data = DataConverter.instance().convert( tensor.getData(), byte[].class );
-        //BufferedImage buffi = new BufferedImage( _width, _height, BufferedImage.TYPE_3BYTE_BGR );
-        //buffi.getRaster().
+
         BufferedImage buffi = new BufferedImage( _width, _height, BufferedImage.TYPE_3BYTE_BGR );
         buffi.setData(
                 Raster.createRaster(
@@ -175,13 +168,10 @@ public class JPEGHead implements FileHead<JPEGHead, Number>
                 )
         );
         try {
-            //BufferedImage image = ImageIO.read( new ByteArrayInputStream( data ) );
             ImageIO.write( buffi, "jpg", new File( _fileName ) );
         } catch ( Exception e ) {
             e.printStackTrace();
         }
-        //System.out.println("image created");
-
         return this;
     }
 

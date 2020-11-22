@@ -112,7 +112,7 @@ class FileHead_Unit_Tests extends Specification
             "MNIST-sample-3.idx" || "87eade8bb5659d324030f4e84f6745e7"
     }
 
-    def 'The FileDevice component "JPEGHead can read JPG file formats and load them as tensors.'(
+    def 'The FileDevice component "JPEGHead" can read JPG file formats and load them as tensors.'(
             String filename, List<Integer> shape, String expected
     ) {
 

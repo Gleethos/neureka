@@ -550,7 +550,12 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      */
     protected void _configureFromNewShape( int[] newShape, boolean makeVirtual ) {
         int size = NDConfiguration.Utility.szeOfShp( newShape );
-        //_value = ( _value == null ) ? new double[ size ] : _value; // TODO : use allocate
+        if ( size == 0 ) {
+            String shape = Arrays.stream( newShape ).mapToObj( String::valueOf ).collect( Collectors.joining( "x" ) );
+            String message = "The provided shape '"+shape+"' must not contain zeros. Dimensions lower than 1 are not possible.";
+            _LOGGER.error( message );
+            throw new IllegalArgumentException( message );
+        }
         if ( _value == null ) _allocate( size );
         int length = _dataLength();
         if ( length >= 0 ) {

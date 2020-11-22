@@ -83,4 +83,5 @@ public interface FileHead<FinalType, ValueType> extends Storage<ValueType>
      */
     int[] getShape();
 
+    String extension();
 }
