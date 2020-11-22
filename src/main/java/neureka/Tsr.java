@@ -135,21 +135,6 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     |   ---------------------------
     */
 
-    private void _allocate( int size )
-    {
-        _value = _type.allocate( size );
-    }
-
-    private void _virtualize()
-    {
-        _value = _type.virtualize( _value );
-    }
-
-    private void _actualize()
-    {
-        _value = _type.actualize( _value, this.size() );
-    }
-
     public Tsr(){}
 
     public Tsr( Object arg ) {
@@ -451,7 +436,6 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
 
     private void _construct( int[] shape, boolean allocate, boolean virtual ) {
-        //_value = new double[ NDConfiguration.Utility.szeOfShp( shape ) ];
         if ( allocate ) _allocate( ( virtual ) ? 1 : NDConfiguration.Utility.szeOfShp( shape ) );
         if ( virtual ) setIsVirtual( true );
         _configureFromNewShape( shape, virtual );
@@ -464,7 +448,6 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     private void _construct( int[] shape, double value ) {
         int size = NDConfiguration.Utility.szeOfShp( shape );
         _type = DataType.instance( F64.class );
-        //_value = new double[ 1 ];
         _allocate( 1 );
         setIsVirtual( size > 1 );
         _configureFromNewShape( shape, size > 1 );
@@ -475,20 +458,21 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
          _construct( shape, value );
     }
 
-    private void _construct( int[] shape, double[] value ) {
+    private void _construct( int[] shape, double[] value )
+    {
         int size = NDConfiguration.Utility.szeOfShp( shape );
-        if ( size != value.length ) {
-            double[] newValue = new double[ size ];
-            for ( int i = 0; i < newValue.length; i++ ) newValue[ i ] = value[ i % value.length ];
-            _value = newValue;
-        } else _value = value;
         _type = DataType.instance( F64.class );
+        if ( size != value.length ) {
+            _allocate( size );
+            for ( int i = 0; i < size; i++ ) ( (double[])_value )[ i ]  = value[ i % value.length ];
+        } else _value = value;
         _configureFromNewShape( shape, false );
     }
 
-    public Tsr( int[] shape, DataType dataType, Object value ) {
+    public Tsr( int[] shape, DataType<?> dataType, Object value ) {
         _value = value;
         _type = dataType;
+        if (dataType.typeClassImplements( NumericType.class ) )
         _configureFromNewShape( shape, false );
     }
 
@@ -566,7 +550,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      */
     protected void _configureFromNewShape( int[] newShape, boolean makeVirtual ) {
         int size = NDConfiguration.Utility.szeOfShp( newShape );
-        _value = ( _value == null ) ? new double[ size ] : _value; // TODO : use allocate
+        //_value = ( _value == null ) ? new double[ size ] : _value; // TODO : use allocate
+        if ( _value == null ) _allocate( size );
         int length = _dataLength();
         if ( length >= 0 ) {
             if ( size != length && ( !this.isVirtual() || !makeVirtual) ) {
@@ -575,10 +560,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 throw new IllegalArgumentException( message );
             }
         }
-        if ( makeVirtual ) {
-            //setIsVirtual( true );
-            _conf = VirtualNDConfiguration.construct( newShape );
-        } else {
+        if ( makeVirtual ) _conf = VirtualNDConfiguration.construct( newShape );
+        else {
             int[] newTranslation = NDConfiguration.Utility.newTlnOf( newShape );
             int[] newIdxmap = newTranslation;
             int[] newSpread = new int[ newShape.length ];
@@ -683,10 +666,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 );
                 throw exception;
             }
-            //Object v = this.getValueAt( 0 );//( _value == null ) ? 0 : value64(0);
-                    //((this.is64())?((double[])_value)[ 0 ]:((float[])_value)[ 0 ]);
             if ( isVirtual ) {
-                //_value = new double[]{v};
                 if ( _value == null ) _allocate( 1 );
                 else _virtualize();
                 Relation<ValueType> relation = find( Relation.class );
@@ -697,14 +677,6 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                     parentTensor.find( Relation.class ).remove( this );
                 }
                 _actualize();
-                ///newValue = new double[ size ];
-                ///Arrays.fill( (double[]) newValue, ( (double[]) value )[ 0 ] );
-                //_value = (this.is64()) ? new double[ this.size() ] : new float[ this.size() ];
-                //int length = (this.is64()) ? ((double[]) _value).length : ((float[]) _value).length;
-                //for (int i = 0; i < length; i++) {
-                //    if (this.is64()) ((double[]) _value)[i] = (double) v;
-                //    else ((float[]) _value)[i] = (float) v;
-                //}
             }
             _setIsVirtual( isVirtual );
             if( _conf != null ) _configureFromNewShape( _conf.shape(), isVirtual );
@@ -719,7 +691,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 );
                 throw new IllegalStateException( message );
             }
-        } else if ( isVirtual && _value == null ) _allocate(1);//_value = //new double[]{0};
+        } else if ( isVirtual && _value == null ) _allocate( 1 );//_value = //new double[]{0};
         return this;
     }
 
@@ -1742,11 +1714,12 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     @Override
     public Object getValueAt( int i ) {
-        if ( this.is32() ) return value32( i );
-        else if ( this.is64() ) return value64( i );
+        if ( _value instanceof float[] ) return ( (float[]) _value )[ i ];
+        else if ( _value instanceof double[] ) return ( (double[]) _value )[ i ];
         else if ( _value instanceof short[] ) return ( (short[]) _value )[ i ];
         else if ( _value instanceof int[] ) return ( (int[]) _value )[ i ];
         else if ( _value instanceof byte[] ) return ( (byte[]) _value )[ i ];
+        else if ( _value instanceof long[] ) return ( (long[]) _value )[ i ];
         else return ( (ValueType[]) _value )[ i ];
     }
 

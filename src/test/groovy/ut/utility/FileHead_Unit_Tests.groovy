@@ -146,8 +146,11 @@ class FileHead_Unit_Tests extends Specification
 
         then :
             loaded != null
-            hash == expected
+            !loaded.isVirtual()
+            loaded.size() == shape.inject( 1, {prod, value -> prod * value} )
             loaded.getDataType().getTypeClass() == I16.class // Auto convert! (stored as I16)
+            hash == expected
+
 
         and :
             jpg.shape == shape as int[]

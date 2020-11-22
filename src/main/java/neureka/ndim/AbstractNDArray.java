@@ -62,18 +62,36 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
 
     protected NDConfiguration _conf;
 
-    protected DataType _type = DataType.instance( Neureka.instance().settings().dtype().getDefaultDataTypeClass() );
+    protected DataType<?> _type = DataType.instance( Neureka.instance().settings().dtype().getDefaultDataTypeClass() );
     
     protected Object _value;
 
-    public Class<?> getValueClass(){
-        DataType dt = _type;
+    public Class<?> getValueClass()
+    {
+        DataType<?> dt = _type;
         if ( dt != null ) return dt.getTypeClass();
         else return null;
     }
 
     public DataType getDataType(){
         return _type;
+    }
+
+
+
+    protected void _allocate( int size )
+    {
+        _value = _type.allocate( size );
+    }
+
+    protected void _virtualize()
+    {
+        _value = _type.virtualize( _value );
+    }
+
+    protected void _actualize()
+    {
+        _value = _type.actualize( _value, this.size() );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
