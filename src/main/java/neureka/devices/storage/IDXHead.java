@@ -48,7 +48,7 @@ public class IDXHead extends AbstractFileHead<IDXHead>
     {
         super( fileName );
         try {
-            _loadHead( fileName );
+            _loadHead();
         } catch( Exception e ) {
             e.printStackTrace();
             System.err.print("Failed reading IDX file!");
@@ -63,18 +63,10 @@ public class IDXHead extends AbstractFileHead<IDXHead>
         store( t );
     }
 
-    private void _loadHead( String fileName ) throws IOException
+    private void _loadHead() throws IOException
     {
-        FileInputStream f = null;
-        try
-        {
-            f = new FileInputStream(fileName);
-        }
-        catch (FileNotFoundException e)
-        {
-            //System.err.println("File: " + fileName + " not found.");
-            return; // This mean that the file will be created when tensor is saved...
-        }
+        FileInputStream f = _loadFileInputStream();
+
         NumberReader numre = new NumberReader(f);
 
         int zeros = numre.read( new UI16() );
@@ -152,7 +144,8 @@ public class IDXHead extends AbstractFileHead<IDXHead>
         return this;
     }
 
-    private Object _loadData() throws IOException {
+    @Override
+    protected Object _loadData() throws IOException {
         FileInputStream fs = new FileInputStream( _fileName );
         Class<?> clazz = _dtype.getTypeClass();
         if ( NumericType.class.isAssignableFrom( clazz ) ) {
@@ -212,15 +205,5 @@ public class IDXHead extends AbstractFileHead<IDXHead>
         return "idx";
     }
 
-    @Override
-    public IDXHead restore( Tsr<Number> tensor )
-    {
-        try {
-            Object value = _loadData();
-            tensor.setValue( value );
-        } catch ( Exception e ) {
-            e.printStackTrace();
-        }
-        return this;
-    }
+
 }

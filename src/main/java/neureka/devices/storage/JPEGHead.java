@@ -94,13 +94,10 @@ public class JPEGHead extends AbstractFileHead<JPEGHead>
         return t;
     }
 
-    private Object _loadData() throws IOException {
-        File found = new File( _fileName );
-        if ( !found.exists() ) {
-
-
-            throw new IOException("File at '"+_fileName+"' not found. Tensor could not be loaded.");
-        }
+    @Override
+    protected Object _loadData() throws IOException
+    {
+        File found = _loadFile();
 
         BufferedImage image = null;
         try
@@ -175,14 +172,5 @@ public class JPEGHead extends AbstractFileHead<JPEGHead>
         return this;
     }
 
-    @Override
-    public Storage restore( Tsr<Number> tensor ) {
-        try {
-            Object value = _loadData();
-            tensor.setValue( value );
-        } catch ( Exception e ) {
-            e.printStackTrace();
-        }
-        return this;
-    }
+
 }

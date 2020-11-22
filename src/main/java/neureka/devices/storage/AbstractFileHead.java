@@ -1,8 +1,12 @@
 package neureka.devices.storage;
 
+import neureka.Tsr;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public abstract class AbstractFileHead<FinalType> implements FileHead<FinalType, Number>
 {
@@ -33,6 +37,8 @@ public abstract class AbstractFileHead<FinalType> implements FileHead<FinalType,
         }
     }
 
+    protected abstract Object _loadData() throws IOException;
+
     protected File _loadFile()
     {
             File found = new File( _fileName );
@@ -43,6 +49,22 @@ public abstract class AbstractFileHead<FinalType> implements FileHead<FinalType,
                 throw new IllegalArgumentException(message);
             }
             return found;
+    }
+
+    protected FileInputStream _loadFileInputStream() throws IOException {
+        File found = _loadFile();
+        FileInputStream f = null;
+        try
+        {
+            f = new FileInputStream( found );
+        }
+        catch ( FileNotFoundException e )
+        {
+            String message = "Could not create 'FileInputStream' for '"+f.toString()+"'.";
+            _LOGGER.error( message, e );
+            throw new IOException( message );
+        }
+        return f;
     }
 
 
@@ -66,6 +88,18 @@ public abstract class AbstractFileHead<FinalType> implements FileHead<FinalType,
     public String getFileName() {
         String[] split = _fileName.replace( "\\","/" ).split( "/" );
         return split[ split.length - 1 ];
+    }
+
+    @Override
+    public Storage restore( Tsr<Number> tensor ) {
+        try {
+            Object value = _loadData();
+            tensor.setValue( value );
+        } catch ( Exception e ) {
+            _LOGGER.error( "Restoring tensor from filesystem failed!", e );
+            e.printStackTrace();
+        }
+        return this;
     }
 
 
