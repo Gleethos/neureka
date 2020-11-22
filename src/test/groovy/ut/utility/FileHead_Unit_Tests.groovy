@@ -70,7 +70,7 @@ class FileHead_Unit_Tests extends Specification
             def hash = ""
 
         when : 'The given idx file is being loaded by the "IDXHead" class into a new tensor...'
-            IDXHead idx = new IDXHead( "src/test/resources/idx/" + filename )
+            IDXHead idx = new IDXHead( "build/resources/test/idx/" + filename )
             Tsr loaded = idx.load()
         and : '... this new tensor is then hashed ...'
             loaded.forEach( e -> hash = ( hash + e ).digest("md5") )
@@ -121,7 +121,7 @@ class FileHead_Unit_Tests extends Specification
             def hash = ""
 
         when :
-            JPEGHead jpg = new JPEGHead( "src/test/resources/jpg/" + filename )
+            JPEGHead jpg = new JPEGHead( "build/resources/test/jpg/" + filename )
             Tsr loaded = jpg.load()
             loaded.forEach(e -> hash = ( hash + e ).digest('md5') )
             /*
