@@ -51,7 +51,8 @@ public abstract class AbstractFileHead<FinalType> implements FileHead<FinalType,
             return found;
     }
 
-    protected FileInputStream _loadFileInputStream() throws IOException {
+    protected FileInputStream _loadFileInputStream() throws IOException
+    {
         File found = _loadFile();
         FileInputStream f = null;
         try
