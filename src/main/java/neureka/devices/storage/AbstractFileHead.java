@@ -1,6 +1,7 @@
 package neureka.devices.storage;
 
 import neureka.Tsr;
+import neureka.devices.Storage;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -92,7 +93,7 @@ public abstract class AbstractFileHead<FinalType> implements FileHead<FinalType,
     }
 
     @Override
-    public Storage restore( Tsr<Number> tensor ) {
+    public Storage restore(Tsr<Number> tensor ) {
         try {
             Object value = _loadData();
             tensor.setValue( value );

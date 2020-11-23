@@ -44,7 +44,6 @@ import neureka.devices.opencl.OpenCLDevice;
 import neureka.devices.opencl.OpenCLPlatform;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.frontend.assembly.FunctionParser;
-import neureka.devices.storage.Storage;
 
 import java.util.Arrays;
 import java.util.Collection;

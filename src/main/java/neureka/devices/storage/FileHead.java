@@ -2,6 +2,7 @@ package neureka.devices.storage;
 
 
 import neureka.Tsr;
+import neureka.devices.Storage;
 import neureka.dtype.DataType;
 
 import java.io.IOException;

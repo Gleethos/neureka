@@ -1,10 +1,10 @@
-package neureka.devices.storage;
+package neureka.devices;
 
 import neureka.Tsr;
 
 /**
  *  This is an abstract interface which simply describes "a thing that stores tensors".
- *  Therefore the expected method signatures defining this abstract entity biol down
+ *  Therefore the expected method signatures defining this abstract entity boil down
  *  to a "store" and a "restore" method.
  *  Classes like "OpenCLDevice" or "FileDevice" implement this interface indirectly (via the Device interface)
  *  because they are in essence also just entities that store tensors!

@@ -1,11 +1,9 @@
 package neureka.devices.storage;
 
 import neureka.Tsr;
+import neureka.devices.Storage;
 import neureka.devices.host.HostCPU;
 import neureka.dtype.DataType;
-import neureka.dtype.NumericType;
-import neureka.dtype.custom.I16;
-import neureka.dtype.custom.I8;
 import neureka.dtype.custom.UI8;
 import neureka.utility.DataConverter;
 import org.slf4j.LoggerFactory;
@@ -16,10 +14,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Iterator;
 
 public class JPEGHead extends AbstractFileHead<JPEGHead>
 {
@@ -153,7 +147,7 @@ public class JPEGHead extends AbstractFileHead<JPEGHead>
     }
 
     @Override
-    public Storage store( Tsr<Number> tensor )
+    public Storage store(Tsr<Number> tensor )
     {
         byte[] data = DataConverter.instance().convert( tensor.getData(), byte[].class );
 
