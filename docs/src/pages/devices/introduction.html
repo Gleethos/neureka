@@ -7,10 +7,11 @@
         </h3>
         <p>
             One core concept of Neureka is the "Device" interface which
-            provides a useful abstraction for a multitude of backends.
+            provides a useful abstraction for a multitude of backends.<br>
             Implementations of this interface represent
             devices which primarily store tensors and optionally might also be
-            capable of executing operations on them.
+            capable of executing operations on them.<br>
+            <br>
             Such instances are also components of tensors, which is why
             the interface extends the Component&lt;Tsr&lt;ValueType&gt;&gt; interface. <br>
             (For more information simply browse through the source code!) <br>
@@ -20,6 +21,7 @@
             A tensor stored on a device holds a reference to that device,
             as well as the device itself which also knows about the tensors it holds.
             A tensor stored on a device will have its "isOutsourced" property set to true!
+            <br>
         </p>
     </div>
 </div>

@@ -25,7 +25,7 @@
         </p>
     </div>
 </div>
-<div class="col-sm-12 col-md-6">
+<div class="col-sm-12 col-md-12 col-lg-12">
     <div class="TabWrapper">
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
@@ -56,7 +56,7 @@
         </p>
     </div>
 </div>
-<div class="col-sm-12 col-md-6">
+<div class="col-sm-12 col-md-12 col-lg-12">
     <div class="TabWrapper">
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
@@ -124,10 +124,43 @@
         </div>
     </div>
 </div>
-<div class="col-sm-12 col-md-12 col-lg-12">
+<div class="col-sm-12 col-md-12 col-lg-5">
     <div class="ContentBox">
         <p>
-
+            Tensors stored on a file device or any other device for that matter can be restored by calling
+            the "restore" method.<br>
+            Contrary to other device implementations however, the FileDevice instance will not delete
+            the underlying data source (in this case a file) which stores the recently restored tensor.<br>
+            This is because contrary to let's say an OpenCLDevice the whole purpose of the FileDevice
+            is to persist data. <br>
         </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-7">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+    device.restore( myTensor ) // Loads the tensor but does not delete the file.
+
+    device.free( myOtherTensor ) // Deletes the provided tensor (If stored on the file device).
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    device.restore( myTensor ); // Loads the tensor but does not delete the file.
+
+    device.free( myOtherTensor ); // Deletes the provided tensor (If stored on the file device).
+
+                </code></pre>
+            </div>
+        </div>
     </div>
 </div>
