@@ -1,6 +1,5 @@
 package neureka.devices.storage;
 
-import neureka.Component;
 import neureka.Tsr;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.devices.AbstractBaseDevice;
@@ -26,6 +25,13 @@ import java.util.stream.Collectors;
  *  Therefore tensors that are stored on this device are not fit for computation.
  *  The "get(..)" method has to be called instead.
  *
+ *  The abstraction provided by the "Device" interface
+ *  does not necessitate that concrete implementations
+ *  represent accelerator hardware. <br>
+ *  Generally speaking a device is a thing that
+ *  stores tensors and optionally also handles "ExecutionCall" instances.
+ *  Therefore, an implementation might also represent a simple
+ *  storage device like your local SSD ord HDD...
  */
 public class FileDevice extends AbstractBaseDevice<Number>
 {

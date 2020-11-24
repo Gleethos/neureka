@@ -50,13 +50,16 @@ import java.util.Collection;
 
 /**
  * This is the interface for implementations representing
- * devices capable of executing operations on tensors, namely the Tsr<ValueType> class.
+ * devices primarily store tensors, namely instances of the Tsr<ValueType> class.
+ * Optionally they might also be capable of executing operations on tensors.
  * Such instances are also components of tensors, which is why
  * this interface extends the Component &lt; Tsr<ValueType> &gt; interface.
- * The device interface also extends the "Storage" interface because devices
+ *
+ * The device interface extends the "Storage" interface because devices
  * are also capable of storing tensors on them.
- * Therefore a tensor which is stored on a device, meaning it holds a
- * reference to it within its component system also has the "isOutsourced" property set to true!
+ * A tensor stored on a device holds a reference to that device,
+ * as well as the device itself which also knows about the tensors it holds.
+ * A tensor stored on a device will have its "isOutsourced" property set to true!
  *
  */
 public interface Device<ValueType> extends Component<Tsr<ValueType>>, Storage<ValueType>, Collection<Tsr<ValueType>>
