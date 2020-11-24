@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.devices.Storage;
 import neureka.devices.host.HostCPU;
 import neureka.dtype.DataType;
+import neureka.dtype.custom.I16;
 import neureka.dtype.custom.UI8;
 import neureka.utility.DataConverter;
 import org.slf4j.LoggerFactory;
@@ -83,8 +84,7 @@ public class JPEGHead extends AbstractFileHead<JPEGHead>
     @Override
     public Tsr<Number> load() throws IOException {
         Object value = _loadData();
-        Tsr<Number> t = new Tsr<>( new int[]{_height, _width, 3} );
-        t.setValue( value );
+        Tsr<Number> t = new Tsr<>( new int[]{_height, _width, 3}, I16.class, value );
         return t;
     }
 

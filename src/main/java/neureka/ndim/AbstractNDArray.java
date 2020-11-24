@@ -62,50 +62,65 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
 
     protected NDConfiguration _conf;
 
-    protected DataType<?> _type = DataType.instance( Neureka.instance().settings().dtype().getDefaultDataTypeClass() );
+    private DataType<?> _dataType = DataType.instance( Neureka.instance().settings().dtype().getDefaultDataTypeClass() );
     
-    protected Object _value;
+    protected Object _data;
 
     public Class<?> getValueClass()
     {
-        DataType<?> dt = _type;
+        DataType<?> dt = _dataType;
         if ( dt != null ) return dt.getTypeClass();
         else return null;
     }
 
     public DataType getDataType(){
-        return _type;
+        return _dataType;
     }
 
+    public InstanceType setDataType( DataType<?> dataType )
+    {
+        if ( _data != null ) {
+            String message = "Data type of tensor can only be set when data attribute is null!\n" +
+                    "This is due to construction-consistency reasons.\n";
+            throw new IllegalStateException( message );
+        }
+        _dataType = dataType;
+        return (InstanceType) this;
+    }
 
+    protected void _setData( Object data ) {
+        _data = data;
+    }
 
     protected void _allocate( int size )
     {
-        _value = _type.allocate( size );
+        _data = _dataType.allocate( size );
     }
 
     protected void _virtualize()
     {
-        _value = _type.virtualize( _value );
+        _data = _dataType.virtualize(_data);
     }
 
     protected void _actualize()
     {
-        _value = _type.actualize( _value, this.size() );
+        _data = _dataType.actualize(_data, this.size() );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public void forEach(Consumer<? super ValueType> action) {
-        for ( ValueType v : this ) action.accept(v);
+    public void forEach( Consumer<? super ValueType> action ) {
+        for ( ValueType v : this ) action.accept( v );
     }
 
     @Override
-    public Spliterator<ValueType> spliterator() {
-        return new Spliterator<ValueType>() {
+    public Spliterator<ValueType> spliterator()
+    {
+        return new Spliterator<ValueType>()
+        {
             @Override
-            public boolean tryAdvance(Consumer<? super ValueType> action) {
+            public boolean tryAdvance( Consumer<? super ValueType> action ) {
                 return false;
             }
 
@@ -126,29 +141,34 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         };
     }
 
-    public abstract Object getValueAt(int i);
+    public abstract Object getValueAt( int i );
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    public boolean is( Class<?> typeClass ) {
+        DataType<?> type = DataType.instance( typeClass );
+        return type == _dataType;
+    }
+
     public boolean is64(){
-        return _value instanceof double[];
+        return _data instanceof double[];
     }
 
     public  boolean is32(){
-        return _value instanceof float[];
+        return _data instanceof float[];
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public int i_of_i(int i){
+    public int i_of_i( int i ){
         return _conf.i_of_i( i );
     }
 
-    public int[] idx_of_i(int i) {
+    public int[] idx_of_i( int i ) {
         return _conf.idx_of_i( i );
     }
 
-    public int i_of_idx(int[] idx) {
+    public int i_of_idx( int[] idx ) {
         return _conf.i_of_idx(idx);
     }
 
@@ -158,10 +178,11 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         return _conf;
     }
 
-    public InstanceType setNDConf(NDConfiguration ndConfiguration){
+    public InstanceType setNDConf( NDConfiguration ndConfiguration ){
         _conf = ndConfiguration;
         return (InstanceType) this;
     }
+
 
     //---
 
@@ -173,7 +194,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         return _asList(_conf.shape());
     }
 
-    public int shape(int i){
+    public int shape( int i ){
         return _conf.shape()[ i ];
     }
 
@@ -197,9 +218,9 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         return NDConfiguration.Utility.szeOfShp(_conf.shape());
     }
 
-    protected static List<Integer> _asList(int[] array){
-        List<Integer> intList = new ArrayList<>(array.length);
-        for (int i : array) intList.add( i );
+    protected static List<Integer> _asList( int[] array ){
+        List<Integer> intList = new ArrayList<>( array.length );
+        for ( int i : array ) intList.add( i );
         return intList;
     }
 
@@ -215,19 +236,19 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
     {
         public static class Stringify
         {
-            @Contract(pure = true)
-            public static String formatFP(double v){
-                DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.US);
+            @Contract( pure = true )
+            public static String formatFP( double v ){
+                DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols( Locale.US );
                 DecimalFormat Formatter = new DecimalFormat("##0.0##E0", formatSymbols);
-                String vStr = String.valueOf(v);
+                String vStr = String.valueOf( v );
                 final int offset = 0;
                 if ( vStr.length() > ( 7 - offset ) ){
-                    if (vStr.startsWith("0.")){
-                        vStr = vStr.substring(0, 7-offset)+"E0";
-                    } else if(vStr.startsWith("-0.")){
-                        vStr = vStr.substring(0, 8-offset)+"E0";
+                    if ( vStr.startsWith("0.") ) {
+                        vStr = vStr.substring( 0, 7-offset )+"E0";
+                    } else if( vStr.startsWith( "-0." ) ){
+                        vStr = vStr.substring( 0, 8-offset )+"E0";
                     } else {
-                        vStr = Formatter.format(v);
+                        vStr = Formatter.format( v );
                         vStr = (!vStr.contains(".0E0"))?vStr:vStr.replace(".0E0",".0");
                         vStr = (vStr.contains("."))?vStr:vStr.replace("E0",".0");
                     }
@@ -235,10 +256,11 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
                 return vStr;
             }
 
-            @Contract(pure = true)
-            public static String strConf(int[] conf) {
+            @Contract( pure = true )
+            public static String strConf( int[] conf ) {
                 StringBuilder str = new StringBuilder();
-                for (int i=0; i<conf.length; i++) str.append(conf[ i ]).append((i != conf.length - 1) ? ", " : "");
+                for ( int i = 0; i < conf.length; i++ )
+                    str.append(conf[ i ]).append((i != conf.length - 1) ? ", " : "");
                 return "[" + str + "]";
             }
         }
@@ -249,11 +271,9 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
          */
         public static class Indexing
         {
-
-
             @Contract(pure = true)
-            public static int[] shpCheck(int[] newShp, Tsr t) {
-                if (NDConfiguration.Utility.szeOfShp(newShp) != t.size()) {
+            public static int[] shpCheck( int[] newShp, Tsr t ) {
+                if ( NDConfiguration.Utility.szeOfShp(newShp) != t.size() ) {
                     throw new IllegalArgumentException(
                             "New shape does not match tensor size!" +
                                     " (" + Utility.Stringify.strConf(newShp) + ((NDConfiguration.Utility.szeOfShp(newShp) < t.size()) ? "<" : ">") + Utility.Stringify.strConf(t._conf.shape()) + ")");
@@ -262,9 +282,9 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
             }
 
             @Contract(pure = true)
-            public static int[][] makeFit(int[] sA, int[] sB){
+            public static int[][] makeFit( int[] sA, int[] sB ){
                 int lastIndexOfA = 0;
-                for (int i=sA.length-1; i>=0; i--) {
+                for ( int i = sA.length-1; i >= 0; i-- ) {
                     if(sA[ i ]!=1){
                         lastIndexOfA = i;
                         break;

@@ -184,7 +184,7 @@ public class DataConverter
         public static double[] seededDoubleArray(double[] array, long seed){
             Random dice = new Random();
             dice.setSeed(seed);
-            for(int i=0; i<array.length; i++) array[ i ] = dice.nextGaussian();
+            for( int i=0; i<array.length; i++ ) array[ i ] = dice.nextGaussian();
             return array;
         }
 

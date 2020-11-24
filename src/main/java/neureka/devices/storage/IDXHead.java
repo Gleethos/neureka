@@ -67,14 +67,14 @@ public class IDXHead extends AbstractFileHead<IDXHead>
     {
         FileInputStream f = _loadFileInputStream();
 
-        NumberReader numre = new NumberReader(f);
+        NumberReader numre = new NumberReader( f );
 
         int zeros = numre.read( new UI16() );
         assert zeros == 0;
 
         int typeId = numre.read( new UI8() );
-        Class<?> typeClass = TYPE_MAP.get(typeId);
-        _dtype = DataType.instance(typeClass);
+        Class<?> typeClass = TYPE_MAP.get( typeId );
+        _dtype = (DataType<NumericType<?, ?, ?, ?>>) DataType.instance( typeClass );
 
         int rank = numre.read( new UI8() );
         int[] shape = new int[rank];

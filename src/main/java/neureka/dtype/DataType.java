@@ -47,38 +47,60 @@ public class DataType<Type>
 {
     private static Map<Class<?>, DataType> _instances = new WeakHashMap<>();
 
-    public static DataType instance( Class<?> c ) {
-        if ( _instances.containsKey(c) ) {
-            return _instances.get( c );
+    private static Class<?> _trueType( Class<?> typeClass ) {
+        Class<?> realTypeClass = typeClass;
+        if ( typeClass == Double.class ) realTypeClass = F64.class;
+        else if ( typeClass == Float.class ) realTypeClass = F32.class;
+        else if ( typeClass == Integer.class ) realTypeClass = I32.class;
+        else if ( typeClass == Short.class ) realTypeClass = I16.class;
+        else if ( typeClass == Long.class ) realTypeClass = I64.class;
+        else if ( typeClass == Byte.class ) realTypeClass = I8.class;
+        else if ( typeClass == byte[].class ) realTypeClass = I8.class;
+        else if ( typeClass == int[].class ) realTypeClass = I32.class;
+        else if ( typeClass == float[].class ) realTypeClass = F32.class;
+        else if ( typeClass == double[].class ) realTypeClass = F64.class;
+        else if ( typeClass == long[].class ) realTypeClass = I64.class;
+        return realTypeClass;
+    }
+
+    public static DataType<?> instance( Class<?> typeClass )
+    {
+        Class<?> realTypeClass = _trueType( typeClass );
+
+        if ( _instances.containsKey( realTypeClass ) ) {
+            return _instances.get( realTypeClass );
         }
-        DataType dt = new DataType(c);
-        _instances.put(c, dt);
+        DataType<?> dt = new DataType( realTypeClass );
+        _instances.put( realTypeClass, dt );
         return dt;
     }
 
-    public static <T> void forType(Class<T> c, Consumer<T> action) {
-        if ( _instances.containsKey(c) ) action.accept(
-                (T) _instances.get(c)
-        );
+    public static <T> void forType( Class<T> typeClass, Consumer<DataType<T>> action )
+    {
+        Class<?> realTypeClass = _trueType( typeClass );
+        if ( _instances.containsKey( realTypeClass ) ) {
+            DataType<?> found = _instances.get( realTypeClass );
+            if ( found.getTypeClass() == typeClass ) action.accept( (DataType<T>) found );
+        }
     }
 
-    private Class<Type> _type;
+    private Class<Type> _typeClass;
 
-    private DataType(Class<Type> type) {
-        _type = type;
+    private DataType( Class<Type> type ) {
+        _typeClass = type;
     }
 
     public Class<Type> getTypeClass(){
-        return _type;
+        return _typeClass;
     }
 
-    public Type getTypeClassInstance(){
-
-        Constructor[] ctors = _type.getDeclaredConstructors();
+    public Type getTypeClassInstance()
+    {
+        Constructor[] ctors = _typeClass.getDeclaredConstructors();
         Constructor ctor = null;
-        for (int i = 0; i < ctors.length; i++) {
+        for ( int i = 0; i < ctors.length; i++ ) {
             ctor = ctors[ i ];
-            if (ctor.getGenericParameterTypes().length == 0)
+            if ( ctor.getGenericParameterTypes().length == 0 )
                 break;
         }
 
@@ -91,29 +113,31 @@ public class DataType<Type>
         return null;
     }
 
-    public boolean typeClassImplements(Class<?> interfaceClass){
-        return interfaceClass.isAssignableFrom(_type);
+    public boolean typeClassImplements( Class<?> interfaceClass ){
+        return interfaceClass.isAssignableFrom(_typeClass);
     }
 
 
-    public <TA> TA virtualize(TA value ) {
+    public <TA> TA virtualize( TA value )
+    {
         Object newValue;
         if ( getTypeClass() == F64.class )
-            newValue = ( ((double[]) value).length <= 1 ) ? value : new double[]{ ((double[]) value)[0] };
+            newValue = ( ( (double[]) value ).length <= 1 ) ? value : new double[]{ ( (double[]) value )[ 0 ] };
         else if ( getTypeClass() == F32.class )
-            newValue = ( ((float[]) value).length <= 1 ) ? value : new float[]{ ((float[]) value)[0] };
+            newValue = ( ( (float[]) value ).length <= 1 ) ? value : new float[]{ ( (float[]) value )[ 0 ] };
         else if ( getTypeClass() == I32.class )
-            newValue = ( ((int[]) value).length <= 1 ) ? value : new int[]{ ((int[]) value)[0] };
+            newValue = ( ( (int[]) value ).length <= 1 ) ? value : new int[]{ ( (int[]) value )[ 0 ] };
         else if ( getTypeClass() == I16.class )
-            newValue = ( ((short[]) value).length <= 1 ) ? value : new short[]{ ((short[]) value)[0] };
+            newValue = ( ( (short[]) value ).length <= 1 ) ? value : new short[]{ ( (short[]) value )[ 0 ] };
         else if ( getTypeClass() == I8.class )
-            newValue = ( ((byte[]) value).length <= 1 ) ? value : new byte[]{ ((byte[]) value)[0] };
+            newValue = ( ( (byte[]) value ).length <= 1 ) ? value : new byte[]{ ( (byte[]) value )[ 0 ] };
         else
             throw new IllegalStateException("Primitive array of type '"+getTypeClass().getSimpleName()+"' not supported.");
         return (TA) newValue;
     }
 
-    public <TA> TA actualize( TA value, int size ){
+    public <TA> TA actualize( TA value, int size )
+    {
         Object newValue = value;
         if ( getTypeClass() == F64.class ) {
             if ( ( (double[]) value ).length == size ) return value;
@@ -122,19 +146,19 @@ public class DataType<Type>
         } else if ( getTypeClass() == F32.class ) {
             if ( ( (float[]) value ).length == size ) return value;
             newValue = new float[size];
-            Arrays.fill((float[]) newValue, ((float[]) value)[0]);
+            Arrays.fill( (float[]) newValue, ( (float[]) value )[ 0 ] );
         } else if ( getTypeClass() == I32.class ) {
             if ( ( (int[]) value ).length == size ) return value;
-            newValue = new int[size];
-            Arrays.fill((int[]) newValue, ((int[]) value)[0]);
+            newValue = new int[ size ];
+            Arrays.fill( (int[]) newValue, ( (int[]) value )[ 0 ] );
         } else if ( getTypeClass() == I16.class ) {
             if ( ( (short[]) value ).length == size ) return value;
-            newValue = new short[size];
-            Arrays.fill((short[]) newValue, ((short[]) value)[0]);
+            newValue = new short[ size ];
+            Arrays.fill( (short[]) newValue, ( (short[]) value )[ 0 ] );
         } else if ( getTypeClass() == I8.class ) {
             if ( ( (byte[]) value ).length == size ) return value;
-            newValue = new byte[size];
-            Arrays.fill((byte[]) newValue, ((byte[]) value)[0]);
+            newValue = new byte[ size ];
+            Arrays.fill( (byte[]) newValue, ( (byte[]) value )[ 0 ] );
         } else
             throw new IllegalStateException("Primitive array for type '"+getTypeClass().getSimpleName()+"' not supported.");
         return (TA) newValue;
@@ -146,11 +170,11 @@ public class DataType<Type>
             return new double[ size ];
         else if ( getTypeClass() == F32.class )
             return new float[ size ];
-        else if ( getTypeClass() == I32.class )
+        else if ( getTypeClass() == I32.class || getTypeClass() == UI32.class )
             return new int[ size ];
-        else if ( getTypeClass() == I16.class )
+        else if ( getTypeClass() == I16.class || getTypeClass() == UI16.class )
             return new short[ size ];
-        else if ( getTypeClass() == I8.class )
+        else if ( getTypeClass() == I8.class || getTypeClass() == UI8.class )
             return new byte[ size ];
         else
             throw new IllegalStateException("Primitive array of type '"+getTypeClass().getSimpleName()+"' not supported.");

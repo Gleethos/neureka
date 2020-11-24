@@ -12,7 +12,7 @@ The Device interface also extends the "Component" interface located inside the m
 namely the "neureka" package.
 This is because instances of Device implementations are also components of tensors.
 Tensors "need to know were they are located at" while "devices need to know which tensors they host" ...
-Therefore the following two ways of marrying both types exist : <br>
+Therefore, the following two ways of marrying both types exist : <br>
 
 ```
 myTensor.set( myDevice );
@@ -23,3 +23,12 @@ myDevice.store( myTensor );
 ```
 
 ---
+
+Instances of implementations of the Device interface can be accessed in different ways.
+However, the simplest way is the static ```find(...)``` method  located in the Device interface.
+This works as follows : <br>
+
+```
+Device device = Device.find("cpu"); // "gpu", "first gpu", "amd", ...
+```
+

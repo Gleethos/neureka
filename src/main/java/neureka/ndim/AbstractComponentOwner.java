@@ -85,16 +85,17 @@ public abstract class AbstractComponentOwner<InstanceType>
      * @param componentClass The type/class of a component which will be removed by this method.
      * @return This very class.
      */
-    public <T extends Component<InstanceType>> InstanceType remove(Class<T> componentClass) {
-        T oldComponent = find(componentClass);
-        if (oldComponent != null) {
-            _components.remove(_removeOrReject(oldComponent));
+    public <T extends Component<InstanceType>> InstanceType remove(Class<T> componentClass)
+    {
+        T oldComponent = find( componentClass );
+        if ( oldComponent != null ) {
+            _components.remove( _removeOrReject( oldComponent ) );
             //_components.trimToSize();
         }
-        if (_components != null && _components.size() == 0) {
+        if ( _components != null && _components.size() == 0 ) {
             _components = null;
         }
-        return (InstanceType)this;
+        return (InstanceType) this;
     }
 
     /**
@@ -104,8 +105,8 @@ public abstract class AbstractComponentOwner<InstanceType>
      * @param componentClass The class/type of a component that might exist in components.
      * @return True if the component of the given type/class has been found.
      */
-    public boolean has(Class componentClass) {
-        return find(componentClass) != null;
+    public boolean has( Class<?> componentClass ) {
+        return find( componentClass ) != null;
     }
 
     /**
@@ -118,20 +119,20 @@ public abstract class AbstractComponentOwner<InstanceType>
      * @param newComponent The new component which should be added to the components list.
      * @return This very class.
      */
-    public InstanceType set(Component<InstanceType> newComponent)
+    public InstanceType set( Component<InstanceType> newComponent)
     {
-        if (newComponent == null) return (InstanceType)this;
+        if ( newComponent == null ) return (InstanceType) this;
         Component<InstanceType> oldCompartment = null;
-        if (_components != null) {
-            oldCompartment = (Component<InstanceType>) find(newComponent.getClass());
-            if (oldCompartment != null) {
-                _components.remove(oldCompartment);
+        if ( _components != null ) {
+            oldCompartment = (Component<InstanceType>) find( newComponent.getClass() );
+            if ( oldCompartment != null ) {
+                _components.remove( oldCompartment );
                 //_components.trimToSize();
             }
         } else _components = new ArrayList<>();
 
-        _components.add(_setOrReject(newComponent));
-        return (InstanceType)this;
+        _components.add( _setOrReject( newComponent ) );
+        return (InstanceType) this;
     }
 
     /**
@@ -147,7 +148,7 @@ public abstract class AbstractComponentOwner<InstanceType>
      * @param newComponent The component which should be added to the components list.
      * @return The same component or null if it has been rejected.
      */
-    protected abstract <T extends Component<InstanceType>> T _setOrReject(T newComponent);
+    protected abstract <T extends Component<InstanceType>> T _setOrReject( T newComponent );
 
 
     /**

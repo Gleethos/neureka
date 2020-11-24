@@ -31,14 +31,14 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
     {
         given : 'A simple tensor instance with a mock device as component.'
             def device = Mock(Device)
-            device.has(_) >>> [false, true, true]
+            device.has(_) >>> [false, true, true, false]
             Tsr t = new Tsr(2).set(device)
 
         when : 'The "isOutsourced" property is being set to false...'
             t.isOutsourced = false
 
         then : '...the tensor should try to remove itself from the given device.'
-            1 * device.restore(t)
+            1 * device.restore( t )
 
         and : 'The device should not be a tensor component anymore.'
             !t.has(Device.class)

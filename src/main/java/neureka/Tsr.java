@@ -32,6 +32,42 @@ SOFTWARE.
     This is the the core work-horse class of Neureka. The 'Tsr' class!
     It is a three-letter abbreviation of the word "tensor"!
 
+------------------------------------------------------------------------------------------------------------------------
+
+    $(1) : CONSTRUCTION
+        §(1.1) : FUNCTION BASED CONSTRUCTION
+
+    §(2) : FLAGS
+        §(2.0) : GRADIENT REQUIREMENT
+        §(2.1) : SOURCE LOCATION (DEVICE)
+        §(2.2) : VIRTUAL / ACTUAL
+        §(2.3) : GRADIENT APPLY REQUIREMENT
+
+    §(3) : COMPONENT SYSTEM
+        §(3.0) : SETTING / REJECTING
+        §(3.1) : REMOVING / REJECTING
+        §(3.2) : UPDATING
+
+    §(4) : PROPERTIES
+        $(4.0) : HIGH LEVEL PROPERTIES
+        §(4.1) : COMPONENT PROPERTIES
+        §(4.2) : INNER PROPERTIES
+
+    §(5) : OBJECT STATE MODIFICATION
+
+    §(6) : ND-ITERATOR LOGIC
+
+    §(7) : COMPONENT SPECIFIC
+        §(7.0) : AUTO-GRAD
+        §(7.1) : FRAMING
+
+    §(8) : (OVERLOADABLE) OPERATORS & OPERATIONS
+        §(8.0) : OPERATORS
+        §(8.1) : OPERATIONS
+
+    §(9) : SLICING, INDEXING & INJECTING
+        §(9.0) : SLICING
+        §(9.1) : INJECTING
 */
 
 package neureka;
@@ -183,12 +219,12 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                     NDConfiguration.Utility.szeOfShp( shp )
             );
             for ( int i = 0; i < value.length; i++ ) value[ i ] = range.get( i % range.size() );
-            _value = value;
-            _type = DataType.instance( givenClass );
+            setDataType( DataType.instance( givenClass ) );
+            _setData( value );
             _construct( shp, value );
         } else {
             double[] value = new double[ NDConfiguration.Utility.szeOfShp( shp ) ];
-            _type = DataType.instance( F64.class );
+            //setDataType( DataType.instance( F64.class ) ); //!!
             for ( int i = 0; i < value.length; i++ ) {
                 if ( range.get( i % range.size() ) instanceof BigDecimal ) {
                     value[ i ] = ( (BigDecimal) range.get( i % range.size() ) ).doubleValue();
@@ -212,11 +248,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                     NDConfiguration.Utility.szeOfShp( shape )
             );
             for ( int i = 0; i < newValue.length; i++ ) newValue[ i ] = value[ i % value.length ];
-            _value = newValue;
-            _type = DataType.instance( givenClass );
+            setDataType( DataType.instance( givenClass ) );
+            _setData( newValue );
         }
-        else _value = value;
-        _configureFromNewShape( shape, false );
+        else _setData( value );
+        _configureFromNewShape( shape, false, true );
     }
 
     private void _construct( List<List<Object>> matrix ) {
@@ -327,9 +363,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _construct( shape, seed );
     }
 
-    private void _construct( int[] shape, String seed ) {
+    private void _construct( int[] shape, String seed ) 
+    {
         _construct( shape, false, false );
-        _value = DataConverter.Utility.seededDoubleArray( (double[]) _value, seed );
+        _setData( DataConverter.Utility.seededDoubleArray( (double[]) _data, seed ) );
     }
 
     private int[] _intArray( Object[] arg ) {
@@ -342,7 +379,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return array;
     }
 
-    private double[] _doubleArray( Object[] arg ) {
+    private double[] _doubleArray( Object[] arg ) 
+    {
         int length = arg.length;
         double[] array = new double[ length ];
         for ( int i = 0; i < length; i++ ) {
@@ -353,11 +391,13 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return array;
     }
 
-    public Tsr( Object[] args ){
+    public Tsr( Object[] args )
+    {
         _construct( args );
     }
 
-    private void _construct( Object[] args ) {
+    private void _construct( Object[] args )
+    {
         if ( args == null || args.length == 0 ) return;
         if ( args.length == 1 ) {
             if ( args[ 0 ] instanceof Object[] ) {
@@ -421,37 +461,50 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _construct( tsrs, f.toString(), doAD );
     }
 
-    public Tsr( double value ){
+    public Tsr( double value )
+    {
         _construct( new int[]{ 1 }, value );
     }
 
-    public Tsr( int[] shape ) {
+    public Tsr( int[] shape ) 
+    {
         _construct( shape, true, true );
     }
 
-    public Tsr( int[] shape, DataType<?> type ) {
-        _type = DataType.instance( type.getTypeClass() );
+    public Tsr( int[] shape, DataType<?> type ) 
+    {
+        setDataType( DataType.instance( type.getTypeClass() ) );
         _construct( shape, true, true );
     }
 
+    public Tsr( int[] shape, Class<?> typeClass, Object data )
+    {
+        setDataType( DataType.instance( typeClass ) );
+        _configureFromNewShape( shape, false, false );
+        setValue( data );
+    }
 
-    private void _construct( int[] shape, boolean allocate, boolean virtual ) {
+
+    private void _construct( int[] shape, boolean allocate, boolean virtual ) 
+    {
         if ( allocate ) _allocate( ( virtual ) ? 1 : NDConfiguration.Utility.szeOfShp( shape ) );
         if ( virtual ) setIsVirtual( true );
-        _configureFromNewShape( shape, virtual );
+        _configureFromNewShape( shape, virtual, true );
     }
 
-    public Tsr( int[] shape, double value ) {
+    public Tsr( int[] shape, double value ) 
+    {
         _construct( shape, value );
     }
 
-    private void _construct( int[] shape, double value ) {
+    private void _construct( int[] shape, double value ) 
+    {
         int size = NDConfiguration.Utility.szeOfShp( shape );
-        _type = DataType.instance( F64.class );
+        setDataType( DataType.instance( F64.class ) );
         _allocate( 1 );
         setIsVirtual( size > 1 );
-        _configureFromNewShape( shape, size > 1 );
-        ( (double[])_value )[ 0 ] = value;
+        _configureFromNewShape( shape, size > 1, true );
+        ( (double[]) _data)[ 0 ] = value;
     }
 
     public Tsr( int[] shape, double[] value ) {
@@ -461,19 +514,19 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     private void _construct( int[] shape, double[] value )
     {
         int size = NDConfiguration.Utility.szeOfShp( shape );
-        _type = DataType.instance( F64.class );
+        setDataType( DataType.instance( F64.class ) );
         if ( size != value.length ) {
             _allocate( size );
-            for ( int i = 0; i < size; i++ ) ( (double[])_value )[ i ]  = value[ i % value.length ];
-        } else _value = value;
-        _configureFromNewShape( shape, false );
+            for ( int i = 0; i < size; i++ ) ( (double[]) _data)[ i ]  = value[ i % value.length ];
+        } else _setData( value );
+        _configureFromNewShape( shape, false, true );
     }
 
     public Tsr( int[] shape, DataType<?> dataType, Object value ) {
-        _value = value;
-        _type = dataType;
+        setDataType( dataType );
+        _setData( value );
         if (dataType.typeClassImplements( NumericType.class ) )
-        _configureFromNewShape( shape, false );
+        _configureFromNewShape( shape, false, true );
     }
 
     /*
@@ -546,9 +599,14 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     /**
+     *  This method is responsible for instantiating and setting the _conf variable.
+     *  The core requirement for instantiating NDConfiguration interface implementation s
+     *  is a shape array of integers which is being passed to the method...
+     *
      * @param newShape
      */
-    protected void _configureFromNewShape( int[] newShape, boolean makeVirtual ) {
+    protected void _configureFromNewShape( int[] newShape, boolean makeVirtual, boolean autoAllocate )
+    {
         int size = NDConfiguration.Utility.szeOfShp( newShape );
         if ( size == 0 ) {
             String shape = Arrays.stream( newShape ).mapToObj( String::valueOf ).collect( Collectors.joining( "x" ) );
@@ -556,7 +614,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             _LOGGER.error( message );
             throw new IllegalArgumentException( message );
         }
-        if ( _value == null ) _allocate( size );
+        if ( _data == null && autoAllocate ) _allocate( size );
         int length = _dataLength();
         if ( length >= 0 ) {
             if ( size != length && ( !this.isVirtual() || !makeVirtual) ) {
@@ -582,6 +640,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     |       §(2) : FLAGS
     |   ----------------------
     */
+    /*
+    --------------------------------------------
+        §(2.0) : GRADIENT REQUIREMENT  :
+    --------------------------------------------
+    */
 
     public Tsr<ValueType> setRqsGradient( boolean rqsGradient ) {
         if ( rqsGradient() != rqsGradient && !rqsGradient ) this.remove( Tsr.class );
@@ -600,12 +663,16 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         }
     }
 
-    //------------------------------------------------------------------------------------------------------------------
+    /*
+    ---------------------------------------------
+        §(2.1) : SOURCE LOCATION (DEVICE)  :
+    ---------------------------------------------
+    */
 
     public Tsr<ValueType> setIsOutsourced( boolean isOutsourced ) {
         _setIsOutsourced( isOutsourced );
         if ( isOutsourced ) {
-            _value = null;
+            _setData( null );
         } else if (
                 !forComponent(
                         Device.class,
@@ -639,7 +706,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                                                     })
                             );
                         }
-                ) && _value == null
+                ) && _data == null
         ){
             setIsVirtual( true );
         }
@@ -657,7 +724,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         }
     }
 
-    //------------------------------------------------------------------------------------------------------------------
+    /*
+    --------------------------------------------
+        §(2.2) : VIRTUAL / ACTUAL  :
+    --------------------------------------------
+    */
 
     public Tsr<ValueType> setIsVirtual( boolean isVirtual ) {
         if ( isVirtual() != isVirtual ) {
@@ -672,10 +743,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 throw exception;
             }
             if ( isVirtual ) {
-                if ( _value == null ) _allocate( 1 );
+                if ( _data == null ) _allocate( 1 );
                 else _virtualize();
                 Relation<ValueType> relation = find( Relation.class );
-                if ( relation!=null ) relation.foreachChild( c -> c._value = _value );
+                if ( relation!=null ) relation.foreachChild( c -> c._setData( _data) );
             } else {
                 Tsr<?> parentTensor = (this.isSlice())? find(Relation.class).getParent() : null;
                 if ( parentTensor != null ) {
@@ -684,7 +755,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 _actualize();
             }
             _setIsVirtual( isVirtual );
-            if( _conf != null ) _configureFromNewShape( _conf.shape(), isVirtual );
+            if( _conf != null ) _configureFromNewShape( _conf.shape(), isVirtual, true );
             try {
                 if( device != null ) device.store( this );
             } catch ( Exception exception ) {
@@ -696,7 +767,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 );
                 throw new IllegalStateException( message );
             }
-        } else if ( isVirtual && _value == null ) _allocate( 1 );//_value = //new double[]{0};
+        } else if ( isVirtual && _data == null ) _allocate( 1 );//_value = //new double[]{0};
         return this;
     }
 
@@ -716,7 +787,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         }
     }
 
-    //------------------------------------------------------------------------------------------------------------------
+    /*
+    --------------------------------------------
+        §(2.3) : GRADIENT APPLY REQUIREMENT  :
+    --------------------------------------------
+    */
 
     public Tsr<ValueType> setGradientApplyRqd( boolean applyRequested ) {
         if ( gradientApplyRqd() != applyRequested ) {
@@ -741,6 +816,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     |
     |       §(3) : COMPONENT SYSTEM
     |   --------------------------------
+    */
+    /*
+    --------------------------------------------
+        §(3.0) : SETTING / REJECTING  :
+    --------------------------------------------
     */
 
     /**
@@ -796,6 +876,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return newComponent;
     }
 
+    /*
+    --------------------------------------------
+        §(3.1) : REMOVING / REJECTING  :
+    --------------------------------------------
+    */
     /**
      * This method is executed when a component is being removed from the tensor.
      * The public remove method is implemented in the super class
@@ -809,11 +894,36 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     protected <T extends Component<Tsr<ValueType>>> T _removeOrReject( T newComponent )
     {
         if ( newComponent instanceof Device ) {
+            Device<ValueType> device = (Device<ValueType>) newComponent;
+            /*
+                The following seems like a redundant check, however often times a tensor
+                will be removed from a Device implementation inside the "restore" method
+                when the tensor has already been removed from the device...
+                With out the condition below a stack overflow would occur!
+             */
+            if ( device.has( this ) ) {
+                try {
+                    device.restore( this );
+                } catch ( Exception exception ) {
+                    _LOGGER.error(
+                            "Removing device from tensor / tensor from device failed.\n" +
+                            "Restoring tensor from device threw exception.\n",
+                            exception
+                    );
+                    throw exception;
+                }
+            }
+
 
         }
         return newComponent;
     }
 
+    /*
+    ----------------------------
+        §(3.2) : UPDATING  :
+    ----------------------------
+    */
     /**
      *  Important : Components of type Tsr are simply gradients!
      *  This method does not need to have an implementation in this case.
@@ -832,12 +942,17 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     /*==================================================================================================================
     |
-    |       §(4) : HIGH LEVEL PROPERTIES :
+    |       §(4) : PROPERTIES :
     |   ---------------------------------------
+    */
+    /*
+    --------------------------------------------
+        §(4.0) : HIGH LEVEL PROPERTIES  :
+    --------------------------------------------
     */
 
     public boolean isEmpty() {
-        return _value == null && !this.isOutsourced();
+        return _data == null && !this.isOutsourced();
     }
 
     public boolean isUndefined() {
@@ -875,11 +990,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this.has( Tsr.class );
     }
 
-
     /*
-        --------------------------------------------
-            §(4.1) : COMPONENT PROPERTIES :
-        --------------------------------------------
+        ----------------------------------------------
+            §(4.1) : COMPONENT BASED PROPERTIES :
+        ----------------------------------------------
      */
 
     public Tsr<ValueType> getGradient() {
@@ -917,12 +1031,12 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         ---------------------------------------
      */
 
-    private int _dataLength(){
-        if ( !(_value instanceof float[]) && !(_value instanceof double[]) ) {
-            if ( _value instanceof Object[] ) return ((Object[])_value).length;
+    private int _dataLength() {
+        if ( !(_data instanceof float[]) && !(_data instanceof double[]) ) {
+            if ( _data instanceof Object[] ) return ((Object[]) _data).length;
             else return -1;
-        } else if ( this.is64() ) return ( (double[]) _value ).length;
-        else return ( (float[]) _value ).length;
+        } else if ( this.is64() ) return ( (double[]) _data).length;
+        else return ( (float[]) _data).length;
     }
 
 
@@ -931,9 +1045,6 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     |       §(5) : OBJECT STATE MODIFICATION :
     |   ------------------------------------------
     */
-
-
-
     /**
      *  This method is responsible for incrementing
      *  the "_version" field variable which represents the version of the data of this tensor.
@@ -971,17 +1082,18 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         });
         forComponent( Device.class, d -> d.free( this ) );
         _flags = -1;
-        _value = null;
+        _setData( null );
         _conf = null;
         forComponent( Tsr.class, Tsr::delete );
         _components = null;
         return this;
     }
 
-    protected Tsr<ValueType> _become( Tsr<ValueType> tensor ) {
+    protected Tsr<ValueType> _become( Tsr<ValueType> tensor )
+    {
         if ( tensor == null ) return this;
-        _value = tensor._value;
-        _type = tensor._type;
+        this.setDataType( tensor.getDataType() );
+        _setData( tensor._data );
         _conf = tensor._conf;
         _components = Collections.synchronizedList( new ArrayList<>() );
         _flags = tensor._flags;
@@ -990,8 +1102,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             List<Component<Tsr<ValueType>>> snapshot = new ArrayList<>( tensor._components );
             for ( Component<Tsr<ValueType>> o : snapshot ) o.update( tensor, this );
         }
-        tensor._value = null;
-        tensor._type = null;
+        tensor._setData( null );
+        tensor.setDataType( null );
         tensor._conf = null;
         tensor._components = null;
         tensor._flags = -1;
@@ -1039,7 +1151,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     */
     /*
         -------------------------------
-            §(7.1) : AUTO-GRAD :
+            §(7.0) : AUTO-GRAD :
         -------------------------------
         ... for more context see package 'autograd' ...
      */
@@ -1108,7 +1220,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     /*
         ----------------------------
-            §(7.2) : FRAMING :
+            §(7.1) : FRAMING :
         ----------------------------
         ... for more context see package 'framing'...
      */
@@ -1149,7 +1261,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     |*/
     /*
         -----------------------------
-            §(8.1) : OPERATORS :
+            §(8.0) : OPERATORS :
         -----------------------------
      */
 
@@ -1227,7 +1339,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     /*
         -----------------------------
-            §(8.2) : OPERATIONS :
+            §(8.1) : OPERATIONS :
         -----------------------------
      */
 
@@ -1291,7 +1403,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     */
     /*
         -----------------------------
-            §(9.1) : SLICING :
+            §(9.0) : SLICING :
         -----------------------------
      */
 
@@ -1332,7 +1444,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return _sliceOf( newShape, newOffset, newSpread );
     }
 
-    public Tsr shallowCopy()
+    public Tsr<ValueType> shallowCopy()
     {
         if ( this.isEmpty() || this.isUndefined() ) return this;
         List<List<Integer>> ranges = new ArrayList<>();
@@ -1341,7 +1453,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             for ( int i = 0; i < e; i++ ) rangeAsList.add( i );
             ranges.add( rangeAsList);
         }
-        return (Tsr) getAt( ranges.toArray() );
+        return (Tsr<ValueType>) getAt( ranges.toArray() );
     }
 
     /**
@@ -1372,7 +1484,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
         if ( key instanceof Object[] ) {
             boolean allInt = true;
-            for (Object o : (Object[]) key) allInt = allInt && o instanceof Integer;
+            for ( Object o : (Object[]) key ) allInt = allInt && o instanceof Integer;
             if ( allInt && ((Object[]) key).length == rank() ) {
                 key = _intArray((Object[]) key);
                 newOffset = (int[]) key;
@@ -1400,11 +1512,12 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return _sliceOf( newShape, newOffset, newSpread );
     }
 
-    private Tsr _sliceOf( int[] newShape, int[] newOffset, int[] newSpread ) {
+    private Tsr<ValueType> _sliceOf( int[] newShape, int[] newOffset, int[] newSpread )
+    {
         this.setIsVirtual( false );
         Tsr<ValueType> subset = new Tsr<>();
-        subset._value = this._value;
-        subset._type = this._type;
+        subset.setDataType( this.getDataType() );
+        subset._setData( this._data );
         int[] newTranslation = this._conf.translation();
         int[] newIdxmap = NDConfiguration.Utility.newTlnOf( newShape );
 
@@ -1516,10 +1629,6 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                     Object[] ks = ( (Map<?,?>) ranges[ i ] ).keySet().toArray();
                     Object[] steps = ( (Map<?,?>) ranges[ i ]).values().toArray();
                     int newI = _configureSubsetFromRanges( ks, offset, spread, newShape, i + iOffset );
-                    //for ( int ii = rank(); ii < ( rank() + steps.length ); ii++ ) {
-                    //    idxbase[ ii + i + offset ] = (Integer) steps[ ii - rank() ];
-                    //    newShape[ ii + i + offset - rank() ] /= idxbase[ ii + i + offset ];
-                    //}
                     for ( int ii = 0; ii < steps.length; ii++ ) {
                         spread[ ii + i + iOffset ] = (Integer) steps[ ii ];
                         newShape[ ii + i + iOffset ] /= spread[ ii + i + iOffset ];
@@ -1589,7 +1698,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     /*
         -----------------------------
-            §(9.2) : INJECTING :
+            §(9.1) : INJECTING :
         -----------------------------
      */
 
@@ -1719,38 +1828,38 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     @Override
     public Object getValueAt( int i ) {
-        if ( _value instanceof float[] ) return ( (float[]) _value )[ i ];
-        else if ( _value instanceof double[] ) return ( (double[]) _value )[ i ];
-        else if ( _value instanceof short[] ) return ( (short[]) _value )[ i ];
-        else if ( _value instanceof int[] ) return ( (int[]) _value )[ i ];
-        else if ( _value instanceof byte[] ) return ( (byte[]) _value )[ i ];
-        else if ( _value instanceof long[] ) return ( (long[]) _value )[ i ];
-        else return ( (ValueType[]) _value )[ i ];
+        if ( _data instanceof float[] ) return ( (float[]) _data)[ i ];
+        else if ( _data instanceof double[] ) return ( (double[]) _data)[ i ];
+        else if ( _data instanceof short[] ) return ( (short[]) _data)[ i ];
+        else if ( _data instanceof int[] ) return ( (int[]) _data)[ i ];
+        else if ( _data instanceof byte[] ) return ( (byte[]) _data)[ i ];
+        else if ( _data instanceof long[] ) return ( (long[]) _data)[ i ];
+        else return ( (ValueType[]) _data)[ i ];
     }
 
     public Tsr<ValueType> setValue64( double[] value ) {
         if ( this.isOutsourced() ) this.find( Device.class ).overwrite64( this, value );
-        else if ( _value == null ) {
-            _value = value;
-            _type = DataType.instance( F64.class );
+        else if ( _data == null ) {
+            setDataType( DataType.instance( F64.class ) );
+            _setData( value );
         }
-        else if ( _value instanceof float[] )
-            for ( int i = 0; i < value.length; i++ ) ( (float[]) _value )[ i ] = (float) value[ i ];
-        else if ( _value instanceof double[] )
-            for ( int i = 0; i < value.length; i++ ) ( (double[]) _value )[ i ] = value[ i ];
+        else if ( _data instanceof float[] )
+            for ( int i = 0; i < value.length; i++ ) ( (float[]) _data)[ i ] = (float) value[ i ];
+        else if ( _data instanceof double[] )
+            for ( int i = 0; i < value.length; i++ ) ( (double[]) _data)[ i ] = value[ i ];
         return this;
     }
 
     public Tsr<ValueType> setValue32( float[] value ) {
         if ( this.isOutsourced() ) this.find( Device.class ).overwrite32( this, value );
-        else if ( _value == null ) {
-            _value = value;
-            _type = DataType.instance( F32.class );
+        else if ( _data == null ) {
+            setDataType( DataType.instance( F32.class ) );
+            _setData( value );
         }
-        else if ( _value instanceof float[] )
-            for ( int i = 0; i < value.length; i++ ) ( (float[]) _value )[ i ] = value[ i ];
-        else if ( _value instanceof double[] )
-            for ( int i = 0; i < value.length; i++ ) ( (double[]) _value )[ i ] = value[ i ];
+        else if ( _data instanceof float[] )
+            for ( int i = 0; i < value.length; i++ ) ( (float[]) _data)[ i ] = value[ i ];
+        else if ( _data instanceof double[] )
+            for ( int i = 0; i < value.length; i++ ) ( (double[]) _data)[ i ] = value[ i ];
         return this;
     }
 
@@ -1759,19 +1868,19 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         else if ( value instanceof  double[] ) this.setValue64( (double[]) value );
         else if ( value instanceof Float ) {
             this.setIsVirtual( true );
-            if ( this.is32() ) ( (float[]) _value )[ 0 ] = (Float) value;
-            else ( (double[]) _value )[ 0 ] = ( (Float) value ).doubleValue();
+            if ( this.is32() ) ( (float[]) _data)[ 0 ] = (Float) value;
+            else ( (double[]) _data)[ 0 ] = ( (Float) value ).doubleValue();
         } else if ( value instanceof Double ) {
             this.setIsVirtual( true );
-            if ( this.is64() ) ( (double[]) _value )[ 0 ] = (Double) value;
-            else ( (float[]) _value )[ 0 ] = ( (Double) value ).floatValue();
+            if ( this.is64() ) ( (double[]) _data)[ 0 ] = (Double) value;
+            else ( (float[]) _data)[ 0 ] = ( (Double) value ).floatValue();
         } else if ( value instanceof int[] ) {
-            _type = DataType.instance(I32.class);
-            _value = value;
+            setDataType( DataType.instance(I32.class) );
+            _setData( value );
             setIsVirtual( false );
         } else if ( value instanceof short[] ) {
-            _type = DataType.instance(I16.class);
-            _value = value;
+            setDataType( DataType.instance(I16.class) );
+            _setData( value );
             setIsVirtual( false );
         }
         return this;
@@ -1785,17 +1894,14 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                         ? device.value32f( this )
                         : device.value64f( this );
             }
-            else return _value;
+            else return _data;
         }
-        else if ( !this.isVirtual() ) return _value;
-        else return _type.actualize( _value, this.size() );
-        //else if ( this.is64() ) return value64();
-        //else if ( this.is32() ) return value32();
-        //else return _value;
+        else if ( !this.isVirtual() ) return _data;
+        else return getDataType().actualize(_data, this.size() );
     }
 
     public Object getData() {
-        return _value;
+        return _data;
     }
 
     public double[] gradient64() {
@@ -1843,7 +1949,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 _LOGGER.error( "Failed to restore tensor from device for datatype migration.", exception );
                 throw exception;
             }
-            _value = DataConverter.Utility.doubleToFloat( (double[]) _value );
+            _setData( DataConverter.Utility.doubleToFloat( (double[]) _data) );
             forComponent( Tsr.class, Tsr::to32 );
             try {
                 if ( device != null ) device.store( this );
@@ -1864,7 +1970,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 _LOGGER.error( "Failed to restore tensor from device for datatype migration.", exception );
                 throw exception;
             }
-            _value = DataConverter.Utility.floatToDouble( (float[]) _value );
+            _setData( DataConverter.Utility.floatToDouble( (float[]) _data) );
             forComponent( Tsr.class, Tsr::to64 );
             try {
                 if ( device != null ) device.store( this );
@@ -1876,28 +1982,21 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this;
     }
 
-
     public <T> Tsr<T> asType( Class<T> typeClass )
     {
-        Class<?> realTypeClass = typeClass;
-        if ( typeClass == Double.class ) realTypeClass = F64.class;
-        else if ( typeClass == Float.class ) realTypeClass = F32.class;
-        else if ( typeClass == Integer.class ) realTypeClass = I32.class;
-        else if ( typeClass == Short.class ) realTypeClass = I16.class;
-
         if ( this.isOutsourced() ) {
-            _type = DataType.instance( realTypeClass );
+            setDataType( DataType.instance( typeClass ) );
             return (Tsr<T>) this;
         }
         // else conversion :
-        DataType newDT = DataType.instance( realTypeClass );
+        DataType newDT = DataType.instance( typeClass );
         if (
                 newDT.typeClassImplements( NumericType.class ) &&
-                        _type.typeClassImplements( NumericType.class )
+                        getDataType().typeClassImplements( NumericType.class )
         ) {
             NumericType<?,Object, ?, Object> instance   = (NumericType<?, Object,?, Object>) newDT.getTypeClassInstance();
-            NumericType<?,Object,?, Object> originType = (NumericType<?, Object,?, Object>) _type.getTypeClassInstance();
-            instance.convert( _value, originType.targetArrayType() );
+            NumericType<?,Object,?, Object> originType = (NumericType<?, Object,?, Object>) getDataType().getTypeClassInstance();
+            instance.convert(_data, originType.targetArrayType() );
         }
         return (Tsr<T>) this;
     }
@@ -1905,32 +2004,26 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public double value64( int i ) {
         if ( this.isOutsourced() ) return find( Device.class ).value64f( this, i );
         if ( this.isVirtual() ) {
-            if ( this.is64() ) return ( (double[]) _value )[ 0 ];
-            else return ( (float[]) _value )[ 0 ];
+            if ( this.is64() ) return ( (double[]) _data)[ 0 ];
+            else return ( (float[]) _data)[ 0 ];
         } else {
-            if ( this.is64() ) return ( (double[]) _value )[ i ];
-            else return ( (float[]) _value )[ i ];
+            if ( this.is64() ) return ( (double[]) _data)[ i ];
+            else return ( (float[]) _data)[ i ];
         }
     }
 
     public double[] value64() {
         Device found = this.find( Device.class );
-        if ( _value == null && this.isOutsourced() && found != null ) {
+        if ( _data == null && this.isOutsourced() && found != null ) {
             return found.value64f( this );
         }
-        double[] newValue = DataConverter.instance().convert( _value, double[].class );
-                //( this.is64() )
-                //? (double[]) _value
-                //: DataConverter.Utility.floatToDouble( (float[]) _value );
+        double[] newValue = DataConverter.instance().convert(_data, double[].class );
+
         if ( this.isVirtual() && newValue != null && this.size() > 1 ) {
 
-            //newValue = new double[ this.size() ];
-            double[] value = new double[ this.size() ];
-                    //( this.is64() )
-                    //? (double[]) _value
-                    //: DataConverter.Utility.floatToDouble( (float[]) _value );
-            Arrays.fill( value, newValue[ 0 ] );
-            return value;
+           double[] value = new double[ this.size() ];
+           Arrays.fill( value, newValue[ 0 ] );
+           return value;
         }
         return newValue;
     }
@@ -1938,23 +2031,20 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public float value32( int i ) {
         if ( this.isOutsourced() ) return find( Device.class ).value32f( this, i );
         if ( this.isVirtual() ) {
-            if ( this.is64() ) return (float) ( (double[]) _value )[ 0 ];
-            else return ( (float[]) _value )[ 0 ];
+            if ( this.is64() ) return (float) ( (double[]) _data)[ 0 ];
+            else return ( (float[]) _data)[ 0 ];
         } else {
-            if ( this.is64() ) return (float) ( (double[]) _value )[ i ];
-            else return ( (float[]) _value )[ i ];
+            if ( this.is64() ) return (float) ( (double[]) _data)[ i ];
+            else return ( (float[]) _data)[ i ];
         }
     }
 
     public float[] value32() {
         Device<ValueType> found = this.find( Device.class );
-        if ( _value == null && this.isOutsourced() && found != null ) {
+        if ( _data == null && this.isOutsourced() && found != null ) {
             return found.value32f( this );
         }
-        float[] newValue = DataConverter.instance().convert( _value, float[].class );
-                //( this.is64() )
-                //? DataConverter.Utility.doubleToFloat( (double[]) _value )
-                //: (float[]) _value;
+        float[] newValue = DataConverter.instance().convert(_data, float[].class );
         if ( this.isVirtual() && newValue != null ) {
             newValue = new float[ this.size() ];
             Arrays.fill( newValue, newValue[ 0 ] );
@@ -1992,7 +2082,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         );
         if ( mode.contains( "shape" ) || mode.contains( "shp" ) ) return strShape.toString();
         String asString = "";
-        asString += _stringified( _value, compact, max );
+        asString += _stringified(_data, compact, max );
         asString = strShape + (
                         ( Neureka.instance().settings().view().isUsingLegacyView() )
                                 ? ":(" + asString + ")"
@@ -2178,9 +2268,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             return t;
         }
 
-        private static Tsr _newEmptyLike( Tsr template ) {
-            Tsr t = new Tsr();
-            t._configureFromNewShape( template.getNDConf().shape(), false );
+        private static Tsr<?> _newEmptyLike( Tsr<?> template ) {
+            Tsr<?> t = new Tsr();
+            t._configureFromNewShape( template.getNDConf().shape(), false, true );
             return t;
         }
 
