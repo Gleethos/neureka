@@ -127,11 +127,6 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     /**
-     *  An interface provided by sl4j which enables a modular logging backend!
-     */
-    private static Logger _LOGGER; // Why is this not final ? : For unit testing!
-
-    /**
      *  Default device (host cpu)
      */
     private static final Device<Number> _CPU;
@@ -1949,7 +1944,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 _LOGGER.error( "Failed to restore tensor from device for datatype migration.", exception );
                 throw exception;
             }
-            _setData( DataConverter.Utility.doubleToFloat( (double[]) getData()) );
+            Object old = getData();
+            _setData( null );
+            setDataType( DataType.instance( F32.class ) );
+            _setData( DataConverter.Utility.doubleToFloat( (double[]) old) );
             forComponent( Tsr.class, Tsr::to32 );
             try {
                 if ( device != null ) device.store( this );
@@ -1970,7 +1968,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 _LOGGER.error( "Failed to restore tensor from device for datatype migration.", exception );
                 throw exception;
             }
-            _setData( DataConverter.Utility.floatToDouble( (float[]) getData()) );
+            Object old = getData();
+            _setData( null );
+            setDataType( DataType.instance( F64.class ) );
+            _setData( DataConverter.Utility.floatToDouble( (float[]) old) );
             forComponent( Tsr.class, Tsr::to64 );
             try {
                 if ( device != null ) device.store( this );

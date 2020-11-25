@@ -39,8 +39,10 @@ package neureka.ndim;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.dtype.DataType;
+import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
+import org.slf4j.Logger;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -59,6 +61,11 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractComponentOwner<InstanceType> implements Iterable<ValueType>
 {
+
+    /**
+     *  An interface provided by sl4j which enables a modular logging backend!
+     */
+    protected static Logger _LOGGER; // Why is this not final ? : For unit testing!
 
     protected NDConfiguration _conf;
 
@@ -93,7 +100,21 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
     }
 
 
-    protected void _setData( Object data ) {
+    protected void _setData( Object data )
+    {
+        if ( _dataType == null ) {
+            String message = "Trying to set data in a tensor which does not have a DataTyp instance.";
+            _LOGGER.error( message );
+            throw new IllegalStateException( message );
+        }
+        if ( data != null && _dataType.typeClassImplements( NumericType.class ) ) {
+            NumericType numericType = (NumericType) _dataType.getTypeClassInstance();
+            if ( numericType.targetArrayType() != data.getClass() ) {
+                String message = "Cannot set data whose type does not match what is defined by the DataType instance.";
+                _LOGGER.error( message );
+                throw new IllegalStateException( message );
+            }
+        }
         _data = data;
     }
 
