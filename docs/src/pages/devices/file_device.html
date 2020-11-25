@@ -81,8 +81,8 @@
     // But when we store it on the file device...
     device.store( a, 'tensor-name.idx' ) // 'device.store( a )' if the name should be generated...
 
-    // ... then the tensor exists as a "idx" file :
-    assert new File( 'my/relative/path/to/directory' + 'tensor-name.idx' ).exists()
+    // ... then the tensor exists as an "idx" file :
+    assert new File( 'my/relative/path/to/directory/' + 'tensor-name.idx' ).exists()
 
     // ... and the RAM will be freed ...
     assert a.data == null
@@ -91,7 +91,7 @@
     device.free( a )
 
     // ... and the file is gone :
-    assert !new File( path + '/' + 'tensor-name.idx' ).exists()
+    assert !new File( 'my/relative/path/to/directory/' + 'tensor-name.idx' ).exists()
 
                 </code></pre>
             </div>
@@ -111,7 +111,7 @@
     device.store( a, "tensor-name.idx" ); // 'device.store( a )' if the name should be generated...
 
     // ... then the tensor exists as a "idx" file :
-    assert new File( path + "/" + "tensor-name.idx" ).exists();
+    assert new File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists();
 
     // ... and the RAM will be freed ...
     assert a.data == null;
@@ -120,7 +120,7 @@
     device.free( a );
 
     // ... and the file is gone :
-    assert !new File( "my/relative/path/to/directory" + "tensor-name.idx" ).exists();
+    assert !new File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists();
 
                 </code></pre>
             </div>
@@ -131,7 +131,8 @@
     <div class="ContentBox">
         <p>
             Tensors stored on a file device or any other device for that matter can be restored by calling
-            the "restore" method.
+            the "restore" method.<br>
+            On the other hand the "free" method will delete the underlying file of a given tensor.
         </p>
     </div>
 </div>
