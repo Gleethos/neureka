@@ -64,7 +64,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
 
     private DataType<?> _dataType = DataType.instance( Neureka.instance().settings().dtype().getDefaultDataTypeClass() );
     
-    protected Object _data;
+    private Object _data;
 
     public Class<?> getValueClass()
     {
@@ -73,7 +73,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         else return null;
     }
 
-    public DataType getDataType(){
+    public DataType getDataType() {
         return _dataType;
     }
 
@@ -87,6 +87,11 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         _dataType = dataType;
         return (InstanceType) this;
     }
+
+    public Object getData() {
+        return _data;
+    }
+
 
     protected void _setData( Object data ) {
         _data = data;
