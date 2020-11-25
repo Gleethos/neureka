@@ -309,6 +309,9 @@ hr {
     top: 0;
 }
 
+#navi img {
+    width: 1.5em;
+}
 
 header img {
     display: block;
