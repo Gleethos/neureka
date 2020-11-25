@@ -37,6 +37,11 @@
         border-bottom-right-radius: 2em;
         font-size: 25px;
     }
+
+    .LinkLabel {
+        display: none;
+    }
+
 }
 
 /*---*/
@@ -248,11 +253,13 @@ hr {
 
 #navbar_menu {
     position: absolute;
-    right: 1em;
+    right: -1em;
+    padding-right: 1.25em;
     padding-bottom: 0.25em;
     padding-top: 0.25em;
-    width: 85%;
+    width: auto;
     max-width: 26em;
+    min-width: 10em;
 }
 
 #navbar_list {
@@ -271,7 +278,7 @@ hr {
     box-shadow: 3px 0px 4px 0px black;
     display: block;
     text-align: center;
-    padding: 0.1em 0.325em 0.0em 0.17em;
+    padding: 0.1em 0.325em 0.0em 0.32em;
     text-decoration: none;
     background: #1e5799; /* Old browsers */
     background: -moz-linear-gradient(top, #1e5799 0%, #2989d8 47%, #7db9e8 100%); /* FF3.6-15 */
