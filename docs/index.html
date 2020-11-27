@@ -52,7 +52,12 @@
 <body>
 <div id="header" class="">
     <div id="BirdBox" class="MainFrame"
-         style="background-image: url('https://images.pexels.com/photos/1287142/pexels-photo-1287142.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260');">
+         style="
+            background-image: url('https://cdn.pixabay.com/photo/2015/03/26/09/47/sky-690293_1280.jpg');
+            background-size:     cover;
+            background-repeat:   no-repeat;
+            background-position: center center;
+        ">
         <nav class="FloatsUp">
             <div id="top_most_nav_bar">
                 <div id="navigation_container" >
@@ -124,9 +129,9 @@
 
         <!----------------------------------LAYOUT------------------------------------------------->
         <main id="main_with_parallax" class="Parallax" onscroll="updateTopBar(event);">
-            <div style="left:-10px;" class="ParallaxLayer ParallaxLayer--back ">
+            <div class="ParallaxLayer ParallaxLayer--back ">
                 <div>
-                    <img src="src/img/parallax/woods.png">
+                    <img src="src/img/parallax/woods.png" class="InverseDynamicWidth">
                 </div>
             </div>
             <div class="ParallaxLayer">

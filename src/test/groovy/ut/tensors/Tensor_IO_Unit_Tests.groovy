@@ -162,7 +162,7 @@ class Tensor_IO_Unit_Tests extends  Specification
             !x.rqsGradient()
             x.size()==1
 
-        when : x.to32()
+        when : x.toType( Float.class )
         then : x.value instanceof float[]
 
         when :
@@ -186,21 +186,17 @@ class Tensor_IO_Unit_Tests extends  Specification
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             Tsr x = new Tsr(3)
 
-        when : x = x.asType( Float.class )
+        when : x.toType( Float.class )
         then :
             assert x.getValue() instanceof float[]
             assert x.is32()
             assert x.value32(0)==3.0f
 
-        when :
-            def y = x.asType( Double.class )
+        when : x.toType( Double.class )
         then :
-            assert x.getValue() instanceof float[]
-            assert x.is32()
+            assert x.getValue() instanceof double[]
+            assert x.is64()
             assert x.value32(0)==3.0f
-            assert y.getValue() instanceof double[]
-            assert y.is64()
-            assert y.value32(0)==3.0f
     }
 
 

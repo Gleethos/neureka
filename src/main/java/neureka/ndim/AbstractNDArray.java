@@ -111,7 +111,8 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         if ( data != null && _dataType.typeClassImplements( NumericType.class ) ) {
             NumericType numericType = (NumericType) _dataType.getTypeClassInstance();
             if ( numericType.targetArrayType() != data.getClass() ) {
-                String message = "Cannot set data whose type does not match what is defined by the DataType instance.";
+                String message = "Cannot set data whose type does not match what is defined by the DataType instance.\n" +
+                        "Current type '"+numericType.targetArrayType().getSimpleName()+"' does not match '"+ data.getClass().getSimpleName()+"'.\n";
                 _LOGGER.error( message );
                 throw new IllegalStateException( message );
             }

@@ -70,26 +70,6 @@ implements NumericType<TargetType, TargetArrayType, HolderType, HolderArrayType>
         return (Class<NumericType<TargetType, TargetArrayType, TargetType, TargetArrayType>>) _relations.get( this.getClass() );
     }
 
-    //@Override
-    //public HolderType convertToHolder( Object from ){
-    //     return (HolderType) _scalarHolderConverters.get( from.getClass() ).go( from );
-    //}
-//
-    //@Override
-    //public HolderArrayType convertToHolderArray( Object from ) {
-    //    return (HolderArrayType) _arrayHolderConverters.get( from.getClass() ).go( from );
-    //}
-//
-    //@Override
-    //public TargetType convertToTarget( Object from ){
-    //    return (TargetType) _scalarTargetConverters.get( from.getClass() ).go( from );
-    //}
-//
-    //@Override
-    //public TargetArrayType convertToTargetArray( Object from ) {
-    //    return (TargetArrayType) _arrayTargetConverters.get( from.getClass() ).go( from );
-    //}
-
     @Override
     public void writeDataTo( DataOutput stream, Iterator<TargetType> iterator ) throws IOException {
         while( iterator.hasNext() ) {

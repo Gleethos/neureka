@@ -1919,18 +1919,19 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 : gradient.value32();
     }
 
+
     public Tsr<ValueType> addToGradient( Tsr<ValueType> error ) {
         if (
                 !forComponent(
                     Tsr.class,
-                        g ->
+                        gradient ->
                         this.set(
-                                Function.Detached.PLUS_ASSIGN.call( new Tsr[]{ g, error } )
+                                Function.Detached.PLUS_ASSIGN.call( new Tsr[]{ gradient, error } )
                         )
                 )
-        ) set( error ).forComponent( Device.class, d -> {
+        ) set( error ).forComponent( Device.class, device -> {
             try {
-                d.store( error ) ;
+                device.store( error ) ;
             } catch ( Exception exception ) {
                 _LOGGER.error( "Failed trying to store a given error to a device for gradient accumulation.", exception );
                 throw exception;
@@ -1939,54 +1940,23 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this;
     }
 
-    public Tsr<ValueType> to32() {
-        if ( this.is64() ) {
-            Device device = this.find( Device.class );
-            try {
-                if ( device != null ) device.restore( this );
-            } catch ( Exception exception ) {
-                _LOGGER.error( "Failed to restore tensor from device for datatype migration.", exception );
-                throw exception;
-            }
-            Object old = getData();
-            _setData( null );
-            setDataType( DataType.instance( F32.class ) );
-            _setData( DataConverter.Utility.doubleToFloat( (double[]) old) );
-            forComponent( Tsr.class, Tsr::to32 );
-            try {
-                if ( device != null ) device.store( this );
-            } catch ( Exception exception ) {
-                _LOGGER.error( "Failed to store tensor back to original device after datatype migration.", exception );
-                throw exception;
-            }
-        }
-        return this;
-    }
-
-    public Tsr<ValueType> to64() {
-        if ( this.is32() ) {
-            Device device = this.find( Device.class );
-            try {
-                if ( device != null ) device.restore( this );
-            } catch ( Exception exception ) {
-                _LOGGER.error( "Failed to restore tensor from device for datatype migration.", exception );
-                throw exception;
-            }
-            Object old = getData();
-            _setData( null );
-            setDataType( DataType.instance( F64.class ) );
-            _setData( DataConverter.Utility.floatToDouble( (float[]) old) );
-            forComponent( Tsr.class, Tsr::to64 );
-            try {
-                if ( device != null ) device.store( this );
-            } catch ( Exception exception ) {
-                _LOGGER.error( "Failed to store tensor back to original device after datatype migration.", exception );
-                throw exception;
-            }
-        }
-        return this;
-    }
-
+    /**
+     *  This method represents a pure operation producing a new tensor instance
+     *  which is a deep copy of this original tensor and contains data whose
+     *  elements have been converted to a new data type, namely :
+     *  the type specified by the argument
+     *
+     *  The method does not change this tensor, which is why the operation is pure.
+     *  Important to note is that the method will return instances of the specified
+     *  type but merely another tensor containing elements of that type...
+     *  The name of this method for example translates to the "as" operator
+     *  found in Groovy, so the following code : " myTensor as Double "
+     *  would not return a Double instance!
+     *
+     * @param typeClass
+     * @param <T>
+     * @return
+     */
     public <T> Tsr<T> asType( Class<T> typeClass )
     {
         DataType newDT = DataType.instance( typeClass );
@@ -2001,15 +1971,37 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return (Tsr<T>) new Tsr( this.getNDConf().shape(), newDT, newData );
     }
 
+    /**
+     *  This method is an inline operation which changes the underlying data of this tensor.
+     *  It converts the data types of the elements of this tensor to the specified type!
+     *  WARNING : The use of this method is discouraged for the following reasons:
+     *  1. Inline operations are inherently error prone for most use cases.
+     *  2. This inline operation in particular has no safety net,
+     *     meaning that there is no implementation of version mismatch detection
+     *     like there is for those operations present in the operation backend...
+     *     No exceptions will be thrown during backpropagation!
+     *  3. This method has not yet been implemented to also handle instances which
+     *     are slices of parent tensors!
+     *     Therefore there might be unexpected performance penalties or side effects
+     *     associated with this method.
+     *
+     * @param typeClass The target type class for elements of this tensor.
+     * @param <T> The type parameter for the returned tensor.
+     * @return The same tensor instance whose data has been converted to hold a different type.
+     */
     public <T> Tsr<T> toType( Class<T> typeClass )
     {
-        setDataType( DataType.instance( typeClass ) );
         if ( this.isOutsourced() ) {
             setDataType( DataType.instance( typeClass ) );
             return (Tsr<T>) this;
         }
-        else _setData( _convertedDataOfType( typeClass ) );
-        //setDataType( DataType.instance( typeClass ) );
+        else {
+            Object newData = _convertedDataOfType( typeClass );
+            _setData( null );
+            setDataType( DataType.instance( typeClass ) );
+            _setData( newData );
+        }
+        forComponent( Tsr.class, gradient -> gradient.toType( typeClass ) );
         return (Tsr<T>) this;
     }
 

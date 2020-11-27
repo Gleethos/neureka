@@ -1,4 +1,25 @@
 /*Media Querys:*/
+@media (min-width: 0px) {
+    .InverseDynamicWidth {
+        width : 300%;
+    }
+}
+@media (min-width: 420px) {
+    .InverseDynamicWidth {
+        width : 280%;
+    }
+}
+@media (min-width: 600px) {
+    .InverseDynamicWidth {
+        width : 230%;
+    }
+}
+/*---*/
+@media (min-width: 840px) {
+    .InverseDynamicWidth {
+        width : 200%;
+    }
+}
 @media (max-width: 840px) {
     main {
         margin: 0px;
@@ -41,7 +62,6 @@
     .LinkLabel {
         display: none;
     }
-
 }
 
 /*---*/
@@ -71,6 +91,11 @@
     .DynamicPillarWidth {
         width:25%;
     }
+
+    .InverseDynamicWidth {
+        width : 155%;
+    }
+
 }
 
 /*---*/
@@ -99,6 +124,10 @@
 
     .DynamicPillarWidth {
         width:20%;
+    }
+
+    .InverseDynamicWidth {
+        width : 130%;
     }
 }
 
@@ -129,6 +158,10 @@
     .DynamicPillarWidth {
         width:15%;
     }
+
+    .InverseDynamicWidth {
+        width : 110%;
+    }
 }
 
 /*---*/
@@ -140,6 +173,10 @@
 
     .DynamicWidth {
         width: 50%
+    }
+
+    .InverseDynamicWidth {
+        width : 100%;
     }
 }
 
@@ -198,6 +235,7 @@ hr {
 .ParallaxLayer--back {
     -webkit-transform: translateZ(-1px) scale(2);
     transform: translateZ(-1px) scale(2);
+    left: -0.55%;
 }
 
 /* main styles */
