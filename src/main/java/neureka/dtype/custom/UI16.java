@@ -5,6 +5,7 @@ import neureka.dtype.AbstractNumericType;
 import java.io.IOException;
 import java.io.DataInput;
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 
 public class UI16 extends AbstractNumericType<Integer, int[], Short, short[]>
 {
@@ -34,27 +35,22 @@ public class UI16 extends AbstractNumericType<Integer, int[], Short, short[]>
     }
 
     @Override
-    public Class<Short> foreignType() {
+    public Class<Short> holderType() {
         return null;
     }
 
     @Override
-    public Class<short[]> foreignArrayType() {
+    public Class<short[]> holderArrayType() {
         return null;
     }
 
     @Override
-    public Integer foreignBytesToTarget( byte[] b ) {
+    public Integer foreignHolderBytesToTarget(byte[] b ) {
         return
-        //            0x00 << 24 |
-        //            0x00 << 16 |
-        //                ((int)b[ 0 ]) << 8 |
-        //                ((int)b[ 1 ]);
-        0x00 << 24 |
+                0x00 << 24 |
                 0x00 << 16 |
                 (b[ 0 ] & 0xff) << 8 |
                 (b[ 1 ] & 0xff);
-        //return Utility.unsignedByteArrayToInt(bytes);
     }
 
     @Override
@@ -63,25 +59,55 @@ public class UI16 extends AbstractNumericType<Integer, int[], Short, short[]>
     }
 
     @Override
-    public byte[] targetToForeignBytes( Integer number ) {
+    public byte[] targetToForeignHolderBytes(Integer number ) {
         final ByteBuffer buf = ByteBuffer.allocate(2);
         buf.putShort( (short) number.intValue() );
         return buf.array();
     }
 
     @Override
-    public int[] readAndConvertDataFrom( DataInput stream, int size )  throws IOException {
+    public int[] readAndConvertForeignDataFrom(DataInput stream, int size )  throws IOException {
         int[] data = new int[ size ];
         for ( int i=0; i<size; i++ ) {
             stream.readFully(_data);
-            data[ i ] = foreignBytesToTarget(_data);
+            data[ i ] = foreignHolderBytesToTarget(_data);
         }
         return data;
     }
 
     @Override
-    public short[] readForeignDataFrom(DataInput stream, int size) throws IOException {
+    public <T> int[] readAndConvertForeignDataFrom( Iterator<T> iterator, int size ) {
+        return new int[0];
+    }
+
+    @Override
+    public short[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
         return new short[0];
+    }
+
+    @Override
+    public <T> short[] readForeignDataFrom( Iterator<T> iterator, int size ) {
+        return new short[0];
+    }
+
+    @Override
+    public Short convertToHolder(Object from) {
+        return null;
+    }
+
+    @Override
+    public short[] convertToHolderArray(Object from) {
+        return new short[0];
+    }
+
+    @Override
+    public Integer convertToTarget(Object from) {
+        return null;
+    }
+
+    @Override
+    public int[] convertToTargetArray(Object from) {
+        return new int[0];
     }
 
 

@@ -5,6 +5,7 @@ import neureka.dtype.AbstractNumericType;
 import java.io.IOException;
 import java.io.DataInput;
 import java.math.BigInteger;
+import java.util.Iterator;
 
 public class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Long, long[]>
 {
@@ -32,17 +33,17 @@ public class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Long, lo
     }
 
     @Override
-    public Class<Long> foreignType() {
+    public Class<Long> holderType() {
         return Long.class;
     }
 
     @Override
-    public Class<long[]> foreignArrayType() {
+    public Class<long[]> holderArrayType() {
         return long[].class;
     }
 
     @Override
-    public BigInteger foreignBytesToTarget( byte[] bytes ) { // This is working but not optimal
+    public BigInteger foreignHolderBytesToTarget(byte[] bytes ) { // This is working but not optimal
         // use "import static java.math.BigInteger.ONE;" to shorten this line
         BigInteger UNSIGNED_LONG_MASK = BigInteger.ONE.shiftLeft(Long.SIZE).subtract(BigInteger.ONE);
         long unsignedLong = new BigInteger(bytes).longValue(); // sample input value
@@ -58,7 +59,7 @@ public class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Long, lo
     }
 
     @Override
-    public byte[] targetToForeignBytes( BigInteger b ) {
+    public byte[] targetToForeignHolderBytes( BigInteger b ) {
         byte[] unsignedbyteArray= b.toByteArray();
         byte[] bytes = new byte[8];
         System.arraycopy(
@@ -70,13 +71,43 @@ public class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Long, lo
     }
 
     @Override
-    public BigInteger[] readAndConvertDataFrom(DataInput stream, int size) throws IOException {
+    public BigInteger[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
         return new BigInteger[ 0 ];
     }
 
     @Override
-    public long[] readForeignDataFrom(DataInput stream, int size) throws IOException {
+    public <T> BigInteger[] readAndConvertForeignDataFrom(Iterator<T> iterator, int size) {
+        return new BigInteger[0];
+    }
+
+    @Override
+    public long[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
         return new long[0];
+    }
+
+    @Override
+    public <T> long[] readForeignDataFrom(Iterator<T> iterator, int size) {
+        return new long[0];
+    }
+
+    @Override
+    public Long convertToHolder(Object from) {
+        return null;
+    }
+
+    @Override
+    public long[] convertToHolderArray(Object from) {
+        return new long[0];
+    }
+
+    @Override
+    public BigInteger convertToTarget(Object from) {
+        return null;
+    }
+
+    @Override
+    public BigInteger[] convertToTargetArray(Object from) {
+        return new BigInteger[0];
     }
 
 

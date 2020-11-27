@@ -41,6 +41,7 @@ import neureka.Tsr;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
+import neureka.utility.DataConverter;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 
@@ -133,6 +134,20 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         _data = _dataType.actualize(_data, this.size() );
     }
 
+    protected Object _convertedDataOfType( Class<?> typeClass )
+    {
+        DataType newDT = DataType.instance( typeClass );
+        if (
+                newDT.typeClassImplements( NumericType.class ) &&
+                        getDataType().typeClassImplements( NumericType.class )
+        ) {
+            NumericType<?,Object, ?, Object> targetType  = (NumericType<?, Object,?, Object>) newDT.getTypeClassInstance();
+            return targetType.readForeignDataFrom( iterator(), this.size() );
+        }
+        else
+            return DataConverter.instance().convert( getData(), newDT.getTypeClass() );
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
@@ -180,7 +195,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         return _data instanceof double[];
     }
 
-    public  boolean is32(){
+    public boolean is32(){
         return _data instanceof float[];
     }
 

@@ -11,7 +11,7 @@ import java.util.Map;
 public abstract class AbstractNumericType<TargetType, TargetArrayType, HolderType, HolderArrayType>
 implements NumericType<TargetType, TargetArrayType, HolderType, HolderArrayType>
 {
-    private final Map<?,?> _relations = Map.of(
+    private static final Map<?,?> _relations = Map.of(
             I8.class, I8.class,
             I16.class, I16.class,
             I32.class, I32.class,
@@ -23,9 +23,13 @@ implements NumericType<TargetType, TargetArrayType, HolderType, HolderArrayType>
             UI64.class, UI64.class // think about this
     );
 
-    public interface Conversion<FromType, ToType> { ToType go(FromType thing); }
+    public interface Conversion<FromType, ToType> { ToType go( FromType thing ); }
 
-    private Map<Class<?>, Conversion<TargetArrayType,?>> _converters = new HashMap<>();
+    private final Map<Class<?>, Conversion<Object, ?>> _arrayTargetConverters = new HashMap<>();
+    private final Map<Class<?>, Conversion<Object, ?>> _arrayHolderConverters = new HashMap<>();
+    private final Map<Class<?>, Conversion<Object,?>> _scalarTargetConverters = new HashMap<>();
+    private final Map<Class<?>, Conversion<Object,?>> _scalarHolderConverters = new HashMap<>();
+
 
     protected byte[] _data;
 
@@ -33,34 +37,63 @@ implements NumericType<TargetType, TargetArrayType, HolderType, HolderArrayType>
         _data = new byte[numberOfBytes()];
     }
 
-    protected <T> void _set(
-            Class<T> to,
-            Conversion<TargetArrayType,T> conversion
+    protected <T> void _setToTarget( Class<T> from, Conversion<T,TargetType> conversion ) {
+        _setConversion( _scalarTargetConverters, from, (Conversion<Object, ?>) conversion);
+    }
+
+    protected <T> void _setToHolder( Class<T> from, Conversion<T,HolderType> conversion ) {
+        _setConversion( _scalarHolderConverters, from, (Conversion<Object, ?>) conversion);
+    }
+
+    protected <T> void _setToTargetArray( Class<T> from, Conversion<T,TargetArrayType> conversion ) {
+        _setConversion( _arrayTargetConverters, from, (Conversion<Object, ?>) conversion);
+    }
+
+    protected <T> void _setToHolderArray( Class<T> from, Conversion<T,HolderArrayType> conversion ) {
+        _setConversion( _arrayHolderConverters, from, (Conversion<Object, ?>) conversion);
+    }
+
+    private static void _setConversion(
+            Map<Class<?>, Conversion<Object, ?>> converters, Class<?> key, Conversion<Object,?> conversion
     ){
-        Map<Class<?>, Conversion<TargetArrayType,?>> fromMap = _converters;
-        if ( !_converters.containsKey(to) )
-        {
-            _converters.put(to, conversion);
-        } else {
-            Conversion<?,?> found = fromMap.get(to);
+        if ( !converters.containsKey(key) ) converters.put( key, conversion );
+        else {
+            Conversion<?,?> found = converters.get( key );
             if ( found != null ) throw new IllegalStateException("Conversion already present!");
-            else fromMap.put(to, conversion);
+            else converters.put( key, conversion );
         }
     }
 
+
+    @Override
     public Class<NumericType<TargetType, TargetArrayType, TargetType, TargetArrayType>> getNumericTypeTarget() {
         return (Class<NumericType<TargetType, TargetArrayType, TargetType, TargetArrayType>>) _relations.get( this.getClass() );
     }
 
-    @Override
-    public <T> T convert(TargetArrayType from, Class<T> to) {
-        return (T) _converters.get( to ).go( from );
-    }
+    //@Override
+    //public HolderType convertToHolder( Object from ){
+    //     return (HolderType) _scalarHolderConverters.get( from.getClass() ).go( from );
+    //}
+//
+    //@Override
+    //public HolderArrayType convertToHolderArray( Object from ) {
+    //    return (HolderArrayType) _arrayHolderConverters.get( from.getClass() ).go( from );
+    //}
+//
+    //@Override
+    //public TargetType convertToTarget( Object from ){
+    //    return (TargetType) _scalarTargetConverters.get( from.getClass() ).go( from );
+    //}
+//
+    //@Override
+    //public TargetArrayType convertToTargetArray( Object from ) {
+    //    return (TargetArrayType) _arrayTargetConverters.get( from.getClass() ).go( from );
+    //}
 
     @Override
-    public void writeDataTo(DataOutput stream, Iterator<TargetType> iterator) throws IOException {
+    public void writeDataTo( DataOutput stream, Iterator<TargetType> iterator ) throws IOException {
         while( iterator.hasNext() ) {
-            _data = targetToForeignBytes(iterator.next());
+            _data = targetToForeignHolderBytes(iterator.next());
             stream.write(_data);
         }
     }

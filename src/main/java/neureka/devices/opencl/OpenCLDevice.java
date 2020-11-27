@@ -245,7 +245,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 )
             );
         } else tensor.setIsOutsourced( true );
-        tensor.asType( F32.class );
+        tensor.toType( F32.class );
     }
 
     /**

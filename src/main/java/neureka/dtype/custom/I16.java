@@ -5,6 +5,7 @@ import neureka.dtype.AbstractNumericType;
 import java.io.IOException;
 import java.io.DataInput;
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 
 public class I16 extends AbstractNumericType<Short, short[], Short, short[]>
 {
@@ -33,21 +34,20 @@ public class I16 extends AbstractNumericType<Short, short[], Short, short[]>
     }
 
     @Override
-    public Class<Short> foreignType() {
+    public Class<Short> holderType() {
         return Short.class;
     }
 
     @Override
-    public Class<short[]> foreignArrayType() {
+    public Class<short[]> holderArrayType() {
         return short[].class;
     }
 
     @Override
-    public Short foreignBytesToTarget(byte[] bytes) {
+    public Short foreignHolderBytesToTarget(byte[] bytes) {
         buffer.put(bytes, 0, bytes.length);
         buffer.flip();//need flip
         return buffer.getShort();
-        //return ByteBuffer.wrap(bytes).order(ByteOrder.).getShort();
     }
 
     @Override
@@ -56,15 +56,19 @@ public class I16 extends AbstractNumericType<Short, short[], Short, short[]>
     }
 
     @Override
-    public byte[] targetToForeignBytes(Short number) {
+    public byte[] targetToForeignHolderBytes(Short number) {
         buffer.putShort(0, number);
         return buffer.array();
-        //return new byte[]{(byte)(number & 0xff),(byte)((number >> 8) & 0xff)};
     }
 
     @Override
-    public short[] readAndConvertDataFrom( DataInput stream, int size ) throws IOException {
+    public short[] readAndConvertForeignDataFrom(DataInput stream, int size ) throws IOException {
         return _readData( stream, size );
+    }
+
+    @Override
+    public <T> short[] readAndConvertForeignDataFrom(Iterator<T> iterator, int size) {
+        return new short[0];
     }
 
     @Override
@@ -72,11 +76,49 @@ public class I16 extends AbstractNumericType<Short, short[], Short, short[]>
         return _readData( stream, size );
     }
 
+    @Override
+    public <T> short[] readForeignDataFrom(Iterator<T> iterator, int size) {
+        return new short[0];
+    }
+
+    @Override
+    public Short convertToHolder(Object from) {
+        if ( Byte.class.equals( from.getClass() ) )
+            return ( (Byte) from ).shortValue();
+        else if ( Integer.class.equals( from.getClass() ) )
+            return ( (Integer) from ).shortValue();
+        else if ( Double.class.equals( from.getClass() ) )
+            return ( (Double) from ).shortValue();
+        else if ( Short.class.equals( from.getClass() ) )
+            return ( (Short) from );
+        else if ( Long.class.equals( from.getClass() ) )
+            return ( (Long) from ).shortValue();
+        else if ( Float.class.equals( from.getClass() ) )
+            return ( (Float) from ).shortValue();
+        else
+            return null;
+    }
+
+    @Override
+    public short[] convertToHolderArray(Object from) {
+        return new short[0];
+    }
+
+    @Override
+    public Short convertToTarget(Object from) {
+        return convertToHolder(from);
+    }
+
+    @Override
+    public short[] convertToTargetArray(Object from) {
+        return new short[0];
+    }
+
     private short[] _readData( DataInput stream, int size ) throws IOException {
         short[] data = new short[size];
         for ( int i=0; i<size; i++ ) {
             stream.readFully(_data);
-            data[ i ] = foreignBytesToTarget(_data);
+            data[ i ] = foreignHolderBytesToTarget(_data);
         }
         return data;
     }

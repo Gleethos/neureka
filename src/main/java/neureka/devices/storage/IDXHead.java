@@ -155,7 +155,7 @@ public class IDXHead extends AbstractFileHead<IDXHead>
             );
             stream.skipBytes( _dataOffset );
             if ( Neureka.instance().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )
-                return type.readAndConvertDataFrom( stream, _bodySize );
+                return type.readAndConvertForeignDataFrom( stream, _bodySize );
             else
                 return type.readForeignDataFrom( stream, _bodySize );
         }

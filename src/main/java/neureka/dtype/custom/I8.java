@@ -5,17 +5,17 @@ import neureka.utility.DataConverter;
 
 import java.io.IOException;
 import java.io.DataInput;
-import java.io.DataOutput;
+import java.util.Iterator;
 
 
 public class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
 {
     public I8(){
         super();
-        _set( double[].class, DataConverter.Utility::byteToDouble);
-        _set( int[].class,    DataConverter.Utility::byteToInt);
-        _set( float[].class,  DataConverter.Utility::byteToFloat);
-        _set( long[].class,   DataConverter.Utility::byteToLong );
+        _setToTargetArray( double[].class, DataConverter.Utility::doubleToByte );
+        //_setToTargetArray( int[].class,    DataConverter.Utility::byteToInt);
+        //_setToTargetArray( float[].class,  DataConverter.Utility::byteToFloat);
+        //_setToTargetArray( long[].class,   DataConverter.Utility::byteToLong );
     }
 
     @Override
@@ -39,17 +39,17 @@ public class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
     }
 
     @Override
-    public Class<Byte> foreignType() {
+    public Class<Byte> holderType() {
         return Byte.class;
     }
 
     @Override
-    public Class<byte[]> foreignArrayType() {
+    public Class<byte[]> holderArrayType() {
         return byte[].class;
     }
 
     @Override
-    public Byte foreignBytesToTarget(byte[] bytes) {
+    public Byte foreignHolderBytesToTarget(byte[] bytes) {
         return bytes[ 0 ];
     }
 
@@ -59,22 +59,65 @@ public class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
     }
 
     @Override
-    public byte[] targetToForeignBytes(Byte number) {
+    public byte[] targetToForeignHolderBytes(Byte number) {
         return new byte[]{number};
     }
 
     @Override
-    public byte[] readAndConvertDataFrom(DataInput stream, int size) throws IOException {
+    public byte[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
         byte[] bytes = new byte[size];
         stream.readFully(bytes, size, size);
         return bytes;
     }
 
     @Override
-    public byte[] readForeignDataFrom(DataInput stream, int size) throws IOException {
+    public <T> byte[] readAndConvertForeignDataFrom(Iterator<T> iterator, int size) {
+        return new byte[0];
+    }
+
+    @Override
+    public byte[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
         byte[] bytes = new byte[size];
         stream.readFully(bytes, size, size);
         return bytes;
+    }
+
+    @Override
+    public <T> byte[] readForeignDataFrom(Iterator<T> iterator, int size) {
+        return new byte[0];
+    }
+
+    @Override
+    public Byte convertToHolder(Object from) {
+        if ( Byte.class.equals( from.getClass() ) )
+            return ( (Byte) from );
+        else if ( Integer.class.equals( from.getClass() ) )
+            return ( (Integer) from ).byteValue();
+        else if ( Double.class.equals( from.getClass() ) )
+            return ( (Double) from ).byteValue();
+        else if ( Short.class.equals( from.getClass() ) )
+            return ( (Short) from ).byteValue();
+        else if ( Long.class.equals( from.getClass() ) )
+            return ( (Long) from ).byteValue();
+        else if ( Float.class.equals( from.getClass() ) )
+            return ( (Float) from ).byteValue();
+        else
+            return null;
+    }
+
+    @Override
+    public byte[] convertToHolderArray(Object from) {
+        return new byte[0];
+    }
+
+    @Override
+    public Byte convertToTarget(Object from) {
+        return convertToHolder( from );
+    }
+
+    @Override
+    public byte[] convertToTargetArray(Object from) {
+        return new byte[0];
     }
 
 

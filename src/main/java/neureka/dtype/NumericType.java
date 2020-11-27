@@ -39,7 +39,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-public interface NumericType<TargetType, TargetArrayType, ForeignType, ForeignArrayType>
+public interface NumericType<TargetType, TargetArrayType, HolderType, HolderArrayType>
 {
     boolean signed();
 
@@ -49,25 +49,35 @@ public interface NumericType<TargetType, TargetArrayType, ForeignType, ForeignAr
 
     Class<TargetArrayType> targetArrayType();
 
-    Class<ForeignType> foreignType();
+    Class<HolderType> holderType();
 
-    Class<ForeignArrayType> foreignArrayType();
+    Class<HolderArrayType> holderArrayType();
 
     Class<NumericType<TargetType, TargetArrayType, TargetType, TargetArrayType>> getNumericTypeTarget();
 
-    TargetType foreignBytesToTarget( byte[] bytes );
+    TargetType foreignHolderBytesToTarget( byte[] bytes );
 
-    TargetType toTarget( ForeignType original );
+    TargetType toTarget( HolderType original );
 
-    byte[] targetToForeignBytes( TargetType number );
+    byte[] targetToForeignHolderBytes(TargetType number );
 
-    TargetArrayType readAndConvertDataFrom( DataInput stream, int size ) throws IOException;
+    TargetArrayType readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException;
 
-    ForeignArrayType readForeignDataFrom(DataInput stream, int size ) throws IOException;
+    <T> TargetArrayType readAndConvertForeignDataFrom( Iterator<T> iterator, int size );
+
+    HolderArrayType readForeignDataFrom (DataInput stream, int size ) throws IOException;
+
+    <T> HolderArrayType readForeignDataFrom( Iterator<T> iterator, int size );
 
     void writeDataTo( DataOutput stream, Iterator<TargetType> iterator ) throws IOException;
 
-    <T> T convert( TargetArrayType from, Class<T> to );
+    HolderType convertToHolder( Object from );
+
+    HolderArrayType convertToHolderArray( Object from );
+
+    TargetType convertToTarget( Object from );
+
+    TargetArrayType convertToTargetArray( Object from );
 
     class Utility
     {

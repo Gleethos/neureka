@@ -61,12 +61,12 @@ class NumericType_Unit_Tests extends Specification
             NumericType type, List<Byte> data, Number converted
     ){
         given :
-            def result = type.foreignBytesToTarget( data as byte[] )
+            def result = type.foreignHolderBytesToTarget( data as byte[] )
 
         expect : 'The array of bytes  is being converted to a fitting JVM type.'
             result == converted
         and : 'The original byte array can be recreated by converting with the inverse...'
-            type.targetToForeignBytes(result) == ( data as byte[] )
+            type.targetToForeignHolderBytes(result) == ( data as byte[] )
 
         where : 'The following NumericType instances and bytes are being used :'
             type      | data                         || converted
@@ -115,9 +115,9 @@ class NumericType_Unit_Tests extends Specification
                     'F64': { o -> o as Double }
             ][ num.class.simpleName ](original)
         and : 'The convert the raw type (might represent unsigned value) to a JVM compatible target type...'
-            def resultTarget = num.foreignBytesToTarget( rawOriginal )
+            def resultTarget = num.foreignHolderBytesToTarget( rawOriginal )
         and : 'Then convert this result to the true byte array of the value...'
-            def backToRaw = num.targetToForeignBytes( resultTarget )
+            def backToRaw = num.targetToForeignHolderBytes( resultTarget )
 
         then : 'This produces the expected values which express the following relationships:'
             resultTarget == target

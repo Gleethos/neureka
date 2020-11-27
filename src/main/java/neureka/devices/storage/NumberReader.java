@@ -28,7 +28,7 @@ public class NumberReader
     public <T> T read( NumericType<T, ?, ?, ?> type ) throws IOException {
         assert _fileInputStream.read( _byteMap.get(type.numberOfBytes()) ) == type.numberOfBytes();
         _bytesRead += type.numberOfBytes();
-        return type.foreignBytesToTarget(_byteMap.get(type.numberOfBytes()));
+        return type.foreignHolderBytesToTarget(_byteMap.get(type.numberOfBytes()));
         // return NumericType.Utility.unsignedByteArrayToInt(_byteMap.get(number));
     }
 

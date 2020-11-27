@@ -5,6 +5,7 @@ import neureka.dtype.AbstractNumericType;
 import java.io.DataInput;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 
 public class UI32 extends AbstractNumericType<Long, long[], Integer, int[]>
 {
@@ -30,28 +31,18 @@ public class UI32 extends AbstractNumericType<Long, long[], Integer, int[]>
     }
 
     @Override
-    public Class<Integer> foreignType() {
+    public Class<Integer> holderType() {
         return Integer.class;
     }
 
     @Override
-    public Class<int[]> foreignArrayType() {
+    public Class<int[]> holderArrayType() {
         return int[].class;
     }
 
     @Override
-    public Long foreignBytesToTarget(byte[] bytes) {
-        //int asInt = ByteBuffer.wrap(bytes).getInt();
-        //System.out.println("... "+asInt);
-        //return ( asInt >= 0 )
-        //            ? (long) asInt
-        //            : (((long)0x40000000) + (long)asInt);
+    public Long foreignHolderBytesToTarget(byte[] bytes) {
         return
-            //0x00L << 64 |
-            //0x00L << 56 |
-            //0x00L << 48 |
-            //0x00L << 40 |
-            //0x00L << 32 |
             ((long)( bytes[ 0 ] & 0xff )) << 24 |
             ((long)( bytes[ 1 ] & 0xff )) << 16 |
             ( bytes[ 2 ] & 0xff ) << 8 |
@@ -64,7 +55,7 @@ public class UI32 extends AbstractNumericType<Long, long[], Integer, int[]>
     }
 
     @Override
-    public byte[] targetToForeignBytes(Long number) {
+    public byte[] targetToForeignHolderBytes(Long number) {
         final ByteBuffer buf = ByteBuffer.allocate(8);
         buf.putLong( number );
         byte[] b = buf.array();
@@ -72,18 +63,44 @@ public class UI32 extends AbstractNumericType<Long, long[], Integer, int[]>
     }
 
     @Override
-    public long[] readAndConvertDataFrom(DataInput stream, int size) throws IOException {
+    public long[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
         return new long[ 0 ];
     }
 
     @Override
-    public int[] readForeignDataFrom(DataInput stream, int size) throws IOException {
+    public <T> long[] readAndConvertForeignDataFrom(Iterator<T> iterator, int size) {
+        return new long[0];
+    }
+
+    @Override
+    public int[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
         return new int[0];
     }
 
+    @Override
+    public <T> int[] readForeignDataFrom(Iterator<T> iterator, int size) {
+        return new int[0];
+    }
 
     @Override
-    public <T> T convert(long[] from, Class<T> to) {
+    public Integer convertToHolder(Object from) {
         return null;
     }
+
+    @Override
+    public int[] convertToHolderArray(Object from) {
+        return new int[0];
+    }
+
+    @Override
+    public Long convertToTarget(Object from) {
+        return null;
+    }
+
+    @Override
+    public long[] convertToTargetArray(Object from) {
+        return new long[0];
+    }
+
+
 }

@@ -168,6 +168,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public Tsr(){}
 
+    public Tsr( DataType dtype ){
+        setDataType( dtype );
+    }
+
     public Tsr( Object arg ) {
         _construct( new Object[]{ arg } );
     }
@@ -1985,20 +1989,27 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public <T> Tsr<T> asType( Class<T> typeClass )
     {
+        DataType newDT = DataType.instance( typeClass );
+        Object newData;
+        if ( this.isOutsourced() ) {
+            Device device = find( Device.class );
+            device.restore( this );
+            newData = _convertedDataOfType( typeClass );
+            device.store( this );
+        }
+        else newData = _convertedDataOfType( typeClass );
+        return (Tsr<T>) new Tsr( this.getNDConf().shape(), newDT, newData );
+    }
+
+    public <T> Tsr<T> toType( Class<T> typeClass )
+    {
+        setDataType( DataType.instance( typeClass ) );
         if ( this.isOutsourced() ) {
             setDataType( DataType.instance( typeClass ) );
             return (Tsr<T>) this;
         }
-        // else conversion :
-        DataType newDT = DataType.instance( typeClass );
-        if (
-                newDT.typeClassImplements( NumericType.class ) &&
-                        getDataType().typeClassImplements( NumericType.class )
-        ) {
-            NumericType<?,Object, ?, Object> instance   = (NumericType<?, Object,?, Object>) newDT.getTypeClassInstance();
-            NumericType<?,Object,?, Object> originType = (NumericType<?, Object,?, Object>) getDataType().getTypeClassInstance();
-            instance.convert(getData(), originType.targetArrayType() );
-        }
+        else _setData( _convertedDataOfType( typeClass ) );
+        //setDataType( DataType.instance( typeClass ) );
         return (Tsr<T>) this;
     }
 
