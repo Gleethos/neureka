@@ -1,6 +1,7 @@
 package neureka.dtype.custom;
 
 import neureka.dtype.AbstractNumericType;
+import neureka.utility.DataConverter;
 
 import java.io.IOException;
 import java.io.DataInput;
@@ -112,7 +113,7 @@ public class I64 extends AbstractNumericType<Long, long[], Long, long[]>
 
     @Override
     public long[] convertToTargetArray(Object from) {
-        return new long[0];
+        return DataConverter.instance().convert( from, long[].class );
     }
 
 }

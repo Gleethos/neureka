@@ -1,6 +1,7 @@
 package neureka.dtype.custom;
 
 import neureka.dtype.AbstractNumericType;
+import neureka.utility.DataConverter;
 
 import java.io.DataInput;
 import java.io.IOException;
@@ -99,7 +100,7 @@ public class UI32 extends AbstractNumericType<Long, long[], Integer, int[]>
 
     @Override
     public long[] convertToTargetArray(Object from) {
-        return new long[0];
+        return DataConverter.instance().convert( from, long[].class );
     }
 
 

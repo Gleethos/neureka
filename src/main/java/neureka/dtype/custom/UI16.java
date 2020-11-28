@@ -1,6 +1,7 @@
 package neureka.dtype.custom;
 
 import neureka.dtype.AbstractNumericType;
+import neureka.utility.DataConverter;
 
 import java.io.IOException;
 import java.io.DataInput;
@@ -107,7 +108,7 @@ public class UI16 extends AbstractNumericType<Integer, int[], Short, short[]>
 
     @Override
     public int[] convertToTargetArray(Object from) {
-        return new int[0];
+        return DataConverter.instance().convert( from, int[].class );
     }
 
 

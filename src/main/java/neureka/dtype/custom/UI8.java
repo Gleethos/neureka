@@ -1,6 +1,7 @@
 package neureka.dtype.custom;
 
 import neureka.dtype.AbstractNumericType;
+import neureka.utility.DataConverter;
 
 import java.io.IOException;
 import java.io.DataInput;
@@ -101,7 +102,7 @@ public class UI8 extends AbstractNumericType<Short, short[], Byte, byte[]>
     }
 
     @Override
-    public Short convertToTarget(Object from) {
+    public Short convertToTarget( Object from ) {
         if ( Byte.class.equals( from.getClass() ) )
             return ( (Byte) from ).shortValue();
         else if ( Integer.class.equals( from.getClass() ) )
@@ -119,8 +120,8 @@ public class UI8 extends AbstractNumericType<Short, short[], Byte, byte[]>
     }
 
     @Override
-    public short[] convertToTargetArray(Object from) {
-        return new short[0];
+    public short[] convertToTargetArray( Object from ) {
+        return DataConverter.instance().convert( from, short[].class );
     }
 
 }

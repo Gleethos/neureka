@@ -1,6 +1,7 @@
 package neureka.dtype.custom;
 
 import neureka.dtype.AbstractNumericType;
+import neureka.utility.DataConverter;
 
 import java.io.IOException;
 import java.io.DataInput;
@@ -107,7 +108,7 @@ public class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Long, lo
 
     @Override
     public BigInteger[] convertToTargetArray(Object from) {
-        return new BigInteger[0];
+        return DataConverter.instance().convert( from, BigInteger[].class );
     }
 
 

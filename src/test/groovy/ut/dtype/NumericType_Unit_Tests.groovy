@@ -124,20 +124,27 @@ class NumericType_Unit_Tests extends Specification
             backToRaw == rawOriginal
             num.toTarget( original ) == target
 
+        and : 'The numeric type instance can perform array conversion.'
+           num.convertToTargetArray( rawOriginal as double[] ) == rawOriginal // Groovy automatically tests values
+           num.convertToTargetArray( rawOriginal as float[] ) == rawOriginal // ...despite difference types...
+           num.convertToTargetArray( rawOriginal as int[] ) == rawOriginal
+           num.convertToTargetArray( rawOriginal as short[] ) == rawOriginal
+           num.convertToTargetArray( rawOriginal as long[] ) == rawOriginal
+
         where : 'The following "NumericType" implementation instances and numeric data is being used: '
-            num       |    original   |     rawOriginal                        || target
-            new UI8() |      -3       |       [-3]                             || 255 - 2
-            new UI16()|      -3       |      [255, 253]                        || 65_535 - 2
-            new UI32()|      -3       |[255, 255, 255, 253]                    || 4_294_967_295 - 2
-            new UI64()|      -3       |[255, 255, 255, 255, 255, 255, 255, 253]|| 18_446_744_073_709_551_615 - 2
-            new I8()  |      -3       |       [-3]                             || - 3
-            new I16() |      -3       |      [255, 253]                        || - 3
-            new I32() |      -3       |[255, 255, 255, 253]                    || - 3
-            new I64() |      -3       |[255, 255, 255, 255, 255, 255, 255, 253]|| - 3
-            new F32() |     -0.3      | [-66, -103, -103, -102]                || - 0.3 as Float
-            new F64() |     -0.3      | [-65, -45, 51, 51, 51, 51, 51, 51]     || - 0.3 as Double
-            new F32() |  -5432.39928  | [-59, -87, -61, 50]                    || -5432.39928 as Float
-            new F64() |  -5432.39928  | [-64, -75, 56, 102, 55, 54, -51, -14]  || -5432.39928 as Double
+            num        |   original  |      rawOriginal                         || target
+            new UI8()  |     -3      |        [-3]                              || 255 - 2
+            new UI16() |     -3      |       [255, 253]                         || 65_535 - 2
+            new UI32() |     -3      | [255, 255, 255, 253]                     || 4_294_967_295 - 2
+            new UI64() |     -3      | [255, 255, 255, 255, 255, 255, 255, 253] || 18_446_744_073_709_551_615 - 2
+            new I8()   |     -3      |        [-3]                              || - 3
+            new I16()  |     -3      |       [255, 253]                         || - 3
+            new I32()  |     -3      | [255, 255, 255, 253]                     || - 3
+            new I64()  |     -3      | [255, 255, 255, 255, 255, 255, 255, 253] || - 3
+            new F32()  |    -0.3     |  [-66, -103, -103, -102]                 || - 0.3 as Float
+            new F64()  |    -0.3     |  [-65, -45, 51, 51, 51, 51, 51, 51]      || - 0.3 as Double
+            new F32()  | -5432.39928 |  [-59, -87, -61, 50]                     || -5432.39928 as Float
+            new F64()  | -5432.39928 |  [-64, -75, 56, 102, 55, 54, -51, -14]   || -5432.39928 as Double
         /*
             Verify F32 & F64 byte arrays with the following :
             ------------------------------------------------
@@ -145,6 +152,10 @@ class NumericType_Unit_Tests extends Specification
             print new I32().targetToForeignBytes( Float.floatToIntBits( -8495432.3992898 ) )
         */
     }
+
+
+
+
 
 
 }

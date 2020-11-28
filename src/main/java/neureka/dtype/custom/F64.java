@@ -1,6 +1,7 @@
 package neureka.dtype.custom;
 
 import neureka.dtype.AbstractNumericType;
+import neureka.utility.DataConverter;
 
 import java.io.IOException;
 import java.io.DataInput;
@@ -123,7 +124,7 @@ public class F64 extends AbstractNumericType<Double, double[], Double, double[]>
 
     @Override
     public double[] convertToTargetArray(Object from) {
-        return new double[0];
+        return DataConverter.instance().convert( from, double[].class );
     }
 
     private double[] _readFrom( DataInput stream, int size ) throws IOException {
