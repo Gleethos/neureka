@@ -82,12 +82,12 @@ public class I32 extends AbstractNumericType<Integer, int[], Integer, int[]>
     }
 
     @Override
-    public <T> int[] readForeignDataFrom(Iterator<T> iterator, int size) {
+    public <T> int[] readForeignDataFrom( Iterator<T> iterator, int size ) {
         return new int[0];
     }
 
     @Override
-    public Integer convertToHolder(Object from) {
+    public Integer convertToHolder( Object from ) {
         if ( Byte.class.equals( from.getClass() ) )
             return ( (Byte) from ).intValue();
         else if ( Integer.class.equals( from.getClass() ) )
@@ -105,25 +105,26 @@ public class I32 extends AbstractNumericType<Integer, int[], Integer, int[]>
     }
 
     @Override
-    public int[] convertToHolderArray(Object from) {
+    public int[] convertToHolderArray( Object from ) {
         return new int[0];
     }
 
     @Override
-    public Integer convertToTarget(Object from) {
-        return convertToHolder(from);
+    public Integer convertToTarget( Object from ) {
+        return convertToHolder( from );
     }
 
     @Override
-    public int[] convertToTargetArray(Object from) {
+    public int[] convertToTargetArray( Object from ) {
         return DataConverter.instance().convert( from, int[].class );
     }
 
     private int[] _readData( DataInput stream, int size ) throws IOException {
         int[] data = new int[size];
+        byte[] bytes = new byte[ this.numberOfBytes() ];
         for ( int i=0; i<size; i++ ) {
-            stream.readFully(_data);
-            data[ i ] = foreignHolderBytesToTarget(_data);
+            stream.readFully( bytes );
+            data[ i ] = foreignHolderBytesToTarget( bytes );
         }
         return data;
     }

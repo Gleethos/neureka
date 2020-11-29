@@ -11,7 +11,7 @@ import java.util.Iterator;
 public class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Long, long[]>
 {
 
-    public UI64(){ super(); }
+    public UI64() { super(); }
 
     @Override
     public boolean signed() {
@@ -77,7 +77,7 @@ public class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Long, lo
     }
 
     @Override
-    public <T> BigInteger[] readAndConvertForeignDataFrom(Iterator<T> iterator, int size) {
+    public <T> BigInteger[] readAndConvertForeignDataFrom( Iterator<T> iterator, int size ) {
         return new BigInteger[0];
     }
 
@@ -87,27 +87,27 @@ public class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Long, lo
     }
 
     @Override
-    public <T> long[] readForeignDataFrom(Iterator<T> iterator, int size) {
+    public <T> long[] readForeignDataFrom( Iterator<T> iterator, int size ) {
         return new long[0];
     }
 
     @Override
-    public Long convertToHolder(Object from) {
+    public Long convertToHolder( Object from ) {
         return null;
     }
 
     @Override
-    public long[] convertToHolderArray(Object from) {
+    public long[] convertToHolderArray( Object from ) {
         return new long[0];
     }
 
     @Override
-    public BigInteger convertToTarget(Object from) {
+    public BigInteger convertToTarget( Object from ) {
         return null;
     }
 
     @Override
-    public BigInteger[] convertToTargetArray(Object from) {
+    public BigInteger[] convertToTargetArray( Object from ) {
         return DataConverter.instance().convert( from, BigInteger[].class );
     }
 

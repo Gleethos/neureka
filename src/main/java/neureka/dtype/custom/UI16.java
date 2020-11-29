@@ -69,9 +69,10 @@ public class UI16 extends AbstractNumericType<Integer, int[], Short, short[]>
     @Override
     public int[] readAndConvertForeignDataFrom(DataInput stream, int size )  throws IOException {
         int[] data = new int[ size ];
+        byte[] bytes = new byte[ this.numberOfBytes() ];
         for ( int i=0; i<size; i++ ) {
-            stream.readFully(_data);
-            data[ i ] = foreignHolderBytesToTarget(_data);
+            stream.readFully( bytes );
+            data[ i ] = foreignHolderBytesToTarget( bytes );
         }
         return data;
     }
@@ -92,22 +93,22 @@ public class UI16 extends AbstractNumericType<Integer, int[], Short, short[]>
     }
 
     @Override
-    public Short convertToHolder(Object from) {
+    public Short convertToHolder( Object from ) {
         return null;
     }
 
     @Override
-    public short[] convertToHolderArray(Object from) {
+    public short[] convertToHolderArray( Object from ) {
         return new short[0];
     }
 
     @Override
-    public Integer convertToTarget(Object from) {
+    public Integer convertToTarget( Object from ) {
         return null;
     }
 
     @Override
-    public int[] convertToTargetArray(Object from) {
+    public int[] convertToTargetArray( Object from ) {
         return DataConverter.instance().convert( from, int[].class );
     }
 

@@ -12,7 +12,7 @@ public class I16 extends AbstractNumericType<Short, short[], Short, short[]>
 {
     private final ByteBuffer buffer = ByteBuffer.allocate(Short.BYTES);
 
-    public I16(){ super(); }
+    public I16() { super(); }
 
     @Override
     public boolean signed() {
@@ -45,7 +45,7 @@ public class I16 extends AbstractNumericType<Short, short[], Short, short[]>
     }
 
     @Override
-    public Short foreignHolderBytesToTarget(byte[] bytes) {
+    public Short foreignHolderBytesToTarget( byte[] bytes ) {
         buffer.put(bytes, 0, bytes.length);
         buffer.flip();//need flip
         return buffer.getShort();
@@ -68,7 +68,7 @@ public class I16 extends AbstractNumericType<Short, short[], Short, short[]>
     }
 
     @Override
-    public <T> short[] readAndConvertForeignDataFrom(Iterator<T> iterator, int size) {
+    public <T> short[] readAndConvertForeignDataFrom( Iterator<T> iterator, int size ) {
         return new short[0];
     }
 
@@ -78,12 +78,12 @@ public class I16 extends AbstractNumericType<Short, short[], Short, short[]>
     }
 
     @Override
-    public <T> short[] readForeignDataFrom(Iterator<T> iterator, int size) {
+    public <T> short[] readForeignDataFrom( Iterator<T> iterator, int size ) {
         return new short[0];
     }
 
     @Override
-    public Short convertToHolder(Object from) {
+    public Short convertToHolder( Object from ) {
         if ( Byte.class.equals( from.getClass() ) )
             return ( (Byte) from ).shortValue();
         else if ( Integer.class.equals( from.getClass() ) )
@@ -101,25 +101,26 @@ public class I16 extends AbstractNumericType<Short, short[], Short, short[]>
     }
 
     @Override
-    public short[] convertToHolderArray(Object from) {
+    public short[] convertToHolderArray( Object from ) {
         return new short[0];
     }
 
     @Override
-    public Short convertToTarget(Object from) {
-        return convertToHolder(from);
+    public Short convertToTarget( Object from ) {
+        return convertToHolder( from );
     }
 
     @Override
-    public short[] convertToTargetArray(Object from) {
+    public short[] convertToTargetArray( Object from ) {
         return DataConverter.instance().convert( from, short[].class );
     }
 
     private short[] _readData( DataInput stream, int size ) throws IOException {
         short[] data = new short[size];
+        byte[] bytes = new byte[ this.numberOfBytes() ];
         for ( int i=0; i<size; i++ ) {
-            stream.readFully(_data);
-            data[ i ] = foreignHolderBytesToTarget(_data);
+            stream.readFully( bytes );
+            data[ i ] = foreignHolderBytesToTarget( bytes );
         }
         return data;
     }

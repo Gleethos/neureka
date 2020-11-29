@@ -45,7 +45,7 @@ public class I64 extends AbstractNumericType<Long, long[], Long, long[]>
     }
 
     @Override
-    public Long foreignHolderBytesToTarget(byte[] bytes) {
+    public Long foreignHolderBytesToTarget( byte[] bytes ) {
         buffer.put(bytes, 0, bytes.length);
         buffer.flip();//need flip
         return buffer.getLong();
@@ -69,7 +69,7 @@ public class I64 extends AbstractNumericType<Long, long[], Long, long[]>
     }
 
     @Override
-    public <T> long[] readAndConvertForeignDataFrom(Iterator<T> iterator, int size) {
+    public <T> long[] readAndConvertForeignDataFrom( Iterator<T> iterator, int size ) {
         return new long[0];
     }
 
@@ -79,12 +79,12 @@ public class I64 extends AbstractNumericType<Long, long[], Long, long[]>
     }
 
     @Override
-    public <T> long[] readForeignDataFrom(Iterator<T> iterator, int size) {
+    public <T> long[] readForeignDataFrom( Iterator<T> iterator, int size ) {
         return new long[0];
     }
 
     @Override
-    public Long convertToHolder(Object from) {
+    public Long convertToHolder( Object from ) {
         if ( Byte.class.equals( from.getClass() ) )
             return ( (Byte) from ).longValue();
         else if ( Integer.class.equals( from.getClass() ) )
@@ -102,17 +102,17 @@ public class I64 extends AbstractNumericType<Long, long[], Long, long[]>
     }
 
     @Override
-    public long[] convertToHolderArray(Object from) {
+    public long[] convertToHolderArray( Object from ) {
         return new long[0];
     }
 
     @Override
-    public Long convertToTarget(Object from) {
-        return convertToHolder(from);
+    public Long convertToTarget( Object from ) {
+        return convertToHolder( from );
     }
 
     @Override
-    public long[] convertToTargetArray(Object from) {
+    public long[] convertToTargetArray( Object from ) {
         return DataConverter.instance().convert( from, long[].class );
     }
 

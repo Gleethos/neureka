@@ -90,7 +90,7 @@ public class DataType<Type>
         _typeClass = type;
     }
 
-    public Class<Type> getTypeClass(){
+    public Class<Type> getTypeClass() {
         return _typeClass;
     }
 
@@ -113,7 +113,7 @@ public class DataType<Type>
         return null;
     }
 
-    public boolean typeClassImplements( Class<?> interfaceClass ){
+    public boolean typeClassImplements( Class<?> interfaceClass ) {
         return interfaceClass.isAssignableFrom(_typeClass);
     }
 

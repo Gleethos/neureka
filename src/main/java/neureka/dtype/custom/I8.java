@@ -10,12 +10,8 @@ import java.util.Iterator;
 
 public class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
 {
-    public I8(){
+    public I8() {
         super();
-        _setToTargetArray( double[].class, DataConverter.Utility::doubleToByte );
-        //_setToTargetArray( int[].class,    DataConverter.Utility::byteToInt);
-        //_setToTargetArray( float[].class,  DataConverter.Utility::byteToFloat);
-        //_setToTargetArray( long[].class,   DataConverter.Utility::byteToLong );
     }
 
     @Override
@@ -49,17 +45,17 @@ public class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
     }
 
     @Override
-    public Byte foreignHolderBytesToTarget(byte[] bytes) {
+    public Byte foreignHolderBytesToTarget( byte[] bytes ) {
         return bytes[ 0 ];
     }
 
     @Override
-    public Byte toTarget(Byte original) {
+    public Byte toTarget( Byte original ) {
         return original;
     }
 
     @Override
-    public byte[] targetToForeignHolderBytes(Byte number) {
+    public byte[] targetToForeignHolderBytes( Byte number ) {
         return new byte[]{number};
     }
 
@@ -71,7 +67,7 @@ public class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
     }
 
     @Override
-    public <T> byte[] readAndConvertForeignDataFrom(Iterator<T> iterator, int size) {
+    public <T> byte[] readAndConvertForeignDataFrom( Iterator<T> iterator, int size ) {
         return new byte[0];
     }
 
@@ -83,12 +79,12 @@ public class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
     }
 
     @Override
-    public <T> byte[] readForeignDataFrom(Iterator<T> iterator, int size) {
+    public <T> byte[] readForeignDataFrom( Iterator<T> iterator, int size ) {
         return new byte[0];
     }
 
     @Override
-    public Byte convertToHolder(Object from) {
+    public Byte convertToHolder( Object from ) {
         if ( Byte.class.equals( from.getClass() ) )
             return ( (Byte) from );
         else if ( Integer.class.equals( from.getClass() ) )
@@ -106,12 +102,12 @@ public class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
     }
 
     @Override
-    public byte[] convertToHolderArray(Object from) {
+    public byte[] convertToHolderArray( Object from ) {
         return new byte[0];
     }
 
     @Override
-    public Byte convertToTarget(Object from) {
+    public Byte convertToTarget( Object from ) {
         return convertToHolder( from );
     }
 

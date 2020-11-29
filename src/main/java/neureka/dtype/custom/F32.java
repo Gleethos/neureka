@@ -12,10 +12,6 @@ public class F32 extends AbstractNumericType<Float, float[], Float, float[]>
 {
     public F32() {
         super();
-        _setToTargetArray( double[].class, DataConverter.Utility::doubleToFloat );
-        _setToTargetArray( int[].class,    DataConverter.Utility::intToFloat );
-        //_set( float[].class,  DataConverter.Utility::floatToFloat);
-        //_set( long[].class,   DataConverter.Utility::floatToLong );
     }
 
     @Override
@@ -49,7 +45,7 @@ public class F32 extends AbstractNumericType<Float, float[], Float, float[]>
     }
 
     @Override
-    public Float foreignHolderBytesToTarget(byte[] bytes) {
+    public Float foreignHolderBytesToTarget( byte[] bytes ) {
         return ByteBuffer.wrap(bytes).getFloat();
     }
 
@@ -117,12 +113,12 @@ public class F32 extends AbstractNumericType<Float, float[], Float, float[]>
     }
 
     @Override
-    public Float convertToTarget(Object from) {
+    public Float convertToTarget( Object from ) {
         return convertToHolder( from );
     }
 
     @Override
-    public float[] convertToTargetArray(Object from) {
+    public float[] convertToTargetArray( Object from ) {
         return DataConverter.instance().convert( from, float[].class );
     }
 

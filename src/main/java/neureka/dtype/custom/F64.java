@@ -95,7 +95,7 @@ public class F64 extends AbstractNumericType<Double, double[], Double, double[]>
     }
 
     @Override
-    public Double convertToHolder(Object from) {
+    public Double convertToHolder( Object from ) {
         if ( Byte.class.equals( from.getClass() ) )
             return ( (Byte) from ).doubleValue();
         else if ( Integer.class.equals( from.getClass() ) )
@@ -113,25 +113,26 @@ public class F64 extends AbstractNumericType<Double, double[], Double, double[]>
     }
 
     @Override
-    public double[] convertToHolderArray(Object from) {
+    public double[] convertToHolderArray( Object from ) {
         return new double[0];
     }
 
     @Override
-    public Double convertToTarget(Object from) {
+    public Double convertToTarget( Object from ) {
         return convertToHolder( from );
     }
 
     @Override
-    public double[] convertToTargetArray(Object from) {
+    public double[] convertToTargetArray( Object from ) {
         return DataConverter.instance().convert( from, double[].class );
     }
 
     private double[] _readFrom( DataInput stream, int size ) throws IOException {
         double[] data = new double[ size ];
+        byte[] bytes = new byte[ this.numberOfBytes() ];
         for ( int i=0; i<size; i++ ) {
-            stream.readFully(_data);
-            data[ i ] = foreignHolderBytesToTarget(_data);
+            stream.readFully( bytes );
+            data[ i ] = foreignHolderBytesToTarget( bytes );
         }
         return data;
     }

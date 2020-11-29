@@ -45,7 +45,7 @@ public class UI8 extends AbstractNumericType<Short, short[], Byte, byte[]>
     }
 
     @Override
-    public Short foreignHolderBytesToTarget(byte[] bytes) {
+    public Short foreignHolderBytesToTarget( byte[] bytes ) {
         return (short) (((int)bytes[ 0 ]) & 0xFF);
     }
 
@@ -64,40 +64,42 @@ public class UI8 extends AbstractNumericType<Short, short[], Byte, byte[]>
     @Override
     public short[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
         short[] data = new short[size];
+        byte[] bytes = new byte[ this.numberOfBytes() ];
         for ( int i=0; i<size; i++ ) {
-            stream.readFully(_data);
-            data[ i ] = foreignHolderBytesToTarget(_data);
+            stream.readFully( bytes );
+            data[ i ] = foreignHolderBytesToTarget( bytes );
         }
         return data;
     }
 
     @Override
-    public <T> short[] readAndConvertForeignDataFrom(Iterator<T> iterator, int size) {
+    public <T> short[] readAndConvertForeignDataFrom( Iterator<T> iterator, int size ) {
         return new short[0];
     }
 
     @Override
     public byte[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
-        byte[] data = new byte[size];
+        byte[] data = new byte[ size ];
+        byte[] bytes = new byte[ this.numberOfBytes() ];
         for ( int i=0; i<size; i++ ) {
-            stream.readFully(_data);
-            data[ i ] = _data[0];
+            stream.readFully( bytes );
+            data[ i ] = bytes[ 0 ];
         }
         return data;
     }
 
     @Override
-    public <T> byte[] readForeignDataFrom(Iterator<T> iterator, int size) {
+    public <T> byte[] readForeignDataFrom( Iterator<T> iterator, int size ) {
         return new byte[0];
     }
 
     @Override
-    public Byte convertToHolder(Object from) {
+    public Byte convertToHolder( Object from ) {
         return null;
     }
 
     @Override
-    public byte[] convertToHolderArray(Object from) {
+    public byte[] convertToHolderArray( Object from ) {
         return new byte[0];
     }
 

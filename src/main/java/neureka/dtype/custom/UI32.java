@@ -42,7 +42,7 @@ public class UI32 extends AbstractNumericType<Long, long[], Integer, int[]>
     }
 
     @Override
-    public Long foreignHolderBytesToTarget(byte[] bytes) {
+    public Long foreignHolderBytesToTarget( byte[] bytes ) {
         return
             ((long)( bytes[ 0 ] & 0xff )) << 24 |
             ((long)( bytes[ 1 ] & 0xff )) << 16 |
@@ -69,7 +69,7 @@ public class UI32 extends AbstractNumericType<Long, long[], Integer, int[]>
     }
 
     @Override
-    public <T> long[] readAndConvertForeignDataFrom(Iterator<T> iterator, int size) {
+    public <T> long[] readAndConvertForeignDataFrom( Iterator<T> iterator, int size ) {
         return new long[0];
     }
 
@@ -79,27 +79,27 @@ public class UI32 extends AbstractNumericType<Long, long[], Integer, int[]>
     }
 
     @Override
-    public <T> int[] readForeignDataFrom(Iterator<T> iterator, int size) {
+    public <T> int[] readForeignDataFrom( Iterator<T> iterator, int size ) {
         return new int[0];
     }
 
     @Override
-    public Integer convertToHolder(Object from) {
+    public Integer convertToHolder( Object from ) {
         return null;
     }
 
     @Override
-    public int[] convertToHolderArray(Object from) {
+    public int[] convertToHolderArray( Object from ) {
         return new int[0];
     }
 
     @Override
-    public Long convertToTarget(Object from) {
+    public Long convertToTarget( Object from ) {
         return null;
     }
 
     @Override
-    public long[] convertToTargetArray(Object from) {
+    public long[] convertToTargetArray( Object from ) {
         return DataConverter.instance().convert( from, long[].class );
     }
 
