@@ -39,10 +39,34 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
+/**
+ *  This interface represents instances of utility classes which represent numeric data types
+ *  alongside useful methods which offer extensive conversion methods for various types
+ *  of primitive or non-primitive data types and arrays of said types.
+ *  Instances of concrete sub-types do not embody data types themselves,
+ *  however they simply provide standardized methods which handle the
+ *  type which the class represents.
+ *
+ * @param <TargetType>
+ * @param <TargetArrayType>
+ * @param <HolderType>
+ * @param <HolderArrayType>
+ */
 public interface NumericType<TargetType, TargetArrayType, HolderType, HolderArrayType>
 {
+    /**
+     *  This boolean value tells if the data-type represented
+     *  by concrete instances of implementations of this interface
+     *  is signed!
+     *
+     * @return The truth value which defines if the represented data-type is signed.
+     */
     boolean signed();
 
+    /**
+     *
+     * @return The number of bytes which it takes to represent the data-type.
+     */
     int numberOfBytes();
 
     Class<TargetType> targetType();

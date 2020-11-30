@@ -7,7 +7,11 @@ import java.io.IOException;
 import java.io.DataInput;
 import java.util.Iterator;
 
-
+/**
+ *  The following abstract class implements some basic logic which
+ *  is applicable across all final concrete classes extending this abstract one.
+ *
+ */
 public class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
 {
     public I8() {

@@ -107,12 +107,12 @@ class NumericType_Unit_Tests extends Specification
                     'UI16': { o -> o as Short },
                     'UI32': { o -> o as Integer },
                     'UI64': { o -> o as Long },
-                    'I8' : { o -> o as Byte },
-                    'I16': { o -> o as Short },
-                    'I32': { o -> o as Integer },
-                    'I64': { o -> o as Long },
-                    'F32': { o -> o as Float },
-                    'F64': { o -> o as Double }
+                    'I8'  : { o -> o as Byte },
+                    'I16' : { o -> o as Short },
+                    'I32' : { o -> o as Integer },
+                    'I64' : { o -> o as Long },
+                    'F32' : { o -> o as Float },
+                    'F64' : { o -> o as Double }
             ][ num.class.simpleName ](original)
         and : 'The convert the raw type (might represent unsigned value) to a JVM compatible target type...'
             def resultTarget = num.foreignHolderBytesToTarget( rawOriginal )
