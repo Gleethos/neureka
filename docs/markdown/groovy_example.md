@@ -1,7 +1,7 @@
 # Neureka with Groovy #
 
 Simple scalar calculation:
-```
+```java
     def x = new Tsr(3).setRqsGradient(true) 
     def b = new Tsr(-4)
     def w = new Tsr(2)
@@ -16,7 +16,7 @@ Simple scalar calculation:
      */
 ```
 Matrix multiplication:
-```
+```java
     x = new Tsr(
                 [2, 3, 1],
                 [
@@ -38,7 +38,7 @@ Matrix multiplication:
      */
 ```
 Convolution:
-```
+```java
         x = new Tsr(
                 [3, 3],
                 [
@@ -64,7 +64,7 @@ Convolution:
 ```
 
 GPU execution:
-```
+```java
         def gpu = Device.find('nvidia')
         x = new Tsr(
                 [3, 3],
