@@ -1,7 +1,7 @@
 # Neureka with Java #
 
 Simple scalar calculation:
-```
+```java
     Tsr x = new Tsr(3).setRqsGradient(true);
     Tsr b = new Tsr(-4);
     Tsr w = new Tsr(2);
@@ -16,7 +16,7 @@ Simple scalar calculation:
      */
 ```
 Matrix multiplication:
-```
+```java
     x = new Tsr(
                 new int[]{2, 3, 1},
                 new double[]{
@@ -38,7 +38,7 @@ Matrix multiplication:
      */
 ```
 Convolution:
-```
+```java
         x = new Tsr(
                 new int[]{3, 3},
                 new double[]{
@@ -64,7 +64,7 @@ Convolution:
 ```
 
 GPU execution:
-```
+```java
         Device gpu = Device.find("nvidia");
         x = new Tsr(
                 new int[]{3, 3},
