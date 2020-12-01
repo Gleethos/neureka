@@ -8,14 +8,19 @@ import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
+import java.util.List;
+
 public class Operator extends AbstractFunctionalOperationTypeImplementation<Operator>
 {
     public Operator() {
         super("operator");
         setSuitabilityChecker(
                 call -> {
-                    int size = ( call.getTensors()[ 0 ] == null ) ? call.getTensors()[ 1 ].size() : call.getTensors()[ 0 ].size();
-                    for ( Tsr t : call.getTensors() ) if ( t!=null && t.size() != size ) return 0.0f;
+                    List<Integer> shape = ( call.getTensors()[ 0 ] == null ) ? call.getTensors()[ 1 ].shape() : call.getTensors()[ 0 ].shape();
+                    int size = shape.stream().reduce(1,( x, y )-> x * y );
+                    for ( Tsr t : call.getTensors() )
+                        if ( t != null && ( t.size() != size || !shape.equals( t.shape() ) ) )
+                            return 0.0f;
                     return 1.0f;
                 }
         );
@@ -33,7 +38,6 @@ public class Operator extends AbstractFunctionalOperationTypeImplementation<Oper
             OperationType.SecondaryNDIConsumer operation
     ) {
         if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
-
             ((double[])t0_drn.getValue())[ 0 ] = operation.execute( NDIterator.of( t1_src ), NDIterator.of( t2_src ) ); // new int[t0_drn.rank()]
         } else {
             //int[] t0Shp = t0_drn.getNDConf().shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
@@ -44,9 +48,9 @@ public class Operator extends AbstractFunctionalOperationTypeImplementation<Oper
             t0Idx.set( t0_drn.idx_of_i( i ) );
             t1Idx.set( t1_src.idx_of_i( i ) );
             t2Idx.set( t2_src.idx_of_i( i ) );
-            while (i < end) {//increment on drain accordingly:
+            while ( i < end ) {//increment on drain accordingly:
                 //setInto _value in drn:
-                t0_value[t0Idx.i()] = operation.execute( t1Idx, t2Idx );
+                t0_value[ t0Idx.i() ] = operation.execute( t1Idx, t2Idx );
                 //increment on drain:
                 t0Idx.increment();
                 t1Idx.increment();

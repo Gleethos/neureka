@@ -12,7 +12,7 @@ import java.util.Iterator;
  *  is applicable across all final concrete classes extending this abstract one.
  *
  */
-public class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
+public final class I8 extends AbstractNumericType<Byte, byte[], Byte, byte[]>
 {
     public I8() {
         super();

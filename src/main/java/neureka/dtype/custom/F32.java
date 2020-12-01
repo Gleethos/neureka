@@ -8,7 +8,7 @@ import java.io.DataInput;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-public class F32 extends AbstractNumericType<Float, float[], Float, float[]>
+public final class F32 extends AbstractNumericType<Float, float[], Float, float[]>
 {
     public F32() {
         super();

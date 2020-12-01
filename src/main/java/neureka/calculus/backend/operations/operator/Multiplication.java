@@ -164,20 +164,21 @@ public class Multiplication extends AbstractOperationType {
                         if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                         {
                             int[] shp = tsrs[ 1 ].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual( false );
-                        try {
-                            device.store(output);
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
+                            Tsr output = new Tsr( shp, 0.0 );
+                            output.setIsVirtual( false );
+                            try {
+                                device.store(output);
+                            } catch( Exception e ) {
+                                e.printStackTrace();
+                            }
+                            tsrs[ 0 ] = output;
                         }
                         return call;
                     }
                 );
 
-        setImplementation(Operator.class,
+        setImplementation(
+                Operator.class,
                 operator.setExecutor(
                         HostExecutor.class,
                         new HostExecutor(
@@ -240,7 +241,7 @@ public class Multiplication extends AbstractOperationType {
                 .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
-                        Tsr ctxDerivative = (Tsr)call.getAt("derivative");
+                        Tsr ctxDerivative = (Tsr)call.getAt( "derivative" );
                         Function mul = Function.Detached.MUL;
                         if ( ctxDerivative != null ) {
                             return new DefaultADAgent( ctxDerivative )
@@ -259,7 +260,21 @@ public class Multiplication extends AbstractOperationType {
                         }
                     }
                 )
-                .setCallHock( ( caller, call ) -> null )
+                .setCallHock( ( caller, call ) -> {
+                    int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
+                    if (
+                                call.getTensor(0+offset).shape().size() != call.getTensor(1+offset).shape().size()
+                        ) // Creating a new tensor:
+                        {
+                            Tsr[] tsrs = {call.getTensor(0+offset), call.getTensor(1+offset) };
+                            Tsr.makeFit(tsrs, caller.doesAD() );
+                            tsrs = new Tsr[]{null, tsrs[0], tsrs[1]};
+                            call.getDevice().execute( call.withNew( tsrs ) );
+                            return tsrs[0];
+                        }
+                        return null;
+                    }
+                )
                 .setRJAgent( rja )
                 .setDrainInstantiation(
                     call -> {
@@ -267,15 +282,29 @@ public class Multiplication extends AbstractOperationType {
                         Device device = call.getDevice();
                         if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                         {
-                            int[] shp = tsrs[ 1 ].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual( false );
-                        try {
-                            device.store(output);
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
+                            int[] s1 = tsrs[1].getNDConf().shape();
+                            int[] s2 = tsrs[2].getNDConf().shape();
+
+                            assert s1.length == s2.length || true;
+
+
+                            int[] newShape = new int[s1.length];
+
+
+                            for ( int i = 0; i < newShape.length; i++ )
+                                assert s1[ i ] == 1 || s2[ i ] == 1 || s1[ i ] == s2[ i ];
+
+                            for ( int i = 0; i < newShape.length; i++ )
+                                newShape[ i ] = ( s1[ i ] == 1 ) ? s2[ i ] : s1[ i ];
+
+                            Tsr output = new Tsr( newShape, 0.0 );
+                            output.setIsVirtual( false );
+                            try {
+                                device.store(output);
+                            } catch( Exception e ) {
+                                e.printStackTrace();
+                            }
+                            tsrs[ 0 ] = output;
                         }
                         return call;
                     }

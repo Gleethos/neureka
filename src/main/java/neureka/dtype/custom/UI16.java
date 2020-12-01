@@ -8,7 +8,7 @@ import java.io.DataInput;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-public class UI16 extends AbstractNumericType<Integer, int[], Short, short[]>
+public final class UI16 extends AbstractNumericType<Integer, int[], Short, short[]>
 {
 
     public UI16() {

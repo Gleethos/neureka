@@ -8,7 +8,7 @@ import java.io.DataInput;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-public class I64 extends AbstractNumericType<Long, long[], Long, long[]>
+public final class I64 extends AbstractNumericType<Long, long[], Long, long[]>
 {
     private final ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
 

@@ -8,7 +8,7 @@ import java.io.DataInput;
 import java.math.BigInteger;
 import java.util.Iterator;
 
-public class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Long, long[]>
+public final class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Long, long[]>
 {
 
     public UI64() { super(); }

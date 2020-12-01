@@ -8,7 +8,7 @@ import java.io.DataInput;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-public class I32 extends AbstractNumericType<Integer, int[], Integer, int[]>
+public final class I32 extends AbstractNumericType<Integer, int[], Integer, int[]>
 {
 
     public I32() {

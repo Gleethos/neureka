@@ -8,7 +8,7 @@ import java.io.DataInput;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-public class I16 extends AbstractNumericType<Short, short[], Short, short[]>
+public final class I16 extends AbstractNumericType<Short, short[], Short, short[]>
 {
     private final ByteBuffer buffer = ByteBuffer.allocate(Short.BYTES);
 

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.DataInput;
 import java.util.Iterator;
 
-public class UI8 extends AbstractNumericType<Short, short[], Byte, byte[]>
+public final class UI8 extends AbstractNumericType<Short, short[], Byte, byte[]>
 {
 
     public UI8() {

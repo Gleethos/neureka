@@ -43,7 +43,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
-public class DataType<Type>
+public final class DataType<Type>
 {
     private static Map<Class<?>, DataType> _instances = new WeakHashMap<>();
 

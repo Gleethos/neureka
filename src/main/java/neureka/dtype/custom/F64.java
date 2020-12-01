@@ -8,7 +8,7 @@ import java.io.DataInput;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-public class F64 extends AbstractNumericType<Double, double[], Double, double[]>
+public final class F64 extends AbstractNumericType<Double, double[], Double, double[]>
 {
 
     public F64() {

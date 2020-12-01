@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-public class UI32 extends AbstractNumericType<Long, long[], Integer, int[]>
+public final class UI32 extends AbstractNumericType<Long, long[], Integer, int[]>
 {
 
     @Override

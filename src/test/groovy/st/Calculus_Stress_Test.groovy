@@ -5,6 +5,7 @@ import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.devices.opencl.OpenCLDevice
+import neureka.devices.opencl.OpenCLPlatform
 import spock.lang.Specification
 
 class Calculus_Stress_Test extends Specification
@@ -22,7 +23,7 @@ class Calculus_Stress_Test extends Specification
         and :
             if (
                 device instanceof OpenCLDevice &&
-                        ( (OpenCLDevice) device ).getPlatform().isDoingLegacyIndexing()  != legacyIndexing
+                        ( (OpenCLDevice) device ).getPlatform().isDoingLegacyIndexing() != legacyIndexing
             ) ( (OpenCLDevice) device ).getPlatform().recompile()
         and :
             def stress = ( Tsr t ) -> {
@@ -102,6 +103,56 @@ class Calculus_Stress_Test extends Specification
         false         | false          | [2, 1, 3]    || "(2x1x1x1x2):[29.0, 2.0, 2.0, 2.0]"
     }
 
+    def 'The broadcast operation stress test runs error free and produces expected result'(
+            Device device,
+            boolean arrayIndexing, boolean legacyIndexing,
+            List<Integer> shape1, List<Integer> shape2,
+            String operation,
+            String expected
+    ) {
+        given: 'Neureka is being reset.'
+            Neureka.instance().reset()
+        and:
+            if (
+                device instanceof OpenCLDevice &&
+                    ( (OpenCLDevice) device ).getPlatform().isDoingLegacyIndexing() != legacyIndexing
+            ) ( (OpenCLDevice) device ).getPlatform().recompile()
+            Neureka.instance().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing
+            Neureka.instance().settings().indexing().isUsingLegacyIndexing = legacyIndexing
+
+        and :
+            Tsr t1 = new Tsr( shape1, -4..2 ).set( device )
+            Tsr t2 = new Tsr( shape2, -3..5 ).set( device )
+
+        when :
+            Tsr t = new Tsr( operation, [t1,t2] )
+
+        then :
+            t.toString() == expected
+
+        where :
+            device             | arrayIndexing | legacyIndexing | shape1    | shape2    | operation || expected
+            HostCPU.instance() | true          | false          | [2, 1]    | [2, 2]    | 'i0*i1'   || "(2x2):[12.0, 8.0, 3.0, -0.0]"
+            HostCPU.instance() | true          | true           | [2, 1]    | [2, 2]    | 'i0*i1'   || "(2x2):[12.0, 6.0, 4.0, -0.0]"
+            HostCPU.instance() | true          | false          | [2, 3, 1] | [1, 3, 2] | 'i0*i1'   || "(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]"
+            HostCPU.instance() | true          | true           | [2, 3, 1] | [1, 3, 2] | 'i0*i1'   || "(2x3x2):[12.0, 9.0, 4.0, 2.0, -0.0, -1.0, -0.0, -0.0, -2.0, -1.0, 0.0, 2.0]"
+            HostCPU.instance() | false         | false          | [2, 1]    | [2, 2]    | 'i0*i1'   || "(2x2):[12.0, 8.0, 3.0, -0.0]"
+            HostCPU.instance() | false         | true           | [2, 1]    | [2, 2]    | 'i0*i1'   || "(2x2):[12.0, 6.0, 4.0, -0.0]"
+            HostCPU.instance() | false         | false          | [2, 3, 1] | [1, 3, 2] | 'i0*i1'   || "(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]"
+            HostCPU.instance() | false         | true           | [2, 3, 1] | [1, 3, 2] | 'i0*i1'   || "(2x3x2):[12.0, 9.0, 4.0, 2.0, -0.0, -1.0, -0.0, -0.0, -2.0, -1.0, 0.0, 2.0]"
+
+            Device.find('gpu') | true          | false          | [2, 1]    | [2, 2]    | 'i0*i1'   || "(2x2):[12.0, 8.0, 3.0, -0.0]"
+            Device.find('gpu') | true          | false          | [2, 3, 1] | [1, 3, 2] | 'i0*i1'   || "(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]"
+            Device.find('gpu') | false         | false          | [2, 1]    | [2, 2]    | 'i0*i1'   || "(2x2):[12.0, 8.0, 3.0, -0.0]"
+            Device.find('gpu') | false         | false          | [2, 3, 1] | [1, 3, 2] | 'i0*i1'   || "(2x3x2):[12.0, 8.0, 3.0, -0.0, -2.0, -4.0, 3.0, 2.0, -0.0, 0.0, 1.0, 2.0]"
+            //WIP:
+            //Device.find('gpu') | true          | true           | [2, 1]    | [2, 2]    | 'i0*i1'   || "(2x2):[12.0, 6.0, 4.0, -0.0]"
+            //Device.find('gpu') | true          | true           | [2, 3, 1] | [1, 3, 2] | 'i0*i1'   || "(2x3x2):[12.0, 9.0, 4.0, 2.0, -0.0, -1.0, -0.0, -0.0, -2.0, -1.0, 0.0, 2.0]"
+            //Device.find('gpu') | false         | true           | [2, 1]    | [2, 2]    | 'i0*i1'   || "(2x2):[12.0, 6.0, 4.0, -0.0]"
+            //Device.find('gpu') | false         | true           | [2, 3, 1] | [1, 3, 2] | 'i0*i1'   || "(2x3x2):[12.0, 9.0, 4.0, 2.0, -0.0, -1.0, -0.0, -0.0, -2.0, -1.0, 0.0, 2.0]"
+
+
+    }
 
 
 }

@@ -177,11 +177,18 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     public Tsr( String equation, List<Object> inputs ) {
-        _construct(
-                inputs.stream().map( Tsr::new ).toArray( Tsr[]::new ),
-                equation,
-                true
-        );
+        if ( inputs.stream().allMatch( e -> e instanceof Tsr ) )
+            _construct(
+                    inputs.stream().toArray( Tsr[]::new ),
+                    equation,
+                    true
+            );
+        else
+            _construct(
+                    inputs.stream().map( Tsr::new ).toArray( Tsr[]::new ),
+                    equation,
+                    true
+            );
     }
 
     public Tsr( List<?> arg1, String arg2 )
