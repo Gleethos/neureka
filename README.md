@@ -153,6 +153,8 @@ $ gradlew proguard
 
 - [Java-Docs](https://gleethos.github.io/neureka/jdocs/index.html)
 
+- [Living Documentation](https://gleethos.github.io/neureka/spock/reports/index.html)!
+
 ---
 
 ## Testing & Specification ###
