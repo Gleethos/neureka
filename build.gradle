@@ -80,7 +80,7 @@ change({VERSION}).between("production/lib/neureka-", "\\.jar\\)").inFile("/READM
 change({VERSION}).between("return \"", "\"").inFile("/src/main/resources/library_settings.groovy")
 change({VERSION}).between("assert Neureka.version\\(\\)==\"", "\"//version").inFile("/src/test/groovy/ThoroughGroovyTests.groovy")
 change({VERSION}).between("Neureka.version\\(\\)==\"", "\"//version").inFile("/src/test/groovy/ut/neureka/Neureka_Unit_Tests.groovy")
-
+change({VERSION}).between("implementation 'com.github.Gleethos:neureka:v", "'").inFile("/README.md")
 
 // SETTING VERSION AND GROUP-ID FOR BUILDING :
 
