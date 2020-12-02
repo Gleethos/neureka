@@ -115,6 +115,17 @@ dependencies {
 
 ---
 
+## Getting started with Groovy Grape: ##
+
+```
+@GrabResolver(name = 'jitpack.io', root = 'https://jitpack.io')
+@Grab('com.github.Gleethos:neureka:v0.3.0')
+
+import com.github.Gleethos.neureka.*
+```
+
+---
+
 ## Building from source ##
 
 Execute the following:
