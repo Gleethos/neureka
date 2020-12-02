@@ -132,7 +132,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     private static final Device<Number> _CPU;
 
     /**
-     *  Flag Fields
+     *  This field contains multiple flags.
+     *  The bits of this integer are used to encode various states which a tensor can have.
+     *  These bits are flipped by bitmasks which are defined below.
      */
     private int _flags = 0;
 
@@ -146,13 +148,17 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     private static final int GRADIENT_APPLY_RQD_MASK = 8;
 
     /**
-     *  The version of the data (_value) stored within this tensor.
+     *  The version of the data ( _data ) stored within this tensor.
      *  Gets incremented every time an inline operation occurs!
+     *  GraphNode instances tied to this tensor (as component) store
+     *  a reference version which is a copy of this field.
+     *  If this version changes despite there being a GraphNode which might
+     *  perform auto-differentiation at some point then an exception will be thrown for debugging.
      */
     private int _version = 0;
 
     /**
-     *  This method returns the version of the data (_value) stored within this tensor.
+     *  This method returns the version of the data (_data) stored within this tensor.
      *
      * @return The version of the underlying data of this tensor.
      */
