@@ -166,8 +166,6 @@ check.dependsOn jacocoTestReport
 //----------------------------------------------------------------------------------------------------------------------
 // 9. CONFIGURING MUTATION TESTING :
 
-
-
 pitest {
     junit5PluginVersion = '0.12' // This is important, otherwise pitest will not run.
     //jvmArgs = ['-Xmx1024m', '-ea']
@@ -232,7 +230,6 @@ task deploy() {
 
 //----------------------------------------------------------------------------------------------------------------------
 // 11. JAR CREATION AND MINIFICATION :
-
 
 jar {
     //destinationDirectory = file("$rootDir/build/libs")
@@ -397,7 +394,6 @@ uploadArchives {
                         email "Gleethos@gmx.at"
                     }
                 }
-
                 scm {
                     url 'https://github.com/Gleethos/'+PROJECT+''
                     connection 'scm:git:git://github.com/Gleethos/'+PROJECT+'.git'

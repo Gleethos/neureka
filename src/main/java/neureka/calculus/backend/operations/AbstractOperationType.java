@@ -13,6 +13,8 @@ import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeI
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
 import neureka.calculus.frontend.AbstractFunction;
 import neureka.calculus.frontend.assembly.FunctionBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -21,6 +23,7 @@ import java.util.function.Consumer;
 
 public abstract class AbstractOperationType implements OperationType
 {
+    private static Logger _LOGGER = LoggerFactory.getLogger( AbstractOperationType.class );
 
     private Stringifier _stringifier;
 
@@ -252,6 +255,12 @@ public abstract class AbstractOperationType implements OperationType
                     bestImpl = impl;
                 }
             }
+        }
+        if ( bestImpl == null ) {
+            String message = "No suitable implementation for execution call '"+call+"' could be found.\n" +
+                    "Execution process aborted.";
+            _LOGGER.error( message );
+            throw new IllegalStateException( message );
         }
         return bestImpl;
     }

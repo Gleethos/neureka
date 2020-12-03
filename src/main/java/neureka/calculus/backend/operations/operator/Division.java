@@ -281,9 +281,8 @@ public class Division extends AbstractOperationType
 
         Broadcast broadcast = new Broadcast()
                 .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
-                    call -> false
-                ).setADAgentSupplier(
+                .setForwardADAnalyzer( call -> false )
+                .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         Tsr ctxDerivative = (Tsr)call.getAt("derivative");
@@ -305,27 +304,7 @@ public class Division extends AbstractOperationType
                         }
                     }
                 )
-                .setCallHock( ( caller, call ) -> null )
-                .setRJAgent( rja )
-                .setDrainInstantiation(
-                    call -> {
-                        Tsr[] tsrs = call.getTensors();
-                        Device device = call.getDevice();
-                        if ( tsrs[ 0 ] == null ) // Creating a new tensor:
-                        {
-                            int[] shp = tsrs[ 1 ].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual( false );
-                        try {
-                            device.store( output );
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
-                        }
-                        return call;
-                    }
-                );
+                .setRJAgent( rja );
 
         setImplementation(
                 Broadcast.class,

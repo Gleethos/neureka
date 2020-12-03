@@ -340,51 +340,7 @@ public class Subtraction extends AbstractOperationType
                             }
                         }
                 )
-                .setCallHock( ( caller, call ) -> {
-                    int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
-                    if (
-                            call.getTensor(0+offset).shape().size() != call.getTensor(1+offset).shape().size()
-                    ) // Creating a new tensor:
-                    {
-                        Tsr[] tsrs = {call.getTensor(0+offset), call.getTensor(1+offset) };
-                        Tsr.makeFit(tsrs, caller.doesAD() );
-                        tsrs = new Tsr[]{null, tsrs[0], tsrs[1]};
-                        call.getDevice().execute( call.withNew( tsrs ) );
-                        return tsrs[0];
-                    }
-                    return null;
-                } )
-                .setRJAgent( rja )
-                .setDrainInstantiation(
-                        call -> {
-                            Tsr[] tsrs = call.getTensors();
-                            Device device = call.getDevice();
-                            if ( tsrs[ 0 ] == null ) // Creating a new tensor:
-                            {
-                                int[] s1 = tsrs[1].getNDConf().shape();
-                                int[] s2 = tsrs[2].getNDConf().shape();
-
-                                assert s1.length == s2.length;
-                                int[] newShape = new int[s1.length];
-
-                                for ( int i = 0; i < newShape.length; i++ )
-                                    assert s1[ i ] == 1 || s2[ i ] == 1 || s1[ i ] == s2[ i ];
-
-                                for ( int i = 0; i < newShape.length; i++ )
-                                    newShape[ i ] = ( s1[ i ] == 1 ) ? s2[ i ] : s1[ i ];
-
-                                Tsr output = new Tsr( newShape, 0.0 );
-                                output.setIsVirtual( false );
-                                try {
-                                    device.store( output );
-                                } catch( Exception e ) {
-                                    e.printStackTrace();
-                                }
-                                tsrs[ 0 ] = output;
-                            }
-                            return call;
-                        }
-                );
+                .setRJAgent( rja );
 
         setImplementation (
                 Broadcast.class,

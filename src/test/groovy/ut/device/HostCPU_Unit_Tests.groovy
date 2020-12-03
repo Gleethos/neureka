@@ -17,8 +17,8 @@ class HostCPU_Unit_Tests extends Specification
     {
         given :
             Neureka.instance().reset()
-            Tsr a = new Tsr(new int[]{100, 60, 2}, 4)
-            Tsr b = new Tsr(new int[]{100, 2, 60}, -2)
+            Tsr a = new Tsr(new int[]{100, 60, 1, 2}, 4)
+            Tsr b = new Tsr(new int[]{100, 1, 60, 2}, -2)
             Device cpu = a.device()
             assert cpu!=null
             HostCPU.NativeExecutor exec = ((HostCPU)cpu).getExecutor()
@@ -38,6 +38,7 @@ class HostCPU_Unit_Tests extends Specification
                 })
                 t.start()
                 Tsr c = (a / b) * 3
+                assert c.shape() == [100,60,60,2]
                 int result = min[0]
                 try {
                     min[0] = 0
