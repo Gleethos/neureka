@@ -167,7 +167,7 @@ public class Multiplication extends AbstractOperationType {
                             Tsr output = new Tsr( shp, 0.0 );
                             output.setIsVirtual( false );
                             try {
-                                device.store(output);
+                                device.store( output );
                             } catch( Exception e ) {
                                 e.printStackTrace();
                             }
@@ -261,8 +261,8 @@ public class Multiplication extends AbstractOperationType {
                     }
                 )
                 .setCallHock( ( caller, call ) -> {
-                    int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
-                    if (
+                        int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
+                        if (
                                 call.getTensor(0+offset).shape().size() != call.getTensor(1+offset).shape().size()
                         ) // Creating a new tensor:
                         {
@@ -285,11 +285,8 @@ public class Multiplication extends AbstractOperationType {
                             int[] s1 = tsrs[1].getNDConf().shape();
                             int[] s2 = tsrs[2].getNDConf().shape();
 
-                            assert s1.length == s2.length || true;
-
-
+                            assert s1.length == s2.length;
                             int[] newShape = new int[s1.length];
-
 
                             for ( int i = 0; i < newShape.length; i++ )
                                 assert s1[ i ] == 1 || s2[ i ] == 1 || s1[ i ] == s2[ i ];
@@ -300,7 +297,7 @@ public class Multiplication extends AbstractOperationType {
                             Tsr output = new Tsr( newShape, 0.0 );
                             output.setIsVirtual( false );
                             try {
-                                device.store(output);
+                                device.store( output );
                             } catch( Exception e ) {
                                 e.printStackTrace();
                             }
@@ -427,7 +424,7 @@ public class Multiplication extends AbstractOperationType {
                                 Tsr output = new Tsr( shp, 0.0 );
                                 output.setIsVirtual( false );
                                 try {
-                                    device.store(output);
+                                    device.store( output );
                                 } catch( Exception e ) {
                                     e.printStackTrace();
                                 }

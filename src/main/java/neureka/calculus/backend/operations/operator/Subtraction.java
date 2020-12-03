@@ -113,7 +113,7 @@ public class Subtraction extends AbstractOperationType
                                 Tsr output = new Tsr( shp, 0.0 );
                                 output.setIsVirtual( false );
                                 try {
-                                    device.store(output);
+                                    device.store( output );
                                 } catch( Exception e ) {
                                     e.printStackTrace();
                                 }
@@ -218,7 +218,7 @@ public class Subtraction extends AbstractOperationType
                         Tsr output = new Tsr( shp, 0.0 );
                         output.setIsVirtual( false );
                         try {
-                            device.store(output);
+                            device.store( output );
                         } catch( Exception e ) {
                             e.printStackTrace();
                         }
@@ -325,7 +325,7 @@ public class Subtraction extends AbstractOperationType
                                 Tsr output = new Tsr( shp, 0.0 );
                                 output.setIsVirtual( false );
                                 try {
-                                    device.store(output);
+                                    device.store( output );
                                 } catch( Exception e ) {
                                     e.printStackTrace();
                                 }

@@ -139,8 +139,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     private int _flags = 0;
 
     /**
-     * This is a bit mask used to store true / false values
-     * in a targeted bit inside the "_flags" variable.
+     *  This is a bit mask used to store true / false values
+     *  in a targeted bit inside the "_flags" variable.
      */
     private static final int RQS_GRADIENT_MASK = 1;
     private static final int IS_OUTSOURCED_MASK = 2;
