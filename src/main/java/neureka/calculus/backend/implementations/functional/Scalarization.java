@@ -8,12 +8,20 @@ import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Scalarization extends AbstractFunctionalOperationTypeImplementation< Scalarization >
 {
 
     public Scalarization(){
         super("scalarization");
-        setSuitabilityChecker(call->1.0f);
+        setSuitabilityChecker(call->{
+            Tsr[] tsrs = call.getTensors();
+            int size = tsrs[tsrs.length-1].size();
+            if( size != 1 || tsrs.length!=2 ) return 0f;
+            return 1.0f;
+        });
     }
 
 

@@ -21,6 +21,35 @@ import java.util.List;
 
 public class Subtraction extends AbstractOperationType
 {
+    private static final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
+            ( inputs, d ) -> {
+                double[] t1_val = inputs[ 1 ].value64();
+                double[] t2_val = inputs[ 2 ].value64();
+                if (d < 0) {
+                    return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()] - t2_val[t2Idx.i()];
+                } else {
+                    return (t0Idx, t1Idx, t2Idx) -> {
+                        if (d == 0) return 1;
+                        else return -1;
+                    };
+                }
+            };
+
+    private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
+            ( inputs, d ) -> {
+                double[] t1_val = inputs[ 1 ].value64();
+                double[] t2_val = inputs[ 2 ].value64();
+                NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
+                NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
+                if (d < 0) {
+                    return (t0Idx, t1Idx, t2Idx) -> t1_val[ndc1.i_of_idx(t1Idx)] - t2_val[ndc2.i_of_idx(t2Idx)];
+                } else {
+                    return (t0Idx, t1Idx, t2Idx) -> {
+                        if (d == 0) return 1;
+                        else return -1;
+                    };
+                }
+            };
 
     public Subtraction()
     {
@@ -286,43 +315,65 @@ public class Subtraction extends AbstractOperationType
         //________________
         // BROADCASTING :
 
-        setImplementation (
-                Broadcast.class,
-                new Broadcast()
-                        .setBackwardADAnalyzer( call -> true )
-                        .setForwardADAnalyzer( call -> true )
-                        .setADAgentSupplier(
-                            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                            {
-                                Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
-                                Function mul = Function.Detached.MUL;
-                                if ( ctxDerivative != null ) {
-                                    return new DefaultADAgent( ctxDerivative )
-                                            .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                                            .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
-                                }
-                                Tsr[] inputs = call.getTensors();
-                                int d = call.getDerivativeIndex();
-                                if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                                else
-                                {
-                                    Tsr deriv = f.derive( inputs, d );
-                                    return new DefaultADAgent( deriv )
-                                            .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                            .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
-                                }
+        Broadcast broadcast = new Broadcast()
+                .setBackwardADAnalyzer( call -> true )
+                .setForwardADAnalyzer( call -> true )
+                .setADAgentSupplier(
+                        ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                        {
+                            Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
+                            Function mul = Function.Detached.MUL;
+                            if ( ctxDerivative != null ) {
+                                return new DefaultADAgent( ctxDerivative )
+                                        .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                                        .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                             }
-                        )
-                        .setCallHock( ( caller, call ) -> null )
-                        .setRJAgent( rja )
-                        .setDrainInstantiation(
-                            call -> {
-                                Tsr[] tsrs = call.getTensors();
-                                Device device = call.getDevice();
-                                if ( tsrs[ 0 ] == null ) // Creating a new tensor:
-                                {
-                                    int[] shp = tsrs[ 1 ].getNDConf().shape();
-                                Tsr output = new Tsr( shp, 0.0 );
+                            Tsr[] inputs = call.getTensors();
+                            int d = call.getDerivativeIndex();
+                            if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                            else
+                            {
+                                Tsr deriv = f.derive( inputs, d );
+                                return new DefaultADAgent( deriv )
+                                        .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                        .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                            }
+                        }
+                )
+                .setCallHock( ( caller, call ) -> {
+                    int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
+                    if (
+                            call.getTensor(0+offset).shape().size() != call.getTensor(1+offset).shape().size()
+                    ) // Creating a new tensor:
+                    {
+                        Tsr[] tsrs = {call.getTensor(0+offset), call.getTensor(1+offset) };
+                        Tsr.makeFit(tsrs, caller.doesAD() );
+                        tsrs = new Tsr[]{null, tsrs[0], tsrs[1]};
+                        call.getDevice().execute( call.withNew( tsrs ) );
+                        return tsrs[0];
+                    }
+                    return null;
+                } )
+                .setRJAgent( rja )
+                .setDrainInstantiation(
+                        call -> {
+                            Tsr[] tsrs = call.getTensors();
+                            Device device = call.getDevice();
+                            if ( tsrs[ 0 ] == null ) // Creating a new tensor:
+                            {
+                                int[] s1 = tsrs[1].getNDConf().shape();
+                                int[] s2 = tsrs[2].getNDConf().shape();
+
+                                assert s1.length == s2.length;
+                                int[] newShape = new int[s1.length];
+
+                                for ( int i = 0; i < newShape.length; i++ )
+                                    assert s1[ i ] == 1 || s2[ i ] == 1 || s1[ i ] == s2[ i ];
+
+                                for ( int i = 0; i < newShape.length; i++ )
+                                    newShape[ i ] = ( s1[ i ] == 1 ) ? s2[ i ] : s1[ i ];
+
+                                Tsr output = new Tsr( newShape, 0.0 );
                                 output.setIsVirtual( false );
                                 try {
                                     device.store( output );
@@ -331,11 +382,58 @@ public class Subtraction extends AbstractOperationType
                                 }
                                 tsrs[ 0 ] = output;
                             }
-                                return call;
-                            }
-                        )
-                        // add _creator
-                    );
+                            return call;
+                        }
+                );
+
+        setImplementation (
+                Broadcast.class,
+                        broadcast
+                        .setExecutor(
+                            HostExecutor.class,
+                            new HostExecutor(
+                                    call ->
+                                            call.getDevice().getExecutor()
+                                                    .threaded (
+                                                            call.getTensor( 0 ).size(),
+                                                            (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                                    ? ( start, end ) ->
+                                                                    Broadcast.broadcast (
+                                                                            call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                            call.getDerivativeIndex(), start, end,
+                                                                            _creatorX.create(call.getTensors(), call.getDerivativeIndex())
+                                                                    )
+                                                                    : ( start, end ) ->
+                                                                    Broadcast.broadcast (
+                                                                            call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                            call.getDerivativeIndex(), start, end,
+                                                                            _creator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                    )
+                                                    ),
+                                    3
+                            )
+                    ).setExecutor(
+                            CLExecutor.class,
+                            new CLExecutor(
+                                    call -> {
+                                        int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
+                                        int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                        call.getDevice().getKernel(call)
+                                                .pass( call.getTensor( offset ) )
+                                                .pass( call.getTensor( offset + 1 ) )
+                                                .pass( call.getTensor( offset + 2 ) )
+                                                .pass( call.getTensor( 0 ).rank() )
+                                                .pass( call.getDerivativeIndex() )
+                                                .call( gwz );
+                                    },
+                                    3,
+                                    broadcast.getKernelSource(), // kernelSource
+                                    "value = src1 - src2;\n",
+                                    "value += handle - drain;\n",
+                                    this // OperationType
+                            )
+                    )
+                );
 
         //______________________
         // RELATED OPERATIONS :
