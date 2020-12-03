@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.operations.OperationType;
+import neureka.devices.Device;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
@@ -22,6 +23,25 @@ public class Scalarization extends AbstractFunctionalOperationTypeImplementation
             if( size != 1 || tsrs.length!=2 ) return 0f;
             return 1.0f;
         });
+        setDrainInstantiation(
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( tsrs[ 0 ] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = tsrs[ 1 ].getNDConf().shape();
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual( false );
+                        try {
+                            device.store( output );
+                        } catch( Exception e ) {
+                            e.printStackTrace();
+                        }
+                        tsrs[ 0 ] = output;
+                    }
+                    return call;
+                }
+        );
     }
 
 

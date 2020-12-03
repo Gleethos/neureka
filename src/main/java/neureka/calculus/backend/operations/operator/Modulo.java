@@ -347,14 +347,7 @@ public class Modulo extends AbstractOperationType {
                 defaultImplementation().supplyADAgentFor(f, call, forward)
             )
             .setCallHock( ( caller, call ) -> null )
-            .setRJAgent( ( call, goDeeperWith ) -> null )
-            .setDrainInstantiation(
-                    call -> {
-                        Tsr[] tsrs = call.getTensors();
-                        int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                        return new ExecutionCall<>(call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1 + offset]}, -1, OperationType.instance("idy"));
-                    }
-            );
+            .setRJAgent( ( call, goDeeperWith ) -> null );
 
         setImplementation(
                 Scalarization.class,
