@@ -196,4 +196,17 @@ Feedback is greatly appreciated!
 
 ## License ##
 
-**It
+**It's Free!** ... 
+    
+    [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.png?v=103)](https://github.com/ellerbrock/open-source-badges/)
+    
+    ---
+    
+    ## Support on Beerpay ##
+    Help me out for a couple of :beers:!
+    
+    [![Beerpay](https://beerpay.io/Gleethos/neureka/badge.svg?style=beer-square)](https://beerpay.io/Gleethos/neureka)  [![Beerpay](https://beerpay.io/Gleethos/neureka/make-wish.svg?style=flat-square)](https://beerpay.io/Gleethos/neureka?focus=wish)
+    
+    ---
+    
+    [![Tweet](https://img.shields.io/twitter/url/https/github.com/Gleethos/neureka.svg?style=social)](https://twitter.com/intent/tweet?text=Check%20out%20Neureka!%20https://github.com/Gleethos/neureka)
