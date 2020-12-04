@@ -179,41 +179,11 @@ public class Division extends AbstractOperationType
                 };
 
         Operator operator = new Operator()
-                .setBackwardADAnalyzer( call -> true )
-                .setForwardADAnalyzer(
-                    call -> {
-                        Tsr<?> last = null;
-                        for ( Tsr<?> t : call.getTensors() ) {
-                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                            last = t; // Note: shapes are cached!
-                        }
-                        return true;
-                    }
-                ).setADAgentSupplier(
-                    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                            defaultImplementation().supplyADAgentFor( f, call, forward )
+                   .setADAgentSupplier(
+                        ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                                defaultImplementation().supplyADAgentFor( f, call, forward )
                 )
-                .setCallHock( ( caller, call ) -> null )
-                .setRJAgent( rja )
-                .setDrainInstantiation(
-                    call -> {
-                        Tsr[] tsrs = call.getTensors();
-                        Device device = call.getDevice();
-                        if ( tsrs[ 0 ] == null ) // Creating a new tensor:
-                        {
-                            int[] shp = tsrs[ 1 ].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual( false );
-                        try {
-                            device.store( output );
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
-                        }
-                        return call;
-                    }
-                );
+                .setRJAgent( rja );;
 
         setImplementation(
                 Operator.class,

@@ -2,8 +2,11 @@ package neureka.calculus.backend.implementations.functional;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.calculus.Function;
+import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.operations.OperationType;
+import neureka.devices.Device;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
@@ -24,9 +27,31 @@ public class Operator extends AbstractFunctionalOperationTypeImplementation<Oper
                     return 1.0f;
                 }
         );
+        setBackwardADAnalyzer( call -> true );
+        setForwardADAnalyzer( call -> true );
+        setCallHock( ( caller, call ) -> null );
+        setDrainInstantiation(
+                call -> {
+                    Tsr[] tsrs = call.getTensors();
+                    Device device = call.getDevice();
+                    if ( tsrs[ 0 ] == null ) // Creating a new tensor:
+                    {
+                        int[] shp = tsrs[ 1 ].getNDConf().shape();
+                        Tsr output = new Tsr( shp, 0.0 );
+                        output.setIsVirtual( false );
+                        try {
+                            device.store( output );
+                        } catch( Exception e ) {
+                            e.printStackTrace();
+                        }
+                        tsrs[ 0 ] = output;
+                    }
+                    return call;
+                }
+        );
     }
 
-    public String getKernelSource(){
+    public String getKernelSource() {
         return Neureka.instance().utility().readResource("kernels/operator_template.cl");
     }
 

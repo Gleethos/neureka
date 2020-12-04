@@ -2,6 +2,7 @@ package neureka.calculus.backend.operations.operator;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.calculus.backend.implementations.OperationTypeImplementation;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
 import neureka.devices.opencl.execution.CLExecutor;
@@ -40,6 +41,64 @@ public class Modulo extends AbstractOperationType {
                 }
         );
 
+        OperationTypeImplementation.RecursiveJunctionAgent rja = (call, goDeeperWith)->
+        {
+            Tsr[] tsrs = call.getTensors();
+            Device device = call.getDevice();
+            int d = call.getDerivativeIndex();
+            OperationType type = call.getType();
+
+            Tsr alternative = null;
+            if (tsrs.length > 3) {
+                if (d < 0) {
+                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
+                    alternative = goDeeperWith.apply(
+                            new ExecutionCall<>(device, reduction, d, type)
+                    );
+                    tsrs[ 0 ] = reduction[ 0 ];
+
+                    reduction = Utility.offsetted(tsrs, 1);
+                    alternative = goDeeperWith.apply(
+                            new ExecutionCall<>(device, reduction, d, type)
+                    );
+                    tsrs[ 0 ] = reduction[ 0 ];
+                } else {
+                    Tsr a;
+                    if ( d > 1 ) {
+                        Tsr[] reduction = Utility.subset(tsrs, 1, 1, d+1);
+                        reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);
+                        alternative = goDeeperWith.apply(
+                                new ExecutionCall<>( device, reduction, -1, OperationType.instance("/") )
+                        );
+                        a = reduction[ 0 ];
+                    } else if ( d == 1 ) a = tsrs[ 1 ];
+                    else a = Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);
+                    Tsr b;
+                    if ( tsrs.length -  d - 2  > 1 ) {
+                        Tsr[] reduction = Utility.subset(tsrs, 2, d+2, tsrs.length-(d+2));
+                        reduction[ 1 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);
+                        reduction[ 0 ] = reduction[ 1 ];
+                        alternative = goDeeperWith.apply(
+                                new ExecutionCall<>( device, reduction, -1, OperationType.instance("/") )
+                        );
+                        b = reduction[ 0 ];
+                    } else b = Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);
+
+                    alternative = goDeeperWith.apply(
+                            new ExecutionCall<>( device, new Tsr[]{tsrs[ 0 ], a, b}, -1, OperationType.instance("*") )
+                    );
+                    alternative = goDeeperWith.apply(
+                            new ExecutionCall<>( device, new Tsr[]{tsrs[ 0 ], tsrs[ 0 ], tsrs[d+1]}, 1, OperationType.instance("/") )
+                    );
+                    if ( d == 0 ) a.delete();
+                    b.delete();
+                }
+                return alternative;
+            } else {
+                return alternative;
+            }
+        };
+
         //_____________________
         // DEFAULT OPERATION :
 
@@ -77,42 +136,11 @@ public class Modulo extends AbstractOperationType {
                 };
 
         Operator operator = new Operator()
-            .setBackwardADAnalyzer( call -> true )
-            .setForwardADAnalyzer(
-                    call -> {
-                        Tsr<?> last = null;
-                        for ( Tsr<?> t : call.getTensors() ) {
-                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                            last = t; // Note: shapes are cached!
-                        }
-                        return true;
-                    }
-            )
-            .setADAgentSupplier(
-                ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                        defaultImplementation().supplyADAgentFor( f, call, forward )
-            )
-            .setCallHock( ( caller, call ) -> null )
-            .setRJAgent( ( call, goDeeperWith ) -> null )
-            .setDrainInstantiation(
-                        call -> {
-                            Tsr[] tsrs = call.getTensors();
-                            Device device = call.getDevice();
-                            if ( tsrs[ 0 ] == null ) // Creating a new tensor:
-                            {
-                                int[] shp = tsrs[ 1 ].getNDConf().shape();
-                                Tsr output = new Tsr( shp, 0.0 );
-                                output.setIsVirtual( false );
-                                try {
-                                    device.store( output );
-                                } catch( Exception e ) {
-                                    e.printStackTrace();
-                                }
-                                tsrs[ 0 ] = output;
-                            }
-                            return call;
-                        }
-            );
+                   .setADAgentSupplier(
+                        ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                                defaultImplementation().supplyADAgentFor( f, call, forward )
+                )
+                .setRJAgent( rja );;
 
         setImplementation(
                 Operator.class,
