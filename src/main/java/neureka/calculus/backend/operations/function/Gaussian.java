@@ -34,11 +34,11 @@ public class Gaussian extends AbstractOperationType
                 ( inputs, d ) ->
                 {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if (d < 0) {
-                        return (t0Idx, t1Idx, t2Idx) -> Math.pow(Math.E, -Math.pow(t1_val[t1Idx.i()], 2));
+                    if ( d < 0 ) {
+                        return ( t0Idx, t1Idx, t2Idx ) -> Math.pow(Math.E, -Math.pow(t1_val[ t1Idx.i() ], 2));
                     } else {
-                        return (t0Idx, t1Idx, t2Idx) -> {
-                            double input = t1_val[t1Idx.i()];
+                        return ( t0Idx, t1Idx, t2Idx ) -> {
+                            double input = t1_val[ t1Idx.i() ];
                             return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));
                         };
 
@@ -49,11 +49,11 @@ public class Gaussian extends AbstractOperationType
                 ( inputs, d ) ->
                 {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if (d < 0) {
-                        return (t0Idx, t1Idx, t2Idx) -> Math.pow(Math.E, -Math.pow(t1_val[inputs[ 1 ].i_of_idx(t1Idx)], 2));
+                    if ( d < 0 ) {
+                        return ( t0Idx, t1Idx, t2Idx ) -> Math.pow(Math.E, -Math.pow(t1_val[inputs[ 1 ].i_of_idx( t1Idx )], 2));
                     } else {
-                        return (t0Idx, t1Idx, t2Idx) -> {
-                            double input = t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                        return ( t0Idx, t1Idx, t2Idx ) -> {
+                            double input = t1_val[inputs[ 1 ].i_of_idx( t1Idx )];
                             return -2 * input * Math.pow(Math.E, -Math.pow(input, 2));
                         };
 
@@ -74,7 +74,7 @@ public class Gaussian extends AbstractOperationType
             )
             .setADAgentSupplier(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                defaultImplementation().supplyADAgentFor(f, call, forward)
+                defaultImplementation().supplyADAgentFor( f, call, forward )
             )
         .setCallHock( ( caller, call ) -> null )
         .setRJAgent( ( call, goDeeperWith ) -> null )

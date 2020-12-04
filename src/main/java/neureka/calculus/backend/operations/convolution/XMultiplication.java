@@ -53,7 +53,7 @@ public class XMultiplication extends AbstractOperationType
 
             Tsr alternative = null;
             if (tsrs.length > 3) {
-                if (d < 0) {
+                if ( d < 0 ) {
                     Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
@@ -87,12 +87,12 @@ public class XMultiplication extends AbstractOperationType
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
-                    if (d < 0) {
-                        return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()] * t2_val[t2Idx.i()];
+                    if ( d < 0 ) {
+                        return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
                     } else {
-                        return (t0Idx, t1Idx, t2Idx) -> {
+                        return ( t0Idx, t1Idx, t2Idx ) -> {
                             if (d == 0) return t2_val[t2Idx.i()];
-                            else return t1_val[t1Idx.i()];
+                            else return t1_val[ t1Idx.i() ];
                         };
                     }
                 };
@@ -100,12 +100,12 @@ public class XMultiplication extends AbstractOperationType
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
-                    if (d < 0) {
-                        return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] * t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                    if ( d < 0 ) {
+                        return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].i_of_idx( t1Idx )] * t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
                     } else {
-                        return (t0Idx, t1Idx, t2Idx) -> {
+                        return ( t0Idx, t1Idx, t2Idx ) -> {
                             if (d == 0) return t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
-                            else return t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                            else return t1_val[inputs[ 1 ].i_of_idx( t1Idx )];
                         };
                     }
                 };

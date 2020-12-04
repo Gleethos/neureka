@@ -35,15 +35,15 @@ public class Identity extends AbstractOperationType
         DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()];
-                    else return (t0Idx, t1Idx, t2Idx) -> 1;
+                    if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
+                    else return ( t0Idx, t1Idx, t2Idx ) -> 1;
                 };
 
         DefaultOperatorCreator<TertiaryNDXConsumer> activationXCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
-                    else return (t0Idx, t1Idx, t2Idx) -> 1;
+                    if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].i_of_idx( t1Idx )];
+                    else return ( t0Idx, t1Idx, t2Idx ) -> 1;
                 };
 
         Activation typeImplementation = new Activation()
@@ -59,7 +59,7 @@ public class Identity extends AbstractOperationType
                 }
         ).setADAgentSupplier(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                defaultImplementation().supplyADAgentFor(f, call, forward)
+                defaultImplementation().supplyADAgentFor( f, call, forward )
         )
         .setCallHock( ( caller, call ) -> null )
         .setRJAgent( ( call, goDeeperWith ) -> null )
@@ -121,7 +121,7 @@ public class Identity extends AbstractOperationType
 
         ScalarOperatorCreator<PrimaryNDIConsumer> scalarizationCreator =
                 (inputs, value, d) -> {
-                    if (d < 0) return t1Idx -> value;
+                    if ( d < 0 ) return t1Idx -> value;
                     else return t1Idx -> value;
                 };
         Scalarization scalarization = new Scalarization()

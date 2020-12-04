@@ -119,7 +119,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                 }
                 //----------
                 //setInto _value in drn:
-                t0_value[t0Idx.i()] = operation.execute(t0Idx, t1Idx, t2Idx);
+                t0_value[t0Idx.i()] = operation.execute( t0Idx, t1Idx, t2Idx );
                 //increment on drain:
                 t0Idx.increment();
                 //NDConfiguration.Utility.increment(t0Idx, t0Shp);
@@ -148,7 +148,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                 while ( running ) {
                     ri = ( ri == rank ) ? 0 : ri;
                     if ( !incrementing ) {
-                        value += operation.execute(t0Idx, t1Idx, t2Idx);
+                        value += operation.execute( t0Idx, t1Idx, t2Idx );
                         incrementing = true;
                         ri = 0;
                     } else {//incrementing:
@@ -215,7 +215,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                 }
                 //----------
                 //setInto _value in drn:
-                t0_value[ndc0.i_of_idx(t0Idx)] = operation.execute(t0Idx, t1Idx, t2Idx);
+                t0_value[ndc0.i_of_idx(t0Idx)] = operation.execute( t0Idx, t1Idx, t2Idx );
                 //increment on drain:
                 NDConfiguration.Utility.increment(t0Idx, t0Shp);
                 i++;
@@ -243,7 +243,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                 while ( running ) {
                     ri = ( ri == rank ) ? 0 : ri;
                     if ( !incrementing ) {
-                        value += operation.execute(t0Idx, t1Idx, t2Idx);
+                        value += operation.execute( t0Idx, t1Idx, t2Idx );
                         incrementing = true;
                         ri = 0;
                     } else {//incrementing:

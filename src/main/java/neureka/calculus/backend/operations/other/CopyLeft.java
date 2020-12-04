@@ -75,14 +75,14 @@ public class CopyLeft extends AbstractOperationType {
         ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if (d < 0) return t1Idx -> t1_val[t1Idx.i()] = value;
+                    if ( d < 0 ) return t1Idx -> t1_val[ t1Idx.i() ] = value;
                     else return null;
                 };
 
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarXCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if (d < 0) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] = value;
+                    if ( d < 0 ) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx( t1Idx )] = value;
                     else return null;
                 };
 

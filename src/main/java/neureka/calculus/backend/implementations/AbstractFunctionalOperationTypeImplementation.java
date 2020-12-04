@@ -99,7 +99,7 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
 
     @Override
     public ADAgent supplyADAgentFor(Function f, ExecutionCall<Device> call, boolean forward) {
-        return _adaCreator.getADAgentOf(f, call, forward);
+        return _adaCreator.getADAgentOf( f, call, forward );
     }
 
     public ADAgentSupplier getADAgentSupplier() {

@@ -35,7 +35,7 @@ public class Convolution extends AbstractFunctionalOperationTypeImplementation< 
 
         double[] t0_value = t0_drn.value64();
 
-        if (d < 0) {
+        if ( d < 0 ) {
             while (i < end)//drnSze)
             {//increment on drain accordingly:
                 int ri=0;
@@ -60,7 +60,7 @@ public class Convolution extends AbstractFunctionalOperationTypeImplementation< 
                 while ( running ) {
                     ri = (ri == rank) ? 0 : ri;
                     if (!incrementing) {
-                        value += operation.execute(t0Idx, t1Idx, t2Idx);
+                        value += operation.execute( t0Idx, t1Idx, t2Idx );
                         incrementing = true;
                         ri = 0;
                     } else { // incrementing:
@@ -186,7 +186,7 @@ public class Convolution extends AbstractFunctionalOperationTypeImplementation< 
         int[] t2Idx = new int[rank];
         double[] t0_value = (double[]) t0_drn.getData();
 
-        if (d < 0) {
+        if ( d < 0 ) {
             while (i < end)//drnSze)
             {//increment on drain accordingly:
                 int ri=0;
@@ -211,7 +211,7 @@ public class Convolution extends AbstractFunctionalOperationTypeImplementation< 
                 while (running) {
                     ri = (ri == rank) ? 0 : ri;
                     if (!incrementing) {
-                        value += operation.execute(t0Idx, t1Idx, t2Idx);
+                        value += operation.execute( t0Idx, t1Idx, t2Idx );
                         incrementing = true;
                         ri = 0;
                     } else {//incrementing:
@@ -285,7 +285,7 @@ public class Convolution extends AbstractFunctionalOperationTypeImplementation< 
                         for (int rii = 0; rii < rank; rii++) {
                             isMatch = (t1Idx[rii] < t1Shp[rii] && t1Idx[rii] >= 0) && isMatch;
                         }
-                        value += (isMatch) ? operation.execute(t0Idx, t1Idx, t2Idx) : 0;
+                        value += (isMatch) ? operation.execute( t0Idx, t1Idx, t2Idx ) : 0;
                         incrementing = true;
                         ri = 0;
                     } else {//incrementing:

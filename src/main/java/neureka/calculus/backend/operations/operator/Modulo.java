@@ -50,7 +50,7 @@ public class Modulo extends AbstractOperationType {
 
             Tsr alternative = null;
             if (tsrs.length > 3) {
-                if (d < 0) {
+                if ( d < 0 ) {
                     Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
@@ -106,13 +106,13 @@ public class Modulo extends AbstractOperationType {
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
-                    if (d < 0) return ( t1Idx, t2Idx ) -> t1_val[t1Idx.i()] % t2_val[t2Idx.i()];
+                    if ( d < 0 ) return ( t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] % t2_val[t2Idx.i()];
                     else {
                         return ( t1Idx, t2Idx ) -> {
                             if (d == 0) {
                                 return 1 / t2_val[t2Idx.i()];
                             } else {
-                                return -(t1_val[t1Idx.i()] / Math.pow(t2_val[t2Idx.i()], 2));
+                                return -(t1_val[ t1Idx.i() ] / Math.pow(t2_val[t2Idx.i()], 2));
                             }
                         };
                     }
@@ -123,13 +123,13 @@ public class Modulo extends AbstractOperationType {
                     double[] t2_val = inputs[ 2 ].value64();
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                     NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-                    if (d < 0) return t1Idx -> t1_val[ndc1.i_of_idx(t1Idx)] % t2_val[ndc2.i_of_idx(t1Idx)];
+                    if ( d < 0 ) return t1Idx -> t1_val[ndc1.i_of_idx( t1Idx )] % t2_val[ndc2.i_of_idx( t1Idx )];
                     else {
                         return t1Idx -> {
                             if (d == 0) {
-                                return 1 / t2_val[ndc2.i_of_idx(t1Idx)];
+                                return 1 / t2_val[ndc2.i_of_idx( t1Idx )];
                             } else {
-                                return -(t1_val[ndc1.i_of_idx(t1Idx)] / Math.pow(t2_val[ndc2.i_of_idx(t1Idx)], 2));
+                                return -(t1_val[ndc1.i_of_idx( t1Idx )] / Math.pow(t2_val[ndc2.i_of_idx( t1Idx )], 2));
                             }
                         };
                     }
@@ -209,15 +209,15 @@ public class Modulo extends AbstractOperationType {
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
-                    if (d < 0) {
-                        return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()] % t2_val[t2Idx.i()];
+                    if ( d < 0 ) {
+                        return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] % t2_val[t2Idx.i()];
                     } else {
-                        return (t0Idx, t1Idx, t2Idx) -> {
+                        return ( t0Idx, t1Idx, t2Idx ) -> {
                             if (d == 0) {
                                 return 1 / t2_val[t2Idx.i()];
                             } else {
                                 return
-                                        -(t1_val[t1Idx.i()]
+                                        -(t1_val[ t1Idx.i() ]
                                                 /
                                                 Math.pow(t2_val[t2Idx.i()], 2));
                             }
@@ -231,10 +231,10 @@ public class Modulo extends AbstractOperationType {
                     double[] t2_val = inputs[ 2 ].value64();
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                     NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-                    if (d < 0) {
-                        return (t0Idx, t1Idx, t2Idx) -> t1_val[ ndc1.i_of_idx(t1Idx) ] % t2_val[ ndc2.i_of_idx(t2Idx) ];
+                    if ( d < 0 ) {
+                        return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ ndc1.i_of_idx( t1Idx ) ] % t2_val[ ndc2.i_of_idx(t2Idx) ];
                     } else {
-                        return (t0Idx, t1Idx, t2Idx) -> {
+                        return ( t0Idx, t1Idx, t2Idx ) -> {
                             if (d == 0) {
                                 return 1 / t2_val[ ndc2.i_of_idx( t2Idx ) ];
                             } else {
@@ -338,11 +338,11 @@ public class Modulo extends AbstractOperationType {
         ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if (d < 0) {
-                        return t1Idx -> t1_val[t1Idx.i()] % value;
+                    if ( d < 0 ) {
+                        return t1Idx -> t1_val[ t1Idx.i() ] % value;
                     } else {
                         if (d == 0) return t1Idx -> 1 / value;
-                        else return t1Idx -> -value / Math.pow(t1_val[t1Idx.i()], 2);
+                        else return t1Idx -> -value / Math.pow(t1_val[ t1Idx.i() ], 2);
                     }
                 };
 
@@ -350,11 +350,11 @@ public class Modulo extends AbstractOperationType {
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-                    if (d < 0) {
-                        return t1Idx -> t1_val[ndc1.i_of_idx(t1Idx)] % value;
+                    if ( d < 0 ) {
+                        return t1Idx -> t1_val[ndc1.i_of_idx( t1Idx )] % value;
                     } else {
                         if (d == 0) return t1Idx -> 1 / value;
-                        else return t1Idx -> - value / Math.pow(t1_val[ndc1.i_of_idx(t1Idx)], 2);
+                        else return t1Idx -> - value / Math.pow(t1_val[ndc1.i_of_idx( t1Idx )], 2);
                     }
                 };
 
@@ -372,7 +372,7 @@ public class Modulo extends AbstractOperationType {
             )
             .setADAgentSupplier(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                defaultImplementation().supplyADAgentFor(f, call, forward)
+                defaultImplementation().supplyADAgentFor( f, call, forward )
             )
             .setCallHock( ( caller, call ) -> null )
             .setRJAgent( ( call, goDeeperWith ) -> null );

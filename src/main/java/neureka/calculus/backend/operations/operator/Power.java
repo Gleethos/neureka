@@ -27,20 +27,20 @@ public class Power extends AbstractOperationType
     {
         double[] t1_val = inputs[ 1 ].value64();
         double[] t2_val = inputs[ 2 ].value64();
-        if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.pow(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);
+        if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.pow(t1_val[ t1Idx.i() ], t2_val[t2Idx.i()]);
         else {
-            return (t0Idx, t1Idx, t2Idx) -> {
+            return ( t0Idx, t1Idx, t2Idx ) -> {
                 if (d == 0) {
                     return t2_val[t2Idx.i()]
                             * Math.pow(
-                            t1_val[t1Idx.i()],
+                            t1_val[ t1Idx.i() ],
                             t2_val[t2Idx.i()] - 1
                     );
                 } else {
                     return Math.pow(
-                            t1_val[t1Idx.i()],
+                            t1_val[ t1Idx.i() ],
                             t2_val[t2Idx.i()]
-                    ) * Math.log(t1_val[t1Idx.i()]);
+                    ) * Math.log(t1_val[ t1Idx.i() ]);
                 }
             };
         }
@@ -52,15 +52,15 @@ public class Power extends AbstractOperationType
         double[] t2_val = inputs[ 2 ].value64();
         NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
         NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-        if (d < 0) return (t0Idx, t1Idx, t2Idx) ->
-                Math.pow(t1_val[ndc1.i_of_idx(t1Idx)], t2_val[ndc2.i_of_idx(t2Idx)]);
+        if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) ->
+                Math.pow(t1_val[ndc1.i_of_idx( t1Idx )], t2_val[ndc2.i_of_idx(t2Idx)]);
         else {
-            return (t0Idx, t1Idx, t2Idx) -> {
+            return ( t0Idx, t1Idx, t2Idx ) -> {
                 if (d == 0) {
                     double temp = t2_val[ndc2.i_of_idx(t2Idx)];
-                    return temp * Math.pow( t1_val[ndc1.i_of_idx(t1Idx)], temp - 1 );
+                    return temp * Math.pow( t1_val[ndc1.i_of_idx( t1Idx )], temp - 1 );
                 } else {
-                    double temp = t1_val[ndc1.i_of_idx(t1Idx)];
+                    double temp = t1_val[ndc1.i_of_idx( t1Idx )];
                     return Math.pow( temp, t2_val[ndc2.i_of_idx(t2Idx)] )  * Math.log(temp);
                 }
             };
@@ -90,21 +90,21 @@ public class Power extends AbstractOperationType
         {
             double[] t1_val = inputs[ 1 ].value64();
             double[] t2_val = inputs[ 2 ].value64();
-            if (d < 0) return ( t1Idx, t2Idx ) ->
-                    Math.pow(t1_val[t1Idx.i()], t2_val[t2Idx.i()]);
+            if ( d < 0 ) return ( t1Idx, t2Idx ) ->
+                    Math.pow(t1_val[ t1Idx.i() ], t2_val[t2Idx.i()]);
             else {
                 return ( t1Idx, t2Idx ) ->
                 {
                     if ( d == 0 ) return
                             t2_val[t2Idx.i()] * Math.pow(
-                                t1_val[t1Idx.i()],
+                                t1_val[ t1Idx.i() ],
                                 t2_val[t2Idx.i()] - 1
                             );
                     else return
                             Math.pow(
-                                t1_val[t1Idx.i()],
+                                t1_val[ t1Idx.i() ],
                                 t2_val[t2Idx.i()]
-                            ) * Math.log(t1_val[t1Idx.i()]);
+                            ) * Math.log(t1_val[ t1Idx.i() ]);
                 };
             }
         };
@@ -115,13 +115,13 @@ public class Power extends AbstractOperationType
             double[] t2_val = inputs[ 2 ].value64();
             NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
             NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-            if (d < 0) return t1Idx ->
-                    Math.pow(t1_val[ndc1.i_of_idx(t1Idx)], t2_val[ndc2.i_of_idx(t1Idx)]);
+            if ( d < 0 ) return t1Idx ->
+                    Math.pow(t1_val[ndc1.i_of_idx( t1Idx )], t2_val[ndc2.i_of_idx( t1Idx )]);
             else {
                 return t1Idx ->
                 {
-                    double temp1 = t1_val[ndc1.i_of_idx(t1Idx)];
-                    double temp2 = t2_val[ndc2.i_of_idx(t1Idx)];
+                    double temp1 = t1_val[ndc1.i_of_idx( t1Idx )];
+                    double temp2 = t2_val[ndc2.i_of_idx( t1Idx )];
                     if ( d == 0 ) return temp2 * Math.pow( temp1, temp2 - 1 );
                     else return Math.pow( temp1, temp2 ) * Math.log(temp1);
                 };
@@ -353,10 +353,10 @@ public class Power extends AbstractOperationType
         ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
                 ( inputs, value, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if (d < 0) return t1Idx -> Math.pow(t1_val[t1Idx.i()], value);
+                    if ( d < 0 ) return t1Idx -> Math.pow(t1_val[ t1Idx.i() ], value);
                     else {
-                        if(d==0) return t1Idx -> value*Math.pow(t1_val[t1Idx.i()], value-1);
-                        else return t1Idx -> Math.pow(t1_val[t1Idx.i()], value)*Math.log(value);
+                        if(d==0) return t1Idx -> value*Math.pow(t1_val[ t1Idx.i() ], value-1);
+                        else return t1Idx -> Math.pow(t1_val[ t1Idx.i() ], value)*Math.log(value);
                     }
                 };
 
@@ -364,10 +364,10 @@ public class Power extends AbstractOperationType
                 ( inputs, value, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-                    if (d < 0) return t1Idx -> Math.pow(t1_val[ndc1.i_of_idx(t1Idx)], value);
+                    if ( d < 0 ) return t1Idx -> Math.pow(t1_val[ndc1.i_of_idx( t1Idx )], value);
                     else {
-                        if(d==0) return t1Idx -> value*Math.pow(t1_val[ndc1.i_of_idx(t1Idx)], value-1);
-                        else return t1Idx -> Math.pow(t1_val[ndc1.i_of_idx(t1Idx)], value)*Math.log(value);
+                        if(d==0) return t1Idx -> value*Math.pow(t1_val[ndc1.i_of_idx( t1Idx )], value-1);
+                        else return t1Idx -> Math.pow(t1_val[ndc1.i_of_idx( t1Idx )], value)*Math.log(value);
                     }
                 };
 
@@ -376,7 +376,7 @@ public class Power extends AbstractOperationType
                 .setForwardADAnalyzer( call -> true )
                 .setADAgentSupplier(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                        defaultImplementation().supplyADAgentFor(f, call, forward)
+                        defaultImplementation().supplyADAgentFor( f, call, forward )
                 )
                 .setCallHock( ( caller, call ) -> null )
                 .setRJAgent( rja );

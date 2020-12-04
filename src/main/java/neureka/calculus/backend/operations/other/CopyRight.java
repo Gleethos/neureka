@@ -36,8 +36,8 @@ public class CopyRight extends AbstractOperationType {
         DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()];
-                    else return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()];
+                    if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
+                    else return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
                 };
 
 

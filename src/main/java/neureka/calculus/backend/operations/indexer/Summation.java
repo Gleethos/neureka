@@ -54,7 +54,7 @@ public class Summation extends AbstractOperationType
 
             Tsr alternative = null;
             if (tsrs.length > 3) {
-                if (d < 0) {
+                if ( d < 0 ) {
                     Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.apply(
                             new ExecutionCall<>(device, reduction, d, type)
@@ -83,8 +83,8 @@ public class Summation extends AbstractOperationType
                 {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
-                    if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()] + t2_val[t2Idx.i()];
-                    else return (t0Idx, t1Idx, t2Idx) -> 1.0;
+                    if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] + t2_val[t2Idx.i()];
+                    else return ( t0Idx, t1Idx, t2Idx ) -> 1.0;
                 };
 
         DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
@@ -92,8 +92,8 @@ public class Summation extends AbstractOperationType
                 {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
-                    if (d < 0) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)] + t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
-                    else return (t0Idx, t1Idx, t2Idx) -> 1.0;
+                    if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].i_of_idx( t1Idx )] + t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                    else return ( t0Idx, t1Idx, t2Idx ) -> 1.0;
                 };
 
         Broadcast typeImplementation = new Broadcast()
@@ -185,15 +185,15 @@ public class Summation extends AbstractOperationType
         DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if ( d < 0 ) return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()];
-                    else return (t0Idx, t1Idx, t2Idx) -> t1_val[t1Idx.i()];
+                    if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
+                    else return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
                 };
 
         DefaultOperatorCreator<TertiaryNDXConsumer> activationXCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if ( d < 0 ) return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
-                    else return (t0Idx, t1Idx, t2Idx) -> t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                    if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].i_of_idx( t1Idx )];
+                    else return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].i_of_idx( t1Idx )];
                 };
 
         Activation activation = new Activation()

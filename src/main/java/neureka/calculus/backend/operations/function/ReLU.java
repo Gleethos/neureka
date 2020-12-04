@@ -19,14 +19,14 @@ public class ReLU extends AbstractOperationType
     private DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
-                if (d < 0) {
-                    return (t0Idx, t1Idx, t2Idx) -> {
-                        if(t1_val[t1Idx.i()]>=0) return t1_val[t1Idx.i()];
-                        else return t1_val[t1Idx.i()]*0.01;
+                if ( d < 0 ) {
+                    return ( t0Idx, t1Idx, t2Idx ) -> {
+                        if(t1_val[ t1Idx.i() ]>=0) return t1_val[ t1Idx.i() ];
+                        else return t1_val[ t1Idx.i() ]*0.01;
                     };
                 } else {
-                    return (t0Idx, t1Idx, t2Idx) -> {
-                        if(t1_val[t1Idx.i()]>=0) return 1;
+                    return ( t0Idx, t1Idx, t2Idx ) -> {
+                        if(t1_val[ t1Idx.i() ]>=0) return 1;
                         else return 0.01;
                     };
                 }
@@ -35,14 +35,14 @@ public class ReLU extends AbstractOperationType
     private DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
-                if (d < 0) {
-                    return (t0Idx, t1Idx, t2Idx) -> {
-                        if(t1_val[inputs[ 1 ].i_of_idx(t1Idx)]>=0) return t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
-                        else return t1_val[inputs[ 1 ].i_of_idx(t1Idx)]*0.01;
+                if ( d < 0 ) {
+                    return ( t0Idx, t1Idx, t2Idx ) -> {
+                        if(t1_val[inputs[ 1 ].i_of_idx( t1Idx )]>=0) return t1_val[inputs[ 1 ].i_of_idx( t1Idx )];
+                        else return t1_val[inputs[ 1 ].i_of_idx( t1Idx )]*0.01;
                     };
                 } else {
-                    return (t0Idx, t1Idx, t2Idx) -> {
-                        if(t1_val[inputs[ 1 ].i_of_idx(t1Idx)]>=0) return 1;
+                    return ( t0Idx, t1Idx, t2Idx ) -> {
+                        if(t1_val[inputs[ 1 ].i_of_idx( t1Idx )]>=0) return 1;
                         else return 0.01;
                     };
                 }
@@ -73,7 +73,7 @@ public class ReLU extends AbstractOperationType
         Activation typeImplementation = new Activation()
             .setADAgentSupplier(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                defaultImplementation().supplyADAgentFor(f, call, forward)
+                defaultImplementation().supplyADAgentFor( f, call, forward )
             );
 
         setImplementation(

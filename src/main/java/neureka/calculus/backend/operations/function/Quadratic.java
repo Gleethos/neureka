@@ -19,23 +19,23 @@ public class Quadratic extends AbstractOperationType
     private DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
-                if (d < 0) {
-                    return (t0Idx, t1Idx, t2Idx) -> {
-                        double input = t1_val[t1Idx.i()];
+                if ( d < 0 ) {
+                    return ( t0Idx, t1Idx, t2Idx ) -> {
+                        double input = t1_val[ t1Idx.i() ];
                         return input * input;
                     };
-                } else return (t0Idx, t1Idx, t2Idx) -> 2 * t1_val[t1Idx.i()];
+                } else return ( t0Idx, t1Idx, t2Idx ) -> 2 * t1_val[ t1Idx.i() ];
             };
 
     private DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
-                if (d < 0) {
-                    return (t0Idx, t1Idx, t2Idx) -> {
-                        double input = t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                if ( d < 0 ) {
+                    return ( t0Idx, t1Idx, t2Idx ) -> {
+                        double input = t1_val[inputs[ 1 ].i_of_idx( t1Idx )];
                         return input * input;
                     };
-                } else return (t0Idx, t1Idx, t2Idx) -> 2 * t1_val[inputs[ 1 ].i_of_idx(t1Idx)];
+                } else return ( t0Idx, t1Idx, t2Idx ) -> 2 * t1_val[inputs[ 1 ].i_of_idx( t1Idx )];
             };
 
     public Quadratic(){
@@ -63,7 +63,7 @@ public class Quadratic extends AbstractOperationType
         Activation typeImplementation = new Activation()
             .setADAgentSupplier(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                defaultImplementation().supplyADAgentFor(f, call, forward)
+                defaultImplementation().supplyADAgentFor( f, call, forward )
             );
 
         setImplementation(

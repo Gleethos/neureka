@@ -18,14 +18,14 @@ public class Absolute extends AbstractOperationType {
     private DefaultOperatorCreator<TertiaryNDIConsumer> _activationCreator =
             ( inputs, d )->{
                 double[] t1_val = inputs[ 1 ].value64();
-                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.abs(t1_val[t1Idx.i()]);
-                else return (t0Idx, t1Idx, t2Idx) -> (t1_val[t1Idx.i()] < 0) ? -1 : 1;
+                if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.abs(t1_val[ t1Idx.i() ]);
+                else return ( t0Idx, t1Idx, t2Idx ) -> ( t1_val[ t1Idx.i() ] < 0 ) ? -1 : 1;
             };
     private DefaultOperatorCreator<TertiaryNDXConsumer> _activationXCreator =
             ( inputs, d )->{
                 double[] t1_val = inputs[ 1 ].value64();
-                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.abs(t1_val[inputs[ 1 ].i_of_idx(t1Idx)]);
-                else return (t0Idx, t1Idx, t2Idx) -> (t1_val[inputs[ 1 ].i_of_idx(t1Idx)] < 0) ? -1 : 1;
+                if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.abs(t1_val[inputs[ 1 ].i_of_idx( t1Idx )]);
+                else return ( t0Idx, t1Idx, t2Idx ) -> ( t1_val[inputs[ 1 ].i_of_idx( t1Idx )] < 0 ) ? -1 : 1;
             };
 
     public Absolute()
@@ -45,7 +45,7 @@ public class Absolute extends AbstractOperationType {
         Activation typeImplementation = new Activation()
             .setADAgentSupplier(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                defaultImplementation().supplyADAgentFor(f, call, forward)
+                defaultImplementation().supplyADAgentFor( f, call, forward )
             );
 
         setImplementation(
