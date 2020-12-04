@@ -16,11 +16,11 @@ import java.util.List;
 public class Absolute extends AbstractOperationType {
 
     private DefaultOperatorCreator<TertiaryNDIConsumer> _activationCreator =
-    ( inputs, d )->{
-        double[] t1_val = inputs[ 1 ].value64();
-        if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.abs(t1_val[t1Idx.i()]);
-        else return (t0Idx, t1Idx, t2Idx) -> (t1_val[t1Idx.i()] < 0) ? -1 : 1;
-    };
+            ( inputs, d )->{
+                double[] t1_val = inputs[ 1 ].value64();
+                if (d < 0) return (t0Idx, t1Idx, t2Idx) -> Math.abs(t1_val[t1Idx.i()]);
+                else return (t0Idx, t1Idx, t2Idx) -> (t1_val[t1Idx.i()] < 0) ? -1 : 1;
+            };
     private DefaultOperatorCreator<TertiaryNDXConsumer> _activationXCreator =
             ( inputs, d )->{
                 double[] t1_val = inputs[ 1 ].value64();
@@ -43,41 +43,10 @@ public class Absolute extends AbstractOperationType {
         );
 
         Activation typeImplementation = new Activation()
-        .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
-                call -> {
-                    Tsr<?> last = null;
-                    for ( Tsr<?> t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
-                    }
-                    return true;
-                }
-        ).setADAgentSupplier(
-            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-            defaultImplementation().supplyADAgentFor(f, call, forward)
-        )
-        .setCallHock( ( caller, call ) -> null )
-        .setRJAgent( ( call, goDeeperWith ) -> null )
-        .setDrainInstantiation(
-                call -> {
-                    Tsr[] tsrs = call.getTensors();
-                    Device device = call.getDevice();
-                    if ( tsrs[ 0 ] == null ) // Creating a new tensor:
-                    {
-                        int[] shp = tsrs[ 1 ].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
-                        output.setIsVirtual( false );
-                        try {
-                            device.store(output);
-                        } catch( Exception e ) {
-                            e.printStackTrace();
-                        }
-                        tsrs[ 0 ] = output;
-                    }
-                    return call;
-                }
-        );
+            .setADAgentSupplier(
+                ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                defaultImplementation().supplyADAgentFor(f, call, forward)
+            );
 
         setImplementation(
                 Activation.class,
