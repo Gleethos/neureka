@@ -19,7 +19,7 @@ public class SimpleD1Configuration extends D1C //:= IMMUTABLE
     public static NDConfiguration construct(
             int[] shape,
             int[] translation
-    ){
+    ) {
         return _cached(new SimpleD1Configuration(shape[ 0 ], translation[ 0 ]));
     }
 

@@ -18,14 +18,14 @@ public class Softplus extends AbstractOperationType
 {
 
     private final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
-            ( inputs, d )->{
+            ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.log(1 + Math.pow(Math.E, t1_val[ t1Idx.i() ]));
                 else return ( t0Idx, t1Idx, t2Idx ) -> 1 / (1 + Math.pow(Math.E, -t1_val[ t1Idx.i() ]));
             };
 
     private final DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
-            ( inputs, d )->{
+            ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.log(1 + Math.pow(Math.E, t1_val[inputs[ 1 ].i_of_idx( t1Idx )]));
                 else return ( t0Idx, t1Idx, t2Idx ) -> 1 / (1 + Math.pow(Math.E, -t1_val[inputs[ 1 ].i_of_idx( t1Idx )]));
@@ -38,9 +38,7 @@ public class Softplus extends AbstractOperationType
         setStringifier(
                 children -> {
                     String expression = String.join( ", ", children );
-                    if (expression.charAt( 0 ) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                        return "softplus" + expression;
-                    }
+                    if ( expression.startsWith("(") && expression.endsWith(")") ) return "softplus" + expression;
                     return "softplus" + "(" + expression + ")";
                 }
         );
@@ -83,7 +81,7 @@ public class Softplus extends AbstractOperationType
                         new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
                                     call.getDevice().getKernel(call)
                                             .pass( call.getTensor( offset ) )
                                             .pass( call.getTensor( offset + 1 ) )

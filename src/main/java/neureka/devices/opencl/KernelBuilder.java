@@ -15,7 +15,7 @@ public class KernelBuilder
     private int _argId;
     private final List<Tsr> _inputs;
 
-    public KernelBuilder(cl_kernel kernel, cl_command_queue queue){
+    public KernelBuilder(cl_kernel kernel, cl_command_queue queue) {
         _queue = queue;
         _kernel = kernel;
         _inputs = new ArrayList<>();
@@ -28,7 +28,7 @@ public class KernelBuilder
      * @param t
      * @return
      */
-    public KernelBuilder pass(Tsr<Number> t){
+    public KernelBuilder pass(Tsr<Number> t) {
         _inputs.add(t);
         clSetKernelArg(_kernel, _argId, Sizeof.cl_mem, Pointer.to(t.find(OpenCLDevice.cl_tsr.class).value.data));
         _argId++;
@@ -43,7 +43,7 @@ public class KernelBuilder
         return this;
     }
 
-    public KernelBuilder pass(float f){
+    public KernelBuilder pass(float f) {
         clSetKernelArg(_kernel, _argId, Sizeof.cl_float, Pointer.to(new float[]{f}));
         _argId++;
         return this;
@@ -52,7 +52,7 @@ public class KernelBuilder
     public void call(int globalWorkSize)
     {
         cl_event[] events = _getWaitList(_inputs.toArray(new Tsr[ 0 ]));
-        if(events.length>0){
+        if(events.length>0) {
             clWaitForEvents(events.length, events);
             _releaseEvents(_inputs.toArray(new Tsr[ 0 ]));
         }
@@ -68,16 +68,16 @@ public class KernelBuilder
         );
     }
 
-    private void _releaseEvents(Tsr[] tsrs){
-        for(Tsr<Number> t : tsrs){
-            if( t.find(OpenCLDevice.cl_tsr.class).value.event != null ){
+    private void _releaseEvents(Tsr[] tsrs) {
+        for(Tsr<Number> t : tsrs) {
+            if( t.find(OpenCLDevice.cl_tsr.class).value.event != null ) {
                 clReleaseEvent(t.find(OpenCLDevice.cl_tsr.class).value.event);
                 t.find(OpenCLDevice.cl_tsr.class).value.event = null;
             }
         }
     }
 
-    private cl_event[] _getWaitList(Tsr[] tsrs){
+    private cl_event[] _getWaitList(Tsr[] tsrs) {
         List<cl_event> list = new ArrayList<>();
         for (Tsr<Number> t : tsrs) {
             cl_event event = t.find(OpenCLDevice.cl_tsr.class).value.event;

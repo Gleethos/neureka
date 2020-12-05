@@ -46,7 +46,7 @@ public class DefaultADAgent implements ADAgent
         _context.put( "derivative", derivative );
     }
 
-    public DefaultADAgent(){ }
+    public DefaultADAgent() { }
 
     public DefaultADAgent withContext( Map<String, Object> context  ) {
         _context.putAll( context );
@@ -69,17 +69,17 @@ public class DefaultADAgent implements ADAgent
     }
 
     @Override
-    public <T> Tsr<T> backward( GraphNode<T> target, Tsr<T> error ){
+    public <T> Tsr<T> backward( GraphNode<T> target, Tsr<T> error ) {
         return (Tsr<T>) _bad.execute( target, error );
     }
 
     @Override
-    public Tsr<?> derivative(){
+    public Tsr<?> derivative() {
         return (Tsr<?>) _context.get( "derivative" );
     }
 
     @Override
-    public boolean hasForward(){
+    public boolean hasForward() {
         return (
                 _context != null &&
                 _context.containsKey( "derivative" )

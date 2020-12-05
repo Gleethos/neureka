@@ -60,7 +60,7 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
             int[] idxmap,
             int[] spread,
             int[] offset
-    ){
+    ) {
         return _cached(new ComplexD2Configuration(shape, translation, idxmap, spread, offset));
     }
 
@@ -124,7 +124,7 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
 
     @Override
     public int i_of_i(int i) {
-        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){
+        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
             return (((i%_idxmap2) / _idxmap1) * _spread1 + _offset1) * _translation1 +
                     ((i / _idxmap2) * _spread2 + _offset2) * _translation2;
         } else {
@@ -136,7 +136,7 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
     @Override
     public int[] idx_of_i(int i) {
         int[] idx = new int[ 2 ];
-        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){
+        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
             idx[ 1 ] += i / _idxmap2;
             i %= _idxmap2;
             idx[ 0 ] += i / _idxmap1;

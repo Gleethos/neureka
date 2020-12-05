@@ -133,11 +133,11 @@ public class ExecutionCall< DeviceType extends Device >
         return _implementation;
     }
     
-    public boolean allowsForward(){
+    public boolean allowsForward() {
         return getImplementation().canImplementationPerformForwardADFor(this);
     }
 
-    public boolean allowsBackward(){
+    public boolean allowsBackward() {
         return getImplementation().canImplementationPerformBackwardADFor(this);
     }
 
@@ -151,7 +151,7 @@ public class ExecutionCall< DeviceType extends Device >
         return getImplementation().supplyADAgentFor(function, call, forward);
     }
     
-    public void mutateArguments(Mutator mutation){
+    public void mutateArguments(Mutator mutation) {
         _tensors = mutation.mutate(_tensors);
     }
     
@@ -163,27 +163,27 @@ public class ExecutionCall< DeviceType extends Device >
         return new ExecutionCall<DeviceType>(device, _tensors, _d, _j, _type);
     }
 
-    public <T> T getAt(Class<T> type){
+    public <T> T getAt(Class<T> type) {
         if ( _context == null ) return null;
         return (T) _context.get(getClass().getName());
     }
 
-    public Object getAt(String varName){
+    public Object getAt(String varName) {
         if ( _context == null ) return null;
         return _context.get(varName);
     }
 
-    public <T> ExecutionCall<DeviceType> putAt(String s, T o){
+    public <T> ExecutionCall<DeviceType> putAt(String s, T o) {
         if ( _context == null ) _context = new TreeMap<>();
         _context.put(s,o);
         return this;
     }
 
-    public Map<String, Object> getContext(){
+    public Map<String, Object> getContext() {
         return _context;
     }
 
-    public void takeContext( Map<String, Object>  context ){
+    public void takeContext( Map<String, Object>  context ) {
         if(_context==null && context!=null )_context = new TreeMap<>();
         if(context!=null) _context.putAll(_context);
     }

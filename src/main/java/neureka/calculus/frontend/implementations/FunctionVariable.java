@@ -10,7 +10,7 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
 
     private boolean _providesGradient = false;
 
-    public boolean providesGradient(){
+    public boolean providesGradient() {
         return _providesGradient;
     }
 
@@ -20,7 +20,7 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     }
 
     @Override
-    public boolean doesAD(){
+    public boolean doesAD() {
         return false;
     }
 
@@ -30,7 +30,7 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     }
 
     @Override
-    public boolean dependsOn(int index){
+    public boolean dependsOn(int index) {
         return true;
     }
 

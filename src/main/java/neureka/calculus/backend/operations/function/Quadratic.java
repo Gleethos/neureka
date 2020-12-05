@@ -1,7 +1,6 @@
 package neureka.calculus.backend.operations.function;
 
 import neureka.Neureka;
-import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
 import neureka.devices.opencl.execution.CLExecutor;
@@ -16,7 +15,7 @@ import java.util.List;
 public class Quadratic extends AbstractOperationType
 {
 
-    private DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
+    private DefaultOperatorCreator<TertiaryNDIConsumer> _creatorNDI =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) {
@@ -27,7 +26,7 @@ public class Quadratic extends AbstractOperationType
                 } else return ( t0Idx, t1Idx, t2Idx ) -> 2 * t1_val[ t1Idx.i() ];
             };
 
-    private DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
+    private DefaultOperatorCreator<TertiaryNDXConsumer> _creatorNDX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) {
@@ -38,7 +37,7 @@ public class Quadratic extends AbstractOperationType
                 } else return ( t0Idx, t1Idx, t2Idx ) -> 2 * t1_val[inputs[ 1 ].i_of_idx( t1Idx )];
             };
 
-    public Quadratic(){
+    public Quadratic() {
 
         super(
                 "quad",
@@ -53,9 +52,7 @@ public class Quadratic extends AbstractOperationType
         setStringifier(
                 children -> {
                     String expression = String.join( ", ", children );
-                    if (expression.charAt( 0 ) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                        return "quad" + expression;
-                    }
+                    if ( expression.startsWith("(") && expression.endsWith(")") ) return "quad" + expression;
                     return "quad" + "(" + expression + ")";
                 }
         );
@@ -63,7 +60,7 @@ public class Quadratic extends AbstractOperationType
         Activation typeImplementation = new Activation()
             .setADAgentSupplier(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                defaultImplementation().supplyADAgentFor( f, call, forward )
+                    defaultImplementation().supplyADAgentFor( f, call, forward )
             );
 
         setImplementation(
@@ -80,23 +77,24 @@ public class Quadratic extends AbstractOperationType
                                                                 Activation.activate (
                                                                         call.getTensor( 0 ),
                                                                         start, end,
-                                                                        _creatorX.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        _creatorNDX.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                         : ( start, end ) ->
                                                                 Activation.activate (
                                                                         call.getTensor( 0 ), call.getTensor( 1 ),
                                                                         start, end,
-                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        _creatorNDI.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 ),
                                 3
                         )
-                ).setExecutor(
+                )
+                .setExecutor(
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
                                     call.getDevice().getKernel(call)
                                             .pass( call.getTensor( offset ) )
                                             .pass( call.getTensor( offset + 1 ) )

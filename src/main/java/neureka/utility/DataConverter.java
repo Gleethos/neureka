@@ -89,7 +89,7 @@ public class DataConverter
      *
      * @return The singleton instance of this class.
      */
-    public static DataConverter instance(){
+    public static DataConverter instance() {
         return _instance;
     }
 
@@ -163,7 +163,7 @@ public class DataConverter
     private <F,T> void _set(
             Class<F> from, Class<T> to,
             Conversion<F,T> conversion
-    ){
+    ) {
         Map<Class, Conversion> fromMap = _converters.get(from);
         if ( fromMap == null )
         {
@@ -202,38 +202,38 @@ public class DataConverter
     public static class Utility
     {
 
-        public static double[] newSeededDoubleArray(String seed, int size){
+        public static double[] newSeededDoubleArray(String seed, int size) {
             return newSeededDoubleArray(_longStringHash(seed), size);
         }
 
-        public static double[] newSeededDoubleArray(long seed, int size){
+        public static double[] newSeededDoubleArray(long seed, int size) {
             return seededDoubleArray(new double[size], seed);
         }
 
-        public static double[] seededDoubleArray(double[] array, String seed){
+        public static double[] seededDoubleArray(double[] array, String seed) {
             return seededDoubleArray(array, _longStringHash(seed));
         }
 
-        public static double[] seededDoubleArray(double[] array, long seed){
+        public static double[] seededDoubleArray(double[] array, long seed) {
             Random dice = new Random();
             dice.setSeed(seed);
             for( int i=0; i<array.length; i++ ) array[ i ] = dice.nextGaussian();
             return array;
         }
 
-        public static float[] newSeededFloatArray(String seed, int size){
+        public static float[] newSeededFloatArray(String seed, int size) {
             return newSeededFloatArray(_longStringHash(seed), size);
         }
 
-        public static float[] newSeededFloatArray(long seed, int size){
+        public static float[] newSeededFloatArray(long seed, int size) {
             return seededFloatArray(new float[size], seed);
         }
 
-        public static float[] seededFloatArray(float[] array, String seed){
+        public static float[] seededFloatArray(float[] array, String seed) {
             return seededFloatArray(array, _longStringHash(seed));
         }
 
-        public static float[] seededFloatArray(float[] array, long seed){
+        public static float[] seededFloatArray(float[] array, long seed) {
             Random dice = new Random();
             dice.setSeed(seed);
             for(int i=0; i<array.length; i++) array[ i ] = (float)dice.nextGaussian();
@@ -291,98 +291,98 @@ public class DataConverter
             return newData;
         }
 
-        public static double[] floatToDouble(float[] data){
+        public static double[] floatToDouble(float[] data) {
             if(data==null) return null;
             double[] newData = new double[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (double)data[ i ];
             return newData;
         }
 
-        public static byte[] floatToByte( float[] data ){
+        public static byte[] floatToByte( float[] data ) {
             if(data==null) return null;
             byte[] newData = new byte[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (byte) data[ i ];
             return newData;
         }
 
-        public static short[] floatToShort( float[] data ){
+        public static short[] floatToShort( float[] data ) {
             if(data==null) return null;
             short[] newData = new short[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (short) data[ i ];
             return newData;
         }
 
-        public static long[] floatToLong( float[] data ){
+        public static long[] floatToLong( float[] data ) {
             if(data==null) return null;
             long[] newData = new long[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (long) data[ i ];
             return newData;
         }
 
-        public static double[] shortToDouble(short[] data){
+        public static double[] shortToDouble(short[] data) {
             if(data==null) return null;
             double[] newData = new double[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
-        public static double[] byteToDouble(byte[] data){
+        public static double[] byteToDouble(byte[] data) {
             if(data==null) return null;
             double[] newData = new double[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
-        public static float[] byteToFloat(byte[] data){
+        public static float[] byteToFloat(byte[] data) {
             if(data==null) return null;
             float[] newData = new float[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
-        public static float[] shortToFloat(short[] data){
+        public static float[] shortToFloat(short[] data) {
             if(data==null) return null;
             float[] newData = new float[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
-        public static int[] byteToInt(byte[] data){
+        public static int[] byteToInt(byte[] data) {
             if(data==null) return null;
             int[] newData = new int[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
-        public static int[] shortToInt(short[] data){
+        public static int[] shortToInt(short[] data) {
             if(data==null) return null;
             int[] newData = new int[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
-        public static byte[] shortToByte(short[] data){
+        public static byte[] shortToByte(short[] data) {
             if(data==null) return null;
             byte[] newData = new byte[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (byte) data[ i ];
             return newData;
         }
 
-        public static long[] byteToLong(byte[] data){
+        public static long[] byteToLong(byte[] data) {
             if(data==null) return null;
             long[] newData = new long[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
-        public static long[] shortToLong(short[] data){
+        public static long[] shortToLong(short[] data) {
             if(data==null) return null;
             long[] newData = new long[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
-        public static BigInteger[] shortToBigInteger(short[] data){
+        public static BigInteger[] shortToBigInteger(short[] data) {
             if(data==null) return null;
             BigInteger[] newData = new BigInteger[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );
@@ -459,42 +459,42 @@ public class DataConverter
             return newData;
         }
 
-        public static byte[] longToByte(long[] data){
+        public static byte[] longToByte(long[] data) {
             if(data==null) return null;
             byte[] newData = new byte[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (byte) data[ i ];
             return newData;
         }
 
-        public static short[] longToShort(long[] data){
+        public static short[] longToShort(long[] data) {
             if(data==null) return null;
             short[] newData = new short[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (short) data[ i ];
             return newData;
         }
 
-        public static int[] longToInt(long[] data){
+        public static int[] longToInt(long[] data) {
             if(data==null) return null;
             int[] newData = new int[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (int) data[ i ];
             return newData;
         }
 
-        public static float[] longToFloat(long[] data){
+        public static float[] longToFloat(long[] data) {
             if(data==null) return null;
             float[] newData = new float[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (float) data[ i ];
             return newData;
         }
 
-        public static double[] longToDouble(long[] data){
+        public static double[] longToDouble(long[] data) {
             if(data==null) return null;
             double[] newData = new double[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (double) data[ i ];
             return newData;
         }
 
-        public static BigInteger[] longToBigInteger(long[] data){
+        public static BigInteger[] longToBigInteger(long[] data) {
             if(data==null) return null;
             BigInteger[] newData = new BigInteger[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );

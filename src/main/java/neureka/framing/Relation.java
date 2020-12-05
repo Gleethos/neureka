@@ -100,19 +100,19 @@ public class Relation<ValueType> implements Component<Tsr<ValueType>>
         else return _parent.find( Relation.class ).findRootTensor();
     }
 
-    public Tsr<?> getParent(){
+    public Tsr<?> getParent() {
         return _parent;
     }
 
-    public boolean hasParent(){
+    public boolean hasParent() {
         return _parent != null;
     }
 
-    public boolean hasChildren(){
+    public boolean hasChildren() {
         return _children != null;
     }
 
-    public int childCount(){
+    public int childCount() {
         return ( _children == null ) ? 0 : _children.length;
     }
 

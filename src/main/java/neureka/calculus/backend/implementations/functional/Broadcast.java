@@ -37,10 +37,10 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                 ( caller, call ) -> {
                     int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
                     if (
-                            call.getTensor(0+offset).shape().size() != call.getTensor(1+offset).shape().size()
+                            call.getTensor( 0+offset ).shape().size() != call.getTensor(1+offset).shape().size()
                     ) // Creating a new tensor:
                     {
-                        Tsr[] tsrs = {call.getTensor(0+offset), call.getTensor(1+offset) };
+                        Tsr[] tsrs = {call.getTensor( 0+offset ), call.getTensor(1+offset) };
                         Tsr.makeFit(tsrs, caller.doesAD() );
                         tsrs = new Tsr[]{null, tsrs[0], tsrs[1]};
                         call.getDevice().execute( call.withNew( tsrs ) );
@@ -81,7 +81,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
         );
     }
 
-    public String getKernelSource(){
+    public String getKernelSource() {
         return Neureka.instance().utility().readResource("kernels/broadcast_template.cl");
     }
 

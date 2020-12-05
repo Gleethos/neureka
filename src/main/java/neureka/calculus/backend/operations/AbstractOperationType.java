@@ -208,11 +208,11 @@ public abstract class AbstractOperationType implements OperationType
     //==================================================================================================================
 
     @Override
-    public <T extends AbstractFunctionalOperationTypeImplementation> T getImplementation(Class<T> type){
+    public <T extends AbstractFunctionalOperationTypeImplementation> T getImplementation(Class<T> type) {
         return (T) _implementations.get(type);
     }
     @Override
-    public <T extends AbstractFunctionalOperationTypeImplementation> boolean supportsImplementation(Class<T> type){
+    public <T extends AbstractFunctionalOperationTypeImplementation> boolean supportsImplementation(Class<T> type) {
         return _implementations.containsKey(type);
     }
     @Override
@@ -222,7 +222,7 @@ public abstract class AbstractOperationType implements OperationType
     }
 
     @Override
-    public OperationType forEachImplementation(Consumer<OperationTypeImplementation> action ){
+    public OperationType forEachImplementation(Consumer<OperationTypeImplementation> action ) {
         _implementations.values().forEach(action);
         return this;
     }
@@ -268,22 +268,22 @@ public abstract class AbstractOperationType implements OperationType
     //==================================================================================================================
 
     @Override
-    public String getFunction(){
+    public String getFunction() {
         return _function;
     }
 
     @Override
-    public String getOperator(){
+    public String getOperator() {
         return _operator;
     }
 
     @Override
-    public int getId(){
+    public int getId() {
         return _id;
     }
 
     @Override
-    public int getArity(){
+    public int getArity() {
         return _arity;
     }
 
@@ -293,17 +293,17 @@ public abstract class AbstractOperationType implements OperationType
     }
 
     @Override
-    public boolean isIndexer(){
+    public boolean isIndexer() {
         return _isIndexer;
     }
 
     @Override
-    public boolean isDifferentiable(){
+    public boolean isDifferentiable() {
         return _isDifferentiable;
     }
 
     @Override
-    public boolean isInline(){
+    public boolean isInline() {
         return _isInline;
     }
 

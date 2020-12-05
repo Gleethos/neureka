@@ -46,7 +46,7 @@ public class FunctionBuilder {
     public static Function build(String expression, boolean doAD) {
         expression =
                 (expression.length() > 0
-                        && (expression.charAt( 0 ) != '(' || expression.charAt(expression.length() - 1) != ')'))
+                        && (expression.charAt( 0 ) != '(' || expression.charAt( expression.length() - 1 ) != ')'))
                         ? ("(" + expression + ")")
                         : expression;
         String k = (doAD) ? "d" + expression : expression;

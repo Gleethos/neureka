@@ -66,7 +66,7 @@ public class OperationContext implements Cloneable
     /**
      * @return The OperationContext singleton instance!
      */
-    public static OperationContext instance(){
+    public static OperationContext instance() {
         return _INSTANCES.get();
     }
 
@@ -78,7 +78,7 @@ public class OperationContext implements Cloneable
     private final ArrayList<AbstractOperationType> _REGISTER;
     private int _ID;
 
-    private OperationContext(){
+    private OperationContext() {
         _LOOKUP = new HashMap<>();
         _REGISTER = new ArrayList<>();
         _ID = 0;
@@ -87,37 +87,37 @@ public class OperationContext implements Cloneable
     /**
      * @return A mapping between OperationType identifiers and their corresponding instances.
      */
-    public Map<String, AbstractOperationType> getLookup(){
+    public Map<String, AbstractOperationType> getLookup() {
         return _LOOKUP;
     }
 
     /**
      * @return A list of all OperationType instances.
      */
-    public List<AbstractOperationType> getRegister(){
+    public List<AbstractOperationType> getRegister() {
         return _REGISTER;
     }
 
     /**
      * @return The ID of the OperationType that will be instantiated next.
      */
-    public int getID(){
+    public int getID() {
         return _ID;
     }
 
-    public void incrementID(){
+    public void incrementID() {
         _ID++;
     }
 
-    public List<AbstractOperationType> instances(){
+    public List<AbstractOperationType> instances() {
         return getRegister();
     }
 
-    public AbstractOperationType instance(int index){
+    public AbstractOperationType instance(int index) {
         return getRegister().get(index);
     }
 
-    public AbstractOperationType instance(String identifier){
+    public AbstractOperationType instance(String identifier) {
         return getLookup().getOrDefault(identifier, null);
     }
 

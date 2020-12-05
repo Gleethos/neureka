@@ -15,7 +15,7 @@ import java.util.List;
 public class Scalarization extends AbstractFunctionalOperationTypeImplementation< Scalarization >
 {
 
-    public Scalarization(){
+    public Scalarization() {
         super("scalarization");
         setSuitabilityChecker(call->{
             Tsr[] tsrs = call.getTensors();
@@ -45,7 +45,7 @@ public class Scalarization extends AbstractFunctionalOperationTypeImplementation
     }
 
 
-    public String getKernelSource(){
+    public String getKernelSource() {
         return Neureka.instance().utility().readResource("kernels/scalarization_template.cl");
     }
 

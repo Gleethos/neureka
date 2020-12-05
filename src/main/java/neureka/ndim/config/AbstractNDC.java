@@ -106,7 +106,7 @@ public abstract class AbstractNDC implements NDConfiguration
             int[] spread,
             int[] offset
     ) {
-        if( Neureka.instance().settings().ndim().isOnlyUsingDefaultNDConfiguration() ){
+        if( Neureka.instance().settings().ndim().isOnlyUsingDefaultNDConfiguration() ) {
             return ComplexDefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);
         }
         boolean isSimple = _isSimpleConfiguration(shape, translation, idxmap, spread, offset);
@@ -167,7 +167,7 @@ public abstract class AbstractNDC implements NDConfiguration
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public String toString(){
+    public String toString() {
         return "(NDConfiguration|@"+Integer.toHexString(hashCode())+"#"+Long.toHexString(keyCode())+"):{ " +
                     "shape : "+Arrays.toString(shape())+", "+
                     "translation : "+Arrays.toString(translation())+", "+

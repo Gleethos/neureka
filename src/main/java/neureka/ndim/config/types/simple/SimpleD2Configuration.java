@@ -32,7 +32,7 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
     public static NDConfiguration construct(
             int[] shape,
             int[] translation
-    ){
+    ) {
         return _cached(new SimpleD2Configuration(shape, translation));
     }
 
@@ -97,7 +97,7 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
 
     @Override
     public int i_of_i(int i) {
-        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){
+        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
             return ((i%_translation2) / _translation1) * _translation1 +
                     (i / _translation2) * _translation2;
         } else {
@@ -109,7 +109,7 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
     @Override
     public int[] idx_of_i(int i) {
         int[] idx = new int[ 2 ];
-        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){
+        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
             idx[ 1 ] += i / _translation2;
             i %= _translation2;
             idx[ 0 ] += i / _translation1;

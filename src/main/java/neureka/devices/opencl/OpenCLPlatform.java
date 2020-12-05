@@ -116,7 +116,7 @@ public class OpenCLPlatform {
                             exec = type.getImplementation(Operator.class).getExecutor(CLExecutor.class);
                         } else if (preName.contains("scalarization") && type.supportsImplementation(Scalarization.class)) {
                             exec = type.getImplementation(Scalarization.class).getExecutor(CLExecutor.class);
-                        } else if(preName.contains("broadcast") && type.supportsImplementation(Broadcast.class)){//broadcast
+                        } else if(preName.contains("broadcast") && type.supportsImplementation(Broadcast.class)) {//broadcast
                             exec = type.getImplementation(Broadcast.class).getExecutor(CLExecutor.class);
                         } else if(preName.contains("convolution") && type.supportsImplementation(Convolution.class)) {
                             exec = type.getImplementation(Convolution.class).getExecutor(CLExecutor.class);
@@ -175,15 +175,15 @@ public class OpenCLPlatform {
         return devices;
     }
 
-    public boolean has(cl_device_id did){
+    public boolean has(cl_device_id did) {
         return _id_device.containsKey(did);
     }
 
-    public OpenCLDevice get(cl_device_id did){
+    public OpenCLDevice get(cl_device_id did) {
         return _id_device.get(did);
     }
 
-    public void put(cl_device_id did, OpenCLDevice device){
+    public void put(cl_device_id did, OpenCLDevice device) {
        _id_device.put(did, device);
     }
 

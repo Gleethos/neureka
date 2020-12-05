@@ -55,7 +55,7 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
             int[] idxmap,
             int[] spread,
             int[] offset
-    ){
+    ) {
         return _cached(new ComplexDefaultNDConfiguration(shape, translation, idxmap, spread, offset));
     }
 
@@ -118,14 +118,14 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public int i_of_i(int i){
+    public int i_of_i(int i) {
         return i_of_idx(idx_of_i( i ));
     }
 
     @Override
     public int[] idx_of_i(int i) {
         int[] idx = new int[_shape.length];
-        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){
+        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
             for ( int ii = rank()-1; ii >= 0; ii-- ) {
                 idx[ii] += i / _idxmap[ii];
                 i %= _idxmap[ii];

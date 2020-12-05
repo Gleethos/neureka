@@ -111,11 +111,11 @@ public interface Function
         public static Function NEG = create("(-1*I[ 0 ])", false);
     }
 
-    static Function create( String expression ){
+    static Function create( String expression ) {
         return create(expression, true);
     }
 
-    static Function create( String expression, boolean doAD ){
+    static Function create( String expression, boolean doAD ) {
         return FunctionBuilder.build(expression, doAD);
     }
 

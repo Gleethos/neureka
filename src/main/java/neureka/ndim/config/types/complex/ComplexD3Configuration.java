@@ -70,7 +70,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
             int[] idxmap,
             int[] spread,
             int[] offset
-    ){
+    ) {
         return _cached(new ComplexD3Configuration(shape, translation, idxmap, spread, offset));
     }
 
@@ -133,9 +133,9 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public int i_of_i(int i){
+    public int i_of_i(int i) {
         int idx1, idx2, idx3;
-        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){
+        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
             idx3 = i / _idxmap3;
             i %= _idxmap3;
             idx2 = i / _idxmap2;
@@ -156,7 +156,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     @Override
     public int[] idx_of_i(int i) {
         int idx1, idx2, idx3;
-        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){
+        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
             idx3 = i / _idxmap3;
             i %= _idxmap3;
             idx2 = i / _idxmap2;

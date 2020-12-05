@@ -13,7 +13,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
 
     //------------------------------------------------------------------------------------------------------------------
 
-    public boolean providesGradient(){
+    public boolean providesGradient() {
         return (_index<0);
     }
 
@@ -25,7 +25,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
     }
 
     @Override
-    public boolean doesAD(){
+    public boolean doesAD() {
         return false;
     }
 
@@ -35,7 +35,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
     }
 
     @Override
-    public boolean dependsOn(int index){
+    public boolean dependsOn(int index) {
         return index() == index;
     }
 
@@ -44,7 +44,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
     @Override
     public Function newBuild(final String equation) {
 
-        if(equation.charAt( 0 )=='-'){
+        if(equation.charAt( 0 )=='-') {
             return FunctionBuilder.build(equation.substring(1)+"*-1", true);
         }
         int number = 0;
@@ -60,7 +60,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
             }
         }
         _index = number;
-        if(equation.contains("g")){
+        if(equation.contains("g")) {
             _index = -(_index+1);
         }
 
@@ -135,7 +135,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
         return "I"+((this.providesGradient())?"g":"")+"[" + index() + "]";
     }
 
-    public int index(){
+    public int index() {
         return ((this.providesGradient())?(Math.abs(_index)-1):_index);
     }
 

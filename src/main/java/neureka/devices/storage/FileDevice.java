@@ -74,7 +74,7 @@ public class FileDevice extends AbstractBaseDevice<Number>
     private FileDevice( String directory ) {
         _directory = directory;
         File dir = new File( directory );
-        if ( ! dir.exists() ){
+        if ( ! dir.exists() ) {
             dir.mkdirs();
         }
     }

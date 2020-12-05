@@ -63,7 +63,7 @@ import java.util.stream.IntStream;
 
 public interface NDIterator
 {
-    static NDIterator of( Tsr<?> t ){
+    static NDIterator of( Tsr<?> t ) {
 
         NDConfiguration ndc = t.getNDConf();
 

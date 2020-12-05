@@ -13,13 +13,13 @@ public class VirtualNDConfiguration extends AbstractNDC
 
     private final int[] _shape;
 
-    private VirtualNDConfiguration( int[] shape ){
+    private VirtualNDConfiguration( int[] shape ) {
         _shape = _cacheArray( shape );
     }
 
     public static NDConfiguration construct(
             int[] shape
-    ){
+    ) {
         shape = _cacheArray( shape );
         VirtualNDConfiguration found = _Virtual_Cache.get( shape );
         if ( found != null ) {

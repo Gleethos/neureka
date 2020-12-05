@@ -223,7 +223,7 @@ public class Division extends AbstractOperationType
                         new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
                                     call.getDevice().getKernel(call)
                                             .pass( call.getTensor( offset ) )
                                             .pass( call.getTensor( offset + 1 ) )
@@ -235,7 +235,7 @@ public class Division extends AbstractOperationType
                                 3,
                                 operator.getKernelSource(), // kernelSource
                                 "output = input1 / input2;\n",
-                                "if(d==0){\n" +
+                                "if(d==0) {\n" +
                                         "    output = 1/input2;\n" +
                                         "} else {\n" +
                                         "    output = -input2 /(float)pow(input1, 2.0f);\n" +
@@ -306,7 +306,7 @@ public class Division extends AbstractOperationType
                         new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
                                     call.getDevice().getKernel(call)
                                             .pass( call.getTensor( offset ) )
                                             .pass( call.getTensor( offset + 1 ) )
@@ -318,7 +318,7 @@ public class Division extends AbstractOperationType
                                 3,
                                 broadcast.getKernelSource(), // kernelSource
                                 "value = src1 / src2;\n",
-                                "if(d==0){\n" +
+                                "if(d==0) {\n" +
                                         "    value += (1/handle) * drain;\n" +
                                         "} else {\n" +
                                         "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
@@ -395,7 +395,7 @@ public class Division extends AbstractOperationType
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1)?1:0;
+                                    int offset = (call.getTensor( 2 ).isVirtual() || call.getTensor( 2 ).size() == 1)?1:0;
                                     int gwz = call.getTensor( 0 ).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor( 0 ))
@@ -408,7 +408,7 @@ public class Division extends AbstractOperationType
                                 3,
                                 scalarization.getKernelSource(), // kernelSource
                                 "output = input1 / value;\n",
-                                "if(d==0){\n" +
+                                "if(d==0) {\n" +
                                         "    output = 1/value;\n" +
                                         "} else {\n" +
                                         "    output = -value /(float)pow(input1, 2.0f);\n" +
@@ -443,9 +443,9 @@ public class Division extends AbstractOperationType
 
         new AbstractOperationType(
                 "divide", "d", 2, true, false, true, false
-                ){
+                ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ){
+            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
                 return 0;
             }
         }.setImplementation(

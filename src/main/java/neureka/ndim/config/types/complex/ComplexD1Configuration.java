@@ -35,7 +35,7 @@ public class ComplexD1Configuration extends D1C //:= IMMUTABLE
             int[] idxmap,
             int[] spread,
             int[] offset
-    ){
+    ) {
         return _cached(new ComplexD1Configuration(shape[ 0 ], translation[ 0 ],  idxmap[ 0 ], spread[ 0 ], offset[ 0 ]));
     }
 

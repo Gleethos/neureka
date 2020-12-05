@@ -47,12 +47,12 @@ public abstract class AbstractBaseFunction implements Function
 {
 
     @Override
-    public double call(double input){
+    public double call(double input) {
         return call(new double[]{input});
     }
 
     @Override
-    public <T> Tsr<T> call(Tsr<T> input){
+    public <T> Tsr<T> call(Tsr<T> input) {
         return call(new Tsr[]{input});
     }
 
@@ -71,46 +71,46 @@ public abstract class AbstractBaseFunction implements Function
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public double invoke(double input){
-        return call(input);
+    public double invoke(double input) {
+        return call( input );
     }
 
     @Override
-    public double invoke(double[] inputs, int j){
+    public double invoke(double[] inputs, int j) {
         return call( inputs, j );
     }
 
     @Override
-    public double invoke(double[] inputs){
+    public double invoke(double[] inputs) {
         return call( inputs );
     }
 
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public <T> Tsr<T> invoke(Tsr<T> input){
-        return call(input);
+    public <T> Tsr<T> invoke(Tsr<T> input) {
+        return call( input );
     }
 
     @Override
-    public <T> Tsr<T> invoke(Tsr<T>[] inputs, int j){
+    public <T> Tsr<T> invoke(Tsr<T>[] inputs, int j) {
         return call( inputs, j );
     }
 
     @Override
-    public <T> Tsr<T> invoke(Tsr<T>[] inputs){
+    public <T> Tsr<T> invoke(Tsr<T>[] inputs) {
         return call( inputs );
     }
 
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public <T> Tsr<T> derive(List<Tsr<T>> inputs, int index, int j){
+    public <T> Tsr<T> derive(List<Tsr<T>> inputs, int index, int j) {
         return derive(inputs.toArray(new Tsr[ 0 ]), index, j);
     }
 
     @Override
-    public <T> Tsr<T> derive(List<Tsr<T>> inputs, int index){
+    public <T> Tsr<T> derive(List<Tsr<T>> inputs, int index) {
         return derive(inputs.toArray(new Tsr[ 0 ]), index);
     }
 

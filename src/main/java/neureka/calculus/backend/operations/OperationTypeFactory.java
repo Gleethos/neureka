@@ -15,11 +15,11 @@ public class OperationTypeFactory
     Boolean _isDifferentiable = null;
     Boolean _isInline = null;
 
-    public OperationTypeFactory(){
+    public OperationTypeFactory() {
 
     }
 
-    public AbstractOperationType create(){
+    public AbstractOperationType create() {
         List<String> missing = new ArrayList<>();
         if( _function == null ) missing.add("function");
         if( _operator == null ) missing.add("operator");

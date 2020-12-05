@@ -106,7 +106,7 @@ public class SimpleReshapeView extends AbstractNDC
     @Override
     public int[] idx_of_i(int i) {
         int[] idx = new int[_shape.length];
-        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){
+        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
             for ( int ii = rank()-1; ii >= 0; ii-- ) {
                 idx[ii] += i / _idxmap[ii];
                 i %= _idxmap[ii];

@@ -25,9 +25,7 @@ public class Identity extends AbstractOperationType
         setStringifier(
                 children -> {
                     String expression = String.join( ", ", children );
-                    if (expression.charAt( 0 ) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                        return "idy" + expression;
-                    }
+                    if ( expression.startsWith("(") && expression.endsWith(")") ) return "idy" + expression;
                     return "idy" + "(" + expression + ")";
                 }
         );
@@ -100,7 +98,7 @@ public class Identity extends AbstractOperationType
                         new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
                                     // Drain tensor needs to be 'actual'! :
                                     if(!call.getTensor(offset + 1).isVirtual()) call.getTensor(offset).setIsVirtual( false );
                                     call.getDevice().getKernel(call)
@@ -191,7 +189,7 @@ public class Identity extends AbstractOperationType
                                     call.getDevice().getKernel(call)
                                             .pass(t)
                                             .pass(t)
-                                            .pass((float)call.getTensor(1).value64( 0 ))
+                                            .pass((float)call.getTensor( 1 ).value64( 0 ))
                                             .pass(t.rank())
                                             .pass( call.getDerivativeIndex() )
                                             .call( gwz );

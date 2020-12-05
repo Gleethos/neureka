@@ -182,7 +182,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      */
     private PendingError _pending_error = null;
 
-    public PendingError getPendingError(){
+    public PendingError getPendingError() {
         return _pending_error;
     }
 
@@ -287,7 +287,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      */
     private int _reference_payload_version = -1;
 
-    public int referenceVersion(){
+    public int referenceVersion() {
         return _reference_payload_version;
     }
 

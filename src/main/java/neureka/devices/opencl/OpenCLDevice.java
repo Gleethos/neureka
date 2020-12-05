@@ -102,8 +102,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
         _cleaning( this, () -> {
             clReleaseCommandQueue(_queue);
         } );
-        //Runtime.getRuntime().addShutdownHook(new Thread(()->{
-        //    _mapping.forEach((k, v)->{
+        //Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        //    _mapping.forEach((k, v) -> {
         //        if(v.value.event!=null) clWaitForEvents(1, new cl_event[]{v.value.event});
         //        clReleaseMemObject(v.config);
         //        clReleaseMemObject(v.value.data);
@@ -320,7 +320,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     //private void _rmv(WeakReference<Tsr> reference) {
     //    cl_tsr clt = _mapping.get(reference);
     //    clReleaseMemObject(clt.config);//remove translations/shapes/spread/offset... from device!
-    //    //if (clt.value.uses <= 1){
+    //    //if (clt.value.uses <= 1) {
     //    //    clReleaseMemObject(clt.value.data);
     //    //} else clt.value.uses--;
     //    _mapping.remove(reference);
@@ -349,16 +349,16 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return this;
     }
 
-    private void _releaseEvents(Tsr[] tsrs){
-        for(Tsr<Number> t : tsrs){
-            if( t.find(cl_tsr.class).value.event != null ){
+    private void _releaseEvents(Tsr[] tsrs) {
+        for(Tsr<Number> t : tsrs) {
+            if( t.find(cl_tsr.class).value.event != null ) {
                 clReleaseEvent(t.find(cl_tsr.class).value.event);
                 t.find(cl_tsr.class).value.event = null;
             }
         }
     }
 
-    private cl_event[] _getWaitList(Tsr[] tsrs){
+    private cl_event[] _getWaitList(Tsr[] tsrs) {
         List<cl_event> list = new ArrayList<>();
         for (Tsr<Number> t : tsrs) {
             cl_event event = t.find(cl_tsr.class).value.event;
@@ -373,7 +373,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     public Device overwrite32(Tsr<Number> tensor, float[] value) {
         cl_tsr clt = tensor.find(cl_tsr.class);
         if (clt.fp == 1) {
-            if(clt.value.event!=null){
+            if(clt.value.event!=null) {
                 clWaitForEvents(1, new cl_event[]{clt.value.event});
             }
             clt.value.event = new cl_event();
@@ -458,18 +458,18 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public double value64f(Tsr<Number> tensor, int index){
+    public double value64f(Tsr<Number> tensor, int index) {
         cl_tsr clt = tensor.find(cl_tsr.class);
         return _value64f(clt, 1, index)[ 0 ];
     }
 
     @Override
-    public float value32f(Tsr<Number> tensor, int index){
+    public float value32f(Tsr<Number> tensor, int index) {
         cl_tsr clt = tensor.find(cl_tsr.class);
         return _value32f(clt, 1, index)[ 0 ];
     }
 
-    public KernelBuilder getKernel(ExecutionCall call){
+    public KernelBuilder getKernel(ExecutionCall call) {
         String chosen = call.getImplementation().getName()+"_"+call.getType().getFunction();
         cl_kernel kernel = _platform.getKernels().get(chosen);
         return new KernelBuilder(kernel, _queue);

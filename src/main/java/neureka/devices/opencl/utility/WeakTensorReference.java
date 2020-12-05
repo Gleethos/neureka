@@ -26,12 +26,12 @@ public class WeakTensorReference<T> extends WeakReference<T>
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return _hash;
     }
 
     @Override
-    public boolean equals(Object o){
+    public boolean equals(Object o) {
         return o.hashCode() == _hash;
     }
 

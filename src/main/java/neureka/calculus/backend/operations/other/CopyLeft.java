@@ -16,7 +16,7 @@ import java.util.List;
 
 public class CopyLeft extends AbstractOperationType {
 
-    public CopyLeft(){
+    public CopyLeft() {
 
         super(
                 "left_inline", "<", 2,
@@ -43,7 +43,7 @@ public class CopyLeft extends AbstractOperationType {
                 .setSuitabilityChecker(
                         call ->
                         {
-                            if ( call.getTensor(1).isVirtual() || call.getTensor(1).size() == 1 ) {
+                            if ( call.getTensor( 1 ).isVirtual() || call.getTensor( 1 ).size() == 1 ) {
                                 return 1.0f;
                             } else return 0.0f;
                         }
@@ -93,7 +93,7 @@ public class CopyLeft extends AbstractOperationType {
                         new HostExecutor(
                                 call ->
                                 {
-                                    double value = call.getTensor(1).value64( 0 );
+                                    double value = call.getTensor( 1 ).value64( 0 );
                                     call.getDevice().getExecutor()
                                             .threaded (
                                                     call.getTensor( 0 ).size(),
@@ -123,7 +123,7 @@ public class CopyLeft extends AbstractOperationType {
                                     call.getDevice().getKernel(call)
                                             .pass(t)
                                             .pass(t)
-                                            .pass(call.getTensor(1).value32( 0 ))
+                                            .pass(call.getTensor( 1 ).value32( 0 ))
                                             .pass(t.rank())
                                             .pass( call.getDerivativeIndex() )
                                             .call( gwz );

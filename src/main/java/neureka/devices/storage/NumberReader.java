@@ -34,7 +34,7 @@ public class NumberReader
 
 
 
-    public int bytesRead(){
+    public int bytesRead() {
         return _bytesRead;
     }
 

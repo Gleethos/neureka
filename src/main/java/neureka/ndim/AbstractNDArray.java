@@ -192,17 +192,17 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         return type == _dataType;
     }
 
-    public boolean is64(){
+    public boolean is64() {
         return _data instanceof double[];
     }
 
-    public boolean is32(){
+    public boolean is32() {
         return _data instanceof float[];
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public int i_of_i( int i ){
+    public int i_of_i( int i ) {
         return _conf.i_of_i( i );
     }
 
@@ -216,11 +216,11 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public NDConfiguration getNDConf(){
+    public NDConfiguration getNDConf() {
         return _conf;
     }
 
-    public InstanceType setNDConf( NDConfiguration ndConfiguration ){
+    public InstanceType setNDConf( NDConfiguration ndConfiguration ) {
         _conf = ndConfiguration;
         return (InstanceType) this;
     }
@@ -228,7 +228,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
 
     //---
 
-    public int rank(){
+    public int rank() {
         return _conf.shape().length;
     }
 
@@ -236,11 +236,11 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         return _asList(_conf.shape());
     }
 
-    public int shape( int i ){
+    public int shape( int i ) {
         return _conf.shape()[ i ];
     }
 
-    public List<Integer> idxmap(){
+    public List<Integer> idxmap() {
         return _asList(_conf.idxmap());
     }
 
@@ -248,11 +248,11 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         return _asList(_conf.translation());
     }
 
-    public List<Integer> spread(){
+    public List<Integer> spread() {
         return _asList(_conf.spread());
     }
 
-    public List<Integer> offset(){
+    public List<Integer> offset() {
         return _asList(_conf.offset());
     }
 
@@ -260,7 +260,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         return NDConfiguration.Utility.szeOfShp(_conf.shape());
     }
 
-    protected static List<Integer> _asList( int[] array ){
+    protected static List<Integer> _asList( int[] array ) {
         List<Integer> intList = new ArrayList<>( array.length );
         for ( int i : array ) intList.add( i );
         return intList;
@@ -279,15 +279,15 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         public static class Stringify
         {
             @Contract( pure = true )
-            public static String formatFP( double v ){
+            public static String formatFP( double v ) {
                 DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols( Locale.US );
                 DecimalFormat Formatter = new DecimalFormat("##0.0##E0", formatSymbols);
                 String vStr = String.valueOf( v );
                 final int offset = 0;
-                if ( vStr.length() > ( 7 - offset ) ){
+                if ( vStr.length() > ( 7 - offset ) ) {
                     if ( vStr.startsWith("0.") ) {
                         vStr = vStr.substring( 0, 7-offset )+"E0";
-                    } else if( vStr.startsWith( "-0." ) ){
+                    } else if( vStr.startsWith( "-0." ) ) {
                         vStr = vStr.substring( 0, 8-offset )+"E0";
                     } else {
                         vStr = Formatter.format( v );
@@ -324,17 +324,17 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
             }
 
             @Contract(pure = true)
-            public static int[][] makeFit( int[] sA, int[] sB ){
+            public static int[][] makeFit( int[] sA, int[] sB ) {
                 int lastIndexOfA = 0;
                 for ( int i = sA.length-1; i >= 0; i-- ) {
-                    if(sA[ i ]!=1){
+                    if(sA[ i ]!=1) {
                         lastIndexOfA = i;
                         break;
                     }
                 }
                 int firstIndexOfB = 0;
-                for (int i=0; i<sB.length; i++){
-                    if(sB[ i ]!=1){
+                for (int i=0; i<sB.length; i++) {
+                    if(sB[ i ]!=1) {
                         firstIndexOfB = i;
                         break;
                     }

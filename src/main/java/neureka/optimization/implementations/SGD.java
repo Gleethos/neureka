@@ -56,7 +56,7 @@ public class SGD<ValueType> implements Optimizer<ValueType>
         Function.Detached.IDY.call(_function.call( g ));
     }
 
-    public double learningRate(){
+    public double learningRate() {
         return _learningRate;
     }
 

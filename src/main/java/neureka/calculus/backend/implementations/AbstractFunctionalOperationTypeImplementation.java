@@ -70,7 +70,7 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
         return _forwardAnalyzer.allowsForward(call);
     }
 
-    public ForwardADAnalyzer getForwardADAnalyzer(){
+    public ForwardADAnalyzer getForwardADAnalyzer() {
         return _forwardAnalyzer;
     }
 
@@ -86,7 +86,7 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
         return _backwardAnalyzer.allowsBackward(call);
     }
 
-    public BackwardADAnalyzer getBackwardADAnalyzer(){
+    public BackwardADAnalyzer getBackwardADAnalyzer() {
         return _backwardAnalyzer;
     }
 
@@ -119,7 +119,7 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
         return _hook.handle( caller, call );
     }
 
-    public InitialCallHook getCallHook(){
+    public InitialCallHook getCallHook() {
         return _hook;
     }
 
@@ -136,7 +136,7 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
         return _RJAgent.handle(call, goDeeperWith);
     }
 
-    public RecursiveJunctionAgent getRJAgent(){
+    public RecursiveJunctionAgent getRJAgent() {
         return _RJAgent;
     }
 
@@ -152,7 +152,7 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
         return _instantiation.handle(call);
     }
 
-    public DrainInstantiation getDrainInstantiation(){
+    public DrainInstantiation getDrainInstantiation() {
         return _instantiation;
     }
 

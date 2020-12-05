@@ -18,7 +18,7 @@ public class DispatchUtility {
         List<List<Integer>> factors = new ArrayList<>();
         for ( int s : shape ) factors.add( primeFactors(s) );
         int[] indices = new int[ shape.length ];
-        for ( int i=0; i<shape.length; i++){
+        for ( int i=0; i<shape.length; i++) {
             int index = -1;
             int product = 1;
             do {

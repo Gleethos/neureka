@@ -74,7 +74,7 @@ public abstract class AbstractDevice<ValueType> extends AbstractBaseDevice<Value
     protected abstract void _execute( Tsr[] tensors, int d, OperationType type );
 
     @Override
-    public void update( Tsr oldOwner, Tsr newOwner ){
+    public void update( Tsr oldOwner, Tsr newOwner ) {
         swap( oldOwner, newOwner );
     }
 
@@ -84,7 +84,7 @@ public abstract class AbstractDevice<ValueType> extends AbstractBaseDevice<Value
         return this;
     }
 
-    protected void _cleaning( Object o, Runnable action ){
+    protected void _cleaning( Object o, Runnable action ) {
         _CLEANER.register(o, action);
     }
 

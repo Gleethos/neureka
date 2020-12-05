@@ -21,7 +21,7 @@ public class PendingError
         _toBeReceived--;
     }
 
-    public boolean isFullyAccumulated(){
+    public boolean isFullyAccumulated() {
         return _toBeReceived == 0;
     }
 
@@ -29,7 +29,7 @@ public class PendingError
         return _toBeReceived;
     }
 
-    public Tsr getAccumulatedError(){
+    public Tsr getAccumulatedError() {
         return _error;
     }
 

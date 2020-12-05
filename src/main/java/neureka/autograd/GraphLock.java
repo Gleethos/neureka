@@ -26,14 +26,14 @@ public class GraphLock
      * @param owner The function which currently processes the graph of nodes of which this lock is referenced by.
      * @param sources
      */
-    public GraphLock(Function owner, Tsr[] sources){
+    public GraphLock(Function owner, Tsr[] sources) {
         this._owner = owner;
     }
 
     /**
      * @return Returns true if the graph is locked
      */
-    public boolean isLocked(){
+    public boolean isLocked() {
         return _is_locked;
     }
 
@@ -41,7 +41,7 @@ public class GraphLock
      *  Releases this lock and permits nodes of this graph
      *  to be used for further processing.
      */
-    public void release(){
+    public void release() {
         _is_locked = false;
     }
 
@@ -49,7 +49,7 @@ public class GraphLock
      * @return A description based on the identity of this lock and its owner (a function)!
      */
     @Override
-    public String toString(){
+    public String toString() {
         return "GID:"+Integer.toHexString(this.hashCode())+":f"+ _owner.toString()+"";
     }
 

@@ -41,7 +41,7 @@ public class Cache
     private static Cache _cache = new Cache();
     private Logger _logger = LoggerFactory.getLogger( Cache.class );
 
-    private Cache(){
+    private Cache() {
         _logger.debug("New singleton instance of class 'Cache' created for function result caching.");
     }
 
@@ -54,7 +54,7 @@ public class Cache
 
     private final Map<String, Function> FUNCTIONS = Collections.synchronizedMap(new WeakHashMap<>());
 
-    public synchronized Map<String, Function> FUNCTIONS(){
+    public synchronized Map<String, Function> FUNCTIONS() {
         return this.FUNCTIONS;
     }
 
@@ -80,11 +80,11 @@ public class Cache
                 locked = (locked) && node.lock().isLocked();
             }
         }
-        if( untracked == null || !locked ){ // If graph tracking (nodes) has not yet been initialized!
+        if( untracked == null || !locked ) { // If graph tracking (nodes) has not yet been initialized!
             return Function.Setup.commit( null, inputs, function, activation );
         }
         GraphLock lock =  untracked.find( GraphNode.class ).lock();
-        for ( Tsr<Object> t : inputs ){
+        for ( Tsr<Object> t : inputs ) {
             if ( t.has(GraphNode.class) ) t.find( GraphNode.class ).obtainLocking( lock );
             else new GraphNode( function, lock, ()->t );
         }
@@ -93,7 +93,7 @@ public class Cache
 
         if ( !function.getOperation().isInline() ) result = _get( inputs, d, j );
 
-        if( result == null ){
+        if( result == null ) {
             result = activation.get();
             _put( result, node, d, j );
         }
@@ -145,7 +145,7 @@ public class Cache
         return key;
     }
 
-    private int _keyed( int number ){
+    private int _keyed( int number ) {
         return ( number>=0 ) ? number + 1 : number;
     }
 

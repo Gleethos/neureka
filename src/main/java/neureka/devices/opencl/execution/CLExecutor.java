@@ -44,10 +44,10 @@ public class CLExecutor implements ExecutorFor<OpenCLDevice>
     private final ExecutionOn<OpenCLDevice> _lambda;
     private final int _arity;
 
-    public String getSource(){
+    public String getSource() {
         return _source;
     }
-    public String getName(){
+    public String getName() {
         return _name;
     }
 

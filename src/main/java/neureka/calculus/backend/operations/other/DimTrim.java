@@ -32,7 +32,7 @@ public class DimTrim extends AbstractOperationType
         setStringifier(
                 children -> {
                     String expression = String.join( ", ", children );
-                    if (expression.charAt( 0 ) == '(' && expression.charAt(expression.length() - 1) == ')') {
+                    if (expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')') {
                         return "dimtrim" + expression;
                     }
                     return "dimtrim" + "(" + expression + ")";

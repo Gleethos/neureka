@@ -63,9 +63,7 @@ public class ReLU extends AbstractOperationType
         setStringifier(
                 children -> {
                     String expression = String.join( ", ", children );
-                    if (expression.charAt( 0 ) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                        return "relu" + expression;
-                    }
+                    if ( expression.startsWith("(") && expression.endsWith(")") ) return "relu" + expression;
                     return "relu" + "(" + expression + ")";
                 }
         );
@@ -106,7 +104,7 @@ public class ReLU extends AbstractOperationType
                         new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
                                     call.getDevice().getKernel(call)
                                             .pass( call.getTensor( offset ) )
                                             .pass( call.getTensor( offset + 1 ) )

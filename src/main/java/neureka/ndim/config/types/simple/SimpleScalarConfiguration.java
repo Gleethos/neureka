@@ -5,7 +5,7 @@ import neureka.ndim.config.NDConfiguration;
 
 public final class SimpleScalarConfiguration extends AbstractNDC //:= IMMUTABLE
 {
-    public static NDConfiguration construct(){
+    public static NDConfiguration construct() {
         return _cached(new SimpleScalarConfiguration());
     }
 

@@ -191,7 +191,7 @@ public class Multiplication extends AbstractOperationType {
                         new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
                                     call.getDevice().getKernel(call)
                                             .pass( call.getTensor( offset ) )
                                             .pass( call.getTensor( offset + 1 ) )
@@ -203,7 +203,7 @@ public class Multiplication extends AbstractOperationType {
                                 3,
                                 operator.getKernelSource(), // kernelSource
                                 "output = input1 * input2;\n",
-                                "if(d==0){output = input2;}else{output = input1;}\n",
+                                "if(d==0) {output = input2;}else{output = input1;}\n",
                                 this // OperationType
                         )
                 )
@@ -269,7 +269,7 @@ public class Multiplication extends AbstractOperationType {
                     new CLExecutor(
                             call -> {
                                 int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
                                 call.getDevice().getKernel(call)
                                         .pass( call.getTensor( offset ) )
                                         .pass( call.getTensor( offset + 1 ) )
@@ -379,7 +379,7 @@ public class Multiplication extends AbstractOperationType {
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1)?1:0;
+                                    int offset = (call.getTensor( 2 ).isVirtual() || call.getTensor( 2 ).size() == 1)?1:0;
                                     int gwz = call.getTensor( 0 ).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor( 0 ))
@@ -392,7 +392,7 @@ public class Multiplication extends AbstractOperationType {
                                 3,
                                 scalarization.getKernelSource(), // kernelSource
                                 "output = input1 * value;\n",
-                                "if(d==0){output = value;}else{output = input1;}\n",
+                                "if(d==0) {output = value;}else{output = input1;}\n",
                                 this // OperationType
                         )
                 )
@@ -470,9 +470,9 @@ public class Multiplication extends AbstractOperationType {
 
         new AbstractOperationType(
                 "", ((char) 171) + "*", 3, true, false, false, false
-        ){
+        ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ){
+            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
                 return 0;
             }
         }.setImplementation(
@@ -505,7 +505,7 @@ public class Multiplication extends AbstractOperationType {
                         new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
                                     call.getDevice().getKernel(call)
                                             .pass( call.getTensor( offset ) )
                                             .pass( call.getTensor( offset + 1 ) )
@@ -569,9 +569,9 @@ public class Multiplication extends AbstractOperationType {
 
         new AbstractOperationType(
                 "", "*" + ((char) 187), 3, true, false, false, false
-        ){
+        ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ){
+            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
                 return 0;
             }
         }.setImplementation(
@@ -604,7 +604,7 @@ public class Multiplication extends AbstractOperationType {
                         new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
                                     call.getDevice().getKernel(call)
                                             .pass( call.getTensor( offset ) )
                                             .pass( call.getTensor( offset + 1 ) )

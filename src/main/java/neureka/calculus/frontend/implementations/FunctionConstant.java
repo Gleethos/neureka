@@ -8,19 +8,19 @@ import neureka.calculus.frontend.AbstractBaseFunction;
 public class FunctionConstant extends AbstractBaseFunction
 {
 	private double _value;
-	public double value(){
+	public double value() {
 		return this._value;
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public boolean isFlat(){
+	public boolean isFlat() {
 		return  false;
 	}
 
 	@Override
-	public boolean doesAD(){
+	public boolean doesAD() {
 		return false;
 	}
 
@@ -30,7 +30,7 @@ public class FunctionConstant extends AbstractBaseFunction
 	}
 
 	@Override
-	public boolean dependsOn(int index){
+	public boolean dependsOn(int index) {
 		return false;
 	}
 

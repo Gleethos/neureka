@@ -37,9 +37,7 @@ public class Sinus extends AbstractOperationType
         setStringifier(
                 children -> {
                     String expression = String.join( ", ", children );
-                    if (expression.charAt( 0 ) == '(' && expression.charAt(expression.length() - 1) == ')') {
-                        return "sin" + expression;
-                    }
+                    if ( expression.startsWith("(") && expression.endsWith(")") ) return "sin" + expression;
                     return "sin" + "(" + expression + ")";
                 }
         );
@@ -110,7 +108,7 @@ public class Sinus extends AbstractOperationType
                         new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
                                     call.getDevice().getKernel(call)
                                             .pass( call.getTensor( offset ) )
                                             .pass( call.getTensor( offset + 1 ) )
@@ -120,8 +118,8 @@ public class Sinus extends AbstractOperationType
                                 },
                                 3,
                                 typeImplementation.getKernelSource(), // kernelSource
-                                "output = sin(input);\n",
-                                "output = cos(input);\n",
+                                "output = sin( input );\n",
+                                "output = cos( input );\n",
                                 this // OperationType
                         )
                 )

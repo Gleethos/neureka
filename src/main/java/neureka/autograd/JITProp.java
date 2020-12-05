@@ -45,11 +45,11 @@ public class JITProp<ValueType> implements Component<Tsr<ValueType>>
         }
     }
 
-    public int finishedCount(){
+    public int finishedCount() {
         return ( _finished==null ) ? 0 : _finished.size();
     }
 
-    public int pendingCount(){
+    public int pendingCount() {
         return ( _pending==null ) ? 0 : _pending.size();
     }
 
@@ -57,7 +57,7 @@ public class JITProp<ValueType> implements Component<Tsr<ValueType>>
     /**
      *
      */
-    public void execute(){
+    public void execute() {
         if ( _pending == null ) return;
         _pending.forEach( n -> {
             if ( _finished == null || !_finished.contains( n ) ) {
@@ -74,7 +74,7 @@ public class JITProp<ValueType> implements Component<Tsr<ValueType>>
      *
      * @return
      */
-    public boolean isDone(){
+    public boolean isDone() {
         return ( _finished == null && _pending == null );
     }
 

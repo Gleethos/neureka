@@ -14,7 +14,7 @@ public class FunctionParser
 {
     public static int numberOfOperationsWithin(final List<String> operations) {
         int counter = 0;
-        for(AbstractOperationType ot : OperationType.instances()){
+        for(AbstractOperationType ot : OperationType.instances()) {
             if (operations.contains(ot.getOperator())) ++counter;
         }
         return counter;
@@ -207,10 +207,10 @@ public class FunctionParser
         return exp.trim();
     }
 
-    public static String assumptionBasedOn(String expression){
+    public static String assumptionBasedOn(String expression) {
         double largest = -1;
         int best = 0;
-        for (int i = 0; i< OperationType.COUNT(); i++){
+        for (int i = 0; i< OperationType.COUNT(); i++) {
             double s = similarity(expression, OperationType.instance( i ).getOperator());
             if (largest==-1) largest = s;
             else if (s > largest) {
@@ -233,7 +233,7 @@ public class FunctionParser
             double currentWeight = longer.length();
             double weightSum = 0;
             double modifier = delta / (double)longer.length();
-            for ( int i=0; i<(delta+1); i++ ){
+            for ( int i=0; i<(delta+1); i++ ) {
                 weights[ i ] = currentWeight;
                 weightSum += currentWeight;
                 currentWeight *= modifier;

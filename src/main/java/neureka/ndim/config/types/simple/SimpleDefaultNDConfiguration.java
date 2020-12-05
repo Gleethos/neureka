@@ -94,15 +94,15 @@ public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTAB
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public int i_of_i(int i){
+    public int i_of_i(int i) {
         return i_of_idx(idx_of_i( i ));
     }
 
     @Override
     public int[] idx_of_i(int i) {
         int[] idx = new int[_shape.length];
-        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){
-            for (int ii=rank()-1; ii>=0; ii--){
+        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
+            for (int ii=rank()-1; ii>=0; ii--) {
                 idx[ii] += i / _translation_and_idxmap[ii];
                 i %= _translation_and_idxmap[ii];
             }

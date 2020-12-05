@@ -20,7 +20,7 @@ public abstract class AbstractBaseOperationTypeImplementation<FinalType> impleme
 
 
     @Override
-    public String getName(){
+    public String getName() {
         return _name;
     }
 
@@ -88,7 +88,7 @@ public abstract class AbstractBaseOperationTypeImplementation<FinalType> impleme
     //---
 
     @Override
-    public <D extends Device, E extends ExecutorFor<D>> FinalType setExecutor(Class<E> deviceClass, E execution){
+    public <D extends Device, E extends ExecutorFor<D>> FinalType setExecutor(Class<E> deviceClass, E execution) {
         _executions.put(
                 (Class<ExecutorFor<Device>>) deviceClass,
                 (ExecutorFor<Device>) execution
@@ -97,7 +97,7 @@ public abstract class AbstractBaseOperationTypeImplementation<FinalType> impleme
     }
 
     @Override
-    public <D extends Device, E extends ExecutorFor<D>> E getExecutor(Class<E> deviceClass){
+    public <D extends Device, E extends ExecutorFor<D>> E getExecutor(Class<E> deviceClass) {
         return (E) _executions.get(deviceClass);
     }
 

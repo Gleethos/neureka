@@ -49,7 +49,7 @@ public class ADAM<ValueType> implements Optimizer<ValueType> {
     Tsr<ValueType> m;
     Tsr<ValueType> v;
 
-    ADAM(Tsr<ValueType> target){
+    ADAM(Tsr<ValueType> target) {
         int[] shape = target.getNDConf().shape();
         m  = new Tsr<>(shape, 0);
         v  = new Tsr<>(shape, 0);
@@ -59,7 +59,7 @@ public class ADAM<ValueType> implements Optimizer<ValueType> {
         e  = new Tsr<>(shape, 1e-7);
     }
 
-    private void _optimize(Tsr<ValueType> w){
+    private void _optimize(Tsr<ValueType> w) {
         Tsr<ValueType> g = w.find(Tsr.class);
         m = new Tsr<>(b1, "*", m, " + ( 1-", b1, ") *", g);
         v = new Tsr<>(b2, "*", v, " + ( 1-", b2, ") * (", g,"^2 )");

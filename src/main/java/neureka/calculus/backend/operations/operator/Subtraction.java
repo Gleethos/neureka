@@ -166,7 +166,7 @@ public class Subtraction extends AbstractOperationType
                         new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
                                     call.getDevice().getKernel(call)
                                             .pass( call.getTensor( offset ) )
                                             .pass( call.getTensor( offset + 1 ) )
@@ -178,7 +178,7 @@ public class Subtraction extends AbstractOperationType
                                 3,
                                 operator.getKernelSource(), // kernelSource
                                 "output = input1 - input2;  \n",
-                                "if(d==0){                 \n" +//drn and src2 switch:
+                                "if(d==0) {                 \n" +//drn and src2 switch:
                                         "    output = 1;              \n" +
                                         "} else {                     \n" +
                                         "    output = -1;               " +
@@ -222,7 +222,7 @@ public class Subtraction extends AbstractOperationType
                         HostExecutor.class,
                         new HostExecutor (
                                 call -> {
-                                    int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1) ? 1 : 0;
+                                    int offset = (call.getTensor( 2 ).isVirtual() || call.getTensor( 2 ).size() == 1) ? 1 : 0;
                                     double value = call.getTensor(1+offset).value64( 0 );
                                     call.getDevice().getExecutor()
                                             .threaded (
@@ -248,7 +248,7 @@ public class Subtraction extends AbstractOperationType
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1)?1:0;
+                                    int offset = (call.getTensor( 2 ).isVirtual() || call.getTensor( 2 ).size() == 1)?1:0;
                                     int gwz = call.getTensor( 0 ).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor( 0 ))
@@ -261,7 +261,7 @@ public class Subtraction extends AbstractOperationType
                                 3,
                                 scalarization.getKernelSource(), // kernelSource
                                 "output = input1 - value;\n",
-                                "if(d==0){     \n" +//drn and src2 switch:
+                                "if(d==0) {     \n" +//drn and src2 switch:
                                         "    output = 1;  \n" +
                                         "} else {         \n" +
                                         "    output = -1;   " +
@@ -332,7 +332,7 @@ public class Subtraction extends AbstractOperationType
                             new CLExecutor(
                                     call -> {
                                         int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                        int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                        int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
                                         call.getDevice().getKernel(call)
                                                 .pass( call.getTensor( offset ) )
                                                 .pass( call.getTensor( offset + 1 ) )

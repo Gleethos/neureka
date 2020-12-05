@@ -35,7 +35,7 @@ public class SimpleD3Configuration extends D3C //:= IMMUTABLE
     public static NDConfiguration construct(
             int[] shape,
             int[] translation
-    ){
+    ) {
         return _cached(new SimpleD3Configuration(shape, translation));
     }
 
@@ -98,9 +98,9 @@ public class SimpleD3Configuration extends D3C //:= IMMUTABLE
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public int i_of_i(int i){
+    public int i_of_i(int i) {
         int idx1, idx2, idx3;
-        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){
+        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
             idx3 = i / _translation3;
             i %= _translation3;
             idx2 = i / _translation2;
@@ -121,7 +121,7 @@ public class SimpleD3Configuration extends D3C //:= IMMUTABLE
     @Override
     public int[] idx_of_i(int i) {
         int idx1, idx2, idx3;
-        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){
+        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
             idx3 = i / _translation3;
             i %= _translation3;
             idx2 = i / _translation2;

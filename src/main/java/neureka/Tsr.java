@@ -172,9 +172,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     |   ---------------------------
     */
 
-    public Tsr(){}
+    public Tsr() {}
 
-    public Tsr( DataType dtype ){
+    public Tsr( DataType dtype ) {
         setDataType( dtype );
     }
 
@@ -339,11 +339,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _construct( new Object[]{ arg1, arg2 } );
     }
 
-    public Tsr( Object arg1, Object arg2, Object arg3 ){
+    public Tsr( Object arg1, Object arg2, Object arg3 ) {
         _construct( new Object[]{ arg1, arg2, arg3 } );
     }
 
-    public Tsr( Object arg1, Object arg2, Object arg3, String arg4 ){
+    public Tsr( Object arg1, Object arg2, Object arg3, String arg4 ) {
         _construct( new Object[]{ arg1, arg2, arg3, arg4 } );
     }
 
@@ -371,7 +371,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _construct( new Object[]{ arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10 } );
     }
 
-    public Tsr( int[] shape, String seed ){
+    public Tsr( int[] shape, String seed ) {
         _construct( shape, seed );
     }
 
@@ -463,7 +463,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         StringBuilder f = new StringBuilder();
         int ti = 0;
         for ( Object o : args ) {
-            if ( tsrList.contains( o ) ){
+            if ( tsrList.contains( o ) ) {
                 tsrs[ ti ] = ( (Tsr<?>) o );
                 f.append( "I[" ).append( ti ).append( "]" );
                 ti++;
@@ -720,7 +720,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                             );
                         }
                 ) && getData() == null
-        ){
+        ) {
             setIsVirtual( true );
         }
         return this;
@@ -982,7 +982,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return ( child != null ) ? child.childCount() : 0;
     }
 
-    public boolean isSliceParent(){
+    public boolean isSliceParent() {
         Relation<ValueType> parent = find( Relation.class );
         return ( parent != null && parent.hasChildren() );
     }
@@ -1025,7 +1025,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *
      * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
      */
-    public GraphNode<ValueType> getGraphNode(){
+    public GraphNode<ValueType> getGraphNode() {
         return find( GraphNode.class );
     }
 
@@ -1033,7 +1033,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *
      * @return Custom IndexAlias object.
      */
-    public IndexAlias<ValueType> index(){
+    public IndexAlias<ValueType> index() {
         return find( IndexAlias.class );
     }
 
@@ -1070,7 +1070,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param call The context object containing all relevent informatin that defines a call for tensor execution.
      * @return This very tensor instance. (factory pattern)
      */
-    public Tsr<ValueType> incrementVersionBecauseOf( ExecutionCall call ){
+    public Tsr<ValueType> incrementVersionBecauseOf( ExecutionCall call ) {
         if ( Neureka.instance().settings().autograd().isPreventingInlineOperations() ) {
             _version ++;
             GraphNode<?> node = find( GraphNode.class );
@@ -1301,7 +1301,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return Function.Detached.MINUS_ASSIGN.call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<ValueType> negative(){
+    public Tsr<ValueType> negative() {
         return Function.NEG.call( new Tsr[]{ this } );
     }
 
@@ -1325,7 +1325,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return div( new Tsr<>( this.shape(), value ) );
     }
 
-    public Tsr<ValueType> divAssign( Tsr<ValueType> other ){
+    public Tsr<ValueType> divAssign( Tsr<ValueType> other ) {
         return Function.Detached.DIV_ASSIGN.call( new Tsr[]{ this, other } );
     }
 
@@ -1341,7 +1341,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return Function.POW.call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<ValueType> power( Double value ){
+    public Tsr<ValueType> power( Double value ) {
         return power( new Tsr<>( this.shape(), value ) );
     }
 
@@ -1394,7 +1394,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return Function.X.call( new Tsr[]{ a, b } ).dimtrim();
     }
 
-    public Tsr<ValueType> dimtrim(){
+    public Tsr<ValueType> dimtrim() {
         return Function.DIMTRIM.call( this );
     }
 
@@ -1406,7 +1406,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return found[ 0 ];
     }
 
-    public boolean contains( Tsr<ValueType> t ){
+    public boolean contains( Tsr<ValueType> t ) {
         return isCase( t );
     }
 
@@ -1423,7 +1423,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         -----------------------------
      */
 
-    public double getAt( int[] idx ){
+    public double getAt( int[] idx ) {
         return value64( i_of_idx( idx ) );
     }
 
@@ -1764,7 +1764,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public static class IO
     {
-        private IO(){}
+        private IO() {}
 
         public static double getFrom( Tsr<?> t, int i ) {
             if ( t.isEmpty() || t.isUndefined() ) return 0;
@@ -2073,7 +2073,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     //DISPLAY :
     //=========================
-    public String toString( String mode ){
+    public String toString( String mode ) {
         return _toString( mode, ( mode.contains( "f" ) ) ? "    " : null );
     }
 
@@ -2192,7 +2192,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     private String _stringified(
             IntFunction<String> getter,
             int max
-    ){
+    ) {
         StringBuilder asString = new StringBuilder();
         int size = this.size();
         int trim = ( size - max );
@@ -2244,13 +2244,13 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public static class Create
     {
-        private Create(){}
+        private Create() {}
 
-        public  static Tsr E( int[] shape ){
+        public  static Tsr E( int[] shape ) {
             return new Tsr( shape, 2.7182818284590452353602874713527 );
         }
 
-        public static Tsr newRandom( int[] shape ){
+        public static Tsr newRandom( int[] shape ) {
             return newRandom( shape, 8701252152903546L );
         }
 

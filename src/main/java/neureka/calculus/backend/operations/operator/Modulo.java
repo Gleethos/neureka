@@ -178,7 +178,7 @@ public class Modulo extends AbstractOperationType {
                         new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
                                     call.getDevice().getKernel(call)
                                             .pass( call.getTensor( offset ) )
                                             .pass( call.getTensor( offset + 1 ) )
@@ -310,7 +310,7 @@ public class Modulo extends AbstractOperationType {
                         new CLExecutor(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor(1).size();
+                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
                                     call.getDevice().getKernel(call)
                                             .pass( call.getTensor( offset ) )
                                             .pass( call.getTensor( offset + 1 ) )
@@ -322,7 +322,7 @@ public class Modulo extends AbstractOperationType {
                                 3,
                                 broadcast.getKernelSource(), // kernelSource
                                 "value = ((int)src1) % ((int)src2);\n",
-                                "if(d==0){\n" +
+                                "if(d==0) {\n" +
                                         "    value += (1/handle) * drain;\n" +//TODO: this is probably wrong!
                                         "} else {\n" +
                                         "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
@@ -408,7 +408,7 @@ public class Modulo extends AbstractOperationType {
                         CLExecutor.class,
                         new CLExecutor(
                                 call -> {
-                                    int offset = (call.getTensor(2).isVirtual() || call.getTensor(2).size() == 1)?1:0;
+                                    int offset = (call.getTensor( 2 ).isVirtual() || call.getTensor( 2 ).size() == 1)?1:0;
                                     int gwz = call.getTensor( 0 ).size();
                                     call.getDevice().getKernel(call)
                                             .pass(call.getTensor( 0 ))
@@ -421,7 +421,7 @@ public class Modulo extends AbstractOperationType {
                                 3,
                                 scalarization.getKernelSource(), // kernelSource
                                 "output = ((int)input1) % ((int)value);     \n",
-                                "if(d==0){                               \n" +
+                                "if(d==0) {                               \n" +
                                         "    output = 1/value;                           \n" +
                                         "} else {                                        \n" +
                                         "    output = -value /(float)pow(input1, 2.0f);  \n" +
