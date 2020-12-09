@@ -27,12 +27,18 @@ SOFTWARE.
     |  |____ _ __
     | /  ___/ '___\
     | \___  \ |
-     \/_____/_|
+     \/_____/_|         A long yet shallow class.
 
     This is the the core work-horse class of Neureka. The 'Tsr' class!
     It is a three-letter abbreviation of the word "tensor"!
 
 ------------------------------------------------------------------------------------------------------------------------
+
+   “Any fool can write code that a computer can understand.
+    Good programmers write code that humans can understand.”
+    – Martin Fowler
+
+    Use the following as search keys :)
 
     $(1) : CONSTRUCTION
         §(1.1) : FUNCTION BASED CONSTRUCTION
@@ -94,7 +100,6 @@ import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 import neureka.optimization.Optimizer;
 import neureka.utility.DataConverter;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Array;
@@ -174,7 +179,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public Tsr() {}
 
-    public Tsr( DataType dtype ) {
+    public Tsr( DataType<?> dtype ) {
         setDataType( dtype );
     }
 
@@ -199,7 +204,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public Tsr( List<?> arg1, String arg2 )
     {
-        java.util.function.Function<Class, Boolean> isType = c -> arg1.stream().allMatch( e -> e.getClass() == c );
+        java.util.function.Function<Class<?>, Boolean> isType = c -> arg1.stream().allMatch( e -> e.getClass() == c );
 
         if ( isType.apply( Integer.class ) ) {
             List<Integer> shape = (List<Integer>) arg1;

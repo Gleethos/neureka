@@ -50,6 +50,8 @@ plugins {
     id 'signing'
 }
 
+compileJava { options.encoding = "UTF-8" } // This gives some more freedom for comments ( special characters... ).
+
 String PROJECT = "neureka"
 String VERSION = "0.3.0"
 String GROUPID = "com.github.gleethos"

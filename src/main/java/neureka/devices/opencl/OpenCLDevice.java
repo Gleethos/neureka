@@ -1,3 +1,51 @@
+/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   ____                    _____ _      _____             _
+  / __ \                  / ____| |    |  __ \           (_)
+ | |  | |_ __   ___ _ __ | |    | |    | |  | | _____   ___  ___ ___
+ | |  | | '_ \ / _ \ '_ \| |    | |    | |  | |/ _ \ \ / / |/ __/ _ \
+ | |__| | |_) |  __/ | | | |____| |____| |__| |  __/\ V /| | (_|  __/
+  \____/| .__/ \___|_| |_|\_____|______|_____/ \___| \_/ |_|\___\___|
+        | |
+        |_|
+
+------------------------------------------------------------------------------------------------------------------------
+
+   “Any fool can write code that a computer can understand.
+    Good programmers write code that humans can understand.”
+    – Martin Fowler
+
+    Use the following as search keys :)
+
+    $(1) : NESTED CLASSES
+    $(2) : FIELD VARIABLES
+    $(3) : CONSTRUCTION
+    $(4) : OPENCL PROPERTIES
+
+*/
+
 package neureka.devices.opencl;
 
 import static org.jocl.CL.*;
@@ -17,6 +65,11 @@ import neureka.framing.Relation;
 import neureka.utility.DataConverter;
 import org.jocl.*;
 
+/**
+ *  This class is a concrete implementation of the Device interface by extending the AbstractDevice class.
+ *  Instances of this class internally utilize the OpenCL API in order to use supported
+ *  accelerator hardware like GPUs or FPGAs for storing tensors and executing operations on them.
+ */
 public class OpenCLDevice extends AbstractDevice<Number>
 {
     public static OpenCLDevice newInstanceOf( OpenCLPlatform platform, cl_device_id did )
@@ -24,6 +77,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
         if( !platform.has( did ) ) platform.put( did,  new OpenCLDevice( platform, did ) );
         return platform.get( did );
     }
+
+    /*==================================================================================================================
+    |
+    |       §(1) : NESTED CLASSES
+    |   ---------------------------
+    */
 
     /**
      * This class is an OpenCL-Device specific tensor component used to store
@@ -89,6 +148,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
         public cl_program program;
     }
 
+    /*==================================================================================================================
+    |
+    |       §(2) : FIELD VARIABLES
+    |   ---------------------------
+    */
+
     private final Map<String, cl_ad_hoc> _adhocKernels = new WeakHashMap<>();
     private final cl_ad_hoc[] _adhocKernelRingBuffer = new cl_ad_hoc[ 128 ];
     private int _ringIndex = 0;
@@ -107,7 +172,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
      */
     private final cl_command_queue _queue;
 
-    //==================================================================================================================
+
+    /*==================================================================================================================
+    |
+    |       §(3) : CONSTRUCTION
+    |   ---------------------------
+    */
 
     /**
      * @param platform
@@ -226,11 +296,20 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return this;
     }
 
+    /**
+     *  This method is a simple getter for the OpenCLPlatform instance hosting this current device.
+     *  A platform would for example be vendor specific like Intel, AMD, Nvidia...
+     *
+     * @return The OpenCLPlatform instance representing the platform (amd, intel, nvidia) to which this device belongs.
+     */
     public OpenCLPlatform getPlatform() {
         return _platform;
     }
 
     /**
+     *  This method returns all the tensors stored on this
+     *  OpenCLDevice instance as a Collection.
+     *
      * @return A collection of all tensors currently stored on the device.
      */
     @Override
@@ -241,9 +320,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return extracted;
     }
 
+    /**
+     *  This method tells the to restore all tensors stored on it and release all resources.
+     */
     @Override
     public void dispose() {
-        _tensors.forEach( this::restore);
+        _tensors.forEach( this::restore );
         clFinish( _queue );
     }
 
@@ -372,8 +454,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
 
     private void _store( Tsr tensor, cl_tsr newClTsr, int fp ) {
-        Pointer p = null;
-        int size = tensor.size();
+        Pointer p;
+        int size;
         //if ( !tensor.isVirtual() ) {
             if ( fp == 1 ) {
                 float[] data = tensor.value32();
@@ -596,6 +678,13 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
     */
 
+
+    /*==================================================================================================================
+    |
+    |       §(4) : OPENCL PROPERTIES
+    |   ---------------------------
+    */
+
     public String name() {
         return DeviceQuery.getString(_deviceId, CL_DEVICE_NAME);
     }
@@ -743,25 +832,26 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return DeviceQuery.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE);
     }
 
-    public static class DeviceQuery {
+    public static class DeviceQuery
+    {
         /**
-         * Returns the value64 of the device info parameter with the given name
+         *  Returns the value of the device info parameter with the given name
          *
          * @param device    The device
          * @param paramName The parameter name
-         * @return The value64
+         * @return The value
          */
         public static int getInt(cl_device_id device, int paramName) {
             return getInts(device, paramName, 1)[ 0 ];
         }
 
         /**
-         * Returns the values of the device info parameter with the given name
+         *  Returns the values of the device info parameter with the given name
          *
          * @param device    The device
          * @param paramName The parameter name
          * @param numValues The number of values
-         * @return The value64
+         * @return The value
          */
         public static int[] getInts(cl_device_id device, int paramName, int numValues) {
             int[] values = new int[numValues];
@@ -770,23 +860,23 @@ public class OpenCLDevice extends AbstractDevice<Number>
         }
 
         /**
-         * Returns the value64 of the device info parameter with the given name
+         *  Returns the value of the device info parameter with the given name
          *
          * @param device    The device
          * @param paramName The parameter name
-         * @return The value64
+         * @return The value
          */
         public static long getLong(cl_device_id device, int paramName) {
             return getLongs(device, paramName, 1)[ 0 ];
         }
 
         /**
-         * Returns the values of the device info parameter with the given name
+         *  Returns the values of the device info parameter with the given name
          *
          * @param device    The device
          * @param paramName The parameter name
          * @param numValues The number of values
-         * @return The value64
+         * @return The value
          */
         public static long[] getLongs(cl_device_id device, int paramName, int numValues) {
             long[] values = new long[numValues];
@@ -795,11 +885,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
         }
 
         /**
-         * Returns the value64 of the device info parameter with the given name
+         *  Returns the value of the device info parameter with the given name
          *
          * @param device    The device
          * @param paramName The parameter name
-         * @return The value64
+         * @return The value
          */
         public static String getString(cl_device_id device, int paramName) {
             // Obtain the length of the string that will be queried
@@ -815,38 +905,38 @@ public class OpenCLDevice extends AbstractDevice<Number>
         }
 
         /**
-         * Returns the value64 of the platform info parameter with the given name
+         *  Returns the value of the platform info parameter with the given name
          *
          * @param platform  The platform
          * @param paramName The parameter name
-         * @return The value64
+         * @return The value
          */
-        public static String getString(cl_platform_id platform, int paramName) {
+        public static String getString( cl_platform_id platform, int paramName ) {
             // Obtain the length of the string that will be queried
             long[] size = new long[ 1 ];
             clGetPlatformInfo(platform, paramName, 0, null, size);
 
             // Create a buffer of the appropriate size and fill it with the info
-            byte[] buffer = new byte[(int) size[ 0 ]];
-            clGetPlatformInfo(platform, paramName, buffer.length, Pointer.to(buffer), null);
+            byte[] buffer = new byte[ (int) size[ 0 ] ];
+            clGetPlatformInfo( platform, paramName, buffer.length, Pointer.to(buffer), null );
 
             // Create a string from the buffer (excluding the trailing \0 byte)
-            return new String(buffer, 0, buffer.length - 1);
+            return new String( buffer, 0, buffer.length - 1 );
         }
 
         /**
-         * Returns the value64 of the device info parameter with the given name
+         *  Returns the value of the device info parameter with the given name
          *
          * @param device    The device
          * @param paramName The parameter name
          * @return The value64
          */
-        public static long getSize(cl_device_id device, int paramName) {
-            return getSizes(device, paramName, 1)[ 0 ];
+        public static long getSize( cl_device_id device, int paramName ) {
+            return getSizes( device, paramName, 1 )[ 0 ];
         }
 
         /**
-         * Returns the values of the device info parameter with the given name
+         *  Returns the values of the device info parameter with the given name
          *
          * @param device    The device
          * @param paramName The parameter name
@@ -856,18 +946,22 @@ public class OpenCLDevice extends AbstractDevice<Number>
         public static long[] getSizes(cl_device_id device, int paramName, int numValues) {
             // The size of the returned data has to depend on
             // the size of a size_t, which is handled here
-            ByteBuffer buffer = ByteBuffer.allocate(
-                    numValues * Sizeof.size_t).order(ByteOrder.nativeOrder());
-            clGetDeviceInfo(device, paramName, (long)Sizeof.size_t * numValues,
-                    Pointer.to(buffer), null);
-            long[] values = new long[numValues];
-            if (Sizeof.size_t == 4) {
-                for (int i = 0; i < numValues; i++) {
-                    values[ i ] = buffer.getInt(i * Sizeof.size_t);
+            ByteBuffer buffer = ByteBuffer.allocate( numValues * Sizeof.size_t ).order( ByteOrder.nativeOrder() );
+            clGetDeviceInfo(
+                    device,
+                    paramName,
+                    (long) Sizeof.size_t * numValues,
+                    Pointer.to(buffer),
+                    null
+            );
+            long[] values = new long[ numValues ];
+            if ( Sizeof.size_t == 4 ) {
+                for ( int i = 0; i < numValues; i++ ) {
+                    values[ i ] = buffer.getInt( i * Sizeof.size_t );
                 }
             } else {
-                for (int i = 0; i < numValues; i++) {
-                    values[ i ] = buffer.getLong(i * Sizeof.size_t);
+                for ( int i = 0; i < numValues; i++ ) {
+                    values[ i ] = buffer.getLong( i * Sizeof.size_t );
                 }
             }
             return values;
