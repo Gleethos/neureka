@@ -21,7 +21,7 @@ public class JITProp<ValueType> implements Component<Tsr<ValueType>>
 
     /**
      *
-     * @param pendings A set of GraphNode<ValueType> instance which are saved for future backprop continuation.
+     * @param pendings A set of GraphNode&lt;ValueType&gt; instance which are saved for future backprop continuation.
      */
     public void addPending( Set<GraphNode<ValueType>> pendings ) {
         if( pendings.isEmpty() ) throw new IllegalStateException("Trying to add empty pending errors set to JITProp.");

@@ -826,7 +826,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      * This method returns what is needed for AD, usually a derivative of AD-Agent.
      *
      * @param target
-     * @return Tsr<ValueType>
+     * @return Tsr&lt;ValueType&gt;
      */
     public List<ADAgent> get( GraphNode<ValueType> target ) {
         if ( _targets_derivatives == null ) return null;

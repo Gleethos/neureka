@@ -50,10 +50,10 @@ import java.util.Collection;
 
 /**
  * This is the interface for implementations representing
- * devices primarily store tensors, namely instances of the Tsr<ValueType> class.
+ * devices primarily store tensors, namely instances of the Tsr&lt;ValueType&gt; class.
  * Optionally they might also be capable of executing operations on tensors.
  * Such instances are also components of tensors, which is why
- * this interface extends the Component &lt; Tsr<ValueType> &gt; interface.
+ * this interface extends the Component &lt; Tsr &lt; ValueType&gt; &gt; interface.
  *
  * The device interface extends the "Storage" interface because devices
  * are also capable of storing tensors on them.

@@ -586,7 +586,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...
      *  An example would be the following :
      *  'Tsr a = new Tsr( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'
-     *  Which takes the tensor 'b' & 'c' and applies the function "f(x,y) = sin(x) / y"
+     *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
      *  elementwise to produce a new tensor 'a'!
      *
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
@@ -603,7 +603,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...
      *  An example would be the following :
      *  'Tsr a = new Tsr( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'
-     *  Which takes the tensor 'b' & 'c' and applies the function "f(x,y) = sin(x) / y"
+     *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
      *  elementwise to produce a new tensor 'a'!
      *  Additionally there is a helpful flag which allows one to specify if the
      *  parsed Function instance emerging from the provided expression
