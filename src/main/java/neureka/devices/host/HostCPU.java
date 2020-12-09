@@ -22,6 +22,7 @@ public class HostCPU extends AbstractDevice<Number>
     private Set<Tsr<Number>> _tensors = Collections.newSetFromMap(new WeakHashMap<Tsr<Number>, Boolean>());
 
     private HostCPU() {
+        super();
         _executor = new NativeExecutor();
     }
 

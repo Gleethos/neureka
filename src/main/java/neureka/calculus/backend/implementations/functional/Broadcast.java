@@ -87,7 +87,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
 
     @Contract(pure = true)
     public static void broadcast(
-            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            Tsr<Number> t0_drn, Tsr<Number> t1_src, Tsr<Number> t2_src,
             int d, int i, int end,
             OperationType.TertiaryNDIConsumer operation
     ) {
@@ -126,7 +126,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                 i++;
             }
         }
-        else//---//Note: src2 is now former drain!
+        else //---// Note: src2 is now former drain!
         {
             while ( i < end ) {//increment on drain accordingly:
                 int ri = 0;

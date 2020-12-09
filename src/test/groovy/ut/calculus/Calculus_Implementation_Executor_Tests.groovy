@@ -4,7 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.host.HostCPU
 import neureka.devices.host.execution.HostExecutor
-import neureka.devices.opencl.KernelBuilder
+import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.execution.CLExecutor
 import neureka.calculus.backend.ExecutionCall
@@ -125,7 +125,7 @@ class Calculus_Implementation_Executor_Tests extends Specification
             def device = Mock( OpenCLDevice )
             def tensor = Mock( Tsr )
             def clExecutor = imp.getExecutor( CLExecutor.class )
-            def kernel = Mock( KernelBuilder )
+            def kernel = Mock( KernelCaller )
 
         when : 'CL-executor instance is being called...'
             clExecutor.execution.run( call )

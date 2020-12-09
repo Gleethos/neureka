@@ -483,6 +483,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _construct( shape, true, true );
     }
 
+    public Tsr( float[] value ) {
+        _construct( new int[]{ value.length }, value );
+    }
+
     public Tsr( int[] shape, DataType<?> type ) 
     {
         setDataType( DataType.instance( type.getTypeClass() ) );
@@ -530,6 +534,16 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if ( size != value.length ) {
             _allocate( size );
             for ( int i = 0; i < size; i++ ) ( (double[]) getData())[ i ]  = value[ i % value.length ];
+        } else _setData( value );
+        _configureFromNewShape( shape, false, true );
+    }
+
+    private void _construct( int[] shape, float[] value ) {
+        int size = NDConfiguration.Utility.szeOfShp( shape );
+        setDataType( DataType.instance( F32.class ) );
+        if ( size != value.length ) {
+            _allocate( size );
+            for ( int i = 0; i < size; i++ ) ( (float[]) getData())[ i ]  = value[ i % value.length ];
         } else _setData( value );
         _configureFromNewShape( shape, false, true );
     }

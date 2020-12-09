@@ -17,7 +17,7 @@ public class OpenCLPlatform {
     private final cl_platform_id _pid;
     private final Map<cl_device_id, OpenCLDevice> _id_device;
     private final cl_context _context;
-    private final Map<String, cl_kernel> _kernels;
+    private final Map<String, cl_kernel> _kernels = new HashMap<>();
 
     private boolean _isDoingLegacyIndexing = false;
 
@@ -49,7 +49,6 @@ public class OpenCLPlatform {
             OpenCLDevice clDevice = OpenCLDevice.instance(this, did);
             _id_device.put(did, clDevice);
         }
-        _kernels = new HashMap<>();
         _compile(devicesArray);
     }
 
@@ -77,9 +76,9 @@ public class OpenCLPlatform {
                 "scalarization_template.cl",
                 "utility.cl"
         };
-        for ( String name : fileNames ) {
+        for ( String name : fileNames )
             templateSources.add(Neureka.instance().utility().readResource("kernels/"+name));
-        }
+
         ArrayList<String> names = new ArrayList<>();
         ArrayList<String> sources = new ArrayList<>();
         for ( int i = 0; i < fileNames.length; i++ )
@@ -91,7 +90,7 @@ public class OpenCLPlatform {
                     ( _isDoingLegacyIndexing ) ? "true" : "false"
             );
             boolean templateFound = false;
-            if ( kernelSource.contains("__kernel") )
+            if ( kernelSource.contains( "__kernel" ) )
             {
                 String[] parts = kernelSource.split("__kernel")[ 1 ].split("\\(")[ 0 ].split(" ");
 
@@ -100,7 +99,6 @@ public class OpenCLPlatform {
                 else
                 {
                     String preName = parts[parts.length - 1].replace("template", "");
-                    assert preName != null;
                     // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
                     // Tsr t0_drain,  Tsr t1_src1,   Tsr t2_src2
                     // drn[di], src1[_i_of_idx_on_tln(prv_src1_cfg, rank)], src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]
@@ -110,15 +108,15 @@ public class OpenCLPlatform {
                     Map<String, String> code = new HashMap<>();
                     CLExecutor exec = null;
                     for ( AbstractOperationType type : OperationType.ALL() ) {
-                        if (preName.contains("activation") && type.supportsImplementation(Activation.class)) {
+                        if ( preName.contains("activation") && type.supportsImplementation(Activation.class) ) {
                             exec = type.getImplementation(Activation.class).getExecutor(CLExecutor.class);
-                        } else if (preName.contains("operator") && type.supportsImplementation(Operator.class)) {
+                        } else if ( preName.contains("operator") && type.supportsImplementation(Operator.class) ) {
                             exec = type.getImplementation(Operator.class).getExecutor(CLExecutor.class);
-                        } else if (preName.contains("scalarization") && type.supportsImplementation(Scalarization.class)) {
+                        } else if ( preName.contains("scalarization") && type.supportsImplementation(Scalarization.class) ) {
                             exec = type.getImplementation(Scalarization.class).getExecutor(CLExecutor.class);
-                        } else if(preName.contains("broadcast") && type.supportsImplementation(Broadcast.class)) {//broadcast
+                        } else if ( preName.contains("broadcast") && type.supportsImplementation(Broadcast.class) ) {//broadcast
                             exec = type.getImplementation(Broadcast.class).getExecutor(CLExecutor.class);
-                        } else if(preName.contains("convolution") && type.supportsImplementation(Convolution.class)) {
+                        } else if ( preName.contains("convolution") && type.supportsImplementation(Convolution.class) ) {
                             exec = type.getImplementation(Convolution.class).getExecutor(CLExecutor.class);
                         } else if (
                                 type.supportsImplementation(GenericImplementation.class)
@@ -126,23 +124,23 @@ public class OpenCLPlatform {
                         ) { // TODO: cover!
                             exec = type.getImplementation(GenericImplementation.class).getExecutor(CLExecutor.class);
                         }
-                        if(exec!=null && exec.getSource() != null) code.put(exec.getName(), exec.getSource());
+                        if( exec != null && exec.getSource() != null ) code.put( exec.getName(), exec.getSource() );
                     }
-                    code.forEach((n, s) -> {
-                                names.add(n);
-                                sources.add(s);
+                    code.forEach( ( n, s ) -> {
+                                names.add( n );
+                                sources.add( s );
                             }
                     );
                 }
             }
-            if (!templateFound) sources.add(kernelSource);
+            if ( !templateFound ) sources.add( kernelSource );
         }
 
         // Create the program
         cl_program cpProgram = clCreateProgramWithSource(
                 _context,
                 sources.size(),
-                sources.toArray(new String[ 0 ]),
+                sources.toArray( new String[ 0 ] ),
                 null,
                 null
         );
@@ -159,11 +157,10 @@ public class OpenCLPlatform {
         //TODO: check compilation errors!
 
         // Create the kernels
-        for (String name : names) {
-            if (name != null) _kernels.put(name, clCreateKernel(cpProgram, name, null));
+        for ( String name : names ) {
+            if ( name != null ) _kernels.put( name, clCreateKernel( cpProgram, name, null ) );
         }
     }
-
 
     public cl_platform_id getID() {
         return _pid;
@@ -175,16 +172,16 @@ public class OpenCLPlatform {
         return devices;
     }
 
-    public boolean has(cl_device_id did) {
-        return _id_device.containsKey(did);
+    public boolean has( cl_device_id did ) {
+        return _id_device.containsKey( did );
     }
 
-    public OpenCLDevice get(cl_device_id did) {
-        return _id_device.get(did);
+    public OpenCLDevice get( cl_device_id did ) {
+        return _id_device.get( did );
     }
 
-    public void put(cl_device_id did, OpenCLDevice device) {
-       _id_device.put(did, device);
+    public void put( cl_device_id did, OpenCLDevice device ) {
+       _id_device.put( did, device );
     }
 
     public Map<String, cl_kernel> getKernels() {
@@ -196,10 +193,10 @@ public class OpenCLPlatform {
     }
 
     public static List<OpenCLPlatform> PLATFORMS() {
-        return _setup.PLATFORMS;
+        return Setup.PLATFORMS;
     }
 
-    private static class _setup
+    private static class Setup
     {
         public static List<OpenCLPlatform> PLATFORMS = findAllPlatforms();
 
@@ -211,10 +208,10 @@ public class OpenCLPlatform {
 
             // Obtain the platform IDs
             cl_platform_id[] platforms = new cl_platform_id[numPlatforms[ 0 ]];
-            clGetPlatformIDs(platforms.length, platforms, null);
+            clGetPlatformIDs( platforms.length, platforms, null );
 
             List<OpenCLPlatform> list = new ArrayList<>();
-            for (cl_platform_id id : platforms) list.add(new OpenCLPlatform(id));
+            for ( cl_platform_id id : platforms ) list.add( new OpenCLPlatform( id ) );
             return list;
         }
 

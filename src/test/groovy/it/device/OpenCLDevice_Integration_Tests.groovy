@@ -3,9 +3,10 @@ package it.device
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
+import neureka.devices.opencl.OpenCLPlatform
 import spock.lang.Specification
 
-class OpenCLDevice_Integration_Testing extends Specification
+class OpenCLDevice_Integration_Tests extends Specification
 {
 
     def 'An OpenCLDevice will throw an exception when trying to add a tensor whose "data parent" is not outsourced.'()
@@ -66,6 +67,56 @@ class OpenCLDevice_Integration_Testing extends Specification
 
         then : 'The value variable is null.'
             data == null
+    }
+
+    def 'Ad hoc compilation produces executable kernel.'() {
+
+        given : 'This system supports OpenCL'
+            if ( !Neureka.instance().canAccessOpenCL() ) return
+            def device = OpenCLPlatform.PLATFORMS()[0].devices[0]
+            def someData = new Tsr( new float[]{ 2, -5, -3, 9, -1 } ).set( device )
+
+        expect :
+            !device.hasAdHocKernel( 'dummy_kernel' )
+
+        when :
+            device.compileAdHocKernel( 'dummy_kernel', """
+                __kernel void dummy_kernel (
+                        __global float* output,
+                        __global float* input,
+                        float value 
+                    ) { 
+                        unsigned int i = get_global_id( 0 );
+                        output[i] = input[i] + value; 
+                    }
+                """
+            )
+
+        then :
+            device.hasAdHocKernel( 'dummy_kernel' )
+
+        and :
+            device._adhocKernels['dummy_kernel'].source == """
+                __kernel void dummy_kernel (
+                        __global float* output,
+                        __global float* input,
+                        float value 
+                    ) { 
+                        unsigned int i = get_global_id( 0 );
+                        output[i] = input[i] + value; 
+                    }
+                """
+
+        when :
+            device.getAdHocKernel( 'dummy_kernel' )
+                    .passRaw( someData )
+                    .passRaw( someData )
+                    .pass( -4f )
+                    .call( someData.size() )
+
+        then :
+            someData.toString() == "(5):[-2.0, -9.0, -7.0, 5.0, -5.0]"
+
     }
 
 }

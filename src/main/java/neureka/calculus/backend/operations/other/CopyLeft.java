@@ -121,10 +121,10 @@ public class CopyLeft extends AbstractOperationType {
                                     Tsr t = call.getTensor( 0 );
                                     int gwz = t.size();
                                     call.getDevice().getKernel(call)
-                                            .pass(t)
-                                            .pass(t)
-                                            .pass(call.getTensor( 1 ).value32( 0 ))
-                                            .pass(t.rank())
+                                            .pass( t )
+                                            .pass( t )
+                                            .pass( call.getTensor( 1 ).value32( 0 ) )
+                                            .pass( t.rank() )
                                             .pass( call.getDerivativeIndex() )
                                             .call( gwz );
                                 },

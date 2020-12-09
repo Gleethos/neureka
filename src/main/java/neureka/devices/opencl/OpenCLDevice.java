@@ -16,6 +16,7 @@ import neureka.dtype.custom.F32;
 import neureka.framing.Relation;
 import neureka.utility.DataConverter;
 import org.jocl.*;
+import org.slf4j.LoggerFactory;
 
 public class OpenCLDevice extends AbstractDevice<Number>
 {
@@ -66,6 +67,98 @@ public class OpenCLDevice extends AbstractDevice<Number>
         }
     }
 
+    /**
+     *  This class manages reference to a so called "ad hoc" program & kernel.
+     *  Ad hoc is a Latin phrase meaning literally 'to this'.
+     *  In English, it generally signifies a solution designed for a specific problem or task,
+     *  non-generalizable, and not intended to be adapted to other purposes.
+     *  This leads to the purpose of instances of this class, namely to manage a unique kernel with
+     *  a uniquely associated kernel which has been created for a specific operation involving specific
+     *  tensor dimensions or possibly other variables...
+     */
+    private class cl_ad_hoc {
+        String source;
+        cl_kernel kernel;
+        cl_program program;
+    }
+
+    private final Map<String, cl_ad_hoc> _adhocKernels = new WeakHashMap<>();
+    private final cl_ad_hoc[] _adhocKernelRingBuffer = new cl_ad_hoc[ 128 ];
+    private int _ringIndex = 0;
+
+    public boolean hasAdHocKernel( String name ) {
+        return _adhocKernels.containsKey( name );
+    }
+
+    public KernelCaller getAdHocKernel( String name ) {
+        cl_ad_hoc adHoc = _adhocKernels.get( name );
+        if ( adHoc != null ) return new KernelCaller( adHoc.kernel, _queue );
+        else return null;
+    }
+
+    public OpenCLDevice compileAdHocKernel( String name, String source )
+    {
+        if ( this.hasAdHocKernel( name ) ) {
+            cl_ad_hoc adHoc = _adhocKernels.get( name );
+            String message = "Cannot compile kernel source for name '"+name+"' because the name is already taken.\n" +
+                    "Use another name or find out why this kernel already exists.\n" +
+                    (
+                        ( adHoc.source.equals( source ) )
+                            ? "Besides the name, the source code of the existing kernel is also identical.\n" : ""
+                    );
+            _logger.error( message );
+            throw new IllegalArgumentException( message );
+        }
+
+        // Create the program for the kernel
+        cl_program cpProgram = clCreateProgramWithSource(
+                getPlatform().getContext(),
+                1,
+                new String[]{source},
+                null,
+                null
+        );
+
+        // Build the program
+        int err = clBuildProgram(
+                cpProgram,
+                1,
+                new cl_device_id[]{ _did },
+                "-cl-mad-enable",
+                null,
+                null
+        );
+        //TODO: check compilation errors!
+        cl_kernel kernel;
+        try {
+            // Create the kernel
+            kernel = clCreateKernel(cpProgram, name, null);
+        } catch ( Exception e ) {
+            if ( e.getMessage().equals("CL_INVALID_KERNEL_NAME") && !source.contains( "__kernel void " + name ) ) {
+                String message = "Method 'clCreateKernel' failed! The name of the '__kernel' method declared inside \n" +
+                        "the source String does not match the provided name needed for kernel creation.";
+                _logger.error( message, e );
+                throw new IllegalArgumentException( message );
+            }
+            _logger.error( "Method call 'clCreateKernel(.., name=\""+name+"\", ..)' failed!", e );
+            throw e;
+        }
+        cl_ad_hoc adHoc = new cl_ad_hoc();
+        adHoc.source = source;
+        adHoc.kernel = kernel;
+        adHoc.program = cpProgram;
+        // Storing the ad hoc object in a weak hash map for fast access by operations :
+        _adhocKernels.put( name, adHoc );
+        // Storing the ad hoc object in a ring buffer to avoid immediate garbage collection :
+        _ringIndex = ( _ringIndex + 1 ) % _adhocKernelRingBuffer.length;
+
+        _cleaning( adHoc, () -> {
+            clReleaseKernel( kernel );
+            clReleaseProgram( cpProgram );
+        } );
+        return this;
+    }
+
     private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap( new WeakHashMap<Tsr<Number>, Boolean>() );
 
     private final cl_device_id _did;
@@ -92,6 +185,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      */
     private OpenCLDevice( OpenCLPlatform platform, cl_device_id did )
     {
+        super();
         _did = did;
         _platform = platform;
         _queue = clCreateCommandQueueWithProperties(// Create a command-queue for the selected device
@@ -140,7 +234,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public Device<Number> restore(Tsr<Number> tensor ) {
+    public Device<Number> restore( Tsr<Number> tensor ) {
         double[] value = ( tensor.isVirtual() )
                 ? _value64f( tensor.find( cl_tsr.class ), 1, 0 )
                 : value64f( tensor );
@@ -151,7 +245,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public Device<Number> store(Tsr<Number> tensor ) {
+    public Device<Number> store( Tsr<Number> tensor ) {
         Tsr root = null;
         if ( tensor.has( Relation.class ) ) root = tensor.find( Relation.class ).findRootTensor();
         if ( root != null ) store( tensor, root );
@@ -179,9 +273,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         if ( parent == null ) {
             newClt.value = new cl_value();
             _store( tensor, newClt, 1 );
-            if ( tensor.rqsGradient() && tensor.has( Tsr.class ) ) {
-                this.store( tensor.find( Tsr.class ) );
-            }
+            if ( tensor.rqsGradient() && tensor.has( Tsr.class ) ) this.store( tensor.find( Tsr.class ) );
             {
                 final cl_mem clValMem = newClt.value.data;
                 cl_event clValEvent = newClt.value.event;
@@ -254,7 +346,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * This method check if the passed tensor
      * is stored on this very OpenCLDevice instance.
      * "Stored" means that the data of the tensor is represented as
-     * cl_mem objects which are stored inside tensors as components...
+     * cl_mem objects which are referenced inside tensors as components...
      *
      * @param tensor The tensor in question.
      * @return The truth value of the fact that the provided tensor is on this device.
@@ -265,7 +357,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
 
-    private void _store(Tsr tensor, cl_tsr newClTsr, int fp) {
+    private void _store( Tsr tensor, cl_tsr newClTsr, int fp ) {
         Pointer p = null;
         int size = tensor.size();
         //if ( !tensor.isVirtual() ) {
@@ -291,7 +383,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 null
         );
         newClTsr.value.data = mem;
-        if (!tensor.isVirtual()) {
+        if ( !tensor.isVirtual() ) {
             clEnqueueWriteBuffer(
                     _queue,
                     mem,
@@ -308,7 +400,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
 
     @Override
-    public Device<Number> free(Tsr<Number> tensor) {
+    public Device<Number> free( Tsr<Number> tensor ) {
         cl_tsr clt = tensor.find(cl_tsr.class);
         if ( clt == null ) return this;
         _tensors.remove(tensor);
@@ -327,11 +419,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
     //}
 
     @Override
-    public Device<Number> overwrite64(Tsr<Number> tensor, double[] value) {
+    public Device<Number> overwrite64(Tsr<Number> tensor, double[] value)
+    {
         cl_tsr clt = tensor.find(cl_tsr.class);
-        if (clt.fp == 1) {
-            overwrite32(tensor, DataConverter.Utility.doubleToFloat(value));
-        } else {
+        if (clt.fp == 1) overwrite32(tensor, DataConverter.Utility.doubleToFloat(value));
+        else {
             if(clt.value.event!=null) clWaitForEvents(1, new cl_event[]{clt.value.event});
             clt.value.event = new cl_event();
             clEnqueueWriteBuffer(
@@ -349,33 +441,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return this;
     }
 
-    private void _releaseEvents(Tsr[] tsrs) {
-        for(Tsr<Number> t : tsrs) {
-            if( t.find(cl_tsr.class).value.event != null ) {
-                clReleaseEvent(t.find(cl_tsr.class).value.event);
-                t.find(cl_tsr.class).value.event = null;
-            }
-        }
-    }
-
-    private cl_event[] _getWaitList(Tsr[] tsrs) {
-        List<cl_event> list = new ArrayList<>();
-        for (Tsr<Number> t : tsrs) {
-            cl_event event = t.find(cl_tsr.class).value.event;
-            if (event != null && !list.contains(event)) {
-                list.add(event);
-            }
-        }
-        return list.toArray(new cl_event[ 0 ]);
-    }
-
     @Override
-    public Device overwrite32(Tsr<Number> tensor, float[] value) {
+    public Device overwrite32( Tsr<Number> tensor, float[] value) {
         cl_tsr clt = tensor.find(cl_tsr.class);
-        if (clt.fp == 1) {
-            if(clt.value.event!=null) {
-                clWaitForEvents(1, new cl_event[]{clt.value.event});
-            }
+        if ( clt.fp == 1 ) {
+            if ( clt.value.event!=null ) clWaitForEvents( 1, new cl_event[]{ clt.value.event } );
             clt.value.event = new cl_event();
             clEnqueueWriteBuffer(
                     _queue,
@@ -405,16 +475,16 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public double[] value64f(Tsr<Number> tensor) {
+    public double[] value64f( Tsr<Number> tensor ) {
         cl_tsr clt = tensor.find(cl_tsr.class);
         return _value64f(clt, clt.value.size, 0);
     }
 
-    private double[] _value64f(cl_tsr clt , int size, int offset) {
-        if (clt.fp == 1) {
-            return DataConverter.Utility.floatToDouble(_value32f(clt, size, offset));
-        } else {
-            double[] data = new double[size];//clt.value.size];
+    private double[] _value64f( cl_tsr clt , int size, int offset )
+    {
+        if (clt.fp == 1) return DataConverter.Utility.floatToDouble(_value32f(clt, size, offset));
+        else {
+            double[] data = new double[ size ];
             clEnqueueReadBuffer(
                     _queue,
                     clt.value.data,
@@ -431,15 +501,14 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public float[] value32f(Tsr<Number> tensor) {
+    public float[] value32f( Tsr<Number> tensor ) {
         cl_tsr clt = tensor.find(cl_tsr.class);
         return _value32f(clt, clt.value.size, 0);
     }
 
-    private float[] _value32f(cl_tsr clt, int size, int offset) {
-        //cl_tsr clt = tensor.find(cl_tsr.class);
+    private float[] _value32f( cl_tsr clt, int size, int offset ) {
         if (clt.fp == 1) {
-            float[] data = new float[size];//clt.value.size];
+            float[] data = new float[size];
             clEnqueueReadBuffer(
                     _queue,
                     clt.value.data,
@@ -458,21 +527,21 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public double value64f(Tsr<Number> tensor, int index) {
+    public double value64f( Tsr<Number> tensor, int index ) {
         cl_tsr clt = tensor.find(cl_tsr.class);
         return _value64f(clt, 1, index)[ 0 ];
     }
 
     @Override
-    public float value32f(Tsr<Number> tensor, int index) {
+    public float value32f( Tsr<Number> tensor, int index ) {
         cl_tsr clt = tensor.find(cl_tsr.class);
         return _value32f(clt, 1, index)[ 0 ];
     }
 
-    public KernelBuilder getKernel(ExecutionCall call) {
+    public KernelCaller getKernel( ExecutionCall call ) {
         String chosen = call.getImplementation().getName()+"_"+call.getType().getFunction();
         cl_kernel kernel = _platform.getKernels().get(chosen);
-        return new KernelBuilder(kernel, _queue);
+        return new KernelCaller(kernel, _queue);
     }
 
     @Override
@@ -488,6 +557,30 @@ public class OpenCLDevice extends AbstractDevice<Number>
         tensors[ 0 ].setIsVirtual( false );
         call.getImplementation().getExecutor(CLExecutor.class).getExecution().run(call);
     }
+
+    /*
+    // The following are two potentially important methods for future features.
+
+    private void _releaseEvents(Tsr[] tsrs) {
+        for(Tsr<Number> t : tsrs) {
+            if( t.find(cl_tsr.class).value.event != null ) {
+                clReleaseEvent(t.find(cl_tsr.class).value.event);
+                t.find(cl_tsr.class).value.event = null;
+            }
+        }
+    }
+
+    private cl_event[] _getWaitList(Tsr[] tsrs) {
+        List<cl_event> list = new ArrayList<>();
+        for (Tsr<Number> t : tsrs) {
+            cl_event event = t.find(cl_tsr.class).value.event;
+            if (event != null && !list.contains(event)) {
+                list.add(event);
+            }
+        }
+        return list.toArray(new cl_event[ 0 ]);
+    }
+    */
 
     public String name() {
         return DeviceQuery.getString(_did, CL_DEVICE_NAME);

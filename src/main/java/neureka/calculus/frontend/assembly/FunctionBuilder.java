@@ -17,12 +17,12 @@ public class FunctionBuilder {
      * @param doAD
      * @return
      */
-    public static Function build(AbstractOperationType type, int size, boolean doAD) {
+    public static Function build( AbstractOperationType type, int size, boolean doAD ) {
         if (type.getId() == 18) {
             size = 2;
         } else if ( type.getOperator().equals(",") ) {
             ArrayList<Function> srcs = new ArrayList<>();
-            for (int i = 0; i < size; i++) srcs.add(new FunctionInput().newBuild("" + i));
+            for (int i = 0; i < size; i++) srcs.add( new FunctionInput().newBuild("" + i) );
             return new FunctionNode(type, srcs, doAD);
         }
         if ( type.getId() < 10 ) {
@@ -49,15 +49,18 @@ public class FunctionBuilder {
                         && (expression.charAt( 0 ) != '(' || expression.charAt( expression.length() - 1 ) != ')'))
                         ? ("(" + expression + ")")
                         : expression;
-        String k = (doAD) ? "d" + expression : expression;
-        if (Function.CACHE.FUNCTIONS().containsKey(k)) {
-            return Function.CACHE.FUNCTIONS().get(k);
-        }
-        expression = FunctionParser.unpackAndCorrect(expression);
-        Function built = _build(expression, doAD);
-        if (built != null) {
-            Function.CACHE.FUNCTIONS().put(((doAD) ? "d" : "") + "(" + built.toString() + ")", built);
-        }
+        String k = ( doAD ) ? "d" + expression : expression;
+
+        if ( Function.CACHE.FUNCTIONS().containsKey( k ) ) return Function.CACHE.FUNCTIONS().get( k );
+
+        expression = FunctionParser.unpackAndCorrect( expression );
+        Function built = _build( expression, doAD );
+        if ( built != null )
+            Function.CACHE.FUNCTIONS().put(
+                    (( (doAD) ? "d" : "" ) + "(" + built.toString() + ")").intern(),
+                    built
+            );
+
         return built;
     }
 
@@ -66,7 +69,8 @@ public class FunctionBuilder {
      * @param doAD       enables or disables autograd for this function
      * @return a function which has been built by the given expression
      */
-    private static Function _build(String expression, boolean doAD) {
+    private static Function _build( String expression, boolean doAD )
+    {
         expression = expression
                 .replace("<<", "" + ((char) 171))
                 .replace(">>", "" + ((char) 187));
@@ -75,7 +79,7 @@ public class FunctionBuilder {
                 .replace("->", ">");
         Function function;
         ArrayList<Function> sources = new ArrayList<>();
-        if (expression.equals("")) {
+        if ( expression.equals("") ) {
             Function newCore = new FunctionConstant();
             newCore = newCore.newBuild("0");
             return newCore;
@@ -84,10 +88,10 @@ public class FunctionBuilder {
         List<String> foundJunctors = new ArrayList<>();
         List<String> foundComponents = new ArrayList<>();
         int i = 0;
-        while (i < expression.length()) {
+        while ( i < expression.length() ) {
             final String newComponent = FunctionParser.findComponentIn(expression, i);
-            if (newComponent != null) {
-                if (foundComponents.size() <= foundJunctors.size()) foundComponents.add(newComponent);
+            if ( newComponent != null ) {
+                if ( foundComponents.size() <= foundJunctors.size() ) foundComponents.add( newComponent );
                 i += newComponent.length();
                 final String newOperation = FunctionParser.parsedOperation(expression, i);
                 if (newOperation != null) {
@@ -95,25 +99,26 @@ public class FunctionBuilder {
                     if (newOperation.length() <= 0) continue;
                     foundJunctors.add(newOperation);
                 }
-            } else ++i;
+            }
+            else ++i;
         }
         //---
         int counter = OperationType.COUNT();
-        for (int j = OperationType.COUNT(); j > 0; --j) {
-            if (!foundJunctors.contains(OperationType.instance(j - 1).getOperator())) {
+        for ( int j = OperationType.COUNT(); j > 0; --j ) {
+            if ( !foundJunctors.contains(OperationType.instance(j - 1).getOperator()) ) {
                 --counter;
             } else {
                 j = 0;
             }
         }
         int ID = 0;
-        while (ID < counter) {
+        while ( ID < counter ) {
             final List<String> newJunctors = new ArrayList<>();
             final List<String> newComponents = new ArrayList<>();
-            if (foundJunctors.contains(OperationType.instance(ID).getOperator())) {
+            if ( foundJunctors.contains( OperationType.instance( ID ).getOperator() ) ) {
                 String currentChain = null;
                 boolean groupingOccured = false;
-                boolean enoughtPresent = FunctionParser.numberOfOperationsWithin(foundJunctors) > 1;// Otherwise: I[j]^4 goes nuts!
+                boolean enoughtPresent = FunctionParser.numberOfOperationsWithin( foundJunctors ) > 1;// Otherwise: I[j]^4 goes nuts!
                 if (enoughtPresent) {
                     String[] ComponentsArray = foundComponents.toArray(new String[ 0 ]);
                     int length = ComponentsArray.length;
@@ -182,7 +187,8 @@ public class FunctionBuilder {
                                 foundComponents.get( 0 ),
                                 possibleFunction.length()
                         );
-                        for (String p : parameters) {
+                        assert parameters != null;
+                        for ( String p : parameters ) {
                             sources.add(FunctionBuilder.build(p, doAD));
                         }
                         function = new FunctionNode(OperationType.instance(typeId), sources, doAD);
@@ -191,8 +197,8 @@ public class FunctionBuilder {
                 }
             }
             //---
-            String component = FunctionParser.unpackAndCorrect(foundComponents.get( 0 ));
-            boolean possiblyInverseInput = (component.length()>1 && component.toLowerCase().substring(0,2).equals("-i"));
+            String component = FunctionParser.unpackAndCorrect( foundComponents.get( 0 ) );
+            boolean possiblyInverseInput = ( component.length()>1 && component.toLowerCase().startsWith("-i") );
             if (!possiblyInverseInput &&
                     (
                             ((component.charAt( 0 ) <= '9') && (component.charAt( 0 ) >= '0')) ||
@@ -201,9 +207,9 @@ public class FunctionBuilder {
                     )
                 ) {
                 if (
-                        component.startsWith("-") &&
+                        component.startsWith( "-" ) &&
                                 component.length()>2 &&
-                                !component.substring(1, 2).matches("[0-9]+")
+                                !component.substring(1, 2).matches( "[0-9]+" )
                 ) {
                     component = "-1 * "+component.substring(1);
                     return _build(component, doAD);
@@ -235,7 +241,7 @@ public class FunctionBuilder {
             return FunctionBuilder.build(component, doAD);
         } else {// More than one component left:
             if (OperationType.instance(typeId).getOperator().equals("x") || OperationType.instance(typeId).getOperator().equals("<") || OperationType.instance(typeId).getOperator().equals(">")) {
-                foundComponents = _rebindPairwise(foundComponents, typeId);
+                foundComponents = _rebindPairwise( foundComponents, typeId );
             } else if (OperationType.instance(typeId).getOperator().equals(",") && foundComponents.get( 0 ).startsWith("[")) {
 
                 foundComponents.set(0, foundComponents.get( 0 ).substring(1));
@@ -278,7 +284,7 @@ public class FunctionBuilder {
      * @return
      */
     private static List<String> _rebindPairwise(List<String> components, int f_id) {
-        if (components.size() > 2) {
+        if ( components.size() > 2 ) {
             String newComponent = "(" + components.get( 0 ) + OperationType.instance(f_id).getOperator() + components.get(1) + ")";
             components.remove(components.get( 0 ));
             components.remove(components.get( 0 ));

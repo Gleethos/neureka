@@ -38,6 +38,8 @@ import neureka.Tsr;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.ref.Cleaner;
 
@@ -58,6 +60,12 @@ import java.lang.ref.Cleaner;
 public abstract class AbstractDevice<ValueType> extends AbstractBaseDevice<ValueType>
 {
     private static final Cleaner _CLEANER = Cleaner.create();
+
+    protected Logger _logger;
+
+    protected AbstractDevice() {
+        _logger = LoggerFactory.getLogger( getClass() );
+    }
 
     /**
      *  This method is the internal execution routine called by it's public counterpart
@@ -80,12 +88,12 @@ public abstract class AbstractDevice<ValueType> extends AbstractBaseDevice<Value
 
     @Override
     public Device cleaning( Tsr tensor, Runnable action ) {
-        _cleaning(tensor, action);
+        _cleaning( tensor, action );
         return this;
     }
 
     protected void _cleaning( Object o, Runnable action ) {
-        _CLEANER.register(o, action);
+        _CLEANER.register( o, action );
     }
 
     @Override

@@ -57,7 +57,6 @@ public abstract class AbstractBaseOperationTypeImplementation<FinalType> impleme
             }
             else rollbacks[ i ] = t -> {};
         }
-
         /* For the following operations with the correct arity RJAgent should do: ...
             case ("s" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
             case ("d" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
