@@ -46,7 +46,7 @@ public class OpenCLPlatform {
 
         // Collect all devices of this platform
         for (cl_device_id did : devicesArray) {
-            OpenCLDevice clDevice = OpenCLDevice.instance(this, did);
+            OpenCLDevice clDevice = OpenCLDevice.newInstanceOf( this, did );
             _id_device.put(did, clDevice);
         }
         _compile(devicesArray);
@@ -59,7 +59,7 @@ public class OpenCLPlatform {
     public void recompile() {
         List<OpenCLDevice> devices = getDevices();
         cl_device_id[] devicesArray = new cl_device_id[devices.size()];
-        for (int i = 0; i < devicesArray.length; i++) devicesArray[ i ] = devices.get( i ).CLDeviceID();
+        for (int i = 0; i < devicesArray.length; i++) devicesArray[ i ] = devices.get( i ).getCLDeviceID();
         _compile(devicesArray);
     }
 

@@ -16,47 +16,53 @@ import neureka.dtype.custom.F32;
 import neureka.framing.Relation;
 import neureka.utility.DataConverter;
 import org.jocl.*;
-import org.slf4j.LoggerFactory;
 
 public class OpenCLDevice extends AbstractDevice<Number>
 {
-    /**
-     * This class is responsible for representing the
-     * data of a tensor stored on the device.
-     * Instances of this class lend their identity to utilize garbage collection
-     * of the data that they reference via their "cl_mem" field.
-     * Meaning this inner memory object "cl_mem" will
-     * be freed via a call hook stored inside a Cleaner instance...
-     */
-    static class cl_value
+    public static OpenCLDevice newInstanceOf( OpenCLPlatform platform, cl_device_id did )
     {
-        public cl_mem data;
-        public int size = 0;
-        public cl_event event;
+        if( !platform.has( did ) ) platform.put( did,  new OpenCLDevice( platform, did ) );
+        return platform.get( did );
     }
 
     /**
-     * This is the class responsible for representing NDConfiguration data.
-     * Instances of this class lend their identity to utilize garbage collection
-     * of the data that they reference via their "cl_mem" field.
-     * Meaning this inner memory object "cl_mem" will
-     * be freed via a call hook stored inside a Cleaner instance...
-     */
-    static class cl_config
-    {
-        public cl_mem data;
-    }
-
-    /**
-     * This class is an OpenCL-Device specific tensor component
-     * used to store
+     * This class is an OpenCL-Device specific tensor component used to store
      * the floating point size ( 1:float, 2:double, ...),
-     * a reference to a wrapper containing a pointer to the tensors configuration (cl_config)
+     * a reference to a wrapper containing a pointer to the tensors configuration (cl_config),
      * and
      * a reference to a wrapper containing a pointer to the tensors data (cl_data)
      * The latter two lend their identity for garbage collection!
      */
-    static class cl_tsr implements Component<Tsr<Number>> {
+    static class cl_tsr implements Component<Tsr<Number>>
+    {
+
+        /**
+         * This class is responsible for representing the
+         * data of a tensor stored on the device.
+         * Instances of this class lend their identity to utilize garbage collection
+         * of the data that they reference via their "cl_mem" field.
+         * Meaning this inner memory object "cl_mem" will
+         * be freed via a call hook stored inside a Cleaner instance...
+         */
+        public static class cl_value
+        {
+            public int size = 0;
+            public cl_mem data;
+            public cl_event event;
+        }
+
+        /**
+         * This is the class responsible for representing NDConfiguration data.
+         * Instances of this class lend their identity to utilize garbage collection
+         * of the data that they reference via their "cl_mem" field.
+         * Meaning this inner memory object "cl_mem" will
+         * be freed via a call hook stored inside a Cleaner instance...
+         */
+        public static class cl_config
+        {
+            public cl_mem data;
+        }
+
         public int fp = 1;
         public cl_config config = new cl_config();// Tensor configurations are always unique!
         public cl_value value;
@@ -72,19 +78,66 @@ public class OpenCLDevice extends AbstractDevice<Number>
      *  Ad hoc is a Latin phrase meaning literally 'to this'.
      *  In English, it generally signifies a solution designed for a specific problem or task,
      *  non-generalizable, and not intended to be adapted to other purposes.
-     *  This leads to the purpose of instances of this class, namely to manage a unique kernel with
-     *  a uniquely associated kernel which has been created for a specific operation involving specific
-     *  tensor dimensions or possibly other variables...
+     *  This leads to the purpose of instances of this class, namely to hold the context to a unique kernel with
+     *  a uniquely associated purpose which has been created by an operation possibly for specific
+     *  tensor dimensions or possibly other properties...
      */
-    private class cl_ad_hoc {
-        String source;
-        cl_kernel kernel;
-        cl_program program;
+    private static class cl_ad_hoc
+    {
+        public String source;
+        public cl_kernel kernel;
+        public cl_program program;
     }
 
     private final Map<String, cl_ad_hoc> _adhocKernels = new WeakHashMap<>();
     private final cl_ad_hoc[] _adhocKernelRingBuffer = new cl_ad_hoc[ 128 ];
     private int _ringIndex = 0;
+
+    private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap( new WeakHashMap<Tsr<Number>, Boolean>() );
+
+    private final cl_device_id _deviceId;
+
+    /**
+     * The OpenCLPlatform
+     */
+    private final OpenCLPlatform _platform;
+
+    /**
+     * The OpenCL command queue
+     */
+    private final cl_command_queue _queue;
+
+    //==================================================================================================================
+
+    /**
+     * @param platform
+     * @param deviceId
+     */
+    private OpenCLDevice( OpenCLPlatform platform, cl_device_id deviceId )
+    {
+        super();
+        _deviceId = deviceId;
+        _platform = platform;
+        _queue = clCreateCommandQueueWithProperties(// Create a command-queue for the selected device
+                platform.getContext(), deviceId,
+                null,
+                null
+        );
+        _cleaning( this, () -> clReleaseCommandQueue( _queue ) );
+        //Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        //    _mapping.forEach((k, v) -> {
+        //        if(v.value.event!=null) clWaitForEvents(1, new cl_event[]{v.value.event});
+        //        clReleaseMemObject(v.config);
+        //        clReleaseMemObject(v.value.data);
+        //    });
+        //    clReleaseCommandQueue(_queue);
+        //    clReleaseContext(_context);
+        //}));
+    }
+
+    public cl_device_id getCLDeviceID() {
+        return _deviceId;
+    }
 
     public boolean hasAdHocKernel( String name ) {
         return _adhocKernels.containsKey( name );
@@ -96,15 +149,29 @@ public class OpenCLDevice extends AbstractDevice<Number>
         else return null;
     }
 
-    public OpenCLDevice compileAdHocKernel( String name, String source )
+    /**
+     *  This method compiles so called "ad hoc" kernel.
+     *  Ad hoc is a Latin phrase meaning literally 'to this'.
+     *  In English, it generally signifies a solution designed for a specific problem or task,
+     *  non-generalizable, and not intended to be adapted to other purposes.
+     *  This leads to the purpose of ad hoc kernel compilation, namely to be able to compile
+     *  unique kernels with a specific purpose created on the fly during runtime by operations.
+     *  This might be useful for high performance operations on tensors with specific dimensions and
+     *  or possibly other variables / properties which might be taken into account...
+     *
+     * @param name The name of the kernel which ought to be compiled.
+     * @param source The source of the kernel which ought to be compiled.
+     * @return This very instance in order to enable the factory pattern.
+     */
+    public synchronized OpenCLDevice compileAdHocKernel( String name, String source )
     {
         if ( this.hasAdHocKernel( name ) ) {
             cl_ad_hoc adHoc = _adhocKernels.get( name );
             String message = "Cannot compile kernel source for name '"+name+"' because the name is already taken.\n" +
                     "Use another name or find out why this kernel already exists.\n" +
                     (
-                        ( adHoc.source.equals( source ) )
-                            ? "Besides the name, the source code of the existing kernel is also identical.\n" : ""
+                            ( adHoc.source.equals( source ) )
+                                    ? "Besides the name, the source code of the existing kernel is also identical.\n" : ""
                     );
             _logger.error( message );
             throw new IllegalArgumentException( message );
@@ -123,7 +190,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         int err = clBuildProgram(
                 cpProgram,
                 1,
-                new cl_device_id[]{ _did },
+                new cl_device_id[]{ _deviceId },
                 "-cl-mad-enable",
                 null,
                 null
@@ -157,59 +224,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
             clReleaseProgram( cpProgram );
         } );
         return this;
-    }
-
-    private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap( new WeakHashMap<Tsr<Number>, Boolean>() );
-
-    private final cl_device_id _did;
-
-    public cl_device_id CLDeviceID() {
-        return _did;
-    }
-
-    /**
-     * The OpenCLPlatform
-     */
-    private final OpenCLPlatform _platform;
-
-    /**
-     * The OpenCL command queue
-     */
-    private final cl_command_queue _queue;
-
-    //==================================================================================================================
-
-    /**
-     * @param platform
-     * @param did
-     */
-    private OpenCLDevice( OpenCLPlatform platform, cl_device_id did )
-    {
-        super();
-        _did = did;
-        _platform = platform;
-        _queue = clCreateCommandQueueWithProperties(// Create a command-queue for the selected device
-                platform.getContext(), did,
-                null,
-                null
-        );
-        _cleaning( this, () -> {
-            clReleaseCommandQueue(_queue);
-        } );
-        //Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-        //    _mapping.forEach((k, v) -> {
-        //        if(v.value.event!=null) clWaitForEvents(1, new cl_event[]{v.value.event});
-        //        clReleaseMemObject(v.config);
-        //        clReleaseMemObject(v.value.data);
-        //    });
-        //    clReleaseCommandQueue(_queue);
-        //    clReleaseContext(_context);
-        //}));
-    }
-
-    public static OpenCLDevice instance( OpenCLPlatform platform, cl_device_id did ) {
-        if( !platform.has( did ) ) platform.put( did,  new OpenCLDevice( platform, did ) );
-        return platform.get( did );
     }
 
     public OpenCLPlatform getPlatform() {
@@ -254,7 +268,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public Device<Number> store(Tsr<Number> tensor, Tsr<Number> parent ) {
+    public Device<Number> store( Tsr<Number> tensor, Tsr<Number> parent ) {
         if ( !parent.isOutsourced() ) throw new IllegalStateException( "Data parent is not outsourced!" );
         _add( tensor, parent.find( cl_tsr.class ) );
         _tensors.add( tensor );
@@ -271,7 +285,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         }
         //VALUE TRANSFER:
         if ( parent == null ) {
-            newClt.value = new cl_value();
+            newClt.value = new cl_tsr.cl_value();
             _store( tensor, newClt, 1 );
             if ( tensor.rqsGradient() && tensor.has( Tsr.class ) ) this.store( tensor.find( Tsr.class ) );
             {
@@ -282,7 +296,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     clReleaseMemObject( clValMem );//Removing value.. from device!
                 });
             }
-        } else {//tensor is a subset tensor of parent:
+        } else { // Tensor is a subset tensor of parent:
             newClt.fp = parent.fp;
             newClt.value = parent.value;
         }
@@ -343,7 +357,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     /**
-     * This method check if the passed tensor
+     * This method checks if the passed tensor
      * is stored on this very OpenCLDevice instance.
      * "Stored" means that the data of the tensor is represented as
      * cl_mem objects which are referenced inside tensors as components...
@@ -353,7 +367,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      */
     @Override
     public boolean has( Tsr<Number> tensor ) {
-        return _tensors.contains(tensor);
+        return _tensors.contains( tensor );
     }
 
 
@@ -583,19 +597,19 @@ public class OpenCLDevice extends AbstractDevice<Number>
     */
 
     public String name() {
-        return DeviceQuery.getString(_did, CL_DEVICE_NAME);
+        return DeviceQuery.getString(_deviceId, CL_DEVICE_NAME);
     }
 
     public String vendor() {
-        return DeviceQuery.getString(_did, CL_DEVICE_VENDOR);
+        return DeviceQuery.getString(_deviceId, CL_DEVICE_VENDOR);
     }
 
     public String version() {
-        return DeviceQuery.getString(_did, CL_DRIVER_VERSION);
+        return DeviceQuery.getString(_deviceId, CL_DRIVER_VERSION);
     }
 
     public String type() {
-        long deviceType = DeviceQuery.getLong(_did, CL_DEVICE_TYPE);
+        long deviceType = DeviceQuery.getLong(_deviceId, CL_DEVICE_TYPE);
         if ((deviceType & CL_DEVICE_TYPE_CPU) != 0)
             return "CPU";
         if ((deviceType & CL_DEVICE_TYPE_GPU) != 0)
@@ -608,55 +622,55 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     public int maxComputeUnits() {
-        return DeviceQuery.getInt(_did, CL_DEVICE_MAX_COMPUTE_UNITS);
+        return DeviceQuery.getInt(_deviceId, CL_DEVICE_MAX_COMPUTE_UNITS);
     }
 
     public long maxWorkItemSimensions() {
-        return DeviceQuery.getLong(_did, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS);
+        return DeviceQuery.getLong(_deviceId, CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS);
     }
 
     public long[] maxWorkItemSizes() {
-        return DeviceQuery.getSizes(_did, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3);
+        return DeviceQuery.getSizes(_deviceId, CL_DEVICE_MAX_WORK_ITEM_SIZES, 3);
     }
 
     public long maxWorkGroupSize() {
-        return DeviceQuery.getSize(_did, CL_DEVICE_MAX_WORK_GROUP_SIZE);
+        return DeviceQuery.getSize(_deviceId, CL_DEVICE_MAX_WORK_GROUP_SIZE);
     }
 
     public long maxClockFrequenzy() {
-        return DeviceQuery.getLong(_did, CL_DEVICE_MAX_CLOCK_FREQUENCY);
+        return DeviceQuery.getLong(_deviceId, CL_DEVICE_MAX_CLOCK_FREQUENCY);
     }
 
     public int maxAddressBits() {
-        return DeviceQuery.getInt(_did, CL_DEVICE_ADDRESS_BITS);
+        return DeviceQuery.getInt(_deviceId, CL_DEVICE_ADDRESS_BITS);
     }
 
     public long maxMemAllocSize() {
-        return DeviceQuery.getLong(_did, CL_DEVICE_MAX_MEM_ALLOC_SIZE);
+        return DeviceQuery.getLong(_deviceId, CL_DEVICE_MAX_MEM_ALLOC_SIZE);
     }
 
     public long globalMemSize() {
-        return DeviceQuery.getLong(_did, CL_DEVICE_GLOBAL_MEM_SIZE);
+        return DeviceQuery.getLong(_deviceId, CL_DEVICE_GLOBAL_MEM_SIZE);
     }
 
     public int errorCorrectionSupport() {
-        return DeviceQuery.getInt(_did, CL_DEVICE_ERROR_CORRECTION_SUPPORT);
+        return DeviceQuery.getInt(_deviceId, CL_DEVICE_ERROR_CORRECTION_SUPPORT);
     }
 
     public int localMemType() {
-        return DeviceQuery.getInt(_did, CL_DEVICE_LOCAL_MEM_TYPE);
+        return DeviceQuery.getInt(_deviceId, CL_DEVICE_LOCAL_MEM_TYPE);
     }
 
     public long localMemSize() {
-        return DeviceQuery.getLong(_did, CL_DEVICE_LOCAL_MEM_SIZE);
+        return DeviceQuery.getLong(_deviceId, CL_DEVICE_LOCAL_MEM_SIZE);
     }
 
     public long maxConstantBufferSize() {
-        return DeviceQuery.getLong(_did, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE);
+        return DeviceQuery.getLong(_deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE);
     }
 
     public long maxConstantBufferSizeKB() {
-        return (int) (DeviceQuery.getLong(_did, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE) / 1024);
+        return (int) (DeviceQuery.getLong(_deviceId, CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE) / 1024);
     }
     /*
     public boolean queueExecIsOrdered() {
@@ -670,63 +684,63 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
     */
     public int imageSupport() {
-        return DeviceQuery.getInt(_did, CL_DEVICE_IMAGE_SUPPORT);
+        return DeviceQuery.getInt(_deviceId, CL_DEVICE_IMAGE_SUPPORT);
     }
 
     public int maxReadImageArgs() {
-        return DeviceQuery.getInt(_did, CL_DEVICE_MAX_READ_IMAGE_ARGS);
+        return DeviceQuery.getInt(_deviceId, CL_DEVICE_MAX_READ_IMAGE_ARGS);
     }
 
     public int maxWriteImageArgs() {
-        return DeviceQuery.getInt(_did, CL_DEVICE_MAX_WRITE_IMAGE_ARGS);
+        return DeviceQuery.getInt(_deviceId, CL_DEVICE_MAX_WRITE_IMAGE_ARGS);
     }
 
     public long singleFPConfig() {
-        return DeviceQuery.getLong(_did, CL_DEVICE_SINGLE_FP_CONFIG);
+        return DeviceQuery.getLong(_deviceId, CL_DEVICE_SINGLE_FP_CONFIG);
     }
 
     public long image2DMaxWidth() {
-        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE2D_MAX_WIDTH);
+        return DeviceQuery.getSize(_deviceId, CL_DEVICE_IMAGE2D_MAX_WIDTH);
     }
 
     public long image2DMaxHeight() {
-        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE2D_MAX_HEIGHT);
+        return DeviceQuery.getSize(_deviceId, CL_DEVICE_IMAGE2D_MAX_HEIGHT);
     }
 
     public long image3DMaxWidth() {
-        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE3D_MAX_WIDTH);
+        return DeviceQuery.getSize(_deviceId, CL_DEVICE_IMAGE3D_MAX_WIDTH);
     }
 
     public long image3DMaxHeight() {
-        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE3D_MAX_HEIGHT);
+        return DeviceQuery.getSize(_deviceId, CL_DEVICE_IMAGE3D_MAX_HEIGHT);
     }
 
     public long image3DMaxDepth() {
-        return DeviceQuery.getSize(_did, CL_DEVICE_IMAGE3D_MAX_DEPTH);
+        return DeviceQuery.getSize(_deviceId, CL_DEVICE_IMAGE3D_MAX_DEPTH);
     }
 
     public int prefVecWidthChar() {
-        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR);
+        return DeviceQuery.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR);
     }
 
     public int prefVecWidthShort() {
-        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT);
+        return DeviceQuery.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT);
     }
 
     public int prefVecWidthInt() {
-        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT);
+        return DeviceQuery.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT);
     }
 
     public int prefVecWidthLong() {
-        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG);
+        return DeviceQuery.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG);
     }
 
     public int prefVecWidthFloat() {
-        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT);
+        return DeviceQuery.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT);
     }
 
     public int prefVecWidthDouble() {
-        return DeviceQuery.getInt(_did, CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE);
+        return DeviceQuery.getInt(_deviceId, CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE);
     }
 
     public static class DeviceQuery {

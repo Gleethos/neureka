@@ -1,0 +1,102 @@
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <h3>
+            The "OpenCLDevice" - Accelerated Operations
+        </h3>
+        <p>
+            The OpenCLDevice class is a concrete implementation of the Device interface.
+            Instances of this class internally utilize the OpenCL API in order to use supported
+            accelerator hardware like GPUs or FPGAs for storing tensors and executing operations on them.
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <h4>
+            Custom kernels
+        </h4>
+        <p>
+            The following example is a brief showcase of an important OpenCLDevice feature
+            which enables just in time kernel compilation and caching for specific use cases.
+            This is particularly useful when extending the operations backend or simply creating
+            extremely fast custom operations for specific tensors. <br>
+            <br>
+            However one has to that this is a fairly low level usage pattern which does
+            not support autograd.
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+    def device = OpenCLPlatform.PLATFORMS()[0].devices[0]
+    def someData = new Tsr( new float[]{ 2, -5, -3, 9, -1 } ).set( device )
+
+    assert !device.hasAdHocKernel( 'dummy_kernel' )
+
+    device.compileAdHocKernel( 'dummy_kernel', """
+            __kernel void dummy_kernel (
+                    __global float* output,
+                    __global float* input,
+                    float value
+                ) {
+                    unsigned int i = get_global_id( 0 );
+                    output[i] = input[i] + value;
+                }
+        """
+    )
+
+    assert device.hasAdHocKernel( 'dummy_kernel' )
+
+    device.getAdHocKernel( 'dummy_kernel' )
+            .passRaw( someData )
+            .passRaw( someData )
+            .pass( -4f )
+            .call( someData.size() )
+
+    assert someData.toString() == "(5):[-2.0, -9.0, -7.0, 5.0, -5.0]"
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    OpenCLDevice device = OpenCLPlatform.PLATFORMS().getAt( 0 ).getDevices.getAt( 0 );
+    Tsr someData = new Tsr( new float[]{ 2, -5, -3, 9, -1 } ).set( device );
+
+    assert !device.hasAdHocKernel( 'dummy_kernel' );
+
+    device.compileAdHocKernel( "dummy_kernel",
+        "__kernel void dummy_kernel (                      \n" +
+        "        __global float* output,                           \n" +
+        "        __global float* input,                             \n" +
+        "        float value                                             \n" +
+        "    ) {                                                              \n" +
+        "        unsigned int i = get_global_id( 0 );       \n" +
+        "        output[i] = input[i] + value;                    \n" +
+        "    }                                                                \n"
+    );
+
+    assert device.hasAdHocKernel( "dummy_kernel" );
+
+    device.getAdHocKernel( "dummy_kernel" )
+            .passRaw( someData )
+            .passRaw( someData )
+            .pass( -4f )
+            .call( someData.size() );
+
+    assert someData.toString().equals( "(5):[-2.0, -9.0, -7.0, 5.0, -5.0]" );
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
