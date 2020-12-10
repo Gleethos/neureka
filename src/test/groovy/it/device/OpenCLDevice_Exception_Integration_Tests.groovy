@@ -106,7 +106,7 @@ class OpenCLDevice_Exception_Integration_Tests extends Specification
             )
 
         cleanup : 'Afterwards we restore the original logger!'
-            device._logger = oldLogger
+            if ( Neureka.instance().canAccessOpenCL() ) device._logger = oldLogger
     }
 
 
