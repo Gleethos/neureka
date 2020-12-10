@@ -329,8 +329,24 @@ public class OpenCLDevice extends AbstractDevice<Number>
         clFinish( _queue );
     }
 
+    /**
+     *  This method assumes that the passed tensor is stored on this device instance.
+     *  If the tensor is stored on the device then the method loads the outsourced
+     *  data of the tensor back into primitive JVM arrays and restores the tensor
+     *  freshly in RAM.
+     *
+     * @param tensor The tensor whose data ought to be restored (loaded to RAM).
+     * @return
+     */
     @Override
-    public Device<Number> restore( Tsr<Number> tensor ) {
+    public Device<Number> restore( Tsr<Number> tensor )
+    {
+        if ( !this.has( tensor ) ) {
+            String message = "The passed tensor cannot be restored from this OpenCL device " +
+                    "because the tensor is not stored on the device.\n";
+            _logger.error( message );
+            throw new IllegalArgumentException( message );
+        }
         double[] value = ( tensor.isVirtual() )
                 ? _value64f( tensor.find( cl_tsr.class ), 1, 0 )
                 : value64f( tensor );
@@ -342,7 +358,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     public Device<Number> store( Tsr<Number> tensor ) {
-        Tsr root = null;
+        Tsr<Number> root = null;
         if ( tensor.has( Relation.class ) ) root = tensor.find( Relation.class ).findRootTensor();
         if ( root != null ) store( tensor, root );
         else _add( tensor, null );
@@ -374,7 +390,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 final cl_mem clValMem = newClt.value.data;
                 cl_event clValEvent = newClt.value.event;
                 _cleaning( newClt.value, () -> {
-                    if(clValEvent!=null) clWaitForEvents( 1, new cl_event[]{ clValEvent } );
+                    if( clValEvent != null ) clWaitForEvents( 1, new cl_event[]{ clValEvent } );
                     clReleaseMemObject( clValMem );//Removing value.. from device!
                 });
             }
@@ -427,7 +443,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             execute(
                 new ExecutionCall(
                         this,
-                        new Tsr[]{ tensor, (Tsr) new Tsr( value ).set( this ) },
+                        new Tsr[]{ tensor, (Tsr) new Tsr( value ).set( this )},
                         -1,
                         OperationType.instance( "<" )
                 )
@@ -453,18 +469,18 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
 
-    private void _store( Tsr tensor, cl_tsr newClTsr, int fp ) {
+    private void _store( Tsr<Number> tensor, cl_tsr newClTsr, int fp ) {
         Pointer p;
         int size;
         //if ( !tensor.isVirtual() ) {
             if ( fp == 1 ) {
                 float[] data = tensor.value32();
-                data = ( data == null ) ? new float[tensor.size()] : data;
+                data = ( data == null ) ? new float[ tensor.size() ] : data;
                 p = Pointer.to(data);
                 size = data.length;
             } else {
                 double[] data = tensor.value64();
-                data = ( data == null ) ? new double[tensor.size()] : data;
+                data = ( data == null ) ? new double[ tensor.size() ] : data;
                 p = Pointer.to(data);
                 size = data.length;
             }
@@ -474,7 +490,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         cl_mem mem = clCreateBuffer(
                 _platform.getContext(),
                 CL_MEM_READ_WRITE,
-                size * (long)Sizeof.cl_float * fp,
+                size * (long) Sizeof.cl_float * fp,
                 null,
                 null
         );
@@ -485,7 +501,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     mem,
                     CL_TRUE,
                     0,
-                    size * (long)Sizeof.cl_float * fp,
+                    size * (long) Sizeof.cl_float * fp,
                     p,
                     0,
                     null,
@@ -497,11 +513,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     public Device<Number> free( Tsr<Number> tensor ) {
-        cl_tsr clt = tensor.find(cl_tsr.class);
+        cl_tsr clt = tensor.find( cl_tsr.class );
         if ( clt == null ) return this;
-        _tensors.remove(tensor);
+        _tensors.remove( tensor );
         tensor.setIsOutsourced( false );
-        tensor.remove(cl_tsr.class);
+        tensor.remove( cl_tsr.class );
         return this;
     }
 
@@ -515,12 +531,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
     //}
 
     @Override
-    public Device<Number> overwrite64(Tsr<Number> tensor, double[] value)
+    public Device<Number> overwrite64( Tsr<Number> tensor, double[] value )
     {
         cl_tsr clt = tensor.find(cl_tsr.class);
-        if (clt.fp == 1) overwrite32(tensor, DataConverter.Utility.doubleToFloat(value));
+        if ( clt.fp == 1 ) overwrite32( tensor, DataConverter.Utility.doubleToFloat( value ) );
         else {
-            if(clt.value.event!=null) clWaitForEvents(1, new cl_event[]{clt.value.event});
+            if( clt.value.event != null ) clWaitForEvents( 1, new cl_event[]{ clt.value.event } );
             clt.value.event = new cl_event();
             clEnqueueWriteBuffer(
                     _queue,
@@ -528,7 +544,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     CL_FALSE,
                     0,
                     Sizeof.cl_double * value.length,
-                    Pointer.to(value),
+                    Pointer.to( value ),
                     0,
                     null,
                     clt.value.event
@@ -539,9 +555,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     public Device overwrite32( Tsr<Number> tensor, float[] value) {
-        cl_tsr clt = tensor.find(cl_tsr.class);
+        cl_tsr clt = tensor.find( cl_tsr.class );
         if ( clt.fp == 1 ) {
-            if ( clt.value.event!=null ) clWaitForEvents( 1, new cl_event[]{ clt.value.event } );
+            if ( clt.value.event != null ) clWaitForEvents( 1, new cl_event[]{ clt.value.event } );
             clt.value.event = new cl_event();
             clEnqueueWriteBuffer(
                     _queue,
@@ -554,31 +570,32 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     null,
                     clt.value.event
             );
-        } else {
-            overwrite64(tensor, DataConverter.Utility.floatToDouble(value));
         }
+        else overwrite64( tensor, DataConverter.Utility.floatToDouble( value ) );
+
         return this;
     }
 
     @Override
-    public Device swap(Tsr<Number> former, Tsr<Number> replacement) {
-        cl_tsr clTsr = former.find(cl_tsr.class);
-        former.remove(cl_tsr.class);
-        replacement.set(clTsr);
-        _tensors.remove(former);
-        _tensors.add(replacement);
+    public Device swap(Tsr<Number> former, Tsr<Number> replacement)
+    {
+        cl_tsr clTsr = former.find( cl_tsr.class );
+        former.remove( cl_tsr.class );
+        replacement.set( clTsr );
+        _tensors.remove( former );
+        _tensors.add( replacement );
         return this;
     }
 
     @Override
     public double[] value64f( Tsr<Number> tensor ) {
-        cl_tsr clt = tensor.find(cl_tsr.class);
-        return _value64f(clt, clt.value.size, 0);
+        cl_tsr clt = tensor.find( cl_tsr.class );
+        return _value64f( clt, clt.value.size, 0 );
     }
 
     private double[] _value64f( cl_tsr clt , int size, int offset )
     {
-        if (clt.fp == 1) return DataConverter.Utility.floatToDouble(_value32f(clt, size, offset));
+        if ( clt.fp == 1 ) return DataConverter.Utility.floatToDouble( _value32f( clt, size, offset ) );
         else {
             double[] data = new double[ size ];
             clEnqueueReadBuffer(
@@ -587,7 +604,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     CL_TRUE,
                     offset * 8, // one double == eight byte
                     Sizeof.cl_double * data.length,
-                    Pointer.to(data),
+                    Pointer.to( data ),
                     0,
                     null,
                     null
@@ -598,50 +615,49 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     public float[] value32f( Tsr<Number> tensor ) {
-        cl_tsr clt = tensor.find(cl_tsr.class);
-        return _value32f(clt, clt.value.size, 0);
+        cl_tsr clt = tensor.find( cl_tsr.class );
+        return _value32f( clt, clt.value.size, 0 );
     }
 
     private float[] _value32f( cl_tsr clt, int size, int offset ) {
-        if (clt.fp == 1) {
-            float[] data = new float[size];
+        if ( clt.fp == 1 ) {
+            float[] data = new float[ size ];
             clEnqueueReadBuffer(
                     _queue,
                     clt.value.data,
                     CL_TRUE,
                     offset * 4, // one float == four bytes !
-                    (long)Sizeof.cl_float * data.length,
-                    Pointer.to(data),
+                    (long) Sizeof.cl_float * data.length,
+                    Pointer.to( data ),
                     0,
                     null,
                     null
             );
             return data;
-        } else {
-            return DataConverter.Utility.doubleToFloat(_value64f(clt, size, offset));
         }
+        else return DataConverter.Utility.doubleToFloat( _value64f( clt, size, offset ) );
     }
 
     @Override
     public double value64f( Tsr<Number> tensor, int index ) {
-        cl_tsr clt = tensor.find(cl_tsr.class);
-        return _value64f(clt, 1, index)[ 0 ];
+        cl_tsr clt = tensor.find( cl_tsr.class );
+        return _value64f( clt, 1, index )[ 0 ];
     }
 
     @Override
     public float value32f( Tsr<Number> tensor, int index ) {
-        cl_tsr clt = tensor.find(cl_tsr.class);
-        return _value32f(clt, 1, index)[ 0 ];
+        cl_tsr clt = tensor.find( cl_tsr.class );
+        return _value32f( clt, 1, index )[ 0 ];
     }
 
     public KernelCaller getKernel( ExecutionCall call ) {
-        String chosen = call.getImplementation().getName()+"_"+call.getType().getFunction();
-        cl_kernel kernel = _platform.getKernels().get(chosen);
-        return new KernelCaller(kernel, _queue);
+        String chosen = call.getImplementation().getName() + "_" + call.getType().getFunction();
+        cl_kernel kernel = _platform.getKernels().get( chosen );
+        return new KernelCaller( kernel, _queue );
     }
 
     @Override
-    protected void _execute(Tsr[] tensors, int d, OperationType type)
+    protected void _execute( Tsr[] tensors, int d, OperationType type )
     {
         ExecutionCall<OpenCLDevice> call =
                 new ExecutionCall<OpenCLDevice>(
@@ -651,7 +667,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                         type
                 );
         tensors[ 0 ].setIsVirtual( false );
-        call.getImplementation().getExecutor(CLExecutor.class).getExecution().run(call);
+        call.getImplementation().getExecutor( CLExecutor.class ).getExecution().run( call );
     }
 
     /*
@@ -686,26 +702,26 @@ public class OpenCLDevice extends AbstractDevice<Number>
     */
 
     public String name() {
-        return DeviceQuery.getString(_deviceId, CL_DEVICE_NAME);
+        return DeviceQuery.getString( _deviceId, CL_DEVICE_NAME );
     }
 
     public String vendor() {
-        return DeviceQuery.getString(_deviceId, CL_DEVICE_VENDOR);
+        return DeviceQuery.getString( _deviceId, CL_DEVICE_VENDOR );
     }
 
     public String version() {
-        return DeviceQuery.getString(_deviceId, CL_DRIVER_VERSION);
+        return DeviceQuery.getString( _deviceId, CL_DRIVER_VERSION );
     }
 
     public String type() {
-        long deviceType = DeviceQuery.getLong(_deviceId, CL_DEVICE_TYPE);
-        if ((deviceType & CL_DEVICE_TYPE_CPU) != 0)
+        long deviceType = DeviceQuery.getLong( _deviceId, CL_DEVICE_TYPE );
+        if ( (deviceType & CL_DEVICE_TYPE_CPU) != 0 )
             return "CPU";
-        if ((deviceType & CL_DEVICE_TYPE_GPU) != 0)
+        if ( (deviceType & CL_DEVICE_TYPE_GPU) != 0 )
             return "GPU";
-        if ((deviceType & CL_DEVICE_TYPE_ACCELERATOR) != 0)
+        if ( (deviceType & CL_DEVICE_TYPE_ACCELERATOR) != 0 )
             return "ACCELERATOR";
-        if ((deviceType & CL_DEVICE_TYPE_DEFAULT) != 0)
+        if ( (deviceType & CL_DEVICE_TYPE_DEFAULT) != 0 )
             return "DEFAULT";
         return "UNKNOWN";
     }
