@@ -46,6 +46,7 @@ import neureka.calculus.backend.operations.OperationType;
 
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 
 /**
  * This class is a simple container holding relevant
@@ -59,18 +60,101 @@ import java.util.TreeMap;
  */
 public class ExecutionCall< DeviceType extends Device >
 {
-    public interface Mutator {
-        Tsr[] mutate( Tsr[] tensors );
-    }
+    public interface TensorCondition { boolean check( Tsr tensor ); }
+    public interface TensorCompare { boolean check( Tsr first, Tsr second ); }
+    public interface DeviceCondition { boolean check( Device device ); }
+    public interface OperationTypeCondition { boolean check( OperationType type ); }
+    public interface Mutator { Tsr[] mutate( Tsr[] tensors ); }
 
     private final DeviceType _device;
-    private Tsr[] _tensors;
     private final int _d;
-    private int _j = -1;
     private final OperationType _type;
+
+    private Tsr[] _tensors;
+    private int _j = -1;
     private OperationTypeImplementation<OperationTypeImplementation> _implementation;
 
     private Map<String, Object> _context;
+
+    public class Validator
+    {
+        private boolean _isValid = true;
+
+        public boolean isValid()
+        {
+            return _isValid;
+        }
+
+        public float estimation() {
+            return ( _isValid ) ? 1.0f : 0.0f;
+        }
+
+        public Validator first( TensorCondition condition ) {
+            if ( !condition.check( _tensors[0] ) ) _isValid = false;
+            return this;
+        }
+
+        public Validator any( TensorCondition condition )
+        {
+            boolean any = false;
+            for ( Tsr t : _tensors ) any = ( condition.check( t ) ) ? true : any;
+            if ( !any ) _isValid = false;
+            return this;
+        }
+
+        public Validator anyNotNull( TensorCondition condition )
+        {
+            boolean any = false;
+            for ( Tsr t : _tensors )
+                if ( t != null ) any = ( condition.check( t ) ) ? true : any;
+            if ( !any ) _isValid = false;
+            return this;
+        }
+
+        public Validator all( TensorCondition condition )
+        {
+            boolean all = true;
+            for ( Tsr t : _tensors ) all = ( !condition.check( t ) ) ? false : all;
+            if ( !all ) _isValid = false;
+            return this;
+        }
+
+        public Validator allNotNull( TensorCondition condition )
+        {
+            boolean all = true;
+            for ( Tsr t : _tensors )
+                if( t != null ) all = ( !condition.check( t ) ) ? false : all;
+            if ( !all ) _isValid = false;
+            return this;
+        }
+
+
+        public Validator all( TensorCompare compare )
+        {
+            boolean all = true;
+            Tsr<?> last = null;
+            for ( Tsr<?> current : _tensors ) {
+                if ( last != null && !compare.check( last, current ) ) all = false;
+                last = current; // Note: shapes are cached!
+            }
+            if ( !all ) _isValid = false;
+            return this;
+        }
+
+        public Validator forDevice( DeviceCondition condition )
+        {
+            if ( !condition.check( _device ) ) _isValid = false;
+            return this;
+        }
+
+        public Validator forOperation( OperationTypeCondition condition ) {
+            if ( !condition.check( _type ) ) _isValid = false;
+            return this;
+        }
+
+    }
+
+    public Validator validate() { return new Validator(); }
 
     public ExecutionCall(
             DeviceType device,
@@ -141,7 +225,8 @@ public class ExecutionCall< DeviceType extends Device >
         return getImplementation().canImplementationPerformBackwardADFor(this);
     }
 
-    public ADAgent getADAgentFrom(Function function, ExecutionCall<Device> call, boolean forward ) {
+    public ADAgent getADAgentFrom(Function function, ExecutionCall<Device> call, boolean forward )
+    {
         if ( this._context != null ) {
             if ( call._context ==null ) call._context = new TreeMap<>();
             call._context.putAll(this._context);
@@ -187,6 +272,10 @@ public class ExecutionCall< DeviceType extends Device >
         if(_context==null && context!=null )_context = new TreeMap<>();
         if(context!=null) _context.putAll(_context);
     }
+
+    // CONDITIONS:
+
+
 
 
 }

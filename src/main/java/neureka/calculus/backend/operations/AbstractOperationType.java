@@ -1,6 +1,8 @@
 
 package neureka.calculus.backend.operations;
 
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.devices.Device;
@@ -13,6 +15,7 @@ import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeI
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
 import neureka.calculus.frontend.AbstractFunction;
 import neureka.calculus.frontend.assembly.FunctionBuilder;
+import neureka.dtype.NumericType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,7 +158,8 @@ public abstract class AbstractOperationType implements OperationType
             }
 
             @Override
-            public ExecutionCall instantiateNewTensorsForExecutionIn(ExecutionCall call) {
+            public ExecutionCall instantiateNewTensorsForExecutionIn(ExecutionCall call)
+            {
                 Tsr[] tensors = call.getTensors();
                 Device device = call.getDevice();
                 if ( tensors[ 0 ] == null ) // Creating a new tensor:
@@ -172,26 +176,55 @@ public abstract class AbstractOperationType implements OperationType
                 }
                 return call;
             }
-        }.setExecutor(
+        }
+        .setExecutor(
                 HostExecutor.class,
                 new HostExecutor(
                         call -> {
                             Function f = FunctionBuilder.build(this, call.getTensors().length-1, false);
-                            double[] inputs = new double[call.getTensors().length-1];
-                            call
-                                .getDevice()
-                                .getExecutor()
-                                .threaded (
-                                        call.getTensor( 0 ).size(),
-                                        ( start, end ) -> {
-                                            for ( int i = start; i < end; i++ ) {
-                                                for ( int ii = 0; ii < inputs.length; ii++ ) {
-                                                    inputs[ii] = call.getTensor(1+ii).value64( i );
+                            boolean allNumeric = call.validate()
+                                    .all( t -> t.getDataType().typeClassImplements(NumericType.class) )
+                                    .isValid();
+
+                            if ( allNumeric )
+                            {
+                                double[] inputs = new double[call.getTensors().length-1];
+                                call
+                                        .getDevice()
+                                        .getExecutor()
+                                        .threaded (
+                                                call.getTensor( 0 ).size(),
+                                                ( start, end ) -> {
+                                                    for ( int i = start; i < end; i++ ) {
+                                                        for ( int ii = 0; ii < inputs.length; ii++ ) {
+                                                            inputs[ii] = call.getTensor(1+ii).value64( i );
+                                                        }
+                                                        call.getTensor( 0 ).value64()[ i ] = f.call( inputs );
+                                                    }
                                                 }
-                                                call.getTensor( 0 ).value64()[ i ] = f.call( inputs );
-                                            }
-                                        }
-                                );
+                                        );
+                            } else {
+                                Object[] inputs = new Object[ call.getTensors().length-1 ];
+                                String expression = f.toString();
+                                Binding binding = new Binding();
+                                binding.setVariable("I", inputs);
+                                GroovyShell shell = new GroovyShell(binding);
+                                call
+                                        .getDevice()
+                                        .getExecutor()
+                                        .threaded (
+                                                call.getTensor( 0 ).size(),
+                                                ( start, end ) -> {
+                                                    for ( int i = start; i < end; i++ ) {
+                                                        for ( int ii = 0; ii < inputs.length; ii++ ) {
+                                                            inputs[ii] = call.getTensor(1+ii).getAt(i);
+                                                        }
+                                                        call.getTensor( 0 ).setAt(i, shell.evaluate( expression ) );
+                                                    }
+                                                }
+                                        );
+
+                            }
                         },
                         _arity
                 )
@@ -222,7 +255,7 @@ public abstract class AbstractOperationType implements OperationType
     }
 
     @Override
-    public OperationType forEachImplementation(Consumer<OperationTypeImplementation> action ) {
+    public OperationType forEachImplementation( Consumer<OperationTypeImplementation> action ) {
         _implementations.values().forEach(action);
         return this;
     }

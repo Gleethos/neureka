@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.devices.Device;
+import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
@@ -17,7 +18,13 @@ public class Scalarization extends AbstractFunctionalOperationTypeImplementation
 
     public Scalarization() {
         super("scalarization");
-        setSuitabilityChecker(call->{
+        setSuitabilityChecker( call -> {
+            if (
+                    !call.validate()
+                            .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
+                            .first( t -> t == null )
+                            .isValid()
+            ) return 0.0f;
             Tsr[] tsrs = call.getTensors();
             int size = tsrs[tsrs.length-1].size();
             if( size != 1 || tsrs.length!=2 ) return 0f;

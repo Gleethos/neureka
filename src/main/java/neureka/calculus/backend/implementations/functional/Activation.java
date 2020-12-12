@@ -7,6 +7,7 @@ import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.devices.Device;
+import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
@@ -16,17 +17,17 @@ public class Activation extends AbstractFunctionalOperationTypeImplementation< A
 
     public Activation() {
         super("activation");
-        setSuitabilityChecker( call -> 1.0f );
+        setSuitabilityChecker(
+                call -> call.validate()
+                        .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
+                        .estimation()
+        );
         setBackwardADAnalyzer( call -> true );
         setForwardADAnalyzer(
-                        call -> {
-                            Tsr<?> last = null;
-                            for ( Tsr<?> t : call.getTensors() ) {
-                                if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                                last = t; // Note: shapes are cached!
-                            }
-                            return true;
-                        }
+                        call -> call
+                                .validate()
+                                .all( ( first, second ) -> first.shape().equals(second.shape()) )
+                                .isValid()
                 );
         setCallHock( ( caller, call ) -> null );
         setRJAgent( ( call, goDeeperWith ) -> null );

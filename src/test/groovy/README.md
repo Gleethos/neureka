@@ -15,7 +15,7 @@ Neureka's testsuite is divided into the following 3 packages : <br>
 
 Package divisions within those test packages mirror those found in the <br>
 main code base, namely : <br>
- ``acceleration``, ``autograd``, ``calculus``, ``framing``, ``ndim``, ``optimization``, ...<br>
+ ``devices``, ``autograd``, ``calculus``, ``framing``, ``ndim``, ``optimization``, ...<br>
 Any of these package names might be present in the three test packages, <br>
 however they don't have to be either if a related specification has not yet been implemented <br>
 or simply does not make sense for a given reason. <br>

@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.operations.OperationType;
+import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
@@ -13,7 +14,11 @@ public class Convolution extends AbstractFunctionalOperationTypeImplementation< 
 
     public Convolution() {
         super("convolution");
-        setSuitabilityChecker( call->1.0f );
+        setSuitabilityChecker( call ->
+                call.validate()
+                .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
+                .estimation()
+        );
     }
 
 

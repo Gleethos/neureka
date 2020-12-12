@@ -7,6 +7,7 @@ import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.devices.Device;
+import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
@@ -21,10 +22,10 @@ public class Operator extends AbstractFunctionalOperationTypeImplementation<Oper
                 call -> {
                     List<Integer> shape = ( call.getTensors()[ 0 ] == null ) ? call.getTensors()[ 1 ].shape() : call.getTensors()[ 0 ].shape();
                     int size = shape.stream().reduce(1,( x, y )-> x * y );
-                    for ( Tsr t : call.getTensors() )
-                        if ( t != null && ( t.size() != size || !shape.equals( t.shape() ) ) )
-                            return 0.0f;
-                    return 1.0f;
+                    return call.validate()
+                            .allNotNull( t -> t.size() == size && shape.equals( t.shape() ) )
+                            .allNotNull( t -> t.getDataType().typeClassImplements( NumericType.class ) )
+                            .estimation();
                 }
         );
         setBackwardADAnalyzer( call -> true );

@@ -1455,6 +1455,17 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return getAt( Arrays.asList(_conf.idx_of_i( i )).toArray() );
     }
 
+    public Tsr<ValueType> setAt( int i, ValueType o ) {
+        if ( getData() instanceof Object[] ) ( (Object[]) getData() )[ _conf.i_of_i( i ) ] = o;
+        else if ( getData() instanceof float[]  ) ( (float[])  getData() )[ _conf.i_of_i( i ) ] = (float)  o;
+        else if ( getData() instanceof double[] ) ( (double[]) getData() )[ _conf.i_of_i( i ) ] = (double) o;
+        else if ( getData() instanceof int[]    ) ( (int[])    getData() )[ _conf.i_of_i( i ) ] = (int)    o;
+        else if ( getData() instanceof long[]   ) ( (long[])   getData() )[ _conf.i_of_i( i ) ] = (long)   o;
+        else if ( getData() instanceof short[]  ) ( (short[])  getData() )[ _conf.i_of_i( i ) ] = (short)  o;
+        else if ( getData() instanceof byte[]   ) ( (byte[])   getData() )[ _conf.i_of_i( i ) ] = (byte)   o;
+        return this;
+    }
+
     public Object getAt( double i ) {
         return getAt( Arrays.asList( _conf.idx_of_i( (int) Math.floor( i ) ) ).toArray() );
     }
