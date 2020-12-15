@@ -106,6 +106,13 @@ public abstract class AbstractNDC implements NDConfiguration
             int[] spread,
             int[] offset
     ) {
+        for ( int dim : shape ) {
+            if ( dim == 0 ) {
+                String message = "Trying to create tensor configuration containing shape with dimension 0.\n" +
+                        "Shape dimensions must be greater than 0!\n";
+                throw new IllegalStateException( message );
+            }
+        }
         if( Neureka.instance().settings().ndim().isOnlyUsingDefaultNDConfiguration() ) {
             return ComplexDefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);
         }

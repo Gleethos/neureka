@@ -444,14 +444,22 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             else if ( ( ( Object[] ) args[ 1 ] )[ 0 ] instanceof BigDecimal ) args[ 1 ] = _doubleArray( (Object[]) args[ 1 ] );
         }
         //CASES:
-        if ( args[ 0 ] instanceof int[] && ( args[ 1 ] instanceof Double || args[ 1 ] instanceof Integer ) ) {
-            args[ 1 ] = ( args[ 1 ] instanceof Integer ) ? ( (Integer) args[ 1 ] ).doubleValue() : args[ 1 ];
-            _construct( (int[]) args[ 0 ], (Double) args[ 1 ] );
-            return;
-        } else if ( args[ 0 ] instanceof int[] && args[ 1 ] instanceof double[] ) {
-            _construct( (int[]) args[ 0 ], (double[]) args[ 1 ] );
-            return;
+        if ( args[ 0 ] instanceof int[] ) {
+            if ( args[ 1 ] instanceof Double || args[ 1 ] instanceof Integer ) {
+                args[ 1 ] = ( args[ 1 ] instanceof Integer ) ? ( (Integer) args[ 1 ] ).doubleValue() : args[ 1 ];
+                _construct( (int[]) args[ 0 ], (Double) args[ 1 ] );
+                return;
+            } else if ( args[ 1 ] instanceof double[] ) {
+                _construct( (int[]) args[ 0 ], (double[]) args[ 1 ] );
+                return;
+            } else {
+                this.setDataType( DataType.instance( args[1].getClass() ) );
+                _construct( (int[]) args[0], true, true );
+                ((Object[])getData())[0] = args[1];
+                return;
+            }
         }
+
         // EXPRESSION:
         boolean containsString = false;
         int numberOfTensors = 0;
@@ -1453,6 +1461,17 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public Object getAt( int i ) {
         return getAt( Arrays.asList(_conf.idx_of_i( i )).toArray() );
+    }
+
+    public Object getElement( int i ) {
+        if ( getData() instanceof Object[] ) return ( (Object[]) getData() )[ _conf.i_of_i( i ) ];
+        else if ( getData() instanceof float[]  ) return ( (float[])  getData() )[ _conf.i_of_i( i ) ];
+        else if ( getData() instanceof double[] ) return ( (double[]) getData() )[ _conf.i_of_i( i ) ];
+        else if ( getData() instanceof int[]    ) return ( (int[])    getData() )[ _conf.i_of_i( i ) ];
+        else if ( getData() instanceof long[]   ) return ( (long[])   getData() )[ _conf.i_of_i( i ) ];
+        else if ( getData() instanceof short[]  ) return ( (short[])  getData() )[ _conf.i_of_i( i ) ];
+        else if ( getData() instanceof byte[]   ) return ( (byte[])   getData() )[ _conf.i_of_i( i ) ];
+        return null;
     }
 
     public Tsr<ValueType> setAt( int i, ValueType o ) {

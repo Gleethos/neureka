@@ -15,6 +15,7 @@ import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeI
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
 import neureka.calculus.frontend.AbstractFunction;
 import neureka.calculus.frontend.assembly.FunctionBuilder;
+import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,7 +166,7 @@ public abstract class AbstractOperationType implements OperationType
                 if ( tensors[ 0 ] == null ) // Creating a new tensor:
                 {
                     int[] shp = tensors[ 1 ].getNDConf().shape();
-                    Tsr output = new Tsr( shp, 0.0 );
+                    Tsr output = new Tsr( shp, tensors[ 1 ].getDataType() );
                     output.setIsVirtual( false );
                     try {
                         device.store(output);
@@ -217,7 +218,7 @@ public abstract class AbstractOperationType implements OperationType
                                                 ( start, end ) -> {
                                                     for ( int i = start; i < end; i++ ) {
                                                         for ( int ii = 0; ii < inputs.length; ii++ ) {
-                                                            inputs[ii] = call.getTensor(1+ii).getAt(i);
+                                                            inputs[ii] = call.getTensor(1+ii).getElement(i);
                                                         }
                                                         call.getTensor( 0 ).setAt(i, shell.evaluate( expression ) );
                                                     }
@@ -289,6 +290,11 @@ public abstract class AbstractOperationType implements OperationType
                 }
             }
         }
+
+        if ( _defaultImplementation.isImplementationSuitableFor( call ) > 0.0f) {
+            return _defaultImplementation;
+        }
+
         if ( bestImpl == null ) {
             String message = "No suitable implementation for execution call '"+call+"' could be found.\n" +
                     "Execution process aborted.";

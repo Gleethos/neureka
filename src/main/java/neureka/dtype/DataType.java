@@ -132,7 +132,9 @@ public final class DataType<Type>
         else if ( getTypeClass() == I8.class )
             newValue = ( ( (byte[]) value ).length <= 1 ) ? value : new byte[]{ ( (byte[]) value )[ 0 ] };
         else
-            throw new IllegalStateException("Primitive array of type '"+getTypeClass().getSimpleName()+"' not supported.");
+            newValue = ( ( (Object[]) value ).length <= 1 ) ? value : new Object[]{ ( (Object[]) value )[ 0 ] };
+
+            //throw new IllegalStateException("Primitive array of type '"+getTypeClass().getSimpleName()+"' not supported.");
         return (TA) newValue;
     }
 
@@ -159,8 +161,12 @@ public final class DataType<Type>
             if ( ( (byte[]) value ).length == size ) return value;
             newValue = new byte[ size ];
             Arrays.fill( (byte[]) newValue, ( (byte[]) value )[ 0 ] );
-        } else
-            throw new IllegalStateException("Primitive array for type '"+getTypeClass().getSimpleName()+"' not supported.");
+        } else {
+            if ( ( (Object[]) value ).length == size ) return value;
+            newValue = new Object[ size ];
+            Arrays.fill( (Object[]) newValue, ( (Object[]) value )[ 0 ] );
+        }
+          //  throw new IllegalStateException("Primitive array for type '"+getTypeClass().getSimpleName()+"' not supported.");
         return (TA) newValue;
     }
 
@@ -176,8 +182,9 @@ public final class DataType<Type>
             return new short[ size ];
         else if ( getTypeClass() == I8.class || getTypeClass() == UI8.class )
             return new byte[ size ];
-        else
-            throw new IllegalStateException("Primitive array of type '"+getTypeClass().getSimpleName()+"' not supported.");
+        else return new Object[ size ];
+        //else
+        //    throw new IllegalStateException("Primitive array of type '"+getTypeClass().getSimpleName()+"' not supported.");
     }
 
 
