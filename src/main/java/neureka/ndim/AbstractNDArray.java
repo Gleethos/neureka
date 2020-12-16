@@ -70,7 +70,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
 
     protected NDConfiguration _conf;
 
-    private DataType<?> _dataType = DataType.instance( Neureka.instance().settings().dtype().getDefaultDataTypeClass() );
+    private DataType<?> _dataType = DataType.of( Neureka.instance().settings().dtype().getDefaultDataTypeClass() );
     
     private Object _data;
 
@@ -137,7 +137,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
 
     protected Object _convertedDataOfType( Class<?> typeClass )
     {
-        DataType newDT = DataType.instance( typeClass );
+        DataType newDT = DataType.of( typeClass );
         if (
                 newDT.typeClassImplements( NumericType.class ) &&
                         getDataType().typeClassImplements( NumericType.class )
@@ -188,7 +188,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public boolean is( Class<?> typeClass ) {
-        DataType<?> type = DataType.instance( typeClass );
+        DataType<?> type = DataType.of( typeClass );
         return type == _dataType;
     }
 

@@ -63,14 +63,14 @@ public final class DataType<Type>
         return realTypeClass;
     }
 
-    public static DataType<?> instance( Class<?> typeClass )
+    public static <T> DataType<T> of(Class<T> typeClass )
     {
         Class<?> realTypeClass = _trueType( typeClass );
 
         if ( _instances.containsKey( realTypeClass ) ) {
             return _instances.get( realTypeClass );
         }
-        DataType<?> dt = new DataType( realTypeClass );
+        DataType<T> dt = new DataType( realTypeClass );
         _instances.put( realTypeClass, dt );
         return dt;
     }
@@ -182,9 +182,8 @@ public final class DataType<Type>
             return new short[ size ];
         else if ( getTypeClass() == I8.class || getTypeClass() == UI8.class )
             return new byte[ size ];
-        else return new Object[ size ];
-        //else
-        //    throw new IllegalStateException("Primitive array of type '"+getTypeClass().getSimpleName()+"' not supported.");
+        else
+            return new Object[ size ];
     }
 
 

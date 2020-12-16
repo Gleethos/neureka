@@ -18,29 +18,31 @@ class Tensor_As_Container_Integration_Tests extends Specification
     }
 
 
-    def 'Operations on tensors of String objects work elementwise.'()
+    def 'Plus operator on String tensors works element-wise.'()
     {
-        given : ''
+        given : 'Two tensors filled with String objects containing various letters.'
             Tsr a = new Tsr([2, 3], 'a'..'e')
             Tsr b = new Tsr([2, 3], 'f'..'k')
 
-        expect :
+        expect : 'These two tensors then look as expected.'
             a.toString() == '(2x3):[a, b, c, d, e, a]'
             b.toString() == '(2x3):[f, g, h, i, j, k]'
-            a.dataType == DataType.instance( String.class )
-            b.dataType == DataType.instance( String.class )
 
-        when :
+        and : 'They have a data type wrapping the String class.'
+            a.dataType == DataType.of( String.class )
+            b.dataType == DataType.of( String.class )
+
+        when : 'We now apply the "+" operator to the tensors...'
             Tsr c = a + b
 
-        then:
+        then: 'This translates to the individual elements :'
             c.toString() == '(2x3):[af, bg, ch, di, ej, ak]'
 
     }
 
-    def 'Basic operations work with custom data types.'()
+    def 'Tensor operations translate to custom data type "ComplexNumber".'()
     {
-        given :
+        given : ''
             def c1 = new ComplexNumber(2.3, -1.54)
             def c2 = new ComplexNumber(1.0, 0.5)
         and :

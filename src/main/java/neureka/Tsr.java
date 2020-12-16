@@ -41,7 +41,11 @@ SOFTWARE.
     Use the following as search keys :)
 
     $(1) : CONSTRUCTION
-        §(1.1) : FUNCTION BASED CONSTRUCTION
+        $(1.0) : GENERIC CONSTRUCTION
+        $(1.1) : SHAPE LIST BASED CONSTRUCTION
+        $(1.2) : SHAPE ARRAY BASED CONSTRUCTION
+        §(1.3) : LAMBDA BASED CONSTRUCTION
+        §(1.4) : FUNCTION BASED CONSTRUCTION
 
     §(2) : FLAGS
         §(2.0) : GRADIENT REQUIREMENT
@@ -121,7 +125,6 @@ import java.util.stream.Collectors;
  *  Such operations might be simple elementwise operations or more complex linear operations like
  *  matrix- or even tensor multiplications.
  *
- *
  * @param <ValueType>
  */
 public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> implements Component<Tsr<ValueType>>
@@ -162,186 +165,22 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      */
     private int _version = 0;
 
-    /**
-     *  This method returns the version of the data (_data) stored within this tensor.
-     *
-     * @return The version of the underlying data of this tensor.
-     */
-    public int version() {
-        return _version;
-    }
 
     /*==================================================================================================================
     |
     |       §(1) : CONSTRUCTION
     |   ---------------------------
     */
+    /*
+        -------------------------------------------
+            §(1.0) : GENERIC CONSTRUCTION
+        --------------------------------------------
+    */
 
     public Tsr() {}
 
-    public Tsr( DataType<?> dtype ) {
-        setDataType( dtype );
-    }
-
     public Tsr( Object arg ) {
         _construct( new Object[]{ arg } );
-    }
-
-    public Tsr( String equation, List<Object> inputs ) {
-        if ( inputs.stream().allMatch( e -> e instanceof Tsr ) )
-            _construct(
-                    inputs.stream().toArray( Tsr[]::new ),
-                    equation,
-                    true
-            );
-        else
-            _construct(
-                    inputs.stream().map( Tsr::new ).toArray( Tsr[]::new ),
-                    equation,
-                    true
-            );
-    }
-
-    public Tsr( List<?> arg1, String arg2 )
-    {
-        java.util.function.Function<Class<?>, Boolean> isType = c -> arg1.stream().allMatch( e -> e.getClass() == c );
-
-        if ( isType.apply( Integer.class ) ) {
-            List<Integer> shape = (List<Integer>) arg1;
-            int[] shp = new int[ shape.size() ];
-            for ( int i=0; i < shp.length; i++ ) shp[ i ] = shape.get( i );
-            _construct( shp, arg2 );
-        } else if ( isType.apply( Tsr.class ) ) {
-            _construct( arg1.toArray( new Tsr[ 0 ] ), arg2, true );
-        } else {
-            _construct(
-                    ( (List<Object>) arg1 ).stream().map( Tsr::new ).toArray( Tsr[]::new ),
-                    arg2,
-                    true
-            );
-        }
-    }
-
-    public Tsr( List<Integer> shape, List<ValueType> range )
-    {
-        int[] shp = new int[ shape.size() ];
-        for( int i=0; i<shp.length; i++ ) shp[ i ] = shape.get( i );
-        if ( range.size() == 1 && range.get( 0 ) instanceof IntRange ) range = (List<ValueType>) range.get( 0 );
-
-        if ( !range.isEmpty() && !( range.get( 0 ) instanceof Number ) ) {
-            Class<?> givenClass = range.get( 0 ).getClass();
-            @SuppressWarnings("unchecked")
-            final ValueType[] value = (ValueType[]) Array.newInstance(
-                    givenClass,
-                    NDConfiguration.Utility.szeOfShp( shp )
-            );
-            for ( int i = 0; i < value.length; i++ ) value[ i ] = range.get( i % range.size() );
-            setDataType( DataType.instance( givenClass ) );
-            _setData( value );
-            _construct( shp, value );
-        } else {
-            double[] value = new double[ NDConfiguration.Utility.szeOfShp( shp ) ];
-            //setDataType( DataType.instance( F64.class ) ); //!!
-            for ( int i = 0; i < value.length; i++ ) {
-                if ( range.get( i % range.size() ) instanceof BigDecimal ) {
-                    value[ i ] = ( (BigDecimal) range.get( i % range.size() ) ).doubleValue();
-                } else if ( range.get( i % range.size() ) instanceof Integer ) {
-                    value[ i ] = (Integer) range.get( i % range.size() );
-                }
-            }
-            _construct( shp, value );
-        }
-    }
-
-
-
-    private void _construct( int[] shape, ValueType[] value ) {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
-        if ( size != value.length ) {
-            Class<?> givenClass = value[ 0 ].getClass();
-            @SuppressWarnings("unchecked")
-            final ValueType[] newValue = (ValueType[]) Array.newInstance(
-                    givenClass,
-                    NDConfiguration.Utility.szeOfShp( shape )
-            );
-            for ( int i = 0; i < newValue.length; i++ ) newValue[ i ] = value[ i % value.length ];
-            setDataType( DataType.instance( givenClass ) );
-            _setData( newValue );
-        }
-        else _setData( value );
-        _configureFromNewShape( shape, false, true );
-    }
-
-    private void _construct( List<List<Object>> matrix ) {
-        boolean isNumeric = matrix.stream().allMatch( e -> e.stream().allMatch( ie -> ie instanceof Number ) );
-        if ( isNumeric ) {
-            int n = matrix.get( 0 ).size();
-            boolean isHomogenius = matrix.stream().allMatch( e -> e.size() == n );
-            if ( isHomogenius ) {
-                int m = matrix.size();
-                double[] value = new double[ m * n ];
-                boolean isLegacy = Neureka.instance().settings().indexing().isUsingLegacyIndexing();
-                int[] shape = ( isLegacy )
-                        ? new int[]{ n, m }
-                        : new int[]{ m, n };
-
-                for ( int mi = 0; mi < m; mi++ ) {
-                    for ( int ni = 0; ni < n; ni++ ) {
-                        int i = ( isLegacy ) ? m * ni + mi : n * mi + ni;
-                        value[ i ] = DataConverter.instance().convert( matrix.get( mi ).get( ni ), Double.class );
-                    }
-                }
-                _construct( shape, value );
-            } else {
-                String message = "Provided nested list(s) do not form a regular matrix.";
-                _LOGGER.error( message );
-                throw new IllegalArgumentException( message );
-            }
-        }
-    }
-
-    public Tsr( List<Object> conf ) {
-        boolean isMatric = conf.stream().allMatch( e -> e instanceof List );
-        if ( isMatric ) {
-            _construct( conf.stream().map( e -> (List<Object>) e ).collect( Collectors.toList() ) );
-            return;
-        }
-        boolean isNatural = ( conf.size() <= 64 );
-        for( Object e : conf ) {
-            if( !isNatural ) break;
-            double asNum = ( e instanceof BigDecimal ) ?
-                    ( (BigDecimal) e ).doubleValue()
-                    : ( e instanceof Double )
-                        ? (Double) e
-                        : (Integer) e;
-            isNatural = asNum % 1 == 0;
-        }
-        if ( isNatural ) {
-            int[] shape = new int[ conf.size() ];
-            for ( int i = 0; i < shape.length; i++ ) {
-                shape[ i ] = ( conf.get( i ) instanceof BigDecimal )
-                        ? ( (BigDecimal) conf.get( i ) ).intValue() :
-                            ( conf.get( i ) instanceof Double )
-                                    ? ( (Double) conf.get( i ) ).intValue()
-                                    :( (Integer) conf.get( i ) );
-            }
-            _construct( shape, false, false );
-        } else {
-            double[] value = new double[ conf.size() ];
-            for (int i = 0; i < value.length; i++ ) {
-                value[ i ] = ( conf.get( i ) instanceof BigDecimal )
-                        ? ( (BigDecimal) conf.get( i ) ).doubleValue() :
-                            ( conf.get( i ) instanceof Double )
-                                ? ( (Double) conf.get( i ) ).doubleValue()
-                                : ( (Integer) conf.get( i ) );
-            }
-            _construct( new int[]{ conf.size() }, value );
-        }
-
-    }
-
-    public Tsr( List<Integer> arg1, Object arg2 ) {
-        _construct( new Object[]{ arg1, arg2 } );
     }
 
     public Tsr( Object arg1, Object arg2, Object arg3 ) {
@@ -374,38 +213,6 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public Tsr( Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8, Object arg9, Object arg10 ) {
         _construct( new Object[]{ arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10 } );
-    }
-
-    public Tsr( int[] shape, String seed ) {
-        _construct( shape, seed );
-    }
-
-    private void _construct( int[] shape, String seed ) 
-    {
-        _construct( shape, false, false );
-        _setData( DataConverter.Utility.seededDoubleArray( (double[]) getData(), seed ) );
-    }
-
-    private int[] _intArray( Object[] arg ) {
-        int length = arg.length;
-        int[] array = new int[ length ];
-        for ( int i = 0; i < length; i++ ) {
-            if ( arg[ i ] instanceof Double ) array[ i ] = ( (Double) arg[ i ] ).intValue();
-            else array[ i ] = (Integer) arg[ i ];
-        }
-        return array;
-    }
-
-    private double[] _doubleArray( Object[] arg ) 
-    {
-        int length = arg.length;
-        double[] array = new double[ length ];
-        for ( int i = 0; i < length; i++ ) {
-            if ( arg[ i ] instanceof Integer ) array[ i ] = (Integer) arg[ i ];
-            else if ( arg[ i ] instanceof Double ) array[ i ] = (Double) arg[ i ];
-            else if ( arg[ i ] instanceof BigDecimal ) array[ i ] = ( (BigDecimal) arg[ i ] ).doubleValue();
-        }
-        return array;
     }
 
     public Tsr( Object[] args )
@@ -453,7 +260,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 _construct( (int[]) args[ 0 ], (double[]) args[ 1 ] );
                 return;
             } else {
-                this.setDataType( DataType.instance( args[1].getClass() ) );
+                this.setDataType( DataType.of( args[1].getClass() ) );
                 _construct( (int[]) args[0], true, true );
                 ((Object[])getData())[0] = args[1];
                 return;
@@ -486,64 +293,230 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _construct( tsrs, f.toString(), doAD );
     }
 
+
+    /*
+        -------------------------------------------
+            §(1.1) : SHAPE LIST BASED CONSTRUCTION
+        --------------------------------------------
+    */
+
+    public Tsr( List<Integer> arg1, Object arg2 ) {
+        _construct( new Object[]{ arg1, arg2 } );
+    }
+
+    public Tsr( List<?> arg1, String arg2 )
+    {
+        java.util.function.Function<Class<?>, Boolean> isType = c -> arg1.stream().allMatch( e -> e.getClass() == c );
+
+        if ( isType.apply( Integer.class ) ) {
+            List<Integer> shape = (List<Integer>) arg1;
+            int[] shp = new int[ shape.size() ];
+            for ( int i=0; i < shp.length; i++ ) shp[ i ] = shape.get( i );
+            _construct( shp, arg2 );
+        } else if ( isType.apply( Tsr.class ) ) {
+            _construct( arg1.toArray( new Tsr[ 0 ] ), arg2, true );
+        } else {
+            _construct(
+                    ( (List<Object>) arg1 ).stream().map( Tsr::new ).toArray( Tsr[]::new ),
+                    arg2,
+                    true
+            );
+        }
+    }
+
+    public Tsr( List<Integer> shape, List<ValueType> range )
+    {
+        int[] shp = new int[ shape.size() ];
+        for( int i=0; i<shp.length; i++ ) shp[ i ] = shape.get( i );
+        if ( range.size() == 1 && range.get( 0 ) instanceof IntRange ) range = (List<ValueType>) range.get( 0 );
+
+        if ( !range.isEmpty() && !( range.get( 0 ) instanceof Number ) ) {
+            Class<?> givenClass = range.get( 0 ).getClass();
+            @SuppressWarnings("unchecked")
+            final ValueType[] value = (ValueType[]) Array.newInstance(
+                    givenClass,
+                    NDConfiguration.Utility.szeOfShp( shp )
+            );
+            for ( int i = 0; i < value.length; i++ ) value[ i ] = range.get( i % range.size() );
+            setDataType( DataType.of( givenClass ) );
+            _setData( value );
+            _construct( shp, value );
+        } else {
+            double[] value = new double[ NDConfiguration.Utility.szeOfShp( shp ) ];
+            for ( int i = 0; i < value.length; i++ ) {
+                if ( range.get( i % range.size() ) instanceof BigDecimal ) {
+                    value[ i ] = ( (BigDecimal) range.get( i % range.size() ) ).doubleValue();
+                } else if ( range.get( i % range.size() ) instanceof Integer ) {
+                    value[ i ] = (Integer) range.get( i % range.size() );
+                }
+            }
+            _construct( shp, value );
+        }
+    }
+
+
+    public Tsr( List<Object> conf ) {
+        boolean isMatrix = conf.stream().allMatch( e -> e instanceof List );
+        if ( isMatrix ) {
+            _construct( conf.stream().map( e -> (List<Object>) e ).collect( Collectors.toList() ) );
+            return;
+        }
+        boolean isNatural = ( conf.size() <= 64 );
+        for( Object e : conf ) {
+            if( !isNatural ) break;
+            double asNum = ( e instanceof BigDecimal ) ?
+                    ( (BigDecimal) e ).doubleValue()
+                    : ( e instanceof Double )
+                    ? (Double) e
+                    : (Integer) e;
+            isNatural = asNum % 1 == 0;
+        }
+        if ( isNatural ) {
+            int[] shape = new int[ conf.size() ];
+            for ( int i = 0; i < shape.length; i++ ) {
+                shape[ i ] = ( conf.get( i ) instanceof BigDecimal )
+                        ? ( (BigDecimal) conf.get( i ) ).intValue() :
+                        ( conf.get( i ) instanceof Double )
+                                ? ( (Double) conf.get( i ) ).intValue()
+                                :( (Integer) conf.get( i ) );
+            }
+            _construct( shape, false, false );
+        } else {
+            double[] value = new double[ conf.size() ];
+            for (int i = 0; i < value.length; i++ ) {
+                value[ i ] = ( conf.get( i ) instanceof BigDecimal )
+                        ? ( (BigDecimal) conf.get( i ) ).doubleValue() :
+                        ( conf.get( i ) instanceof Double )
+                                ? ( (Double) conf.get( i ) ).doubleValue()
+                                : ( (Integer) conf.get( i ) );
+            }
+            _construct( new int[]{ conf.size() }, value );
+        }
+
+    }
+
+
+    /**
+     *  This method receives a list of lists which represents a matrix of objects.
+     *  It parses this matrix into a 2D shape array and a double array.
+     *
+     * @param matrix A list of list which ought to resemble a matrix.
+     */
+    private void _construct( List<List<Object>> matrix ) {
+        boolean isNumeric = matrix.stream().allMatch( e -> e.stream().allMatch( ie -> ie instanceof Number ) );
+        if ( isNumeric ) {
+            int n = matrix.get( 0 ).size();
+            boolean isHomogenous = matrix.stream().allMatch( e -> e.size() == n );
+            if ( isHomogenous ) {
+                int m = matrix.size();
+                double[] value = new double[ m * n ];
+                boolean isLegacy = Neureka.instance().settings().indexing().isUsingLegacyIndexing();
+                int[] shape = ( isLegacy )
+                        ? new int[]{ n, m }
+                        : new int[]{ m, n };
+
+                for ( int mi = 0; mi < m; mi++ ) {
+                    for ( int ni = 0; ni < n; ni++ ) {
+                        int i = ( isLegacy ) ? m * ni + mi : n * mi + ni;
+                        value[ i ] = DataConverter.instance().convert( matrix.get( mi ).get( ni ), Double.class );
+                    }
+                }
+                _construct( shape, value );
+            } else {
+                String message = "Provided nested list(s) do not form a regular matrix.";
+                _LOGGER.error( message );
+                throw new IllegalArgumentException( message );
+            }
+        }
+    }
+
+    /*
+        -------------------------------------------
+            §(1.2) : SHAPE ARRAY BASED CONSTRUCTION
+        --------------------------------------------
+    */
+
     public Tsr( double value )
     {
         _construct( new int[]{ 1 }, value );
     }
 
-    public Tsr( int[] shape ) 
+    public Tsr( float[] value )
+    {
+        _construct( new int[]{ value.length }, value );
+    }
+
+    public Tsr( int[] shape, String seed )
+    {
+        _construct( shape, seed );
+    }
+
+    public Tsr( int[] shape )
     {
         _construct( shape, true, true );
     }
 
-    public Tsr( float[] value ) {
-        _construct( new int[]{ value.length }, value );
+    public Tsr( int[] shape, double value )
+    {
+        _construct( shape, value );
     }
 
-    public Tsr( int[] shape, DataType<?> type ) 
+
+    public Tsr( int[] shape, double[] value ) {
+        _construct( shape, value );
+    }
+
+
+    public Tsr( int[] shape, DataType<?> type )
     {
-        setDataType( DataType.instance( type.getTypeClass() ) );
+        setDataType( DataType.of( type.getTypeClass() ) );
         _construct( shape, true, true );
     }
 
     public Tsr( int[] shape, Class<?> typeClass, Object data )
     {
-        setDataType( DataType.instance( typeClass ) );
+        setDataType( DataType.of( typeClass ) );
         _configureFromNewShape( shape, false, false );
         setValue( data );
     }
 
+    public Tsr( int[] shape, DataType<?> dataType, Object value )
+    {
+        setDataType( dataType );
+        _setData( value );
+        if (dataType.typeClassImplements( NumericType.class ) )
+            _configureFromNewShape( shape, false, true );
+    }
 
-    private void _construct( int[] shape, boolean allocate, boolean virtual ) 
+    // Inner construction layer:
+
+    private void _construct( int[] shape, String seed )
+    {
+        _construct( shape, false, false );
+        _setData( DataConverter.Utility.seededDoubleArray( (double[]) getData(), seed ) );
+    }
+
+    private void _construct( int[] shape, boolean allocate, boolean virtual )
     {
         if ( allocate ) _allocate( ( virtual ) ? 1 : NDConfiguration.Utility.szeOfShp( shape ) );
         if ( virtual ) setIsVirtual( true );
         _configureFromNewShape( shape, virtual, true );
     }
 
-    public Tsr( int[] shape, double value ) 
-    {
-        _construct( shape, value );
-    }
-
-    private void _construct( int[] shape, double value ) 
+    private void _construct( int[] shape, double value )
     {
         int size = NDConfiguration.Utility.szeOfShp( shape );
-        setDataType( DataType.instance( F64.class ) );
+        setDataType( DataType.of( F64.class ) );
         _allocate( 1 );
         setIsVirtual( size > 1 );
         _configureFromNewShape( shape, size > 1, true );
         ( (double[]) getData())[ 0 ] = value;
     }
 
-    public Tsr( int[] shape, double[] value ) {
-         _construct( shape, value );
-    }
-
     private void _construct( int[] shape, double[] value )
     {
         int size = NDConfiguration.Utility.szeOfShp( shape );
-        setDataType( DataType.instance( F64.class ) );
+        setDataType( DataType.of( F64.class ) );
         if ( size != value.length ) {
             _allocate( size );
             for ( int i = 0; i < size; i++ ) ( (double[]) getData())[ i ]  = value[ i % value.length ];
@@ -551,9 +524,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _configureFromNewShape( shape, false, true );
     }
 
-    private void _construct( int[] shape, float[] value ) {
+    private void _construct( int[] shape, float[] value )
+    {
         int size = NDConfiguration.Utility.szeOfShp( shape );
-        setDataType( DataType.instance( F32.class ) );
+        setDataType( DataType.of( F32.class ) );
         if ( size != value.length ) {
             _allocate( size );
             for ( int i = 0; i < size; i++ ) ( (float[]) getData())[ i ]  = value[ i % value.length ];
@@ -561,18 +535,111 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _configureFromNewShape( shape, false, true );
     }
 
-    public Tsr( int[] shape, DataType<?> dataType, Object value ) {
-        setDataType( dataType );
-        _setData( value );
-        if (dataType.typeClassImplements( NumericType.class ) )
+    private void _construct( int[] shape, ValueType[] value ) {
+        int size = NDConfiguration.Utility.szeOfShp( shape );
+        if ( size != value.length ) {
+            Class<?> givenClass = value[ 0 ].getClass();
+            @SuppressWarnings("unchecked")
+            final ValueType[] newValue = (ValueType[]) Array.newInstance(
+                    givenClass,
+                    NDConfiguration.Utility.szeOfShp( shape )
+            );
+            for ( int i = 0; i < newValue.length; i++ ) newValue[ i ] = value[ i % value.length ];
+            setDataType( DataType.of( givenClass ) );
+            _setData( newValue );
+        }
+        else _setData( value );
         _configureFromNewShape( shape, false, true );
+    }
+
+    private int[] _intArray( Object[] arg ) {
+        int length = arg.length;
+        int[] array = new int[ length ];
+        for ( int i = 0; i < length; i++ ) {
+            if ( arg[ i ] instanceof Double ) array[ i ] = ( (Double) arg[ i ] ).intValue();
+            else array[ i ] = (Integer) arg[ i ];
+        }
+        return array;
+    }
+
+    private double[] _doubleArray( Object[] arg )
+    {
+        int length = arg.length;
+        double[] array = new double[ length ];
+        for ( int i = 0; i < length; i++ ) {
+            if ( arg[ i ] instanceof Integer ) array[ i ] = (Integer) arg[ i ];
+            else if ( arg[ i ] instanceof Double ) array[ i ] = (Double) arg[ i ];
+            else if ( arg[ i ] instanceof BigDecimal ) array[ i ] = ( (BigDecimal) arg[ i ] ).doubleValue();
+        }
+        return array;
     }
 
     /*
         -------------------------------------------
-            §(1.1) : FUNCTION BASED CONSTRUCTION
+            §(1.3) : LAMBDA BASED CONSTRUCTION
+        --------------------------------------------
+    */
+
+    public interface Initializer<T> {  T init( int i, int[] index );  }
+
+    public <T> Tsr( List<Integer> shape, DataType<T> type, Initializer<T> initializer )
+    {
+        _construct( shape.stream().mapToInt(e->e).toArray(), type, initializer );
+    }
+
+    public <T> Tsr( int[] shape, DataType<T> type, Initializer<T> initializer )
+    {
+        _construct( shape, type, initializer );
+    }
+
+    private <T> void _construct( int[] shape, DataType<T> type, Initializer<T> initializer )
+    {
+        setDataType( type );
+        _construct( shape, true, false );
+        Object data = getData();
+        if ( data instanceof double[] )
+            for ( int i=0; i<((double[])data).length; i++ )
+                ( (double[]) data )[i] = (double) initializer.init( i, _conf.idx_of_i( i )  );
+        else if ( data instanceof float[] )
+            for ( int i=0; i<((float[])data).length; i++ )
+                ( (float[]) data )[i] = (float) initializer.init( i, _conf.idx_of_i( i )  );
+        else if ( data instanceof int[] )
+            for ( int i=0; i<((int[])data).length; i++ )
+                ( (int[]) data )[i] = (int) initializer.init( i, _conf.idx_of_i( i )  );
+        else if ( data instanceof short[] )
+            for ( int i=0; i<((short[])data).length; i++ )
+                ( (short[]) data )[i] = (short) initializer.init( i, _conf.idx_of_i( i )  );
+        else if ( data instanceof byte[] )
+            for ( int i=0; i<((byte[])data).length; i++ )
+                ( (byte[]) data )[i] = (byte) initializer.init( i, _conf.idx_of_i( i )  );
+        else for ( int i=0; i<((Object[])data).length; i++ )
+                ( (Object[]) data )[i] = initializer.init( i, _conf.idx_of_i( i )  );
+
+    }
+
+
+    /*
+        -------------------------------------------
+            §(1.4) : FUNCTION BASED CONSTRUCTION
         --------------------------------------------
      */
+
+
+    public Tsr( String expression, List<Object> inputs )
+    {
+        if ( inputs.stream().allMatch( e -> e instanceof Tsr ) )
+            _construct(
+                    inputs.stream().toArray( Tsr[]::new ),
+                    expression,
+                    true
+            );
+        else
+            _construct(
+                    inputs.stream().map( Tsr::new ).toArray( Tsr[]::new ),
+                    expression,
+                    true
+            );
+    }
 
     /**
      *  This method takes a tensor and a String expression describing
@@ -627,11 +694,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param expression The expression describing operations applied to the provided tensors.
      * @param doAD A flag which when set to true commands the creation of a computation graph during operation execution.
      */
-    public Tsr( Tsr<ValueType>[] tensors, String expression, boolean doAD ) {
+    public Tsr( Tsr<ValueType>[] tensors, String expression, boolean doAD )
+    {
         _construct( tensors, expression, doAD );
     }
 
-    
     private void _construct( Tsr[] tensors, String operation, boolean doAD ) {
         if ( tensors == null || tensors.length == 0 || tensors[ 0 ] == null ) return;
         Tsr<ValueType> result = Function.Setup.commit( this, tensors, operation, doAD );
@@ -681,9 +748,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     |   ----------------------
     */
     /*
-    --------------------------------------------
-        §(2.0) : GRADIENT REQUIREMENT  :
-    --------------------------------------------
+        --------------------------------------------
+            §(2.0) : GRADIENT REQUIREMENT  :
+        --------------------------------------------
     */
 
     public Tsr<ValueType> setRqsGradient( boolean rqsGradient ) {
@@ -1081,6 +1148,15 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         else return ( (float[]) getData()).length;
     }
 
+    /**
+     *  This method returns the version of the data (_data) stored within this tensor.
+     *
+     * @return The version of the underlying data of this tensor.
+     */
+    public int version()
+    {
+        return _version;
+    }
 
     /*==================================================================================================================
     |
@@ -1214,13 +1290,14 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     /**
      *  This method turns the given scalar value and
      *  turns it into a matching tensor (same shape)
-     *  which will be backpropagated through the
+     *  which will be back-propagated through the
      *  recorded computation graph.
      *
      * @param value A scalar which is back-propagated to gradients. Must match the size og this tensor.
      * @return The tensor on which this method was called. (factory pattern)
      */
-    public Tsr<ValueType> backward( double value ) {
+    public Tsr<ValueType> backward( double value )
+    {
         backward( new Tsr( _conf.shape(), value ) );
         return this;
     }
@@ -1232,12 +1309,14 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *
      * @return The tensor on which this method was called. (factory pattern)
      */
-    public Tsr<ValueType> backward() {
+    public Tsr<ValueType> backward()
+    {
         backward( 1 );
         return this;
     }
 
-    public void applyGradient() {
+    public void applyGradient()
+    {
         forComponent( JITProp.class, JITProp::execute );
         remove( JITProp.class );
         forComponent(
@@ -1257,7 +1336,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         );
     }
 
-    public void detach() {
+    public void detach()
+    {
         this.remove( GraphNode.class );
     }
 
@@ -1268,7 +1348,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         ... for more context see package 'framing'...
      */
 
-    public Tsr<ValueType> label( String[][] labels ) {
+    public Tsr<ValueType> label( String[][] labels )
+    {
         IndexAlias indexAlias = find( IndexAlias.class );
         if ( indexAlias == null ) {
             indexAlias = new IndexAlias( this.rank() );
@@ -1284,13 +1365,15 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this;
     }
 
-    public Tsr<ValueType> label( List<List<Object>> labels ) {
+    public Tsr<ValueType> label( List<List<Object>> labels )
+    {
         IndexAlias indexAlias = find( IndexAlias.class );
         if ( indexAlias == null ) set( new IndexAlias( labels ) );
         return this;
     }
 
-    public Tsr<ValueType> label( Map<Object, List<Object>> labels ) {
+    public Tsr<ValueType> label( Map<Object, List<Object>> labels )
+    {
         this.set( new IndexAlias<>( labels, this ) );
         return this;
     }
@@ -1386,7 +1469,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         -----------------------------
      */
 
-    public Tsr<ValueType> T() { // Transposed!
+    public Tsr<ValueType> T()  // Transposed!
+    {
         StringBuilder operation = new StringBuilder();
         for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( ( i == 0 ) ? "" : ", " );
         operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
@@ -1905,7 +1989,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public Tsr<ValueType> setValue64( double[] value ) {
         if ( this.isOutsourced() ) this.find( Device.class ).overwrite64( this, value );
         else if ( getData() == null ) {
-            setDataType( DataType.instance( F64.class ) );
+            setDataType( DataType.of( F64.class ) );
             _setData( value );
         }
         else if ( getData() instanceof float[] )
@@ -1918,7 +2002,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public Tsr<ValueType> setValue32( float[] value ) {
         if ( this.isOutsourced() ) this.find( Device.class ).overwrite32( this, value );
         else if ( getData() == null ) {
-            setDataType( DataType.instance( F32.class ) );
+            setDataType( DataType.of( F32.class ) );
             _setData( value );
         }
         else if ( getData() instanceof float[] )
@@ -1940,11 +2024,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             if ( this.is64() ) ( (double[]) getData())[ 0 ] = (Double) value;
             else ( (float[]) getData())[ 0 ] = ( (Double) value ).floatValue();
         } else if ( value instanceof int[] ) {
-            setDataType( DataType.instance(I32.class) );
+            setDataType( DataType.of(I32.class) );
             _setData( value );
             setIsVirtual( false );
         } else if ( value instanceof short[] ) {
-            setDataType( DataType.instance(I16.class) );
+            setDataType( DataType.of(I16.class) );
             _setData( value );
             setIsVirtual( false );
         }
@@ -2021,7 +2105,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      */
     public <T> Tsr<T> asType( Class<T> typeClass )
     {
-        DataType newDT = DataType.instance( typeClass );
+        DataType newDT = DataType.of( typeClass );
         Object newData;
         if ( this.isOutsourced() ) {
             Device device = find( Device.class );
@@ -2054,13 +2138,13 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public <T> Tsr<T> toType( Class<T> typeClass )
     {
         if ( this.isOutsourced() ) {
-            setDataType( DataType.instance( typeClass ) );
+            setDataType( DataType.of( typeClass ) );
             return (Tsr<T>) this;
         }
         else {
             Object newData = _convertedDataOfType( typeClass );
             _setData( null );
-            setDataType( DataType.instance( typeClass ) );
+            setDataType( DataType.of( typeClass ) );
             _setData( newData );
         }
         forComponent( Tsr.class, gradient -> gradient.toType( typeClass ) );

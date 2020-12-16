@@ -80,7 +80,7 @@ class Tensor_State_Unit_Test extends Specification
     def 'Tensor created from shape and datatype has expected state.'()
     {
         given : 'A new vector tensor is being instantiated.'
-            Tsr t = new Tsr( new int[]{ 2 }, DataType.instance(I8.class ) )
+            Tsr t = new Tsr( new int[]{ 2 }, DataType.of(I8.class ) )
         expect : 'The tensor is not stored on another device, meaning that it is not "outsourced".'
             !t.isOutsourced()
             t.value64() == [0, 0] as double[]

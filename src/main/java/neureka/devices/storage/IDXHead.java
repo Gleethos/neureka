@@ -74,7 +74,7 @@ public class IDXHead extends AbstractFileHead<IDXHead>
 
         int typeId = numre.read( new UI8() );
         Class<?> typeClass = TYPE_MAP.get( typeId );
-        _dtype = (DataType<NumericType<?, ?, ?, ?>>) DataType.instance( typeClass );
+        _dtype = (DataType<NumericType<?, ?, ?, ?>>) DataType.of( typeClass );
 
         int rank = numre.read( new UI8() );
         int[] shape = new int[rank];
@@ -167,7 +167,7 @@ public class IDXHead extends AbstractFileHead<IDXHead>
     {
         Object value = _loadData();
         DataType<?> type = ( Neureka.instance().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )
-                ? DataType.instance( _dtype.getTypeClassInstance().getNumericTypeTarget() )
+                ? DataType.of( _dtype.getTypeClassInstance().getNumericTypeTarget() )
                 : _dtype;
         return new Tsr<>( _shape, type, value );
     }

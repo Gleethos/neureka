@@ -90,7 +90,7 @@ class FileHead_Unit_Tests extends Specification
             hash == expected
         and : 'The loaded tensor has the expected data type.'
             loaded.dataType.getTypeClass() == I16.class
-            loaded.dataType == DataType.instance( I16.class )
+            loaded.dataType == DataType.of( I16.class )
         and : 'It contains the correct array type.'
             loaded.data instanceof short[]
 
@@ -101,7 +101,7 @@ class FileHead_Unit_Tests extends Specification
             idx.location.endsWith( filename )
             idx.totalSize == 28 * 28 * 1 + 16
             idx.dataType != loaded.dataType
-            idx.dataType == DataType.instance( UI8.class ) // The underlying data is unsigned byte! (Not supported by JVM)
+            idx.dataType == DataType.of( UI8.class ) // The underlying data is unsigned byte! (Not supported by JVM)
 
 
         where : 'The following files and the expected hashes of their data were used :'
@@ -157,8 +157,8 @@ class FileHead_Unit_Tests extends Specification
             jpg.valueSize == shape.inject( 1, {prod, value -> prod * value} )
             jpg.totalSize == shape.inject( 1, {prod, value -> prod * value} ) //28 * 28 * 1 + 16
             jpg.location.endsWith( filename )
-            jpg.dataType == DataType.instance( UI8.class )
-            loaded.dataType == DataType.instance( I16.class )
+            jpg.dataType == DataType.of( UI8.class )
+            loaded.dataType == DataType.of( I16.class )
 
         where : 'The following jpg files with their expected shape and hash were used.'
             filename           || shape          | expected

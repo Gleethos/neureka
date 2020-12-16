@@ -26,7 +26,7 @@ class DataType_Unit_Tests extends Specification
       Class<?> typeClass, Class<?> targetClass, boolean isNumericType
     ) {
         given : 'A "DataType" instance representing / wrapping the relevant datatype Class passed to "instance(...)."'
-            DataType dt = DataType.instance( typeClass )
+            DataType dt = DataType.of( typeClass )
 
         expect : 'The found instance is not null!'
             dt != null

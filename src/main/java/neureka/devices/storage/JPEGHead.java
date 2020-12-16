@@ -133,7 +133,7 @@ public class JPEGHead extends AbstractFileHead<JPEGHead>
 
     @Override
     public DataType<?> getDataType() {
-        return DataType.instance( UI8.class );
+        return DataType.of( UI8.class );
     }
 
     @Override

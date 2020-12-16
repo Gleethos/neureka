@@ -5,6 +5,7 @@ import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.calculus.Function
+import neureka.dtype.DataType
 import spock.lang.Specification
 
 class Tensor_IO_Unit_Tests extends  Specification
@@ -30,6 +31,33 @@ class Tensor_IO_Unit_Tests extends  Specification
         expect : 'Equal seeds produce equal values.'
             t1.toString() == t2.toString()
             t1.toString() != t3.toString()
+    }
+
+    def 'Tensor initialization lambdas produce expected tensors.'()
+    {
+        given : 'The current Neureka instance configuration is being reset.'
+            Neureka.instance().reset()
+
+        when :
+                Tsr t = new Tsr(
+                        [ 2, 3 ],
+                        DataType.of( Integer.class ),
+                        ( int i, int[] idx ) -> { i - 2 }
+                )
+
+        then :
+            t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"
+
+        when :
+            t = new Tsr(
+                    [ 2, 3 ],
+                    DataType.of( String.class ),
+                    ( int i, int[] idx ) -> { i+':'+idx.toString() }
+            )
+
+        then :
+            t.toString() == "(2x3):[0:[0, 0], 1:[0, 1], 2:[0, 2], 3:[1, 0], 4:[1, 1], 5:[1, 2]]"
+
     }
 
     def 'Smart tensor constructors yield expected results.'()
