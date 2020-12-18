@@ -2,8 +2,8 @@ package neureka.devices.opencl.execution;
 
 import neureka.Neureka;
 import neureka.devices.opencl.OpenCLDevice;
-import neureka.calculus.backend.executions.ExecutorFor;
-import neureka.calculus.backend.operations.AbstractOperationType;
+import neureka.backend.api.executions.ExecutorFor;
+import neureka.backend.api.operations.AbstractOperationType;
 
 import java.util.HashMap;
 import java.util.Map;

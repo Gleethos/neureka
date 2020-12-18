@@ -2,7 +2,7 @@ package neureka.calculus.frontend.implementations;
 
 import neureka.Tsr;
 import neureka.calculus.Function;
-import neureka.calculus.backend.operations.AbstractOperationType;
+import neureka.backend.api.operations.AbstractOperationType;
 import neureka.calculus.frontend.AbstractBaseFunction;
 
 public class FunctionConstant extends AbstractBaseFunction

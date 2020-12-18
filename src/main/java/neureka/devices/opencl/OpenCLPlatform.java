@@ -1,14 +1,17 @@
 package neureka.devices.opencl;
 
 import lombok.Getter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 import neureka.Neureka;
+import neureka.backend.standard.implementations.Activation;
+import neureka.backend.standard.implementations.Broadcast;
+import neureka.backend.standard.implementations.Convolution;
+import neureka.backend.standard.implementations.GenericImplementation;
+import neureka.backend.standard.implementations.Operator;
+import neureka.backend.standard.implementations.Scalarization;
 import neureka.devices.opencl.execution.CLExecutor;
-import neureka.calculus.backend.implementations.functional.GenericImplementation;
-import neureka.calculus.backend.implementations.functional.*;
-import neureka.calculus.backend.operations.AbstractOperationType;
-import neureka.calculus.backend.operations.OperationType;
+import neureka.backend.api.operations.AbstractOperationType;
+import neureka.backend.api.operations.OperationType;
 import org.jocl.*;
 import java.util.*;
 

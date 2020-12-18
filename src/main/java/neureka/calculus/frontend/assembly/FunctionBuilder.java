@@ -1,8 +1,8 @@
 package neureka.calculus.frontend.assembly;
 
 import neureka.calculus.Function;
-import neureka.calculus.backend.operations.AbstractOperationType;
-import neureka.calculus.backend.operations.OperationType;
+import neureka.backend.api.operations.AbstractOperationType;
+import neureka.backend.api.operations.OperationType;
 import neureka.calculus.frontend.implementations.FunctionConstant;
 import neureka.calculus.frontend.implementations.FunctionInput;
 import neureka.calculus.frontend.implementations.FunctionNode;
@@ -17,7 +17,7 @@ public class FunctionBuilder {
      * @param doAD
      * @return
      */
-    public static Function build( AbstractOperationType type, int size, boolean doAD ) {
+    public static Function build( OperationType type, int size, boolean doAD ) {
         if (type.getId() == 18) {
             size = 2;
         } else if ( type.getOperator().equals(",") ) {

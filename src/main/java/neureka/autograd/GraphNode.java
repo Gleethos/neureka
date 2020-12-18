@@ -47,7 +47,7 @@ import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.opencl.utility.WeakTensorReference;
 import neureka.calculus.Function;
-import neureka.calculus.backend.ExecutionCall;
+import neureka.backend.api.ExecutionCall;
 
 import java.lang.ref.WeakReference;
 import java.util.*;

@@ -35,9 +35,9 @@ SOFTWARE.
 package neureka.devices;
 
 import neureka.Tsr;
-import neureka.calculus.backend.ExecutionCall;
-import neureka.calculus.backend.operations.OperationType;
-import neureka.calculus.backend.implementations.OperationTypeImplementation;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.operations.OperationType;
+import neureka.backend.api.implementations.OperationTypeImplementation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

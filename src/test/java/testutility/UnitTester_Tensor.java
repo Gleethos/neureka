@@ -6,10 +6,10 @@ import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.autograd.GraphNode;
-import neureka.calculus.backend.ExecutionCall;
-import neureka.calculus.backend.operations.OperationType;
-import neureka.calculus.backend.implementations.functional.Broadcast;
-import neureka.calculus.backend.implementations.functional.Convolution;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.operations.OperationType;
+import neureka.backend.standard.implementations.Broadcast;
+import neureka.backend.standard.implementations.Convolution;
 import neureka.dtype.DataType;
 import neureka.ndim.config.NDConfiguration;
 
@@ -22,7 +22,7 @@ public class UnitTester_Tensor extends UnitTester
         super(name);
     }
 
-    public int testShareDevice(Device device, Tsr[] tsrs){
+    public int testShareDevice( Device device, Tsr[] tsrs ){
         printSessionStart("Testing if tensors share device!");
         println(BAR +"  Device: "+device.toString());
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");

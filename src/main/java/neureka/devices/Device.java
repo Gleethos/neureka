@@ -42,7 +42,7 @@ import neureka.Tsr;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.devices.opencl.OpenCLPlatform;
-import neureka.calculus.backend.ExecutionCall;
+import neureka.backend.api.ExecutionCall;
 import neureka.calculus.frontend.assembly.FunctionParser;
 
 import java.util.Arrays;

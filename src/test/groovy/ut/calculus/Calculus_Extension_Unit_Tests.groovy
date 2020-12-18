@@ -6,8 +6,8 @@ import neureka.devices.Device
 import neureka.autograd.ADAgent
 import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
-import neureka.calculus.backend.operations.OperationType
-import neureka.calculus.backend.implementations.OperationTypeImplementation
+import neureka.backend.api.operations.OperationType
+import neureka.backend.api.implementations.OperationTypeImplementation
 import neureka.calculus.frontend.implementations.FunctionNode
 import neureka.calculus.frontend.implementations.FunctionInput
 import neureka.ndim.config.NDConfiguration

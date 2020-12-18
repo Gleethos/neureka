@@ -5,8 +5,8 @@ import neureka.devices.Device
 import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
 import neureka.calculus.Function
-import neureka.calculus.backend.ExecutionCall
-import neureka.calculus.backend.operations.AbstractOperationType
+import neureka.backend.api.ExecutionCall
+import neureka.backend.api.operations.AbstractOperationType
 import spock.lang.Specification
 
 import java.util.function.Supplier

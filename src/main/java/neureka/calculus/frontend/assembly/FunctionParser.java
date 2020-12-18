@@ -1,7 +1,7 @@
 package neureka.calculus.frontend.assembly;
 
-import neureka.calculus.backend.operations.AbstractOperationType;
-import neureka.calculus.backend.operations.OperationType;
+import neureka.backend.api.operations.AbstractOperationType;
+import neureka.backend.api.operations.OperationType;
 
 import java.util.ArrayList;
 import java.util.Arrays;

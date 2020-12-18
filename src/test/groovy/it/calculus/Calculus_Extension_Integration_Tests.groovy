@@ -7,11 +7,11 @@ import neureka.devices.Device
 import neureka.devices.host.execution.HostExecutor
 import neureka.devices.opencl.utility.DispatchUtility
 import neureka.calculus.Function
-import neureka.calculus.backend.ExecutionCall
-import neureka.calculus.backend.implementations.functional.GenericImplementation
-import neureka.calculus.backend.operations.OperationContext
-import neureka.calculus.backend.operations.OperationType
-import neureka.calculus.backend.operations.OperationTypeFactory
+import neureka.backend.api.ExecutionCall
+import neureka.backend.standard.implementations.GenericImplementation
+import neureka.backend.api.operations.OperationContext
+import neureka.backend.api.operations.OperationType
+import neureka.backend.api.operations.OperationTypeFactory
 import neureka.calculus.frontend.assembly.FunctionBuilder
 import spock.lang.Specification
 
@@ -35,14 +35,14 @@ class Calculus_Extension_Integration_Tests extends Specification
             OperationContext testContext = oldContext.clone()
             OperationContext.setInstance(testContext)
             OperationType type = new OperationTypeFactory()
-                    .withFunction('test_function')
-                    .withOperator('test_function')
-                    .withArity(-1)
+                    .setFunction('test_function')
+                    .setOperator('test_function')
+                    .setArity(-1)
                     .setIsIndexer(false)
                     .setIsOperator(false)
                     .setIsDifferentiable(true)
                     .setIsInline(false)
-                    .create()
+                    .build()
                     .setStringifier(
                             children -> {
                                 String expression = String.join( ", ", children );

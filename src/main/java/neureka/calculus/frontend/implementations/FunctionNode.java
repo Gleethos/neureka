@@ -2,7 +2,7 @@ package neureka.calculus.frontend.implementations;
 
 import neureka.Tsr;
 import neureka.calculus.*;
-import neureka.calculus.backend.operations.OperationType;
+import neureka.backend.api.operations.OperationType;
 import neureka.calculus.frontend.AbstractFunction;
 
 import java.util.List;

@@ -39,7 +39,7 @@ package neureka.calculus;
 import neureka.Tsr;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
-import neureka.calculus.backend.operations.OperationType;
+import neureka.backend.api.operations.OperationType;
 import neureka.calculus.frontend.assembly.FunctionBuilder;
 import neureka.calculus.frontend.Cache;
 
