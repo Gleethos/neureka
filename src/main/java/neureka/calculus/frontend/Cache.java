@@ -39,10 +39,10 @@ import java.util.function.Supplier;
 public class Cache
 {
     private static Cache _cache = new Cache();
-    private Logger _logger = LoggerFactory.getLogger( Cache.class );
+    private Logger _log = LoggerFactory.getLogger( Cache.class );
 
     private Cache() {
-        _logger.debug("New singleton instance of class 'Cache' created for function result caching.");
+        _log.debug("New singleton instance of class 'Cache' created for function result caching.");
     }
 
     public static Cache instance()
@@ -106,7 +106,7 @@ public class Cache
         GraphLock lock = tsrs[ 0 ].find( GraphNode.class ).getLock();
         long key = _keyOf( tsrs, d, j );
         if ( key != 0 && PROCESSING.containsKey( lock ) && PROCESSING.get( lock ).containsKey( key ) ) {
-                _logger.debug(
+                _log.debug(
                         "Result cache hit occurred! Function lock : '{}'; Key : '{}';", lock, key
                 );
                 return PROCESSING.get( lock ).get( key );

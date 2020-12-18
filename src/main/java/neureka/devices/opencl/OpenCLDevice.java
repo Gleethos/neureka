@@ -250,7 +250,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                             ( adHoc.source.equals( source ) )
                                     ? "Besides the name, the source code of the existing kernel is also identical.\n" : ""
                     );
-            _logger.error( message );
+            _log.error( message );
             throw new IllegalArgumentException( message );
         }
 
@@ -281,10 +281,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
             if ( e.getMessage().equals("CL_INVALID_KERNEL_NAME") && !source.contains( "__kernel void " + name ) ) {
                 String message = "Method 'clCreateKernel' failed! The name of the '__kernel' method declared inside \n" +
                         "the source String does not match the provided name needed for kernel creation.";
-                _logger.error( message, e );
+                _log.error( message, e );
                 throw new IllegalArgumentException( message );
             }
-            _logger.error( "Method call 'clCreateKernel(.., name=\""+name+"\", ..)' failed!", e );
+            _log.error( "Method call 'clCreateKernel(.., name=\""+name+"\", ..)' failed!", e );
             throw e;
         }
         cl_ad_hoc adHoc = new cl_ad_hoc();
@@ -342,7 +342,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         if ( !this.has( tensor ) ) {
             String message = "The passed tensor cannot be restored from this OpenCL device " +
                     "because the tensor is not stored on the device.\n";
-            _logger.error( message );
+            _log.error( message );
             throw new IllegalArgumentException( message );
         }
         double[] value = ( tensor.isVirtual() )

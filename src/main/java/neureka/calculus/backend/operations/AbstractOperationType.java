@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 
 public abstract class AbstractOperationType implements OperationType
 {
-    private static Logger _LOGGER = LoggerFactory.getLogger( AbstractOperationType.class );
+    private static Logger _LOG = LoggerFactory.getLogger( AbstractOperationType.class );
 
     private Stringifier _stringifier;
 
@@ -298,7 +298,7 @@ public abstract class AbstractOperationType implements OperationType
         if ( bestImpl == null ) {
             String message = "No suitable implementation for execution call '"+call+"' could be found.\n" +
                     "Execution process aborted.";
-            _LOGGER.error( message );
+            _LOG.error( message );
             throw new IllegalStateException( message );
         }
         return bestImpl;

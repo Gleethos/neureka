@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class IDXHead extends AbstractFileHead<IDXHead>
 {
     static {
-        _LOGGER = LoggerFactory.getLogger( IDXHead.class );
+        _LOG = LoggerFactory.getLogger( IDXHead.class );
     }
     @Getter
     private DataType<NumericType<?,?,?,?>> _dataType;

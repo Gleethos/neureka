@@ -69,7 +69,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
     /**
      *  An interface provided by sl4j which enables a modular logging backend!
      */
-    protected static Logger _LOGGER; // Why is this not final ? : For unit testing!
+    protected static Logger _LOG; // Why is this not final ? : For unit testing!
 
     @Getter
     protected NDConfiguration _NDConf;
@@ -102,7 +102,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
     {
         if ( _dataType == null ) {
             String message = "Trying to set data in a tensor which does not have a DataTyp instance.";
-            _LOGGER.error( message );
+            _LOG.error( message );
             throw new IllegalStateException( message );
         }
         if ( data != null && _dataType.typeClassImplements( NumericType.class ) ) {
@@ -110,7 +110,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
             if ( numericType.targetArrayType() != data.getClass() ) {
                 String message = "Cannot set data whose type does not match what is defined by the DataType instance.\n" +
                         "Current type '"+numericType.targetArrayType().getSimpleName()+"' does not match '"+ data.getClass().getSimpleName()+"'.\n";
-                _LOGGER.error( message );
+                _LOG.error( message );
                 throw new IllegalStateException( message );
             }
         }

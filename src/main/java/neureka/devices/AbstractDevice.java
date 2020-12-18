@@ -61,10 +61,10 @@ public abstract class AbstractDevice<ValueType> extends AbstractBaseDevice<Value
 {
     private static final Cleaner _CLEANER = Cleaner.create();
 
-    protected Logger _logger;
+    protected Logger _log;
 
     protected AbstractDevice() {
-        _logger = LoggerFactory.getLogger( getClass() );
+        _log = LoggerFactory.getLogger( getClass() );
     }
 
     /**

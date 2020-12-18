@@ -134,7 +134,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 {
     static {
         _CPU = HostCPU.instance();
-        _LOGGER = LoggerFactory.getLogger( Tsr.class );
+        _LOG = LoggerFactory.getLogger( Tsr.class );
     }
 
     /**
@@ -243,7 +243,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 return;
             } else {
                 String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
-                _LOGGER.error( message );
+                _LOG.error( message );
                 throw new IllegalArgumentException( message );
             }
         }
@@ -432,7 +432,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 _construct( shape, value );
             } else {
                 String message = "Provided nested list(s) do not form a regular matrix.";
-                _LOGGER.error( message );
+                _LOG.error( message );
                 throw new IllegalArgumentException( message );
             }
         }
@@ -726,7 +726,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if ( size == 0 ) {
             String shape = Arrays.stream( newShape ).mapToObj( String::valueOf ).collect( Collectors.joining( "x" ) );
             String message = "The provided shape '"+shape+"' must not contain zeros. Dimensions lower than 1 are not possible.";
-            _LOGGER.error( message );
+            _LOG.error( message );
             throw new IllegalArgumentException( message );
         }
         if ( getData() == null && autoAllocate ) _allocate( size );
@@ -734,7 +734,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if ( length >= 0 ) {
             if ( size != length && ( !this.isVirtual() || !makeVirtual) ) {
                 String message = "Size of shape does not match stored value64!";
-                _LOGGER.error( message );
+                _LOG.error( message );
                 throw new IllegalArgumentException( message );
             }
         }
@@ -795,7 +795,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                             try {
                                 if ( d.has( this ) ) d.restore( this );
                             } catch ( Exception exception ) {
-                                _LOGGER.error(
+                                _LOG.error(
                                         "Tensor could not be restored from device component when trying to migrate it back to RAM.",
                                         exception
                                 );
@@ -811,7 +811,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                                                         try {
                                                             if ( ( (Device) gd ).has( gradient ) ) ( (Device) gd ).restore( gradient );
                                                         } catch ( Exception exception ) {
-                                                            _LOGGER.error(
+                                                            _LOG.error(
                                                                     "Gradient could not be restored from device component when trying to migrate it back to RAM.",
                                                                     exception
                                                             );
@@ -851,7 +851,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             try {
                 if ( device != null ) device.restore( this );
             } catch ( Exception exception ) {
-                _LOGGER.error(
+                _LOG.error(
                         "Tensor could not be restored from device component when changing flag 'isVirtual' to " + isVirtual + "."
                         , exception
                 );
@@ -876,7 +876,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             } catch ( Exception exception ) {
                 String message =
                         "Tensor could not be migrated back to host device after changing flag 'isVirtual' to "+isVirtual+".";
-                _LOGGER.error(
+                _LOG.error(
                         message,
                         exception
                 );
@@ -960,7 +960,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                     try {
                         ((Device)newComponent).store( root );
                     } catch ( Exception exception ) {
-                        _LOGGER.error( "Could not store tensor on device '" + newComponent.toString() +"'.", exception );
+                        _LOG.error( "Could not store tensor on device '" + newComponent.toString() +"'.", exception );
                         throw exception;
                     }
                     root.find( Relation.class ).foreachChild( c -> ((Tsr)c).setIsOutsourced( true ) );
@@ -969,7 +969,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                     try {
                         ((Device)newComponent).store( this );
                     } catch ( Exception exception ) {
-                        _LOGGER.error( "Could not store tensor on device '" + newComponent.toString() +"'.", exception );
+                        _LOG.error( "Could not store tensor on device '" + newComponent.toString() +"'.", exception );
                         throw exception;
                     }
                 }
@@ -977,7 +977,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 try {
                     ((Device)newComponent).store( this );
                 } catch ( Exception exception ) {
-                    _LOGGER.error( "Could not store tensor on device '" + newComponent.toString() +"'.", exception );
+                    _LOG.error( "Could not store tensor on device '" + newComponent.toString() +"'.", exception );
                     throw exception;
                 }
             }
@@ -1020,7 +1020,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 try {
                     device.restore( this );
                 } catch ( Exception exception ) {
-                    _LOGGER.error(
+                    _LOG.error(
                             "Removing device from tensor / tensor from device failed.\n" +
                             "Restoring tensor from device threw exception.\n",
                             exception
@@ -1179,7 +1179,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 if ( node.usesAD() || node.isUsedAsDerivative() ) {
                     String error = "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\n" +
                             "The following OperationType caused an internal version mismatch: '"+call.getOperation().getFunction()+"'";
-                    _LOGGER.error( error );
+                    _LOG.error( error );
                     throw new IllegalStateException( error );
                 }
             }
@@ -1193,7 +1193,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         forComponent( GraphNode.class, n -> {
             if ( n.isUsedAsDerivative() ) {
                 String message = "Cannot delete a tensor which is used as derivative by the AD computation graph!";
-                _LOGGER.error( message );
+                _LOG.error( message );
                 throw new IllegalStateException( message );
             }
         });
@@ -1653,7 +1653,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             }
         } else {
             String message = "Cannot create tensor slice from key of type '" + key.getClass().getName() + "'!";
-            _LOGGER.error( message );
+            _LOG.error( message );
             throw new IllegalArgumentException( message );
         }
         return _sliceOf( newShape, newOffset, newSpread );
@@ -1715,7 +1715,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                                     "At index '" + i + "' : offset '" + newOffset[ i ] + "' + shape '" + newShape[ i ] + "' = '" + top + "',\n" +
                                     "which is larger than the target shape '" + parentTensor.shape( ii ) + "' at the same index!";
                     Exception exception = new IllegalArgumentException( message );
-                    _LOGGER.error( message, exception );
+                    _LOG.error( message, exception );
                     throw new IllegalArgumentException( exception );
                 }
             }
@@ -1793,7 +1793,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                         last = position;
                     } else {
                         String message = "Given indexAlias key at axis " + ( i + iOffset ) + " not found!";
-                        _LOGGER.error( message );
+                        _LOG.error( message );
                         throw new IllegalStateException( message );
                     }
                 }
@@ -1864,7 +1864,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     private void _putAtCheckFor( Tsr value ) {
         if ( value.isEmpty() ) {
             String message = "Provided tensor is empty! Empty tensors cannot be injected.";
-            _LOGGER.error( message );
+            _LOG.error( message );
             throw new IllegalArgumentException( message );
         }
     }
@@ -1877,7 +1877,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             try {
                 device.store( value );
             } catch ( Exception exce ) {
-                _LOGGER.error( "Trying to migrate target slice tensor to device failed.", exce );
+                _LOG.error( "Trying to migrate target slice tensor to device failed.", exce );
                 throw exce;
             }
             valueIsDeviceVisitor = true;
@@ -1887,7 +1887,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         try {
             if ( valueIsDeviceVisitor ) value.find( Device.class ).restore( value );
         } catch ( Exception exception ) {
-            _LOGGER.error( "Trying to migrate source tensor back to original location failed.", exception );
+            _LOG.error( "Trying to migrate source tensor back to original location failed.", exception );
             throw exception;
         }
         return this;
@@ -2077,7 +2077,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             try {
                 device.store( error ) ;
             } catch ( Exception exception ) {
-                _LOGGER.error( "Failed trying to store a given error to a device for gradient accumulation.", exception );
+                _LOG.error( "Failed trying to store a given error to a device for gradient accumulation.", exception );
                 throw exception;
             }
         });
@@ -2397,7 +2397,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             try {
                 if ( template.isOutsourced() ) ( (Device<Object>) template.find( Device.class ) ).store( t );
             } catch ( Exception exception ) {
-                _LOGGER.error( "Failed storing a newly created tensor from a template tensor to its host device.", exception );
+                _LOG.error( "Failed storing a newly created tensor from a template tensor to its host device.", exception );
                 throw exception;
             }
             return t;
@@ -2410,7 +2410,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             try {
                 if ( template.isOutsourced() ) ( (Device<Object>) template.find( Device.class ) ).store( t );
             } catch ( Exception exception ) {
-                _LOGGER.error( "Failed storing a newly created tensor from a template tensor to its host device.", exception );
+                _LOG.error( "Failed storing a newly created tensor from a template tensor to its host device.", exception );
                 throw exception;
             }
             return t;

@@ -12,12 +12,12 @@ class GraphNode_Tensor_Exception_Unit_Tests extends Specification
     @Shared def oldLogger
 
     def setup() {
-        oldLogger = Tsr._LOGGER
-        Tsr._LOGGER = Mock( Logger )
+        oldLogger = Tsr._LOG
+        Tsr._LOG = Mock( Logger )
     }
 
     def cleanup() {
-        Tsr._LOGGER = oldLogger
+        Tsr._LOG = oldLogger
     }
 
 
@@ -38,7 +38,7 @@ class GraphNode_Tensor_Exception_Unit_Tests extends Specification
             def exception = thrown(IllegalStateException)
             exception.message == "Cannot delete a tensor which is used as derivative by the AD computation graph!"
         and : 'The exception message is also being thrown.'
-            Tsr._LOGGER.error( "Cannot delete a tensor which is used as derivative by the AD computation graph!" )
+            Tsr._LOG.error( "Cannot delete a tensor which is used as derivative by the AD computation graph!" )
     }
 
 }

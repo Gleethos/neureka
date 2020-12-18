@@ -12,12 +12,12 @@ class Tensor_Exception_Unit_Tests extends Specification
     @Shared def oldLogger
 
     def setup() {
-        oldLogger = Tsr._LOGGER
-        Tsr._LOGGER = Mock( Logger )
+        oldLogger = Tsr._LOG
+        Tsr._LOG = Mock( Logger )
     }
 
     def cleanup() {
-        Tsr._LOGGER = oldLogger
+        Tsr._LOG = oldLogger
     }
 
     def "Trying to inject an empty tensor into another causes fitting exception."()
@@ -32,7 +32,7 @@ class Tensor_Exception_Unit_Tests extends Specification
             def exception = thrown(IllegalArgumentException)
             assert exception.message.contains("Provided tensor is empty! Empty tensors cannot be injected.")
         and : 'The exception has also been logged.'
-            1 * Tsr._LOGGER.error( "Provided tensor is empty! Empty tensors cannot be injected." )
+            1 * Tsr._LOG.error( "Provided tensor is empty! Empty tensors cannot be injected." )
     }
 
     def 'Passing an invalid object into Tsr constructor causes descriptive exception.'()
@@ -45,7 +45,7 @@ class Tensor_Exception_Unit_Tests extends Specification
                     "Cannot create tensor from argument of type 'java.util.Scanner'!"
             )
         and : 'The logger logs the exception message!'
-            1 * Tsr._LOGGER.error( "Cannot create tensor from argument of type 'java.util.Scanner'!" )
+            1 * Tsr._LOG.error( "Cannot create tensor from argument of type 'java.util.Scanner'!" )
     }
 
 
@@ -63,7 +63,7 @@ class Tensor_Exception_Unit_Tests extends Specification
                     "Cannot create tensor slice from key of type 'java.lang.Class'!"
             )
         and : 'The logger logs the exception message!'
-            1 * Tsr._LOGGER.error( "Cannot create tensor slice from key of type 'java.lang.Class'!" )
+            1 * Tsr._LOG.error( "Cannot create tensor slice from key of type 'java.lang.Class'!" )
     }
 
 
@@ -83,7 +83,7 @@ class Tensor_Exception_Unit_Tests extends Specification
                     "which is larger than the target shape '3' at the same index!"
 
         and : 'The logger logs the exception message!'
-            1 * Tsr._LOGGER.error(
+            1 * Tsr._LOG.error(
                     "Cannot create slice because ranges are out of the bounds of the targeted tensor.\n" +
                     "At index '1' : offset '1' + shape '3' = '4',\n" +
                     "which is larger than the target shape '3' at the same index!",

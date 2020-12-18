@@ -19,7 +19,7 @@ import java.io.*;
 public class JPEGHead extends AbstractFileHead<JPEGHead>
 {
     static {
-        _LOGGER = LoggerFactory.getLogger( JPEGHead.class );
+        _LOG = LoggerFactory.getLogger( JPEGHead.class );
     }
 
     int _width;
@@ -61,7 +61,7 @@ public class JPEGHead extends AbstractFileHead<JPEGHead>
             _width = data.getWidth();
         } catch ( Exception exception ) {
             String message = "JPEG '"+_fileName+"' could not be read from file!";
-            _LOGGER.error( message, exception );
+            _LOG.error( message, exception );
             exception.printStackTrace();
         }
 
@@ -71,7 +71,7 @@ public class JPEGHead extends AbstractFileHead<JPEGHead>
                 String message = "The height and width of the jpeg at '"+_fileName+"' is "+_height+" & "+_width+"." +
                         "However both dimensions must at least be of size 1!";
                 Exception e = new IOException( message );
-                _LOGGER.error( message, e );
+                _LOG.error( message, e );
                 throw e;
             }
         }

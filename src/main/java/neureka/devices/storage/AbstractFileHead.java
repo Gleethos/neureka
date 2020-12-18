@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public abstract class AbstractFileHead<FinalType> implements FileHead<FinalType, Number>
 {
-    protected static Logger _LOGGER;
+    protected static Logger _LOG;
 
     protected final String _fileName;
 
@@ -20,20 +20,20 @@ public abstract class AbstractFileHead<FinalType> implements FileHead<FinalType,
         _fileName = filename;
         if ( _fileName.equals("") ) {
             String message = "Loading tensor from '"+extension()+"' file failed because the provided file location string is empty!\n";
-            _LOGGER.error( message );
+            _LOG.error( message );
             throw new IllegalArgumentException(message);
         }
         if ( !_fileName.contains(".") ) {
             String message = "Loading tensor from location '"+_fileName+"' failed because the file does not have an ending." +
                     "Expected file extension of type '"+extension()+"'!\n";
-            _LOGGER.error( message );
+            _LOG.error( message );
             throw new IllegalArgumentException(message);
         }
         String[] split = _fileName.split("\\."); // Example: splitting "myFile.PNG" int "myFile" and "PNG".
         String ending = split[ split.length-1 ].toLowerCase(); // ... 'ending' would then be "png"!
         if ( !ending.contains( extension().toLowerCase() ) ) {
             String message = "Loading tensor from location '"+_fileName+"' failed because the file ending does not match '"+extension()+"'!\n";
-            _LOGGER.error( message );
+            _LOG.error( message );
             throw new IllegalArgumentException(message);
         }
     }
@@ -46,7 +46,7 @@ public abstract class AbstractFileHead<FinalType> implements FileHead<FinalType,
             if ( !found.exists() ) {
                 String message = "Failed loading file at '"+_fileName+"' of type '"+extension()+"'!\n" +
                         "It seems like the file does not exist.\n";
-                _LOGGER.error( message );
+                _LOG.error( message );
                 throw new IllegalArgumentException(message);
             }
             return found;
@@ -63,7 +63,7 @@ public abstract class AbstractFileHead<FinalType> implements FileHead<FinalType,
         catch ( FileNotFoundException e )
         {
             String message = "Could not create 'FileInputStream' for '"+found.toString()+"'.";
-            _LOGGER.error( message, e );
+            _LOG.error( message, e );
             throw new IOException( message );
         }
         return f;
@@ -75,7 +75,7 @@ public abstract class AbstractFileHead<FinalType> implements FileHead<FinalType,
         boolean success = new File(_fileName).delete();
         if ( !success ) {
             String message = "Freeing "+extension()+" file '"+_fileName+"' failed!\n";
-            _LOGGER.error( message );
+            _LOG.error( message );
             throw new IllegalStateException( message );
         }
         return (FinalType) this;
@@ -98,7 +98,7 @@ public abstract class AbstractFileHead<FinalType> implements FileHead<FinalType,
             Object value = _loadData();
             tensor.setValue( value );
         } catch ( Exception e ) {
-            _LOGGER.error( "Restoring tensor from filesystem failed!\n", e );
+            _LOG.error( "Restoring tensor from filesystem failed!\n", e );
             e.printStackTrace();
         }
         return this;

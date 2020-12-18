@@ -88,8 +88,8 @@ class OpenCLDevice_Exception_Integration_Tests extends Specification
             if ( !Neureka.instance().canAccessOpenCL() ) return
             def device = OpenCLPlatform.PLATFORMS()[0].devices[0]
         and : 'We create a new mock logger for the OpenCL device.'
-            def oldLogger = device._logger
-            device._logger = Mock( Logger )
+            def oldLogger = device._log
+            device._log = Mock( Logger )
 
         when : 'We pass a new tensor to the restore method of the device, even though the tensor is not stored on it...'
             device.restore( new Tsr<Number>() )
@@ -100,13 +100,13 @@ class OpenCLDevice_Exception_Integration_Tests extends Specification
                     "this OpenCL device because the tensor is not stored on the device.\n"
 
         and : 'This message is also being logged by the internal device logger.'
-            1 * device._logger.error(
+            1 * device._log.error(
                     "The passed tensor cannot be restored from " +
                     "this OpenCL device because the tensor is not stored on the device.\n"
             )
 
         cleanup : 'Afterwards we restore the original logger!'
-            if ( Neureka.instance().canAccessOpenCL() ) device._logger = oldLogger
+            if ( Neureka.instance().canAccessOpenCL() ) device._log = oldLogger
     }
 
 
