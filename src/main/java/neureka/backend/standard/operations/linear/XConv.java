@@ -140,8 +140,8 @@ public class XConv extends AbstractOperationType
                     );
                     Tsr deriv = f.derive( inputs, d );
                     return new DefaultADAgent( deriv )
-                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                    .withBackward( (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)}) );
+                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                    .setBackward( (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)}) );
                 }
             )
             .setCallHook(

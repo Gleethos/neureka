@@ -110,13 +110,13 @@ public class GenericImplementation extends AbstractBaseOperationTypeImplementati
         Function mul = Function.Detached.MUL;
         if ( ctxDerivative != null ) {
             return new DefaultADAgent( ctxDerivative )
-                    .withForward( ( node, forwardDerivative ) -> mul.call( new Tsr[]{forwardDerivative, ctxDerivative} ) )
-                    .withBackward( ( node, backwardError ) -> mul.call( new Tsr[]{backwardError, ctxDerivative} ) );
+                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{forwardDerivative, ctxDerivative} ) )
+                    .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{backwardError, ctxDerivative} ) );
         }
         Tsr<?> localDerivative = f.derive(call.getTensors(), call.getDerivativeIndex());
         return new DefaultADAgent( localDerivative )
-                .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
-                .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
+                .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
+                .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
     }
 
     @Override

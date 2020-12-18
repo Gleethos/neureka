@@ -76,8 +76,8 @@ public class Reshape extends AbstractOperationType
                             throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                         }
                         return new DefaultADAgent( null )
-                                .withForward( ( t, derivative ) -> FunctionBuilder.build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
-                                .withBackward( ( t, error ) -> FunctionBuilder.build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
+                                .setForward( (t, derivative ) -> FunctionBuilder.build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
+                                .setBackward( (t, error ) -> FunctionBuilder.build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
                     }
                 ).setCallHook(
                     ( caller, call ) ->

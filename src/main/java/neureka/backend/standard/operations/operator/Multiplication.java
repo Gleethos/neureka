@@ -224,8 +224,8 @@ public class Multiplication extends AbstractOperationType {
                         Function mul = Function.Detached.MUL;
                         if ( ctxDerivative != null ) {
                             return new DefaultADAgent( ctxDerivative )
-                                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                                    .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
+                                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                                    .setBackward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                         }
                         Tsr[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
@@ -234,8 +234,8 @@ public class Multiplication extends AbstractOperationType {
                         {
                             Tsr deriv = f.derive( inputs, d );
                             return new DefaultADAgent( deriv )
-                                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                    .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                    .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
                         }
                     }
                 )
@@ -326,8 +326,8 @@ public class Multiplication extends AbstractOperationType {
                         Function mul = Function.Detached.MUL;
                         if ( ctxDerivative != null ) {
                             return new DefaultADAgent( ctxDerivative )
-                                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                                    .withBackward( null );
+                                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                                    .setBackward( null );
                         }
                         Tsr[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
@@ -335,15 +335,15 @@ public class Multiplication extends AbstractOperationType {
                         {
                             Tsr deriv = f.derive( inputs, d );
                             return new DefaultADAgent(  deriv )
-                                    .withForward( ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}) )
-                                    .withBackward( null );
+                                    .setForward( (t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}) )
+                                    .setBackward( null );
                         }
                         else
                         {
                             Tsr deriv = f.derive( inputs, d );
                             return new DefaultADAgent(  deriv )
-                                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                    .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                    .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
                         }
                     }
                 )
@@ -442,8 +442,8 @@ public class Multiplication extends AbstractOperationType {
                 Function mul = Function.Detached.MUL;
                 if ( ctxDerivative != null ) {
                     return new DefaultADAgent( ctxDerivative )
-                            .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                            .withBackward( null );
+                            .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                            .setBackward( null );
                 }
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
@@ -453,9 +453,9 @@ public class Multiplication extends AbstractOperationType {
                     Tsr deriv = f.derive( inputs, d );
                     return new DefaultADAgent(
                             deriv
-                        ).withForward(
+                        ).setForward(
                             ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                        ).withBackward(
+                        ).setBackward(
                             ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv})
                         );
                 }
@@ -546,8 +546,8 @@ public class Multiplication extends AbstractOperationType {
                     Function mul = Function.Detached.MUL;
                     if ( ctxDerivative != null ) {
                         return new DefaultADAgent( ctxDerivative )
-                                .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                                .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
+                                .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                                .setBackward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                     }
                     Tsr[] inputs = call.getTensors();
                     int d = call.getDerivativeIndex();
@@ -556,8 +556,8 @@ public class Multiplication extends AbstractOperationType {
                     {
                         Tsr deriv = f.derive( inputs, d );
                         return new DefaultADAgent( deriv )
-                                .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
                     }
                 }
             )

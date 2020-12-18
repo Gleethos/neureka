@@ -138,8 +138,8 @@ public class MatMul extends AbstractOperationType
                             int d = call.getDerivativeIndex();
                             Tsr deriv = inputs[1+d].T();//f.derive( inputs, d );
                             return new DefaultADAgent( deriv )
-                                    .withForward( ( node, forwardDerivative ) -> null )
-                                    .withBackward( (t, error) -> invX.call(new Tsr[]{ error, deriv }) );
+                                    .setForward( (node, forwardDerivative ) -> null )
+                                    .setBackward( (t, error) -> invX.call(new Tsr[]{ error, deriv }) );
                         }
                 )
                 .setCallHook(

@@ -1,5 +1,7 @@
 package neureka.autograd;
 
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import neureka.Tsr;
 
 import java.util.Map;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
  * perform propagation.
  *
  */
+@Accessors( prefix = {"_"}, chain = true )
 public class DefaultADAgent implements ADAgent
 {
     /**
@@ -38,8 +41,8 @@ public class DefaultADAgent implements ADAgent
          Tsr<?> execute(GraphNode<?> t, Tsr<?> error);
     }
 
-    private ADAction _fad;
-    private ADAction _bad;
+    @Setter private ADAction _forward;
+    @Setter private ADAction _backward;
     private final Map<String, Object> _context = new TreeMap<>();
 
     public DefaultADAgent(  Tsr<?> derivative  ) {
@@ -53,24 +56,14 @@ public class DefaultADAgent implements ADAgent
         return this;
     }
 
-    public DefaultADAgent withForward( ADAction fad ) {
-        _fad = fad;
-        return this;
-    }
-
-    public DefaultADAgent withBackward( ADAction bad ) {
-        _bad = bad;
-        return this;
-    }
-
     @Override
     public <T> Tsr<T> forward( GraphNode<T> target, Tsr<T> derivative) {
-        return (Tsr<T>) _fad.execute( target, derivative);
+        return (Tsr<T>) _forward.execute( target, derivative);
     }
 
     @Override
     public <T> Tsr<T> backward( GraphNode<T> target, Tsr<T> error ) {
-        return (Tsr<T>) _bad.execute( target, error );
+        return (Tsr<T>) _backward.execute( target, error );
     }
 
     @Override
@@ -88,7 +81,7 @@ public class DefaultADAgent implements ADAgent
 
     @Override
     public boolean hasBackward() {
-        return _bad != null;
+        return _backward != null;
     }
 
     @Override
@@ -97,12 +90,9 @@ public class DefaultADAgent implements ADAgent
             return derivative().toString();
         }
 
-        if ( _context != null ) {
-            return _context.keySet().stream()
-                    .map( key -> key + "=" + _context.get( key ) )
-                    .collect( Collectors.joining( ", ", "{", "}" ) );
-        }
-        return "null";
+        return _context.keySet().stream()
+                .map( key -> key + "=" + _context.get( key ) )
+                .collect( Collectors.joining( ", ", "{", "}" ) );
     }
 
 

@@ -51,8 +51,8 @@ public class DimFit extends AbstractOperationType
                         }
                         return new DefaultADAgent()
                                 .withContext(call.getContext())
-                                .withForward(null)
-                                .withBackward(
+                                .setForward(null)
+                                .setBackward(
                                         null//(t, error) -> pad(error, new int[]{prefix, postfix}, true)
                                 );
                     }

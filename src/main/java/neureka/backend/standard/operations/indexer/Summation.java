@@ -106,8 +106,8 @@ public class Summation extends AbstractOperationType
                         Function mul = Function.Detached.MUL;
                         if ( ctxDerivative != null ) {
                             return new DefaultADAgent( ctxDerivative )
-                                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                                    .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
+                                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                                    .setBackward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                         }
                         Tsr[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
@@ -116,8 +116,8 @@ public class Summation extends AbstractOperationType
                         {
                             Tsr deriv = f.derive( inputs, d );
                             return new DefaultADAgent( deriv )
-                                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                    .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                    .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
                         }
                     }
                 )
@@ -209,8 +209,8 @@ public class Summation extends AbstractOperationType
                     ctxDerivative != null
                 ) {
                     return new DefaultADAgent( ctxDerivative )
-                            .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                            .withBackward( ( node, backwardError ) -> mul.call( new Tsr[]{backwardError, ctxDerivative} ) );
+                            .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                            .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{backwardError, ctxDerivative} ) );
                 }
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
@@ -219,9 +219,9 @@ public class Summation extends AbstractOperationType
                     Tsr deriv = f.derive( inputs, d );
                     return new DefaultADAgent(
                             deriv
-                        ).withForward(
+                        ).setForward(
                             ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                        ).withBackward(
+                        ).setBackward(
                             ( t, derivative ) -> mul.call( new Tsr[]{derivative, deriv} )
                         );
                 }
@@ -235,15 +235,15 @@ public class Summation extends AbstractOperationType
                         );
                         Tsr deriv = f.derive( inputs, d );
                         return new DefaultADAgent( deriv )
-                                .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                .withBackward( (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)}) );
+                                .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                .setBackward( (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)}) );
                     }
                     else
                     {
                         Tsr deriv = f.derive( inputs, d );
                         return new DefaultADAgent( deriv )
-                                .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                                .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
                     }
                 }
             }

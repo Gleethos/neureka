@@ -59,8 +59,8 @@ public class Addition extends AbstractOperationType {
                 Function mul = Function.Detached.MUL;
                 if ( ctxDerivative != null ) {
                     return new DefaultADAgent( ctxDerivative )
-                            .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                            .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
+                            .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                            .setBackward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                 }
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
@@ -69,8 +69,8 @@ public class Addition extends AbstractOperationType {
                 {
                     Tsr deriv = f.derive( inputs, d );
                     return new DefaultADAgent( deriv )
-                            .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                            .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                            .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                            .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
                 }
             }
         )
@@ -404,8 +404,8 @@ public class Addition extends AbstractOperationType {
                             Function mul = Function.Detached.MUL;
                             if ( ctxDerivative != null ) {
                                 return new DefaultADAgent( ctxDerivative )
-                                        .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                                        .withBackward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
+                                        .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                                        .setBackward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
                             }
                             Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
@@ -415,8 +415,8 @@ public class Addition extends AbstractOperationType {
                             {
                                 Tsr<?> localDerivative = f.derive( inputs, d );
                                 return new DefaultADAgent( localDerivative )
-                                    .withForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
-                                    .withBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
+                                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
+                                    .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
                             }
                         }
                     )
