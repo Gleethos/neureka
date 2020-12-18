@@ -46,7 +46,7 @@ public class Modulo extends AbstractOperationType {
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();
             int d = call.getDerivativeIndex();
-            OperationType type = call.getType();
+            OperationType type = call.getOperation();
 
             Tsr alternative = null;
             if (tsrs.length > 3) {
@@ -140,7 +140,8 @@ public class Modulo extends AbstractOperationType {
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                                 defaultImplementation().supplyADAgentFor( f, call, forward )
                 )
-                .setRJAgent( rja );;
+                .setRJAgent( rja )
+                .build();
 
         setImplementation(
                 Operator.class,
@@ -278,7 +279,8 @@ public class Modulo extends AbstractOperationType {
                     }
                 }
             )
-            .setRJAgent( ( call, goDeeperWith ) -> null );
+            .setRJAgent( ( call, goDeeperWith ) -> null )
+            .build();
 
         setImplementation(
                 Broadcast.class,
@@ -374,8 +376,9 @@ public class Modulo extends AbstractOperationType {
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                 defaultImplementation().supplyADAgentFor( f, call, forward )
             )
-            .setCallHock( ( caller, call ) -> null )
-            .setRJAgent( ( call, goDeeperWith ) -> null );
+            .setCallHook( (caller, call ) -> null )
+            .setRJAgent( ( call, goDeeperWith ) -> null )
+            .build();
 
         setImplementation(
                 Scalarization.class,

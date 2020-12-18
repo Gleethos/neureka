@@ -59,7 +59,7 @@ public class Identity extends AbstractOperationType
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                 defaultImplementation().supplyADAgentFor( f, call, forward )
         )
-        .setCallHock( ( caller, call ) -> null )
+        .setCallHook( (caller, call ) -> null )
         .setRJAgent( ( call, goDeeperWith ) -> null )
         .setDrainInstantiation(
                 call -> {
@@ -67,7 +67,9 @@ public class Identity extends AbstractOperationType
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                     return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                 }
-        );
+        )
+        .build();
+
         setImplementation(
                 Activation.class,
                 typeImplementation.setExecutor(
@@ -138,7 +140,7 @@ public class Identity extends AbstractOperationType
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     defaultImplementation().supplyADAgentFor( f, call, forward )
             )
-            .setCallHock( ( caller, call ) -> null )
+            .setCallHook( (caller, call ) -> null )
             .setRJAgent( ( call, goDeeperWith ) -> null )
             .setDrainInstantiation(
                 call -> {
@@ -158,7 +160,9 @@ public class Identity extends AbstractOperationType
                     }
                     return call;
                 }
-            );
+            )
+            .build();
+
         setImplementation(
                 Scalarization.class,
                 scalarization.setExecutor(

@@ -35,18 +35,18 @@ class AD_And_Computation_Graph_Integration_Tests extends Specification{
             assert a.toString().contains("[2x3]:(1.0, 2.0, 3.0, 4.0, 5.0, 6.0):g:(-1.0, 4.0, -9.0, 2.0, 7.0, 8.0)")
             assert b.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
             assert na.isLeave()
-            assert na.function()==null
-            assert na.mode() == 1
+            assert na.function==null
+            assert na.getMode() == 1
             assert na.size()==0
-            assert na.nid()==1
-            assert !na.lock().isLocked()
+            assert na.getNodeID()==1
+            assert !na.getLock().isLocked()
 
             assert !nb.isLeave()
-            assert nb.function() != null
-            assert nb.mode() == -1
+            assert nb.function != null
+            assert nb.getMode() == -1
             assert nb.size()==0
-            assert nb.nid()!=1
-            assert !nb.lock().isLocked()
+            assert nb.getNodeID()!=1
+            assert !nb.getLock().isLocked()
     }
 
     def "Payloads and derivatives are null."()

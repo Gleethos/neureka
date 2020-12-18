@@ -36,6 +36,8 @@ SOFTWARE.
 
 package neureka.ndim;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.dtype.DataType;
@@ -60,6 +62,7 @@ import java.util.function.Consumer;
  *  are not extended more than once.
  *
  */
+@Accessors( prefix = {"_"} )
 public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractComponentOwner<InstanceType> implements Iterable<ValueType>
 {
 
@@ -68,10 +71,13 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
      */
     protected static Logger _LOGGER; // Why is this not final ? : For unit testing!
 
-    protected NDConfiguration _conf;
+    @Getter
+    protected NDConfiguration _NDConf;
 
+    @Getter
     private DataType<?> _dataType = DataType.of( Neureka.instance().settings().dtype().getDefaultDataTypeClass() );
-    
+
+    @Getter
     private Object _data;
 
     public Class<?> getValueClass()
@@ -79,10 +85,6 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         DataType<?> dt = _dataType;
         if ( dt != null ) return dt.getTypeClass();
         else return null;
-    }
-
-    public DataType getDataType() {
-        return _dataType;
     }
 
     public InstanceType setDataType( DataType<?> dataType )
@@ -95,11 +97,6 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         _dataType = dataType;
         return (InstanceType) this;
     }
-
-    public Object getData() {
-        return _data;
-    }
-
 
     protected void _setData( Object data )
     {
@@ -203,25 +200,22 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public int i_of_i( int i ) {
-        return _conf.i_of_i( i );
+        return _NDConf.i_of_i( i );
     }
 
     public int[] idx_of_i( int i ) {
-        return _conf.idx_of_i( i );
+        return _NDConf.idx_of_i( i );
     }
 
     public int i_of_idx( int[] idx ) {
-        return _conf.i_of_idx(idx);
+        return _NDConf.i_of_idx(idx);
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public NDConfiguration getNDConf() {
-        return _conf;
-    }
 
     public InstanceType setNDConf( NDConfiguration ndConfiguration ) {
-        _conf = ndConfiguration;
+        _NDConf = ndConfiguration;
         return (InstanceType) this;
     }
 
@@ -229,35 +223,35 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
     //---
 
     public int rank() {
-        return _conf.shape().length;
+        return _NDConf.shape().length;
     }
 
     public List<Integer> shape() {
-        return _asList(_conf.shape());
+        return _asList(_NDConf.shape());
     }
 
     public int shape( int i ) {
-        return _conf.shape()[ i ];
+        return _NDConf.shape()[ i ];
     }
 
     public List<Integer> idxmap() {
-        return _asList(_conf.idxmap());
+        return _asList(_NDConf.idxmap());
     }
 
     public List<Integer> translation() {
-        return _asList(_conf.translation());
+        return _asList(_NDConf.translation());
     }
 
     public List<Integer> spread() {
-        return _asList(_conf.spread());
+        return _asList(_NDConf.spread());
     }
 
     public List<Integer> offset() {
-        return _asList(_conf.offset());
+        return _asList(_NDConf.offset());
     }
 
     public int size() {
-        return NDConfiguration.Utility.szeOfShp(_conf.shape());
+        return NDConfiguration.Utility.szeOfShp(_NDConf.shape());
     }
 
     protected static List<Integer> _asList( int[] array ) {
@@ -318,7 +312,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
                 if ( NDConfiguration.Utility.szeOfShp(newShp) != t.size() ) {
                     throw new IllegalArgumentException(
                             "New shape does not match tensor size!" +
-                                    " (" + Utility.Stringify.strConf(newShp) + ((NDConfiguration.Utility.szeOfShp(newShp) < t.size()) ? "<" : ">") + Utility.Stringify.strConf(t._conf.shape()) + ")");
+                                    " (" + Utility.Stringify.strConf(newShp) + ((NDConfiguration.Utility.szeOfShp(newShp) < t.size()) ? "<" : ">") + Utility.Stringify.strConf(t._NDConf.shape()) + ")");
                 }
                 return newShp;
             }

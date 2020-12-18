@@ -52,7 +52,8 @@ public class Cosinus extends AbstractOperationType {
             .setADAgentSupplier(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                 defaultImplementation().supplyADAgentFor( f, call, forward )
-            );
+            )
+            .build();
 
         setImplementation(
                 Activation.class,

@@ -78,7 +78,7 @@ public class Multiplication extends AbstractOperationType {
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();
             int d = call.getDerivativeIndex();
-            OperationType type = call.getType();
+            OperationType type = call.getOperation();
 
             Tsr alternative = null;
             if (tsrs.length > 3) {
@@ -153,7 +153,8 @@ public class Multiplication extends AbstractOperationType {
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                                 defaultImplementation().supplyADAgentFor( f, call, forward )
                 )
-                .setRJAgent( rja );;
+                .setRJAgent( rja )
+                .build();
 
         setImplementation(
                 Operator.class,
@@ -238,7 +239,8 @@ public class Multiplication extends AbstractOperationType {
                         }
                     }
                 )
-                .setRJAgent( rja );
+                .setRJAgent( rja )
+                .build();
 
         setImplementation(Broadcast.class,
             broadcast.setExecutor(
@@ -345,8 +347,9 @@ public class Multiplication extends AbstractOperationType {
                         }
                     }
                 )
-                .setCallHock( ( caller, call ) -> null )
-                .setRJAgent( rja );
+                .setCallHook( (caller, call ) -> null )
+                .setRJAgent( rja )
+                .build();
 
         setImplementation(
                 Scalarization.class,
@@ -458,7 +461,7 @@ public class Multiplication extends AbstractOperationType {
                 }
             }
         )
-        .setCallHock( ( caller, call ) -> null )
+        .setCallHook( (caller, call ) -> null )
         .setRJAgent( ( call, goDeeperWith ) -> null )
         .setDrainInstantiation(
                 call -> {
@@ -466,7 +469,8 @@ public class Multiplication extends AbstractOperationType {
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                     return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                 }
-        );
+        )
+        .build();
 
         new AbstractOperationType(
                 "", ((char) 171) + "*", 3, true, false, false, false
@@ -557,7 +561,7 @@ public class Multiplication extends AbstractOperationType {
                     }
                 }
             )
-            .setCallHock( ( caller, call ) -> null )
+            .setCallHook( (caller, call ) -> null )
             .setRJAgent( ( call, goDeeperWith ) -> null )
             .setDrainInstantiation(
                     call -> {
@@ -565,7 +569,8 @@ public class Multiplication extends AbstractOperationType {
                         int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                         return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                     }
-            );
+            )
+            .build();
 
         new AbstractOperationType(
                 "", "*" + ((char) 187), 3, true, false, false, false

@@ -26,6 +26,8 @@ SOFTWARE.
 
 package neureka.calculus.frontend;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
@@ -44,11 +46,16 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Accessors( prefix = {"_"} )
 public abstract class AbstractFunction extends AbstractBaseFunction
 {
-    private final OperationType _type;
+    @Getter
+    private final OperationType _operation;
+    @Getter
     private final boolean _isFlat;
-    private final boolean _doAD;
+    @Getter
+    private final boolean _isDoingAD;
+
     private final List<Function> _src;
 
     //------------------------------------------------------------------------------------------------------------------
@@ -75,10 +82,10 @@ public abstract class AbstractFunction extends AbstractBaseFunction
             isFlat = ((f instanceof FunctionInput) || (f instanceof FunctionVariable) || (f instanceof FunctionConstant)) && isFlat;
         }
 
-        _type = type;
+        _operation = type;
         _isFlat = isFlat;
         _src = sources;
-        _doAD = doAD;
+        _isDoingAD = doAD;
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -88,28 +95,13 @@ public abstract class AbstractFunction extends AbstractBaseFunction
         return FunctionBuilder.build( expression, true );
     }
 
-    @Override
-    public boolean isFlat() {
-        return _isFlat;
-    }
-
-    @Override
-    public boolean doesAD() {
-        return _doAD;
-    }
-
-    @Override
-    public OperationType getOperation() {
-        return _type;
-    }
-
     //---
 
     @Override
     public String toString()
     {
         List<String> stringedSource = _src.stream().map(e->((e==null)?"(null)":e.toString())).collect(Collectors.toList());
-        return _type.getStringifier().asString(stringedSource);
+        return _operation.getStringifier().asString(stringedSource);
     }
 
     @Override
@@ -135,7 +127,7 @@ public abstract class AbstractFunction extends AbstractBaseFunction
                 inputs,
                 d,
                 j,
-                _type
+                _operation
         );
         ExecutionCall<Device> finalCall;
         Device possiblyNewDevice = call.getImplementation().findDeviceFor(call);
@@ -147,7 +139,7 @@ public abstract class AbstractFunction extends AbstractBaseFunction
             /* The following code is reached in flat functions only:  */
             /* Autograd-Graph will be generated below for the new GraphNode: */
             /* only flat functions can be executed directly */
-            if ( d < 0 && _doAD )
+            if ( d < 0 && _isDoingAD)
                 return new GraphNode(this, finalCall, () -> __flat_execution(finalCall)).getPayload();
             else
                 return __flat_execution( finalCall );
@@ -178,24 +170,24 @@ public abstract class AbstractFunction extends AbstractBaseFunction
         int j = call.getJ();
 
         Tsr[] tsrs;
-        if ( _type.isIndexer() ) tsrs = new Tsr[ 1 + inputs.length ];
+        if ( _operation.isIndexer() ) tsrs = new Tsr[ 1 + inputs.length ];
         else tsrs = new Tsr[ 1 + _src.size() ];
 
-        if ( _type.isIndexer() ) {
+        if ( _operation.isIndexer() ) {
             for ( int i = 1; i < tsrs.length; i++ ) tsrs[ i ] = _src.get( 0 ).call(inputs, i - 1);
         } else if (
                 !_isFlat && j < 0 && (
-                        _type.isOperator() || _type.supportsImplementation(Activation.class)
+                        _operation.isOperator() || _operation.supportsImplementation(Activation.class)
                 )
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
             tsrs = srcActivation(inputs, j, d, 0);
             List<String> stringedSource = IntStream.range(0, _src.size()).mapToObj(i -> "I[" + i + "]").collect(Collectors.toList());
-            String asStr = _type.getStringifier().asString(stringedSource);
-            return FunctionBuilder.build(asStr, _doAD).call(tsrs);
+            String asStr = _operation.getStringifier().asString(stringedSource);
+            return FunctionBuilder.build(asStr, _isDoingAD).call(tsrs);
         } else {
             tsrs = srcActivation(inputs, j, d, 1);
         }
-        device.execute( new ExecutionCall<>( device, tsrs, d, _type ) );
+        device.execute( new ExecutionCall<>( device, tsrs, d, _operation) );
 
         return ( tsrs[ 0 ] == null ) ? tsrs[ 1 ] : tsrs[ 0 ];
     }
@@ -239,14 +231,14 @@ public abstract class AbstractFunction extends AbstractBaseFunction
             int j = call.getJ();
 
             Tsr[] tsrs;
-            if ( _type.isIndexer() ) tsrs = new Tsr[ 1 + inputs.length ];
+            if ( _operation.isIndexer() ) tsrs = new Tsr[ 1 + inputs.length ];
             else tsrs = new Tsr[ 1 + _src.size() ];
 
             // Chain-rule (forward AutoDiff):
             // inner times outer means:
             // first derive source!
             // like so:
-            if ( _type.isIndexer() ) {
+            if ( _operation.isIndexer() ) {
                 for ( int i = 1; i < tsrs.length; i++ ) {
                     tsrs[ i ] = _src.get( 0 ).derive(inputs, d, i - 1);
                 }
@@ -269,7 +261,7 @@ public abstract class AbstractFunction extends AbstractBaseFunction
 
             tsrs[ 0 ] = null;
             //...then activate (No differentiation!) the source like so:
-            if ( _type.isIndexer() ) { // Indexer pass an index j of course!
+            if ( _operation.isIndexer() ) { // Indexer pass an index j of course!
                 for ( int i = 1; i < tsrs.length; i++ ) {
                     tsrs[ i ] = _src.get( 0 ).call( inputs, i - 1 ); // i - 1 := j
                 }
@@ -280,13 +272,13 @@ public abstract class AbstractFunction extends AbstractBaseFunction
             }
             //...get derivative index within src list:
             for ( int i = 0; i < _src.size(); i++ ) {
-                if ( _src.get( i ).dependsOn(d) && !_type.isIndexer() ) {
+                if ( _src.get( i ).dependsOn(d) && !_operation.isIndexer() ) {
                     d = i;
                     break;
                 }
             }
             // Use those tensors for the outer derivative:
-            device.execute( new ExecutionCall<>( device, tsrs, d, _type ) );
+            device.execute( new ExecutionCall<>( device, tsrs, d, _operation) );
             // At the end:
             //...multiply inner times outer: ( if inner is not 1 entirely... )
             if ( !( ( inner.isVirtual() || inner.size()==1 ) && inner.value64( 0 )==1.0) ) {
@@ -343,7 +335,7 @@ public abstract class AbstractFunction extends AbstractBaseFunction
         if ( inputs.length == 0 ) return HostCPU.instance();
         Device device = inputs[ 0 ].find( Device.class );
         boolean onSameDevice = _shareGuestDevice( inputs );
-        boolean doAccel = !_type.getOperator().equals(",") && onSameDevice;
+        boolean doAccel = !_operation.getOperator().equals(",") && onSameDevice;
         return ( doAccel && device != null ) ? device : inputs[ 0 ].device();
     }
 

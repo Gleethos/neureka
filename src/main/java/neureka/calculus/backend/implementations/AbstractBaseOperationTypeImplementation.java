@@ -33,7 +33,7 @@ public abstract class AbstractBaseOperationTypeImplementation<FinalType> impleme
         Device device = call.getDevice();
         Tsr[] tsrs = call.getTensors();
         int d = call.getDerivativeIndex();
-        OperationType type = call.getType();
+        OperationType type = call.getOperation();
 
         Consumer<Tsr>[] rollbacks = new Consumer[tsrs.length];
         for (int i=0; i<tsrs.length; i++) {

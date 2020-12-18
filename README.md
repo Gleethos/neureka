@@ -20,7 +20,7 @@
 
 ---
 
-Neureka is a platform independent deep-learning library written in Java. 
+Neureka is a platform independent tensor library written in Java. 
 
   - Java, Kotlin, Groovy, Scala, Jython, JRuby...
  
@@ -154,7 +154,7 @@ $ gradlew proguard
 
 - OpenCL - 2.^ (JOCL binding)
 
-- Groovy - 3.^ (optional)
+- Groovy - 3.^ 
 
 ---
 

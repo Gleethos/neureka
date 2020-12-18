@@ -74,7 +74,7 @@ public class Gaussian extends AbstractOperationType
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                 defaultImplementation().supplyADAgentFor( f, call, forward )
             )
-        .setCallHock( ( caller, call ) -> null )
+        .setCallHook( (caller, call ) -> null )
         .setRJAgent( ( call, goDeeperWith ) -> null )
         .setDrainInstantiation(
                 call -> {
@@ -94,7 +94,8 @@ public class Gaussian extends AbstractOperationType
                         }
                         return call;
                     }
-            );
+            )
+            .build();
 
         setImplementation(
                 Activation.class,

@@ -118,6 +118,11 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
     //implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.29' // adds log4j backend
 
+    // Lombok :
+    compileOnly 'org.projectlombok:lombok:1.18.16'
+    annotationProcessor 'org.projectlombok:lombok:1.18.16'
+
+
     // Test suite : Groovy, Spock (+ sl4j, + Spock-Reports)
     testCompile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.5'
     testCompile group: 'org.spockframework', name: 'spock-core', version: '2.0-M2-groovy-3.0'
@@ -127,6 +132,10 @@ dependencies {
     testRuntimeClasspath 'org.slf4j:slf4j-simple:1.7.30'
     testRuntime "net.bytebuddy:byte-buddy:1.9.3" // allows mocking of classes (in addition to interfaces)
     testRuntime "org.objenesis:objenesis:2.6"    // allows mocking of classes without default constructor (together with CGLIB)
+    // Lombok :
+    testCompileOnly 'org.projectlombok:lombok:1.18.16'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+
 }
 
 //----------------------------------------------------------------------------------------------------------------------

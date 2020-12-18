@@ -1,5 +1,8 @@
 package neureka.devices.opencl;
 
+import lombok.Getter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import neureka.Neureka;
 import neureka.devices.opencl.execution.CLExecutor;
 import neureka.calculus.backend.implementations.functional.GenericImplementation;
@@ -12,16 +15,21 @@ import java.util.*;
 import static org.jocl.CL.*;
 import static org.jocl.CL.CL_DEVICE_TYPE_ALL;
 
+@Accessors( prefix = {"_"} )
 public class OpenCLPlatform {
 
+    @Getter
     private final cl_platform_id _pid;
-    private final Map<cl_device_id, OpenCLDevice> _id_device;
+    @Getter
     private final cl_context _context;
-    private final Map<String, cl_kernel> _kernels = new HashMap<>();
-
+    @Getter
     private boolean _isDoingLegacyIndexing = false;
 
-    private OpenCLPlatform(cl_platform_id pid)
+    private final Map<cl_device_id, OpenCLDevice> _id_device;
+    private final Map<String, cl_kernel> _kernels = new HashMap<>();
+
+
+    private OpenCLPlatform( cl_platform_id pid )
     {
         _id_device = new TreeMap<>(Comparator.comparingInt(NativePointerObject::hashCode));
         _pid = pid;
@@ -52,14 +60,10 @@ public class OpenCLPlatform {
         _compile(devicesArray);
     }
 
-    public boolean isDoingLegacyIndexing() {
-        return _isDoingLegacyIndexing;
-    }
-
     public void recompile() {
         List<OpenCLDevice> devices = getDevices();
         cl_device_id[] devicesArray = new cl_device_id[devices.size()];
-        for (int i = 0; i < devicesArray.length; i++) devicesArray[ i ] = devices.get( i ).getCLDeviceID();
+        for (int i = 0; i < devicesArray.length; i++) devicesArray[ i ] = devices.get( i ).getDeviceId();
         _compile(devicesArray);
     }
 
@@ -162,10 +166,6 @@ public class OpenCLPlatform {
         }
     }
 
-    public cl_platform_id getID() {
-        return _pid;
-    }
-
     public List<OpenCLDevice> getDevices() {
         List<OpenCLDevice> devices = new ArrayList<>();
         _id_device.forEach( ( k, v ) -> devices.add(v) );
@@ -188,9 +188,6 @@ public class OpenCLPlatform {
         return _kernels;
     }
 
-    public cl_context getContext() {
-        return _context;
-    }
 
     public static List<OpenCLPlatform> PLATFORMS() {
         return Setup.PLATFORMS;

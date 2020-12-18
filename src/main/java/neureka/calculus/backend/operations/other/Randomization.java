@@ -51,8 +51,8 @@ public class Randomization extends AbstractOperationType
         .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                 call -> {
-                    if ( call.getType().supports(Convolution.class) ) return false;
-                    if ( call.getType().getOperator().equals(",") ) return false; //Reshape
+                    if ( call.getOperation().supports(Convolution.class) ) return false;
+                    if ( call.getOperation().getOperator().equals(",") ) return false; //Reshape
                     Tsr<?> last = null;
                     for ( Tsr<?> t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;
@@ -65,7 +65,7 @@ public class Randomization extends AbstractOperationType
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     defaultImplementation().supplyADAgentFor( f, call, forward )
         )
-        .setCallHock( ( caller, call ) -> null )
+        .setCallHook( (caller, call ) -> null )
         .setRJAgent( ( call, goDeeperWith ) -> null )
         .setDrainInstantiation(
                 call -> {
@@ -73,7 +73,8 @@ public class Randomization extends AbstractOperationType
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                     return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                 }
-        );
+        )
+        .build();
 
         setImplementation(
                 Scalarization.class,

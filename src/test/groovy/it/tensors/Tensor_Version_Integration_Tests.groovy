@@ -25,8 +25,8 @@ class Tensor_Version_Integration_Tests extends Specification
             binding.setVariable('b', b)
 
         expect :
-            a.version() == 0
-            b.version() == 0
+            a.getVersion() == 0
+            b.getVersion() == 0
 
         when : 'The groovy code is being evaluated.'
             Tsr c = new GroovyShell(binding).evaluate((code))
@@ -36,9 +36,9 @@ class Tensor_Version_Integration_Tests extends Specification
             c != a
 
         and : 'The three tensors have the expected versions.'
-            a.version() == version_of_a
-            b.version() == version_of_b
-            c.version() == version_of_c
+            a.getVersion() == version_of_a
+            b.getVersion() == version_of_b
+            c.getVersion() == version_of_c
 
         where :
             code       |  no_inline  || version_of_c | version_of_a | version_of_b | expected
@@ -72,8 +72,8 @@ class Tensor_Version_Integration_Tests extends Specification
             binding.setVariable('b', b)
 
         expect :
-            a.version() == 0
-            b.version() == 0
+            a.getVersion() == 0
+            b.getVersion() == 0
 
         when : 'The groovy code is being evaluated.'
             Tsr c = new GroovyShell(binding).evaluate((code))
@@ -83,9 +83,9 @@ class Tensor_Version_Integration_Tests extends Specification
             c == a
 
         and : 'The three tensors have the expected versions.'
-            a.version() == version_of_a
-            b.version() == version_of_b
-            c.version() == version_of_c
+            a.getVersion() == version_of_a
+            b.getVersion() == version_of_b
+            c.getVersion() == version_of_c
 
         where :
             code                  | save_inline || version_of_c | version_of_a | version_of_b | expected
@@ -115,8 +115,8 @@ class Tensor_Version_Integration_Tests extends Specification
             binding.setVariable('b', b)
 
         expect :
-            a.version() == 0
-            b.version() == 0
+            a.getVersion() == 0
+            b.getVersion() == 0
 
         when : 'The groovy code is being evaluated.'
             Tsr c = new GroovyShell( binding ).evaluate( code )

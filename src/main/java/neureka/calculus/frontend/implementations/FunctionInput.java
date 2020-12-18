@@ -25,7 +25,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
     }
 
     @Override
-    public boolean doesAD() {
+    public boolean isDoingAD() {
         return false;
     }
 

@@ -39,7 +39,7 @@ class Calculus_Extension_Unit_Tests extends Specification
         then : 'The mock type has been called as expected and the function has the following properties.'
             (1.._) * type.getArity() >> 2
             function.isFlat()
-            !function.doesAD()
+            !function.isDoingAD()
 
         when : 'The function is being called with an empty tensor array...'
             def result = function.call(new Tsr[0])
@@ -91,7 +91,7 @@ class Calculus_Extension_Unit_Tests extends Specification
         then : 'The mock type has been called as expected and the function has the following properties.'
             (1.._) * type.getArity() >> 2
             function.isFlat()
-            function.doesAD()
+            function.isDoingAD()
 
         when : 'The function is being called with an empty tensor array...'
             def result = function.call([input])
@@ -105,7 +105,7 @@ class Calculus_Extension_Unit_Tests extends Specification
 
         and : 'The GraphNode instance which will be created as tensor component interacts as follows.'
             (1.._) * input.find(GraphNode.class) >> node
-            (1.._) * node.lock() >> Mock(GraphLock)
+            (1.._) * node.getLock() >> Mock(GraphLock)
             (1.._) * input.device() >> Mock(Device) // Device is being queried for execution...
             _ * type.getOperator() >> 'test_identifier'
             (1.._) * output.device() >> Mock(Device)

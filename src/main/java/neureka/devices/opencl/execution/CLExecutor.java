@@ -72,6 +72,18 @@ public class CLExecutor implements ExecutorFor<OpenCLDevice>
     public CLExecutor(
             ExecutionOn<OpenCLDevice> lambda,
             int arity,
+            String kernelName,
+            String kernelSource
+    ) {
+        _lambda = lambda;
+        _arity = arity;
+        _name = kernelName;
+        _source = kernelSource;
+    }
+
+    public CLExecutor(
+            ExecutionOn<OpenCLDevice> lambda,
+            int arity,
             String kernelSource,
             String activationSource,
             String differentiationSource,

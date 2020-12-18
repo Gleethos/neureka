@@ -1,4 +1,7 @@
 package neureka.autograd;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import neureka.Tsr;
 import neureka.calculus.Function;
 
@@ -8,6 +11,7 @@ import neureka.calculus.Function;
  *  access to tensors which are involved in the computation graph rendered by the 'lock owner',
  *  namely any Function object!
  * */
+@Accessors( prefix = {"_"} )
 public class GraphLock
 {
 
@@ -18,23 +22,19 @@ public class GraphLock
 
     /**
      *  Lock status (is locked if the graph is currently processing)
+     *
+     *  @return Returns true if the graph is locked
      */
-    private boolean _is_locked = true;
+    @Getter
+    private boolean _isLocked = true;
 
     /**
      * CONSTRUCTOR
      * @param owner The function which currently processes the graph of nodes of which this lock is referenced by.
      * @param sources
      */
-    public GraphLock(Function owner, Tsr[] sources) {
+    public GraphLock( Function owner, Tsr[] sources ) {
         this._owner = owner;
-    }
-
-    /**
-     * @return Returns true if the graph is locked
-     */
-    public boolean isLocked() {
-        return _is_locked;
     }
 
     /**
@@ -42,7 +42,7 @@ public class GraphLock
      *  to be used for further processing.
      */
     public void release() {
-        _is_locked = false;
+        _isLocked = false;
     }
 
     /**

@@ -74,7 +74,8 @@ public class Addition extends AbstractOperationType {
                 }
             }
         )
-        .setRJAgent( ( call, goDeeperWith ) -> null );
+        .setRJAgent( ( call, goDeeperWith ) -> null )
+        .build();
 
     public Addition()
     {
@@ -106,7 +107,7 @@ public class Addition extends AbstractOperationType {
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();
             int d = call.getDerivativeIndex();
-            OperationType type = call.getType();
+            OperationType type = call.getOperation();
 
             Tsr alternative = null;
             if (tsrs.length > 3) {
@@ -157,7 +158,8 @@ public class Addition extends AbstractOperationType {
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                                 defaultImplementation().supplyADAgentFor( f, call, forward )
                 )
-                .setRJAgent( rja );
+                .setRJAgent( rja )
+                .build();
 
         setImplementation(
                 Operator.class,
@@ -275,8 +277,9 @@ public class Addition extends AbstractOperationType {
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                             defaultImplementation().supplyADAgentFor( f, call, forward )
                 )
-                .setCallHock( ( caller, call ) -> null )
-                .setRJAgent( rja );
+                .setCallHook( (caller, call ) -> null )
+                .setRJAgent( rja )
+                .build();
 
         ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
                 (inputs, value, d) -> {
@@ -417,7 +420,7 @@ public class Addition extends AbstractOperationType {
                             }
                         }
                     )
-                    .setCallHock( ( caller, call ) -> null )
+                    .setCallHook( (caller, call ) -> null )
                     .setRJAgent( ( call, goDeeperWith ) -> null )
                     .setDrainInstantiation(
                             call -> {
@@ -426,6 +429,7 @@ public class Addition extends AbstractOperationType {
                                 return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                             }
                     )
+                    .build()
         )
         .setStringifier(
             children -> {

@@ -53,6 +53,9 @@ import static org.jocl.CL.*;
 import java.nio.*;
 import java.util.*;
 
+import lombok.Getter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import neureka.Component;
 import neureka.Tsr;
 import neureka.devices.AbstractDevice;
@@ -70,6 +73,8 @@ import org.jocl.*;
  *  Instances of this class internally utilize the OpenCL API in order to use supported
  *  accelerator hardware like GPUs or FPGAs for storing tensors and executing operations on them.
  */
+@Accessors( prefix = {"_"} )
+@ToString
 public class OpenCLDevice extends AbstractDevice<Number>
 {
     public static OpenCLDevice newInstanceOf( OpenCLPlatform platform, cl_device_id did )
@@ -160,11 +165,17 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap( new WeakHashMap<Tsr<Number>, Boolean>() );
 
+    @Getter
     private final cl_device_id _deviceId;
 
     /**
-     * The OpenCLPlatform
+     *  The OpenCLPlatform :
+     *  This method is a simple getter for the OpenCLPlatform instance hosting this current device.
+     *  A platform would for example be vendor specific like Intel, AMD, Nvidia...
+     *
+     * @return The OpenCLPlatform instance representing the platform (amd, intel, nvidia) to which this device belongs.
      */
+    @Getter
     private final OpenCLPlatform _platform;
 
     /**
@@ -203,10 +214,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         //    clReleaseCommandQueue(_queue);
         //    clReleaseContext(_context);
         //}));
-    }
-
-    public cl_device_id getCLDeviceID() {
-        return _deviceId;
     }
 
     public boolean hasAdHocKernel( String name ) {
@@ -296,15 +303,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return this;
     }
 
-    /**
-     *  This method is a simple getter for the OpenCLPlatform instance hosting this current device.
-     *  A platform would for example be vendor specific like Intel, AMD, Nvidia...
-     *
-     * @return The OpenCLPlatform instance representing the platform (amd, intel, nvidia) to which this device belongs.
-     */
-    public OpenCLPlatform getPlatform() {
-        return _platform;
-    }
 
     /**
      *  This method returns all the tensors stored on this
@@ -521,14 +519,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return this;
     }
 
-    //private void _rmv(WeakReference<Tsr> reference) {
-    //    cl_tsr clt = _mapping.get(reference);
-    //    clReleaseMemObject(clt.config);//remove translations/shapes/spread/offset... from device!
-    //    //if (clt.value.uses <= 1) {
-    //    //    clReleaseMemObject(clt.value.data);
-    //    //} else clt.value.uses--;
-    //    _mapping.remove(reference);
-    //}
 
     @Override
     public Device<Number> overwrite64( Tsr<Number> tensor, double[] value )
@@ -552,6 +542,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         }
         return this;
     }
+
 
     @Override
     public Device overwrite32( Tsr<Number> tensor, float[] value) {
@@ -651,7 +642,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     public KernelCaller getKernel( ExecutionCall call ) {
-        String chosen = call.getImplementation().getName() + "_" + call.getType().getFunction();
+        String chosen = call.getImplementation().getName() + "_" + call.getOperation().getFunction();
         cl_kernel kernel = _platform.getKernels().get( chosen );
         return new KernelCaller( kernel, _queue );
     }

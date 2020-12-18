@@ -50,7 +50,7 @@ public class Summation extends AbstractOperationType
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();
             int d = call.getDerivativeIndex();
-            OperationType type = call.getType();
+            OperationType type = call.getOperation();
 
             Tsr alternative = null;
             if (tsrs.length > 3) {
@@ -121,7 +121,8 @@ public class Summation extends AbstractOperationType
                         }
                     }
                 )
-                .setRJAgent( rja );
+                .setRJAgent( rja )
+                .build();
 
 
         setImplementation (
@@ -247,7 +248,7 @@ public class Summation extends AbstractOperationType
                 }
             }
         )
-        .setCallHock( ( caller, call ) -> null )
+        .setCallHook( (caller, call ) -> null )
         .setRJAgent( rja )
         .setDrainInstantiation(
                 call -> {
@@ -267,7 +268,8 @@ public class Summation extends AbstractOperationType
                     }
                     return call;
                 }
-        );
+        )
+        .build();
 
         setImplementation(Activation.class,
                 activation.setExecutor(

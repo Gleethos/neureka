@@ -67,7 +67,7 @@ class Calculus_Extension_Integration_Tests extends Specification
                                                         .withBackward((t, error) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0));
                                             }
                                     )
-                                    .setCallHock( ( caller, call ) -> null )
+                                    .setCallHook( (caller, call ) -> null )
                                     .setRJAgent( ( call, goDeeperWith ) -> null )
                                     .setDrainInstantiation(
                                             call ->
@@ -76,7 +76,7 @@ class Calculus_Extension_Integration_Tests extends Specification
                                                 Device device = call.getDevice();
                                                 if ( tsrs[0] == null ) // Creating a new tensor:
                                                 {
-                                                    int[] shp = tsrs[1].getNDConf().shape();
+                                                    int[] shp = new int[]{tsrs[1].getNDConf().shape()[0],tsrs[2].getNDConf().shape()[1]}
                                                     Tsr output = new Tsr( shp, 0.0 );
                                                     output.setIsVirtual( false );
                                                     device.store(output);
@@ -189,8 +189,11 @@ class Calculus_Extension_Integration_Tests extends Specification
             100   | [400, 100]            || [8, 5]
             255   | [470, 652]            || [47, 4]
             255   | [7849, 4782]          || [47, 6]
-
+           128**2 | [256, 256]            || [128, 128]
+             8**2 | [128, 128]            || [8, 8]
+            4**2  | [4,4]                 || [4,4]
     }
+
 
 
 }

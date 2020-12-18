@@ -57,7 +57,7 @@ public class DimTrim extends AbstractOperationType
                                     .withBackward( (t, error) -> pad(error, new int[]{prefix, postfix}, true) );
                         }
                 )
-                .setCallHock(
+                .setCallHook(
                         ( caller, call ) ->
                         {
                             Tsr<?>[] inputs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
@@ -75,7 +75,8 @@ public class DimTrim extends AbstractOperationType
                         }
                 )
                 .setRJAgent( ( call, goDeeperWith ) -> null )
-                .setDrainInstantiation( call -> call );
+                .setDrainInstantiation( call -> call )
+                .build();
 
         setImplementation(
                 GenericImplementation.class,

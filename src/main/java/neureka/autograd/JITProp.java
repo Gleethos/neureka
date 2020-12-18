@@ -63,7 +63,7 @@ public class JITProp<ValueType> implements Component<Tsr<ValueType>>
             if ( _finished == null || !_finished.contains( n ) ) {
                 PendingError pe = n.getAndRemovePendingError();
                 if ( !pe.isFullyAccumulated() ) throw new IllegalStateException("Pending error has not received expected accumulation.");
-                n.backwardJIT(pe.getAccumulatedError());//Continue backprop recursively!
+                n.backwardJIT( (Tsr<ValueType>) pe.getAccumulatedError() );//Continue backprop recursively!
             }
         });
         if ( pendingCount() > 0 ) throw new IllegalStateException("Pending error has not received expected accumulation.");

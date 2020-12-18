@@ -88,7 +88,7 @@ public class Division extends AbstractOperationType
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();
             int d = call.getDerivativeIndex();
-            OperationType type = call.getType();
+            OperationType type = call.getOperation();
 
             Tsr alternative = null;
             if (tsrs.length > 3) {
@@ -183,7 +183,8 @@ public class Division extends AbstractOperationType
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                                 defaultImplementation().supplyADAgentFor( f, call, forward )
                 )
-                .setRJAgent( rja );;
+                .setRJAgent( rja )
+                .build();
 
         setImplementation(
                 Operator.class,
@@ -274,7 +275,8 @@ public class Division extends AbstractOperationType
                         }
                     }
                 )
-                .setRJAgent( rja );
+                .setRJAgent( rja )
+                .build();
 
         setImplementation(
                 Broadcast.class,
@@ -361,8 +363,9 @@ public class Division extends AbstractOperationType
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     defaultImplementation().supplyADAgentFor( f, call, forward )
                 )
-                .setCallHock( ( caller, call ) -> null )
-                .setRJAgent( rja );
+                .setCallHook( (caller, call ) -> null )
+                .setRJAgent( rja )
+                .build();
 
         setImplementation(
                 Scalarization.class,
@@ -484,7 +487,7 @@ public class Division extends AbstractOperationType
                             }
                         }
                     )
-                    .setCallHock( ( caller, call ) -> null )
+                    .setCallHook( (caller, call ) -> null )
                     .setRJAgent( ( call, goDeeperWith ) -> null )
                     .setDrainInstantiation(
                             call -> {
@@ -493,6 +496,7 @@ public class Division extends AbstractOperationType
                                 return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                             }
                     )
+                    .build()
                 ).setStringifier(
                         children -> {
                             StringBuilder reconstructed = new StringBuilder();

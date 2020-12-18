@@ -2,8 +2,6 @@ package neureka.calculus.backend.implementations.functional;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.calculus.Function;
-import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.devices.Device;
@@ -29,7 +27,7 @@ public class Activation extends AbstractFunctionalOperationTypeImplementation< A
                                 .all( ( first, second ) -> first.shape().equals(second.shape()) )
                                 .isValid()
                 );
-        setCallHock( ( caller, call ) -> null );
+        setCallHook( (caller, call ) -> null );
         setRJAgent( ( call, goDeeperWith ) -> null );
         setDrainInstantiation(
                         call -> {

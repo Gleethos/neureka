@@ -109,7 +109,7 @@ public abstract class AbstractDevice<ValueType> extends AbstractBaseDevice<Value
         ( (OperationTypeImplementation<Object>) call.getImplementation() )
                 .recursiveReductionOf(
                     call,
-                    c -> _execute( c.getTensors(), c.getDerivativeIndex(), c.getType() )
+                    c -> _execute( c.getTensors(), c.getDerivativeIndex(), c.getOperation() )
                 );
         return this;
     }

@@ -68,7 +68,7 @@ public class Cache
 
     public synchronized Tsr<Object> preprocess( Tsr<Object>[] inputs, Function function, Supplier<Tsr<Object>> activation, int d, int j )
     {
-        if ( !function.doesAD() ) {
+        if ( !function.isDoingAD() ) {
             return activation.get(); // TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD => NO GRAPH NODES
         }
         boolean locked = true;//input tensors might all have graph nodes but are left from previous computation. (=>need to locked again!)
@@ -77,13 +77,13 @@ public class Cache
             GraphNode<Object> node = t.find( GraphNode.class );
             if ( node != null ) {
                 untracked=t;
-                locked = (locked) && node.lock().isLocked();
+                locked = (locked) && node.getLock().isLocked();
             }
         }
         if( untracked == null || !locked ) { // If graph tracking (nodes) has not yet been initialized!
             return Function.Setup.commit( null, inputs, function, activation );
         }
-        GraphLock lock =  untracked.find( GraphNode.class ).lock();
+        GraphLock lock =  untracked.find( GraphNode.class ).getLock();
         for ( Tsr<Object> t : inputs ) {
             if ( t.has(GraphNode.class) ) t.find( GraphNode.class ).obtainLocking( lock );
             else new GraphNode( function, lock, ()->t );
@@ -103,7 +103,7 @@ public class Cache
 
     private synchronized Tsr<Object> _get( Tsr<Object>[] tsrs, int d, int j )
     {
-        GraphLock lock = tsrs[ 0 ].find( GraphNode.class ).lock();
+        GraphLock lock = tsrs[ 0 ].find( GraphNode.class ).getLock();
         long key = _keyOf( tsrs, d, j );
         if ( key != 0 && PROCESSING.containsKey( lock ) && PROCESSING.get( lock ).containsKey( key ) ) {
                 _logger.debug(
@@ -125,10 +125,10 @@ public class Cache
         long key = _keyOf( tsrs, d, j );
         if ( node.isCachable() && key != 0 ) {
             TreeMap<Long, Tsr<Object>> variables;
-            if ( PROCESSING.containsKey( node.lock() ) ) variables = PROCESSING.get( node.lock() );
+            if ( PROCESSING.containsKey( node.getLock() ) ) variables = PROCESSING.get( node.getLock() );
             else {
                 variables = new TreeMap<>((a, b) -> (a.hashCode() - b.hashCode()));
-                PROCESSING.put( node.lock(), variables );
+                PROCESSING.put( node.getLock(), variables );
             }
             variables.put( key, t );
         }

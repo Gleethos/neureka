@@ -1,6 +1,9 @@
 package neureka.calculus.backend.implementations;
 
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.autograd.ADAgent;
@@ -23,17 +26,25 @@ import neureka.calculus.frontend.AbstractFunction;
  *
  * @param <FinalType> The final type extending this class.
  */
+@Accessors( prefix = {"_"}, chain = true )
 public abstract class AbstractFunctionalOperationTypeImplementation< FinalType > extends AbstractBaseOperationTypeImplementation< FinalType >
 {
-
+    @Getter @Setter
     private SuitabilityChecker _suitabilityChecker;
-    private DeviceFinder _finder;
-    private ForwardADAnalyzer _forwardAnalyzer;
-    private BackwardADAnalyzer _backwardAnalyzer;
-    private ADAgentSupplier _adaCreator;
-    private InitialCallHook _hook;
+    @Getter @Setter
+    private DeviceFinder _deviceFinder;
+    @Getter @Setter
+    private ForwardADAnalyzer _forwardADAnalyzer;
+    @Getter @Setter
+    private BackwardADAnalyzer _backwardADAnalyzer;
+    @Getter @Setter
+    private ADAgentSupplier _ADAgentSupplier;
+    @Getter @Setter
+    private InitialCallHook _callHook;
+    @Getter @Setter
     private RecursiveJunctionAgent _RJAgent;
-    private DrainInstantiation _instantiation;
+    @Getter @Setter
+    private DrainInstantiation _drainInstantiation;
 
     public AbstractFunctionalOperationTypeImplementation(String name) {
         super(name);
@@ -46,88 +57,40 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
         return _suitabilityChecker.canHandle(call);
     }
 
-    public FinalType setSuitabilityChecker(SuitabilityChecker checker) {
-        _suitabilityChecker = checker;
-        return (FinalType) this;
-    }
-
     ///---
 
     @Override
     public Device findDeviceFor(ExecutionCall call) {
-        return ( _finder == null ) ? null :_finder.findFor(call);
-    }
-
-    public FinalType setDeviceFinder( DeviceFinder finder ) {
-        _finder = finder;
-        return (FinalType) this;
+        return ( _deviceFinder == null ) ? null : _deviceFinder.findFor(call);
     }
 
     //---
 
     @Override
     public boolean canImplementationPerformForwardADFor(ExecutionCall call ) {
-        return _forwardAnalyzer.allowsForward(call);
-    }
-
-    public ForwardADAnalyzer getForwardADAnalyzer() {
-        return _forwardAnalyzer;
-    }
-
-    public FinalType setForwardADAnalyzer(ForwardADAnalyzer analyzer) {
-        _forwardAnalyzer = analyzer;
-        return (FinalType) this;
+        return _forwardADAnalyzer.allowsForward(call);
     }
 
     //---
 
     @Override
     public boolean canImplementationPerformBackwardADFor(ExecutionCall call ) {
-        return _backwardAnalyzer.allowsBackward(call);
-    }
-
-    public BackwardADAnalyzer getBackwardADAnalyzer() {
-        return _backwardAnalyzer;
-    }
-
-    public FinalType setBackwardADAnalyzer(BackwardADAnalyzer analyzer) {
-        _backwardAnalyzer = analyzer;
-        return (FinalType) this;
+        return _backwardADAnalyzer.allowsBackward(call);
     }
 
     //---
 
     @Override
     public ADAgent supplyADAgentFor(Function f, ExecutionCall<Device> call, boolean forward) {
-        return _adaCreator.getADAgentOf( f, call, forward );
+        return _ADAgentSupplier.getADAgentOf( f, call, forward );
     }
-
-    public ADAgentSupplier getADAgentSupplier() {
-        return _adaCreator;
-    }
-
-    public FinalType setADAgentSupplier(ADAgentSupplier creator ) {
-        _adaCreator = creator;
-        return (FinalType) this;
-    }
-
 
     //---
 
     @Override
     public Tsr handleInsteadOfDevice(AbstractFunction caller, ExecutionCall call) {
-        return _hook.handle( caller, call );
+        return _callHook.handle( caller, call );
     }
-
-    public InitialCallHook getCallHook() {
-        return _hook;
-    }
-
-    public FinalType setCallHock(InitialCallHook hook) {
-        _hook = hook;
-        return (FinalType) this;
-    }
-
 
     //---
 
@@ -136,33 +99,18 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
         return _RJAgent.handle(call, goDeeperWith);
     }
 
-    public RecursiveJunctionAgent getRJAgent() {
-        return _RJAgent;
-    }
-
-    public FinalType setRJAgent(RecursiveJunctionAgent rja) {
-        _RJAgent = rja;
-        return (FinalType) this;
-    }
-
     //---
 
     @Override
     public ExecutionCall instantiateNewTensorsForExecutionIn(ExecutionCall call) {
-        return _instantiation.handle(call);
+        return _drainInstantiation.handle(call);
     }
-
-    public DrainInstantiation getDrainInstantiation() {
-        return _instantiation;
-    }
-
-    public FinalType setDrainInstantiation(DrainInstantiation drainInstantiation) {
-        _instantiation = drainInstantiation;
-        return (FinalType) this;
-    }
-
 
     //---
+
+    public FinalType build() {
+        return (FinalType) this;
+    }
 
 }
 

@@ -57,7 +57,7 @@ public class DimFit extends AbstractOperationType
                                 );
                     }
                 )
-                .setCallHock(
+                .setCallHook(
                         ( caller, call ) ->
                         {
                             Tsr<?>[] inputs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
@@ -118,7 +118,8 @@ public class DimFit extends AbstractOperationType
                         }
                 )
                 .setRJAgent( ( call, goDeeperWith ) -> null )
-                .setDrainInstantiation( call -> call );
+                .setDrainInstantiation( call -> call )
+                .build();
 
         setImplementation(
                 GenericImplementation.class,

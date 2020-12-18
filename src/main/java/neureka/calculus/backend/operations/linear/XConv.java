@@ -1,4 +1,4 @@
-package neureka.calculus.backend.operations.convolution;
+package neureka.calculus.backend.operations.linear;
 
 import neureka.Neureka;
 import neureka.Tsr;
@@ -16,10 +16,10 @@ import neureka.calculus.frontend.assembly.FunctionBuilder;
 
 import java.util.List;
 
-public class XMultiplication extends AbstractOperationType
+public class XConv extends AbstractOperationType
 {
 
-    public XMultiplication()
+    public XConv()
     {
         super(
                 "multiply",
@@ -49,7 +49,7 @@ public class XMultiplication extends AbstractOperationType
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();
             int d = call.getDerivativeIndex();
-            OperationType type = call.getType();
+            OperationType type = call.getOperation();
 
             Tsr alternative = null;
             if (tsrs.length > 3) {
@@ -68,7 +68,7 @@ public class XMultiplication extends AbstractOperationType
                 }
                 return alternative;
             } else {
-                if ( call.getType().getOperator().equals("x") ) {
+                if ( call.getOperation().getOperator().equals("x") ) {
                     if (d >= 0) {
                         if (d == 0) tsrs[ 0 ] = tsrs[ 2 ];
                         else tsrs[ 0 ] = tsrs[ 1 ];
@@ -76,7 +76,7 @@ public class XMultiplication extends AbstractOperationType
                     } else {
                         call.mutateArguments( t -> new Tsr[]{t[ 0 ], t[ 1 ], t[ 2 ]} );
                     }
-                } else if ( call.getType().getOperator().equals("x"+ ((char) 187)) ) {
+                } else if ( call.getOperation().getOperator().equals("x"+ ((char) 187)) ) {
                     call.mutateArguments( t -> new Tsr[]{t[ 2 ], t[ 1 ], t[ 0 ]} );
                 }
                 return alternative;
@@ -114,8 +114,8 @@ public class XMultiplication extends AbstractOperationType
             .setBackwardADAnalyzer( call -> true )
             .setForwardADAnalyzer(
                 call -> {
-                    if ( call.getType().supports(Convolution.class) ) return false;
-                    if ( call.getType().getOperator().equals(",") ) return false; //Reshape
+                    if ( call.getOperation().supports(Convolution.class) ) return false;
+                    if ( call.getOperation().getOperator().equals(",") ) return false; //Reshape
                     Tsr<?> last = null;
                     for ( Tsr<?> t : call.getTensors() ) {
                         if ( last != null && !last.shape().equals(t.shape()) ) return false;
@@ -144,10 +144,10 @@ public class XMultiplication extends AbstractOperationType
                     .withBackward( (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)}) );
                 }
             )
-            .setCallHock(
+            .setCallHook(
                     ( caller, call ) -> {
                         if ( !caller.isFlat() ) return null;
-                        if ( call.getType().getOperator().equals("x") ) {
+                        if ( call.getOperation().getOperator().equals("x") ) {
 
                             Tsr[] inputs = call.getTensors();
                             Tsr[] tsrs = new Tsr[]{null, inputs[ 0 ], inputs[ 1 ]};
@@ -161,10 +161,10 @@ public class XMultiplication extends AbstractOperationType
                         } else {
                             if (call.getDerivativeIndex() < 0) {
                                 Tsr[] tsrs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
-                                Tsr.makeFit(tsrs, caller.doesAD()); // This might not fit here... (fitting should probably be a setup thing...)
+                                Tsr.makeFit(tsrs, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                 for ( Tsr t : tsrs ) t.setIsVirtual( false );
-                                call.getDevice().execute( new ExecutionCall( call.getDevice(), tsrs, 0, call.getType() ) );
-                                if ( call.getType().getId() == OperationType.instance("x>>").getId()) return tsrs[ 2 ];
+                                call.getDevice().execute( new ExecutionCall( call.getDevice(), tsrs, 0, call.getOperation() ) );
+                                if ( call.getOperation().getId() == OperationType.instance("x>>").getId()) return tsrs[ 2 ];
                                 else return tsrs[ 0 ];
                             }
                         }
@@ -190,7 +190,8 @@ public class XMultiplication extends AbstractOperationType
                         }
                         return call;
                     }
-            );
+            )
+            .build();
 
         setImplementation(
                 Convolution.class,

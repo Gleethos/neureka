@@ -35,10 +35,6 @@ SOFTWARE.
 
 package neureka.utility;
 
-import neureka.dtype.DataType;
-import neureka.dtype.NumericType;
-import neureka.dtype.custom.*;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;

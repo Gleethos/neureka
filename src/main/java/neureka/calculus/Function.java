@@ -143,7 +143,7 @@ public interface Function
 
         public static <T> Tsr<T> commit( Tsr<T> drain, Tsr<T>[] inputs, Function function, Supplier<Tsr<T>> activation )
         {
-            Tsr.makeFit(inputs, function.doesAD()); // reshaping if needed
+            Tsr.makeFit(inputs, function.isDoingAD()); // reshaping if needed
 
             GraphLock newLock = new GraphLock(function, inputs);
             for (Tsr<T> t : inputs) {
@@ -174,7 +174,7 @@ public interface Function
 
     Function newBuild( String expression );
 
-    boolean doesAD();//Note: only branch nodes can 'do Auto-Differentiation'
+    boolean isDoingAD();//Note: only branch nodes can 'do Auto-Differentiation'
 
     boolean isFlat();
 

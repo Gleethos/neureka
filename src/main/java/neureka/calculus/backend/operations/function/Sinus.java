@@ -56,7 +56,7 @@ public class Sinus extends AbstractOperationType
         ).setADAgentSupplier(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             defaultImplementation().supplyADAgentFor( f, call, forward )
-        ).setCallHock(  ( caller, call ) -> null )
+        ).setCallHook(  (caller, call ) -> null )
          .setRJAgent( ( call, goDeeperWith ) -> null )
          .setDrainInstantiation(
              call -> {
@@ -76,7 +76,8 @@ public class Sinus extends AbstractOperationType
                  }
                  return call;
              }
-        );
+        )
+        .build();
 
         setImplementation(
                 Activation.class,

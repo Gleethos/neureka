@@ -40,7 +40,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
                     "A given context must either be a GraphLock instance or an ExecutionCall."
 
         and : 'The function has not been called.'
-            0 * function.doesAD()
+            0 * function.isDoingAD()
     }
 
     def 'GraphNode throws exception when trying to instantiate with Function argument being null.'()
@@ -98,8 +98,8 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
 
         and : 'The mock objects are being called as expected.'
             1 * context.getTensors() >> inputs
-            2 * inputsNodeMock.lock() >> Mock( GraphLock )
-            0 * function.doesAD() >> true
+            2 * inputsNodeMock.getLock() >> Mock( GraphLock )
+            0 * function.isDoingAD() >> true
             0 * payload.device() >> device
             0 * payload.set( _ )
             0 * device.cleaning( payload, _ )
@@ -136,9 +136,9 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
 
         and : 'The mock objects are being called as expected.'
             1 * context.getTensors() >> inputs
-            3 * inputsNodeMock.lock() >> Mock( GraphLock )
-            1 * otherInputsNodeMock.lock() >> Mock( GraphLock )
-            0 * function.doesAD() >> true
+            3 * inputsNodeMock.getLock() >> Mock( GraphLock )
+            1 * otherInputsNodeMock.getLock() >> Mock( GraphLock )
+            0 * function.isDoingAD() >> true
             0 * payload.device() >> device
             0 * payload.set( _ )
             0 * device.cleaning( payload, _ )
@@ -175,15 +175,15 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
 
         and : 'The mock objects have been called as expected.'
             1 * context.getTensors() >> inputs
-            2 * inputsNodeMock.lock() >> Mock( GraphLock )
-            0 * function.doesAD() >> true
+            2 * inputsNodeMock.getLock() >> Mock( GraphLock )
+            0 * function.isDoingAD() >> true
             0 * payload.device() >> device
             0 * payload.set( _ )
             0 * device.cleaning( payload, _ )
             1 * inputs[0].find(GraphNode.class) >> inputsNodeMock
             0 * inputs[1].find(GraphNode.class) >> inputsNodeMock
             0 * inputs[2].find(GraphNode.class) >> inputsNodeMock
-            0 * inputsNodeMock.mode() >> -2
+            0 * inputsNodeMock.getMode() >> -2
             1 * inputsNodeMock.usesAD() >> true
             0 * inputs[0].rqsGradient() >> true
             0 * inputs[1].rqsGradient() >> false

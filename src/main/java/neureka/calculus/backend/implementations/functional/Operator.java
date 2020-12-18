@@ -2,8 +2,6 @@ package neureka.calculus.backend.implementations.functional;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.calculus.Function;
-import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.operations.OperationType;
 import neureka.devices.Device;
@@ -30,7 +28,7 @@ public class Operator extends AbstractFunctionalOperationTypeImplementation<Oper
         );
         setBackwardADAnalyzer( call -> true );
         setForwardADAnalyzer( call -> true );
-        setCallHock( ( caller, call ) -> null );
+        setCallHook( (caller, call ) -> null );
         setDrainInstantiation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();

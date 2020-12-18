@@ -20,7 +20,7 @@ public class FunctionConstant extends AbstractBaseFunction
 	}
 
 	@Override
-	public boolean doesAD() {
+	public boolean isDoingAD() {
 		return false;
 	}
 

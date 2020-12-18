@@ -35,6 +35,10 @@ SOFTWARE.
 
 package neureka.dtype;
 
+import lombok.Getter;
+import lombok.ToString;
+import lombok.Value;
+import lombok.experimental.Accessors;
 import neureka.dtype.custom.*;
 
 import java.lang.reflect.Constructor;
@@ -43,7 +47,10 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
-public final class DataType<Type>
+@Accessors( prefix = {"_"} )
+@ToString
+@Value
+public class DataType<Type>
 {
     private static Map<Class<?>, DataType> _instances = new WeakHashMap<>();
 
@@ -84,14 +91,10 @@ public final class DataType<Type>
         }
     }
 
-    private Class<Type> _typeClass;
+    @Getter Class<Type> _typeClass;
 
     private DataType( Class<Type> type ) {
         _typeClass = type;
-    }
-
-    public Class<Type> getTypeClass() {
-        return _typeClass;
     }
 
     public Type getTypeClassInstance()

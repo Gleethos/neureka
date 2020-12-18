@@ -39,6 +39,8 @@ SOFTWARE.
 
 package neureka.autograd;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import neureka.Component;
 import neureka.Neureka;
 import neureka.Tsr;
@@ -64,10 +66,9 @@ import java.util.function.Supplier;
  *  graph branches (child nodes) can be garbage collected...
  *  ...whereas parents are strongly referenced in order to grant successful traversal.
  */
+@Accessors( prefix = {"_"} )
 public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
 {
-    private final static Function MUL =  Function.Detached.MUL;
-    private final static Function ADD = Function.Detached.ADD;
 
     /**
      * mode state meaning:
@@ -79,6 +80,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      * _mode < 0  |  backward Auto-Differentiation   |
      * -----------+----------------------------------+-
      */
+    @Getter
     private int _mode;
 
     /**
@@ -156,11 +158,8 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      * All nodes between a Pending-Error and those requiring gradients will
      * be marked with '_relies_on_JIPProp=true'!
      */
-    public boolean reliesOnJustInTimeProp() {
-        return _relies_on_JIPProp;
-    }
-
-    private boolean _relies_on_JIPProp = false;
+    @Getter
+    private boolean _reliesOnJustInTimeProp = false;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -172,19 +171,17 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      * @return Returns an instance of the PendingError class containing a error accumulation.
      */
     public PendingError getAndRemovePendingError() {
-        PendingError pe = _pending_error;
-        _pending_error = null;
+        PendingError pe = _pendingError;
+        _pendingError = null;
         return pe;
     }
 
     /**
-     * Used by the Just-In-Time backprop component.
+     * Used by the Just-In-Time back-prop component.
      */
-    private PendingError _pending_error = null;
+    @Getter
+    private PendingError _pendingError = null;
 
-    public PendingError getPendingError() {
-        return _pending_error;
-    }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -195,21 +192,15 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      * f'(x) = (1*y) * (1*z) = z*y
      * The values z,y or z*y must not be deleted as they are needed for back-propagation!
      */
-    public boolean isUsedAsDerivative() {
-        return _is_used_as_derivative;
-    }
-
-    private boolean _is_used_as_derivative = false;
+    @Getter
+    private boolean _isUsedAsDerivative = false;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * Recorded Function which produced this GrphNode.
      */
-    public Function getFunction() {
-        return _function;
-    }
-
+    @Getter
     private Function _function;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -219,10 +210,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      * These are always the GraphNodes of the tensors from which the tensor payload of this
      * GraphNode has been formed.
      */
-    public GraphNode[] getParents() {
-        return _parents;
-    }
-
+    @Getter
     private GraphNode[] _parents;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -285,11 +273,9 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      *  However it can be read freely in order to
      *  check that the version of the payload hasn't changed.
      */
-    private int _reference_payload_version = -1;
+    @Getter
+    private int _payloadReferenceVersion = -1;
 
-    public int referenceVersion() {
-        return _reference_payload_version;
-    }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -308,10 +294,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      *
      * @return GraphLock
      */
-    public GraphLock lock() {
-        return _lock;
-    }
-
+    @Getter
     private GraphLock _lock;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -320,10 +303,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      *  The children are GraphNode instances which represent computations
      *  performed on at least the payload of this very node.
      */
-    public List<WeakReference<GraphNode>> getChildren() {
-        return _children;
-    }
-
+    @Getter
     private List<WeakReference<GraphNode>> _children;
 
     /**
@@ -340,11 +320,8 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
     /**
      * @return long AbstractSurfaceNode-ID (Used for caching to avoid redundant computation within one computation graph)
      */
-    public long nid() {
-        return _nid;
-    }
-
-    private long _nid = -1;
+    @Getter
+    private long _nodeID = -1;
 
     /**
      * Some nodes are not cachable! Namely: leave tensors! They are not results of
@@ -353,7 +330,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      * @return boolean
      */
     public boolean isCachable() {
-        return ( this.nid() != 1 );
+        return ( this.getNodeID() != 1 );
     }
 
     //==================================================================================================================
@@ -377,7 +354,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
     public boolean isGraphLeave() {
         if ( this.isLeave() ) return true;
         for ( GraphNode p : _parents ) {
-            if ( p.lock() != this.lock() ) return true;
+            if ( p.getLock() != this.getLock() ) return true;
         }
         return false;
     }
@@ -424,8 +401,8 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                         "Input tensor at index '" + i + "' did not return a GraphNode instance." +
                                 "Input tensors of a new GraphNode must be part of the computation graph!"
                 );
-                if ( foundLock == null ) foundLock = child.lock();
-                if ( foundLock != child.lock() ) {
+                if ( foundLock == null ) foundLock = child.getLock();
+                if ( foundLock != child.getLock() ) {
                     throw new IllegalStateException(
                             "GraphNode instances found in input tensors do not share the same GraphLock instance.\n" +
                                     "The given input tensors of a new node must be part of the same locked computation graph!"
@@ -439,7 +416,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                     );
                 }
             }
-            _construct( payloadSupplier.get(), function, call, inputs[ 0 ].find(GraphNode.class).lock() );
+            _construct( payloadSupplier.get(), function, call, inputs[ 0 ].find(GraphNode.class).getLock() );
         } else {
             throw new IllegalArgumentException(
                     "The passed context object for the GraphNode constructor is of type '" + context.getClass().getName() + "'.\n" +
@@ -460,8 +437,8 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
     {
         Tsr<Object>[] inputs = ( call == null ) ? null : call.getTensors();
         if ( output == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
-        _reference_payload_version = output.version();
-        if ( !function.doesAD() ) return; // Only functions with AutoDiff enabled create computation graph!
+        _payloadReferenceVersion = output.getVersion();
+        if ( !function.isDoingAD() ) return; // Only functions with AutoDiff enabled create computation graph!
         _lock = lock;
         _setPayload( output );
         output.set( this );
@@ -482,14 +459,14 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                 } else _parents[ i ]._attachChild(this);
             }
         }
-        if ( _nid == -1 ) {
+        if ( _nodeID == -1 ) {
             long nid = 1;
             if ( _parents != null ) {
                 for ( GraphNode<ValueType> n : _parents )
                     nid *= n.getPayload().hashCode(); //payload might be 0! Why? -> garbage collected!
             }
             if ( _function != null ) nid += _function.hashCode();
-            _nid = nid;
+            _nodeID = nid;
         }
         /* Returning if the above cannot form an AutoDiff computation graph! : */
         if ( inputs == null || !function.isFlat() ) return; // Leave nodes have!
@@ -515,7 +492,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                                                     call.getTensors(),
                                                     i,
                                                     call.getJ(),
-                                                    call.getType()
+                                                    call.getOperation()
                                             ),
                                             true
                                     )
@@ -539,7 +516,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                                                             call.getTensors(),
                                                             finalI,
                                                             call.getJ(),
-                                                            call.getType()
+                                                            call.getOperation()
                                                     )
                                                     .putAt( "derivative",targetDerivative ),
                                                     true
@@ -565,7 +542,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                                                 call.getTensors(),
                                                 i,
                                                 call.getJ(),
-                                                call.getType()
+                                                call.getOperation()
                                         ),
                                         false
                                 )
@@ -595,7 +572,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
         int inputMode = 0;
         for ( int i = 0; i < inputs.length; i++ ) {
             GraphNode node = inputs[ i ].find( GraphNode.class ); // Not null checked in constructor!
-            modes[ i ] = ( inputs[ i ].rqsGradient() ) ? 1 : node.mode();
+            modes[ i ] = ( inputs[ i ].rqsGradient() ) ? 1 : node.getMode();
             inputMode += ( modes[ i ] != 0) ? 1 : 0;
         }
         _allows_forward = call.allowsForward();
@@ -646,9 +623,9 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
             pendingNodes.forEach( n -> n._carryPendingBackPropToGradients( pendingNodes ) );
         } else {
             pendingNodes.forEach( n -> {
-                if ( !n._pending_error.isFullyAccumulated() )
+                if ( !n._pendingError.isFullyAccumulated() )
                     throw new IllegalStateException("Pending error has not received expected accumulation.");
-                n.backward( n._pending_error.getAccumulatedError() ); // Continue back-propagation recursively!
+                n.backward( n._pendingError.getAccumulatedError() ); // Continue back-propagation recursively!
             });
         }
         _deleteDerivativesRecursively(); // Cleanup after back-propagation!
@@ -676,10 +653,10 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
             if ( allowPendingError && !this.isLeave() ) {//==> We are NOT inside a 'Just-In-Time-Backprop' process (new pending error can be created)
                 int numOfADPaths = _numberOfReverseModeADChildren();// Multiple children triggers creation of a pending error
                 if ( numOfADPaths > 1 ) {
-                    if ( _pending_error == null ) {
-                        _pending_error = new PendingError( error, numOfADPaths - 1 );
+                    if ( _pendingError == null ) {
+                        _pendingError = new PendingError( error, numOfADPaths - 1 );
                         pendingNodes.add( this );
-                    } else _pending_error.accumulate( error );
+                    } else _pendingError.accumulate( error );
                     return;
                     /* Backprop will be continued later! This node is being remembered in 'PendingError'
                        NOTE: Multiple AutoDiff paths leading to one node in history will be accumulated first! (performance)
@@ -703,7 +680,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      * @param pendingBackProp
      */
     private void _carryPendingBackPropToGradients( Set<GraphNode<ValueType>> pendingBackProp ) {
-        _relies_on_JIPProp = true; //:=> Shall be traversed at a later point in time...
+        _reliesOnJustInTimeProp = true; //:=> Shall be traversed at a later point in time...
         this.forEachTarget( t -> t._carryPendingBackPropToGradients( pendingBackProp ) );
         if ( this.isLeave() && getPayload().rqsGradient() ) {
             JITProp<ValueType> jit = getPayload().find( JITProp.class );
@@ -732,7 +709,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
     }
 
     private void _backwardJIT(Tsr<ValueType> error, GraphNode<ValueType> source) {
-        _relies_on_JIPProp = false; // JITProp is currently being handled in this method. Afterwards it is not relying on it anymore!
+        _reliesOnJustInTimeProp = false; // JITProp is currently being handled in this method. Afterwards it is not relying on it anymore!
         _migrateAndOrApplyError( error, payload -> {
             JITProp<ValueType> jit = payload.find( JITProp.class );//Get JIT-Prop node.
             if ( jit != null ) {
@@ -740,8 +717,8 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                 if ( jit.isDone() ) payload.remove( JITProp.class );
             }
         });
-        if ( _pending_error != null && source != this ) {
-            _pending_error.accumulate( error );
+        if ( _pendingError != null && source != this ) {
+            _pendingError.accumulate( error );
             /*
               A pending error has been found, so this means that this node
               is referenced by one or more JIT-Prop components.
@@ -770,7 +747,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
      */
     private void _deleteDerivativesRecursively() {
         if ( !Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads() ) { // <=- This flag is almost always false. (Used for testing)
-            if ( !this.reliesOnJustInTimeProp() ) _targets_derivatives = null;
+            if ( !this.isReliesOnJustInTimeProp() ) _targets_derivatives = null;
             if ( !this.isGraphLeave() ) forEachTarget( GraphNode::_deleteDerivativesRecursively );
         }
     }
@@ -793,19 +770,6 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
         return count;
     }
 
-    /**
-     * @return int
-     */
-    public int mode() {
-        return _mode;
-    }
-
-    /**
-     * @return Function
-     */
-    public Function function() {
-        return _function;
-    }
 
     /**
      * @param target nodes are graph nodes which contain either tensors requiring errors for accumulation and/or more targets.
@@ -819,7 +783,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
         } else _targets_derivatives.put( target, new ArrayList<>( Arrays.asList( agent ) ) );
 
         Tsr<?> d = agent.derivative();
-        if ( d != null && d.has( GraphNode.class ) ) d.find( GraphNode.class )._is_used_as_derivative = true;
+        if ( d != null && d.has( GraphNode.class ) ) d.find( GraphNode.class )._isUsedAsDerivative = true;
     }
 
     /**
@@ -929,9 +893,9 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
     public String toString( String m ) {
         if ( m.contains( "g" ) ) {
             String flags = m.replace( "g", "" );
-            return "]> LOCK: " + lock() + " |> GRAPH:\n]\n" + _toString( "]    0", true, flags ) + "\n]\n]|END|>";
+            return "]> LOCK: " + getLock() + " |> GRAPH:\n]\n" + _toString( "]    0", true, flags ) + "\n]\n]|END|>";
         }
-        String nid = ( m.contains( "n" ) ) ? "NID:" + Long.toHexString( nid() ) : "NODE";
+        String nid = ( m.contains( "n" ) ) ? "NID:" + Long.toHexString( getNodeID() ) : "NODE";
         if ( m.contains( "v" ) ) {
             return "(" + this.type() + "): [" + nid + "]:<(  "
                     + "f" +

@@ -49,7 +49,7 @@ public class Product extends AbstractOperationType {
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();
             int d = call.getDerivativeIndex();
-            OperationType type = call.getType();
+            OperationType type = call.getOperation();
 
             Tsr alternative = null;
             if (tsrs.length > 3) {
@@ -140,7 +140,8 @@ public class Product extends AbstractOperationType {
                         }
                     }
                 )
-                .setRJAgent( rja );
+                .setRJAgent( rja )
+                .build();
 
         setImplementation (
                 Broadcast.class,
@@ -259,7 +260,7 @@ public class Product extends AbstractOperationType {
                         }
                     }
         )
-        .setCallHock( ( caller, call ) -> null )
+        .setCallHook( (caller, call ) -> null )
         .setRJAgent( rja )
         .setDrainInstantiation(
                 call -> {
@@ -279,7 +280,8 @@ public class Product extends AbstractOperationType {
                     }
                     return call;
                 }
-        );
+        )
+        .build();
 
         setImplementation(Activation.class,
                 activation.setExecutor(

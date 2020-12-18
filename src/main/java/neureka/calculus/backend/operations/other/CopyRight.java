@@ -48,7 +48,7 @@ public class CopyRight extends AbstractOperationType {
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                 defaultImplementation().supplyADAgentFor( f, call, forward )
         )
-        .setCallHock( ( caller, call ) -> null )
+        .setCallHook( (caller, call ) -> null )
         .setRJAgent( ( call, goDeeperWith ) -> null )
         .setDrainInstantiation(
                 call -> {
@@ -56,7 +56,8 @@ public class CopyRight extends AbstractOperationType {
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                     return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[1+offset], tsrs[offset]}, -1, OperationType.instance("idy") );
                 }
-        );
+        )
+        .build();
 
         setImplementation(Activation.class,
                 activation.setExecutor(
@@ -68,7 +69,7 @@ public class CopyRight extends AbstractOperationType {
                                             call.getDevice(),
                                             new Tsr[]{call.getTensor(1+offset), call.getTensor(offset)},
                                             -1,
-                                            call.getType()
+                                            call.getOperation()
                                     );
                                     OperationType.instance("idy")
                                             .getImplementation(Activation.class)
@@ -86,7 +87,7 @@ public class CopyRight extends AbstractOperationType {
                                             call.getDevice(),
                                             new Tsr[]{call.getTensor(1+offset), call.getTensor(offset)},
                                             -1,
-                                            call.getType()
+                                            call.getOperation()
                                     );
                                     OperationType.instance("idy")
                                             .getImplementation(Activation.class)

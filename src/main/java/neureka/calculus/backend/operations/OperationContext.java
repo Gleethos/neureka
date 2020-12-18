@@ -1,6 +1,6 @@
 package neureka.calculus.backend.operations;
 
-import neureka.calculus.backend.operations.convolution.XMultiplication;
+import neureka.calculus.backend.operations.linear.XConv;
 import neureka.calculus.backend.operations.function.*;
 import neureka.calculus.backend.operations.indexer.Product;
 import neureka.calculus.backend.operations.indexer.Summation;
@@ -55,7 +55,7 @@ public class OperationContext implements Cloneable
         new Subtraction();
         new Addition();
 
-        new XMultiplication();
+        new XConv();
 
         new Reshape();
         new DimTrim();

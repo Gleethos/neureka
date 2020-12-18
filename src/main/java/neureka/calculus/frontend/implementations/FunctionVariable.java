@@ -20,7 +20,7 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     }
 
     @Override
-    public boolean doesAD() {
+    public boolean isDoingAD() {
         return false;
     }
 

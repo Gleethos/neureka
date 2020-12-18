@@ -1,13 +1,20 @@
 package neureka.framing;
 
+import lombok.Getter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import neureka.Component;
 import neureka.Tsr;
 
 import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
 
+
+@Accessors( prefix = {"_"} )
+@ToString
 public class Relation<ValueType> implements Component<Tsr<ValueType>>
 {
+    @Getter
     private Tsr<ValueType> _parent;// Children need their parents. They shall not be garbage collected.
 
     private WeakReference<Tsr<ValueType>>[] _children;// Children may be garbage collected if not needed.
@@ -98,10 +105,6 @@ public class Relation<ValueType> implements Component<Tsr<ValueType>>
         else if ( !_parent.has( Relation.class ) ) return null;
         else if ( !_parent.find( Relation.class ).hasParent() ) return _parent;
         else return _parent.find( Relation.class ).findRootTensor();
-    }
-
-    public Tsr<?> getParent() {
-        return _parent;
     }
 
     public boolean hasParent() {

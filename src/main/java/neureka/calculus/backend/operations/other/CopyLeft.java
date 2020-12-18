@@ -54,7 +54,7 @@ public class CopyLeft extends AbstractOperationType {
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                                 defaultImplementation().supplyADAgentFor( f, call, forward )
                 )
-                .setCallHock( ( caller, call ) -> null )
+                .setCallHook( (caller, call ) -> null )
                 .setRJAgent( ( call, goDeeperWith ) -> null )
                 .setDrainInstantiation(
                         call ->
@@ -70,7 +70,8 @@ public class CopyLeft extends AbstractOperationType {
                                     this
                             );
                         }
-                );
+                )
+                .build();
 
         ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
                 (inputs, value, d) -> {
@@ -144,7 +145,7 @@ public class CopyLeft extends AbstractOperationType {
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                         defaultImplementation().supplyADAgentFor( f, call, forward )
             )
-            .setCallHock( ( caller, call ) -> null )
+            .setCallHook( (caller, call ) -> null )
             .setRJAgent( ( call, goDeeperWith ) -> null )
             .setDrainInstantiation(
                     call ->
@@ -154,7 +155,8 @@ public class CopyLeft extends AbstractOperationType {
                         call.getTensor(offset).incrementVersionBecauseOf(call);
                         return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
                     }
-            );
+            )
+            .build();
 
         setImplementation(
                 Activation.class,

@@ -40,7 +40,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                     return 1.0f;
                 }
         );
-        setCallHock(
+        setCallHook(
                 ( caller, call ) -> {
                     int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
                     if (
@@ -48,7 +48,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
                     ) // Creating a new tensor:
                     {
                         Tsr[] tsrs = {call.getTensor( 0+offset ), call.getTensor(1+offset) };
-                        Tsr.makeFit(tsrs, caller.doesAD() );
+                        Tsr.makeFit(tsrs, caller.isDoingAD() );
                         tsrs = new Tsr[]{null, tsrs[0], tsrs[1]};
                         call.getDevice().execute( call.withNew( tsrs ) );
                         return tsrs[0];

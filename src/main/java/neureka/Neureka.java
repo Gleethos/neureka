@@ -35,6 +35,8 @@ SOFTWARE.
 
 package neureka;
 
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import neureka.dtype.custom.F64;
 import neureka.utility.SettingsLoader;
 
@@ -43,19 +45,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+@Accessors( prefix = {"_"} )
+@ToString
 public class Neureka
 {
     private static final ThreadLocal<Neureka> _INSTANCES;
 
     private static String _VERSION;
 
-    private static final boolean _GROOVY_AVAILABLE;
     private static final boolean _OPENCL_AVAILABLE;
 
     static
     {
         _INSTANCES = new ThreadLocal<>();
-        _GROOVY_AVAILABLE = Utility.isPresent( "groovy.lang.GroovySystem" );
         _OPENCL_AVAILABLE = Utility.isPresent( "org.jocl.CL" );
     }
 
@@ -84,15 +86,9 @@ public class Neureka
     }
 
     public static Neureka instance(Object closure) {
-        if(_GROOVY_AVAILABLE) {
-            Object o = SettingsLoader.tryGroovyClosureOn(closure, Neureka.instance());
-            if (o instanceof String) _VERSION = (String) o;
-        }
+        Object o = SettingsLoader.tryGroovyClosureOn(closure, Neureka.instance());
+        if (o instanceof String) _VERSION = (String) o;
         return Neureka.instance();
-    }
-
-    public boolean canAccessGroovy() {
-        return _GROOVY_AVAILABLE;
     }
 
     public boolean canAccessOpenCL() {
@@ -104,7 +100,7 @@ public class Neureka
     }
 
     public Settings settings(Object closure) {
-        if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _settings);
+        SettingsLoader.tryGroovyClosureOn(closure, _settings);
         return _settings;
     }
 
@@ -117,9 +113,9 @@ public class Neureka
     }
 
     public void reset() {
-        if (_GROOVY_AVAILABLE) {
+        try {
             SettingsLoader.tryGroovyScriptsOn(this);
-        } else {
+        } catch ( Exception e ) {
             settings().autograd().setIsRetainingPendingErrorForJITProp( true );
             settings().autograd().setIsApplyingGradientWhenTensorIsUsed( true );
             settings().autograd().setIsApplyingGradientWhenRequested( true );
@@ -134,6 +130,8 @@ public class Neureka
         return this.equals( _INSTANCES.get() );
     }
 
+    @Accessors( prefix = {"_"} )
+    @ToString
     public class Settings
     {
         private final Debug _debug;
@@ -159,7 +157,7 @@ public class Neureka
         }
 
         public Debug debug(Object closure) {
-            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn(closure, _debug);
+            SettingsLoader.tryGroovyClosureOn(closure, _debug);
             return _debug;
         }
 
@@ -168,7 +166,7 @@ public class Neureka
         }
 
         public AutoGrad autograd( Object closure ) {
-            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn( closure, _autograd );
+            SettingsLoader.tryGroovyClosureOn( closure, _autograd );
             return _autograd;
         }
 
@@ -177,7 +175,7 @@ public class Neureka
         }
 
         public Indexing indexing( Object closure ) {
-            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn( closure, _indexing );
+            SettingsLoader.tryGroovyClosureOn( closure, _indexing );
             return _indexing;
         }
 
@@ -186,7 +184,7 @@ public class Neureka
         }
 
         public View view( Object closure ) {
-            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn( closure, _view );
+            SettingsLoader.tryGroovyClosureOn( closure, _view );
             return _view;
         }
 
@@ -195,7 +193,7 @@ public class Neureka
         }
 
         public NDim ndim( Object closure ) {
-            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn( closure, _ndim );
+            SettingsLoader.tryGroovyClosureOn( closure, _ndim );
             return _ndim;
         }
 
@@ -204,7 +202,7 @@ public class Neureka
         }
 
         public DType dtype( Object closure ) {
-            if(_GROOVY_AVAILABLE) SettingsLoader.tryGroovyClosureOn( closure, _dtype );
+            SettingsLoader.tryGroovyClosureOn( closure, _dtype );
             return _dtype;
         }
 
@@ -216,6 +214,8 @@ public class Neureka
             _isLocked = locked;
         }
 
+        @Accessors( prefix = {"_"} )
+        @ToString
         public class Debug
         {
             /**
@@ -246,6 +246,8 @@ public class Neureka
 
         }
 
+        @Accessors( prefix = {"_"} )
+        @ToString
         public class AutoGrad // Auto-Grad/Differentiation
         {
             /**
@@ -321,6 +323,8 @@ public class Neureka
 
         }
 
+        @Accessors( prefix = {"_"} )
+        @ToString
         public class Indexing
         {
             private boolean _isUsingLegacyIndexing = false;
@@ -349,6 +353,8 @@ public class Neureka
 
         }
 
+        @Accessors( prefix = {"_"} )
+        @ToString
         public class View
         {
             private boolean _isUsingLegacyView = false;
@@ -364,6 +370,8 @@ public class Neureka
 
         }
 
+        @Accessors( prefix = {"_"} )
+        @ToString
         public class NDim
         {
             /**
@@ -384,6 +392,8 @@ public class Neureka
 
         }
 
+        @Accessors( prefix = {"_"} )
+        @ToString
         public class DType {
 
             private Class<?> _defaultDataTypeClass = F64.class;

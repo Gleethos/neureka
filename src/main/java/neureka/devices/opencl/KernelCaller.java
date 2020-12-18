@@ -107,6 +107,26 @@ public class KernelCaller
         );
     }
 
+    public void call( long[] globalWorkSizes, long[] localWorkSizes )
+    {
+        cl_event[] events = _getWaitList( _inputs.toArray( new Tsr[ 0 ] ) );
+        if( events.length > 0 ) {
+            clWaitForEvents( events.length, events );
+            _releaseEvents( _inputs.toArray( new Tsr[ 0 ] ) );
+        }
+        if ( localWorkSizes != null ) assert globalWorkSizes.length == localWorkSizes.length;
+        clEnqueueNDRangeKernel(
+                _queue, _kernel,
+                globalWorkSizes.length,
+                null,
+                globalWorkSizes,
+                localWorkSizes,
+                0,
+                null,
+                null
+        );
+    }
+
     @Contract( pure = true )
     private void _releaseEvents( @NotNull Tsr<Number>[] tensors ) {
         for ( Tsr<Number> t : tensors ) {

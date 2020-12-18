@@ -1,5 +1,8 @@
 package neureka.devices.storage;
 
+import lombok.Getter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import neureka.Tsr;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.devices.AbstractBaseDevice;
@@ -33,6 +36,8 @@ import java.util.stream.Collectors;
  *  Therefore, an implementation might also represent a simple
  *  storage device like your local SSD ord HDD...
  */
+@Accessors( prefix = {"_"} )
+@ToString
 public class FileDevice extends AbstractBaseDevice<Number>
 {
     private static final Map<String, FileDevice> _DEVICES = new WeakHashMap<>();
@@ -60,6 +65,7 @@ public class FileDevice extends AbstractBaseDevice<Number>
             }
     );
 
+    @Getter
     private String _directory;
     private Map<Tsr<Number>, FileHead> _stored = new HashMap<>();
 
@@ -90,7 +96,7 @@ public class FileDevice extends AbstractBaseDevice<Number>
     }
 
     @Override
-    public Device restore(Tsr<Number> tensor ) {
+    public Device restore( Tsr<Number> tensor ) {
         if ( !this.has( tensor ) )
             throw new IllegalStateException( "The given tensor is not stored on this file device." );
         FileHead head = _stored.get( tensor );
