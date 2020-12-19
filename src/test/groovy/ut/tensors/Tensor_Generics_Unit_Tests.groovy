@@ -6,6 +6,22 @@ import spock.lang.Specification
 
 class Tensor_Generics_Unit_Tests extends Specification
 {
+    def setupSpec()
+    {
+        reportHeader """
+                <h2> Tensors as Containers </h2>
+                <br> 
+                <p>
+                    Tensors do not just store numeric data.
+                    They can hold anything which can be stuffed into a "Object[]" array.
+                    You could even create a tensor of tensors!            
+                </p>
+            """
+    }
+
+    def setup() {
+        Neureka.instance().reset()
+    }
 
     def 'Anonymous tensor instance has the default datatype class as defined in Neureka settings.'() {
 

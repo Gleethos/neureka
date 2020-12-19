@@ -18,6 +18,10 @@ class Tensor_State_Unit_Test extends Specification
         """
     }
 
+    def setup() {
+        Neureka.instance().reset()
+    }
+
     def 'Newly instantiated and unmodified scalar tensor has expected state.'()
     {
         given: 'A new instance of a scalar tensor.'

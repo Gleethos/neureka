@@ -7,13 +7,17 @@ import neureka.calculus.Function
 //import org.junit.Test
 import spock.lang.Specification
 
-class Optimizer_Tests extends Specification{
+class Optimizer_Tests extends Specification
+{
+
+    def setup() {
+        Neureka.instance().reset()
+    }
 
     // WIP! : not yet completed!
     def 'NN calculations are being optimized'()
     {
         given :
-            Neureka.instance().reset()
             def data = new Tsr([8, 4], [ // a-b*c
                                           1,  2,  2, -3,
                                           3, -1, -1, 4,

@@ -8,10 +8,21 @@ import spock.lang.Specification
 
 class Tensor_Exception_Unit_Tests extends Specification
 {
+    def setupSpec() {
+        reportHeader """
+                <h2> Tensors Exception Behavior </h2>
+                <br> 
+                <p>
+                    This specification covers the behavior of tensors
+                    in exceptional situations.           
+                </p>
+            """
+    }
 
     @Shared def oldLogger
 
     def setup() {
+        Neureka.instance().reset()
         oldLogger = Tsr._LOG
         Tsr._LOG = Mock( Logger )
     }
@@ -69,8 +80,6 @@ class Tensor_Exception_Unit_Tests extends Specification
 
     def 'Out of dimension bound causes descriptive exception!'()
     {
-        given : 'Neureka isbeing reset.'
-            Neureka.instance().settings()
         when : 'Some more complex slicing is being performed...'
             Tsr t = new Tsr( [3, 3, 3, 3], 0 )
             t[1..2, 1..3, 1..1, 0..2] = new Tsr( [2, 3, 1, 3], -4..2 )

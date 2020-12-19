@@ -25,6 +25,10 @@ class Autograd_Flags_Explained extends Specification
         """
     }
 
+    def setup() {
+        Neureka.instance().reset()
+    }
+
     @Unroll
     def 'Advanced backpropagation on all AD-Modes '(
             String code,
@@ -77,9 +81,7 @@ class Autograd_Flags_Explained extends Specification
             <b> Let's take a look :  </b>
         """
 
-        given : 'Neureka is being reset in order to assure that configurations set to default.'
-            Neureka.instance().reset()
-        and :
+        given : 'We configure Neureka autograd:'
             Neureka.instance().settings().autograd().isApplyingGradientWhenRequested = whenRsd
             Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
             Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJIT

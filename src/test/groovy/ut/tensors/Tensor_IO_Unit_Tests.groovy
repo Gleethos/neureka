@@ -8,23 +8,28 @@ import neureka.calculus.Function
 import neureka.dtype.DataType
 import spock.lang.Specification
 
-class Tensor_IO_Unit_Tests extends  Specification
+class Tensor_IO_Unit_Tests extends Specification
 {
     def setupSpec()
     {
         reportHeader """
-            This specification covers some basic behaviour related to
-            tensor instantiation and modification.
-            This includes the instantiation of tensors with custom seeds, shapes and values...
+            <h2>Tensor Instantiation and IO Tests</h2>
+            <p>
+                This specification covers some basic behaviour related to
+                tensor instantiation and modification.
+                This includes the instantiation of tensors with custom seeds, shapes and values...
+            </p>
         """
+    }
+
+    def setup() {
+        Neureka.instance().reset()
     }
 
 
     def 'Tensors can be instantiated with String seed.'()
     {
-        given : 'The current Neureka instance configuration is being reset.'
-            Neureka.instance().reset()
-        and : 'Three seeded 2D tensors are being instantiated.'
+        given : 'Three seeded 2D tensors are being instantiated.'
             Tsr t1 = new Tsr([2, 3], "I am a seed! :)")
             Tsr t2 = new Tsr(new int[]{2, 3}, "I am a seed! :)")
             Tsr t3 = new Tsr(new int[]{2, 3}, "I am also a seed! But different. :)")
@@ -35,15 +40,12 @@ class Tensor_IO_Unit_Tests extends  Specification
 
     def 'Tensor initialization lambdas produce expected tensors.'()
     {
-        given : 'The current Neureka instance configuration is being reset.'
-            Neureka.instance().reset()
-
-        when :
-                Tsr t = new Tsr(
-                        [ 2, 3 ],
-                        DataType.of( Integer.class ),
-                        ( int i, int[] idx ) -> { i - 2 }
-                )
+        when : 'Instantiating a tensor using an initializer lambda...'
+            Tsr t = new Tsr(
+                    [ 2, 3 ],
+                    DataType.of( Integer.class ),
+                    ( int i, int[] idx ) -> { i - 2 }
+            )
 
         then :
             t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"
@@ -102,8 +104,7 @@ class Tensor_IO_Unit_Tests extends  Specification
 
     def 'Indexing after reshaping works as expected.'()
     {
-        given : 'Neureka is being reset and the indexing mode is set to "legacy".'
-            Neureka.instance().reset()
+        given : 'Neureka indexing mode is set to "legacy".'
             Neureka.instance().settings().view().isUsingLegacyView = true
 
         and : 'A new tensor instance with the shape (4x3).'
@@ -149,8 +150,7 @@ class Tensor_IO_Unit_Tests extends  Specification
 
     def 'Tensor value type can not be changed by passing float or double arrays to it.'()
     {
-        given : 'Neureka is being reset and the indexing mode is set to "legacy".'
-            Neureka.instance().reset()
+        given : 'Neureka indexing mode is set to "legacy".'
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
         and : 'A new tensor instance.'
             Tsr x = new Tsr(3)
@@ -209,8 +209,7 @@ class Tensor_IO_Unit_Tests extends  Specification
 
     def 'Tensors value type can be changed by calling "to64()" and "to32()".'()
     {
-        given : 'Neureka is being reset.'
-            Neureka.instance().reset()
+        given : 'Neureka tensor view is set to legacy.'
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             Tsr x = new Tsr(3)
 
@@ -230,9 +229,9 @@ class Tensor_IO_Unit_Tests extends  Specification
 
     def 'A tensor produced by a function has expected properties.'()
     {
-        given:
-            Neureka.instance().reset()
+        given : 'Neureka tensor view is set to "legacy".'
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
+        and : 'A simple scalar tensor containing the number "4".'
             Tsr x = new Tsr(4)
 
         when: Tsr y = new Tsr(x, "th(I[0])")
@@ -248,7 +247,6 @@ class Tensor_IO_Unit_Tests extends  Specification
     def 'A tensor produced by the static "Tsr.Create.newRandom(shape)" has expected "random" value.'()
     {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().view().isUsingLegacyView = true
 
         when :
@@ -265,7 +263,6 @@ class Tensor_IO_Unit_Tests extends  Specification
     void 'Tensor values can be manipulated via static method calls within the "Tsr.IO" class.'()
     {
         given :
-        Neureka.instance().reset()
         Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)//TODO: repeat tests with default indexing
         Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
         Neureka.instance().settings().view().setIsUsingLegacyView(true)
@@ -322,7 +319,6 @@ class Tensor_IO_Unit_Tests extends  Specification
     {
         given : 'Neureka can access OpenCL (JOCL).'
             if ( !Neureka.instance().canAccessOpenCL() ) return
-            Neureka.instance().reset()
             Device gpu = Device.find("nvidia")
             Tsr t = new Tsr([3, 4, 1], 3)
 

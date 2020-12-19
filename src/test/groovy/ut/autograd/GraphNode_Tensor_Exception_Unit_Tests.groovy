@@ -1,5 +1,6 @@
 package ut.autograd
 
+import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
 import org.slf4j.Logger
@@ -11,7 +12,19 @@ class GraphNode_Tensor_Exception_Unit_Tests extends Specification
 
     @Shared def oldLogger
 
+    def setupSpec()
+    {
+        reportHeader """
+            <h2> GraphNode Tensor Exceptions </h2>
+            <p>
+                Specified below are strict tests covering the exception behavior
+                of the GraphNode class interacting with Tsr instances.
+            </p>
+        """
+    }
+
     def setup() {
+        Neureka.instance().reset()
         oldLogger = Tsr._LOG
         Tsr._LOG = Mock( Logger )
     }

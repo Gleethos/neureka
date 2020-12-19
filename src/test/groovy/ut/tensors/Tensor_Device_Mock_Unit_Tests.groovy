@@ -1,11 +1,26 @@
 package ut.tensors
 
+import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
 import spock.lang.Specification
 
 class Tensor_Device_Mock_Unit_Tests extends Specification
 {
+    def setupSpec() {
+        reportHeader """    
+            <h2>Tensor Device Mock Tests</h2>
+            <p>
+                This unit test specification covers 
+                the expected behavior of tensors when interacting
+                with instances of implementations of the Device interface.
+            </p>
+        """
+    }
+
+    def setup() {
+        Neureka.instance().reset()
+    }
 
     def 'Tensors try to migrate themselves to a device that is being added to them as component.'()
     {

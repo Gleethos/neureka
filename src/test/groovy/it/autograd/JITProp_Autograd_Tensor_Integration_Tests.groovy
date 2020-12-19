@@ -9,11 +9,27 @@ import spock.lang.Specification
 class JITProp_Autograd_Tensor_Integration_Tests extends Specification
 {
 
+    def setupSpec()
+    {
+        reportHeader """
+            <h2>Autograd Tensor Integration Tests</h2>
+            <p>
+                This specification contains tests which
+                cover the autograd behavior of tensors. <br>
+                The classes involved in governing the tested features are
+                the Tsr, GraphNode and Function (& implementations) classes.
+            </p>
+        """
+
+    }
+
+    def setup() {
+        Neureka.instance().reset()
+    }
+
     def 'Test pending error optimization'()
     {
-        given : 'Neureka is being reset.'
-            Neureka.instance().reset()
-        and : 'The view settings are being set to legacy.'
+        given : 'The view settings are being set to legacy.'
             Neureka.instance().settings().view().isUsingLegacyView = true
         and : 'The simple scalar tensors are being instantiated, where one requires gradients.'
             Tsr a = new Tsr(2).setRqsGradient(true)
@@ -45,7 +61,6 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
     def 'Test JIT propagation variant one.'()
     {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             Tsr a = new Tsr(2).setRqsGradient(true)
             Tsr b = new Tsr(-4)
@@ -70,7 +85,6 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
     def 'Test JIT propagation variant two.'()
     {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
             Tsr a = new Tsr(2).setRqsGradient(true)
@@ -102,7 +116,6 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
     def 'Gradient auto-apply kicks in when used AD uses JIT prop'()
     {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
@@ -181,7 +194,6 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
     def 'Test no preemptive gradient apply when not requested and auto apply and JIT_prop'() // This has been checked allot! :)
     {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
@@ -314,7 +326,6 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
     def 'Test in-differential and JIT with auto apply'()
     {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
             Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false)

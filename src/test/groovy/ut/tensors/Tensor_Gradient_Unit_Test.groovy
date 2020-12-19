@@ -6,20 +6,29 @@ import spock.lang.Specification
 
 class Tensor_Gradient_Unit_Test extends Specification
 {
+    def setupSpec()
+    {
+        reportHeader """
+                <h2> Tensor Gradient Unit Tests </h2>
+                <br>
+                <b>Why is there a difference between "rqsGradient()" and "hasGradient()" ? :</b>
+                <br><br>
+                <p>
+                    The latter property simply tells if a tensor has another tensor as component.
+                    This however does not necessitate it to also require gradients via the autograd system.
+                    This is what the prior property is for.            
+                </p>
+            """
+    }
 
-    /**
-     *  Why is there a difference between "rqsGradient()" and "hasGradient()" ? :
-     *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     *  The latter property simply tells if a tensor has another tensor as component.
-     *  This however does not necessitate it to also require gradients via the autograd system.
-     *  This is what the prior property is for.
-     */
+    def setup() {
+        Neureka.instance().reset()
+    }
+
+
     def 'Tensors can have gradients but not require them.'()
     {
-        given : 'The Neureka instance is being reset.'
-            Neureka.instance().reset()
-
-        and : 'A new simple tensor.'
+        given : 'A new simple tensor.'
             Tsr t = new Tsr(-3)
 
         and : 'A second tensor viewed as gradient.'

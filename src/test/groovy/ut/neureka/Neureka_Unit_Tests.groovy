@@ -5,12 +5,27 @@ import spock.lang.Specification
 
 class Neureka_Unit_Tests extends Specification
 {
+    def setupSpec()
+    {
+        reportHeader """
+                <h2> Neureka Behavior </h2>
+                <br> 
+                <p>
+                    This specification covers the behavior
+                    of the "Neureka" class, shich is used as 
+                    a thread local configuration.          
+                </p>
+            """
+    }
+
+    def setup() {
+        Neureka.instance().reset()
+    }
+
+
     def 'Neureka class instance has expected behaviour.'()
     {
-        when : 'Neureka instance settings are being reset.'
-            Neureka.instance().reset()
-
-        then : 'Important settings have their expected states.'
+        expect : 'Important settings have their expected states.'
             assert !Neureka.instance().settings().isLocked()
             assert !Neureka.instance().settings().indexing().isUsingLegacyIndexing()
             assert !Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads()

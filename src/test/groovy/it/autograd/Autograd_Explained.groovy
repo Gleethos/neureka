@@ -50,15 +50,17 @@ class Autograd_Explained extends Specification
         """
     }
 
+    def setup() {
+        Neureka.instance().reset()
+    }
+
     def 'Simple automatic differentiation and propagation.'()
     {
         reportInfo """
             How can I compute gradients with Neureka automatically?
         """
 
-        given : 'Neureka is being reset in order to assure that configurations set to default.'
-            Neureka.instance().reset()
-        and : """
+        given : """
                 Because (by default) Neureka is not too eager when it comes to backpropagation
                 we have to set the following flags :
             """
@@ -138,9 +140,6 @@ class Autograd_Explained extends Specification
             !result.has(GraphNode.class)
 
     }
-
-
-
 
 
 }

@@ -10,12 +10,23 @@ import spock.lang.Specification
  */
 class Autograd_Tensor_Integration_Tests extends Specification
 {
+    def setupSpec()
+    {
+        reportHeader """
+            <h2> Autograd Tensor Behavior </h2>
+            <p>
+                Specified below is the behavior of the autograd system.
+            </p>
+        """
+    }
+
+    def setup() {
+        Neureka.instance().reset()
+    }
 
     def 'Test basic autograd behaviour. (Not on device)'()
     {
-        given: 'The Neurka instance is being reset.'
-            Neureka.instance().reset();
-        and: 'Gradient auto apply for tensors in ue is set to false.'
+        given: 'Gradient auto apply for tensors in ue is set to false.'
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
         and: 'Tensor legacy view is set to true.'
             Neureka.instance().settings().view().setIsUsingLegacyView(true);

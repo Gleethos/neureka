@@ -23,11 +23,14 @@ class Autograd_NN_Integration extends Specification
             """
     }
 
+    def setup() {
+        Neureka.instance().reset()
+    }
+
     def 'Autograd works in a simple feed forward neural network.'()
     {
 
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested( false )
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
             Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp( false )

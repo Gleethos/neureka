@@ -1,5 +1,6 @@
 package ut.autograd
 
+import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
 import neureka.autograd.GraphLock
@@ -18,10 +19,17 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
     def setupSpec()
     {
         reportHeader """
-            Specified below are strict tests covering the behavior
-            of the GraphNode class during instantiation where
-            inputs are setup to cause expected exceptions.
+            <h2> GraphNode Instantiation Tests </h2>
+            <p>
+                Specified below are strict tests covering the behavior
+                of the GraphNode class during instantiation where
+                inputs are setup to cause expected exceptions.
+            </p>
         """
+    }
+
+    def setup() {
+        Neureka.instance().reset()
     }
 
     def 'GraphNode throws exception when trying to instantiate with the wrong context.'()

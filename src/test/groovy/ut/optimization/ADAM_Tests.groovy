@@ -13,7 +13,19 @@ class ADAM_Tests extends Specification
     @Shared Tsr w = new Tsr(0)
     @Shared Optimizer o = new ADAM(w)
 
+    def setupSpec()
+    {
+        reportHeader """
+                <h2> ADAM Optimizer Behavior </h2>
+                <br> 
+                <p>
+                    This specification check the behavior of the ADAM class.        
+                </p>
+            """
+    }
+
     def setup() {
+        Neureka.instance().reset()
         w.set(o)
     }
 
@@ -21,9 +33,7 @@ class ADAM_Tests extends Specification
     def 'ADAM optimizes according to expected inputs' (
             int input, double gradient
     ) {
-        given : 'Neureka is being reset.'
-            Neureka.instance().reset()
-        and : 'A new scalar gradient tensor is being created.'
+        given : 'A new scalar gradient tensor is being created.'
             Tsr g = new Tsr(gradient)
         and : 'The following input is being applied to the tensor (and internal optimizer)...'
             w.set( new Tsr( input ) )
@@ -64,8 +74,6 @@ class ADAM_Tests extends Specification
     def 'Equations used by ADAM return expected result.' (
             String expression, List<Object> inputs, String expected
     ) {
-        given : 'Neureka is being reset.'
-            Neureka.instance().reset()
         when : 'A new tensor is being created from the given equation and array of input tensors...'
             def t = new Tsr( expression, inputs )
         then : '...this produces the expected result String.'

@@ -1,5 +1,6 @@
 package ut.autograd
 
+import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
 import neureka.autograd.GraphLock
@@ -17,9 +18,16 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
     def setupSpec()
     {
         reportHeader """
-            Specified below are strict tests covering the behavior
-            of the GraphNode class during instantiation.
+            <h2> GraphNode Instantiation </h2>
+            <p>
+                Specified below are strict tests covering the behavior
+                of the GraphNode class during instantiation.
+            </p>
         """
+    }
+
+    def setup() {
+        Neureka.instance().reset()
     }
 
     def 'GraphNode instantiation works as expected when the context argument is a GraphLock.'()

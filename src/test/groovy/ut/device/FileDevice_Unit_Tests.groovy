@@ -10,12 +10,26 @@ import spock.lang.Specification
 
 class FileDevice_Unit_Tests extends Specification
 {
+    def setupSpec()
+    {
+        reportHeader """
+                <h2> FileDevice Behavior </h2>
+                <br> 
+                <p>
+                    This specification covers the behavior of the "FileDevice"
+                    class, which enables the persistence of tensor data.           
+                </p>
+            """
+    }
+
+    def setup() {
+        Neureka.instance().reset()
+    }
+
     def 'A file device stores tensors in idx files by default.'(
         String path, String filename
     ) {
-        given : 'Neureka settings are being reset.'
-            Neureka.instance().reset()
-        and : 'A new tensor is being created for testing.'
+        given : 'A new tensor is being created for testing.'
             Tsr a = new Tsr([2, 4], [ 5, 4, -7, 3, -2, 6, -4, 3 ])
         and : 'A file device instance is being accessed for a given path.'
             def device = FileDevice.instance( path )
@@ -47,9 +61,7 @@ class FileDevice_Unit_Tests extends Specification
     def 'A file device stores tensors in various file formats.'(
             String path, String filename, Class<FileHead<?,Number>> fileHeadClass
     ) {
-        given : 'Neureka settings are being reset.'
-            Neureka.instance().reset()
-        and : 'A new tensor is being created for testing.'
+        given : 'A new tensor is being created for testing.'
             Tsr a = new Tsr([2, 4, 3], -8..8)
         and : 'A file device instance is being accessed for a given path.'
             def device = FileDevice.instance( path )

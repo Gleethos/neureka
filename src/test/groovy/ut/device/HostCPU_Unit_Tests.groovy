@@ -8,15 +8,27 @@ import spock.lang.Specification;
 
 class HostCPU_Unit_Tests extends Specification
 {
-    /**
-     * The thread pool of the HostCPU executor becomes
-     * more active when receiving larger workloads which
-     * benefit from parallelization.
-     */
+    def setupSpec()
+    {
+        reportHeader """
+                <h2> HostCPU Behavior </h2>
+                <br> 
+                <p>
+                    The thread pool of the HostCPU executor becomes
+                    more active when receiving larger workloads which
+                    benefit from parallelization.           
+                </p>
+            """
+    }
+
+    def setup() {
+        Neureka.instance().reset()
+    }
+
+
     def "thread pool executes given workload in parallel"()
     {
         given :
-            Neureka.instance().reset()
             Tsr a = new Tsr(new int[]{100, 60, 1, 2}, 4)
             Tsr b = new Tsr(new int[]{100, 1, 60, 2}, -2)
             Device cpu = a.device()
