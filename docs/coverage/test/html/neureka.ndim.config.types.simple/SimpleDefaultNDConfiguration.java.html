@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SimpleDefaultNDConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config.types.simple</a> &gt; <span class="el_source">SimpleDefaultNDConfiguration.java</span></div><h1>SimpleDefaultNDConfiguration.java</h1><pre class="source lang-java linenums">package neureka.ndim.config.types.simple;
+
+import neureka.Neureka;
+import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.AbstractNDC;
+
+import java.util.Arrays;
+
+public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
+{
+
+    /**
+     *  The shape of the NDArray.
+     */
+    protected final int[] _shape;
+    /**
+     *  The translation from a shape index (idx) to the index of the underlying data array.
+     */
+    private final int[] _translation_and_idxmap;
+
+
+    protected SimpleDefaultNDConfiguration(
+            int[] shape, int[] translation
+<span class="fc" id="L24">    ) {</span>
+<span class="fc" id="L25">        _shape = _cacheArray(shape);</span>
+<span class="fc" id="L26">        _translation_and_idxmap = _cacheArray(translation);</span>
+<span class="fc" id="L27">    }</span>
+
+    public static NDConfiguration construct(
+            int[] shape,
+            int[] translation
+    ) {
+<span class="fc" id="L33">        return _cached(new SimpleDefaultNDConfiguration(shape, translation));</span>
+    }
+
+    @Override
+    public int rank() {
+<span class="fc" id="L38">        return _shape.length;</span>
+    }
+
+    @Override
+    public int[] shape() {
+<span class="fc" id="L43">        return _shape;</span>
+    }
+
+    @Override
+    public int shape(int i) {
+<span class="nc" id="L48">        return _shape[ i ];</span>
+    }
+
+    @Override
+    public int[] idxmap() {
+<span class="fc" id="L53">        return _translation_and_idxmap;</span>
+    }
+
+    @Override
+    public int idxmap(int i) {
+<span class="fc" id="L58">        return _translation_and_idxmap[ i ];</span>
+    }
+
+    @Override
+    public int[] translation() {
+<span class="fc" id="L63">        return _translation_and_idxmap;</span>
+    }
+
+    @Override
+    public int translation(int i) {
+<span class="fc" id="L68">        return _translation_and_idxmap[ i ];</span>
+    }
+
+    @Override
+    public int[] spread() {
+<span class="fc" id="L73">        int[] newSpred = new int[_shape.length];</span>
+<span class="fc" id="L74">        Arrays.fill(newSpred, 1);</span>
+<span class="fc" id="L75">        return newSpred;</span>
+    }
+
+    @Override
+    public int spread(int i) {
+<span class="fc" id="L80">        return 1;</span>
+    }
+
+    @Override
+    public int[] offset() {
+<span class="fc" id="L85">        return new int[_shape.length];</span>
+    }
+
+    @Override
+    public int offset(int i) {
+<span class="fc" id="L90">        return 0;</span>
+    }
+
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    public int i_of_i(int i) {
+<span class="fc" id="L98">        return i_of_idx(idx_of_i( i ));</span>
+    }
+
+    @Override
+    public int[] idx_of_i(int i) {
+<span class="fc" id="L103">        int[] idx = new int[_shape.length];</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">            for (int ii=rank()-1; ii&gt;=0; ii--) {</span>
+<span class="fc" id="L106">                idx[ii] += i / _translation_and_idxmap[ii];</span>
+<span class="fc" id="L107">                i %= _translation_and_idxmap[ii];</span>
+            }
+        } else {
+<span class="fc bfc" id="L110" title="All 2 branches covered.">            for (int ii=0; ii&lt;rank(); ii++) {</span>
+<span class="fc" id="L111">                idx[ii] += i / _translation_and_idxmap[ii];</span>
+<span class="fc" id="L112">                i %= _translation_and_idxmap[ii];</span>
+            }
+        }
+<span class="fc" id="L115">        return idx;</span>
+    }
+
+    @Override
+    public int i_of_idx(int[] idx) {
+<span class="fc" id="L120">        int i = 0;</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        for (int ii=0; ii&lt;_shape.length; ii++) i += idx[ii] * _translation_and_idxmap[ii];</span>
+<span class="fc" id="L122">        return i;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

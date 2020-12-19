@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExecutionCall.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api</a> &gt; <span class="el_source">ExecutionCall.java</span></div><h1>ExecutionCall.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   ______                     _   _              _____      _ _
+  |  ____|                   | | (_)            / ____|    | | |
+  | |__  __  _____  ___ _   _| |_ _  ___  _ __ | |     __ _| | |
+  |  __| \ \/ / _ \/ __| | | | __| |/ _ \| '_ \| |    / _` | | |
+  | |____ &gt;  &lt;  __/ (__| |_| | |_| | (_) | | | | |___| (_| | | |
+  |______/_/\_\___|\___|\__,_|\__|_|\___/|_| |_|\_____\__,_|_|_|
+
+    A very simple class which wraps essential arguments and context data
+    used for operation execution on Tsr instances.
+
+
+*/
+
+package neureka.backend.api;
+
+import lombok.Getter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
+import neureka.Tsr;
+import neureka.backend.api.operations.OperationType;
+import neureka.devices.Device;
+import neureka.autograd.ADAgent;
+import neureka.calculus.Function;
+import neureka.backend.api.implementations.OperationTypeImplementation;
+
+import java.util.Map;
+import java.util.TreeMap;
+
+/**
+ * This class is a simple container holding relevant
+ * arguments needed to execute on a targeted Device which
+ * is specified by the type parameter below.
+ *
+ * It also holds a context map responsible for storing
+ * operation specific variables.
+ *
+ * @param &lt;DeviceType&gt; The Device implementation targeted by an instance of this ExecutionCall!
+ */
+@Accessors( prefix = {&quot;_&quot;} )
+<span class="nc" id="L64">@ToString</span>
+public class ExecutionCall&lt; DeviceType extends Device &gt;
+{
+    public interface TensorCondition { boolean check( Tsr tensor ); }
+    public interface TensorCompare { boolean check( Tsr first, Tsr second ); }
+    public interface DeviceCondition { boolean check( Device device ); }
+    public interface OperationTypeCondition { boolean check( OperationType type ); }
+    public interface Mutator { Tsr[] mutate( Tsr[] tensors ); }
+
+<span class="fc" id="L73">    @Getter</span>
+    private final DeviceType _device;
+    /**
+     * This method returns an import property whose
+     * role might not be clear at first :
+     * An operation can have multiple inputs, however
+     * when calculating the derivative for a forward or backward pass
+     * then one must know which derivative ought to be calculated.
+     * So the &quot;derivative index&quot; targets said input.
+     * This property is -1 when no derivative should be calculated,
+     * however 0... when targeting an input to calculate the derivative of.
+     *
+     * @return The index of the input whose derivative ought to be calculated.
+     */
+<span class="fc" id="L87">    @Getter</span>
+    private final int _derivativeIndex;
+
+    /**
+     *  This is the operation type which will be applied to this execution call.
+     *  It contains multiple implementations, one of which might be applicable to this call...
+     */
+<span class="fc" id="L94">    @Getter</span>
+    private final OperationType _operation;
+
+<span class="fc" id="L97">    @Getter</span>
+    private Tsr[] _tensors;
+
+<span class="fc" id="L100">    @Getter</span>
+    private int _j = -1;
+
+    private OperationTypeImplementation&lt;OperationTypeImplementation&gt; _implementation;
+
+<span class="fc" id="L105">    @Getter</span>
+    private Map&lt;String, Object&gt; _context;
+
+    @Accessors( prefix = {&quot;_&quot;} )
+<span class="fc" id="L109">    public class Validator</span>
+    {
+<span class="fc" id="L111">        @Getter</span>
+        private boolean _isValid = true;
+
+        public float estimation() {
+<span class="fc bfc" id="L115" title="All 2 branches covered.">            return ( _isValid ) ? 1.0f : 0.0f;</span>
+        }
+
+        public Validator first( TensorCondition condition ) {
+<span class="fc bfc" id="L119" title="All 2 branches covered.">            if ( !condition.check( _tensors[0] ) ) _isValid = false;</span>
+<span class="fc" id="L120">            return this;</span>
+        }
+
+        public Validator any( TensorCondition condition )
+        {
+<span class="nc" id="L125">            boolean any = false;</span>
+<span class="nc bnc" id="L126" title="All 4 branches missed.">            for ( Tsr t : _tensors ) any = ( condition.check( t ) ) ? true : any;</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">            if ( !any ) _isValid = false;</span>
+<span class="nc" id="L128">            return this;</span>
+        }
+
+        public Validator anyNotNull( TensorCondition condition )
+        {
+<span class="nc" id="L133">            boolean any = false;</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">            for ( Tsr t : _tensors )</span>
+<span class="nc bnc" id="L135" title="All 4 branches missed.">                if ( t != null ) any = ( condition.check( t ) ) ? true : any;</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">            if ( !any ) _isValid = false;</span>
+<span class="nc" id="L137">            return this;</span>
+        }
+
+        public Validator all( TensorCondition condition )
+        {
+<span class="fc" id="L142">            boolean all = true;</span>
+<span class="pc bpc" id="L143" title="1 of 4 branches missed.">            for ( Tsr t : _tensors ) all = ( !condition.check( t ) ) ? false : all;</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">            if ( !all ) _isValid = false;</span>
+<span class="fc" id="L145">            return this;</span>
+        }
+
+        public Validator allNotNull( TensorCondition condition )
+        {
+<span class="fc" id="L150">            boolean all = true;</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">            for ( Tsr t : _tensors )</span>
+<span class="fc bfc" id="L152" title="All 4 branches covered.">                if( t != null ) all = ( !condition.check( t ) ) ? false : all;</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">            if ( !all ) _isValid = false;</span>
+<span class="fc" id="L154">            return this;</span>
+        }
+
+        public Validator all( TensorCompare compare )
+        {
+<span class="fc" id="L159">            boolean all = true;</span>
+<span class="fc" id="L160">            Tsr&lt;?&gt; last = null;</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; current : _tensors ) {</span>
+<span class="pc bpc" id="L162" title="3 of 4 branches missed.">                if ( last != null &amp;&amp; !compare.check( last, current ) ) all = false;</span>
+<span class="fc" id="L163">                last = current; // Note: shapes are cached!</span>
+            }
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">            if ( !all ) _isValid = false;</span>
+<span class="fc" id="L166">            return this;</span>
+        }
+
+        public Validator forDevice( DeviceCondition condition )
+        {
+<span class="nc bnc" id="L171" title="All 2 branches missed.">            if ( !condition.check( _device ) ) _isValid = false;</span>
+<span class="nc" id="L172">            return this;</span>
+        }
+
+        public Validator forOperation( OperationTypeCondition condition ) {
+<span class="nc bnc" id="L176" title="All 2 branches missed.">            if ( !condition.check(_operation) ) _isValid = false;</span>
+<span class="nc" id="L177">            return this;</span>
+        }
+    }
+
+<span class="fc" id="L181">    public Validator validate() { return new Validator(); }</span>
+
+    public ExecutionCall(
+            DeviceType device,
+            Tsr[] tensors,
+            int d,
+            OperationType type
+<span class="fc" id="L188">    ) {</span>
+<span class="fc" id="L189">        _device = device;</span>
+<span class="fc" id="L190">        _tensors = tensors;</span>
+<span class="fc" id="L191">        _derivativeIndex = d;</span>
+<span class="fc" id="L192">        _operation = type;</span>
+<span class="fc" id="L193">        _implementation = null;</span>
+<span class="fc" id="L194">        _context = null;</span>
+<span class="fc" id="L195">    }</span>
+    
+    public ExecutionCall(
+            DeviceType device,
+            Tsr[] tensors,
+            int d,
+            int j,
+            OperationType type
+<span class="fc" id="L203">    ) {</span>
+<span class="fc" id="L204">        _device = device;</span>
+<span class="fc" id="L205">        _tensors = tensors;</span>
+<span class="fc" id="L206">        _derivativeIndex = d;</span>
+<span class="fc" id="L207">        _j = j;</span>
+<span class="fc" id="L208">        _operation = type;</span>
+<span class="fc" id="L209">        _implementation = null;</span>
+<span class="fc" id="L210">    }</span>
+
+<span class="fc" id="L212">    public Tsr getTensor( int i ) { return _tensors[ i ];}</span>
+
+
+    public OperationTypeImplementation getImplementation() {
+<span class="fc bfc" id="L216" title="All 2 branches covered.">        if ( _implementation != null ) return _implementation;</span>
+<span class="fc" id="L217">        else _implementation = _operation.implementationOf(this);</span>
+<span class="fc" id="L218">        return _implementation;</span>
+    }
+    
+    public boolean allowsForward() {
+<span class="fc" id="L222">        return getImplementation().canImplementationPerformForwardADFor(this);</span>
+    }
+
+    public boolean allowsBackward() {
+<span class="fc" id="L226">        return getImplementation().canImplementationPerformBackwardADFor(this);</span>
+    }
+
+    public ADAgent getADAgentFrom( Function function, ExecutionCall&lt;Device&gt; call, boolean forward )
+    {
+<span class="fc bfc" id="L231" title="All 2 branches covered.">        if ( this._context != null ) {</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">            if ( call._context ==null ) call._context = new TreeMap&lt;&gt;();</span>
+<span class="fc" id="L233">            call._context.putAll(this._context);</span>
+        }
+<span class="fc" id="L235">        return getImplementation().supplyADAgentFor(function, call, forward);</span>
+    }
+    
+    public void mutateArguments( Mutator mutation ) {
+<span class="fc" id="L239">        _tensors = mutation.mutate(_tensors);</span>
+<span class="fc" id="L240">    }</span>
+    
+    public ExecutionCall&lt;DeviceType&gt; withNew( Tsr[] tensors ) {
+<span class="fc" id="L243">        return new ExecutionCall&lt;DeviceType&gt;(_device, tensors, _derivativeIndex, _j, _operation);</span>
+    }
+
+    public ExecutionCall&lt;DeviceType&gt; withNew( DeviceType device ) {
+<span class="nc" id="L247">        return new ExecutionCall&lt;DeviceType&gt;(device, _tensors, _derivativeIndex, _j, _operation);</span>
+    }
+
+    public &lt;T&gt; T getAt( Class&lt;T&gt; type ) {
+<span class="nc bnc" id="L251" title="All 2 branches missed.">        if ( _context == null ) return null;</span>
+<span class="nc" id="L252">        return (T) _context.get(getClass().getName());</span>
+    }
+
+    public Object getAt( String varName ) {
+<span class="fc bfc" id="L256" title="All 2 branches covered.">        if ( _context == null ) return null;</span>
+<span class="fc" id="L257">        return _context.get(varName);</span>
+    }
+
+    public &lt;T&gt; ExecutionCall&lt;DeviceType&gt; putAt( String s, T o ) {
+<span class="pc bpc" id="L261" title="1 of 2 branches missed.">        if ( _context == null ) _context = new TreeMap&lt;&gt;();</span>
+<span class="fc" id="L262">        _context.put(s,o);</span>
+<span class="fc" id="L263">        return this;</span>
+    }
+
+    public void takeContext( Map&lt;String, Object&gt;  context ) {
+<span class="nc bnc" id="L267" title="All 4 branches missed.">        if(_context==null &amp;&amp; context!=null )_context = new TreeMap&lt;&gt;();</span>
+<span class="nc bnc" id="L268" title="All 2 branches missed.">        if(context!=null) _context.putAll(_context);</span>
+<span class="nc" id="L269">    }</span>
+
+    // CONDITIONS:
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

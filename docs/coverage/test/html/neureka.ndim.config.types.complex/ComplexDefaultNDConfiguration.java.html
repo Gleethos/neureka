@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ComplexDefaultNDConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config.types.complex</a> &gt; <span class="el_source">ComplexDefaultNDConfiguration.java</span></div><h1>ComplexDefaultNDConfiguration.java</h1><pre class="source lang-java linenums">package neureka.ndim.config.types.complex;
+
+import neureka.Neureka;
+import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.AbstractNDC;
+
+public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
+{
+
+    /**
+     *  The shape of the NDArray.
+     */
+    protected final int[] _shape;
+    /**
+     *  The translation from a shape index (idx) to the index of the underlying data array.
+     */
+    private final int[] _translation;
+    /**
+     *  The mapping of an index to an index array.
+     *  The index array is created and filled
+     *  during iteration and passed to this configuration for element access...
+     *  However it is also possible to creat an index array from an index integer.
+     *  This is what the following property does :
+     */
+    private final int[] _idxmap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
+    /**
+     *  Produces the strides of a tensor subset / slice
+     */
+    private final int[] _spread;
+    /**
+     *  Defines the position of a subset / slice tensor within its parent!
+     */
+    private final int[] _offset;
+    /**
+     *  The value of this tensor. Usually a array of type double[] or float[].
+     */
+
+    protected ComplexDefaultNDConfiguration(
+            int[] shape,
+            int[] translation,
+            int[] idxmap,
+            int[] spread,
+            int[] offset
+<span class="fc" id="L44">    ) {</span>
+<span class="fc" id="L45">        _shape = _cacheArray(shape);</span>
+<span class="fc" id="L46">        _translation = _cacheArray(translation);</span>
+<span class="fc" id="L47">        _idxmap = _cacheArray(idxmap);</span>
+<span class="fc" id="L48">        _spread = _cacheArray(spread);</span>
+<span class="fc" id="L49">        _offset = _cacheArray(offset);</span>
+<span class="fc" id="L50">    }</span>
+
+    public static NDConfiguration construct(
+            int[] shape,
+            int[] translation,
+            int[] idxmap,
+            int[] spread,
+            int[] offset
+    ) {
+<span class="fc" id="L59">        return _cached(new ComplexDefaultNDConfiguration(shape, translation, idxmap, spread, offset));</span>
+    }
+
+    @Override
+    public int rank() {
+<span class="fc" id="L64">        return _shape.length;</span>
+    }
+
+    @Override
+    public int[] shape() {
+<span class="fc" id="L69">        return _shape;</span>
+    }
+
+    @Override
+    public int shape(int i) {
+<span class="nc" id="L74">        return _shape[ i ];</span>
+    }
+
+    @Override
+    public int[] idxmap() {
+<span class="fc" id="L79">        return _idxmap;</span>
+    }
+
+    @Override
+    public int idxmap(int i) {
+<span class="nc" id="L84">        return _idxmap[ i ];</span>
+    }
+
+    @Override
+    public int[] translation() {
+<span class="fc" id="L89">        return _translation;</span>
+    }
+
+    @Override
+    public int translation(int i) {
+<span class="nc" id="L94">        return _translation[ i ];</span>
+    }
+
+    @Override
+    public int[] spread() {
+<span class="fc" id="L99">        return _spread;</span>
+    }
+
+    @Override
+    public int spread(int i) {
+<span class="nc" id="L104">        return _spread[ i ];</span>
+    }
+
+    @Override
+    public int[] offset() {
+<span class="fc" id="L109">        return _offset;</span>
+    }
+
+    @Override
+    public int offset(int i) {
+<span class="nc" id="L114">        return _offset[ i ];</span>
+    }
+
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
+    public int i_of_i(int i) {
+<span class="fc" id="L122">        return i_of_idx(idx_of_i( i ));</span>
+    }
+
+    @Override
+    public int[] idx_of_i(int i) {
+<span class="fc" id="L127">        int[] idx = new int[_shape.length];</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">            for ( int ii = rank()-1; ii &gt;= 0; ii-- ) {</span>
+<span class="fc" id="L130">                idx[ii] += i / _idxmap[ii];</span>
+<span class="fc" id="L131">                i %= _idxmap[ii];</span>
+            }
+        } else {
+<span class="fc bfc" id="L134" title="All 2 branches covered.">            for ( int ii = 0; ii &lt; rank(); ii++ ) {</span>
+<span class="fc" id="L135">                idx[ii] += i / _idxmap[ii];</span>
+<span class="fc" id="L136">                i %= _idxmap[ii];</span>
+            }
+        }
+<span class="fc" id="L139">        return idx;</span>
+    }
+
+    @Override
+    public int i_of_idx(int[] idx) {
+<span class="fc" id="L144">        int i = 0;</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; _shape.length; ii++ ) i += (idx[ii] * _spread[ii] + _offset[ii]) * _translation[ii];</span>
+<span class="fc" id="L146">        return i;</span>
+    }
+
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

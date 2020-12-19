@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OperationTypeFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api.operations</a> &gt; <span class="el_source">OperationTypeFactory.java</span></div><h1>OperationTypeFactory.java</h1><pre class="source lang-java linenums">package neureka.backend.api.operations;
+
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Accessors( prefix = {&quot;_&quot;}, chain = true )
+<span class="fc" id="L10">public class OperationTypeFactory</span>
+{
+<span class="fc" id="L12">    @Setter String _function = null;</span>
+<span class="fc" id="L13">    @Setter String _operator = null;</span>
+<span class="fc" id="L14">    @Setter Integer _arity = null;</span>
+<span class="fc" id="L15">    @Setter Boolean _isOperator = null;</span>
+<span class="fc" id="L16">    @Setter Boolean _isIndexer = null;</span>
+<span class="fc" id="L17">    @Setter Boolean _isDifferentiable = null;</span>
+<span class="fc" id="L18">    @Setter Boolean _isInline = null;</span>
+
+
+    public GenericOperation build()
+    {
+<span class="fc" id="L23">        List&lt;String&gt; missing = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">        if( _function == null ) missing.add( &quot;function&quot; );</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">        if( _operator == null ) missing.add( &quot;operator&quot; );</span>
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        if( _arity == null ) missing.add( &quot;arity&quot; );</span>
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        if( _isOperator == null ) missing.add( &quot;isOperator&quot; );</span>
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        if( _isIndexer == null ) missing.add( &quot;isIndexer&quot; );</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        if( _isDifferentiable == null ) missing.add( &quot;isDifferentiable&quot; );</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if( _isInline == null ) missing.add( &quot;isInline&quot; );</span>
+
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        if( !missing.isEmpty() )</span>
+<span class="nc" id="L33">            throw new IllegalStateException(&quot;Factory not satisfied! The following properties are missing: '&quot;+ String.join(&quot;, &quot;, missing) +&quot;'&quot;);</span>
+        else
+<span class="fc" id="L35">            return new GenericOperation (</span>
+                    _function,
+                    _operator,
+                    _arity,
+                    _isOperator,
+                    _isIndexer,
+                    _isDifferentiable,
+                    _isInline
+            );
+    }
+
+}
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

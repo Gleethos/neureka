@@ -1,16 +1,56 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractNDArray.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim</a> &gt; <span class="el_source">AbstractNDArray.java</span></div><h1>AbstractNDArray.java</h1><pre class="source lang-java linenums">package neureka.ndim;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractNDArray.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim</a> &gt; <span class="el_source">AbstractNDArray.java</span></div><h1>AbstractNDArray.java</h1><pre class="source lang-java linenums">/*
+MIT License
 
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+            _         _                  _   _   _ _____
+      /\   | |       | |                | | | \ | |  __ \   /\
+     /  \  | |__  ___| |_ _ __ __ _  ___| |_|  \| | |  | | /  \   _ __ _ __ __ _ _   _
+    / /\ \ | '_ \/ __| __| '__/ _` |/ __| __| . ` | |  | |/ /\ \ | '__| '__/ _` | | | |
+   / ____ \| |_) \__ \ |_| | | (_| | (__| |_| |\  | |__| / ____ \| |  | | | (_| | |_| |
+  /_/    \_\_.__/|___/\__|_|  \__,_|\___|\__|_| \_|_____/_/    \_\_|  |_|  \__,_|\__, |
+                                                                                  __/ |
+                                                                                |___/
+
+
+*/
+
+package neureka.ndim;
+
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.dtype.DataType;
+import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
+import neureka.utility.DataConverter;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.function.Consumer;
 
 
 /**
@@ -22,86 +62,204 @@ import java.util.Locale;
  *  are not extended more than once.
  *
  */
-<span class="fc" id="L25">public abstract class AbstractNDArray&lt;InstanceType&gt; extends AbstractComponentOwner&lt;InstanceType&gt;</span>
+@Accessors( prefix = {&quot;_&quot;} )
+<span class="fc" id="L66">public abstract class AbstractNDArray&lt;InstanceType, ValueType&gt; extends AbstractComponentOwner&lt;InstanceType&gt; implements Iterable&lt;ValueType&gt;</span>
 {
-    protected NDConfiguration _conf;
-    
-    protected Object _value;
+
+    /**
+     *  An interface provided by sl4j which enables a modular logging backend!
+     */
+    protected static Logger _LOG; // Why is this not final ? : For unit testing!
+
+<span class="fc" id="L74">    @Getter</span>
+    protected NDConfiguration _NDConf;
+
+<span class="fc" id="L77">    @Getter</span>
+<span class="fc" id="L78">    private DataType&lt;?&gt; _dataType = DataType.of( Neureka.instance().settings().dtype().getDefaultDataTypeClass() );</span>
+
+<span class="fc" id="L80">    @Getter</span>
+    private Object _data;
+
+    public Class&lt;?&gt; getValueClass()
+    {
+<span class="fc" id="L85">        DataType&lt;?&gt; dt = _dataType;</span>
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        if ( dt != null ) return dt.getTypeClass();</span>
+<span class="nc" id="L87">        else return null;</span>
+    }
+
+    public InstanceType setDataType( DataType&lt;?&gt; dataType )
+    {
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">        if ( _data != null ) {</span>
+<span class="nc" id="L93">            String message = &quot;Data type of tensor can only be set when data attribute is null!\n&quot; +</span>
+                    &quot;This is due to construction-consistency reasons.\n&quot;;
+<span class="nc" id="L95">            throw new IllegalStateException( message );</span>
+        }
+<span class="fc" id="L97">        _dataType = dataType;</span>
+<span class="fc" id="L98">        return (InstanceType) this;</span>
+    }
+
+    protected void _setData( Object data )
+    {
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        if ( _dataType == null ) {</span>
+<span class="nc" id="L104">            String message = &quot;Trying to set data in a tensor which does not have a DataTyp instance.&quot;;</span>
+<span class="nc" id="L105">            _LOG.error( message );</span>
+<span class="nc" id="L106">            throw new IllegalStateException( message );</span>
+        }
+<span class="fc bfc" id="L108" title="All 4 branches covered.">        if ( data != null &amp;&amp; _dataType.typeClassImplements( NumericType.class ) ) {</span>
+<span class="fc" id="L109">            NumericType numericType = (NumericType) _dataType.getTypeClassInstance();</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">            if ( numericType.targetArrayType() != data.getClass() ) {</span>
+<span class="nc" id="L111">                String message = &quot;Cannot set data whose type does not match what is defined by the DataType instance.\n&quot; +</span>
+<span class="nc" id="L112">                        &quot;Current type '&quot;+numericType.targetArrayType().getSimpleName()+&quot;' does not match '&quot;+ data.getClass().getSimpleName()+&quot;'.\n&quot;;</span>
+<span class="nc" id="L113">                _LOG.error( message );</span>
+<span class="nc" id="L114">                throw new IllegalStateException( message );</span>
+            }
+        }
+<span class="fc" id="L117">        _data = data;</span>
+<span class="fc" id="L118">    }</span>
+
+    protected void _allocate( int size )
+    {
+<span class="fc" id="L122">        _data = _dataType.allocate( size );</span>
+<span class="fc" id="L123">    }</span>
+
+    protected void _virtualize()
+    {
+<span class="fc" id="L127">        _data = _dataType.virtualize(_data);</span>
+<span class="fc" id="L128">    }</span>
+
+    protected void _actualize()
+    {
+<span class="fc" id="L132">        _data = _dataType.actualize(_data, this.size() );</span>
+<span class="fc" id="L133">    }</span>
+
+    protected Object _convertedDataOfType( Class&lt;?&gt; typeClass )
+    {
+<span class="fc" id="L137">        DataType newDT = DataType.of( typeClass );</span>
+<span class="fc" id="L138">        if (</span>
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">                newDT.typeClassImplements( NumericType.class ) &amp;&amp;</span>
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">                        getDataType().typeClassImplements( NumericType.class )</span>
+        ) {
+<span class="fc" id="L142">            NumericType&lt;?,Object, ?, Object&gt; targetType  = (NumericType&lt;?, Object,?, Object&gt;) newDT.getTypeClassInstance();</span>
+<span class="fc" id="L143">            return targetType.readForeignDataFrom( iterator(), this.size() );</span>
+        }
+        else
+<span class="nc" id="L146">            return DataConverter.instance().convert( getData(), newDT.getTypeClass() );</span>
+    }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public boolean is64(){
-<span class="fc" id="L34">        return _value instanceof double[];</span>
+    @Override
+    public void forEach( Consumer&lt;? super ValueType&gt; action ) {
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        for ( ValueType v : this ) action.accept( v );</span>
+<span class="fc" id="L154">    }</span>
+
+    @Override
+    public Spliterator&lt;ValueType&gt; spliterator()
+    {
+<span class="nc" id="L159">        return new Spliterator&lt;ValueType&gt;()</span>
+<span class="nc" id="L160">        {</span>
+            @Override
+            public boolean tryAdvance( Consumer&lt;? super ValueType&gt; action ) {
+<span class="nc" id="L163">                return false;</span>
+            }
+
+            @Override
+            public Spliterator&lt;ValueType&gt; trySplit() {
+<span class="nc" id="L168">                return null;</span>
+            }
+
+            @Override
+            public long estimateSize() {
+<span class="nc" id="L173">                return 0;</span>
+            }
+
+            @Override
+            public int characteristics() {
+<span class="nc" id="L178">                return 0;</span>
+            }
+        };
     }
 
-    public  boolean is32(){
-<span class="fc" id="L38">        return _value instanceof float[];</span>
+    public abstract Object getValueAt( int i );
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    public boolean is( Class&lt;?&gt; typeClass ) {
+<span class="nc" id="L188">        DataType&lt;?&gt; type = DataType.of( typeClass );</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">        return type == _dataType;</span>
+    }
+
+    public boolean is64() {
+<span class="fc" id="L193">        return _data instanceof double[];</span>
+    }
+
+    public boolean is32() {
+<span class="fc" id="L197">        return _data instanceof float[];</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public int i_of_i(int i){
-<span class="fc" id="L44">        return _conf.i_of_i(i);</span>
+    public int i_of_i( int i ) {
+<span class="fc" id="L203">        return _NDConf.i_of_i( i );</span>
     }
 
-    public int[] idx_of_i(int i) {
-<span class="fc" id="L48">        return _conf.idx_of_i(i);</span>
+    public int[] idx_of_i( int i ) {
+<span class="fc" id="L207">        return _NDConf.idx_of_i( i );</span>
     }
 
-    public int i_of_idx(int[] idx) {
-<span class="fc" id="L52">        return _conf.i_of_idx(idx);</span>
+    public int i_of_idx( int[] idx ) {
+<span class="fc" id="L211">        return _NDConf.i_of_idx(idx);</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public NDConfiguration getNDConf(){
-<span class="fc" id="L58">        return _conf;</span>
+
+    public InstanceType setNDConf( NDConfiguration ndConfiguration ) {
+<span class="fc" id="L218">        _NDConf = ndConfiguration;</span>
+<span class="fc" id="L219">        return (InstanceType) this;</span>
     }
 
-    public InstanceType setNDConf(NDConfiguration ndConfiguration){
-<span class="fc" id="L62">        _conf = ndConfiguration;</span>
-<span class="fc" id="L63">        return (InstanceType) this;</span>
-    }
 
     //---
 
-    public int rank(){
-<span class="fc" id="L69">        return _conf.shape().length;</span>
+    public int rank() {
+<span class="fc" id="L226">        return _NDConf.shape().length;</span>
     }
 
     public List&lt;Integer&gt; shape() {
-<span class="fc" id="L73">        return _asList(_conf.shape());</span>
+<span class="fc" id="L230">        return _asList(_NDConf.shape());</span>
     }
 
-    public int shape(int i){
-<span class="fc" id="L77">        return _conf.shape()[i];</span>
+    public int shape( int i ) {
+<span class="fc" id="L234">        return _NDConf.shape()[ i ];</span>
     }
 
-    public List&lt;Integer&gt; idxmap(){
-<span class="fc" id="L81">        return _asList(_conf.idxmap());</span>
+    public List&lt;Integer&gt; idxmap() {
+<span class="fc" id="L238">        return _asList(_NDConf.idxmap());</span>
     }
 
     public List&lt;Integer&gt; translation() {
-<span class="fc" id="L85">        return _asList(_conf.translation());</span>
+<span class="fc" id="L242">        return _asList(_NDConf.translation());</span>
     }
 
-    public List&lt;Integer&gt; spread(){
-<span class="fc" id="L89">        return _asList(_conf.spread());</span>
+    public List&lt;Integer&gt; spread() {
+<span class="fc" id="L246">        return _asList(_NDConf.spread());</span>
     }
 
-    public List&lt;Integer&gt; offset(){
-<span class="fc" id="L93">        return _asList(_conf.offset());</span>
+    public List&lt;Integer&gt; offset() {
+<span class="fc" id="L250">        return _asList(_NDConf.offset());</span>
     }
 
     public int size() {
-<span class="fc" id="L97">        return Utility.Indexing.szeOfShp(_conf.shape());</span>
+<span class="fc" id="L254">        return NDConfiguration.Utility.szeOfShp(_NDConf.shape());</span>
     }
 
-    protected static List&lt;Integer&gt; _asList(int[] array){
-<span class="fc" id="L101">        List&lt;Integer&gt; intList = new ArrayList&lt;&gt;(array.length);</span>
-<span class="fc bfc" id="L102" title="All 2 branches covered.">        for (int i : array) intList.add(i);</span>
-<span class="fc" id="L103">        return intList;</span>
+    protected static List&lt;Integer&gt; _asList( int[] array ) {
+<span class="fc" id="L258">        List&lt;Integer&gt; intList = new ArrayList&lt;&gt;( array.length );</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">        for ( int i : array ) intList.add( i );</span>
+<span class="fc" id="L260">        return intList;</span>
     }
+
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -110,34 +268,36 @@ import java.util.Locale;
     /**
      *  Static methods.
      */
-<span class="nc" id="L113">    public static class Utility</span>
+<span class="nc" id="L271">    public static class Utility</span>
     {
-<span class="nc" id="L115">        public static class Stringify</span>
+<span class="nc" id="L273">        public static class Stringify</span>
         {
-            @Contract(pure = true)
-            public static String formatFP(double v){
-<span class="fc" id="L119">                DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.US);</span>
-<span class="fc" id="L120">                DecimalFormat Formatter = new DecimalFormat(&quot;##0.0##E0&quot;, formatSymbols);</span>
-<span class="fc" id="L121">                String vStr = String.valueOf(v);</span>
-<span class="fc bfc" id="L122" title="All 2 branches covered.">                if (vStr.length()&gt;7){</span>
-<span class="fc bfc" id="L123" title="All 2 branches covered.">                    if (vStr.startsWith(&quot;0.&quot;)){</span>
-<span class="fc" id="L124">                        vStr = vStr.substring(0, 7)+&quot;E0&quot;;</span>
-<span class="fc bfc" id="L125" title="All 2 branches covered.">                    } else if(vStr.startsWith(&quot;-0.&quot;)){</span>
-<span class="fc" id="L126">                        vStr = vStr.substring(0, 8)+&quot;E0&quot;;</span>
+            @Contract( pure = true )
+            public static String formatFP( double v ) {
+<span class="fc" id="L277">                DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols( Locale.US );</span>
+<span class="fc" id="L278">                DecimalFormat Formatter = new DecimalFormat(&quot;##0.0##E0&quot;, formatSymbols);</span>
+<span class="fc" id="L279">                String vStr = String.valueOf( v );</span>
+<span class="fc" id="L280">                final int offset = 0;</span>
+<span class="fc bfc" id="L281" title="All 2 branches covered.">                if ( vStr.length() &gt; ( 7 - offset ) ) {</span>
+<span class="fc bfc" id="L282" title="All 2 branches covered.">                    if ( vStr.startsWith(&quot;0.&quot;) ) {</span>
+<span class="fc" id="L283">                        vStr = vStr.substring( 0, 7-offset )+&quot;E0&quot;;</span>
+<span class="fc bfc" id="L284" title="All 2 branches covered.">                    } else if( vStr.startsWith( &quot;-0.&quot; ) ) {</span>
+<span class="fc" id="L285">                        vStr = vStr.substring( 0, 8-offset )+&quot;E0&quot;;</span>
                     } else {
-<span class="fc" id="L128">                        vStr = Formatter.format(v);</span>
-<span class="fc bfc" id="L129" title="All 2 branches covered.">                        vStr = (!vStr.contains(&quot;.0E0&quot;))?vStr:vStr.replace(&quot;.0E0&quot;,&quot;.0&quot;);</span>
-<span class="pc bpc" id="L130" title="1 of 2 branches missed.">                        vStr = (vStr.contains(&quot;.&quot;))?vStr:vStr.replace(&quot;E0&quot;,&quot;.0&quot;);</span>
+<span class="fc" id="L287">                        vStr = Formatter.format( v );</span>
+<span class="fc bfc" id="L288" title="All 2 branches covered.">                        vStr = (!vStr.contains(&quot;.0E0&quot;))?vStr:vStr.replace(&quot;.0E0&quot;,&quot;.0&quot;);</span>
+<span class="fc bfc" id="L289" title="All 2 branches covered.">                        vStr = (vStr.contains(&quot;.&quot;))?vStr:vStr.replace(&quot;E0&quot;,&quot;.0&quot;);</span>
                     }
                 }
-<span class="fc" id="L133">                return vStr;</span>
+<span class="fc" id="L292">                return vStr;</span>
             }
 
-            @Contract(pure = true)
-            public static String strConf(int[] conf) {
-<span class="fc" id="L138">                StringBuilder str = new StringBuilder();</span>
-<span class="fc bfc" id="L139" title="All 4 branches covered.">                for (int i=0; i&lt;conf.length; i++) str.append(conf[i]).append((i != conf.length - 1) ? &quot;, &quot; : &quot;&quot;);</span>
-<span class="fc" id="L140">                return &quot;[&quot; + str + &quot;]&quot;;</span>
+            @Contract( pure = true )
+            public static String strConf( int[] conf ) {
+<span class="fc" id="L297">                StringBuilder str = new StringBuilder();</span>
+<span class="fc bfc" id="L298" title="All 2 branches covered.">                for ( int i = 0; i &lt; conf.length; i++ )</span>
+<span class="fc bfc" id="L299" title="All 2 branches covered.">                    str.append(conf[ i ]).append((i != conf.length - 1) ? &quot;, &quot; : &quot;&quot;);</span>
+<span class="fc" id="L300">                return &quot;[&quot; + str + &quot;]&quot;;</span>
             }
         }
 
@@ -145,147 +305,63 @@ import java.util.Locale;
         /**
          * Indexing methods.
          */
-<span class="nc" id="L148">        public static class Indexing</span>
+<span class="nc" id="L308">        public static class Indexing</span>
         {
             @Contract(pure = true)
-            public static void increment(@NotNull int[] shpIdx, @NotNull int[] shape) {
-                int i;
-<span class="fc bfc" id="L153" title="All 2 branches covered.">                if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) i = 0;</span>
-<span class="fc" id="L154">                else i = shape.length-1;</span>
-<span class="fc bfc" id="L155" title="All 4 branches covered.">                while (i &gt;= 0 &amp;&amp; i &lt; shape.length) i = _incrementAt(i, shpIdx, shape);</span>
-<span class="fc" id="L156">            }</span>
-
-            @Contract(pure = true)
-            private static int _incrementAt(int i, @NotNull int[] shpIdx, @NotNull int[] shape) {
-<span class="fc bfc" id="L160" title="All 2 branches covered.">                if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
-<span class="pc bpc" id="L161" title="1 of 2 branches missed.">                    if (shpIdx[i] &lt; (shape[i])) {</span>
-<span class="fc" id="L162">                        shpIdx[i]++;</span>
-<span class="fc bfc" id="L163" title="All 2 branches covered.">                        if (shpIdx[i] == (shape[i])) {</span>
-<span class="fc" id="L164">                            shpIdx[i] = 0;</span>
-<span class="fc" id="L165">                            i++;</span>
-                        } else {
-<span class="fc" id="L167">                            i = -1;</span>
-                        }
-                    } else {
-<span class="nc" id="L170">                        i++;</span>
-                    }
-<span class="fc" id="L172">                    return i;</span>
-                } else {
-<span class="pc bpc" id="L174" title="1 of 2 branches missed.">                    if (shpIdx[i] &lt; (shape[i])) {</span>
-<span class="fc" id="L175">                        shpIdx[i]++;</span>
-<span class="fc bfc" id="L176" title="All 2 branches covered.">                        if (shpIdx[i] == (shape[i])) {</span>
-<span class="fc" id="L177">                            shpIdx[i] = 0;</span>
-<span class="fc" id="L178">                            i--;</span>
-                        } else {
-<span class="fc" id="L180">                            i = -1;</span>
-                        }
-                    } else {
-<span class="nc" id="L183">                        i--;</span>
-                    }
-<span class="fc" id="L185">                    return i;</span>
-                }
-            }
-
-            @Contract(pure = true)
-            public static int[] newTlnOf(int[] shape) {
-<span class="fc" id="L191">                int[] tln = new int[shape.length];</span>
-<span class="fc" id="L192">                int prod = 1;</span>
-<span class="fc bfc" id="L193" title="All 2 branches covered.">                if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
-<span class="fc bfc" id="L194" title="All 2 branches covered.">                    for (int i = 0; i &lt; tln.length; i++) {</span>
-<span class="fc" id="L195">                        tln[i] = prod;</span>
-<span class="fc" id="L196">                        prod *= shape[i];</span>
-                    }
-                } else {
-<span class="fc bfc" id="L199" title="All 2 branches covered.">                    for (int i = tln.length-1; i &gt;= 0; i--) {</span>
-<span class="fc" id="L200">                        tln[i] = prod;</span>
-<span class="fc" id="L201">                        prod *= shape[i];</span>
-                    }
-                }
-<span class="fc" id="L204">                return tln;</span>
-            }
-
-            @Contract(pure = true)
-            public static int[] rearrange(@NotNull int[] array, @NotNull int[] ptr) {
-<span class="fc" id="L209">                int[] newShp = new int[ptr.length];</span>
-<span class="fc bfc" id="L210" title="All 2 branches covered.">                for (int i = 0; i &lt; ptr.length; i++) {</span>
-<span class="fc bfc" id="L211" title="All 2 branches covered.">                    if (ptr[i] &lt; 0) newShp[i] = Math.abs(ptr[i]);</span>
-<span class="pc bpc" id="L212" title="1 of 2 branches missed.">                    else if (ptr[i] &gt;= 0) newShp[i] = array[ptr[i]];</span>
-                }
-<span class="fc" id="L214">                return newShp;</span>
-            }
-
-            @Contract(pure = true)
-            public static int[] shpCheck(int[] newShp, Tsr t) {
-<span class="pc bpc" id="L219" title="1 of 2 branches missed.">                if (szeOfShp(newShp) != t.size()) {</span>
-<span class="nc" id="L220">                    throw new IllegalArgumentException(</span>
+            public static int[] shpCheck( int[] newShp, Tsr t ) {
+<span class="pc bpc" id="L312" title="1 of 2 branches missed.">                if ( NDConfiguration.Utility.szeOfShp(newShp) != t.size() ) {</span>
+<span class="nc" id="L313">                    throw new IllegalArgumentException(</span>
                             &quot;New shape does not match tensor size!&quot; +
-<span class="nc bnc" id="L222" title="All 2 branches missed.">                                    &quot; (&quot; + Utility.Stringify.strConf(newShp) + ((szeOfShp(newShp) &lt; t.size()) ? &quot;&lt;&quot; : &quot;&gt;&quot;) + Utility.Stringify.strConf(t._conf.shape()) + &quot;)&quot;);</span>
+<span class="nc bnc" id="L315" title="All 2 branches missed.">                                    &quot; (&quot; + Utility.Stringify.strConf(newShp) + ((NDConfiguration.Utility.szeOfShp(newShp) &lt; t.size()) ? &quot;&lt;&quot; : &quot;&gt;&quot;) + Utility.Stringify.strConf(t._NDConf.shape()) + &quot;)&quot;);</span>
                 }
-<span class="fc" id="L224">                return newShp;</span>
+<span class="fc" id="L317">                return newShp;</span>
             }
 
             @Contract(pure = true)
-            public static int[] rearrange(int[] tln, int[] shp, @NotNull int[] newForm) {
-<span class="fc" id="L229">                int[] shpTln = newTlnOf(shp);</span>
-<span class="fc" id="L230">                int[] newTln = new int[newForm.length];</span>
-<span class="fc bfc" id="L231" title="All 2 branches covered.">                for (int i = 0; i &lt; newForm.length; i++) {</span>
-<span class="fc bfc" id="L232" title="All 2 branches covered.">                    if (newForm[i] &lt; 0) newTln[i] = shpTln[i];</span>
-<span class="pc bpc" id="L233" title="1 of 2 branches missed.">                    else if (newForm[i] &gt;= 0) newTln[i] = tln[newForm[i]];</span>
-                }
-<span class="fc" id="L235">                return newTln;</span>
-            }
-
-            @Contract(pure = true)
-            public static int[][] makeFit(int[] sA, int[] sB){
-<span class="fc" id="L240">                int lastIndexOfA = 0;</span>
-<span class="fc bfc" id="L241" title="All 2 branches covered.">                for (int i=sA.length-1; i&gt;=0; i--) {</span>
-<span class="fc bfc" id="L242" title="All 2 branches covered.">                    if(sA[i]!=1){</span>
-<span class="fc" id="L243">                        lastIndexOfA = i;</span>
-<span class="fc" id="L244">                        break;</span>
+            public static int[][] makeFit( int[] sA, int[] sB ) {
+<span class="fc" id="L322">                int lastIndexOfA = 0;</span>
+<span class="fc bfc" id="L323" title="All 2 branches covered.">                for ( int i = sA.length-1; i &gt;= 0; i-- ) {</span>
+<span class="fc bfc" id="L324" title="All 2 branches covered.">                    if(sA[ i ]!=1) {</span>
+<span class="fc" id="L325">                        lastIndexOfA = i;</span>
+<span class="fc" id="L326">                        break;</span>
                     }
                 }
-<span class="fc" id="L247">                int firstIndexOfB = 0;</span>
-<span class="fc bfc" id="L248" title="All 2 branches covered.">                for (int i=0; i&lt;sB.length; i++){</span>
-<span class="fc bfc" id="L249" title="All 2 branches covered.">                    if(sB[i]!=1){</span>
-<span class="fc" id="L250">                        firstIndexOfB = i;</span>
-<span class="fc" id="L251">                        break;</span>
+<span class="fc" id="L329">                int firstIndexOfB = 0;</span>
+<span class="fc bfc" id="L330" title="All 2 branches covered.">                for (int i=0; i&lt;sB.length; i++) {</span>
+<span class="fc bfc" id="L331" title="All 2 branches covered.">                    if(sB[ i ]!=1) {</span>
+<span class="fc" id="L332">                        firstIndexOfB = i;</span>
+<span class="fc" id="L333">                        break;</span>
                     }
                 }
-<span class="fc" id="L254">                int newSize = lastIndexOfA + sB.length - firstIndexOfB;</span>
-<span class="fc" id="L255">                int[] rsA = new int[newSize];</span>
-<span class="fc" id="L256">                int[] rsB = new int[newSize];</span>
-<span class="fc bfc" id="L257" title="All 2 branches covered.">                for(int i=0; i&lt;newSize; i++) {</span>
-<span class="fc bfc" id="L258" title="All 2 branches covered.">                    if(i&lt;=lastIndexOfA) rsA[i] = i; else rsA[i] = -1;</span>
-<span class="fc bfc" id="L259" title="All 2 branches covered.">                    if(i&gt;=lastIndexOfA) rsB[i] = i-lastIndexOfA+firstIndexOfB; else rsB[i] = -1;</span>
+<span class="fc" id="L336">                int newSize = lastIndexOfA + sB.length - firstIndexOfB;</span>
+<span class="fc" id="L337">                int[] rsA = new int[newSize];</span>
+<span class="fc" id="L338">                int[] rsB = new int[newSize];</span>
+<span class="fc bfc" id="L339" title="All 2 branches covered.">                for(int i=0; i&lt;newSize; i++) {</span>
+<span class="fc bfc" id="L340" title="All 2 branches covered.">                    if(i&lt;=lastIndexOfA) rsA[ i ] = i; else rsA[ i ] = -1;</span>
+<span class="fc bfc" id="L341" title="All 2 branches covered.">                    if(i&gt;=lastIndexOfA) rsB[ i ] = i-lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;</span>
                 }
-<span class="fc" id="L261">                return new int[][]{rsA, rsB};</span>
+<span class="fc" id="L343">                return new int[][]{rsA, rsB};</span>
             }
 
             @Contract(pure = true)
             public static int[] shpOfCon(int[] shp1, int[] shp2) {
-<span class="fc" id="L266">                int[] shape = new int[(shp1.length + shp2.length) / 2];</span>
-<span class="pc bpc" id="L267" title="1 of 4 branches missed.">                for (int i = 0; i &lt; shp1.length &amp;&amp; i &lt; shp2.length; i++) shape[i] = Math.abs(shp1[i] - shp2[i]) + 1;</span>
-<span class="fc" id="L268">                return shape;</span>
+<span class="fc" id="L348">                int[] shape = new int[(shp1.length + shp2.length) / 2];</span>
+<span class="pc bpc" id="L349" title="1 of 4 branches missed.">                for (int i = 0; i &lt; shp1.length &amp;&amp; i &lt; shp2.length; i++) shape[ i ] = Math.abs(shp1[ i ] - shp2[ i ]) + 1;</span>
+<span class="fc" id="L350">                return shape;</span>
             }
 
             @Contract(pure = true)
             public static int[] shpOfBrc(int[] shp1, int[] shp2) {
-<span class="fc" id="L273">                int[] shape = new int[(shp1.length + shp2.length) / 2];</span>
-<span class="pc bpc" id="L274" title="1 of 4 branches missed.">                for (int i = 0; i &lt; shp1.length &amp;&amp; i &lt; shp2.length; i++) {</span>
-<span class="fc" id="L275">                    shape[i] = Math.max(shp1[i], shp2[i]);</span>
-<span class="pc bpc" id="L276" title="3 of 4 branches missed.">                    if (Math.min(shp1[i], shp2[i])!=1&amp;&amp;Math.max(shp1[i], shp2[i])!=shape[i]) {</span>
-<span class="nc" id="L277">                        throw new IllegalStateException(&quot;Broadcast not possible. Shapes do not match!&quot;);</span>
+<span class="fc" id="L355">                int[] shape = new int[(shp1.length + shp2.length) / 2];</span>
+<span class="pc bpc" id="L356" title="1 of 4 branches missed.">                for (int i = 0; i &lt; shp1.length &amp;&amp; i &lt; shp2.length; i++) {</span>
+<span class="fc" id="L357">                    shape[ i ] = Math.max(shp1[ i ], shp2[ i ]);</span>
+<span class="pc bpc" id="L358" title="3 of 4 branches missed.">                    if (Math.min(shp1[ i ], shp2[ i ])!=1&amp;&amp;Math.max(shp1[ i ], shp2[ i ])!=shape[ i ]) {</span>
+<span class="nc" id="L359">                        throw new IllegalStateException(&quot;Broadcast not possible. Shapes do not match!&quot;);</span>
                     }
                 }
-<span class="fc" id="L280">                return shape;</span>
+<span class="fc" id="L362">                return shape;</span>
             }
 
-            @Contract(pure = true)
-            public static int szeOfShp(int[] shape) {
-<span class="fc" id="L285">                int size = 1;</span>
-<span class="fc bfc" id="L286" title="All 2 branches covered.">                for (int i : shape) size *= i;</span>
-<span class="fc" id="L287">                return size;</span>
-            }
 
         }
 

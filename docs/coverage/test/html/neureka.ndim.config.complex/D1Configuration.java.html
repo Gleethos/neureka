@@ -16,7 +16,7 @@ public final class D1Configuration extends AbstractNDC //:= IMMUTABLE
     /**
      *  The mapping of idx array.
      */
-    private final int _idxmap; // Used to avoid distortion when reshaping!
+    private final int _idxmap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
     /**
      *  Produces the strides of a tensor subset / slice
      */
@@ -36,7 +36,7 @@ public final class D1Configuration extends AbstractNDC //:= IMMUTABLE
             int[] spread,
             int[] offset
     ){
-<span class="fc" id="L39">        return _cached(new D1Configuration(shape[0], translation[0],  idxmap[0], spread[0], offset[0]));</span>
+<span class="fc" id="L39">        return _cached(new D1Configuration(shape[ 0 ], translation[ 0 ],  idxmap[ 0 ], spread[ 0 ], offset[ 0 ]));</span>
     }
 
     private D1Configuration(
@@ -120,7 +120,7 @@ public final class D1Configuration extends AbstractNDC //:= IMMUTABLE
     }
     @Override
     public int i_of_idx(int[] idx) {
-<span class="nc" id="L123">        return (idx[0] * _spread + _offset) * _translation;</span>
+<span class="nc" id="L123">        return (idx[ 0 ] * _spread + _offset) * _translation;</span>
     }
 
 

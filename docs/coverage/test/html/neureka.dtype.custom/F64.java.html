@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>F64.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.dtype.custom</a> &gt; <span class="el_source">F64.java</span></div><h1>F64.java</h1><pre class="source lang-java linenums">package neureka.dtype.custom;
+
+import neureka.dtype.AbstractNumericType;
+import neureka.utility.DataConverter;
+
+import java.io.IOException;
+import java.io.DataInput;
+import java.nio.ByteBuffer;
+import java.util.Iterator;
+
+public final class F64 extends AbstractNumericType&lt;Double, double[], Double, double[]&gt;
+{
+
+    public F64() {
+<span class="fc" id="L15">        super();</span>
+<span class="fc" id="L16">    }</span>
+
+    @Override
+    public boolean signed() {
+<span class="fc" id="L20">        return true;</span>
+    }
+
+    @Override
+    public int numberOfBytes() {
+<span class="fc" id="L25">        return 8;</span>
+    }
+
+    @Override
+    public Class&lt;Double&gt; targetType() {
+<span class="fc" id="L30">        return Double.class;</span>
+    }
+
+    @Override
+    public Class&lt;double[]&gt; targetArrayType() {
+<span class="fc" id="L35">        return double[].class;</span>
+    }
+
+    @Override
+    public Class&lt;Double&gt; holderType() {
+<span class="nc" id="L40">        return Double.class;</span>
+    }
+
+    @Override
+    public Class&lt;double[]&gt; holderArrayType() {
+<span class="nc" id="L45">        return double[].class;</span>
+    }
+
+    @Override
+    public Double foreignHolderBytesToTarget( byte[] bytes ) {
+<span class="fc" id="L50">        return ByteBuffer.wrap(bytes).getDouble();</span>
+    }
+
+    @Override
+    public Double toTarget( Double original ) {
+<span class="fc" id="L55">        return original;</span>
+    }
+
+    @Override
+    public byte[] targetToForeignHolderBytes( Double number ) {
+<span class="fc" id="L60">        long data = Double.doubleToRawLongBits(number);</span>
+<span class="fc" id="L61">        return new byte[] {</span>
+                (byte) ((data &gt;&gt; 56) &amp; 0xff),
+                (byte) ((data &gt;&gt; 48) &amp; 0xff),
+                (byte) ((data &gt;&gt; 40) &amp; 0xff),
+                (byte) ((data &gt;&gt; 32) &amp; 0xff),
+                (byte) ((data &gt;&gt; 24) &amp; 0xff),
+                (byte) ((data &gt;&gt; 16) &amp; 0xff),
+                (byte) ((data &gt;&gt;  8) &amp; 0xff),
+                (byte) ((data &gt;&gt;  0) &amp; 0xff),
+        };
+    }
+
+    @Override
+    public double[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
+<span class="fc" id="L75">        return _readFrom( stream, size );</span>
+    }
+
+    @Override
+    public &lt;T&gt; double[] readAndConvertForeignDataFrom( Iterator&lt;T&gt; iterator, int size ) {
+<span class="nc" id="L80">        double[] data = new double[ size ];</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        for ( int i=0; i&lt;size; i++ ) data[ i ] = convertToTarget( iterator.next() );</span>
+<span class="nc" id="L82">        return data;</span>
+    }
+
+    @Override
+    public double[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
+<span class="nc" id="L87">        return _readFrom( stream, size );</span>
+    }
+
+    @Override
+    public &lt;T&gt; double[] readForeignDataFrom( Iterator&lt;T&gt; iterator, int size ) {
+<span class="fc" id="L92">        double[] data = new double[ size ];</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        for ( int i=0; i&lt;size; i++ ) data[ i ] = convertToHolder( iterator.next() );</span>
+<span class="fc" id="L94">        return data;</span>
+    }
+
+    @Override
+    public Double convertToHolder( Object from ) {
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if ( Byte.class.equals( from.getClass() ) )</span>
+<span class="nc" id="L100">            return ( (Byte) from ).doubleValue();</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        else if ( Integer.class.equals( from.getClass() ) )</span>
+<span class="nc" id="L102">            return ( (Integer) from ).doubleValue();</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        else if ( Double.class.equals( from.getClass() ) )</span>
+<span class="nc" id="L104">            return ( (Double) from );</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">        else if ( Short.class.equals( from.getClass() ) )</span>
+<span class="nc" id="L106">            return ( (Short) from ).doubleValue();</span>
+<span class="pc bpc" id="L107" title="1 of 2 branches missed.">        else if ( Long.class.equals( from.getClass() ) )</span>
+<span class="nc" id="L108">            return ( (Long) from ).doubleValue();</span>
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">        else if ( Float.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L110">            return ( (Float) from ).doubleValue();</span>
+        else
+<span class="nc" id="L112">            return null;</span>
+    }
+
+    @Override
+    public double[] convertToHolderArray( Object from ) {
+<span class="nc" id="L117">        return new double[0];</span>
+    }
+
+    @Override
+    public Double convertToTarget( Object from ) {
+<span class="nc" id="L122">        return convertToHolder( from );</span>
+    }
+
+    @Override
+    public double[] convertToTargetArray( Object from ) {
+<span class="fc" id="L127">        return DataConverter.instance().convert( from, double[].class );</span>
+    }
+
+    private double[] _readFrom( DataInput stream, int size ) throws IOException {
+<span class="fc" id="L131">        double[] data = new double[ size ];</span>
+<span class="fc" id="L132">        byte[] bytes = new byte[ this.numberOfBytes() ];</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        for ( int i=0; i&lt;size; i++ ) {</span>
+<span class="fc" id="L134">            stream.readFully( bytes );</span>
+<span class="fc" id="L135">            data[ i ] = foreignHolderBytesToTarget( bytes );</span>
+        }
+<span class="fc" id="L137">        return data;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

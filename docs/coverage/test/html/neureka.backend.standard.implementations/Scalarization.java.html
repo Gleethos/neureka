@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Scalarization.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.standard.implementations</a> &gt; <span class="el_source">Scalarization.java</span></div><h1>Scalarization.java</h1><pre class="source lang-java linenums">package neureka.backend.standard.implementations;
+
+import neureka.Neureka;
+import neureka.Tsr;
+import neureka.backend.api.implementations.AbstractFunctionalOperationTypeImplementation;
+import neureka.backend.api.operations.OperationType;
+import neureka.devices.Device;
+import neureka.dtype.NumericType;
+import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.iterators.NDIterator;
+import org.jetbrains.annotations.Contract;
+
+<span class="pc bpc" id="L13" title="1 of 2 branches missed.">public class Scalarization extends AbstractFunctionalOperationTypeImplementation&lt; Scalarization &gt;</span>
+{
+
+    public Scalarization() {
+<span class="fc" id="L17">        super(&quot;scalarization&quot;);</span>
+<span class="fc" id="L18">        setSuitabilityChecker( call -&gt; {</span>
+<span class="fc" id="L19">            if (</span>
+<span class="fc" id="L20">                    !call.validate()</span>
+<span class="fc" id="L21">                            .allNotNull( t -&gt; t.getDataType().typeClassImplements(NumericType.class) )</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">                            .first( t -&gt; t == null )</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">                            .isValid()</span>
+<span class="fc" id="L24">            ) return 0.0f;</span>
+<span class="fc" id="L25">            Tsr[] tsrs = call.getTensors();</span>
+<span class="fc" id="L26">            int size = tsrs[tsrs.length-1].size();</span>
+<span class="pc bpc" id="L27" title="3 of 4 branches missed.">            if( size != 1 || tsrs.length!=2 ) return 0f;</span>
+<span class="nc" id="L28">            return 1.0f;</span>
+        });
+<span class="fc" id="L30">        setDrainInstantiation(</span>
+                call -&gt; {
+<span class="nc" id="L32">                    Tsr[] tsrs = call.getTensors();</span>
+<span class="nc" id="L33">                    Device device = call.getDevice();</span>
+<span class="nc bnc" id="L34" title="All 4 branches missed.">                    assert tsrs[ 0 ] == null;  // Creating a new tensor:</span>
+
+<span class="nc" id="L36">                    int[] shp = tsrs[ 1 ].getNDConf().shape();</span>
+<span class="nc" id="L37">                    Tsr output = new Tsr( shp, 0.0 );</span>
+<span class="nc" id="L38">                    output.setIsVirtual( false );</span>
+                    try {
+<span class="nc" id="L40">                        device.store( output );</span>
+<span class="nc" id="L41">                    } catch( Exception e ) {</span>
+<span class="nc" id="L42">                        e.printStackTrace();</span>
+<span class="nc" id="L43">                    }</span>
+<span class="nc" id="L44">                    tsrs[ 0 ] = output;</span>
+
+<span class="nc" id="L46">                    return call;</span>
+                }
+        );
+<span class="fc" id="L49">    }</span>
+
+
+    public String getKernelSource() {
+<span class="fc" id="L53">        return Neureka.instance().utility().readResource(&quot;kernels/scalarization_template.cl&quot;);</span>
+    }
+
+
+    @Contract(pure = true)
+    public static void scalarize (
+            Tsr t0_drn,
+            int i, int end,
+            OperationType.PrimaryNDIConsumer operation
+    ) {
+<span class="nc" id="L63">        NDIterator t0Idx = NDIterator.of( t0_drn ); //t0_drn.idx_of_i( i );</span>
+<span class="nc" id="L64">        t0Idx.set( t0_drn.idx_of_i( i ) );</span>
+<span class="nc" id="L65">        double[] t0_value = t0_drn.value64();</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        while (i &lt; end) // increment on drain accordingly:</span>
+        {
+            // setInto _value in drn:
+<span class="nc" id="L69">            t0_value[t0Idx.i()] = operation.execute( t0Idx );</span>
+            // increment on drain:
+<span class="nc" id="L71">            t0Idx.increment();</span>
+            //NDConfiguration.Utility.increment(t0Idx, t0Shp);
+<span class="nc" id="L73">            i++;</span>
+        }
+<span class="nc" id="L75">    }</span>
+
+    @Contract(pure = true)
+    public static void scalarize (
+            Tsr t0_drn,
+            int i, int end,
+            OperationType.PrimaryNDXConsumer operation
+    ) {
+<span class="fc" id="L83">        int[] t0Shp = t0_drn.getNDConf().shape();</span>
+<span class="fc" id="L84">        int[] t0Idx = t0_drn.idx_of_i( i );</span>
+<span class="fc" id="L85">        double[] t0_value = t0_drn.value64();</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        while (i &lt; end) // increment on drain accordingly:</span>
+        {
+            // setInto _value in drn:
+<span class="fc" id="L89">            t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute( t0Idx );</span>
+            // increment on drain:
+<span class="fc" id="L91">            NDConfiguration.Utility.increment(t0Idx, t0Shp);</span>
+<span class="fc" id="L92">            i++;</span>
+        }
+<span class="fc" id="L94">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

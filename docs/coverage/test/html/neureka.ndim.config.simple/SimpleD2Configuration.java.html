@@ -11,10 +11,10 @@ public final class SimpleD2Configuration extends AbstractNDC //:= IMMUTABLE
             int[] shape,
             int[] translation
 <span class="fc" id="L13">    ) {</span>
-<span class="fc" id="L14">        _shape1 = shape[0];</span>
-<span class="fc" id="L15">        _shape2 = shape[1];</span>
-<span class="fc" id="L16">        _translation1 = translation[0];</span>
-<span class="fc" id="L17">        _translation2 = translation[1];</span>
+<span class="fc" id="L14">        _shape1 = shape[ 0 ];</span>
+<span class="fc" id="L15">        _shape2 = shape[ 1 ];</span>
+<span class="fc" id="L16">        _translation1 = translation[ 0 ];</span>
+<span class="fc" id="L17">        _translation2 = translation[ 1 ];</span>
 <span class="fc" id="L18">    }</span>
 
     public static NDConfiguration construct(
@@ -38,7 +38,7 @@ public final class SimpleD2Configuration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int rank() {
-<span class="nc" id="L41">        return 2;</span>
+<span class="fc" id="L41">        return 2;</span>
     }
 
     @Override
@@ -58,7 +58,7 @@ public final class SimpleD2Configuration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int idxmap(int i) {
-<span class="nc" id="L61">        return 1;</span>
+<span class="fc" id="L61">        return 1;</span>
     }
 
     @Override
@@ -68,7 +68,7 @@ public final class SimpleD2Configuration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int translation(int i) {
-<span class="nc bnc" id="L71" title="All 2 branches missed.">        return (i==0)?_translation1:_translation2;</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        return (i==0)?_translation1:_translation2;</span>
     }
 
     @Override
@@ -107,15 +107,15 @@ public final class SimpleD2Configuration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int[] idx_of_i(int i) {
-<span class="fc" id="L110">        int[] idx = new int[2];</span>
+<span class="fc" id="L110">        int[] idx = new int[ 2 ];</span>
 <span class="fc bfc" id="L111" title="All 2 branches covered.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){</span>
-<span class="fc" id="L112">            idx[1] += i / _translation2;</span>
+<span class="fc" id="L112">            idx[ 1 ] += i / _translation2;</span>
 <span class="fc" id="L113">            i %= _translation2;</span>
-<span class="fc" id="L114">            idx[0] += i / _translation1;</span>
+<span class="fc" id="L114">            idx[ 0 ] += i / _translation1;</span>
         } else {
-<span class="fc" id="L116">            idx[0] += i / _translation1;</span>
+<span class="fc" id="L116">            idx[ 0 ] += i / _translation1;</span>
 <span class="fc" id="L117">            i %= _translation1;</span>
-<span class="fc" id="L118">            idx[1] += i / _translation2;</span>
+<span class="fc" id="L118">            idx[ 1 ] += i / _translation2;</span>
         }
 <span class="fc" id="L120">        return idx;</span>
     }
@@ -123,8 +123,8 @@ public final class SimpleD2Configuration extends AbstractNDC //:= IMMUTABLE
     @Override
     public int i_of_idx(int[] idx) {
 <span class="fc" id="L125">        int i = 0;</span>
-<span class="fc" id="L126">        i += idx[0] * _translation1;</span>
-<span class="fc" id="L127">        i += idx[1] * _translation2;</span>
+<span class="fc" id="L126">        i += idx[ 0 ] * _translation1;</span>
+<span class="fc" id="L127">        i += idx[ 1 ] * _translation2;</span>
 <span class="fc" id="L128">        return i;</span>
     }
 

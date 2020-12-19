@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WeakTensorReference.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.device.opencl.utility</a> &gt; <span class="el_source">WeakTensorReference.java</span></div><h1>WeakTensorReference.java</h1><pre class="source lang-java linenums">package neureka.device.opencl.utility;
+
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
+
+public class WeakTensorReference&lt;T&gt; extends WeakReference&lt;T&gt;
+{
+    /**
+     * Creates a new phantom reference that refers to the given object and
+     * is registered with the given queue.
+     *
+     * &lt;p&gt; It is possible to create a phantom reference with a {@code null}
+     * queue, but such a reference is completely useless: Its {@code get}
+     * method will always return {@code null} and, since it does not have a queue,
+     * it will never be enqueued.
+     *
+     * @param referent the object the new phantom reference will refer to
+     * @param q        the queue with which the reference is to be registered,
+     *                 or {@code null} if registration is not required
+     */
+    private int _hash;
+
+    public WeakTensorReference(T referent, ReferenceQueue&lt;? super T&gt; q) {
+<span class="fc" id="L24">        super(referent, q);</span>
+<span class="fc" id="L25">        _hash = referent.hashCode();</span>
+<span class="fc" id="L26">    }</span>
+
+    @Override
+    public int hashCode(){
+<span class="nc" id="L30">        return _hash;</span>
+    }
+
+    @Override
+    public boolean equals(Object o){
+<span class="nc bnc" id="L35" title="All 2 branches missed.">        return o.hashCode() == _hash;</span>
+    }
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,4 +1,39 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractComponentOwner.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim</a> &gt; <span class="el_source">AbstractComponentOwner.java</span></div><h1>AbstractComponentOwner.java</h1><pre class="source lang-java linenums">package neureka.ndim;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractComponentOwner.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim</a> &gt; <span class="el_source">AbstractComponentOwner.java</span></div><h1>AbstractComponentOwner.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+          _         _                  _    _____                                            _    ____
+    /\   | |       | |                | |  / ____|                                          | |  / __ \
+   /  \  | |__  ___| |_ _ __ __ _  ___| |_| |    ___  _ __ ___  _ __   ___  _ __   ___ _ __ | |_| |  |_|      ___ __   ___ _ __
+  / /\ \ | '_ \/ __| __| '__/ _` |/ __| __| |   / _ \| '_ ` _ \| '_ \ / _ \| '_ \ / _ \ '_ \| __| |  |\ \ /\ / / '_ \ / _ \ '__|
+ / ____ \| |_) \__ \ |_| | | (_| | (__| |_| |__| (_) | | | | | | |_) | (_) | | | |  __/ | | | |_| |__| \ V  V /| | | |  __/ |
+/_/    \_\_.__/|___/\__|_|  \__,_|\___|\__|\____\___/|_| |_| |_| .__/ \___/|_| |_|\___|_| |_|\__|\____/ \_/\_/ |_| |_|\___|_|
+                                                               | |
+                                                               |_|
+
+*/
+
+package neureka.ndim;
 
 import neureka.Component;
 
@@ -15,99 +50,140 @@ import java.util.function.Consumer;
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
  *
+ * @param &lt;InstanceType&gt; The class at the bottom end of the inheritance hierarchy. (Used for factory pattern)
  */
-<span class="fc" id="L19">public abstract class AbstractComponentOwner&lt;InstanceType&gt; {</span>
-
+<span class="fc" id="L55">public abstract class AbstractComponentOwner&lt;InstanceType&gt;</span>
+{
     /**
      *  (Tensor) components
+     *  A collection of component.
      */
-<span class="fc" id="L24">    protected List&lt;Component&lt;InstanceType&gt;&gt; _components = Collections.synchronizedList(new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L61">    protected List&lt;Component&lt;InstanceType&gt;&gt; _components = Collections.synchronizedList(new ArrayList&lt;&gt;());</span>
 
     /**
+     *  This method tries to find a component inside the stored
+     *  component collection whose class matches the one provided.
+     *  If no such component could be found then
+     *  the return value will simply be null.
+     *
      * @param componentClass The type/class of the component which shall be found and returned.
+     * @param &lt;T&gt; The type parameter defining the component class.
      * @return The correct component or null if nothing has been found.
      */
-    public &lt;T&gt; T find(Class&lt;T&gt; componentClass) {
-<span class="fc bfc" id="L31" title="All 2 branches covered.">        if (_components != null) {</span>
-<span class="fc bfc" id="L32" title="All 2 branches covered.">            for (Component&lt;InstanceType&gt; component : _components) {</span>
-<span class="fc bfc" id="L33" title="All 2 branches covered.">                if (componentClass.isInstance(component)) return (T)component;</span>
-<span class="fc" id="L34">            }</span>
+    public &lt;T&gt; T find(Class&lt;T&gt; componentClass)
+    {
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (_components != null) {</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">            for (Component&lt;InstanceType&gt; component : _components) {</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">                if (componentClass.isInstance(component)) return (T)component;</span>
+<span class="fc" id="L78">            }</span>
         }
-<span class="fc" id="L36">        return null;</span>
+<span class="fc" id="L80">        return null;</span>
     }
 
     /**
+     *  This method removes a component identified by the passed Class
+     *  instance if found in the stored component collection.
      *
      * @param componentClass The type/class of a component which will be removed by this method.
      * @return This very class.
      */
-    public &lt;T extends Component&lt;InstanceType&gt;&gt;  InstanceType remove(Class&lt;T&gt; componentClass) {
-<span class="fc" id="L45">        T oldComponent = find(componentClass);</span>
-<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (oldComponent != null) {</span>
-<span class="fc" id="L47">            _components.remove(_removeOrReject(oldComponent));</span>
+    public &lt;T extends Component&lt;InstanceType&gt;&gt; InstanceType remove(Class&lt;T&gt; componentClass)
+    {
+<span class="fc" id="L92">        T oldComponent = find( componentClass );</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        if ( oldComponent != null ) {</span>
+<span class="fc" id="L94">            _components.remove( _removeOrReject( oldComponent ) );</span>
             //_components.trimToSize();
         }
-<span class="pc bpc" id="L50" title="1 of 4 branches missed.">        if (_components != null &amp;&amp; _components.size() == 0) {</span>
-<span class="fc" id="L51">            _components = null;</span>
+<span class="pc bpc" id="L97" title="1 of 4 branches missed.">        if ( _components != null &amp;&amp; _components.size() == 0 ) {</span>
+<span class="fc" id="L98">            _components = null;</span>
         }
-<span class="fc" id="L53">        return (InstanceType)this;</span>
+<span class="fc" id="L100">        return (InstanceType) this;</span>
     }
 
     /**
+     * This method checks if a component identified by the passed Class
+     * instance is present inside the stored component collection.
      *
      * @param componentClass The class/type of a component that might exist in components.
      * @return True if the component of the given type/class has been found.
      */
-    public boolean has(Class componentClass) {
-<span class="fc bfc" id="L62" title="All 2 branches covered.">        return find(componentClass) != null;</span>
+    public boolean has( Class&lt;?&gt; componentClass ) {
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        return find( componentClass ) != null;</span>
     }
 
     /**
+     * This methods stores the passed component inside the component
+     * collection of this class...
+     * However it only adds the provided component if it is not
+     * &quot;rejected&quot; by an abstract method, namely : &quot;_addOrReject&quot; !
+     * Rejection means that this method simply returns null.
      *
      * @param newComponent The new component which should be added to the components list.
      * @return This very class.
      */
-    public &lt;T extends Component&lt;InstanceType&gt;&gt; InstanceType add(T newComponent)
+    public InstanceType set( Component&lt;InstanceType&gt; newComponent)
     {
-<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        if (newComponent == null) return (InstanceType)this;</span>
-<span class="fc" id="L73">        T oldCompartment = null;</span>
-<span class="fc bfc" id="L74" title="All 2 branches covered.">        if (_components != null) {</span>
-<span class="fc" id="L75">            oldCompartment = (T) find(newComponent.getClass());</span>
-<span class="fc bfc" id="L76" title="All 2 branches covered.">            if (oldCompartment != null) {</span>
-<span class="fc" id="L77">                _components.remove(oldCompartment);</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        if ( newComponent == null ) return (InstanceType) this;</span>
+<span class="fc" id="L127">        Component&lt;InstanceType&gt; oldCompartment = null;</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">        if ( _components != null ) {</span>
+<span class="fc" id="L129">            oldCompartment = (Component&lt;InstanceType&gt;) find( newComponent.getClass() );</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">            if ( oldCompartment != null ) {</span>
+<span class="fc" id="L131">                _components.remove( oldCompartment );</span>
                 //_components.trimToSize();
             }
-<span class="fc" id="L80">        } else _components = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L134">        } else _components = new ArrayList&lt;&gt;();</span>
 
-<span class="fc" id="L82">        _components.add(_addOrReject(newComponent));</span>
-<span class="fc" id="L83">        return (InstanceType)this;</span>
+<span class="fc" id="L136">        _components.add( _setOrReject( newComponent ) );</span>
+<span class="fc" id="L137">        return (InstanceType) this;</span>
     }
 
     /**
+     * This method ought to be implemented further down
+     * the inheritance hierarchy where it's responsibility
+     * makes more sense, namely :
+     * An implementation of this method checks if the passes component
+     * should be added or &quot;rejected&quot; to the component collection
+     * of this class.
+     * Rejection in this case simply means that it returns null instead
+     * of the passed component.
+     *
      * @param newComponent The component which should be added to the components list.
      * @return The same component or null if it has been rejected.
      */
-    protected abstract &lt;T extends Component&lt;InstanceType&gt;&gt; T _addOrReject(T newComponent);
+    protected abstract &lt;T extends Component&lt;InstanceType&gt;&gt; T _setOrReject( T newComponent );
 
 
     /**
+     * This method ought to be implemented further down
+     * the inheritance hierarchy where it's responsibility
+     * makes more sense, namely :
+     * An implementation of this method checks if the passes component
+     * should be removed from the component collection of this class
+     * or its removal should be &quot;rejected&quot;.
+     * Rejection in this case simply means that it returns null instead
+     * of the passed component.
+     *
      * @param newComponent The component which should be removed from the components list.
      * @return The same component or null if its removal has been rejected.
      */
     protected abstract &lt;T extends Component&lt;InstanceType&gt;&gt; T _removeOrReject(T newComponent);
 
     /**
+     * This method tries to find a stored component by identifying it
+     * via the given Class instance in order to pass it
+     * into th provided Consumer lambda.
+     * If however no component was found then this lambda is being left untouched.
      *
      * @param cc Component class of whose type the requested component is.
      * @param action An action applied on the requested component if found.
      * @return True if a component could be found, false otherwise.
      */
     public &lt;T extends Component&lt;InstanceType&gt;&gt; boolean forComponent(Class&lt;T&gt; cc, Consumer&lt;T&gt; action) {
-<span class="fc" id="L106">        T component = this.find(cc);</span>
-<span class="fc bfc" id="L107" title="All 2 branches covered.">        if (component!=null) {</span>
-<span class="fc" id="L108">            action.accept(component);</span>
-<span class="fc" id="L109">            return true;</span>
-<span class="fc" id="L110">        } else return false;</span>
+<span class="fc" id="L182">        T component = this.find(cc);</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        if (component!=null) {</span>
+<span class="fc" id="L184">            action.accept(component);</span>
+<span class="fc" id="L185">            return true;</span>
+<span class="fc" id="L186">        } else return false;</span>
     }
 
 

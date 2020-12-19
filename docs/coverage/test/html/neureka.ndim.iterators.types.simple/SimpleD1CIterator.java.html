@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SimpleD1CIterator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.iterators.types.simple</a> &gt; <span class="el_source">SimpleD1CIterator.java</span></div><h1>SimpleD1CIterator.java</h1><pre class="source lang-java linenums">package neureka.ndim.iterators.types.simple;
+
+
+import neureka.ndim.iterators.NDIterator;
+import neureka.ndim.config.types.simple.SimpleD1Configuration;
+
+public class SimpleD1CIterator extends SimpleD1Configuration implements NDIterator
+{
+    private int _d1;
+
+    public SimpleD1CIterator( SimpleD1Configuration ndc ) {
+<span class="nc" id="L12">        super( ndc.shape( 0 ), ndc.translation( 0 ));</span>
+<span class="nc" id="L13">    }</span>
+
+
+    @Override
+    public void increment() {
+<span class="nc" id="L18">        _d1++;</span>
+<span class="nc" id="L19">    }</span>
+
+    @Override
+    public void decrement() {
+<span class="nc" id="L23">        _d1--;</span>
+<span class="nc" id="L24">    }</span>
+
+
+    @Override
+    public int i() {
+<span class="nc" id="L29">        return this.i_of_idx(_d1);</span>
+    }
+
+    @Override
+    public int get( int axis ) {
+<span class="nc" id="L34">        return _d1;</span>
+    }
+
+    @Override
+    public int[] get() {
+<span class="nc" id="L39">        return new int[]{_d1};</span>
+    }
+
+    @Override
+    public void set( int axis, int position ) {
+<span class="nc" id="L44">        _d1 = position;</span>
+<span class="nc" id="L45">    }</span>
+
+    @Override
+    public void set( int[] idx ) {
+<span class="nc" id="L49">        _d1 = idx[0];</span>
+<span class="nc" id="L50">    }</span>
+
+    @Override
+    public int rank() {
+<span class="nc" id="L54">        return 1;</span>
+    }
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

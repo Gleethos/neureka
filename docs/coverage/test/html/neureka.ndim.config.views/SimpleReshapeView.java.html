@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SimpleReshapeView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config.views</a> &gt; <span class="el_source">SimpleReshapeView.java</span></div><h1>SimpleReshapeView.java</h1><pre class="source lang-java linenums">package neureka.ndim.config.views;
+
+import neureka.Neureka;
+import neureka.Tsr;
+import neureka.ndim.AbstractNDArray;
+import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.config.NDConfiguration;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class SimpleReshapeView extends AbstractNDC
+{
+    private final NDConfiguration _toBeViewed;
+    private final int[] _form;
+    private final int[] _formTranslator;
+    private final int[] _shape;
+    private final int[] _translation;
+    private final int[] _idxmap;
+    private final int[] _spread;
+    private final int[] _offset;
+
+    public SimpleReshapeView(int[] form, NDConfiguration toBeViewed)
+<span class="fc" id="L27">    {</span>
+<span class="fc" id="L28">        _toBeViewed = toBeViewed;</span>
+<span class="fc" id="L29">        _form = form;</span>
+
+<span class="fc" id="L31">        List&lt;Integer&gt; _translator = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        for ( int i=0; i &lt; form.length; i++ )</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">                if ( form[ i ] &lt; -1 ) throw new IllegalArgumentException(</span>
+                    &quot;SimpleReshapeView may not view a NDConfiguration beyond reshaping and or padding!&quot;
+                );
+<span class="fc bfc" id="L37" title="All 2 branches covered.">            else if ( form[ i ] &gt;= 0 )  _translator.add(form[ i ]);</span>
+
+<span class="fc" id="L39">        _formTranslator = _translator.stream().mapToInt(e -&gt; e).toArray();</span>
+
+
+<span class="fc" id="L42">        NDConfiguration ndc = _simpleReshape( form, toBeViewed );</span>
+<span class="fc" id="L43">        _shape = ndc.shape();</span>
+<span class="fc" id="L44">        _translation = ndc.translation();</span>
+<span class="fc" id="L45">        _idxmap = ndc.idxmap();</span>
+<span class="fc" id="L46">        _spread = ndc.spread();</span>
+<span class="fc" id="L47">        _offset = ndc.offset();</span>
+<span class="fc" id="L48">    }</span>
+
+    @Override
+    public int rank() {
+<span class="fc" id="L52">        return _shape.length;</span>
+    }
+
+    @Override
+    public int[] shape() {
+<span class="fc" id="L57">        return _shape;</span>
+    }
+
+    @Override
+    public int shape(int i) {
+<span class="nc" id="L62">        return _shape[ i ];</span>
+    }
+
+    @Override
+    public int[] idxmap() {
+<span class="nc" id="L67">        return _idxmap;</span>
+    }
+
+    @Override
+    public int idxmap(int i) {
+<span class="nc" id="L72">        return _idxmap[ i ];</span>
+    }
+
+    @Override
+    public int[] translation() {
+<span class="fc" id="L77">        return _translation;</span>
+    }
+
+    @Override
+    public int translation(int i) {
+<span class="nc" id="L82">        return _translation[ i ];</span>
+    }
+
+    @Override
+    public int[] spread() {
+<span class="nc" id="L87">        return _spread;</span>
+    }
+
+    @Override
+    public int spread(int i) {
+<span class="nc" id="L92">        return _spread[ i ];</span>
+    }
+
+    @Override
+    public int[] offset() {
+<span class="nc" id="L97">        return _offset;</span>
+    }
+
+    @Override
+    public int offset(int i) {
+<span class="fc" id="L102">        return _offset[ i ];</span>
+    }
+    @Override
+    public int i_of_i(int i) {
+<span class="fc" id="L106">        return i_of_idx(idx_of_i( i ));</span>
+    }
+
+    @Override
+    public int[] idx_of_i(int i) {
+<span class="fc" id="L111">        int[] idx = new int[_shape.length];</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">            for ( int ii = rank()-1; ii &gt;= 0; ii-- ) {</span>
+<span class="nc" id="L114">                idx[ii] += i / _idxmap[ii];</span>
+<span class="nc" id="L115">                i %= _idxmap[ii];</span>
+            }
+        } else {
+<span class="fc bfc" id="L118" title="All 2 branches covered.">            for ( int ii = 0; ii &lt; rank(); ii++ ) {</span>
+<span class="fc" id="L119">                idx[ii] += i / _idxmap[ii];</span>
+<span class="fc" id="L120">                i %= _idxmap[ii];</span>
+            }
+        }
+<span class="fc" id="L123">        return idx;</span>
+    }
+
+    @Override
+    public int i_of_idx(int[] idx) {
+<span class="fc" id="L128">        int[] innerIdx = _rearrange(idx,_form, _formTranslator);</span>
+<span class="fc" id="L129">        return _toBeViewed.i_of_idx(innerIdx);</span>
+    }
+
+    @Contract(pure = true)
+    private static int[] _rearrange(@NotNull int[] array, @NotNull int[] ptr, @NotNull int[] idx) {
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        for (int i = 0; i &lt; ptr.length; i++) {</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">            if (ptr[ i ] &gt;= 0) idx[ptr[ i ]] = array[ i ];</span>
+        }
+<span class="fc" id="L137">        return idx;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

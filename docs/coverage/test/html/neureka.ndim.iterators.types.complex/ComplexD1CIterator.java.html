@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ComplexD1CIterator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.iterators.types.complex</a> &gt; <span class="el_source">ComplexD1CIterator.java</span></div><h1>ComplexD1CIterator.java</h1><pre class="source lang-java linenums">package neureka.ndim.iterators.types.complex;
+
+import neureka.ndim.iterators.NDIterator;
+import neureka.ndim.config.types.complex.ComplexD1Configuration;
+
+public class ComplexD1CIterator extends ComplexD1Configuration implements NDIterator
+{
+    private int _d1;
+
+    public ComplexD1CIterator(ComplexD1Configuration ndc) {
+<span class="nc" id="L11">        super(ndc.shape(0), ndc.translation(0), ndc.idxmap(0), ndc.spread(0), ndc.offset(0));</span>
+<span class="nc" id="L12">    }</span>
+
+    @Override
+    public void increment() {
+<span class="nc" id="L16">        _d1++;</span>
+<span class="nc" id="L17">    }</span>
+
+    @Override
+    public void decrement() {
+<span class="nc" id="L21">        _d1--;</span>
+<span class="nc" id="L22">    }</span>
+
+
+    @Override
+    public int i() {
+<span class="nc" id="L27">        return this.i_of_idx(_d1);</span>
+    }
+
+    @Override
+    public int get( int axis ) {
+<span class="nc" id="L32">        return _d1;</span>
+    }
+
+    @Override
+    public int[] get() {
+<span class="nc" id="L37">        return new int[]{_d1};</span>
+    }
+
+    @Override
+    public void set( int axis, int position ) {
+<span class="nc" id="L42">        _d1 = position;</span>
+<span class="nc" id="L43">    }</span>
+
+    @Override
+    public void set( int[] idx ) {
+<span class="nc" id="L47">        _d1 = idx[0];</span>
+<span class="nc" id="L48">    }</span>
+
+    @Override
+    public int rank() {
+<span class="nc" id="L52">        return 1;</span>
+    }
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

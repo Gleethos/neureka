@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DimFit.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.standard.operations.other</a> &gt; <span class="el_source">DimFit.java</span></div><h1>DimFit.java</h1><pre class="source lang-java linenums">package neureka.backend.standard.operations.other;
+
+import neureka.Tsr;
+import neureka.backend.standard.implementations.GenericImplementation;
+import neureka.devices.Device;
+import neureka.autograd.DefaultADAgent;
+import neureka.calculus.Function;
+import neureka.backend.api.operations.AbstractOperationType;
+import neureka.backend.api.ExecutionCall;
+
+import java.util.List;
+
+<span class="nc bnc" id="L13" title="All 2 branches missed.">public class DimFit extends AbstractOperationType</span>
+{
+
+    public DimFit()
+    {
+
+<span class="nc" id="L19">        super(</span>
+                &quot;dimfit&quot;,
+                &quot;dimfit&quot;,
+                -1,
+                false,
+                false,
+                true,
+                false
+        );
+
+<span class="nc" id="L29">        setStringifier(</span>
+                children -&gt; {
+<span class="nc" id="L31">                    String expression = String.join( &quot;, &quot;, children );</span>
+<span class="nc bnc" id="L32" title="All 4 branches missed.">                    if (expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')') {</span>
+<span class="nc" id="L33">                        return &quot;dimfit&quot; + expression;</span>
+                    }
+<span class="nc" id="L35">                    return &quot;dimfit&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+                }
+        );
+
+<span class="nc" id="L39">        GenericImplementation implementation = new GenericImplementation(&quot;reshape&quot;)</span>
+<span class="nc" id="L40">                .setSuitabilityChecker( call -&gt; 1.0f )</span>
+<span class="nc" id="L41">                .setBackwardADAnalyzer( call -&gt; true )</span>
+<span class="nc" id="L42">                .setForwardADAnalyzer( call -&gt; false )</span>
+<span class="nc" id="L43">                .setADAgentSupplier(</span>
+                    ( Function f, ExecutionCall&lt;Device&gt; call, boolean forward ) -&gt;
+                    {
+                        //int index = call.getDerivativeIndex();
+                        //int prefix = ((int[]) call.getAt(&quot;ends&quot;))[ 0 ];
+                        //int postfix = ((int[]) call.getAt(&quot;ends&quot;))[ 1 ];
+<span class="nc bnc" id="L49" title="All 2 branches missed.">                        if(forward) {</span>
+<span class="nc" id="L50">                            throw new IllegalArgumentException(&quot;Dim-Fit operation does not support forward-AD!&quot;);</span>
+                        }
+<span class="nc" id="L52">                        return new DefaultADAgent()</span>
+<span class="nc" id="L53">                                .withContext(call.getContext())</span>
+<span class="nc" id="L54">                                .setForward(null)</span>
+<span class="nc" id="L55">                                .setBackward(</span>
+                                        null//(t, error) -&gt; pad(error, new int[]{prefix, postfix}, true)
+                                );
+                    }
+                )
+<span class="nc" id="L60">                .setCallHook(</span>
+                        ( caller, call ) -&gt;
+                        {
+<span class="nc" id="L63">                            Tsr&lt;?&gt;[] inputs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);</span>
+<span class="nc bnc" id="L64" title="All 4 branches missed.">                            assert call.getDerivativeIndex() &lt; 0;</span>
+
+<span class="nc" id="L66">                            int largest = -1;</span>
+<span class="nc" id="L67">                            int[] shape = null;</span>
+<span class="nc bnc" id="L68" title="All 4 branches missed.">                            for ( Tsr&lt;?&gt; t : inputs ) if ( t.rank() &gt; largest ) {</span>
+<span class="nc" id="L69">                                largest = t.rank();</span>
+<span class="nc" id="L70">                                shape = t.getNDConf().shape();</span>
+                            }
+<span class="nc" id="L72">                            int prefix = 0;</span>
+<span class="nc bnc" id="L73" title="All 4 branches missed.">                            for ( int s : shape ) if ( s == 1 ) prefix++; else break;</span>
+<span class="nc" id="L74">                            int postfix = 0;</span>
+<span class="nc bnc" id="L75" title="All 4 branches missed.">                            for ( int i = shape.length-1; i&gt;=0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;</span>
+
+<span class="nc" id="L77">                            int[][] change = new int[inputs.length][];</span>
+
+
+<span class="nc bnc" id="L80" title="All 2 branches missed.">                            for (int i=0; i&lt;inputs.length; i++)</span>
+                            {
+<span class="nc bnc" id="L82" title="All 2 branches missed.">                                if (inputs[ i ].rank()!=largest)</span>
+                                {
+<span class="nc" id="L84">                                    int[] oldShape = inputs[ i ].getNDConf().shape();</span>
+<span class="nc" id="L85">                                    int[] newReshape = new int[largest];</span>
+<span class="nc" id="L86">                                    int padding = largest-oldShape.length;</span>
+
+<span class="nc bnc" id="L88" title="All 2 branches missed.">                                    int handle = ( postfix &lt;= prefix )? padding : largest-padding;</span>
+<span class="nc bnc" id="L89" title="All 4 branches missed.">                                    for (int ii=0; ii&lt;handle; ii++) newReshape[ii]       = ( postfix &lt;= prefix )? -1 : ii;</span>
+<span class="nc bnc" id="L90" title="All 4 branches missed.">                                    for (int ii=handle; ii&lt;largest; ii++) newReshape[ii] = ( postfix &lt;= prefix )? ii-padding : -1;</span>
+
+<span class="nc" id="L92">                                    change[ i ] = newReshape;</span>
+                                    //Function f = Function.create(
+                                    //        AbstractNDArray.Utility.Stringify.strConf(newReshape) +&quot;:(I[ 0 ])&quot;
+                                    //);
+                                    //inputs[ i ] = f.call( inputs[ i ] );
+
+                                    //inputs[ i ].setNDConf(inputs[ i ].getNDConf().view())
+                                }
+                            }
+
+
+
+
+<span class="nc" id="L105">                            return null;</span>
+
+
+                            //Tsr&lt;?&gt; t = inputs[ 0 ];
+                            //if ( call.getDerivativeIndex() == 0 ) {
+                            //    int prefix = ((int[]) call.getAt(&quot;ends&quot;))[ 0 ];
+                            //    int postfix = ((int[]) call.getAt(&quot;ends&quot;))[ 0 ];
+                            //    return pad(t, new int[]{prefix, postfix}, true);
+                            //} else {
+                            //    int[] ends = new int[ 2 ];
+                            //    call.putAt(&quot;ends&quot;, ends);
+                            //    return trim(t, ends, true);
+                            //}
+                        }
+                )
+<span class="nc" id="L120">                .setRJAgent( ( call, goDeeperWith ) -&gt; null )</span>
+<span class="nc" id="L121">                .setDrainInstantiation( call -&gt; call )</span>
+<span class="nc" id="L122">                .build();</span>
+
+<span class="nc" id="L124">        setImplementation(</span>
+                GenericImplementation.class,
+                implementation
+        );
+
+<span class="nc" id="L129">    }</span>
+
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, List&lt;Function&gt; src ) {
+<span class="nc" id="L134">        return src.get( 0 ).call( inputs, j );</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

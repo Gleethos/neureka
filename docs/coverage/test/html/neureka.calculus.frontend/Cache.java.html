@@ -1,107 +1,152 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Cache.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.frontend</a> &gt; <span class="el_source">Cache.java</span></div><h1>Cache.java</h1><pre class="source lang-java linenums">package neureka.calculus.frontend;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Cache.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.frontend</a> &gt; <span class="el_source">Cache.java</span></div><h1>Cache.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*/
+
+package neureka.calculus.frontend;
 
 import neureka.Tsr;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
-import neureka.calculus.backend.operations.OperationType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Supplier;
 
 public class Cache
 {
-<span class="fc" id="L14">    private static Cache _cache = new Cache();</span>
+<span class="fc" id="L41">    private static Cache _cache = new Cache();</span>
+<span class="fc" id="L42">    private Logger _log = LoggerFactory.getLogger( Cache.class );</span>
 
-<span class="fc" id="L16">    private Cache(){ }</span>
+<span class="fc" id="L44">    private Cache() {</span>
+<span class="fc" id="L45">        _log.debug(&quot;New singleton instance of class 'Cache' created for function result caching.&quot;);</span>
+<span class="fc" id="L46">    }</span>
 
     public static Cache instance()
     {
-<span class="fc" id="L20">        Cache c = _cache;</span>
-<span class="fc" id="L21">        _cache = null;</span>
-<span class="fc" id="L22">        return c;</span>
+<span class="fc" id="L50">        Cache c = _cache;</span>
+<span class="fc" id="L51">        _cache = null;</span>
+<span class="fc" id="L52">        return c;</span>
     }
 
-<span class="fc" id="L25">    private final Map&lt;String, Function&gt; FUNCTIONS = Collections.synchronizedMap(new WeakHashMap&lt;&gt;());</span>
+<span class="fc" id="L55">    private final Map&lt;String, Function&gt; FUNCTIONS = Collections.synchronizedMap(new WeakHashMap&lt;&gt;());</span>
 
-    public synchronized Map&lt;String, Function&gt; FUNCTIONS(){
-<span class="fc" id="L28">        return this.FUNCTIONS;</span>
+    public synchronized Map&lt;String, Function&gt; FUNCTIONS() {
+<span class="fc" id="L58">        return this.FUNCTIONS;</span>
     }
 
-<span class="fc" id="L31">    private final Map&lt;GraphLock, TreeMap&lt;Long, Tsr&gt;&gt; PROCESSING = Collections.synchronizedMap(new TreeMap&lt;&gt;((a, b)-&gt;((int)(a.hashCode()-b.hashCode()))));</span>
+<span class="fc" id="L61">    private final Map&lt;GraphLock, TreeMap&lt;Long, Tsr&lt;Object&gt;&gt;&gt; PROCESSING = Collections.synchronizedMap( new TreeMap&lt;&gt;( ( a, b )-&gt; a.hashCode() - b.hashCode() ) );</span>
 
     public synchronized void free( GraphLock lock )
     {
-<span class="fc" id="L35">        PROCESSING.remove( lock );</span>
-<span class="fc" id="L36">        lock.release();</span>
-<span class="fc" id="L37">    }</span>
+<span class="fc" id="L65">        PROCESSING.remove( lock );</span>
+<span class="fc" id="L66">        lock.release();</span>
+<span class="fc" id="L67">    }</span>
 
-    public synchronized Tsr preprocess( Tsr[] inputs, Function function, Supplier&lt;Tsr&gt; activation, int d, int j )
+    public synchronized Tsr&lt;Object&gt; preprocess( Tsr&lt;Object&gt;[] inputs, Function function, Supplier&lt;Tsr&lt;Object&gt;&gt; activation, int d, int j )
     {
-<span class="fc bfc" id="L41" title="All 2 branches covered.">        if ( !function.doesAD() ) {</span>
-<span class="fc" id="L42">            return activation.get();//TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD =&gt; NO GRAPH NODES</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if ( !function.isDoingAD() ) {</span>
+<span class="fc" id="L72">            return activation.get(); // TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD =&gt; NO GRAPH NODES</span>
         }
-<span class="fc" id="L44">        boolean locked = true;//input tensors might all have graph nodes but are left from previous computation. (=&gt;need to locked again!)</span>
-<span class="fc" id="L45">        Tsr untracked = null;</span>
-<span class="fc bfc" id="L46" title="All 2 branches covered.">        for ( Tsr t : inputs ) {</span>
-<span class="fc" id="L47">            GraphNode node = t.find(GraphNode.class);</span>
-<span class="fc bfc" id="L48" title="All 2 branches covered.">            if ( node != null ) {</span>
-<span class="fc" id="L49">                untracked=t;</span>
-<span class="fc bfc" id="L50" title="All 4 branches covered.">                locked = (locked)&amp;&amp;node.lock().isLocked();</span>
+<span class="fc" id="L74">        boolean locked = true;//input tensors might all have graph nodes but are left from previous computation. (=&gt;need to locked again!)</span>
+<span class="fc" id="L75">        Tsr&lt;Object&gt; untracked = null;</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        for ( Tsr&lt;Object&gt; t : inputs ) {</span>
+<span class="fc" id="L77">            GraphNode&lt;Object&gt; node = t.find( GraphNode.class );</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            if ( node != null ) {</span>
+<span class="fc" id="L79">                untracked=t;</span>
+<span class="fc bfc" id="L80" title="All 4 branches covered.">                locked = (locked) &amp;&amp; node.getLock().isLocked();</span>
             }
         }
-<span class="fc bfc" id="L53" title="All 4 branches covered.">        if( untracked==null || !locked ){ // If graph tracking (nodes) has not yet been initialized!</span>
-<span class="fc" id="L54">            return Function.Setup.commit(null, inputs, function, activation);</span>
+<span class="fc bfc" id="L83" title="All 4 branches covered.">        if( untracked == null || !locked ) { // If graph tracking (nodes) has not yet been initialized!</span>
+<span class="fc" id="L84">            return Function.Setup.commit( null, inputs, function, activation );</span>
         }
-<span class="fc" id="L56">        GraphLock lock =  untracked.find(GraphNode.class).lock();</span>
-<span class="fc bfc" id="L57" title="All 2 branches covered.">        for ( Tsr t : inputs ){</span>
-<span class="fc bfc" id="L58" title="All 2 branches covered.">            if ( t.has(GraphNode.class) ) t.find(GraphNode.class).obtainLocking(lock);</span>
-<span class="fc" id="L59">            else new GraphNode( function, lock, ()-&gt;t );</span>
+<span class="fc" id="L86">        GraphLock lock =  untracked.find( GraphNode.class ).getLock();</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        for ( Tsr&lt;Object&gt; t : inputs ) {</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">            if ( t.has(GraphNode.class) ) t.find( GraphNode.class ).obtainLocking( lock );</span>
+<span class="fc" id="L89">            else new GraphNode( function, lock, ()-&gt;t );</span>
         }
-<span class="fc" id="L61">        GraphNode node = inputs[0].find(GraphNode.class);</span>
-<span class="fc" id="L62">        Tsr result = null;</span>
-<span class="fc bfc" id="L63" title="All 4 branches covered.">        if (function.id() != OperationType.instance(&quot;&lt;&quot;).getId() &amp;&amp; function.id() != OperationType.instance(&quot;&gt;&quot;).getId()){</span>
-<span class="fc" id="L64">            result = _get(inputs, d, j);</span>
-        }
-<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        if( result == null ){</span>
-<span class="fc" id="L67">            result = activation.get();</span>
-<span class="fc" id="L68">            _put( result, node, d, j );</span>
+<span class="fc" id="L91">        GraphNode&lt;Object&gt; node = inputs[ 0 ].find( GraphNode.class );</span>
+<span class="fc" id="L92">        Tsr&lt;Object&gt; result = null;</span>
+
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        if ( !function.getOperation().isInline() ) result = _get( inputs, d, j );</span>
+
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">        if( result == null ) {</span>
+<span class="fc" id="L97">            result = activation.get();</span>
+<span class="fc" id="L98">            _put( result, node, d, j );</span>
         }
         // add references / child to graph node?
-<span class="fc" id="L71">        return result;</span>
+<span class="fc" id="L101">        return result;</span>
     }
 
-    private synchronized Tsr _get(Tsr[] tsrs, int d, int j)
+    private synchronized Tsr&lt;Object&gt; _get( Tsr&lt;Object&gt;[] tsrs, int d, int j )
     {
-<span class="fc" id="L76">        GraphLock lock = null;</span>
-<span class="fc" id="L77">        long key = 0;</span>
-<span class="fc bfc" id="L78" title="All 2 branches covered.">        for( int i = 0; i &lt; tsrs.length; i++ ) {</span>
-<span class="fc" id="L79">            GraphNode node = tsrs[i].find( GraphNode.class );</span>
-<span class="fc" id="L80">            lock = node.lock();</span>
-<span class="fc" id="L81">            key += ( (i+1) * node.nid() ) + _keyed(d) * 31 + _keyed(j);</span>
+<span class="fc" id="L106">        GraphLock lock = tsrs[ 0 ].find( GraphNode.class ).getLock();</span>
+<span class="fc" id="L107">        long key = _keyOf( tsrs, d, j );</span>
+<span class="pc bpc" id="L108" title="2 of 6 branches missed.">        if ( key != 0 &amp;&amp; PROCESSING.containsKey( lock ) &amp;&amp; PROCESSING.get( lock ).containsKey( key ) ) {</span>
+<span class="nc" id="L109">                _log.debug(</span>
+<span class="nc" id="L110">                        &quot;Result cache hit occurred! Function lock : '{}'; Key : '{}';&quot;, lock, key</span>
+                );
+<span class="nc" id="L112">                return PROCESSING.get( lock ).get( key );</span>
         }
-<span class="fc bfc" id="L83" title="All 2 branches covered.">        if ( PROCESSING.containsKey(lock) ) {</span>
-<span class="pc bpc" id="L84" title="1 of 2 branches missed.">            if (PROCESSING.get(lock).containsKey(key)) return PROCESSING.get(lock).get(key);</span>
-        }
-<span class="fc" id="L86">        return null;</span>
+<span class="fc" id="L114">        return null;</span>
     }
 
-    private synchronized void _put( Tsr t, GraphNode node, int d, int j )
+    private synchronized void _put( Tsr&lt;Object&gt; t, GraphNode&lt;Object&gt; node, int d, int j )
     {
-<span class="fc" id="L91">        long key = node.nid() + _keyed(d) * 31 + _keyed(j);</span>
-<span class="fc bfc" id="L92" title="All 2 branches covered.">        if ( node.isCachable() ) {</span>
-            TreeMap&lt;Long, Tsr&gt; variables;
-<span class="fc bfc" id="L94" title="All 2 branches covered.">            if ( PROCESSING.containsKey(node.lock()) ) variables = PROCESSING.get(node.lock());</span>
+<span class="fc" id="L119">        GraphNode[] nodes = node.getParents();</span>
+<span class="fc" id="L120">        Tsr[] tsrs = null;</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        if ( nodes != null ) {</span>
+<span class="fc" id="L122">            tsrs = new Tsr[ nodes.length ];</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">            for ( int i=0; i&lt;nodes.length; i++ ) tsrs[i] = nodes[i].getPayload();</span>
+        }
+<span class="fc" id="L125">        long key = _keyOf( tsrs, d, j );</span>
+<span class="pc bpc" id="L126" title="1 of 4 branches missed.">        if ( node.isCachable() &amp;&amp; key != 0 ) {</span>
+            TreeMap&lt;Long, Tsr&lt;Object&gt;&gt; variables;
+<span class="fc bfc" id="L128" title="All 2 branches covered.">            if ( PROCESSING.containsKey( node.getLock() ) ) variables = PROCESSING.get( node.getLock() );</span>
             else {
-<span class="fc" id="L96">                variables = new TreeMap&lt;&gt;((a, b) -&gt; (a.hashCode() - b.hashCode()));</span>
-<span class="fc" id="L97">                PROCESSING.put( node.lock(), variables );</span>
+<span class="fc" id="L130">                variables = new TreeMap&lt;&gt;((a, b) -&gt; (a.hashCode() - b.hashCode()));</span>
+<span class="fc" id="L131">                PROCESSING.put( node.getLock(), variables );</span>
             }
-<span class="fc" id="L99">            variables.put( key, t );</span>
+<span class="fc" id="L133">            variables.put( key, t );</span>
         }
-<span class="fc" id="L101">    }</span>
+<span class="fc" id="L135">    }</span>
 
-    private int _keyed( int number ){
-<span class="fc bfc" id="L104" title="All 2 branches covered.">        return ( number&gt;=0 ) ? number + 1 : number;</span>
+    private long _keyOf( Tsr[] tsrs, int d, int j )
+    {
+<span class="fc" id="L139">        long key = 0;</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        if ( tsrs == null ) return 0;</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        for( int i = 0; i &lt; tsrs.length; i++ ) {</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">            if ( tsrs[ i ] == null ) return 0; // Tensor has probably been garbage collected!</span>
+<span class="fc" id="L143">            key += ( ( i + 1 ) * tsrs[ i ].hashCode() ) + _keyed( d ) * 31 + _keyed( j );</span>
+        }
+<span class="fc" id="L145">        return key;</span>
+    }
+
+    private int _keyed( int number ) {
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        return ( number&gt;=0 ) ? number + 1 : number;</span>
     }
 
 }

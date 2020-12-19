@@ -20,7 +20,7 @@ public final class SimpleD1Configuration extends AbstractNDC //:= IMMUTABLE
             int[] shape,
             int[] translation
     ){
-<span class="fc" id="L23">        return _cached(new SimpleD1Configuration(shape[0], translation[0]));</span>
+<span class="fc" id="L23">        return _cached(new SimpleD1Configuration(shape[ 0 ], translation[ 0 ]));</span>
     }
 
     private SimpleD1Configuration(
@@ -33,7 +33,7 @@ public final class SimpleD1Configuration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int rank() {
-<span class="nc" id="L36">        return 1;</span>
+<span class="fc" id="L36">        return 1;</span>
     }
 
     @Override
@@ -98,7 +98,7 @@ public final class SimpleD1Configuration extends AbstractNDC //:= IMMUTABLE
     }
     @Override
     public int i_of_idx(int[] idx) {
-<span class="fc" id="L101">        return idx[0] * _translation_and_idxmap;</span>
+<span class="fc" id="L101">        return idx[ 0 ] * _translation_and_idxmap;</span>
     }
 
 

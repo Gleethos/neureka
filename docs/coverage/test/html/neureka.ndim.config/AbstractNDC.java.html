@@ -1,16 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractNDC.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config</a> &gt; <span class="el_source">AbstractNDC.java</span></div><h1>AbstractNDC.java</h1><pre class="source lang-java linenums">package neureka.ndim.config;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractNDC.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config</a> &gt; <span class="el_source">AbstractNDC.java</span></div><h1>AbstractNDC.java</h1><pre class="source lang-java linenums">package neureka.ndim.config;
 
 import neureka.Neureka;
-import neureka.ndim.AbstractNDArray;
-import neureka.ndim.config.complex.*;
-import neureka.ndim.config.simple.*;
+import neureka.ndim.config.types.complex.*;
+import neureka.ndim.config.types.simple.*;
+import neureka.ndim.config.types.views.SimpleReshapeView;
+import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
 
-<span class="fc" id="L13">public abstract class AbstractNDC implements NDConfiguration</span>
+<span class="pc bpc" id="L11" title="1 of 2 branches missed.">public abstract class AbstractNDC implements NDConfiguration</span>
 {
     /**
      *  Cached configuration
@@ -18,7 +16,7 @@ import java.util.WeakHashMap;
     private static final Map&lt;Long, NDConfiguration&gt; _CACHED_NDCS;
     static
     {
-<span class="fc" id="L21">        _CACHED_NDCS = Collections.synchronizedMap(new WeakHashMap&lt;&gt;()) ;</span>
+<span class="fc" id="L19">        _CACHED_NDCS = Collections.synchronizedMap(new WeakHashMap&lt;&gt;()) ;</span>
     }
 
     /**
@@ -28,58 +26,75 @@ import java.util.WeakHashMap;
 
     static
     {
-<span class="fc" id="L31">        _CACHED_INT_ARRAYS = Collections.synchronizedMap(new WeakHashMap&lt;&gt;()) ;</span>
-<span class="fc" id="L32">    }</span>
+<span class="fc" id="L29">        _CACHED_INT_ARRAYS = Collections.synchronizedMap(new WeakHashMap&lt;&gt;()) ;</span>
+<span class="fc" id="L30">    }</span>
 
     protected static int[] _cacheArray(int[] data)
     {
-<span class="fc" id="L36">        long key = 0;</span>
-<span class="fc bfc" id="L37" title="All 2 branches covered.">        for ( int e : data ) {</span>
-<span class="fc bfc" id="L38" title="All 2 branches covered.">            if ( e &lt;= 10 ) key *= 10;</span>
-<span class="fc bfc" id="L39" title="All 2 branches covered.">            else if ( e &lt;= 100 ) key *= 100;</span>
-<span class="pc bpc" id="L40" title="1 of 2 branches missed.">            else if ( e &lt;= 1000 ) key *= 1000;</span>
-<span class="nc bnc" id="L41" title="All 2 branches missed.">            else if ( e &lt;= 10000 ) key *= 10000;</span>
-<span class="nc bnc" id="L42" title="All 2 branches missed.">            else if ( e &lt;= 100000 ) key *= 100000;</span>
-<span class="nc bnc" id="L43" title="All 2 branches missed.">            else if ( e &lt;= 1000000 ) key *= 1000000;</span>
-<span class="nc bnc" id="L44" title="All 2 branches missed.">            else if ( e &lt;= 10000000 ) key *= 10000000;</span>
-<span class="nc bnc" id="L45" title="All 2 branches missed.">            else if ( e &lt;= 100000000 ) key *= 100000000;</span>
-<span class="nc bnc" id="L46" title="All 2 branches missed.">            else if ( e &lt;= 1000000000 ) key *= 1000000000;</span>
-<span class="fc" id="L47">            key += Math.abs(e) + 1;</span>
+<span class="fc" id="L34">        long key = 0;</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        for ( int e : data ) {</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">            if ( e &lt;= 10 ) key *= 10;</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">            else if ( e &lt;= 100 ) key *= 100;</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">            else if ( e &lt;= 1000 ) key *= 1000;</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">            else if ( e &lt;= 10000 ) key *= 10000;</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">            else if ( e &lt;= 100000 ) key *= 100000;</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">            else if ( e &lt;= 1000000 ) key *= 1000000;</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">            else if ( e &lt;= 10000000 ) key *= 10000000;</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">            else if ( e &lt;= 100000000 ) key *= 100000000;</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">            else if ( e &lt;= 1000000000 ) key *= 1000000000;</span>
+<span class="fc" id="L45">            key += Math.abs(e) + 1;</span>
         }
-<span class="fc" id="L49">        int rank = data.length;</span>
-<span class="fc bfc" id="L50" title="All 2 branches covered.">        while ( rank != 0 ) {</span>
-<span class="fc" id="L51">            rank /= 10;</span>
-<span class="fc" id="L52">            key *= 10;</span>
+<span class="fc" id="L47">        int rank = data.length;</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        while ( rank != 0 ) {</span>
+<span class="fc" id="L49">            rank /= 10;</span>
+<span class="fc" id="L50">            key *= 10;</span>
         }
-<span class="fc" id="L54">        key += data.length;</span>
-<span class="fc" id="L55">        int[] found = _CACHED_INT_ARRAYS.get(key);</span>
-<span class="fc bfc" id="L56" title="All 2 branches covered.">        if ( found != null ) return found;</span>
+<span class="fc" id="L52">        key += data.length;</span>
+<span class="fc" id="L53">        int[] found = _CACHED_INT_ARRAYS.get(key);</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if ( found != null ) return found;</span>
         else {
-<span class="fc" id="L58">            _CACHED_INT_ARRAYS.put(key, data);</span>
-<span class="fc" id="L59">            return data;</span>
+<span class="fc" id="L56">            _CACHED_INT_ARRAYS.put(key, data);</span>
+<span class="fc" id="L57">            return data;</span>
         }
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
+    public int[] asInlineArray()
+    {
+        //CONFIG TRANSFER: &lt;[ shape | translation | idxmap | idx | scale ]&gt;
+<span class="fc" id="L67">        int rank = rank();</span>
+<span class="fc" id="L68">        int[] inline = new int[rank * 5];</span>
+<span class="fc" id="L69">        System.arraycopy(shape(), 0, inline, 0, rank);// -=&gt; SHAPE COPY</span>
+<span class="fc" id="L70">        System.arraycopy(translation(), 0, inline, rank * 1, rank);// -=&gt; TRANSLATION COPY</span>
+<span class="fc" id="L71">        System.arraycopy(idxmap(), 0, inline, rank * 2, rank);// -=&gt; IDXMAP COPY (translates scalarization to dimension index)</span>
+<span class="fc" id="L72">        System.arraycopy(offset(), 0, inline, rank * 3, rank);// -=&gt; SPREAD</span>
+<span class="fc" id="L73">        System.arraycopy(spread(), 0, inline, rank * 4, rank);</span>
+<span class="fc" id="L74">        return inline;</span>
+    }
+
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    @Override
     public long keyCode()
     {
-<span class="fc" id="L68">        return Arrays.hashCode( shape() ) +</span>
-<span class="fc" id="L69">               Arrays.hashCode( translation() ) * 2 +</span>
-<span class="fc" id="L70">               Arrays.hashCode( idxmap() ) * 3 +</span>
-<span class="fc" id="L71">               Arrays.hashCode( spread() ) * 4 +</span>
-<span class="fc" id="L72">               Arrays.hashCode( offset() ) * 5;</span>
+<span class="fc" id="L83">        return Arrays.hashCode( shape() ) +</span>
+<span class="fc" id="L84">               Arrays.hashCode( translation() ) * 2 +</span>
+<span class="fc" id="L85">               Arrays.hashCode( idxmap() ) * 3 +</span>
+<span class="fc" id="L86">               Arrays.hashCode( spread() ) * 4 +</span>
+<span class="fc" id="L87">               Arrays.hashCode( offset() ) * 5;</span>
     }
 
     @Override
     public boolean equals(NDConfiguration ndc)
     {
-<span class="pc bpc" id="L78" title="1 of 2 branches missed.">        return  Arrays.equals(shape(), ndc.shape()) &amp;&amp;</span>
-<span class="pc bpc" id="L79" title="1 of 2 branches missed.">                Arrays.equals(translation(), ndc.translation()) &amp;&amp;</span>
-<span class="pc bpc" id="L80" title="1 of 2 branches missed.">                Arrays.equals(idxmap(), ndc.idxmap()) &amp;&amp;</span>
-<span class="pc bpc" id="L81" title="1 of 2 branches missed.">                Arrays.equals(spread(), ndc.spread()) &amp;&amp;</span>
-<span class="fc bfc" id="L82" title="All 2 branches covered.">                Arrays.equals(offset(), ndc.offset());</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        return  Arrays.equals(shape(), ndc.shape()) &amp;&amp;</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">                Arrays.equals(translation(), ndc.translation()) &amp;&amp;</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">                Arrays.equals(idxmap(), ndc.idxmap()) &amp;&amp;</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">                Arrays.equals(spread(), ndc.spread()) &amp;&amp;</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">                Arrays.equals(offset(), ndc.offset());</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -91,44 +106,52 @@ import java.util.WeakHashMap;
             int[] spread,
             int[] offset
     ) {
-<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if(Neureka.instance().settings().ndim().isOnlyUsingDefaultNDConfiguration()){</span>
-<span class="nc" id="L95">            return DefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        for ( int dim : shape ) {</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">            if ( dim == 0 ) {</span>
+<span class="nc" id="L111">                String message = &quot;Trying to create tensor configuration containing shape with dimension 0.\n&quot; +</span>
+                        &quot;Shape dimensions must be greater than 0!\n&quot;;
+<span class="nc" id="L113">                throw new IllegalStateException( message );</span>
+            }
         }
-<span class="fc" id="L97">        boolean isSimple = _isSimpleConfiguration(shape, translation, idxmap, spread, offset);</span>
-<span class="fc" id="L98">        NDConfiguration ndc = null;</span>
-<span class="fc bfc" id="L99" title="All 2 branches covered.">        if ( isSimple ) {</span>
-<span class="fc bfc" id="L100" title="All 2 branches covered.">            if (shape.length == 1) {</span>
-<span class="fc bfc" id="L101" title="All 2 branches covered.">                if(shape[0]==1) ndc = SimpleScalarConfiguration.construct();</span>
-<span class="fc" id="L102">                else ndc = SimpleD1Configuration.construct(shape, translation);</span>
-<span class="fc bfc" id="L103" title="All 2 branches covered.">            } else if (shape.length == 2) {</span>
-<span class="fc" id="L104">                ndc = SimpleD2Configuration.construct(shape, translation);</span>
-<span class="fc bfc" id="L105" title="All 2 branches covered.">            } else if(shape.length == 3) {</span>
-<span class="fc" id="L106">                ndc = SimpleD3Configuration.construct(shape, translation);</span>
-<span class="fc" id="L107">            } else ndc = SimpleDefaultNDConfiguration.construct(shape, translation);</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if( Neureka.instance().settings().ndim().isOnlyUsingDefaultNDConfiguration() ) {</span>
+<span class="nc" id="L117">            return ComplexDefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);</span>
+        }
+<span class="fc" id="L119">        boolean isSimple = _isSimpleConfiguration(shape, translation, idxmap, spread, offset);</span>
+<span class="fc" id="L120">        NDConfiguration ndc = null;</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">        if ( isSimple ) {</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">            if (shape.length == 1) {</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">                if(shape[ 0 ]==1) ndc = SimpleScalarConfiguration.construct();</span>
+<span class="fc" id="L124">                else ndc = SimpleD1Configuration.construct(shape, translation);</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">            } else if (shape.length == 2) {</span>
+<span class="fc" id="L126">                ndc = SimpleD2Configuration.construct(shape, translation);</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">            } else if(shape.length == 3) {</span>
+<span class="fc" id="L128">                ndc = SimpleD3Configuration.construct(shape, translation);</span>
+<span class="fc" id="L129">            } else ndc = SimpleDefaultNDConfiguration.construct(shape, translation);</span>
         } else {
-<span class="fc bfc" id="L109" title="All 2 branches covered.">            if (shape.length == 1) {</span>
-<span class="fc bfc" id="L110" title="All 2 branches covered.">                if(shape[0]==1) ndc = ScalarConfiguration.construct(shape, offset);</span>
-<span class="fc" id="L111">                else ndc = D1Configuration.construct(shape, translation, idxmap, spread, offset);</span>
-<span class="fc bfc" id="L112" title="All 2 branches covered.">            } else if (shape.length == 2) {</span>
-<span class="fc" id="L113">                ndc = D2Configuration.construct(shape, translation, idxmap, spread, offset);</span>
-<span class="fc bfc" id="L114" title="All 2 branches covered.">            } else if(shape.length == 3) {</span>
-<span class="fc" id="L115">                ndc = D3Configuration.construct(shape, translation, idxmap, spread, offset);</span>
-<span class="fc" id="L116">            } else ndc = DefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">            if (shape.length == 1) {</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">                if(shape[ 0 ]==1) ndc = ComplexScalarConfiguration.construct(shape, offset);</span>
+<span class="fc" id="L133">                else ndc = ComplexD1Configuration.construct(shape, translation, idxmap, spread, offset);</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">            } else if (shape.length == 2) {</span>
+<span class="fc" id="L135">                ndc = ComplexD2Configuration.construct(shape, translation, idxmap, spread, offset);</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">            } else if(shape.length == 3) {</span>
+<span class="fc" id="L137">                ndc = ComplexD3Configuration.construct(shape, translation, idxmap, spread, offset);</span>
+<span class="fc" id="L138">            } else ndc = ComplexDefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);</span>
         }
-<span class="fc" id="L118">        return ndc;</span>
+<span class="fc" id="L140">        return ndc;</span>
     }
 
     protected static &lt;T extends NDConfiguration&gt; NDConfiguration _cached(T ndc)
     {
-<span class="fc" id="L123">        long key = ndc.keyCode();</span>
-<span class="fc" id="L124">        NDConfiguration found = _CACHED_NDCS.get(key);</span>
-<span class="fc bfc" id="L125" title="All 2 branches covered.">        if (</span>
-<span class="pc bpc" id="L126" title="1 of 2 branches missed.">                found != null &amp;&amp; ndc.equals(found)</span>
+<span class="pc bpc" id="L145" title="2 of 4 branches missed.">        assert !( ndc instanceof VirtualNDConfiguration );</span>
+<span class="fc" id="L146">        long key = ndc.keyCode();</span>
+<span class="fc" id="L147">        NDConfiguration found = _CACHED_NDCS.get(key);</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        if (</span>
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">                found != null &amp;&amp; ndc.equals(found)</span>
         ) {
-<span class="fc" id="L128">            return found;</span>
+<span class="fc" id="L151">            return found;</span>
         } else {
-<span class="fc" id="L130">            _CACHED_NDCS.put(key, ndc);</span>
-<span class="fc" id="L131">            return ndc;</span>
+<span class="fc" id="L153">            _CACHED_NDCS.put(key, ndc);</span>
+<span class="fc" id="L154">            return ndc;</span>
         }
     }
 
@@ -139,26 +162,57 @@ import java.util.WeakHashMap;
             int[] spread,
             int[] offset
     ) {
-<span class="fc" id="L142">        int[] newTranslation = AbstractNDArray.Utility.Indexing.newTlnOf(shape);</span>
-<span class="fc" id="L143">        int[] newSpread = new int[shape.length];</span>
-<span class="fc" id="L144">        Arrays.fill(newSpread, 1);</span>
-<span class="fc bfc" id="L145" title="All 2 branches covered.">        return  Arrays.equals(translation, newTranslation) &amp;&amp;</span>
-<span class="pc bpc" id="L146" title="1 of 2 branches missed.">                Arrays.equals(idxmap, newTranslation) &amp;&amp;</span>
-<span class="fc bfc" id="L147" title="All 2 branches covered.">                Arrays.equals(offset, new int[shape.length]) &amp;&amp;</span>
-<span class="pc bpc" id="L148" title="1 of 2 branches missed.">                Arrays.equals(spread, newSpread);</span>
+<span class="fc" id="L165">        int[] newTranslation = Utility.newTlnOf(shape);</span>
+<span class="fc" id="L166">        int[] newSpread = new int[ shape.length ];</span>
+<span class="fc" id="L167">        Arrays.fill(newSpread, 1);</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">        return  Arrays.equals(translation, newTranslation) &amp;&amp;</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">                Arrays.equals(idxmap, newTranslation) &amp;&amp;</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">                Arrays.equals(offset, new int[ shape.length ]) &amp;&amp;</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">                Arrays.equals(spread, newSpread);</span>
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public String toString(){
-<span class="nc" id="L155">        return &quot;(NDConfiguration|@&quot;+Integer.toHexString(hashCode())+&quot;#&quot;+Long.toHexString(keyCode())+&quot;):{ &quot; +</span>
-<span class="nc" id="L156">                    &quot;shape : &quot;+Arrays.toString(shape())+&quot;, &quot;+</span>
-<span class="nc" id="L157">                    &quot;translation : &quot;+Arrays.toString(translation())+&quot;, &quot;+</span>
-<span class="nc" id="L158">                    &quot;idxmap : &quot;+Arrays.toString(idxmap())+&quot;, &quot;+</span>
-<span class="nc" id="L159">                    &quot;spread : &quot;+Arrays.toString(spread())+&quot;, &quot;+</span>
-<span class="nc" id="L160">                    &quot;offset : &quot;+Arrays.toString(offset())+&quot; &quot;+</span>
+    public String toString() {
+<span class="nc" id="L178">        return &quot;(NDConfiguration|@&quot;+Integer.toHexString(hashCode())+&quot;#&quot;+Long.toHexString(keyCode())+&quot;):{ &quot; +</span>
+<span class="nc" id="L179">                    &quot;shape : &quot;+Arrays.toString(shape())+&quot;, &quot;+</span>
+<span class="nc" id="L180">                    &quot;translation : &quot;+Arrays.toString(translation())+&quot;, &quot;+</span>
+<span class="nc" id="L181">                    &quot;idxmap : &quot;+Arrays.toString(idxmap())+&quot;, &quot;+</span>
+<span class="nc" id="L182">                    &quot;spread : &quot;+Arrays.toString(spread())+&quot;, &quot;+</span>
+<span class="nc" id="L183">                    &quot;offset : &quot;+Arrays.toString(offset())+&quot; &quot;+</span>
                 &quot;}&quot;;
+    }
+
+    protected static NDConfiguration _simpleReshape( int[] newForm, NDConfiguration ndc ) {
+<span class="fc" id="L188">        int[] newShape = Utility.rearrange(ndc.shape(), newForm);</span>
+<span class="fc" id="L189">        int[] newTranslation = Utility.rearrange(ndc.translation(), newShape, newForm);</span>
+<span class="fc" id="L190">        int[] newIdxmap = Utility.newTlnOf(newShape);</span>
+<span class="fc" id="L191">        int[] newSpread = new int[newForm.length];</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">        for (int i = 0; i &lt; newForm.length; i++) {</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">            if (newForm[ i ] &lt; 0) newSpread[ i ] = 1;</span>
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">            else if (newForm[ i ] &gt;= 0) newSpread[ i ] = ndc.spread(newForm[ i ]);</span>
+        }
+<span class="fc" id="L196">        int[] newOffset = new int[newForm.length];</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">        for (int i = 0; i &lt; newForm.length; i++) {</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">            if (newForm[ i ] &lt; 0) newOffset[ i ] = 0;</span>
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">            else if (newForm[ i ] &gt;= 0) newOffset[ i ] = ndc.offset(newForm[ i ]);</span>
+        }
+<span class="fc" id="L201">        return AbstractNDC.construct(newShape, newTranslation, newIdxmap, newSpread, newOffset);</span>
+    }
+
+    @Override
+    public NDConfiguration newReshaped( int[] newForm )
+    {
+        //TODO : shape check!
+<span class="fc bfc" id="L208" title="All 2 branches covered.">        if ( this._isSimpleConfiguration(shape(),translation(),idxmap(),spread(),offset()) ) {</span>
+<span class="fc" id="L209">            return _simpleReshape( newForm, this );</span>
+        } else {
+<span class="fc" id="L211">            return new SimpleReshapeView( newForm, this );</span>
+            //throw new IllegalStateException(&quot;Not ready&quot;);
+        }
+
+
     }
 
 

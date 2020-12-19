@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractFunctionalOperationTypeImplementation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.backend.implementations</a> &gt; <span class="el_source">AbstractFunctionalOperationTypeImplementation.java</span></div><h1>AbstractFunctionalOperationTypeImplementation.java</h1><pre class="source lang-java linenums">package neureka.calculus.backend.implementations;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractFunctionalOperationTypeImplementation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.backend.implementations</a> &gt; <span class="el_source">AbstractFunctionalOperationTypeImplementation.java</span></div><h1>AbstractFunctionalOperationTypeImplementation.java</h1><pre class="source lang-java linenums">package neureka.calculus.backend.implementations;
 
 
 import neureka.Tsr;
-import neureka.acceleration.Device;
+import neureka.devices.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.*;
@@ -28,86 +28,86 @@ public abstract class AbstractFunctionalOperationTypeImplementation&lt; FinalTyp
 
     private SuitabilityChecker _suitabilityChecker;
     private DeviceFinder _finder;
-    private ADAnalyzer _analyzer;
+    private ForwardADAnalyzer _forwardAnalyzer;
+    private BackwardADAnalyzer _backwardAnalyzer;
     private ADAgentSupplier _adaCreator;
     private InitialCallHook _hook;
     private RecursiveJunctionAgent _RJAgent;
     private DrainInstantiation _instantiation;
 
     public AbstractFunctionalOperationTypeImplementation(String name) {
-<span class="fc" id="L38">        super(name);</span>
-<span class="fc" id="L39">    }</span>
+<span class="fc" id="L39">        super(name);</span>
+<span class="fc" id="L40">    }</span>
 
     //---
 
     @Override
-    public boolean isImplementationSuitableFor(ExecutionCall call) {
-<span class="fc" id="L45">        return _suitabilityChecker.canHandle(call);</span>
+    public float isImplementationSuitableFor(ExecutionCall call) {
+<span class="fc" id="L46">        return _suitabilityChecker.canHandle(call);</span>
     }
 
     public FinalType setSuitabilityChecker(SuitabilityChecker checker) {
-<span class="fc" id="L49">        _suitabilityChecker = checker;</span>
-<span class="fc" id="L50">        return (FinalType) this;</span>
+<span class="fc" id="L50">        _suitabilityChecker = checker;</span>
+<span class="fc" id="L51">        return (FinalType) this;</span>
     }
 
     ///---
 
     @Override
     public Device findDeviceFor(ExecutionCall call) {
-<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        return ( _finder == null ) ? null :_finder.findFor(call);</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        return ( _finder == null ) ? null :_finder.findFor(call);</span>
     }
 
     public FinalType setDeviceFinder( DeviceFinder finder ) {
-<span class="nc" id="L61">        _finder = finder;</span>
-<span class="nc" id="L62">        return (FinalType) this;</span>
+<span class="nc" id="L62">        _finder = finder;</span>
+<span class="nc" id="L63">        return (FinalType) this;</span>
     }
 
     //---
 
     @Override
-    public boolean canImplementationPerformADFor(ExecutionCall call) {
-<span class="fc" id="L69">        return _analyzer.allowsForward(call);</span>
+    public boolean canImplementationPerformForwardADFor(ExecutionCall call ) {
+<span class="fc" id="L70">        return _forwardAnalyzer.allowsForward(call);</span>
     }
 
-    public ADAnalyzer getADAnalyzer(){
-<span class="nc" id="L73">        return _analyzer;</span>
+    public ForwardADAnalyzer getForwardADAnalyzer() {
+<span class="nc" id="L74">        return _forwardAnalyzer;</span>
     }
 
-    public FinalType setADAnalyzer(ADAnalyzer analyzer) {
-<span class="fc" id="L77">        _analyzer = analyzer;</span>
-<span class="fc" id="L78">        return (FinalType) this;</span>
+    public FinalType setForwardADAnalyzer(ForwardADAnalyzer analyzer) {
+<span class="fc" id="L78">        _forwardAnalyzer = analyzer;</span>
+<span class="fc" id="L79">        return (FinalType) this;</span>
+    }
+
+    //---
+
+    @Override
+    public boolean canImplementationPerformBackwardADFor(ExecutionCall call ) {
+<span class="fc" id="L86">        return _backwardAnalyzer.allowsBackward(call);</span>
+    }
+
+    public BackwardADAnalyzer getBackwardADAnalyzer() {
+<span class="nc" id="L90">        return _backwardAnalyzer;</span>
+    }
+
+    public FinalType setBackwardADAnalyzer(BackwardADAnalyzer analyzer) {
+<span class="fc" id="L94">        _backwardAnalyzer = analyzer;</span>
+<span class="fc" id="L95">        return (FinalType) this;</span>
     }
 
     //---
 
     @Override
     public ADAgent supplyADAgentFor(Function f, ExecutionCall&lt;Device&gt; call, boolean forward) {
-<span class="fc" id="L85">        return _adaCreator.getADAgentOf(f, call, forward);</span>
+<span class="fc" id="L102">        return _adaCreator.getADAgentOf( f, call, forward );</span>
     }
 
     public ADAgentSupplier getADAgentSupplier() {
-<span class="fc" id="L89">        return _adaCreator;</span>
+<span class="fc" id="L106">        return _adaCreator;</span>
     }
 
     public FinalType setADAgentSupplier(ADAgentSupplier creator ) {
-<span class="fc" id="L93">        _adaCreator = creator;</span>
-<span class="fc" id="L94">        return (FinalType) this;</span>
-    }
-
-
-    //---
-
-    @Override
-    public Tsr handleInsteadOfDevice(AbstractFunction caller, ExecutionCall call) {
-<span class="fc" id="L102">        return _hook.handle(caller, call);</span>
-    }
-
-    public InitialCallHook getCallHook(){
-<span class="nc" id="L106">        return _hook;</span>
-    }
-
-    public FinalType setCallHock(InitialCallHook hook) {
-<span class="fc" id="L110">        _hook = hook;</span>
+<span class="fc" id="L110">        _adaCreator = creator;</span>
 <span class="fc" id="L111">        return (FinalType) this;</span>
     }
 
@@ -115,33 +115,50 @@ public abstract class AbstractFunctionalOperationTypeImplementation&lt; FinalTyp
     //---
 
     @Override
-    public Tsr handleRecursivelyAccordingToArity(ExecutionCall call, java.util.function.Function&lt;ExecutionCall, Tsr&gt; goDeeperWith) {
-<span class="fc" id="L119">        return _RJAgent.handle(call, goDeeperWith);</span>
+    public Tsr handleInsteadOfDevice(AbstractFunction caller, ExecutionCall call) {
+<span class="fc" id="L119">        return _hook.handle( caller, call );</span>
     }
 
-    public RecursiveJunctionAgent getRJAgent(){
-<span class="nc" id="L123">        return _RJAgent;</span>
+    public InitialCallHook getCallHook() {
+<span class="nc" id="L123">        return _hook;</span>
+    }
+
+    public FinalType setCallHock(InitialCallHook hook) {
+<span class="fc" id="L127">        _hook = hook;</span>
+<span class="fc" id="L128">        return (FinalType) this;</span>
+    }
+
+
+    //---
+
+    @Override
+    public Tsr handleRecursivelyAccordingToArity(ExecutionCall call, java.util.function.Function&lt;ExecutionCall, Tsr&gt; goDeeperWith) {
+<span class="fc" id="L136">        return _RJAgent.handle(call, goDeeperWith);</span>
+    }
+
+    public RecursiveJunctionAgent getRJAgent() {
+<span class="nc" id="L140">        return _RJAgent;</span>
     }
 
     public FinalType setRJAgent(RecursiveJunctionAgent rja) {
-<span class="fc" id="L127">        _RJAgent = rja;</span>
-<span class="fc" id="L128">        return (FinalType) this;</span>
+<span class="fc" id="L144">        _RJAgent = rja;</span>
+<span class="fc" id="L145">        return (FinalType) this;</span>
     }
 
     //---
 
     @Override
     public ExecutionCall instantiateNewTensorsForExecutionIn(ExecutionCall call) {
-<span class="fc" id="L135">        return _instantiation.handle(call);</span>
+<span class="fc" id="L152">        return _instantiation.handle(call);</span>
     }
 
-    public DrainInstantiation getDrainInstantiation(){
-<span class="nc" id="L139">        return _instantiation;</span>
+    public DrainInstantiation getDrainInstantiation() {
+<span class="nc" id="L156">        return _instantiation;</span>
     }
 
     public FinalType setDrainInstantiation(DrainInstantiation drainInstantiation) {
-<span class="fc" id="L143">        _instantiation = drainInstantiation;</span>
-<span class="fc" id="L144">        return (FinalType) this;</span>
+<span class="fc" id="L160">        _instantiation = drainInstantiation;</span>
+<span class="fc" id="L161">        return (FinalType) this;</span>
     }
 
 

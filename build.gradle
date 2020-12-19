@@ -54,7 +54,7 @@ plugins {
 compileJava { options.encoding = "UTF-8" } // Allows for '"' characters in comments for example...
 
 String PROJECT = "neureka"
-String VERSION = "0.3.0"
+String VERSION = "0.4.0"
 String GROUPID = "com.github.gleethos"
 String BASENAME = "neureka"
 
@@ -212,20 +212,6 @@ task releaseSpockReports(type: Copy) {
     into "$rootDir/docs/spock/reports"
 }
 
-task injectSpockStyles(type: Task){
-    ant.replaceregexp(match:"<style>[\\s\\S]*</style>", replace:'<style>###</style>', flags:'g', byline:false) {
-        fileset(dir: "$rootDir/docs/spock/reports")
-    }
-    ant.replaceregexp(
-            match:'<style>###</style>',
-            replace:'<style>' + new File("$rootDir/docs/spock/css/custom.css").text + '</style>',
-            flags:'g',
-            byline:false
-    ) {
-        fileset(dir: "$rootDir/docs/spock/reports")
-    }
-}
-
 task deploy() {
 
     // Expected before : dependsOn 'cleanForDeployment'
@@ -238,6 +224,20 @@ task deploy() {
     dependsOn 'releaseSpockReports'
 
     // Expected after : dependsOn 'injectSpockStyles'
+}
+
+task injectSpockStyles(type: Task){
+    ant.replaceregexp(match:"<style>[\\s\\S]*</style>", replace:'<style>###</style>', flags:'g', byline:false) {
+        fileset(dir: "$rootDir/docs/spock/reports")
+    }
+    ant.replaceregexp(
+            match:'<style>###</style>',
+            replace:'<style>' + new File("$rootDir/docs/spock/css/custom.css").text + '</style>',
+            flags:'g',
+            byline:false
+    ) {
+        fileset(dir: "$rootDir/docs/spock/reports")
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -328,6 +328,10 @@ task ('proguard', type: proguard.gradle.ProGuardTask) {
     dontwarn 'org.codehaus.**'
     dontwarn 'groovy.lang.**'
     dontwarn 'org.jetbrains.**'
+
+    dontwarn 'org.slf4j.**'
+    dontwarn 'java.awt.**'
+    dontwarn 'javax.imageio.**'
 }
 
 //----------------------------------------------------------------------------------------------------------------------

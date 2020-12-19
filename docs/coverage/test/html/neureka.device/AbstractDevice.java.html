@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractDevice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.device</a> &gt; <span class="el_source">AbstractDevice.java</span></div><h1>AbstractDevice.java</h1><pre class="source lang-java linenums">package neureka.device;
+
+import neureka.Component;
+import neureka.Tsr;
+import neureka.calculus.backend.ExecutionCall;
+import neureka.calculus.backend.operations.OperationType;
+import neureka.calculus.backend.implementations.OperationTypeImplementation;
+
+import java.lang.ref.Cleaner;
+
+<span class="fc" id="L11">public abstract class AbstractDevice&lt;ValueType&gt; implements Device&lt;ValueType&gt;, Component&lt;Tsr&lt;ValueType&gt;&gt;</span>
+{
+<span class="fc" id="L13">    private static final Cleaner _CLEANER = Cleaner.create();</span>
+
+    protected abstract void _enqueue(Tsr[] tsrs, int d, OperationType type);
+
+    @Override
+    public void update(Tsr oldOwner, Tsr newOwner){
+<span class="fc" id="L19">        swap(oldOwner, newOwner);</span>
+<span class="fc" id="L20">    }</span>
+
+    @Override
+    public Device cleaning(Tsr tensor, Runnable action){
+<span class="fc" id="L24">        _CLEANER.register(tensor, action);</span>
+<span class="fc" id="L25">        return this;</span>
+    }
+
+    protected void _cleaning(Object o, Runnable action){
+<span class="fc" id="L29">        _CLEANER.register(o, action);</span>
+<span class="fc" id="L30">    }</span>
+
+    @Override
+    public Device execute( ExecutionCall call )
+    {
+<span class="fc" id="L35">        call = call.getImplementation().instantiateNewTensorsForExecutionIn(call);</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        for ( Tsr t : call.getTensors() ) {</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">            if ( t == null ) throw new IllegalArgumentException(</span>
+                    &quot;Device arguments may not be null!\n&quot; +
+                            &quot;One or more tensor arguments within the given ExecutionCall instance is null.&quot;
+            );
+        }
+<span class="fc" id="L42">        ((OperationTypeImplementation&lt;Object&gt;)call.getImplementation())</span>
+<span class="fc" id="L43">                .recursiveReductionOf(</span>
+                    call,
+<span class="fc" id="L45">                    c -&gt; _enqueue(c.getTensors(), c.getDerivativeIndex(), c.getType())</span>
+                );
+<span class="fc" id="L47">        return this;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

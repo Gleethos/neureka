@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NumberReader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.device.storage</a> &gt; <span class="el_source">NumberReader.java</span></div><h1>NumberReader.java</h1><pre class="source lang-java linenums">package neureka.device.storage;
+
+import neureka.dtype.NumericType;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Map;
+
+<span class="pc bpc" id="L9" title="1 of 2 branches missed.">public class NumberReader</span>
+{
+    private final FileInputStream _fileInputStream;
+<span class="fc" id="L12">    private int _bytesRead = 0;</span>
+<span class="fc" id="L13">    private final Map&lt;Integer, byte[]&gt; _byteMap = Map.of(</span>
+<span class="fc" id="L14">            1, new byte[1],</span>
+<span class="fc" id="L15">            2, new byte[2],</span>
+<span class="fc" id="L16">            4, new byte[4],</span>
+<span class="fc" id="L17">            8, new byte[8]</span>
+    );
+
+<span class="fc" id="L20">    public NumberReader( FileInputStream fileInputStream ) {</span>
+<span class="fc" id="L21">        _fileInputStream = fileInputStream;</span>
+<span class="fc" id="L22">    }</span>
+
+    public FileInputStream getStream() {
+<span class="nc" id="L25">        return _fileInputStream;</span>
+    }
+
+    public &lt;T&gt; T read(NumericType&lt;T, ?&gt; type) throws IOException {
+<span class="pc bpc" id="L29" title="2 of 4 branches missed.">        assert _fileInputStream.read( _byteMap.get(type.numberOfBytes()) ) == type.numberOfBytes();</span>
+<span class="fc" id="L30">        _bytesRead += type.numberOfBytes();</span>
+<span class="fc" id="L31">        return type.convert(_byteMap.get(type.numberOfBytes()));</span>
+    }
+
+    public Integer readIntegerInByteNumber(byte number) throws IOException {
+<span class="nc" id="L35">        _bytesRead += number;</span>
+<span class="nc bnc" id="L36" title="All 4 branches missed.">        assert _fileInputStream.read(_byteMap.get(number)) == number;</span>
+<span class="nc" id="L37">        return NumericType.Utility.unsignedByteArrayToInt(_byteMap.get(number));</span>
+    }
+
+    public int bytesRead(){
+<span class="fc" id="L41">        return _bytesRead;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

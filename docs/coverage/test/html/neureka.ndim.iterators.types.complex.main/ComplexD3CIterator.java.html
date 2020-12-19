@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ComplexD3CIterator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.iterators.types.complex.main</a> &gt; <span class="el_source">ComplexD3CIterator.java</span></div><h1>ComplexD3CIterator.java</h1><pre class="source lang-java linenums">package neureka.ndim.iterators.types.complex.main;
+
+import neureka.ndim.iterators.NDIterator;
+import neureka.ndim.config.types.complex.ComplexD3Configuration;
+
+public class ComplexD3CIterator extends ComplexD3Configuration implements NDIterator
+{
+<span class="nc" id="L8">    protected int _d1 = 0;</span>
+<span class="nc" id="L9">    protected int _d2 = 0;</span>
+<span class="nc" id="L10">    protected int _d3 = 0;</span>
+
+    public ComplexD3CIterator(ComplexD3Configuration ndc) {
+<span class="nc" id="L13">        super( ndc.shape(), ndc.translation(), ndc.idxmap(), ndc.spread(), ndc.offset() );</span>
+<span class="nc" id="L14">    }</span>
+
+
+    @Override
+    public void increment() {
+<span class="nc" id="L19">        _d3++;</span>
+<span class="nc bnc" id="L20" title="All 2 branches missed.">        if ( _d3 == _shape3 ) {</span>
+<span class="nc" id="L21">            _d3 = 0;</span>
+<span class="nc" id="L22">            _d2++;</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">            if ( _d2 == _shape2 ) {</span>
+<span class="nc" id="L24">                _d2 = 0;</span>
+<span class="nc" id="L25">                _d1++;</span>
+            }
+        }
+<span class="nc" id="L28">    }</span>
+
+    @Override
+    public void decrement() {
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        if ( _d3 == 0 ) {</span>
+<span class="nc" id="L33">            _d3 = _shape3 - 1;</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">            if ( _d2 == 0 ) {</span>
+<span class="nc" id="L35">                _d1--;</span>
+<span class="nc" id="L36">            } else _d2--;</span>
+        }
+<span class="nc" id="L38">    }</span>
+
+    @Override
+    public int i() {
+<span class="nc" id="L42">        return this.i_of_idx( _d1, _d2, _d3 );</span>
+    }
+
+    @Override
+    public int get( int axis ) {
+<span class="nc bnc" id="L47" title="All 4 branches missed.">        return ( axis == 0 ) ? _d1 : ( axis == 1 ) ? _d2 : _d3;</span>
+    }
+
+    @Override
+    public int[] get() {
+<span class="nc" id="L52">        return new int[]{ _d1, _d2, _d3 };</span>
+    }
+
+    @Override
+    public void set( int axis, int position ) {
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if ( axis == 0 ) _d1 = position;</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        else if ( axis == 1 ) _d2 = position;</span>
+<span class="nc" id="L59">        else _d3 = position;</span>
+<span class="nc" id="L60">    }</span>
+
+    @Override
+    public void set( int[] idx ) {
+<span class="nc" id="L64">        _d1 = idx[0];</span>
+<span class="nc" id="L65">        _d2 = idx[1];</span>
+<span class="nc" id="L66">        _d3 = idx[2];</span>
+<span class="nc" id="L67">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

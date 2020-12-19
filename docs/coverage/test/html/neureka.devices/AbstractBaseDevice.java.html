@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractBaseDevice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices</a> &gt; <span class="el_source">AbstractBaseDevice.java</span></div><h1>AbstractBaseDevice.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+           _         _                  _   ____                 _____             _
+     /\   | |       | |                | | |  _ \               |  __ \           (_)
+    /  \  | |__  ___| |_ _ __ __ _  ___| |_| |_) | __ _ ___  ___| |  | | _____   ___  ___ ___
+   / /\ \ | '_ \/ __| __| '__/ _` |/ __| __|  _ &lt; / _` / __|/ _ \ |  | |/ _ \ \ / / |/ __/ _ \
+  / ____ \| |_) \__ \ |_| | | (_| | (__| |_| |_) | (_| \__ \  __/ |__| |  __/\ V /| | (_|  __/
+ /_/    \_\_.__/|___/\__|_|  \__,_|\___|\__|____/ \__,_|___/\___|_____/ \___| \_/ |_|\___\___|
+
+
+*/
+
+package neureka.devices;
+
+import neureka.Component;
+import neureka.Tsr;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.function.IntFunction;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+<span class="fc" id="L48">public abstract class AbstractBaseDevice&lt;ValueType&gt; implements Device&lt;ValueType&gt;, Component&lt;Tsr&lt;ValueType&gt;&gt;</span>
+{
+
+    @Override
+    public int size() {
+<span class="fc" id="L53">        Collection&lt;Tsr&lt;ValueType&gt;&gt; tensors = this.getTensors();</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        if ( tensors == null ) return 0;</span>
+<span class="fc" id="L55">        return tensors.size();</span>
+    }
+
+    @Override
+    public boolean isEmpty() {
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        return this.size() == 0;</span>
+    }
+
+    @Override
+    public boolean contains(Object o) {
+<span class="fc" id="L65">        return this.getTensors().contains( o );</span>
+    }
+
+    @NotNull
+    @Override
+    public Iterator&lt;Tsr&lt;ValueType&gt;&gt; iterator() {
+<span class="fc" id="L71">        return this.getTensors().iterator();</span>
+    }
+
+    @NotNull
+    @Override
+    public Object[] toArray() {
+<span class="nc" id="L77">        return this.getTensors().toArray();</span>
+    }
+
+    @NotNull
+    @Override
+    public &lt;T&gt; T[] toArray(@NotNull T[] a) {
+<span class="nc" id="L83">        return this.getTensors().toArray(a);</span>
+    }
+
+    @Override
+    public &lt;T&gt; T[] toArray(IntFunction&lt;T[]&gt; generator) {
+<span class="nc" id="L88">        return this.getTensors().toArray(generator);</span>
+    }
+
+    @Override
+    public boolean add(Tsr&lt;ValueType&gt; tsr) {
+        try {
+<span class="nc" id="L94">            this.store( tsr );</span>
+<span class="nc" id="L95">        } catch ( Exception e ) {</span>
+<span class="nc" id="L96">            e.printStackTrace();</span>
+<span class="nc" id="L97">            return false;</span>
+<span class="nc" id="L98">        }</span>
+<span class="nc" id="L99">        return true;</span>
+    }
+
+    @Override
+    public boolean remove( Object o ) {
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if ( !(o instanceof Tsr) ) return false;</span>
+        try {
+<span class="nc" id="L106">            this.free( (Tsr) o );</span>
+<span class="nc" id="L107">        } catch ( Exception e ) {</span>
+<span class="nc" id="L108">            e.printStackTrace();</span>
+<span class="nc" id="L109">            return false;</span>
+<span class="nc" id="L110">        }</span>
+<span class="nc" id="L111">        return true;</span>
+    }
+
+    @Override
+    public boolean containsAll(@NotNull Collection&lt;?&gt; c) {
+<span class="nc" id="L116">        return this.getTensors().containsAll( c );</span>
+    }
+
+    @Override
+    public boolean addAll(@NotNull Collection&lt;? extends Tsr&lt;ValueType&gt;&gt; c) {
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        for ( Tsr&lt;ValueType&gt; t : c ) {</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">            if ( !this.add( t ) ) return false;</span>
+<span class="nc" id="L123">        }</span>
+<span class="nc" id="L124">        return true;</span>
+    }
+
+    @Override
+    public boolean removeAll(@NotNull Collection&lt;?&gt; c) {
+<span class="nc" id="L129">        return false;</span>
+    }
+
+    @Override
+    public boolean removeIf( Predicate&lt;? super Tsr&lt;ValueType&gt;&gt; filter ) {
+<span class="nc" id="L134">        int removed = 0;</span>
+<span class="nc bnc" id="L135" title="All 4 branches missed.">        for ( Tsr t : this.getTensors() ) removed += ( (this.remove(t))?1:0 );</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        return removed &gt; 0;</span>
+    }
+
+    @Override
+    public boolean retainAll(@NotNull Collection&lt;?&gt; c) {
+<span class="nc" id="L141">        return false;</span>
+    }
+
+    @Override
+    public void clear() {
+<span class="nc" id="L146">        this.dispose();</span>
+<span class="nc" id="L147">    }</span>
+
+    @Override
+    public Spliterator&lt;Tsr&lt;ValueType&gt;&gt; spliterator() {
+<span class="nc" id="L151">        return getTensors().spliterator();</span>
+    }
+
+    @Override
+    public Stream&lt;Tsr&lt;ValueType&gt;&gt; stream() {
+<span class="nc" id="L156">        return this.getTensors().stream();</span>
+    }
+
+    @Override
+    public Stream&lt;Tsr&lt;ValueType&gt;&gt; parallelStream() {
+<span class="nc" id="L161">        return this.getTensors().stream();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

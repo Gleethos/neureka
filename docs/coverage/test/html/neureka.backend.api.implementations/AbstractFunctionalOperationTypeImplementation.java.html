@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractFunctionalOperationTypeImplementation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api.implementations</a> &gt; <span class="el_source">AbstractFunctionalOperationTypeImplementation.java</span></div><h1>AbstractFunctionalOperationTypeImplementation.java</h1><pre class="source lang-java linenums">package neureka.backend.api.implementations;
+
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.calculus.implementations.FunctionNode;
+import neureka.devices.Device;
+import neureka.autograd.ADAgent;
+import neureka.calculus.Function;
+
+/**
+ * This is the base class for implementations of the OperationTypeImplementation interface.
+ * The class implements the component logic required by said interface.
+ * Additionally it contains useful methods used to process passed arguments of execution calls.
+ *
+ * Conceptually this class represents &quot;a way of execution&quot; for
+ * the OperationType to which an instance of this class would belong.
+ * The &quot;+&quot; operator for example has different OperationTypeImplementation instances
+ * for different ExecutionCall instances.
+ * Tensors within an execution call having the same shape would
+ * trigger the Operation instance of the OperationType, whereas otherwise
+ * the Convolution or Broadcast implementation might be called.
+ *
+ * @param &lt;FinalType&gt; The final type extending this class.
+ */
+@Accessors( prefix = {&quot;_&quot;}, chain = true )
+public abstract class AbstractFunctionalOperationTypeImplementation&lt; FinalType &gt; extends AbstractBaseOperationTypeImplementation&lt; FinalType &gt;
+{
+<span class="pc" id="L32">    @Getter @Setter private SuitabilityChecker _suitabilityChecker;</span>
+<span class="nc" id="L33">    @Getter @Setter private DeviceFinder _deviceFinder;</span>
+<span class="pc" id="L34">    @Getter @Setter private ForwardADAnalyzer _forwardADAnalyzer;</span>
+<span class="pc" id="L35">    @Getter @Setter private BackwardADAnalyzer _backwardADAnalyzer;</span>
+<span class="fc" id="L36">    @Getter @Setter private ADAgentSupplier _ADAgentSupplier;</span>
+<span class="pc" id="L37">    @Getter @Setter private InitialCallHook _callHook;</span>
+<span class="pc" id="L38">    @Getter @Setter private RecursiveJunctionAgent _RJAgent;</span>
+<span class="pc" id="L39">    @Getter @Setter private DrainInstantiation _drainInstantiation;</span>
+
+    public AbstractFunctionalOperationTypeImplementation( String name ) {
+<span class="fc" id="L42">        super(name);</span>
+<span class="fc" id="L43">    }</span>
+
+    //---
+
+    @Override
+    public float isImplementationSuitableFor( ExecutionCall call ) {
+<span class="fc" id="L49">        return _suitabilityChecker.canHandle(call);</span>
+    }
+
+    ///---
+
+    @Override
+    public Device findDeviceFor( ExecutionCall call ) {
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">        return ( _deviceFinder == null ) ? null : _deviceFinder.findFor(call);</span>
+    }
+
+    //---
+
+    @Override
+    public boolean canImplementationPerformForwardADFor( ExecutionCall call ) {
+<span class="fc" id="L63">        return _forwardADAnalyzer.allowsForward(call);</span>
+    }
+
+    //---
+
+    @Override
+    public boolean canImplementationPerformBackwardADFor( ExecutionCall call ) {
+<span class="fc" id="L70">        return _backwardADAnalyzer.allowsBackward(call);</span>
+    }
+
+    //---
+
+    @Override
+    public ADAgent supplyADAgentFor( Function f, ExecutionCall&lt;Device&gt; call, boolean forward ) {
+<span class="fc" id="L77">        return _ADAgentSupplier.getADAgentOf( f, call, forward );</span>
+    }
+
+    //---
+
+    @Override
+    public Tsr handleInsteadOfDevice( FunctionNode caller, ExecutionCall call ) {
+<span class="fc" id="L84">        return _callHook.handle( caller, call );</span>
+    }
+
+    //---
+
+    @Override
+    public Tsr handleRecursivelyAccordingToArity( ExecutionCall call, java.util.function.Function&lt;ExecutionCall, Tsr&gt; goDeeperWith ) {
+<span class="fc" id="L91">        return _RJAgent.handle(call, goDeeperWith);</span>
+    }
+
+    //---
+
+    @Override
+    public ExecutionCall instantiateNewTensorsForExecutionIn( ExecutionCall call ) {
+<span class="fc" id="L98">        return _drainInstantiation.handle(call);</span>
+    }
+
+    //---
+
+    public FinalType build() {
+<span class="fc" id="L104">        return (FinalType) this;</span>
+    }
+
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

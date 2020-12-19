@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OperationType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.backend.operations</a> &gt; <span class="el_source">OperationType.java</span></div><h1>OperationType.java</h1><pre class="source lang-java linenums">package neureka.calculus.backend.operations;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OperationType.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.backend.operations</a> &gt; <span class="el_source">OperationType.java</span></div><h1>OperationType.java</h1><pre class="source lang-java linenums">package neureka.calculus.backend.operations;
 
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
@@ -6,41 +6,51 @@ import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.implementations.OperationTypeImplementation;
+import neureka.ndim.iterators.NDIterator;
 
 import java.util.List;
 import java.util.function.Consumer;
 
 public interface OperationType
 {
-    public static List&lt;AbstractOperationType&gt; instances() {
-<span class="fc" id="L16">        return OperationContext.instance().getRegister();</span>
+    static List&lt;AbstractOperationType&gt; instances() {
+<span class="fc" id="L17">        return OperationContext.instance().getRegister();</span>
     }
 
-    public static AbstractOperationType instance(int index) {
-<span class="fc" id="L20">        return OperationContext.instance().getRegister().get(index);</span>
+    static AbstractOperationType instance(int index) {
+<span class="fc" id="L21">        return OperationContext.instance().getRegister().get(index);</span>
     }
 
-    public static AbstractOperationType[] ALL() {
-<span class="fc" id="L24">        return OperationContext.instance().getRegister().toArray(new AbstractOperationType[0]);</span>
+    static AbstractOperationType[] ALL() {
+<span class="fc" id="L25">        return OperationContext.instance().getRegister().toArray(new AbstractOperationType[ 0 ]);</span>
     }
 
-    public static int COUNT() {
-<span class="fc" id="L28">        return OperationContext.instance().getID();</span>
+    static int COUNT() {
+<span class="fc" id="L29">        return OperationContext.instance().getID();</span>
     }
 
 
-    public static AbstractOperationType instance(String identifier) {
-<span class="fc" id="L33">        return OperationContext.instance().getLookup().getOrDefault(identifier, null);</span>
+    static AbstractOperationType instance(String identifier) {
+<span class="fc" id="L34">        return OperationContext.instance().getLookup().getOrDefault(identifier, null);</span>
     }
 
+    interface TertiaryNDIConsumer {
+        double execute(NDIterator t0Idx, NDIterator t1Idx, NDIterator t2Idx);
+    }
     interface TertiaryNDXConsumer {
         double execute(int[] t0Idx, int[] t1Idx, int[] t2Idx);
     }
 
+    interface SecondaryNDIConsumer {
+        double execute(NDIterator t0Idx, NDIterator t1Idx);
+    }
     interface SecondaryNDXConsumer {
         double execute(int[] t0Idx, int[] t1Idx);
     }
 
+    interface PrimaryNDIConsumer {
+        double execute(NDIterator t0Idx);
+    }
     interface PrimaryNDXConsumer {
         double execute(int[] t0Idx);
     }
@@ -48,11 +58,11 @@ public interface OperationType
     //---
 
     interface DefaultOperatorCreator&lt;T&gt; {
-        T create(Tsr[] inputs, int d);
+        T create(Tsr&lt;?&gt;[] inputs, int d);
     }
 
     interface ScalarOperatorCreator&lt;T&gt; {
-        T create(Tsr[] inputs, double scalar, int d);
+        T create(Tsr&lt;?&gt;[] inputs, double scalar, int d);
     }
 
     //==================================================================================================================
@@ -101,45 +111,79 @@ public interface OperationType
 
     boolean isIndexer();
 
-    boolean isCommutative();
+    boolean isDifferentiable();
+
+    boolean isInline();
 
     boolean supports(Class implementation);
 
+    /**
+     * This method mainly ought to serve as a reference- and fallback- implementation for tensor backends and also
+     * as the backend for handling the calculation of scalar inputs passed to a given abstract syntax tree of
+     * Function instances...
+     * ( (almost) every Function instance contains an OperationType reference to which it passes scalar executions... )
+     *
+     * This is also the reason why the last parameter of this method is a list of Function objects :
+     * The list stores the child nodes of the Function node that is currently being processed.
+     * Therefore when implementing this method one should first call the child nodes in
+     * order to get the &quot;real inputs&quot; of this current node.
+     *
+     * One might ask : Why does that not happen automatically?
+     * The answer is to that question lies in the other parameters of this method.
+     * Specifically the parameter &quot;d&quot; !
+     * This argument determines if the derivative ought to be calculated and
+     * also which value is being targeted within the input array.
+     * Depending on this variable and also the nature of the operation,
+     * the execution calls to the child nodes of this node change considerably!
+     *
+     *
+     * @param inputs An array of scalar input variables.
+     * @param j The index variable for indexed execution on the input array. (-1 if no indexing should occur)
+     * @param d The index of the variable of which a derivative ought to be calculated.
+     * @param src The child nodes of the Function node to which this very OperationType belongs.
+     * @return The result of the calculation.
+     */
+    double calculate( double[] inputs, int j, int d, List&lt;Function&gt; src );
 
-    public abstract double calculate(double[] inputs, int j, int d, List&lt;Function&gt; src);
 
-
-<span class="nc" id="L112">    public static class Utility {</span>
-        public static Tsr[] _subset(Tsr[] tsrs, int padding, int index, int offset) {
-<span class="pc bpc" id="L114" title="1 of 2 branches missed.">            if (offset &lt; 0) {</span>
-<span class="nc" id="L115">                index += offset;</span>
-<span class="nc" id="L116">                offset *= -1;</span>
+    /**
+     *  This static utility class contains simple methods used for creating slices of plain old
+     *  arrays of tensor objects...
+     *  These slices may be used for many reasons, however mainly when iterating over
+     *  inputs to a Function recursively in order to execute them pairwise for example...
+     */
+<span class="nc" id="L155">    class Utility</span>
+    {
+        public static Tsr&lt;?&gt;[] subset(Tsr&lt;?&gt;[] tsrs, int padding, int index, int offset) {
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">            if (offset &lt; 0) {</span>
+<span class="nc" id="L159">                index += offset;</span>
+<span class="nc" id="L160">                offset *= -1;</span>
             }
-<span class="fc" id="L118">            Tsr[] newTsrs = new Tsr[offset + padding];</span>
-<span class="fc" id="L119">            System.arraycopy(tsrs, index, newTsrs, padding, offset);</span>
-<span class="fc" id="L120">            return newTsrs;</span>
+<span class="fc" id="L162">            Tsr&lt;?&gt;[] newTsrs = new Tsr[offset + padding];</span>
+<span class="fc" id="L163">            System.arraycopy(tsrs, index, newTsrs, padding, offset);</span>
+<span class="fc" id="L164">            return newTsrs;</span>
         }
 
-        public static Tsr[] _without(Tsr[] tsrs, int index) {
-<span class="fc" id="L124">            Tsr[] newTsrs = new Tsr[tsrs.length - 1];</span>
-<span class="fc bfc" id="L125" title="All 4 branches covered.">            for (int i = 0; i &lt; newTsrs.length; i++) newTsrs[i] = tsrs[i + ((i &lt; index) ? 0 : 1)];</span>
-<span class="fc" id="L126">            return newTsrs;</span>
+        public static Tsr&lt;?&gt;[] without(Tsr&lt;?&gt;[] tsrs, int index) {
+<span class="fc" id="L168">            Tsr&lt;?&gt;[] newTsrs = new Tsr[tsrs.length - 1];</span>
+<span class="fc bfc" id="L169" title="All 4 branches covered.">            for (int i = 0; i &lt; newTsrs.length; i++) newTsrs[ i ] = tsrs[i + ((i &lt; index) ? 0 : 1)];</span>
+<span class="fc" id="L170">            return newTsrs;</span>
         }
 
-        public static Tsr[] _offsetted(Tsr[] tsrs, int offset) {
-<span class="fc" id="L130">            Tsr[] newTsrs = new Tsr[tsrs.length - offset];</span>
-<span class="fc" id="L131">            newTsrs[0] = Tsr.Create.newTsrLike(tsrs[1]);</span>
-<span class="fc bfc" id="L132" title="All 4 branches covered.">            if (!tsrs[1].has(GraphNode.class) &amp;&amp; tsrs[1] != tsrs[0]) {//Deleting intermediate results!</span>
-<span class="fc" id="L133">                tsrs[1].delete();</span>
-<span class="fc" id="L134">                tsrs[1] = null;</span>
+        public static Tsr&lt;?&gt;[] offsetted(Tsr&lt;?&gt;[] tsrs, int offset) {
+<span class="fc" id="L174">            Tsr&lt;?&gt;[] newTsrs = new Tsr[tsrs.length - offset];</span>
+<span class="fc" id="L175">            newTsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[ 1 ]);</span>
+<span class="fc bfc" id="L176" title="All 4 branches covered.">            if (!tsrs[ 1 ].has(GraphNode.class) &amp;&amp; tsrs[ 1 ] != tsrs[ 0 ]) {//Deleting intermediate results!</span>
+<span class="fc" id="L177">                tsrs[ 1 ].delete();</span>
+<span class="fc" id="L178">                tsrs[ 1 ] = null;</span>
             }
-<span class="pc bpc" id="L136" title="1 of 4 branches missed.">            if (!tsrs[2].has(GraphNode.class) &amp;&amp; tsrs[2] != tsrs[0]) {//Deleting intermediate results!</span>
-<span class="fc" id="L137">                tsrs[2].delete();</span>
-<span class="fc" id="L138">                tsrs[2] = null;</span>
+<span class="pc bpc" id="L180" title="1 of 4 branches missed.">            if (!tsrs[ 2 ].has(GraphNode.class) &amp;&amp; tsrs[ 2 ] != tsrs[ 0 ]) {//Deleting intermediate results!</span>
+<span class="fc" id="L181">                tsrs[ 2 ].delete();</span>
+<span class="fc" id="L182">                tsrs[ 2 ] = null;</span>
             }
-<span class="fc" id="L140">            System.arraycopy(tsrs, 1 + offset, newTsrs, 1, tsrs.length - 1 - offset);</span>
-<span class="fc" id="L141">            newTsrs[1] = tsrs[0];</span>
-<span class="fc" id="L142">            return newTsrs;</span>
+<span class="fc" id="L184">            System.arraycopy(tsrs, 1 + offset, newTsrs, 1, tsrs.length - 1 - offset);</span>
+<span class="fc" id="L185">            newTsrs[ 1 ] = tsrs[ 0 ];</span>
+<span class="fc" id="L186">            return newTsrs;</span>
         }
 
     }

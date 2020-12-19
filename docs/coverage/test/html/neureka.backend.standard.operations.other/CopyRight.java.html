@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CopyRight.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.standard.operations.other</a> &gt; <span class="el_source">CopyRight.java</span></div><h1>CopyRight.java</h1><pre class="source lang-java linenums">package neureka.backend.standard.operations.other;
+
+import neureka.Tsr;
+import neureka.backend.standard.implementations.Activation;
+import neureka.devices.Device;
+import neureka.devices.host.HostCPU;
+import neureka.devices.host.execution.HostExecutor;
+import neureka.devices.opencl.OpenCLDevice;
+import neureka.devices.opencl.execution.CLExecutor;
+import neureka.calculus.Function;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.operations.AbstractOperationType;
+import neureka.backend.api.operations.OperationType;
+
+import java.util.List;
+
+public class CopyRight extends AbstractOperationType {
+
+    public CopyRight()
+    {
+<span class="fc" id="L21">        super(&quot;inject_right&quot;, &quot;&gt;&quot;, 2,true, false, false, true);</span>
+
+<span class="fc" id="L23">        setStringifier(</span>
+                children -&gt; {
+<span class="fc" id="L25">                    StringBuilder reconstructed = new StringBuilder();</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">                    for ( int i = 0; i &lt; children.size(); ++i ) {</span>
+<span class="fc" id="L27">                        reconstructed.append( children.get( i ) );</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">                        if ( i &lt; children.size() - 1 ) {</span>
+<span class="fc" id="L29">                            reconstructed.append(&quot; -&gt; &quot;);</span>
+                        }
+                    }
+<span class="fc" id="L32">                    return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
+                }
+        );
+
+<span class="fc" id="L36">        DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; activationCreator =</span>
+                ( inputs, d ) -&gt; {
+<span class="nc" id="L38">                    double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ];</span>
+<span class="nc" id="L40">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ];</span>
+                };
+
+
+<span class="fc" id="L44">        Activation activation = new Activation()</span>
+<span class="pc" id="L45">        .setBackwardADAnalyzer( call -&gt; false )</span>
+<span class="pc" id="L46">        .setForwardADAnalyzer( call -&gt; false )</span>
+<span class="fc" id="L47">        .setADAgentSupplier(</span>
+            ( Function f, ExecutionCall&lt;Device&gt; call, boolean forward ) -&gt;
+<span class="fc" id="L49">                getDefaultImplementation().supplyADAgentFor( f, call, forward )</span>
+        )
+<span class="fc" id="L51">        .setCallHook( (caller, call ) -&gt; null )</span>
+<span class="pc" id="L52">        .setRJAgent( ( call, goDeeperWith ) -&gt; null )</span>
+<span class="fc" id="L53">        .setDrainInstantiation(</span>
+                call -&gt; {
+<span class="fc" id="L55">                    Tsr[] tsrs = call.getTensors();</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">                    int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;</span>
+<span class="fc" id="L57">                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[1+offset], tsrs[offset]}, -1, OperationType.instance(&quot;idy&quot;) );</span>
+                }
+        )
+<span class="fc" id="L60">        .build();</span>
+
+<span class="fc" id="L62">        setImplementation(Activation.class,</span>
+<span class="fc" id="L63">                activation.setExecutor(</span>
+                        HostExecutor.class,
+                        new HostExecutor(
+                                call -&gt; {
+<span class="nc bnc" id="L67" title="All 2 branches missed.">                                    int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;</span>
+<span class="nc" id="L68">                                    ExecutionCall&lt;HostCPU&gt; newCall = new ExecutionCall&lt;&gt;(</span>
+<span class="nc" id="L69">                                            call.getDevice(),</span>
+<span class="nc" id="L70">                                            new Tsr[]{call.getTensor(1+offset), call.getTensor(offset)},</span>
+                                            -1,
+<span class="nc" id="L72">                                            call.getOperation()</span>
+                                    );
+<span class="nc" id="L74">                                    OperationType.instance(&quot;idy&quot;)</span>
+<span class="nc" id="L75">                                            .getImplementation(Activation.class)</span>
+<span class="nc" id="L76">                                            .getExecutor(HostExecutor.class)</span>
+<span class="nc" id="L77">                                            .getExecution().run(call);</span>
+<span class="nc" id="L78">                                },</span>
+                                3
+                        )
+<span class="fc" id="L81">                ).setExecutor(</span>
+                        CLExecutor.class,
+                        new CLExecutor(
+                                call -&gt; {
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                                    int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;</span>
+<span class="nc" id="L86">                                    ExecutionCall&lt;OpenCLDevice&gt; newCall = new ExecutionCall&lt;&gt;(</span>
+<span class="nc" id="L87">                                            call.getDevice(),</span>
+<span class="nc" id="L88">                                            new Tsr[]{call.getTensor(1+offset), call.getTensor(offset)},</span>
+                                            -1,
+<span class="nc" id="L90">                                            call.getOperation()</span>
+                                    );
+<span class="nc" id="L92">                                    OperationType.instance(&quot;idy&quot;)</span>
+<span class="nc" id="L93">                                            .getImplementation(Activation.class)</span>
+<span class="nc" id="L94">                                            .getExecutor(CLExecutor.class)</span>
+<span class="nc" id="L95">                                            .getExecution().run(call);</span>
+<span class="nc" id="L96">                                },</span>
+                                3
+                        )
+                )
+        );
+<span class="fc" id="L101">    }</span>
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, List&lt;Function&gt; src ) {
+<span class="nc" id="L105">            return src.get( 0 ).call( inputs, j );</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

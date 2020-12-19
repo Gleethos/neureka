@@ -1,348 +1,57 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractFunction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.frontend</a> &gt; <span class="el_source">AbstractFunction.java</span></div><h1>AbstractFunction.java</h1><pre class="source lang-java linenums">package neureka.calculus.frontend;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractFunction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.frontend</a> &gt; <span class="el_source">AbstractFunction.java</span></div><h1>AbstractFunction.java</h1><pre class="source lang-java linenums">/*
+MIT License
 
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*/
+
+package neureka.calculus.frontend;
+
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import neureka.Tsr;
-import neureka.acceleration.Device;
-import neureka.acceleration.host.HostCPU;
+import neureka.calculus.implementations.FunctionNode;
+import neureka.devices.Device;
+import neureka.devices.host.HostCPU;
 import neureka.calculus.Function;
-import neureka.calculus.backend.ExecutionCall;
-import neureka.calculus.backend.implementations.functional.Activation;
-import neureka.calculus.backend.operations.OperationType;
-import neureka.calculus.frontend.assembly.FunctionBuilder;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.standard.implementations.Activation;
+import neureka.backend.api.operations.OperationType;
+import neureka.calculus.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
-import neureka.calculus.frontend.implementations.FunctionConstant;
-import neureka.calculus.frontend.implementations.FunctionInput;
-import neureka.calculus.frontend.implementations.FunctionVariable;
+import neureka.calculus.implementations.FunctionConstant;
+import neureka.calculus.implementations.FunctionInput;
+import neureka.calculus.implementations.FunctionVariable;
 
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public abstract class AbstractFunction extends AbstractBaseFunction
+
+@Accessors( prefix = {&quot;_&quot;} )
+<span class="nc" id="L52">public abstract class AbstractFunction extends AbstractBaseFunction</span>
 {
-    private final OperationType _type;
-    private final boolean _isFlat;
-    private final boolean _doAD;
-    private final List&lt;Function&gt; _src;
 
-    //------------------------------------------------------------------------------------------------------------------
-
-    /**
-     *
-     * @param type
-     * @param sources
-     * @param doAD
-     */
-    protected AbstractFunction(OperationType type, List&lt;Function&gt; sources, boolean doAD )
-<span class="fc" id="L37">    {</span>
-<span class="fc bfc" id="L38" title="All 4 branches covered.">        if( type.getArity() &gt;= 0 &amp;&amp; sources.size() != type.getArity() ) {</span>
-<span class="fc bfc" id="L39" title="All 2 branches covered.">            String tip = ( type.isIndexer() )</span>
-<span class="fc" id="L40">                    ? &quot;\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration.&quot;</span>
-<span class="fc" id="L41">                    : &quot;&quot;;</span>
-<span class="fc" id="L42">            throw new IllegalArgumentException(</span>
-<span class="fc" id="L43">                    &quot;The function/operation '&quot;+type.getOperator()+&quot;' expects &quot;+type.getArity()+&quot; parameters, &quot;+</span>
-<span class="fc" id="L44">                            &quot;however &quot;+sources.size()+&quot; where given!&quot;+tip</span>
-            );
-        }
-<span class="fc" id="L47">        boolean isFlat = true;</span>
-<span class="fc bfc" id="L48" title="All 2 branches covered.">        for ( Function f : sources ) { // AbstractFunction does only reference tip nodes of the function graph:</span>
-<span class="fc bfc" id="L49" title="All 8 branches covered.">            isFlat = ((f instanceof FunctionInput) || (f instanceof FunctionVariable) || (f instanceof FunctionConstant)) &amp;&amp; isFlat;</span>
-<span class="fc" id="L50">        }</span>
-
-<span class="fc" id="L52">        _type = type;</span>
-<span class="fc" id="L53">        _isFlat = isFlat;</span>
-<span class="fc" id="L54">        _src = sources;</span>
-<span class="fc" id="L55">        _doAD = doAD;</span>
-<span class="fc" id="L56">    }</span>
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    @Override
-    public Function newBuild( String expression ) {
-<span class="nc" id="L62">        return FunctionBuilder.build( expression, true );</span>
-    }
-
-    @Override
-    public boolean isFlat() {
-<span class="fc" id="L67">        return _isFlat;</span>
-    }
-
-    @Override
-    public boolean doesAD() {
-<span class="fc" id="L72">        return _doAD;</span>
-    }
-
-    @Override
-    public int id() {
-<span class="fc" id="L77">        return _type.getId();</span>
-    }
-
-    @Override
-    public OperationType type() {
-<span class="fc" id="L82">        return _type;</span>
-    }
-
-    //---
-
-    @Override
-    public String toString()
-    {
-<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        List&lt;String&gt; stringedSource = _src.stream().map(e-&gt;((e==null)?&quot;(null)&quot;:e.toString())).collect(Collectors.toList());</span>
-<span class="fc" id="L91">        return _type.getStringifier().asString(stringedSource);</span>
-    }
-
-    @Override
-    public boolean dependsOn( int index ) {
-<span class="pc bpc" id="L96" title="1 of 4 branches missed.">        for ( Function f : _src ) if ( f.dependsOn(index) ) return true;</span>
-<span class="nc" id="L97">        return false;</span>
-    }
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Responsible for handling functions with multiple inputs!
-     *
-     * @param inputs
-     * @param j
-     * @param d
-     * @return
-     */
-    protected Tsr _tensor_activation( Tsr[] inputs, int j, int d )
-    {
-<span class="fc" id="L112">        ExecutionCall&lt;Device&gt; call = new ExecutionCall&lt;&gt;(</span>
-<span class="fc" id="L113">                _device( inputs ),</span>
-                inputs,
-                d,
-                j,
-                _type
-        );
-        ExecutionCall&lt;Device&gt; finalCall;
-<span class="fc" id="L120">        Device possiblyNewDevice = call.getImplementation().findDeviceFor(call);</span>
-<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        if ( possiblyNewDevice != null ) finalCall = call.withNew(possiblyNewDevice);</span>
-<span class="fc" id="L122">        else finalCall = call;</span>
-
-        /* The code below deals with deep functions (non flat) :  */
-<span class="fc bfc" id="L125" title="All 2 branches covered.">        if ( _isFlat ) {</span>
-            /* The following code is reached in flat functions only:  */
-            /* Autograd-Graph will be generated below for the new GraphNode: */
-            /* only flat functions can be executed directly */
-<span class="fc bfc" id="L129" title="All 4 branches covered.">            if ( d &lt; 0 &amp;&amp; _doAD )</span>
-<span class="fc" id="L130">                return new GraphNode( this, finalCall, ()-&gt; __flat_execution( finalCall ) ).getPayload();</span>
-            else
-<span class="fc" id="L132">                return __flat_execution( finalCall );</span>
-        }
-<span class="fc bfc" id="L134" title="All 2 branches covered.">        else if ( d &lt; 0 ) return __deep_activation( finalCall );</span>
-<span class="fc" id="L135">        else return _deep_derivative( finalCall );</span>
-
-    }
-
-    private Tsr __flat_execution( ExecutionCall&lt;Device&gt; call )
-    {
-<span class="fc" id="L141">        Tsr alternative = call.getImplementation().handleInsteadOfDevice( this, call );</span>
-<span class="fc bfc" id="L142" title="All 2 branches covered.">        if ( alternative != null ) return alternative;</span>
-
-<span class="fc bfc" id="L144" title="All 2 branches covered.">        if ( call.getDerivativeIndex() &lt; 0 ) return __deep_activation( call );</span>
-<span class="fc" id="L145">        else return _deep_derivative( call  );</span>
-    }
-
-    public List&lt;Function&gt; getChildren() {
-<span class="fc" id="L149">        return _src;</span>
-    }
-
-    private Tsr __deep_activation(ExecutionCall&lt;Device&gt; call )
-    {
-<span class="fc" id="L154">        Tsr[] inputs = call.getTensors();</span>
-<span class="fc" id="L155">        Device device = call.getDevice();</span>
-<span class="fc" id="L156">        int d = call.getDerivativeIndex();</span>
-<span class="fc" id="L157">        int j = call.getJ();</span>
-
-        Tsr[] tsrs;
-<span class="fc bfc" id="L160" title="All 2 branches covered.">        if ( _type.isIndexer() ) tsrs = new Tsr[ 1 + inputs.length ];</span>
-<span class="fc" id="L161">        else tsrs = new Tsr[ 1 + _src.size() ];</span>
-
-<span class="fc bfc" id="L163" title="All 2 branches covered.">        if ( _type.isIndexer() ) {</span>
-<span class="fc bfc" id="L164" title="All 2 branches covered.">            for ( int i = 1; i &lt; tsrs.length; i++ ) tsrs[i] = _src.get(0).call(inputs, i - 1);</span>
-<span class="pc bpc" id="L165" title="1 of 4 branches missed.">        } else if (</span>
-                !_isFlat &amp;&amp; j &lt; 0 &amp;&amp; (
-<span class="pc bpc" id="L167" title="1 of 4 branches missed.">                        _type.isOperator() || _type.supportsImplementation(Activation.class)</span>
-                )
-        ) {/*   '+', '-', 'x', '*', '%', 'Â«', 'Â»', ',', ...   */
-<span class="fc" id="L170">            tsrs = srcActivation(inputs, j, d, 0);</span>
-<span class="fc" id="L171">            List&lt;String&gt; stringedSource = IntStream.range(0, _src.size()).mapToObj(i -&gt; &quot;I[&quot; + i + &quot;]&quot;).collect(Collectors.toList());</span>
-<span class="fc" id="L172">            String asStr = _type.getStringifier().asString(stringedSource);</span>
-<span class="fc" id="L173">            return FunctionBuilder.build(asStr, _doAD).call(tsrs);</span>
-        } else {
-<span class="fc" id="L175">            tsrs = srcActivation(inputs, j, d, 1);</span>
-        }
-<span class="fc" id="L177">        device.execute( new ExecutionCall&lt;&gt;( device, tsrs, d, _type ) );</span>
-
-<span class="fc bfc" id="L179" title="All 2 branches covered.">        return ( tsrs[0] == null ) ? tsrs[1] : tsrs[0];</span>
-    }
-
-    /**
-     *  This method return the index of the tensor
-     *  in the given tensor array which is virtual and contains &quot;1.0&quot;.
-     *  However if not all tensors are virtual or their values are not all &quot;0.0&quot; except one
-     *  whose value is &quot;1.0&quot; then it return -1, because the optimization cannot
-     *  be made...
-     *
-     * @param tsrs An array of tensors which ought to be analyzed.
-     * @return The index of the tensor whose value is &quot;1.0&quot; (if all other are &quot;0.0&quot;), otherwise : -1
-     */
-    private int ___indexOfFoundDerivative( Tsr[] tsrs )
-    {
-<span class="fc" id="L194">        boolean allVirtual = true;</span>
-<span class="fc bfc" id="L195" title="All 6 branches covered.">        for ( Tsr t : tsrs ) if ( t != null &amp;&amp; !t.isVirtual() ) allVirtual = false;</span>
-<span class="fc bfc" id="L196" title="All 2 branches covered.">        if ( allVirtual ) {</span>
-<span class="fc" id="L197">            int index = -1;</span>
-<span class="fc bfc" id="L198" title="All 2 branches covered.">            for ( int i=0; i &lt; tsrs.length; i++ ) {</span>
-<span class="fc bfc" id="L199" title="All 2 branches covered.">                double value = ( tsrs[i] == null ) ? 0.0 : tsrs[i].value64(0);</span>
-<span class="fc bfc" id="L200" title="All 2 branches covered.">                if ( value == 1.0 ) {</span>
-<span class="fc bfc" id="L201" title="All 2 branches covered.">                    if ( index &gt;= 0 ) return -1;</span>
-<span class="fc" id="L202">                    index = i;</span>
-<span class="pc bpc" id="L203" title="1 of 2 branches missed.">                } else if ( value != 0.0 ) return -1;</span>
-            }
-<span class="fc" id="L205">            return index;</span>
-        }
-<span class="fc" id="L207">        return -1;</span>
-    }
-
-    private Tsr _deep_derivative( ExecutionCall&lt;Device&gt; call )
-    {
-<span class="fc" id="L212">        Supplier&lt;Tsr&gt; actor =</span>
-        () -&gt;
-        {
-<span class="fc" id="L215">            Tsr[] inputs = call.getTensors();</span>
-<span class="fc" id="L216">            Device device = call.getDevice();</span>
-<span class="fc" id="L217">            int d = call.getDerivativeIndex();</span>
-<span class="fc" id="L218">            int j = call.getJ();</span>
-
-            Tsr[] tsrs;
-<span class="fc bfc" id="L221" title="All 2 branches covered.">            if ( _type.isIndexer() ) tsrs = new Tsr[ 1 + inputs.length ];</span>
-<span class="fc" id="L222">            else tsrs = new Tsr[ 1 + _src.size() ];</span>
-
-            // Chain-rule (forward AutoDiff):
-            // inner times outer means:
-            // first derive source!
-            // like so:
-<span class="fc bfc" id="L228" title="All 2 branches covered.">            if ( _type.isIndexer() ) {</span>
-<span class="fc bfc" id="L229" title="All 2 branches covered.">                for ( int i = 1; i &lt; tsrs.length; i++ ) {</span>
-<span class="fc" id="L230">                    tsrs[i] = _src.get(0).derive(inputs, d, i - 1);</span>
-                }
-            } else {
-<span class="fc bfc" id="L233" title="All 2 branches covered.">                for ( int i = 1; i &lt; tsrs.length; i++ ) {</span>
-<span class="fc bfc" id="L234" title="All 2 branches covered.">                    tsrs[i] = ( j &gt;= 0 ) ? _src.get( i - 1 ).derive( inputs, d, j ) : _src.get( i - 1 ).derive(inputs, d);</span>
-                }
-            }
-            //...then add them all together! (is possible because of linearity...)
-            Tsr inner;
-<span class="fc bfc" id="L239" title="All 2 branches covered.">            if ( tsrs.length &gt; 2 ) {// Optimization: Finds index of &quot;1.0&quot; among otherwise all &quot;0.0&quot; virtual tensors!</span>
-<span class="fc" id="L240">                int index = ___indexOfFoundDerivative( tsrs );</span>
-<span class="fc bfc" id="L241" title="All 2 branches covered.">                if ( index &gt;= 0 ) inner = tsrs[index];</span>
-                else {
-                    // Optimization above did not apply, so we accumulate all the derivatives!
-<span class="fc" id="L244">                    device.execute( new ExecutionCall&lt;&gt;( device, tsrs, -1, OperationType.instance(&quot;+&quot;) ) );</span>
-<span class="fc" id="L245">                    inner = tsrs[0];//this is now the inner derivative!</span>
-                }
-<span class="fc" id="L247">            } else inner = tsrs[1];</span>
-
-<span class="fc" id="L249">            tsrs[0] = null;</span>
-            //...then activate (No differentiation!) the source like so:
-<span class="fc bfc" id="L251" title="All 2 branches covered.">            if ( _type.isIndexer() ) { // Indexer pass an index j of course!</span>
-<span class="fc bfc" id="L252" title="All 2 branches covered.">                for ( int i = 1; i &lt; tsrs.length; i++ ) {</span>
-<span class="fc" id="L253">                    tsrs[i] = _src.get(0).call( inputs, i - 1 ); // i - 1 := j</span>
-                }
-            } else {
-<span class="fc bfc" id="L256" title="All 2 branches covered.">                for ( int i = 1; i &lt; tsrs.length; i++ ) {</span>
-<span class="fc bfc" id="L257" title="All 2 branches covered.">                    tsrs[i] = ( j &gt;= 0 ) ? _src.get(i - 1).call(inputs, j) : _src.get(i - 1).call(inputs);</span>
-                }
-            }
-            //...get derivative index within src list:
-<span class="fc bfc" id="L261" title="All 2 branches covered.">            for ( int i = 0; i &lt; _src.size(); i++ ) {</span>
-<span class="fc bfc" id="L262" title="All 4 branches covered.">                if ( _src.get(i).dependsOn(d) &amp;&amp; !_type.isIndexer() ) {</span>
-<span class="fc" id="L263">                    d = i;</span>
-<span class="fc" id="L264">                    break;</span>
-                }
-            }
-            // Use those tensors for the outer derivative:
-<span class="fc" id="L268">            device.execute( new ExecutionCall&lt;&gt;( device, tsrs, d, _type ) );</span>
-            // At the end:
-            //...multiply inner times outer: ( if inner is not 1 entirely... )
-<span class="pc bpc" id="L271" title="1 of 6 branches missed.">            if ( !( ( inner.isVirtual() || inner.size()==1 ) &amp;&amp; inner.value64(0)==1.0) ) {</span>
-<span class="fc" id="L272">                tsrs = new Tsr[]{null, inner, tsrs[0]};</span>
-<span class="fc" id="L273">                device.execute( new ExecutionCall&lt;&gt;( device, tsrs, -1, OperationType.instance(&quot;*&quot;) ) );</span>
-            } // done!
-<span class="fc" id="L275">            return tsrs[0];</span>
-
-        };
-<span class="fc" id="L278">        Device device = call.getDevice();</span>
-<span class="fc" id="L279">        int d = call.getDerivativeIndex();</span>
-<span class="fc" id="L280">        Tsr out = null;</span>
-<span class="fc bfc" id="L281" title="All 2 branches covered.">        for ( int i = 0; i &lt; _src.size(); i++ ) { // constants need to be figured out!</span>
-<span class="fc bfc" id="L282" title="All 2 branches covered.">            int di = ( _src.get(i).dependsOn(d) ) ? i : -1;</span>
-<span class="fc bfc" id="L283" title="All 2 branches covered.">            if ( di &gt;= 0 ) {</span>
-<span class="fc bfc" id="L284" title="All 2 branches covered.">                if ( out == null ) out = actor.get();</span>
-<span class="fc" id="L285">                else device.execute(</span>
-                        new ExecutionCall&lt;&gt;(
-<span class="fc" id="L287">                                device, new Tsr[]{null, actor.get(), out}, -1, OperationType.instance(&quot;+&quot;)</span>
-                        )
-                );
-            }
-        }
-<span class="fc" id="L292">        return out;</span>
-    }
-
-    public Tsr[] srcActivation( Tsr[] inputs, int j, int d, int offset )
-    {
-<span class="fc" id="L297">        int[] tempShape = null;</span>
-<span class="fc" id="L298">        Tsr[] tsrs = new Tsr[ _src.size() + offset ];</span>
-<span class="fc bfc" id="L299" title="All 2 branches covered.">        for ( int i = offset; i &lt; tsrs.length; i++ ) {//constants need to be figured out!</span>
-<span class="fc bfc" id="L300" title="All 2 branches covered.">            if ( !(_src.get(i - offset) instanceof FunctionConstant) ) {</span>
-<span class="pc bpc" id="L301" title="1 of 2 branches missed.">                if ( d &lt; 0 ) {</span>
-<span class="fc bfc" id="L302" title="All 2 branches covered.">                    tsrs[i] = ( j &gt;= 0 ) ? _src.get(i - offset).call(inputs, j) : _src.get(i - offset).call(inputs);</span>
-                } else {
-<span class="nc bnc" id="L304" title="All 2 branches missed.">                    tsrs[i] = ( j &gt;= 0 ) ? _src.get(i - offset).derive(inputs, d, j) : _src.get(i - offset).derive(inputs, d);</span>
-                }
-<span class="fc bfc" id="L306" title="All 2 branches covered.">                tempShape = ( tempShape == null ) ? tsrs[i].getNDConf().shape() : tempShape;</span>
-            }
-        }
-<span class="fc bfc" id="L309" title="All 2 branches covered.">        for ( int i = offset; i &lt; tsrs.length; i++ ) {</span>
-<span class="fc bfc" id="L310" title="All 2 branches covered.">            if ( tsrs[i] == null ) {</span>
-<span class="fc" id="L311">                tsrs[i] =</span>
-<span class="fc bfc" id="L312" title="All 2 branches covered.">                        ( j &lt; 0 )</span>
-<span class="fc" id="L313">                                ? new Tsr(tempShape, ((FunctionConstant) _src.get(i - offset)).value())</span>
-<span class="fc" id="L314">                                : new Tsr(tempShape, _src.get(i - offset).call(new double[]{}, j));</span>
-            }
-        }
-<span class="fc" id="L317">        return tsrs;</span>
-    }
-
-    private Device _device( Tsr[] inputs )
-    {
-<span class="fc bfc" id="L322" title="All 2 branches covered.">        if ( inputs.length == 0 ) return HostCPU.instance();</span>
-<span class="fc" id="L323">        Device device = inputs[0].find( Device.class );</span>
-<span class="fc" id="L324">        boolean onSameDevice = _shareGuestDevice( inputs );</span>
-<span class="fc bfc" id="L325" title="All 4 branches covered.">        boolean doAccel = !_type.getOperator().equals(&quot;,&quot;) &amp;&amp; onSameDevice;</span>
-<span class="pc bpc" id="L326" title="1 of 4 branches missed.">        return ( doAccel &amp;&amp; device != null ) ? device : inputs[0].device();</span>
-    }
-
-    private static boolean _shareGuestDevice( Tsr[] tsrs )
-    {
-<span class="fc" id="L331">        boolean onSameGuestDevice = true;</span>
-<span class="fc" id="L332">        Device device = null;</span>
-<span class="fc bfc" id="L333" title="All 4 branches covered.">        for ( Tsr tsr : tsrs ) device = ( tsr.isOutsourced() ) ? tsr.find( Device.class ) : device;</span>
-
-<span class="fc bfc" id="L335" title="All 2 branches covered.">        if ( device != null ) {</span>
-<span class="fc bfc" id="L336" title="All 2 branches covered.">            for ( Tsr tsr : tsrs ) {</span>
-<span class="fc bfc" id="L337" title="All 6 branches covered.">                onSameGuestDevice = ( !tsr.isVirtual() &amp;&amp; device == tsr.find(Device.class) ) &amp;&amp; onSameGuestDevice;</span>
-            }
-<span class="fc" id="L339">        } else onSameGuestDevice = false;</span>
-
-<span class="fc bfc" id="L341" title="All 6 branches covered.">        if ( device != null &amp;&amp; tsrs.length == 2 &amp;&amp; tsrs[1].size() == 1 ) {</span>
-<span class="fc" id="L342">            onSameGuestDevice = true;</span>
-        }
-<span class="fc" id="L344">        return onSameGuestDevice;</span>
-    }
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

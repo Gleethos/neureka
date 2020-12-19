@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NDIterator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.iterators</a> &gt; <span class="el_source">NDIterator.java</span></div><h1>NDIterator.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   _   _ _____ _____ _                 _
+  | \ | |  __ \_   _| |               | |
+  |  \| | |  | || | | |_ ___ _ __ __ _| |_ ___  _ __
+  | . ` | |  | || | | __/ _ \ '__/ _` | __/ _ \| '__|
+  | |\  | |__| || |_| ||  __/ | | (_| | || (_) | |
+  |_| \_|_____/_____|\__\___|_|  \__,_|\__\___/|_|
+
+
+*/
+
+
+package neureka.ndim.iterators;
+
+
+import neureka.Neureka;
+import neureka.Tsr;
+import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.types.complex.ComplexD1Configuration;
+import neureka.ndim.config.types.complex.ComplexD2Configuration;
+import neureka.ndim.config.types.complex.ComplexD3Configuration;
+import neureka.ndim.config.types.simple.SimpleD1Configuration;
+import neureka.ndim.config.types.simple.SimpleD2Configuration;
+import neureka.ndim.config.types.simple.SimpleD3Configuration;
+import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
+import neureka.ndim.iterators.types.*;
+import neureka.ndim.iterators.types.complex.ComplexD1CIterator;
+import neureka.ndim.iterators.types.complex.legacy.ComplexLegacyD2CIterator;
+import neureka.ndim.iterators.types.complex.legacy.ComplexLegacyD3CIterator;
+import neureka.ndim.iterators.types.complex.main.ComplexD2CIterator;
+import neureka.ndim.iterators.types.complex.main.ComplexD3CIterator;
+import neureka.ndim.iterators.types.simple.SimpleD1CIterator;
+import neureka.ndim.iterators.types.simple.legacy.SimpleLegacyD2CIterator;
+import neureka.ndim.iterators.types.simple.legacy.SimpleLegacyD3CIterator;
+import neureka.ndim.iterators.types.simple.main.SimpleD2CIterator;
+import neureka.ndim.iterators.types.simple.main.SimpleD3CIterator;
+
+import java.util.StringJoiner;
+import java.util.stream.IntStream;
+
+public interface NDIterator
+{
+    static NDIterator of( Tsr&lt;?&gt; t ) {
+
+<span class="fc" id="L68">        NDConfiguration ndc = t.getNDConf();</span>
+
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        if ( ndc instanceof ComplexD1Configuration) return new ComplexD1CIterator( (ComplexD1Configuration) ndc );</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        if ( ndc instanceof SimpleD1Configuration ) return new SimpleD1CIterator( (SimpleD1Configuration) ndc );</span>
+
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if ( Neureka.instance().settings().indexing().isUsingLegacyIndexing() ) {</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">            if ( ndc instanceof ComplexD2Configuration) return new ComplexLegacyD2CIterator( (ComplexD2Configuration) ndc );</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">            if ( ndc instanceof ComplexD3Configuration) return new ComplexLegacyD3CIterator( (ComplexD3Configuration) ndc );</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">            if ( ndc instanceof SimpleD2Configuration ) return new SimpleLegacyD2CIterator( (SimpleD2Configuration) ndc );</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">            if ( ndc instanceof SimpleD3Configuration ) return new SimpleLegacyD3CIterator( (SimpleD3Configuration) ndc );</span>
+        } else {
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">            if ( ndc instanceof ComplexD2Configuration) return new ComplexD2CIterator( (ComplexD2Configuration) ndc );</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">            if ( ndc instanceof ComplexD3Configuration) return new ComplexD3CIterator( (ComplexD3Configuration) ndc );</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">            if ( ndc instanceof SimpleD2Configuration ) return new SimpleD2CIterator( (SimpleD2Configuration) ndc );</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">            if ( ndc instanceof SimpleD3Configuration ) return new SimpleD3CIterator( (SimpleD3Configuration) ndc );</span>
+        }
+
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        if ( ndc instanceof VirtualNDConfiguration )</span>
+<span class="nc" id="L86">            return new VirtualNDIterator( (VirtualNDConfiguration) ndc );</span>
+        else
+<span class="fc" id="L88">            return new DefaultNDIterator( ndc );</span>
+    }
+
+    int shape( int i );
+
+    int[] shape();
+
+    void increment();
+
+    void decrement();
+
+    int i();
+
+    int get( int axis );
+
+    int[] get();
+
+    void set( int axis, int position );
+
+    void set( int[] idx );
+
+    int rank();
+
+
+    default String asString()
+    {
+<span class="nc" id="L114">        StringBuilder b = new StringBuilder();</span>
+
+<span class="nc" id="L116">        StringJoiner sj = new StringJoiner( &quot;,&quot; );</span>
+<span class="nc" id="L117">        StringJoiner finalSj1 = sj;</span>
+<span class="nc" id="L118">        IntStream.of( this.shape() ).forEach( x -&gt; finalSj1.add( String.valueOf(x) ) );</span>
+
+<span class="nc" id="L120">        b.append( &quot;S[&quot; + sj.toString() + &quot;];&quot; );</span>
+<span class="nc" id="L121">        sj = new StringJoiner( &quot;,&quot; );</span>
+<span class="nc" id="L122">        StringJoiner finalSj = sj;</span>
+<span class="nc" id="L123">        IntStream.of( this.get() ).forEach( x -&gt; finalSj.add( String.valueOf( x ) ) );</span>
+<span class="nc" id="L124">        b.append( &quot;I[&quot; + sj.toString() + &quot;];&quot; );</span>
+<span class="nc" id="L125">        return b.toString();</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

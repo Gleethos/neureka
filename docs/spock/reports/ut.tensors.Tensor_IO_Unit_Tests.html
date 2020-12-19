@@ -1,272 +1,208 @@
 <!DOCTYPE html><html>
 <head>
 <meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
-<style>
-body {
-    font-family: Helvetica, Arial, sans-serif;
-    font-weight: 300;
+<style>body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 300;
 }
 
 h2 {
-    font-weight: 400;
-}
-
-hr {
-    margin-bottom: 1.5em;
+  font-weight: 400;
 }
 
 h3 {
-    font-weight: 200;
+  font-weight: 200;
+}
+
+.back-link {
+  font-size: small;
 }
 
 table {
-    margin: 7px;
-    -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
-    -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
-    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+  margin: 5px;
 }
-
-.ignored {
-    color: gray;
-}
-
-div.project-header {
-    margin-bottom: 10px;
-    font-size: large;
-}
-
-div.project-header &gt; span.project-name {
-
-                        }
-
-div.project-header &gt; span.project-version {
-                            padding-left: 20px;
-                        }
 
 div.date-test-ran {
-    font-size: small;
-    font-style: italic;
-}
-
-div.spec-title {
-    padding: 10px 0px 5px 0px;
-}
-
-tr.error td, td.error {
-    background-color: #F89A4F !important;
-}
-
-tr.failure td, td.failure {
-    color: red;
-}
-
-div.footer {
-    text-align: center;
-    font-size: small;
-}
-
-
-
-
-
-
-.back-link {
-    font-size: small;
-    font-weight: bold;
-}
-
-
-div.date-test-ran {
-    font-size: small;
-    font-style: italic;
+  font-size: small;
+  font-style: italic;
 }
 
 table.features-table {
-    width: 99%;
-    text-align: left;
+  width: 800px;
 }
 
 table.summary-table {
-    width: 99%;
-
-    font-weight: bold;
-    font-size: small;
-}
-
-table.summary-table tbody {
-    width: 99%;
-    text-align: left;
+  width: 800px;
+  text-align: left;
+  font-weight: bold;
+  font-size: small;
 }
 
 table.summary-table th {
-    background: lightblue;
-    padding: 6px;
+  background: lightblue;
+  padding: 6px;
 }
 
 table.summary-table td {
-    background: #E0E0E0;
-    padding: 6px;
+  background: #E0E0E0;
+  padding: 6px;
 }
 
 pre.title {
-    font-family: inherit;
-    font-size: 24px;
-    line-height: 28px;
-    letter-spacing: -1px;
-    color: #333;
+  font-family: inherit;
+  font-size: 24px;
+  line-height: 28px;
+  letter-spacing: -1px;
+  color: #333;
 }
 
 pre.narrative {
-    font-family: inherit;
-    font-size: 18px;
-    font-style: italic;
-    line-height: 23px;
-    letter-spacing: -1px;
-    color: #333;
+  font-family: inherit;
+  font-size: 18px;
+  font-style: italic;
+  line-height: 23px;
+  letter-spacing: -1px;
+  color: #333;
 }
 
 .feature-description {
-    font-size: large;
-    background: lightblue;
-    padding: 12px;
+  font-size: large;
+  background: lightblue;
+  padding: 12px;
 }
 
 .feature-toc-error {
-    color: #F89A4F;
+  color: #F89A4F;
 }
 
 .feature-toc-failure {
-    color: #FF8080;
+  color: #FF8080;
 }
 
 .feature-toc-ignored {
-    color: lightgray;
+  color: lightgray;
 }
 
 .feature-toc-pass {
-    color: green;
+  color: green;
 }
 
 .feature-description.error {
-    background: #F89A4F;
+  background: #F89A4F;
 }
 
 .feature-description.failure {
-    background: #FF8080;
+  background: #FF8080;
 }
 
 .feature-description.ignored {
-    background: lightgray;
+  background: lightgray;
 }
 
 .feature-description.ignored .reason {
-    color: black;
-    font-style: italic;
-    font-size: small;
+  color: black;
+  font-style: italic;
+  font-size: small;
 }
 
 div.extra-info {
-    font-size: small;
+  font-size: small;
 }
 
 div.spec-headers {
-    margin: 4px;
-    font-style: italic;
+  margin: 4px;
+  font-style: italic;
 }
 
 div.spec-header {
 }
 
 div.issues {
-    margin-top: 6px;
-    padding: 10px 5px 5px 5px;
-    background-color: lemonchiffon;
-    color: black;
-    font-weight: 500;
-    font-size: small;
-    max-width: 50%;
+  margin-top: 6px;
+  padding: 10px 5px 5px 5px;
+  background-color: lemonchiffon;
+  color: black;
+  font-weight: 500;
+  font-size: small;
+  max-width: 50%;
 }
 
 div.pending-feature {
-    background-color: dodgerblue;
-    color: white;
-    margin-top: 6px;
-    padding: 5px;
-    text-align: center;
-    font-size: small;
-    max-width: 120px;
+  background-color: dodgerblue;
+  color: white;
+  margin-top: 6px;
+  padding: 5px;
+  text-align: center;
+  font-size: small;
+  max-width: 120px;
 }
 
 div.problem-description {
-    padding: 10px;
-    background: pink;
-    border-radius: 10px;
+  padding: 10px;
+  background: pink;
+  border-radius: 10px;
 }
 
 div.problem-header {
-    font-weight: bold;
-    color: red;
+  font-weight: bold;
+  color: red;
 }
 
 div.problem-list {
 
 }
 
-table.ex-table{
-    width: 98%;
-}
-
 table.ex-table th {
-    background: lightblue;
-    padding: 5px;
+  background: lightblue;
+  padding: 5px;
 }
 
 table.ex-table td {
-    background: #E0E0E0;
-    padding: 2px 5px 2px 5px;
+  background: #E0E0E0;
+  padding: 2px 5px 2px 5px;
 }
 
 table td {
-    min-width: 50px;
+  min-width: 50px;
 }
 
 col.block-kind-col {
-    width: 70px;
+  width: 70px;
 }
 
 span.spec-header {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 div.spec-text {
-    /*color: green;*/
+  /*color: green;*/
 }
 
 div.spec-status {
-    font-style: italic;
+  font-style: italic;
 }
 
 .ignored {
-    color: gray;
+  color: gray;
 }
 
 td.ex-result {
-    text-align: center;
-    background: white !important;
+  text-align: center;
+  background: white !important;
 }
 
 .ex-pass {
-    color: darkgreen;
+  color: darkgreen;
 }
 
 .ex-fail {
-    color: red;
-    font-weight: bold;
+  color: red;
+  font-weight: bold;
 }
 
 div.block-kind {
-    margin: 2px;
-    font-style: italic;
+  margin: 2px;
+  font-style: italic;
 }
 
 div.block-text {
@@ -274,14 +210,14 @@ div.block-text {
 }
 
 pre.block-source {
-    background-color: whitesmoke;
-    padding: 10px;
+  background-color: whitesmoke;
+  padding: 10px;
 }
 
 pre.block-source.error {
-    background-color: pink;
-    color: red;
-    font-weight: bold;
+  background-color: pink;
+  color: red;
+  font-weight: bold;
 }
 
 pre.block-source.pre-error {
@@ -289,22 +225,23 @@ pre.block-source.pre-error {
 }
 
 pre.block-source.before-error {
-    margin-bottom: -14px;
+  margin-bottom: -14px;
 }
 
 pre.block-source.after-error {
-    color: gray;
-    margin-top: -14px;
+  color: gray;
+  margin-top: -14px;
 }
 
 pre.block-source.post-error {
-    color: gray;
+  color: gray;
 }
 
 div.footer {
-    text-align: center;
-    font-size: small;
-}</style>
+  text-align: center;
+  font-size: small;
+}
+</style>
 </head>
 <body>
 <h2>Report for ut.tensors.Tensor_IO_Unit_Tests</h2>
@@ -314,7 +251,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Tue Sep 08 15:46:55 CEST 2020 by Daglemino</div>
+<div class='date-test-ran'>Created on Sat Dec 19 19:58:42 CET 2020 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -326,15 +263,25 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>10</td>
+<td>11</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
-<td>100,0%</td>
-<td>0,654 seconds</td>
+<td>100.0%</td>
+<td>0.828 seconds</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class='spec-headers'>
+<div class='spec-header'>
+            <h2>Tensor Instantiation and IO Tests</h2>
+            <p>
+                This specification covers some basic behaviour related to
+                tensor instantiation and modification.
+                This includes the instantiation of tensors with custom seeds, shapes and values...
+            </p>
+        </div>
 </div>
 <h3>Features:</h3>
 <table class='features-table'>
@@ -346,6 +293,9 @@ div.footer {
 <ul id='toc'>
 <li>
 <a href='#-23914743' class='feature-toc-pass'>Tensors can be instantiated with String seed.</a>
+</li>
+<li>
+<a href='#583974159' class='feature-toc-pass'>Tensor initialization lambdas produce expected tensors.</a>
 </li>
 <li>
 <a href='#-856932970' class='feature-toc-pass'>Smart tensor constructors yield expected results.</a>
@@ -390,20 +340,6 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<div class='block-text'>The current Neureka instance configuration is being reset.</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>Neureka.instance().reset()</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>And:</div>
-</td>
-<td>
 <div class='block-text'>Three seeded 2D tensors are being instantiated.</div>
 </td>
 </tr>
@@ -426,8 +362,64 @@ Tsr t3 = new Tsr(new int[]{2, 3}, "I am also a seed! But different. :)")</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>assert t1.toString()==t2.toString()
-assert t1.toString()!=t3.toString()</pre>
+<pre class='block-source'>t1.toString() == t2.toString()
+t1.toString() != t3.toString()</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='583974159'>
+<span>Tensor initialization lambdas produce expected tensors.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>Instantiating a tensor using an initializer lambda...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr t = new Tsr(
+        [ 2, 3 ],
+        DataType.of( Integer.class ),
+        ( int i, int[] idx ) -&gt; { i - 2 }
+)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>t = new Tsr(
+        [ 2, 3 ],
+        DataType.of( String.class ),
+        ( int i, int[] idx ) -&gt; { i+':'+idx.toString() }
+)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t.toString() == "(2x3):[0:[0, 0], 1:[0, 1], 2:[0, 2], 3:[1, 0], 4:[1, 1], 5:[1, 2]]"</pre>
 </td>
 </tr>
 <tr>
@@ -649,14 +641,25 @@ assert t.value64().length==2</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().reset()
-Neureka.instance().settings().view().isUsingLegacyView = true</pre>
+<div class='block-text'>Neureka indexing mode is set to "legacy".</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().settings().view().isUsingLegacyView = true</pre>
 </td>
 </tr>
 <tr>
 <td>
 <div class='block-kind'>And:</div>
 </td>
+<td>
+<div class='block-text'>A new tensor instance with the shape (4x3).</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>Tsr t1 = new Tsr([4, 3], 1..12)</pre>
 </td>
@@ -665,6 +668,12 @@ Neureka.instance().settings().view().isUsingLegacyView = true</pre>
 <td>
 <div class='block-kind'>When:</div>
 </td>
+<td>
+<div class='block-text'>Recording the index behavior before and after a reshape operation...</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>def t1_ioi_1 = t1.i_of_idx(new int[]{2, 1})
 def t1_ioi_2 = t1.i_of_idx(new int[]{1, 2})
@@ -680,6 +689,12 @@ def t2_ioi_2 =  t2.i_of_idx(t2.idx_of_i(7))</pre>
 <td>
 <div class='block-kind'>Then:</div>
 </td>
+<td>
+<div class='block-text'>These recorded values are as one would expect.</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>t1_ioi_1 == 7
 t1_ioi_2 == 5
@@ -751,15 +766,39 @@ t2.toString().contains("[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().reset()
-Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Tsr x = new Tsr(3)</pre>
+<div class='block-text'>Neureka indexing mode is set to "legacy".</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A new tensor instance.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr x = new Tsr(3)</pre>
 </td>
 </tr>
 <tr>
 <td>
 <div class='block-kind'>When:</div>
 </td>
+<td>
+<div class='block-text'>Setting the value of the tensor...</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>float[] value32 = new float[1]
 value32[0] = 5
@@ -770,6 +809,12 @@ x.setValue(value32)</pre>
 <td>
 <div class='block-kind'>Then:</div>
 </td>
+<td>
+<div class='block-text'>...the tensor will change as expected.</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>!(x.getValue() instanceof float[])
 !x.is32()
@@ -782,6 +827,12 @@ x.value64(0)==5.0d</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
+<div class='block-text'>Doing the same with double array...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
 <pre class='block-source'>double[] value64 = new double[1]
 value64[0] = 4.0
 x.setValue(value64)</pre>
@@ -791,6 +842,12 @@ x.setValue(value64)</pre>
 <td>
 <div class='block-kind'>Then:</div>
 </td>
+<td>
+<div class='block-text'>...once again the tensor changes as expected.</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>x.getValue() instanceof double[]
 x.is64()
@@ -815,7 +872,7 @@ x.size()==1</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>x.to32()</pre>
+<pre class='block-source'>x.toType( Float.class )</pre>
 </td>
 </tr>
 <tr>
@@ -862,8 +919,13 @@ x.value64(0)==7.0d</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().reset()
-Neureka.instance().settings().view().setIsUsingLegacyView(true)
+<div class='block-text'>Neureka tensor view is set to legacy.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)
 Tsr x = new Tsr(3)</pre>
 </td>
 </tr>
@@ -872,7 +934,7 @@ Tsr x = new Tsr(3)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>x.to32()</pre>
+<pre class='block-source'>x.toType( Float.class )</pre>
 </td>
 </tr>
 <tr>
@@ -890,7 +952,7 @@ assert x.value32(0)==3.0f</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>x.to64()</pre>
+<pre class='block-source'>x.toType( Double.class )</pre>
 </td>
 </tr>
 <tr>
@@ -918,9 +980,27 @@ assert x.value32(0)==3.0f</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().reset()
-Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Tsr x = new Tsr(4)</pre>
+<div class='block-text'>Neureka tensor view is set to "legacy".</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A simple scalar tensor containing the number "4".</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr x = new Tsr(4)</pre>
 </td>
 </tr>
 <tr>
@@ -958,8 +1038,7 @@ y.toString().contains("[1]:(0.97014E0)")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().reset()
-Neureka.instance().settings().view().isUsingLegacyView = true</pre>
+<pre class='block-source'>Neureka.instance().settings().view().isUsingLegacyView = true</pre>
 </td>
 </tr>
 <tr>
@@ -1011,8 +1090,7 @@ Tsr x = Tsr.Create.newRandom(shape)</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().reset()
-Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
+<pre class='block-source'>Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
 Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
 Neureka.instance().settings().view().setIsUsingLegacyView(true)
 Tsr t = new Tsr([2, 2], [
@@ -1202,8 +1280,13 @@ Tsr.IO.subInto(t, idx, -9.0)</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
+<div class='block-text'>Neureka can access OpenCL (JOCL).</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
 <pre class='block-source'>if ( !Neureka.instance().canAccessOpenCL() ) return
-Neureka.instance().reset()
 Device gpu = Device.find("nvidia")
 Tsr t = new Tsr([3, 4, 1], 3)</pre>
 </td>
@@ -1212,6 +1295,12 @@ Tsr t = new Tsr([3, 4, 1], 3)</pre>
 <td>
 <div class='block-kind'>Expect:</div>
 </td>
+<td>
+<div class='block-text'>The following is to be expected with respect to the given :</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>!t.has(Device.class)
 !t.isOutsourced()
@@ -1223,13 +1312,25 @@ Tsr t = new Tsr([3, 4, 1], 3)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t.add(gpu)</pre>
+<div class='block-text'>The tensor is being added to the OpenCL device...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.set(gpu)</pre>
 </td>
 </tr>
 <tr>
 <td>
 <div class='block-kind'>Then:</div>
 </td>
+<td>
+<div class='block-text'>The now "outsourced" tensor has a reference to the device and vice versa!</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>t.has(Device.class)
 t.isOutsourced()

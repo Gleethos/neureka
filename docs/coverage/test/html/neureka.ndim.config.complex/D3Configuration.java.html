@@ -13,21 +13,21 @@ public final class D3Configuration extends AbstractNDC //:= IMMUTABLE
             int[] spread,
             int[] offset
 <span class="fc" id="L15">    ) {</span>
-<span class="fc" id="L16">        _shape1 = shape[0];</span>
-<span class="fc" id="L17">        _shape2 = shape[1];</span>
-<span class="fc" id="L18">        _shape3 = shape[2];</span>
-<span class="fc" id="L19">        _translation1 = translation[0];</span>
-<span class="fc" id="L20">        _translation2 = translation[1];</span>
-<span class="fc" id="L21">        _translation3 = translation[2];</span>
-<span class="fc" id="L22">        _idxmap1 = idxmap[0];</span>
-<span class="fc" id="L23">        _idxmap2 = idxmap[1];</span>
-<span class="fc" id="L24">        _idxmap3 = idxmap[2];</span>
-<span class="fc" id="L25">        _spread1 = spread[0];</span>
-<span class="fc" id="L26">        _spread2 = spread[1];</span>
-<span class="fc" id="L27">        _spread3 = spread[2];</span>
-<span class="fc" id="L28">        _offset1 = offset[0];</span>
-<span class="fc" id="L29">        _offset2 = offset[1];</span>
-<span class="fc" id="L30">        _offset3 = offset[2];</span>
+<span class="fc" id="L16">        _shape1 = shape[ 0 ];</span>
+<span class="fc" id="L17">        _shape2 = shape[ 1 ];</span>
+<span class="fc" id="L18">        _shape3 = shape[ 2 ];</span>
+<span class="fc" id="L19">        _translation1 = translation[ 0 ];</span>
+<span class="fc" id="L20">        _translation2 = translation[ 1 ];</span>
+<span class="fc" id="L21">        _translation3 = translation[ 2 ];</span>
+<span class="fc" id="L22">        _idxmap1 = idxmap[ 0 ];</span>
+<span class="fc" id="L23">        _idxmap2 = idxmap[ 1 ];</span>
+<span class="fc" id="L24">        _idxmap3 = idxmap[ 2 ];</span>
+<span class="fc" id="L25">        _spread1 = spread[ 0 ];</span>
+<span class="fc" id="L26">        _spread2 = spread[ 1 ];</span>
+<span class="fc" id="L27">        _spread3 = spread[ 2 ];</span>
+<span class="fc" id="L28">        _offset1 = offset[ 0 ];</span>
+<span class="fc" id="L29">        _offset2 = offset[ 1 ];</span>
+<span class="fc" id="L30">        _offset3 = offset[ 2 ];</span>
 <span class="fc" id="L31">    }</span>
 
     public static NDConfiguration construct(
@@ -56,7 +56,7 @@ public final class D3Configuration extends AbstractNDC //:= IMMUTABLE
      *  The mapping of idx array.
      */
     private final int _idxmap1;
-    private final int _idxmap2; // Used to avoid distortion when reshaping!
+    private final int _idxmap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
     private final int _idxmap3;
     /**
      *  Produces the strides of a tensor subset / slice
@@ -174,9 +174,9 @@ public final class D3Configuration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int i_of_idx(int[] idx) {
-<span class="fc" id="L177">        return (idx[0] * _spread1 + _offset1) * _translation1 +</span>
-                    (idx[1] * _spread2 + _offset2) * _translation2 +
-                        (idx[2] * _spread3 + _offset3) * _translation3;
+<span class="nc" id="L177">        return (idx[ 0 ] * _spread1 + _offset1) * _translation1 +</span>
+                    (idx[ 1 ] * _spread2 + _offset2) * _translation2 +
+                        (idx[ 2 ] * _spread3 + _offset3) * _translation3;
     }
 
 }

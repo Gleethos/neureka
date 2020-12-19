@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UI64.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.dtype.custom</a> &gt; <span class="el_source">UI64.java</span></div><h1>UI64.java</h1><pre class="source lang-java linenums">package neureka.dtype.custom;
+
+import neureka.dtype.AbstractNumericType;
+import neureka.utility.DataConverter;
+
+import java.io.IOException;
+import java.io.DataInput;
+import java.math.BigInteger;
+import java.util.Iterator;
+
+public final class UI64 extends AbstractNumericType&lt;BigInteger, BigInteger[], Long, long[]&gt;
+{
+
+<span class="fc" id="L14">    public UI64() { super(); }</span>
+
+    @Override
+    public boolean signed() {
+<span class="fc" id="L18">        return false;</span>
+    }
+
+    @Override
+    public int numberOfBytes() {
+<span class="fc" id="L23">        return 8;</span>
+    }
+
+    @Override
+    public Class&lt;BigInteger&gt; targetType() {
+<span class="fc" id="L28">        return BigInteger.class;</span>
+    }
+
+    @Override
+    public Class&lt;BigInteger[]&gt; targetArrayType() {
+<span class="fc" id="L33">        return BigInteger[].class;</span>
+    }
+
+    @Override
+    public Class&lt;Long&gt; holderType() {
+<span class="nc" id="L38">        return Long.class;</span>
+    }
+
+    @Override
+    public Class&lt;long[]&gt; holderArrayType() {
+<span class="nc" id="L43">        return long[].class;</span>
+    }
+
+    @Override
+    public BigInteger foreignHolderBytesToTarget(byte[] bytes ) { // This is working but not optimal
+        // use &quot;import static java.math.BigInteger.ONE;&quot; to shorten this line
+<span class="fc" id="L49">        BigInteger UNSIGNED_LONG_MASK = BigInteger.ONE.shiftLeft(Long.SIZE).subtract(BigInteger.ONE);</span>
+<span class="fc" id="L50">        long unsignedLong = new BigInteger(bytes).longValue(); // sample input value</span>
+<span class="fc" id="L51">        BigInteger bi =  BigInteger.valueOf(unsignedLong).and(UNSIGNED_LONG_MASK);</span>
+<span class="fc" id="L52">        System.out.println(&quot;To big integer : &quot;+bi);</span>
+<span class="fc" id="L53">        return bi;</span>
+    }
+
+    @Override
+    public BigInteger toTarget( Long original ) {
+<span class="fc" id="L58">        System.out.println(&quot;To unsigned string : &quot;+Long.toUnsignedString( original ));</span>
+<span class="fc" id="L59">        return new BigInteger( Long.toUnsignedString( original ) );</span>
+    }
+
+    @Override
+    public byte[] targetToForeignHolderBytes( BigInteger b ) {
+<span class="fc" id="L64">        byte[] unsignedbyteArray= b.toByteArray();</span>
+<span class="fc" id="L65">        byte[] bytes = new byte[8];</span>
+<span class="fc" id="L66">        System.arraycopy(</span>
+<span class="fc" id="L67">                unsignedbyteArray, Math.max(0, unsignedbyteArray.length-8),</span>
+                bytes, 0,
+<span class="fc" id="L69">                Math.min( 8, unsignedbyteArray.length )</span>
+        );
+<span class="fc" id="L71">        return bytes;</span>
+    }
+
+    @Override
+    public BigInteger[] readAndConvertForeignDataFrom( DataInput stream, int size ) throws IOException {
+<span class="nc" id="L76">        return new BigInteger[ 0 ];</span>
+    }
+
+    @Override
+    public &lt;T&gt; BigInteger[] readAndConvertForeignDataFrom( Iterator&lt;T&gt; iterator, int size ) {
+<span class="nc" id="L81">        return new BigInteger[0];</span>
+    }
+
+    @Override
+    public long[] readForeignDataFrom( DataInput stream, int size ) throws IOException {
+<span class="nc" id="L86">        return new long[0];</span>
+    }
+
+    @Override
+    public &lt;T&gt; long[] readForeignDataFrom( Iterator&lt;T&gt; iterator, int size ) {
+<span class="nc" id="L91">        return new long[0];</span>
+    }
+
+    @Override
+    public Long convertToHolder( Object from ) {
+<span class="nc" id="L96">        return null;</span>
+    }
+
+    @Override
+    public long[] convertToHolderArray( Object from ) {
+<span class="nc" id="L101">        return new long[0];</span>
+    }
+
+    @Override
+    public BigInteger convertToTarget( Object from ) {
+<span class="nc" id="L106">        return null;</span>
+    }
+
+    @Override
+    public BigInteger[] convertToTargetArray( Object from ) {
+<span class="fc" id="L111">        return DataConverter.instance().convert( from, BigInteger[].class );</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NDConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config</a> &gt; <span class="el_source">NDConfiguration.java</span></div><h1>NDConfiguration.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   _   _ _____   _____             __ _                       _   _
+  | \ | |  __ \ / ____|           / _(_)                     | | (_)
+  |  \| | |  | | |     ___  _ __ | |_ _  __ _ _   _ _ __ __ _| |_ _  ___  _ __
+  | . ` | |  | | |    / _ \| '_ \|  _| |/ _` | | | | '__/ _` | __| |/ _ \| '_ \
+  | |\  | |__| | |___| (_) | | | | | | | (_| | |_| | | | (_| | |_| | (_) | | | |
+  |_| \_|_____/ \_____\___/|_| |_|_| |_|\__, |\__,_|_|  \__,_|\__|_|\___/|_| |_|
+                                         __/ |
+                                        |___/
+*/
+
+package neureka.ndim.config;
+
+import neureka.Neureka;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
+public interface NDConfiguration
+{
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    int rank();
+
+    int[] shape();
+
+    int shape(int i);
+
+    int[] idxmap();
+
+    int idxmap(int i);
+
+    int[] translation();
+
+    int translation(int i);
+
+    int[] spread();
+
+    int spread(int i);
+
+    int[] offset();
+
+    int offset(int i);
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    int i_of_i(int i);
+
+    int[] idx_of_i(int i);
+
+    int i_of_idx(int[] idx);
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    int[] asInlineArray();
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    long keyCode();
+
+    boolean equals(NDConfiguration ndc);
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    NDConfiguration newReshaped(int[] newForm);
+
+<span class="nc" id="L89">    public class Utility {</span>
+
+        @Contract(pure = true)
+        public static int[] rearrange(int[] tln, int[] shp, @NotNull int[] newForm) {
+<span class="fc" id="L93">            int[] shpTln = newTlnOf(shp);</span>
+<span class="fc" id="L94">            int[] newTln = new int[newForm.length];</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">            for (int i = 0; i &lt; newForm.length; i++) {</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">                if (newForm[ i ] &lt; 0) newTln[ i ] = shpTln[ i ];</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">                else if (newForm[ i ] &gt;= 0) newTln[ i ] = tln[newForm[ i ]];</span>
+            }
+<span class="fc" id="L99">            return newTln;</span>
+        }
+
+        @Contract(pure = true)
+        public static int[] rearrange(@NotNull int[] array, @NotNull int[] ptr) {
+<span class="fc" id="L104">            int[] newShp = new int[ptr.length];</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">            for (int i = 0; i &lt; ptr.length; i++) {</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">                if (ptr[ i ] &lt; 0) newShp[ i ] = Math.abs(ptr[ i ]);</span>
+<span class="pc bpc" id="L107" title="1 of 2 branches missed.">                else if (ptr[ i ] &gt;= 0) newShp[ i ] = array[ptr[ i ]];</span>
+            }
+<span class="fc" id="L109">            return newShp;</span>
+        }
+
+        @Contract(pure = true)
+        public static int[] newTlnOf(int[] shape) {
+<span class="fc" id="L114">            int[] tln = new int[ shape.length ];</span>
+<span class="fc" id="L115">            int prod = 1;</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">            if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                for (int i = 0; i &lt; tln.length; i++) {</span>
+<span class="fc" id="L118">                    tln[ i ] = prod;</span>
+<span class="fc" id="L119">                    prod *= shape[ i ];</span>
+                }
+            } else {
+<span class="fc bfc" id="L122" title="All 2 branches covered.">                for (int i = tln.length-1; i &gt;= 0; i--) {</span>
+<span class="fc" id="L123">                    tln[ i ] = prod;</span>
+<span class="fc" id="L124">                    prod *= shape[ i ];</span>
+                }
+            }
+<span class="fc" id="L127">            return tln;</span>
+        }
+
+        @Contract(pure = true)
+        public static void increment( @NotNull int[] shpIdx, @NotNull int[] shape ) {
+            int i;
+<span class="fc bfc" id="L133" title="All 2 branches covered.">            if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) i = 0;</span>
+<span class="fc" id="L134">            else i = shape.length-1;</span>
+<span class="fc bfc" id="L135" title="All 4 branches covered.">            while ( i &gt;= 0 &amp;&amp; i &lt; shape.length ) i = _incrementAt( i, shpIdx, shape );</span>
+<span class="fc" id="L136">        }</span>
+
+        @Contract(pure = true)
+        private static int _incrementAt( int i, @NotNull int[] shpIdx, @NotNull int[] shape ) {
+<span class="fc bfc" id="L140" title="All 2 branches covered.">            if ( Neureka.instance().settings().indexing().isUsingLegacyIndexing() ) {</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">                if ( shpIdx[ i ] &lt; shape[ i ] ) {</span>
+<span class="fc" id="L142">                    shpIdx[ i ]++;</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">                    if ( shpIdx[ i ] == shape[ i ] ) {</span>
+<span class="fc" id="L144">                        shpIdx[ i ] = 0;</span>
+<span class="fc" id="L145">                        i++;</span>
+                    }
+<span class="fc" id="L147">                    else i = -1;</span>
+                }
+<span class="nc" id="L149">                else i++;</span>
+<span class="fc" id="L150">                return i;</span>
+            } else {
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">                if ( shpIdx[ i ] &lt; shape[ i ] ) {</span>
+<span class="fc" id="L153">                    shpIdx[ i ]++;</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">                    if ( shpIdx[ i ] == shape[ i ] ) {</span>
+<span class="fc" id="L155">                        shpIdx[ i ] = 0;</span>
+<span class="fc" id="L156">                        i--;</span>
+                    }
+<span class="fc" id="L158">                    else i = -1;</span>
+                }
+<span class="nc" id="L160">                else i--;</span>
+<span class="fc" id="L161">                return i;</span>
+            }
+        }
+
+        @Contract(pure = true)
+        public static int szeOfShp( int[] shape ) {
+<span class="fc" id="L167">            int size = 1;</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">            for ( int i : shape ) size *= i;</span>
+<span class="fc" id="L169">            return size;</span>
+        }
+
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

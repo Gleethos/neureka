@@ -1,27 +1,91 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Operator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.backend.implementations.functional</a> &gt; <span class="el_source">Operator.java</span></div><h1>Operator.java</h1><pre class="source lang-java linenums">package neureka.calculus.backend.implementations.functional;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Operator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.backend.implementations.functional</a> &gt; <span class="el_source">Operator.java</span></div><h1>Operator.java</h1><pre class="source lang-java linenums">package neureka.calculus.backend.implementations.functional;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.calculus.Function;
+import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.AbstractFunctionalOperationTypeImplementation;
 import neureka.calculus.backend.operations.OperationType;
+import neureka.devices.Device;
+import neureka.dtype.NumericType;
+import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
+
+import java.util.List;
 
 public class Operator extends AbstractFunctionalOperationTypeImplementation&lt;Operator&gt;
 {
     public Operator() {
-<span class="fc" id="L12">        super(&quot;operator&quot;);</span>
-<span class="fc" id="L13">        setSuitabilityChecker(</span>
+<span class="fc" id="L20">        super(&quot;operator&quot;);</span>
+<span class="fc" id="L21">        setSuitabilityChecker(</span>
                 call -&gt; {
-<span class="fc bfc" id="L15" title="All 2 branches covered.">                    int size = ( call.getTensors()[0] == null ) ? call.getTensors()[1].size() : call.getTensors()[0].size();</span>
-<span class="fc bfc" id="L16" title="All 6 branches covered.">                    for ( Tsr t : call.getTensors() ) if ( t!=null &amp;&amp; t.size() != size ) return false;</span>
-<span class="fc" id="L17">                    return true;</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">                    List&lt;Integer&gt; shape = ( call.getTensors()[ 0 ] == null ) ? call.getTensors()[ 1 ].shape() : call.getTensors()[ 0 ].shape();</span>
+<span class="fc" id="L24">                    int size = shape.stream().reduce(1,( x, y )-&gt; x * y );</span>
+<span class="fc" id="L25">                    return call.validate()</span>
+<span class="fc bfc" id="L26" title="All 4 branches covered.">                            .allNotNull( t -&gt; t.size() == size &amp;&amp; shape.equals( t.shape() ) )</span>
+<span class="fc" id="L27">                            .allNotNull( t -&gt; t.getDataType().typeClassImplements( NumericType.class ) )</span>
+<span class="fc" id="L28">                            .estimation();</span>
                 }
         );
-<span class="fc" id="L20">    }</span>
+<span class="fc" id="L31">        setBackwardADAnalyzer( call -&gt; true );</span>
+<span class="fc" id="L32">        setForwardADAnalyzer( call -&gt; true );</span>
+<span class="fc" id="L33">        setCallHock( ( caller, call ) -&gt; null );</span>
+<span class="fc" id="L34">        setDrainInstantiation(</span>
+                call -&gt; {
+<span class="fc" id="L36">                    Tsr[] tsrs = call.getTensors();</span>
+<span class="fc" id="L37">                    Device device = call.getDevice();</span>
+<span class="pc bpc" id="L38" title="1 of 2 branches missed.">                    if ( tsrs[ 0 ] == null ) // Creating a new tensor:</span>
+                    {
+<span class="fc" id="L40">                        int[] shp = tsrs[ 1 ].getNDConf().shape();</span>
+<span class="fc" id="L41">                        Tsr output = new Tsr( shp, 0.0 );</span>
+<span class="fc" id="L42">                        output.setIsVirtual( false );</span>
+                        try {
+<span class="fc" id="L44">                            device.store( output );</span>
+<span class="nc" id="L45">                        } catch( Exception e ) {</span>
+<span class="nc" id="L46">                            e.printStackTrace();</span>
+<span class="fc" id="L47">                        }</span>
+<span class="fc" id="L48">                        tsrs[ 0 ] = output;</span>
+                    }
+<span class="fc" id="L50">                    return call;</span>
+                }
+        );
+<span class="fc" id="L53">    }</span>
 
-    public String getKernelSource(){
-<span class="fc" id="L23">        return Neureka.instance().utility().readResource(&quot;kernels/operator_template.cl&quot;);</span>
+    public String getKernelSource() {
+<span class="fc" id="L56">        return Neureka.instance().utility().readResource(&quot;kernels/operator_template.cl&quot;);</span>
     }
+
+
+    @Contract(pure = true)
+    public static void operate(
+            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            int d, int i, int end,
+            OperationType.SecondaryNDIConsumer operation
+    ) {
+<span class="pc bpc" id="L66" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() ) {</span>
+<span class="nc" id="L67">            ((double[])t0_drn.getValue())[ 0 ] = operation.execute( NDIterator.of( t1_src ), NDIterator.of( t2_src ) ); // new int[t0_drn.rank()]</span>
+        } else {
+            //int[] t0Shp = t0_drn.getNDConf().shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0
+<span class="fc" id="L70">            double[] t0_value = t0_drn.value64();</span>
+<span class="fc" id="L71">            NDIterator t0Idx = NDIterator.of( t0_drn ); //t0_drn.idx_of_i( i );</span>
+<span class="fc" id="L72">            NDIterator t1Idx = NDIterator.of( t1_src );</span>
+<span class="fc" id="L73">            NDIterator t2Idx = NDIterator.of( t2_src );</span>
+<span class="fc" id="L74">            t0Idx.set( t0_drn.idx_of_i( i ) );</span>
+<span class="fc" id="L75">            t1Idx.set( t1_src.idx_of_i( i ) );</span>
+<span class="fc" id="L76">            t2Idx.set( t2_src.idx_of_i( i ) );</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">            while ( i &lt; end ) {//increment on drain accordingly:</span>
+                //setInto _value in drn:
+<span class="fc" id="L79">                t0_value[ t0Idx.i() ] = operation.execute( t1Idx, t2Idx );</span>
+                //increment on drain:
+<span class="fc" id="L81">                t0Idx.increment();</span>
+<span class="fc" id="L82">                t1Idx.increment();</span>
+<span class="fc" id="L83">                t2Idx.increment();</span>
+<span class="fc" id="L84">                i++;</span>
+            }
+        }
+<span class="fc" id="L87">    }</span>
+
 
 
     @Contract(pure = true)
@@ -30,21 +94,22 @@ public class Operator extends AbstractFunctionalOperationTypeImplementation&lt;O
             int d, int i, int end,
             OperationType.PrimaryNDXConsumer operation
     ) {
-<span class="pc bpc" id="L33" title="5 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() ) {</span>
-<span class="nc" id="L34">            ((double[])t0_drn.getValue())[0] = operation.execute( new int[t0_drn.rank()] );</span>
+<span class="pc bpc" id="L97" title="2 of 6 branches missed.">        if ( t0_drn.isVirtual() &amp;&amp; t1_src.isVirtual() &amp;&amp; t2_src.isVirtual() ) {</span>
+<span class="nc" id="L98">            ((double[])t0_drn.getValue())[ 0 ] = operation.execute( new int[t0_drn.rank()] );</span>
         } else {
-<span class="fc" id="L36">            int[] t0Shp = t0_drn.getNDConf().shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
-<span class="fc" id="L37">            int[] t0Idx = t0_drn.idx_of_i(i);</span>
-<span class="fc" id="L38">            double[] t0_value = t0_drn.value64();</span>
-<span class="fc bfc" id="L39" title="All 2 branches covered.">            while (i &lt; end) {//increment on drain accordingly:</span>
+<span class="fc" id="L100">            NDConfiguration ndc0 = t0_drn.getNDConf();</span>
+<span class="fc" id="L101">            int[] t0Shp = ndc0.shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d&gt;=0</span>
+<span class="fc" id="L102">            int[] t0Idx = ndc0.idx_of_i( i );</span>
+<span class="fc" id="L103">            double[] t0_value = (double[]) t0_drn.getData();</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">            while (i &lt; end) {//increment on drain accordingly:</span>
                 //setInto _value in drn:
-<span class="fc" id="L41">                t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute( t0Idx );</span>
+<span class="fc" id="L106">                t0_value[ndc0.i_of_idx(t0Idx)] = operation.execute( t0Idx );</span>
                 //increment on drain:
-<span class="fc" id="L43">                Tsr.Utility.Indexing.increment(t0Idx, t0Shp);</span>
-<span class="fc" id="L44">                i++;</span>
+<span class="fc" id="L108">                NDConfiguration.Utility.increment( t0Idx, t0Shp );</span>
+<span class="fc" id="L109">                i++;</span>
             }
         }
-<span class="fc" id="L47">    }</span>
+<span class="fc" id="L112">    }</span>
 
 
 }

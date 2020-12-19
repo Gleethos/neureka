@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GenericImplementation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api.implementations</a> &gt; <span class="el_source">GenericImplementation.java</span></div><h1>GenericImplementation.java</h1><pre class="source lang-java linenums">package neureka.backend.api.implementations;
+
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+import neureka.Tsr;
+import neureka.autograd.ADAgent;
+import neureka.autograd.DefaultADAgent;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.operations.OperationType;
+import neureka.calculus.Function;
+import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.implementations.FunctionNode;
+import neureka.devices.Device;
+import neureka.devices.host.execution.HostExecutor;
+import neureka.dtype.NumericType;
+
+import java.util.Arrays;
+
+public class GenericImplementation extends AbstractBaseOperationTypeImplementation&lt;OperationTypeImplementation&gt;{
+
+    public GenericImplementation( String name, int arity,  OperationType type ) {
+<span class="fc" id="L22">        super(name);</span>
+<span class="fc" id="L23">        setExecutor(</span>
+                HostExecutor.class,
+                new HostExecutor(
+                        call -&gt; {
+<span class="fc" id="L27">                            Function f = FunctionBuilder.build( type, call.getTensors().length-1, false);</span>
+<span class="fc" id="L28">                            boolean allNumeric = call.validate()</span>
+<span class="fc" id="L29">                                    .all( t -&gt; t.getDataType().typeClassImplements(NumericType.class) )</span>
+<span class="fc" id="L30">                                    .isValid();</span>
+
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">                            if ( allNumeric )</span>
+                            {
+<span class="nc" id="L34">                                double[] inputs = new double[call.getTensors().length-1];</span>
+<span class="nc" id="L35">                                call</span>
+<span class="nc" id="L36">                                        .getDevice()</span>
+<span class="nc" id="L37">                                        .getExecutor()</span>
+<span class="nc" id="L38">                                        .threaded (</span>
+<span class="nc" id="L39">                                                call.getTensor( 0 ).size(),</span>
+                                                ( start, end ) -&gt; {
+<span class="nc bnc" id="L41" title="All 2 branches missed.">                                                    for ( int i = start; i &lt; end; i++ ) {</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">                                                        for ( int ii = 0; ii &lt; inputs.length; ii++ ) {</span>
+<span class="nc" id="L43">                                                            inputs[ii] = call.getTensor(1+ii).value64( i );</span>
+                                                        }
+<span class="nc" id="L45">                                                        call.getTensor( 0 ).value64()[ i ] = f.call( inputs );</span>
+                                                    }
+<span class="nc" id="L47">                                                }</span>
+                                        );
+<span class="nc" id="L49">                            } else {</span>
+<span class="fc" id="L50">                                Object[] inputs = new Object[ call.getTensors().length-1 ];</span>
+<span class="fc" id="L51">                                String expression = f.toString();</span>
+<span class="fc" id="L52">                                Binding binding = new Binding();</span>
+<span class="fc" id="L53">                                binding.setVariable(&quot;I&quot;, inputs);</span>
+<span class="fc" id="L54">                                GroovyShell shell = new GroovyShell(binding);</span>
+<span class="fc" id="L55">                                call</span>
+<span class="fc" id="L56">                                        .getDevice()</span>
+<span class="fc" id="L57">                                        .getExecutor()</span>
+<span class="fc" id="L58">                                        .threaded (</span>
+<span class="fc" id="L59">                                                call.getTensor( 0 ).size(),</span>
+                                                ( start, end ) -&gt; {
+<span class="fc bfc" id="L61" title="All 2 branches covered.">                                                    for ( int i = start; i &lt; end; i++ ) {</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">                                                        for ( int ii = 0; ii &lt; inputs.length; ii++ ) {</span>
+<span class="fc" id="L63">                                                            inputs[ii] = call.getTensor(1+ii).getElement(i);</span>
+                                                        }
+<span class="fc" id="L65">                                                        call.getTensor( 0 ).setAt(i, shell.evaluate( expression ) );</span>
+                                                    }
+<span class="fc" id="L67">                                                }</span>
+                                        );
+
+                            }
+<span class="fc" id="L71">                        },</span>
+                        arity
+                )
+        );
+<span class="fc" id="L75">    }</span>
+
+    @Override
+    public float isImplementationSuitableFor(ExecutionCall call) {
+<span class="fc" id="L79">        int[] shape = null;</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : call.getTensors() ) {</span>
+<span class="fc bfc" id="L81" title="All 4 branches covered.">            if ( shape == null ) if ( t != null ) shape = t.getNDConf().shape();</span>
+<span class="pc bpc" id="L82" title="3 of 4 branches missed.">            else if ( t != null &amp;&amp; !Arrays.equals( shape, t.getNDConf().shape() ) ) return 0.0f;</span>
+        }
+<span class="fc" id="L84">        return 1.0f;</span>
+    }
+
+    /**
+     * @param call The execution call which has been routed to this implementation...
+     * @return null because the default implementation is not outsourced.
+     */
+    @Override
+    public Device findDeviceFor(ExecutionCall call ) {
+<span class="fc" id="L93">        return null;</span>
+    }
+
+    @Override
+    public boolean canImplementationPerformForwardADFor( ExecutionCall call ) {
+<span class="fc" id="L98">        return true;</span>
+    }
+
+    @Override
+    public boolean canImplementationPerformBackwardADFor( ExecutionCall call ) {
+<span class="fc" id="L103">        return true;</span>
+    }
+
+    @Override
+    public ADAgent supplyADAgentFor(Function f, ExecutionCall&lt;Device&gt; call, boolean forward)
+    {
+<span class="fc" id="L109">        Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getAt(&quot;derivative&quot;);</span>
+<span class="fc" id="L110">        Function mul = Function.Detached.MUL;</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if ( ctxDerivative != null ) {</span>
+<span class="fc" id="L112">            return new DefaultADAgent( ctxDerivative )</span>
+<span class="fc" id="L113">                    .setForward( (node, forwardDerivative ) -&gt; mul.call( new Tsr[]{forwardDerivative, ctxDerivative} ) )</span>
+<span class="fc" id="L114">                    .setBackward( (node, backwardError ) -&gt; mul.call( new Tsr[]{backwardError, ctxDerivative} ) );</span>
+        }
+<span class="fc" id="L116">        Tsr&lt;?&gt; localDerivative = f.derive(call.getTensors(), call.getDerivativeIndex());</span>
+<span class="fc" id="L117">        return new DefaultADAgent( localDerivative )</span>
+<span class="fc" id="L118">                .setForward( (node, forwardDerivative ) -&gt; mul.call(new Tsr[]{forwardDerivative, localDerivative}) )</span>
+<span class="fc" id="L119">                .setBackward( (node, backwardError ) -&gt; mul.call(new Tsr[]{backwardError, localDerivative}) );</span>
+    }
+
+    @Override
+    public Tsr handleInsteadOfDevice( FunctionNode caller, ExecutionCall call ) {
+<span class="fc" id="L124">        return null;</span>
+    }
+
+    @Override
+    public Tsr handleRecursivelyAccordingToArity( ExecutionCall call, java.util.function.Function&lt;ExecutionCall, Tsr&gt; goDeeperWith )
+    {
+<span class="fc" id="L130">        return null;</span>
+    }
+
+    @Override
+    public ExecutionCall instantiateNewTensorsForExecutionIn( ExecutionCall call )
+    {
+<span class="fc" id="L136">        Tsr[] tensors = call.getTensors();</span>
+<span class="fc" id="L137">        Device device = call.getDevice();</span>
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        if ( tensors[ 0 ] == null ) // Creating a new tensor:</span>
+        {
+<span class="fc" id="L140">            int[] shp = tensors[ 1 ].getNDConf().shape();</span>
+<span class="fc" id="L141">            Tsr output = new Tsr( shp, tensors[ 1 ].getDataType() );</span>
+<span class="fc" id="L142">            output.setIsVirtual( false );</span>
+            try {
+<span class="fc" id="L144">                device.store( output );</span>
+<span class="nc" id="L145">            } catch ( Exception e ) {</span>
+<span class="nc" id="L146">                e.printStackTrace();</span>
+<span class="fc" id="L147">            }</span>
+<span class="fc" id="L148">            tensors[ 0 ] = output;</span>
+        }
+<span class="fc" id="L150">        return call;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

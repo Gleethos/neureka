@@ -13,16 +13,16 @@ public final class D2Configuration extends AbstractNDC //:= IMMUTABLE
             int[] spread,
             int[] offset
 <span class="fc" id="L15">    ) {</span>
-<span class="fc" id="L16">        _shape1 = shape[0];</span>
-<span class="fc" id="L17">        _shape2 = shape[1];</span>
-<span class="fc" id="L18">        _translation1 = translation[0];</span>
-<span class="fc" id="L19">        _translation2 = translation[1];</span>
-<span class="fc" id="L20">        _idxmap1 = idxmap[0];</span>
-<span class="fc" id="L21">        _idxmap2 = idxmap[1];</span>
-<span class="fc" id="L22">        _spread1 = spread[0];</span>
-<span class="fc" id="L23">        _spread2 = spread[1];</span>
-<span class="fc" id="L24">        _offset1 = offset[0];</span>
-<span class="fc" id="L25">        _offset2 = offset[1];</span>
+<span class="fc" id="L16">        _shape1 = shape[ 0 ];</span>
+<span class="fc" id="L17">        _shape2 = shape[ 1 ];</span>
+<span class="fc" id="L18">        _translation1 = translation[ 0 ];</span>
+<span class="fc" id="L19">        _translation2 = translation[ 1 ];</span>
+<span class="fc" id="L20">        _idxmap1 = idxmap[ 0 ];</span>
+<span class="fc" id="L21">        _idxmap2 = idxmap[ 1 ];</span>
+<span class="fc" id="L22">        _spread1 = spread[ 0 ];</span>
+<span class="fc" id="L23">        _spread2 = spread[ 1 ];</span>
+<span class="fc" id="L24">        _offset1 = offset[ 0 ];</span>
+<span class="fc" id="L25">        _offset2 = offset[ 1 ];</span>
 <span class="fc" id="L26">    }</span>
 
     public static NDConfiguration construct(
@@ -49,7 +49,7 @@ public final class D2Configuration extends AbstractNDC //:= IMMUTABLE
      *  The mapping of idx array.
      */
     private final int _idxmap1;
-    private final int _idxmap2; // Used to avoid distortion when reshaping!
+    private final int _idxmap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
     /**
      *  Produces the strides of a tensor subset / slice
      */
@@ -66,7 +66,7 @@ public final class D2Configuration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int rank() {
-<span class="nc" id="L69">        return 2;</span>
+<span class="fc" id="L69">        return 2;</span>
     }
 
     @Override
@@ -86,7 +86,7 @@ public final class D2Configuration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int idxmap(int i) {
-<span class="nc bnc" id="L89" title="All 2 branches missed.">        return (i==0)?_idxmap1:_idxmap2;</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        return (i==0)?_idxmap1:_idxmap2;</span>
     }
 
     @Override
@@ -96,7 +96,7 @@ public final class D2Configuration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int translation(int i) {
-<span class="nc bnc" id="L99" title="All 2 branches missed.">        return (i==0)?_translation1:_translation2;</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        return (i==0)?_translation1:_translation2;</span>
     }
 
     @Override
@@ -135,15 +135,15 @@ public final class D2Configuration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int[] idx_of_i(int i) {
-<span class="fc" id="L138">        int[] idx = new int[2];</span>
+<span class="fc" id="L138">        int[] idx = new int[ 2 ];</span>
 <span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()){</span>
-<span class="nc" id="L140">            idx[1] += i / _idxmap2;</span>
+<span class="nc" id="L140">            idx[ 1 ] += i / _idxmap2;</span>
 <span class="nc" id="L141">            i %= _idxmap2;</span>
-<span class="nc" id="L142">            idx[0] += i / _idxmap1;</span>
+<span class="nc" id="L142">            idx[ 0 ] += i / _idxmap1;</span>
         } else {
-<span class="fc" id="L144">            idx[0] += i / _idxmap1;</span>
+<span class="fc" id="L144">            idx[ 0 ] += i / _idxmap1;</span>
 <span class="fc" id="L145">            i %= _idxmap1;</span>
-<span class="fc" id="L146">            idx[1] += i / _idxmap2;</span>
+<span class="fc" id="L146">            idx[ 1 ] += i / _idxmap2;</span>
         }
 <span class="fc" id="L148">        return idx;</span>
     }
@@ -151,8 +151,8 @@ public final class D2Configuration extends AbstractNDC //:= IMMUTABLE
     @Override
     public int i_of_idx(int[] idx) {
 <span class="fc" id="L153">        int i = 0;</span>
-<span class="fc" id="L154">        i += (idx[0] * _spread1 + _offset1) * _translation1;</span>
-<span class="fc" id="L155">        i += (idx[1] * _spread2 + _offset2) * _translation2;</span>
+<span class="fc" id="L154">        i += (idx[ 0 ] * _spread1 + _offset1) * _translation1;</span>
+<span class="fc" id="L155">        i += (idx[ 1 ] * _spread2 + _offset2) * _translation2;</span>
 <span class="fc" id="L156">        return i;</span>
     }
 

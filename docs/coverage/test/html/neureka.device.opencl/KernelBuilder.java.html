@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="de"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>KernelBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.device.opencl</a> &gt; <span class="el_source">KernelBuilder.java</span></div><h1>KernelBuilder.java</h1><pre class="source lang-java linenums">package neureka.device.opencl;
+
+import neureka.Tsr;
+import org.jocl.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.jocl.CL.*;
+
+public class KernelBuilder
+{
+    private final cl_command_queue _queue;
+    private final cl_kernel _kernel;
+    private int _argId;
+    private final List&lt;Tsr&gt; _inputs;
+
+<span class="fc" id="L18">    public KernelBuilder(cl_kernel kernel, cl_command_queue queue){</span>
+<span class="fc" id="L19">        _queue = queue;</span>
+<span class="fc" id="L20">        _kernel = kernel;</span>
+<span class="fc" id="L21">        _inputs = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L22">        _argId = 0;</span>
+<span class="fc" id="L23">    }</span>
+
+    /**
+     * This method passes 2 arguments to the kernel.
+     * One for the data of the tensor and one for the configuration data!
+     * @param t
+     * @return
+     */
+    public KernelBuilder pass(Tsr&lt;Number&gt; t){
+<span class="fc" id="L32">        _inputs.add(t);</span>
+<span class="fc" id="L33">        clSetKernelArg(_kernel, _argId, Sizeof.cl_mem, Pointer.to(t.find(OpenCLDevice.cl_tsr.class).value.data));</span>
+<span class="fc" id="L34">        _argId++;</span>
+<span class="fc" id="L35">        clSetKernelArg(_kernel, _argId, Sizeof.cl_mem, Pointer.to(t.find(OpenCLDevice.cl_tsr.class).config.data));</span>
+<span class="fc" id="L36">        _argId++;</span>
+<span class="fc" id="L37">        return this;</span>
+    }
+
+    public KernelBuilder pass(int i) {
+<span class="fc" id="L41">        clSetKernelArg(_kernel, _argId, Sizeof.cl_int, Pointer.to(new int[]{i}));</span>
+<span class="fc" id="L42">        _argId++;</span>
+<span class="fc" id="L43">        return this;</span>
+    }
+
+    public KernelBuilder pass(float f){
+<span class="fc" id="L47">        clSetKernelArg(_kernel, _argId, Sizeof.cl_float, Pointer.to(new float[]{f}));</span>
+<span class="fc" id="L48">        _argId++;</span>
+<span class="fc" id="L49">        return this;</span>
+    }
+
+    public void call(int globalWorkSize)
+    {
+<span class="fc" id="L54">        cl_event[] events = _getWaitList(_inputs.toArray(new Tsr[ 0 ]));</span>
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        if(events.length&gt;0){</span>
+<span class="nc" id="L56">            clWaitForEvents(events.length, events);</span>
+<span class="nc" id="L57">            _releaseEvents(_inputs.toArray(new Tsr[ 0 ]));</span>
+        }
+<span class="fc" id="L59">        clEnqueueNDRangeKernel(</span>
+                _queue, _kernel,
+                1,
+                null,
+                new long[]{globalWorkSize},
+                null,
+                0,
+                null,
+                null
+        );
+<span class="fc" id="L69">    }</span>
+
+    private void _releaseEvents(Tsr[] tsrs){
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        for(Tsr&lt;Number&gt; t : tsrs){</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            if( t.find(OpenCLDevice.cl_tsr.class).value.event != null ){</span>
+<span class="nc" id="L74">                clReleaseEvent(t.find(OpenCLDevice.cl_tsr.class).value.event);</span>
+<span class="nc" id="L75">                t.find(OpenCLDevice.cl_tsr.class).value.event = null;</span>
+            }
+        }
+<span class="nc" id="L78">    }</span>
+
+    private cl_event[] _getWaitList(Tsr[] tsrs){
+<span class="fc" id="L81">        List&lt;cl_event&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        for (Tsr&lt;Number&gt; t : tsrs) {</span>
+<span class="fc" id="L83">            cl_event event = t.find(OpenCLDevice.cl_tsr.class).value.event;</span>
+<span class="pc bpc" id="L84" title="3 of 4 branches missed.">            if (event != null &amp;&amp; !list.contains(event)) {</span>
+<span class="nc" id="L85">                list.add(event);</span>
+            }
+        }
+<span class="fc" id="L88">        return list.toArray(new cl_event[ 0 ]);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

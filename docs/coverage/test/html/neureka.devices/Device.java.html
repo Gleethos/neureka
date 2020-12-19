@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Device.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices</a> &gt; <span class="el_source">Device.java</span></div><h1>Device.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   _____             _
+  |  __ \           (_)
+  | |  | | _____   ___  ___ ___
+  | |  | |/ _ \ \ / / |/ __/ _ \
+  | |__| |  __/\ V /| | (_|  __/
+  |_____/ \___| \_/ |_|\___\___|
+
+    An abstract of a backend implementations which handles tensors, their data
+    and executions on these tensors / their data.
+
+*/
+
+package neureka.devices;
+
+import neureka.Component;
+import neureka.Neureka;
+import neureka.Tsr;
+import neureka.devices.host.HostCPU;
+import neureka.devices.opencl.OpenCLDevice;
+import neureka.devices.opencl.OpenCLPlatform;
+import neureka.backend.api.ExecutionCall;
+import neureka.calculus.assembly.FunctionParser;
+
+import java.util.Arrays;
+import java.util.Collection;
+
+/**
+ * This is the interface for implementations representing
+ * devices primarily store tensors, namely instances of the Tsr&amp;lt;ValueType&amp;gt; class.
+ * Optionally they might also be capable of executing operations on tensors.
+ * Such instances are also components of tensors, which is why
+ * this interface extends the Component &amp;lt; Tsr &amp;lt; ValueType&amp;gt; &amp;gt; interface.
+ *
+ * The device interface extends the &quot;Storage&quot; interface because devices
+ * are also capable of storing tensors on them.
+ * A tensor stored on a device holds a reference to that device,
+ * as well as the device itself which also knows about the tensors it holds.
+ * A tensor stored on a device will have its &quot;isOutsourced&quot; property set to true!
+ *
+ */
+public interface Device&lt;ValueType&gt; extends Component&lt;Tsr&lt;ValueType&gt;&gt;, Storage&lt;ValueType&gt;, Collection&lt;Tsr&lt;ValueType&gt;&gt;
+{
+    /**
+     * This method return Device instances matching
+     * the given search parameter.
+     * @param name The search parameter and name of the requested Device instance.
+     * @return The found Device instance or simply the HostCPU instance by default.
+     */
+    static Device find( String name )
+    {
+<span class="fc" id="L75">        String search = name.toLowerCase();</span>
+<span class="fc" id="L76">        boolean probablyWantsGPU = Arrays.stream(</span>
+                new String[]{
+                        &quot;gpu&quot;, &quot;nvidia&quot;, &quot;amd&quot;, &quot;intel&quot;, &quot;opencl&quot;, &quot;fpga&quot;
+                }
+<span class="fc" id="L80">        ).anyMatch(search::contains);</span>
+
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        if ( !Neureka.instance().canAccessOpenCL() ) {</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">            if ( probablyWantsGPU ) {</span>
+<span class="nc" id="L84">                return null; // User wants OpenCL but cannot have it :/</span>
+<span class="nc" id="L85">            } else return HostCPU.instance();</span>
+        }
+
+<span class="fc" id="L88">        Device&lt;Number&gt; result = HostCPU.instance();</span>
+<span class="fc" id="L89">        double score = FunctionParser.similarity( &quot;jvm native host cpu threaded&quot;, search );</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if ( probablyWantsGPU ) score /= 10; // HostCPU instance is most likely not meant!</span>
+
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        for ( OpenCLPlatform p : OpenCLPlatform.PLATFORMS() ) {</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">            for ( OpenCLDevice d : p.getDevices() ) {</span>
+<span class="fc" id="L94">                String str = (&quot;opencl | &quot;+d.type()+&quot; | &quot;+d.name()+&quot; | &quot;+d.vendor()).toLowerCase();</span>
+<span class="fc" id="L95">                double similarity = FunctionParser.similarity( str, search );</span>
+<span class="pc bpc" id="L96" title="1 of 4 branches missed.">                if ( similarity &gt; score || str.contains(search) ) {</span>
+<span class="fc" id="L97">                    result = d;</span>
+<span class="fc" id="L98">                    score = similarity;</span>
+                }
+<span class="fc" id="L100">            }</span>
+<span class="fc" id="L101">        }</span>
+<span class="fc bfc" id="L102" title="All 4 branches covered.">        if ( result == HostCPU.instance() &amp;&amp; name.equals(&quot;first&quot;) ) {</span>
+<span class="fc" id="L103">            Device&lt;Number&gt; first = OpenCLPlatform.PLATFORMS().get( 0 ).getDevices().get( 0 );</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">            if( first!=null ) result = first;</span>
+        }
+<span class="fc" id="L106">        return result;</span>
+    }
+
+    /**
+     *  This method signals the device to get ready for garbage collection.
+     *  A given device may have resources which ought to be freed when it is no longer used.
+     *  One may also chose to do resource freeing manually.
+     */
+    void dispose();
+
+    /**
+     *  Implementations of this method ought to store the value
+     *  of the given tensor and the &quot;parent&quot; tensor in whatever
+     *  formant suites the underlying implementation and or final type.
+     *  Device implementations are also tensor storages
+     *  which may also have to store tensors which are slices of bigger tensors.
+     *
+     * @param tensor The tensor whose data ought to be stored.
+     * @return A reference this object to allow for method chaining. (factory pattern)
+     */
+    Device store( Tsr&lt;ValueType&gt; tensor, Tsr&lt;ValueType&gt; parent );
+
+    boolean has( Tsr&lt;ValueType&gt; tensor );
+
+    Device free( Tsr&lt;ValueType&gt; tensor );
+
+    Device cleaning( Tsr&lt;ValueType&gt; tensor, Runnable action );
+
+    Device overwrite64( Tsr&lt;ValueType&gt; tensor, double[] value );
+
+    Device overwrite32( Tsr&lt;ValueType&gt; tensor, float[] value );
+
+    Device swap( Tsr&lt;ValueType&gt; former, Tsr&lt;ValueType&gt; replacement );
+
+    Device execute( ExecutionCall call );
+
+    double[] value64f( Tsr&lt;ValueType&gt; tensor );
+
+    float[] value32f( Tsr&lt;ValueType&gt; tensor );
+
+    double value64f( Tsr&lt;ValueType&gt; tensor, int index );
+
+    float value32f( Tsr&lt;ValueType&gt; tensor, int index );
+
+    Collection&lt; Tsr&lt;ValueType&gt; &gt; getTensors();
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

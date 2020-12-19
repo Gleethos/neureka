@@ -1,0 +1,1098 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<style>body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: 300;
+}
+
+h2 {
+  font-weight: 400;
+}
+
+h3 {
+  font-weight: 200;
+}
+
+.back-link {
+  font-size: small;
+}
+
+table {
+  margin: 5px;
+}
+
+div.date-test-ran {
+  font-size: small;
+  font-style: italic;
+}
+
+table.features-table {
+  width: 800px;
+}
+
+table.summary-table {
+  width: 800px;
+  text-align: left;
+  font-weight: bold;
+  font-size: small;
+}
+
+table.summary-table th {
+  background: lightblue;
+  padding: 6px;
+}
+
+table.summary-table td {
+  background: #E0E0E0;
+  padding: 6px;
+}
+
+pre.title {
+  font-family: inherit;
+  font-size: 24px;
+  line-height: 28px;
+  letter-spacing: -1px;
+  color: #333;
+}
+
+pre.narrative {
+  font-family: inherit;
+  font-size: 18px;
+  font-style: italic;
+  line-height: 23px;
+  letter-spacing: -1px;
+  color: #333;
+}
+
+.feature-description {
+  font-size: large;
+  background: lightblue;
+  padding: 12px;
+}
+
+.feature-toc-error {
+  color: #F89A4F;
+}
+
+.feature-toc-failure {
+  color: #FF8080;
+}
+
+.feature-toc-ignored {
+  color: lightgray;
+}
+
+.feature-toc-pass {
+  color: green;
+}
+
+.feature-description.error {
+  background: #F89A4F;
+}
+
+.feature-description.failure {
+  background: #FF8080;
+}
+
+.feature-description.ignored {
+  background: lightgray;
+}
+
+.feature-description.ignored .reason {
+  color: black;
+  font-style: italic;
+  font-size: small;
+}
+
+div.extra-info {
+  font-size: small;
+}
+
+div.spec-headers {
+  margin: 4px;
+  font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+  margin-top: 6px;
+  padding: 10px 5px 5px 5px;
+  background-color: lemonchiffon;
+  color: black;
+  font-weight: 500;
+  font-size: small;
+  max-width: 50%;
+}
+
+div.pending-feature {
+  background-color: dodgerblue;
+  color: white;
+  margin-top: 6px;
+  padding: 5px;
+  text-align: center;
+  font-size: small;
+  max-width: 120px;
+}
+
+div.problem-description {
+  padding: 10px;
+  background: pink;
+  border-radius: 10px;
+}
+
+div.problem-header {
+  font-weight: bold;
+  color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table th {
+  background: lightblue;
+  padding: 5px;
+}
+
+table.ex-table td {
+  background: #E0E0E0;
+  padding: 2px 5px 2px 5px;
+}
+
+table td {
+  min-width: 50px;
+}
+
+col.block-kind-col {
+  width: 70px;
+}
+
+span.spec-header {
+  font-weight: bold;
+}
+
+div.spec-text {
+  /*color: green;*/
+}
+
+div.spec-status {
+  font-style: italic;
+}
+
+.ignored {
+  color: gray;
+}
+
+td.ex-result {
+  text-align: center;
+  background: white !important;
+}
+
+.ex-pass {
+  color: darkgreen;
+}
+
+.ex-fail {
+  color: red;
+  font-weight: bold;
+}
+
+div.block-kind {
+  margin: 2px;
+  font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+  background-color: whitesmoke;
+  padding: 10px;
+}
+
+pre.block-source.error {
+  background-color: pink;
+  color: red;
+  font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+  margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+  color: gray;
+  margin-top: -14px;
+}
+
+pre.block-source.post-error {
+  color: gray;
+}
+
+div.footer {
+  text-align: center;
+  font-size: small;
+}
+</style>
+</head>
+<body>
+<h2>Report for ut.device.Cross_Device_Type_Unit_Tests</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Sat Dec 19 19:58:46 CET 2020 by Daglemino</div>
+<table class='summary-table'>
+<thead>
+<th>Executed features</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>2.002 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#-1551662766' class='feature-toc-pass'>Querying for Device implementations works as expected.</a>
+</li>
+<li>
+<a href='#-716282076' class='feature-toc-pass'>Passing a numeric array to a tensor should modify its content!</a>
+</li>
+<li>
+<a href='#758214135' class='feature-toc-pass'>Tensor data can be fetched from device if the tensor is stored on it...</a>
+</li>
+<li>
+<a href='#-846989796' class='feature-toc-pass'>Execution calls containing null arguments will cause an exception to be thrown in device instances.</a>
+</li>
+<li>
+<a href='#733456921' class='feature-toc-pass'>Devices store tensors which can also be restored.</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1551662766'>
+<span>Querying for Device implementations works as expected.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>This system supports OpenCL.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>if ( !Neureka.instance().canAccessOpenCL() ) return</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Neureka is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The query is being passed to the "find" method...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def device = Device.find(query)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The resulting Device variable has the expected type.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>device.class == type</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<th class='ex-header'>query</th>
+<th class='ex-header'>type</th>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>cPu</td>
+<td class='ex-value'>class neureka.devices.host.HostCPU</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>jVm</td>
+<td class='ex-value'>class neureka.devices.host.HostCPU</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>natiVe</td>
+<td class='ex-value'>class neureka.devices.host.HostCPU</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Threaded</td>
+<td class='ex-value'>class neureka.devices.host.HostCPU</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>openCl</td>
+<td class='ex-value'>class neureka.devices.opencl.OpenCLDevice</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>nvidia or amd or intel</td>
+<td class='ex-value'>class neureka.devices.opencl.OpenCLDevice</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>first</td>
+<td class='ex-value'>class neureka.devices.opencl.OpenCLDevice</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>7/7 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-716282076'>
+<span>Passing a numeric array to a tensor should modify its content!</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Neureka is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A 2D tensor is being instantiated..</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr t = new Tsr&lt;&gt;(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).set(device)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>A numeric array is passed to said tensor...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>if( data1 instanceof float[] ) t.setValue32(data1)
+else t.setValue64(data1 as double[])
+if( data2 instanceof float[] ) t.setValue32(data2)
+else t.setValue64(data2 as double[])</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The tensor (as String) contains the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.toString().contains(expected)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following data is being used :</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<th class='ex-header'>device</th>
+<th class='ex-header'>data1</th>
+<th class='ex-header'>data2</th>
+<th class='ex-header'>expected</th>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>[(2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[1.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[3.0, -4.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[3.0, -5.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2x4):[10.0, 12.0, 16.0, 21.0, 33.0, 66.0, 222.0, 15.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[3.0, -4.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[-1.0, 3.0]]</td>
+<td class='ex-value'>[]</td>
+<td class='ex-value'>[]</td>
+<td class='ex-value'>(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[(2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[1.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[3.0, -4.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[3.0, -5.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2x4):[10.0, 12.0, 16.0, 21.0, 33.0, 66.0, 222.0, 15.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[3.0, -4.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[-1.0, 3.0]]</td>
+<td class='ex-value'>[2.0, 3.0, 4.0, 5.0, 6.0]</td>
+<td class='ex-value'>[1.0, 1.0, 1.0, 1.0, 1.0]</td>
+<td class='ex-value'>(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[(2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[1.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[3.0, -4.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[3.0, -5.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2x4):[10.0, 12.0, 16.0, 21.0, 33.0, 66.0, 222.0, 15.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[3.0, -4.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[-1.0, 3.0]]</td>
+<td class='ex-value'>[3.0, 5.0, 6.0]</td>
+<td class='ex-value'>[4.0, 2.0, 3.0]</td>
+<td class='ex-value'>(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[(2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[1.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[3.0, -4.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[3.0, -5.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2x4):[10.0, 12.0, 16.0, 21.0, 33.0, 66.0, 222.0, 15.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[3.0, -4.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[-1.0, 3.0]]</td>
+<td class='ex-value'>[9.0, 4.0, 7.0, -12.0]</td>
+<td class='ex-value'>[-5.0, -2.0, 1.0]</td>
+<td class='ex-value'>(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[(2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[1.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[3.0, -4.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[3.0, -5.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2x4):[10.0, 12.0, 16.0, 21.0, 33.0, 66.0, 222.0, 15.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[3.0, -4.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[-1.0, 3.0]]</td>
+<td class='ex-value'>[22.0, 24.0, 35.0, 80.0]</td>
+<td class='ex-value'>[-1.0, -1.0, -1.0]</td>
+<td class='ex-value'>(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]], _deviceId=cl_device_id[0x1d620bab110], _platform=neureka.devices.opencl.OpenCLPlatform@4059bfec, _queue=cl_command_queue[0x1d6223a69b0])</td>
+<td class='ex-value'>[]</td>
+<td class='ex-value'>[]</td>
+<td class='ex-value'>(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]], _deviceId=cl_device_id[0x1d620bab110], _platform=neureka.devices.opencl.OpenCLPlatform@4059bfec, _queue=cl_command_queue[0x1d6223a69b0])</td>
+<td class='ex-value'>[2.0, 3.0, 4.0, 5.0, 6.0]</td>
+<td class='ex-value'>[1.0, 1.0, 1.0, 1.0, 1.0]</td>
+<td class='ex-value'>(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]], _deviceId=cl_device_id[0x1d620bab110], _platform=neureka.devices.opencl.OpenCLPlatform@4059bfec, _queue=cl_command_queue[0x1d6223a69b0])</td>
+<td class='ex-value'>[3.0, 5.0, 6.0]</td>
+<td class='ex-value'>[4.0, 2.0, 3.0]</td>
+<td class='ex-value'>(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]], _deviceId=cl_device_id[0x1d620bab110], _platform=neureka.devices.opencl.OpenCLPlatform@4059bfec, _queue=cl_command_queue[0x1d6223a69b0])</td>
+<td class='ex-value'>[9.0, 4.0, 7.0, -12.0]</td>
+<td class='ex-value'>[-5.0, -2.0, 1.0]</td>
+<td class='ex-value'>(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]], _deviceId=cl_device_id[0x1d620bab110], _platform=neureka.devices.opencl.OpenCLPlatform@4059bfec, _queue=cl_command_queue[0x1d6223a69b0])</td>
+<td class='ex-value'>[22.0, 24.0, 35.0, 80.0]</td>
+<td class='ex-value'>[-1.0, -1.0, -1.0]</td>
+<td class='ex-value'>(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>10/10 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='758214135'>
+<span>Tensor data can be fetched from device if the tensor is stored on it...</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Neureka is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().reset()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Because in some environments OpenCL might not be available, the test will be stopped!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>if ( device == null ) return</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>A 2D tensor is being instantiated by passing the given shape and data...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr t = new Tsr&lt;&gt;(shape, data).set(device)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The tensor values (as List) are as expected.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>(t.value64() as List&lt;Float&gt;) == expected</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The same underlying data is being queried by calling the device...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def result = (0..&lt;t.size()).collect{device.value32f(t, it)}</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>This new result also contains the same elements.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>result == expected</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>This procedure is now repeated using the method for double precision...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>result = (0..&lt;t.size()).collect{device.value64f(t, it)}</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>Again the values are the same!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>result == expected as List&lt;Double&gt;</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following data is being used for tensor instantiation :</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<th class='ex-header'>device</th>
+<th class='ex-header'>shape</th>
+<th class='ex-header'>data</th>
+<th class='ex-header'>expected</th>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>[(2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[1.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[3.0, -4.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[3.0, -5.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2x4):[10.0, 12.0, 16.0, 21.0, 33.0, 66.0, 222.0, 15.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[3.0, -4.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[-1.0, 3.0]]</td>
+<td class='ex-value'>[3, 2]</td>
+<td class='ex-value'>[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
+<td class='ex-value'>[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[(2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[1.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[3.0, -4.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[3.0, -5.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2x4):[10.0, 12.0, 16.0, 21.0, 33.0, 66.0, 222.0, 15.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[3.0, -4.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[-1.0, 3.0]]</td>
+<td class='ex-value'>[3, 2]</td>
+<td class='ex-value'>[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
+<td class='ex-value'>[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]], _deviceId=cl_device_id[0x1d620bab110], _platform=neureka.devices.opencl.OpenCLPlatform@4059bfec, _queue=cl_command_queue[0x1d6223a69b0])</td>
+<td class='ex-value'>[3, 2]</td>
+<td class='ex-value'>[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
+<td class='ex-value'>[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]], _deviceId=cl_device_id[0x1d620bab110], _platform=neureka.devices.opencl.OpenCLPlatform@4059bfec, _queue=cl_command_queue[0x1d6223a69b0])</td>
+<td class='ex-value'>[3, 2]</td>
+<td class='ex-value'>[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
+<td class='ex-value'>[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>4/4 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-846989796'>
+<span>Execution calls containing null arguments will cause an exception to be thrown in device instances.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>The given device is available and Neureka is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>if ( device == null ) return
+Neureka.instance().reset()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A mocked ExecutionCall with mocked operation implementation and a mocked drain instantiator lambda...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def call = Mock(ExecutionCall)
+def implementation = Mock(OperationTypeImplementation)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The call is being passed to the device for execution...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>device.execute(call)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>...the implementation is being accessed in order to access the mocked lambda...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>1 * call.getImplementation() &gt;&gt; implementation
+1 * implementation.instantiateNewTensorsForExecutionIn(call) &gt;&gt; call</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The tensor array is being accessed to check for null. (For exception throwing)</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>1 * call.getTensors() &gt;&gt; new Tsr[]{ Mock(Tsr), null }</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The expected exception is being thrown alongside a descriptive message.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def exception = thrown(IllegalArgumentException)
+exception.message == "Device arguments may not be null!\n" +
+"One or more tensor arguments within the given ExecutionCall instance is null."</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following Device instances are being tested :</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<th class='ex-header'>device</th>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>[(2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[1.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[3.0, -4.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[3.0, -5.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2x4):[10.0, 12.0, 16.0, 21.0, 33.0, 66.0, 222.0, 15.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[3.0, -4.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[-1.0, 3.0]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]], _deviceId=cl_device_id[0x1d620bab110], _platform=neureka.devices.opencl.OpenCLPlatform@4059bfec, _queue=cl_command_queue[0x1d6223a69b0])</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='733456921'>
+<span>Devices store tensors which can also be restored.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>The given device is available and Neureka is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>if ( device == null ) return
+Neureka.instance().reset()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Two tensors which will be transferred later on...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>int initialNumber = device.size()
+Tsr a = new Tsr([2, 3], ";)")
+Tsr b = new Tsr([3, 4], ":P")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>The given device is initially empty.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>device.isEmpty() == ( device.size() == 0 )
+!device.has( a )
+!device.has( b )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The the first tensor is being passed to the device...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>device.store( a )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>...tensor "a" is now on the device.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>!device.isEmpty()
+device.size() == initialNumber + 1
+device.has( a )
+!device.has( b )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The the second tensor is being passed to the device...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>device.store( b )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>...tensor "b" is now also on the device.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>!device.isEmpty()
+device.size() == initialNumber + 2
+device.has( a )
+device.has( b )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>They are being removed again...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>device.free( a ).free( b )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>...the device is empty again.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>device.isEmpty() == ( initialNumber == 0 )
+device.size() == initialNumber
+!device.has( a )
+!device.has( b )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following Device instances are being tested :</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<th class='ex-header'>device</th>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>[(2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[1.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[3.0, -4.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[3.0, -5.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2x4):[10.0, 12.0, 16.0, 21.0, 33.0, 66.0, 222.0, 15.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[7.0, -1.0], (2x3):[-4.0, 7.0, -1.0, 2.0, 3.0, 8.0], (2):[1.0, 2.0], (2):[7.0, -1.0], (2):[2.0, 2.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[7.0, -1.0], (2):[3.0, -4.0], (2):[7.0, -1.0], (2):[-1.0, 3.0], (2):[-1.0, 3.0], (2):[2.0, 2.0], (2):[2.0, 2.0], (2):[-1.0, 3.0]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]], _deviceId=cl_device_id[0x1d620bab110], _platform=neureka.devices.opencl.OpenCLPlatform@4059bfec, _queue=cl_command_queue[0x1d6223a69b0])</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>FileDevice(_directory=build/test-can, _stored={})</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>3/3 passed</div>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>
