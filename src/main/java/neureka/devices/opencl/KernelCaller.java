@@ -86,7 +86,7 @@ public class KernelCaller
 
     /**
      *
-     * @param globalWorkSize
+     * @param globalWorkSize The number of global threads which will be dispatched.
      */
     public void call( int globalWorkSize )
     {

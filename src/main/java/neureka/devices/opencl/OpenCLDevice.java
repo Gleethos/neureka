@@ -33,8 +33,8 @@ SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
 
-   “Any fool can write code that a computer can understand.
-    Good programmers write code that humans can understand.”
+   'Any fool can write code that a computer can understand.
+    Good programmers write code that humans can understand.'
     – Martin Fowler
 
     Use the following as search keys :)
@@ -334,7 +334,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      *  freshly in RAM.
      *
      * @param tensor The tensor whose data ought to be restored (loaded to RAM).
-     * @return
+     * @return This device, which enables method chaining.
      */
     @Override
     public Device<Number> restore( Tsr<Number> tensor )

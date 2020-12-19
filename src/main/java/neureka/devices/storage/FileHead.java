@@ -28,7 +28,7 @@ public interface FileHead<FinalType, ValueType> extends Storage<ValueType>
      *  meaning it adheres to the factory pattern.
      *
      * @return A reference of this very object in order to enable method chaining.
-     * @throws IOException
+     * @throws IOException Freeing / deleting resources might result in io exceptions.
      */
     FinalType free() throws IOException;
 

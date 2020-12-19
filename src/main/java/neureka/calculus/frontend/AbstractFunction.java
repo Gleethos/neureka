@@ -118,7 +118,7 @@ public abstract class AbstractFunction extends AbstractBaseFunction
      * @param inputs
      * @param j
      * @param d
-     * @return
+     * @return The result of the execution.
      */
     protected Tsr _tensor_activation( Tsr[] inputs, int j, int d )
     {

@@ -16,7 +16,7 @@ public class DeviceQuery
     /**
      * The entry point of this program
      *
-     * @return
+     * @return A String containing a detailed summary of all OpenCL related...
      */
     public static String query()
     {

@@ -429,38 +429,38 @@ public class Neureka
          * the contents of this file as a String. Will exit the application
          * if the file can not be read.
          *
-         * @param path
+         * @param path The path to the jar resource.
          * @return The contents of the file
          */
-        public String readResource(String path) {
-            InputStream stream = getClass().getClassLoader().getResourceAsStream(path);
+        public String readResource( String path ) {
+            InputStream stream = getClass().getClassLoader().getResourceAsStream( path );
             try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+                BufferedReader br = new BufferedReader(new InputStreamReader( stream ));
                 StringBuffer sb = new StringBuffer();
                 String line = "";
-                while (line!=null) {
+                while ( line != null ) {
                     line = br.readLine();
-                    if (line != null) sb.append(line).append("\n");
+                    if ( line != null ) sb.append( line ).append( "\n" );
                 }
                 return sb.toString();
-            } catch (IOException e) {
+            } catch ( IOException e ) {
                 e.printStackTrace();
-                System.exit(1);
+                System.exit( 1 );
                 return null;
             }
         }
 
-        public static boolean isPresent(String className) {
+        public static boolean isPresent( String className ) {
             boolean found = false;
-            String groovyInfo = ((className.toLowerCase().contains("groovy"))?" Neureka settings uninitialized!":"");
+            String groovyInfo = ( (className.toLowerCase().contains("groovy") ) ? " Neureka settings uninitialized!" : "" );
             String cause = " unknown ";
             try {
-                Class.forName(className);
+                Class.forName( className );
                 found = true;
-            } catch (Throwable ex) {// Class or one of its dependencies is not present...
+            } catch ( Throwable ex ) {// Class or one of its dependencies is not present...
                 cause = ex.getMessage();
             } finally {
-                if(!found) {
+                if( !found ) {
                     System.out.println(
                             "[Info]: '"+className+"' dependencies not found!"+groovyInfo+"\n[Cause]: "+cause
                     );

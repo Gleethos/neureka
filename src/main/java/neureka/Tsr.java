@@ -34,8 +34,8 @@ SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
 
-   “Any fool can write code that a computer can understand.
-    Good programmers write code that humans can understand.”
+   'Any fool can write code that a computer can understand.
+    Good programmers write code that humans can understand.'
     – Martin Fowler
 
     Use the following as search keys :)
@@ -718,7 +718,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *  The core requirement for instantiating NDConfiguration interface implementation s
      *  is a shape array of integers which is being passed to the method...
      *
-     * @param newShape
+     * @param newShape An array if integers which are all > 0 and represent the tensor dimensions.
      */
     protected void _configureFromNewShape( int[] newShape, boolean makeVirtual, boolean autoAllocate )
     {
@@ -2097,9 +2097,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *  found in Groovy, so the following code : " myTensor as Double "
      *  would not return a Double instance!
      *
-     * @param typeClass
-     * @param <T>
-     * @return
+     * @param typeClass The class which is the target of the underlying type comvertion...
+     * @param <T> The value type of the tensor that will be returned.
+     * @return A new tensor which hosting the supplied type.
      */
     public <T> Tsr<T> asType( Class<T> typeClass )
     {
