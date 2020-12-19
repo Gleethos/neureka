@@ -12,7 +12,7 @@ import neureka.backend.standard.implementations.GenericImplementation
 import neureka.backend.api.operations.OperationContext
 import neureka.backend.api.operations.OperationType
 import neureka.backend.api.operations.OperationTypeFactory
-import neureka.calculus.frontend.assembly.FunctionBuilder
+import neureka.calculus.assembly.FunctionBuilder
 import spock.lang.Specification
 
 class Calculus_Extension_Integration_Tests extends Specification

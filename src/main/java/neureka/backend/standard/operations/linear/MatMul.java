@@ -10,7 +10,7 @@ import neureka.backend.standard.implementations.Convolution;
 import neureka.backend.standard.implementations.GenericImplementation;
 import neureka.backend.api.operations.AbstractOperationType;
 import neureka.backend.api.operations.OperationType;
-import neureka.calculus.frontend.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
 import neureka.devices.opencl.execution.CLExecutor;

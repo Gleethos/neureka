@@ -41,9 +41,9 @@ package neureka.backend.api.implementations;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.executions.ExecutorFor;
+import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
 import neureka.autograd.ADAgent;
-import neureka.calculus.frontend.AbstractFunction;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -103,10 +103,10 @@ public interface OperationTypeImplementation<FinalType>
     );
 
     interface InitialCallHook {
-        Tsr handle( AbstractFunction caller,  ExecutionCall call );
+        Tsr handle( FunctionNode caller,  ExecutionCall call );
     }
 
-    Tsr handleInsteadOfDevice(  AbstractFunction caller, ExecutionCall call );
+    Tsr handleInsteadOfDevice( FunctionNode caller, ExecutionCall call );
 
     interface RecursiveJunctionAgent {
         Tsr handle( ExecutionCall call, Function<ExecutionCall, Tsr> goDeeperWith );

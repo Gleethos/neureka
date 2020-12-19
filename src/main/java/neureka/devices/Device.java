@@ -43,7 +43,7 @@ import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.devices.opencl.OpenCLPlatform;
 import neureka.backend.api.ExecutionCall;
-import neureka.calculus.frontend.assembly.FunctionParser;
+import neureka.calculus.assembly.FunctionParser;
 
 import java.util.Arrays;
 import java.util.Collection;

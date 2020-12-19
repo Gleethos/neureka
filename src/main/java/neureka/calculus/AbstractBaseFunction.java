@@ -24,7 +24,7 @@ SOFTWARE.
 
 */
 
-package neureka.calculus.frontend;
+package neureka.calculus;
 
 import neureka.Tsr;
 import neureka.calculus.Function;

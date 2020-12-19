@@ -7,7 +7,7 @@ import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
 import neureka.backend.api.operations.AbstractOperationType;
 import neureka.backend.api.ExecutionCall;
-import neureka.calculus.frontend.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionBuilder;
 import neureka.ndim.config.AbstractNDC;
 
 import java.util.ArrayList;

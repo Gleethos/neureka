@@ -12,7 +12,7 @@ import neureka.backend.api.operations.AbstractOperationType;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.implementations.OperationTypeImplementation;
 import neureka.backend.standard.implementations.Convolution;
-import neureka.calculus.frontend.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionBuilder;
 
 import java.util.List;
 

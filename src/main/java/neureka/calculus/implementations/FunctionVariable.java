@@ -1,10 +1,10 @@
-package neureka.calculus.frontend.implementations;
+package neureka.calculus.implementations;
 
 import neureka.Tsr;
 import neureka.calculus.Function;
 import neureka.backend.api.operations.AbstractOperationType;
-import neureka.calculus.frontend.AbstractBaseFunction;
-import neureka.calculus.frontend.assembly.FunctionBuilder;
+import neureka.calculus.AbstractBaseFunction;
+import neureka.calculus.assembly.FunctionBuilder;
 
 public class FunctionVariable extends AbstractBaseFunction implements GradientProvider {
 

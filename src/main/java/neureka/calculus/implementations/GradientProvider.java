@@ -23,7 +23,7 @@ SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-package neureka.calculus.frontend.implementations;
+package neureka.calculus.implementations;
 
 /**
  *  This is a simple interface whose single purpose is

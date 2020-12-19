@@ -3,7 +3,7 @@ package it.calculus
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
-import neureka.calculus.frontend.assembly.FunctionBuilder
+import neureka.calculus.assembly.FunctionBuilder
 import spock.lang.Specification
 
 class Calculus_Integration_Tests extends Specification

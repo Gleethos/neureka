@@ -1,11 +1,10 @@
-package neureka.calculus.frontend.assembly;
+package neureka.calculus.assembly;
 
 import neureka.calculus.Function;
-import neureka.backend.api.operations.AbstractOperationType;
 import neureka.backend.api.operations.OperationType;
-import neureka.calculus.frontend.implementations.FunctionConstant;
-import neureka.calculus.frontend.implementations.FunctionInput;
-import neureka.calculus.frontend.implementations.FunctionNode;
+import neureka.calculus.implementations.FunctionConstant;
+import neureka.calculus.implementations.FunctionInput;
+import neureka.calculus.implementations.FunctionNode;
 
 import java.util.*;
 

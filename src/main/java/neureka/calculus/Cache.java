@@ -24,12 +24,11 @@ SOFTWARE.
 
 */
 
-package neureka.calculus.frontend;
+package neureka.calculus;
 
 import neureka.Tsr;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
-import neureka.calculus.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

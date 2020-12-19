@@ -61,15 +61,17 @@ public abstract class AbstractComponentOwner<InstanceType>
     protected List<Component<InstanceType>> _components = Collections.synchronizedList(new ArrayList<>());
 
     /**
-     * This method tries to find a component inside the stored
-     * component collection whose class matches the one provided.
-     * If no such component could be found then
-     * the return value will simply be null.
+     *  This method tries to find a component inside the stored
+     *  component collection whose class matches the one provided.
+     *  If no such component could be found then
+     *  the return value will simply be null.
      *
      * @param componentClass The type/class of the component which shall be found and returned.
+     * @param <T> The type parameter defining the component class.
      * @return The correct component or null if nothing has been found.
      */
-    public <T> T find(Class<T> componentClass) {
+    public <T> T find(Class<T> componentClass)
+    {
         if (_components != null) {
             for (Component<InstanceType> component : _components) {
                 if (componentClass.isInstance(component)) return (T)component;

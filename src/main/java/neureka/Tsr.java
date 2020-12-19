@@ -96,7 +96,7 @@ import neureka.devices.Device;
 import neureka.framing.IndexAlias;
 import neureka.framing.Relation;
 import neureka.calculus.Function;
-import neureka.calculus.frontend.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.ndim.config.AbstractNDC;
@@ -718,7 +718,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *  The core requirement for instantiating NDConfiguration interface implementation s
      *  is a shape array of integers which is being passed to the method...
      *
-     * @param newShape An array if integers which are all > 0 and represent the tensor dimensions.
+     * @param newShape An array if integers which are all greater 0 and represent the tensor dimensions.
      */
     protected void _configureFromNewShape( int[] newShape, boolean makeVirtual, boolean autoAllocate )
     {

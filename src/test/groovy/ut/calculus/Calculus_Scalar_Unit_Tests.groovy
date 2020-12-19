@@ -1,7 +1,7 @@
 package ut.calculus
 
 import neureka.calculus.Function
-import neureka.calculus.frontend.assembly.FunctionBuilder
+import neureka.calculus.assembly.FunctionBuilder
 import spock.lang.Specification
 
 class Calculus_Scalar_Unit_Tests extends Specification

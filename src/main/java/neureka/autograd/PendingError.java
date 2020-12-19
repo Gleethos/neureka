@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
-import neureka.calculus.frontend.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionBuilder;
 
 @Accessors( prefix = {"_"} )
 @ToString

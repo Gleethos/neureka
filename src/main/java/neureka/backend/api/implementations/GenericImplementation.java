@@ -8,8 +8,8 @@ import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.OperationType;
 import neureka.calculus.Function;
-import neureka.calculus.frontend.AbstractFunction;
-import neureka.calculus.frontend.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
 import neureka.devices.host.execution.HostExecutor;
 import neureka.dtype.NumericType;
@@ -94,12 +94,12 @@ public class GenericImplementation extends AbstractBaseOperationTypeImplementati
     }
 
     @Override
-    public boolean canImplementationPerformForwardADFor(ExecutionCall call) {
+    public boolean canImplementationPerformForwardADFor( ExecutionCall call ) {
         return true;
     }
 
     @Override
-    public boolean canImplementationPerformBackwardADFor(ExecutionCall call) {
+    public boolean canImplementationPerformBackwardADFor( ExecutionCall call ) {
         return true;
     }
 
@@ -120,18 +120,18 @@ public class GenericImplementation extends AbstractBaseOperationTypeImplementati
     }
 
     @Override
-    public Tsr handleInsteadOfDevice(AbstractFunction caller, ExecutionCall call) {
+    public Tsr handleInsteadOfDevice( FunctionNode caller, ExecutionCall call ) {
         return null;
     }
 
     @Override
-    public Tsr handleRecursivelyAccordingToArity(ExecutionCall call, java.util.function.Function<ExecutionCall, Tsr> goDeeperWith)
+    public Tsr handleRecursivelyAccordingToArity( ExecutionCall call, java.util.function.Function<ExecutionCall, Tsr> goDeeperWith )
     {
         return null;
     }
 
     @Override
-    public ExecutionCall instantiateNewTensorsForExecutionIn(ExecutionCall call)
+    public ExecutionCall instantiateNewTensorsForExecutionIn( ExecutionCall call )
     {
         Tsr[] tensors = call.getTensors();
         Device device = call.getDevice();
@@ -141,7 +141,7 @@ public class GenericImplementation extends AbstractBaseOperationTypeImplementati
             Tsr output = new Tsr( shp, tensors[ 1 ].getDataType() );
             output.setIsVirtual( false );
             try {
-                device.store(output);
+                device.store( output );
             } catch ( Exception e ) {
                 e.printStackTrace();
             }

@@ -1,4 +1,4 @@
-package neureka.calculus.frontend.assembly;
+package neureka.calculus.assembly;
 
 import neureka.backend.api.operations.AbstractOperationType;
 import neureka.backend.api.operations.OperationType;

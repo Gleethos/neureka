@@ -3,7 +3,7 @@ package it.autograd
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.JITProp
-import neureka.calculus.frontend.assembly.FunctionBuilder
+import neureka.calculus.assembly.FunctionBuilder
 import spock.lang.Specification
 
 class JITProp_Autograd_Tensor_Integration_Tests extends Specification

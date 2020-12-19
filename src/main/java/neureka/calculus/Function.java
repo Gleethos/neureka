@@ -40,8 +40,7 @@ import neureka.Tsr;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.operations.OperationType;
-import neureka.calculus.frontend.assembly.FunctionBuilder;
-import neureka.calculus.frontend.Cache;
+import neureka.calculus.assembly.FunctionBuilder;
 
 import java.util.List;
 import java.util.function.Supplier;

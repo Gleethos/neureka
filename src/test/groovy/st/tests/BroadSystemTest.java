@@ -3,7 +3,7 @@ package st.tests;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.calculus.Function;
-import neureka.calculus.frontend.assembly.FunctionBuilder;
+import neureka.calculus.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import testutility.UnitTester_Tensor;
 

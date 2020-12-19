@@ -3,14 +3,11 @@ package st
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
-import neureka.calculus.frontend.Cache
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import org.slf4j.Logger
 import spock.lang.Specification
 import testutility.Utility
-
-import java.text.SimpleDateFormat
 
 class Benchmark_System_Test extends Specification
 {

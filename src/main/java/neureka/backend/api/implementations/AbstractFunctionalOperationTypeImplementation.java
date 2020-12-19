@@ -6,10 +6,10 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
-import neureka.calculus.frontend.AbstractFunction;
 
 /**
  * This is the base class for implementations of the OperationTypeImplementation interface.
@@ -80,7 +80,7 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
     //---
 
     @Override
-    public Tsr handleInsteadOfDevice( AbstractFunction caller, ExecutionCall call ) {
+    public Tsr handleInsteadOfDevice( FunctionNode caller, ExecutionCall call ) {
         return _callHook.handle( caller, call );
     }
 

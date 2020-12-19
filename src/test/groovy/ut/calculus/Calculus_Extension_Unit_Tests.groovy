@@ -8,8 +8,8 @@ import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
 import neureka.backend.api.operations.OperationType
 import neureka.backend.api.implementations.OperationTypeImplementation
-import neureka.calculus.frontend.implementations.FunctionNode
-import neureka.calculus.frontend.implementations.FunctionInput
+import neureka.calculus.implementations.FunctionNode
+import neureka.calculus.implementations.FunctionInput
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 

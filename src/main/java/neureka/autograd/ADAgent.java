@@ -60,7 +60,7 @@ public interface ADAgent
      * @param target The node which is targeted to hold the partial derivative.
      * @param derivative The partial derivative which ought to be propagated forward.
      * @param <T> The type argument of the tensor that is being used.
-     * @return
+     * @return The result of a forward mode auto differentiation.
      */
     <T> Tsr<T> forward( GraphNode<T> target, Tsr<T> derivative );
 
@@ -71,7 +71,7 @@ public interface ADAgent
      * @param target The node which is targeted to hold the new error.
      * @param error The error which ought to be propagated backward.
      * @param <T> The type argument of the tensor that is being used.
-     * @return The new error for the targeted graph node.
+     * @return The result of a backward mode auto differentiation, and new error for the targeted graph node.
      */
     <T> Tsr<T> backward( GraphNode<T> target, Tsr<T> error );
 
