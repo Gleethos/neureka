@@ -167,8 +167,6 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *  perform auto-differentiation at some point then an exception will be thrown for debugging.
      *
      *  The getter returns the version of the data (_data) stored within this tensor.
-     *
-     * @return The version of the underlying data of this tensor.
      */
     @Getter
     private int _version = 0;
