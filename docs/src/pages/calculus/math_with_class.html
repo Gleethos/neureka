@@ -16,7 +16,7 @@
         </p>
     </div>
 </div>
-<div class="col-sm-12 col-md-6 col-lg-6">
+<div class="col-sm-12 col-md-12 col-lg-12">
     <div class="ContentBox">
         <p>
             First we have to define a class acting as numeric data type, meaning it implements
@@ -25,7 +25,7 @@
         </p>
     </div>
 </div>
-<div class="col-sm-12 col-md-6 col-lg-6">
+<div class="col-sm-12 col-md-12 col-lg-12">
     <div class="TabWrapper">
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
@@ -133,17 +133,17 @@
         </div>
     </div>
 </div>
-<div class="col-sm-12 col-md-6 col-lg-6">
+<div class="col-sm-12 col-md-12 col-lg-5">
     <div class="ContentBox">
         <p>
-            Nex we have to create two tensors holding some complex numbers. <br>
+            Next we have to create two tensors holding some complex numbers. <br>
             Let's just initialize them for 2D tensors and let them be points
             which are also the indices of the tensors.
         </p>
     </div>
 </div>
 
-<div class="col-sm-12 col-md-6 col-lg-12">
+<div class="col-sm-12 col-md-12 col-lg-7">
     <div class="TabWrapper">
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
@@ -153,32 +153,32 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-            Tsr a = new Tsr(
-                    [ 3, 2 ],
-                    DataType.of( ComplexNumber.class ),
-                    ( int i, int[] idx ) -> new ComplexNumber( idx[0], idx[1] )
-            )
-            Tsr b = new Tsr(
-                    [ 3, 2 ],
-                    DataType.of( ComplexNumber.class ),
-                    ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )
-            )
+    Tsr a = new Tsr(
+            [ 3, 2 ],
+            DataType.of( ComplexNumber.class ),
+            ( int i, int[] idx ) -> new ComplexNumber( idx[0], idx[1] )
+    )
+    Tsr b = new Tsr(
+            [ 3, 2 ],
+            DataType.of( ComplexNumber.class ),
+            ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )
+    )
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-            Tsr&#60;ComplexNumber&#62; a = new Tsr&#60;&#62;(
-                    new int[]{ 3, 2 },
-                    DataType.of( ComplexNumber.class ),
-                    ( int i, int[] idx ) -> new ComplexNumber( idx[0], idx[1] )
-            );
-            Tsr&#60;ComplexNumber&#62; b = new Tsr&#60;&#62;(
-                    new int[]{ 3, 2 },
-                    DataType.of( ComplexNumber.class ),
-                    ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )
-            );
+    Tsr&#60;ComplexNumber&#62; a = new Tsr&#60;&#62;(
+            new int[]{ 3, 2 },
+            DataType.of( ComplexNumber.class ),
+            ( int i, int[] idx ) -> new ComplexNumber( idx[0], idx[1] )
+    );
+    Tsr&#60;ComplexNumber&#62; b = new Tsr&#60;&#62;(
+            new int[]{ 3, 2 },
+            DataType.of( ComplexNumber.class ),
+            ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )
+    );
 
                 </code></pre>
             </div>
@@ -195,7 +195,7 @@
 </div>
 
 
-<div class="col-sm-12 col-md-6">
+<div class="col-sm-12 col-md-12 col-lg-12">
     <div class="TabWrapper">
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
@@ -229,7 +229,7 @@
 </div>
 
 
-<div class="col-sm-12 col-md-6 col-lg-6">
+<div class="col-sm-12 col-md-12 col-lg-12">
     <div class="ContentBox">
         <p>
             This feature currently only work for elementwise operations.<br>
