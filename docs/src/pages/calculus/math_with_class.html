@@ -1,0 +1,245 @@
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <h3>
+            Custom Numeric Data Types:
+        </h3>
+        <p>
+            Sometimes the default primitive data types like
+            double, float, int, short, byte, long... are not enough! <br>
+            One classic example for an important numeric format which is not embedded
+            into most languages is the complex number. <br>
+            If you want to go beyond primitive data types and
+            get any class to act as a numeric type within a tensor and tensor operations
+            then take a look at the
+            following example.
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-6 col-lg-6">
+    <div class="ContentBox">
+        <p>
+            First we have to define a class acting as numeric data type, meaning it implements
+            methods like "plus", "minus", "divide" and so on... <br>
+            Let's create a simple "ComplexNumber" class:
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-6 col-lg-6">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+    class ComplexNumber
+    {
+        private double real = 0.0
+        private double imaginary = 0.0
+
+        ComplexNumber(double real, double imaginary)
+        {
+            this.real = real
+            this.imaginary = imaginary
+        }
+
+        ComplexNumber plus(ComplexNumber z2) {
+            return new ComplexNumber(this.real + z2.real, this.imaginary + z2.imaginary)
+        }
+
+        ComplexNumber minus(ComplexNumber z2) {
+            return new ComplexNumber(this.real - z2.real, this.imaginary - z2.imaginary)
+        }
+
+        ComplexNumber multiply(ComplexNumber z2) {
+            double _real = this.real*z2.real - this.imaginary*z2.imaginary
+            double _imaginary = this.real*z2.imaginary + this.imaginary*z2.real
+            return new ComplexNumber(_real,_imaginary)
+        }
+
+        ComplexNumber divide(ComplexNumber z2) {
+            ComplexNumber output = multiply(z2.conjugate())
+            double div = Math.pow(z2.mod(),2)
+            return new ComplexNumber(output.real/div,output.imaginary/div)
+        }
+
+        double mod() {
+            return Math.sqrt(Math.pow(this.real,2) + Math.pow(this.imaginary,2))
+        }
+
+        @Override
+        String toString() {
+            String re = this.real + ""
+            String im
+            if (this.imaginary < 0) im = this.imaginary+"i"
+            else im = "+"+this.imaginary+"i"
+            return re + im
+        }
+    }
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    class ComplexNumber
+    {
+        private double real = 0.0
+        private double imaginary = 0.0
+
+        public ComplexNumber(double real, double imaginary){
+            this.real = real; this.imaginary = imaginary;
+        }
+
+        public ComplexNumber plus(ComplexNumber z2) {
+            return new ComplexNumber(this.real + z2.real, this.imaginary + z2.imaginary);
+        }
+
+        public ComplexNumber minus(ComplexNumber z2) {
+            return new ComplexNumber(this.real - z2.real, this.imaginary - z2.imaginary);
+        }
+
+        public ComplexNumber multiply(ComplexNumber z2) {
+            double _real = this.real*z2.real - this.imaginary*z2.imaginary;
+            double _imaginary = this.real*z2.imaginary + this.imaginary*z2.real;
+            return new ComplexNumber(_real,_imaginary);
+        }
+
+        public ComplexNumber divide(ComplexNumber z2) {
+            ComplexNumber output = multiply(z2.conjugate());
+            double div = Math.pow(z2.mod(),2);
+            return new ComplexNumber(output.real/div,output.imaginary/div);
+        }
+
+        public double mod() {
+            return Math.sqrt(Math.pow(this.real,2) + Math.pow(this.imaginary,2));
+        }
+
+        @Override
+        public String toString() {
+            String re = this.real + "";
+            String im;
+            if (this.imaginary < 0) im = this.imaginary+"i";
+            else im = "+"+this.imaginary+"i";
+            return re + im;
+        }
+    }
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm-12 col-md-6 col-lg-6">
+    <div class="ContentBox">
+        <p>
+            Nex we have to create two tensors holding some complex numbers. <br>
+            Let's just initialize them for 2D tensors and let them be points
+            which are also the indices of the tensors.
+        </p>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-6 col-lg-12">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+            Tsr a = new Tsr(
+                    [ 3, 2 ],
+                    DataType.of( ComplexNumber.class ),
+                    ( int i, int[] idx ) -> new ComplexNumber( idx[0], idx[1] )
+            )
+            Tsr b = new Tsr(
+                    [ 3, 2 ],
+                    DataType.of( ComplexNumber.class ),
+                    ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )
+            )
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+            Tsr&#60;ComplexNumber&#62; a = new Tsr&#60;&#62;(
+                    new int[]{ 3, 2 },
+                    DataType.of( ComplexNumber.class ),
+                    ( int i, int[] idx ) -> new ComplexNumber( idx[0], idx[1] )
+            );
+            Tsr&#60;ComplexNumber&#62; b = new Tsr&#60;&#62;(
+                    new int[]{ 3, 2 },
+                    DataType.of( ComplexNumber.class ),
+                    ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )
+            );
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <p>
+            There are plenty of pre-instantiated and optimized Functions
+            to pick from in the Function interface.
+        </p>
+    </div>
+</div>
+
+
+<div class="col-sm-12 col-md-6">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+            assert a.toString() == "(3x2):[0.0+0.0i, 0.0+1.0i, 1.0+0.0i, 1.0+1.0i, 2.0+0.0i, 2.0+1.0i]"
+            assert b.toString() == "(3x2):[0.0+0.0i, 1.0+0.0i, 0.0+1.0i, 1.0+1.0i, 0.0+2.0i, 1.0+2.0i]"
+            assert (a+b).toString() == "(3x2):[0.0+0.0i, 1.0+1.0i, 1.0+1.0i, 2.0+2.0i, 2.0+2.0i, 3.0+3.0i]"
+            assert (a-b).toString() == "(3x2):[0.0+0.0i, -1.0+1.0i, 1.0-1.0i, 0.0+0.0i, 2.0-2.0i, 1.0-1.0i]"
+            assert (a*b).toString() == "(3x2):[0.0+0.0i, 0.0+1.0i, 0.0+1.0i, 0.0+2.0i, 0.0+4.0i, 0.0+5.0i]"
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+            assert a.toString().equals("(3x2):[0.0+0.0i, 0.0+1.0i, 1.0+0.0i, 1.0+1.0i, 2.0+0.0i, 2.0+1.0i]");
+            assert b.toString().equals("(3x2):[0.0+0.0i, 1.0+0.0i, 0.0+1.0i, 1.0+1.0i, 0.0+2.0i, 1.0+2.0i]");
+            assert a.plus(b).toString().equals("(3x2):[0.0+0.0i, 1.0+1.0i, 1.0+1.0i, 2.0+2.0i, 2.0+2.0i, 3.0+3.0i]");
+            assert a.minus(b).toString().equals( "(3x2):[0.0+0.0i, -1.0+1.0i, 1.0-1.0i, 0.0+0.0i, 2.0-2.0i, 1.0-1.0i]");
+            assert a.multiply(b).toString().equals("(3x2):[0.0+0.0i, 0.0+1.0i, 0.0+1.0i, 0.0+2.0i, 0.0+4.0i, 0.0+5.0i]");
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="col-sm-12 col-md-6 col-lg-6">
+    <div class="ContentBox">
+        <p>
+            This feature currently only work for elementwise operations.<br>
+            In future versions linear operations will be supported as well.<br>
+            <br>
+            One important note that has to be kept in mind when using this feature
+            is that is substantially slower than operations in conventional (primitive)
+            data types.
+        </p>
+    </div>
+</div>
+
+

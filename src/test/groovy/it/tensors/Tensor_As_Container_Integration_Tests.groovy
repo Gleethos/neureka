@@ -59,6 +59,30 @@ class Tensor_As_Container_Integration_Tests extends Specification
             (a*b).toString() == "(3x2):[3.07-0.3900000000000001i, 3.07-0.3900000000000001i, 3.07-0.3900000000000001i, 3.07-0.3900000000000001i, 3.07-0.3900000000000001i, 3.07-0.3900000000000001i]"
     }
 
+    def 'More tensor operations translate to custom data type "ComplexNumber".'()
+    {
+        given : ''
+            Tsr a = new Tsr(
+                    [3, 2],
+                    DataType.of(ComplexNumber.class),
+                    ( int i, int[] idx ) -> new ComplexNumber(idx[0], idx[1])
+            )
+            Tsr b = new Tsr(
+                    [3, 2],
+                    DataType.of(ComplexNumber.class),
+                    ( int i, int[] idx ) -> new ComplexNumber(idx[1], idx[0])
+            )
+
+        expect:
+            a.toString() == "(3x2):[0.0+0.0i, 0.0+1.0i, 1.0+0.0i, 1.0+1.0i, 2.0+0.0i, 2.0+1.0i]"
+            b.toString() == "(3x2):[0.0+0.0i, 1.0+0.0i, 0.0+1.0i, 1.0+1.0i, 0.0+2.0i, 1.0+2.0i]"
+            !a.isVirtual()
+            !b.isVirtual()
+            (a+b).toString() == "(3x2):[0.0+0.0i, 1.0+1.0i, 1.0+1.0i, 2.0+2.0i, 2.0+2.0i, 3.0+3.0i]"
+            (a-b).toString() == "(3x2):[0.0+0.0i, -1.0+1.0i, 1.0-1.0i, 0.0+0.0i, 2.0-2.0i, 1.0-1.0i]"
+            (a*b).toString() == "(3x2):[0.0+0.0i, 0.0+1.0i, 0.0+1.0i, 0.0+2.0i, 0.0+4.0i, 0.0+5.0i]"
+    }
+
 
     class ComplexNumber
     {

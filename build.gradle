@@ -362,7 +362,7 @@ artifacts {
 }
 
 signing {
-    //372447547E38B0A909776E4DD830DAE574A07986
+    //Key-ID: 372447547E38B0A909776E4DD830DAE574A07986
     sign configurations.archives
 }
 
