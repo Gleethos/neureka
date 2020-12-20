@@ -1,26 +1,13 @@
 
 <center>
  
-# [NEUREKA](https://gleethos.github.io/neureka/index.html) - [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6bfd22ba9b8c410285b19e3d37f4fbc6)](https://www.codacy.com/manual/Gleethos/neureka?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Gleethos/neureka&amp;utm_campaign=Badge_Grade) [![Build Status](https://travis-ci.org/Gleethos/neureka.svg?branch=master)](https://travis-ci.org/Gleethos/neureka) [![Code Coverage](https://img.shields.io/codecov/c/github/gleethos/neureka)](https://codecov.io/github/gleethos/neureka) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![GitHub version](https://badge.fury.io/gh/Gleethos%2Fneureka.svg)](https://github.com/Gleethos/neureka) #
-
-[![forthebadge](https://forthebadge.com/images/badges/made-with-java.svg)](https://forthebadge.com) 
-[![forthebadge](https://forthebadge.com/images/badges/built-with-swag.svg)](https://forthebadge.com) 
-[![forthebadge](https://forthebadge.com/images/badges/for-you.svg)](https://forthebadge.com) 
-[![forthebadge](https://forthebadge.com/images/badges/certified-elijah-wood.svg)](https://forthebadge.com)
-[![forthebadge](https://forthebadge.com/images/badges/check-it-out.svg)](https://forthebadge.com)
-
-<a href="https://scan.coverity.com/projects/gleethos-neureka">
-  <img alt="Coverity Scan Build Status"
-       src="https://img.shields.io/coverity/scan/21605.svg"/>
-</a>
+# [NEUREKA](https://gleethos.github.io/neureka/index.html) - [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6bfd22ba9b8c410285b19e3d37f4fbc6)](https://www.codacy.com/manual/Gleethos/neureka?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Gleethos/neureka&amp;utm_campaign=Badge_Grade) [![Build Status](https://travis-ci.org/Gleethos/neureka.svg?branch=master)](https://travis-ci.org/Gleethos/neureka) [![Code Coverage](https://img.shields.io/codecov/c/github/gleethos/neureka)](https://codecov.io/github/gleethos/neureka) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![GitHub version](https://badge.fury.io/gh/Gleethos%2Fneureka.svg)](https://github.com/Gleethos/neureka) [![HitCount](http://hits.dwyl.com/Gleethos/neureka.svg)](http://hits.dwyl.com/Gleethos/neureka) #
 
 </center>
 
-[![HitCount](http://hits.dwyl.com/Gleethos/neureka.svg)](http://hits.dwyl.com/Gleethos/neureka)
+**A platform independent tensor library written in Java.**
 
 ---
-
-Neureka is a platform independent tensor library written in Java. 
 
   - Java, Kotlin, Groovy, Scala, Jython, JRuby...
  
@@ -65,7 +52,7 @@ Take a quick look:
 
 ## Tech ##
 
-This library is being heavily inspired by [PyTorch](https://github.com/pytorch/pytorch).
+This library has been heavily inspired by [PyTorch](https://github.com/pytorch/pytorch).
 A powerful deep learning framework that combines
 [dynamic computation](https://medium.com/@omaraymanomar/dynamic-vs-static-computation-graph-2579d1934ecf), performance and debugging freedom!
 
@@ -81,7 +68,7 @@ would still be locked out of AMD and Intel Systems when it comes to performance.
 
 For that reason Neureka is written in Java and OpenCl.
 Although performance will certainly be impacted 
-by this choice, modularity, uncomplicated cross platform deployment and ease of 
+by this choice, modularity, extensibility, uncomplicated cross platform deployment, and ease of 
 use are the benefits.
 Additionally, the use of OpenCl theoretically should allow for
 FPGA utilization.
@@ -94,14 +81,33 @@ the fact that it is among the most dominant platforms.
 Neureka has been built for the JVM not for Java.
 
 ---
+## Getting started with Apache Maven: ##
 
-## Getting started with gradle: ##
+```
+<dependency>
+  <groupId>com.github.gleethos</groupId>
+  <artifactId>neureka</artifactId>
+  <version>0.4.0</version>
+</dependency>
+```
+---
+
+## Getting started with Gradle: ##
+Groovy DSL:
+```
+implementation 'com.github.gleethos:neureka:0.4.0' 
+```
+Kotlin DSL:
+```
+implementation("com.github.gleethos:neureka:0.4.0")
+```
+...or alternatively: 
 
 1. Add [jitpack](https://jitpack.io/) in your root build.gradle at the end of repositories:
 ```
 allprojects {
 	repositories {
-		...
+		//...
 		maven { url 'https://jitpack.io' }
 	}
 }
@@ -119,7 +125,7 @@ dependencies {
 
 ```
 @GrabResolver(name = 'jitpack.io', root = 'https://jitpack.io')
-@Grab('com.github.Gleethos:neureka:v0.3.0')
+@Grab('com.github.Gleethos:neureka:v0.4.0')
 
 import com.github.Gleethos.neureka.*
 ```
@@ -155,6 +161,8 @@ $ gradlew proguard
 - OpenCL - 2.^ (JOCL binding)
 
 - Groovy - 3.^ 
+
+- SLF4J
 
 ---
 
