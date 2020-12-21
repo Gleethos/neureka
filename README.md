@@ -95,7 +95,7 @@ Neureka has been built for the JVM not for Java.
 ## Getting started with Gradle: ##
 Groovy DSL:
 ```
-implementation 'com.github.gleethos:neureka:0.4.0' 
+implementation 'com.github.gleethos:neureka:0.4.0'
 ```
 Kotlin DSL:
 ```
