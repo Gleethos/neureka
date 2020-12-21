@@ -26,7 +26,7 @@ Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/ra
 
 ---  
 
-## Features ##
+## :hammer_and_wrench: Features ##
 
   - dynamic computation graph
 
@@ -50,7 +50,7 @@ Take a quick look:
 
 ---
 
-## Tech ##
+## :robot: Tech ##
 
 This library has been heavily inspired by [PyTorch](https://github.com/pytorch/pytorch).
 A powerful deep learning framework that combines
@@ -132,7 +132,7 @@ import com.github.Gleethos.neureka.*
 
 ---
 
-## Building from source ##
+## :rocket: Building from source ##
 
 Execute the following:
 ```sh
@@ -156,7 +156,7 @@ $ gradlew proguard
 
 ---
 
-## Dependencies ##
+## :mount_fuji: Dependencies ##
 
 - OpenCL - 2.^ (JOCL binding)
 
@@ -166,7 +166,7 @@ $ gradlew proguard
 
 ---
 
-## Documentation ###
+## :book: Documentation ###
 
 - [By example](https://gleethos.github.io/neureka/showcase.html) 
 
@@ -176,7 +176,7 @@ $ gradlew proguard
 
 ---
 
-## Testing & Specification ###
+## :microscope: Testing & Specification :scroll: ###
 
 - BDD & living documentation with Spock! 
 
@@ -184,7 +184,7 @@ $ gradlew proguard
 
 ---
 
-## Development - [![Commit activity 1 year](https://img.shields.io/github/commit-activity/y/Gleethos/neureka.svg?style=flat)]() - [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Gleethos/neureka/graphs/commit-activity) - [![GitHub commits](https://img.shields.io/github/commits-since/Gleethos/neureka/v0.0.0.svg)](https://GitHub.com/Gleethos/neurka/commit/) ##
+## :seedling: Development - [![Commit activity 1 year](https://img.shields.io/github/commit-activity/y/Gleethos/neureka.svg?style=flat)]() - [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Gleethos/neureka/graphs/commit-activity) - [![GitHub commits](https://img.shields.io/github/commits-since/Gleethos/neureka/v0.0.0.svg)](https://GitHub.com/Gleethos/neurka/commit/) ##
 
 Want to contribute? Great!
 
@@ -196,13 +196,13 @@ Feedback is greatly appreciated!
 
 ---
 
-## Todos - [![Issues](https://img.shields.io/github/issues-raw/Gleethos/neureka.svg?maxAge=25000)](https://github.com/Gleethos/neureka/issues)  ##
+## :memo: Todos - [![Issues](https://img.shields.io/github/issues-raw/Gleethos/neureka.svg?maxAge=25000)](https://github.com/Gleethos/neureka/issues)  ##
 
   - Make a wish! :)
 
 ---
 
-## License ##
+## :balance_scale: License ##
 
 **It's Free!** ... 
     
@@ -210,7 +210,7 @@ Feedback is greatly appreciated!
 
 ---
 
-## Support on Beerpay ##
+## :v: Support on Beerpay ##
 Help me out for a couple of :beers:!
 
 [![Beerpay](https://beerpay.io/Gleethos/neureka/badge.svg?style=beer-square)](https://beerpay.io/Gleethos/neureka)  [![Beerpay](https://beerpay.io/Gleethos/neureka/make-wish.svg?style=flat-square)](https://beerpay.io/Gleethos/neureka?focus=wish)
