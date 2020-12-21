@@ -42,11 +42,11 @@ Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/ra
   
   - labeling
 
-Take a quick look:
+### Take a quick look: ###
 
-- [Neureka with Java](docs/markdown/java_example.md)
+- [Neureka with Java](docs/markdown/java_example.md) :coffee:
 
-- [Neureka with Groovy](docs/markdown/groovy_example.md)
+- [Neureka with Groovy](docs/markdown/groovy_example.md) :star:
 
 ---
 
