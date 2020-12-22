@@ -67,14 +67,16 @@ def change = { c -> new Object() {
                         File file = new File("$rootDir" + p)
                         if(!file.exists()) return
                         String[] parts = file.text.split( a )
-                        if ( parts.length==1 ) println( a +' <=-=> '+ b )
+                        if ( parts.length==1 ) println( '-=>\n'+ a )
                         assert parts.length == 2
                         String[] tails = parts[1].split(b)
+                        if ( tails.length==1 ) println( '-=>\n'+ b )
+                        assert tails.length>=2
                         if( tails.length > 2 ) {
                             tails[1] = (tails as List)[1..tails.length].inject('',{s,v->s+v})
                             println(tails as List)
                         }
-                        if(!unchanged) file.write(parts[0] + a.replace("\\", "") + c(tails[0]) + b.replace("\\", "") + ((tails.length>1)?tails[1]:""))
+                        if(!unchanged) file.write(parts[0] + a.replace("\\", "") + c(tails[0]) + b.replace("\\", "") + tails[1])
                     }
                 }
             }
@@ -92,7 +94,7 @@ task setVersionAcrossProject() {
     change({VERSION}).between( "production/lib/neureka-", "\\.jar\\)" ).inFile("/README.md")
     change({VERSION}).between( "<version>", "</version>").inFile("/README.md")
     change({VERSION}).between( "implementation 'com\\.github\\.gleethos:neureka:", "'\r\n```" ).inFile("/README.md")
-    change({VERSION}).between( "implementation\\(\"com\\.github\\.gleethos:neureka:", "\"\\)\r\n```" ).inFile("/README.md")
+    change({VERSION}).between( "implementation\\(\"com.github\\.gleethos:neureka:", "\"\\)\r\n```" ).inFile("/README.md")
     change({VERSION}).between( "implementation 'com\\.github\\.Gleethos:neureka:v", "'\r\n\\}\r\n```" ).inFile("/README.md")
     change({VERSION}).between( "@Grab\\('com\\.github\\.Gleethos:neureka:v", "'\\)" ).inFile("/README.md")
 }
