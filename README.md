@@ -180,6 +180,8 @@ $ gradlew proguard
 
 - [Living Documentation](https://gleethos.github.io/neureka/spock/reports/index.html)!
 
+- [GitHub Wiki](https://github.com/Gleethos/neureka/wiki)
+
 ---
 
 ## :microscope: Testing & Specification :scroll: ###
@@ -210,7 +212,7 @@ Feedback is greatly appreciated!
 
 ## :balance_scale: License ##
 
-**It's Free!** ... 
+- MIT -> **It's Free!** ... 
     
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.png?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
