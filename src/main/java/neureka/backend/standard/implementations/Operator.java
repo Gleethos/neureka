@@ -62,7 +62,7 @@ public class Operator extends AbstractFunctionalOperationTypeImplementation<Oper
             OperationType.SecondaryNDIConsumer operation
     ) {
         if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
-            ((double[])t0_drn.getValue())[ 0 ] = operation.execute( NDIterator.of( t1_src ), NDIterator.of( t2_src ) ); // new int[t0_drn.rank()]
+            ((double[])t0_drn.getData())[ 0 ] = operation.execute( NDIterator.of( t1_src ), NDIterator.of( t2_src ) ); // new int[t0_drn.rank()]
         } else {
             //int[] t0Shp = t0_drn.getNDConf().shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
             double[] t0_value = t0_drn.value64();
@@ -93,7 +93,7 @@ public class Operator extends AbstractFunctionalOperationTypeImplementation<Oper
             OperationType.PrimaryNDXConsumer operation
     ) {
         if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
-            ((double[])t0_drn.getValue())[ 0 ] = operation.execute( new int[t0_drn.rank()] );
+            ((double[])t0_drn.getData())[ 0 ] = operation.execute( new int[t0_drn.rank()] );
         } else {
             NDConfiguration ndc0 = t0_drn.getNDConf();
             int[] t0Shp = ndc0.shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0

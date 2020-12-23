@@ -2031,7 +2031,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this;
     }
 
-    public Object getValue() {
+    public Object getValue() { // TODO : Make this what it is supposed to be!!!
         if ( this.isOutsourced() ) {
             Device device = find( Device.class );
             if ( device != null ) {
@@ -2042,7 +2042,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             else return getData();
         }
         else if ( !this.isVirtual() ) return getData();
-        else return getDataType().actualize(getData(), this.size() );
+        else return getDataType().actualize( getData(), this.size() );
     }
     
     public double[] gradient64() {
@@ -2206,29 +2206,49 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return _toString( mode, ( mode.contains( "f" ) ) ? "    " : null );
     }
 
-    protected String _toString( String mode, String deep ) {
-        String base = ( deep == null ) ? "" : "\n" + deep;
-        String delimiter = ( deep == null ) ? "" : "    ";
-        String half = ( deep == null ) ? "" : "  ";
-        String deeper = ( deep == null ) ? deep : deep + delimiter;
-        int max = ( mode.contains( "s" ) ) ? 3 : 50;
-        if ( this.isEmpty() ) return "empty";
-        else if ( this.isUndefined() ) return "undefined";
-        StringBuilder strShape = new StringBuilder();
+    /*
+    // A recursive stringifier for formatted tensors...
+    private StringBuilder _format( int[] shape, int[] idx, int dim ) {
+        boolean legacy = Neureka.instance().settings().indexing().isUsingLegacyIndexing();
+        StringBuilder builder = new StringBuilder();
+
+        if ( legacy && dim == 0 || !legacy && dim == idx.length - 1 ) {
+            String row = _stringified( true, 50, idx, shape[dim] );
+        } else {
+
+            builder.append( _format(shape, idx, dim+1) );
+        }
+        //NDConfiguration.Utility.increment( idx, shape );
+        return builder;
+    }
+    */
+
+    private StringBuilder _strShape() {
+        boolean legacy = Neureka.instance().settings().view().isUsingLegacyView();
+        StringBuilder strShape = new StringBuilder( (legacy)?"[":"(" );
         int[] shape = _NDConf.shape();
         for ( int i = 0; i < shape.length; i++ ) {
             strShape.append( shape[ i ] );
             if ( i < shape.length - 1 ) strShape.append( "x" );
         }
+        if ( legacy ) return strShape.append("]");
+        else return strShape.append(")");
+
+    }
+
+    protected String _toString( String mode, String deep ) {
+        if ( this.isEmpty() ) return "empty";
+        else if ( this.isUndefined() ) return "undefined";
+        String base = ( deep == null ) ? "" : "\n" + deep;
+        String delimiter = ( deep == null ) ? "" : "    ";
+        String half = ( deep == null ) ? "" : "  ";
+        String deeper = ( deep == null ) ? deep : deep + delimiter;
+        int max = ( mode.contains( "s" ) ) ? 3 : 50;
+        StringBuilder strShape = _strShape();
         boolean compact = mode.contains( "c" );
-        strShape = new StringBuilder(
-                ( Neureka.instance().settings().view().isUsingLegacyView() )
-                        ? "[" + strShape + "]"
-                        : "(" + strShape + ")"
-        );
         if ( mode.contains( "shape" ) || mode.contains( "shp" ) ) return strShape.toString();
         String asString = "";
-        asString += _stringified(getData(), compact, max );
+        asString += _stringified( compact, max );
         asString = strShape + (
                         ( Neureka.instance().settings().view().isUsingLegacyView() )
                                 ? ":(" + asString + ")"
@@ -2278,50 +2298,32 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     private String _stringified(
-            Object v,
+            boolean format,
+            int max,
+            int[] idx,
+            int size
+    ) {
+        int[] shape = getNDConf().shape();
+        IntFunction<String> getter = _createValStringifier( format );
+        StringBuilder asString = new StringBuilder();
+        int trim = ( size - max );
+        size = ( trim > 0 ) ? max : size;
+        for ( int i = 0; i < size; i++ ) {
+            String vStr = getter.apply( ( this.isVirtual() ) ? 0 : i_of_idx( idx ) );
+            asString.append( vStr );
+            if ( i < size - 1 ) asString.append( ", " );
+            else if ( trim > 0 ) asString.append( ", ... + " ).append( trim ).append( " more" );
+            NDConfiguration.Utility.increment( idx, shape );
+        }
+        return asString.toString();
+    }
+
+
+    private String _stringified(
             boolean format,
             int max
     ) {
-        if ( v instanceof double[] ) return _stringified(
-                i -> ( format )
-                        ? Utility.Stringify.formatFP( ( (double[]) v )[ i ])
-                        : String.valueOf( ( (double[] ) v )[ i ] ),
-                max
-        );
-        else if ( v instanceof float[] ) return _stringified(
-                i -> ( format )
-                        ? Utility.Stringify.formatFP( ( (float[]) v )[ i ] )
-                        : String.valueOf( ( (float[]) v )[ i ] ),
-                max
-        );
-        else if ( v instanceof short[] ) return _stringified(
-                i -> ( format )
-                        ? Utility.Stringify.formatFP( ( (short[]) v )[ i ] )
-                        : String.valueOf( ( (short[]) v )[ i ] ),
-                max
-        );
-        else if ( v instanceof int[] ) return _stringified(
-                i -> ( format )
-                        ? Utility.Stringify.formatFP( ( (int[]) v )[ i ] )
-                        : String.valueOf( ( (int[]) v )[ i ] ),
-                max
-        );
-        else if ( v == null ) return _stringified(
-                    i -> ( format )
-                            ? Utility.Stringify.formatFP( value64( i ) )
-                            : String.valueOf( value64( i ) ),
-                    max
-            );
-        else return _stringified(
-                    i -> String.valueOf( ( (Object[]) v )[ i ] ),
-                    max
-            );
-    }
-
-    private String _stringified(
-            IntFunction<String> getter,
-            int max
-    ) {
+        IntFunction<String> getter = _createValStringifier( format );
         StringBuilder asString = new StringBuilder();
         int size = this.size();
         int trim = ( size - max );
@@ -2334,6 +2336,35 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         }
         return asString.toString();
     }
+
+    private IntFunction _createValStringifier( boolean format ) {
+        Object v = getData();
+        if ( v instanceof double[] )
+            return i -> ( format )
+                        ? Utility.Stringify.formatFP( ( (double[]) v )[ i ])
+                        : String.valueOf( ( (double[] ) v )[ i ] );
+        else if ( v instanceof float[] )
+            return i -> ( format )
+                        ? Utility.Stringify.formatFP( ( (float[]) v )[ i ] )
+                        : String.valueOf( ( (float[]) v )[ i ] );
+        else if ( v instanceof short[] )
+            return i -> ( format )
+                        ? Utility.Stringify.formatFP( ( (short[]) v )[ i ] )
+                        : String.valueOf( ( (short[]) v )[ i ] );
+        else if ( v instanceof int[] )
+            return i -> ( format )
+                        ? Utility.Stringify.formatFP( ( (int[]) v )[ i ] )
+                        : String.valueOf( ( (int[]) v )[ i ] );
+        else if ( v == null )
+            return i -> ( format )
+                        ? Utility.Stringify.formatFP( value64( i ) )
+                        : String.valueOf( value64( i ) );
+        else
+            return i -> String.valueOf( ( (Object[]) v )[ i ] );
+    }
+
+
+
 
     public String toString() {
         return toString( "dgc" );
