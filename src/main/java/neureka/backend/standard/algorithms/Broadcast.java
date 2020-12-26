@@ -25,13 +25,13 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                     ) return 0.0f;
 
                     int maxRank = 0;
-                    for ( Tsr t : call.getTensors() ) if( t != null && t.rank() > maxRank ) maxRank = t.rank();
+                    for ( Tsr t : call.getTensors() ) if ( t != null && t.rank() > maxRank ) maxRank = t.rank();
                     for ( int i = 0; i < maxRank; i++ )
                     {
                         int currentDim = -1;
                         for( Tsr t : call.getTensors() )
                         {
-                            if( t!=null && i < t.rank() ) {
+                            if ( t!=null && i < t.rank() ) {
                                 if ( currentDim == -1 ) currentDim = t.shape( i );
                                 else if ( currentDim != t.shape( i ) && currentDim != 1 && t.shape( i ) != 1 ) return 0.0f;
                             }

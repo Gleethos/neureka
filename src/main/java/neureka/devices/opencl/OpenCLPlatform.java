@@ -127,7 +127,7 @@ public class OpenCLPlatform {
                         ) { // TODO: cover!
                             exec = (CLImplementation) type.getAlgorithm(GenericAlgorithm.class).getImplementationFor( OpenCLDevice.class );
                         }
-                        if( exec != null && exec.getSource() != null ) code.put( exec.getName(), exec.getSource() );
+                        if ( exec != null && exec.getSource() != null ) code.put( exec.getName(), exec.getSource() );
                     }
                     code.forEach( ( n, s ) -> {
                                 names.add( n );
@@ -167,7 +167,7 @@ public class OpenCLPlatform {
 
     public List<OpenCLDevice> getDevices() {
         List<OpenCLDevice> devices = new ArrayList<>();
-        _id_device.forEach( ( k, v ) -> devices.add(v) );
+        _id_device.forEach( ( k, v ) -> devices.add( v ) );
         return devices;
     }
 
@@ -203,7 +203,7 @@ public class OpenCLPlatform {
             clGetPlatformIDs(0, null, numPlatforms);
 
             // Obtain the platform IDs
-            cl_platform_id[] platforms = new cl_platform_id[numPlatforms[ 0 ]];
+            cl_platform_id[] platforms = new cl_platform_id[ numPlatforms[ 0 ] ];
             clGetPlatformIDs( platforms.length, platforms, null );
 
             List<OpenCLPlatform> list = new ArrayList<>();

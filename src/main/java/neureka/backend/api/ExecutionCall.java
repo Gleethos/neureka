@@ -149,7 +149,7 @@ public class ExecutionCall< DeviceType extends Device >
         {
             boolean all = true;
             for ( Tsr t : _tensors )
-                if( t != null ) all = ( !condition.check( t ) ) ? false : all;
+                if ( t != null ) all = ( !condition.check( t ) ) ? false : all;
             if ( !all ) _isValid = false;
             return this;
         }
@@ -264,8 +264,8 @@ public class ExecutionCall< DeviceType extends Device >
     }
 
     public void takeContext( Map<String, Object>  context ) {
-        if(_context==null && context!=null )_context = new TreeMap<>();
-        if(context!=null) _context.putAll(_context);
+        if ( _context==null && context!=null )_context = new TreeMap<>();
+        if (context!=null) _context.putAll(_context);
     }
 
     // CONDITIONS:

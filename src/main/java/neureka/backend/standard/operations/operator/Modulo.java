@@ -271,7 +271,7 @@ public class Modulo extends AbstractOperation {
                     }
                     Tsr[] inputs = call.getTensors();
                     int d = call.getDerivativeIndex();
-                    if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                    if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                     else
                     {
                         Tsr deriv = f.derive( inputs, d );
@@ -326,7 +326,7 @@ public class Modulo extends AbstractOperation {
                                 3,
                                 broadcast.getKernelSource(), // kernelSource
                                 "value = ((int)src1) % ((int)src2);\n",
-                                "if(d==0) {\n" +
+                                "if (d==0) {\n" +
                                         "    value += (1/handle) * drain;\n" +//TODO: this is probably wrong!
                                         "} else {\n" +
                                         "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
@@ -426,7 +426,7 @@ public class Modulo extends AbstractOperation {
                                 3,
                                 scalarization.getKernelSource(), // kernelSource
                                 "output = ((int)input1) % ((int)value);     \n",
-                                "if(d==0) {                               \n" +
+                                "if (d==0) {                               \n" +
                                         "    output = 1/value;                           \n" +
                                         "} else {                                        \n" +
                                         "    output = -value /(float)pow(input1, 2.0f);  \n" +

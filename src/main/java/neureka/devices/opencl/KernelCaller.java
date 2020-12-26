@@ -91,7 +91,7 @@ public class KernelCaller
     public void call( int globalWorkSize )
     {
         cl_event[] events = _getWaitList( _inputs.toArray( new Tsr[ 0 ] ) );
-        if( events.length > 0 ) {
+        if ( events.length > 0 ) {
             clWaitForEvents( events.length, events );
             _releaseEvents( _inputs.toArray( new Tsr[ 0 ] ) );
         }
@@ -110,7 +110,7 @@ public class KernelCaller
     public void call( long[] globalWorkSizes, long[] localWorkSizes )
     {
         cl_event[] events = _getWaitList( _inputs.toArray( new Tsr[ 0 ] ) );
-        if( events.length > 0 ) {
+        if ( events.length > 0 ) {
             clWaitForEvents( events.length, events );
             _releaseEvents( _inputs.toArray( new Tsr[ 0 ] ) );
         }
@@ -130,7 +130,7 @@ public class KernelCaller
     @Contract( pure = true )
     private void _releaseEvents( @NotNull Tsr<Number>[] tensors ) {
         for ( Tsr<Number> t : tensors ) {
-            if( t.find( OpenCLDevice.cl_tsr.class ).value.event != null ) {
+            if ( t.find( OpenCLDevice.cl_tsr.class ).value.event != null ) {
                 clReleaseEvent(t.find( OpenCLDevice.cl_tsr.class ).value.event);
                 t.find( OpenCLDevice.cl_tsr.class ).value.event = null;
             }

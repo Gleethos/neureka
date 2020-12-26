@@ -71,7 +71,7 @@ public class Neureka
 
     public static Neureka instance() {
         Neureka n = _INSTANCES.get();
-        if( n == null ) {
+        if ( n == null ) {
             n = new Neureka();
             synchronized ( Neureka.class ) {
                 setContext( n );
@@ -240,7 +240,7 @@ public class Neureka
             }
 
             public void setIsKeepingDerivativeTargetPayloads(boolean keep) {
-                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || !_currentThreadIsAuthorized()) return;
                 _isKeepingDerivativeTargetPayloads = keep;
             }
 
@@ -290,7 +290,7 @@ public class Neureka
             }
 
             public void setIsPreventingInlineOperations(boolean prevent) {
-                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || !_currentThreadIsAuthorized()) return;
                 _isPreventingInlineOperations = prevent;
             }
 
@@ -299,7 +299,7 @@ public class Neureka
             }
 
             public void setIsRetainingPendingErrorForJITProp(boolean retain) {
-                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || !_currentThreadIsAuthorized()) return;
                 _isRetainingPendingErrorForJITProp = retain;
             }
 
@@ -308,7 +308,7 @@ public class Neureka
             }
 
             public void setIsApplyingGradientWhenTensorIsUsed(boolean apply) {
-                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || !_currentThreadIsAuthorized()) return;
                 _isApplyingGradientWhenTensorIsUsed = apply;
             }
 
@@ -317,7 +317,7 @@ public class Neureka
             }
 
             public void setIsApplyingGradientWhenRequested(boolean apply) {
-                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || !_currentThreadIsAuthorized()) return;
                 _isApplyingGradientWhenRequested = apply;
             }
 
@@ -338,7 +338,7 @@ public class Neureka
             }
 
             public void setIsUsingLegacyIndexing(boolean enabled) {
-                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || !_currentThreadIsAuthorized()) return;
                 _isUsingLegacyIndexing = enabled; // NOTE: gpu code must recompiled! (in OpenCLPlatform)
             }
 
@@ -347,7 +347,7 @@ public class Neureka
             }
 
             public void setIsUsingArrayBasedIndexing( boolean thorough ) {
-                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || !_currentThreadIsAuthorized()) return;
                 _isUsingArrayBasedIndexing = thorough;
             }
 
@@ -364,7 +364,7 @@ public class Neureka
             }
 
             public void setIsUsingLegacyView(boolean enabled) {
-                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || !_currentThreadIsAuthorized()) return;
                 _isUsingLegacyView = enabled;
             }
 
@@ -386,7 +386,7 @@ public class Neureka
             }
 
             public void setIsOnlyUsingDefaultNDConfiguration(boolean enabled) {
-                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || !_currentThreadIsAuthorized()) return;
                 _isOnlyUsingDefaultNDConfiguration = enabled;
             }
 
@@ -405,7 +405,7 @@ public class Neureka
             }
 
             public void setDefaultDataTypeClass( Class dtype ) {
-                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || !_currentThreadIsAuthorized()) return;
                 _defaultDataTypeClass = dtype;
             }
 
@@ -414,7 +414,7 @@ public class Neureka
             }
 
             public void setIsAutoConvertingExternalDataToJVMTypes( boolean autoConvert ) {
-                if(_isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || !_currentThreadIsAuthorized()) return;
                 _isAutoConvertingExternalDataToJVMTypes = autoConvert;
             }
 
@@ -460,7 +460,7 @@ public class Neureka
             } catch ( Throwable ex ) {// Class or one of its dependencies is not present...
                 cause = ex.getMessage();
             } finally {
-                if( !found ) {
+                if ( !found ) {
                     System.out.println(
                             "[Info]: '"+className+"' dependencies not found!"+groovyInfo+"\n[Cause]: "+cause
                     );

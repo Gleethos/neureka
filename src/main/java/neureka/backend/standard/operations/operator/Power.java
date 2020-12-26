@@ -258,7 +258,7 @@ public class Power extends AbstractOperation
                                 3,
                                 operator.getKernelSource(), // kernelSource
                                 "output = pow(input1, input2);",
-                                "if(d==0) {                                    \n" +
+                                "if (d==0) {                                    \n" +
                                         "    output = input2 * pow(input1, input2-1.0f);  \n" +
                                         "} else {                                         \n" +
                                         "    output = pow(input1, input2) * log(input1);  \n" +
@@ -286,7 +286,7 @@ public class Power extends AbstractOperation
                         }
                         Tsr[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
-                        if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                        if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
                             Tsr<?> deriv = f.derive( inputs, d );
@@ -341,7 +341,7 @@ public class Power extends AbstractOperation
                                 3,
                                 broadcast.getKernelSource(), // kernelSource
                                 "value += pow(src1, src2);",
-                                "if(d==0) {\n" +
+                                "if (d==0) {\n" +
                                         "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
                                         "} else {\n" +
                                         "    value += (pow(target, handle) * log(handle)) * drain;\n" +
@@ -359,7 +359,7 @@ public class Power extends AbstractOperation
                     double[] t1_val = inputs[ 1 ].value64();
                     if ( d < 0 ) return t1Idx -> Math.pow(t1_val[ t1Idx.i() ], value);
                     else {
-                        if(d==0) return t1Idx -> value*Math.pow(t1_val[ t1Idx.i() ], value-1);
+                        if (d==0) return t1Idx -> value*Math.pow(t1_val[ t1Idx.i() ], value-1);
                         else return t1Idx -> Math.pow(t1_val[ t1Idx.i() ], value)*Math.log(value);
                     }
                 };
@@ -370,7 +370,7 @@ public class Power extends AbstractOperation
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                     if ( d < 0 ) return t1Idx -> Math.pow(t1_val[ndc1.i_of_idx( t1Idx )], value);
                     else {
-                        if(d==0) return t1Idx -> value*Math.pow(t1_val[ndc1.i_of_idx( t1Idx )], value-1);
+                        if (d==0) return t1Idx -> value*Math.pow(t1_val[ndc1.i_of_idx( t1Idx )], value-1);
                         else return t1Idx -> Math.pow(t1_val[ndc1.i_of_idx( t1Idx )], value)*Math.log(value);
                     }
                 };
@@ -493,7 +493,7 @@ public class Power extends AbstractOperation
                             }
                             Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
-                            if( forward )
+                            if ( forward )
                                 throw new IllegalArgumentException("Convolution of does not support forward-AD!");
                             else
                             {

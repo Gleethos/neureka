@@ -46,7 +46,7 @@ public class DimFit extends AbstractOperation
                         //int index = call.getDerivativeIndex();
                         //int prefix = ((int[]) call.getAt("ends"))[ 0 ];
                         //int postfix = ((int[]) call.getAt("ends"))[ 1 ];
-                        if(forward) {
+                        if (forward) {
                             throw new IllegalArgumentException("Dim-Fit operation does not support forward-AD!");
                         }
                         return new DefaultADAgent()

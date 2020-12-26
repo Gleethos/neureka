@@ -181,7 +181,7 @@ public class Subtraction extends AbstractOperation
                                 3,
                                 operator.getKernelSource(), // kernelSource
                                 "output = input1 - input2;  \n",
-                                "if(d==0) {                 \n" +//drn and src2 switch:
+                                "if (d==0) {                 \n" +//drn and src2 switch:
                                         "    output = 1;              \n" +
                                         "} else {                     \n" +
                                         "    output = -1;               " +
@@ -265,7 +265,7 @@ public class Subtraction extends AbstractOperation
                                 3,
                                 scalarization.getKernelSource(), // kernelSource
                                 "output = input1 - value;\n",
-                                "if(d==0) {     \n" +//drn and src2 switch:
+                                "if (d==0) {     \n" +//drn and src2 switch:
                                         "    output = 1;  \n" +
                                         "} else {         \n" +
                                         "    output = -1;   " +
@@ -293,7 +293,7 @@ public class Subtraction extends AbstractOperation
                             }
                             Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
-                            if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                            if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                             else
                             {
                                 Tsr deriv = f.derive( inputs, d );

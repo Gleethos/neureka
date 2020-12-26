@@ -206,7 +206,7 @@ public class Multiplication extends AbstractOperation {
                                 3,
                                 operator.getKernelSource(), // kernelSource
                                 "output = input1 * input2;\n",
-                                "if(d==0) {output = input2;}else{output = input1;}\n",
+                                "if (d==0) {output = input2;}else{output = input1;}\n",
                                 this // OperationType
                         )
                 )
@@ -231,7 +231,7 @@ public class Multiplication extends AbstractOperation {
                         }
                         Tsr[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
-                        if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                        if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
                             Tsr deriv = f.derive( inputs, d );
@@ -333,7 +333,7 @@ public class Multiplication extends AbstractOperation {
                         }
                         Tsr[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
-                        if( forward )
+                        if ( forward )
                         {
                             Tsr deriv = f.derive( inputs, d );
                             return new DefaultADAgent(  deriv )
@@ -397,7 +397,7 @@ public class Multiplication extends AbstractOperation {
                                 3,
                                 scalarization.getKernelSource(), // kernelSource
                                 "output = input1 * value;\n",
-                                "if(d==0) {output = value;}else{output = input1;}\n",
+                                "if (d==0) {output = value;}else{output = input1;}\n",
                                 this // OperationType
                         )
                 )
@@ -449,7 +449,7 @@ public class Multiplication extends AbstractOperation {
                 }
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
-                if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                 else
                 {
                     Tsr deriv = f.derive( inputs, d );
@@ -553,7 +553,7 @@ public class Multiplication extends AbstractOperation {
                     }
                     Tsr[] inputs = call.getTensors();
                     int d = call.getDerivativeIndex();
-                    if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                    if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                     else
                     {
                         Tsr deriv = f.derive( inputs, d );

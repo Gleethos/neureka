@@ -22,12 +22,12 @@ public class ReLU extends AbstractOperation
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) {
                     return ( t0Idx, t1Idx, t2Idx ) -> {
-                        if(t1_val[ t1Idx.i() ]>=0) return t1_val[ t1Idx.i() ];
+                        if (t1_val[ t1Idx.i() ]>=0) return t1_val[ t1Idx.i() ];
                         else return t1_val[ t1Idx.i() ]*0.01;
                     };
                 } else {
                     return ( t0Idx, t1Idx, t2Idx ) -> {
-                        if(t1_val[ t1Idx.i() ]>=0) return 1;
+                        if (t1_val[ t1Idx.i() ]>=0) return 1;
                         else return 0.01;
                     };
                 }
@@ -38,12 +38,12 @@ public class ReLU extends AbstractOperation
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) {
                     return ( t0Idx, t1Idx, t2Idx ) -> {
-                        if(t1_val[inputs[ 1 ].i_of_idx( t1Idx )]>=0) return t1_val[inputs[ 1 ].i_of_idx( t1Idx )];
+                        if (t1_val[inputs[ 1 ].i_of_idx( t1Idx )]>=0) return t1_val[inputs[ 1 ].i_of_idx( t1Idx )];
                         else return t1_val[inputs[ 1 ].i_of_idx( t1Idx )]*0.01;
                     };
                 } else {
                     return ( t0Idx, t1Idx, t2Idx ) -> {
-                        if(t1_val[inputs[ 1 ].i_of_idx( t1Idx )]>=0) return 1;
+                        if (t1_val[inputs[ 1 ].i_of_idx( t1Idx )]>=0) return 1;
                         else return 0.01;
                     };
                 }

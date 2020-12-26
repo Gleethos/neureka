@@ -44,7 +44,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
     @Override
     public Function newBuild(final String equation) {
 
-        if(equation.charAt( 0 )=='-') {
+        if (equation.charAt( 0 )=='-') {
             return FunctionBuilder.build(equation.substring(1)+"*-1", true);
         }
         int number = 0;
@@ -60,7 +60,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
             }
         }
         _index = number;
-        if(equation.contains("g")) {
+        if (equation.contains("g")) {
             _index = -(_index+1);
         }
 

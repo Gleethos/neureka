@@ -101,7 +101,7 @@ public interface Device<ValueType> extends Component<Tsr<ValueType>>, Storage<Va
         }
         if ( result == HostCPU.instance() && name.equals("first") ) {
             Device<Number> first = OpenCLPlatform.PLATFORMS().get( 0 ).getDevices().get( 0 );
-            if( first!=null ) result = first;
+            if ( first!=null ) result = first;
         }
         return result;
     }

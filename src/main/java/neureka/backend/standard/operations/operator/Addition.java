@@ -66,7 +66,7 @@ public class Addition extends AbstractOperation {
                 }
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
-                if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                 else
                 {
                     Tsr deriv = f.derive( inputs, d );
@@ -413,7 +413,7 @@ public class Addition extends AbstractOperation {
                             }
                             Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
-                            if( forward )
+                            if ( forward )
                                 throw new IllegalArgumentException("Convolution of does not support forward-AD!");
                             else
                             {

@@ -40,7 +40,7 @@ public class FunctionConstant extends AbstractBaseFunction
 		String number = "";
 		for(int i=0; i<expression.length(); i++) 
 		{
-			if(expression.charAt( i )>='0'
+			if (expression.charAt( i )>='0'
 			|| expression.charAt( i )<='9'
 			|| expression.charAt( i )=='.'
 			|| expression.charAt( i )=='-'

@@ -23,7 +23,7 @@ public class Relation<ValueType> implements Component<Tsr<ValueType>>
 
     @Override
     public void update( Tsr<ValueType> oldOwner, Tsr<ValueType> newOwner ) {
-        if (_parent != null) {
+        if ( _parent != null) {
             Relation<ValueType> pr = _parent.find(Relation.class);
             for (int i=0; i < pr._children.length; i++) {
                 if (pr._children[ i ].get() == oldOwner) {

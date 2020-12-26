@@ -42,7 +42,7 @@ public class FunctionNode extends AbstractBaseFunction
      */
     public FunctionNode(Operation type, List<Function> sources, boolean doAD)
     {
-        if( type.getArity() >= 0 && sources.size() != type.getArity() ) {
+        if ( type.getArity() >= 0 && sources.size() != type.getArity() ) {
             String tip = ( type.isIndexer() )
                     ? "\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."
                     : "";

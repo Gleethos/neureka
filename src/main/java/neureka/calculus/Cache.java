@@ -79,7 +79,7 @@ public class Cache
                 locked = (locked) && node.getLock().isLocked();
             }
         }
-        if( untracked == null || !locked ) { // If graph tracking (nodes) has not yet been initialized!
+        if ( untracked == null || !locked ) { // If graph tracking (nodes) has not yet been initialized!
             return Function.Setup.commit( null, inputs, function, activation );
         }
         GraphLock lock =  untracked.find( GraphNode.class ).getLock();
@@ -92,7 +92,7 @@ public class Cache
 
         if ( !function.getOperation().isInline() ) result = _get( inputs, d, j );
 
-        if( result == null ) {
+        if ( result == null ) {
             result = activation.get();
             _put( result, node, d, j );
         }

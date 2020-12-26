@@ -64,14 +64,14 @@ public class SettingsLoader
 
     public static void tryGroovyScriptsOn(Neureka instance)
     {
-        if (_settings_source == null || _setup_source == null) {
+        if ( _settings_source == null || _setup_source == null) {
             _settings_source = instance.utility().readResource("library_settings.groovy");
             _setup_source = instance.utility().readResource("scripting_setup.groovy");
         }
         try {
 
             String version = GroovySystem.getVersion();
-            if(Integer.parseInt(version.split("\\.")[ 0 ]) < 3) {
+            if (Integer.parseInt(version.split("\\.")[ 0 ]) < 3) {
                 throw new IllegalCallerException(
                         "Wrong groovy version "+version+" found! Version 3.0.0 or greater required."
                 );

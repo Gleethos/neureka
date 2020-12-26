@@ -238,7 +238,7 @@ public class Division extends AbstractOperation
                                 3,
                                 operator.getKernelSource(), // kernelSource
                                 "output = input1 / input2;\n",
-                                "if(d==0) {\n" +
+                                "if (d==0) {\n" +
                                         "    output = 1/input2;\n" +
                                         "} else {\n" +
                                         "    output = -input2 /(float)pow(input1, 2.0f);\n" +
@@ -267,7 +267,7 @@ public class Division extends AbstractOperation
                         }
                         Tsr[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
-                        if( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                        if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
                             Tsr deriv = f.derive( inputs, d );
@@ -322,7 +322,7 @@ public class Division extends AbstractOperation
                                 3,
                                 broadcast.getKernelSource(), // kernelSource
                                 "value = src1 / src2;\n",
-                                "if(d==0) {\n" +
+                                "if (d==0) {\n" +
                                         "    value += (1/handle) * drain;\n" +
                                         "} else {\n" +
                                         "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
@@ -413,7 +413,7 @@ public class Division extends AbstractOperation
                                 3,
                                 scalarization.getKernelSource(), // kernelSource
                                 "output = input1 / value;\n",
-                                "if(d==0) {\n" +
+                                "if (d==0) {\n" +
                                         "    output = 1/value;\n" +
                                         "} else {\n" +
                                         "    output = -value /(float)pow(input1, 2.0f);\n" +
@@ -478,7 +478,7 @@ public class Division extends AbstractOperation
                             }
                             Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
-                            if( forward )
+                            if ( forward )
                                 throw new IllegalArgumentException("Convolution of does not support forward-AD!");
                             else
                             {

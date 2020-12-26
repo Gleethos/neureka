@@ -86,7 +86,7 @@ public class DefaultADAgent implements ADAgent
 
     @Override
     public String toString() {
-        if( this.derivative() != null ) {
+        if ( this.derivative() != null ) {
             return derivative().toString();
         }
 

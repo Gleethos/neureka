@@ -72,7 +72,7 @@ public abstract class AbstractComponentOwner<InstanceType>
      */
     public <T> T find(Class<T> componentClass)
     {
-        if (_components != null) {
+        if ( _components != null) {
             for (Component<InstanceType> component : _components) {
                 if (componentClass.isInstance(component)) return (T)component;
             }

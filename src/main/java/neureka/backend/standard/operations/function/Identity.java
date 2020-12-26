@@ -104,7 +104,7 @@ public class Identity extends AbstractOperation
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
                                     // Drain tensor needs to be 'actual'! :
-                                    if(!call.getTensor(offset + 1).isVirtual()) call.getTensor(offset).setIsVirtual( false );
+                                    if (!call.getTensor(offset + 1).isVirtual()) call.getTensor(offset).setIsVirtual( false );
                                     call.getDevice().getKernel(call)
                                             .pass( call.getTensor( offset ) )
                                             .pass( call.getTensor( offset + 1 ) )

@@ -246,28 +246,28 @@ public class DataConverter
 
 
         public static short[] byteToShort( byte[] data ) {
-            if( data == null ) return null;
+            if ( data == null ) return null;
             short[] newData = new short[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static BigInteger[] byteToBigInteger( byte[] data ) {
-            if( data == null ) return null;
+            if ( data == null ) return null;
             BigInteger[] newData = new BigInteger[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );
             return newData;
         }
 
         public static float[] doubleToFloat( double[] data ) {
-            if( data == null ) return null;
+            if ( data == null ) return null;
             float[] newData = new float[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (float) data[ i ];
             return newData;
         }
 
         public static byte[] doubleToByte( double[] data ) {
-            if( data == null ) return null;
+            if ( data == null ) return null;
             byte[] newData = new byte[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (byte) data[ i ];
             return newData;
@@ -288,98 +288,98 @@ public class DataConverter
         }
 
         public static double[] floatToDouble(float[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             double[] newData = new double[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (double)data[ i ];
             return newData;
         }
 
         public static byte[] floatToByte( float[] data ) {
-            if(data==null) return null;
+            if (data==null) return null;
             byte[] newData = new byte[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (byte) data[ i ];
             return newData;
         }
 
         public static short[] floatToShort( float[] data ) {
-            if(data==null) return null;
+            if (data==null) return null;
             short[] newData = new short[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (short) data[ i ];
             return newData;
         }
 
         public static long[] floatToLong( float[] data ) {
-            if(data==null) return null;
+            if (data==null) return null;
             long[] newData = new long[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (long) data[ i ];
             return newData;
         }
 
         public static double[] shortToDouble(short[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             double[] newData = new double[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static double[] byteToDouble(byte[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             double[] newData = new double[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static float[] byteToFloat(byte[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             float[] newData = new float[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static float[] shortToFloat(short[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             float[] newData = new float[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static int[] byteToInt(byte[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             int[] newData = new int[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static int[] shortToInt(short[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             int[] newData = new int[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static byte[] shortToByte(short[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             byte[] newData = new byte[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (byte) data[ i ];
             return newData;
         }
 
         public static long[] byteToLong(byte[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             long[] newData = new long[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static long[] shortToLong(short[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             long[] newData = new long[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = data[ i ];
             return newData;
         }
 
         public static BigInteger[] shortToBigInteger(short[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             BigInteger[] newData = new BigInteger[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );
             return newData;
@@ -456,42 +456,42 @@ public class DataConverter
         }
 
         public static byte[] longToByte(long[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             byte[] newData = new byte[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (byte) data[ i ];
             return newData;
         }
 
         public static short[] longToShort(long[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             short[] newData = new short[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (short) data[ i ];
             return newData;
         }
 
         public static int[] longToInt(long[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             int[] newData = new int[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (int) data[ i ];
             return newData;
         }
 
         public static float[] longToFloat(long[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             float[] newData = new float[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (float) data[ i ];
             return newData;
         }
 
         public static double[] longToDouble(long[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             double[] newData = new double[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = (double) data[ i ];
             return newData;
         }
 
         public static BigInteger[] longToBigInteger(long[] data) {
-            if(data==null) return null;
+            if (data==null) return null;
             BigInteger[] newData = new BigInteger[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );
             return newData;

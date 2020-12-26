@@ -24,7 +24,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
             ) return 0.0f;
             Tsr[] tsrs = call.getTensors();
             int size = tsrs[tsrs.length-1].size();
-            if( size != 1 || tsrs.length!=2 ) return 0f;
+            if ( size != 1 || tsrs.length!=2 ) return 0f;
             return 1.0f;
         });
         setDrainInstantiation(

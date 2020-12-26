@@ -37,7 +37,7 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public Function newBuild(final String equation) {
-        if(equation.contains("g")) _providesGradient = true;
+        if (equation.contains("g")) _providesGradient = true;
         return this;
     }
 

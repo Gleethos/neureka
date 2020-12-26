@@ -369,7 +369,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         }
         boolean isNatural = ( conf.size() <= 64 );
         for( Object e : conf ) {
-            if( !isNatural ) break;
+            if ( !isNatural ) break;
             double asNum = ( e instanceof BigDecimal ) ?
                     ( (BigDecimal) e ).doubleValue()
                     : ( e instanceof Double )
@@ -868,9 +868,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 _actualize();
             }
             _setIsVirtual( isVirtual );
-            if( _NDConf != null ) _configureFromNewShape( _NDConf.shape(), isVirtual, true );
+            if ( _NDConf != null ) _configureFromNewShape( _NDConf.shape(), isVirtual, true );
             try {
-                if( device != null ) device.store( this );
+                if ( device != null ) device.store( this );
             } catch ( Exception exception ) {
                 String message =
                         "Tensor could not be migrated back to host device after changing flag 'isVirtual' to "+isVirtual+".";
@@ -1756,7 +1756,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         for ( int i = 0; i < ranges.length; i++ ) {
             int first = 0;
             int last = 0;
-            if( ranges[ i ] instanceof int[] ) {
+            if ( ranges[ i ] instanceof int[] ) {
                 if ( ranges[ i ] instanceof int[] ) {
                     List<Integer> intList = new ArrayList<>( ( (int[]) ranges[ i ] ).length );
                     for ( int ii : (int[]) ranges[ i ] ) intList.add( ii );

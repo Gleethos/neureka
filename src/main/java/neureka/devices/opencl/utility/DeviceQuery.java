@@ -68,10 +68,10 @@ public class DeviceQuery
 
             // CL_DEVICE_TYPE
             long deviceType = getLong(device, CL_DEVICE_TYPE);
-            if( (deviceType & CL_DEVICE_TYPE_CPU) != 0) result+=("CL_DEVICE_TYPE: CL_DEVICE_TYPE_CPU\n");
-            if( (deviceType & CL_DEVICE_TYPE_GPU) != 0) result+=("CL_DEVICE_TYPE: CL_DEVICE_TYPE_GPU\n");
-            if( (deviceType & CL_DEVICE_TYPE_ACCELERATOR) != 0) result+=("CL_DEVICE_TYPE: CL_DEVICE_TYPE_ACCELERATOR\n");
-            if( (deviceType & CL_DEVICE_TYPE_DEFAULT) != 0) result+=("CL_DEVICE_TYPE: CL_DEVICE_TYPE_DEFAULT\n");
+            if ( (deviceType & CL_DEVICE_TYPE_CPU) != 0) result+=("CL_DEVICE_TYPE: CL_DEVICE_TYPE_CPU\n");
+            if ( (deviceType & CL_DEVICE_TYPE_GPU) != 0) result+=("CL_DEVICE_TYPE: CL_DEVICE_TYPE_GPU\n");
+            if ( (deviceType & CL_DEVICE_TYPE_ACCELERATOR) != 0) result+=("CL_DEVICE_TYPE: CL_DEVICE_TYPE_ACCELERATOR\n");
+            if ( (deviceType & CL_DEVICE_TYPE_DEFAULT) != 0) result+=("CL_DEVICE_TYPE: CL_DEVICE_TYPE_DEFAULT\n");
 
             // CL_DEVICE_MAX_COMPUTE_UNITS
             int maxComputeUnits = getInt(device, CL_DEVICE_MAX_COMPUTE_UNITS);

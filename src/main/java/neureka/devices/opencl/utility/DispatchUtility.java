@@ -119,7 +119,7 @@ public class DispatchUtility {
                 int inversionDelta = inversionProductOfNewDimension(
                         shape, current, i, size
                 );
-                if( inversionDelta < productDelta ) {
+                if ( inversionDelta < productDelta ) {
                     bestIndex = i;
                     bestInversionDelta = inversionDelta;
                 }

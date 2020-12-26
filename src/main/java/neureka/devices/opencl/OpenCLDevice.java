@@ -79,7 +79,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 {
     public static OpenCLDevice newInstanceOf( OpenCLPlatform platform, cl_device_id did )
     {
-        if( !platform.has( did ) ) platform.put( did,  new OpenCLDevice( platform, did ) );
+        if ( !platform.has( did ) ) platform.put( did,  new OpenCLDevice( platform, did ) );
         return platform.get( did );
     }
 
@@ -207,7 +207,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         _cleaning( this, () -> clReleaseCommandQueue( _queue ) );
         //Runtime.getRuntime().addShutdownHook(new Thread(() -> {
         //    _mapping.forEach((k, v) -> {
-        //        if(v.value.event!=null) clWaitForEvents(1, new cl_event[]{v.value.event});
+        //        if (v.value.event!=null) clWaitForEvents(1, new cl_event[]{v.value.event});
         //        clReleaseMemObject(v.config);
         //        clReleaseMemObject(v.value.data);
         //    });
@@ -388,7 +388,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 final cl_mem clValMem = newClt.value.data;
                 cl_event clValEvent = newClt.value.event;
                 _cleaning( newClt.value, () -> {
-                    if( clValEvent != null ) clWaitForEvents( 1, new cl_event[]{ clValEvent } );
+                    if ( clValEvent != null ) clWaitForEvents( 1, new cl_event[]{ clValEvent } );
                     clReleaseMemObject( clValMem );//Removing value.. from device!
                 });
             }
@@ -526,7 +526,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         cl_tsr clt = tensor.find(cl_tsr.class);
         if ( clt.fp == 1 ) overwrite32( tensor, DataConverter.Utility.doubleToFloat( value ) );
         else {
-            if( clt.value.event != null ) clWaitForEvents( 1, new cl_event[]{ clt.value.event } );
+            if ( clt.value.event != null ) clWaitForEvents( 1, new cl_event[]{ clt.value.event } );
             clt.value.event = new cl_event();
             clEnqueueWriteBuffer(
                     _queue,
@@ -666,7 +666,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     private void _releaseEvents(Tsr[] tsrs) {
         for(Tsr<Number> t : tsrs) {
-            if( t.find(cl_tsr.class).value.event != null ) {
+            if ( t.find(cl_tsr.class).value.event != null ) {
                 clReleaseEvent(t.find(cl_tsr.class).value.event);
                 t.find(cl_tsr.class).value.event = null;
             }

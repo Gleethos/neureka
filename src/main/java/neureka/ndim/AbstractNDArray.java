@@ -281,7 +281,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
                 if ( vStr.length() > ( 7 - offset ) ) {
                     if ( vStr.startsWith("0.") ) {
                         vStr = vStr.substring( 0, 7-offset )+"E0";
-                    } else if( vStr.startsWith( "-0." ) ) {
+                    } else if ( vStr.startsWith( "-0." ) ) {
                         vStr = vStr.substring( 0, 8-offset )+"E0";
                     } else {
                         vStr = Formatter.format( v );
@@ -321,14 +321,14 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
             public static int[][] makeFit( int[] sA, int[] sB ) {
                 int lastIndexOfA = 0;
                 for ( int i = sA.length-1; i >= 0; i-- ) {
-                    if(sA[ i ]!=1) {
+                    if (sA[ i ]!=1) {
                         lastIndexOfA = i;
                         break;
                     }
                 }
                 int firstIndexOfB = 0;
                 for (int i=0; i<sB.length; i++) {
-                    if(sB[ i ]!=1) {
+                    if (sB[ i ]!=1) {
                         firstIndexOfB = i;
                         break;
                     }
@@ -337,8 +337,8 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
                 int[] rsA = new int[newSize];
                 int[] rsB = new int[newSize];
                 for(int i=0; i<newSize; i++) {
-                    if(i<=lastIndexOfA) rsA[ i ] = i; else rsA[ i ] = -1;
-                    if(i>=lastIndexOfA) rsB[ i ] = i-lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
+                    if (i<=lastIndexOfA) rsA[ i ] = i; else rsA[ i ] = -1;
+                    if (i>=lastIndexOfA) rsB[ i ] = i-lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
                 }
                 return new int[][]{rsA, rsB};
             }

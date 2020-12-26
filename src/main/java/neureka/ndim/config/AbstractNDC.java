@@ -113,27 +113,27 @@ public abstract class AbstractNDC implements NDConfiguration
                 throw new IllegalStateException( message );
             }
         }
-        if( Neureka.instance().settings().ndim().isOnlyUsingDefaultNDConfiguration() ) {
+        if ( Neureka.instance().settings().ndim().isOnlyUsingDefaultNDConfiguration() ) {
             return ComplexDefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);
         }
         boolean isSimple = _isSimpleConfiguration(shape, translation, idxmap, spread, offset);
         NDConfiguration ndc = null;
         if ( isSimple ) {
             if (shape.length == 1) {
-                if(shape[ 0 ]==1) ndc = SimpleScalarConfiguration.construct();
+                if (shape[ 0 ]==1) ndc = SimpleScalarConfiguration.construct();
                 else ndc = SimpleD1Configuration.construct(shape, translation);
             } else if (shape.length == 2) {
                 ndc = SimpleD2Configuration.construct(shape, translation);
-            } else if(shape.length == 3) {
+            } else if (shape.length == 3) {
                 ndc = SimpleD3Configuration.construct(shape, translation);
             } else ndc = SimpleDefaultNDConfiguration.construct(shape, translation);
         } else {
             if (shape.length == 1) {
-                if(shape[ 0 ]==1) ndc = ComplexScalarConfiguration.construct(shape, offset);
+                if (shape[ 0 ]==1) ndc = ComplexScalarConfiguration.construct(shape, offset);
                 else ndc = ComplexD1Configuration.construct(shape, translation, idxmap, spread, offset);
             } else if (shape.length == 2) {
                 ndc = ComplexD2Configuration.construct(shape, translation, idxmap, spread, offset);
-            } else if(shape.length == 3) {
+            } else if (shape.length == 3) {
                 ndc = ComplexD3Configuration.construct(shape, translation, idxmap, spread, offset);
             } else ndc = ComplexDefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);
         }

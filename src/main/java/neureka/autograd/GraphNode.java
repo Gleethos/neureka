@@ -388,7 +388,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
             Neureka.Settings.AutoGrad adSetting = Neureka.instance().settings().autograd();
             if ( adSetting.isApplyingGradientWhenTensorIsUsed() ) {
                 for ( Tsr<ValueType> t : inputs ) {
-                    if( !adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRqd() ) {
+                    if ( !adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRqd() ) {
                         t.applyGradient(); // activates JITProp if present and removes it...
                         t.setGradientApplyRqd( false );
                     }

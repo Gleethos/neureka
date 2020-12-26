@@ -21,15 +21,15 @@ public class OperationTypeFactory
     public GenericOperation build()
     {
         List<String> missing = new ArrayList<>();
-        if( _function == null ) missing.add( "function" );
-        if( _operator == null ) missing.add( "operator" );
-        if( _arity == null ) missing.add( "arity" );
-        if( _isOperator == null ) missing.add( "isOperator" );
-        if( _isIndexer == null ) missing.add( "isIndexer" );
-        if( _isDifferentiable == null ) missing.add( "isDifferentiable" );
-        if( _isInline == null ) missing.add( "isInline" );
+        if ( _function == null ) missing.add( "function" );
+        if ( _operator == null ) missing.add( "operator" );
+        if ( _arity == null ) missing.add( "arity" );
+        if ( _isOperator == null ) missing.add( "isOperator" );
+        if ( _isIndexer == null ) missing.add( "isIndexer" );
+        if ( _isDifferentiable == null ) missing.add( "isDifferentiable" );
+        if ( _isInline == null ) missing.add( "isInline" );
 
-        if( !missing.isEmpty() )
+        if ( !missing.isEmpty() )
             throw new IllegalStateException("Factory not satisfied! The following properties are missing: '"+ String.join(", ", missing) +"'");
         else
             return new GenericOperation (

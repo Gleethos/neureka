@@ -24,8 +24,8 @@ public class JITProp<ValueType> implements Component<Tsr<ValueType>>
      * @param pendings A set of GraphNode&lt;ValueType&gt; instance which are saved for future backprop continuation.
      */
     public void addPending( Set<GraphNode<ValueType>> pendings ) {
-        if( pendings.isEmpty() ) throw new IllegalStateException("Trying to add empty pending errors set to JITProp.");
-        if( !isDone() ) throw new IllegalStateException("Trying to add pending errors to JITProp which is done.");
+        if ( pendings.isEmpty() ) throw new IllegalStateException("Trying to add empty pending errors set to JITProp.");
+        if ( !isDone() ) throw new IllegalStateException("Trying to add pending errors to JITProp which is done.");
         _pending.addAll( pendings );
     }
 
@@ -34,7 +34,7 @@ public class JITProp<ValueType> implements Component<Tsr<ValueType>>
      * @param finishedJITProps The reference to a GraphNote which has finished (JITed) backpropation.
      */
     public void noteFinished( GraphNode<ValueType> finishedJITProps ) {
-        if( _finished == null ) _finished = new HashSet<>();
+        if ( _finished == null ) _finished = new HashSet<>();
         _finished.add( finishedJITProps );
         if ( _pending != null ) {
             Set<GraphNode<ValueType>> intersection = _finished.stream().filter(_pending::contains).collect(Collectors.toSet());
