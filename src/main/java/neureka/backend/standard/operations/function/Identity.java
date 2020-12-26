@@ -2,20 +2,22 @@ package neureka.backend.standard.operations.function;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.standard.implementations.Activation;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.standard.algorithms.Activation;
+import neureka.backend.api.operations.Operation;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.Function;
-import neureka.backend.standard.implementations.Scalarization;
-import neureka.backend.api.operations.AbstractOperationType;
+import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.api.ExecutionCall;
+import neureka.devices.host.HostCPU;
+import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
-public class Identity extends AbstractOperationType
+public class Identity extends AbstractOperation
 {
 
     public Identity()
@@ -44,7 +46,7 @@ public class Identity extends AbstractOperationType
                     else return ( t0Idx, t1Idx, t2Idx ) -> 1;
                 };
 
-        Activation typeImplementation = new Activation()
+        Activation operationAlgorithm = new Activation()
         .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
                 call -> {
@@ -57,7 +59,7 @@ public class Identity extends AbstractOperationType
                 }
         ).setADAgentSupplier(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                getDefaultImplementation().supplyADAgentFor( f, call, forward )
+                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
         )
         .setCallHook( (caller, call ) -> null )
         .setRJAgent( ( call, goDeeperWith ) -> null )
@@ -65,16 +67,16 @@ public class Identity extends AbstractOperationType
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
+                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, Operation.instance("idy") );
                 }
         )
         .build();
 
-        setImplementation(
+        setAlgorithm(
                 Activation.class,
-                typeImplementation.setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor(
+                operationAlgorithm.setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                                 call  ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -93,11 +95,11 @@ public class Identity extends AbstractOperationType
                                                                         activationCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 ),
-                                3
+                                2
                         )
-                ).setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
+                ).setImplementationFor(
+                        OpenCLDevice.class,
+                        new CLImplementation(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
@@ -110,8 +112,8 @@ public class Identity extends AbstractOperationType
                                             .pass( call.getDerivativeIndex() )
                                             .call( gwz );
                                 },
-                                3,
-                                typeImplementation.getKernelSource(), // kernelSource
+                                2,
+                                operationAlgorithm.getKernelSource(), // kernelSource
                                 "output = input;\n", // activationSource
                                 "output = input;\n", //differentiationSource
                                 this // OperationType
@@ -138,7 +140,7 @@ public class Identity extends AbstractOperationType
             )
             .setADAgentSupplier(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                    getDefaultImplementation().supplyADAgentFor( f, call, forward )
+                    getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
             .setCallHook( (caller, call ) -> null )
             .setRJAgent( ( call, goDeeperWith ) -> null )
@@ -163,11 +165,11 @@ public class Identity extends AbstractOperationType
             )
             .build();
 
-        setImplementation(
+        setAlgorithm(
                 Scalarization.class,
-                scalarization.setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor(
+                scalarization.setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                                 call  -> {
                                     double value = call.getTensor( 0 ).value64(2);
                                         call.getDevice().getExecutor()
@@ -182,11 +184,11 @@ public class Identity extends AbstractOperationType
                                                                 )
                                                 );
                                 },
-                                3
+                                2
                         )
-                ).setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
+                ).setImplementationFor(
+                        OpenCLDevice.class,
+                        new CLImplementation(
                                 call -> {
                                     Tsr t = call.getTensor( 0 );
                                     int gwz = t.size();
@@ -198,7 +200,7 @@ public class Identity extends AbstractOperationType
                                             .pass( call.getDerivativeIndex() )
                                             .call( gwz );
                                 },
-                                3,
+                                2,
                                 scalarization.getKernelSource(), // kernelSource
                                 "output = value;\n",
                                 "output = value;\n",

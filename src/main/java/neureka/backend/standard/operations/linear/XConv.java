@@ -2,21 +2,23 @@ package neureka.backend.standard.operations.linear;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.api.operations.Operation;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
-import neureka.backend.api.operations.AbstractOperationType;
+import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.implementations.OperationTypeImplementation;
-import neureka.backend.standard.implementations.Convolution;
+import neureka.backend.api.algorithms.Algorithm;
+import neureka.backend.standard.algorithms.Convolution;
 import neureka.calculus.assembly.FunctionBuilder;
+import neureka.devices.host.HostCPU;
+import neureka.devices.opencl.OpenCLDevice;
 
 import java.util.List;
 
-public class XConv extends AbstractOperationType
+public class XConv extends AbstractOperation
 {
 
     public XConv()
@@ -44,12 +46,12 @@ public class XConv extends AbstractOperationType
                 }
         );
 
-        OperationTypeImplementation.RecursiveJunctionAgent rja = (call, goDeeperWith)->
+        Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();
             int d = call.getDerivativeIndex();
-            OperationType type = call.getOperation();
+            Operation type = call.getOperation();
 
             Tsr alternative = null;
             if (tsrs.length > 3) {
@@ -166,7 +168,7 @@ public class XConv extends AbstractOperationType
                                 Tsr.makeFit(tsrs, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                 for ( Tsr t : tsrs ) t.setIsVirtual( false );
                                 call.getDevice().execute( new ExecutionCall( call.getDevice(), tsrs, 0, call.getOperation() ) );
-                                if ( call.getOperation().getId() == OperationType.instance("x>>").getId()) return tsrs[ 2 ];
+                                if ( call.getOperation().getId() == Operation.instance("x>>").getId()) return tsrs[ 2 ];
                                 else return tsrs[ 0 ];
                             }
                         }
@@ -195,12 +197,12 @@ public class XConv extends AbstractOperationType
             )
             .build();
 
-        setImplementation(
+        setAlgorithm(
                 Convolution.class,
                 convolution
-                        .setExecutor(
-                                HostExecutor.class,
-                                new HostExecutor(
+                        .setImplementationFor(
+                                HostCPU.class,
+                                new HostImplementation(
                                         call ->
                                                 call.getDevice().getExecutor()
                                                         .threaded (
@@ -228,9 +230,9 @@ public class XConv extends AbstractOperationType
                                         3
                                 )
                         )
-                        .setExecutor(
-                            CLExecutor.class,
-                            new CLExecutor(
+                        .setImplementationFor(
+                            OpenCLDevice.class,
+                            new CLImplementation(
                                     call -> {
                                         int offset = ( call.getTensor( 0 ) != null ) ? 0 : 1;
                                         int gwz = ( call.getTensor( 0 ) != null ) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
@@ -250,7 +252,7 @@ public class XConv extends AbstractOperationType
                             )
                         )
         );
-        new AbstractOperationType(
+        new AbstractOperation(
                 "inv_convolve_mul_left", ((char) 171) + "x",
                 3,
                 true,
@@ -263,7 +265,7 @@ public class XConv extends AbstractOperationType
                 return src.get( 0 ).call( inputs, j );
             }
         }
-        .setImplementation(Convolution.class, convolution)
+        .setAlgorithm(Convolution.class, convolution)
         .setStringifier(
             children -> {
                 StringBuilder reconstructed = new StringBuilder();
@@ -277,7 +279,7 @@ public class XConv extends AbstractOperationType
             }
         );
 
-        new AbstractOperationType(
+        new AbstractOperation(
                 "inv_convolve_mul_right", "x" + ((char) 187),
                 3,
                 true,
@@ -290,7 +292,7 @@ public class XConv extends AbstractOperationType
                 return 0;
             }
         }
-        .setImplementation(Convolution.class, convolution)
+        .setAlgorithm(Convolution.class, convolution)
                 .setStringifier(
                         children -> {
                             StringBuilder reconstructed = new StringBuilder();

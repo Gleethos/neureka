@@ -2,25 +2,27 @@ package neureka.backend.standard.operations.operator;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.algorithms.Algorithm;
+import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.operations.Operation;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
-import neureka.backend.standard.implementations.Broadcast;
-import neureka.backend.standard.implementations.Operator;
-import neureka.backend.standard.implementations.Scalarization;
-import neureka.backend.api.operations.AbstractOperationType;
+import neureka.backend.standard.algorithms.Broadcast;
+import neureka.backend.standard.algorithms.Operator;
+import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.operations.OperationType;
-import neureka.backend.api.implementations.OperationTypeImplementation;
+import neureka.devices.host.HostCPU;
+import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
 
-public class Multiplication extends AbstractOperationType {
+public class Multiplication extends AbstractOperation {
 
 
     private static final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
@@ -73,12 +75,12 @@ public class Multiplication extends AbstractOperationType {
                 }
         );
 
-        OperationTypeImplementation.RecursiveJunctionAgent rja = (call, goDeeperWith)->
+        Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();
             int d = call.getDerivativeIndex();
-            OperationType type = call.getOperation();
+            Operation type = call.getOperation();
 
             Tsr alternative = null;
             if (tsrs.length > 3) {
@@ -99,7 +101,7 @@ public class Multiplication extends AbstractOperationType {
                     if ( reduction.length > 2 ) {
                         reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tsrs[ 1 ]) : reduction[ 0 ];
                         alternative = goDeeperWith.apply(
-                                new ExecutionCall<>( device, reduction, -1, OperationType.instance("*") )
+                                new ExecutionCall<>( device, reduction, -1, Operation.instance("*") )
                         );
                         tsrs[ 0 ] = reduction[ 0 ];
                     } else tsrs[ 0 ] = reduction[ 1 ];
@@ -151,16 +153,16 @@ public class Multiplication extends AbstractOperationType {
         Operator operator = new Operator()
                    .setADAgentSupplier(
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                                getDefaultImplementation().supplyADAgentFor( f, call, forward )
+                                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
                 .setRJAgent( rja )
                 .build();
 
-        setImplementation(
+        setAlgorithm(
                 Operator.class,
-                operator.setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor(
+                operator.setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -187,9 +189,9 @@ public class Multiplication extends AbstractOperationType {
                                                 ),
                                 3
                         )
-                ).setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
+                ).setImplementationFor(
+                        OpenCLDevice.class,
+                        new CLImplementation(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
@@ -242,10 +244,10 @@ public class Multiplication extends AbstractOperationType {
                 .setRJAgent( rja )
                 .build();
 
-        setImplementation(Broadcast.class,
-            broadcast.setExecutor(
-                    HostExecutor.class,
-                    new HostExecutor(
+        setAlgorithm(Broadcast.class,
+            broadcast.setImplementationFor(
+                    HostCPU.class,
+                    new HostImplementation(
                             call ->
                                     call.getDevice().getExecutor()
                                             .threaded (
@@ -266,9 +268,9 @@ public class Multiplication extends AbstractOperationType {
                                             ),
                             3
                     )
-            ).setExecutor(
-                    CLExecutor.class,
-                    new CLExecutor(
+            ).setImplementationFor(
+                    OpenCLDevice.class,
+                    new CLImplementation(
                             call -> {
                                 int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                 int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
@@ -351,11 +353,11 @@ public class Multiplication extends AbstractOperationType {
                 .setRJAgent( rja )
                 .build();
 
-        setImplementation(
+        setAlgorithm(
                 Scalarization.class,
-                scalarization.setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor(
+                scalarization.setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                                 call -> {
                                     double value = call.getTensor( 0 ).value64(2);
                                     call.getDevice().getExecutor()
@@ -378,9 +380,9 @@ public class Multiplication extends AbstractOperationType {
                                 },
                                 3
                         )
-                ).setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
+                ).setImplementationFor(
+                        OpenCLDevice.class,
+                        new CLImplementation(
                                 call -> {
                                     int offset = (call.getTensor( 2 ).isVirtual() || call.getTensor( 2 ).size() == 1)?1:0;
                                     int gwz = call.getTensor( 0 ).size();
@@ -467,23 +469,23 @@ public class Multiplication extends AbstractOperationType {
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
+                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, Operation.instance("idy") );
                 }
         )
         .build();
 
-        new AbstractOperationType(
+        new AbstractOperation(
                 "", ((char) 171) + "*", 3, true, false, false, false
         ) {
             @Override
             public double calculate( double[] inputs, int j, int d, List<Function> src ) {
                 return 0;
             }
-        }.setImplementation(
+        }.setAlgorithm(
                 Broadcast.class,
-                xBroadcast.setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor(
+                xBroadcast.setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -504,9 +506,9 @@ public class Multiplication extends AbstractOperationType {
                                                 ),
                                 3
                         )
-                ).setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
+                ).setImplementationFor(
+                        OpenCLDevice.class,
+                        new CLImplementation(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
@@ -567,23 +569,23 @@ public class Multiplication extends AbstractOperationType {
                     call -> {
                         Tsr[] tsrs = call.getTensors();
                         int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                        return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
+                        return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, Operation.instance("idy") );
                     }
             )
             .build();
 
-        new AbstractOperationType(
+        new AbstractOperation(
                 "", "*" + ((char) 187), 3, true, false, false, false
         ) {
             @Override
             public double calculate( double[] inputs, int j, int d, List<Function> src ) {
                 return 0;
             }
-        }.setImplementation(
+        }.setAlgorithm(
                 Broadcast.class,
-                xBroadcast.setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor(
+                xBroadcast.setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -604,9 +606,9 @@ public class Multiplication extends AbstractOperationType {
                                                 ),
                                 3
                         )
-                ).setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
+                ).setImplementationFor(
+                        OpenCLDevice.class,
+                        new CLImplementation(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();

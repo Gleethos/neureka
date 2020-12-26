@@ -42,27 +42,27 @@ package neureka.backend.api.operations;
 
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
-import neureka.backend.api.implementations.AbstractFunctionalOperationTypeImplementation;
+import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.algorithms.Algorithm;
 import neureka.calculus.Function;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.implementations.OperationTypeImplementation;
 import neureka.ndim.iterators.NDIterator;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-public interface OperationType
+public interface Operation
 {
-    static List<AbstractOperationType> instances() {
+    static List<AbstractOperation> instances() {
         return OperationContext.instance().getRegister();
     }
 
-    static AbstractOperationType instance(int index) {
+    static AbstractOperation instance(int index) {
         return OperationContext.instance().getRegister().get(index);
     }
 
-    static AbstractOperationType[] ALL() {
-        return OperationContext.instance().getRegister().toArray(new AbstractOperationType[ 0 ]);
+    static AbstractOperation[] ALL() {
+        return OperationContext.instance().getRegister().toArray(new AbstractOperation[ 0 ]);
     }
 
     static int COUNT() {
@@ -70,7 +70,7 @@ public interface OperationType
     }
 
 
-    static AbstractOperationType instance(String identifier) {
+    static AbstractOperation instance(String identifier) {
         return OperationContext.instance().getLookup().getOrDefault(identifier, null);
     }
 
@@ -107,7 +107,7 @@ public interface OperationType
 
     //==================================================================================================================
 
-    OperationTypeImplementation implementationOf(ExecutionCall call);
+    Algorithm AlgorithmFor(ExecutionCall call);
 
     //==================================================================================================================
 
@@ -115,13 +115,13 @@ public interface OperationType
 
     //==================================================================================================================
 
-    <T extends AbstractFunctionalOperationTypeImplementation> T getImplementation(Class<T> type);
+    <T extends AbstractFunctionalAlgorithm> T getAlgorithm(Class<T> type);
 
-    <T extends AbstractFunctionalOperationTypeImplementation> boolean supportsImplementation(Class<T> type);
+    <T extends AbstractFunctionalAlgorithm> boolean supportsAlgorithm(Class<T> type);
 
-    <T extends AbstractFunctionalOperationTypeImplementation> OperationType setImplementation(Class<T> type, T instance);
+    <T extends AbstractFunctionalAlgorithm> Operation setAlgorithm(Class<T> type, T instance);
 
-    OperationType forEachImplementation(Consumer<OperationTypeImplementation> action);
+    Operation forEachAlgorithm(Consumer<Algorithm> action);
 
     //==================================================================================================================
 
@@ -131,7 +131,7 @@ public interface OperationType
 
     //---
 
-    OperationType setStringifier(Stringifier stringifier);
+    Operation setStringifier(Stringifier stringifier);
 
     Stringifier getStringifier();
 

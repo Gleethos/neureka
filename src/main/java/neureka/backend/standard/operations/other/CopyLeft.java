@@ -2,19 +2,21 @@ package neureka.backend.standard.operations.other;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.standard.implementations.Activation;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.api.operations.Operation;
+import neureka.backend.standard.algorithms.Activation;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.Function;
-import neureka.backend.api.operations.AbstractOperationType;
+import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.standard.implementations.Scalarization;
+import neureka.backend.standard.algorithms.Scalarization;
+import neureka.devices.host.HostCPU;
+import neureka.devices.opencl.OpenCLDevice;
 
 import java.util.List;
 
-public class CopyLeft extends AbstractOperationType {
+public class CopyLeft extends AbstractOperation {
 
     public CopyLeft() {
 
@@ -52,7 +54,7 @@ public class CopyLeft extends AbstractOperationType {
                 .setForwardADAnalyzer( call -> false )
                 .setADAgentSupplier(
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                                getDefaultImplementation().supplyADAgentFor( f, call, forward )
+                                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
                 .setCallHook( (caller, call ) -> null )
                 .setRJAgent( ( call, goDeeperWith ) -> null )
@@ -87,11 +89,11 @@ public class CopyLeft extends AbstractOperationType {
                     else return null;
                 };
 
-        setImplementation(
+        setAlgorithm(
                 Scalarization.class,
-                scalarization.setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor(
+                scalarization.setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                                 call ->
                                 {
                                     double value = call.getTensor( 1 ).value64( 0 );
@@ -113,11 +115,11 @@ public class CopyLeft extends AbstractOperationType {
                                                             )
                                             );
                                 },
-                                3
+                                2
                         )
-                ).setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
+                ).setImplementationFor(
+                        OpenCLDevice.class,
+                        new CLImplementation(
                                 call -> {
                                     Tsr t = call.getTensor( 0 );
                                     int gwz = t.size();
@@ -129,7 +131,7 @@ public class CopyLeft extends AbstractOperationType {
                                             .pass( call.getDerivativeIndex() )
                                             .call( gwz );
                                 },
-                                3,
+                                2,
                                 scalarization.getKernelSource(), // kernelSource
                                 "output = value;\n",
                                 "output = value;\n",
@@ -143,7 +145,7 @@ public class CopyLeft extends AbstractOperationType {
             .setForwardADAnalyzer( call -> false )
             .setADAgentSupplier(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                        getDefaultImplementation().supplyADAgentFor( f, call, forward )
+                        getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
             .setCallHook( (caller, call ) -> null )
             .setRJAgent( ( call, goDeeperWith ) -> null )
@@ -153,39 +155,39 @@ public class CopyLeft extends AbstractOperationType {
                         Tsr[] tsrs = call.getTensors();
                         int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                         call.getTensor(offset).incrementVersionBecauseOf(call);
-                        return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
+                        return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, Operation.instance("idy") );
                     }
             )
             .build();
 
-        setImplementation(
+        setAlgorithm(
                 Activation.class,
                 activation
-                    .setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor(
+                    .setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                                 call ->
                                 {
                                     call.getTensor( 0 ).setIsVirtual( false );
-                                    OperationType.instance("idy")
-                                            .getImplementation(Activation.class)
-                                            .getExecutor(HostExecutor.class)
-                                            .getExecution().run(call);
+                                    Operation.instance("idy")
+                                            .getAlgorithm( Activation.class )
+                                            .getImplementationFor( HostCPU.class )
+                                            .run(call);
                                 },
-                                3
+                                2
                         )
                     )
-                    .setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
+                    .setImplementationFor(
+                        OpenCLDevice.class,
+                        new CLImplementation(
                                 call -> {
                                     call.getTensor( 0 ).setIsVirtual( false );
-                                    OperationType.instance("idy")
-                                            .getImplementation(Activation.class)
-                                            .getExecutor(CLExecutor.class)
-                                            .getExecution().run(call);
+                                    Operation.instance("idy")
+                                            .getAlgorithm(Activation.class)
+                                            .getImplementationFor( OpenCLDevice.class )
+                                            .run(call);
                                 },
-                                3
+                                2
                         )
                 )
         );

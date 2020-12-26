@@ -4,13 +4,14 @@ import it.calculus.mocks.CLContext
 import neureka.Tsr
 import neureka.autograd.DefaultADAgent
 import neureka.devices.Device
-import neureka.devices.host.execution.HostExecutor
+import neureka.backend.standard.implementations.HostImplementation
+import neureka.devices.host.HostCPU
 import neureka.devices.opencl.utility.DispatchUtility
 import neureka.calculus.Function
 import neureka.backend.api.ExecutionCall
-import neureka.backend.standard.implementations.GenericImplementation
+import neureka.backend.standard.algorithms.GenericAlgorithm
 import neureka.backend.api.operations.OperationContext
-import neureka.backend.api.operations.OperationType
+import neureka.backend.api.operations.Operation
 import neureka.backend.api.operations.OperationTypeFactory
 import neureka.calculus.assembly.FunctionBuilder
 import spock.lang.Specification
@@ -34,7 +35,7 @@ class Calculus_Extension_Integration_Tests extends Specification
             OperationContext oldContext = OperationContext.instance()
             OperationContext testContext = oldContext.clone()
             OperationContext.setInstance(testContext)
-            OperationType type = new OperationTypeFactory()
+        Operation type = new OperationTypeFactory()
                     .setFunction('test_function')
                     .setOperator('test_function')
                     .setArity(-1)
@@ -52,9 +53,9 @@ class Calculus_Extension_Integration_Tests extends Specification
                                 return "test_function" + "(" + expression + ")";
                             }
                     )
-                    .setImplementation(
-                            GenericImplementation.class,
-                            new GenericImplementation()
+                    .setAlgorithm(
+                            GenericAlgorithm.class,
+                            new GenericAlgorithm()
                                     .setSuitabilityChecker( call -> 1.0f )
                                     .setBackwardADAnalyzer( call -> true )
                                     .setForwardADAnalyzer(call -> false )
@@ -85,9 +86,9 @@ class Calculus_Extension_Integration_Tests extends Specification
                                                 return call;
                                             }
                                     )
-                                    .setExecutor(
-                                            HostExecutor.class,
-                                            new HostExecutor(
+                                    .setImplementationFor(
+                                            HostCPU.class,
+                                            new HostImplementation(
                                                     (call) ->
                                                     {
                                                         Tsr drn = call.getTensor(0)

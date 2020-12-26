@@ -36,7 +36,7 @@ SOFTWARE.
 */
 
 
-package neureka.backend.api.executions;
+package neureka.backend.api.implementations;
 
 import neureka.devices.Device;
 import neureka.backend.api.ExecutionCall;
@@ -44,32 +44,25 @@ import neureka.backend.api.ExecutionCall;
 /**
  * This interface describes the functionality of an implementation
  * of an execution procedure for a specific Device (interface) instance
- * and OperationTypeImplementation (interface) instance!
+ * and Algorithm (interface) instance!
  *
- * An instance of this interface is then a component of an OperationTypeImplementation instance
- * which is itself a component of the OperationType class.
+ * An instance of this interface is then a component of an Algorithm instance
+ * which is itself a component of the Operation class.
  *
  * @param <TargetDevice> The Device type for which an implementation of this interface has been made.
  */
-public interface ExecutorFor< TargetDevice extends Device >
+public interface ImplementationFor< TargetDevice extends Device >
 {
+
     /**
-     * Every ExecutorFor &lt; Device &gt; implementation needs to also
-     * implement a lambda defined by the interface below.
-     * The lambda shall take the call arguments and call
-     * the specific methods of the Device type implementation
-     * in order to satisfy the OperationTypeImplementation to which
-     * this class belongs.
+     *  The concrete implementation of the algorithm to which instances of this interface
+     *  belongs and the device on which this is implemented.
+     *  One has to keep in mind that the implementation details
+     *  with respect to the target device a specific to the
+     *  methods of the "TargetDevice" type  on which this call should run...
      *
-     * @param <TargetDevice>
+     *  @param call The call which ought to be executed on this implementation.
      */
-    interface ExecutionOn< TargetDevice extends Device >
-    {
-        void run(ExecutionCall<TargetDevice> call );
-    }
-
-    ExecutionOn< TargetDevice > getExecution();
-
-    int arity();
+    void run( ExecutionCall<TargetDevice> call );
 
 }

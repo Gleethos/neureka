@@ -1,23 +1,23 @@
-package ut.calculus
+package ut.backend
 
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.ADAgent
 import neureka.calculus.Function
 import neureka.backend.api.ExecutionCall
-import neureka.backend.api.implementations.OperationTypeImplementation
-import neureka.backend.standard.implementations.Activation
-import neureka.backend.standard.implementations.Broadcast
-import neureka.backend.standard.implementations.Convolution
-import neureka.backend.standard.implementations.Operator
+import neureka.backend.api.algorithms.Algorithm
+import neureka.backend.standard.algorithms.Activation
+import neureka.backend.standard.algorithms.Broadcast
+import neureka.backend.standard.algorithms.Convolution
+import neureka.backend.standard.algorithms.Operator
 import neureka.backend.api.operations.OperationContext
 import spock.lang.Specification
 
-class Calculus_Implementation_AD_Unit_Tests extends Specification
+class Backend_Algorithm_AD_Unit_Tests extends Specification
 {
 
     def 'Operator implementations behave as expected.'(
-            OperationTypeImplementation imp
+            Algorithm imp
     ){
 
         given : 'The current Neureka instance is being reset.'
@@ -62,12 +62,12 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
                                     e.isOperator() &&
                                             e.getOperator().length()==1 &&
                                                 e.supports( Operator.class )
-                    ).map( e -> e.getImplementation( Operator.class ) )
+                    ).map( e -> e.getAlgorithm( Operator.class ) )
     }
 
 
     def 'Activation implementations behave as expected.'(
-            OperationTypeImplementation imp
+            Algorithm imp
     ){
 
         given : 'The current Neureka instance is being reset.'
@@ -110,12 +110,12 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
                 .filter(
                         e ->
                                         e.supports( Activation.class )
-                ).map( e -> e.getImplementation( Activation.class ) )
+                ).map( e -> e.getAlgorithm( Activation.class ) )
     }
 
 
     def 'Convolution implementations behave as expected.'(
-            OperationTypeImplementation imp
+            Algorithm imp
     ){
 
         given : 'The current Neureka instance is being reset.'
@@ -160,13 +160,13 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
                                 e.isOperator() &&
                                         e.getOperator().length()==1 &&
                                         e.supports( Convolution.class )
-                ).map( e -> e.getImplementation( Convolution.class ) )
+                ).map( e -> e.getAlgorithm( Convolution.class ) )
     }
 
 
 
     def 'Broadcast implementations behave as expected.'(
-            OperationTypeImplementation imp
+            Algorithm imp
     ){
 
         given : 'The current Neureka instance is being reset.'
@@ -210,7 +210,7 @@ class Calculus_Implementation_AD_Unit_Tests extends Specification
                         e ->
                                 e.isOperator() &&
                                         e.supports( Broadcast.class )
-                ).map( e -> e.getImplementation( Broadcast.class ) )
+                ).map( e -> e.getAlgorithm( Broadcast.class ) )
     }
 
 

@@ -36,8 +36,8 @@ package neureka.devices;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.operations.OperationType;
-import neureka.backend.api.implementations.OperationTypeImplementation;
+import neureka.backend.api.algorithms.Algorithm;
+import neureka.backend.api.operations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +79,7 @@ public abstract class AbstractDevice<ValueType> extends AbstractBaseDevice<Value
      * @param d The index of the input which ought to be derived.
      * @param type The type of operation.
      */
-    protected abstract void _execute( Tsr[] tensors, int d, OperationType type );
+    protected abstract void _execute( Tsr[] tensors, int d, Operation type );
 
     @Override
     public void update( Tsr oldOwner, Tsr newOwner ) {
@@ -99,14 +99,14 @@ public abstract class AbstractDevice<ValueType> extends AbstractBaseDevice<Value
     @Override
     public Device<ValueType> execute( ExecutionCall call )
     {
-        call = call.getImplementation().instantiateNewTensorsForExecutionIn(call);
+        call = call.getImplementation().instantiateNewTensorsForExecutionIn( call );
         for ( Tsr<?> t : call.getTensors() ) {
             if ( t == null ) throw new IllegalArgumentException(
                     "Device arguments may not be null!\n" +
                             "One or more tensor arguments within the given ExecutionCall instance is null."
             );
         }
-        ( (OperationTypeImplementation<Object>) call.getImplementation() )
+        ( (Algorithm<Object>) call.getImplementation() )
                 .recursiveReductionOf(
                     call,
                     c -> _execute( c.getTensors(), c.getDerivativeIndex(), c.getOperation() )

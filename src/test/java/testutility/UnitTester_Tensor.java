@@ -1,15 +1,15 @@
 package testutility;
 
 import neureka.Tsr;
+import neureka.backend.api.operations.Operation;
 import neureka.devices.host.HostCPU;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.operations.OperationType;
-import neureka.backend.standard.implementations.Broadcast;
-import neureka.backend.standard.implementations.Convolution;
+import neureka.backend.standard.algorithms.Broadcast;
+import neureka.backend.standard.algorithms.Convolution;
 import neureka.dtype.DataType;
 import neureka.ndim.config.NDConfiguration;
 
@@ -127,10 +127,10 @@ public class UnitTester_Tensor extends UnitTester
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
         double[] rsltData = new double[NDConfiguration.Utility.szeOfShp(drnMxd)];
-        OperationType.instance("x")
-                .getImplementation(Convolution.class)
-                .getExecutor(HostExecutor.class)
-                .getExecution().run(
+        Operation.instance("x")
+                .getAlgorithm(Convolution.class)
+                .getImplementationFor( HostCPU.class )
+                .run(
                 new ExecutionCall<>(
                         HostCPU.instance(),
                         new Tsr[]{
@@ -138,7 +138,7 @@ public class UnitTester_Tensor extends UnitTester
                                 new Tsr(frstShp, frstData),
                                 new Tsr(scndShp, scondData)
                         }, -1,
-                        OperationType.instance("x")
+                        Operation.instance("x")
                 )
         );
         assertIsEqual(stringified(rsltData), stringified(expctd));
@@ -152,10 +152,10 @@ public class UnitTester_Tensor extends UnitTester
     ){
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
-        OperationType.instance(((char) 171)+"x")
-                .getImplementation(Convolution.class)
-                .getExecutor(HostExecutor.class)
-                .getExecution().run(
+        Operation.instance(((char) 171)+"x")
+                .getAlgorithm(Convolution.class)
+                .getImplementationFor( HostCPU.class )
+                .run(
                 new ExecutionCall<>(
                         HostCPU.instance(),
                         new Tsr[]{
@@ -164,7 +164,7 @@ public class UnitTester_Tensor extends UnitTester
                                 (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
                         },
                         0,
-                        OperationType.instance(((char) 171)+"x")
+                        Operation.instance(((char) 171)+"x")
                 )
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
@@ -176,10 +176,10 @@ public class UnitTester_Tensor extends UnitTester
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
         double[] rsltData = new double[NDConfiguration.Utility.szeOfShp(drnMxd)];
 
-        OperationType.instance("*")
-                .getImplementation(Broadcast.class)
-                .getExecutor(HostExecutor.class)
-                .getExecution().run(
+        Operation.instance("*")
+                .getAlgorithm(Broadcast.class)
+                .getImplementationFor( HostCPU.class )
+                .run(
                         new ExecutionCall<>(
                                 HostCPU.instance(),
                                 new Tsr[]{
@@ -188,7 +188,7 @@ public class UnitTester_Tensor extends UnitTester
                                         new Tsr(scndShp, scondData)
                                 },
                                 -1,
-                                OperationType.instance("*")
+                                Operation.instance("*")
                         )
         );
         assertIsEqual(stringified(rsltData), stringified(expctd));
@@ -202,10 +202,10 @@ public class UnitTester_Tensor extends UnitTester
     ){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
-        OperationType.instance(((char) 171) + "*")
-                .getImplementation(Broadcast.class)
-                .getExecutor(HostExecutor.class)
-                .getExecution().run(
+        Operation.instance(((char) 171) + "*")
+                .getAlgorithm(Broadcast.class)
+                .getImplementationFor( HostCPU.class )
+                .run(
                 new ExecutionCall<>(
                         HostCPU.instance(),
                         new Tsr[]{
@@ -214,14 +214,14 @@ public class UnitTester_Tensor extends UnitTester
                                 (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
                         },
                         0,
-                        OperationType.instance(((char) 171) + "*")
+                        Operation.instance(((char) 171) + "*")
                 )
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
-        OperationType.instance("*" + ((char) 187))
-                .getImplementation(Broadcast.class)
-                .getExecutor(HostExecutor.class)
-                .getExecution().run(
+        Operation.instance("*" + ((char) 187))
+                .getAlgorithm(Broadcast.class)
+                .getImplementationFor( HostCPU.class )
+                .run(
                 new ExecutionCall<>(
                         HostCPU.instance(),
                         new Tsr[]{
@@ -230,7 +230,7 @@ public class UnitTester_Tensor extends UnitTester
                                 (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData),
                         },
                         0,
-                        OperationType.instance("*" + ((char) 187))
+                        Operation.instance("*" + ((char) 187))
                 )
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));

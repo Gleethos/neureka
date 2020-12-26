@@ -3,13 +3,13 @@ package neureka.calculus.implementations;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
+import neureka.backend.api.operations.Operation;
 import neureka.calculus.AbstractBaseFunction;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.calculus.Function;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.standard.implementations.Activation;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.standard.algorithms.Activation;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 
@@ -24,7 +24,7 @@ public class FunctionNode extends AbstractBaseFunction
 {
 
     @Getter
-    private final OperationType _operation;
+    private final Operation _operation;
     @Getter
     private final boolean _isFlat;
     @Getter
@@ -40,7 +40,7 @@ public class FunctionNode extends AbstractBaseFunction
      * @param sources
      * @param doAD
      */
-    public FunctionNode(OperationType type, List<Function> sources, boolean doAD)
+    public FunctionNode(Operation type, List<Function> sources, boolean doAD)
     {
         if( type.getArity() >= 0 && sources.size() != type.getArity() ) {
             String tip = ( type.isIndexer() )
@@ -151,7 +151,7 @@ public class FunctionNode extends AbstractBaseFunction
             for ( int i = 1; i < tsrs.length; i++ ) tsrs[ i ] = _src.get( 0 ).call(inputs, i - 1);
         } else if (
                 !_isFlat && j < 0 && (
-                        _operation.isOperator() || _operation.supportsImplementation(Activation.class)
+                        _operation.isOperator() || _operation.supportsAlgorithm(Activation.class)
                 )
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
             tsrs = srcActivation(inputs, j, d, 0);
@@ -228,7 +228,7 @@ public class FunctionNode extends AbstractBaseFunction
                         if ( index >= 0 ) inner = tsrs[index];
                         else {
                             // Optimization above did not apply, so we accumulate all the derivatives!
-                            device.execute( new ExecutionCall<>( device, tsrs, -1, OperationType.instance("+") ) );
+                            device.execute( new ExecutionCall<>( device, tsrs, -1, Operation.instance("+") ) );
                             inner = tsrs[ 0 ];//this is now the inner derivative!
                         }
                     } else inner = tsrs[ 1 ];
@@ -257,7 +257,7 @@ public class FunctionNode extends AbstractBaseFunction
                     //...multiply inner times outer: ( if inner is not 1 entirely... )
                     if ( !( ( inner.isVirtual() || inner.size()==1 ) && inner.value64( 0 )==1.0) ) {
                         tsrs = new Tsr[]{null, inner, tsrs[ 0 ]};
-                        device.execute( new ExecutionCall<>( device, tsrs, -1, OperationType.instance("*") ) );
+                        device.execute( new ExecutionCall<>( device, tsrs, -1, Operation.instance("*") ) );
                     } // done!
                     return tsrs[ 0 ];
 
@@ -271,7 +271,7 @@ public class FunctionNode extends AbstractBaseFunction
                 if ( out == null ) out = actor.get();
                 else device.execute(
                         new ExecutionCall<>(
-                                device, new Tsr[]{null, actor.get(), out}, -1, OperationType.instance("+")
+                                device, new Tsr[]{null, actor.get(), out}, -1, Operation.instance("+")
                         )
                 );
             }

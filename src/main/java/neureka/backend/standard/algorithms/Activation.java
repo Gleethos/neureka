@@ -1,16 +1,16 @@
-package neureka.backend.standard.implementations;
+package neureka.backend.standard.algorithms;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.implementations.AbstractFunctionalOperationTypeImplementation;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.operations.Operation;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
-public class Activation extends AbstractFunctionalOperationTypeImplementation< Activation >
+public class Activation extends AbstractFunctionalAlgorithm< Activation >
 {
 
     public Activation() {
@@ -58,7 +58,7 @@ public class Activation extends AbstractFunctionalOperationTypeImplementation< A
     public static void activate(
             Tsr t0_drn, Tsr t1_src,
             int i, int end,
-            OperationType.TertiaryNDIConsumer operation
+            Operation.TertiaryNDIConsumer operation
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src );
@@ -80,7 +80,7 @@ public class Activation extends AbstractFunctionalOperationTypeImplementation< A
     public static void activate(
             Tsr t0_drn,
             int i, int end,
-            OperationType.TertiaryNDXConsumer operation
+            Operation.TertiaryNDXConsumer operation
     ) {
         NDConfiguration ndc0 = t0_drn.getNDConf();
         int[] t0Shp = ndc0.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0

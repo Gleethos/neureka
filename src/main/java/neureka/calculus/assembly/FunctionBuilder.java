@@ -1,7 +1,7 @@
 package neureka.calculus.assembly;
 
+import neureka.backend.api.operations.Operation;
 import neureka.calculus.Function;
-import neureka.backend.api.operations.OperationType;
 import neureka.calculus.implementations.FunctionConstant;
 import neureka.calculus.implementations.FunctionInput;
 import neureka.calculus.implementations.FunctionNode;
@@ -16,7 +16,7 @@ public class FunctionBuilder {
      * @param doAD
      * @return
      */
-    public static Function build( OperationType type, int size, boolean doAD ) {
+    public static Function build(Operation type, int size, boolean doAD ) {
         if (type.getId() == 18) {
             size = 2;
         } else if ( type.getOperator().equals(",") ) {
@@ -102,9 +102,9 @@ public class FunctionBuilder {
             else ++i;
         }
         //---
-        int counter = OperationType.COUNT();
-        for ( int j = OperationType.COUNT(); j > 0; --j ) {
-            if ( !foundJunctors.contains(OperationType.instance(j - 1).getOperator()) ) {
+        int counter = Operation.COUNT();
+        for (int j = Operation.COUNT(); j > 0; --j ) {
+            if ( !foundJunctors.contains(Operation.instance(j - 1).getOperator()) ) {
                 --counter;
             } else {
                 j = 0;
@@ -114,7 +114,7 @@ public class FunctionBuilder {
         while ( ID < counter ) {
             final List<String> newJunctors = new ArrayList<>();
             final List<String> newComponents = new ArrayList<>();
-            if ( foundJunctors.contains( OperationType.instance( ID ).getOperator() ) ) {
+            if ( foundJunctors.contains( Operation.instance( ID ).getOperator() ) ) {
                 String currentChain = null;
                 boolean groupingOccured = false;
                 boolean enoughtPresent = FunctionParser.numberOfOperationsWithin( foundJunctors ) > 1;// Otherwise: I[j]^4 goes nuts!
@@ -129,9 +129,9 @@ public class FunctionBuilder {
                             currentOperation = foundJunctors.get(Ci);
                         }
                         if (currentOperation != null) {
-                            if (currentOperation.equals(OperationType.instance(ID).getOperator())) {
+                            if (currentOperation.equals(Operation.instance(ID).getOperator())) {
                                 final String newChain =
-                                        FunctionParser.groupBy(OperationType.instance(ID).getOperator(), currentChain, currentComponent, currentOperation);
+                                        FunctionParser.groupBy(Operation.instance(ID).getOperator(), currentChain, currentComponent, currentOperation);
                                 if (newChain != null) {
                                     currentChain = newChain;
                                 }
@@ -165,8 +165,8 @@ public class FunctionBuilder {
         // identifying function id:
         int typeId = 0;
         if (foundJunctors.size() >= 1) {
-            for (int id = 0; id < OperationType.COUNT(); ++id) {
-                if (OperationType.instance(id).getOperator().equals(foundJunctors.get( 0 ))) {
+            for (int id = 0; id < Operation.COUNT(); ++id) {
+                if (Operation.instance(id).getOperator().equals(foundJunctors.get( 0 ))) {
                     typeId = id;
                 }
             }
@@ -179,8 +179,8 @@ public class FunctionBuilder {
             );
             if (possibleFunction != null && possibleFunction.length() > 1) {
 
-                for (int oi = 0; oi < OperationType.COUNT(); oi++) {
-                    if (OperationType.instance(oi).getOperator().toLowerCase().equals(possibleFunction.toLowerCase())) {
+                for (int oi = 0; oi < Operation.COUNT(); oi++) {
+                    if (Operation.instance(oi).getOperator().toLowerCase().equals(possibleFunction.toLowerCase())) {
                         typeId = oi;
                         List<String> parameters = FunctionParser.findParametersIn(
                                 foundComponents.get( 0 ),
@@ -190,7 +190,7 @@ public class FunctionBuilder {
                         for ( String p : parameters ) {
                             sources.add(FunctionBuilder.build(p, doAD));
                         }
-                        function = new FunctionNode(OperationType.instance(typeId), sources, doAD);
+                        function = new FunctionNode(Operation.instance(typeId), sources, doAD);
                         return function;
                     }
                 }
@@ -239,9 +239,9 @@ public class FunctionBuilder {
 
             return FunctionBuilder.build(component, doAD);
         } else {// More than one component left:
-            if (OperationType.instance(typeId).getOperator().equals("x") || OperationType.instance(typeId).getOperator().equals("<") || OperationType.instance(typeId).getOperator().equals(">")) {
+            if (Operation.instance(typeId).getOperator().equals("x") || Operation.instance(typeId).getOperator().equals("<") || Operation.instance(typeId).getOperator().equals(">")) {
                 foundComponents = _rebindPairwise( foundComponents, typeId );
-            } else if (OperationType.instance(typeId).getOperator().equals(",") && foundComponents.get( 0 ).startsWith("[")) {
+            } else if (Operation.instance(typeId).getOperator().equals(",") && foundComponents.get( 0 ).startsWith("[")) {
 
                 foundComponents.set(0, foundComponents.get( 0 ).substring(1));
                 String[] splitted;
@@ -272,7 +272,7 @@ public class FunctionBuilder {
                 if (source != null) newVariable.add(source);
             }
             sources = newVariable;
-            function = new FunctionNode(OperationType.instance(typeId), sources, doAD);
+            function = new FunctionNode(Operation.instance(typeId), sources, doAD);
             return function;
         }
     }
@@ -284,7 +284,7 @@ public class FunctionBuilder {
      */
     private static List<String> _rebindPairwise(List<String> components, int f_id) {
         if ( components.size() > 2 ) {
-            String newComponent = "(" + components.get( 0 ) + OperationType.instance(f_id).getOperator() + components.get(1) + ")";
+            String newComponent = "(" + components.get( 0 ) + Operation.instance(f_id).getOperator() + components.get(1) + ")";
             components.remove(components.get( 0 ));
             components.remove(components.get( 0 ));
             components.add(0, newComponent);

@@ -1,4 +1,4 @@
-package neureka.backend.api.implementations;
+package neureka.backend.api.algorithms;
 
 
 import lombok.Getter;
@@ -12,22 +12,24 @@ import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 
 /**
- * This is the base class for implementations of the OperationTypeImplementation interface.
+ * This is the base class for implementations of the Algorithm interface.
  * The class implements the component logic required by said interface.
  * Additionally it contains useful methods used to process passed arguments of execution calls.
  *
  * Conceptually this class represents "a way of execution" for
- * the OperationType to which an instance of this class would belong.
- * The "+" operator for example has different OperationTypeImplementation instances
- * for different ExecutionCall instances.
+ * the Operation to which an instance of this class would belong.
+ * The "+" operator for example has different Algorithm instances
+ * for ExecutionCall instances hosting tensors which might require
+ * either elementwise addition or broadcasting depending on the shapes.
  * Tensors within an execution call having the same shape would
- * trigger the Operation instance of the OperationType, whereas otherwise
- * the Convolution or Broadcast implementation might be called.
+ * trigger an elementwise Algorithm instance stored in the Operation,
+ * whereas otherwise
+ * the Convolution or Broadcast algorithm type might be called.
  *
  * @param <FinalType> The final type extending this class.
  */
 @Accessors( prefix = {"_"}, chain = true )
-public abstract class AbstractFunctionalOperationTypeImplementation< FinalType > extends AbstractBaseOperationTypeImplementation< FinalType >
+public abstract class AbstractFunctionalAlgorithm< FinalType > extends AbstractBaseAlgorithm< FinalType >
 {
     @Getter @Setter private SuitabilityChecker _suitabilityChecker;
     @Getter @Setter private DeviceFinder _deviceFinder;
@@ -38,14 +40,14 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
     @Getter @Setter private RecursiveJunctionAgent _RJAgent;
     @Getter @Setter private DrainInstantiation _drainInstantiation;
 
-    public AbstractFunctionalOperationTypeImplementation( String name ) {
+    public AbstractFunctionalAlgorithm(String name ) {
         super(name);
     }
 
     //---
 
     @Override
-    public float isImplementationSuitableFor( ExecutionCall call ) {
+    public float isAlgorithmSuitableFor(ExecutionCall call ) {
         return _suitabilityChecker.canHandle(call);
     }
 
@@ -59,15 +61,15 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
     //---
 
     @Override
-    public boolean canImplementationPerformForwardADFor( ExecutionCall call ) {
+    public boolean canAlgorithmPerformForwardADFor(ExecutionCall call ) {
         return _forwardADAnalyzer.allowsForward(call);
     }
 
     //---
 
     @Override
-    public boolean canImplementationPerformBackwardADFor( ExecutionCall call ) {
-        return _backwardADAnalyzer.allowsBackward(call);
+    public boolean canAlgorithmPerformBackwardADFor( ExecutionCall call ) {
+        return _backwardADAnalyzer.allowsBackward( call );
     }
 
     //---
@@ -87,15 +89,15 @@ public abstract class AbstractFunctionalOperationTypeImplementation< FinalType >
     //---
 
     @Override
-    public Tsr handleRecursivelyAccordingToArity( ExecutionCall call, java.util.function.Function<ExecutionCall, Tsr> goDeeperWith ) {
-        return _RJAgent.handle(call, goDeeperWith);
+    public Tsr handleRecursivelyAccordingToArity( ExecutionCall call, java.util.function.Function<ExecutionCall, Tsr<?>> goDeeperWith ) {
+        return _RJAgent.handle( call, goDeeperWith );
     }
 
     //---
 
     @Override
     public ExecutionCall instantiateNewTensorsForExecutionIn( ExecutionCall call ) {
-        return _drainInstantiation.handle(call);
+        return _drainInstantiation.handle( call );
     }
 
     //---

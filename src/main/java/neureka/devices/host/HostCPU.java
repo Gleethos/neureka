@@ -4,8 +4,8 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.api.operations.Operation;
 import neureka.backend.api.ExecutionCall;
 
 import java.util.*;
@@ -34,7 +34,7 @@ public class HostCPU extends AbstractDevice<Number>
     }
 
     @Override
-    protected void _execute( Tsr[] tensors, int d, OperationType type )
+    protected void _execute( Tsr[] tensors, int d, Operation type )
     {
         ExecutionCall<HostCPU> call =
                 new ExecutionCall<>(
@@ -43,7 +43,7 @@ public class HostCPU extends AbstractDevice<Number>
                         d,
                         type
                 );
-        call.getImplementation().getExecutor(HostExecutor.class).getExecution().run(call);
+        call.getImplementation().getImplementationFor( HostCPU.class ).run( call );
     }
 
     @Override

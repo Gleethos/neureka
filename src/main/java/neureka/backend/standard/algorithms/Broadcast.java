@@ -1,16 +1,16 @@
-package neureka.backend.standard.implementations;
+package neureka.backend.standard.algorithms;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.implementations.AbstractFunctionalOperationTypeImplementation;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.operations.Operation;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
-public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Broadcast >
+public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
 {
 
     public Broadcast() {
@@ -96,7 +96,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
     public static void broadcast(
             Tsr<Number> t0_drn, Tsr<Number> t1_src, Tsr<Number> t2_src,
             int d, int i, int end,
-            OperationType.TertiaryNDIConsumer operation
+            Operation.TertiaryNDIConsumer operation
     ) {
         int[] t0Shp = t0_drn.getNDConf().shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         int[] t1Shp = t1_src.getNDConf().shape();
@@ -192,7 +192,7 @@ public class Broadcast extends AbstractFunctionalOperationTypeImplementation< Br
     public static void broadcast(
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int d, int i, int end,
-            OperationType.TertiaryNDXConsumer operation
+            Operation.TertiaryNDXConsumer operation
     ) {
         NDConfiguration ndc0 = t0_drn.getNDConf();
         NDConfiguration ndc1 = t1_src.getNDConf();

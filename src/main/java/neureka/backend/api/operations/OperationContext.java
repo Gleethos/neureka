@@ -96,11 +96,11 @@ public class OperationContext implements Cloneable
     /**
      * @return A mapping between OperationType identifiers and their corresponding instances.
      */
-    @Getter private final Map<String, AbstractOperationType> _lookup;
+    @Getter private final Map<String, AbstractOperation> _lookup;
     /**
      * @return A list of all OperationType instances.
      */
-    @Getter private final ArrayList<AbstractOperationType> _register;
+    @Getter private final ArrayList<AbstractOperation> _register;
     /**
      * @return The ID of the OperationType that will be instantiated next.
      */
@@ -116,15 +116,15 @@ public class OperationContext implements Cloneable
         _ID++;
     }
 
-    public List<AbstractOperationType> instances() {
+    public List<AbstractOperation> instances() {
         return getRegister();
     }
 
-    public AbstractOperationType instance(int index) {
+    public AbstractOperation instance(int index) {
         return getRegister().get(index);
     }
 
-    public AbstractOperationType instance(String identifier) {
+    public AbstractOperation instance(String identifier) {
         return getLookup().getOrDefault(identifier, null);
     }
 

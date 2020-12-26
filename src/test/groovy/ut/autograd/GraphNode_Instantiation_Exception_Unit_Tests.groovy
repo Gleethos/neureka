@@ -7,8 +7,8 @@ import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
 import neureka.calculus.Function
 import neureka.backend.api.ExecutionCall
-import neureka.backend.api.operations.AbstractOperationType
-import neureka.backend.api.operations.OperationType
+import neureka.backend.api.operations.AbstractOperation
+import neureka.backend.api.operations.Operation
 import spock.lang.Specification
 
 import java.util.function.Supplier
@@ -90,7 +90,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }
             Supplier<Tsr> supplier = () -> payload
             Function function = Mock( Function )
-            OperationType type = Mock(OperationType)
+            Operation type = Mock(Operation)
             Object context = Mock( ExecutionCall )
             Device device = Mock( Device )
             def inputsNodeMock = Mock( GraphNode )
@@ -127,7 +127,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }
             Supplier<Tsr> supplier = () -> payload
             Function function = Mock( Function )
-            OperationType type = Mock(OperationType)
+            Operation type = Mock(Operation)
             Object context = Mock( ExecutionCall )
             Device device = Mock( Device )
             def inputsNodeMock = Mock( GraphNode )
@@ -165,7 +165,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             Tsr payload = Mock( Tsr )
             Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }
             Supplier<Tsr> supplier = () -> payload
-            AbstractOperationType type = Mock( AbstractOperationType )
+            AbstractOperation type = Mock( AbstractOperation )
             Function function = Mock( Function )
             Object context = Mock( ExecutionCall )
             Device device = Mock( Device )

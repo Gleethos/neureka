@@ -2,24 +2,26 @@ package neureka.backend.standard.operations.indexer;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.algorithms.Algorithm;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
-import neureka.backend.standard.implementations.Activation;
-import neureka.backend.standard.implementations.Broadcast;
-import neureka.backend.standard.implementations.Convolution;
-import neureka.backend.api.operations.AbstractOperationType;
+import neureka.backend.standard.algorithms.Activation;
+import neureka.backend.standard.algorithms.Broadcast;
+import neureka.backend.standard.algorithms.Convolution;
+import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.operations.OperationType;
-import neureka.backend.api.implementations.OperationTypeImplementation;
+import neureka.backend.api.operations.Operation;
 import neureka.calculus.assembly.FunctionBuilder;
+import neureka.devices.host.HostCPU;
+import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
-public class Summation extends AbstractOperationType
+public class Summation extends AbstractOperation
 {
 
     public Summation()
@@ -45,12 +47,12 @@ public class Summation extends AbstractOperationType
                 }
         );
 
-        OperationTypeImplementation.RecursiveJunctionAgent rja = (call, goDeeperWith)->
+        Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();
             int d = call.getDerivativeIndex();
-            OperationType type = call.getOperation();
+            Operation type = call.getOperation();
 
             Tsr alternative = null;
             if (tsrs.length > 3) {
@@ -96,7 +98,7 @@ public class Summation extends AbstractOperationType
                     else return ( t0Idx, t1Idx, t2Idx ) -> 1.0;
                 };
 
-        Broadcast typeImplementation = new Broadcast()
+        Broadcast operationAlgorithm = new Broadcast()
                 .setBackwardADAnalyzer( call -> true )
                 .setForwardADAnalyzer( call -> true )
                 .setADAgentSupplier(
@@ -125,11 +127,11 @@ public class Summation extends AbstractOperationType
                 .build();
 
 
-        setImplementation (
+        setAlgorithm(
                 Broadcast.class,
-                typeImplementation.setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor(
+                operationAlgorithm.setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                                 call  ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -156,9 +158,9 @@ public class Summation extends AbstractOperationType
                                                 ),
                                 3
                         )
-                ).setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
+                ).setImplementationFor(
+                        OpenCLDevice.class,
+                        new CLImplementation(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
@@ -171,7 +173,7 @@ public class Summation extends AbstractOperationType
                                             .call( gwz );
                                 },
                                 3,
-                                typeImplementation.getKernelSource(), // kernelSource
+                                operationAlgorithm.getKernelSource(), // kernelSource
                                 "value = src1 + src2;\n",
                                 "value += 1 * drain;\n",
                                 this // OperationType
@@ -203,27 +205,21 @@ public class Summation extends AbstractOperationType
         .setADAgentSupplier(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
-                Tsr ctxDerivative = (Tsr)call.getAt("derivative");
+                Tsr ctxDerivative = (Tsr) call.getAt("derivative");
                 Function mul = Function.Detached.MUL;
-                if (
-                    ctxDerivative != null
-                ) {
+                if ( ctxDerivative != null )
                     return new DefaultADAgent( ctxDerivative )
                             .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
                             .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{backwardError, ctxDerivative} ) );
-                }
+
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
                 if( forward )
                 {
                     Tsr deriv = f.derive( inputs, d );
-                    return new DefaultADAgent(
-                            deriv
-                        ).setForward(
-                            ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv})
-                        ).setBackward(
-                            ( t, derivative ) -> mul.call( new Tsr[]{derivative, deriv} )
-                        );
+                    return new DefaultADAgent( deriv )
+                            .setForward( ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}) )
+                            .setBackward( ( t, derivative ) -> mul.call( new Tsr[]{derivative, deriv} ) );
                 }
                 else
                 {
@@ -271,10 +267,11 @@ public class Summation extends AbstractOperationType
         )
         .build();
 
-        setImplementation(Activation.class,
-                activation.setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor(
+        setAlgorithm(
+                Activation.class,
+                activation.setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                                 call  ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -295,9 +292,9 @@ public class Summation extends AbstractOperationType
                                                 ),
                                 3
                         )
-                ).setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
+                ).setImplementationFor(
+                        OpenCLDevice.class,
+                        new CLImplementation(
                                 call -> {
                                     int offset = ( call.getTensor( 0 ) != null ) ? 0 : 1;
                                     int gwz =
@@ -332,13 +329,10 @@ public class Summation extends AbstractOperationType
                 sum += src.get( 0 ).call( inputs, i );
                 nothingDone = false;
             }
-            if ( nothingDone ) {
-                return src.get( 0 ).call( inputs );
-            }
+            if ( nothingDone ) return src.get( 0 ).call( inputs );
             return sum;
-        } else {
-            return src.get( 0 ).derive( inputs, d, j );
         }
+        else return src.get( 0 ).derive( inputs, d, j );
     }
 
     @Contract(pure = true)
@@ -350,9 +344,7 @@ public class Summation extends AbstractOperationType
                 sum += src.get( 0 ).call( inputs, i );
                 nothingDone = false;
             }
-            if ( nothingDone ) {
-                return src.get( 0 ).call( inputs );
-            }
+            if ( nothingDone ) return src.get( 0 ).call( inputs );
             return sum;
         } else {
             double sum = 0;
@@ -362,9 +354,7 @@ public class Summation extends AbstractOperationType
                 sum += r;
                 nothingDone = false;
             }
-            if ( nothingDone ) {
-                return src.get( 0 ).call( inputs );
-            }
+            if ( nothingDone ) return src.get( 0 ).call( inputs );
             return sum;
         }
 

@@ -2,19 +2,20 @@ package neureka.backend.standard.operations.other;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.operations.Operation;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
 import neureka.calculus.Function;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.standard.implementations.Convolution;
-import neureka.backend.standard.implementations.Scalarization;
-import neureka.backend.api.operations.AbstractOperationType;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.standard.algorithms.Convolution;
+import neureka.backend.standard.algorithms.Scalarization;
+import neureka.devices.host.HostCPU;
 
 import java.util.List;
 import java.util.Random;
 
-public class Randomization extends AbstractOperationType
+public class Randomization extends AbstractOperation
 {
 
     public Randomization()
@@ -63,7 +64,7 @@ public class Randomization extends AbstractOperationType
         )
         .setADAgentSupplier(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                    getDefaultImplementation().supplyADAgentFor( f, call, forward )
+                    getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
         )
         .setCallHook( (caller, call ) -> null )
         .setRJAgent( ( call, goDeeperWith ) -> null )
@@ -71,16 +72,16 @@ public class Randomization extends AbstractOperationType
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationType.instance("idy") );
+                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, Operation.instance("idy") );
                 }
         )
         .build();
 
-        setImplementation(
+        setAlgorithm(
                 Scalarization.class,
-                scalarization.setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor (
+                scalarization.setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                                 call -> call.getDevice().getExecutor()
                                         .threaded (
                                                 call.getTensor( 0 ).size(),

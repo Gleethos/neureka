@@ -1,4 +1,4 @@
-package neureka.backend.api.implementations;
+package neureka.backend.api.algorithms;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -6,23 +6,25 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.api.operations.Operation;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.devices.host.HostCPU;
 import neureka.dtype.NumericType;
 
 import java.util.Arrays;
 
-public class GenericImplementation extends AbstractBaseOperationTypeImplementation<OperationTypeImplementation>{
+public class GenericAlgorithm extends AbstractBaseAlgorithm<Algorithm> {
 
-    public GenericImplementation( String name, int arity,  OperationType type ) {
+    public GenericAlgorithm( String name, int arity, Operation type )
+    {
         super(name);
-        setExecutor(
-                HostExecutor.class,
-                new HostExecutor(
+        setImplementationFor(
+                HostCPU.class,
+                new HostImplementation(
                         call -> {
                             Function f = FunctionBuilder.build( type, call.getTensors().length-1, false);
                             boolean allNumeric = call.validate()
@@ -75,7 +77,7 @@ public class GenericImplementation extends AbstractBaseOperationTypeImplementati
     }
 
     @Override
-    public float isImplementationSuitableFor(ExecutionCall call) {
+    public float isAlgorithmSuitableFor(ExecutionCall call) {
         int[] shape = null;
         for ( Tsr<?> t : call.getTensors() ) {
             if ( shape == null ) if ( t != null ) shape = t.getNDConf().shape();
@@ -94,12 +96,12 @@ public class GenericImplementation extends AbstractBaseOperationTypeImplementati
     }
 
     @Override
-    public boolean canImplementationPerformForwardADFor( ExecutionCall call ) {
+    public boolean canAlgorithmPerformForwardADFor(ExecutionCall call ) {
         return true;
     }
 
     @Override
-    public boolean canImplementationPerformBackwardADFor( ExecutionCall call ) {
+    public boolean canAlgorithmPerformBackwardADFor(ExecutionCall call ) {
         return true;
     }
 
@@ -125,7 +127,7 @@ public class GenericImplementation extends AbstractBaseOperationTypeImplementati
     }
 
     @Override
-    public Tsr handleRecursivelyAccordingToArity( ExecutionCall call, java.util.function.Function<ExecutionCall, Tsr> goDeeperWith )
+    public Tsr handleRecursivelyAccordingToArity( ExecutionCall call, java.util.function.Function<ExecutionCall, Tsr<?>> goDeeperWith )
     {
         return null;
     }

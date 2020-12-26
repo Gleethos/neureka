@@ -1,9 +1,9 @@
-package neureka.backend.standard.implementations;
+package neureka.backend.standard.algorithms;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.implementations.AbstractFunctionalOperationTypeImplementation;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.operations.Operation;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
-public class Operator extends AbstractFunctionalOperationTypeImplementation<Operator>
+public class Operator extends AbstractFunctionalAlgorithm<Operator>
 {
     public Operator() {
         super("operator");
@@ -59,7 +59,7 @@ public class Operator extends AbstractFunctionalOperationTypeImplementation<Oper
     public static void operate(
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int d, int i, int end,
-            OperationType.SecondaryNDIConsumer operation
+            Operation.SecondaryNDIConsumer operation
     ) {
         if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
             ((double[])t0_drn.getData())[ 0 ] = operation.execute( NDIterator.of( t1_src ), NDIterator.of( t2_src ) ); // new int[t0_drn.rank()]
@@ -90,7 +90,7 @@ public class Operator extends AbstractFunctionalOperationTypeImplementation<Oper
     public static void operate(
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int d, int i, int end,
-            OperationType.PrimaryNDXConsumer operation
+            Operation.PrimaryNDXConsumer operation
     ) {
         if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
             ((double[])t0_drn.getData())[ 0 ] = operation.execute( new int[t0_drn.rank()] );

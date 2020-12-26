@@ -1,32 +1,36 @@
-package ut.calculus
+package ut.backend
 
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.host.HostCPU
-import neureka.devices.host.execution.HostExecutor
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
-import neureka.devices.opencl.execution.CLExecutor
 import neureka.backend.api.ExecutionCall
-import neureka.backend.api.implementations.OperationTypeImplementation
-import neureka.backend.standard.implementations.Activation
-import neureka.backend.standard.implementations.Operator
+import neureka.backend.api.algorithms.Algorithm
+import neureka.backend.standard.algorithms.Activation
+import neureka.backend.standard.algorithms.Operator
 import neureka.backend.api.operations.OperationContext
 import spock.lang.Specification
 
-class Calculus_Implementation_Executor_Tests extends Specification
+class Backend_Algorithm_Implementation_Tests extends Specification
 {
+    def setupSpec()
+    {
+        Neureka.instance().reset()
+
+        reportHeader """
+                   This specification defines the behavior of implementations of the 
+                   Algorithm interface! <br> 
+        """
+    }
 
     def 'Operator implementations have expected Executor instances.'(
-            OperationTypeImplementation imp
+            Algorithm imp
     ){
 
-        given : 'The current Neureka instance is being reset.'
-            Neureka.instance().reset()
-
         when : 'Host- and CL- executor instance are being fetched...'
-            def hostExecutor = imp.getExecutor( HostExecutor.class )
-            def clExecutor = imp.getExecutor( CLExecutor.class )
+            def hostExecutor = imp.getImplementationFor( HostCPU.class )
+            def clExecutor = imp.getImplementationFor( OpenCLDevice.class )
 
         then : 'The variables containing the executor instances are not null.'
             hostExecutor != null
@@ -41,22 +45,19 @@ class Calculus_Implementation_Executor_Tests extends Specification
                                     e.isOperator() &&
                                     e.getOperator().length() == 1 &&
                                     e.supports( Operator.class )
-                    ).map( e -> e.getImplementation( Operator.class ) )
+                    ).map( e -> e.getAlgorithm( Operator.class ) )
 
     }
 
 
 
     def 'Activation implementations have expected Executor instances.'(
-            OperationTypeImplementation imp
+            Algorithm imp
     ){
 
-        given : 'The current Neureka instance is being reset.'
-        Neureka.instance().reset()
-
         when : 'Host- and CL- executor instance are being fetched...'
-        def hostExecutor = imp.getExecutor( HostExecutor.class )
-        def clExecutor = imp.getExecutor( CLExecutor.class )
+            def hostExecutor = imp.getImplementationFor( HostCPU.class )
+            def clExecutor = imp.getImplementationFor( OpenCLDevice.class )
 
         then : 'The variables containing the executor instances are not null.'
         hostExecutor != null
@@ -69,27 +70,24 @@ class Calculus_Implementation_Executor_Tests extends Specification
                 .filter(
                         e ->
                                         e.supports( Activation.class )
-                ).map( e -> e.getImplementation( Activation.class ) )
+                ).map( e -> e.getAlgorithm( Activation.class ) )
 
     }
 
 
     def 'HostExecutors of Operator implementations behave as expected.'(
-            OperationTypeImplementation imp
+            Algorithm imp
     ){
 
-        given : 'The current Neureka instance is being reset.'
-            Neureka.instance().reset()
-
-        and : 'Mock instances to simulate an ExecutionCall instance.'
+        given : 'Mock instances to simulate an ExecutionCall instance.'
             def call = Mock( ExecutionCall )
             def device = Mock( HostCPU )
             def tensor = Mock( Tsr )
-            def hostExecutor = imp.getExecutor( HostExecutor.class )
+            def hostExecutor = imp.getImplementationFor( HostCPU.class )
             def nativeExecutor = Mock( HostCPU.NativeExecutor )
 
         when : 'Host-executor instance is being called...'
-            hostExecutor.execution.run( call )
+            hostExecutor.run( call )
 
         then : 'The mock objects are being called as expected.'
             (1.._) * call.getDevice() >> device
@@ -107,28 +105,25 @@ class Calculus_Implementation_Executor_Tests extends Specification
                                 e.isOperator() &&
                                         e.getOperator().length() == 1 &&
                                         e.supports( Operator.class )
-                ).map( e -> e.getImplementation( Operator.class ) )
+                ).map( e -> e.getAlgorithm( Operator.class ) )
 
     }
 
 
 
     def 'CLExecutors of Operator implementations behave as expected.'(
-            OperationTypeImplementation imp
+            Algorithm imp
     ){
 
-        given : 'The current Neureka instance is being reset.'
-            Neureka.instance().reset()
-
-        and : 'Mock instances to simulate an ExecutionCall instance.'
+        given : 'Mock instances to simulate an ExecutionCall instance.'
             def call = Mock( ExecutionCall )
             def device = Mock( OpenCLDevice )
             def tensor = Mock( Tsr )
-            def clExecutor = imp.getExecutor( CLExecutor.class )
+            def clExecutor = imp.getImplementationFor( OpenCLDevice.class )
             def kernel = Mock( KernelCaller )
 
         when : 'CL-executor instance is being called...'
-            clExecutor.execution.run( call )
+            clExecutor.run( call )
 
         then : 'The mock objects are being called as expected.'
             (1.._) * call.getTensor(0) >> tensor
@@ -147,7 +142,7 @@ class Calculus_Implementation_Executor_Tests extends Specification
                                 e.isOperator() &&
                                         e.getOperator().length() == 1 &&
                                         e.supports( Operator.class )
-                ).map( e -> e.getImplementation( Operator.class ) )
+                ).map( e -> e.getAlgorithm( Operator.class ) )
 
     }
 

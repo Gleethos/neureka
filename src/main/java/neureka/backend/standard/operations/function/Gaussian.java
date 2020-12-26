@@ -3,17 +3,19 @@ package neureka.backend.standard.operations.function;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.Function;
-import neureka.backend.standard.implementations.Activation;
-import neureka.backend.api.operations.AbstractOperationType;
+import neureka.backend.standard.algorithms.Activation;
+import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.ExecutionCall;
+import neureka.devices.host.HostCPU;
+import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
-public class Gaussian extends AbstractOperationType
+public class Gaussian extends AbstractOperation
 {
 
     public Gaussian() {
@@ -58,7 +60,7 @@ public class Gaussian extends AbstractOperationType
                     }
                 };
 
-        Activation typeImplementation = new Activation()
+        Activation operationAlgorithm = new Activation()
             .setBackwardADAnalyzer( call -> true )
             .setForwardADAnalyzer(
                     call -> {
@@ -72,7 +74,7 @@ public class Gaussian extends AbstractOperationType
             )
             .setADAgentSupplier(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                getDefaultImplementation().supplyADAgentFor( f, call, forward )
+                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
         .setCallHook( (caller, call ) -> null )
         .setRJAgent( ( call, goDeeperWith ) -> null )
@@ -97,11 +99,11 @@ public class Gaussian extends AbstractOperationType
             )
             .build();
 
-        setImplementation(
+        setAlgorithm(
                 Activation.class,
-                typeImplementation.setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor(
+                operationAlgorithm.setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                                 call  ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -122,9 +124,9 @@ public class Gaussian extends AbstractOperationType
                                                 ),
                                 3
                         )
-                ).setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
+                ).setImplementationFor(
+                        OpenCLDevice.class,
+                        new CLImplementation(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
@@ -136,7 +138,7 @@ public class Gaussian extends AbstractOperationType
                                             .call( gwz );
                                 },
                                 3,
-                                typeImplementation.getKernelSource(), // kernelSource
+                                operationAlgorithm.getKernelSource(), // kernelSource
                                 "output =\n" +
                                         "    (float)pow(\n" +
                                         "        (float)M_E,\n" +

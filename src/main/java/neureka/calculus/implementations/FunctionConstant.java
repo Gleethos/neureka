@@ -1,8 +1,8 @@
 package neureka.calculus.implementations;
 
 import neureka.Tsr;
+import neureka.backend.api.operations.AbstractOperation;
 import neureka.calculus.Function;
-import neureka.backend.api.operations.AbstractOperationType;
 import neureka.calculus.AbstractBaseFunction;
 
 public class FunctionConstant extends AbstractBaseFunction
@@ -25,7 +25,7 @@ public class FunctionConstant extends AbstractBaseFunction
 	}
 
 	@Override
-	public AbstractOperationType getOperation() {
+	public AbstractOperation getOperation() {
 		return null;
 	}
 

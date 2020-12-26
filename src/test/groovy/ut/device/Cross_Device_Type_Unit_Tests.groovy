@@ -6,7 +6,7 @@ import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.devices.opencl.OpenCLDevice
 import neureka.backend.api.ExecutionCall
-import neureka.backend.api.implementations.OperationTypeImplementation
+import neureka.backend.api.algorithms.Algorithm
 import neureka.devices.storage.FileDevice
 import spock.lang.Specification
 
@@ -126,7 +126,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             Neureka.instance().reset()
         and : 'A mocked ExecutionCall with mocked operation implementation and a mocked drain instantiator lambda...'
             def call = Mock(ExecutionCall)
-            def implementation = Mock(OperationTypeImplementation)
+            def implementation = Mock(Algorithm)
 
         when : 'The call is being passed to the device for execution...'
             device.execute(call)

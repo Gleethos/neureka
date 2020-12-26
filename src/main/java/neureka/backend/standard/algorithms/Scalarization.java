@@ -1,16 +1,16 @@
-package neureka.backend.standard.implementations;
+package neureka.backend.standard.algorithms;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.implementations.AbstractFunctionalOperationTypeImplementation;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.operations.Operation;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
-public class Scalarization extends AbstractFunctionalOperationTypeImplementation< Scalarization >
+public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
 {
 
     public Scalarization() {
@@ -58,7 +58,7 @@ public class Scalarization extends AbstractFunctionalOperationTypeImplementation
     public static void scalarize (
             Tsr t0_drn,
             int i, int end,
-            OperationType.PrimaryNDIConsumer operation
+            Operation.PrimaryNDIConsumer operation
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn ); //t0_drn.idx_of_i( i );
         t0Idx.set( t0_drn.idx_of_i( i ) );
@@ -78,7 +78,7 @@ public class Scalarization extends AbstractFunctionalOperationTypeImplementation
     public static void scalarize (
             Tsr t0_drn,
             int i, int end,
-            OperationType.PrimaryNDXConsumer operation
+            Operation.PrimaryNDXConsumer operation
     ) {
         int[] t0Shp = t0_drn.getNDConf().shape();
         int[] t0Idx = t0_drn.idx_of_i( i );

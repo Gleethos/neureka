@@ -1,15 +1,15 @@
-package neureka.backend.standard.implementations;
+package neureka.backend.standard.algorithms;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.implementations.AbstractFunctionalOperationTypeImplementation;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.operations.Operation;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
-public class Convolution extends AbstractFunctionalOperationTypeImplementation< Convolution >
+public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
 {
 
     public Convolution() {
@@ -30,7 +30,7 @@ public class Convolution extends AbstractFunctionalOperationTypeImplementation< 
     public static void convolve (
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int d, int i, int end,
-            OperationType.TertiaryNDIConsumer operation
+            Operation.TertiaryNDIConsumer operation
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src );
@@ -177,7 +177,7 @@ public class Convolution extends AbstractFunctionalOperationTypeImplementation< 
     public static void convolve (
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int d, int i, int end,
-            OperationType.TertiaryNDXConsumer operation
+            Operation.TertiaryNDXConsumer operation
     ) {
         NDConfiguration ndc0 = t0_drn.getNDConf();
         NDConfiguration ndc1 = t1_src.getNDConf();

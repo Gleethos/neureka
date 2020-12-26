@@ -1,9 +1,12 @@
-package neureka.devices.opencl.execution;
+package neureka.backend.standard.implementations;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import neureka.Neureka;
+import neureka.backend.api.implementations.AbstractImplementationFor;
+import neureka.backend.api.implementations.ImplementationFor;
+import neureka.backend.api.operations.AbstractOperation;
 import neureka.devices.opencl.OpenCLDevice;
-import neureka.backend.api.executions.ExecutorFor;
-import neureka.backend.api.operations.AbstractOperationType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +17,8 @@ import java.util.Map;
  * ExecutionOn &lt; OpenCLDevice &gt; lambda implementation
  * receiving an instance of the ExecutionCall class.
  */
-public class CLExecutor implements ExecutorFor<OpenCLDevice>
+@Accessors( prefix = {"_"} )
+public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
 {
     private final java.util.function.Function<String, String> _aliasSwapper =
             s ->
@@ -38,59 +42,36 @@ public class CLExecutor implements ExecutorFor<OpenCLDevice>
                     .replace("//-=<ARGUMENT>=-//", "")
                     .replace("//-=<CONFIGURATION>=-//", "");
 
-    private String _source;
-    private String _name;
+    @Getter private String _source;
+    @Getter private String _name;
 
-    private final ExecutionOn<OpenCLDevice> _lambda;
-    private final int _arity;
-
-    public String getSource() {
-        return _source;
-    }
-    public String getName() {
-        return _name;
-    }
-
-    @Override
-    public ExecutionOn<OpenCLDevice> getExecution() {
-        return _lambda;
-    }
-
-    @Override
-    public int arity() {
-        return _arity;
-    }
-
-    public CLExecutor(
-            ExecutionOn<OpenCLDevice> lambda,
+    public CLImplementation(
+            ImplementationFor<OpenCLDevice> lambda,
             int arity
     ) {
-        _lambda = lambda;
-        _arity = arity;
+        super( lambda, arity );
     }
 
-    public CLExecutor(
-            ExecutionOn<OpenCLDevice> lambda,
+    public CLImplementation(
+            ImplementationFor<OpenCLDevice> lambda,
             int arity,
             String kernelName,
             String kernelSource
     ) {
-        _lambda = lambda;
-        _arity = arity;
+        super( lambda, arity );
         _name = kernelName;
         _source = kernelSource;
     }
 
-    public CLExecutor(
-            ExecutionOn<OpenCLDevice> lambda,
+    public CLImplementation(
+            ImplementationFor<OpenCLDevice> lambda,
             int arity,
             String kernelSource,
             String activationSource,
             String differentiationSource,
-            AbstractOperationType type
+            AbstractOperation type
     ) {
-        _lambda = lambda;
-        _arity = arity;
+        super( lambda, arity );
         kernelSource = kernelSource.replace(
                 "Neureka.instance().settings().indexing().REVERSE_INDEX_TRANSLATION",
                 (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) ? "true" : "false"
@@ -116,7 +97,8 @@ public class CLExecutor implements ExecutorFor<OpenCLDevice>
         }
     }
 
-    private interface Parser {
+    private interface Parser
+    {
         void apply(String name, String first, String second);
     }
 
@@ -125,14 +107,14 @@ public class CLExecutor implements ExecutorFor<OpenCLDevice>
             String kernelSource,
             String activationSource,
             String differentiationSource,
-            AbstractOperationType type
+            AbstractOperation type
     ) {
         Map<String, String> code = new HashMap<>();
         String preName = templateName.replace("template", "");
         String source = kernelSource.replace("template", "");
         String[] parts = source.split("//-=<OPERATION>=-//");
 
-        Parser parser = (n, f, s) -> {
+        Parser parser = ( n, f, s ) -> {
             String convcode =
                     parts[ 0 ].replace(preName, preName + n) +
                             _aliasSwapper.apply(f) +

@@ -1,7 +1,7 @@
 package neureka.calculus.assembly;
 
-import neureka.backend.api.operations.AbstractOperationType;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.operations.Operation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ public class FunctionParser
 {
     public static int numberOfOperationsWithin(final List<String> operations) {
         int counter = 0;
-        for(AbstractOperationType ot : OperationType.instances()) {
+        for(AbstractOperation ot : Operation.instances()) {
             if (operations.contains(ot.getOperator())) ++counter;
         }
         return counter;
@@ -46,7 +46,7 @@ public class FunctionParser
                 for (int ii = exp.length()-1; ii >= i+1; ii--) {
                     String found = FunctionParser.parsedOperation(exp.substring(i,ii), i);
                     if (
-                         found != null && !OperationType.instance(found).isOperator()
+                         found != null && !Operation.instance(found).isOperator()
                     ) {
                         ii = -1; // end inner loop
                         component.append(found.substring(0,found.length()-1));
@@ -96,7 +96,7 @@ public class FunctionParser
 
     public static boolean isAnyOperation(final String operation) {
         if (operation.length() > 32) return false;
-        return (OperationType.instance(operation) != null) && OperationType.instance(operation).getId() >= 0;
+        return (Operation.instance(operation) != null) && Operation.instance(operation).getId() >= 0;
     }
 
     public static String groupBy(final String operation, final String currentChain, final String currentComponent, final String currentOperation) {
@@ -210,15 +210,15 @@ public class FunctionParser
     public static String assumptionBasedOn(String expression) {
         double largest = -1;
         int best = 0;
-        for (int i = 0; i< OperationType.COUNT(); i++) {
-            double s = similarity(expression, OperationType.instance( i ).getOperator());
+        for (int i = 0; i< Operation.COUNT(); i++) {
+            double s = similarity(expression, Operation.instance( i ).getOperator());
             if (largest==-1) largest = s;
             else if (s > largest) {
                 best = i;
                 largest = s;
             }
         }
-        return ( largest > 0.1 ) ? OperationType.instance(best).getOperator() : "";
+        return ( largest > 0.1 ) ? Operation.instance(best).getOperator() : "";
     }
 
     public static double similarity(String s1, String s2) {

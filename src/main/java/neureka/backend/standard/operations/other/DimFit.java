@@ -1,16 +1,16 @@
 package neureka.backend.standard.operations.other;
 
 import neureka.Tsr;
-import neureka.backend.standard.implementations.GenericImplementation;
+import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.devices.Device;
 import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
-import neureka.backend.api.operations.AbstractOperationType;
 import neureka.backend.api.ExecutionCall;
 
 import java.util.List;
 
-public class DimFit extends AbstractOperationType
+public class DimFit extends AbstractOperation
 {
 
     public DimFit()
@@ -36,7 +36,7 @@ public class DimFit extends AbstractOperationType
                 }
         );
 
-        GenericImplementation implementation = new GenericImplementation("reshape")
+        GenericAlgorithm implementation = new GenericAlgorithm("reshape")
                 .setSuitabilityChecker( call -> 1.0f )
                 .setBackwardADAnalyzer( call -> true )
                 .setForwardADAnalyzer( call -> false )
@@ -121,8 +121,8 @@ public class DimFit extends AbstractOperationType
                 .setDrainInstantiation( call -> call )
                 .build();
 
-        setImplementation(
-                GenericImplementation.class,
+        setAlgorithm(
+                GenericAlgorithm.class,
                 implementation
         );
 

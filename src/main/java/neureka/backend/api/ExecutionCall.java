@@ -41,11 +41,11 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.api.algorithms.Algorithm;
+import neureka.backend.api.operations.Operation;
 import neureka.devices.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
-import neureka.backend.api.implementations.OperationTypeImplementation;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -67,7 +67,7 @@ public class ExecutionCall< DeviceType extends Device >
     public interface TensorCondition { boolean check( Tsr tensor ); }
     public interface TensorCompare { boolean check( Tsr first, Tsr second ); }
     public interface DeviceCondition { boolean check( Device device ); }
-    public interface OperationTypeCondition { boolean check( OperationType type ); }
+    public interface OperationTypeCondition { boolean check( Operation type ); }
     public interface Mutator { Tsr[] mutate( Tsr[] tensors ); }
 
     @Getter
@@ -92,7 +92,7 @@ public class ExecutionCall< DeviceType extends Device >
      *  It contains multiple implementations, one of which might be applicable to this call...
      */
     @Getter
-    private final OperationType _operation;
+    private final Operation _operation;
 
     @Getter
     private Tsr[] _tensors;
@@ -100,7 +100,7 @@ public class ExecutionCall< DeviceType extends Device >
     @Getter
     private int _j = -1;
 
-    private OperationTypeImplementation<OperationTypeImplementation> _implementation;
+    private Algorithm<Algorithm> _implementation;
 
     @Getter
     private Map<String, Object> _context;
@@ -184,7 +184,7 @@ public class ExecutionCall< DeviceType extends Device >
             DeviceType device,
             Tsr[] tensors,
             int d,
-            OperationType type
+            Operation type
     ) {
         _device = device;
         _tensors = tensors;
@@ -199,7 +199,7 @@ public class ExecutionCall< DeviceType extends Device >
             Tsr[] tensors,
             int d,
             int j,
-            OperationType type
+            Operation type
     ) {
         _device = device;
         _tensors = tensors;
@@ -212,18 +212,18 @@ public class ExecutionCall< DeviceType extends Device >
     public Tsr getTensor( int i ) { return _tensors[ i ];}
 
 
-    public OperationTypeImplementation getImplementation() {
+    public Algorithm getImplementation() {
         if ( _implementation != null ) return _implementation;
-        else _implementation = _operation.implementationOf(this);
+        else _implementation = _operation.AlgorithmFor(this);
         return _implementation;
     }
     
     public boolean allowsForward() {
-        return getImplementation().canImplementationPerformForwardADFor(this);
+        return getImplementation().canAlgorithmPerformForwardADFor(this);
     }
 
     public boolean allowsBackward() {
-        return getImplementation().canImplementationPerformBackwardADFor(this);
+        return getImplementation().canAlgorithmPerformBackwardADFor(this);
     }
 
     public ADAgent getADAgentFrom( Function function, ExecutionCall<Device> call, boolean forward )

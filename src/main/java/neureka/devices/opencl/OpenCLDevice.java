@@ -58,11 +58,11 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import neureka.Component;
 import neureka.Tsr;
+import neureka.backend.api.operations.Operation;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.operations.OperationType;
 import neureka.dtype.custom.F32;
 import neureka.framing.Relation;
 import neureka.utility.DataConverter;
@@ -443,7 +443,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                         this,
                         new Tsr[]{ tensor, (Tsr) new Tsr( value ).set( this )},
                         -1,
-                        OperationType.instance( "<" )
+                        Operation.instance( "<" )
                 )
             );
         }
@@ -648,7 +648,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected void _execute( Tsr[] tensors, int d, OperationType type )
+    protected void _execute( Tsr[] tensors, int d, Operation type )
     {
         ExecutionCall<OpenCLDevice> call =
                 new ExecutionCall<OpenCLDevice>(
@@ -658,7 +658,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                         type
                 );
         tensors[ 0 ].setIsVirtual( false );
-        call.getImplementation().getExecutor( CLExecutor.class ).getExecution().run( call );
+        call.getImplementation().getImplementationFor( OpenCLDevice.class ).run( call );
     }
 
     /*

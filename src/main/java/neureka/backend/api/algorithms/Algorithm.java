@@ -36,11 +36,11 @@ SOFTWARE.
 */
 
 
-package neureka.backend.api.implementations;
+package neureka.backend.api.algorithms;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.executions.ExecutorFor;
+import neureka.backend.api.implementations.ImplementationFor;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
 import neureka.autograd.ADAgent;
@@ -50,17 +50,17 @@ import java.util.function.Function;
 
 /**
  *   This class is the middle layer of the 3 tier abstraction architecture
- *   of Neureka's operation implementations.
+ *   of Neureka's operation backend.
  *
  *   Conceptually an implementation of this interface represents "a way of execution" for
- *   the OperationType to which an instance of said implementation would belong.
- *   The "+" operator for example has different OperationTypeImplementation instances
+ *   the Operation to which an instance of said implementation would belong.
+ *   The "+" operator for example has different Algorithm instances
  *   for different ExecutionCall instances.
  *   Tensors within an execution call having the same shape would
- *   trigger the Operation instance of the OperationType, whereas otherwise
+ *   trigger the Operation instance of an elementwise Algorithm instance, whereas otherwise
  *   the Convolution or Broadcast implementation might be called.
  */
-public interface OperationTypeImplementation<FinalType>
+public interface Algorithm<FinalType>
 {
     String getName();
 
@@ -68,7 +68,7 @@ public interface OperationTypeImplementation<FinalType>
         float canHandle( ExecutionCall call );
     }
 
-    float isImplementationSuitableFor( ExecutionCall call );
+    float isAlgorithmSuitableFor(ExecutionCall call );
 
     interface DeviceFinder {
         Device findFor( ExecutionCall call );
@@ -80,13 +80,13 @@ public interface OperationTypeImplementation<FinalType>
         boolean allowsForward( ExecutionCall call );
     }
 
-    boolean canImplementationPerformForwardADFor(ExecutionCall call );
+    boolean canAlgorithmPerformForwardADFor( ExecutionCall call );
 
     interface BackwardADAnalyzer {
         boolean allowsBackward( ExecutionCall call );
     }
 
-    boolean canImplementationPerformBackwardADFor(ExecutionCall call );
+    boolean canAlgorithmPerformBackwardADFor( ExecutionCall call );
 
     interface ADAgentSupplier {
         ADAgent getADAgentOf(
@@ -109,10 +109,10 @@ public interface OperationTypeImplementation<FinalType>
     Tsr handleInsteadOfDevice( FunctionNode caller, ExecutionCall call );
 
     interface RecursiveJunctionAgent {
-        Tsr handle( ExecutionCall call, Function<ExecutionCall, Tsr> goDeeperWith );
+        Tsr handle( ExecutionCall call, Function<ExecutionCall, Tsr<?>> goDeeperWith );
     }
 
-    Tsr handleRecursivelyAccordingToArity( ExecutionCall call, Function<ExecutionCall, Tsr> goDeeperWith );
+    Tsr handleRecursivelyAccordingToArity( ExecutionCall call, Function<ExecutionCall, Tsr<?>> goDeeperWith );
 
     interface DrainInstantiation {
         ExecutionCall handle( ExecutionCall call );
@@ -121,12 +121,37 @@ public interface OperationTypeImplementation<FinalType>
     ExecutionCall instantiateNewTensorsForExecutionIn( ExecutionCall call );
 
 
-    Tsr recursiveReductionOf(ExecutionCall<Device> call, Consumer<ExecutionCall<Device>> finalExecution );
+    Tsr recursiveReductionOf( ExecutionCall<Device> call, Consumer<ExecutionCall<Device>> finalExecution );
 
-    <D extends Device, E extends ExecutorFor<D>> FinalType setExecutor(Class<E> deviceClass, E execution);
+    /**
+     *
+     *  Implementations of the Algorithm interface ought to express a compositional design pattern. <br>
+     *  This means that concrete implementations of an algorithm for a device are not extending
+     *  an Algorithm, they are components of it instead. <br>
+     *  These components can be stored on an Algorithm by passing
+     *  a Device class as key and an ImplementationFor instance as value.
+     *
+     *
+     * @param deviceClass
+     * @param execution
+     * @param <D>
+     * @param <E>
+     * @return
+     */
+    <D extends Device<?>, E extends ImplementationFor<D>> FinalType setImplementationFor(Class<D> deviceClass, E execution);
 
-    <D extends Device, E extends ExecutorFor<D>> ExecutorFor getExecutor(Class<E> deviceClass);
-
+    /**
+     *  A device specific implementation can be accessed by passing the class of the implementation
+     *  of the 'ImplementationFor<Device>' class.
+     *  An Algorithm instance ought to contain a collection of these device specific
+     *  implementations...
+     *
+     * @param deviceClass The class of the device for which the stored algorithm implementation should be returned.
+     * @param <D> The type parameter which has to be a class extending the Device interface.
+     * @param <I> The type parameter for a class implementing the "ImplementationFor" interface.
+     * @return The implementation for the passed device type class.
+     */
+    <D extends Device<?>> ImplementationFor<D> getImplementationFor(Class<D> deviceClass );
 
 
 }

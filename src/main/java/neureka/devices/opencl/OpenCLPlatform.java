@@ -3,15 +3,11 @@ package neureka.devices.opencl;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import neureka.Neureka;
-import neureka.backend.standard.implementations.Activation;
-import neureka.backend.standard.implementations.Broadcast;
-import neureka.backend.standard.implementations.Convolution;
-import neureka.backend.standard.implementations.GenericImplementation;
-import neureka.backend.standard.implementations.Operator;
-import neureka.backend.standard.implementations.Scalarization;
-import neureka.devices.opencl.execution.CLExecutor;
-import neureka.backend.api.operations.AbstractOperationType;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.standard.algorithms.*;
+import neureka.backend.standard.algorithms.GenericAlgorithm;
+import neureka.backend.standard.implementations.CLImplementation;
+import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.operations.Operation;
 import org.jocl.*;
 import java.util.*;
 
@@ -113,23 +109,23 @@ public class OpenCLPlatform {
                     // inverse:  src1/fdrn <- src2 <- drain
                     //===========================================================================
                     Map<String, String> code = new HashMap<>();
-                    CLExecutor exec = null;
-                    for ( AbstractOperationType type : OperationType.ALL() ) {
-                        if ( preName.contains("activation") && type.supportsImplementation(Activation.class) ) {
-                            exec = type.getImplementation(Activation.class).getExecutor(CLExecutor.class);
-                        } else if ( preName.contains("operator") && type.supportsImplementation(Operator.class) ) {
-                            exec = type.getImplementation(Operator.class).getExecutor(CLExecutor.class);
-                        } else if ( preName.contains("scalarization") && type.supportsImplementation(Scalarization.class) ) {
-                            exec = type.getImplementation(Scalarization.class).getExecutor(CLExecutor.class);
-                        } else if ( preName.contains("broadcast") && type.supportsImplementation(Broadcast.class) ) {//broadcast
-                            exec = type.getImplementation(Broadcast.class).getExecutor(CLExecutor.class);
-                        } else if ( preName.contains("convolution") && type.supportsImplementation(Convolution.class) ) {
-                            exec = type.getImplementation(Convolution.class).getExecutor(CLExecutor.class);
+                    CLImplementation exec = null;
+                    for ( AbstractOperation type : Operation.ALL() ) {
+                        if ( preName.contains("activation") && type.supportsAlgorithm(Activation.class) ) {
+                            exec = (CLImplementation) type.getAlgorithm(Activation.class).getImplementationFor( OpenCLDevice.class );
+                        } else if ( preName.contains("operator") && type.supportsAlgorithm(Operator.class) ) {
+                            exec = (CLImplementation) type.getAlgorithm(Operator.class).getImplementationFor( OpenCLDevice.class );
+                        } else if ( preName.contains("scalarization") && type.supportsAlgorithm(Scalarization.class) ) {
+                            exec = (CLImplementation) type.getAlgorithm(Scalarization.class).getImplementationFor( OpenCLDevice.class );
+                        } else if ( preName.contains("broadcast") && type.supportsAlgorithm(Broadcast.class) ) {//broadcast
+                            exec = (CLImplementation) type.getAlgorithm(Broadcast.class).getImplementationFor( OpenCLDevice.class );
+                        } else if ( preName.contains("convolution") && type.supportsAlgorithm(Convolution.class) ) {
+                            exec = (CLImplementation) type.getAlgorithm(Convolution.class).getImplementationFor( OpenCLDevice.class );
                         } else if (
-                                type.supportsImplementation(GenericImplementation.class)
-                                && preName.contains(type.getImplementation(GenericImplementation.class).getName())
+                                type.supportsAlgorithm(GenericAlgorithm.class)
+                                && preName.contains(type.getAlgorithm(GenericAlgorithm.class).getName())
                         ) { // TODO: cover!
-                            exec = type.getImplementation(GenericImplementation.class).getExecutor(CLExecutor.class);
+                            exec = (CLImplementation) type.getAlgorithm(GenericAlgorithm.class).getImplementationFor( OpenCLDevice.class );
                         }
                         if( exec != null && exec.getSource() != null ) code.put( exec.getName(), exec.getSource() );
                     }

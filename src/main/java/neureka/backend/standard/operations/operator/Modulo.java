@@ -2,24 +2,26 @@ package neureka.backend.standard.operations.operator;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.implementations.OperationTypeImplementation;
+import neureka.backend.api.algorithms.Algorithm;
+import neureka.backend.api.operations.AbstractOperation;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
-import neureka.backend.standard.implementations.Broadcast;
-import neureka.backend.standard.implementations.Operator;
-import neureka.backend.standard.implementations.Scalarization;
-import neureka.backend.api.operations.AbstractOperationType;
+import neureka.backend.standard.algorithms.Broadcast;
+import neureka.backend.standard.algorithms.Operator;
+import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.api.operations.Operation;
+import neureka.devices.host.HostCPU;
+import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
-public class Modulo extends AbstractOperationType {
+public class Modulo extends AbstractOperation {
 
     public Modulo()
     {
@@ -41,12 +43,12 @@ public class Modulo extends AbstractOperationType {
                 }
         );
 
-        OperationTypeImplementation.RecursiveJunctionAgent rja = (call, goDeeperWith)->
+        Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();
             int d = call.getDerivativeIndex();
-            OperationType type = call.getOperation();
+            Operation type = call.getOperation();
 
             Tsr alternative = null;
             if (tsrs.length > 3) {
@@ -68,7 +70,7 @@ public class Modulo extends AbstractOperationType {
                         Tsr[] reduction = Utility.subset(tsrs, 1, 1, d+1);
                         reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);
                         alternative = goDeeperWith.apply(
-                                new ExecutionCall<>( device, reduction, -1, OperationType.instance("/") )
+                                new ExecutionCall<>( device, reduction, -1, Operation.instance("/") )
                         );
                         a = reduction[ 0 ];
                     } else if ( d == 1 ) a = tsrs[ 1 ];
@@ -79,16 +81,16 @@ public class Modulo extends AbstractOperationType {
                         reduction[ 1 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);
                         reduction[ 0 ] = reduction[ 1 ];
                         alternative = goDeeperWith.apply(
-                                new ExecutionCall<>( device, reduction, -1, OperationType.instance("/") )
+                                new ExecutionCall<>( device, reduction, -1, Operation.instance("/") )
                         );
                         b = reduction[ 0 ];
                     } else b = Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);
 
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>( device, new Tsr[]{tsrs[ 0 ], a, b}, -1, OperationType.instance("*") )
+                            new ExecutionCall<>( device, new Tsr[]{tsrs[ 0 ], a, b}, -1, Operation.instance("*") )
                     );
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>( device, new Tsr[]{tsrs[ 0 ], tsrs[ 0 ], tsrs[d+1]}, 1, OperationType.instance("/") )
+                            new ExecutionCall<>( device, new Tsr[]{tsrs[ 0 ], tsrs[ 0 ], tsrs[d+1]}, 1, Operation.instance("/") )
                     );
                     if ( d == 0 ) a.delete();
                     b.delete();
@@ -138,16 +140,16 @@ public class Modulo extends AbstractOperationType {
         Operator operator = new Operator()
                    .setADAgentSupplier(
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                                getDefaultImplementation().supplyADAgentFor( f, call, forward )
+                                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
                 .setRJAgent( rja )
                 .build();
 
-        setImplementation(
+        setAlgorithm(
                 Operator.class,
-                operator.setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor(
+                operator.setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -174,9 +176,9 @@ public class Modulo extends AbstractOperationType {
                                                 ),
                                 3
                         )
-                ).setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
+                ).setImplementationFor(
+                        OpenCLDevice.class,
+                        new CLImplementation(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
@@ -282,11 +284,11 @@ public class Modulo extends AbstractOperationType {
             .setRJAgent( ( call, goDeeperWith ) -> null )
             .build();
 
-        setImplementation(
+        setAlgorithm(
                 Broadcast.class,
-                broadcast.setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor(
+                broadcast.setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -307,9 +309,9 @@ public class Modulo extends AbstractOperationType {
                                                 ),
                                 3
                         )
-                ).setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
+                ).setImplementationFor(
+                        OpenCLDevice.class,
+                        new CLImplementation(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
@@ -374,17 +376,17 @@ public class Modulo extends AbstractOperationType {
             )
             .setADAgentSupplier(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                getDefaultImplementation().supplyADAgentFor( f, call, forward )
+                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
             .setCallHook( (caller, call ) -> null )
             .setRJAgent( ( call, goDeeperWith ) -> null )
             .build();
 
-        setImplementation(
+        setAlgorithm(
                 Scalarization.class,
-                scalarization.setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor(
+                scalarization.setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                                 call -> {
                                     double value = call.getTensor( 0 ).value64(2);
                                     call.getDevice().getExecutor()
@@ -407,9 +409,9 @@ public class Modulo extends AbstractOperationType {
                                 },
                                 3
                         )
-                ).setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
+                ).setImplementationFor(
+                        OpenCLDevice.class,
+                        new CLImplementation(
                                 call -> {
                                     int offset = (call.getTensor( 2 ).isVirtual() || call.getTensor( 2 ).size() == 1)?1:0;
                                     int gwz = call.getTensor( 0 ).size();
@@ -439,7 +441,7 @@ public class Modulo extends AbstractOperationType {
         //__________________________
         // RELATED OPERATION TYPES :
 
-        new AbstractOperationType(
+        new AbstractOperation(
                 "", ((char) 171) + "%", 3, true, false, false, false
         ) {
             @Override
@@ -447,7 +449,7 @@ public class Modulo extends AbstractOperationType {
             return src.get( 0 ).call( inputs, j );
             }
         };
-        new AbstractOperationType(
+        new AbstractOperation(
                 "", "%" + ((char) 187), 3, true, false, false, false
         ) {
             @Override

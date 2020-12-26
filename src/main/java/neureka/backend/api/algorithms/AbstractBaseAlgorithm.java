@@ -1,29 +1,25 @@
-package neureka.backend.api.implementations;
+package neureka.backend.api.algorithms;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import neureka.Tsr;
+import neureka.backend.api.implementations.ImplementationFor;
+import neureka.backend.api.operations.Operation;
 import neureka.devices.Device;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.executions.ExecutorFor;
-import neureka.backend.api.operations.OperationType;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class AbstractBaseOperationTypeImplementation<FinalType> implements OperationTypeImplementation<FinalType>
+@Accessors( prefix = {"_"} )
+public abstract class AbstractBaseAlgorithm<FinalType> implements Algorithm<FinalType>
 {
-    private final String _name;
+    @Getter private final String _name;
 
-    protected final Map< Class<ExecutorFor< Device >>, ExecutorFor< Device > > _executions = new HashMap<>();
+    protected final Map< Class< Device<?> >, ImplementationFor< Device<?> >> _executions = new HashMap<>();
 
-    public AbstractBaseOperationTypeImplementation(String name) { _name = name; }
-
-
-    @Override
-    public String getName() {
-        return _name;
-    }
-
+    public AbstractBaseAlgorithm(String name) { _name = name; }
 
     @Override
     public Tsr recursiveReductionOf(
@@ -33,7 +29,7 @@ public abstract class AbstractBaseOperationTypeImplementation<FinalType> impleme
         Device device = call.getDevice();
         Tsr[] tsrs = call.getTensors();
         int d = call.getDerivativeIndex();
-        OperationType type = call.getOperation();
+        Operation type = call.getOperation();
 
         Consumer<Tsr>[] rollbacks = new Consumer[tsrs.length];
         for (int i=0; i<tsrs.length; i++) {
@@ -52,8 +48,6 @@ public abstract class AbstractBaseOperationTypeImplementation<FinalType> impleme
                     }
                 };
 
-
-
             }
             else rollbacks[ i ] = t -> {};
         }
@@ -68,14 +62,13 @@ public abstract class AbstractBaseOperationTypeImplementation<FinalType> impleme
             Below is the core lambda of recursive preprocessing
             which is defined for each OperationImplementation individually :
          */
-        Tsr result = handleRecursivelyAccordingToArity(call, c -> recursiveReductionOf( c, finalExecution ));
+        Tsr result = handleRecursivelyAccordingToArity( call, c -> recursiveReductionOf( c, finalExecution ) );
         if ( result == null ) {
             finalExecution.accept(
                     new ExecutionCall<>( device, call.getTensors(), d, type )
             );
         }
         else return result;
-
 
         for ( int i = 0; i < tsrs.length; i++ ) {
             if ( tsrs[ i ] != null && !tsrs[ i ].isUndefined() ) rollbacks[ i ].accept(tsrs[ i ]);
@@ -87,17 +80,17 @@ public abstract class AbstractBaseOperationTypeImplementation<FinalType> impleme
     //---
 
     @Override
-    public <D extends Device, E extends ExecutorFor<D>> FinalType setExecutor(Class<E> deviceClass, E execution) {
+    public <D extends Device<?>, E extends ImplementationFor<D>> FinalType setImplementationFor( Class<D> deviceClass, E implementation ) {
         _executions.put(
-                (Class<ExecutorFor<Device>>) deviceClass,
-                (ExecutorFor<Device>) execution
+                (Class<Device<?>>) deviceClass,
+                (ImplementationFor<Device<?>>) implementation
         );
         return (FinalType) this;
     }
 
     @Override
-    public <D extends Device, E extends ExecutorFor<D>> E getExecutor(Class<E> deviceClass) {
-        return (E) _executions.get(deviceClass);
+    public <D extends Device<?>> ImplementationFor<D> getImplementationFor( Class<D> deviceClass ) {
+        return (ImplementationFor<D>) _executions.get( deviceClass );
     }
 
 }

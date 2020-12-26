@@ -1,20 +1,20 @@
 package neureka.backend.standard.operations.other;
 
 import neureka.Tsr;
-import neureka.backend.standard.implementations.Activation;
+import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.operations.Operation;
+import neureka.backend.standard.algorithms.Activation;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
-import neureka.devices.host.execution.HostExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
 import neureka.devices.opencl.OpenCLDevice;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.Function;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.operations.AbstractOperationType;
-import neureka.backend.api.operations.OperationType;
 
 import java.util.List;
 
-public class CopyRight extends AbstractOperationType {
+public class CopyRight extends AbstractOperation {
 
     public CopyRight()
     {
@@ -46,7 +46,7 @@ public class CopyRight extends AbstractOperationType {
         .setForwardADAnalyzer( call -> false )
         .setADAgentSupplier(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                getDefaultImplementation().supplyADAgentFor( f, call, forward )
+                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
         )
         .setCallHook( (caller, call ) -> null )
         .setRJAgent( ( call, goDeeperWith ) -> null )
@@ -54,15 +54,15 @@ public class CopyRight extends AbstractOperationType {
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[1+offset], tsrs[offset]}, -1, OperationType.instance("idy") );
+                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[1+offset], tsrs[offset]}, -1, Operation.instance("idy") );
                 }
         )
         .build();
 
-        setImplementation(Activation.class,
-                activation.setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor(
+        setAlgorithm(Activation.class,
+                activation.setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                                 call -> {
                                     int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
                                     ExecutionCall<HostCPU> newCall = new ExecutionCall<>(
@@ -71,16 +71,16 @@ public class CopyRight extends AbstractOperationType {
                                             -1,
                                             call.getOperation()
                                     );
-                                    OperationType.instance("idy")
-                                            .getImplementation(Activation.class)
-                                            .getExecutor(HostExecutor.class)
-                                            .getExecution().run(call);
+                                    Operation.instance("idy")
+                                            .getAlgorithm(Activation.class)
+                                            .getImplementationFor( HostCPU.class )
+                                            .run(call);
                                 },
-                                3
+                                2
                         )
-                ).setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
+                ).setImplementationFor(
+                        OpenCLDevice.class,
+                        new CLImplementation(
                                 call -> {
                                     int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
                                     ExecutionCall<OpenCLDevice> newCall = new ExecutionCall<>(
@@ -89,12 +89,12 @@ public class CopyRight extends AbstractOperationType {
                                             -1,
                                             call.getOperation()
                                     );
-                                    OperationType.instance("idy")
-                                            .getImplementation(Activation.class)
-                                            .getExecutor(CLExecutor.class)
-                                            .getExecution().run(call);
+                                    Operation.instance("idy")
+                                            .getAlgorithm(Activation.class)
+                                            .getImplementationFor( OpenCLDevice.class )
+                                            .run(call);
                                 },
-                                3
+                                2
                         )
                 )
         );

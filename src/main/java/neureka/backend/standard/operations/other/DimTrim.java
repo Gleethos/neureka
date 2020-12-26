@@ -1,11 +1,11 @@
 package neureka.backend.standard.operations.other;
 
 import neureka.Tsr;
-import neureka.backend.standard.implementations.GenericImplementation;
+import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.devices.Device;
 import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
-import neureka.backend.api.operations.AbstractOperationType;
 import neureka.backend.api.ExecutionCall;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.ndim.config.AbstractNDC;
@@ -13,7 +13,7 @@ import neureka.ndim.config.AbstractNDC;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DimTrim extends AbstractOperationType
+public class DimTrim extends AbstractOperation
 {
 
     public DimTrim()
@@ -39,7 +39,7 @@ public class DimTrim extends AbstractOperationType
                 }
         );
 
-        GenericImplementation implementation = new GenericImplementation("reshape")
+        GenericAlgorithm implementation = new GenericAlgorithm("reshape")
                 .setSuitabilityChecker( call -> 1.0f )
                 .setBackwardADAnalyzer( call -> true )
                 .setForwardADAnalyzer( call -> false )
@@ -78,8 +78,8 @@ public class DimTrim extends AbstractOperationType
                 .setDrainInstantiation( call -> call )
                 .build();
 
-        setImplementation(
-                GenericImplementation.class,
+        setAlgorithm(
+                GenericAlgorithm.class,
                 implementation
         );
 

@@ -1,18 +1,20 @@
 package neureka.backend.standard.operations.function;
 
 import neureka.Neureka;
+import neureka.backend.api.operations.AbstractOperation;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.Function;
-import neureka.backend.standard.implementations.Activation;
-import neureka.backend.api.operations.AbstractOperationType;
+import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.api.ExecutionCall;
+import neureka.devices.host.HostCPU;
+import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
-public class Cosinus extends AbstractOperationType {
+public class Cosinus extends AbstractOperation {
 
     private DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) -> {
@@ -47,18 +49,18 @@ public class Cosinus extends AbstractOperationType {
                 }
         );
 
-        Activation typeImplementation = new Activation()
+        Activation operationAlgorithm = new Activation()
             .setADAgentSupplier(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
-                getDefaultImplementation().supplyADAgentFor( f, call, forward )
+                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
             .build();
 
-        setImplementation(
+        setAlgorithm(
                 Activation.class,
-                typeImplementation.setExecutor(
-                        HostExecutor.class,
-                        new HostExecutor(
+                operationAlgorithm.setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                             call  ->
                                         call.getDevice().getExecutor()
                                     .threaded (
@@ -79,9 +81,9 @@ public class Cosinus extends AbstractOperationType {
                                 ),
                             3
                         )
-                ).setExecutor(
-                        CLExecutor.class,
-                        new CLExecutor(
+                ).setImplementationFor(
+                        OpenCLDevice.class,
+                        new CLImplementation(
                                 call -> {
                                     int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
@@ -93,7 +95,7 @@ public class Cosinus extends AbstractOperationType {
                                             .call( gwz );
                                 },
                                 3,
-                                typeImplementation.getKernelSource(), // kernelSource
+                                operationAlgorithm.getKernelSource(), // kernelSource
                                 "output = cos( input );\n", // activationSource
                                 "output = -sin( input );\n", //differentiationSource
                                 this // OperationType

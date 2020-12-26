@@ -1,11 +1,11 @@
 package neureka.backend.standard.operations.other;
 
 import neureka.Tsr;
-import neureka.backend.standard.implementations.GenericImplementation;
+import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.devices.Device;
 import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
-import neureka.backend.api.operations.AbstractOperationType;
 import neureka.backend.api.ExecutionCall;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.framing.Relation;
@@ -15,7 +15,7 @@ import neureka.ndim.config.NDConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Reshape extends AbstractOperationType
+public class Reshape extends AbstractOperation
 {
 
     public Reshape()
@@ -64,7 +64,7 @@ public class Reshape extends AbstractOperationType
             }
         );
 
-        GenericImplementation implementation = new GenericImplementation( "reshape" )
+        GenericAlgorithm implementation = new GenericAlgorithm( "reshape" )
                 .setSuitabilityChecker( call -> 1.0f )
                 .setBackwardADAnalyzer( call -> true )
                 .setForwardADAnalyzer(call -> false )
@@ -98,8 +98,8 @@ public class Reshape extends AbstractOperationType
                 .setDrainInstantiation( call -> call)
                 .build();
 
-        setImplementation(
-                GenericImplementation.class,
+        setAlgorithm(
+                GenericAlgorithm.class,
                 implementation
         );
 

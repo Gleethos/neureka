@@ -2,7 +2,7 @@ package neureka.calculus.implementations;
 
 import neureka.Tsr;
 import neureka.calculus.Function;
-import neureka.backend.api.operations.AbstractOperationType;
+import neureka.backend.api.operations.AbstractOperation;
 import neureka.calculus.AbstractBaseFunction;
 import neureka.calculus.assembly.FunctionBuilder;
 
@@ -25,7 +25,7 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     }
 
     @Override
-    public AbstractOperationType getOperation() {
+    public AbstractOperation getOperation() {
         return null;
     }
 

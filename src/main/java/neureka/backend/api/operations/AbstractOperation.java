@@ -1,15 +1,14 @@
 
 package neureka.backend.api.operations;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import neureka.backend.api.implementations.AbstractFunctionalOperationTypeImplementation;
-import neureka.backend.api.implementations.GenericImplementation;
+import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.algorithms.Algorithm;
+import neureka.backend.api.algorithms.GenericAlgorithm;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.implementations.OperationTypeImplementation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +18,9 @@ import java.util.function.Consumer;
 
 @NoArgsConstructor
 @Accessors( prefix = {"_"}, chain = true )
-public abstract class AbstractOperationType implements OperationType
+public abstract class AbstractOperation implements Operation
 {
-    private static Logger _LOG = LoggerFactory.getLogger( AbstractOperationType.class );
+    private static Logger _LOG = LoggerFactory.getLogger( AbstractOperation.class );
 
     @Getter
     @Setter
@@ -40,28 +39,28 @@ public abstract class AbstractOperationType implements OperationType
     @Getter protected boolean _isInline;
     protected boolean _isOperator;
 
-    private final Map<Class<?>, OperationTypeImplementation<?>> _implementations = new LinkedHashMap<>();
+    private final Map<Class<?>, Algorithm<?>> _algorithms = new LinkedHashMap<>();
 
     /**
-     *  This is the default implementation for every OperationType extending this class.
-     *  It may not fit the purpose of every OperationType implementation,
-     *  however for most types it will provide useful functionality to use.
+     *  This is the default algorithm for every OperationType extending this class.
+     *  It may not fit the purpose of every Operation implementation,
+     *  however for most operation types it will provide useful functionality to use.
      *
-     *  The default implementation assumes an operation that is either a function or operator.
+     *  The default algorithm assumes an operation that is either a function or operator.
      *  Meaning that it assumes that the operation is also differentiable.
      *  Therefore it contains functionality that goes alongside this assumption,
      *  just to name a few :
      *
-     *  - An ADAgent supplier returning ADAgent instances capable of performing both forwrd- and reverse- mode AD.
+     *  - An ADAgent supplier returning ADAgent instances capable of performing both forward- and reverse- mode AD.
      *
      *  - A simple result tensor instantiation implementation.
      *
      *  - A basic threaded execution based on the AST of a given Function object.
      */
     @Getter
-    private final OperationTypeImplementation _defaultImplementation = new GenericImplementation( "default", _arity, this );
+    private final Algorithm _defaultAlgorithm = new GenericAlgorithm( "default", _arity, this );
 
-    public AbstractOperationType(
+    public AbstractOperation(
             String function,
             String operator,
             int arity,
@@ -80,21 +79,21 @@ public abstract class AbstractOperationType implements OperationType
         _isDifferentiable = isDifferentiable;
         _isInline = isInline;
 
-        OperationContext.instance().getRegister().add(this);
-        OperationContext.instance().getLookup().put(operator, this);
-        OperationContext.instance().getLookup().put(operator.toLowerCase(), this);
+        OperationContext.instance().getRegister().add( this );
+        OperationContext.instance().getLookup().put( operator, this );
+        OperationContext.instance().getLookup().put( operator.toLowerCase(), this );
         if (
                 operator
                         .replace((""+((char)171)), "")
                         .replace((""+((char)187)), "")
                         .matches("[a-z]")
         ) {
-            if (operator.contains((""+((char)171)))) {
+            if ( operator.contains( ""+((char)171) ) )
                 OperationContext.instance().getLookup().put(operator.replace((""+((char)171)), "<<"), this);
-            }
-            if (operator.contains((""+((char)187)))) {
+
+            if ( operator.contains( ""+((char)187) ) )
                 OperationContext.instance().getLookup().put(operator.replace((""+((char)187)),">>"), this);
-            }
+
         }
 
     }
@@ -102,33 +101,35 @@ public abstract class AbstractOperationType implements OperationType
     //==================================================================================================================
 
     @Override
-    public <T extends AbstractFunctionalOperationTypeImplementation> T getImplementation(Class<T> type) {
-        return (T) _implementations.get(type);
+    public <T extends AbstractFunctionalAlgorithm> T getAlgorithm( Class<T> type ) {
+        return (T) _algorithms.get( type );
     }
+
     @Override
-    public <T extends AbstractFunctionalOperationTypeImplementation> boolean supportsImplementation(Class<T> type) {
-        return _implementations.containsKey(type);
+    public <T extends AbstractFunctionalAlgorithm> boolean supportsAlgorithm( Class<T> type ) {
+        return _algorithms.containsKey( type );
     }
+
     @Override
-    public <T extends AbstractFunctionalOperationTypeImplementation> OperationType setImplementation(Class<T> type, T instance) {
-        _implementations.put(type, instance);
+    public <T extends AbstractFunctionalAlgorithm> Operation setAlgorithm( Class<T> type, T instance ) {
+        _algorithms.put( type, instance );
         return this;
     }
 
     @Override
-    public OperationType forEachImplementation( Consumer<OperationTypeImplementation> action ) {
-        _implementations.values().forEach(action);
+    public Operation forEachAlgorithm( Consumer<Algorithm> action ) {
+        _algorithms.values().forEach( action );
         return this;
     }
 
     //==================================================================================================================
 
     @Override
-    public OperationTypeImplementation implementationOf( ExecutionCall call ) {
+    public Algorithm AlgorithmFor( ExecutionCall call ) {
         float bestScore = 0f;
-        OperationTypeImplementation bestImpl = null;
-        for( OperationTypeImplementation impl : _implementations.values() ) {
-            float currentScore = impl.isImplementationSuitableFor( call );
+        Algorithm bestImpl = null;
+        for( Algorithm impl : _algorithms.values() ) {
+            float currentScore = impl.isAlgorithmSuitableFor( call );
             if ( currentScore > bestScore ) {
                 if ( currentScore == 1.0 ) return impl;
                 else {
@@ -138,7 +139,7 @@ public abstract class AbstractOperationType implements OperationType
             }
         }
 
-        if (  _defaultImplementation.isImplementationSuitableFor( call ) > 0.0f ) return _defaultImplementation;
+        if ( _defaultAlgorithm.isAlgorithmSuitableFor( call ) > 0.0f ) return _defaultAlgorithm;
 
         if ( bestImpl == null ) {
             String message = "No suitable implementation for execution call '"+call+"' could be found.\n" +
@@ -153,10 +154,8 @@ public abstract class AbstractOperationType implements OperationType
 
     @Override
     public boolean supports( Class implementation ) {
-        return _implementations.containsKey(implementation);
+        return _algorithms.containsKey( implementation );
     }
-
-
 
     @Override
     public boolean isOperator() {

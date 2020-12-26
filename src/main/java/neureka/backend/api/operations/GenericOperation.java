@@ -8,7 +8,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Accessors( prefix = {"_"} )
-public class GenericOperation extends AbstractOperationType
+public class GenericOperation extends AbstractOperation
 {
     public GenericOperation(
             String function,

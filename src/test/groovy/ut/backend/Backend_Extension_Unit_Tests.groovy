@@ -1,4 +1,4 @@
-package ut.calculus
+package ut.backend
 
 import neureka.Neureka
 import neureka.Tsr
@@ -6,23 +6,29 @@ import neureka.devices.Device
 import neureka.autograd.ADAgent
 import neureka.autograd.GraphLock
 import neureka.autograd.GraphNode
-import neureka.backend.api.operations.OperationType
-import neureka.backend.api.implementations.OperationTypeImplementation
+import neureka.backend.api.operations.Operation
+import neureka.backend.api.algorithms.Algorithm
 import neureka.calculus.implementations.FunctionNode
 import neureka.calculus.implementations.FunctionInput
 import neureka.ndim.config.NDConfiguration
 import spock.lang.Specification
 
-class Calculus_Extension_Unit_Tests extends Specification
+class Backend_Extension_Unit_Tests extends Specification
 {
+    def setupSpec()
+    {
+        Neureka.instance().reset()
+
+        reportHeader """
+                   This specification defines the behavior of
+                   Operation instances and their ability to be extended! <br> 
+        """
+    }
 
     def 'Mock operation interacts with FunctionNode (AbstractFunction) instance as expected.'(){
 
-        given : 'Neureka is being reset.'
-            Neureka.instance().reset()
-
-        and : 'A new mock operation type is being created.'
-            def type = Mock(OperationType)
+        given : 'A new mock operation type is being created.'
+            def type = Mock(Operation)
 
         and : 'A list of mocked function source nodes.'
             def children = [Mock(FunctionInput), Mock(FunctionInput)]
@@ -31,7 +37,7 @@ class Calculus_Extension_Unit_Tests extends Specification
             Tsr output = Mock(Tsr)
 
         and : 'A mocked operation implementation.'
-            def implementation = Mock(OperationTypeImplementation)
+            def implementation = Mock(Algorithm)
 
         when : 'A FunctionNode is being instantiated via the given mocks...'
             def function = new FunctionNode(type, children, false)
@@ -45,14 +51,14 @@ class Calculus_Extension_Unit_Tests extends Specification
             def result = function.call(new Tsr[0])
 
         then : 'The custom call hook should be accessed as outlined below.'
-            (1.._) * type.implementationOf(_) >> implementation
+            (1.._) * type.AlgorithmFor(_) >> implementation
             (1.._) * implementation.handleInsteadOfDevice(_,_) >> output
 
         and : 'The mocked output tensor never returns the mock device because our custom call hook replaces execution.'
             0 * output.device() >> Mock(Device)
 
         and : 'The ADAnalyzer of the mock implementation will not be called because "doAD" is set to "false".'
-            0 * implementation.isImplementationSuitableFor(_)
+            0 * implementation.isAlgorithmSuitableFor(_)
 
         and : 'The agent creator is never accessed because "doAD" is set to false.'
             0 * implementation.supplyADAgentFor(_,_,_)
@@ -64,14 +70,11 @@ class Calculus_Extension_Unit_Tests extends Specification
 
     def 'Lambda properties of mock implementation interact with FunctionNode (AbstractFunction) as expected.'()
     {
-        given : 'Neureka is being reset.'
-            Neureka.instance().reset()
-
-        and : 'A mock agent.'
+        given : 'A mock agent.'
             def agent = Mock(ADAgent)
 
         and : 'A new operation type with a new implementation.'
-            def type = Mock(OperationType)
+            def type = Mock(Operation)
 
         and : 'A list of function source nodes.'
             def children = [Mock(FunctionInput), Mock(FunctionInput)]
@@ -83,7 +86,7 @@ class Calculus_Extension_Unit_Tests extends Specification
             def ndc = Mock(NDConfiguration)
 
         and : 'A mocked operation implementation.'
-            def implementation = Mock(OperationTypeImplementation)
+            def implementation = Mock(Algorithm)
 
         when : 'A FunctionNode is being instantiated via the given mocks...'
             def function = new FunctionNode(type, children, true)
@@ -100,7 +103,7 @@ class Calculus_Extension_Unit_Tests extends Specification
             (1.._) * input.getNDConf() >> ndc
             (1.._) * ndc.shape() >> new int[]{1,2}
             (1.._) * type.isDifferentiable() >> true
-            (1.._) * type.implementationOf(_) >> implementation
+            (1.._) * type.AlgorithmFor(_) >> implementation
             (1.._) * implementation.handleInsteadOfDevice(_,_) >> output
 
         and : 'The GraphNode instance which will be created as tensor component interacts as follows.'
@@ -112,8 +115,8 @@ class Calculus_Extension_Unit_Tests extends Specification
 
         and : 'The given ADAnalyzer instance is being called because auto-differentiation is enabled.'
             (1.._) * input.rqsGradient() >> true
-            (1.._) * implementation.canImplementationPerformForwardADFor(_) >> false
-            (1.._) * implementation.canImplementationPerformBackwardADFor(_) >> true
+            (1.._) * implementation.canAlgorithmPerformForwardADFor(_) >> false
+            (1.._) * implementation.canAlgorithmPerformBackwardADFor(_) >> true
             (1.._) * node.getPayload() >> input
             (1.._) * node.usesAD() >> true
 
