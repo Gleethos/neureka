@@ -1538,6 +1538,13 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         //TODO :Function.DIV.call(new Tsr[]{sum, new Tsr(this.size())});
     }
 
+    /**
+     *  This method performs a dot product between the last dimension of this tensor
+     *  and the first dimension of the passed tensor.
+     *
+     * @param b The tensor which is the right part of the dot product operation.
+     * @return A new tensor which is the dot product of this tensor and the passed one.
+     */
     public Tsr<ValueType> dot( Tsr<ValueType> b ) {
         Tsr<ValueType> a = this;
         int[][] fitter = AbstractNDArray.Utility.Indexing.makeFit( a.getNDConf().shape(), b.getNDConf().shape() );
@@ -1551,10 +1558,29 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return Function.X.call( new Tsr[]{ a, b } ).dimtrim();
     }
 
+    /**
+     *  This method creates a new tensor sharing the same data and whose shape is trimmed.
+     *  A trimmed shape is simply a shape without preceding and trailing ones.
+     *  For example the shape (1x4x1x2x1) would be trimmed to (4x1x2).
+     *  The underlying operation does not perform a removal of redundant ones all together.
+     *  Only ones at the start and the beginning will be removed.
+     *  A scalar tensor will not be affected by this operation.
+     *
+     * @return A tensor with the same underlying data but possibly trimmed shape without preceding or trailing ones.
+     */
     public Tsr<ValueType> dimtrim() {
         return Function.DIMTRIM.call( this );
     }
 
+    /**
+     *  This method name translates to the "in" keyword in Groovy!
+     *  The same is true for the "contains" method in Kotlin.
+     *  Both methods do the exact same thing, however they exist
+     *  for better language support.
+     *
+     * @param t The tensor which will be checked.
+     * @return The answer to the following question: Is the data of the provided tensor a subset of the data of this tensor?
+     */
     public boolean isCase( Tsr<ValueType> t ) {
         boolean[] found = { false };
         this.forComponent( Relation.class, r -> r.foreachChild( c -> {
@@ -1563,6 +1589,15 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return found[ 0 ];
     }
 
+    /**
+     *  This method name translates to the "in" keyword in Kotlin!
+     *  The same is true for the "isCase" method in Groovy.
+     *  Both methods do the exact same thing, however they exist
+     *  for better language support.
+     *
+     * @param t The tensor which will be checked.
+     * @return The answer to the following question: Is the data of the provided tensor a subset of the data of this tensor?
+     */
     public boolean contains( Tsr<ValueType> t ) {
         return isCase( t );
     }
@@ -1580,10 +1615,26 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         -----------------------------
      */
 
+    /**
+     *  The following method enables access to scalar values.
+     *  The method name also translates to the subscript operator in Groovy.
+     *
+     * @param idx The index of the element which should be returned.
+     * @return A scalar value located at the provided index.
+     */
     public double getAt( int[] idx ) {
         return value64( i_of_idx( idx ) );
     }
 
+    /**
+     *  The following method enables the creation of tensor slices which access
+     *  the same underlying data (possibly from a different view).
+     *  The method name also translates to the subscript operator in Groovy.
+     *
+     * @param i1
+     * @param i2
+     * @return
+     */
     public Object getAt( Object i1, Object i2 ) {
         List<Object> args = Arrays.asList( i1, i2 );
         return getAt( args );
