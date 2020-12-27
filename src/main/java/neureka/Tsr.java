@@ -1344,6 +1344,22 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         ... for more context see package 'framing'...
      */
 
+    /**
+     *  This method receives a nested String array which
+     *  ought to contain a label for the index of this tensor.
+     *  The index for a single element of this tensor would be an array
+     *  of numbers as long as the rank where every number is
+     *  in the range of the corresponding shape dimension...
+     *  Labeling an index means that for every dimension there
+     *  must be a label for elements in this range array! <br>
+     *  For example the shape (2,3) could be labeled as follows: <br>
+     *
+     *      dim 0 : ["A", "B"]
+     *      dim 1 : ["1", "2", "3"]
+     *
+     * @param labels A nested String array containing labels for indexes of the tensor dimensions.
+     * @return This tensor (method chaining).
+     */
     public Tsr<ValueType> label( String[][] labels )
     {
         IndexAlias indexAlias = find( IndexAlias.class );
@@ -1361,6 +1377,22 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this;
     }
 
+    /**
+     *  This method receives a nested String list which
+     *  ought to contain a label for the index of this tensor.
+     *  The index for a single element of this tensor would be an array
+     *  of numbers as long as the rank where every number is
+     *  in the range of the corresponding shape dimension...
+     *  Labeling an index means that for every dimension there
+     *  must be a label for elements in this range array! <br>
+     *  For example the shape (2,3) could be labeled as follows: <br>
+     *
+     *      dim 0 : ["A", "B"]
+     *      dim 1 : ["1", "2", "3"]
+     *
+     * @param labels A nested String list containing labels for indexes of the tensor dimensions.
+     * @return This tensor (method chaining).
+     */
     public Tsr<ValueType> label( List<List<Object>> labels )
     {
         IndexAlias indexAlias = find( IndexAlias.class );
@@ -1368,6 +1400,21 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this;
     }
 
+    /**
+     *  This method provides the ability to
+     *  label not only the indices of the shape of this tensor, but also
+     *  the dimension of the shape.
+     *  The first and only argument of the method expects a map instance
+     *  where keys are the objects which ought to act as dimension labels
+     *  and the values are lists of labels for the indices of said dimensions.
+     *  For example the shape (2,3) could be labeled as follows: <br>
+     *  [
+     *      "dim 0" : ["A", "B"],
+     *      "dim 1" : ["1", "2", "3"]
+     *  ]
+     * @param labels A map where keys are dimension labels and values are lists of index labels.
+     * @return This tensor (method chaining).
+     */
     public Tsr<ValueType> label( Map<Object, List<Object>> labels )
     {
         this.set( new IndexAlias<>( labels, this ) );
@@ -1465,6 +1512,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         -----------------------------
      */
 
+    /**
+     * @return A new transposed tensor with the same underlying data as this tensor.
+     */
     public Tsr<ValueType> T()  // Transposed!
     {
         StringBuilder operation = new StringBuilder();
