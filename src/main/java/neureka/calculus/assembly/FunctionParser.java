@@ -2,17 +2,19 @@ package neureka.calculus.assembly;
 
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.Operation;
+import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Utility for parsing
+ * Utility for parsing function expressions.
  * */
 public class FunctionParser
 {
-    public static int numberOfOperationsWithin(final List<String> operations) {
+    @Contract( pure = true ) 
+    public static int numberOfOperationsWithin( final List<String> operations ) {
         int counter = 0;
         for(AbstractOperation ot : Operation.instances()) {
             if (operations.contains(ot.getOperator())) ++counter;
@@ -20,7 +22,8 @@ public class FunctionParser
         return counter;
     }
 
-    public static String parsedOperation(final String exp, final int index) {
+    @Contract( pure = true )
+    public static String parsedOperation( final String exp, final int index ) {
         if (exp.length() <= index) return null;
         String operation = "";
         for (int i = exp.length()-1; i >= index; i--) {
@@ -32,7 +35,8 @@ public class FunctionParser
         return null;
     }
 
-    public static String findComponentIn(String exp, final int index) {
+    @Contract( pure = true )
+    public static String findComponentIn( String exp, final int index ) {
         exp = exp.trim();
         if (exp.length() <= index) return null;
         int bracketDepth = 0;
@@ -67,7 +71,8 @@ public class FunctionParser
         return component.toString();
     }
 
-    public static List<String> findParametersIn(String exp, final int index) {
+    @Contract( pure = true )
+    public static List<String> findParametersIn( String exp, final int index ) {
         exp = exp.trim();
         if (exp.length() <= index) return null;
         int bracketDepth = 0;
@@ -94,12 +99,14 @@ public class FunctionParser
         return parameters;
     }
 
-    public static boolean isAnyOperation(final String operation) {
-        if (operation.length() > 32) return false;
-        return (Operation.instance(operation) != null) && Operation.instance(operation).getId() >= 0;
+    @Contract( pure = true )
+    public static boolean isAnyOperation( final String operation ) {
+        if ( operation.length() > 32 ) return false;
+        return (Operation.instance( operation ) != null) && Operation.instance(operation).getId() >= 0;
     }
 
-    public static String groupBy(final String operation, final String currentChain, final String currentComponent, final String currentOperation) {
+    @Contract( pure = true )
+    public static String groupBy( final String operation, final String currentChain, final String currentComponent, final String currentOperation ) {
         String group = null;
         if (currentOperation != null) {
             if (currentOperation.equals(operation)) {
@@ -110,17 +117,18 @@ public class FunctionParser
         return group;
     }
 
-    private static boolean isForbiddenChar(char c) {
+    private static boolean isForbiddenChar( char c ) {
         return c == '"' || c == '$' || c == '%' || c == '&' || c == '=' || c == '#' || c == '|' || c == '~' || c == ':'
                 || c == ';' || c == '@' || c == '?' || c == '\\' || c == '>' || c == '<' || c == ' ';
     }
 
-    public static String cleanedHeadAndTail(String exp) {
+    @Contract( pure = true )
+    public static String cleanedHeadAndTail( String exp ) {
         exp = exp.trim();
         int ci = 0;
         StringBuilder updated = new StringBuilder();
         boolean condition = true;
-        while (condition) {
+        while ( condition ) {
             if (FunctionParser.isForbiddenChar(exp.charAt(ci)) || (exp.charAt(ci) >= 'A' && exp.charAt(ci) <= 'Z') || (exp.charAt(ci) >= 'a' && exp.charAt(ci) <= 'z')) {
                 ci++;
             } else condition = false;
@@ -154,6 +162,7 @@ public class FunctionParser
         return exp;
     }
 
+    @Contract( pure = true )
     public static String unpackAndCorrect(String exp) {
         if ( exp == null ) return null;
         if ( exp.length() == 0 ) return "";
@@ -207,6 +216,7 @@ public class FunctionParser
         return exp.trim();
     }
 
+    @Contract( pure = true )
     public static String assumptionBasedOn(String expression) {
         double largest = -1;
         int best = 0;
@@ -221,7 +231,8 @@ public class FunctionParser
         return ( largest > 0.1 ) ? Operation.instance(best).getOperator() : "";
     }
 
-    public static double similarity(String s1, String s2) {
+    @Contract( pure = true )
+    public static double similarity( final String s1, final String s2 ) {
             String longer = (s1.length() > s2.length()) ?s1 : s2;
             String shorter = (s1.length() > s2.length()) ? s2 : s1;
             // longer should always have greater length
