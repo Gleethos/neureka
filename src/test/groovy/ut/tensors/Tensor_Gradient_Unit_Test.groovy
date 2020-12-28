@@ -19,9 +19,6 @@ class Tensor_Gradient_Unit_Test extends Specification
                     This is what the prior property is for.            
                 </p>
             """
-    }
-
-    def setup() {
         Neureka.instance().reset()
     }
 
@@ -46,10 +43,7 @@ class Tensor_Gradient_Unit_Test extends Specification
 
     def 'Tensors that have gradients but do not require them still print them.'()
     {
-        given : 'The Neureka instance is being reset.'
-            Neureka.instance().reset()
-
-        and : 'A new simple tensor.'
+        given : 'A new simple tensor.'
             Tsr t = new Tsr(-3)
 
         and : 'A second tensor viewed as gradient.'
@@ -66,10 +60,7 @@ class Tensor_Gradient_Unit_Test extends Specification
     def 'Gradient of tensor is being applies regardless of the tensor requiring gradient or not'(
         boolean requiresGradient, String expected
     ) {
-        given : 'The Neureka instance is being reset.'
-            Neureka.instance().reset()
-
-        and : 'A new simple tensor.'
+        given : 'A new simple tensor.'
             Tsr t = new Tsr(-3)
 
         and : 'A second tensor viewed as gradient.'

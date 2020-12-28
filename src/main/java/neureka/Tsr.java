@@ -84,6 +84,7 @@ package neureka;
 
 import groovy.lang.IntRange;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.standard.operations.other.Reshape;
@@ -1948,15 +1949,35 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         -----------------------------
      */
 
+    /**
+     *  This method enables injecting slices of tensor to be assigned into this tensor!
+     *  It takes a key of various types which is used to configure a slice
+     *  tensor sharing the same underlying data as the original tensor.
+     *  This slice is then used to assign the second argument to it, namely
+     *  the "value" argument.
+     *
+     * @param key This object is a list defining a targeted index or range of indices...
+     * @return A slice tensor or scalar value.
+     */
     public Tsr<ValueType> putAt( List<?> key, Tsr<ValueType> value ) {
         _putAtCheckFor( value );
         Tsr<ValueType> slice = ( key == null ) ? this : (Tsr) getAt( key );
         return _putAt( slice, value );
     }
 
+    /**
+     *  This method enables injecting slices of tensor to be assigned into this tensor!
+     *  It takes a key which is used to configure a slice
+     *  tensor sharing the same underlying data as the original tensor.
+     *  This slice is then used to assign the second argument to it, namely
+     *  the "value" argument.
+     *
+     * @param key This object is a map defining a stride and a targeted index or range of indices...
+     * @return A slice tensor or scalar value.
+     */
     public Tsr<ValueType> putAt( Map<?,?> key, Tsr<ValueType> value ) {
         _putAtCheckFor( value );
-        Tsr<ValueType> slice = ( key == null ) ? this : (Tsr) getAt( key );
+        Tsr<ValueType> slice = ( key == null ) ? this : (Tsr<ValueType>) getAt( key );
         return _putAt( slice, value );
     }
 
@@ -1972,7 +1993,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     {
         boolean valueIsDeviceVisitor = false;
         if ( slice.isOutsourced() && !value.isOutsourced() ) {
-            Device device = slice.find( Device.class );
+            Device<ValueType> device = slice.find( Device.class );
             try {
                 device.store( value );
             } catch ( Exception exce ) {
@@ -1992,6 +2013,12 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this;
     }
 
+    /**
+     *  This is a static nested utility class
+     *  which is used to allow for fast access to
+     *  tensors storing doubles.
+     *
+     */
     public static class IO
     {
         private IO() {}
@@ -2073,7 +2100,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
 
     @Override
-    public Object getValueAt( int i ) {
+    public Object getValueAt( int i )
+    {
         if ( getData() instanceof float[] ) return ( (float[]) getData())[ i ];
         else if ( getData() instanceof double[] ) return ( (double[]) getData())[ i ];
         else if ( getData() instanceof short[] ) return ( (short[]) getData())[ i ];
@@ -2184,7 +2212,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     /**
-     *  This method represents a pure operation producing a new tensor instance
+     *  This method constitutes a pure operation producing a new tensor instance
      *  which is a deep copy of this original tensor and contains data whose
      *  elements have been converted to a new data type, namely :
      *  the type specified by the argument
@@ -2196,7 +2224,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *  found in Groovy, so the following code : " myTensor as Double "
      *  would not return a Double instance!
      *
-     * @param typeClass The class which is the target of the underlying type comvertion...
+     * @param typeClass The class which is the target of the underlying type conversion...
      * @param <T> The value type of the tensor that will be returned.
      * @return A new tensor which hosting the supplied type.
      */
@@ -2251,11 +2279,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public double value64( int i ) {
         if ( this.isOutsourced() ) return find( Device.class ).value64f( this, i );
         if ( this.isVirtual() ) {
-            if ( this.is64() ) return ( (double[]) getData())[ 0 ];
-            else return ( (float[]) getData())[ 0 ];
+            if ( this.is64() ) return ( (double[]) getData() )[ 0 ];
+            else return ( (float[]) getData() )[ 0 ];
         } else {
-            if ( this.is64() ) return ( (double[]) getData())[ i ];
-            else return ( (float[]) getData())[ i ];
+            if ( this.is64() ) return ( (double[]) getData() )[ i ];
+            else return ( (float[]) getData() )[ i ];
         }
     }
 
@@ -2278,11 +2306,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public float value32( int i ) {
         if ( this.isOutsourced() ) return find( Device.class ).value32f( this, i );
         if ( this.isVirtual() ) {
-            if ( this.is64() ) return (float) ( (double[]) getData())[ 0 ];
+            if ( this.is64() ) return (float) ( (double[]) getData() )[ 0 ];
             else return ( (float[]) getData())[ 0 ];
         } else {
-            if ( this.is64() ) return (float) ( (double[]) getData())[ i ];
-            else return ( (float[]) getData())[ i ];
+            if ( this.is64() ) return (float) ( (double[]) getData() )[ i ];
+            else return ( (float[]) getData() )[ i ];
         }
     }
 
@@ -2291,7 +2319,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if ( getData() == null && this.isOutsourced() && found != null ) {
             return found.value32f( this );
         }
-        float[] newValue = DataConverter.instance().convert(getData(), float[].class );
+        float[] newValue = DataConverter.instance().convert( getData(), float[].class );
         if ( this.isVirtual() && newValue != null ) {
             newValue = new float[ this.size() ];
             Arrays.fill( newValue, newValue[ 0 ] );
@@ -2326,14 +2354,14 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     private StringBuilder _strShape() {
         boolean legacy = Neureka.instance().settings().view().isUsingLegacyView();
-        StringBuilder strShape = new StringBuilder( (legacy)?"[":"(" );
+        StringBuilder strShape = new StringBuilder( (legacy) ? "[" : "(" );
         int[] shape = _NDConf.shape();
         for ( int i = 0; i < shape.length; i++ ) {
             strShape.append( shape[ i ] );
             if ( i < shape.length - 1 ) strShape.append( "x" );
         }
-        if ( legacy ) return strShape.append("]");
-        else return strShape.append(")");
+        if ( legacy ) return strShape.append( "]" );
+        else return strShape.append( ")" );
 
     }
 
@@ -2355,7 +2383,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                                 ? ":(" + asString + ")"
                                 : ":[" + asString + "]"
                 );
-        if ( mode.contains("g") && ( this.rqsGradient() || this.hasGradient() ) ) {
+        if ( mode.contains( "g" ) && ( this.rqsGradient() || this.hasGradient() ) ) {
             asString += ":g:";
             Tsr<ValueType> gradient = this.find( Tsr.class );
             if ( gradient != null )
@@ -2465,8 +2493,6 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
 
-
-
     public String toString() {
         return toString( "dgc" );
     }
@@ -2503,25 +2529,28 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     }
 
+    /**
+     *  This is a nested static utility class which is used
+     *  to create tensor instances.
+     */
+    @NoArgsConstructor
     public static class Create
     {
-        private Create() {}
-
-        public  static Tsr E( int[] shape ) {
+        public  static Tsr<?> E( int[] shape ) {
             return new Tsr( shape, 2.7182818284590452353602874713527 );
         }
 
-        public static Tsr newRandom( int[] shape ) {
+        public static Tsr<?> newRandom( int[] shape ) {
             return newRandom( shape, 8701252152903546L );
         }
 
-        public static Tsr newRandom( int[] shape, long seed ) {
+        public static Tsr<?> newRandom( int[] shape, long seed ) {
             int size = NDConfiguration.Utility.szeOfShp( shape );
-            return new Tsr( shape, DataConverter.Utility.newSeededDoubleArray( seed, size ) );
+            return new Tsr<>( shape, DataConverter.Utility.newSeededDoubleArray( seed, size ) );
         }
 
-        public static Tsr newTsrLike( Tsr template, double value ) {
-            Tsr t = _newEmptyLike( template );
+        public static Tsr<?> newTsrLike( Tsr<?> template, double value ) {
+            Tsr<Object> t = (Tsr<Object>) _newEmptyLike( template );
             if ( template.is32() ) t.setValue( (float) value );
             else t.setValue( value );
             try {
@@ -2533,7 +2562,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             return t;
         }
 
-        public static Tsr newTsrLike( Tsr template ) { // The output tensor will not have gradients!
+        public static Tsr<?> newTsrLike( Tsr<?> template ) { // The output tensor will not have gradients!
             Tsr t = _newEmptyLike( template );
             if ( template.is32() ) t.setValue32( new float[ template.size() ] );
             else t.setValue64( new double[ template.size() ] );
@@ -2547,12 +2576,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         }
 
         private static Tsr<?> _newEmptyLike( Tsr<?> template ) {
-            Tsr<?> t = new Tsr();
+            Tsr<?> t = new Tsr<>();
             t._configureFromNewShape( template.getNDConf().shape(), false, true );
             return t;
         }
 
     }
-
 
 }
