@@ -77,7 +77,7 @@ public class DimFit extends AbstractOperation
                             int[][] change = new int[inputs.length][];
 
 
-                            for (int i=0; i<inputs.length; i++)
+                            for ( int i=0; i<inputs.length; i++)
                             {
                                 if (inputs[ i ].rank()!=largest)
                                 {
@@ -86,8 +86,8 @@ public class DimFit extends AbstractOperation
                                     int padding = largest-oldShape.length;
 
                                     int handle = ( postfix <= prefix )? padding : largest-padding;
-                                    for (int ii=0; ii<handle; ii++) newReshape[ii]       = ( postfix <= prefix )? -1 : ii;
-                                    for (int ii=handle; ii<largest; ii++) newReshape[ii] = ( postfix <= prefix )? ii-padding : -1;
+                                    for ( int ii=0; ii<handle; ii++) newReshape[ ii ]       = ( postfix <= prefix )? -1 : ii;
+                                    for ( int ii=handle; ii<largest; ii++) newReshape[ ii ] = ( postfix <= prefix )? ii-padding : -1;
 
                                     change[ i ] = newReshape;
                                     //Function f = Function.create(

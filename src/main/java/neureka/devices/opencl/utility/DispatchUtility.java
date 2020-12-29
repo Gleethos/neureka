@@ -18,7 +18,7 @@ public class DispatchUtility {
         List<List<Integer>> factors = new ArrayList<>();
         for ( int s : shape ) factors.add( primeFactors(s) );
         int[] indices = new int[ shape.length ];
-        for ( int i=0; i<shape.length; i++) {
+        for ( int i=0; i<shape.length; i++ ) {
             int index = -1;
             int product = 1;
             do {
@@ -180,7 +180,7 @@ public class DispatchUtility {
 
         // n must be odd at this point.  So we can
         // skip one element (Note i = i +2)
-        for (int i = 3; i <= Math.sqrt(n); i += 2) {
+        for ( int i = 3; i <= Math.sqrt(n); i += 2) {
             // While i divides n, print i and divide n
             while (n % i == 0) {
                 factors.add( i );

@@ -50,7 +50,7 @@
             Tsr D = new Tsr([size], "grapefruit").set(device)
             time = System.nanoTime()
             measure "vector_multiplication", {
-               for (int i=0; i < N; i++) tester("I[0]xI[1]" % [C, D])
+               for ( int i=0; i < N; i++) tester("I[0]xI[1]" % [C, D])
             }
          }
          //==========================================================================#
@@ -61,7 +61,7 @@
          execute {
             Tsr a = new Tsr([size, size], 3..19).set(device)
             measure "manual_convolution", {
-               for (int i; i < N; i++) {
+               for ( int i; i < N; i++ ) {
                   Tsr rowconvol = a[1..-2, 0..-1] + a[0..-3, 0..-1] + a[2..-1, 0..-1]//(98, 100) (98, 100) (98, 100)
                   Tsr colconvol = rowconvol[0..-1, 1..-2] + rowconvol[0..-1, 0..-3] + rowconvol[0..-1, 2..-1] - 9 * a[1..-2, 1..-2]
                   tester(colconvol)
@@ -82,7 +82,7 @@
             Tsr t1 = new Tsr(dim).set(device)
             Tsr t2 = new Tsr(dim).set(device)
             measure "tensor_math", {
-               for (int i; i < N; i++) {
+               for ( int i; i < N; i++ ) {
                   Tsr v = t1 * 10
                   v = v * t2 / t1
                   v = v ** 0.5

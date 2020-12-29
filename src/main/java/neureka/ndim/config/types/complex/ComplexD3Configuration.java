@@ -85,7 +85,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     }
 
     @Override
-    public int shape(int i) {
+    public int shape( int i ) {
         return (i==0)?_shape1:(i==1)?_shape2:_shape3;
     }
 
@@ -95,7 +95,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     }
 
     @Override
-    public int idxmap(int i) {
+    public int idxmap( int i ) {
         return (i==0)?_idxmap1:(i==1)?_idxmap2:_idxmap3;
     }
 
@@ -105,7 +105,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     }
 
     @Override
-    public int translation(int i) {
+    public int translation( int i ) {
         return (i==0)?_translation1:(i==1)?_translation2:_translation3;
     }
 
@@ -115,7 +115,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     }
 
     @Override
-    public int spread(int i) {
+    public int spread( int i ) {
         return (i==0)?_spread1:(i==1)?_spread2:_spread3;
     }
 
@@ -125,7 +125,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     }
 
     @Override
-    public int offset(int i) {
+    public int offset( int i ) {
         return (i==0)?_offset1:(i==1)?_offset2:_offset3;
     }
 
@@ -133,7 +133,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public int i_of_i(int i) {
+    public int i_of_i( int i ) {
         int idx1, idx2, idx3;
         if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
             idx3 = i / _idxmap3;
@@ -154,7 +154,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     }
 
     @Override
-    public int[] idx_of_i(int i) {
+    public int[] idx_of_i( int i ) {
         int idx1, idx2, idx3;
         if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
             idx3 = i / _idxmap3;
@@ -173,7 +173,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     }
 
     @Override
-    public int i_of_idx(int[] idx) {
+    public int i_of_idx( int[] idx ) {
         return (idx[ 0 ] * _spread1 + _offset1) * _translation1 +
                     (idx[ 1 ] * _spread2 + _offset2) * _translation2 +
                         (idx[ 2 ] * _spread3 + _offset3) * _translation3;

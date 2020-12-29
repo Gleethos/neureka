@@ -63,7 +63,7 @@ public class UnitTester_Function extends UnitTester {
 		printSessionStart(description);
 		println(BAR +" Function: "+expression);
 		String inputStr = "";
-		for(int Ii=0; Ii<input.length; Ii++) {
+		for( int Ii=0; Ii<input.length; Ii++ ) {
 			inputStr+=input[Ii]+", ";
 		}
 		println(BAR +" Value: "+inputStr);
@@ -83,7 +83,7 @@ public class UnitTester_Function extends UnitTester {
 		printSessionStart(description);
 		println(BAR +" Test Deriviation of Function: "+expression);
 		String inputStr = "";
-		for(int Ii=0; Ii<input.length; Ii++) {
+		for(int Ii=0; Ii<input.length; Ii++ ) {
 			inputStr+=input[Ii]+", ";
 		}
 		println(BAR +" Value: "+inputStr);
@@ -103,7 +103,7 @@ public class UnitTester_Function extends UnitTester {
 		printSessionStart(description);
 		println(BAR +" Function: "+expression);
 		String inputStr = "";
-		for(int Ii=0; Ii<input.length; Ii++) {
+		for(int Ii=0; Ii<input.length; Ii++ ) {
 			inputStr+=input[Ii]+", ";
 		}
 		println(BAR +" Value: "+inputStr);
@@ -123,7 +123,7 @@ public class UnitTester_Function extends UnitTester {
 		printSessionStart(description);
 		println(BAR +" Deriviation of Function: "+expression);
 		String inputStr = "";
-		for(int Ii=0; Ii<input.length; Ii++) {
+		for( int Ii=0; Ii<input.length; Ii++ ) {
 			inputStr+=input[Ii]+", ";
 		}
 		println(BAR +" Value: "+inputStr);

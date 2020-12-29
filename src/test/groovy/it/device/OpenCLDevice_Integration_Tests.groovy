@@ -9,6 +9,18 @@ import spock.lang.Specification
 
 class OpenCLDevice_Integration_Tests extends Specification
 {
+    def setupSpec()
+    {
+        reportHeader """
+            <h2> OpenCLDevice Integration Tests </h2>
+            <p>
+                Specified below are strict tests covering the behavior
+                of the OpenCLDevice when hosting tensors and executing 
+                operations on them.
+            </p>
+        """
+        Neureka.instance().reset()
+    }
 
     def 'An OpenCLDevice will throw an exception when trying to add a tensor whose "data parent" is not outsourced.'()
     {
@@ -192,18 +204,18 @@ class OpenCLDevice_Integration_Tests extends Specification
                         float acc[WPTM][WPTN];
                      
                         // Initialise the accumulation registers
-                        for (int wm=0; wm<WPTM; wm++) {
-                            for (int wn=0; wn<WPTN; wn++) {
+                        for ( int wm=0; wm<WPTM; wm++ ) {
+                            for ( int wn=0; wn<WPTN; wn++ ) {
                                 acc[wm][wn] = 0.0f;
                             }
                         }
                         
                         // Loop over all tiles
                         int numTiles = K/TSK;
-                        for (int t=0; t<numTiles; t++) {
+                        for ( int t=0; t<numTiles; t++ ) {
                      
                             // Load one tile of A and B into local memory
-                            for (int la=0; la<LPTA; la++) {
+                            for ( int la=0; la<LPTA; la++ ) {
                                 int tid = tidn*RTSM + tidm;
                                 int id = la*RTSN*RTSM + tid;
                                 int row = id % TSM;
@@ -217,19 +229,19 @@ class OpenCLDevice_Integration_Tests extends Specification
                             barrier(CLK_LOCAL_MEM_FENCE);
                      
                             // Loop over the values of a single tile
-                            for (int k=0; k<TSK; k++) {
+                            for ( int k=0; k<TSK; k++ ) {
                      
                                 // Cache the values of Bsub in registers
-                                for (int wn=0; wn<WPTN; wn++) {
+                                for ( int wn=0; wn<WPTN; wn++ ) {
                                     int col = tidn + wn*RTSN;
                                     Breg[wn] = Bsub[col][k];
                                 }
                      
                                 // Perform the computation
-                                for (int wm=0; wm<WPTM; wm++) {
+                                for ( int wm=0; wm<WPTM; wm++ ) {
                                     int row = tidm + wm*RTSM;
                                     Areg = Asub[k][row];
-                                    for (int wn=0; wn<WPTN; wn++) {
+                                    for ( int wn=0; wn<WPTN; wn++ ) {
                                         acc[wm][wn] += Areg * Breg[wn];
                                     }
                                 }
@@ -240,9 +252,9 @@ class OpenCLDevice_Integration_Tests extends Specification
                         }
                      
                         // Store the final results in C
-                        for (int wm=0; wm<WPTM; wm++) {
+                        for ( int wm=0; wm<WPTM; wm++ ) {
                             int globalRow = offsetM + tidm + wm*RTSM;
-                            for (int wn=0; wn<WPTN; wn++) {
+                            for ( int wn=0; wn<WPTN; wn++ ) {
                                 int globalCol = offsetN + tidn + wn*RTSN;
                                 //C[globalCol*M + globalRow] = acc[wm][wn];
                                 C[globalCol + N*globalRow] = acc[wm][wn];

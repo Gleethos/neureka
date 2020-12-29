@@ -8,6 +8,18 @@ import spock.lang.Specification
 
 class OpenCLDevice_Exception_Integration_Tests extends Specification
 {
+    def setupSpec()
+    {
+        reportHeader """
+            <h2> OpenCLDevice Exception Integration Tests </h2>
+            <p>
+                Specified below are strict tests covering the behavior
+                of the OpenCLDevice when encountering exceptional situation
+                where insightful error messages are important.
+            </p>
+        """
+        Neureka.instance().reset()
+    }
 
     def 'Ad hoc compilation produces expected exceptions.'()
     {

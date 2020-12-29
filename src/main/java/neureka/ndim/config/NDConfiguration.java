@@ -46,31 +46,31 @@ public interface NDConfiguration
 
     int[] shape();
 
-    int shape(int i);
+    int shape( int i );
 
     int[] idxmap();
 
-    int idxmap(int i);
+    int idxmap( int i );
 
     int[] translation();
 
-    int translation(int i);
+    int translation( int i );
 
     int[] spread();
 
-    int spread(int i);
+    int spread( int i );
 
     int[] offset();
 
-    int offset(int i);
+    int offset( int i );
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    int i_of_i(int i);
+    int i_of_i( int i );
 
-    int[] idx_of_i(int i);
+    int[] idx_of_i( int i );
 
-    int i_of_idx(int[] idx);
+    int i_of_idx( int[] idx );
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -92,7 +92,7 @@ public interface NDConfiguration
         public static int[] rearrange(int[] tln, int[] shp, @NotNull int[] newForm) {
             int[] shpTln = newTlnOf(shp);
             int[] newTln = new int[newForm.length];
-            for (int i = 0; i < newForm.length; i++) {
+            for ( int i = 0; i < newForm.length; i++ ) {
                 if (newForm[ i ] < 0) newTln[ i ] = shpTln[ i ];
                 else if (newForm[ i ] >= 0) newTln[ i ] = tln[newForm[ i ]];
             }
@@ -102,7 +102,7 @@ public interface NDConfiguration
         @Contract(pure = true)
         public static int[] rearrange(@NotNull int[] array, @NotNull int[] ptr) {
             int[] newShp = new int[ptr.length];
-            for (int i = 0; i < ptr.length; i++) {
+            for ( int i = 0; i < ptr.length; i++ ) {
                 if (ptr[ i ] < 0) newShp[ i ] = Math.abs(ptr[ i ]);
                 else if (ptr[ i ] >= 0) newShp[ i ] = array[ptr[ i ]];
             }
@@ -114,12 +114,12 @@ public interface NDConfiguration
             int[] tln = new int[ shape.length ];
             int prod = 1;
             if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
-                for (int i = 0; i < tln.length; i++) {
+                for ( int i = 0; i < tln.length; i++ ) {
                     tln[ i ] = prod;
                     prod *= shape[ i ];
                 }
             } else {
-                for (int i = tln.length-1; i >= 0; i--) {
+                for ( int i = tln.length-1; i >= 0; i--) {
                     tln[ i ] = prod;
                     prod *= shape[ i ];
                 }

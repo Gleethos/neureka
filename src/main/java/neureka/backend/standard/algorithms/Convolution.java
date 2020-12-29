@@ -100,7 +100,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
         else//---
         {
             // Incrementing if 'i>0' so that all indexes match:
-            for(int ii=0; ii<i; ii++) {
+            for(int ii=0; ii<i; ii++ ) {
                 int ri = 0;
                 while (ri < rank) {
                     if (t2Idx.get( ri ) == t2Idx.shape( ri )) {
@@ -139,7 +139,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
                     ri = (ri == rank) ? 0 : ri;
                     if (!incrementing) {// := testing for match and applying operation:
                         boolean isMatch = true;
-                        for (int rii = 0; rii < rank; rii++) {
+                        for ( int rii = 0; rii < rank; rii++ ) {
                             isMatch = (t1Idx.get( rii ) < t1Idx.shape( rii ) && t1Idx.get( rii ) >= 0) && isMatch;
                         }
                         value += (isMatch) ? operation.execute( t0Idx, t1Idx, t2Idx ) : 0;
@@ -250,7 +250,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
         else//---
         {
             // Incrementing if 'i>0' so that all indexes match:
-            for(int ii=0; ii<i; ii++) {
+            for(int ii=0; ii<i; ii++ ) {
                 int ri = 0;
                 while (ri < rank) {
                     if (t2Idx[ri] == t2Shp[ri]) {
@@ -287,7 +287,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
                     ri = (ri == rank) ? 0 : ri;
                     if (!incrementing) {// := testing for match and applying operation:
                         boolean isMatch = true;
-                        for (int rii = 0; rii < rank; rii++) {
+                        for ( int rii = 0; rii < rank; rii++ ) {
                             isMatch = (t1Idx[rii] < t1Shp[rii] && t1Idx[rii] >= 0) && isMatch;
                         }
                         value += (isMatch) ? operation.execute( t0Idx, t1Idx, t2Idx ) : 0;

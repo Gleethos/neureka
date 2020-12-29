@@ -20,7 +20,7 @@ public class SimpleReshapeView extends AbstractNDC
     private final int[] _spread;
     private final int[] _offset;
 
-    public SimpleReshapeView(int[] form, NDConfiguration toBeViewed)
+    public SimpleReshapeView( int[] form, NDConfiguration toBeViewed )
     {
         _toBeViewed = toBeViewed;
         _form = form;
@@ -31,9 +31,9 @@ public class SimpleReshapeView extends AbstractNDC
                 if ( form[ i ] < -1 ) throw new IllegalArgumentException(
                     "SimpleReshapeView may not view a NDConfiguration beyond reshaping and or padding!"
                 );
-            else if ( form[ i ] >= 0 )  _translator.add(form[ i ]);
+            else if ( form[ i ] >= 0 )  _translator.add( form[ i ] );
 
-        _formTranslator = _translator.stream().mapToInt(e -> e).toArray();
+        _formTranslator = _translator.stream().mapToInt( e -> e ).toArray();
 
 
         NDConfiguration ndc = _simpleReshape( form, toBeViewed );
@@ -55,7 +55,7 @@ public class SimpleReshapeView extends AbstractNDC
     }
 
     @Override
-    public int shape(int i) {
+    public int shape( int i ) {
         return _shape[ i ];
     }
 
@@ -65,7 +65,7 @@ public class SimpleReshapeView extends AbstractNDC
     }
 
     @Override
-    public int idxmap(int i) {
+    public int idxmap( int i ) {
         return _idxmap[ i ];
     }
 
@@ -75,7 +75,7 @@ public class SimpleReshapeView extends AbstractNDC
     }
 
     @Override
-    public int translation(int i) {
+    public int translation( int i ) {
         return _translation[ i ];
     }
 
@@ -85,7 +85,7 @@ public class SimpleReshapeView extends AbstractNDC
     }
 
     @Override
-    public int spread(int i) {
+    public int spread( int i ) {
         return _spread[ i ];
     }
 
@@ -95,41 +95,42 @@ public class SimpleReshapeView extends AbstractNDC
     }
 
     @Override
-    public int offset(int i) {
+    public int offset( int i ) {
         return _offset[ i ];
-    }
-    @Override
-    public int i_of_i(int i) {
-        return i_of_idx(idx_of_i( i ));
     }
 
     @Override
-    public int[] idx_of_i(int i) {
+    public int i_of_i( int i ) {
+        return i_of_idx( idx_of_i( i ) );
+    }
+
+    @Override
+    public int[] idx_of_i( int i ) {
         int[] idx = new int[_shape.length];
         if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
             for ( int ii = rank()-1; ii >= 0; ii-- ) {
-                idx[ii] += i / _idxmap[ii];
-                i %= _idxmap[ii];
+                idx[ ii ] += i / _idxmap[ ii ];
+                i %= _idxmap[ ii ];
             }
         } else {
             for ( int ii = 0; ii < rank(); ii++ ) {
-                idx[ii] += i / _idxmap[ii];
-                i %= _idxmap[ii];
+                idx[ ii ] += i / _idxmap[ ii ];
+                i %= _idxmap[ ii ];
             }
         }
         return idx;
     }
 
     @Override
-    public int i_of_idx(int[] idx) {
-        int[] innerIdx = _rearrange(idx,_form, _formTranslator);
-        return _toBeViewed.i_of_idx(innerIdx);
+    public int i_of_idx( int[] idx ) {
+        int[] innerIdx = _rearrange( idx,_form, _formTranslator );
+        return _toBeViewed.i_of_idx( innerIdx );
     }
 
     @Contract(pure = true)
     private static int[] _rearrange(@NotNull int[] array, @NotNull int[] ptr, @NotNull int[] idx) {
-        for (int i = 0; i < ptr.length; i++) {
-            if (ptr[ i ] >= 0) idx[ptr[ i ]] = array[ i ];
+        for ( int i = 0; i < ptr.length; i++ ) {
+            if ( ptr[ i ] >= 0 ) idx[ptr[ i ]] = array[ i ];
         }
         return idx;
     }

@@ -74,10 +74,10 @@ practice in other languages, namely : C#, C++ and Python.
 >    a += c + d;
 >    a = ( a + b ) / ( c * d ); // Instead of : a = (a + b) / (c * d);
 >    
->    while ( d++ = s++ ) { // Instead of : while (d++ = s++) { 
+>    while ( d++ == s++ ) { // Instead of : while (d++ == s++) { 
 >        n++;
 >    }
->    printSize( "size is " + foo + "\n" ); // Instead of : printSize("size is " + foo + "\n");
+>    printSize( "size is " + foo + "\n" ); // Instead of : printSize("size is "+foo+"\n");
 >```
 >   This rule guarantees readability in two ways : <br>
 >   1. It forces longer statements to be broken down into multiple lines simply due to their length.

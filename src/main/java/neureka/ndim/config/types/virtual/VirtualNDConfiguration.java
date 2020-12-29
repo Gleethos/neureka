@@ -41,7 +41,7 @@ public class VirtualNDConfiguration extends AbstractNDC
     }
 
     @Override
-    public int shape(int i) {
+    public int shape( int i ) {
         return _shape[ 0 ];
     }
 
@@ -51,7 +51,7 @@ public class VirtualNDConfiguration extends AbstractNDC
     }
 
     @Override
-    public int idxmap(int i) {
+    public int idxmap( int i ) {
         return 0;
     }
 
@@ -61,7 +61,7 @@ public class VirtualNDConfiguration extends AbstractNDC
     }
 
     @Override
-    public int translation(int i) {
+    public int translation( int i ) {
         return 0;
     }
 
@@ -71,7 +71,7 @@ public class VirtualNDConfiguration extends AbstractNDC
     }
 
     @Override
-    public int spread(int i) {
+    public int spread( int i ) {
         return 0;
     }
 
@@ -81,22 +81,22 @@ public class VirtualNDConfiguration extends AbstractNDC
     }
 
     @Override
-    public int offset(int i) {
+    public int offset( int i ) {
         return 0;
     }
 
     @Override
-    public int i_of_i(int i) {
+    public int i_of_i( int i ) {
         return 0;
     }
 
     @Override
-    public int[] idx_of_i(int i) {
+    public int[] idx_of_i( int i ) {
         return new int[rank()];
     }
 
     @Override
-    public int i_of_idx(int[] idx) {
+    public int i_of_idx( int[] idx ) {
         return 0;
     }
 

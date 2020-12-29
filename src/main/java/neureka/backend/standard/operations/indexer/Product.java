@@ -219,9 +219,8 @@ public class Product extends AbstractOperation {
 
         Activation activation = new Activation()
         .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
-                call -> true
-        ).setADAgentSupplier(
+        .setForwardADAnalyzer( call -> true )
+        .setADAgentSupplier(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         Tsr ctxDerivative = (Tsr)call.getAt("derivative");
@@ -286,8 +285,10 @@ public class Product extends AbstractOperation {
         )
         .build();
 
-        setAlgorithm(Activation.class,
-                activation.setImplementationFor(
+        setAlgorithm(
+                Activation.class,
+                activation
+                    .setImplementationFor(
                         HostCPU.class,
                         new HostImplementation(
                                 call  ->
@@ -310,7 +311,8 @@ public class Product extends AbstractOperation {
                                                 ),
                                 3
                         )
-                ).setImplementationFor(
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         new CLImplementation(
                                 call -> {
@@ -340,7 +342,8 @@ public class Product extends AbstractOperation {
 
 
     @Override
-    public double calculate(double[] inputs, int j, int d, List<Function> src ) {
+    public double calculate( double[] inputs, int j, int d, List<Function> src )
+    {
         if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
             double prod = 1;
@@ -355,7 +358,7 @@ public class Product extends AbstractOperation {
             double u, ud, v, vd;
             u = src.get( 0 ).call( inputs, 0 );
             ud = src.get( 0 ).derive(inputs, d, 0);
-            for (int ji = 1; ji < inputs.length; ji++) {
+            for ( int ji = 1; ji < inputs.length; ji++ ) {
                 v = src.get( 0 ).call( inputs, ji );
                 vd = src.get( 0 ).derive( inputs, d, ji );
                 ud = u * vd + v * ud;
@@ -366,12 +369,12 @@ public class Product extends AbstractOperation {
     }
 
     @Contract(pure = true)
-    public static double calculate(double[] inputs, int d, List<Function> src ) {
+    public static double calculate( double[] inputs, int d, List<Function> src ) {
         if ( d < 0 ) {
             double prod = 1;
             boolean nothingDone = true;
             for ( int i = 0; i < inputs.length; i++ ) {
-                prod *= src.get( 0 ).call(inputs, i);
+                prod *= src.get( 0 ).call( inputs, i );
                 nothingDone = false;
             }
             if ( nothingDone ) return src.get( 0 ).call( inputs );

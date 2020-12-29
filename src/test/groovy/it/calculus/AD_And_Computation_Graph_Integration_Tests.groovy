@@ -69,7 +69,7 @@ class AD_And_Computation_Graph_Integration_Tests extends Specification{
             assert n.parents[1].isGraphLeave()
 
         and :
-            for (int i = 0; i < n.parents.length; i++) {
+            for ( int i = 0; i < n.parents.length; i++ ) {
                 assert n.parents[ i ].payload != null
                 boolean[] exists = {false}
                 n.parents[ i ].forEachTarget({ t -> exists[0] = true })

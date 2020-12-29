@@ -32,7 +32,7 @@ public abstract class AbstractBaseAlgorithm<FinalType> implements Algorithm<Fina
         Operation type = call.getOperation();
 
         Consumer<Tsr>[] rollbacks = new Consumer[tsrs.length];
-        for (int i=0; i<tsrs.length; i++) {
+        for ( int i=0; i<tsrs.length; i++ ) {
             if ( tsrs[ i ] != null && !tsrs[ i ].isOutsourced() ) {
                 try {
                     device.store(tsrs[i]);

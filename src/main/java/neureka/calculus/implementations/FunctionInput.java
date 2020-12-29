@@ -48,7 +48,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
             return FunctionBuilder.build(equation.substring(1)+"*-1", true);
         }
         int number = 0;
-        for (int i = 0; i < equation.length(); ++i) {
+        for ( int i = 0; i < equation.length(); ++i) {
             if (equation.charAt( i ) == 'j') {
                 Function newCore = new FunctionVariable();
                 newCore = newCore.newBuild(equation);

@@ -4,7 +4,6 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
-import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.api.operations.Operation;
 import neureka.backend.api.ExecutionCall;
 
@@ -13,9 +12,9 @@ import java.util.concurrent.*;
 
 public class HostCPU extends AbstractDevice<Number>
 {
-    private static final HostCPU _instance;
+    private static final HostCPU _INSTANCE;
 
-    static {  _instance = new HostCPU();  }
+    static {  _INSTANCE = new HostCPU();  }
 
     private final NativeExecutor _executor;
     private Set<Tsr<Number>> _tensors = Collections.newSetFromMap(new WeakHashMap<Tsr<Number>, Boolean>());
@@ -26,7 +25,7 @@ public class HostCPU extends AbstractDevice<Number>
     }
 
     public static HostCPU instance() {
-        return _instance;
+        return _INSTANCE;
     }
 
     public NativeExecutor getExecutor() {
@@ -75,7 +74,7 @@ public class HostCPU extends AbstractDevice<Number>
     }
 
     @Override
-    public Device free(Tsr tensor) {
+    public Device free( Tsr tensor ) {
         _tensors.remove( tensor );
         return this;
     }
@@ -145,7 +144,7 @@ public class HostCPU extends AbstractDevice<Number>
             if ( sze >= 32 && ( ( sze / cores ) >= 8 ) ) {
                 final int chunk = sze / cores;
                 Future[] futures = new Future[cores];
-                for (int i = 0; i < cores; i++) {
+                for ( int i = 0; i < cores; i++ ) {
                     final int start = i * chunk;
                     final int end = ( i == cores - 1 ) ? sze : ( (i + 1) * chunk );
                     Neureka neureka = Neureka.instance();

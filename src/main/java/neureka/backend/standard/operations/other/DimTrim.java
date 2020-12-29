@@ -138,7 +138,7 @@ public class DimTrim extends AbstractOperation
         List<Integer> newOffset = new ArrayList<>();
         int[] shape = tensor.getNDConf().shape();
         int prefix = 0;
-        for (int s : shape) if (s == 1) prefix++; else break;
+        for ( int s : shape) if (s == 1) prefix++; else break;
         int postfix = 0;
         for ( int i=shape.length-1; i>=0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;
         for ( int i = prefix; i < shape.length-postfix; i++ ) {

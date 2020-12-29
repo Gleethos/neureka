@@ -390,7 +390,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             _construct( shape, false, false );
         } else {
             double[] value = new double[ conf.size() ];
-            for (int i = 0; i < value.length; i++ ) {
+            for ( int i = 0; i < value.length; i++ ) {
                 value[ i ] = ( conf.get( i ) instanceof BigDecimal )
                         ? ( (BigDecimal) conf.get( i ) ).doubleValue() :
                         ( conf.get( i ) instanceof Double )

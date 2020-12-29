@@ -12,7 +12,7 @@ public class VirtualNDIterator implements NDIterator
     }
 
     @Override
-    public int shape(int i) {
+    public int shape( int i ) {
         return _conf.shape(i);
     }
 
@@ -52,7 +52,7 @@ public class VirtualNDIterator implements NDIterator
     }
 
     @Override
-    public void set(int[] idx) {
+    public void set( int[] idx ) {
         // It's virtual and therefore does nothing :)
     }
 

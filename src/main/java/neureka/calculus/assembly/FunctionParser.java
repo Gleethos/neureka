@@ -26,7 +26,7 @@ public class FunctionParser
     public static String parsedOperation( final String exp, final int index ) {
         if (exp.length() <= index) return null;
         String operation = "";
-        for (int i = exp.length()-1; i >= index; i--) {
+        for ( int i = exp.length()-1; i >= index; i--) {
             operation = exp.substring(index, i);
             if (FunctionParser.isAnyOperation(operation) || FunctionParser.isAnyOperation(operation.toLowerCase())) {
                 return operation;
@@ -41,13 +41,13 @@ public class FunctionParser
         if (exp.length() <= index) return null;
         int bracketDepth = 0;
         StringBuilder component = new StringBuilder();
-        for (int i = index; i < exp.length(); ++i)
+        for ( int i = index; i < exp.length(); ++i)
         {
             if (exp.charAt( i ) == ')') --bracketDepth;
             else if (exp.charAt( i ) == '(') ++bracketDepth;
             if (bracketDepth == 0) {
                 String possibleOperation = "";
-                for (int ii = exp.length()-1; ii >= i+1; ii--) {
+                for ( int ii = exp.length()-1; ii >= i+1; ii--) {
                     String found = FunctionParser.parsedOperation(exp.substring(i,ii), i);
                     if (
                          found != null && !OperationContext.get().instance(found).isOperator()
@@ -78,7 +78,7 @@ public class FunctionParser
         int bracketDepth = 0;
         List<String> parameters = new ArrayList<>();
         StringBuilder component = new StringBuilder();
-        for (int i = index; i < exp.length(); ++i)
+        for ( int i = index; i < exp.length(); ++i)
         {
             if (exp.charAt( i ) == '(' || exp.charAt( i ) == '[') {
                 if (bracketDepth != 0) component.append(exp.charAt( i ));
@@ -134,7 +134,7 @@ public class FunctionParser
             } else condition = false;
             if (ci == exp.length()) condition = false;
         }
-        for (int gi = ci; gi < exp.length(); gi++) updated.append(exp.charAt(gi));
+        for ( int gi = ci; gi < exp.length(); gi++) updated.append(exp.charAt(gi));
         exp = updated.toString();
         updated = new StringBuilder();
         if (exp.length() > 0) {
@@ -147,7 +147,7 @@ public class FunctionParser
                 } else condition = false;
                 if (l - ci < 0) condition = false;
             }
-            for (int gi = 0; gi <= l - ci; gi++) updated.append(exp.charAt(gi));
+            for ( int gi = 0; gi <= l - ci; gi++) updated.append(exp.charAt(gi));
             exp = updated.toString();
         }
         if (exp.length() > 0) {
@@ -187,14 +187,14 @@ public class FunctionParser
         exp = exp.replace("product", "prod");
 
         int bracketDepth = 0;
-        for (int Ei = 0; Ei < exp.length(); ++Ei) {
+        for ( int Ei = 0; Ei < exp.length(); ++Ei) {
             if (exp.charAt(Ei) == '(') ++bracketDepth;
             else if (exp.charAt(Ei) == ')') --bracketDepth;
         }
         if (bracketDepth != 0) {
             if (bracketDepth < 0) {
                 StringBuilder expBuilder = new StringBuilder(exp);
-                for (int Bi = 0; Bi < -bracketDepth; ++Bi) {
+                for ( int Bi = 0; Bi < -bracketDepth; ++Bi) {
                     expBuilder.insert(0, "(");
                 }
                 exp = expBuilder.toString();
@@ -205,7 +205,7 @@ public class FunctionParser
         while (parsing && (exp.charAt( 0 ) == '(') && (exp.charAt(exp.length() - 1) == ')')) {
             bracketDepth = 0;
             needsStitching = true;
-            for (int i = 0; i < exp.length(); ++i) {
+            for ( int i = 0; i < exp.length(); ++i) {
                 if (exp.charAt( i ) == ')') --bracketDepth;
                 else if (exp.charAt( i ) == '(') ++bracketDepth;
                 if (bracketDepth == 0 && i != exp.length() - 1) needsStitching = false;
@@ -220,7 +220,7 @@ public class FunctionParser
     public static String assumptionBasedOn(String expression) {
         double largest = -1;
         int best = 0;
-        for (int i = 0; i< OperationContext.get().id(); i++) {
+        for ( int i = 0; i< OperationContext.get().id(); i++ ) {
             double s = similarity(expression, OperationContext.get().instance( i ).getOperator());
             if (largest==-1) largest = s;
             else if (s > largest) {
@@ -248,7 +248,7 @@ public class FunctionParser
                 weights[ i ] = currentWeight;
                 weightSum += currentWeight;
                 currentWeight *= modifier;
-                for (int si=0; si<shorter.length(); si++) {
+                for ( int si=0; si<shorter.length(); si++ ) {
                     if (longer.charAt(i+si)==shorter.charAt(si)) alignment[ i ] ++;
                     else if (
                             Character.toLowerCase(longer.charAt(i+si)) == Character.toLowerCase(shorter.charAt(si))
@@ -263,7 +263,7 @@ public class FunctionParser
             Arrays.sort(alignment);
             Arrays.sort(weights);
             double similarity = 0;
-            for (int i=0; i<(delta+1); i++) similarity += alignment[ i ] * (weights[ i ]/weightSum);
+            for ( int i=0; i<(delta+1); i++) similarity += alignment[ i ] * (weights[ i ]/weightSum);
             assert similarity <= 1.0;
             return similarity;
     }

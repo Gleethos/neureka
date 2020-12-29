@@ -61,7 +61,7 @@ public class GEMMKernelReferenceImplementation
 
         // Loop over all tiles
         /*const*/ int numTiles = com/max_ts_com;
-        for (int t=0; t<numTiles; t++) {
+        for ( int t=0; t<numTiles; t++ ) {
 
             // Load one tile of A and B into local memory
             /*const*/ int tiledRow = max_ts_row*t + row_id;
@@ -75,7 +75,7 @@ public class GEMMKernelReferenceImplementation
             //barrier(CLK_LOCAL_MEM_FENCE);
 
             // Perform the computation for a single tile
-            for (int comi=0; comi<max_ts_com; comi++) {
+            for ( int comi=0; comi<max_ts_com; comi++ ) {
                 //acc += Asub[k][row_id] * Bsub[col_id][k];
                 acc += Asub[comi*max_ts_com + row_id] * Bsub[col_id*max_ts_col+comi];
             }
@@ -337,7 +337,7 @@ public class GEMMKernelReferenceImplementation
         for ( int ii = 0 ; ii < rank; ii++) idx[ii] = cfg[rank*3+ii];
         for ( int ii = 0 ; ii < rank; ii++) translation[ii] = cfg[rank+ii];
         int i = 0;
-        for (int ii = 0; ii < rank; ii++) {
+        for ( int ii = 0; ii < rank; ii++ ) {
             i += (idx[ii]*idxScale[ii]+idxBase[ii]) * translation[ii];
         }
         return i;

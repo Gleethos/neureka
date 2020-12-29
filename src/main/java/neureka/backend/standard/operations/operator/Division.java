@@ -563,7 +563,7 @@ public class Division extends AbstractOperation
         if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
             double result = src.get( 0 ).call( inputs, j );
-            for (int Vi = 1; Vi < src.size(); Vi++) {
+            for ( int Vi = 1; Vi < src.size(); Vi++ ) {
                 final double current = src.get(Vi).call( inputs, j );
                 result /= current;
             }
@@ -572,7 +572,7 @@ public class Division extends AbstractOperation
             double u, ud, v, vd;
             u = src.get( 0 ).call( inputs, j );
             ud = src.get( 0 ).derive( inputs, d, j );
-            for (int i = 0; i < src.size() - 1; i++) {
+            for ( int i = 0; i < src.size() - 1; i++ ) {
                 v = src.get(i + 1).call( inputs, j );
                 vd = src.get(i + 1).derive( inputs, d, j );
                 ud = (ud * v - u * vd) / Math.pow(v, 2);

@@ -21,13 +21,13 @@ int _i_of_i(int i, int* cfg, int rank)// cfg:   <[ shape | translation | idxMap 
     int* idxMap = (cfg+rank*2);
     if(Neureka.instance().settings().indexing().REVERSE_INDEX_TRANSLATION){
         for(int ii=(rank)-1; ii>=0; ii--){
-            idx[ii] = (i/idxMap[ii]);//is derived from the shape of a tensor. Translates scalar indexAlias to dim-Index
-            i %= idxMap[ii];
+            idx[ ii ] = (i/idxMap[ ii ]);//is derived from the shape of a tensor. Translates scalar indexAlias to dim-Index
+            i %= idxMap[ ii ];
         }
     } else {//---
         for(int ii=0; ii<rank; ii++){
-            idx[ii] = (i/idxMap[ii]);//is derived from the shape of a tensor. Translates scalar indexAlias to dim-Index
-            i %= idxMap[ii];
+            idx[ ii ] = (i/idxMap[ ii ]);//is derived from the shape of a tensor. Translates scalar indexAlias to dim-Index
+            i %= idxMap[ ii ];
         }
     }
     return _i_of_idx_on_tln(cfg, rank);
@@ -42,8 +42,8 @@ int _i_of_idx_on_tln(int* cfg, int rank) // cfg:   <[ 0:shape | 1:translation | 
     int* idx = (cfg+rank*3);
     int* translation = (cfg+rank);
     int i = 0;
-    for (int ii = 0; ii < rank; ii++) {
-        i += (idx[ii]*idxScale[ii]+idxBase[ii]) * translation[ii];
+    for ( int ii = 0; ii < rank; ii++ ) {
+        i += (idx[ ii ]*idxScale[ ii ]+idxBase[ ii ]) * translation[ ii ];
     }
     return i;
 }

@@ -75,7 +75,7 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int shape(int i) {
+    public int shape( int i ) {
         return (i==0)?_shape1:_shape2;
     }
 
@@ -85,7 +85,7 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int idxmap(int i) {
+    public int idxmap( int i ) {
         return (i==0)?_idxmap1:_idxmap2;
     }
 
@@ -95,7 +95,7 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int translation(int i) {
+    public int translation( int i ) {
         return (i==0)?_translation1:_translation2;
     }
 
@@ -105,7 +105,7 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int spread(int i) {
+    public int spread( int i ) {
         return (i==0)?_spread1:_spread2;
     }
 
@@ -115,7 +115,7 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int offset(int i) {
+    public int offset( int i ) {
         return (i==0)?_offset1:_offset2;
     }
 
@@ -123,7 +123,7 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public int i_of_i(int i) {
+    public int i_of_i( int i ) {
         if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
             return (((i%_idxmap2) / _idxmap1) * _spread1 + _offset1) * _translation1 +
                     ((i / _idxmap2) * _spread2 + _offset2) * _translation2;
@@ -134,7 +134,7 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int[] idx_of_i(int i) {
+    public int[] idx_of_i( int i ) {
         int[] idx = new int[ 2 ];
         if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
             idx[ 1 ] += i / _idxmap2;
@@ -149,7 +149,7 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int i_of_idx(int[] idx) {
+    public int i_of_idx( int[] idx ) {
         int i = 0;
         i += (idx[ 0 ] * _spread1 + _offset1) * _translation1;
         i += (idx[ 1 ] * _spread2 + _offset2) * _translation2;

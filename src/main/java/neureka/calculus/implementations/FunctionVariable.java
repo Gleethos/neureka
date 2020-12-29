@@ -51,7 +51,7 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     @Override
     public double call(final double[] inputs) {
         double sum = 0;
-        for (int Ii = 0; Ii < inputs.length; Ii++) sum += call(inputs, Ii);
+        for ( int Ii = 0; Ii < inputs.length; Ii++) sum += call(inputs, Ii);
         return sum;
     }
 

@@ -42,7 +42,7 @@ public class SimpleD1Configuration extends D1C //:= IMMUTABLE
     }
 
     @Override
-    public int shape(int i) {
+    public int shape( int i ) {
         return _shape;
     }
 
@@ -52,7 +52,7 @@ public class SimpleD1Configuration extends D1C //:= IMMUTABLE
     }
 
     @Override
-    public int idxmap(int i) {
+    public int idxmap( int i ) {
         return _translation_and_idxmap;
     }
 
@@ -62,7 +62,7 @@ public class SimpleD1Configuration extends D1C //:= IMMUTABLE
     }
 
     @Override
-    public int translation(int i) {
+    public int translation( int i ) {
         return _translation_and_idxmap;
     }
 
@@ -72,7 +72,7 @@ public class SimpleD1Configuration extends D1C //:= IMMUTABLE
     }
 
     @Override
-    public int spread(int i) {
+    public int spread( int i ) {
         return 1;
     }
 
@@ -82,23 +82,23 @@ public class SimpleD1Configuration extends D1C //:= IMMUTABLE
     }
 
     @Override
-    public int offset(int i) {
+    public int offset( int i ) {
         return 0;
     }
 
 
     @Override
-    public int i_of_i(int i) {
+    public int i_of_i( int i ) {
         return i;
     }
 
     @Override
-    public int[] idx_of_i(int i) {
+    public int[] idx_of_i( int i ) {
         return new int[]{i / _translation_and_idxmap};
     }
 
     @Override
-    public int i_of_idx(int[] idx) {
+    public int i_of_idx( int[] idx ) {
         return idx[ 0 ] * _translation_and_idxmap;
     }
 

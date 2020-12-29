@@ -16,7 +16,7 @@ public class DefaultNDIterator implements NDIterator
     }
 
     @Override
-    public int shape(int i) {
+    public int shape( int i ) {
         return _shape[i];
     }
 

@@ -320,7 +320,7 @@ public class Summation extends AbstractOperation
     }
 
     @Override
-    public double calculate(double[] inputs, int j, int d, List<Function> src ) {
+    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
         if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
             double sum = 0;
@@ -340,7 +340,7 @@ public class Summation extends AbstractOperation
         if ( d < 0 ) {
             double sum = 0;
             boolean nothingDone = true;
-            for (int i = 0; i < inputs.length; i++) {
+            for ( int i = 0; i < inputs.length; i++ ) {
                 sum += src.get( 0 ).call( inputs, i );
                 nothingDone = false;
             }

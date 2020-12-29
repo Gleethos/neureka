@@ -8,6 +8,20 @@ import spock.lang.Specification
 
 class Calculus_Integration_Tests extends Specification
 {
+    def setupSpec()
+    {
+        reportHeader """
+            <h2> Calculus Integration Tests </h2>
+            <p>
+                Specified below are strict tests covering the behavior
+                of the classes located within the calculus package.
+            </p>
+        """
+    }
+
+    def setup() {
+        Neureka.instance().reset()
+    }
 
     def 'Tensor results of various Function instances return expected results.'(
             String equation, List<Tsr> inputs, Integer index, Map<List<Integer>,List<Double>> expected
@@ -68,7 +82,6 @@ class Calculus_Integration_Tests extends Specification
     def 'Reshaping on 3D tensors works by instantiate a Function instance built from a String.'()
     {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             Function f = Function.create("[2, 0, 1]:(I[0])")
 
@@ -85,7 +98,6 @@ class Calculus_Integration_Tests extends Specification
     def 'The "DimTrim" operation works forward as well as backward!'(){
 
         given :
-            Neureka.instance().reset()
             Tsr t = new Tsr([1, 1, 3, 2, 1], 8).setRqsGradient(true)
 
         when :

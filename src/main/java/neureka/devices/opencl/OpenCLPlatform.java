@@ -62,7 +62,7 @@ public class OpenCLPlatform {
     public void recompile() {
         List<OpenCLDevice> devices = getDevices();
         cl_device_id[] devicesArray = new cl_device_id[devices.size()];
-        for (int i = 0; i < devicesArray.length; i++) devicesArray[ i ] = devices.get( i ).getDeviceId();
+        for ( int i = 0; i < devicesArray.length; i++) devicesArray[ i ] = devices.get( i ).getDeviceId();
         _compile(devicesArray);
     }
 

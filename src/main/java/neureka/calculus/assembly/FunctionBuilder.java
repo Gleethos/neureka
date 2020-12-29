@@ -24,7 +24,7 @@ public class FunctionBuilder {
             size = 2;
         } else if ( type.getOperator().equals(",") ) {
             ArrayList<Function> srcs = new ArrayList<>();
-            for (int i = 0; i < size; i++) srcs.add( new FunctionInput().newBuild("" + i) );
+            for ( int i = 0; i < size; i++) srcs.add( new FunctionInput().newBuild("" + i) );
             return new FunctionNode(type, srcs, doAD);
         }
         if ( type.getId() < 10 ) {
@@ -33,7 +33,7 @@ public class FunctionBuilder {
             return build(type.getFunction() + "I[j]", doAD);
         } else {
             StringBuilder expression = new StringBuilder("I[ 0 ]");
-            for (int i = 0; i < size - 1; i++) {
+            for ( int i = 0; i < size - 1; i++ ) {
                 expression.append(type.getOperator()).append("I[").append(i + 1).append("]");
             }
             return build(expression.toString(), doAD);
@@ -106,7 +106,7 @@ public class FunctionBuilder {
         }
         //---
         int counter = OperationContext.get().id();
-        for (int j = OperationContext.get().id(); j > 0; --j ) {
+        for ( int j = OperationContext.get().id(); j > 0; --j ) {
             if ( !foundJunctors.contains(OperationContext.get().instance(j - 1).getOperator()) ) {
                 --counter;
             } else {
@@ -168,7 +168,7 @@ public class FunctionBuilder {
         // identifying function id:
         int typeId = 0;
         if ( foundJunctors.size() >= 1 ) {
-            for (int id = 0; id < OperationContext.get().id(); ++id) {
+            for ( int id = 0; id < OperationContext.get().id(); ++id) {
                 if ( OperationContext.get().instance(id).getOperator().equals(foundJunctors.get( 0 )) ) {
                     typeId = id;
                 }
@@ -182,7 +182,7 @@ public class FunctionBuilder {
             );
             if (possibleFunction != null && possibleFunction.length() > 1) {
 
-                for (int oi = 0; oi < OperationContext.get().id(); oi++) {
+                for ( int oi = 0; oi < OperationContext.get().id(); oi++ ) {
                     if (OperationContext.get().instance(oi).getOperator().toLowerCase().equals(possibleFunction.toLowerCase())) {
                         typeId = oi;
                         List<String> parameters = FunctionParser.findParametersIn(

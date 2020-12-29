@@ -327,7 +327,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
                     }
                 }
                 int firstIndexOfB = 0;
-                for (int i=0; i<sB.length; i++) {
+                for ( int i=0; i<sB.length; i++ ) {
                     if (sB[ i ]!=1) {
                         firstIndexOfB = i;
                         break;
@@ -336,7 +336,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
                 int newSize = lastIndexOfA + sB.length - firstIndexOfB;
                 int[] rsA = new int[newSize];
                 int[] rsB = new int[newSize];
-                for(int i=0; i<newSize; i++) {
+                for(int i=0; i<newSize; i++ ) {
                     if (i<=lastIndexOfA) rsA[ i ] = i; else rsA[ i ] = -1;
                     if (i>=lastIndexOfA) rsB[ i ] = i-lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
                 }
@@ -346,14 +346,14 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
             @Contract(pure = true)
             public static int[] shpOfCon(int[] shp1, int[] shp2) {
                 int[] shape = new int[(shp1.length + shp2.length) / 2];
-                for (int i = 0; i < shp1.length && i < shp2.length; i++) shape[ i ] = Math.abs(shp1[ i ] - shp2[ i ]) + 1;
+                for ( int i = 0; i < shp1.length && i < shp2.length; i++) shape[ i ] = Math.abs(shp1[ i ] - shp2[ i ]) + 1;
                 return shape;
             }
 
             @Contract(pure = true)
             public static int[] shpOfBrc(int[] shp1, int[] shp2) {
                 int[] shape = new int[(shp1.length + shp2.length) / 2];
-                for (int i = 0; i < shp1.length && i < shp2.length; i++) {
+                for ( int i = 0; i < shp1.length && i < shp2.length; i++ ) {
                     shape[ i ] = Math.max(shp1[ i ], shp2[ i ]);
                     if (Math.min(shp1[ i ], shp2[ i ])!=1&&Math.max(shp1[ i ], shp2[ i ])!=shape[ i ]) {
                         throw new IllegalStateException("Broadcast not possible. Shapes do not match!");

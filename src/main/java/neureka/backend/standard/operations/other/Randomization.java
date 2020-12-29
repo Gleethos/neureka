@@ -30,7 +30,7 @@ public class Randomization extends AbstractOperation
                     return t1Idx -> {
                         int sum = 0;
                         int[] idx = t1Idx.get();
-                        for (int i : idx) sum += i;
+                        for ( int i : idx) sum += i;
                         Random dice = new Random();
                         dice.setSeed(Double.doubleToLongBits(value+sum));
                         return dice.nextGaussian();
@@ -41,7 +41,7 @@ public class Randomization extends AbstractOperation
                 ( inputs, value, d ) -> {
                     return t1Idx -> {
                         int sum = 0;
-                        for (int idx : t1Idx) sum += idx;
+                        for ( int idx : t1Idx) sum += idx;
                         Random dice = new Random();
                         dice.setSeed(Double.doubleToLongBits(value+sum));
                         return dice.nextGaussian();
