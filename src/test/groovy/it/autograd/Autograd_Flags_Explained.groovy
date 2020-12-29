@@ -144,7 +144,7 @@ class Autograd_Flags_Explained extends Specification
             result.detach()
 
         then : 'Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !'
-            !result.has(GraphNode.class)
+            !result.has( GraphNode.class )
 
         where :
             code   | whenRsd | whenUse | doJIT || afterBack     | afterUse        | afterRqd        | afterAll

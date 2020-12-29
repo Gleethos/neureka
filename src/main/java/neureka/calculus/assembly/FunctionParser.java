@@ -1,7 +1,7 @@
 package neureka.calculus.assembly;
 
-import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.Operation;
+import neureka.backend.api.operations.OperationContext;
 import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
@@ -10,13 +10,13 @@ import java.util.List;
 
 /**
  * Utility for parsing function expressions.
- * */
+ **/
 public class FunctionParser
 {
     @Contract( pure = true ) 
     public static int numberOfOperationsWithin( final List<String> operations ) {
         int counter = 0;
-        for(AbstractOperation ot : Operation.instances()) {
+        for( Operation ot : OperationContext.get().instances() ) {
             if (operations.contains(ot.getOperator())) ++counter;
         }
         return counter;
@@ -50,7 +50,7 @@ public class FunctionParser
                 for (int ii = exp.length()-1; ii >= i+1; ii--) {
                     String found = FunctionParser.parsedOperation(exp.substring(i,ii), i);
                     if (
-                         found != null && !Operation.instance(found).isOperator()
+                         found != null && !OperationContext.get().instance(found).isOperator()
                     ) {
                         ii = -1; // end inner loop
                         component.append(found.substring(0,found.length()-1));
@@ -102,7 +102,7 @@ public class FunctionParser
     @Contract( pure = true )
     public static boolean isAnyOperation( final String operation ) {
         if ( operation.length() > 32 ) return false;
-        return (Operation.instance( operation ) != null) && Operation.instance(operation).getId() >= 0;
+        return (OperationContext.get().instance( operation ) != null) && OperationContext.get().instance(operation).getId() >= 0;
     }
 
     @Contract( pure = true )
@@ -220,15 +220,15 @@ public class FunctionParser
     public static String assumptionBasedOn(String expression) {
         double largest = -1;
         int best = 0;
-        for (int i = 0; i< Operation.COUNT(); i++) {
-            double s = similarity(expression, Operation.instance( i ).getOperator());
+        for (int i = 0; i< OperationContext.get().id(); i++) {
+            double s = similarity(expression, OperationContext.get().instance( i ).getOperator());
             if (largest==-1) largest = s;
             else if (s > largest) {
                 best = i;
                 largest = s;
             }
         }
-        return ( largest > 0.1 ) ? Operation.instance(best).getOperator() : "";
+        return ( largest > 0.1 ) ? OperationContext.get().instance(best).getOperator() : "";
     }
 
     @Contract( pure = true )

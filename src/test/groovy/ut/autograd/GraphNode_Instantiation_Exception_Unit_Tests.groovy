@@ -113,9 +113,9 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             0 * device.cleaning( payload, _ )
             (1..2) * function.getOperation() >> type
             (1.._) * type.isDifferentiable() >> true
-            1 * inputs[0].find(GraphNode.class) >> inputsNodeMock
-            1 * inputs[1].find(GraphNode.class) >> null
-            0 * inputs[2].find(GraphNode.class) >> null
+            1 * inputs[0].find( GraphNode.class ) >> inputsNodeMock
+            1 * inputs[1].find( GraphNode.class ) >> null
+            0 * inputs[2].find( GraphNode.class ) >> null
             0 * context.allowsForward() >> true
     }
 
@@ -152,9 +152,9 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             0 * device.cleaning( payload, _ )
             (1.._) * function.getOperation() >> type
             (1.._) * type.isDifferentiable() >> true
-            1 * inputs[0].find(GraphNode.class) >> inputsNodeMock
-            1 * inputs[1].find(GraphNode.class) >> inputsNodeMock
-            1 * inputs[2].find(GraphNode.class) >> otherInputsNodeMock
+            1 * inputs[0].find( GraphNode.class ) >> inputsNodeMock
+            1 * inputs[1].find( GraphNode.class ) >> inputsNodeMock
+            1 * inputs[2].find( GraphNode.class ) >> otherInputsNodeMock
             0 * context.allowsForward() >> true
     }
 
@@ -188,9 +188,9 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             0 * payload.device() >> device
             0 * payload.set( _ )
             0 * device.cleaning( payload, _ )
-            1 * inputs[0].find(GraphNode.class) >> inputsNodeMock
-            0 * inputs[1].find(GraphNode.class) >> inputsNodeMock
-            0 * inputs[2].find(GraphNode.class) >> inputsNodeMock
+            1 * inputs[0].find( GraphNode.class ) >> inputsNodeMock
+            0 * inputs[1].find( GraphNode.class ) >> inputsNodeMock
+            0 * inputs[2].find( GraphNode.class ) >> inputsNodeMock
             0 * inputsNodeMock.getMode() >> -2
             1 * inputsNodeMock.usesAD() >> true
             0 * inputs[0].rqsGradient() >> true

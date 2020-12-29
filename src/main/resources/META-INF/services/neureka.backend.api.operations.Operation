@@ -1,0 +1,33 @@
+
+# activation functions :
+neureka.backend.standard.operations.function.Absolute
+neureka.backend.standard.operations.function.Cosinus
+neureka.backend.standard.operations.function.Gaussian
+neureka.backend.standard.operations.function.Identity
+neureka.backend.standard.operations.function.Quadratic
+neureka.backend.standard.operations.function.ReLU
+neureka.backend.standard.operations.function.Sigmoid
+neureka.backend.standard.operations.function.Sinus
+neureka.backend.standard.operations.function.Softplus
+neureka.backend.standard.operations.function.Tanh
+
+# indexer :
+neureka.backend.standard.operations.indexer.Summation
+neureka.backend.standard.operations.indexer.Product
+
+# operator :
+neureka.backend.standard.operations.operator.Power
+neureka.backend.standard.operations.operator.Division
+neureka.backend.standard.operations.operator.Multiplication
+neureka.backend.standard.operations.operator.Modulo
+neureka.backend.standard.operations.operator.Subtraction
+neureka.backend.standard.operations.operator.Addition
+
+# convolution :
+neureka.backend.standard.operations.linear.XConv
+
+# other :
+neureka.backend.standard.operations.other.DimTrim
+neureka.backend.standard.operations.other.Reshape
+neureka.backend.standard.operations.other.CopyLeft
+neureka.backend.standard.operations.other.CopyRight

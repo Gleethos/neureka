@@ -1,16 +1,16 @@
 package neureka.backend.standard.operations.other;
 
 import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.operations.Operation;
+import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.Activation;
+import neureka.backend.standard.implementations.CLImplementation;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.calculus.Function;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
-import neureka.backend.standard.implementations.HostImplementation;
 import neureka.devices.opencl.OpenCLDevice;
-import neureka.backend.standard.implementations.CLImplementation;
-import neureka.calculus.Function;
-import neureka.backend.api.ExecutionCall;
 
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class CopyRight extends AbstractOperation {
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[1+offset], tsrs[offset]}, -1, Operation.instance("idy") );
+                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[1+offset], tsrs[offset]}, -1, OperationContext.get().instance("idy") );
                 }
         )
         .build();
@@ -71,7 +71,7 @@ public class CopyRight extends AbstractOperation {
                                             -1,
                                             call.getOperation()
                                     );
-                                    Operation.instance("idy")
+                                    OperationContext.get().instance("idy")
                                             .getAlgorithm(Activation.class)
                                             .getImplementationFor( HostCPU.class )
                                             .run(call);
@@ -89,7 +89,7 @@ public class CopyRight extends AbstractOperation {
                                             -1,
                                             call.getOperation()
                                     );
-                                    Operation.instance("idy")
+                                    OperationContext.get().instance("idy")
                                             .getAlgorithm(Activation.class)
                                             .getImplementationFor( OpenCLDevice.class )
                                             .run(call);

@@ -71,17 +71,17 @@ public abstract class AbstractOperation implements Operation
     ) {
         _function = function;
         _arity = arity;
-        _id = OperationContext.instance().getID();
-        OperationContext.instance().incrementID();
+        _id = OperationContext.get().id();
+        OperationContext.get().incrementID();
         _operator = operator;
         _isOperator = isOperator;
         _isIndexer = isIndexer;
         _isDifferentiable = isDifferentiable;
         _isInline = isInline;
 
-        OperationContext.instance().getRegister().add( this );
-        OperationContext.instance().getLookup().put( operator, this );
-        OperationContext.instance().getLookup().put( operator.toLowerCase(), this );
+        OperationContext.get().instances().add( this );
+        OperationContext.get().lookup().put( operator, this );
+        OperationContext.get().lookup().put( operator.toLowerCase(), this );
         if (
                 operator
                         .replace((""+((char)171)), "")
@@ -89,10 +89,10 @@ public abstract class AbstractOperation implements Operation
                         .matches("[a-z]")
         ) {
             if ( operator.contains( ""+((char)171) ) )
-                OperationContext.instance().getLookup().put(operator.replace((""+((char)171)), "<<"), this);
+                OperationContext.get().lookup().put(operator.replace((""+((char)171)), "<<"), this);
 
             if ( operator.contains( ""+((char)187) ) )
-                OperationContext.instance().getLookup().put(operator.replace((""+((char)187)),">>"), this);
+                OperationContext.get().lookup().put(operator.replace((""+((char)187)),">>"), this);
 
         }
 

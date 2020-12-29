@@ -81,7 +81,7 @@ class Autograd_Explained extends Specification
             y.toString().contains("(2x2):[3.0, 3.0, 3.0, 3.0]")
 
         and : 'Because "y" was created as a result of a default operation, it now has a graph node as component.'
-            y.has(GraphNode.class)
+            y.has( GraphNode.class )
 
         when : 'We do more computations on "y" ...'
             def z = y * y * 3
@@ -137,7 +137,7 @@ class Autograd_Explained extends Specification
             result.detach()
 
         then : 'Our latest tensor will now longer have a strong reference to a soon to be garbage collected past !'
-            !result.has(GraphNode.class)
+            !result.has( GraphNode.class )
 
     }
 

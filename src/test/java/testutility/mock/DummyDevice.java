@@ -60,7 +60,7 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public Device execute(ExecutionCall call) {
+    public Device execute( ExecutionCall call ) {
         return this;
     }
 

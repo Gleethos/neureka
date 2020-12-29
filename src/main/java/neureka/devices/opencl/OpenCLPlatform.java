@@ -3,10 +3,10 @@ package neureka.devices.opencl;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import neureka.Neureka;
+import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.*;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.Operation;
 import org.jocl.*;
 import java.util.*;
@@ -110,7 +110,7 @@ public class OpenCLPlatform {
                     //===========================================================================
                     Map<String, String> code = new HashMap<>();
                     CLImplementation exec = null;
-                    for ( AbstractOperation type : Operation.ALL() ) {
+                    for ( Operation type : OperationContext.get().instances() ) {
                         if ( preName.contains("activation") && type.supportsAlgorithm(Activation.class) ) {
                             exec = (CLImplementation) type.getAlgorithm(Activation.class).getImplementationFor( OpenCLDevice.class );
                         } else if ( preName.contains("operator") && type.supportsAlgorithm(Operator.class) ) {

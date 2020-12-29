@@ -83,9 +83,9 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
             1 * payload.device() >> device
             1 * payload.set( _ )
             1 * device.cleaning( payload, _ )
-            4 * inputs[0].find(GraphNode.class) >> inputsNodeMock
-            3 * inputs[1].find(GraphNode.class) >> inputsNodeMock
-            3 * inputs[2].find(GraphNode.class) >> inputsNodeMock
+            4 * inputs[0].find( GraphNode.class ) >> inputsNodeMock
+            3 * inputs[1].find( GraphNode.class ) >> inputsNodeMock
+            3 * inputs[2].find( GraphNode.class ) >> inputsNodeMock
             1 * inputsNodeMock.getMode() >> -2
             1 * inputs[0].rqsGradient() >> true
             1 * inputs[1].rqsGradient() >> false

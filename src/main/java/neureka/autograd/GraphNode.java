@@ -416,7 +416,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
                     );
                 }
             }
-            _construct( payloadSupplier.get(), function, call, inputs[ 0 ].find(GraphNode.class).getLock() );
+            _construct( payloadSupplier.get(), function, call, inputs[ 0 ].find( GraphNode.class ).getLock() );
         } else {
             throw new IllegalArgumentException(
                     "The passed context object for the GraphNode constructor is of type '" + context.getClass().getName() + "'.\n" +
@@ -451,7 +451,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
             _function = function;
             _parents = new GraphNode[inputs.length];
             for ( int i = 0; i < inputs.length; i++ ) {
-                _parents[ i ] = inputs[ i ].find(GraphNode.class);
+                _parents[ i ] = inputs[ i ].find( GraphNode.class );
                 if ( _parents[ i ] == null ) {
                     throw new IllegalStateException(
                             "Input tensors of a new graph-node must contain leave graph-nodes!"

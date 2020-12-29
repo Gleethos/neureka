@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
 import neureka.backend.api.operations.Operation;
+import neureka.backend.api.operations.OperationContext;
 import neureka.calculus.AbstractBaseFunction;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
@@ -228,7 +229,7 @@ public class FunctionNode extends AbstractBaseFunction
                         if ( index >= 0 ) inner = tsrs[index];
                         else {
                             // Optimization above did not apply, so we accumulate all the derivatives!
-                            device.execute( new ExecutionCall<>( device, tsrs, -1, Operation.instance("+") ) );
+                            device.execute( new ExecutionCall<>( device, tsrs, -1, OperationContext.get().instance("+") ) );
                             inner = tsrs[ 0 ];//this is now the inner derivative!
                         }
                     } else inner = tsrs[ 1 ];
@@ -257,7 +258,7 @@ public class FunctionNode extends AbstractBaseFunction
                     //...multiply inner times outer: ( if inner is not 1 entirely... )
                     if ( !( ( inner.isVirtual() || inner.size()==1 ) && inner.value64( 0 )==1.0) ) {
                         tsrs = new Tsr[]{null, inner, tsrs[ 0 ]};
-                        device.execute( new ExecutionCall<>( device, tsrs, -1, Operation.instance("*") ) );
+                        device.execute( new ExecutionCall<>( device, tsrs, -1, OperationContext.get().instance("*") ) );
                     } // done!
                     return tsrs[ 0 ];
 
@@ -271,7 +272,7 @@ public class FunctionNode extends AbstractBaseFunction
                 if ( out == null ) out = actor.get();
                 else device.execute(
                         new ExecutionCall<>(
-                                device, new Tsr[]{null, actor.get(), out}, -1, Operation.instance("+")
+                                device, new Tsr[]{null, actor.get(), out}, -1, OperationContext.get().instance("+")
                         )
                 );
             }

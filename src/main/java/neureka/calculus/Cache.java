@@ -84,7 +84,7 @@ public class Cache
         }
         GraphLock lock =  untracked.find( GraphNode.class ).getLock();
         for ( Tsr<Object> t : inputs ) {
-            if ( t.has(GraphNode.class) ) t.find( GraphNode.class ).obtainLocking( lock );
+            if ( t.has( GraphNode.class ) ) t.find( GraphNode.class ).obtainLocking( lock );
             else new GraphNode( function, lock, ()->t );
         }
         GraphNode<Object> node = inputs[ 0 ].find( GraphNode.class );

@@ -260,7 +260,7 @@ public class BroadSystemTest
                 }
         );
         result = new Tsr(new Tsr[]{tensor1}, "(-3*(2*(i0*-1)))*(-1*i0)");
-        GraphNode node = (GraphNode) result.find(GraphNode.class);
+        GraphNode node = (GraphNode) result.find( GraphNode.class );
         String asString = node.toString("gnv");
         tester.testContains(
                 asString,

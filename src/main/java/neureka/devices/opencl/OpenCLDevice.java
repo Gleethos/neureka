@@ -48,25 +48,26 @@ SOFTWARE.
 
 package neureka.devices.opencl;
 
-import static org.jocl.CL.*;
-
-import java.nio.*;
-import java.util.*;
-
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import neureka.Component;
 import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.Operation;
+import neureka.backend.api.operations.OperationContext;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
-import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.api.ExecutionCall;
 import neureka.dtype.custom.F32;
 import neureka.framing.Relation;
 import neureka.utility.DataConverter;
 import org.jocl.*;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.*;
+
+import static org.jocl.CL.*;
 
 /**
  *  This class is a concrete implementation of the Device interface by extending the AbstractDevice class.
@@ -443,7 +444,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                         this,
                         new Tsr[]{ tensor, (Tsr) new Tsr( value ).set( this )},
                         -1,
-                        Operation.instance( "<" )
+                        OperationContext.get().instance( "<" )
                 )
             );
         }

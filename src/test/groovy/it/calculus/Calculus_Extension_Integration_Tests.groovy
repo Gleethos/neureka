@@ -32,7 +32,7 @@ class Calculus_Extension_Integration_Tests extends Specification
             //def clContext = new CLContext(lws, rws, com_sze, row_sze, col_sze)
             //def kernel = new GEMMKernelReferenceImplementation( clContext )
 
-            OperationContext oldContext = OperationContext.instance()
+            OperationContext oldContext = OperationContext.get()
             OperationContext testContext = oldContext.clone()
             OperationContext.setInstance(testContext)
         Operation type = new OperationTypeFactory()

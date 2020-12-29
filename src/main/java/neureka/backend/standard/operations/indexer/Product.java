@@ -2,19 +2,20 @@ package neureka.backend.standard.operations.indexer;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.devices.Device;
-import neureka.backend.standard.implementations.HostImplementation;
-import neureka.backend.standard.implementations.CLImplementation;
 import neureka.autograd.DefaultADAgent;
-import neureka.calculus.Function;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.Algorithm;
+import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.operations.Operation;
+import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
-import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.operations.Operation;
-import neureka.backend.api.algorithms.Algorithm;
+import neureka.backend.standard.implementations.CLImplementation;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
+import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
@@ -72,7 +73,7 @@ public class Product extends AbstractOperation {
                     if ( reduction.length > 2 ) {
                         reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tsrs[ 1 ]) : reduction[ 0 ];
                         alternative = goDeeperWith.apply(
-                                new ExecutionCall<>( device, reduction, -1, Operation.instance("*") )
+                                new ExecutionCall<>( device, reduction, -1, OperationContext.get().instance("*") )
                         );
                         tsrs[ 0 ] = reduction[ 0 ];
                     } else tsrs[ 0 ] = reduction[ 1 ];

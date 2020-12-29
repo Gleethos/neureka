@@ -11,7 +11,7 @@ class OperationContext_Unit_Tests extends Specification
 
         given : 'The singleton OperationContext instance and a OperationType mock.'
             def mockOperation = Mock(AbstractOperation)
-            def context = OperationContext.instance()
+            def context = OperationContext.get()
 
         when : 'A clone is being created by calling "clone()" on the given context...'
             def clone = context.clone()
@@ -20,25 +20,25 @@ class OperationContext_Unit_Tests extends Specification
             clone != context
 
         and : 'They contain the same entries.'
-            clone.getID() == context.getID()
-            clone.getLookup() == context.getLookup()
-            clone.getRegister() == context.getRegister()
+            clone.id() == context.id()
+            clone.lookup() == context.lookup()
+            clone.instances() == context.instances()
 
         when : 'The clone is changes its state.'
             clone.incrementID()
-            clone.getLookup().put("TEST KEY", null)
-            clone.getRegister().add( mockOperation )
+            clone.lookup().put("TEST KEY", null)
+            clone.instances().add( mockOperation )
 
         then : 'Their properties will no longer be the same.'
-            clone.getID() != context.getID()
-            clone.getLookup() != context.getLookup()
-            clone.getRegister() != context.getRegister()
+            clone.id() != context.id()
+            clone.lookup() != context.lookup()
+            clone.instances() != context.instances()
 
         and : 'The change will be as expected.'
-            clone.getID() == context.getID() + 1
-            clone.getLookup().size() == context.getLookup().size() + 1
-            clone.getLookup().containsKey("TEST KEY")
-            clone.getRegister().size() == context.getRegister().size() + 1
+            clone.id() == context.id() + 1
+            clone.lookup().size() == context.lookup().size() + 1
+            clone.lookup().containsKey("TEST KEY")
+            clone.instances().size() == context.instances().size() + 1
 
     }
 

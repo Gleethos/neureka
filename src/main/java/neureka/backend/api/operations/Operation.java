@@ -49,65 +49,74 @@ import neureka.backend.api.ExecutionCall;
 import neureka.ndim.iterators.NDIterator;
 
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.function.Consumer;
 
+/**
+ *  This interface describes an operation which
+ *  ought to consist of a compositional system
+ *  containing multiple algorithms which themselves
+ *  ought to contain device specific implementations
+ *  capable of processing ExecutionCall instances.
+ *
+ *  Besides the definition of the compositional system
+ *  there is also the requirement for its integration into
+ *  the calculus package.
+ *  This means that the operation should have a function name
+ *  and optionally also an operator.
+ *  Alongside there must be a stringifier which ought to generate
+ *  a String view as part of a Function-AST.
+ */
 public interface Operation
 {
-    static List<AbstractOperation> instances() {
-        return OperationContext.instance().getRegister();
-    }
 
-    static AbstractOperation instance(int index) {
-        return OperationContext.instance().getRegister().get(index);
+    @FunctionalInterface
+    interface TertiaryNDIConsumer
+    {
+        double execute( NDIterator t0Idx, NDIterator t1Idx, NDIterator t2Idx );
     }
-
-    static AbstractOperation[] ALL() {
-        return OperationContext.instance().getRegister().toArray(new AbstractOperation[ 0 ]);
+    @FunctionalInterface
+    interface TertiaryNDXConsumer
+    {
+        double execute( int[] t0Idx, int[] t1Idx, int[] t2Idx );
     }
-
-    static int COUNT() {
-        return OperationContext.instance().getID();
+    @FunctionalInterface
+    interface SecondaryNDIConsumer
+    {
+        double execute( NDIterator t0Idx, NDIterator t1Idx );
     }
-
-
-    static AbstractOperation instance(String identifier) {
-        return OperationContext.instance().getLookup().getOrDefault(identifier, null);
+    @FunctionalInterface
+    interface SecondaryNDXConsumer
+    {
+        double execute( int[] t0Idx, int[] t1Idx );
     }
-
-    interface TertiaryNDIConsumer {
-        double execute(NDIterator t0Idx, NDIterator t1Idx, NDIterator t2Idx);
+    @FunctionalInterface
+    interface PrimaryNDIConsumer
+    {
+        double execute( NDIterator t0Idx );
     }
-    interface TertiaryNDXConsumer {
-        double execute(int[] t0Idx, int[] t1Idx, int[] t2Idx);
-    }
-
-    interface SecondaryNDIConsumer {
-        double execute(NDIterator t0Idx, NDIterator t1Idx);
-    }
-    interface SecondaryNDXConsumer {
-        double execute(int[] t0Idx, int[] t1Idx);
-    }
-
-    interface PrimaryNDIConsumer {
-        double execute(NDIterator t0Idx);
-    }
-    interface PrimaryNDXConsumer {
-        double execute(int[] t0Idx);
+    @FunctionalInterface
+    interface PrimaryNDXConsumer
+    {
+        double execute( int[] t0Idx );
     }
 
     //---
 
-    interface DefaultOperatorCreator<T> {
-        T create(Tsr<?>[] inputs, int d);
+    @FunctionalInterface
+    interface DefaultOperatorCreator<T>
+    {
+        T create( Tsr<?>[] inputs, int d );
     }
-
-    interface ScalarOperatorCreator<T> {
-        T create(Tsr<?>[] inputs, double scalar, int d);
+    @FunctionalInterface
+    interface ScalarOperatorCreator<T>
+    {
+        T create( Tsr<?>[] inputs, double scalar, int d );
     }
 
     //==================================================================================================================
 
-    Algorithm AlgorithmFor(ExecutionCall call);
+    Algorithm AlgorithmFor( ExecutionCall call );
 
     //==================================================================================================================
 
@@ -115,23 +124,25 @@ public interface Operation
 
     //==================================================================================================================
 
-    <T extends AbstractFunctionalAlgorithm> T getAlgorithm(Class<T> type);
+    <T extends AbstractFunctionalAlgorithm> T getAlgorithm( Class<T> type );
 
-    <T extends AbstractFunctionalAlgorithm> boolean supportsAlgorithm(Class<T> type);
+    <T extends AbstractFunctionalAlgorithm> boolean supportsAlgorithm( Class<T> type );
 
-    <T extends AbstractFunctionalAlgorithm> Operation setAlgorithm(Class<T> type, T instance);
+    <T extends AbstractFunctionalAlgorithm> Operation setAlgorithm( Class<T> type, T instance );
 
-    Operation forEachAlgorithm(Consumer<Algorithm> action);
+    Operation forEachAlgorithm( Consumer<Algorithm> action );
 
     //==================================================================================================================
 
-    interface Stringifier {
-        String asString(List<String> children);
+    @FunctionalInterface
+    interface Stringifier
+    {
+        String asString( List<String> children );
     }
 
     //---
 
-    Operation setStringifier(Stringifier stringifier);
+    Operation setStringifier( Stringifier stringifier );
 
     Stringifier getStringifier();
 
@@ -155,7 +166,7 @@ public interface Operation
 
     boolean isInline();
 
-    boolean supports(Class implementation);
+    boolean supports( Class<?> implementation );
 
     /**
      * This method mainly ought to serve as a reference- and fallback- implementation for tensor backends and also
@@ -194,34 +205,34 @@ public interface Operation
      */
     class Utility
     {
-        public static Tsr<?>[] subset(Tsr<?>[] tsrs, int padding, int index, int offset) {
-            if (offset < 0) {
+        public static Tsr<?>[] subset( Tsr<?>[] tsrs, int padding, int index, int offset ) {
+            if ( offset < 0 ) {
                 index += offset;
                 offset *= -1;
             }
-            Tsr<?>[] newTsrs = new Tsr[offset + padding];
-            System.arraycopy(tsrs, index, newTsrs, padding, offset);
+            Tsr<?>[] newTsrs = new Tsr[ offset + padding ];
+            System.arraycopy( tsrs, index, newTsrs, padding, offset );
             return newTsrs;
         }
 
-        public static Tsr<?>[] without(Tsr<?>[] tsrs, int index) {
-            Tsr<?>[] newTsrs = new Tsr[tsrs.length - 1];
-            for (int i = 0; i < newTsrs.length; i++) newTsrs[ i ] = tsrs[i + ((i < index) ? 0 : 1)];
+        public static Tsr<?>[] without( Tsr<?>[] tsrs, int index ) {
+            Tsr<?>[] newTsrs = new Tsr[ tsrs.length - 1 ];
+            for ( int i = 0; i < newTsrs.length; i++ ) newTsrs[ i ] = tsrs[ i + ( ( i < index ) ? 0 : 1 ) ];
             return newTsrs;
         }
 
-        public static Tsr<?>[] offsetted(Tsr<?>[] tsrs, int offset) {
-            Tsr<?>[] newTsrs = new Tsr[tsrs.length - offset];
-            newTsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[ 1 ]);
-            if (!tsrs[ 1 ].has(GraphNode.class) && tsrs[ 1 ] != tsrs[ 0 ]) {//Deleting intermediate results!
+        public static Tsr<?>[] offsetted( Tsr<?>[] tsrs, int offset ) {
+            Tsr<?>[] newTsrs = new Tsr[ tsrs.length - offset ];
+            newTsrs[ 0 ] = Tsr.Create.newTsrLike( tsrs[ 1 ] );
+            if ( !tsrs[ 1 ].has( GraphNode.class ) && tsrs[ 1 ] != tsrs[ 0 ] ) {//Deleting intermediate results!
                 tsrs[ 1 ].delete();
                 tsrs[ 1 ] = null;
             }
-            if (!tsrs[ 2 ].has(GraphNode.class) && tsrs[ 2 ] != tsrs[ 0 ]) {//Deleting intermediate results!
+            if (!tsrs[ 2 ].has( GraphNode.class ) && tsrs[ 2 ] != tsrs[ 0 ]) {//Deleting intermediate results!
                 tsrs[ 2 ].delete();
                 tsrs[ 2 ] = null;
             }
-            System.arraycopy(tsrs, 1 + offset, newTsrs, 1, tsrs.length - 1 - offset);
+            System.arraycopy( tsrs, 1 + offset, newTsrs, 1, tsrs.length - 1 - offset );
             newTsrs[ 1 ] = tsrs[ 0 ];
             return newTsrs;
         }

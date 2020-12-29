@@ -54,7 +54,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
-            imp << OperationContext.instance()
+            imp << OperationContext.get()
                     .instances()
                     .stream()
                     .filter(
@@ -104,7 +104,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Activation".'
-            imp << OperationContext.instance()
+            imp << OperationContext.get()
                 .instances()
                 .stream()
                 .filter(
@@ -152,7 +152,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Convolution".'
-            imp << OperationContext.instance()
+            imp << OperationContext.get()
                 .instances()
                 .stream()
                 .filter(
@@ -203,7 +203,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Convolution".'
-            imp << OperationContext.instance()
+            imp << OperationContext.get()
                 .instances()
                 .stream()
                 .filter(

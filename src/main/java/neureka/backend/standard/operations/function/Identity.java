@@ -2,15 +2,15 @@ package neureka.backend.standard.operations.function;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.standard.algorithms.Activation;
-import neureka.backend.api.operations.Operation;
-import neureka.devices.Device;
-import neureka.backend.standard.implementations.HostImplementation;
-import neureka.backend.standard.implementations.CLImplementation;
-import neureka.calculus.Function;
-import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.operations.OperationContext;
+import neureka.backend.standard.algorithms.Activation;
+import neureka.backend.standard.algorithms.Scalarization;
+import neureka.backend.standard.implementations.CLImplementation;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.calculus.Function;
+import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
@@ -67,7 +67,7 @@ public class Identity extends AbstractOperation
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, Operation.instance("idy") );
+                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationContext.get().instance("idy") );
                 }
         )
         .build();

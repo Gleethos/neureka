@@ -3,17 +3,18 @@ package neureka.backend.standard.operations.linear;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
-import neureka.backend.api.algorithms.Algorithm;
-import neureka.backend.api.operations.Operation;
-import neureka.backend.standard.algorithms.GenericAlgorithm;
-import neureka.calculus.Function;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.standard.algorithms.Convolution;
+import neureka.backend.api.algorithms.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.operations.Operation;
+import neureka.backend.api.operations.OperationContext;
+import neureka.backend.standard.algorithms.Convolution;
+import neureka.backend.standard.algorithms.GenericAlgorithm;
+import neureka.backend.standard.implementations.CLImplementation;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
-import neureka.backend.standard.implementations.HostImplementation;
-import neureka.backend.standard.implementations.CLImplementation;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 
@@ -164,7 +165,7 @@ public class MatMul extends AbstractOperation
                                     Tsr.makeFit(tsrs, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                     for ( Tsr t : tsrs ) t.setIsVirtual( false );
                                     call.getDevice().execute( new ExecutionCall( call.getDevice(), tsrs, 0, call.getOperation() ) );
-                                    if ( call.getOperation().getId() == Operation.instance("x>>").getId()) return tsrs[ 2 ];
+                                    if ( call.getOperation().getId() == OperationContext.get().instance("x>>").getId()) return tsrs[ 2 ];
                                     else return tsrs[ 0 ];
                                 }
                             }

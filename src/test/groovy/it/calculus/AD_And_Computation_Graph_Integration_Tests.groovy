@@ -21,8 +21,8 @@ class AD_And_Computation_Graph_Integration_Tests extends Specification{
 
         when :
             Tsr b = rs(a)
-            GraphNode na = a.find(GraphNode.class)
-            GraphNode nb = b.find(GraphNode.class)
+            GraphNode na = a.find( GraphNode.class )
+            GraphNode nb = b.find( GraphNode.class )
 
         then :
             assert na.getChildren().size()==1
@@ -58,7 +58,7 @@ class AD_And_Computation_Graph_Integration_Tests extends Specification{
             Tsr c = new Tsr(3)
             Tsr d = b ^ c
             Tsr e = d * c
-            GraphNode n = e.find(GraphNode.class)
+            GraphNode n = e.find( GraphNode.class )
 
         when : System.gc()
         then :

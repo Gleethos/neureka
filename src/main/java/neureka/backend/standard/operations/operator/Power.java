@@ -2,19 +2,20 @@ package neureka.backend.standard.operations.operator;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.autograd.DefaultADAgent;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.Operation;
-import neureka.devices.Device;
-import neureka.backend.standard.implementations.HostImplementation;
-import neureka.backend.standard.implementations.CLImplementation;
-import neureka.autograd.DefaultADAgent;
-import neureka.calculus.Function;
+import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
-import neureka.backend.api.ExecutionCall;
+import neureka.backend.standard.implementations.CLImplementation;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.calculus.Function;
+import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.NDConfiguration;
@@ -158,7 +159,7 @@ public class Power extends AbstractOperation
                         Tsr[] reduction = Utility.subset(tsrs, 1,  2, tsrs.length-2);
                         reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);
                         alternative = goDeeperWith.apply(
-                                new ExecutionCall<>( device, reduction, -1, Operation.instance("*") )
+                                new ExecutionCall<>( device, reduction, -1, OperationContext.get().instance("*") )
                         );
                         Tsr exp = reduction[ 0 ];
                         reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], exp};
@@ -172,13 +173,13 @@ public class Power extends AbstractOperation
 
                         reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);
                         alternative = goDeeperWith.apply(
-                                new ExecutionCall<>( device, reduction, d-1, Operation.instance("*") )
+                                new ExecutionCall<>( device, reduction, d-1, OperationContext.get().instance("*") )
                         );
                         Tsr inner = reduction[ 0 ];
 
                         reduction = new Tsr[]{Tsr.Create.newTsrLike(tsrs[ 1 ]), inner, tsrs[d]};
                         alternative = goDeeperWith.apply(
-                                new ExecutionCall<>( device, reduction, -1, Operation.instance("*") )
+                                new ExecutionCall<>( device, reduction, -1, OperationContext.get().instance("*") )
                         );
                         Tsr exp = reduction[ 0 ];
 
@@ -510,7 +511,7 @@ public class Power extends AbstractOperation
                             call -> {
                                 Tsr[] tsrs = call.getTensors();
                                 int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                                return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, Operation.instance("idy") );
+                                return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationContext.get().instance("idy") );
                             }
                     )
                     .build()

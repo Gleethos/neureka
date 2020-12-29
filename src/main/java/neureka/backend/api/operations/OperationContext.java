@@ -3,34 +3,8 @@ package neureka.backend.api.operations;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import neureka.backend.standard.operations.function.Absolute;
-import neureka.backend.standard.operations.function.Cosinus;
-import neureka.backend.standard.operations.function.Gaussian;
-import neureka.backend.standard.operations.function.Identity;
-import neureka.backend.standard.operations.function.Quadratic;
-import neureka.backend.standard.operations.function.ReLU;
-import neureka.backend.standard.operations.function.Sigmoid;
-import neureka.backend.standard.operations.function.Sinus;
-import neureka.backend.standard.operations.function.Softplus;
-import neureka.backend.standard.operations.function.Tanh;
-import neureka.backend.standard.operations.indexer.Product;
-import neureka.backend.standard.operations.indexer.Summation;
-import neureka.backend.standard.operations.linear.XConv;
-import neureka.backend.standard.operations.operator.Addition;
-import neureka.backend.standard.operations.operator.Division;
-import neureka.backend.standard.operations.operator.Modulo;
-import neureka.backend.standard.operations.operator.Multiplication;
-import neureka.backend.standard.operations.operator.Power;
-import neureka.backend.standard.operations.operator.Subtraction;
-import neureka.backend.standard.operations.other.CopyRight;
-import neureka.backend.standard.operations.other.DimTrim;
-import neureka.backend.standard.operations.other.Reshape;
-import neureka.backend.standard.operations.other.CopyLeft;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import java.util.*;
 
 /**
  *    PATTERN : Singleton
@@ -45,96 +19,80 @@ import java.util.Map;
  *    are being instantiated in the static block below.
  *
  */
-@Accessors( prefix = {"_"} )
+@Accessors( prefix = {"_"}, fluent = true )
 @ToString
+@Slf4j
 public class OperationContext implements Cloneable
 {
-    private static ThreadLocal<OperationContext> _INSTANCES = ThreadLocal.withInitial( ()->new OperationContext() );
+    private static final ThreadLocal<OperationContext> _contexts = ThreadLocal.withInitial(
+            () -> new OperationContext()
+    );
 
     static
     {
-        new ReLU();
-        new Sigmoid();
-        new Tanh();
-        new Quadratic();
-        new Softplus();
-        new Identity();
-        new Gaussian();
-        new Absolute();
-        new Sinus();
-        new Cosinus();
-
-        new Summation();
-        new Product();
-
-        new Power();
-        new Division();
-        new Multiplication();
-        new Modulo();
-        new Subtraction();
-        new Addition();
-
-        new XConv();
-
-        new Reshape();
-        new DimTrim();
-        new CopyLeft();
-        new CopyRight();
+       // loading operations!
+       ServiceLoader<Operation> serviceLoader = ServiceLoader.load(Operation.class);
+       serviceLoader.reload();
+       //checking if load was successful
+       for (Operation operation : serviceLoader) {
+           assert operation.getFunction() != null;
+           log.debug( "Operation: '" + operation.getFunction() + "' loaded!" );
+       }
     }
 
     /**
      * @return The OperationContext singleton instance!
      */
-    public static OperationContext instance() {
-        return _INSTANCES.get();
+    public static OperationContext get()
+    {
+        return _contexts.get();
     }
 
-    public static void setInstance( OperationContext context ) {
-        _INSTANCES.set(context);
+    public static void setInstance( OperationContext context )
+    {
+        _contexts.set(context);
     }
 
     /**
-     * @return A mapping between OperationType identifiers and their corresponding instances.
+     *  A mapping between OperationType identifiers and their corresponding instances.
      */
-    @Getter private final Map<String, AbstractOperation> _lookup;
+    @Getter private final Map<String, Operation> _lookup;
     /**
-     * @return A list of all OperationType instances.
+     *  A list of all OperationType instances.
      */
-    @Getter private final ArrayList<AbstractOperation> _register;
+    @Getter private final List<Operation> _instances;
     /**
-     * @return The ID of the OperationType that will be instantiated next.
+     *  The ID of the OperationType that will be instantiated next.
      */
-    @Getter private int _ID;
+    @Getter private int _id;
 
-    private OperationContext() {
+    private OperationContext()
+    {
         _lookup = new HashMap<>();
-        _register = new ArrayList<>();
-        _ID = 0;
+        _instances = new ArrayList<>();
+        _id = 0;
     }
 
-    public void incrementID() {
-        _ID++;
+    public void incrementID()
+    {
+        _id++;
     }
 
-    public List<AbstractOperation> instances() {
-        return getRegister();
+    public Operation instance( int index ) {
+        return _instances.get(index);
     }
 
-    public AbstractOperation instance(int index) {
-        return getRegister().get(index);
-    }
-
-    public AbstractOperation instance(String identifier) {
-        return getLookup().getOrDefault(identifier, null);
+    public Operation instance( String identifier ) {
+        return _lookup.getOrDefault(identifier, null);
     }
 
     @Override
     public OperationContext clone()
     {
         OperationContext clone = new OperationContext();
-        clone._ID = _ID;
+        clone._id = _id;
         clone._lookup.putAll(_lookup);
-        clone._register.addAll(_register);
+        clone._instances.addAll(_instances);
         return clone;
     }
 

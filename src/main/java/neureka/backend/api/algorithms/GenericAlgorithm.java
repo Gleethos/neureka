@@ -77,7 +77,7 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<Algorithm> {
     }
 
     @Override
-    public float isAlgorithmSuitableFor(ExecutionCall call) {
+    public float isAlgorithmSuitableFor( ExecutionCall call ) {
         int[] shape = null;
         for ( Tsr<?> t : call.getTensors() ) {
             if ( shape == null ) if ( t != null ) shape = t.getNDConf().shape();
