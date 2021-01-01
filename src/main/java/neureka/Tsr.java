@@ -106,6 +106,7 @@ import neureka.ndim.iterators.NDIterator;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 import neureka.optimization.Optimizer;
 import neureka.utility.DataConverter;
+import neureka.utility.TsrAsString;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
@@ -2335,161 +2336,13 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return _toString( mode, ( mode.contains( "f" ) ) ? "    " : null );
     }
 
-    /*
-    // A recursive stringifier for formatted tensors...
-    private StringBuilder _format( int[] shape, int[] idx, int dim ) {
-        boolean legacy = Neureka.instance().settings().indexing().isUsingLegacyIndexing();
-        StringBuilder builder = new StringBuilder();
-
-        if ( legacy && dim == 0 || !legacy && dim == idx.length - 1 ) {
-            String row = _stringified( true, 50, idx, shape[dim] );
-        } else {
-
-            builder.append( _format(shape, idx, dim+1) );
-        }
-        //NDConfiguration.Utility.increment( idx, shape );
-        return builder;
-    }
-    */
-
-    private StringBuilder _strShape() {
-        boolean legacy = Neureka.instance().settings().view().isUsingLegacyView();
-        StringBuilder strShape = new StringBuilder( (legacy) ? "[" : "(" );
-        int[] shape = _NDConf.shape();
-        for ( int i = 0; i < shape.length; i++ ) {
-            strShape.append( shape[ i ] );
-            if ( i < shape.length - 1 ) strShape.append( "x" );
-        }
-        if ( legacy ) return strShape.append( "]" );
-        else return strShape.append( ")" );
-
+    public String toString( Map<TsrAsString.Should, Object> config, String deep ) {
+        return new TsrAsString( this, config ).toString( deep );
     }
 
-    protected String _toString( String mode, String deep ) {
-        if ( this.isEmpty() ) return "empty";
-        else if ( this.isUndefined() ) return "undefined";
-        String base = ( deep == null ) ? "" : "\n" + deep;
-        String delimiter = ( deep == null ) ? "" : "    ";
-        String half = ( deep == null ) ? "" : "  ";
-        String deeper = ( deep == null ) ? deep : deep + delimiter;
-        int max = ( mode.contains( "s" ) ) ? 3 : 50;
-        StringBuilder strShape = _strShape();
-        boolean compact = mode.contains( "c" );
-        if ( mode.contains( "shape" ) || mode.contains( "shp" ) ) return strShape.toString();
-        String asString = "";
-        asString += _stringified( compact, max );
-        asString = strShape + (
-                        ( Neureka.instance().settings().view().isUsingLegacyView() )
-                                ? ":(" + asString + ")"
-                                : ":[" + asString + "]"
-                );
-        if ( mode.contains( "g" ) && ( this.rqsGradient() || this.hasGradient() ) ) {
-            asString += ":g:";
-            Tsr<ValueType> gradient = this.find( Tsr.class );
-            if ( gradient != null )
-                asString += gradient.toString( "c" ).replace( strShape + ":", "" );
-            else
-                asString += ( (Neureka.instance().settings().view().isUsingLegacyView() ) ? "(null)" : "[null]" );
-        }
-        if ( mode.contains( "r" ) && this.has( GraphNode.class ) && this.find( GraphNode.class ).size() > 0 ) {
-            GraphNode<ValueType> node = this.find( GraphNode.class );
-            AtomicReference<String> enclosed = new AtomicReference<>( "; " );
-            node.forEachDerivative( ( t, agent ) -> {
-                if ( agent.derivative() == null ) {
-                    enclosed.set( enclosed.get() + "->d(null), " );
-                } else {
-                    enclosed.set(
-                            enclosed.get() +
-                            base + "=>d|[ " +
-                            base + delimiter + agent.derivative()._toString( mode, deeper ) + " " +
-                            base + half + "]|:t{ " +
-                            base + delimiter + (
-                                    ( t.getPayload() != null ) ? t.getPayload()._toString( mode, deeper ) : t.toString("")
-                            ) + " " +
-                            base + half + "}, "
-                    );
-                }
-            });
-            asString += enclosed.get();
-        }
-        if ( mode.contains( "d" ) && this.has( GraphNode.class ) && this.find( GraphNode.class ).size() > 0 ) {
-            GraphNode<ValueType> node = this.find( GraphNode.class );
-            if ( node.getMode() != 0 ) {
-                AtomicReference<String> asAR = new AtomicReference<>( "; " );
-                node.forEachDerivative( ( t, agent ) -> {
-                    if ( agent.derivative() == null ) asAR.set( asAR.get() + "->d(" + agent.toString() + "), " );
-                    else asAR.set( asAR.get() + "->d" + agent.derivative()._toString( mode, deeper ) + ", " );
-                });
-                asString += asAR.get();
-            }
-        }
-        return asString;
-    }
-
-    private String _stringified(
-            boolean format,
-            int max,
-            int[] idx,
-            int size
-    ) {
-        int[] shape = getNDConf().shape();
-        IntFunction<String> getter = _createValStringifier( format );
-        StringBuilder asString = new StringBuilder();
-        int trim = ( size - max );
-        size = ( trim > 0 ) ? max : size;
-        for ( int i = 0; i < size; i++ ) {
-            String vStr = getter.apply( ( this.isVirtual() ) ? 0 : i_of_idx( idx ) );
-            asString.append( vStr );
-            if ( i < size - 1 ) asString.append( ", " );
-            else if ( trim > 0 ) asString.append( ", ... + " ).append( trim ).append( " more" );
-            NDConfiguration.Utility.increment( idx, shape );
-        }
-        return asString.toString();
-    }
-
-
-    private String _stringified(
-            boolean format,
-            int max
-    ) {
-        IntFunction<String> getter = _createValStringifier( format );
-        StringBuilder asString = new StringBuilder();
-        int size = this.size();
-        int trim = ( size - max );
-        size = ( trim > 0 ) ? max : size;
-        for ( int i = 0; i < size; i++ ) {
-            String vStr = getter.apply( ( this.isVirtual() ) ? 0 : i_of_i( i ) );
-            asString.append( vStr );
-            if ( i < size - 1 ) asString.append( ", " );
-            else if ( trim > 0 ) asString.append( ", ... + " ).append( trim ).append( " more" );
-        }
-        return asString.toString();
-    }
-
-    private IntFunction _createValStringifier( boolean format ) {
-        Object v = getData();
-        if ( v instanceof double[] )
-            return i -> ( format )
-                        ? Utility.Stringify.formatFP( ( (double[]) v )[ i ])
-                        : String.valueOf( ( (double[] ) v )[ i ] );
-        else if ( v instanceof float[] )
-            return i -> ( format )
-                        ? Utility.Stringify.formatFP( ( (float[]) v )[ i ] )
-                        : String.valueOf( ( (float[]) v )[ i ] );
-        else if ( v instanceof short[] )
-            return i -> ( format )
-                        ? Utility.Stringify.formatFP( ( (short[]) v )[ i ] )
-                        : String.valueOf( ( (short[]) v )[ i ] );
-        else if ( v instanceof int[] )
-            return i -> ( format )
-                        ? Utility.Stringify.formatFP( ( (int[]) v )[ i ] )
-                        : String.valueOf( ( (int[]) v )[ i ] );
-        else if ( v == null )
-            return i -> ( format )
-                        ? Utility.Stringify.formatFP( value64( i ) )
-                        : String.valueOf( value64( i ) );
-        else
-            return i -> String.valueOf( ( (Object[]) v )[ i ] );
+    protected String _toString( String mode, String deep )
+    {
+        return new TsrAsString( this, mode ).toString( deep );
     }
 
 
