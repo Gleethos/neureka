@@ -3,8 +3,8 @@
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.backend.implementations.functional.Activation;
 import neureka.calculus.backend.operations.AbstractOperationType;
@@ -40,7 +40,7 @@ public class Absolute extends AbstractOperationType {
             }
         );
 
-<span class="fc" id="L43">        Activation typeImplementation = new Activation()</span>
+<span class="fc" id="L43">        Activation operationAlgorithm = new Activation()</span>
 <span class="fc" id="L44">            .setADAgentSupplier(</span>
                 ( Function f, ExecutionCall&lt;Device&gt; call, boolean forward ) -&gt;
 <span class="fc" id="L46">                defaultImplementation().supplyADAgentFor( f, call, forward )</span>
@@ -48,7 +48,7 @@ public class Absolute extends AbstractOperationType {
 
 <span class="fc" id="L49">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L51">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L51">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
 <span class="fc" id="L54">                                call  -&gt; call.getDevice().getExecutor()</span>
@@ -84,7 +84,7 @@ public class Absolute extends AbstractOperationType {
 <span class="nc" id="L84">                                            .call( gwz );</span>
 <span class="nc" id="L85">                                },</span>
                                 3,
-<span class="fc" id="L87">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L87">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;output = fabs( input );\n&quot;, // activationSource
                                 &quot;output = ( input &lt; 0 ) ? -1 : 1;\n&quot;, //differentiationSource
                                 this // OperationType

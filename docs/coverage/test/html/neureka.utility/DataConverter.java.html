@@ -240,34 +240,34 @@ public class DataConverter
         {
 <span class="fc" id="L241">            long h = 1125899906842597L; // prime</span>
 <span class="fc" id="L242">            int len = string.length();</span>
-<span class="fc bfc" id="L243" title="All 2 branches covered.">            for (int i = 0; i &lt; len; i++) h = 31*h + string.charAt( i );</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">            for ( int i = 0; i &lt; len; i++ ) h = 31*h + string.charAt( i );</span>
 <span class="fc" id="L244">            return h;</span>
         }
 
 
         public static short[] byteToShort( byte[] data ) {
-<span class="nc bnc" id="L249" title="All 2 branches missed.">            if( data == null ) return null;</span>
+<span class="nc bnc" id="L249" title="All 2 branches missed.">            if ( data == null ) return null;</span>
 <span class="nc" id="L250">            short[] newData = new short[data.length];</span>
 <span class="nc bnc" id="L251" title="All 2 branches missed.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = data[ i ];</span>
 <span class="nc" id="L252">            return newData;</span>
         }
 
         public static BigInteger[] byteToBigInteger( byte[] data ) {
-<span class="nc bnc" id="L256" title="All 2 branches missed.">            if( data == null ) return null;</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">            if ( data == null ) return null;</span>
 <span class="nc" id="L257">            BigInteger[] newData = new BigInteger[data.length];</span>
 <span class="nc bnc" id="L258" title="All 2 branches missed.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );</span>
 <span class="nc" id="L259">            return newData;</span>
         }
 
         public static float[] doubleToFloat( double[] data ) {
-<span class="pc bpc" id="L263" title="1 of 2 branches missed.">            if( data == null ) return null;</span>
+<span class="pc bpc" id="L263" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
 <span class="fc" id="L264">            float[] newData = new float[data.length];</span>
 <span class="fc bfc" id="L265" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = (float) data[ i ];</span>
 <span class="fc" id="L266">            return newData;</span>
         }
 
         public static byte[] doubleToByte( double[] data ) {
-<span class="pc bpc" id="L270" title="1 of 2 branches missed.">            if( data == null ) return null;</span>
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">            if ( data == null ) return null;</span>
 <span class="fc" id="L271">            byte[] newData = new byte[data.length];</span>
 <span class="fc bfc" id="L272" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = (byte) data[ i ];</span>
 <span class="fc" id="L273">            return newData;</span>
@@ -288,98 +288,98 @@ public class DataConverter
         }
 
         public static double[] floatToDouble(float[] data) {
-<span class="pc bpc" id="L291" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L292">            double[] newData = new double[data.length];</span>
 <span class="fc bfc" id="L293" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = (double)data[ i ];</span>
 <span class="fc" id="L294">            return newData;</span>
         }
 
         public static byte[] floatToByte( float[] data ) {
-<span class="pc bpc" id="L298" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L298" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L299">            byte[] newData = new byte[data.length];</span>
 <span class="fc bfc" id="L300" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = (byte) data[ i ];</span>
 <span class="fc" id="L301">            return newData;</span>
         }
 
         public static short[] floatToShort( float[] data ) {
-<span class="pc bpc" id="L305" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L306">            short[] newData = new short[data.length];</span>
 <span class="fc bfc" id="L307" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = (short) data[ i ];</span>
 <span class="fc" id="L308">            return newData;</span>
         }
 
         public static long[] floatToLong( float[] data ) {
-<span class="pc bpc" id="L312" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L312" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L313">            long[] newData = new long[data.length];</span>
 <span class="fc bfc" id="L314" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = (long) data[ i ];</span>
 <span class="fc" id="L315">            return newData;</span>
         }
 
         public static double[] shortToDouble(short[] data) {
-<span class="pc bpc" id="L319" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L319" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L320">            double[] newData = new double[data.length];</span>
 <span class="fc bfc" id="L321" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = data[ i ];</span>
 <span class="fc" id="L322">            return newData;</span>
         }
 
         public static double[] byteToDouble(byte[] data) {
-<span class="pc bpc" id="L326" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L326" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L327">            double[] newData = new double[data.length];</span>
 <span class="fc bfc" id="L328" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = data[ i ];</span>
 <span class="fc" id="L329">            return newData;</span>
         }
 
         public static float[] byteToFloat(byte[] data) {
-<span class="pc bpc" id="L333" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L333" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L334">            float[] newData = new float[data.length];</span>
 <span class="fc bfc" id="L335" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = data[ i ];</span>
 <span class="fc" id="L336">            return newData;</span>
         }
 
         public static float[] shortToFloat(short[] data) {
-<span class="pc bpc" id="L340" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L341">            float[] newData = new float[data.length];</span>
 <span class="fc bfc" id="L342" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = data[ i ];</span>
 <span class="fc" id="L343">            return newData;</span>
         }
 
         public static int[] byteToInt(byte[] data) {
-<span class="nc bnc" id="L347" title="All 2 branches missed.">            if(data==null) return null;</span>
+<span class="nc bnc" id="L347" title="All 2 branches missed.">            if (data==null) return null;</span>
 <span class="nc" id="L348">            int[] newData = new int[data.length];</span>
 <span class="nc bnc" id="L349" title="All 2 branches missed.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = data[ i ];</span>
 <span class="nc" id="L350">            return newData;</span>
         }
 
         public static int[] shortToInt(short[] data) {
-<span class="pc bpc" id="L354" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L354" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L355">            int[] newData = new int[data.length];</span>
 <span class="fc bfc" id="L356" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = data[ i ];</span>
 <span class="fc" id="L357">            return newData;</span>
         }
 
         public static byte[] shortToByte(short[] data) {
-<span class="pc bpc" id="L361" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L361" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L362">            byte[] newData = new byte[data.length];</span>
 <span class="fc bfc" id="L363" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = (byte) data[ i ];</span>
 <span class="fc" id="L364">            return newData;</span>
         }
 
         public static long[] byteToLong(byte[] data) {
-<span class="nc bnc" id="L368" title="All 2 branches missed.">            if(data==null) return null;</span>
+<span class="nc bnc" id="L368" title="All 2 branches missed.">            if (data==null) return null;</span>
 <span class="nc" id="L369">            long[] newData = new long[data.length];</span>
 <span class="nc bnc" id="L370" title="All 2 branches missed.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = data[ i ];</span>
 <span class="nc" id="L371">            return newData;</span>
         }
 
         public static long[] shortToLong(short[] data) {
-<span class="pc bpc" id="L375" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L375" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L376">            long[] newData = new long[data.length];</span>
 <span class="fc bfc" id="L377" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = data[ i ];</span>
 <span class="fc" id="L378">            return newData;</span>
         }
 
         public static BigInteger[] shortToBigInteger(short[] data) {
-<span class="pc bpc" id="L382" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L382" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L383">            BigInteger[] newData = new BigInteger[data.length];</span>
 <span class="fc bfc" id="L384" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );</span>
 <span class="fc" id="L385">            return newData;</span>
@@ -456,42 +456,42 @@ public class DataConverter
         }
 
         public static byte[] longToByte(long[] data) {
-<span class="pc bpc" id="L459" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L459" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L460">            byte[] newData = new byte[data.length];</span>
 <span class="fc bfc" id="L461" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = (byte) data[ i ];</span>
 <span class="fc" id="L462">            return newData;</span>
         }
 
         public static short[] longToShort(long[] data) {
-<span class="pc bpc" id="L466" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L466" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L467">            short[] newData = new short[data.length];</span>
 <span class="fc bfc" id="L468" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = (short) data[ i ];</span>
 <span class="fc" id="L469">            return newData;</span>
         }
 
         public static int[] longToInt(long[] data) {
-<span class="pc bpc" id="L473" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L473" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L474">            int[] newData = new int[data.length];</span>
 <span class="fc bfc" id="L475" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = (int) data[ i ];</span>
 <span class="fc" id="L476">            return newData;</span>
         }
 
         public static float[] longToFloat(long[] data) {
-<span class="pc bpc" id="L480" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L480" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L481">            float[] newData = new float[data.length];</span>
 <span class="fc bfc" id="L482" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = (float) data[ i ];</span>
 <span class="fc" id="L483">            return newData;</span>
         }
 
         public static double[] longToDouble(long[] data) {
-<span class="pc bpc" id="L487" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L487" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L488">            double[] newData = new double[data.length];</span>
 <span class="fc bfc" id="L489" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = (double) data[ i ];</span>
 <span class="fc" id="L490">            return newData;</span>
         }
 
         public static BigInteger[] longToBigInteger(long[] data) {
-<span class="pc bpc" id="L494" title="1 of 2 branches missed.">            if(data==null) return null;</span>
+<span class="pc bpc" id="L494" title="1 of 2 branches missed.">            if (data==null) return null;</span>
 <span class="fc" id="L495">            BigInteger[] newData = new BigInteger[data.length];</span>
 <span class="fc bfc" id="L496" title="All 2 branches covered.">            for(int i=0; i&lt;data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );</span>
 <span class="fc" id="L497">            return newData;</span>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DimTrim.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.standard.operations.other</a> &gt; <span class="el_source">DimTrim.java</span></div><h1>DimTrim.java</h1><pre class="source lang-java linenums">package neureka.backend.standard.operations.other;
 
 import neureka.Tsr;
-import neureka.backend.standard.implementations.GenericImplementation;
+import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.devices.Device;
 import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
-import neureka.backend.api.operations.AbstractOperationType;
 import neureka.backend.api.ExecutionCall;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.ndim.config.AbstractNDC;
@@ -13,7 +13,7 @@ import neureka.ndim.config.AbstractNDC;
 import java.util.ArrayList;
 import java.util.List;
 
-<span class="pc bpc" id="L16" title="1 of 2 branches missed.">public class DimTrim extends AbstractOperationType</span>
+<span class="pc bpc" id="L16" title="1 of 2 branches missed.">public class DimTrim extends AbstractOperation</span>
 {
 
     public DimTrim()
@@ -39,7 +39,7 @@ import java.util.List;
                 }
         );
 
-<span class="fc" id="L42">        GenericImplementation implementation = new GenericImplementation(&quot;reshape&quot;)</span>
+<span class="fc" id="L42">        GenericAlgorithm implementation = new GenericAlgorithm(&quot;reshape&quot;)</span>
 <span class="fc" id="L43">                .setSuitabilityChecker( call -&gt; 1.0f )</span>
 <span class="fc" id="L44">                .setBackwardADAnalyzer( call -&gt; true )</span>
 <span class="fc" id="L45">                .setForwardADAnalyzer( call -&gt; false )</span>
@@ -78,8 +78,8 @@ import java.util.List;
 <span class="pc" id="L78">                .setDrainInstantiation( call -&gt; call )</span>
 <span class="fc" id="L79">                .build();</span>
 
-<span class="fc" id="L81">        setImplementation(</span>
-                GenericImplementation.class,
+<span class="fc" id="L81">        setAlgorithm(</span>
+                GenericAlgorithm.class,
                 implementation
         );
 
@@ -138,7 +138,7 @@ import java.util.List;
 <span class="fc" id="L138">        List&lt;Integer&gt; newOffset = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L139">        int[] shape = tensor.getNDConf().shape();</span>
 <span class="fc" id="L140">        int prefix = 0;</span>
-<span class="fc bfc" id="L141" title="All 4 branches covered.">        for (int s : shape) if (s == 1) prefix++; else break;</span>
+<span class="fc bfc" id="L141" title="All 4 branches covered.">        for ( int s : shape) if (s == 1) prefix++; else break;</span>
 <span class="fc" id="L142">        int postfix = 0;</span>
 <span class="fc bfc" id="L143" title="All 4 branches covered.">        for ( int i=shape.length-1; i&gt;=0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;</span>
 <span class="fc bfc" id="L144" title="All 2 branches covered.">        for ( int i = prefix; i &lt; shape.length-postfix; i++ ) {</span>

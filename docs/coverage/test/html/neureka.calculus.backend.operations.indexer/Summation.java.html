@@ -3,8 +3,8 @@
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.implementations.functional.Activation;
@@ -96,7 +96,7 @@ public class Summation extends AbstractOperationType
 <span class="fc" id="L96">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; 1.0;</span>
                 };
 
-<span class="fc" id="L99">        Broadcast typeImplementation = new Broadcast()</span>
+<span class="fc" id="L99">        Broadcast operationAlgorithm = new Broadcast()</span>
 <span class="fc" id="L100">                .setBackwardADAnalyzer( call -&gt; true )</span>
 <span class="fc" id="L101">                .setForwardADAnalyzer( call -&gt; true )</span>
 <span class="fc" id="L102">                .setADAgentSupplier(</span>
@@ -126,7 +126,7 @@ public class Summation extends AbstractOperationType
 
 <span class="fc" id="L127">        setImplementation (</span>
                 Broadcast.class,
-<span class="fc" id="L129">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L129">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -170,7 +170,7 @@ public class Summation extends AbstractOperationType
 <span class="nc" id="L170">                                            .call( gwz );</span>
 <span class="nc" id="L171">                                },</span>
                                 3,
-<span class="fc" id="L173">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L173">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;value = src1 + src2;\n&quot;,
                                 &quot;value += 1 * drain;\n&quot;,
                                 this // OperationType

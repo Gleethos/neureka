@@ -43,7 +43,7 @@ public class Cosinus extends OperationType {
                 }
         );
 
-<span class="fc" id="L46">        Activation typeImplementation = new Activation()</span>
+<span class="fc" id="L46">        Activation operationAlgorithm = new Activation()</span>
 <span class="fc" id="L47">        .setADAnalyzer(</span>
                 call -&gt; {
 <span class="fc" id="L49">                    Tsr last = null;</span>
@@ -116,7 +116,7 @@ public class Cosinus extends OperationType {
 
 <span class="fc" id="L117">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L119">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L119">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                             call  -&gt;
@@ -146,7 +146,7 @@ public class Cosinus extends OperationType {
 <span class="nc" id="L146">                                            .call(gwz);</span>
 <span class="nc" id="L147">                                },</span>
                                 3,
-<span class="fc" id="L149">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L149">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;output = cos(input);\n&quot;, // activationSource
                                 &quot;output = -sin(input);\n&quot;, //differentiationSource
                                 this // OperationType

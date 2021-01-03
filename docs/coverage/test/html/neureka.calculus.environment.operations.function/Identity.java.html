@@ -36,7 +36,7 @@ public class Identity extends OperationType
 <span class="nc" id="L36">                    else return (t0Idx, t1Idx, t2Idx) -&gt; 1;</span>
                 };
 
-<span class="fc" id="L39">        Activation typeImplementation = new Activation()</span>
+<span class="fc" id="L39">        Activation operationAlgorithm = new Activation()</span>
 <span class="fc" id="L40">        .setADAnalyzer(</span>
                 call -&gt; {
 <span class="nc" id="L42">                    Tsr last = null;</span>
@@ -100,7 +100,7 @@ public class Identity extends OperationType
         );
 <span class="fc" id="L101">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L103">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L103">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -132,7 +132,7 @@ public class Identity extends OperationType
 <span class="fc" id="L132">                                            .call(gwz);</span>
 <span class="fc" id="L133">                                },</span>
                                 3,
-<span class="fc" id="L135">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L135">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;output = input;\n&quot;, // activationSource
                                 &quot;output = input;\n&quot;, //differentiationSource
                                 this // OperationType

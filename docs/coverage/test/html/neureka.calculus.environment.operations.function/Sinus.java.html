@@ -36,7 +36,7 @@ public class Sinus extends OperationType
                 }
         );
 
-<span class="fc" id="L39">        Activation typeImplementation = new Activation()</span>
+<span class="fc" id="L39">        Activation operationAlgorithm = new Activation()</span>
 <span class="fc" id="L40">        .setADAnalyzer(</span>
                 call -&gt; {
 <span class="nc" id="L42">                    Tsr last = null;</span>
@@ -112,7 +112,7 @@ public class Sinus extends OperationType
 
 <span class="fc" id="L113">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L115">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L115">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -142,7 +142,7 @@ public class Sinus extends OperationType
 <span class="nc" id="L142">                                            .call(gwz);</span>
 <span class="nc" id="L143">                                },</span>
                                 3,
-<span class="fc" id="L145">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L145">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;output = sin(input);\n&quot;,
                                 &quot;output = cos(input);\n&quot;,
                                 this // OperationType

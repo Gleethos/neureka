@@ -85,7 +85,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     }
 
     @Override
-    public int shape(int i) {
+    public int shape( int i ) {
 <span class="nc bnc" id="L89" title="All 4 branches missed.">        return (i==0)?_shape1:(i==1)?_shape2:_shape3;</span>
     }
 
@@ -95,7 +95,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     }
 
     @Override
-    public int idxmap(int i) {
+    public int idxmap( int i ) {
 <span class="nc bnc" id="L99" title="All 4 branches missed.">        return (i==0)?_idxmap1:(i==1)?_idxmap2:_idxmap3;</span>
     }
 
@@ -105,7 +105,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     }
 
     @Override
-    public int translation(int i) {
+    public int translation( int i ) {
 <span class="nc bnc" id="L109" title="All 4 branches missed.">        return (i==0)?_translation1:(i==1)?_translation2:_translation3;</span>
     }
 
@@ -115,7 +115,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     }
 
     @Override
-    public int spread(int i) {
+    public int spread( int i ) {
 <span class="fc bfc" id="L119" title="All 4 branches covered.">        return (i==0)?_spread1:(i==1)?_spread2:_spread3;</span>
     }
 
@@ -125,7 +125,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     }
 
     @Override
-    public int offset(int i) {
+    public int offset( int i ) {
 <span class="fc bfc" id="L129" title="All 4 branches covered.">        return (i==0)?_offset1:(i==1)?_offset2:_offset3;</span>
     }
 
@@ -133,7 +133,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public int i_of_i(int i) {
+    public int i_of_i( int i ) {
         int idx1, idx2, idx3;
 <span class="pc bpc" id="L138" title="1 of 2 branches missed.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
 <span class="nc" id="L139">            idx3 = i / _idxmap3;</span>
@@ -154,7 +154,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     }
 
     @Override
-    public int[] idx_of_i(int i) {
+    public int[] idx_of_i( int i ) {
         int idx1, idx2, idx3;
 <span class="nc bnc" id="L159" title="All 2 branches missed.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
 <span class="nc" id="L160">            idx3 = i / _idxmap3;</span>
@@ -173,7 +173,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     }
 
     @Override
-    public int i_of_idx(int[] idx) {
+    public int i_of_idx( int[] idx ) {
 <span class="fc" id="L177">        return (idx[ 0 ] * _spread1 + _offset1) * _translation1 +</span>
                     (idx[ 1 ] * _spread2 + _offset2) * _translation2 +
                         (idx[ 2 ] * _spread3 + _offset3) * _translation3;

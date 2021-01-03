@@ -2,8 +2,8 @@
 
 import neureka.Neureka;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.backend.implementations.functional.Activation;
 import neureka.calculus.backend.operations.AbstractOperationType;
@@ -57,7 +57,7 @@ public class Quadratic extends AbstractOperationType
                 }
         );
 
-<span class="fc" id="L60">        Activation typeImplementation = new Activation()</span>
+<span class="fc" id="L60">        Activation operationAlgorithm = new Activation()</span>
 <span class="fc" id="L61">            .setADAgentSupplier(</span>
                 ( Function f, ExecutionCall&lt;Device&gt; call, boolean forward ) -&gt;
 <span class="fc" id="L63">                    defaultImplementation().supplyADAgentFor( f, call, forward )</span>
@@ -65,7 +65,7 @@ public class Quadratic extends AbstractOperationType
 
 <span class="fc" id="L66">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L68">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L68">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -103,7 +103,7 @@ public class Quadratic extends AbstractOperationType
 <span class="nc" id="L103">                                            .call( gwz );</span>
 <span class="nc" id="L104">                                },</span>
                                 3,
-<span class="fc" id="L106">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L106">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;output = input*input;\n&quot;,
                                 &quot;output = 2*input;\n&quot;,
                                 this // OperationType

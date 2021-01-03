@@ -8,6 +8,8 @@ import neureka.autograd.GraphNode;
 import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.NDConfiguration;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.IntFunction;
@@ -25,7 +27,6 @@ public class TsrAsString
         HAVE_SHAPE,
         HAS_DERIVATIVES,
         HAS_RECURSIVE_GRAPH,
-
     }
 
     @Getter private int _padding = 6;
@@ -43,22 +44,16 @@ public class TsrAsString
     private Map<Should, Object> _config;
 
     public TsrAsString( Tsr<?> tensor, Map< Should, Object > settings ) {
-        _construct( tensor, settings );
+        Map< Should, Object > copy = _defaults("");
+        for ( Should s : Should.values() )
+            if ( settings.containsKey( s ) ) copy.put( s, settings.get( s ) );
+        _construct( tensor, copy );
     }
 
     public TsrAsString( Tsr<?> tensor, String modes ) {
         _construct(
                 tensor,
-                Map.of(
-                        Should.BE_SHORTENED_BY, (modes.contains("s")) ? 3 : 50,
-                        Should.BE_COMPACT, modes.contains("c"),
-                        Should.BE_FORMATTED, modes.contains("f"),
-                        Should.HAVE_GRADIENT, modes.contains("g"),
-                        Should.HAVE_PADDING_OF, (modes.contains("p")) ? 6 : -1,
-                        Should.HAVE_VALUE, !(modes.contains("shp") || modes.contains("shape")),
-                        Should.HAS_RECURSIVE_GRAPH, modes.contains("r"),
-                        Should.HAS_DERIVATIVES, modes.contains("d")
-                )
+                _defaults( modes )
         );
     }
 
@@ -95,6 +90,19 @@ public class TsrAsString
             _hasDerivatives = (boolean) settings.get( Should.HAS_DERIVATIVES );
     }
 
+    private Map< Should, Object > _defaults( String modes ) {
+        Map< Should, Object > copy = new HashMap<>();
+        copy.put( Should.BE_SHORTENED_BY,      (modes.contains("s")) ? 3 : 50                     );
+        copy.put( Should.BE_COMPACT,           modes.contains("c")                                );
+        copy.put( Should.BE_FORMATTED,         modes.contains("f")                                );
+        copy.put( Should.HAVE_GRADIENT,        modes.contains("g")                                );
+        copy.put( Should.HAVE_PADDING_OF,     (modes.contains("p")) ? 6 : -1                      );
+        copy.put( Should.HAVE_VALUE,          !(modes.contains("shp") || modes.contains("shape")) );
+        copy.put( Should.HAS_RECURSIVE_GRAPH, modes.contains("r")                                 );
+        copy.put( Should.HAS_DERIVATIVES,     modes.contains("d")                                 );
+        return copy;
+    }
+
     private IntFunction<String> _createValStringifier() {
         boolean compact = _isCompact;
         int pad = _padding;
@@ -129,7 +137,7 @@ public class TsrAsString
             String s = function.apply( i );
             int margin = pad - s.length();
             int right = ( margin % 2 == 0 ) ? margin / 2 : ( margin-1 ) / 2;
-            if ( margin > 0 ) s = ( " ".repeat( margin-right ) + s + " ".repeat( right ) );
+            if ( margin > 0 ) s = Util.pad( margin-right, Util.pad( s, right ) );
             return s;
         };
     }
@@ -247,15 +255,15 @@ public class TsrAsString
         StringBuilder builder = new StringBuilder();
 
         if ( legacy && dim == 0 || !legacy && dim == idx.length - 1 ) {
-            builder.append( "   ".repeat( depth ) );
+            builder.append( Util.indent( depth ) );
             builder.append( "[ " + _stringified( 50, idx, shape[ dim ] ) + " ]" );
         } else {
-            builder.append( "   ".repeat(depth) + "[" );
+            builder.append( Util.indent( depth ) + "[" );
             builder.append( "\n" );
             do {
                 builder.append( _format( shape, idx, dim + ( (!legacy) ? 1 : -1 ) ) );
             } while( idx[ dim ] != 0 );
-            builder.append("   ".repeat(depth) + "]");
+            builder.append( Util.indent( depth )  + "]");
         }
         int i = dim + ( (legacy) ? 1 : -1 );
         if ( i >= 0 && i < idx.length && idx[ i ] != 0 ) builder.append( "," );
@@ -273,6 +281,23 @@ public class TsrAsString
         }
         if ( legacy ) return strShape.append( "]" );
         else return strShape.append( ")" );
+    }
+
+    static class Util
+    {
+
+        public static String indent( int n ){
+            return String.join("", Collections.nCopies( n, "   " ));
+        }
+
+        public static String pad( int left, String s ) {
+            return String.join("", Collections.nCopies( left, " " )) + s;
+        }
+
+        public static String pad( String s, int right ) {
+            return s + String.join("", Collections.nCopies( right, " " ));
+        }
+
     }
 
 }

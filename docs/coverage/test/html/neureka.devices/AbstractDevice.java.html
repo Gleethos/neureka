@@ -36,12 +36,12 @@ package neureka.devices;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.operations.OperationType;
-import neureka.backend.api.implementations.OperationTypeImplementation;
+import neureka.backend.api.algorithms.Algorithm;
+import neureka.backend.api.operations.Operation;
+import neureka.utility.CustomCleaner;
+import neureka.utility.NeurekaCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.ref.Cleaner;
 
 /**
  *  The is the abstract precursor class providing
@@ -59,7 +59,7 @@ import java.lang.ref.Cleaner;
  */
 public abstract class AbstractDevice&lt;ValueType&gt; extends AbstractBaseDevice&lt;ValueType&gt;
 {
-<span class="fc" id="L62">    private static final Cleaner _CLEANER = Cleaner.create();</span>
+<span class="fc" id="L62">    private static final NeurekaCleaner _CLEANER = new CustomCleaner();//Cleaner.create();</span>
 
     protected Logger _log;
 
@@ -79,7 +79,7 @@ public abstract class AbstractDevice&lt;ValueType&gt; extends AbstractBaseDevice
      * @param d The index of the input which ought to be derived.
      * @param type The type of operation.
      */
-    protected abstract void _execute( Tsr[] tensors, int d, OperationType type );
+    protected abstract void _execute( Tsr[] tensors, int d, Operation type );
 
     @Override
     public void update( Tsr oldOwner, Tsr newOwner ) {
@@ -99,14 +99,14 @@ public abstract class AbstractDevice&lt;ValueType&gt; extends AbstractBaseDevice
     @Override
     public Device&lt;ValueType&gt; execute( ExecutionCall call )
     {
-<span class="fc" id="L102">        call = call.getImplementation().instantiateNewTensorsForExecutionIn(call);</span>
+<span class="fc" id="L102">        call = call.getImplementation().instantiateNewTensorsForExecutionIn( call );</span>
 <span class="fc bfc" id="L103" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : call.getTensors() ) {</span>
 <span class="fc bfc" id="L104" title="All 2 branches covered.">            if ( t == null ) throw new IllegalArgumentException(</span>
                     &quot;Device arguments may not be null!\n&quot; +
                             &quot;One or more tensor arguments within the given ExecutionCall instance is null.&quot;
             );
         }
-<span class="fc" id="L109">        ( (OperationTypeImplementation&lt;Object&gt;) call.getImplementation() )</span>
+<span class="fc" id="L109">        ( (Algorithm&lt;Object&gt;) call.getImplementation() )</span>
 <span class="fc" id="L110">                .recursiveReductionOf(</span>
                     call,
 <span class="fc" id="L112">                    c -&gt; _execute( c.getTensors(), c.getDerivativeIndex(), c.getOperation() )</span>

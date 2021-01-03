@@ -38,10 +38,10 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.Algorithm;
 import neureka.backend.api.operations.Operation;
+import neureka.utility.CustomCleaner;
+import neureka.utility.NeurekaCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.ref.Cleaner;
 
 /**
  *  The is the abstract precursor class providing
@@ -59,7 +59,7 @@ import java.lang.ref.Cleaner;
  */
 public abstract class AbstractDevice<ValueType> extends AbstractBaseDevice<ValueType>
 {
-    private static final Cleaner _CLEANER = Cleaner.create();
+    private static final NeurekaCleaner _CLEANER = new CustomCleaner();//Cleaner.create();
 
     protected Logger _log;
 

@@ -39,7 +39,7 @@ package neureka.calculus;
 import neureka.Tsr;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.api.operations.Operation;
 import neureka.calculus.assembly.FunctionBuilder;
 
 import java.util.List;
@@ -146,11 +146,11 @@ public interface Function
 
 <span class="fc" id="L147">            GraphLock newLock = new GraphLock(function, inputs);</span>
 <span class="fc bfc" id="L148" title="All 2 branches covered.">            for (Tsr&lt;T&gt; t : inputs) {</span>
-<span class="fc bfc" id="L149" title="All 2 branches covered.">                if( t.has(GraphNode.class) ) t.find(GraphNode.class).obtainLocking( newLock );</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">                if ( t.has( GraphNode.class ) ) t.find( GraphNode.class ).obtainLocking( newLock );</span>
 <span class="fc" id="L150">                else new GraphNode( function, newLock, () -&gt; t );</span>
             }
             Tsr&lt;T&gt; result;
-<span class="fc bfc" id="L153" title="All 2 branches covered.">            if( activation == null ) result = function.call( inputs );</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">            if ( activation == null ) result = function.call( inputs );</span>
 <span class="fc" id="L154">            else result = activation.get();</span>
 
 <span class="fc" id="L156">            Function.CACHE.free( newLock );</span>
@@ -177,7 +177,7 @@ public interface Function
 
     boolean isFlat();
 
-    OperationType getOperation();
+    Operation getOperation();
 
     boolean dependsOn( int index );
 

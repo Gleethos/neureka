@@ -2,8 +2,8 @@
 
 
 import neureka.Tsr;
+import neureka.backend.api.operations.AbstractOperation;
 import neureka.calculus.Function;
-import neureka.backend.api.operations.AbstractOperationType;
 import neureka.calculus.AbstractBaseFunction;
 import neureka.calculus.assembly.FunctionBuilder;
 
@@ -30,7 +30,7 @@ import neureka.calculus.assembly.FunctionBuilder;
     }
 
     @Override
-    public AbstractOperationType getOperation() {
+    public AbstractOperation getOperation() {
 <span class="nc" id="L34">        return null;</span>
     }
 
@@ -44,11 +44,11 @@ import neureka.calculus.assembly.FunctionBuilder;
     @Override
     public Function newBuild(final String equation) {
 
-<span class="fc bfc" id="L47" title="All 2 branches covered.">        if(equation.charAt( 0 )=='-') {</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (equation.charAt( 0 )=='-') {</span>
 <span class="fc" id="L48">            return FunctionBuilder.build(equation.substring(1)+&quot;*-1&quot;, true);</span>
         }
 <span class="fc" id="L50">        int number = 0;</span>
-<span class="fc bfc" id="L51" title="All 2 branches covered.">        for (int i = 0; i &lt; equation.length(); ++i) {</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        for ( int i = 0; i &lt; equation.length(); ++i) {</span>
 <span class="fc bfc" id="L52" title="All 2 branches covered.">            if (equation.charAt( i ) == 'j') {</span>
 <span class="fc" id="L53">                Function newCore = new FunctionVariable();</span>
 <span class="fc" id="L54">                newCore = newCore.newBuild(equation);</span>
@@ -60,7 +60,7 @@ import neureka.calculus.assembly.FunctionBuilder;
             }
         }
 <span class="fc" id="L62">        _index = number;</span>
-<span class="fc bfc" id="L63" title="All 2 branches covered.">        if(equation.contains(&quot;g&quot;)) {</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        if (equation.contains(&quot;g&quot;)) {</span>
 <span class="fc" id="L64">            _index = -(_index+1);</span>
         }
 

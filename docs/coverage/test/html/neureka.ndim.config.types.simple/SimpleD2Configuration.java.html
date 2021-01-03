@@ -48,7 +48,7 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int shape(int i) {
+    public int shape( int i ) {
 <span class="fc bfc" id="L52" title="All 2 branches covered.">        return (i==0)?_shape1:_shape2;</span>
     }
 
@@ -58,7 +58,7 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int idxmap(int i) {
+    public int idxmap( int i ) {
 <span class="fc" id="L62">        return 1;</span>
     }
 
@@ -68,7 +68,7 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int translation(int i) {
+    public int translation( int i ) {
 <span class="fc bfc" id="L72" title="All 2 branches covered.">        return (i==0)?_translation1:_translation2;</span>
     }
 
@@ -78,7 +78,7 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int spread(int i) {
+    public int spread( int i ) {
 <span class="fc" id="L82">        return 1;</span>
     }
 
@@ -88,7 +88,7 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int offset(int i) {
+    public int offset( int i ) {
 <span class="fc" id="L92">        return 0;</span>
     }
 
@@ -96,7 +96,7 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public int i_of_i(int i) {
+    public int i_of_i( int i ) {
 <span class="fc bfc" id="L100" title="All 2 branches covered.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
 <span class="fc" id="L101">            return ((i%_translation2) / _translation1) * _translation1 +</span>
                     (i / _translation2) * _translation2;
@@ -107,7 +107,7 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int[] idx_of_i(int i) {
+    public int[] idx_of_i( int i ) {
 <span class="fc" id="L111">        int[] idx = new int[ 2 ];</span>
 <span class="fc bfc" id="L112" title="All 2 branches covered.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
 <span class="fc" id="L113">            idx[ 1 ] += i / _translation2;</span>
@@ -122,7 +122,7 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int i_of_idx(int[] idx) {
+    public int i_of_idx( int[] idx ) {
 <span class="fc" id="L126">        int i = 0;</span>
 <span class="fc" id="L127">        i += idx[ 0 ] * _translation1;</span>
 <span class="fc" id="L128">        i += idx[ 1 ] * _translation2;</span>

@@ -376,10 +376,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     private void _add( Tsr<Number> tensor, cl_tsr parent )
     {
         cl_tsr newClt = new cl_tsr();
-        {
-            final cl_mem clConfMem = newClt.config.data;
-            _cleaning( newClt.config, () -> clReleaseMemObject( clConfMem ) );
-        }
+
         //VALUE TRANSFER:
         if ( parent == null ) {
             newClt.value = new cl_tsr.cl_value();
@@ -418,6 +415,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 null,
                 null
         );
+        {
+            final cl_mem clConfMem = newClt.config.data;
+            _cleaning( newClt.config, () -> clReleaseMemObject( clConfMem ) );
+        }
         cl_mem[] memos;
         memos = new cl_mem[]{ newClt.value.data, newClt.config.data };
 

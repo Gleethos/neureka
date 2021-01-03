@@ -38,7 +38,7 @@ public class Ligmoid extends AbstractOperationType
                 }
         );
 
-<span class="fc" id="L41">        Activation typeImplementation = new Activation()</span>
+<span class="fc" id="L41">        Activation operationAlgorithm = new Activation()</span>
 <span class="fc" id="L42">        .setADAnalyzer(</span>
                 call -&gt; {
 <span class="fc" id="L44">                    Tsr last = null;</span>
@@ -113,7 +113,7 @@ public class Ligmoid extends AbstractOperationType
 
 <span class="fc" id="L114">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L116">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L116">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -143,7 +143,7 @@ public class Ligmoid extends AbstractOperationType
 <span class="fc" id="L143">                                            .call(gwz);</span>
 <span class="fc" id="L144">                                },</span>
                                 3,
-<span class="fc" id="L146">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L146">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;output = \n&quot; +
                                         &quot;   (\n&quot; +
                                         &quot;        (float) log(\n&quot; +

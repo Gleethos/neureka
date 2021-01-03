@@ -44,7 +44,7 @@ public class Gaussian extends OperationType
                     }
                 };
 
-<span class="fc" id="L47">        Activation typeImplementation = new Activation()</span>
+<span class="fc" id="L47">        Activation operationAlgorithm = new Activation()</span>
 <span class="fc" id="L48">            .setADAnalyzer(</span>
                     call -&gt; {
 <span class="nc" id="L50">                        Tsr last = null;</span>
@@ -117,7 +117,7 @@ public class Gaussian extends OperationType
 
 <span class="fc" id="L118">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L120">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L120">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -147,7 +147,7 @@ public class Gaussian extends OperationType
 <span class="nc" id="L147">                                            .call(gwz);</span>
 <span class="nc" id="L148">                                },</span>
                                 3,
-<span class="fc" id="L150">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L150">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;output =\n&quot; +
                                         &quot;    (float)pow(\n&quot; +
                                         &quot;        (float)M_E,\n&quot; +

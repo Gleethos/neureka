@@ -42,28 +42,21 @@ public class FileDevice extends AbstractBaseDevice<Number>
 {
     private static final Map<String, FileDevice> _DEVICES = new WeakHashMap<>();
 
-    private static Map<String, Function<String, FileHead>> _LOADERS = Map.of(
-            "idx", name -> {
-                return new IDXHead( name );
-            },
-            "jpg", name -> {
-                return new JPEGHead( name );
-            },
-            "png", name -> {
-                return null;
-            }
-    );
-    private static Map<String, BiFunction<String, Tsr<Number>, FileHead>> _SAVERS = Map.of(
-            "idx", (name, tensor) -> {
-                return new IDXHead( tensor, name );
-            },
-            "jpg", (name, tensor) -> {
-                return new JPEGHead( tensor, name );
-            },
-            "png", (name, tensor) -> {
-                return null;
-            }
-    );
+    private static Map<String, Function<String, FileHead>> _LOADERS;
+    static {
+        _LOADERS = new HashMap<>();
+        _LOADERS.put( "idx", name -> new IDXHead( name ) );
+        _LOADERS.put( "jpg", name -> new JPEGHead( name ) );
+        _LOADERS.put( "png", name -> null ); // TODO!
+    }
+
+    private static Map<String, BiFunction<String, Tsr<Number>, FileHead>> _SAVERS;
+    static {
+        _SAVERS = new HashMap<>();
+        _SAVERS.put( "idx", (name, tensor) -> new IDXHead( tensor, name ) );
+        _SAVERS.put( "jpg", (name, tensor) -> new JPEGHead( tensor, name ) );
+        _SAVERS.put( "png", (name, tensor) -> null ); // TODO!
+    }
 
     @Getter
     private String _directory;

@@ -4,38 +4,39 @@ import neureka.dtype.NumericType;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
-<span class="pc bpc" id="L9" title="1 of 2 branches missed.">public class NumberReader</span>
+<span class="pc bpc" id="L10" title="1 of 2 branches missed.">public class NumberReader</span>
 {
     private final FileInputStream _fileInputStream;
-<span class="fc" id="L12">    private int _bytesRead = 0;</span>
-<span class="fc" id="L13">    private final Map&lt;Integer, byte[]&gt; _byteMap = Map.of(</span>
-<span class="fc" id="L14">            1, new byte[ 1 ],</span>
-<span class="fc" id="L15">            2, new byte[ 2 ],</span>
-<span class="fc" id="L16">            4, new byte[ 4 ],</span>
-<span class="fc" id="L17">            8, new byte[ 8 ]</span>
-    );
+<span class="fc" id="L13">    private int _bytesRead = 0;</span>
+    private final Map&lt;Integer, byte[]&gt; _byteMap;
 
-<span class="fc" id="L20">    public NumberReader( FileInputStream fileInputStream ) {</span>
-<span class="fc" id="L21">        _fileInputStream = fileInputStream;</span>
-<span class="fc" id="L22">    }</span>
+<span class="fc" id="L16">    public NumberReader( FileInputStream fileInputStream ) {</span>
+<span class="fc" id="L17">        _byteMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L18">        _byteMap.put( 1, new byte[ 1 ] );</span>
+<span class="fc" id="L19">        _byteMap.put( 2, new byte[ 2 ] );</span>
+<span class="fc" id="L20">        _byteMap.put( 4, new byte[ 4 ] );</span>
+<span class="fc" id="L21">        _byteMap.put( 8, new byte[ 8 ] );</span>
+<span class="fc" id="L22">        _fileInputStream = fileInputStream;</span>
+<span class="fc" id="L23">    }</span>
 
     public FileInputStream getStream() {
-<span class="nc" id="L25">        return _fileInputStream;</span>
+<span class="nc" id="L26">        return _fileInputStream;</span>
     }
 
     public &lt;T&gt; T read( NumericType&lt;T, ?, ?, ?&gt; type ) throws IOException {
-<span class="pc bpc" id="L29" title="2 of 4 branches missed.">        assert _fileInputStream.read( _byteMap.get(type.numberOfBytes()) ) == type.numberOfBytes();</span>
-<span class="fc" id="L30">        _bytesRead += type.numberOfBytes();</span>
-<span class="fc" id="L31">        return type.foreignHolderBytesToTarget(_byteMap.get(type.numberOfBytes()));</span>
+<span class="pc bpc" id="L30" title="2 of 4 branches missed.">        assert _fileInputStream.read( _byteMap.get(type.numberOfBytes()) ) == type.numberOfBytes();</span>
+<span class="fc" id="L31">        _bytesRead += type.numberOfBytes();</span>
+<span class="fc" id="L32">        return type.foreignHolderBytesToTarget(_byteMap.get(type.numberOfBytes()));</span>
         // return NumericType.Utility.unsignedByteArrayToInt(_byteMap.get(number));
     }
 
 
 
     public int bytesRead() {
-<span class="fc" id="L38">        return _bytesRead;</span>
+<span class="fc" id="L39">        return _bytesRead;</span>
     }
 
 }

@@ -24,8 +24,8 @@ public class JITProp&lt;ValueType&gt; implements Component&lt;Tsr&lt;ValueType&g
      * @param pendings A set of GraphNode&amp;lt;ValueType&amp;gt; instance which are saved for future backprop continuation.
      */
     public void addPending( Set&lt;GraphNode&lt;ValueType&gt;&gt; pendings ) {
-<span class="nc bnc" id="L27" title="All 2 branches missed.">        if( pendings.isEmpty() ) throw new IllegalStateException(&quot;Trying to add empty pending errors set to JITProp.&quot;);</span>
-<span class="nc bnc" id="L28" title="All 2 branches missed.">        if( !isDone() ) throw new IllegalStateException(&quot;Trying to add pending errors to JITProp which is done.&quot;);</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">        if ( pendings.isEmpty() ) throw new IllegalStateException(&quot;Trying to add empty pending errors set to JITProp.&quot;);</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        if ( !isDone() ) throw new IllegalStateException(&quot;Trying to add pending errors to JITProp which is done.&quot;);</span>
 <span class="nc" id="L29">        _pending.addAll( pendings );</span>
 <span class="nc" id="L30">    }</span>
 
@@ -34,7 +34,7 @@ public class JITProp&lt;ValueType&gt; implements Component&lt;Tsr&lt;ValueType&g
      * @param finishedJITProps The reference to a GraphNote which has finished (JITed) backpropation.
      */
     public void noteFinished( GraphNode&lt;ValueType&gt; finishedJITProps ) {
-<span class="pc bpc" id="L37" title="1 of 2 branches missed.">        if( _finished == null ) _finished = new HashSet&lt;&gt;();</span>
+<span class="pc bpc" id="L37" title="1 of 2 branches missed.">        if ( _finished == null ) _finished = new HashSet&lt;&gt;();</span>
 <span class="fc" id="L38">        _finished.add( finishedJITProps );</span>
 <span class="pc bpc" id="L39" title="1 of 2 branches missed.">        if ( _pending != null ) {</span>
 <span class="fc" id="L40">            Set&lt;GraphNode&lt;ValueType&gt;&gt; intersection = _finished.stream().filter(_pending::contains).collect(Collectors.toSet());</span>

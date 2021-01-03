@@ -67,7 +67,7 @@ import neureka.ndim.config.types.D1C;
     }
 
     @Override
-    public int shape(int i) {
+    public int shape( int i ) {
 <span class="fc" id="L71">        return _shape;</span>
     }
 
@@ -77,7 +77,7 @@ import neureka.ndim.config.types.D1C;
     }
 
     @Override
-    public int idxmap(int i) {
+    public int idxmap( int i ) {
 <span class="fc" id="L81">        return _idxmap;</span>
     }
 
@@ -87,7 +87,7 @@ import neureka.ndim.config.types.D1C;
     }
 
     @Override
-    public int translation(int i) {
+    public int translation( int i ) {
 <span class="fc" id="L91">        return _translation;</span>
     }
 
@@ -97,7 +97,7 @@ import neureka.ndim.config.types.D1C;
     }
 
     @Override
-    public int spread(int i) {
+    public int spread( int i ) {
 <span class="fc" id="L101">        return _spread;</span>
     }
 
@@ -107,22 +107,22 @@ import neureka.ndim.config.types.D1C;
     }
 
     @Override
-    public int offset(int i) {
+    public int offset( int i ) {
 <span class="fc" id="L111">        return _offset;</span>
     }
 
 
     @Override
-    public int i_of_i(int i) {
+    public int i_of_i( int i ) {
 <span class="fc" id="L117">        return ((i / _idxmap) * _spread + _offset) * _translation;</span>
     }
 
     @Override
-    public int[] idx_of_i(int i) {
+    public int[] idx_of_i( int i ) {
 <span class="nc" id="L122">        return new int[]{i / _idxmap};</span>
     }
     @Override
-    public int i_of_idx(int[] idx) {
+    public int i_of_idx( int[] idx ) {
 <span class="nc" id="L126">        return (idx[ 0 ] * _spread + _offset) * _translation;</span>
     }
 

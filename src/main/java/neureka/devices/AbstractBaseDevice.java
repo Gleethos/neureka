@@ -79,13 +79,13 @@ public abstract class AbstractBaseDevice<ValueType> implements Device<ValueType>
 
     @NotNull
     @Override
-    public <T> T[] toArray(@NotNull T[] a) {
-        return this.getTensors().toArray(a);
+    public <T> T[] toArray( @NotNull T[] a ) {
+        return this.getTensors().toArray( a );
     }
 
     @Override
-    public <T> T[] toArray(IntFunction<T[]> generator) {
-        return this.getTensors().toArray(generator);
+    public <T> T[] toArray( IntFunction<T[]> generator ) {
+        return null; // this.getTensors().toArray( generator );
     }
 
     @Override

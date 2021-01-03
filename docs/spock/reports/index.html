@@ -1,86 +1,317 @@
 <!DOCTYPE html><html>
 <head>
 <meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
-<style>body {
-  font-family: Helvetica, Arial, sans-serif;
-  font-weight: 300;
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 300;
 }
 
 h2 {
-  font-weight: 400;
+    font-weight: 400;
+}
+
+hr {
+    margin-bottom: 1.5em;
 }
 
 h3 {
-  font-weight: 200;
+    font-weight: 200;
 }
 
 table {
-  margin: 5px;
+    margin: 7px;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
 }
 
 .ignored {
-  color: gray;
+    color: gray;
 }
 
 div.project-header {
-  margin-bottom: 10px;
-  font-size: large;
+    margin-bottom: 10px;
+    font-size: large;
 }
 
 div.project-header &gt; span.project-name {
 
-}
+                        }
 
 div.project-header &gt; span.project-version {
-  padding-left: 20px;
-}
+                            padding-left: 20px;
+                        }
 
 div.date-test-ran {
-  font-size: small;
-  font-style: italic;
+    font-size: small;
+    font-style: italic;
 }
 
 div.spec-title {
-  padding: 10px 0px 5px 0px;
-}
-
-table.summary-table {
-  width: 800px;
-  text-align: left;
-  font-weight: 500;
-  font-size: small;
-}
-
-table.summary-table th {
-  background: lightblue;
-  padding: 6px;
-}
-
-table.summary-table td {
-  background: #E0E0E0;
-  padding: 6px;
+    padding: 10px 0px 5px 0px;
 }
 
 tr.error td, td.error {
-  background-color: #F89A4F !important;
+    background-color: #F89A4F !important;
 }
 
 tr.failure td, td.failure {
-  color: red;
+    color: red;
 }
 
 div.footer {
-  text-align: center;
-  font-size: small;
+    text-align: center;
+    font-size: small;
 }
-</style>
+
+
+
+
+
+
+.back-link {
+    font-size: small;
+    font-weight: bold;
+}
+
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+table.features-table {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table {
+    width: 99%;
+
+    font-weight: bold;
+    font-size: small;
+}
+
+table.summary-table tbody {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table th {
+    background: lightblue;
+    padding: 6px;
+}
+
+table.summary-table td {
+    background: #E0E0E0;
+    padding: 6px;
+}
+
+pre.title {
+    font-family: inherit;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+pre.narrative {
+    font-family: inherit;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 23px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+.feature-description {
+    font-size: large;
+    background: lightblue;
+    padding: 12px;
+}
+
+.feature-toc-error {
+    color: #F89A4F;
+}
+
+.feature-toc-failure {
+    color: #FF8080;
+}
+
+.feature-toc-ignored {
+    color: lightgray;
+}
+
+.feature-toc-pass {
+    color: green;
+}
+
+.feature-description.error {
+    background: #F89A4F;
+}
+
+.feature-description.failure {
+    background: #FF8080;
+}
+
+.feature-description.ignored {
+    background: lightgray;
+}
+
+.feature-description.ignored .reason {
+    color: black;
+    font-style: italic;
+    font-size: small;
+}
+
+div.extra-info {
+    font-size: small;
+}
+
+div.spec-headers {
+    margin: 4px;
+    font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+    margin-top: 6px;
+    padding: 10px 5px 5px 5px;
+    background-color: lemonchiffon;
+    color: black;
+    font-weight: 500;
+    font-size: small;
+    max-width: 50%;
+}
+
+div.pending-feature {
+    background-color: dodgerblue;
+    color: white;
+    margin-top: 6px;
+    padding: 5px;
+    text-align: center;
+    font-size: small;
+    max-width: 120px;
+}
+
+div.problem-description {
+    padding: 10px;
+    background: pink;
+    border-radius: 10px;
+}
+
+div.problem-header {
+    font-weight: bold;
+    color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table{
+    width: 98%;
+}
+
+table.ex-table th {
+    background: lightblue;
+    padding: 5px;
+}
+
+table.ex-table td {
+    background: #E0E0E0;
+    padding: 2px 5px 2px 5px;
+}
+
+table td {
+    min-width: 50px;
+}
+
+col.block-kind-col {
+    width: 70px;
+}
+
+span.spec-header {
+    font-weight: bold;
+}
+
+div.spec-text {
+    /*color: green;*/
+}
+
+div.spec-status {
+    font-style: italic;
+}
+
+.ignored {
+    color: gray;
+}
+
+td.ex-result {
+    text-align: center;
+    background: white !important;
+}
+
+.ex-pass {
+    color: darkgreen;
+}
+
+.ex-fail {
+    color: red;
+    font-weight: bold;
+}
+
+div.block-kind {
+    margin: 2px;
+    font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+    background-color: whitesmoke;
+    padding: 10px;
+}
+
+pre.block-source.error {
+    background-color: pink;
+    color: red;
+    font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+    margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+    color: gray;
+    margin-top: -14px;
+}
+
+pre.block-source.post-error {
+    color: gray;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}</style>
 </head>
 <body>
 <h2>Specification run results</h2>
 <hr></hr>
 <div class='summary-report'>
 <h3>Specifications summary:</h3>
-<div class='date-test-ran'>Created on Sat Dec 19 19:58:47 CET 2020 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Jan 03 17:37:13 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Total</th>
@@ -93,13 +324,13 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>47</td>
-<td>47</td>
+<td>48</td>
+<td>48</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>2 minutes, 28.339 seconds</td>
+<td>2 minutes, 33.301 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -125,7 +356,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>8.890 seconds</td>
+<td>6.126 seconds</td>
 </tr>
 <tr>
 <td>
@@ -136,7 +367,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>10.001 seconds</td>
+<td>8.300 seconds</td>
 </tr>
 <tr>
 <td>
@@ -147,7 +378,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.252 seconds</td>
+<td>0.775 seconds</td>
 </tr>
 <tr>
 <td>
@@ -158,7 +389,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.225 seconds</td>
+<td>1.460 seconds</td>
 </tr>
 <tr>
 <td>
@@ -169,7 +400,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>9.463 seconds</td>
+<td>7.113 seconds</td>
 </tr>
 <tr>
 <td>
@@ -180,7 +411,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.016 seconds</td>
+<td>1.313 seconds</td>
 </tr>
 <tr>
 <td>
@@ -191,7 +422,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.280 seconds</td>
+<td>0.347 seconds</td>
 </tr>
 <tr>
 <td>
@@ -202,7 +433,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.891 seconds</td>
+<td>8.364 seconds</td>
 </tr>
 <tr>
 <td>
@@ -213,7 +444,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>6.898 seconds</td>
+<td>6.206 seconds</td>
 </tr>
 <tr>
 <td>
@@ -224,7 +455,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>7.403 seconds</td>
+<td>6.499 seconds</td>
 </tr>
 <tr>
 <td>
@@ -235,7 +466,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>7.023 seconds</td>
+<td>5.762 seconds</td>
 </tr>
 <tr>
 <td>
@@ -246,7 +477,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.838 seconds</td>
+<td>1.201 seconds</td>
 </tr>
 <tr>
 <td>
@@ -257,18 +488,18 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.840 seconds</td>
+<td>0.503 seconds</td>
 </tr>
 <tr>
 <td>
 <a href='it.tensors.Tensor_As_Container_Integration_Tests.html'>it.tensors.Tensor_As_Container_Integration_Tests</a>
 </td>
-<td>2</td>
+<td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>2.332 seconds</td>
+<td>1.358 seconds</td>
 </tr>
 <tr>
 <td>
@@ -279,7 +510,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.888 seconds</td>
+<td>0.689 seconds</td>
 </tr>
 <tr>
 <td>
@@ -290,7 +521,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>5.306 seconds</td>
+<td>17.193 seconds</td>
 </tr>
 <tr>
 <td>
@@ -301,7 +532,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>5.079 seconds</td>
+<td>5.052 seconds</td>
 </tr>
 <tr>
 <td>
@@ -312,7 +543,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>3.804 seconds</td>
+<td>4.489 seconds</td>
 </tr>
 <tr>
 <td>
@@ -323,7 +554,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.620 seconds</td>
+<td>0.213 seconds</td>
 </tr>
 <tr>
 <td>
@@ -334,7 +565,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>21.099 seconds</td>
+<td>15.795 seconds</td>
 </tr>
 <tr>
 <td>
@@ -345,7 +576,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.493 seconds</td>
+<td>0.412 seconds</td>
 </tr>
 <tr>
 <td>
@@ -356,7 +587,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>19.975 seconds</td>
+<td>27.973 seconds</td>
 </tr>
 <tr>
 <td>
@@ -367,7 +598,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>2.803 seconds</td>
+<td>2.375 seconds</td>
 </tr>
 <tr>
 <td>
@@ -378,7 +609,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>2.704 seconds</td>
+<td>1.659 seconds</td>
 </tr>
 <tr>
 <td>
@@ -389,40 +620,40 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.211 seconds</td>
+<td>0.121 seconds</td>
 </tr>
 <tr>
 <td>
-<a href='ut.calculus.Calculus_Extension_Unit_Tests.html'>ut.calculus.Calculus_Extension_Unit_Tests</a>
+<a href='ut.backend.Backend_Algorithm_AD_Unit_Tests.html'>ut.backend.Backend_Algorithm_AD_Unit_Tests</a>
+</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>5.900 seconds</td>
+</tr>
+<tr>
+<td>
+<a href='ut.backend.Backend_Algorithm_Implementation_Tests.html'>ut.backend.Backend_Algorithm_Implementation_Tests</a>
+</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>2.555 seconds</td>
+</tr>
+<tr>
+<td>
+<a href='ut.backend.Backend_Extension_Unit_Tests.html'>ut.backend.Backend_Extension_Unit_Tests</a>
 </td>
 <td>2</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.160 seconds</td>
-</tr>
-<tr>
-<td>
-<a href='ut.calculus.Calculus_Implementation_AD_Unit_Tests.html'>ut.calculus.Calculus_Implementation_AD_Unit_Tests</a>
-</td>
-<td>4</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>100.0%</td>
-<td>8.497 seconds</td>
-</tr>
-<tr>
-<td>
-<a href='ut.calculus.Calculus_Implementation_Executor_Tests.html'>ut.calculus.Calculus_Implementation_Executor_Tests</a>
-</td>
-<td>4</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>100.0%</td>
-<td>3.439 seconds</td>
+<td>0.169 seconds</td>
 </tr>
 <tr>
 <td>
@@ -433,7 +664,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.121 seconds</td>
+<td>0.072 seconds</td>
 </tr>
 <tr>
 <td>
@@ -444,7 +675,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.059 seconds</td>
+<td>0.076 seconds</td>
 </tr>
 <tr>
 <td>
@@ -455,7 +686,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.089 seconds</td>
+<td>0.095 seconds</td>
 </tr>
 <tr>
 <td>
@@ -466,7 +697,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>2.002 seconds</td>
+<td>2.701 seconds</td>
 </tr>
 <tr>
 <td>
@@ -477,7 +708,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.692 seconds</td>
+<td>0.711 seconds</td>
 </tr>
 <tr>
 <td>
@@ -488,7 +719,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.508 seconds</td>
+<td>0.463 seconds</td>
 </tr>
 <tr>
 <td>
@@ -499,7 +730,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.089 seconds</td>
+<td>0.056 seconds</td>
 </tr>
 <tr>
 <td>
@@ -510,7 +741,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.015 seconds</td>
+<td>0.014 seconds</td>
 </tr>
 <tr>
 <td>
@@ -521,7 +752,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.135 seconds</td>
+<td>0.152 seconds</td>
 </tr>
 <tr>
 <td>
@@ -532,7 +763,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.723 seconds</td>
+<td>0.451 seconds</td>
 </tr>
 <tr>
 <td>
@@ -543,7 +774,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.600 seconds</td>
+<td>2.347 seconds</td>
 </tr>
 <tr>
 <td>
@@ -554,7 +785,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.155 seconds</td>
+<td>0.117 seconds</td>
 </tr>
 <tr>
 <td>
@@ -565,7 +796,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.245 seconds</td>
+<td>0.331 seconds</td>
 </tr>
 <tr>
 <td>
@@ -576,7 +807,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.842 seconds</td>
+<td>0.648 seconds</td>
 </tr>
 <tr>
 <td>
@@ -587,7 +818,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.150 seconds</td>
+<td>0.248 seconds</td>
 </tr>
 <tr>
 <td>
@@ -598,7 +829,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.871 seconds</td>
+<td>0.083 seconds</td>
 </tr>
 <tr>
 <td>
@@ -609,18 +840,29 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.828 seconds</td>
+<td>0.969 seconds</td>
 </tr>
 <tr>
 <td>
 <a href='ut.tensors.Tensor_State_Unit_Test.html'>ut.tensors.Tensor_State_Unit_Test</a>
 </td>
-<td>3</td>
+<td>4</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.333 seconds</td>
+<td>0.795 seconds</td>
+</tr>
+<tr>
+<td>
+<a href='ut.utility.Cleaner_Testing.html'>ut.utility.Cleaner_Testing</a>
+</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>1.490 seconds</td>
 </tr>
 <tr>
 <td>
@@ -631,7 +873,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>3.452 seconds</td>
+<td>1.560 seconds</td>
 </tr>
 </tbody>
 </table>

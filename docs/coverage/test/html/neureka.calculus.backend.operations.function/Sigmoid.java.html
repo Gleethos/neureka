@@ -3,8 +3,8 @@
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.functional.Activation;
@@ -51,7 +51,7 @@ public class Sigmoid extends AbstractOperationType
                 }
         );
 
-<span class="fc" id="L54">        Activation typeImplementation = new Activation()</span>
+<span class="fc" id="L54">        Activation operationAlgorithm = new Activation()</span>
 <span class="fc" id="L55">            .setADAgentSupplier(</span>
                 ( Function f, ExecutionCall&lt;Device&gt; call, boolean forward ) -&gt;
 <span class="fc" id="L57">                defaultImplementation().supplyADAgentFor( f, call, forward )</span>
@@ -60,7 +60,7 @@ public class Sigmoid extends AbstractOperationType
 
 <span class="fc" id="L61">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L63">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L63">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -97,7 +97,7 @@ public class Sigmoid extends AbstractOperationType
 <span class="nc" id="L97">                                            .call( gwz );</span>
 <span class="nc" id="L98">                                },</span>
                                 3,
-<span class="fc" id="L100">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L100">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;output = 1 / (1 + (float)pow((float)M_E, -input));\n&quot;,
                                 &quot;output = input * (1 - input);\n&quot;,
                                 this // OperationType

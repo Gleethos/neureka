@@ -70,7 +70,7 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
     }
 
     @Override
-    public int shape(int i) {
+    public int shape( int i ) {
 <span class="nc" id="L74">        return _shape[ i ];</span>
     }
 
@@ -80,7 +80,7 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
     }
 
     @Override
-    public int idxmap(int i) {
+    public int idxmap( int i ) {
 <span class="nc" id="L84">        return _idxmap[ i ];</span>
     }
 
@@ -90,7 +90,7 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
     }
 
     @Override
-    public int translation(int i) {
+    public int translation( int i ) {
 <span class="nc" id="L94">        return _translation[ i ];</span>
     }
 
@@ -100,7 +100,7 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
     }
 
     @Override
-    public int spread(int i) {
+    public int spread( int i ) {
 <span class="nc" id="L104">        return _spread[ i ];</span>
     }
 
@@ -110,7 +110,7 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
     }
 
     @Override
-    public int offset(int i) {
+    public int offset( int i ) {
 <span class="nc" id="L114">        return _offset[ i ];</span>
     }
 
@@ -118,31 +118,31 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public int i_of_i(int i) {
+    public int i_of_i( int i ) {
 <span class="fc" id="L122">        return i_of_idx(idx_of_i( i ));</span>
     }
 
     @Override
-    public int[] idx_of_i(int i) {
+    public int[] idx_of_i( int i ) {
 <span class="fc" id="L127">        int[] idx = new int[_shape.length];</span>
 <span class="fc bfc" id="L128" title="All 2 branches covered.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
 <span class="fc bfc" id="L129" title="All 2 branches covered.">            for ( int ii = rank()-1; ii &gt;= 0; ii-- ) {</span>
-<span class="fc" id="L130">                idx[ii] += i / _idxmap[ii];</span>
-<span class="fc" id="L131">                i %= _idxmap[ii];</span>
+<span class="fc" id="L130">                idx[ ii ] += i / _idxmap[ ii ];</span>
+<span class="fc" id="L131">                i %= _idxmap[ ii ];</span>
             }
         } else {
 <span class="fc bfc" id="L134" title="All 2 branches covered.">            for ( int ii = 0; ii &lt; rank(); ii++ ) {</span>
-<span class="fc" id="L135">                idx[ii] += i / _idxmap[ii];</span>
-<span class="fc" id="L136">                i %= _idxmap[ii];</span>
+<span class="fc" id="L135">                idx[ ii ] += i / _idxmap[ ii ];</span>
+<span class="fc" id="L136">                i %= _idxmap[ ii ];</span>
             }
         }
 <span class="fc" id="L139">        return idx;</span>
     }
 
     @Override
-    public int i_of_idx(int[] idx) {
+    public int i_of_idx( int[] idx ) {
 <span class="fc" id="L144">        int i = 0;</span>
-<span class="fc bfc" id="L145" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; _shape.length; ii++ ) i += (idx[ii] * _spread[ii] + _offset[ii]) * _translation[ii];</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; _shape.length; ii++ ) i += (idx[ ii ] * _spread[ ii ] + _offset[ ii ]) * _translation[ ii ];</span>
 <span class="fc" id="L146">        return i;</span>
     }
 

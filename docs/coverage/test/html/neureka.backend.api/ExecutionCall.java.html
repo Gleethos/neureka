@@ -41,11 +41,11 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
-import neureka.backend.api.operations.OperationType;
+import neureka.backend.api.algorithms.Algorithm;
+import neureka.backend.api.operations.Operation;
 import neureka.devices.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
-import neureka.backend.api.implementations.OperationTypeImplementation;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -67,7 +67,7 @@ public class ExecutionCall&lt; DeviceType extends Device &gt;
     public interface TensorCondition { boolean check( Tsr tensor ); }
     public interface TensorCompare { boolean check( Tsr first, Tsr second ); }
     public interface DeviceCondition { boolean check( Device device ); }
-    public interface OperationTypeCondition { boolean check( OperationType type ); }
+    public interface OperationTypeCondition { boolean check( Operation type ); }
     public interface Mutator { Tsr[] mutate( Tsr[] tensors ); }
 
 <span class="fc" id="L73">    @Getter</span>
@@ -92,7 +92,7 @@ public class ExecutionCall&lt; DeviceType extends Device &gt;
      *  It contains multiple implementations, one of which might be applicable to this call...
      */
 <span class="fc" id="L94">    @Getter</span>
-    private final OperationType _operation;
+    private final Operation _operation;
 
 <span class="fc" id="L97">    @Getter</span>
     private Tsr[] _tensors;
@@ -100,7 +100,7 @@ public class ExecutionCall&lt; DeviceType extends Device &gt;
 <span class="fc" id="L100">    @Getter</span>
     private int _j = -1;
 
-    private OperationTypeImplementation&lt;OperationTypeImplementation&gt; _implementation;
+    private Algorithm&lt;Algorithm&gt; _implementation;
 
 <span class="fc" id="L105">    @Getter</span>
     private Map&lt;String, Object&gt; _context;
@@ -149,7 +149,7 @@ public class ExecutionCall&lt; DeviceType extends Device &gt;
         {
 <span class="fc" id="L150">            boolean all = true;</span>
 <span class="fc bfc" id="L151" title="All 2 branches covered.">            for ( Tsr t : _tensors )</span>
-<span class="fc bfc" id="L152" title="All 4 branches covered.">                if( t != null ) all = ( !condition.check( t ) ) ? false : all;</span>
+<span class="fc bfc" id="L152" title="All 4 branches covered.">                if ( t != null ) all = ( !condition.check( t ) ) ? false : all;</span>
 <span class="fc bfc" id="L153" title="All 2 branches covered.">            if ( !all ) _isValid = false;</span>
 <span class="fc" id="L154">            return this;</span>
         }
@@ -184,7 +184,7 @@ public class ExecutionCall&lt; DeviceType extends Device &gt;
             DeviceType device,
             Tsr[] tensors,
             int d,
-            OperationType type
+            Operation type
 <span class="fc" id="L188">    ) {</span>
 <span class="fc" id="L189">        _device = device;</span>
 <span class="fc" id="L190">        _tensors = tensors;</span>
@@ -199,7 +199,7 @@ public class ExecutionCall&lt; DeviceType extends Device &gt;
             Tsr[] tensors,
             int d,
             int j,
-            OperationType type
+            Operation type
 <span class="fc" id="L203">    ) {</span>
 <span class="fc" id="L204">        _device = device;</span>
 <span class="fc" id="L205">        _tensors = tensors;</span>
@@ -212,18 +212,18 @@ public class ExecutionCall&lt; DeviceType extends Device &gt;
 <span class="fc" id="L212">    public Tsr getTensor( int i ) { return _tensors[ i ];}</span>
 
 
-    public OperationTypeImplementation getImplementation() {
+    public Algorithm getImplementation() {
 <span class="fc bfc" id="L216" title="All 2 branches covered.">        if ( _implementation != null ) return _implementation;</span>
-<span class="fc" id="L217">        else _implementation = _operation.implementationOf(this);</span>
+<span class="fc" id="L217">        else _implementation = _operation.AlgorithmFor(this);</span>
 <span class="fc" id="L218">        return _implementation;</span>
     }
     
     public boolean allowsForward() {
-<span class="fc" id="L222">        return getImplementation().canImplementationPerformForwardADFor(this);</span>
+<span class="fc" id="L222">        return getImplementation().canAlgorithmPerformForwardADFor(this);</span>
     }
 
     public boolean allowsBackward() {
-<span class="fc" id="L226">        return getImplementation().canImplementationPerformBackwardADFor(this);</span>
+<span class="fc" id="L226">        return getImplementation().canAlgorithmPerformBackwardADFor(this);</span>
     }
 
     public ADAgent getADAgentFrom( Function function, ExecutionCall&lt;Device&gt; call, boolean forward )
@@ -264,8 +264,8 @@ public class ExecutionCall&lt; DeviceType extends Device &gt;
     }
 
     public void takeContext( Map&lt;String, Object&gt;  context ) {
-<span class="nc bnc" id="L267" title="All 4 branches missed.">        if(_context==null &amp;&amp; context!=null )_context = new TreeMap&lt;&gt;();</span>
-<span class="nc bnc" id="L268" title="All 2 branches missed.">        if(context!=null) _context.putAll(_context);</span>
+<span class="nc bnc" id="L267" title="All 4 branches missed.">        if ( _context==null &amp;&amp; context!=null )_context = new TreeMap&lt;&gt;();</span>
+<span class="nc bnc" id="L268" title="All 2 branches missed.">        if (context!=null) _context.putAll(_context);</span>
 <span class="nc" id="L269">    }</span>
 
     // CONDITIONS:

@@ -82,7 +82,7 @@ public class Summation extends OperationType
 <span class="fc" id="L82">                    else return (t0Idx, t1Idx, t2Idx) -&gt; 1.0;</span>
                 };
 
-<span class="fc" id="L85">        Broadcast typeImplementation = new Broadcast()</span>
+<span class="fc" id="L85">        Broadcast operationAlgorithm = new Broadcast()</span>
 <span class="fc" id="L86">                .setADAnalyzer(</span>
 <span class="fc" id="L87">                    call -&gt; true</span>
 <span class="fc" id="L88">                ).setADAgentCreator(</span>
@@ -142,7 +142,7 @@ public class Summation extends OperationType
 
 <span class="fc" id="L143">        setImplementation (</span>
                 Broadcast.class,
-<span class="fc" id="L145">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L145">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -176,7 +176,7 @@ public class Summation extends OperationType
 <span class="nc" id="L176">                                            .call(gwz);</span>
 <span class="nc" id="L177">                                },</span>
                                 3,
-<span class="fc" id="L179">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L179">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;value = src1 + src2;\n&quot;,
                                 &quot;value += 1 * drain;\n&quot;,
                                 this // OperationType

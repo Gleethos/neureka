@@ -21,15 +21,15 @@ import java.util.List;
     public GenericOperation build()
     {
 <span class="fc" id="L23">        List&lt;String&gt; missing = new ArrayList&lt;&gt;();</span>
-<span class="pc bpc" id="L24" title="1 of 2 branches missed.">        if( _function == null ) missing.add( &quot;function&quot; );</span>
-<span class="pc bpc" id="L25" title="1 of 2 branches missed.">        if( _operator == null ) missing.add( &quot;operator&quot; );</span>
-<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        if( _arity == null ) missing.add( &quot;arity&quot; );</span>
-<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        if( _isOperator == null ) missing.add( &quot;isOperator&quot; );</span>
-<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        if( _isIndexer == null ) missing.add( &quot;isIndexer&quot; );</span>
-<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        if( _isDifferentiable == null ) missing.add( &quot;isDifferentiable&quot; );</span>
-<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if( _isInline == null ) missing.add( &quot;isInline&quot; );</span>
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">        if ( _function == null ) missing.add( &quot;function&quot; );</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">        if ( _operator == null ) missing.add( &quot;operator&quot; );</span>
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        if ( _arity == null ) missing.add( &quot;arity&quot; );</span>
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        if ( _isOperator == null ) missing.add( &quot;isOperator&quot; );</span>
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">        if ( _isIndexer == null ) missing.add( &quot;isIndexer&quot; );</span>
+<span class="pc bpc" id="L29" title="1 of 2 branches missed.">        if ( _isDifferentiable == null ) missing.add( &quot;isDifferentiable&quot; );</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if ( _isInline == null ) missing.add( &quot;isInline&quot; );</span>
 
-<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        if( !missing.isEmpty() )</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        if ( !missing.isEmpty() )</span>
 <span class="nc" id="L33">            throw new IllegalStateException(&quot;Factory not satisfied! The following properties are missing: '&quot;+ String.join(&quot;, &quot;, missing) +&quot;'&quot;);</span>
         else
 <span class="fc" id="L35">            return new GenericOperation (</span>

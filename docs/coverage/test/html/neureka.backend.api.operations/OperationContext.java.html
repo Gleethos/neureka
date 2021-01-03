@@ -3,139 +3,132 @@
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import neureka.backend.standard.operations.function.Absolute;
-import neureka.backend.standard.operations.function.Cosinus;
-import neureka.backend.standard.operations.function.Gaussian;
-import neureka.backend.standard.operations.function.Identity;
-import neureka.backend.standard.operations.function.Quadratic;
-import neureka.backend.standard.operations.function.ReLU;
-import neureka.backend.standard.operations.function.Sigmoid;
-import neureka.backend.standard.operations.function.Sinus;
-import neureka.backend.standard.operations.function.Softplus;
-import neureka.backend.standard.operations.function.Tanh;
-import neureka.backend.standard.operations.indexer.Product;
-import neureka.backend.standard.operations.indexer.Summation;
-import neureka.backend.standard.operations.linear.XConv;
-import neureka.backend.standard.operations.operator.Addition;
-import neureka.backend.standard.operations.operator.Division;
-import neureka.backend.standard.operations.operator.Modulo;
-import neureka.backend.standard.operations.operator.Multiplication;
-import neureka.backend.standard.operations.operator.Power;
-import neureka.backend.standard.operations.operator.Subtraction;
-import neureka.backend.standard.operations.other.CopyRight;
-import neureka.backend.standard.operations.other.DimTrim;
-import neureka.backend.standard.operations.other.Reshape;
-import neureka.backend.standard.operations.other.CopyLeft;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import java.util.*;
 
 /**
- *    PATTERN : Singleton
- *    (But cloneable for testing purposes!)
- *
- *    This class initializes and stores OperationType instances
+ *    This class is a (thread-local) Singleton managing Operation instances,
+ *    which is also cloneable for testing purposes.
+ *    &lt;br&gt;&lt;br&gt;
+ *    It initializes and stores Operation instances
  *    in various data structures for fast access and querying. (Mostly used by the FunctionParser)
- *
- *    Every OperationType instance contains a default ThreadLocal reference to
- *    the same OperationContext instance, namely: The _INSTANCE variable as declared below.
- *    During class initialization concrete classes extending the OperationType class
- *    are being instantiated in the static block below.
+ *    &lt;br&gt;
+ *    Operation instance are always managed by ThreadLocal reference to
+ *    OperationContext singleton instances represented by the static &quot;_CONTEXTS&quot; variable.
+ *    In these context instances
+ *    operations are stored in simple list and map collections,
+ *    namely: &lt;br&gt;
+ *    The &quot;_instances&quot; list
+ *    and the &quot;_lookup&quot; map
+ *    as declared below.
+ *    &lt;br&gt;
+ *    &lt;br&gt;
+ *    During class initialization concrete classes extending the Operation class
+ *    are being instantiated in the static block below via a ServiceLoader.
  *
  */
-@Accessors( prefix = {&quot;_&quot;} )
-<span class="nc" id="L49">@ToString</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">@Slf4j</span>
+<span class="nc" id="L31">@ToString</span>
+@Accessors( prefix = {&quot;_&quot;}, fluent = true ) // Getters don't have a &quot;get&quot; prefix for better readability!
 public class OperationContext implements Cloneable
 {
-<span class="fc" id="L52">    private static ThreadLocal&lt;OperationContext&gt; _INSTANCES = ThreadLocal.withInitial( ()-&gt;new OperationContext() );</span>
+<span class="fc" id="L35">    private static final ThreadLocal&lt;OperationContext&gt; _CONTEXTS = ThreadLocal.withInitial( OperationContext::new );</span>
 
     static
     {
-<span class="fc" id="L56">        new ReLU();</span>
-<span class="fc" id="L57">        new Sigmoid();</span>
-<span class="fc" id="L58">        new Tanh();</span>
-<span class="fc" id="L59">        new Quadratic();</span>
-<span class="fc" id="L60">        new Softplus();</span>
-<span class="fc" id="L61">        new Identity();</span>
-<span class="fc" id="L62">        new Gaussian();</span>
-<span class="fc" id="L63">        new Absolute();</span>
-<span class="fc" id="L64">        new Sinus();</span>
-<span class="fc" id="L65">        new Cosinus();</span>
-
-<span class="fc" id="L67">        new Summation();</span>
-<span class="fc" id="L68">        new Product();</span>
-
-<span class="fc" id="L70">        new Power();</span>
-<span class="fc" id="L71">        new Division();</span>
-<span class="fc" id="L72">        new Multiplication();</span>
-<span class="fc" id="L73">        new Modulo();</span>
-<span class="fc" id="L74">        new Subtraction();</span>
-<span class="fc" id="L75">        new Addition();</span>
-
-<span class="fc" id="L77">        new XConv();</span>
-
-<span class="fc" id="L79">        new Reshape();</span>
-<span class="fc" id="L80">        new DimTrim();</span>
-<span class="fc" id="L81">        new CopyLeft();</span>
-<span class="fc" id="L82">        new CopyRight();</span>
-<span class="fc" id="L83">    }</span>
+       // loading operations!
+<span class="fc" id="L40">       ServiceLoader&lt;Operation&gt; serviceLoader = ServiceLoader.load(Operation.class);</span>
+<span class="fc" id="L41">       serviceLoader.reload();</span>
+       //checking if load was successful
+<span class="fc bfc" id="L43" title="All 2 branches covered.">       for ( Operation operation : serviceLoader ) {</span>
+<span class="pc bpc" id="L44" title="2 of 4 branches missed.">           assert operation.getFunction() != null;</span>
+<span class="pc bpc" id="L45" title="2 of 4 branches missed.">           assert operation.getOperator() != null;</span>
+<span class="pc bpc" id="L46" title="2 of 4 branches missed.">           assert operation.getStringifier() != null;</span>
+<span class="fc" id="L47">           log.debug( &quot;Operation: '&quot; + operation.getFunction() + &quot;' loaded!&quot; );</span>
+<span class="fc" id="L48">       }</span>
+<span class="fc" id="L49">    }</span>
 
     /**
      * @return The OperationContext singleton instance!
      */
-    public static OperationContext instance() {
-<span class="fc" id="L89">        return _INSTANCES.get();</span>
+    public static OperationContext get()
+    {
+<span class="fc" id="L56">        return _CONTEXTS.get();</span>
     }
 
-    public static void setInstance( OperationContext context ) {
-<span class="fc" id="L93">        _INSTANCES.set(context);</span>
-<span class="fc" id="L94">    }</span>
+    /**
+     *  The OperationContext is a thread local singleton.
+     *  Therefore, this method will only set the context instance
+     *  for the thread which is calling this method.
+     *
+     * @param context The context which ought to be set as thread local singleton.
+     */
+    public static void setInstance( OperationContext context )
+    {
+<span class="fc" id="L68">        _CONTEXTS.set(context);</span>
+<span class="fc" id="L69">    }</span>
 
     /**
-     * @return A mapping between OperationType identifiers and their corresponding instances.
+     *  A mapping between OperationType identifiers and their corresponding instances.
      */
-<span class="fc" id="L99">    @Getter private final Map&lt;String, AbstractOperationType&gt; _lookup;</span>
+<span class="fc" id="L74">    @Getter private final Map&lt;String, Operation&gt; _lookup;</span>
+
     /**
-     * @return A list of all OperationType instances.
+     *  A list of all OperationType instances.
      */
-<span class="fc" id="L103">    @Getter private final ArrayList&lt;AbstractOperationType&gt; _register;</span>
+<span class="fc" id="L79">    @Getter private final List&lt;Operation&gt; _instances;</span>
+
     /**
-     * @return The ID of the OperationType that will be instantiated next.
+     *  The ID of the OperationType that will be instantiated next.
      */
-<span class="fc" id="L107">    @Getter private int _ID;</span>
+<span class="fc" id="L84">    @Getter private int _id;</span>
 
-<span class="fc" id="L109">    private OperationContext() {</span>
-<span class="fc" id="L110">        _lookup = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L111">        _register = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L112">        _ID = 0;</span>
-<span class="fc" id="L113">    }</span>
+    private OperationContext()
+<span class="fc" id="L87">    {</span>
+<span class="fc" id="L88">        _lookup = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L89">        _instances = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L90">        _id = 0;</span>
+<span class="fc" id="L91">    }</span>
 
-    public void incrementID() {
-<span class="fc" id="L116">        _ID++;</span>
-<span class="fc" id="L117">    }</span>
+    public void incrementID()
+    {
+<span class="fc" id="L95">        _id++;</span>
+<span class="fc" id="L96">    }</span>
 
-    public List&lt;AbstractOperationType&gt; instances() {
-<span class="fc" id="L120">        return getRegister();</span>
+    /**
+     *  This method queries the operations in this OperationContext
+     *  by a provided id integer which has to match the the id of an
+     *  existing operation.
+     *
+     * @param id The id of the operation.
+     * @return The found Operation instance or null.
+     */
+    public Operation instance( int id )
+    {
+<span class="fc" id="L108">        return _instances.get( id );</span>
     }
 
-    public AbstractOperationType instance(int index) {
-<span class="nc" id="L124">        return getRegister().get(index);</span>
-    }
-
-    public AbstractOperationType instance(String identifier) {
-<span class="nc" id="L128">        return getLookup().getOrDefault(identifier, null);</span>
+    /**
+     *  This method queries the operations in this OperationContext
+     *  by a provided identifier which has to match the name of
+     *  an existing operation.
+     *
+     * @param identifier The operation identifier, aka: its name.
+     * @return The requested Operation or null.
+     */
+    public Operation instance( String identifier )
+    {
+<span class="fc" id="L121">        return _lookup.getOrDefault( identifier, null );</span>
     }
 
     @Override
     public OperationContext clone()
     {
-<span class="fc" id="L134">        OperationContext clone = new OperationContext();</span>
-<span class="fc" id="L135">        clone._ID = _ID;</span>
-<span class="fc" id="L136">        clone._lookup.putAll(_lookup);</span>
-<span class="fc" id="L137">        clone._register.addAll(_register);</span>
-<span class="fc" id="L138">        return clone;</span>
+<span class="fc" id="L127">        OperationContext clone = new OperationContext();</span>
+<span class="fc" id="L128">        clone._id = _id;</span>
+<span class="fc" id="L129">        clone._lookup.putAll( _lookup );</span>
+<span class="fc" id="L130">        clone._instances.addAll( _instances );</span>
+<span class="fc" id="L131">        return clone;</span>
     }
 
 }

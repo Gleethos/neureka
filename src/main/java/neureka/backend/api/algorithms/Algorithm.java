@@ -142,13 +142,12 @@ public interface Algorithm<FinalType>
 
     /**
      *  A device specific implementation can be accessed by passing the class of the implementation
-     *  of the 'ImplementationFor<Device>' class.
+     *  of the 'ImplementationFor&lt;Device&lt;' class.
      *  An Algorithm instance ought to contain a collection of these device specific
      *  implementations...
      *
      * @param deviceClass The class of the device for which the stored algorithm implementation should be returned.
      * @param <D> The type parameter which has to be a class extending the Device interface.
-     * @param <I> The type parameter for a class implementing the "ImplementationFor" interface.
      * @return The implementation for the passed device type class.
      */
     <D extends Device<?>> ImplementationFor<D> getImplementationFor(Class<D> deviceClass );

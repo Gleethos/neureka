@@ -19,7 +19,7 @@
   
 Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
   
-Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/lib/neureka-0.4.0.jar)
+Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/lib/neureka-0.5.0-pre.jar)
   
 [![Beerpay](https://beerpay.io/Gleethos/neureka/badge.svg?style=beer-square)](https://beerpay.io/Gleethos/neureka)  
 [![Beerpay](https://beerpay.io/Gleethos/neureka/make-wish.svg?style=flat-square)](https://beerpay.io/Gleethos/neureka?focus=wish)
@@ -93,7 +93,7 @@ Neureka has been built for the JVM not for Java.
 <dependency>
   <groupId>com.github.gleethos</groupId>
   <artifactId>neureka</artifactId>
-  <version>0.4.0</version>
+  <version>0.5.0-pre</version>
 </dependency>
 ```
 ---
@@ -101,11 +101,11 @@ Neureka has been built for the JVM not for Java.
 ## Getting started with Gradle: ##
 Groovy DSL:
 ```
-implementation 'com.github.gleethos:neureka:0.4.0'
+implementation 'com.github.gleethos:neureka:0.5.0-pre-pre-pre-pre-pre-pre-pre-pre'
 ```
 Kotlin DSL:
 ```
-implementation("com.github.gleethos:neureka:0.4.0")
+implementation("com.github.gleethos:neureka:0.5.0-pre-pre-pre-pre-pre-pre-pre-pre")
 ```
 ...or alternatively: 
 
@@ -121,7 +121,7 @@ allprojects {
 2. Add Neureka as dependency:
 ```
 dependencies {
-	implementation 'com.github.Gleethos:neureka:v0.4.0'
+	implementation 'com.github.Gleethos:neureka:v0.5.0-pre-pre-pre-pre-pre-pre-pre-pre'
 }
 ```
 
@@ -131,7 +131,7 @@ dependencies {
 
 ```
 @GrabResolver(name = 'jitpack.io', root = 'https://jitpack.io')
-@Grab('com.github.Gleethos:neureka:v0.4.0')
+@Grab('com.github.Gleethos:neureka:v0.5.0-pre-pre-pre-pre-pre-pre-pre-pre')
 
 import com.github.Gleethos.neureka.*
 ```
@@ -166,7 +166,7 @@ $ gradlew proguard
 
 - OpenCL - 2.^ (JOCL binding)
 
-- Groovy - 3.^ 
+- Groovy - 2.^ 
 
 - SLF4J
 

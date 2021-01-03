@@ -3,8 +3,8 @@
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.backend.implementations.functional.Activation;
@@ -115,7 +115,7 @@ public class Product extends AbstractOperationType {
                     }
                 };
 
-<span class="fc" id="L118">        Broadcast typeImplementation = new Broadcast()</span>
+<span class="fc" id="L118">        Broadcast operationAlgorithm = new Broadcast()</span>
 <span class="fc" id="L119">                .setBackwardADAnalyzer( call -&gt; true )</span>
 <span class="fc" id="L120">                .setForwardADAnalyzer( call -&gt; true )</span>
 <span class="fc" id="L121">                .setADAgentSupplier(</span>
@@ -144,7 +144,7 @@ public class Product extends AbstractOperationType {
 
 <span class="fc" id="L145">        setImplementation (</span>
                 Broadcast.class,
-<span class="fc" id="L147">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L147">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -188,7 +188,7 @@ public class Product extends AbstractOperationType {
 <span class="nc" id="L188">                                            .call( gwz );</span>
 <span class="nc" id="L189">                                },</span>
                                 3,
-<span class="fc" id="L191">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L191">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;value = src1 * src2;\n&quot;,
                                 &quot;value += handle * drain;\n&quot;,
                                 this // OperationType

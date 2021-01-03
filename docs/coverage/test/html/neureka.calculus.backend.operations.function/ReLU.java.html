@@ -3,8 +3,8 @@
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.backend.ExecutionCall;
 import neureka.calculus.backend.implementations.functional.Activation;
@@ -68,7 +68,7 @@ public class ReLU extends AbstractOperationType
                 }
         );
 
-<span class="fc" id="L71">        Activation typeImplementation = new Activation()</span>
+<span class="fc" id="L71">        Activation operationAlgorithm = new Activation()</span>
 <span class="fc" id="L72">            .setADAgentSupplier(</span>
                 ( Function f, ExecutionCall&lt;Device&gt; call, boolean forward ) -&gt;
 <span class="fc" id="L74">                defaultImplementation().supplyADAgentFor( f, call, forward )</span>
@@ -76,7 +76,7 @@ public class ReLU extends AbstractOperationType
 
 <span class="fc" id="L77">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L79">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L79">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -113,7 +113,7 @@ public class ReLU extends AbstractOperationType
 <span class="nc" id="L113">                                            .call( gwz );</span>
 <span class="nc" id="L114">                                },</span>
                                 3,
-<span class="fc" id="L116">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L116">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;if (input &gt;= 0) {  output = input; } else { output = input * (float)0.01; }\n&quot;,
                                 &quot;if (input &gt;= 0) { output = (float)1; } else { output = (float)0.01; }\n&quot;,
                                 this // OperationType

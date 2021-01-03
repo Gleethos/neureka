@@ -71,7 +71,7 @@ public class Neureka
 
     public static Neureka instance() {
 <span class="fc" id="L73">        Neureka n = _INSTANCES.get();</span>
-<span class="fc bfc" id="L74" title="All 2 branches covered.">        if( n == null ) {</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        if ( n == null ) {</span>
 <span class="fc" id="L75">            n = new Neureka();</span>
 <span class="fc" id="L76">            synchronized ( Neureka.class ) {</span>
 <span class="fc" id="L77">                setContext( n );</span>
@@ -240,7 +240,7 @@ public class Neureka
             }
 
             public void setIsKeepingDerivativeTargetPayloads(boolean keep) {
-<span class="pc bpc" id="L243" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="pc bpc" id="L243" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
 <span class="fc" id="L244">                _isKeepingDerivativeTargetPayloads = keep;</span>
 <span class="fc" id="L245">            }</span>
 
@@ -290,7 +290,7 @@ public class Neureka
             }
 
             public void setIsPreventingInlineOperations(boolean prevent) {
-<span class="pc bpc" id="L293" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="pc bpc" id="L293" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
 <span class="fc" id="L294">                _isPreventingInlineOperations = prevent;</span>
 <span class="fc" id="L295">            }</span>
 
@@ -299,7 +299,7 @@ public class Neureka
             }
 
             public void setIsRetainingPendingErrorForJITProp(boolean retain) {
-<span class="pc bpc" id="L302" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="pc bpc" id="L302" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
 <span class="fc" id="L303">                _isRetainingPendingErrorForJITProp = retain;</span>
 <span class="fc" id="L304">            }</span>
 
@@ -308,7 +308,7 @@ public class Neureka
             }
 
             public void setIsApplyingGradientWhenTensorIsUsed(boolean apply) {
-<span class="pc bpc" id="L311" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="pc bpc" id="L311" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
 <span class="fc" id="L312">                _isApplyingGradientWhenTensorIsUsed = apply;</span>
 <span class="fc" id="L313">            }</span>
 
@@ -317,7 +317,7 @@ public class Neureka
             }
 
             public void setIsApplyingGradientWhenRequested(boolean apply) {
-<span class="pc bpc" id="L320" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="pc bpc" id="L320" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
 <span class="fc" id="L321">                _isApplyingGradientWhenRequested = apply;</span>
 <span class="fc" id="L322">            }</span>
 
@@ -338,7 +338,7 @@ public class Neureka
             }
 
             public void setIsUsingLegacyIndexing(boolean enabled) {
-<span class="pc bpc" id="L341" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="pc bpc" id="L341" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
 <span class="fc" id="L342">                _isUsingLegacyIndexing = enabled; // NOTE: gpu code must recompiled! (in OpenCLPlatform)</span>
 <span class="fc" id="L343">            }</span>
 
@@ -347,7 +347,7 @@ public class Neureka
             }
 
             public void setIsUsingArrayBasedIndexing( boolean thorough ) {
-<span class="pc bpc" id="L350" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="pc bpc" id="L350" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
 <span class="fc" id="L351">                _isUsingArrayBasedIndexing = thorough;</span>
 <span class="fc" id="L352">            }</span>
 
@@ -364,7 +364,7 @@ public class Neureka
             }
 
             public void setIsUsingLegacyView(boolean enabled) {
-<span class="pc bpc" id="L367" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="pc bpc" id="L367" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
 <span class="fc" id="L368">                _isUsingLegacyView = enabled;</span>
 <span class="fc" id="L369">            }</span>
 
@@ -386,7 +386,7 @@ public class Neureka
             }
 
             public void setIsOnlyUsingDefaultNDConfiguration(boolean enabled) {
-<span class="pc bpc" id="L389" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="pc bpc" id="L389" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
 <span class="fc" id="L390">                _isOnlyUsingDefaultNDConfiguration = enabled;</span>
 <span class="fc" id="L391">            }</span>
 
@@ -405,7 +405,7 @@ public class Neureka
             }
 
             public void setDefaultDataTypeClass( Class dtype ) {
-<span class="pc bpc" id="L408" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="pc bpc" id="L408" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
 <span class="fc" id="L409">                _defaultDataTypeClass = dtype;</span>
 <span class="fc" id="L410">            }</span>
 
@@ -414,7 +414,7 @@ public class Neureka
             }
 
             public void setIsAutoConvertingExternalDataToJVMTypes( boolean autoConvert ) {
-<span class="pc bpc" id="L417" title="2 of 4 branches missed.">                if(_isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="pc bpc" id="L417" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
 <span class="fc" id="L418">                _isAutoConvertingExternalDataToJVMTypes = autoConvert;</span>
 <span class="fc" id="L419">            }</span>
 
@@ -460,7 +460,7 @@ public class Neureka
 <span class="nc" id="L460">            } catch ( Throwable ex ) {// Class or one of its dependencies is not present...</span>
 <span class="nc" id="L461">                cause = ex.getMessage();</span>
             } finally {
-<span class="pc bpc" id="L463" title="5 of 6 branches missed.">                if( !found ) {</span>
+<span class="pc bpc" id="L463" title="5 of 6 branches missed.">                if ( !found ) {</span>
 <span class="nc" id="L464">                    System.out.println(</span>
                             &quot;[Info]: '&quot;+className+&quot;' dependencies not found!&quot;+groovyInfo+&quot;\n[Cause]: &quot;+cause
                     );

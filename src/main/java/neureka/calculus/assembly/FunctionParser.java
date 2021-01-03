@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -198,7 +199,11 @@ public class FunctionParser
                     expBuilder.insert(0, "(");
                 }
                 exp = expBuilder.toString();
-            } else exp = new StringBuilder(exp).append(")".repeat(bracketDepth)).toString();
+            }
+            else
+                exp = new StringBuilder(exp).append(
+                        String.join("", Collections.nCopies( bracketDepth, ")" )) // repeat!
+                ).toString();
         }
         boolean parsing = true;
         boolean needsStitching = false;

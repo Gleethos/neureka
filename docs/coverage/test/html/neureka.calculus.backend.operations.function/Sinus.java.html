@@ -3,8 +3,8 @@
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.backend.implementations.functional.Activation;
 import neureka.calculus.backend.operations.AbstractOperationType;
@@ -42,7 +42,7 @@ public class Sinus extends AbstractOperationType
                 }
         );
 
-<span class="fc" id="L45">        Activation typeImplementation = new Activation()</span>
+<span class="fc" id="L45">        Activation operationAlgorithm = new Activation()</span>
 <span class="pc" id="L46">        .setBackwardADAnalyzer( call -&gt; true )</span>
 <span class="fc" id="L47">        .setForwardADAnalyzer(</span>
              call -&gt; {
@@ -80,7 +80,7 @@ public class Sinus extends AbstractOperationType
 
 <span class="fc" id="L81">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L83">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L83">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -117,7 +117,7 @@ public class Sinus extends AbstractOperationType
 <span class="nc" id="L117">                                            .call( gwz );</span>
 <span class="nc" id="L118">                                },</span>
                                 3,
-<span class="fc" id="L120">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L120">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;output = sin( input );\n&quot;,
                                 &quot;output = cos( input );\n&quot;,
                                 this // OperationType

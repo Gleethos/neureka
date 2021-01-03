@@ -4,39 +4,42 @@ import neureka.dtype.custom.*;
 
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-<span class="fc" id="L10">public abstract class AbstractNumericType&lt;TargetType, TargetArrayType, HolderType, HolderArrayType&gt;</span>
+<span class="fc" id="L11">public abstract class AbstractNumericType&lt;TargetType, TargetArrayType, HolderType, HolderArrayType&gt;</span>
 implements NumericType&lt;TargetType, TargetArrayType, HolderType, HolderArrayType&gt;
 {
-<span class="fc" id="L13">    private static final Map&lt;?,?&gt; _NUMERIC_TYPE_RELATIONS = Map.of(</span>
-            I8.class, I8.class,
-            I16.class, I16.class,
-            I32.class, I32.class,
-            I64.class, I64.class,
-            F32.class, F32.class,
-            F64.class, F64.class,
-            UI8.class, I16.class,
-            UI16.class, I32.class,
-            UI64.class, UI64.class // think about this
-    );
+    private static final Map&lt;Object,Object&gt; _NUMERIC_TYPE_RELATIONS;
+    static {
+<span class="fc" id="L16">        _NUMERIC_TYPE_RELATIONS = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L17">        _NUMERIC_TYPE_RELATIONS.put( I8.class, I8.class    );</span>
+<span class="fc" id="L18">        _NUMERIC_TYPE_RELATIONS.put( I16.class, I16.class  );</span>
+<span class="fc" id="L19">        _NUMERIC_TYPE_RELATIONS.put( I32.class, I32.class  );</span>
+<span class="fc" id="L20">        _NUMERIC_TYPE_RELATIONS.put( I64.class, I64.class  );</span>
+<span class="fc" id="L21">        _NUMERIC_TYPE_RELATIONS.put( F32.class, F32.class  );</span>
+<span class="fc" id="L22">        _NUMERIC_TYPE_RELATIONS.put( F64.class, F64.class  );</span>
+<span class="fc" id="L23">        _NUMERIC_TYPE_RELATIONS.put( UI8.class, I16.class  );</span>
+<span class="fc" id="L24">        _NUMERIC_TYPE_RELATIONS.put( UI16.class, I32.class );</span>
+<span class="fc" id="L25">        _NUMERIC_TYPE_RELATIONS.put( UI64.class, UI64.class); // think about this</span>
+<span class="fc" id="L26">    }</span>
 
     public interface Conversion&lt;FromType, ToType&gt; { ToType go( FromType thing ); }
 
     @Override
     public Class&lt;NumericType&lt;TargetType, TargetArrayType, TargetType, TargetArrayType&gt;&gt; getNumericTypeTarget() {
-<span class="fc" id="L29">        return (Class&lt;NumericType&lt;TargetType, TargetArrayType, TargetType, TargetArrayType&gt;&gt;) _NUMERIC_TYPE_RELATIONS.get( this.getClass() );</span>
+<span class="fc" id="L32">        return (Class&lt;NumericType&lt;TargetType, TargetArrayType, TargetType, TargetArrayType&gt;&gt;) _NUMERIC_TYPE_RELATIONS.get( this.getClass() );</span>
     }
 
     @Override
     public void writeDataTo( DataOutput stream, Iterator&lt;TargetType&gt; iterator ) throws IOException {
         byte[] data;
-<span class="fc bfc" id="L35" title="All 2 branches covered.">        while( iterator.hasNext() ) {</span>
-<span class="fc" id="L36">            data = targetToForeignHolderBytes( iterator.next() );</span>
-<span class="fc" id="L37">            stream.write( data );</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        while( iterator.hasNext() ) {</span>
+<span class="fc" id="L39">            data = targetToForeignHolderBytes( iterator.next() );</span>
+<span class="fc" id="L40">            stream.write( data );</span>
         }
-<span class="fc" id="L39">    }</span>
+<span class="fc" id="L42">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

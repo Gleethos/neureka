@@ -1,9 +1,10 @@
 neureka
 neureka.autograd
 neureka.backend.api
-neureka.backend.api.executions
+neureka.backend.api.algorithms
 neureka.backend.api.implementations
 neureka.backend.api.operations
+neureka.backend.standard.algorithms
 neureka.backend.standard.implementations
 neureka.backend.standard.operations.function
 neureka.backend.standard.operations.indexer
@@ -15,9 +16,7 @@ neureka.calculus.assembly
 neureka.calculus.implementations
 neureka.devices
 neureka.devices.host
-neureka.devices.host.execution
 neureka.devices.opencl
-neureka.devices.opencl.execution
 neureka.devices.opencl.utility
 neureka.devices.storage
 neureka.dtype

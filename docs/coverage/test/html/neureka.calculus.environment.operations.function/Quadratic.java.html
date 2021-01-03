@@ -48,7 +48,7 @@ public class Quadratic extends OperationType
                 }
         );
 
-<span class="fc" id="L51">        Activation typeImplementation = new Activation()</span>
+<span class="fc" id="L51">        Activation operationAlgorithm = new Activation()</span>
 <span class="fc" id="L52">        .setADAnalyzer(</span>
                 call -&gt; {
 <span class="fc" id="L54">                    Tsr last = null;</span>
@@ -124,7 +124,7 @@ public class Quadratic extends OperationType
 
 <span class="fc" id="L125">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L127">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L127">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -154,7 +154,7 @@ public class Quadratic extends OperationType
 <span class="nc" id="L154">                                            .call(gwz);</span>
 <span class="nc" id="L155">                                },</span>
                                 3,
-<span class="fc" id="L157">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L157">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;output = input*input;\n&quot;,
                                 &quot;output = 2*input;\n&quot;,
                                 this // OperationType

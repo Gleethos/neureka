@@ -1,208 +1,272 @@
 <!DOCTYPE html><html>
 <head>
 <meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
-<style>body {
-  font-family: Helvetica, Arial, sans-serif;
-  font-weight: 300;
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 300;
 }
 
 h2 {
-  font-weight: 400;
+    font-weight: 400;
+}
+
+hr {
+    margin-bottom: 1.5em;
 }
 
 h3 {
-  font-weight: 200;
-}
-
-.back-link {
-  font-size: small;
+    font-weight: 200;
 }
 
 table {
-  margin: 5px;
+    margin: 7px;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
 }
 
+.ignored {
+    color: gray;
+}
+
+div.project-header {
+    margin-bottom: 10px;
+    font-size: large;
+}
+
+div.project-header &gt; span.project-name {
+
+                        }
+
+div.project-header &gt; span.project-version {
+                            padding-left: 20px;
+                        }
+
 div.date-test-ran {
-  font-size: small;
-  font-style: italic;
+    font-size: small;
+    font-style: italic;
+}
+
+div.spec-title {
+    padding: 10px 0px 5px 0px;
+}
+
+tr.error td, td.error {
+    background-color: #F89A4F !important;
+}
+
+tr.failure td, td.failure {
+    color: red;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}
+
+
+
+
+
+
+.back-link {
+    font-size: small;
+    font-weight: bold;
+}
+
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
 }
 
 table.features-table {
-  width: 800px;
+    width: 99%;
+    text-align: left;
 }
 
 table.summary-table {
-  width: 800px;
-  text-align: left;
-  font-weight: bold;
-  font-size: small;
+    width: 99%;
+
+    font-weight: bold;
+    font-size: small;
+}
+
+table.summary-table tbody {
+    width: 99%;
+    text-align: left;
 }
 
 table.summary-table th {
-  background: lightblue;
-  padding: 6px;
+    background: lightblue;
+    padding: 6px;
 }
 
 table.summary-table td {
-  background: #E0E0E0;
-  padding: 6px;
+    background: #E0E0E0;
+    padding: 6px;
 }
 
 pre.title {
-  font-family: inherit;
-  font-size: 24px;
-  line-height: 28px;
-  letter-spacing: -1px;
-  color: #333;
+    font-family: inherit;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -1px;
+    color: #333;
 }
 
 pre.narrative {
-  font-family: inherit;
-  font-size: 18px;
-  font-style: italic;
-  line-height: 23px;
-  letter-spacing: -1px;
-  color: #333;
+    font-family: inherit;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 23px;
+    letter-spacing: -1px;
+    color: #333;
 }
 
 .feature-description {
-  font-size: large;
-  background: lightblue;
-  padding: 12px;
+    font-size: large;
+    background: lightblue;
+    padding: 12px;
 }
 
 .feature-toc-error {
-  color: #F89A4F;
+    color: #F89A4F;
 }
 
 .feature-toc-failure {
-  color: #FF8080;
+    color: #FF8080;
 }
 
 .feature-toc-ignored {
-  color: lightgray;
+    color: lightgray;
 }
 
 .feature-toc-pass {
-  color: green;
+    color: green;
 }
 
 .feature-description.error {
-  background: #F89A4F;
+    background: #F89A4F;
 }
 
 .feature-description.failure {
-  background: #FF8080;
+    background: #FF8080;
 }
 
 .feature-description.ignored {
-  background: lightgray;
+    background: lightgray;
 }
 
 .feature-description.ignored .reason {
-  color: black;
-  font-style: italic;
-  font-size: small;
+    color: black;
+    font-style: italic;
+    font-size: small;
 }
 
 div.extra-info {
-  font-size: small;
+    font-size: small;
 }
 
 div.spec-headers {
-  margin: 4px;
-  font-style: italic;
+    margin: 4px;
+    font-style: italic;
 }
 
 div.spec-header {
 }
 
 div.issues {
-  margin-top: 6px;
-  padding: 10px 5px 5px 5px;
-  background-color: lemonchiffon;
-  color: black;
-  font-weight: 500;
-  font-size: small;
-  max-width: 50%;
+    margin-top: 6px;
+    padding: 10px 5px 5px 5px;
+    background-color: lemonchiffon;
+    color: black;
+    font-weight: 500;
+    font-size: small;
+    max-width: 50%;
 }
 
 div.pending-feature {
-  background-color: dodgerblue;
-  color: white;
-  margin-top: 6px;
-  padding: 5px;
-  text-align: center;
-  font-size: small;
-  max-width: 120px;
+    background-color: dodgerblue;
+    color: white;
+    margin-top: 6px;
+    padding: 5px;
+    text-align: center;
+    font-size: small;
+    max-width: 120px;
 }
 
 div.problem-description {
-  padding: 10px;
-  background: pink;
-  border-radius: 10px;
+    padding: 10px;
+    background: pink;
+    border-radius: 10px;
 }
 
 div.problem-header {
-  font-weight: bold;
-  color: red;
+    font-weight: bold;
+    color: red;
 }
 
 div.problem-list {
 
 }
 
+table.ex-table{
+    width: 98%;
+}
+
 table.ex-table th {
-  background: lightblue;
-  padding: 5px;
+    background: lightblue;
+    padding: 5px;
 }
 
 table.ex-table td {
-  background: #E0E0E0;
-  padding: 2px 5px 2px 5px;
+    background: #E0E0E0;
+    padding: 2px 5px 2px 5px;
 }
 
 table td {
-  min-width: 50px;
+    min-width: 50px;
 }
 
 col.block-kind-col {
-  width: 70px;
+    width: 70px;
 }
 
 span.spec-header {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 div.spec-text {
-  /*color: green;*/
+    /*color: green;*/
 }
 
 div.spec-status {
-  font-style: italic;
+    font-style: italic;
 }
 
 .ignored {
-  color: gray;
+    color: gray;
 }
 
 td.ex-result {
-  text-align: center;
-  background: white !important;
+    text-align: center;
+    background: white !important;
 }
 
 .ex-pass {
-  color: darkgreen;
+    color: darkgreen;
 }
 
 .ex-fail {
-  color: red;
-  font-weight: bold;
+    color: red;
+    font-weight: bold;
 }
 
 div.block-kind {
-  margin: 2px;
-  font-style: italic;
+    margin: 2px;
+    font-style: italic;
 }
 
 div.block-text {
@@ -210,14 +274,14 @@ div.block-text {
 }
 
 pre.block-source {
-  background-color: whitesmoke;
-  padding: 10px;
+    background-color: whitesmoke;
+    padding: 10px;
 }
 
 pre.block-source.error {
-  background-color: pink;
-  color: red;
-  font-weight: bold;
+    background-color: pink;
+    color: red;
+    font-weight: bold;
 }
 
 pre.block-source.pre-error {
@@ -225,23 +289,22 @@ pre.block-source.pre-error {
 }
 
 pre.block-source.before-error {
-  margin-bottom: -14px;
+    margin-bottom: -14px;
 }
 
 pre.block-source.after-error {
-  color: gray;
-  margin-top: -14px;
+    color: gray;
+    margin-top: -14px;
 }
 
 pre.block-source.post-error {
-  color: gray;
+    color: gray;
 }
 
 div.footer {
-  text-align: center;
-  font-size: small;
-}
-</style>
+    text-align: center;
+    font-size: small;
+}</style>
 </head>
 <body>
 <h2>Report for ut.optimization.Optimizer_Tests</h2>
@@ -251,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sat Dec 19 19:58:35 CET 2020 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Jan 03 17:36:49 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -268,7 +331,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.155 seconds</td>
+<td>0.117 seconds</td>
 </tr>
 </tbody>
 </table>

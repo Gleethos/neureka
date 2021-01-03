@@ -44,7 +44,7 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
     }
 
     @Override
-    public int shape(int i) {
+    public int shape( int i ) {
 <span class="fc" id="L48">        return _shape;</span>
     }
 
@@ -54,7 +54,7 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
     }
 
     @Override
-    public int idxmap(int i) {
+    public int idxmap( int i ) {
 <span class="fc" id="L58">        return 1;</span>
     }
 
@@ -64,7 +64,7 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
     }
 
     @Override
-    public int translation(int i) {
+    public int translation( int i ) {
 <span class="fc" id="L68">        return 1;</span>
     }
 
@@ -74,7 +74,7 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
     }
 
     @Override
-    public int spread(int i) {
+    public int spread( int i ) {
 <span class="fc" id="L78">        return 1;</span>
     }
 
@@ -84,23 +84,23 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
     }
 
     @Override
-    public int offset(int i) {
+    public int offset( int i ) {
 <span class="fc" id="L88">        return _offset;</span>
     }
 
 
     @Override
-    public int i_of_i(int i) {
+    public int i_of_i( int i ) {
 <span class="nc" id="L94">        return i + _offset;</span>
     }
 
     @Override
-    public int[] idx_of_i(int i) {
+    public int[] idx_of_i( int i ) {
 <span class="nc" id="L99">        return new int[]{i};</span>
     }
 
     @Override
-    public int i_of_idx(int[] idx) {
+    public int i_of_idx( int[] idx ) {
 <span class="nc" id="L104">        return idx[ 0 ] + _offset;</span>
     }
 

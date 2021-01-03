@@ -64,15 +64,15 @@ import neureka.Neureka;
 
     public static void tryGroovyScriptsOn(Neureka instance)
     {
-<span class="pc bpc" id="L67" title="1 of 4 branches missed.">        if (_settings_source == null || _setup_source == null) {</span>
+<span class="pc bpc" id="L67" title="1 of 4 branches missed.">        if ( _settings_source == null || _setup_source == null) {</span>
 <span class="fc" id="L68">            _settings_source = instance.utility().readResource(&quot;library_settings.groovy&quot;);</span>
 <span class="fc" id="L69">            _setup_source = instance.utility().readResource(&quot;scripting_setup.groovy&quot;);</span>
         }
         try {
 
 <span class="fc" id="L73">            String version = GroovySystem.getVersion();</span>
-<span class="pc bpc" id="L74" title="1 of 2 branches missed.">            if(Integer.parseInt(version.split(&quot;\\.&quot;)[ 0 ]) &lt; 3) {</span>
-<span class="nc" id="L75">                throw new IllegalCallerException(</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">            if (Integer.parseInt(version.split(&quot;\\.&quot;)[ 0 ]) &lt; 3) {</span>
+<span class="nc" id="L75">                throw new IllegalStateException(</span>
                         &quot;Wrong groovy version &quot;+version+&quot; found! Version 3.0.0 or greater required.&quot;
                 );
             }

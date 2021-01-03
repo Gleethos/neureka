@@ -54,7 +54,7 @@ public class Tanh extends OperationType
                 }
         );
 
-<span class="fc" id="L57">        Activation typeImplementation = new Activation()</span>
+<span class="fc" id="L57">        Activation operationAlgorithm = new Activation()</span>
 <span class="fc" id="L58">        .setADAnalyzer(</span>
                 call -&gt; {
 <span class="fc" id="L60">                    Tsr last = null;</span>
@@ -130,7 +130,7 @@ public class Tanh extends OperationType
 
 <span class="fc" id="L131">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L133">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L133">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -160,7 +160,7 @@ public class Tanh extends OperationType
 <span class="nc" id="L160">                                            .call(gwz);</span>
 <span class="nc" id="L161">                                },</span>
                                 3,
-<span class="fc" id="L163">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L163">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;output = input/pow(1+pow(input, 2.0f), 0.5f);\n&quot;,
                                 &quot;output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n&quot;,
                                 this // OperationType

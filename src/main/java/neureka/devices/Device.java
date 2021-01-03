@@ -47,6 +47,7 @@ import neureka.calculus.assembly.FunctionParser;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.IntFunction;
 
 /**
  * This is the interface for implementations representing
@@ -148,5 +149,15 @@ public interface Device<ValueType> extends Component<Tsr<ValueType>>, Storage<Va
     float value32f( Tsr<ValueType> tensor, int index );
 
     Collection< Tsr<ValueType> > getTensors();
+
+    /**
+     *  This method has the same signature of the Collection interface in Java 11,
+     *  however in order to enable Java 8 support as well
+     *  the method below is a substitution.
+     * @param generator
+     * @param <T>
+     * @return
+     */
+    <T> T[] toArray( IntFunction<T[]> generator );
 
 }

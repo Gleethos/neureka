@@ -91,7 +91,7 @@ import static org.jocl.CL.*;
     public void call( int globalWorkSize )
     {
 <span class="fc" id="L93">        cl_event[] events = _getWaitList( _inputs.toArray( new Tsr[ 0 ] ) );</span>
-<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if( events.length &gt; 0 ) {</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">        if ( events.length &gt; 0 ) {</span>
 <span class="nc" id="L95">            clWaitForEvents( events.length, events );</span>
 <span class="nc" id="L96">            _releaseEvents( _inputs.toArray( new Tsr[ 0 ] ) );</span>
         }
@@ -110,7 +110,7 @@ import static org.jocl.CL.*;
     public void call( long[] globalWorkSizes, long[] localWorkSizes )
     {
 <span class="fc" id="L112">        cl_event[] events = _getWaitList( _inputs.toArray( new Tsr[ 0 ] ) );</span>
-<span class="pc bpc" id="L113" title="1 of 2 branches missed.">        if( events.length &gt; 0 ) {</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">        if ( events.length &gt; 0 ) {</span>
 <span class="nc" id="L114">            clWaitForEvents( events.length, events );</span>
 <span class="nc" id="L115">            _releaseEvents( _inputs.toArray( new Tsr[ 0 ] ) );</span>
         }
@@ -130,7 +130,7 @@ import static org.jocl.CL.*;
     @Contract( pure = true )
     private void _releaseEvents( @NotNull Tsr&lt;Number&gt;[] tensors ) {
 <span class="nc bnc" id="L132" title="All 2 branches missed.">        for ( Tsr&lt;Number&gt; t : tensors ) {</span>
-<span class="nc bnc" id="L133" title="All 2 branches missed.">            if( t.find( OpenCLDevice.cl_tsr.class ).value.event != null ) {</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">            if ( t.find( OpenCLDevice.cl_tsr.class ).value.event != null ) {</span>
 <span class="nc" id="L134">                clReleaseEvent(t.find( OpenCLDevice.cl_tsr.class ).value.event);</span>
 <span class="nc" id="L135">                t.find( OpenCLDevice.cl_tsr.class ).value.event = null;</span>
             }

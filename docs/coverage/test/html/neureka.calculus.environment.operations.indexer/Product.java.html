@@ -96,7 +96,7 @@ public class Product extends OperationType {
                     }
                 };
 
-<span class="fc" id="L99">        Broadcast typeImplementation = new Broadcast()</span>
+<span class="fc" id="L99">        Broadcast operationAlgorithm = new Broadcast()</span>
 <span class="fc" id="L100">                .setADAnalyzer(</span>
 <span class="fc" id="L101">                    call -&gt; true</span>
 <span class="fc" id="L102">                ).setADAgentCreator(</span>
@@ -152,7 +152,7 @@ public class Product extends OperationType {
 
 <span class="fc" id="L153">        setImplementation (</span>
                 Broadcast.class,
-<span class="fc" id="L155">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L155">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -186,7 +186,7 @@ public class Product extends OperationType {
 <span class="nc" id="L186">                                            .call(gwz);</span>
 <span class="nc" id="L187">                                },</span>
                                 3,
-<span class="fc" id="L189">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L189">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;value = src1 * src2;\n&quot;,
                                 &quot;value += handle * drain;\n&quot;,
                                 this // OperationType

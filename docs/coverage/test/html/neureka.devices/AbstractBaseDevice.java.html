@@ -79,13 +79,13 @@ import java.util.stream.Stream;
 
     @NotNull
     @Override
-    public &lt;T&gt; T[] toArray(@NotNull T[] a) {
-<span class="nc" id="L83">        return this.getTensors().toArray(a);</span>
+    public &lt;T&gt; T[] toArray( @NotNull T[] a ) {
+<span class="nc" id="L83">        return this.getTensors().toArray( a );</span>
     }
 
     @Override
-    public &lt;T&gt; T[] toArray(IntFunction&lt;T[]&gt; generator) {
-<span class="nc" id="L88">        return this.getTensors().toArray(generator);</span>
+    public &lt;T&gt; T[] toArray( IntFunction&lt;T[]&gt; generator ) {
+<span class="nc" id="L88">        return null; // this.getTensors().toArray( generator );</span>
     }
 
     @Override

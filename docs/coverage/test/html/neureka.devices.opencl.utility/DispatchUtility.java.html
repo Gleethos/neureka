@@ -18,7 +18,7 @@ import java.util.List;
 <span class="fc" id="L18">        List&lt;List&lt;Integer&gt;&gt; factors = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L19" title="All 2 branches covered.">        for ( int s : shape ) factors.add( primeFactors(s) );</span>
 <span class="fc" id="L20">        int[] indices = new int[ shape.length ];</span>
-<span class="fc bfc" id="L21" title="All 2 branches covered.">        for ( int i=0; i&lt;shape.length; i++) {</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">        for ( int i=0; i&lt;shape.length; i++ ) {</span>
 <span class="fc" id="L22">            int index = -1;</span>
 <span class="fc" id="L23">            int product = 1;</span>
             do {
@@ -119,7 +119,7 @@ import java.util.List;
 <span class="fc" id="L119">                int inversionDelta = inversionProductOfNewDimension(</span>
                         shape, current, i, size
                 );
-<span class="fc bfc" id="L122" title="All 2 branches covered.">                if( inversionDelta &lt; productDelta ) {</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">                if ( inversionDelta &lt; productDelta ) {</span>
 <span class="fc" id="L123">                    bestIndex = i;</span>
 <span class="fc" id="L124">                    bestInversionDelta = inversionDelta;</span>
                 }
@@ -180,7 +180,7 @@ import java.util.List;
 
         // n must be odd at this point.  So we can
         // skip one element (Note i = i +2)
-<span class="fc bfc" id="L183" title="All 2 branches covered.">        for (int i = 3; i &lt;= Math.sqrt(n); i += 2) {</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        for ( int i = 3; i &lt;= Math.sqrt(n); i += 2) {</span>
             // While i divides n, print i and divide n
 <span class="fc bfc" id="L185" title="All 2 branches covered.">            while (n % i == 0) {</span>
 <span class="fc" id="L186">                factors.add( i );</span>

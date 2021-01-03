@@ -2,7 +2,7 @@
 
 import neureka.Tsr;
 import neureka.calculus.Function;
-import neureka.backend.api.operations.AbstractOperationType;
+import neureka.backend.api.operations.AbstractOperation;
 import neureka.calculus.AbstractBaseFunction;
 import neureka.calculus.assembly.FunctionBuilder;
 
@@ -25,7 +25,7 @@ import neureka.calculus.assembly.FunctionBuilder;
     }
 
     @Override
-    public AbstractOperationType getOperation() {
+    public AbstractOperation getOperation() {
 <span class="nc" id="L29">        return null;</span>
     }
 
@@ -37,7 +37,7 @@ import neureka.calculus.assembly.FunctionBuilder;
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @Override
     public Function newBuild(final String equation) {
-<span class="fc bfc" id="L40" title="All 2 branches covered.">        if(equation.contains(&quot;g&quot;)) _providesGradient = true;</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if (equation.contains(&quot;g&quot;)) _providesGradient = true;</span>
 <span class="fc" id="L41">        return this;</span>
     }
 
@@ -51,7 +51,7 @@ import neureka.calculus.assembly.FunctionBuilder;
     @Override
     public double call(final double[] inputs) {
 <span class="nc" id="L53">        double sum = 0;</span>
-<span class="nc bnc" id="L54" title="All 2 branches missed.">        for (int Ii = 0; Ii &lt; inputs.length; Ii++) sum += call(inputs, Ii);</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        for ( int Ii = 0; Ii &lt; inputs.length; Ii++) sum += call(inputs, Ii);</span>
 <span class="nc" id="L55">        return sum;</span>
     }
 

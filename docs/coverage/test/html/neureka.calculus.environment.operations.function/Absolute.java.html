@@ -35,7 +35,7 @@ public class Absolute extends OperationType {
             }
         );
 
-<span class="fc" id="L38">        Activation typeImplementation = new Activation()</span>
+<span class="fc" id="L38">        Activation operationAlgorithm = new Activation()</span>
 <span class="fc" id="L39">        .setADAnalyzer(</span>
                 call -&gt; {
 <span class="fc" id="L41">                    Tsr last = null;</span>
@@ -110,7 +110,7 @@ public class Absolute extends OperationType {
 
 <span class="fc" id="L111">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L113">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L113">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -140,7 +140,7 @@ public class Absolute extends OperationType {
 <span class="nc" id="L140">                                            .call( gwz );</span>
 <span class="nc" id="L141">                                },</span>
                                 3,
-<span class="fc" id="L143">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L143">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;output = fabs(input);\n&quot;, // activationSource
                                 &quot;output = (input &lt; 0) ? -1 : 1;\n&quot;, //differentiationSource
                                 this // OperationType

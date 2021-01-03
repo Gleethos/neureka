@@ -250,7 +250,7 @@ public class GraphNode&lt;ValueType&gt; implements Component&lt;Tsr&lt;ValueType
 <span class="fc bfc" id="L250" title="All 2 branches covered.">                    if ( _children != null ) {</span>
 <span class="fc bfc" id="L251" title="All 2 branches covered.">                        for ( WeakReference&lt;GraphNode&gt; childRef : _children ) {</span>
 <span class="fc" id="L252">                            GraphNode childNode = childRef.get();</span>
-<span class="fc bfc" id="L253" title="All 4 branches covered.">                            if ( childNode != null &amp;&amp; childNode.usesReverseAD() ) allChildrenUseForwardAD = false;</span>
+<span class="pc bpc" id="L253" title="1 of 4 branches missed.">                            if ( childNode != null &amp;&amp; childNode.usesReverseAD() ) allChildrenUseForwardAD = false;</span>
 <span class="fc" id="L254">                        }</span>
                     }
 <span class="fc bfc" id="L256" title="All 2 branches covered.">                    if ( allChildrenUseForwardAD ) _targets_derivatives = null;</span>
@@ -388,7 +388,7 @@ public class GraphNode&lt;ValueType&gt; implements Component&lt;Tsr&lt;ValueType
 <span class="fc" id="L388">            Neureka.Settings.AutoGrad adSetting = Neureka.instance().settings().autograd();</span>
 <span class="fc bfc" id="L389" title="All 2 branches covered.">            if ( adSetting.isApplyingGradientWhenTensorIsUsed() ) {</span>
 <span class="fc bfc" id="L390" title="All 2 branches covered.">                for ( Tsr&lt;ValueType&gt; t : inputs ) {</span>
-<span class="fc bfc" id="L391" title="All 4 branches covered.">                    if( !adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRqd() ) {</span>
+<span class="fc bfc" id="L391" title="All 4 branches covered.">                    if ( !adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRqd() ) {</span>
 <span class="fc" id="L392">                        t.applyGradient(); // activates JITProp if present and removes it...</span>
 <span class="fc" id="L393">                        t.setGradientApplyRqd( false );</span>
                     }
@@ -416,7 +416,7 @@ public class GraphNode&lt;ValueType&gt; implements Component&lt;Tsr&lt;ValueType
                     );
                 }
             }
-<span class="fc" id="L419">            _construct( payloadSupplier.get(), function, call, inputs[ 0 ].find(GraphNode.class).getLock() );</span>
+<span class="fc" id="L419">            _construct( payloadSupplier.get(), function, call, inputs[ 0 ].find( GraphNode.class ).getLock() );</span>
 <span class="fc" id="L420">        } else {</span>
 <span class="fc" id="L421">            throw new IllegalArgumentException(</span>
 <span class="fc" id="L422">                    &quot;The passed context object for the GraphNode constructor is of type '&quot; + context.getClass().getName() + &quot;'.\n&quot; +</span>
@@ -451,7 +451,7 @@ public class GraphNode&lt;ValueType&gt; implements Component&lt;Tsr&lt;ValueType
 <span class="fc" id="L451">            _function = function;</span>
 <span class="fc" id="L452">            _parents = new GraphNode[inputs.length];</span>
 <span class="fc bfc" id="L453" title="All 2 branches covered.">            for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
-<span class="fc" id="L454">                _parents[ i ] = inputs[ i ].find(GraphNode.class);</span>
+<span class="fc" id="L454">                _parents[ i ] = inputs[ i ].find( GraphNode.class );</span>
 <span class="pc bpc" id="L455" title="1 of 2 branches missed.">                if ( _parents[ i ] == null ) {</span>
 <span class="nc" id="L456">                    throw new IllegalStateException(</span>
                             &quot;Input tensors of a new graph-node must contain leave graph-nodes!&quot;

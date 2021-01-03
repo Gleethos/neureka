@@ -68,10 +68,10 @@ import org.jocl.*;
 
             // CL_DEVICE_TYPE
 <span class="fc" id="L70">            long deviceType = getLong(device, CL_DEVICE_TYPE);</span>
-<span class="pc bpc" id="L71" title="1 of 2 branches missed.">            if( (deviceType &amp; CL_DEVICE_TYPE_CPU) != 0) result+=(&quot;CL_DEVICE_TYPE: CL_DEVICE_TYPE_CPU\n&quot;);</span>
-<span class="pc bpc" id="L72" title="1 of 2 branches missed.">            if( (deviceType &amp; CL_DEVICE_TYPE_GPU) != 0) result+=(&quot;CL_DEVICE_TYPE: CL_DEVICE_TYPE_GPU\n&quot;);</span>
-<span class="pc bpc" id="L73" title="1 of 2 branches missed.">            if( (deviceType &amp; CL_DEVICE_TYPE_ACCELERATOR) != 0) result+=(&quot;CL_DEVICE_TYPE: CL_DEVICE_TYPE_ACCELERATOR\n&quot;);</span>
-<span class="pc bpc" id="L74" title="1 of 2 branches missed.">            if( (deviceType &amp; CL_DEVICE_TYPE_DEFAULT) != 0) result+=(&quot;CL_DEVICE_TYPE: CL_DEVICE_TYPE_DEFAULT\n&quot;);</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">            if ( (deviceType &amp; CL_DEVICE_TYPE_CPU) != 0) result+=(&quot;CL_DEVICE_TYPE: CL_DEVICE_TYPE_CPU\n&quot;);</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">            if ( (deviceType &amp; CL_DEVICE_TYPE_GPU) != 0) result+=(&quot;CL_DEVICE_TYPE: CL_DEVICE_TYPE_GPU\n&quot;);</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">            if ( (deviceType &amp; CL_DEVICE_TYPE_ACCELERATOR) != 0) result+=(&quot;CL_DEVICE_TYPE: CL_DEVICE_TYPE_ACCELERATOR\n&quot;);</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">            if ( (deviceType &amp; CL_DEVICE_TYPE_DEFAULT) != 0) result+=(&quot;CL_DEVICE_TYPE: CL_DEVICE_TYPE_DEFAULT\n&quot;);</span>
 
             // CL_DEVICE_MAX_COMPUTE_UNITS
 <span class="fc" id="L77">            int maxComputeUnits = getInt(device, CL_DEVICE_MAX_COMPUTE_UNITS);</span>
@@ -309,14 +309,14 @@ import org.jocl.*;
 <span class="fc" id="L309">        long values[] = new long[numValues];</span>
 <span class="pc bpc" id="L310" title="1 of 2 branches missed.">        if (Sizeof.size_t == 4)</span>
         {
-<span class="nc bnc" id="L312" title="All 2 branches missed.">            for (int i=0; i&lt;numValues; i++)</span>
+<span class="nc bnc" id="L312" title="All 2 branches missed.">            for ( int i=0; i&lt;numValues; i++)</span>
             {
 <span class="nc" id="L314">                values[ i ] = buffer.getInt(i * Sizeof.size_t);</span>
             }
         }
         else
         {
-<span class="fc bfc" id="L319" title="All 2 branches covered.">            for (int i=0; i&lt;numValues; i++)</span>
+<span class="fc bfc" id="L319" title="All 2 branches covered.">            for ( int i=0; i&lt;numValues; i++)</span>
             {
 <span class="fc" id="L321">                values[ i ] = buffer.getLong(i * Sizeof.size_t);</span>
             }

@@ -27,6 +27,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.sf.proguard:proguard-gradle:6.2.2' // Used to create minified jar file of Neureka!
+        //classpath 'com.guardsquare:proguard-gradle:7.0.0'
     }
 }
 
@@ -48,13 +49,16 @@ plugins {
     id 'java-library'
     id 'maven'//-publish'
     id 'signing'
+
 }
+
+
 
 // This gives some more freedom for comments ( special characters... ).
 compileJava { options.encoding = "UTF-8" } // Allows for '"' characters in comments for example...
 
 String PROJECT = "neureka"
-String VERSION = "0.4.0"
+String VERSION = "0.5.0-pre"
 String GROUPID = "com.github.gleethos"
 String BASENAME = "neureka"
 
@@ -112,8 +116,8 @@ version VERSION
 //----------------------------------------------------------------------------------------------------------------------
 // 5. SETTING JAVA VERSION AND DEPENDENCY SRC:
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = 8
+targetCompatibility = 8
 
 repositories {
     mavenCentral()
@@ -123,20 +127,59 @@ repositories {
 //----------------------------------------------------------------------------------------------------------------------
 // 6. LOADING AND COMPILING DEPENDENCIES :
 
+///*
+// WIP - Multi-Release-Jar :
+
+sourceSets {
+    java11 {
+        java {
+            srcDirs = ['src/main/java']
+        }
+    }
+    java13 {
+        java {
+            srcDirs = ['src/main/java']
+        }
+    }
+}
+//*/
+
+
 dependencies {
+
     // Core library dependencies :
     implementation 'org.codehaus.groovy:groovy:3.0.5'
     implementation 'org.jocl:jocl:2.0.2' //-> Internal dependency!
     implementation 'org.jetbrains:annotations:16.0.2'
+    ///*
+        // WIP - Multi-Release-Jar :
+        java11Implementation 'org.codehaus.groovy:groovy:3.0.5'
+        java11Implementation 'org.jocl:jocl:2.0.2' //-> Internal dependency!
+        java11Implementation 'org.jetbrains:annotations:16.0.2'
+        java13Implementation 'org.codehaus.groovy:groovy:3.0.5'
+        java13Implementation 'org.jocl:jocl:2.0.2' //-> Internal dependency!
+        java13Implementation 'org.jetbrains:annotations:16.0.2'
+    //*/
 
     // Logging :
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
+    ///*
+        // WIP - Multi-Release-Jar :
+        java11Implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
+        java13Implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.+'
+    //*/
     //implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.29' // adds log4j backend
 
     // Lombok :
     compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
-
+    ///*
+        // WIP - Multi-Release-Jar :
+        java11CompileOnly 'org.projectlombok:lombok:1.18.16'
+        java11AnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+        java13CompileOnly 'org.projectlombok:lombok:1.18.16'
+        java13AnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+    //*/
 
     // Test suite : Groovy, Spock (+ sl4j, + Spock-Reports)
     testCompile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.5'
@@ -151,12 +194,48 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.18.16'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
 
+    // WIP - Multi-Release-Jar :
+    //java11Implementation files(sourceSets.main.output.classesDirs) { builtBy compileJava8Java }
+
 }
+
+///*
+// WIP - Multi-Release-Jar :
+
+compileJava13Java {
+    sourceCompatibility = 13
+    targetCompatibility = 13
+    options.compilerArgs.addAll(['--release', '13'])
+
+}
+
+compileJava11Java {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+    options.compilerArgs.addAll(['--release', '11'])
+}
+
 
 //----------------------------------------------------------------------------------------------------------------------
 // 7. CONFIGURING TEST EXECUTION :
 
+
 test {
+    /*
+    // WIP - Multi-Release-Jar :
+
+    testClassesDirs = sourceSets.java11.output.classesDirs
+    classpath = sourceSets.java11.runtimeClasspath
+    dependsOn jar
+    def jdkHome = System.getenv("JAVA_11")
+    classpath = files(jar.archivePath, classpath) - sourceSets.main.output
+    executable = file("$jdkHome/bin/java")
+    doFirst {
+        println classpath.asPath
+        println "$name runs test using JDK 11"
+    }
+    */
+
     //filter { includeTestsMatching "*" } // Filter for tests scenarios!
 
     // Spock-Reports configuration :
@@ -172,6 +251,8 @@ test {
     // Number of threads used for testing :
     maxParallelForks = (int) Math.floor(1+(Runtime.runtime.availableProcessors().intdiv(2) ?: 1)/2)
 }
+
+
 
 //----------------------------------------------------------------------------------------------------------------------
 // 8. CONFIGURING TEST REPORTING :
@@ -216,16 +297,6 @@ task cleanForDeployment(type: Delete) {
     delete new File("$rootDir/docs/spock/reports").listFiles()
 }
 
-task releaseJDocs(type: Copy) {
-    from "$rootDir/build/docs/javadoc"
-    into "$rootDir/docs/jdocs"
-}
-
-task releaseSpockReports(type: Copy) {
-    from "$rootDir/build/spock-reports"
-    into "$rootDir/docs/spock/reports"
-}
-
 task deploy() {
 
     // Expected before : dependsOn 'cleanForDeployment'
@@ -237,7 +308,19 @@ task deploy() {
     dependsOn 'releaseJDocs'
     dependsOn 'releaseSpockReports'
 
+    // Expected after : dependsOn 'releaseJDocs'
+    // Expected after : dependsOn 'releaseSpockReports'
     // Expected after : dependsOn 'injectSpockStyles'
+}
+
+task releaseJDocs(type: Copy) {
+    from "$rootDir/build/docs/javadoc"
+    into "$rootDir/docs/jdocs"
+}
+
+task releaseSpockReports(type: Copy) {
+    from "$rootDir/build/spock-reports"
+    into "$rootDir/docs/spock/reports"
 }
 
 task injectSpockStyles(type: Task){
@@ -258,6 +341,18 @@ task injectSpockStyles(type: Task){
 // 11. JAR CREATION AND MINIFICATION :
 
 jar {
+    // Multi release jar config:
+    manifest.attributes(
+            'Multi-Release': 'true'
+    )
+    into('META-INF/versions/11') {
+        from sourceSets.java11.output
+    }
+    into('META-INF/versions/13') {
+        from sourceSets.java13.output
+    }
+
+    // Target:
     //destinationDirectory = file("$rootDir/build/libs")
     copy {
         from "$rootDir/build/libs/neureka-"+VERSION+".jar"

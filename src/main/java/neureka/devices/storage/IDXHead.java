@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,15 +31,17 @@ public class IDXHead extends AbstractFileHead<IDXHead>
     @Getter
     private int[] _shape;
 
-    private static Map<Integer, Class<?>> TYPE_MAP =  Map.of(
-            0x08, UI8.class,   // unsigned byte
-            0x09, I8.class,    // signed byte
-            0x0A, UI16.class,  //-> !! This is speculation !!
-            0x0B, I16.class,   // short (2 bytes)
-            0x0C, I32.class,   // int (4 bytes)
-            0x0D, F32.class,   // float (4 bytes)
-            0x0E, F64.class    // double (8 bytes)
-    );
+    private static Map<Integer, Class<?>> TYPE_MAP;
+    static {
+        TYPE_MAP = new HashMap<>();
+        TYPE_MAP.put( 0x08, UI8.class );  // unsigned byte
+        TYPE_MAP.put( 0x09, I8.class  );  // signed byte
+        TYPE_MAP.put( 0x0A, UI16.class);  //-> !! This is speculation !!
+        TYPE_MAP.put( 0x0B, I16.class );  // short (2 bytes)
+        TYPE_MAP.put( 0x0C, I32.class );  // int (4 bytes)
+        TYPE_MAP.put( 0x0D, F32.class );  // float (4 bytes)
+        TYPE_MAP.put( 0x0E, F64.class );  // double (8 bytes)
+    }
 
     private final static Map<Class<?>, Integer> CODE_MAP = TYPE_MAP.entrySet()
                                                         .stream()

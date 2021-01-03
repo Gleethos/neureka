@@ -52,7 +52,7 @@ public class Sigmoid extends OperationType
                 }
         );
 
-<span class="fc" id="L55">        Activation typeImplementation = new Activation()</span>
+<span class="fc" id="L55">        Activation operationAlgorithm = new Activation()</span>
 <span class="fc" id="L56">        .setADAnalyzer(</span>
                 call -&gt; {
 <span class="fc" id="L58">                    Tsr last = null;</span>
@@ -129,7 +129,7 @@ public class Sigmoid extends OperationType
 
 <span class="fc" id="L130">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L132">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L132">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -159,7 +159,7 @@ public class Sigmoid extends OperationType
 <span class="nc" id="L159">                                            .call(gwz);</span>
 <span class="nc" id="L160">                                },</span>
                                 3,
-<span class="fc" id="L162">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L162">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;output = 1 / (1 + (float)pow((float)M_E, -input));\n&quot;,
                                 &quot;output = input * (1 - input);\n&quot;,
                                 this // OperationType

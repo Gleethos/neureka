@@ -1,208 +1,272 @@
 <!DOCTYPE html><html>
 <head>
 <meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
-<style>body {
-  font-family: Helvetica, Arial, sans-serif;
-  font-weight: 300;
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 300;
 }
 
 h2 {
-  font-weight: 400;
+    font-weight: 400;
+}
+
+hr {
+    margin-bottom: 1.5em;
 }
 
 h3 {
-  font-weight: 200;
-}
-
-.back-link {
-  font-size: small;
+    font-weight: 200;
 }
 
 table {
-  margin: 5px;
+    margin: 7px;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
 }
 
+.ignored {
+    color: gray;
+}
+
+div.project-header {
+    margin-bottom: 10px;
+    font-size: large;
+}
+
+div.project-header &gt; span.project-name {
+
+                        }
+
+div.project-header &gt; span.project-version {
+                            padding-left: 20px;
+                        }
+
 div.date-test-ran {
-  font-size: small;
-  font-style: italic;
+    font-size: small;
+    font-style: italic;
+}
+
+div.spec-title {
+    padding: 10px 0px 5px 0px;
+}
+
+tr.error td, td.error {
+    background-color: #F89A4F !important;
+}
+
+tr.failure td, td.failure {
+    color: red;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}
+
+
+
+
+
+
+.back-link {
+    font-size: small;
+    font-weight: bold;
+}
+
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
 }
 
 table.features-table {
-  width: 800px;
+    width: 99%;
+    text-align: left;
 }
 
 table.summary-table {
-  width: 800px;
-  text-align: left;
-  font-weight: bold;
-  font-size: small;
+    width: 99%;
+
+    font-weight: bold;
+    font-size: small;
+}
+
+table.summary-table tbody {
+    width: 99%;
+    text-align: left;
 }
 
 table.summary-table th {
-  background: lightblue;
-  padding: 6px;
+    background: lightblue;
+    padding: 6px;
 }
 
 table.summary-table td {
-  background: #E0E0E0;
-  padding: 6px;
+    background: #E0E0E0;
+    padding: 6px;
 }
 
 pre.title {
-  font-family: inherit;
-  font-size: 24px;
-  line-height: 28px;
-  letter-spacing: -1px;
-  color: #333;
+    font-family: inherit;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -1px;
+    color: #333;
 }
 
 pre.narrative {
-  font-family: inherit;
-  font-size: 18px;
-  font-style: italic;
-  line-height: 23px;
-  letter-spacing: -1px;
-  color: #333;
+    font-family: inherit;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 23px;
+    letter-spacing: -1px;
+    color: #333;
 }
 
 .feature-description {
-  font-size: large;
-  background: lightblue;
-  padding: 12px;
+    font-size: large;
+    background: lightblue;
+    padding: 12px;
 }
 
 .feature-toc-error {
-  color: #F89A4F;
+    color: #F89A4F;
 }
 
 .feature-toc-failure {
-  color: #FF8080;
+    color: #FF8080;
 }
 
 .feature-toc-ignored {
-  color: lightgray;
+    color: lightgray;
 }
 
 .feature-toc-pass {
-  color: green;
+    color: green;
 }
 
 .feature-description.error {
-  background: #F89A4F;
+    background: #F89A4F;
 }
 
 .feature-description.failure {
-  background: #FF8080;
+    background: #FF8080;
 }
 
 .feature-description.ignored {
-  background: lightgray;
+    background: lightgray;
 }
 
 .feature-description.ignored .reason {
-  color: black;
-  font-style: italic;
-  font-size: small;
+    color: black;
+    font-style: italic;
+    font-size: small;
 }
 
 div.extra-info {
-  font-size: small;
+    font-size: small;
 }
 
 div.spec-headers {
-  margin: 4px;
-  font-style: italic;
+    margin: 4px;
+    font-style: italic;
 }
 
 div.spec-header {
 }
 
 div.issues {
-  margin-top: 6px;
-  padding: 10px 5px 5px 5px;
-  background-color: lemonchiffon;
-  color: black;
-  font-weight: 500;
-  font-size: small;
-  max-width: 50%;
+    margin-top: 6px;
+    padding: 10px 5px 5px 5px;
+    background-color: lemonchiffon;
+    color: black;
+    font-weight: 500;
+    font-size: small;
+    max-width: 50%;
 }
 
 div.pending-feature {
-  background-color: dodgerblue;
-  color: white;
-  margin-top: 6px;
-  padding: 5px;
-  text-align: center;
-  font-size: small;
-  max-width: 120px;
+    background-color: dodgerblue;
+    color: white;
+    margin-top: 6px;
+    padding: 5px;
+    text-align: center;
+    font-size: small;
+    max-width: 120px;
 }
 
 div.problem-description {
-  padding: 10px;
-  background: pink;
-  border-radius: 10px;
+    padding: 10px;
+    background: pink;
+    border-radius: 10px;
 }
 
 div.problem-header {
-  font-weight: bold;
-  color: red;
+    font-weight: bold;
+    color: red;
 }
 
 div.problem-list {
 
 }
 
+table.ex-table{
+    width: 98%;
+}
+
 table.ex-table th {
-  background: lightblue;
-  padding: 5px;
+    background: lightblue;
+    padding: 5px;
 }
 
 table.ex-table td {
-  background: #E0E0E0;
-  padding: 2px 5px 2px 5px;
+    background: #E0E0E0;
+    padding: 2px 5px 2px 5px;
 }
 
 table td {
-  min-width: 50px;
+    min-width: 50px;
 }
 
 col.block-kind-col {
-  width: 70px;
+    width: 70px;
 }
 
 span.spec-header {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 div.spec-text {
-  /*color: green;*/
+    /*color: green;*/
 }
 
 div.spec-status {
-  font-style: italic;
+    font-style: italic;
 }
 
 .ignored {
-  color: gray;
+    color: gray;
 }
 
 td.ex-result {
-  text-align: center;
-  background: white !important;
+    text-align: center;
+    background: white !important;
 }
 
 .ex-pass {
-  color: darkgreen;
+    color: darkgreen;
 }
 
 .ex-fail {
-  color: red;
-  font-weight: bold;
+    color: red;
+    font-weight: bold;
 }
 
 div.block-kind {
-  margin: 2px;
-  font-style: italic;
+    margin: 2px;
+    font-style: italic;
 }
 
 div.block-text {
@@ -210,14 +274,14 @@ div.block-text {
 }
 
 pre.block-source {
-  background-color: whitesmoke;
-  padding: 10px;
+    background-color: whitesmoke;
+    padding: 10px;
 }
 
 pre.block-source.error {
-  background-color: pink;
-  color: red;
-  font-weight: bold;
+    background-color: pink;
+    color: red;
+    font-weight: bold;
 }
 
 pre.block-source.pre-error {
@@ -225,23 +289,22 @@ pre.block-source.pre-error {
 }
 
 pre.block-source.before-error {
-  margin-bottom: -14px;
+    margin-bottom: -14px;
 }
 
 pre.block-source.after-error {
-  color: gray;
-  margin-top: -14px;
+    color: gray;
+    margin-top: -14px;
 }
 
 pre.block-source.post-error {
-  color: gray;
+    color: gray;
 }
 
 div.footer {
-  text-align: center;
-  font-size: small;
-}
-</style>
+    text-align: center;
+    font-size: small;
+}</style>
 </head>
 <body>
 <h2>Report for ut.dtype.NumericType_Unit_Tests</h2>
@@ -251,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sat Dec 19 19:58:39 CET 2020 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Jan 03 17:36:59 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -268,7 +331,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.135 seconds</td>
+<td>0.152 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -391,7 +454,7 @@ div.footer {
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I8@193a43a2</td>
+<td class='ex-value'>neureka.dtype.custom.I8@33f28324</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>class java.lang.Byte</td>
 <td class='ex-value'>class [B</td>
@@ -399,7 +462,7 @@ div.footer {
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI8@4426d06e</td>
+<td class='ex-value'>neureka.dtype.custom.UI8@76a8f65d</td>
 <td class='ex-value'>1</td>
 <td class='ex-value'>class java.lang.Short</td>
 <td class='ex-value'>class [S</td>
@@ -407,7 +470,7 @@ div.footer {
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I16@67364278</td>
+<td class='ex-value'>neureka.dtype.custom.I16@17688bb2</td>
 <td class='ex-value'>2</td>
 <td class='ex-value'>class java.lang.Short</td>
 <td class='ex-value'>class [S</td>
@@ -415,7 +478,7 @@ div.footer {
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI16@39e7e439</td>
+<td class='ex-value'>neureka.dtype.custom.UI16@4ecddc88</td>
 <td class='ex-value'>2</td>
 <td class='ex-value'>class java.lang.Integer</td>
 <td class='ex-value'>class [I</td>
@@ -423,7 +486,7 @@ div.footer {
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I32@1db0b101</td>
+<td class='ex-value'>neureka.dtype.custom.I32@4f98807f</td>
 <td class='ex-value'>4</td>
 <td class='ex-value'>class java.lang.Integer</td>
 <td class='ex-value'>class [I</td>
@@ -431,7 +494,7 @@ div.footer {
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI32@635dd792</td>
+<td class='ex-value'>neureka.dtype.custom.UI32@1cfeb725</td>
 <td class='ex-value'>4</td>
 <td class='ex-value'>class java.lang.Long</td>
 <td class='ex-value'>class [J</td>
@@ -439,7 +502,7 @@ div.footer {
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I64@183982fc</td>
+<td class='ex-value'>neureka.dtype.custom.I64@5dc7fe48</td>
 <td class='ex-value'>8</td>
 <td class='ex-value'>class java.lang.Long</td>
 <td class='ex-value'>class [J</td>
@@ -447,7 +510,7 @@ div.footer {
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI64@6df851e</td>
+<td class='ex-value'>neureka.dtype.custom.UI64@4cb5647c</td>
 <td class='ex-value'>8</td>
 <td class='ex-value'>class java.math.BigInteger</td>
 <td class='ex-value'>class [Ljava.math.BigInteger;</td>
@@ -455,7 +518,7 @@ div.footer {
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.F32@71412e5c</td>
+<td class='ex-value'>neureka.dtype.custom.F32@67619f38</td>
 <td class='ex-value'>4</td>
 <td class='ex-value'>class java.lang.Float</td>
 <td class='ex-value'>class [F</td>
@@ -463,7 +526,7 @@ div.footer {
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.F64@5ab6d845</td>
+<td class='ex-value'>neureka.dtype.custom.F64@1b09e5c7</td>
 <td class='ex-value'>8</td>
 <td class='ex-value'>class java.lang.Double</td>
 <td class='ex-value'>class [D</td>
@@ -546,109 +609,109 @@ div.footer {
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I8@3567c4c0</td>
+<td class='ex-value'>neureka.dtype.custom.I8@36952a57</td>
 <td class='ex-value'>[-23]</td>
 <td class='ex-value'>-23</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI8@ba64f1b</td>
+<td class='ex-value'>neureka.dtype.custom.UI8@643fa0e6</td>
 <td class='ex-value'>[-23]</td>
 <td class='ex-value'>233</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I16@65789ee7</td>
+<td class='ex-value'>neureka.dtype.custom.I16@1ed76fc6</td>
 <td class='ex-value'>[2, 3]</td>
 <td class='ex-value'>515</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I16@7889fc7</td>
+<td class='ex-value'>neureka.dtype.custom.I16@4c5d684e</td>
 <td class='ex-value'>[-16, -53]</td>
 <td class='ex-value'>-3893</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I16@26a6a677</td>
+<td class='ex-value'>neureka.dtype.custom.I16@6951975c</td>
 <td class='ex-value'>[16, -53]</td>
 <td class='ex-value'>4299</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I16@398d74e7</td>
+<td class='ex-value'>neureka.dtype.custom.I16@72b38d6</td>
 <td class='ex-value'>[-1, -1]</td>
 <td class='ex-value'>-1</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI16@792ef1a1</td>
+<td class='ex-value'>neureka.dtype.custom.UI16@34b072d6</td>
 <td class='ex-value'>[2, 3]</td>
 <td class='ex-value'>515</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI16@3a9b2fe4</td>
+<td class='ex-value'>neureka.dtype.custom.UI16@13087316</td>
 <td class='ex-value'>[-16, -53]</td>
 <td class='ex-value'>61643</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI16@291db3de</td>
+<td class='ex-value'>neureka.dtype.custom.UI16@7686fd5c</td>
 <td class='ex-value'>[16, -53]</td>
 <td class='ex-value'>4299</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI16@16cf7030</td>
+<td class='ex-value'>neureka.dtype.custom.UI16@28b586d2</td>
 <td class='ex-value'>[-1, -1]</td>
 <td class='ex-value'>65535</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I32@5208b274</td>
+<td class='ex-value'>neureka.dtype.custom.I32@1f2467d0</td>
 <td class='ex-value'>[22, -2, 3, -4]</td>
 <td class='ex-value'>385745916</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I32@7ba2f13</td>
+<td class='ex-value'>neureka.dtype.custom.I32@4f6427e1</td>
 <td class='ex-value'>[-22, -2, -3, -4]</td>
 <td class='ex-value'>-352387588</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI32@3668c993</td>
+<td class='ex-value'>neureka.dtype.custom.UI32@ec95f4c</td>
 <td class='ex-value'>[22, -2, 3, -4]</td>
 <td class='ex-value'>385745916</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI32@5b4b719e</td>
+<td class='ex-value'>neureka.dtype.custom.UI32@acedb51</td>
 <td class='ex-value'>[-22, -2, -3, -4]</td>
 <td class='ex-value'>3942579708</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I64@6a87e935</td>
+<td class='ex-value'>neureka.dtype.custom.I64@1caa5244</td>
 <td class='ex-value'>[99, 2, 1, 35, 2, 5, 37, 22]</td>
 <td class='ex-value'>7134266009577661718</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I64@6a40b27a</td>
+<td class='ex-value'>neureka.dtype.custom.I64@60c216d3</td>
 <td class='ex-value'>[-99, 2, 1, -35, 2, 5, -37, 22]</td>
 <td class='ex-value'>-7133136811068105962</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI64@19688fd8</td>
+<td class='ex-value'>neureka.dtype.custom.UI64@1764942b</td>
 <td class='ex-value'>[99, 2, 1, 35, 2, 5, 37, 22]</td>
 <td class='ex-value'>7134266009577661718</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI64@1fc0d5bf</td>
+<td class='ex-value'>neureka.dtype.custom.UI64@2522575e</td>
 <td class='ex-value'>[-99, 2, 1, -35, 2, 5, -37, 22]</td>
 <td class='ex-value'>11313607262641445654</td>
 <td class='ex-result'>OK</td>
@@ -781,84 +844,84 @@ num.convertToTargetArray( rawOriginal as long[] ) == rawOriginal</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI8@25e7f170</td>
+<td class='ex-value'>neureka.dtype.custom.UI8@1b50eefb</td>
 <td class='ex-value'>-3</td>
 <td class='ex-value'>[-3]</td>
 <td class='ex-value'>253</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI16@6b2cbf2f</td>
+<td class='ex-value'>neureka.dtype.custom.UI16@4863a589</td>
 <td class='ex-value'>-3</td>
 <td class='ex-value'>[-1, -3]</td>
 <td class='ex-value'>65533</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI32@76ff0875</td>
+<td class='ex-value'>neureka.dtype.custom.UI32@57f97db7</td>
 <td class='ex-value'>-3</td>
 <td class='ex-value'>[-1, -1, -1, -3]</td>
 <td class='ex-value'>4294967293</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.UI64@509fc3f5</td>
+<td class='ex-value'>neureka.dtype.custom.UI64@6558c55</td>
 <td class='ex-value'>-3</td>
 <td class='ex-value'>[-1, -1, -1, -1, -1, -1, -1, -3]</td>
 <td class='ex-value'>18446744073709551613</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I8@748167f7</td>
+<td class='ex-value'>neureka.dtype.custom.I8@176a7486</td>
 <td class='ex-value'>-3</td>
 <td class='ex-value'>[-3]</td>
 <td class='ex-value'>-3</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I16@7ada7b8f</td>
+<td class='ex-value'>neureka.dtype.custom.I16@42f0d40f</td>
 <td class='ex-value'>-3</td>
 <td class='ex-value'>[-1, -3]</td>
 <td class='ex-value'>-3</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I32@74687801</td>
+<td class='ex-value'>neureka.dtype.custom.I32@5ef81d23</td>
 <td class='ex-value'>-3</td>
 <td class='ex-value'>[-1, -1, -1, -3]</td>
 <td class='ex-value'>-3</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.I64@5ac68d12</td>
+<td class='ex-value'>neureka.dtype.custom.I64@7465158d</td>
 <td class='ex-value'>-3</td>
 <td class='ex-value'>[-1, -1, -1, -1, -1, -1, -1, -3]</td>
 <td class='ex-value'>-3</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.F32@2507f762</td>
+<td class='ex-value'>neureka.dtype.custom.F32@30ef91c3</td>
 <td class='ex-value'>-0.3</td>
 <td class='ex-value'>[-66, -103, -103, -102]</td>
 <td class='ex-value'>-0.3</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.F64@4805fca</td>
+<td class='ex-value'>neureka.dtype.custom.F64@7a4c26ec</td>
 <td class='ex-value'>-0.3</td>
 <td class='ex-value'>[-65, -45, 51, 51, 51, 51, 51, 51]</td>
 <td class='ex-value'>-0.3</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.F32@2ecfc115</td>
+<td class='ex-value'>neureka.dtype.custom.F32@24ea820a</td>
 <td class='ex-value'>-5432.39928</td>
 <td class='ex-value'>[-59, -87, -61, 50]</td>
 <td class='ex-value'>-5432.3994</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.dtype.custom.F64@2837a509</td>
+<td class='ex-value'>neureka.dtype.custom.F64@3f8abb3d</td>
 <td class='ex-value'>-5432.39928</td>
 <td class='ex-value'>[-64, -75, 56, 102, 55, 54, -51, -14]</td>
 <td class='ex-value'>-5432.39928</td>

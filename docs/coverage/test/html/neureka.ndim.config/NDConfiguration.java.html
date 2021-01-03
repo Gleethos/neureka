@@ -46,31 +46,31 @@ public interface NDConfiguration
 
     int[] shape();
 
-    int shape(int i);
+    int shape( int i );
 
     int[] idxmap();
 
-    int idxmap(int i);
+    int idxmap( int i );
 
     int[] translation();
 
-    int translation(int i);
+    int translation( int i );
 
     int[] spread();
 
-    int spread(int i);
+    int spread( int i );
 
     int[] offset();
 
-    int offset(int i);
+    int offset( int i );
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    int i_of_i(int i);
+    int i_of_i( int i );
 
-    int[] idx_of_i(int i);
+    int[] idx_of_i( int i );
 
-    int i_of_idx(int[] idx);
+    int i_of_idx( int[] idx );
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -92,7 +92,7 @@ public interface NDConfiguration
         public static int[] rearrange(int[] tln, int[] shp, @NotNull int[] newForm) {
 <span class="fc" id="L93">            int[] shpTln = newTlnOf(shp);</span>
 <span class="fc" id="L94">            int[] newTln = new int[newForm.length];</span>
-<span class="fc bfc" id="L95" title="All 2 branches covered.">            for (int i = 0; i &lt; newForm.length; i++) {</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">            for ( int i = 0; i &lt; newForm.length; i++ ) {</span>
 <span class="fc bfc" id="L96" title="All 2 branches covered.">                if (newForm[ i ] &lt; 0) newTln[ i ] = shpTln[ i ];</span>
 <span class="pc bpc" id="L97" title="1 of 2 branches missed.">                else if (newForm[ i ] &gt;= 0) newTln[ i ] = tln[newForm[ i ]];</span>
             }
@@ -102,7 +102,7 @@ public interface NDConfiguration
         @Contract(pure = true)
         public static int[] rearrange(@NotNull int[] array, @NotNull int[] ptr) {
 <span class="fc" id="L104">            int[] newShp = new int[ptr.length];</span>
-<span class="fc bfc" id="L105" title="All 2 branches covered.">            for (int i = 0; i &lt; ptr.length; i++) {</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">            for ( int i = 0; i &lt; ptr.length; i++ ) {</span>
 <span class="fc bfc" id="L106" title="All 2 branches covered.">                if (ptr[ i ] &lt; 0) newShp[ i ] = Math.abs(ptr[ i ]);</span>
 <span class="pc bpc" id="L107" title="1 of 2 branches missed.">                else if (ptr[ i ] &gt;= 0) newShp[ i ] = array[ptr[ i ]];</span>
             }
@@ -114,12 +114,12 @@ public interface NDConfiguration
 <span class="fc" id="L114">            int[] tln = new int[ shape.length ];</span>
 <span class="fc" id="L115">            int prod = 1;</span>
 <span class="fc bfc" id="L116" title="All 2 branches covered.">            if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
-<span class="fc bfc" id="L117" title="All 2 branches covered.">                for (int i = 0; i &lt; tln.length; i++) {</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                for ( int i = 0; i &lt; tln.length; i++ ) {</span>
 <span class="fc" id="L118">                    tln[ i ] = prod;</span>
 <span class="fc" id="L119">                    prod *= shape[ i ];</span>
                 }
             } else {
-<span class="fc bfc" id="L122" title="All 2 branches covered.">                for (int i = tln.length-1; i &gt;= 0; i--) {</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">                for ( int i = tln.length-1; i &gt;= 0; i--) {</span>
 <span class="fc" id="L123">                    tln[ i ] = prod;</span>
 <span class="fc" id="L124">                    prod *= shape[ i ];</span>
                 }

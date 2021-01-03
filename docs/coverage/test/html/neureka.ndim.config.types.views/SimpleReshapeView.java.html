@@ -20,7 +20,7 @@ public class SimpleReshapeView extends AbstractNDC
     private final int[] _spread;
     private final int[] _offset;
 
-    public SimpleReshapeView(int[] form, NDConfiguration toBeViewed)
+    public SimpleReshapeView( int[] form, NDConfiguration toBeViewed )
 <span class="fc" id="L24">    {</span>
 <span class="fc" id="L25">        _toBeViewed = toBeViewed;</span>
 <span class="fc" id="L26">        _form = form;</span>
@@ -31,9 +31,9 @@ public class SimpleReshapeView extends AbstractNDC
 <span class="pc bpc" id="L31" title="1 of 2 branches missed.">                if ( form[ i ] &lt; -1 ) throw new IllegalArgumentException(</span>
                     &quot;SimpleReshapeView may not view a NDConfiguration beyond reshaping and or padding!&quot;
                 );
-<span class="fc bfc" id="L34" title="All 2 branches covered.">            else if ( form[ i ] &gt;= 0 )  _translator.add(form[ i ]);</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">            else if ( form[ i ] &gt;= 0 )  _translator.add( form[ i ] );</span>
 
-<span class="fc" id="L36">        _formTranslator = _translator.stream().mapToInt(e -&gt; e).toArray();</span>
+<span class="fc" id="L36">        _formTranslator = _translator.stream().mapToInt( e -&gt; e ).toArray();</span>
 
 
 <span class="fc" id="L39">        NDConfiguration ndc = _simpleReshape( form, toBeViewed );</span>
@@ -55,7 +55,7 @@ public class SimpleReshapeView extends AbstractNDC
     }
 
     @Override
-    public int shape(int i) {
+    public int shape( int i ) {
 <span class="nc" id="L59">        return _shape[ i ];</span>
     }
 
@@ -65,7 +65,7 @@ public class SimpleReshapeView extends AbstractNDC
     }
 
     @Override
-    public int idxmap(int i) {
+    public int idxmap( int i ) {
 <span class="nc" id="L69">        return _idxmap[ i ];</span>
     }
 
@@ -75,7 +75,7 @@ public class SimpleReshapeView extends AbstractNDC
     }
 
     @Override
-    public int translation(int i) {
+    public int translation( int i ) {
 <span class="nc" id="L79">        return _translation[ i ];</span>
     }
 
@@ -85,7 +85,7 @@ public class SimpleReshapeView extends AbstractNDC
     }
 
     @Override
-    public int spread(int i) {
+    public int spread( int i ) {
 <span class="nc" id="L89">        return _spread[ i ];</span>
     }
 
@@ -95,43 +95,44 @@ public class SimpleReshapeView extends AbstractNDC
     }
 
     @Override
-    public int offset(int i) {
+    public int offset( int i ) {
 <span class="fc" id="L99">        return _offset[ i ];</span>
     }
+
     @Override
-    public int i_of_i(int i) {
-<span class="fc" id="L103">        return i_of_idx(idx_of_i( i ));</span>
+    public int i_of_i( int i ) {
+<span class="fc" id="L104">        return i_of_idx( idx_of_i( i ) );</span>
     }
 
     @Override
-    public int[] idx_of_i(int i) {
-<span class="fc" id="L108">        int[] idx = new int[_shape.length];</span>
-<span class="pc bpc" id="L109" title="1 of 2 branches missed.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
-<span class="nc bnc" id="L110" title="All 2 branches missed.">            for ( int ii = rank()-1; ii &gt;= 0; ii-- ) {</span>
-<span class="nc" id="L111">                idx[ii] += i / _idxmap[ii];</span>
-<span class="nc" id="L112">                i %= _idxmap[ii];</span>
+    public int[] idx_of_i( int i ) {
+<span class="fc" id="L109">        int[] idx = new int[_shape.length];</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">            for ( int ii = rank()-1; ii &gt;= 0; ii-- ) {</span>
+<span class="nc" id="L112">                idx[ ii ] += i / _idxmap[ ii ];</span>
+<span class="nc" id="L113">                i %= _idxmap[ ii ];</span>
             }
         } else {
-<span class="fc bfc" id="L115" title="All 2 branches covered.">            for ( int ii = 0; ii &lt; rank(); ii++ ) {</span>
-<span class="fc" id="L116">                idx[ii] += i / _idxmap[ii];</span>
-<span class="fc" id="L117">                i %= _idxmap[ii];</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">            for ( int ii = 0; ii &lt; rank(); ii++ ) {</span>
+<span class="fc" id="L117">                idx[ ii ] += i / _idxmap[ ii ];</span>
+<span class="fc" id="L118">                i %= _idxmap[ ii ];</span>
             }
         }
-<span class="fc" id="L120">        return idx;</span>
+<span class="fc" id="L121">        return idx;</span>
     }
 
     @Override
-    public int i_of_idx(int[] idx) {
-<span class="fc" id="L125">        int[] innerIdx = _rearrange(idx,_form, _formTranslator);</span>
-<span class="fc" id="L126">        return _toBeViewed.i_of_idx(innerIdx);</span>
+    public int i_of_idx( int[] idx ) {
+<span class="fc" id="L126">        int[] innerIdx = _rearrange( idx,_form, _formTranslator );</span>
+<span class="fc" id="L127">        return _toBeViewed.i_of_idx( innerIdx );</span>
     }
 
     @Contract(pure = true)
     private static int[] _rearrange(@NotNull int[] array, @NotNull int[] ptr, @NotNull int[] idx) {
-<span class="fc bfc" id="L131" title="All 2 branches covered.">        for (int i = 0; i &lt; ptr.length; i++) {</span>
-<span class="fc bfc" id="L132" title="All 2 branches covered.">            if (ptr[ i ] &gt;= 0) idx[ptr[ i ]] = array[ i ];</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        for ( int i = 0; i &lt; ptr.length; i++ ) {</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">            if ( ptr[ i ] &gt;= 0 ) idx[ptr[ i ]] = array[ i ];</span>
         }
-<span class="fc" id="L134">        return idx;</span>
+<span class="fc" id="L135">        return idx;</span>
     }
 
 }

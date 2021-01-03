@@ -3,8 +3,8 @@
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.Device;
-import neureka.devices.host.execution.HostExecutor;
-import neureka.devices.opencl.execution.CLExecutor;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.backend.implementations.functional.Activation;
 import neureka.calculus.backend.operations.AbstractOperationType;
@@ -70,7 +70,7 @@ public class Tanh extends AbstractOperationType
                 }
         );
 
-<span class="fc" id="L73">        Activation typeImplementation = new Activation()</span>
+<span class="fc" id="L73">        Activation operationAlgorithm = new Activation()</span>
 <span class="fc" id="L74">            .setADAgentSupplier(</span>
                 ( Function f, ExecutionCall&lt;Device&gt; call, boolean forward ) -&gt;
 <span class="fc" id="L76">                defaultImplementation().supplyADAgentFor( f, call, forward )</span>
@@ -78,7 +78,7 @@ public class Tanh extends AbstractOperationType
 
 <span class="fc" id="L79">        setImplementation(</span>
                 Activation.class,
-<span class="fc" id="L81">                typeImplementation.setExecutor(</span>
+<span class="fc" id="L81">                operationAlgorithm.setExecutor(</span>
                         HostExecutor.class,
                         new HostExecutor(
                                 call  -&gt;
@@ -115,7 +115,7 @@ public class Tanh extends AbstractOperationType
 <span class="nc" id="L115">                                            .call( gwz );</span>
 <span class="nc" id="L116">                                },</span>
                                 3,
-<span class="fc" id="L118">                                typeImplementation.getKernelSource(), // kernelSource</span>
+<span class="fc" id="L118">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
                                 &quot;output = input/pow(1+pow(input, 2.0f), 0.5f);\n&quot;,
                                 &quot;output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n&quot;,
                                 this // OperationType

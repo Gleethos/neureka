@@ -117,7 +117,8 @@ public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
             second -= str.length() - str.length() / 2;
             StringBuilder strBuilder = new StringBuilder(str);
             for ( int i = 0; i < first; i++ ) strBuilder.insert(0, " ");
-            strBuilder.append( " ".repeat( Math.max( 0, second ) ) );
+            strBuilder.append( String.join("", Collections.nCopies(Math.max( 0, second ), " ")) );
+            //" ".repeat( Math.max( 0, second ) ) );
             return strBuilder.toString();
         }
         return str;
