@@ -3,7 +3,7 @@ install: true
 
 os: linux
 dist: trusty
-jdk: openjdk11
+jdk: openjdk13
 
 env:
   - CODECOV_TOKEN="cd19009d-e1e2-4f2f-98d2-927e7632e0de"
