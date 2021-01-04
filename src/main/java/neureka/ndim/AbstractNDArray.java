@@ -273,26 +273,6 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         public static class Stringify
         {
             @Contract( pure = true )
-            public static String formatFP( double v ) {
-                DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols( Locale.US );
-                DecimalFormat Formatter = new DecimalFormat("##0.0##E0", formatSymbols);
-                String vStr = String.valueOf( v );
-                final int offset = 0;
-                if ( vStr.length() > ( 7 - offset ) ) {
-                    if ( vStr.startsWith("0.") ) {
-                        vStr = vStr.substring( 0, 7-offset )+"E0";
-                    } else if ( vStr.startsWith( "-0." ) ) {
-                        vStr = vStr.substring( 0, 8-offset )+"E0";
-                    } else {
-                        vStr = Formatter.format( v );
-                        vStr = (!vStr.contains(".0E0"))?vStr:vStr.replace(".0E0",".0");
-                        vStr = (vStr.contains("."))?vStr:vStr.replace("E0",".0");
-                    }
-                }
-                return vStr;
-            }
-
-            @Contract( pure = true )
             public static String strConf( int[] conf ) {
                 StringBuilder str = new StringBuilder();
                 for ( int i = 0; i < conf.length; i++ )
@@ -300,7 +280,6 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
                 return "[" + str + "]";
             }
         }
-
 
         /**
          * Indexing methods.

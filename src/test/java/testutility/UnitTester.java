@@ -1,5 +1,6 @@
 package testutility;
-import neureka.Tsr;
+
+import neureka.utility.TsrAsString;
 import org.junit.Assert;
 
 import java.util.List;
@@ -161,7 +162,7 @@ public class UnitTester extends Assert
         }
         StringBuilder result = new StringBuilder();
         for(double ai : a) {
-            result.append(Tsr.Utility.Stringify.formatFP(ai)).append(", ");
+            result.append(TsrAsString.Util.formatFP(ai)).append(", ");
         }
         return result.toString();
     }
