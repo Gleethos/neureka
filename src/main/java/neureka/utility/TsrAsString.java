@@ -11,7 +11,6 @@ import neureka.ndim.config.NDConfiguration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.IntFunction;
 
 @Accessors( prefix = {"_"} )
@@ -25,8 +24,8 @@ public class TsrAsString
         BE_SHORTENED_BY,
         HAVE_VALUE,
         HAVE_SHAPE,
-        HAS_DERIVATIVES,
-        HAS_RECURSIVE_GRAPH,
+        HAVE_DERIVATIVES,
+        HAVE_RECURSIVE_GRAPH,
     }
 
     @Getter private int _padding = 6;
@@ -40,11 +39,12 @@ public class TsrAsString
     @Getter private boolean _hasDerivatives = false;
 
     private Tsr<?> _tensor;
+    private StringBuilder _asStr;
 
     private Map<Should, Object> _config;
 
     public TsrAsString( Tsr<?> tensor, Map< Should, Object > settings ) {
-        Map< Should, Object > copy = _defaults("");
+        Map< Should, Object > copy = _defaults( "" );
         for ( Should s : Should.values() )
             if ( settings.containsKey( s ) ) copy.put( s, settings.get( s ) );
         _construct( tensor, copy );
@@ -83,24 +83,35 @@ public class TsrAsString
         if ( settings.containsKey( Should.HAVE_SHAPE ) )
             _hasShape = (boolean) settings.get( Should.HAVE_SHAPE );
 
-        if ( settings.containsKey( Should.HAS_RECURSIVE_GRAPH ) )
-            _hasRecursiveGraph = (boolean) settings.get( Should.HAS_RECURSIVE_GRAPH );
+        if ( settings.containsKey( Should.HAVE_RECURSIVE_GRAPH) )
+            _hasRecursiveGraph = (boolean) settings.get( Should.HAVE_RECURSIVE_GRAPH);
 
-        if ( settings.containsKey( Should.HAS_DERIVATIVES ) )
-            _hasDerivatives = (boolean) settings.get( Should.HAS_DERIVATIVES );
+        if ( settings.containsKey( Should.HAVE_DERIVATIVES) )
+            _hasDerivatives = (boolean) settings.get( Should.HAVE_DERIVATIVES);
     }
 
     private Map< Should, Object > _defaults( String modes ) {
         Map< Should, Object > copy = new HashMap<>();
-        copy.put( Should.BE_SHORTENED_BY,      (modes.contains("s")) ? 3 : 50                     );
-        copy.put( Should.BE_COMPACT,           modes.contains("c")                                );
-        copy.put( Should.BE_FORMATTED,         modes.contains("f")                                );
-        copy.put( Should.HAVE_GRADIENT,        modes.contains("g")                                );
-        copy.put( Should.HAVE_PADDING_OF,     (modes.contains("p")) ? 6 : -1                      );
-        copy.put( Should.HAVE_VALUE,          !(modes.contains("shp") || modes.contains("shape")) );
-        copy.put( Should.HAS_RECURSIVE_GRAPH, modes.contains("r")                                 );
-        copy.put( Should.HAS_DERIVATIVES,     modes.contains("d")                                 );
+        copy.put( Should.BE_SHORTENED_BY,      (modes.contains( "s") ) ? 3 : 50                     );
+        copy.put( Should.BE_COMPACT,           modes.contains( "c" )                                );
+        copy.put( Should.BE_FORMATTED,         modes.contains( "f" )                                );
+        copy.put( Should.HAVE_GRADIENT,        modes.contains( "g" )                                );
+        copy.put( Should.HAVE_PADDING_OF,     (modes.contains( "p" )) ? 6 : -1                      );
+        copy.put( Should.HAVE_VALUE,          !(modes.contains( "shp" ) || modes.contains("shape")) );
+        copy.put( Should.HAVE_RECURSIVE_GRAPH, modes.contains( "r" )                                );
+        copy.put( Should.HAVE_DERIVATIVES,     modes.contains( "d" )                                );
+        copy.put( Should.HAVE_SHAPE,           !modes.contains( "v" )                               );
         return copy;
+    }
+    
+    private TsrAsString _$( String s ) {
+        _asStr.append( s );
+        return this;
+    }
+
+    private TsrAsString _$( int s ) {
+        _asStr.append( s );
+        return this;
     }
 
     private IntFunction<String> _createValStringifier() {
@@ -137,7 +148,7 @@ public class TsrAsString
             String s = function.apply( i );
             int margin = pad - s.length();
             int right = ( margin % 2 == 0 ) ? margin / 2 : ( margin-1 ) / 2;
-            if ( margin > 0 ) s = Util.pad( margin-right, Util.pad( s, right ) );
+            if ( margin > 0 ) s = Util.pad( margin - right, Util.pad( s, right ) );
             return s;
         };
     }
@@ -146,146 +157,160 @@ public class TsrAsString
     {
         if ( _tensor.isEmpty() ) return "empty";
         else if ( _tensor.isUndefined() ) return "undefined";
-
+        _asStr = new StringBuilder();
+        boolean legacy = Neureka.instance().settings().view().isUsingLegacyView();
         String base = ( deep == null ) ? "" : "\n" + deep;
         String delimiter = ( deep == null ) ? "" : "    ";
         String half = ( deep == null ) ? "" : "  ";
         String deeper = ( deep == null ) ? deep : deep + delimiter;
-        StringBuilder strShape = _strShape();
-        if ( !_hasValue ) return strShape.toString();
-        String asString = strShape.toString();
+        if ( _hasShape ) _strShape();
+        if ( !_hasValue ) return _asStr.toString();
+        _$( ":" );
         if ( _isFormatted )
-            asString += ":" + _format( _tensor.getNDConf().shape(), new int[ _tensor.rank() ], -1 ).toString();
-        else
-            asString +=  (
-                    ( Neureka.instance().settings().view().isUsingLegacyView() )
-                            ? ":(" + _stringified() + ")"
-                            : ":[" + _stringified() + "]"
-            );
+            _format( _tensor.getNDConf().shape(), new int[ _tensor.rank() ], -1 );
+        else {
+            if ( legacy ) _$( "(" );
+            else _$( "[" );
+            _stringifyAllValues();
+            if ( legacy ) _$( ")" );
+            else _$( "]" );
+        }
+
         if ( _hasGradient && ( _tensor.rqsGradient() || _tensor.hasGradient() ) ) {
-            asString += ":g:";
+            _$( ":g" );
             Tsr<?> gradient = _tensor.find( Tsr.class );
             if ( gradient != null )
-                asString += gradient
-                        .toString( "c" ).replace( strShape + ":", "" );
+                _$( gradient.toString( "cv" ) );
             else
-                asString += ( (Neureka.instance().settings().view().isUsingLegacyView() ) ? "(null)" : "[null]" );
+                _$( ( ( legacy ) ? ":(null)" : ":[null]" ) );
         }
         if ( _hasRecursiveGraph && _tensor.has( GraphNode.class ) && _tensor.find( GraphNode.class ).size() > 0 ) {
             GraphNode<?> node = _tensor.find( GraphNode.class );
-            AtomicReference<String> enclosed = new AtomicReference<>( "; " );
+            _$( "; " );
             node.forEachDerivative( ( t, agent ) -> {
-                if ( agent.derivative() == null ) {
-                    enclosed.set( enclosed.get() + "->d(null), " );
-                } else {
-                    enclosed.set(
-                            enclosed.get() +
+                if ( agent.derivative() == null ) _$( "->d(null), " );
+                else {
+                    _$(
                                     base + "=>d|[ " +
                                     base + delimiter + agent.derivative().toString( _config, deeper ) + " " +
                                     base + half + "]|:t{ " +
                                     base + delimiter + (
                                     ( t.getPayload() != null ) ? t.getPayload().toString( _config, deeper ) : t.toString("")
-                            ) + " " +
-                                    base + half + "}, "
+                            ) + " " + base + half + "}, "
                     );
                 }
             });
-            asString += enclosed.get();
         }
         if ( _hasDerivatives && _tensor.has( GraphNode.class ) && _tensor.find( GraphNode.class ).size() > 0 ) {
             GraphNode<?> node = _tensor.find( GraphNode.class );
             if ( node.getMode() != 0 ) {
-                AtomicReference<String> asAR = new AtomicReference<>( "; " );
+                _$( "; " );
                 node.forEachDerivative( ( t, agent ) -> {
-                    if ( agent.derivative() == null ) asAR.set( asAR.get() + "->d(" + agent.toString() + "), " );
-                    else asAR.set( asAR.get() + "->d" + agent.derivative().toString( _config, deeper ) + ", " );
+                    if ( agent.derivative() == null ) _$( "->d(" )._$(agent.toString())._$("), ");
+                    else _$("->d")._$(agent.derivative().toString(_config, deeper))._$(", ");
                 });
-                asString += asAR.get();
             }
         }
-        return asString;
-
+        return _asStr.toString();
     }
 
-    private String _stringified() {
+    private void _stringifyAllValues()
+    {
         int max = _shortage;
         IntFunction<String> getter = _createValStringifier();
-        StringBuilder asString = new StringBuilder();
         int size = _tensor.size();
         int trim = ( size - max );
         size = ( trim > 0 ) ? max : size;
         for ( int i = 0; i < size; i++ ) {
             String vStr = getter.apply( ( _tensor.isVirtual() ) ? 0 : _tensor.i_of_i( i ) );
-            asString.append( vStr );
-            if ( i < size - 1 ) asString.append( ", " );
-            else if ( trim > 0 ) asString.append( ", ... + " ).append( trim ).append( " more" );
+            _$( vStr );
+            if ( i < size - 1 ) _$( ", " );
+            else if ( trim > 0 ) _$( ", ... + " )._$( trim )._$( " more" );
         }
-        return asString.toString();
     }
 
     //::: formatted...
 
-    private String _stringified(
+    private void _stringifyValueAt(
             int max,
             int[] idx,
             int size
     ) {
         int[] shape = _tensor.getNDConf().shape();
         IntFunction<String> getter = _createValStringifier();
-        StringBuilder asString = new StringBuilder();
         int trim = ( size - max );
-        size = ( trim > 0 ) ? max : size;
+        trim = Math.max( trim, 0 );
+        int trimStart = (size / 2 - trim / 2);
+        int trimEnd = (size / 2 + trim / 2);
+        assert trimEnd - trimStart == trim;
         for ( int i = 0; i < size; i++ ) {
-            String vStr = getter.apply( ( _tensor.isVirtual() ) ? 0 : _tensor.i_of_idx( idx ) );
-            asString.append( vStr );
-            if ( i < size - 1 ) asString.append( ", " );
-            else if ( trim > 0 ) asString.append( ", ... + " ).append( trim ).append( " more" );
+            if ( i < trimStart || i >= trimEnd ) {
+                _$( getter.apply( ( _tensor.isVirtual() ) ? 0 : _tensor.i_of_idx( idx ) ) );
+                if ( i < size - 1 ) _$( ", " );
+            }
+            else if ( i == trimStart )
+                _$( "... " )._$( trim )._$( " more ..., " );
+
             NDConfiguration.Utility.increment( idx, shape );
         }
-        for ( int i = 0; i < trim; i++ ) NDConfiguration.Utility.increment( idx, shape );
-        return asString.toString();
     }
 
     // A recursive stringifier for formatted tensors...
-    private StringBuilder _format(int[] shape, int[] idx, int dim )
+    private void _format( int[] shape, int[] idx, int dim )
     {
         boolean legacy = Neureka.instance().settings().indexing().isUsingLegacyIndexing();
+        int max = (_shortage * 32 / 50 );
         dim = ( dim < 0 ) ? ( (!legacy) ? 0 : _tensor.rank()-1 ) : dim;
         int depth = ( !legacy ) ? dim : _tensor.rank()-dim-1 ;
-        StringBuilder builder = new StringBuilder();
 
         if ( legacy && dim == 0 || !legacy && dim == idx.length - 1 ) {
-            builder.append( Util.indent( depth ) );
-            builder.append( "[ " + _stringified( 50, idx, shape[ dim ] ) + " ]" );
+            _$( Util.indent( depth ) );
+            _$( "[ " );
+            _stringifyValueAt( max, idx, shape[ dim ] );
+            _$( " ]" );
         } else {
-            builder.append( Util.indent( depth ) + "[" );
-            builder.append( "\n" );
+            _$( Util.indent( depth ) + "[" );
+            _$( "\n" );
+
+            int size = shape[ dim ];
+            int trim = ( size - max );
+            trim = Math.max(trim, 0);
+            int trimStart = (size / 2 - trim / 2);
+            int trimEnd = (size / 2 + trim / 2);
+            assert trimEnd - trimStart == trim;
+            int i = 0;
             do {
-                builder.append( _format( shape, idx, dim + ( (!legacy) ? 1 : -1 ) ) );
-            } while( idx[ dim ] != 0 );
-            builder.append( Util.indent( depth )  + "]");
+                if ( i < trimStart || i >= trimEnd )
+                    _format( shape, idx, dim + ( (!legacy) ? 1 : -1 ) );
+                else if ( i == trimStart )
+                    _$( Util.indent( depth + 1 ) + "... " + trim + " more ...\n" );
+                else
+                    idx[ dim ] = trimEnd + 1;
+                i++;
+            }
+            while( idx[ dim ] != 0 );
+
+            _$( Util.indent( depth )  + "]");
         }
         int i = dim + ( (legacy) ? 1 : -1 );
-        if ( i >= 0 && i < idx.length && idx[ i ] != 0 ) builder.append( "," );
-        builder.append( "\n" );
-        return builder;
+        if ( i >= 0 && i < idx.length && idx[ i ] != 0 ) _$( "," );
+        _$( "\n" );
     }
 
-    private StringBuilder _strShape() {
+    private void _strShape() {
         boolean legacy = Neureka.instance().settings().view().isUsingLegacyView();
-        StringBuilder strShape = new StringBuilder( (legacy) ? "[" : "(" );
+        _$( (legacy) ? "[" : "(" );
         int[] shape = _tensor.getNDConf().shape();
         for ( int i = 0; i < shape.length; i++ ) {
-            strShape.append( shape[ i ] );
-            if ( i < shape.length - 1 ) strShape.append( "x" );
+            _$( shape[ i ] );
+            if ( i < shape.length - 1 ) _$( "x" );
         }
-        if ( legacy ) return strShape.append( "]" );
-        else return strShape.append( ")" );
+        if ( legacy ) _$( "]" );
+        else _$( ")" );
     }
 
     static class Util
     {
-
         public static String indent( int n ){
             return String.join("", Collections.nCopies( n, "   " ));
         }

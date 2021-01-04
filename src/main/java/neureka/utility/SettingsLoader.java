@@ -71,9 +71,9 @@ public class SettingsLoader
         try {
 
             String version = GroovySystem.getVersion();
-            if (Integer.parseInt(version.split("\\.")[ 0 ]) < 3) {
+            if (Integer.parseInt(version.split("\\.")[ 0 ]) < 2) {
                 throw new IllegalStateException(
-                        "Wrong groovy version "+version+" found! Version 3.0.0 or greater required."
+                        "Wrong groovy version "+version+" found! Version 2.0.0 or greater required."
                 );
             }
             new GroovyShell(instance.getClass().getClassLoader()).evaluate(_settings_source);
