@@ -101,10 +101,10 @@ task setVersionAcrossProject() {
     change({VERSION}).between( "<version>", "</version>").inFile("/README.md")
 
     File readme = new File("$rootDir/README.md")
-    readme.write( readme.text.replaceAll( "implementation 'com\\.github\\.gleethos:neureka:\\d(\\.\\d+){2}", "implementation 'com.github.gleethos:neureka:"+VERSION ) )
-    readme.write( readme.text.replaceAll( "implementation\\(\"com.github\\.gleethos:neureka:\\d(\\.\\d+){2}", "implementation(\"com.github.gleethos:neureka:"+VERSION ) )
-    readme.write( readme.text.replaceAll( "implementation 'com\\.github\\.Gleethos:neureka:v\\d(\\.\\d+){2}", "implementation 'com.github.Gleethos:neureka:v"+VERSION ) )
-    readme.write( readme.text.replaceAll( "@Grab\\('com\\.github\\.Gleethos:neureka:v\\d(\\.\\d+){2}", "@Grab\\('com\\.github\\.Gleethos:neureka:v"+VERSION ) )
+    readme.write( readme.text.replaceAll( "implementation 'com\\.github\\.gleethos:neureka:\\d(\\.\\d+){2}(-pre)*(-alpha)*", "implementation 'com.github.gleethos:neureka:"+VERSION ) )
+    readme.write( readme.text.replaceAll( "implementation\\(\"com.github\\.gleethos:neureka:\\d(\\.\\d+){2}(-pre)*(-alpha)*", "implementation(\"com.github.gleethos:neureka:"+VERSION ) )
+    readme.write( readme.text.replaceAll( "implementation 'com\\.github\\.Gleethos:neureka:v\\d(\\.\\d+){2}(-pre)*(-alpha)*", "implementation 'com.github.Gleethos:neureka:v"+VERSION ) )
+    readme.write( readme.text.replaceAll( "@Grab\\('com\\.github\\.Gleethos:neureka:v\\d(\\.\\d+){2}(-pre)*(-alpha)*", "@Grab\\('com\\.github\\.Gleethos:neureka:v"+VERSION ) )
 }
 
 // SETTING VERSION AND GROUP-ID FOR BUILDING :

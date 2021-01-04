@@ -121,7 +121,7 @@ allprojects {
 2. Add Neureka as dependency:
 ```
 dependencies {
-	implementation 'com.github.Gleethos:neureka:v0.5.0-pre-pre-pre-pre-pre-pre-pre-pre-pre-pre'
+	implementation 'com.github.Gleethos:neureka:v0.5.0-pre'
 }
 ```
 
