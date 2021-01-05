@@ -1,31 +1,37 @@
 
 # The 'algorithms' package
 
-This package is the middle layer of the 3 tier <br>
-calculus backend architecture. <br>
+This package is the middle layer of the 3 tier 
+calculus backend API architecture. <br>
 Extending this layer is the most complicated of the three. <br> 
 This is because such extensions / implementations 
-can literally be any procedure done to an 'ExecutionCall' instance,
+can literally be **any procedure done to an `ExecutionCall` instance**, 
 and the tensor arguments contained within this call. <br>
 Hence the package name "algorithms"! <br>
 
-Consequently the core component of this layer is the <br>
-'Algorithm\<FinalType\>' interface! <br>
+Consequently, the core component of this layer is the <br>
+`Algorithm<FinalType>` interface! <br>
 
 However, when extending existing operations or creating new ones,   <br>
-this interface should not be implemented directly. <br>
+this interface should almost never be implemented directly. <br>
 Instead there are 2 useful abstract classes which already <br>
-implement the component logic expected by the interface. <br>
+implement the component logic expected by the interface. <br> 
 
 The referenced classes are :
 
-- AbstractBaseAlgorithm
+- `AbstractBaseAlgorithm`
 
-- AbstractFunctionalAlgorithm
+- `AbstractFunctionalAlgorithm`
 
-The first abstract class implements a component system for 'ImplementationFor<TargetDevice>' <br>
+The first abstract class implements a component system for `ImplementationFor<TargetDevice>` <br>
 instances, and the second class extends the first one and adds support for functional <br>
 implementations of the overridable methods from the root interface. <br>
+<br>
+> *The latter of the two classes, namely `AbstractFunctionalAlgorithm`, should be 
+> the preferred choice when building new custom operations.*
+> *However, if the implementation of an entirely new high performance backend
+> is required, then extending the `AbstractBaseAlgorithm` class would be ideal.*
+
 
 **Before going into further detail, <br>
 lets look into these methods and their meaning :** <br>
@@ -42,11 +48,11 @@ used to dynamically parse OpenCL code and identify it by said name. <br>
 ```
 ---
 
-When an 'ExecutionCall' instance has been formed then it will be routed by <br>
-the given 'Operation' instance to their components, namely : <br> 
-'Algorithm' instances ! <br>
+When an `ExecutionCall` instance has been formed then it will be routed by <br>
+the given `Operation` instance to their components, namely : <br> 
+`Algorithm` instances ! <br>
 
-The ability to decide which algorithm is suitable for a given 'ExecutionCall' instance <br>
+The ability to decide which algorithm is suitable for a given `ExecutionCall` instance <br>
 is being granted by implementations of the following method. <br>
 It returns a float representing the suitability of a given call. <br>
 The float is expected to be between 0 and 1, where 0 means <br>
@@ -68,7 +74,7 @@ for the execution is being picked by the method below. <br>
 
 The following method ought to check if this 
 implementation can perform forward mode AD on
-the given 'ExecutionCall' instance.
+the given `ExecutionCall` instance.
 
 ```
     boolean canAlgorithmPerformForwardADFor( ExecutionCall call );
@@ -78,7 +84,7 @@ the given 'ExecutionCall' instance.
 
 The following method ought to check if this 
 algorithm can perform backward mode AD on
-the given 'ExecutionCall' instance.
+the given `ExecutionCall` instance.
 
 ```
     boolean canAlgorithmPerformBackwardADFor( ExecutionCall call );
@@ -86,10 +92,10 @@ the given 'ExecutionCall' instance.
 ---
 
 This method ought to return a new instance 
-if the ADAgent class. <br>
+if the `ADAgent` class. <br>
 This class contains field variables for 2 lambdas. <br>
 One for th forward mode procedure and one <br>
-for backpropagation... <br>
+for back-propagation... <br>
 Besides that it may also contain context information used <br>
 to perform said procedures.
 
@@ -103,7 +109,7 @@ to perform said procedures.
 ---
 
 The following method is a bypass lambda used 
-for operations / algorithms that do not require device specific execution.
+for operations / algorithms that do not require a device specific execution.
 The 2 methods following the one below will be ignored
 if this returns a tensor. (a.k.a result) <br>
 If the method returns 'null' then 
@@ -134,8 +140,8 @@ The instantiation of these output tensors should be left to the
 algorithm instance in most cases, this is because the given algorithm
 "knows best" what shape(s), size(s), data type(s)... these tensors ought to have.<br>
 <br>
-An example would be algorithms performing elementwise operations vs broadcasting. <br>
-The shape of an output tensor produced by an elementwise operation would most likely be
+An example would be algorithms performing element-wise operations vs broadcasting. <br>
+The shape of an output tensor produced by an element-wise operation would most likely be
 different from the shape of a tensor produced by broadcasting... <br>
 <br>
 This method ought to instantiate necessary output tensors:
@@ -144,7 +150,7 @@ This method ought to instantiate necessary output tensors:
 ```
 ---
 
-The following method is used together with the 'handleRecursivelyAccordingToArity' method.
+The following method is used together with the `handleRecursivelyAccordingToArity` method.
 There is already a great implementation of this method in the AbstractBaseAlgorithm class
 which calls the 'handleRecursivelyAccordingToArity' method whose implementation
 ought to either execute the given call which is passed to it or
@@ -155,9 +161,9 @@ continue to go deeper by calling the passed lambda... <br>
 ```
 ---
 
-Implementations of the Algorithm interface ought to express a compositional design pattern. <br>
+Implementations of the `Algorithm` interface ought to express a compositional design pattern. <br>
 This means that concrete implementations of an algorithm for a device are not extending
-an Algorithm, they are components of it instead. <br>
+an `Algorithm`, they are components of it instead. <br>
 
 
 ```
@@ -166,8 +172,8 @@ an Algorithm, they are components of it instead. <br>
 ---
 
 A device specific implementation can be accessed by passing the class of the implementation 
-of the 'ImplementationFor<Device>' class.
-An Algorithm instance ought to contain a collection of these device specific 
+of the `ImplementationFor<Device>` class.
+An `Algorithm` instance ought to contain a collection of these device-specific 
 implementations...
 
 ```

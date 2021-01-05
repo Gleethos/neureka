@@ -58,34 +58,36 @@ Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/ra
 
 ## :robot: Tech ##
 
-This library has been heavily inspired by [PyTorch](https://github.com/pytorch/pytorch).
-A powerful deep learning framework that combines
-[dynamic computation](https://medium.com/@omaraymanomar/dynamic-vs-static-computation-graph-2579d1934ecf), performance and debugging freedom!
+### Dynamic Autograd : Recording the Computation-Graph ### 
 
-Popular deep learning frameworks like PyTorch and Tensorflow are heavy weight code bases
-which often do not carry with them the benefits of *'write once run everywhere'*.
-This is especially true for dedicated <b>Hardware</b>! 
+Neureka trains your neural network using a computation graph recorder.
 
-[On the state of Deep Learning outside of CUDAs walled garden.](https://towardsdatascience.com/on-the-state-of-deep-learning-outside-of-cudas-walled-garden-d88c8bbb4342)
+This is contrary to the approaches found in other frameworks such as TensorFlow, Theano, Caffe, and CNTK 
+which require the definition of a computation graph ahead of time. 
+This means a developer has to build a neural network structure which 
+cannot change during runtime.   
 
-This is due to the fact that the backends of these frameworks have been written in nvidia's cuda and C++. 
-Which means that even developers willing to compile for all platforms
-would still be locked out of AMD and Intel Systems when it comes to performance.
+Neureka, uses the recorded computation graph in order to apply a technique called reverse-mode auto-differentiation, 
+which allows your network structure to change during runtime arbitrarily with zero lag or overhead.<br>
+This powerful feature has been inspired by PyTorch:
+ 
 
-For that reason Neureka is written in Java and OpenCl.
-Although performance will certainly be impacted 
-by this choice, modularity, extensibility, uncomplicated cross platform deployment, and ease of 
-use are the benefits.
-Additionally, the use of OpenCl theoretically should allow for
-FPGA utilization.
+- [Motivation](docs/markdown/motivation.md) :fire:
+ 
+### Main-Package Overview ###
+ 
+| Package | Description |
+| ---- | --- |
+| [**neureka**](src/main/java/neureka/README.md) | the root package containing the tensor class and the following sub-packages |
+| [**neureka.devices**](src/main/java/neureka/devices/README.md) | a sub-package which enables cross platform acceleration (`OpenCLDevice`) and tensor persistence (`FileDevice`) |
+| [**neureka.calculus**](src/main/java/neureka/calculus/README.md) | a sub-package containing collections of functions and the ability to create custom ones |
+| [**neureka.optimization**](src/main/java/neureka/optimization/README.md) | a sub-package for weight-gradient optimization |
+| [**neureka.autograd**](src/main/java/neureka/autograd/README.md) | the guts of Neurekas autograd system |
+| [**neureka.backend**](src/main/java/neureka/backend/README.md) | the backend containing both a consistent API and a standard implementation  |
 
-In general, the JVM ecosystem currently plays an underwhelming role in the Deep-Learning community despite
-the fact that it is among the most dominant platforms.
 
-[What Java needs for true Machine / Deep Learning support.](https://medium.com/@hsheil/what-java-needs-for-true-machine-deep-learning-support-1571ffdbb594)
-
-Neureka has been built for the JVM not for Java.
-
+ 
+ 
 ---
 ## Getting started with Apache Maven: ##
 
@@ -133,7 +135,7 @@ dependencies {
 @GrabResolver(name = 'jitpack.io', root = 'https://jitpack.io')
 @Grab('com.github.Gleethos:neureka:v0.5.0-pre')
 
-import com.github.Gleethos.neureka.*
+import neureka.*
 ```
 
 ---
