@@ -2,15 +2,12 @@ package st.tests
 
 import neureka.Tsr
 import neureka.devices.Device
-import testutility.UnitTester_Tensor
 import testutility.mock.DummyDevice
 
 class CrossDeviceSlicedTensorSystemTest
 {
     static void on(Device device, boolean legacyIndexing)
     {
-        UnitTester_Tensor tester = new UnitTester_Tensor("Cross-Device sliced tensor integration test!")
-
         Tsr x = new Tsr([1], 3).setRqsGradient(true)
         Tsr b = new Tsr([1], -4)
         Tsr w = new Tsr([1], 2)
@@ -20,15 +17,14 @@ class CrossDeviceSlicedTensorSystemTest
          *  dx:   8*3 - 32  = -8
          * */
         Tsr y = new Tsr([x, b, w], "((i0+i1)*i2)^2")
-        tester.testContains((y.idxmap()==null)?"true":"false", ["false"], "idxmap must be set!")
-        tester.testTensor(y, "[1]:(4.0); ->d[1]:(-8.0)")
+        assert y.idxmap() != null
+        assert y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
         y.backward(new Tsr(2))
 
         y = ((x+b)*w)**2
-        tester.testTensor(y, ["[1]:(4.0); ->d[1]:(-8.0)"])
+        assert y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
         y.backward(new Tsr(2))
-        tester.testTensor(x, ["-32.0"])
-
+        x.toString().contains("-32.0")
         y = b + w * x
 
         /**
@@ -52,24 +48,23 @@ class CrossDeviceSlicedTensorSystemTest
         device.store(a)
         b = a[[-1..-3, -6..-3]]
         def s = a[[1, -2]]
-        assert s==((legacyIndexing)?9.0:2.0)
-        tester.testContains(b.toString(),
-                [
-                        (legacyIndexing)
-                                ?"2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
-                                :"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
-                ], "Testing slicing")
-        tester.testContains(((b.spread() != null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
+        assert s == ((legacyIndexing)?9.0:2.0)
+        assert b.toString().contains(
+                (legacyIndexing)
+                        ?"2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
+                        :"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
+        )
+
+        assert b.spread() != null
         b = a[-3..-1, 0..3]
         s = a[1, -2]
-        assert s==((legacyIndexing)?9.0:2.0)
-        tester.testContains(b.toString(),
-                [
-                        (legacyIndexing)
-                                ?"2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
-                                :"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
-                ], "Testing slicing")
-        tester.testContains(((b.spread() != null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
+        assert s == ( (legacyIndexing) ? 9.0 : 2.0 )
+        assert b.toString().contains(
+                (legacyIndexing)
+                        ?"2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
+                        :"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
+        )
+        assert b.spread() != null
         /**
          * 2, 3, 4,
          * 6, 7, 8,
@@ -77,7 +72,7 @@ class CrossDeviceSlicedTensorSystemTest
          * 5, 6, 7,
          */
         //---
-        if( device instanceof DummyDevice ){
+        if( device instanceof DummyDevice ) {
             a.value64()[1] = a.value64()[1] * 6
             a.value64()[7] = a.value64()[7] * 2
         } else {
@@ -89,15 +84,16 @@ class CrossDeviceSlicedTensorSystemTest
                     1, 1, 1, 1,
                     1, 1, 1, 1
             ])
-            device.store(k)
-            a[] = a*k
+            device.store( k )
+            a[] = a * k
         }
-        tester.testContains(b.toString(), [
+        assert b.toString().contains(
                 (legacyIndexing)
                         ? "12.0, 3.0, 4.0, 6.0, 7.0, 16.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
                         : "7.0, 16.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
-        ], "Testing slicing")
-        //tester.testTensor(x, ["-16.0"])
+        )
+
+        //assert x.toString().contains("-16.0")
         //---
         Tsr c = new Tsr([3, 4], [
                 -3, 2, 3,
@@ -121,30 +117,25 @@ class CrossDeviceSlicedTensorSystemTest
          */
         //device.add(c)
         Tsr d = b + c
-        tester.testContains(d.toString(),
-                [
-                        (legacyIndexing)?
-                                "9.0, 5.0, 7.0, " +
-                                "11.0, 13.0, 18.0, " +
-                                "0.0, 3.0, 5.0, " +
-                                "8.0, 10.0, 9.0"
-                                :"4.0, 18.0, 12.0, 6.0, "+
-                                "10.0, 7.0, 5.0, 8.0, "+
-                                "3.0, 5.0, 7.0, 6.0"
-                ],
-                "Testing slicing"
+        assert d.toString().toString().contains(
+                (legacyIndexing)?
+                        "9.0, 5.0, 7.0, " +
+                        "11.0, 13.0, 18.0, " +
+                        "0.0, 3.0, 5.0, " +
+                        "8.0, 10.0, 9.0"
+                        :"4.0, 18.0, 12.0, 6.0, "+
+                        "10.0, 7.0, 5.0, 8.0, "+
+                        "3.0, 5.0, 7.0, 6.0"
         )
         //---
         b = a[1..3, 2..4]
-        tester.testContains(b.toString(),
-                [
-                        (legacyIndexing)
-                                ?"1.0, 2.0, 3.0, 5.0, 6.0, 7.0, 9.0, 1.0, 2.0"
-                                :"9.0, 1.0, 2.0, 6.0, 7.0, 8.0, 3.0, 4.0, 5.0"
-                ],
-                "Testing slicing"
+        assert b.toString().contains(
+                (legacyIndexing)
+                        ?"1.0, 2.0, 3.0, 5.0, 6.0, 7.0, 9.0, 1.0, 2.0"
+                        :"9.0, 1.0, 2.0, 6.0, 7.0, 8.0, 3.0, 4.0, 5.0"
         )
-        tester.testContains(((b.spread() != null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
+
+        assert b.spread() != null
         /**
          1, 12, 3, 4,
          5, 6, 7, 16,
@@ -161,13 +152,13 @@ class CrossDeviceSlicedTensorSystemTest
          */
         //---
         b = a[[[0..3]:2, [1..4]:2]]
-        tester.testContains(b.toString(),
-                [
-                        (legacyIndexing)
-                                ?"5.0, 7.0, 4.0, 6.0"
-                                :"12.0, 4.0, 5.0, 7.0"
-                ], "Testing slicing")
-        tester.testContains(((b.spread() != null)?"Has index component":"Doesn't have it! :/"), ["Has index component"], "Check if index component is present!")
+        assert b.toString().contains(
+                (legacyIndexing)
+                        ?"5.0, 7.0, 4.0, 6.0"
+                        :"12.0, 4.0, 5.0, 7.0"
+        )
+
+        assert b.spread() != null
         /**
          1, 12, 3, 4,
          5, 6, 7, 16, => 5,  7,
@@ -188,27 +179,24 @@ class CrossDeviceSlicedTensorSystemTest
         Tsr u = new Tsr([2,2], [5, 2, 7, 34]).set((device instanceof DummyDevice)?null:device)
 
         p[] = u
-        tester.testContains(p.toString(), ["5.0, 2.0, 7.0, 34.0"], "Testing slicing")
+        //tester.testContains(p.toString(), ["5.0, 2.0, 7.0, 34.0"], "Testing slicing")
+        assert p.toString().contains("5.0, 2.0, 7.0, 34.0")
 
         //---
         a[[[0..3]:2, [1..4]:2]] = new Tsr([2, 2], [1, 2, 3, 4])
-        tester.testContains(b.toString(), ["1.0, 2.0, 3.0, 4.0"], "Testing slicing")
-        tester.testContains(
-                a.toString(),
-                [
-                        (legacyIndexing)
-                                ?"1.0, 12.0, 3.0, 4.0, " +
-                                "1.0, 6.0, 2.0, 16.0, " +
-                                "9.0, 1.0, 2.0, 3.0, " +
-                                "3.0, 5.0, 4.0, 7.0, " +
-                                "8.0, 9.0, 1.0, 2.0, " +
-                                "3.0, 4.0, 5.0, 6.0"
-                                :"1.0, 1.0, 3.0, 2.0, 5.0, 6.0, " +
-                                "7.0, 16.0, 9.0, 1.0, 2.0, 3.0, " +
-                                "4.0, 3.0, 6.0, 4.0, 8.0, 9.0, " +
-                                "1.0, 2.0, 3.0, 4.0, 5.0, 6.0"
-                ],
-                "Testing slicing"
+        assert b.toString().contains("1.0, 2.0, 3.0, 4.0")
+        assert a.toString().contains(
+                (legacyIndexing)
+                        ?"1.0, 12.0, 3.0, 4.0, " +
+                        "1.0, 6.0, 2.0, 16.0, " +
+                        "9.0, 1.0, 2.0, 3.0, " +
+                        "3.0, 5.0, 4.0, 7.0, " +
+                        "8.0, 9.0, 1.0, 2.0, " +
+                        "3.0, 4.0, 5.0, 6.0"
+                        :"1.0, 1.0, 3.0, 2.0, 5.0, 6.0, " +
+                        "7.0, 16.0, 9.0, 1.0, 2.0, 3.0, " +
+                        "4.0, 3.0, 6.0, 4.0, 8.0, 9.0, " +
+                        "1.0, 2.0, 3.0, 4.0, 5.0, 6.0"
         )
         /**a:>>
          1, 12, 3, 4,
@@ -221,29 +209,25 @@ class CrossDeviceSlicedTensorSystemTest
         //---
 
         a[1..2, 1..2] = new Tsr([2, 2], [8, 8, 8, 8])
-        tester.testContains(b.toString(),
-                [
-                        (legacyIndexing)?
-                                "1.0, 8.0, " +
-                                        "3.0, 4.0"
-                                :"1.0, 2.0, "+
-                                "8.0, 4.0"
-                ], "Testing slicing")
-        tester.testContains(
-                a.toString(), [
+        assert b.toString().contains(
+                (legacyIndexing)?
+                        "1.0, 8.0, " +
+                        "3.0, 4.0"
+                        :"1.0, 2.0, "+
+                        "8.0, 4.0"
+        )
+        assert a.toString().contains(
                 (legacyIndexing)?
                         "1.0, 12.0, 3.0, 4.0, " +
-                                "1.0, 8.0, 8.0, 16.0, " +
-                                "9.0, 8.0, 8.0, 3.0, " +
-                                "3.0, 5.0, 4.0, 7.0, " +
-                                "8.0, 9.0, 1.0, 2.0, " +
-                                "3.0, 4.0, 5.0, 6.0"
+                        "1.0, 8.0, 8.0, 16.0, " +
+                        "9.0, 8.0, 8.0, 3.0, " +
+                        "3.0, 5.0, 4.0, 7.0, " +
+                        "8.0, 9.0, 1.0, 2.0, " +
+                        "3.0, 4.0, 5.0, 6.0"
                         :"1.0, 1.0, 3.0, 2.0, 5.0, 6.0, " +
                         "7.0, 8.0, 8.0, 1.0, 2.0, 3.0, " +
                         "4.0, 8.0, 8.0, 4.0, 8.0, 9.0, " +
                         "1.0, 2.0, 3.0, 4.0, 5.0, 6.0"
-        ],
-                "Testing slicing"
         )
         /**a:>>
          1, 12, 3, 4,
@@ -269,15 +253,13 @@ class CrossDeviceSlicedTensorSystemTest
                 -2, 3,//-2 + 24 + 3 + 8
                 1, 2,
         ])
-        device.store(b).store(c)//-2+6+8+8 = 22
-        x = new Tsr(b, "x", c)//This test is important!
-        tester.testContains(x.toString(),
-                [
-                        (legacyIndexing)?
-                                "[1x1]:(33.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)"
-                                :"[1x1]:(20.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)"
-
-                ], "")
+        device.store(b).store(c) // -2 + 6 + 8 + 8 = 22
+        x = new Tsr(b, "x", c) // This test is important because it tests convolution on slices!
+        assert x.toString().contains(
+                (legacyIndexing)?
+                        "[1x1]:(33.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)"
+                        :"[1x1]:(20.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)"
+        )
 
     }
 
