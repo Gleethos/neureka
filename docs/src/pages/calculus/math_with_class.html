@@ -152,12 +152,12 @@ Tsr a = new Tsr(
         [ 3, 2 ],
         DataType.of( ComplexNumber.class ),
         ( int i, int[] idx ) -> new ComplexNumber( idx[0], idx[1] )
-)
+    )
 Tsr b = new Tsr(
         [ 3, 2 ],
         DataType.of( ComplexNumber.class ),
         ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )
-)
+    )
 
                 </code></pre>
             </div>
@@ -167,12 +167,12 @@ Tsr&#60;ComplexNumber&#62; a = new Tsr&#60;&#62;(
         new int[]{ 3, 2 },
         DataType.of( ComplexNumber.class ),
         ( int i, int[] idx ) -> new ComplexNumber( idx[0], idx[1] )
-);
+    );
 Tsr&#60;ComplexNumber&#62; b = new Tsr&#60;&#62;(
         new int[]{ 3, 2 },
         DataType.of( ComplexNumber.class ),
         ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )
-);
+    );
 
                 </code></pre>
             </div>
@@ -227,11 +227,11 @@ assert a.multiply(b).toString().equals("(3x2):[0.0+0.0i, 0.0+1.0i, 0.0+1.0i, 0.0
 <div class="col-sm-12 col-md-12 col-lg-12">
     <div class="ContentBox">
         <p>
-            This feature currently only work for elementwise operations.<br>
+            This feature currently only work for element-wise operations.<br>
             In future versions linear operations will be supported as well.<br>
             <br>
             One important note that has to be kept in mind when using this feature
-            is that is substantially slower than operations in conventional (primitive)
+            is that it is substantially slower than operations on conventional (primitive)
             data types.
         </p>
     </div>
