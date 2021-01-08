@@ -25,6 +25,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             Device device, boolean legacyIndexing
     ) {
         given :
+            if ( device == null ) return
             Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             if ( device instanceof OpenCLDevice && !Neureka.instance().canAccessOpenCL() ) return
