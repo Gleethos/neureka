@@ -4,14 +4,20 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
 import neureka.calculus.Function
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class AD_And_Computation_Graph_Integration_Tests extends Specification{
 
+    def setup() {
+        Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+    }
+
     def "Reverse indexing with AD produces expected computation graph."(){
 
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             Tsr a = new Tsr([2, 3], [
                     1, 2, 3,
@@ -52,7 +58,6 @@ class AD_And_Computation_Graph_Integration_Tests extends Specification{
     def "Payloads and derivatives are null."()
     {
         given :
-            Neureka.instance().reset()
             Tsr a = new Tsr(2).setRqsGradient(true)
             Tsr b = a * 3 / 5
             Tsr c = new Tsr(3)

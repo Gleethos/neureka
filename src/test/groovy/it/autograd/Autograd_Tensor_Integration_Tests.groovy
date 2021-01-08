@@ -2,6 +2,7 @@ package it.autograd
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 /**
@@ -22,6 +23,8 @@ class Autograd_Tensor_Integration_Tests extends Specification
 
     def setup() {
         Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
 
     def 'Test basic autograd behaviour. (Not on device)'()
@@ -72,9 +75,7 @@ class Autograd_Tensor_Integration_Tests extends Specification
 
     def 'Second-Test "x-mul" autograd behaviour. (Not on device)'()
     {
-        given : 'The Neurka instance is being reset.'
-            Neureka.instance().reset();
-        and: 'Gradient auto apply for tensors in ue is set to false.'
+        given : 'Gradient auto apply for tensors in ue is set to false.'
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
         and: 'Tensor legacy view is set to true.'
             Neureka.instance().settings().view().setIsUsingLegacyView(true);

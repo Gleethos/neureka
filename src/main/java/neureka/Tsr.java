@@ -2343,9 +2343,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return new TsrAsString( this, mode ).toString( deep );
     }
 
-
+    @Override
     public String toString() {
-        return toString( "dgc" );
+        //return toString( "dgc" );
+        return new TsrAsString( this ).toString();
     }
 
 

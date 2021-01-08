@@ -5,6 +5,7 @@ import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.opencl.OpenCLPlatform
 import neureka.devices.opencl.utility.DispatchUtility
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class OpenCLDevice_Integration_Tests extends Specification
@@ -20,6 +21,8 @@ class OpenCLDevice_Integration_Tests extends Specification
             </p>
         """
         Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
 
     def 'An OpenCLDevice will throw an exception when trying to add a tensor whose "data parent" is not outsourced.'()

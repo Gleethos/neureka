@@ -4,6 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionBuilder
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Calculus_Integration_Tests extends Specification
@@ -21,6 +22,8 @@ class Calculus_Integration_Tests extends Specification
 
     def setup() {
         Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
 
     def 'Tensor results of various Function instances return expected results.'(

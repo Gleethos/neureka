@@ -7,6 +7,7 @@ import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.OpenCLPlatform
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 import testutility.mock.DummyDevice
@@ -14,12 +15,16 @@ import testutility.mock.DummyDevice
 
 class Cross_Device_Sliced_Tensor_System_Test extends Specification
 {
+    def setup() {
+        Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+    }
 
     def 'Cross device sliced tensor integration test runs without errors.'(
             Device device, boolean legacyIndexing
     ) {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             if ( device instanceof OpenCLDevice && !Neureka.instance().canAccessOpenCL() ) return
@@ -313,7 +318,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         )
 
         where:
-            device                                                     | legacyIndexing
+            device                                                  | legacyIndexing
             OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0)   | true
             OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0)   | false
             HostCPU.instance()                                      | true

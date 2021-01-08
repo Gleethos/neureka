@@ -9,6 +9,7 @@ import neureka.calculus.Function
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.operations.AbstractOperation
 import neureka.backend.api.operations.Operation
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 import java.util.function.Supplier
@@ -30,6 +31,8 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
 
     def setup() {
         Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
 
     def 'GraphNode throws exception when trying to instantiate with the wrong context.'()

@@ -1,6 +1,7 @@
 package st
 
 import groovy.transform.CompileDynamic
+import neureka.utility.TsrAsString
 import st.tests.CrossDeviceSystemTest
 import neureka.Neureka
 import neureka.Tsr
@@ -15,6 +16,12 @@ import testutility.mock.DummyDevice
 @CompileDynamic
 class Cross_Device_System_Tests extends Specification
 {
+    def setup() {
+        Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+    }
+
     /*  ! WIP !
     def '...'(
             String deviceType, boolean legacyIndexing
@@ -82,7 +89,6 @@ class Cross_Device_System_Tests extends Specification
                 !Neureka.instance().canAccessOpenCL()
             ) return
             Device device = ( deviceType == "CPU" ) ? HostCPU.instance() : Device.find('first')
-            Neureka.instance().reset()
             Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads = true
             Neureka.instance().settings().view().isUsingLegacyView = true
 
@@ -106,7 +112,6 @@ class Cross_Device_System_Tests extends Specification
     def 'Test simple NN implementation with manual backprop'()
     {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
 
         when : Device device = new DummyDevice()

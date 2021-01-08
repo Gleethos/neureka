@@ -2,10 +2,18 @@ package it.tensors
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_Version_Integration_Tests extends Specification
 {
+
+
+    def setup() {
+        Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+    }
 
     def 'Non-inline operations causes version incrementation.'(
             String code,
@@ -15,9 +23,7 @@ class Tensor_Version_Integration_Tests extends Specification
             int version_of_b,
             String expected
     ) {
-        given : 'Neureka is being reset.'
-            Neureka neureka = Neureka.instance()
-            neureka.reset()
+        given :
             Tsr a = new Tsr(6).setRqsGradient(true)
             Tsr b = new Tsr(-4)
             Binding binding = new Binding()
@@ -62,8 +68,7 @@ class Tensor_Version_Integration_Tests extends Specification
             int version_of_b,
             String expected
     ) {
-        given : 'Neureka is being reset.'
-            Neureka.instance().reset()
+        given :
             Neureka.instance().settings().autograd().setIsPreventingInlineOperations( save_inline )
             Tsr a = new Tsr(4) + new Tsr(2)
             Tsr b = new Tsr(-1) + new Tsr(-3).setRqsGradient(true)
@@ -105,8 +110,7 @@ class Tensor_Version_Integration_Tests extends Specification
             String code,
             String message
     ) {
-        given : 'Neureka is being reset.'
-            Neureka.instance().reset()
+        given :
             Neureka.instance().settings().autograd().setIsPreventingInlineOperations( true )
             Tsr a = new Tsr(4) + new Tsr(2).setRqsGradient(true)
             Tsr b = new Tsr(-4)

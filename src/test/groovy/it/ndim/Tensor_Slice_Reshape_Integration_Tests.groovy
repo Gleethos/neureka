@@ -3,17 +3,20 @@ package it.ndim
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_Slice_Reshape_Integration_Tests extends Specification
 {
+    def setup() {
+        Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+    }
 
     def 'A slice of a tensor changes as expected when reshaping it.'()
     {
-        given : 'Neureka is being reset.'
-            Neureka.instance().reset()
-
-        and : 'A parent tensor.'
+        given : 'A parent tensor.'
             Tsr A = new Tsr([
                     [  1,  5,  3, -6, -3,  8, -9,  4  ],
                     [  0, -2,  2,  1, -1,  0,  5,  4  ],
@@ -52,10 +55,7 @@ class Tensor_Slice_Reshape_Integration_Tests extends Specification
 
     def 'Two slices of one big tensor perform matrix multiplication flawless.'()
     {
-        given: 'Neureka is being reset.'
-            Neureka.instance().reset()
-
-        and: 'A parent tensor.'
+        given : 'A parent tensor.'
             Tsr X = new Tsr([
                     [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000],
                     [1000,   -2,    2, 1000, 1000, 1000, 1000, 1000],
@@ -91,10 +91,7 @@ class Tensor_Slice_Reshape_Integration_Tests extends Specification
 
     def 'Reshaping a slice works as expected.'()
     {
-        given: 'Neureka is being reset.'
-            Neureka.instance().reset()
-
-        and: 'A parent tensor.'
+        given : 'A parent tensor.'
             Tsr X = new Tsr([
                     [1000, 1000, 1000, 1000, ],
                     [1000,   -1,    4, 1000, ],

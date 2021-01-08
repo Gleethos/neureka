@@ -39,11 +39,14 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import neureka.dtype.custom.F64;
 import neureka.utility.SettingsLoader;
+import neureka.utility.TsrAsString;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 @Accessors( prefix = {"_"} )
 @ToString
@@ -357,7 +360,23 @@ public class Neureka
         @ToString
         public class View
         {
+            View(){
+                _asString = new HashMap<>();
+                _asString.put( TsrAsString.Should.BE_SHORTENED_BY,      50   );
+                _asString.put( TsrAsString.Should.BE_COMPACT,           true );
+                _asString.put( TsrAsString.Should.BE_FORMATTED,         true );
+                _asString.put( TsrAsString.Should.HAVE_GRADIENT,        true );
+                _asString.put( TsrAsString.Should.HAVE_PADDING_OF,     6     );
+                _asString.put( TsrAsString.Should.HAVE_VALUE,          true );
+                _asString.put( TsrAsString.Should.HAVE_RECURSIVE_GRAPH, false );
+                _asString.put( TsrAsString.Should.HAVE_DERIVATIVES,     false );
+                _asString.put( TsrAsString.Should.HAVE_SHAPE,           true  );
+            }
+
             private boolean _isUsingLegacyView = false;
+
+            private Map<TsrAsString.Should, Object> _asString;
+
 
             public boolean isUsingLegacyView() {
                 return _isUsingLegacyView;
@@ -366,6 +385,14 @@ public class Neureka
             public void setIsUsingLegacyView(boolean enabled) {
                 if ( _isLocked || !_currentThreadIsAuthorized()) return;
                 _isUsingLegacyView = enabled;
+            }
+
+            public Map<TsrAsString.Should, Object> getAsString() {
+                return _asString;
+            }
+
+            public void setAsString( Map<TsrAsString.Should, Object> should ) {
+                _asString = should;
             }
 
         }

@@ -6,15 +6,20 @@ import neureka.ndim.config.types.complex.ComplexD1Configuration
 import neureka.ndim.config.types.complex.ComplexScalarConfiguration
 import neureka.ndim.config.types.simple.SimpleD1Configuration
 import neureka.ndim.config.types.simple.SimpleScalarConfiguration
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_NDConfiguration_Integration_Tests extends Specification
 {
+    def setupSpec() {
+        Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+    }
+
     def 'NDConfiguration instances of tensors have expected state.'()
     {
-        given: 'Neureka instance settings are being reset.'
-            Neureka.instance().reset()
-        and : 'Two scalar tensors "a" and "b" storing values "1" and "2".'
+        given: 'Two scalar tensors "a" and "b" storing values "1" and "2".'
             Tsr a = new Tsr(1)
             Tsr b = new Tsr(2)
 
@@ -33,9 +38,7 @@ class Tensor_NDConfiguration_Integration_Tests extends Specification
 
     def 'NDConfiguration instances of tensors have expected state and behaviour.'()
     {
-        given: 'Neureka instance settings are being reset.'
-        Neureka.instance().reset()
-        and : 'Three vector tensors containing different numeric values.'
+        given: 'Three vector tensors containing different numeric values.'
             Tsr x = new Tsr([1.0, 2.0, 3.1])
             Tsr y = new Tsr([3, 4.5, 2])
             Tsr z = new Tsr([1.4, 2, 4])

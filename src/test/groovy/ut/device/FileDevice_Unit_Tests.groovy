@@ -6,6 +6,7 @@ import neureka.devices.storage.FileDevice
 import neureka.devices.storage.FileHead
 import neureka.devices.storage.IDXHead
 import neureka.devices.storage.JPEGHead
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class FileDevice_Unit_Tests extends Specification
@@ -24,6 +25,8 @@ class FileDevice_Unit_Tests extends Specification
 
     def setup() {
         Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
 
     def 'A file device stores tensors in idx files by default.'(

@@ -2,6 +2,7 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_Generics_Unit_Tests extends Specification
@@ -21,6 +22,8 @@ class Tensor_Generics_Unit_Tests extends Specification
 
     def setup() {
         Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
 
     def 'Anonymous tensor instance has the default datatype class as defined in Neureka settings.'() {

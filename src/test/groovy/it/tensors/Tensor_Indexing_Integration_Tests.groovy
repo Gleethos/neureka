@@ -2,16 +2,21 @@ package it.tensors
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_Indexing_Integration_Tests extends Specification
 {
 
+    def setup() {
+        Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+    }
+
     void 'Test convolution with legacy indexing.'()
     {
-        given : 'The current Neureka instance is being reset.'
-            Neureka.instance().reset()
-        and : 'The following library configuration (legacy) is being used.'
+        given : 'The following library configuration (legacy) is being used.'
             Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
@@ -65,7 +70,6 @@ class Tensor_Indexing_Integration_Tests extends Specification
     def 'Convolution using legacy indexing works as expected.'()
     {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
@@ -118,7 +122,6 @@ class Tensor_Indexing_Integration_Tests extends Specification
     def 'Indexing modes produce expected results when doing convolution.'()
     {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
             Tsr t0 = new Tsr([3, 2, 1], [
                     1, 2,

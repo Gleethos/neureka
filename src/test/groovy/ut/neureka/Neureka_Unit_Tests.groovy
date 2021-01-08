@@ -1,6 +1,7 @@
 package ut.neureka
 
 import neureka.Neureka
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Neureka_Unit_Tests extends Specification
@@ -20,6 +21,8 @@ class Neureka_Unit_Tests extends Specification
 
     def setup() {
         Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
 
 

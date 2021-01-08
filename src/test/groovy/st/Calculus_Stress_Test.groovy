@@ -6,18 +6,21 @@ import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.OpenCLPlatform
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Calculus_Stress_Test extends Specification
 {
-
+    def setup() {
+        Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+    }
 
     def 'Stress test runs error free and produces expected result'(
         Device device, boolean arrayIndexing, boolean legacyIndexing
     ) {
-        given: 'Neureka is being reset.'
-            Neureka.instance().reset()
-        and:
+        given:
             Neureka.instance().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing
             Neureka.instance().settings().indexing().isUsingLegacyIndexing = legacyIndexing
         and :
@@ -76,9 +79,7 @@ class Calculus_Stress_Test extends Specification
     def 'Dot operation stress test runs error free and produces expected result'(
             boolean arrayIndexing, boolean legacyIndexing, List<Integer> shape, String expected
     ) {
-        given: 'Neureka is being reset.'
-            Neureka.instance().reset()
-        and:
+        given:
             Neureka.instance().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing
             Neureka.instance().settings().indexing().isUsingLegacyIndexing = legacyIndexing
 
@@ -110,9 +111,7 @@ class Calculus_Stress_Test extends Specification
             String operation,
             String expected
     ) {
-        given: 'Neureka is being reset.'
-            Neureka.instance().reset()
-        and:
+        given:
             if (
                 device instanceof OpenCLDevice &&
                     ( (OpenCLDevice) device ).getPlatform().isDoingLegacyIndexing() != legacyIndexing

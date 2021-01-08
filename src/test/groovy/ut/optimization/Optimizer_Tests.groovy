@@ -3,6 +3,7 @@ package ut.optimization
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
+import neureka.utility.TsrAsString
 
 //import org.junit.Test
 import spock.lang.Specification
@@ -12,6 +13,8 @@ class Optimizer_Tests extends Specification
 
     def setup() {
         Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
 
     // WIP! : not yet completed!

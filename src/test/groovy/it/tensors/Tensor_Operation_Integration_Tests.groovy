@@ -5,17 +5,22 @@ import neureka.Tsr
 import neureka.calculus.assembly.FunctionBuilder
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_Operation_Integration_Tests extends Specification
 {
 
+    def setup() {
+        Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+    }
+
     def 'Test "x-mul" operator produces expected results. (Not on device)'(
             boolean legacy, String expected
     ) {
-        given: 'The Neurka instance is being reset.'
-            Neureka.instance().reset();
-        and: 'Gradient auto apply for tensors in ue is set to false.'
+        given: 'Gradient auto apply for tensors in ue is set to false.'
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
         and: 'Tensor legacy view is set to true.'
             Neureka.instance().settings().view().setIsUsingLegacyView(true);
@@ -65,9 +70,7 @@ class Tensor_Operation_Integration_Tests extends Specification
 
     def 'The "dot" operation reshapes and produces valid "x" operation result.'()
     {
-        given : 'The Neureka instance is being reset.'
-            Neureka.instance().reset()
-        and : 'Two multi-dimensional tensors.'
+        given : 'Two multi-dimensional tensors.'
             Tsr a = new Tsr([1, 4, 4, 1], [4..12])
             Tsr b = new Tsr([1, 3, 5, 2, 1], [-5..3])
 
@@ -82,8 +85,6 @@ class Tensor_Operation_Integration_Tests extends Specification
             String code, String expected
     ) {
         given :
-            Neureka neureka = Neureka.instance()
-            neureka.reset()
             Tsr a = new Tsr([1,2], [3, 2])
             Tsr b = new Tsr([2,1], [-1, 4])
             Binding binding = new Binding()
@@ -108,7 +109,6 @@ class Tensor_Operation_Integration_Tests extends Specification
             String code, String expected
     ) {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView true
             Tsr a = new Tsr(5)
             Tsr b = new Tsr(3)
@@ -142,7 +142,6 @@ class Tensor_Operation_Integration_Tests extends Specification
     def 'Overloaded operation methods on tensors produce expected results when called.'()
     {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView true
             Tsr a = new Tsr(2).setRqsGradient(true)
             Tsr b = new Tsr(-4)
@@ -162,7 +161,6 @@ class Tensor_Operation_Integration_Tests extends Specification
     def 'Manual convolution produces expected result.'()
     {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView(false)
             Tsr a = new Tsr([100, 100], 3..19)
             Tsr x = a[1..-2,0..-1]
@@ -221,7 +219,6 @@ class Tensor_Operation_Integration_Tests extends Specification
          Device device
     ) {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView(false)
             Tsr a = new Tsr([4, 4], 0..16).set( device )
 
@@ -294,7 +291,6 @@ class Tensor_Operation_Integration_Tests extends Specification
             Device device
     ) {
         given :
-        Neureka.instance().reset()
         Neureka.instance().settings().view().setIsUsingLegacyView(false)
         Tsr a = new Tsr([11, 11], 3..19).set( device )
         Tsr x = a[1..-2,0..-1]
@@ -324,7 +320,6 @@ class Tensor_Operation_Integration_Tests extends Specification
     def 'Auto reshape and broadcasting occurs.'()
     {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             Tsr a = new Tsr([2,2], 1..5)
             Tsr b = new Tsr([2,1], 3..4)
@@ -347,7 +342,6 @@ class Tensor_Operation_Integration_Tests extends Specification
     void 'A new transposed version of a given tensor will be returned by the "T()" method.'()
     {
         given :
-            Neureka.instance().reset()
             Neureka.instance().settings().view().isUsingLegacyView = true
             Neureka.instance().settings().indexing().isUsingLegacyIndexing = true
 
@@ -373,7 +367,6 @@ class Tensor_Operation_Integration_Tests extends Specification
     def 'Operators "+,*,**,^" produce expected results with gradients which can be accessed via a "Ig[0]" Function instance'()
     {
         given : 'Neurekas view is set to legacy and three tensors of which one requires gradients.'
-            Neureka.instance().reset()
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             Tsr x = new Tsr(3).setRqsGradient(true)
             Tsr b = new Tsr(-4)

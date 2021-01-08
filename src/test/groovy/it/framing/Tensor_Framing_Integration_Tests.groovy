@@ -2,12 +2,28 @@ package it.framing
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 import java.lang.ref.WeakReference
 
 class Tensor_Framing_Integration_Tests extends Specification
 {
+    def setupSpec() {
+        reportHeader """
+                <h2> Framing Behavior </h2>
+                <br> 
+                <p>
+                    This specification covers the behavior
+                    of the classes contained in the "framing" package, which 
+                    contains logic in order to provide the possibility to alias
+                    tensor indices.          
+                </p>
+            """
+        Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+    }
 
     def 'Added labels to tensors are accessible through the "index()" method.'()
     {

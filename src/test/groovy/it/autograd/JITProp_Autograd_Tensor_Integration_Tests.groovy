@@ -4,6 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.JITProp
 import neureka.calculus.assembly.FunctionBuilder
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class JITProp_Autograd_Tensor_Integration_Tests extends Specification
@@ -25,6 +26,8 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
 
     def setup() {
         Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
 
     def 'Test pending error optimization'()

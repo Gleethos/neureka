@@ -4,6 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.dtype.DataType
 import neureka.dtype.custom.I8
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_State_Unit_Test extends Specification
@@ -20,6 +21,8 @@ class Tensor_State_Unit_Test extends Specification
 
     def setup() {
         Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
 
     def 'Tensors as String can be formatted depending on shape.'(

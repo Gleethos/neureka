@@ -9,6 +9,7 @@ import neureka.dtype.NumericType
 import neureka.dtype.custom.F64
 import neureka.dtype.custom.I16
 import neureka.dtype.custom.UI8
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class FileHead_Unit_Tests extends Specification
@@ -26,8 +27,11 @@ class FileHead_Unit_Tests extends Specification
         """
     }
 
-
     def setup() {
+        Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+
         File dir = new File( "build/test-can" )
         if ( ! dir.exists() ) dir.mkdirs()
     }
@@ -35,9 +39,6 @@ class FileHead_Unit_Tests extends Specification
     def 'Test writing IDX file format.'(
         Tsr<?> tensor, Class<NumericType<?,?,?,?>> type, String filename, String expected
     ) {
-        given : 'Neureka settings are being reset.'
-            Neureka.instance().reset()
-
         when : 'A new IDX file handle for the given filename is being instantiated.'
             IDXHead idx = new IDXHead(tensor, "build/test-can/"+filename)
 
@@ -63,9 +64,7 @@ class FileHead_Unit_Tests extends Specification
             String filename, String expected
     ) {
 
-        given : 'Neureka is being reset.'
-            Neureka.instance().reset()
-        and : 'A variable for storing a hash :'
+        given : 'A variable for storing a hash :'
             def hash = ""
 
         when : 'The given idx file is being loaded by the "IDXHead" class into a new tensor...'
@@ -117,7 +116,6 @@ class FileHead_Unit_Tests extends Specification
     ) {
 
         given :
-            Neureka.instance().reset()
             def hash = ""
 
         when :

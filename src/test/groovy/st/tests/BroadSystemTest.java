@@ -12,7 +12,6 @@ public class BroadSystemTest
 
     public static boolean on()
     {
-        Neureka.instance().reset();
         Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true);
         Neureka.instance().settings().view().setIsUsingLegacyView(true);
 

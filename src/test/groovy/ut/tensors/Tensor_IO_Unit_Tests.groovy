@@ -6,6 +6,7 @@ import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.calculus.Function
 import neureka.dtype.DataType
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_IO_Unit_Tests extends Specification
@@ -24,6 +25,8 @@ class Tensor_IO_Unit_Tests extends Specification
 
     def setup() {
         Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
 
 

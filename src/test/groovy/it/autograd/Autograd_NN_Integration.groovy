@@ -3,6 +3,7 @@ package it.autograd
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
+import neureka.utility.TsrAsString
 import spock.lang.Specification;
 
 class Autograd_NN_Integration extends Specification
@@ -25,6 +26,8 @@ class Autograd_NN_Integration extends Specification
 
     def setup() {
         Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
 
     def 'Autograd works in a simple feed forward neural network.'()

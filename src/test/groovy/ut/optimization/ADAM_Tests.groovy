@@ -5,6 +5,7 @@ import neureka.Tsr
 import neureka.calculus.Function
 import neureka.optimization.Optimizer
 import neureka.optimization.implementations.ADAM
+import neureka.utility.TsrAsString
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -27,6 +28,8 @@ class ADAM_Tests extends Specification
     def setup() {
         Neureka.instance().reset()
         w.set(o)
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
 
 

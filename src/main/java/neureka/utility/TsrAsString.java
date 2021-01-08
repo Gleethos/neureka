@@ -105,6 +105,13 @@ public class TsrAsString
         );
     }
 
+    public TsrAsString( Tsr<?> tensor ) {
+        _construct(
+                tensor,
+                _defaults( null )
+        );
+    }
+
     private void _construct( Tsr tensor, Map< Should, Object > settings )
     {
         _config = settings;
@@ -139,16 +146,23 @@ public class TsrAsString
     }
 
     private Map< Should, Object > _defaults( String modes ) {
+        if ( modes == null ) {
+            return Neureka.instance().settings().view().getAsString();
+        }
+        return configFromCode( modes );
+    }
+
+    public static Map<Should, Object> configFromCode( String code ) {
         Map< Should, Object > copy = new HashMap<>();
-        copy.put( Should.BE_SHORTENED_BY,      (modes.contains( "s") ) ? 3 : 50                     );
-        copy.put( Should.BE_COMPACT,           modes.contains( "c" )                                );
-        copy.put( Should.BE_FORMATTED,         modes.contains( "f" )                                );
-        copy.put( Should.HAVE_GRADIENT,        modes.contains( "g" )                                );
-        copy.put( Should.HAVE_PADDING_OF,     (modes.contains( "p" )) ? 6 : -1                      );
-        copy.put( Should.HAVE_VALUE,          !(modes.contains( "shp" ) || modes.contains("shape")) );
-        copy.put( Should.HAVE_RECURSIVE_GRAPH, modes.contains( "r" )                                );
-        copy.put( Should.HAVE_DERIVATIVES,     modes.contains( "d" )                                );
-        copy.put( Should.HAVE_SHAPE,           !modes.contains( "v" )                               );
+        copy.put( Should.BE_SHORTENED_BY,      (code.contains( "s") ) ? 3 : 50                     );
+        copy.put( Should.BE_COMPACT,           code.contains( "c" )                                );
+        copy.put( Should.BE_FORMATTED,         code.contains( "f" )                                );
+        copy.put( Should.HAVE_GRADIENT,        code.contains( "g" )                                );
+        copy.put( Should.HAVE_PADDING_OF,     (code.contains( "p" )) ? 6 : -1                      );
+        copy.put( Should.HAVE_VALUE,          !(code.contains( "shp" ) || code.contains("shape")) );
+        copy.put( Should.HAVE_RECURSIVE_GRAPH, code.contains( "r" )                                );
+        copy.put( Should.HAVE_DERIVATIVES,     code.contains( "d" )                                );
+        copy.put( Should.HAVE_SHAPE,           !code.contains( "v" )                               );
         return copy;
     }
 
@@ -218,6 +232,10 @@ public class TsrAsString
             if ( margin > 0 ) s = Util.pad( margin - right, Util.pad( s, right ) );
             return s;
         };
+    }
+
+    public String toString() {
+        return toString("");
     }
 
     public String toString( String deep )

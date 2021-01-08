@@ -5,6 +5,7 @@ import neureka.Tsr
 import neureka.calculus.Function
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
+import neureka.utility.TsrAsString
 import org.slf4j.Logger
 import spock.lang.Specification
 import testutility.Utility
@@ -12,11 +13,14 @@ import testutility.Utility
 class Benchmark_System_Test extends Specification
 {
 
+    def setup() {
+        Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+    }
+
     def 'Tensor can be constructed by passing List instances.'()
     {
-        given : 'Neureka instance is being reset.'
-            Neureka.instance().reset()
-
         when : Tsr t = new Tsr([1, 3, 6])
         then :
             assert !t.toString().contains("empty")
@@ -34,8 +38,7 @@ class Benchmark_System_Test extends Specification
 
     def 'Test benchmark script and simple tensor constructor.'()
     {
-        given : 'Neureka instance is being reset.'
-            Neureka.instance().reset()
+        given :
             def configuration = [ "iterations":1, "sample_size":20, "difficulty":15, "intensifier":0 ]
 
         and : 'Function cache mocking is being prepared to test logging...'

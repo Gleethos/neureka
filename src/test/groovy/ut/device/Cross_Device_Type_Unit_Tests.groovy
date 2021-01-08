@@ -8,20 +8,24 @@ import neureka.devices.opencl.OpenCLDevice
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.algorithms.Algorithm
 import neureka.devices.storage.FileDevice
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 
 class Cross_Device_Type_Unit_Tests extends Specification
 {
 
+    def setup() {
+        Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+    }
+
     def 'Querying for Device implementations works as expected.'(
             String query, Class type
     ) {
         given : 'This system supports OpenCL.'
             if ( !Neureka.instance().canAccessOpenCL() ) return
-
-        and : 'Neureka is being reset.'
-            Neureka.instance().reset()
 
         when : 'The query is being passed to the "find" method...'
             def device = Device.find(query)
@@ -48,9 +52,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
     def 'Passing a numeric array to a tensor should modify its content!'(
             Device device, Object data1, Object data2, String expected
     ) {
-        given : 'Neureka is being reset.'
-            Neureka.instance().reset()
-        and : 'A 2D tensor is being instantiated..'
+        given : 'A 2D tensor is being instantiated..'
             Tsr t = new Tsr<>(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).set(device)
 
         when : 'A numeric array is passed to said tensor...'
@@ -80,10 +82,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
     def 'Tensor data can be fetched from device if the tensor is stored on it...'(
             Device device, int[] shape, Object data, List<Float> expected
     ) {
-        given : 'Neureka is being reset.'
-            Neureka.instance().reset()
-
-        and : 'Because in some environments OpenCL might not be available, the test will be stopped!'
+        given : 'Because in some environments OpenCL might not be available, the test will be stopped!'
             if ( device == null ) return
 
         when : 'A 2D tensor is being instantiated by passing the given shape and data...'
@@ -123,7 +122,6 @@ class Cross_Device_Type_Unit_Tests extends Specification
 
         given : 'The given device is available and Neureka is being reset.'
             if ( device == null ) return
-            Neureka.instance().reset()
         and : 'A mocked ExecutionCall with mocked operation implementation and a mocked drain instantiator lambda...'
             def call = Mock(ExecutionCall)
             def implementation = Mock(Algorithm)
@@ -160,7 +158,6 @@ class Cross_Device_Type_Unit_Tests extends Specification
 
         given : 'The given device is available and Neureka is being reset.'
             if ( device == null ) return
-            Neureka.instance().reset()
         and : 'Two tensors which will be transferred later on...'
             int initialNumber = device.size()
             Tsr a = new Tsr([2, 3], ";)")

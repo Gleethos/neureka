@@ -3,6 +3,7 @@ package it.autograd
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -52,6 +53,8 @@ class Autograd_Explained extends Specification
 
     def setup() {
         Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
 
     def 'Simple automatic differentiation and propagation.'()

@@ -1,5 +1,6 @@
 import neureka.Neureka
 import neureka.dtype.custom.F64
+import neureka.utility.TsrAsString
 
 Neureka.instance {
 
@@ -23,6 +24,18 @@ Neureka.instance {
 
         view {
             it.isUsingLegacyView = false
+            
+            it.asString = [
+                    (TsrAsString.Should.BE_SHORTENED_BY)      : 50,
+                    (TsrAsString.Should.BE_COMPACT)           : true,
+                    (TsrAsString.Should.BE_FORMATTED)         : true,
+                    (TsrAsString.Should.HAVE_GRADIENT)        : true,
+                    (TsrAsString.Should.HAVE_PADDING_OF)      : 6,
+                    (TsrAsString.Should.HAVE_VALUE)           : true,
+                    (TsrAsString.Should.HAVE_RECURSIVE_GRAPH) : false,
+                    (TsrAsString.Should.HAVE_DERIVATIVES)     : false,
+                    (TsrAsString.Should.HAVE_SHAPE)           : true
+            ]
         }
 
         ndim {

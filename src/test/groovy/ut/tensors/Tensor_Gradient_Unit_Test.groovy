@@ -2,6 +2,7 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_Gradient_Unit_Test extends Specification
@@ -20,8 +21,9 @@ class Tensor_Gradient_Unit_Test extends Specification
                 </p>
             """
         Neureka.instance().reset()
+        // Configure printing of tensors to be more compact:
+        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
-
 
     def 'Tensors can have gradients but not require them.'()
     {
