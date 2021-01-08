@@ -16,6 +16,8 @@
   - nd-arrays / tensors.
 
   - flexible tensor indexing and slicing.
+
+  - loading and saving as jpg/idx files
   
 Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
   

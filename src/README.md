@@ -1,7 +1,7 @@
 
 
 
-## Dependencies ##
+## Note ##
 
 If you want to contribute to Neureka or merely 
 play around with it in your IDEA of choice consider the following 
