@@ -273,93 +273,72 @@ import java.util.function.Consumer;
 <span class="nc" id="L273">        public static class Stringify</span>
         {
             @Contract( pure = true )
-            public static String formatFP( double v ) {
-<span class="fc" id="L277">                DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols( Locale.US );</span>
-<span class="fc" id="L278">                DecimalFormat Formatter = new DecimalFormat(&quot;##0.0##E0&quot;, formatSymbols);</span>
-<span class="fc" id="L279">                String vStr = String.valueOf( v );</span>
-<span class="fc" id="L280">                final int offset = 0;</span>
-<span class="fc bfc" id="L281" title="All 2 branches covered.">                if ( vStr.length() &gt; ( 7 - offset ) ) {</span>
-<span class="fc bfc" id="L282" title="All 2 branches covered.">                    if ( vStr.startsWith(&quot;0.&quot;) ) {</span>
-<span class="fc" id="L283">                        vStr = vStr.substring( 0, 7-offset )+&quot;E0&quot;;</span>
-<span class="fc bfc" id="L284" title="All 2 branches covered.">                    } else if ( vStr.startsWith( &quot;-0.&quot; ) ) {</span>
-<span class="fc" id="L285">                        vStr = vStr.substring( 0, 8-offset )+&quot;E0&quot;;</span>
-                    } else {
-<span class="fc" id="L287">                        vStr = Formatter.format( v );</span>
-<span class="fc bfc" id="L288" title="All 2 branches covered.">                        vStr = (!vStr.contains(&quot;.0E0&quot;))?vStr:vStr.replace(&quot;.0E0&quot;,&quot;.0&quot;);</span>
-<span class="fc bfc" id="L289" title="All 2 branches covered.">                        vStr = (vStr.contains(&quot;.&quot;))?vStr:vStr.replace(&quot;E0&quot;,&quot;.0&quot;);</span>
-                    }
-                }
-<span class="fc" id="L292">                return vStr;</span>
-            }
-
-            @Contract( pure = true )
             public static String strConf( int[] conf ) {
-<span class="fc" id="L297">                StringBuilder str = new StringBuilder();</span>
-<span class="fc bfc" id="L298" title="All 2 branches covered.">                for ( int i = 0; i &lt; conf.length; i++ )</span>
-<span class="fc bfc" id="L299" title="All 2 branches covered.">                    str.append(conf[ i ]).append((i != conf.length - 1) ? &quot;, &quot; : &quot;&quot;);</span>
-<span class="fc" id="L300">                return &quot;[&quot; + str + &quot;]&quot;;</span>
+<span class="fc" id="L277">                StringBuilder str = new StringBuilder();</span>
+<span class="fc bfc" id="L278" title="All 2 branches covered.">                for ( int i = 0; i &lt; conf.length; i++ )</span>
+<span class="fc bfc" id="L279" title="All 2 branches covered.">                    str.append(conf[ i ]).append((i != conf.length - 1) ? &quot;, &quot; : &quot;&quot;);</span>
+<span class="fc" id="L280">                return &quot;[&quot; + str + &quot;]&quot;;</span>
             }
         }
-
 
         /**
          * Indexing methods.
          */
-<span class="nc" id="L308">        public static class Indexing</span>
+<span class="nc" id="L287">        public static class Indexing</span>
         {
             @Contract(pure = true)
             public static int[] shpCheck( int[] newShp, Tsr t ) {
-<span class="pc bpc" id="L312" title="1 of 2 branches missed.">                if ( NDConfiguration.Utility.szeOfShp(newShp) != t.size() ) {</span>
-<span class="nc" id="L313">                    throw new IllegalArgumentException(</span>
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">                if ( NDConfiguration.Utility.szeOfShp(newShp) != t.size() ) {</span>
+<span class="nc" id="L292">                    throw new IllegalArgumentException(</span>
                             &quot;New shape does not match tensor size!&quot; +
-<span class="nc bnc" id="L315" title="All 2 branches missed.">                                    &quot; (&quot; + Utility.Stringify.strConf(newShp) + ((NDConfiguration.Utility.szeOfShp(newShp) &lt; t.size()) ? &quot;&lt;&quot; : &quot;&gt;&quot;) + Utility.Stringify.strConf(t._NDConf.shape()) + &quot;)&quot;);</span>
+<span class="nc bnc" id="L294" title="All 2 branches missed.">                                    &quot; (&quot; + Utility.Stringify.strConf(newShp) + ((NDConfiguration.Utility.szeOfShp(newShp) &lt; t.size()) ? &quot;&lt;&quot; : &quot;&gt;&quot;) + Utility.Stringify.strConf(t._NDConf.shape()) + &quot;)&quot;);</span>
                 }
-<span class="fc" id="L317">                return newShp;</span>
+<span class="fc" id="L296">                return newShp;</span>
             }
 
             @Contract(pure = true)
             public static int[][] makeFit( int[] sA, int[] sB ) {
-<span class="fc" id="L322">                int lastIndexOfA = 0;</span>
-<span class="fc bfc" id="L323" title="All 2 branches covered.">                for ( int i = sA.length-1; i &gt;= 0; i-- ) {</span>
-<span class="fc bfc" id="L324" title="All 2 branches covered.">                    if (sA[ i ]!=1) {</span>
-<span class="fc" id="L325">                        lastIndexOfA = i;</span>
-<span class="fc" id="L326">                        break;</span>
+<span class="fc" id="L301">                int lastIndexOfA = 0;</span>
+<span class="fc bfc" id="L302" title="All 2 branches covered.">                for ( int i = sA.length-1; i &gt;= 0; i-- ) {</span>
+<span class="fc bfc" id="L303" title="All 2 branches covered.">                    if (sA[ i ]!=1) {</span>
+<span class="fc" id="L304">                        lastIndexOfA = i;</span>
+<span class="fc" id="L305">                        break;</span>
                     }
                 }
-<span class="fc" id="L329">                int firstIndexOfB = 0;</span>
-<span class="fc bfc" id="L330" title="All 2 branches covered.">                for ( int i=0; i&lt;sB.length; i++ ) {</span>
-<span class="fc bfc" id="L331" title="All 2 branches covered.">                    if (sB[ i ]!=1) {</span>
-<span class="fc" id="L332">                        firstIndexOfB = i;</span>
-<span class="fc" id="L333">                        break;</span>
+<span class="fc" id="L308">                int firstIndexOfB = 0;</span>
+<span class="fc bfc" id="L309" title="All 2 branches covered.">                for ( int i=0; i&lt;sB.length; i++ ) {</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">                    if (sB[ i ]!=1) {</span>
+<span class="fc" id="L311">                        firstIndexOfB = i;</span>
+<span class="fc" id="L312">                        break;</span>
                     }
                 }
-<span class="fc" id="L336">                int newSize = lastIndexOfA + sB.length - firstIndexOfB;</span>
-<span class="fc" id="L337">                int[] rsA = new int[newSize];</span>
-<span class="fc" id="L338">                int[] rsB = new int[newSize];</span>
-<span class="fc bfc" id="L339" title="All 2 branches covered.">                for(int i=0; i&lt;newSize; i++ ) {</span>
-<span class="fc bfc" id="L340" title="All 2 branches covered.">                    if (i&lt;=lastIndexOfA) rsA[ i ] = i; else rsA[ i ] = -1;</span>
-<span class="fc bfc" id="L341" title="All 2 branches covered.">                    if (i&gt;=lastIndexOfA) rsB[ i ] = i-lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;</span>
+<span class="fc" id="L315">                int newSize = lastIndexOfA + sB.length - firstIndexOfB;</span>
+<span class="fc" id="L316">                int[] rsA = new int[newSize];</span>
+<span class="fc" id="L317">                int[] rsB = new int[newSize];</span>
+<span class="fc bfc" id="L318" title="All 2 branches covered.">                for(int i=0; i&lt;newSize; i++ ) {</span>
+<span class="fc bfc" id="L319" title="All 2 branches covered.">                    if (i&lt;=lastIndexOfA) rsA[ i ] = i; else rsA[ i ] = -1;</span>
+<span class="fc bfc" id="L320" title="All 2 branches covered.">                    if (i&gt;=lastIndexOfA) rsB[ i ] = i-lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;</span>
                 }
-<span class="fc" id="L343">                return new int[][]{rsA, rsB};</span>
+<span class="fc" id="L322">                return new int[][]{rsA, rsB};</span>
             }
 
             @Contract(pure = true)
             public static int[] shpOfCon(int[] shp1, int[] shp2) {
-<span class="fc" id="L348">                int[] shape = new int[(shp1.length + shp2.length) / 2];</span>
-<span class="pc bpc" id="L349" title="1 of 4 branches missed.">                for ( int i = 0; i &lt; shp1.length &amp;&amp; i &lt; shp2.length; i++) shape[ i ] = Math.abs(shp1[ i ] - shp2[ i ]) + 1;</span>
-<span class="fc" id="L350">                return shape;</span>
+<span class="fc" id="L327">                int[] shape = new int[(shp1.length + shp2.length) / 2];</span>
+<span class="pc bpc" id="L328" title="1 of 4 branches missed.">                for ( int i = 0; i &lt; shp1.length &amp;&amp; i &lt; shp2.length; i++) shape[ i ] = Math.abs(shp1[ i ] - shp2[ i ]) + 1;</span>
+<span class="fc" id="L329">                return shape;</span>
             }
 
             @Contract(pure = true)
             public static int[] shpOfBrc(int[] shp1, int[] shp2) {
-<span class="fc" id="L355">                int[] shape = new int[(shp1.length + shp2.length) / 2];</span>
-<span class="pc bpc" id="L356" title="1 of 4 branches missed.">                for ( int i = 0; i &lt; shp1.length &amp;&amp; i &lt; shp2.length; i++ ) {</span>
-<span class="fc" id="L357">                    shape[ i ] = Math.max(shp1[ i ], shp2[ i ]);</span>
-<span class="pc bpc" id="L358" title="3 of 4 branches missed.">                    if (Math.min(shp1[ i ], shp2[ i ])!=1&amp;&amp;Math.max(shp1[ i ], shp2[ i ])!=shape[ i ]) {</span>
-<span class="nc" id="L359">                        throw new IllegalStateException(&quot;Broadcast not possible. Shapes do not match!&quot;);</span>
+<span class="fc" id="L334">                int[] shape = new int[(shp1.length + shp2.length) / 2];</span>
+<span class="pc bpc" id="L335" title="1 of 4 branches missed.">                for ( int i = 0; i &lt; shp1.length &amp;&amp; i &lt; shp2.length; i++ ) {</span>
+<span class="fc" id="L336">                    shape[ i ] = Math.max(shp1[ i ], shp2[ i ]);</span>
+<span class="pc bpc" id="L337" title="3 of 4 branches missed.">                    if (Math.min(shp1[ i ], shp2[ i ])!=1&amp;&amp;Math.max(shp1[ i ], shp2[ i ])!=shape[ i ]) {</span>
+<span class="nc" id="L338">                        throw new IllegalStateException(&quot;Broadcast not possible. Shapes do not match!&quot;);</span>
                     }
                 }
-<span class="fc" id="L362">                return shape;</span>
+<span class="fc" id="L341">                return shape;</span>
             }
 
 

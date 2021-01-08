@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Jan 03 17:36:34 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Jan 08 21:15:22 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -331,7 +331,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>5.052 seconds</td>
+<td>3.894 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -369,15 +369,7 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<div class='block-text'>Neureka is being reset.</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>Neureka neureka = Neureka.instance()
-neureka.reset()
-Tsr a = new Tsr(6).setRqsGradient(true)
+<pre class='block-source'>Tsr a = new Tsr(6).setRqsGradient(true)
 Tsr b = new Tsr(-4)
 Binding binding = new Binding()
 binding.setVariable('a', a)
@@ -549,14 +541,7 @@ c.getVersion() == version_of_c</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<div class='block-text'>Neureka is being reset.</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>Neureka.instance().reset()
-Neureka.instance().settings().autograd().setIsPreventingInlineOperations( save_inline )
+<pre class='block-source'>Neureka.instance().settings().autograd().setIsPreventingInlineOperations( save_inline )
 Tsr a = new Tsr(4) + new Tsr(2)
 Tsr b = new Tsr(-1) + new Tsr(-3).setRqsGradient(true)
 Binding binding = new Binding()
@@ -729,14 +714,7 @@ c.getVersion() == version_of_c</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<div class='block-text'>Neureka is being reset.</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>Neureka.instance().reset()
-Neureka.instance().settings().autograd().setIsPreventingInlineOperations( true )
+<pre class='block-source'>Neureka.instance().settings().autograd().setIsPreventingInlineOperations( true )
 Tsr a = new Tsr(4) + new Tsr(2).setRqsGradient(true)
 Tsr b = new Tsr(-4)
 Binding binding = new Binding()

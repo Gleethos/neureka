@@ -136,10 +136,10 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
     @Override
     public int[] idx_of_i( int i ) {
 <span class="fc" id="L138">        int[] idx = new int[ 2 ];</span>
-<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
-<span class="nc" id="L140">            idx[ 1 ] += i / _idxmap2;</span>
-<span class="nc" id="L141">            i %= _idxmap2;</span>
-<span class="nc" id="L142">            idx[ 0 ] += i / _idxmap1;</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
+<span class="fc" id="L140">            idx[ 1 ] += i / _idxmap2;</span>
+<span class="fc" id="L141">            i %= _idxmap2;</span>
+<span class="fc" id="L142">            idx[ 0 ] += i / _idxmap1;</span>
         } else {
 <span class="fc" id="L144">            idx[ 0 ] += i / _idxmap1;</span>
 <span class="fc" id="L145">            i %= _idxmap1;</span>

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Jan 03 17:36:31 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Jan 08 21:15:15 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -331,7 +331,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.313 seconds</td>
+<td>1.087 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -366,8 +366,7 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().reset()
-Neureka.instance().settings().view().setIsUsingLegacyView(true)
+<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)
 Tsr a = new Tsr([2, 3], [
         1, 2, 3,
         4, 5, 6
@@ -428,8 +427,7 @@ assert !nb.getLock().isLocked()</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().reset()
-Tsr a = new Tsr(2).setRqsGradient(true)
+<pre class='block-source'>Tsr a = new Tsr(2).setRqsGradient(true)
 Tsr b = a * 3 / 5
 Tsr c = new Tsr(3)
 Tsr d = b ^ c

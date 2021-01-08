@@ -298,9 +298,9 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
 <span class="fc" id="L298">        _ringIndex = ( _ringIndex + 1 ) % _adhocKernelRingBuffer.length;</span>
 
 <span class="fc" id="L300">        _cleaning( adHoc, () -&gt; {</span>
-<span class="fc" id="L301">            clReleaseKernel( kernel );</span>
-<span class="fc" id="L302">            clReleaseProgram( cpProgram );</span>
-<span class="fc" id="L303">        } );</span>
+<span class="nc" id="L301">            clReleaseKernel( kernel );</span>
+<span class="nc" id="L302">            clReleaseProgram( cpProgram );</span>
+<span class="nc" id="L303">        } );</span>
 <span class="fc" id="L304">        return this;</span>
     }
 

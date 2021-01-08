@@ -19,7 +19,7 @@
   
 Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
   
-Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/lib/neureka-0.5.0-pre.jar)
+Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/lib/neureka-0.5.0.jar)
   
 [![Beerpay](https://beerpay.io/Gleethos/neureka/badge.svg?style=beer-square)](https://beerpay.io/Gleethos/neureka)  
 [![Beerpay](https://beerpay.io/Gleethos/neureka/make-wish.svg?style=flat-square)](https://beerpay.io/Gleethos/neureka?focus=wish)
@@ -95,7 +95,7 @@ This powerful feature has been inspired by PyTorch:
 <dependency>
   <groupId>com.github.gleethos</groupId>
   <artifactId>neureka</artifactId>
-  <version>0.5.0-pre</version>
+  <version>0.5.0</version>
 </dependency>
 ```
 ---
@@ -103,11 +103,11 @@ This powerful feature has been inspired by PyTorch:
 ## Getting started with Gradle: ##
 Groovy DSL:
 ```
-implementation 'com.github.gleethos:neureka:0.5.0-pre'
+implementation 'com.github.gleethos:neureka:0.5.0'
 ```
 Kotlin DSL:
 ```
-implementation("com.github.gleethos:neureka:0.5.0-pre")
+implementation("com.github.gleethos:neureka:0.5.0")
 ```
 ...or alternatively: 
 
@@ -123,7 +123,7 @@ allprojects {
 2. Add Neureka as dependency:
 ```
 dependencies {
-	implementation 'com.github.Gleethos:neureka:v0.5.0-pre'
+	implementation 'com.github.Gleethos:neureka:v0.5.0'
 }
 ```
 
@@ -133,7 +133,7 @@ dependencies {
 
 ```
 @GrabResolver(name = 'jitpack.io', root = 'https://jitpack.io')
-@Grab('com.github.Gleethos:neureka:v0.5.0-pre')
+@Grab('com.github.Gleethos:neureka:v0.5.0')
 
 import neureka.*
 ```
