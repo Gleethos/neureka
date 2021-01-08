@@ -318,11 +318,11 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         )
 
         where:
-            device                                                  | legacyIndexing
-            OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0)   | true
-            OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0)   | false
-            HostCPU.instance()                                      | true
-            HostCPU.instance()                                      | false
+            device               | legacyIndexing
+            Device.find('gpu')   | true
+            Device.find('gpu')   | false
+            HostCPU.instance()   | true
+            HostCPU.instance()   | false
     }
 
 
