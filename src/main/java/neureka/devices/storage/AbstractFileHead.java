@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public abstract class AbstractFileHead<FinalType> implements FileHead<FinalType, Number>
+public abstract class AbstractFileHead<FinalType, ValueType> implements FileHead<FinalType, ValueType>
 {
     protected static Logger _LOG;
 
@@ -93,7 +93,7 @@ public abstract class AbstractFileHead<FinalType> implements FileHead<FinalType,
     }
 
     @Override
-    public Storage restore(Tsr<Number> tensor ) {
+    public Storage<ValueType> restore(Tsr<ValueType> tensor ) {
         try {
             Object value = _loadData();
             tensor.setValue( value );

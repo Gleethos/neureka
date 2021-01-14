@@ -486,12 +486,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         setValue( data );
     }
 
-    public Tsr( int[] shape, DataType<?> dataType, Object value )
+    public Tsr( int[] shape, DataType<?> dataType, Object data )
     {
         setDataType( dataType );
-        _setData( value );
-        if (dataType.typeClassImplements( NumericType.class ) )
-            _configureFromNewShape( shape, false, true );
+        _configureFromNewShape( shape, false, false );
+        _setData( data );
     }
 
     // Inner construction layer:

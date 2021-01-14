@@ -2,6 +2,7 @@ package ut.utility
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.devices.storage.CSVHead
 import neureka.devices.storage.IDXHead
 import neureka.devices.storage.JPEGHead
 import neureka.dtype.DataType
@@ -114,7 +115,6 @@ class FileHead_Unit_Tests extends Specification
     def 'The FileDevice component "JPEGHead" can read JPG file formats and load them as tensors.'(
             String filename, List<Integer> shape, String expected
     ) {
-
         given :
             def hash = ""
 
@@ -149,7 +149,6 @@ class FileHead_Unit_Tests extends Specification
             loaded.getDataType().getTypeClass() == I16.class // Auto convert! (stored as I16)
             hash == expected
 
-
         and :
             jpg.shape == shape as int[]
             jpg.valueSize == shape.inject( 1, {prod, value -> prod * value} )
@@ -163,8 +162,41 @@ class FileHead_Unit_Tests extends Specification
             "small.JPG"        || [260, 410, 3]  | "b0e336b03f2ead7297e56b8ca050f34d"
             "tiny.JPG"         || [10, 46, 3]    | "79bf5dd367b5ec05603e395c41dafaa7"
             "super-tiny.JPG"   || [3, 4, 3]      | "a834038d8ddc53f170fa426c76d45df2"
-
-
     }
+
+    def 'The FileDevice component "CSVHead" can read CSV file formats and load them as tensors.'(
+            String filename, Map<String, Object> params, int byteSize, List<Integer> shape, String expected
+    ) {
+        given :
+            def hash = ""
+
+        when :
+            CSVHead csv = new CSVHead( "build/resources/test/csv/" + filename, params )
+            Tsr loaded = csv.load()
+            loaded.forEach( e -> hash = ( hash + e ).digest('md5') )
+            println(loaded)
+        then :
+            loaded != null
+            !loaded.isVirtual()
+            loaded.size() == shape.inject( 1, {prod, value -> prod * value} )
+            loaded.getDataType().getTypeClass() == String.class // Auto convert! (stored as String)
+            hash == expected
+
+        and :
+            csv.shape == shape as int[]
+            csv.valueSize == shape.inject( 1, {prod, value -> prod * value} )
+            csv.totalSize == byteSize
+            csv.dataSize == byteSize
+            csv.location.endsWith( filename )
+            csv.dataType == DataType.of( String.class )
+            loaded.dataType == DataType.of( String.class )
+
+        where : 'The following jpg files with their expected shape and hash were used.'
+            filename      | params                  || byteSize | shape    | expected
+            "biostats.csv"| [:]                     || 753      | [19, 5]  | "96aacf13cc7be153945722b31632b36a"
+            "biostats.csv"| [firstRowIsLabels:true] || 702      | [18, 5]  | "ddece2f325da089d191ef2efb1df3ba4"
+            "biostats.csv"| [firstColIsIndex:true]  || 639      | [19, 4]  | "c2bc090f87304b3844b83fa7bf2bba38"
+    }
+
 
 }

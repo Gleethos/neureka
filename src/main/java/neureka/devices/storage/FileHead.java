@@ -77,12 +77,17 @@ public interface FileHead<FinalType, ValueType> extends Storage<ValueType>
     /**
      * @return The data type of the tensor stored in the file which is managed by a FileHead.
      */
-    DataType getDataType();
+    DataType<?> getDataType();
 
     /**
      * @return The shape of the tensor stored in the file which is managed by a FileHead.
      */
     int[] getShape();
 
+    /**
+     *  The file ending which comes after the '.' character...
+     *
+     * @return The file ending which implies the encoding of the data in the file.
+     */
     String extension();
 }

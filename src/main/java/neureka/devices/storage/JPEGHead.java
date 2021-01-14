@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.devices.Storage;
 import neureka.devices.host.HostCPU;
 import neureka.dtype.DataType;
+import neureka.dtype.NumericType;
 import neureka.dtype.custom.I16;
 import neureka.dtype.custom.UI8;
 import neureka.utility.DataConverter;
@@ -16,7 +17,7 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.io.*;
 
-public class JPEGHead extends AbstractFileHead<JPEGHead>
+public class JPEGHead extends AbstractFileHead<JPEGHead, Number>
 {
     static {
         _LOG = LoggerFactory.getLogger( JPEGHead.class );
@@ -92,7 +93,6 @@ public class JPEGHead extends AbstractFileHead<JPEGHead>
     protected Object _loadData() throws IOException
     {
         File found = _loadFile();
-
         BufferedImage image = null;
         try
         {
@@ -147,7 +147,7 @@ public class JPEGHead extends AbstractFileHead<JPEGHead>
     }
 
     @Override
-    public Storage store(Tsr<Number> tensor )
+    public Storage<Number> store(Tsr<Number> tensor )
     {
         byte[] data = DataConverter.instance().convert( tensor.getData(), byte[].class );
 

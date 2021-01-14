@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Accessors( prefix = {"_"} )
-public class IDXHead extends AbstractFileHead<IDXHead>
+public class IDXHead extends AbstractFileHead<IDXHead, Number>
 {
     static {
         _LOG = LoggerFactory.getLogger( IDXHead.class );
@@ -96,7 +96,6 @@ public class IDXHead extends AbstractFileHead<IDXHead>
         _shape = shape;
         _valueSize = size;
         _dataOffset = numre.bytesRead();
-
     }
 
 
@@ -182,7 +181,7 @@ public class IDXHead extends AbstractFileHead<IDXHead>
     @Override
     public int getDataSize() {
         int bytes = ( _dataType.typeClassImplements( NumericType.class ) )
-                ? ( (NumericType) _dataType.getTypeClassInstance() ).numberOfBytes()
+                ? _dataType.getTypeClassInstance().numberOfBytes()
                 : 1;
         return _valueSize * bytes;
     }

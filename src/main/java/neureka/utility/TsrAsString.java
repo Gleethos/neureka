@@ -41,6 +41,7 @@ import lombok.experimental.Accessors;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
+import neureka.framing.IndexAlias;
 import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
@@ -88,6 +89,7 @@ public class TsrAsString
 
     private Tsr<?> _tensor;
     private StringBuilder _asStr;
+    private boolean _legacy = Neureka.instance().settings().view().isUsingLegacyView();
 
     private Map<Should, Object> _config;
 
@@ -243,7 +245,6 @@ public class TsrAsString
         if ( _tensor.isEmpty() ) return "empty";
         else if ( _tensor.isUndefined() ) return "undefined";
         _asStr = new StringBuilder();
-        boolean legacy = Neureka.instance().settings().view().isUsingLegacyView();
         String base = ( deep == null ) ? "" : "\n" + deep;
         String delimiter = ( deep == null ) ? "" : "    ";
         String half = ( deep == null ) ? "" : "  ";
@@ -253,10 +254,10 @@ public class TsrAsString
         _$( ":" );
         if ( _isFormatted ) _format( _tensor.getNDConf().shape(), new int[ _tensor.rank() ], -1 );
         else {
-            if ( legacy ) _$( "(" );
+            if ( _legacy ) _$( "(" );
             else _$( "[" );
             _stringifyAllValues();
-            if ( legacy ) _$( ")" );
+            if ( _legacy ) _$( ")" );
             else _$( "]" );
         }
 
@@ -266,7 +267,7 @@ public class TsrAsString
             if ( gradient != null )
                 _$( gradient.toString( "cv" ) );
             else
-                _$( ( ( legacy ) ? ":(null)" : ":[null]" ) );
+                _$( ( ( _legacy ) ? ":(null)" : ":[null]" ) );
         }
         if ( _hasRecursiveGraph && _tensor.has( GraphNode.class ) && _tensor.find( GraphNode.class ).size() > 0 ) {
             GraphNode<?> node = _tensor.find( GraphNode.class );
@@ -327,6 +328,12 @@ public class TsrAsString
         int trimStart = (size / 2 - trim / 2);
         int trimEnd = (size / 2 + trim / 2);
         assert trimEnd - trimStart == trim;
+        //{
+        //    IndexAlias alias = _tensor.find( IndexAlias.class );
+        //    if ( alias != null && idx[ (_legacy) ? 0 : idx.length-1 ] == 0 ) {
+        //
+        //    }
+        //}
         for ( int i = 0; i < size; i++ ) {
             if ( i < trimStart || i >= trimEnd ) {
                 _$( getter.apply( ( _tensor.isVirtual() ) ? 0 : _tensor.i_of_idx( idx ) ) );
@@ -337,6 +344,7 @@ public class TsrAsString
             NDConfiguration.Utility.increment( idx, shape );
         }
     }
+
 
     // A recursive stringifier for formatted tensors...
     private void _format( int[] shape, int[] idx, int dim )

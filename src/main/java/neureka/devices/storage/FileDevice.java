@@ -40,22 +40,26 @@ import java.util.stream.Collectors;
 @ToString
 public class FileDevice extends AbstractBaseDevice<Number>
 {
+    interface Loader { FileHead load( String name, Map<String, Object> config ); }
+    interface Saver { FileHead save( String name, Tsr tensor, Map<String, Object> config ); }
+
     private static final Map<String, FileDevice> _DEVICES = new WeakHashMap<>();
 
-    private static Map<String, Function<String, FileHead>> _LOADERS;
+    private static Map<String, Loader> _LOADERS;
     static {
         _LOADERS = new HashMap<>();
-        _LOADERS.put( "idx", name -> new IDXHead( name ) );
-        _LOADERS.put( "jpg", name -> new JPEGHead( name ) );
-        _LOADERS.put( "png", name -> null ); // TODO!
+        _LOADERS.put( "idx", ( name, conf ) -> new IDXHead( name ) );
+        _LOADERS.put( "jpg", ( name, conf ) -> new JPEGHead( name ) );
+        _LOADERS.put( "png", ( name, conf ) -> null ); // TODO!
+        _LOADERS.put( "csv", ( name, conf ) -> new CSVHead( name, conf ) );
     }
 
-    private static Map<String, BiFunction<String, Tsr<Number>, FileHead>> _SAVERS;
+    private static Map<String, Saver> _SAVERS;
     static {
         _SAVERS = new HashMap<>();
-        _SAVERS.put( "idx", (name, tensor) -> new IDXHead( tensor, name ) );
-        _SAVERS.put( "jpg", (name, tensor) -> new JPEGHead( tensor, name ) );
-        _SAVERS.put( "png", (name, tensor) -> null ); // TODO!
+        _SAVERS.put( "idx", ( name, tensor, conf ) -> new IDXHead( tensor, name ) );
+        _SAVERS.put( "jpg", ( name, tensor, conf ) -> new JPEGHead( tensor, name ) );
+        _SAVERS.put( "png", ( name, tensor, conf ) -> null ); // TODO!
     }
 
     @Getter
@@ -122,24 +126,29 @@ public class FileDevice extends AbstractBaseDevice<Number>
         return this;
     }
 
-    public Device store( Tsr<Number> tensor, String filename )
+    public FileDevice store( Tsr<Number> tensor, String filename )
     {
+        return store( tensor, filename, null );
+    }
+
+    public FileDevice store( Tsr<Number> tensor, String filename, Map<String, Object> configurations )
+    {
+        FileHead head = null;
         if ( filename.endsWith(".jpg") || filename.endsWith(".jpeg") ) {
             try {
-                FileHead head = new JPEGHead( tensor, _directory + "/" + filename );
-                _stored.put( tensor, head );
-            } catch (Exception e) {
+                head = new JPEGHead( tensor, _directory + "/" + filename );
+            } catch ( Exception e ) {
                 e.printStackTrace();
             }
         } else {
             try {
                 if ( !filename.endsWith(".idx") ) filename += ".idx";
-                FileHead head = new IDXHead( tensor, _directory + "/" + filename );
-                _stored.put( tensor, head );
+                head = new IDXHead( tensor, _directory + "/" + filename );
             } catch ( Exception e ) {
                 e.printStackTrace();
             }
         }
+        _stored.put( tensor, head );
         tensor.setIsOutsourced( true );
         return this;
     }
