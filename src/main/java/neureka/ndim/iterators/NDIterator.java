@@ -48,13 +48,9 @@ import neureka.ndim.config.types.simple.SimpleD3Configuration;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 import neureka.ndim.iterators.types.*;
 import neureka.ndim.iterators.types.complex.ComplexD1CIterator;
-import neureka.ndim.iterators.types.complex.legacy.ComplexLegacyD2CIterator;
-import neureka.ndim.iterators.types.complex.legacy.ComplexLegacyD3CIterator;
 import neureka.ndim.iterators.types.complex.main.ComplexD2CIterator;
 import neureka.ndim.iterators.types.complex.main.ComplexD3CIterator;
 import neureka.ndim.iterators.types.simple.SimpleD1CIterator;
-import neureka.ndim.iterators.types.simple.legacy.SimpleLegacyD2CIterator;
-import neureka.ndim.iterators.types.simple.legacy.SimpleLegacyD3CIterator;
 import neureka.ndim.iterators.types.simple.main.SimpleD2CIterator;
 import neureka.ndim.iterators.types.simple.main.SimpleD3CIterator;
 
@@ -70,17 +66,10 @@ public interface NDIterator
         if ( ndc instanceof ComplexD1Configuration) return new ComplexD1CIterator( (ComplexD1Configuration) ndc );
         if ( ndc instanceof SimpleD1Configuration ) return new SimpleD1CIterator( (SimpleD1Configuration) ndc );
 
-        if ( Neureka.instance().settings().indexing().isUsingLegacyIndexing() ) {
-            if ( ndc instanceof ComplexD2Configuration) return new ComplexLegacyD2CIterator( (ComplexD2Configuration) ndc );
-            if ( ndc instanceof ComplexD3Configuration) return new ComplexLegacyD3CIterator( (ComplexD3Configuration) ndc );
-            if ( ndc instanceof SimpleD2Configuration ) return new SimpleLegacyD2CIterator( (SimpleD2Configuration) ndc );
-            if ( ndc instanceof SimpleD3Configuration ) return new SimpleLegacyD3CIterator( (SimpleD3Configuration) ndc );
-        } else {
-            if ( ndc instanceof ComplexD2Configuration) return new ComplexD2CIterator( (ComplexD2Configuration) ndc );
-            if ( ndc instanceof ComplexD3Configuration) return new ComplexD3CIterator( (ComplexD3Configuration) ndc );
-            if ( ndc instanceof SimpleD2Configuration ) return new SimpleD2CIterator( (SimpleD2Configuration) ndc );
-            if ( ndc instanceof SimpleD3Configuration ) return new SimpleD3CIterator( (SimpleD3Configuration) ndc );
-        }
+        if ( ndc instanceof ComplexD2Configuration) return new ComplexD2CIterator( (ComplexD2Configuration) ndc );
+        if ( ndc instanceof ComplexD3Configuration) return new ComplexD3CIterator( (ComplexD3Configuration) ndc );
+        if ( ndc instanceof SimpleD2Configuration ) return new SimpleD2CIterator( (SimpleD2Configuration) ndc );
+        if ( ndc instanceof SimpleD3Configuration ) return new SimpleD3CIterator( (SimpleD3Configuration) ndc );
 
         if ( ndc instanceof VirtualNDConfiguration )
             return new VirtualNDIterator( (VirtualNDConfiguration) ndc );

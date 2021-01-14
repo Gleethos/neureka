@@ -22,22 +22,15 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
     }
 
     def 'Cross device sliced tensor integration test runs without errors.'(
-            Device device, boolean legacyIndexing
+            Device device
     ) {
         given :
             if ( device == null ) return
             Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             if ( device instanceof OpenCLDevice && !Neureka.instance().canAccessOpenCL() ) return
-            if (
-                    device instanceof OpenCLDevice &&
-                    ( (OpenCLDevice) device ).getPlatform().isDoingLegacyIndexing() != legacyIndexing
-            ) ( (OpenCLDevice) device ).getPlatform().recompile()
 
         when :
-            Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(legacyIndexing)
-            if ( device instanceof OpenCLDevice ) OpenCLPlatform.PLATFORMS().get(0).recompile()
-
         Tsr x = new Tsr([1], 3).setRqsGradient(true)
         Tsr b = new Tsr([1], -4)
         Tsr w = new Tsr([1], 2)
@@ -68,14 +61,12 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
          *  Subset:
          */
         Tsr a = new Tsr([4, 6], [
-                1, 2, 3, 4,
-                5, 6, 7, 8,
-                9, 1, 2, 3,
-                4, 5, 6, 7,
-                8, 9, 1, 2,
-                3, 4, 5, 6
+                1, 2, 3, 4, 5, 6,
+                7, 8, 9, 1, 2, 3,
+                4, 5, 6, 7, 8, 9,
+                1, 2, 3, 4, 5, 6
         ])
-        /* //NON LEGACY INDEXED:
+        /*
             1, 2, 3, 4, 5, 6,
             7, 8, 9, 1, 2, 3, => 7, 8, 9, 1
             4, 5, 6, 7, 8, 9, => 4, 5, 6, 7
@@ -87,11 +78,9 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         def s = a[[1, -2]]
 
         then:
-        assert s == ((legacyIndexing)?9.0:2.0)
+        assert s == 2.0
         assert b.toString().contains(
-                (legacyIndexing)
-                        ?"2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
-                        :"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
+                "7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
         )
 
         assert b.spread() != null
@@ -101,11 +90,9 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         s = a[1, -2]
 
         then:
-        assert s == ( (legacyIndexing) ? 9.0 : 2.0 )
+        assert s == 2.0
         assert b.toString().contains(
-                (legacyIndexing)
-                        ?"2.0, 3.0, 4.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
-                        :"7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
+                "7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
         )
         assert b.spread() != null
         /**
@@ -134,9 +121,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
 
         then:
         assert b.toString().contains(
-                (legacyIndexing)
-                        ? "12.0, 3.0, 4.0, 6.0, 7.0, 16.0, 1.0, 2.0, 3.0, 5.0, 6.0, 7.0"
-                        : "7.0, 16.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
+                "7.0, 16.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
         )
 
         //assert x.toString().contains("-16.0")
@@ -165,18 +150,13 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
          */
         //device.add(c)
         Tsr d = b + c
-        assert (d.NDConf.asInlineArray() as List) == ( (legacyIndexing) ? [3, 4, 1, 3, 1, 3, 0, 0, 1, 1] : [3, 4, 4, 1, 4, 1, 0, 0, 1, 1] )
-        assert (b.NDConf.asInlineArray() as List) == ( (legacyIndexing) ? [3, 4, 1, 4, 1, 3, 1, 0, 1, 1] : [3, 4, 6, 1, 4, 1, 1, 0, 1, 1] )
-        assert (c.NDConf.asInlineArray() as List) == ( (legacyIndexing) ? [3, 4, 1, 3, 1, 3, 0, 0, 1, 1] : [3, 4, 4, 1, 4, 1, 0, 0, 1, 1] )
+        assert (d.NDConf.asInlineArray() as List) == ( [3, 4, 4, 1, 4, 1, 0, 0, 1, 1] )
+        assert (b.NDConf.asInlineArray() as List) == ( [3, 4, 6, 1, 4, 1, 1, 0, 1, 1] )
+        assert (c.NDConf.asInlineArray() as List) == ( [3, 4, 4, 1, 4, 1, 0, 0, 1, 1] )
 
         then:
         assert d.toString().contains(
-                (legacyIndexing)?
-                        "9.0, 5.0, 7.0, " +
-                        "11.0, 13.0, 18.0, " +
-                        "0.0, 3.0, 5.0, " +
-                        "8.0, 10.0, 9.0"
-                        :"4.0, 18.0, 12.0, 6.0, "+
+                "4.0, 18.0, 12.0, 6.0, "+
                         "10.0, 7.0, 5.0, 8.0, "+
                         "3.0, 5.0, 7.0, 6.0"
         ) // 9.0, 5.0, 7.0, 10.0, 12.0, 9.0, 15.0, 10.0, 3.0, 5.0, 7.0, 6.0
@@ -186,21 +166,11 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         b = a[1..3, 2..4]
         then:
         assert b.toString().contains(
-                (legacyIndexing)
-                        ?"1.0, 2.0, 3.0, 5.0, 6.0, 7.0, 9.0, 1.0, 2.0"
-                        :"9.0, 1.0, 2.0, 6.0, 7.0, 8.0, 3.0, 4.0, 5.0"
+                "9.0, 1.0, 2.0, 6.0, 7.0, 8.0, 3.0, 4.0, 5.0"
         )
 
         assert b.spread() != null
         /**
-         1, 12, 3, 4,
-         5, 6, 7, 16,
-         9, 1, 2, 3, => 1, 2, 3,
-         4, 5, 6, 7, => 5, 6, 7,
-         8, 9, 1, 2, => 9, 1, 2,
-         3, 4, 5, 6
-
-         NON LEGACY INDEXING:
          1, 12, 3, 4, 5, 6,
          7, 16, 9, 1, 2, 3, =>  9, 1, 2,
          4, 5, 6, 7, 8, 9,  =>  6, 7, 8,
@@ -210,27 +180,14 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         when:
         b = a[[[0..3]:2, [1..4]:2]]
         then:
-        assert b.toString().contains(
-                (legacyIndexing)
-                        ?"5.0, 7.0, 4.0, 6.0"
-                        :"12.0, 4.0, 5.0, 7.0"
-        )
+        assert b.toString().contains( "12.0, 4.0, 5.0, 7.0" )
 
         assert b.spread() != null
         /**
-         1, 12, 3, 4,
-         5, 6, 7, 16, => 5,  7,
-         9, 1, 2, 3,
-         4, 5, 6, 7, => 4,  6,
-         8, 9, 1, 2,
-         3, 4, 5, 6
-
-         NON LEGACY INDEXING :
          1, 12, 3, 4, 5, 6, => 12, 4,
          7, 16, 9, 1, 2, 3,
          4, 5, 6, 7, 8, 9,  => 5,  7,
          1, 2, 3, 4, 5, 6
-
          */
         //---
         when:
@@ -248,59 +205,32 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         then:
         assert b.toString().contains("1.0, 2.0, 3.0, 4.0")
         assert a.toString().contains(
-                (legacyIndexing)
-                        ?"1.0, 12.0, 3.0, 4.0, " +
-                        "1.0, 6.0, 2.0, 16.0, " +
-                        "9.0, 1.0, 2.0, 3.0, " +
-                        "3.0, 5.0, 4.0, 7.0, " +
-                        "8.0, 9.0, 1.0, 2.0, " +
-                        "3.0, 4.0, 5.0, 6.0"
-                        :"1.0, 1.0, 3.0, 2.0, 5.0, 6.0, " +
-                        "7.0, 16.0, 9.0, 1.0, 2.0, 3.0, " +
-                        "4.0, 3.0, 6.0, 4.0, 8.0, 9.0, " +
-                        "1.0, 2.0, 3.0, 4.0, 5.0, 6.0"
+                "1.0, 1.0, 3.0, 2.0, 5.0, 6.0, " +
+                "7.0, 16.0, 9.0, 1.0, 2.0, 3.0, " +
+                "4.0, 3.0, 6.0, 4.0, 8.0, 9.0, " +
+                "1.0, 2.0, 3.0, 4.0, 5.0, 6.0"
         )
         /**a:>>
-         1, 12, 3, 4,
-         1, 6, 2, 16,
-         9, 1, 2, 3,
-         3, 5, 4, 7,
-         8, 9, 1, 2,
-         3, 4, 5, 6
+          1   1   3   2   5   6
+          7   16  9   1   2   3
+          4   3   6   4   8   9
+          1   2   3   4   5   6
          */
         //---
         when:
         a[1..2, 1..2] = new Tsr([2, 2], [8, 8, 8, 8])
         then:
         assert b.toString().contains(
-                (legacyIndexing)?
-                        "1.0, 8.0, " +
-                                "3.0, 4.0"
-                        :"1.0, 2.0, "+
-                        "8.0, 4.0"
+                "1.0, 2.0, "+
+                "8.0, 4.0"
         )
         assert a.toString().contains(
-                (legacyIndexing)?
-                        "1.0, 12.0, 3.0, 4.0, " +
-                                "1.0, 8.0, 8.0, 16.0, " +
-                                "9.0, 8.0, 8.0, 3.0, " +
-                                "3.0, 5.0, 4.0, 7.0, " +
-                                "8.0, 9.0, 1.0, 2.0, " +
-                                "3.0, 4.0, 5.0, 6.0"
-                        :"1.0, 1.0, 3.0, 2.0, 5.0, 6.0, " +
-                        "7.0, 8.0, 8.0, 1.0, 2.0, 3.0, " +
-                        "4.0, 8.0, 8.0, 4.0, 8.0, 9.0, " +
-                        "1.0, 2.0, 3.0, 4.0, 5.0, 6.0"
+                "1.0, 1.0, 3.0, 2.0, 5.0, 6.0, " +
+                "7.0, 8.0, 8.0, 1.0, 2.0, 3.0, " +
+                "4.0, 8.0, 8.0, 4.0, 8.0, 9.0, " +
+                "1.0, 2.0, 3.0, 4.0, 5.0, 6.0"
         )
         /**a:>>
-         1, 12, 3, 4,
-         1, 8, 8, 16,
-         9, 8, 8, 3,
-         3, 5, 4, 7,
-         8, 9, 1, 2,
-         3, 4, 5, 6
-
-         NON LEGACY INDEXING :
          1.0, 1.0, 3.0, 2.0, 5.0, 6.0,
          7.0, 8.0, 8.0, 1.0, 2.0, 3.0,
          4.0, 8.0, 8.0, 4.0, 8.0, 9.0,
@@ -321,17 +251,11 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         x = new Tsr(b, "x", c) // This test is important because it tests convolution on slices!
         then:
         assert x.toString().contains(
-                (legacyIndexing)?
-                        "[1x1]:(33.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)"
-                        :"[1x1]:(20.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)"
+                "[1x1]:(20.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)"
         )
 
         where:
-            device               | legacyIndexing
-            //Device.find('gpu')   | true // TODO: FIX LEGACY INDEXING ON GPU
-            Device.find('gpu')   | false
-            HostCPU.instance()   | true
-            HostCPU.instance()   | false
+            device << [ Device.find('gpu'), HostCPU.instance() ]
     }
 
 

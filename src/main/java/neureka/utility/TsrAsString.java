@@ -349,12 +349,11 @@ public class TsrAsString
     // A recursive stringifier for formatted tensors...
     private void _format( int[] shape, int[] idx, int dim )
     {
-        boolean legacy = Neureka.instance().settings().indexing().isUsingLegacyIndexing();
         int max = ( _shortage * 32 / 50 );
-        dim = ( dim < 0 ) ? ( (!legacy) ? 0 : _tensor.rank() - 1 ) : dim;
-        int depth = ( !legacy ) ? dim : _tensor.rank()-dim-1 ;
+        dim = ( dim < 0 ) ? 0 : dim;
+        int depth = dim;
 
-        if ( legacy && dim == 0 || !legacy && dim == idx.length - 1 ) {
+        if ( dim == idx.length - 1 ) {
             _$( Util.indent( depth ) );
             _$( "[ " );
             _stringifyValueAt( max, idx, shape[ dim ] );
@@ -372,7 +371,7 @@ public class TsrAsString
             int i = 0;
             do {
                 if ( i < trimStart || i >= trimEnd )
-                    _format( shape, idx, dim + ( (!legacy) ? 1 : -1 ) );
+                    _format( shape, idx, dim + 1 );
                 else if ( i == trimStart )
                     _$( Util.indent( depth + 1 ) )._$( "... " )._$( trim )._$( " more ...\n" );
                 else
@@ -383,7 +382,7 @@ public class TsrAsString
 
             _$( Util.indent( depth ) )._$( "]" );
         }
-        int i = dim + ( (legacy) ? 1 : -1 );
+        int i = dim - 1;
         if ( i >= 0 && i < idx.length && idx[ i ] != 0 ) _$( "," );
         _$( "\n" );
     }

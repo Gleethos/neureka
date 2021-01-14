@@ -115,17 +115,16 @@ class Tensor_Framing_Integration_Tests extends Specification
     void 'Tensors can be labeled and their labels can be used to extract slices / subsets of tensors.'(){
 
         given :
-        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
-        Neureka.instance().settings().view().setIsUsingLegacyView(true)
-        Tsr t = new Tsr([3, 4],[
-                1, 2, 3, 4,
-                9, 8, 6, 5,
-                4, 5, 6, 7
-        ])
-        t.label([
-                ["1", "2", "3"],
-                ["a", "b", "y", "z"]
-        ])
+            Neureka.instance().settings().view().setIsUsingLegacyView(true)
+            Tsr t = new Tsr([3, 4],[
+                    1, 2, 3, 4,
+                    9, 8, 6, 5,
+                    4, 5, 6, 7
+            ])
+            t.label([
+                    ["1", "2", "3"],
+                    ["a", "b", "y", "z"]
+            ])
 
         when : Tsr x = t["2", 1..2]
         then :

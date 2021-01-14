@@ -74,7 +74,7 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
         super( lambda, arity );
         kernelSource = kernelSource.replace(
                 "Neureka.instance().settings().indexing().REVERSE_INDEX_TRANSLATION",
-                (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) ? "true" : "false"
+                "false"
         );
         boolean templateFound;
         if (kernelSource.contains("__kernel")) {

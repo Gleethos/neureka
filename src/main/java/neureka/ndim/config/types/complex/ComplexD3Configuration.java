@@ -135,19 +135,11 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     @Override
     public int i_of_i( int i ) {
         int idx1, idx2, idx3;
-        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
-            idx3 = i / _idxmap3;
-            i %= _idxmap3;
-            idx2 = i / _idxmap2;
-            i %= _idxmap2;
-            idx1 = i / _idxmap1;
-        } else {
-            idx1 = i / _idxmap1;
-            i %= _idxmap1;
-            idx2 = i / _idxmap2;
-            i %= _idxmap2;
-            idx3 = i / _idxmap3;
-        }
+        idx1 = i / _idxmap1;
+        i %= _idxmap1;
+        idx2 = i / _idxmap2;
+        i %= _idxmap2;
+        idx3 = i / _idxmap3;
         return (idx1 * _spread1 + _offset1) * _translation1 +
                 (idx2 * _spread2 + _offset2) * _translation2 +
                 (idx3 * _spread3 + _offset3) * _translation3;
@@ -156,19 +148,11 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     @Override
     public int[] idx_of_i( int i ) {
         int idx1, idx2, idx3;
-        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
-            idx3 = i / _idxmap3;
-            i %= _idxmap3;
-            idx2 = i / _idxmap2;
-            i %= _idxmap2;
-            idx1 = i / _idxmap1;
-        } else {
-            idx1 = i / _idxmap1;
-            i %= _idxmap1;
-            idx2 = i / _idxmap2;
-            i %= _idxmap2;
-            idx3 = i / _idxmap3;
-        }
+        idx1 = i / _idxmap1;
+        i %= _idxmap1;
+        idx2 = i / _idxmap2;
+        i %= _idxmap2;
+        idx3 = i / _idxmap3;
         return new int[]{idx1, idx2, idx3};
     }
 

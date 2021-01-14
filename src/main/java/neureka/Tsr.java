@@ -416,14 +416,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             if ( isHomogenous ) {
                 int m = matrix.size();
                 double[] value = new double[ m * n ];
-                boolean isLegacy = Neureka.instance().settings().indexing().isUsingLegacyIndexing();
-                int[] shape = ( isLegacy )
-                        ? new int[]{ n, m }
-                        : new int[]{ m, n };
+                int[] shape = new int[]{ m, n };
 
                 for ( int mi = 0; mi < m; mi++ ) {
                     for ( int ni = 0; ni < n; ni++ ) {
-                        int i = ( isLegacy ) ? m * ni + mi : n * mi + ni;
+                        int i = n * mi + ni;
                         value[ i ] = DataConverter.instance().convert( matrix.get( mi ).get( ni ), Double.class );
                     }
                 }

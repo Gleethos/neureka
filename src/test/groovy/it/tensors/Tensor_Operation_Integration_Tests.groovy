@@ -18,14 +18,12 @@ class Tensor_Operation_Integration_Tests extends Specification
     }
 
     def 'Test "x-mul" operator produces expected results. (Not on device)'(
-            boolean legacy, String expected
+            String expected
     ) {
         given: 'Gradient auto apply for tensors in ue is set to false.'
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
         and: 'Tensor legacy view is set to true.'
             Neureka.instance().settings().view().setIsUsingLegacyView(true);
-        and: 'The Neureka instance is set to legacy indexing.'
-            Neureka.instance().settings().indexing().setIsUsingLegacyIndexing( legacy );
         and: 'Two new 3D tensor instances with the shapes: [2x3x1] & [1x3x2].'
             //Same test again but this time with reversed indexing:
             def x = new Tsr(
@@ -62,9 +60,7 @@ class Tensor_Operation_Integration_Tests extends Specification
             z.toString().contains(expected);
 
         where :
-            legacy || expected
-            false  || "[2x1x2]:(15.0, 2.0, 10.0, 2.0)"
-            true   || "[2x1x2]:(19.0, 22.0, 1.0, -6.0)"
+            expected << ["[2x1x2]:(15.0, 2.0, 10.0, 2.0)"]
     }
 
 
@@ -343,20 +339,9 @@ class Tensor_Operation_Integration_Tests extends Specification
     {
         given :
             Neureka.instance().settings().view().isUsingLegacyView = true
-            Neureka.instance().settings().indexing().isUsingLegacyIndexing = true
 
-        when : 'A two by three matrix is being transposed...'
-            Tsr t = new Tsr([2, 3], [
-                    1, 2,
-                    3, 4,
-                    5, 6
-            ]).T()
-
-        then : t.toString().contains("[3x2]:(1.0, 3.0, 5.0, 2.0, 4.0, 6.0)")
-
-        and : Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
         when : 'A three by two matrix is being transposed...'
-            t = new Tsr([2, 3], [
+            Tsr t = new Tsr([2, 3], [
                     1, 2, 3,
                     4, 5, 6
             ]).T()

@@ -7,7 +7,6 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
-import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.OpenCLPlatform
 import spock.lang.Specification
 import st.tests.SimpleNNSystemTest
@@ -81,7 +80,7 @@ class Cross_Device_System_Tests extends Specification
     */
 
     def 'Test cross device integration with default and legacy indexing.' (
-            String deviceType, boolean legacyIndexing
+            String deviceType
     ) {
         given : 'A given device of any type and the settings configured for testing.'
             if (
@@ -92,19 +91,11 @@ class Cross_Device_System_Tests extends Specification
             Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads = true
             Neureka.instance().settings().view().isUsingLegacyView = true
 
-        and : 'The indexing mode set to "legacy"!'
-            Neureka.instance().settings().indexing().isUsingLegacyIndexing = legacyIndexing
-            if ( device instanceof OpenCLDevice ) OpenCLPlatform.PLATFORMS().get(0).recompile()
-
         expect : 'The integration test runs successful.'
-            CrossDeviceSystemTest.on(device, legacyIndexing)
+            CrossDeviceSystemTest.on(device)
 
         where : 'The following settings are being used: '
-            deviceType  ||  legacyIndexing
-              'CPU'     ||     false
-              'CPU'     ||     true
-              'GPU'     ||     true
-              'GPU'     ||     false
+            deviceType << ['CPU', 'GPU']
     }
 
 

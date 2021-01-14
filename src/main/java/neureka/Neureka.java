@@ -122,7 +122,6 @@ public class Neureka
             settings().autograd().setIsRetainingPendingErrorForJITProp( true );
             settings().autograd().setIsApplyingGradientWhenTensorIsUsed( true );
             settings().autograd().setIsApplyingGradientWhenRequested( true );
-            settings().indexing().setIsUsingLegacyIndexing( false );
             settings().indexing().setIsUsingArrayBasedIndexing( true );
             settings().debug().setIsKeepingDerivativeTargetPayloads( false );
             settings().view().setIsUsingLegacyView( false );
@@ -336,14 +335,14 @@ public class Neureka
 
 
 
-            public boolean isUsingLegacyIndexing() {
-                return _isUsingLegacyIndexing;
-            }
+            //public boolean isUsingLegacyIndexing() {
+            //    return _isUsingLegacyIndexing;
+            //}
 
-            public void setIsUsingLegacyIndexing(boolean enabled) {
-                if ( _isLocked || !_currentThreadIsAuthorized()) return;
-                _isUsingLegacyIndexing = enabled; // NOTE: gpu code must recompiled! (in OpenCLPlatform)
-            }
+            //public void setIsUsingLegacyIndexing(boolean enabled) {
+            //    if ( _isLocked || !_currentThreadIsAuthorized()) return;
+            //    _isUsingLegacyIndexing = enabled; // NOTE: gpu code must recompiled! (in OpenCLPlatform)
+            //}
 
             public boolean isUsingArrayBasedIndexing() {
                 return _isUsingArrayBasedIndexing;

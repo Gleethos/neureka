@@ -12,7 +12,7 @@ public class BroadSystemTest
 
     public static boolean on()
     {
-        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true);
+        //Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true);
         Neureka.instance().settings().view().setIsUsingLegacyView(true);
 
         UnitTester_Tensor tester = new UnitTester_Tensor("Testing core tensor functionality");
@@ -135,8 +135,8 @@ public class BroadSystemTest
         tensor1.setRqsGradient(false);
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1},//, tensor2},/<=TODO make this throw an exception (if input does not match function)
-                "lig([-2, 1, 0, -2]:(I[0])*-100)",
-                new String[]{"[2x3x2x2]:(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)"}
+                "lig( [2, 1, 0]:( I[0] )*-100 )",
+                new String[]{"[4x3x2]:(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)"}
         );
         //---
         tensor1 = new Tsr(new int[]{2}, 2);
@@ -280,18 +280,22 @@ public class BroadSystemTest
         ///=================
         //---
         tensor1 = new Tsr(new int[]{2, 3}, new double[]{
-                0, 0, //3, 1,
-                0, 0, //-2, -1,
-                0, 0, ///-4, 2,
+                0, 0, 0,
+                0, 0, 0,
         });
         //---
         tensor2 = new Tsr(new int[]{5, 2}, new double[]{
-                -2, 3, 6, 3, -1,
-                0, 2, 4, 2, 1
+                -2, 3,
+                6, 3,
+                -1, 0,
+                2, 4,
+                2, 1
         });
         tensor3 = new Tsr(new int[]{4, 2}, new double[]{
-                1, 2, -3, 2,//<= drain data!
-                4, -2, -1, 5,
+                1, 2,
+                -3, 2,//<= drain data!
+                4, -2,
+                -1, 5,
         });
         tester.testTensorAutoGrad(new Tsr[]{tensor1, tensor2, tensor3},
                 "i0<<xi1<<xi2",
@@ -299,7 +303,7 @@ public class BroadSystemTest
         result = Function.Setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i0<<xi1<<xi2", true);
         tester.testContains(
                 result.toString(),
-                new String[]{"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"},
+                new String[]{"[2x3]:(-26.0, 10.0, 32.0, 15.0, 34.0, 3.0)"},
                 "Testing if Function.setup.commit() returns non unique result!"
         );
         tester.testTensorAutoGrad(new Tsr[]{tensor1, tensor2, tensor3},//TODO:REACTIVATE!
@@ -308,7 +312,7 @@ public class BroadSystemTest
         result = Function.Setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i2x>>i1x>>i0", true);
         tester.testContains(
                 result.toString(),
-                new String[]{"[2x3]:(-8.0, 4.0, -9.0, -2.0, 2.0, 3.0)"},
+                new String[]{"[2x3]:(-26.0, 10.0, 32.0, 15.0, 34.0, 3.0)"},
                 "Testing if Function.setup.commit() returns non unique result!"
         );
         //=====================
@@ -327,9 +331,9 @@ public class BroadSystemTest
         tester.testTensorAutoGrad(//4, 5, -13, -4 <= result values
                 new Tsr[]{tensor1, tensor2},
                 "i0xi1",
-                new String[]{"[2x1x2]:(4.0, -13.0, 5.0, -4.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"},
+                new String[]{"[2x1x2]:(0.0, 7.0, -7.0, 0.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"},
                 new Tsr(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
-                new double[][]{{-1.0, -1.0, 5.0, 5.0}, new double[0]}
+                new double[][]{{1.0, 3.0, 1.0, 3.0}, new double[0]}
         );
         Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
         //---
@@ -340,7 +344,7 @@ public class BroadSystemTest
         tester.testTensorUtility_reshape(shape, newForm, expected);
         //---
         shape = new int[]{4, 2, 9, 5, 6, 2};
-        expected = new int[]{1, 4, 4 * 2, 4 * 2 * 9, 4 * 2 * 9 * 5, 4 * 2 * 9 * 5 * 6};
+        expected = new int[]{1080, 540, 60, 12, 2, 1, };
         tester.testTensorUtility_translation(shape, expected);
         //---
 
@@ -368,9 +372,9 @@ public class BroadSystemTest
                 frstShape, scndShape,
                 frstData, scndData,
                 new double[]{
-                        -4, -2, 8, 6,
-                        8, 4, -16, -12,
-                        -6, -3, 12, 9
+                        -4.0, 8.0, -6.0, -2.0,
+                        4.0, -3.0, 8.0, -16.0,
+                        12.0, 6.0, -12.0, 9.0
                 }
         );
         //---
@@ -389,8 +393,8 @@ public class BroadSystemTest
                 frstShape, scndShape,
                 frstData, scndData,
                 new double[]{
-                        29, -28, -1,
-                        -40, 48, -29,
+                        -10.0, 35.0, 7.0,
+                        -16.0, 9.0, -52.0
                 }
         );
         //---
@@ -439,8 +443,8 @@ public class BroadSystemTest
                 frstShape, scndShape,
                 frstData, scndData,
                 new double[]{
-                        15, 11,
-                        20, -22,
+                        -4.0, 0.0,
+                        -13.0, -2.0
                 }
         );
         //---
@@ -467,9 +471,7 @@ public class BroadSystemTest
                         4, -2, -1, 5,
                 },
                 new double[]{
-                        1 * -2 + 2 * 3 - 3 * 6 + 2 * 3, 1 * 3 + 2 * 6 - 3 * 3 + 2 * -1,
-                        1 * 0 + 2 * 2 - 3 * 4 + 2 * 2 + 4 * -2 - 2 * 3 - 1 * 6 + 5 * 3, 1 * 2 + 2 * 4 - 3 * 2 + 2 * 1 + 4 * 3 - 2 * 6 - 1 * 3 + 5 * -1,
-                        4 * 0 - 2 * 2 - 1 * 4 + 5 * 2, 4 * 2 - 2 * 4 - 1 * 2 + 5 * 1
+                        -26.0, 10.0, 32.0, 15.0, 34.0, 3.0
                 },
                 true
         );
@@ -489,9 +491,7 @@ public class BroadSystemTest
                 frstShape, scndShape,
                 frstData, scndData,
                 new double[]{
-                        8, -4,
-                        -4, 2,
-                        12, -6,
+                        8.0, -4.0, 12.0, -4.0, 2.0, -6.0
                 }
         );
         //---
@@ -517,9 +517,7 @@ public class BroadSystemTest
                         12, -6,
                 },
                 new double[]{
-                     16+4,//20
-                     -8-2,//-10
-                     24+6//30
+                        14.0, -20.0, -2.0
                 },
                 true
         );

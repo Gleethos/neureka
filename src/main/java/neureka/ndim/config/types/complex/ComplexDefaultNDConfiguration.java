@@ -125,16 +125,9 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
     @Override
     public int[] idx_of_i( int i ) {
         int[] idx = new int[_shape.length];
-        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
-            for ( int ii = rank()-1; ii >= 0; ii-- ) {
-                idx[ ii ] += i / _idxmap[ ii ];
-                i %= _idxmap[ ii ];
-            }
-        } else {
-            for ( int ii = 0; ii < rank(); ii++ ) {
-                idx[ ii ] += i / _idxmap[ ii ];
-                i %= _idxmap[ ii ];
-            }
+        for ( int ii = 0; ii < rank(); ii++ ) {
+            idx[ ii ] += i / _idxmap[ ii ];
+            i %= _idxmap[ ii ];
         }
         return idx;
     }

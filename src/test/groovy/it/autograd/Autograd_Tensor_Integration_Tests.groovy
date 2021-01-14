@@ -78,9 +78,7 @@ class Autograd_Tensor_Integration_Tests extends Specification
         given : 'Gradient auto apply for tensors in ue is set to false.'
             Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
         and: 'Tensor legacy view is set to true.'
-            Neureka.instance().settings().view().setIsUsingLegacyView(true);
-        and : 'The Neureka instance is set to legacy indexing.'
-            Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true);
+            Neureka.instance().settings().view().setIsUsingLegacyView(true)
         when :
             def x = new Tsr(
                     new int[]{3, 3},
@@ -108,7 +106,6 @@ class Autograd_Tensor_Integration_Tests extends Specification
         then : y.toString().contains("[2x2]:(-1.0, 3.0, 2.0, 3.0):g:(6.0, 9.0, 4.0, 9.0)");
         //---
         when :
-        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false);
         //--- again but now reverse: (outcome should not change...)
         x = new Tsr(
                 new int[]{3, 3},
@@ -126,10 +123,10 @@ class Autograd_Tensor_Integration_Tests extends Specification
                 }).setRqsGradient(true);
 
         then : y.toString().contains(":g:(null)");
-        when : z = new Tsr(new Tsr[]{x, y}, "I0xi1");
+        when : z = new Tsr(new Tsr[]{y, x}, "I0xi1");
         then : z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)");
 
-        when : z = new Tsr(new Object[]{x, "x", y});
+        when : z = new Tsr(new Object[]{y, "x", x});
         then : z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)");
 
         when : z.backward(new Tsr(new int[]{2, 2}, 1));
@@ -151,7 +148,7 @@ class Autograd_Tensor_Integration_Tests extends Specification
             y.toString().contains("[1]:(4.0);");
             y.toString().contains(" ->d[1]:(1.38629E0), ");
         //===
-        //TODO: add tests using more then 1 function and check if the graph is build correctly!
+        //TODO: add tests using more then 1 function and check if the graph is being built correctly!
     }
 
     def 'A tensor used as derivative within a computation graph will throw exception when trying to deleting it.'()

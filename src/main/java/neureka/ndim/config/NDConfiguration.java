@@ -113,53 +113,32 @@ public interface NDConfiguration
         public static int[] newTlnOf(int[] shape) {
             int[] tln = new int[ shape.length ];
             int prod = 1;
-            if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {
-                for ( int i = 0; i < tln.length; i++ ) {
-                    tln[ i ] = prod;
-                    prod *= shape[ i ];
-                }
-            } else {
-                for ( int i = tln.length-1; i >= 0; i--) {
-                    tln[ i ] = prod;
-                    prod *= shape[ i ];
-                }
+            for ( int i = tln.length-1; i >= 0; i-- ) {
+                tln[ i ] = prod;
+                prod *= shape[ i ];
             }
             return tln;
         }
 
         @Contract(pure = true)
         public static void increment( @NotNull int[] shpIdx, @NotNull int[] shape ) {
-            int i;
-            if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) i = 0;
-            else i = shape.length-1;
+            int i = shape.length-1;
             while ( i >= 0 && i < shape.length ) i = _incrementAt( i, shpIdx, shape );
         }
 
         @Contract(pure = true)
-        private static int _incrementAt( int i, @NotNull int[] shpIdx, @NotNull int[] shape ) {
-            if ( Neureka.instance().settings().indexing().isUsingLegacyIndexing() ) {
-                if ( shpIdx[ i ] < shape[ i ] ) {
-                    shpIdx[ i ]++;
-                    if ( shpIdx[ i ] == shape[ i ] ) {
-                        shpIdx[ i ] = 0;
-                        i++;
-                    }
-                    else i = -1;
+        private static int _incrementAt( int i, @NotNull int[] shpIdx, @NotNull int[] shape )
+        {
+            if ( shpIdx[ i ] < shape[ i ] ) {
+                shpIdx[ i ]++;
+                if ( shpIdx[ i ] == shape[ i ] ) {
+                    shpIdx[ i ] = 0;
+                    i--;
                 }
-                else i++;
-                return i;
-            } else {
-                if ( shpIdx[ i ] < shape[ i ] ) {
-                    shpIdx[ i ]++;
-                    if ( shpIdx[ i ] == shape[ i ] ) {
-                        shpIdx[ i ] = 0;
-                        i--;
-                    }
-                    else i = -1;
-                }
-                else i--;
-                return i;
+                else i = -1;
             }
+            else i--;
+            return i;
         }
 
         @Contract(pure = true)

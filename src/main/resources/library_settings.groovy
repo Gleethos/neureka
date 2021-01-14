@@ -17,8 +17,7 @@ Neureka.instance {
             it.isApplyingGradientWhenRequested = true
         }
 
-        indexing {
-            it.isUsingLegacyIndexing = false
+        indexing { 
             it.isUsingArrayBasedIndexing = true
         }
 

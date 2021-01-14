@@ -12,7 +12,7 @@ import java.util.List;
 public class CrossDeviceSystemTest
 {
 
-    public static boolean on( Device gpu, boolean legacyIndexing )
+    public static boolean on( Device gpu )
     {
         UnitTester_Tensor tester = new UnitTester_Tensor("");
 
@@ -91,7 +91,7 @@ public class CrossDeviceSystemTest
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2}, "I0 x i1",
                 new String[]{
-                        (legacyIndexing)?"[2x1x2]:(19.0, 22.0, 1.0, -6.0)":"(15.0, 2.0, 10.0, 2.0)"
+                        "[2x1x2]:(15.0, 2.0, 10.0, 2.0)"
                 });
         //=======================
         tensor1 = new Tsr(
@@ -127,13 +127,11 @@ public class CrossDeviceSystemTest
                 "i0xi1",
                 new String[]{
                         "[2x1x2]:(" +
-                                ((legacyIndexing)?"4.0, -13.0, 5.0, -4.0":"0.0, 7.0, -7.0, 0.0")+
+                                "0.0, 7.0, -7.0, 0.0"+
                                 "); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"
                 },
                 new Tsr(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
-                (legacyIndexing)
-                        ?new double[][]{new double[]{-1.0, -1.0, 5.0, 5.0}, new double[0]}
-                        :new double[][]{new double[]{1.0, 3.0, 1.0, 3.0}, new double[0]}
+                new double[][]{new double[]{1.0, 3.0, 1.0, 3.0}, new double[0]}
         );
 
         // ---

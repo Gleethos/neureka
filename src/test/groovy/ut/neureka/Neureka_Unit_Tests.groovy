@@ -30,7 +30,6 @@ class Neureka_Unit_Tests extends Specification
     {
         expect : 'Important settings have their expected states.'
             assert !Neureka.instance().settings().isLocked()
-            assert !Neureka.instance().settings().indexing().isUsingLegacyIndexing()
             assert !Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads()
             assert Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed()
 

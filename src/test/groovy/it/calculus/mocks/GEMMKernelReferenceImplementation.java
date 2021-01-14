@@ -311,16 +311,9 @@ public class GEMMKernelReferenceImplementation
         int[] idxMap = new int[rank];//(cfg+rank*2);
         for ( int ii = 0 ; ii < rank; ii++) idx[ii] = cfg[rank*3+ii];
         for ( int ii = 0 ; ii < rank; ii++) idxMap[ii] = cfg[rank*2+ii];
-        if(Neureka.instance().settings().indexing().isUsingLegacyIndexing()){
-            for(int ii=(rank-1); ii>=0; ii--){
-                idx[ii] = (i/idxMap[ii]);//is derived from the shape of a tensor. Translates scalar indexAlias to dim-Index
-                i %= idxMap[ii];
-            }
-        } else {//---
-            for(int ii=0; ii<rank; ii++){
-                idx[ii] = (i/idxMap[ii]);//is derived from the shape of a tensor. Translates scalar indexAlias to dim-Index
-                i %= idxMap[ii];
-            }
+        for ( int ii = 0; ii < rank; ii++ ) {
+            idx[ ii ] = ( i / idxMap[ ii ] );//is derived from the shape of a tensor. Translates scalar indexAlias to dim-Index
+            i %= idxMap[ ii ];
         }
         return _i_of_idx_on_tln(cfg, rank);
     }

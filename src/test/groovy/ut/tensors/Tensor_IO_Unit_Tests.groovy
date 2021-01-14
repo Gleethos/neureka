@@ -266,14 +266,16 @@ class Tensor_IO_Unit_Tests extends Specification
     void 'Tensor values can be manipulated via static method calls within the "Tsr.IO" class.'()
     {
         given :
-        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)//TODO: repeat tests with default indexing
-        Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
-        Neureka.instance().settings().view().setIsUsingLegacyView(true)
-        Tsr t = new Tsr([2, 2], [
-                1.0, 4.0,
-                2.0, 7.0,
-        ])
-        Tsr v = new Tsr([2, 2], [1.0, -1.0, 1.0, -1.0])
+            Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
+            Neureka.instance().settings().view().setIsUsingLegacyView(true)
+            Tsr t = new Tsr([2, 2], [
+                    1.0, 4.0,
+                    2.0, 7.0,
+            ])
+            Tsr v = new Tsr([2, 2], [
+                    1.0, -1.0,
+                    1.0, -1.0]
+            )
 
         when : Tsr.IO.addInto(t, v)
         then : t.toString().contains("[2x2]:(2.0, 3.0, 3.0, 6.0)")
@@ -286,34 +288,34 @@ class Tensor_IO_Unit_Tests extends Specification
             idx[1] = 1
             Tsr.IO.addInto(t, idx, -9.0)
         then :
-            t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 6.0)")
-            Tsr.IO.getFrom(t, idx)==-3.0d
+            t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 6.0)")
+            Tsr.IO.getFrom(t, idx)==-6.0d
 
         when :
             idx[0] = 1
             Tsr.IO.mulInto(t, idx, -1)
 
-        then : t.toString().contains("[2x2]:(2.0, 3.0, -3.0, -6.0)")
+        then : t.toString().contains("[2x2]:(2.0, -6.0, 6.0, -6.0)")
 
         when : Tsr.IO.mulInto(t, 3, -2)
-        then : t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 12.0)")
+        then : t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 12.0)")
 
         when : Tsr.IO.setInto(t, idx, 0.0)
-        then : t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 0.0)")
+        then : t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 0.0)")
 
         when : Tsr.IO.setInto(t, 2, 99.0)
-        then : t.toString().contains("[2x2]:(2.0, 3.0, 99.0, 0.0)")
+        then : t.toString().contains("[2x2]:(2.0, -6.0, 99.0, 0.0)")
 
         when : Tsr.IO.subInto(t, 2, 99.0)
-        then : t.toString().contains("[2x2]:(2.0, 3.0, 0.0, 0.0)")
+        then : t.toString().contains("[2x2]:(2.0, -6.0, 0.0, 0.0)")
 
         when :
             idx[0] = 0
             Tsr.IO.subInto(t, idx, -9.0)
-        then : t.toString().contains("[2x2]:(2.0, 3.0, 9.0, 0.0)")
+        then : t.toString().contains("[2x2]:(2.0, 3.0, 0.0, 0.0)")
 
         when : Tsr.IO.subInto(t, new Tsr([2, 2], [1, 2, 3, 4]))
-        then : t.toString().contains("[2x2]:(1.0, 1.0, 6.0, -4.0)")
+        then : t.toString().contains("[2x2]:(1.0, 1.0, -3.0, -4.0)")
 
     }
 

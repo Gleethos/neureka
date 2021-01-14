@@ -7,7 +7,6 @@ import neureka.devices.Device
 class SimpleNNSystemTest {
     static void on(Device device)
     {
-        Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
         Tsr X = new Tsr(// input data: 5 vectors in binary form
                 [5, 3, 1],
                 [
