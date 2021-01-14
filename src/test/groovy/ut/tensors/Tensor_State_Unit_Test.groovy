@@ -30,6 +30,7 @@ class Tensor_State_Unit_Test extends Specification
     ){
 
         given:
+            Tsr t1 = new Tsr( shape, Float.class, -4..5 )
             Tsr t = new Tsr( shape, -4..5 ).set( new Tsr( shape, -7..3 ) )
             println(t.toString(mode))
             println(t.toString(mode).replace("\n", "\\n"))

@@ -168,7 +168,9 @@ public class DataConverter
             _converters.put( from, fromMap );
         } else {
             Conversion found = fromMap.get(to);
-            if ( found != null ) throw new IllegalStateException("Conversion already present!");
+            if ( found != null ) throw new IllegalStateException(
+                    "Conversion already present! From class '"+from.getName()+"'. To clas '"+to.getName()+"'."
+                    );
             else fromMap.put(to, conversion);
         }
     }

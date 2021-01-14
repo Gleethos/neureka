@@ -89,7 +89,6 @@ import lombok.experimental.Accessors;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.standard.operations.other.Reshape;
 import neureka.dtype.DataType;
-import neureka.dtype.NumericType;
 import neureka.dtype.custom.*;
 import neureka.ndim.AbstractNDArray;
 import neureka.devices.host.HostCPU;
@@ -333,27 +332,31 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public Tsr( List<Integer> shape, List<ValueType> range )
     {
         int[] shp = new int[ shape.size() ];
-        for( int i=0; i<shp.length; i++ ) shp[ i ] = shape.get( i );
+        for( int i = 0; i < shp.length; i++ ) shp[ i ] = shape.get( i );
         if ( range.size() == 1 && range.get( 0 ) instanceof IntRange ) range = (List<ValueType>) range.get( 0 );
 
-        if ( !range.isEmpty() && !( range.get( 0 ) instanceof Number ) ) {
-            Class<?> givenClass = range.get( 0 ).getClass();
+        _constructForRange( shp, (ValueType[]) range.toArray());
+    }
+
+    private void _constructForRange( int[] shp, ValueType[] range ) {
+        if ( range.length != 0 && !( range[ 0 ] instanceof Number ) ) {
+            Class<?> givenClass = range[ 0 ].getClass();
             @SuppressWarnings("unchecked")
             final ValueType[] value = (ValueType[]) Array.newInstance(
                     givenClass,
                     NDConfiguration.Utility.szeOfShp( shp )
             );
-            for ( int i = 0; i < value.length; i++ ) value[ i ] = range.get( i % range.size() );
+            for ( int i = 0; i < value.length; i++ ) value[ i ] = range[ i % range.length ];
             setDataType( DataType.of( givenClass ) );
             _setData( value );
             _construct( shp, value );
         } else {
             double[] value = new double[ NDConfiguration.Utility.szeOfShp( shp ) ];
             for ( int i = 0; i < value.length; i++ ) {
-                if ( range.get( i % range.size() ) instanceof BigDecimal ) {
-                    value[ i ] = ( (BigDecimal) range.get( i % range.size() ) ).doubleValue();
-                } else if ( range.get( i % range.size() ) instanceof Integer ) {
-                    value[ i ] = (Integer) range.get( i % range.size() );
+                if ( range[ i % range.length ] instanceof BigDecimal ) {
+                    value[ i ] = ( (BigDecimal) range[ i % range.length ] ).doubleValue();
+                } else if ( range[ i % range.length ] instanceof Integer ) {
+                    value[ i ] = (Integer) range[ i % range.length ];
                 }
             }
             _construct( shp, value );
@@ -483,10 +486,24 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         setValue( data );
     }
 
+    public <T> Tsr( List<Integer> shape, Class<T> typeClass, List<T> data )
+    {
+        setDataType( DataType.of( typeClass ) );
+        _configureFromNewShape( shape.stream().mapToInt( e -> e ).toArray(), false, false );
+        setValue( data );
+    }
+
     public Tsr( int[] shape, DataType<?> dataType, Object data )
     {
         setDataType( dataType );
         _configureFromNewShape( shape, false, false );
+        _setData( data );
+    }
+
+    public <T> Tsr( List<Integer> shape, DataType<T> dataType, List<T> data )
+    {
+        setDataType( dataType );
+        _configureFromNewShape( shape.stream().mapToInt( e -> e ).toArray(), false, false );
         _setData( data );
     }
 
@@ -586,15 +603,15 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public <T> Tsr( List<Integer> shape, DataType<T> type, Initializer<T> initializer )
     {
-        _construct( shape.stream().mapToInt(e->e).toArray(), type, initializer );
+        _constructFromInitializer( shape.stream().mapToInt(e -> e ).toArray(), type, initializer );
     }
 
     public <T> Tsr( int[] shape, DataType<T> type, Initializer<T> initializer )
     {
-        _construct( shape, type, initializer );
+        _constructFromInitializer( shape, type, initializer );
     }
 
-    private <T> void _construct( int[] shape, DataType<T> type, Initializer<T> initializer )
+    private <T> void _constructFromInitializer(int[] shape, DataType<T> type, Initializer<T> initializer )
     {
         setDataType( type );
         _construct( shape, true, false );
@@ -2340,13 +2357,14 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     @Override
-    public String toString() {
-        //return toString( "dgc" );
+    public String toString()
+    {
         return new TsrAsString( this ).toString();
     }
 
 
-    public static void makeFit( Tsr[] tsrs, boolean doesAD ) {
+    public static void makeFit( Tsr[] tsrs, boolean doesAD )
+    {
         int largest = -1;
         int[] shape = null;
         for ( Tsr t : tsrs ) if ( t.rank() > largest ) {
