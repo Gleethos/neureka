@@ -30,13 +30,27 @@ class Tensor_State_Unit_Test extends Specification
     ){
 
         given:
-            Tsr t1 = new Tsr( shape, Float.class, -4..5 )
-            Tsr t = new Tsr( shape, -4..5 ).set( new Tsr( shape, -7..3 ) )
-            println(t.toString(mode))
-            println(t.toString(mode).replace("\n", "\\n"))
+            Tsr t1 = new Tsr( shape, Float.class, -4..5 ).set( new Tsr( shape, -7..3 ) )
+            Tsr t2 = new Tsr( shape, -4..5 ).set( new Tsr( shape, -7..3 ) )
+            Tsr t3 = new Tsr( shape, Integer.class, -4..5 ).set( new Tsr( shape, -7..3 ) )
+            Tsr t4 = new Tsr( shape, Short.class, -4..5 ).set( new Tsr( shape, -7..3 ) )
 
         expect:
-            t.toString(mode) == expected
+            t1.toString(mode) == expected
+            t1.dataType == DataType.of( Float.class )
+            t1.data instanceof float[]
+        and :
+            t2.toString(mode) == expected
+            t2.dataType == DataType.of( Double.class )
+            t2.data instanceof double[]
+        and :
+            t3.toString(mode).replace(' ','') == expected.replace('.0','  ').replace(' ','')
+            t3.dataType == DataType.of( Integer.class )
+            t3.data instanceof int[]
+        and :
+            t4.toString(mode).replace(' ','') == expected.replace('.0','  ').replace(' ','')
+            t4.dataType == DataType.of( Short.class )
+            t4.data instanceof short[]
 
         where :
            mode | shape     | expected

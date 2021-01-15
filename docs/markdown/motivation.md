@@ -13,7 +13,7 @@ This is especially true for dedicated <b>Hardware</b>!
 
 This is due to the fact that the backends of these frameworks have been written in nvidia's cuda and C++. 
 Which means that even developers willing to compile for all platforms
-would still be locked out of many AMD, Intel, and ARM Systems when it comes to performance.
+would still be [locked out of AMD, Intel, and ARM](https://discuss.pytorch.org/t/support-for-amd-rocm-gpu/90404/3) systems when it comes to performance.
 
 For that reason Neureka is written in Java and OpenCl.
 Although performance will certainly be impacted 

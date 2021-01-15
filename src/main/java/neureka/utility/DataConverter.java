@@ -35,6 +35,10 @@ SOFTWARE.
 
 package neureka.utility;
 
+import lombok.NoArgsConstructor;
+import neureka.ndim.config.NDConfiguration;
+import org.jetbrains.annotations.Contract;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -485,6 +489,7 @@ public class DataConverter
             return newData;
         }
 
+        @Contract( pure = true )
         public static double[] longToDouble(long[] data) {
             if (data==null) return null;
             double[] newData = new double[data.length];
@@ -492,13 +497,63 @@ public class DataConverter
             return newData;
         }
 
-        public static BigInteger[] longToBigInteger(long[] data) {
+        @Contract( pure = true )
+        public static BigInteger[] longToBigInteger( long[] data ) {
             if (data==null) return null;
             BigInteger[] newData = new BigInteger[data.length];
             for(int i=0; i<data.length; i++) newData[ i ] = BigInteger.valueOf( data[ i ] );
             return newData;
         }
 
+        //---
+
+        @Contract( pure = true )
+        public static double[] objectsToDoubles( Object[] objects, int targetSize ) {
+            double[] data = new double[ targetSize ];
+            for ( int i = 0; i < data.length; i++ ) {
+                if ( objects[ i % objects.length ] instanceof BigDecimal )
+                    data[ i ] = ( (BigDecimal) objects[ i % objects.length ] ).doubleValue();
+                else if ( objects[ i % objects.length ] instanceof Integer )
+                    data[ i ] = (Integer) objects[ i % objects.length ];
+            }
+            return data;
+        }
+
+        @Contract( pure = true )
+        public static float[] objectsToFloats( Object[] objects, int targetSize ) {
+            float[] data = new float[ targetSize ];
+            for ( int i = 0; i < data.length; i++ ) {
+                if ( objects[ i % objects.length ] instanceof BigDecimal )
+                    data[ i ] = ( (BigDecimal) objects[ i % objects.length ] ).floatValue();
+                else if ( objects[ i % objects.length ] instanceof Integer )
+                    data[ i ] = (Integer) objects[ i % objects.length ];
+            }
+            return data;
+        }
+
+        @Contract( pure = true )
+        public static short[] objectsToShorts( Object[] objects, int targetSize ) {
+            short[] data = new short[ targetSize ];
+            for ( int i = 0; i < data.length; i++ ) {
+                if ( objects[ i % objects.length ] instanceof BigDecimal )
+                    data[ i ] = ( (BigDecimal) objects[ i % objects.length ] ).shortValue();
+                else if ( objects[ i % objects.length ] instanceof Integer )
+                    data[ i ] = ( (Integer) objects[ i % objects.length ] ).shortValue();
+            }
+            return data;
+        }
+
+        @Contract( pure = true )
+        public static int[] objectsToInts( Object[] objects, int targetSize ) {
+            int[] data = new int[ targetSize ];
+            for ( int i = 0; i < data.length; i++ ) {
+                if ( objects[ i % objects.length ] instanceof BigDecimal )
+                    data[ i ] = ( (BigDecimal) objects[ i % objects.length ] ).shortValueExact();
+                else if ( objects[ i % objects.length ] instanceof Integer )
+                    data[ i ] = ( (Integer) objects[ i % objects.length ] );
+            }
+            return data;
+        }
     }
 
 

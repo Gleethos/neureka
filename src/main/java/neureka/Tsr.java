@@ -262,7 +262,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 _construct( (int[]) args[ 0 ], (Double) args[ 1 ] );
                 return;
             } else if ( args[ 1 ] instanceof double[] ) {
-                _construct( (int[]) args[ 0 ], (double[]) args[ 1 ] );
+                _constructForDoubles( (int[]) args[ 0 ], (double[]) args[ 1 ] );
                 return;
             } else {
                 this.setDataType( DataType.of( args[1].getClass() ) );
@@ -331,14 +331,16 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public Tsr( List<Integer> shape, List<ValueType> range )
     {
-        int[] shp = new int[ shape.size() ];
-        for( int i = 0; i < shp.length; i++ ) shp[ i ] = shape.get( i );
+        // Nested Groovy list should be unpacked:
         if ( range.size() == 1 && range.get( 0 ) instanceof IntRange ) range = (List<ValueType>) range.get( 0 );
-
-        _constructForRange( shp, (ValueType[]) range.toArray());
+        _constructForRange(
+                shape.stream().mapToInt( e -> e ).toArray(),
+                DataType.of( F64.class ),
+                (ValueType[]) range.toArray()
+        );
     }
 
-    private void _constructForRange( int[] shp, ValueType[] range ) {
+    private void _constructForRange( int[] shp, DataType<?> dataType, ValueType[] range ) {
         if ( range.length != 0 && !( range[ 0 ] instanceof Number ) ) {
             Class<?> givenClass = range[ 0 ].getClass();
             @SuppressWarnings("unchecked")
@@ -351,15 +353,27 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             _setData( value );
             _construct( shp, value );
         } else {
-            double[] value = new double[ NDConfiguration.Utility.szeOfShp( shp ) ];
-            for ( int i = 0; i < value.length; i++ ) {
-                if ( range[ i % range.length ] instanceof BigDecimal ) {
-                    value[ i ] = ( (BigDecimal) range[ i % range.length ] ).doubleValue();
-                } else if ( range[ i % range.length ] instanceof Integer ) {
-                    value[ i ] = (Integer) range[ i % range.length ];
-                }
-            }
-            _construct( shp, value );
+            setDataType( dataType );
+            if ( dataType.getTypeClass() == F64.class )
+                _constructForDoubles(
+                        shp,
+                        DataConverter.Utility.objectsToDoubles( range, NDConfiguration.Utility.szeOfShp( shp ) )
+                );
+            else if ( dataType.getTypeClass() == F32.class  )
+                _constructForFloats(
+                        shp,
+                        DataConverter.Utility.objectsToFloats( range, NDConfiguration.Utility.szeOfShp( shp ) )
+                );
+            else if ( dataType.getTypeClass() == I32.class )
+                _constructForInts(
+                        shp,
+                        DataConverter.Utility.objectsToInts( range, NDConfiguration.Utility.szeOfShp( shp ) )
+                );
+            else if ( dataType.getTypeClass() == I16.class )
+                _constructForShorts(
+                        shp,
+                        DataConverter.Utility.objectsToShorts( range, NDConfiguration.Utility.szeOfShp( shp ) )
+                );
         }
     }
 
@@ -399,7 +413,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                                 ? ( (Double) conf.get( i ) ).doubleValue()
                                 : ( (Integer) conf.get( i ) );
             }
-            _construct( new int[]{ conf.size() }, value );
+            _constructForDoubles( new int[]{ conf.size() }, value );
         }
 
     }
@@ -427,7 +441,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                         value[ i ] = DataConverter.instance().convert( matrix.get( mi ).get( ni ), Double.class );
                     }
                 }
-                _construct( shape, value );
+                _constructForDoubles( shape, value );
             } else {
                 String message = "Provided nested list(s) do not form a regular matrix.";
                 _LOG.error( message );
@@ -449,7 +463,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public Tsr( float[] value )
     {
-        _construct( new int[]{ value.length }, value );
+        _constructForFloats( new int[]{ value.length }, value );
     }
 
     public Tsr( int[] shape, String seed )
@@ -469,7 +483,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
 
     public Tsr( int[] shape, double[] value ) {
-        _construct( shape, value );
+        _constructForDoubles( shape, value );
     }
 
 
@@ -488,9 +502,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public <T> Tsr( List<Integer> shape, Class<T> typeClass, List<T> data )
     {
-        setDataType( DataType.of( typeClass ) );
-        _configureFromNewShape( shape.stream().mapToInt( e -> e ).toArray(), false, false );
-        setValue( data );
+        _constructForRange( shape.stream().mapToInt( e -> e ).toArray(), DataType.of( typeClass ), (ValueType[]) data.toArray());
     }
 
     public Tsr( int[] shape, DataType<?> dataType, Object data )
@@ -532,7 +544,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         ( (double[]) getData())[ 0 ] = value;
     }
 
-    private void _construct( int[] shape, double[] value )
+    private void _constructForDoubles(int[] shape, double[] value )
     {
         int size = NDConfiguration.Utility.szeOfShp( shape );
         setDataType( DataType.of( F64.class ) );
@@ -543,13 +555,35 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _configureFromNewShape( shape, false, true );
     }
 
-    private void _construct( int[] shape, float[] value )
+    private void _constructForFloats(int[] shape, float[] value )
     {
         int size = NDConfiguration.Utility.szeOfShp( shape );
         setDataType( DataType.of( F32.class ) );
         if ( size != value.length ) {
             _allocate( size );
             for ( int i = 0; i < size; i++ ) ( (float[]) getData())[ i ]  = value[ i % value.length ];
+        } else _setData( value );
+        _configureFromNewShape( shape, false, true );
+    }
+
+    private void _constructForInts( int[] shape, int[] value )
+    {
+        int size = NDConfiguration.Utility.szeOfShp( shape );
+        setDataType( DataType.of( I32.class ) );
+        if ( size != value.length ) {
+            _allocate( size );
+            for ( int i = 0; i < size; i++ ) ( (int[]) getData())[ i ]  = value[ i % value.length ];
+        } else _setData( value );
+        _configureFromNewShape( shape, false, true );
+    }
+
+    private void _constructForShorts( int[] shape, short[] value )
+    {
+        int size = NDConfiguration.Utility.szeOfShp( shape );
+        setDataType( DataType.of( I16.class ) );
+        if ( size != value.length ) {
+            _allocate( size );
+            for ( int i = 0; i < size; i++ ) ( (short[]) getData())[ i ]  = value[ i % value.length ];
         } else _setData( value );
         _configureFromNewShape( shape, false, true );
     }

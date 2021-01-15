@@ -146,6 +146,7 @@ class NumericType_Unit_Tests extends Specification
             new F32()  | -5432.39928 |  [-59, -87, -61, 50]                     || -5432.39928 as Float
             new F64()  | -5432.39928 |  [-64, -75, 56, 102, 55, 54, -51, -14]   || -5432.39928 as Double
         /*
+            TODO:
             Verify F32 & F64 byte arrays with the following :
             ------------------------------------------------
             print new I64().targetToForeignBytes( Double.doubleToLongBits( -8495432.3992898 ) )
@@ -154,7 +155,59 @@ class NumericType_Unit_Tests extends Specification
     }
 
 
+    def 'NumericType conversion to holder types yields expected results.'(
+        NumericType num, Object from, Object expected, Class holderType, Class holderArrayType
+    ) {
+        when:
+            def result = num.convertToHolder( from )
 
+        then :
+             result == expected
+
+        and :
+            result.class == expected.class
+
+        and :
+            result.class == holderType
+
+        and :
+            num.holderType() == holderType
+
+        and :
+            num.holderArrayType() == holderArrayType
+
+
+        where :
+            num        |  from             ||  expected        | holderType     |  holderArrayType
+            new I32()  | 3 as Byte         ||  3 as Integer    | Integer.class  |  int[].class
+            new I32()  | 8 as Integer      ||  8 as Integer    | Integer.class  |  int[].class
+            new I32()  | 863.834 as Double ||  863 as Integer  | Integer.class  |  int[].class
+            new I32()  | 2 as Short        ||  2 as Integer    | Integer.class  |  int[].class
+            new I32()  | 9 as Long         ||  9 as Integer    | Integer.class  |  int[].class
+            new I32()  | 23.422 as Float   ||  23 as Integer   | Integer.class  |  int[].class
+
+            new I16()  | 3 as Byte         ||  3 as Short      | Short.class    |  short[].class
+            new I16()  | 8 as Integer      ||  8 as Short      | Short.class    |  short[].class
+            new I16()  | 863.834 as Double ||  863 as Short    | Short.class    |  short[].class
+            new I16()  | 2 as Short        ||  2 as Short      | Short.class    |  short[].class
+            new I16()  | 9 as Long         ||  9 as Short      | Short.class    |  short[].class
+            new I16()  | 23.422 as Float   ||  23 as Short     | Short.class    |  short[].class
+
+            new I8()   | 3 as Byte         ||  3 as Byte       | Byte.class     |  byte[].class
+            new I8()   | 8 as Integer      ||  8 as Byte       | Byte.class     |  byte[].class
+            new I8()   | 863.834 as Double ||  863 as Byte     | Byte.class     |  byte[].class
+            new I8()   | 2 as Short        ||  2 as Byte       | Byte.class     |  byte[].class
+            new I8()   | 9 as Long         ||  9 as Byte       | Byte.class     |  byte[].class
+            new I8()   | 23.422 as Float   ||  23 as Byte      | Byte.class     |  byte[].class
+            //TODO: implement:
+            //new UI8()  | 3 as Byte         ||  3 as Short      | Short.class    |  short[].class
+            //new UI8()  | 8 as Integer      ||  8 as Short      | Short.class    |  short[].class
+            //new UI8()  | 863.834 as Double ||  863 as Short    | Short.class    |  short[].class
+            //new UI8()  | 2 as Short        ||  2 as Short      | Short.class    |  short[].class
+            //new UI8()  | 9 as Long         ||  9 as Short      | Short.class    |  short[].class
+            //new UI8()  | 23.422 as Float   ||  23 as Short     | Short.class    |  short[].class
+
+    }
 
 
 
