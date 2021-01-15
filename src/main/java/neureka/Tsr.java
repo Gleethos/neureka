@@ -1414,6 +1414,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             indexAlias = new IndexAlias( this.rank() );
             set( indexAlias );
         }
+        assert labels.length <= this.rank();
         for( int i = 0; i < labels.length; i++ ) {
             if ( labels[ i ] != null ) {
                 for ( int ii = 0; ii < labels[ i ].length; ii++ ) {

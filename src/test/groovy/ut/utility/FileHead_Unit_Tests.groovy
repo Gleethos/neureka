@@ -29,9 +29,7 @@ class FileHead_Unit_Tests extends Specification
     }
 
     def setup() {
-        Neureka.instance().reset()
-        // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+        Neureka.instance().reset() 
 
         File dir = new File( "build/test-can" )
         if ( ! dir.exists() ) dir.mkdirs()
@@ -40,6 +38,9 @@ class FileHead_Unit_Tests extends Specification
     def 'Test writing IDX file format.'(
         Tsr<?> tensor, Class<NumericType<?,?,?,?>> type, String filename, String expected
     ) {
+        given:
+            Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+
         when : 'A new IDX file handle for the given filename is being instantiated.'
             IDXHead idx = new IDXHead(tensor, "build/test-can/"+filename)
 

@@ -48,11 +48,10 @@ import org.jetbrains.annotations.Contract;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 
 /**
  *  This class is in essence a simple wrapper class for a tensor and a StringBuilder
@@ -87,6 +86,7 @@ public class TsrAsString
     @Getter private boolean _hasRecursiveGraph = false;
     @Getter private boolean _hasDerivatives = false;
 
+    private int[] _shape;
     private Tsr<?> _tensor;
     private StringBuilder _asStr;
     private boolean _legacy = Neureka.instance().settings().view().isUsingLegacyView();
@@ -116,6 +116,7 @@ public class TsrAsString
 
     private void _construct( Tsr tensor, Map< Should, Object > settings )
     {
+        if ( tensor.getNDConf() != null ) _shape = tensor.getNDConf().shape();
         _config = settings;
         _tensor = tensor;
         // TODO: Add some asserts!
@@ -161,7 +162,7 @@ public class TsrAsString
         copy.put( Should.BE_FORMATTED,         code.contains( "f" )                                );
         copy.put( Should.HAVE_GRADIENT,        code.contains( "g" )                                );
         copy.put( Should.HAVE_PADDING_OF,     (code.contains( "p" )) ? 6 : -1                      );
-        copy.put( Should.HAVE_VALUE,          !(code.contains( "shp" ) || code.contains("shape")) );
+        copy.put( Should.HAVE_VALUE,          !(code.contains( "shp" ) || code.contains("shape"))  );
         copy.put( Should.HAVE_RECURSIVE_GRAPH, code.contains( "r" )                                );
         copy.put( Should.HAVE_DERIVATIVES,     code.contains( "d" )                                );
         copy.put( Should.HAVE_SHAPE,           !code.contains( "v" )                               );
@@ -198,10 +199,12 @@ public class TsrAsString
         return this;
     }
 
-    private IntFunction<String> _createValStringifier() {
+    private IntFunction<String> _createValStringifier( Object v )
+    {
         boolean compact = _isCompact;
-        int pad = _padding;
-        Object v = _tensor.getData();
+        int pad = ( _tensor.getDataType().getTypeClass() == String.class )
+                ? (int)(_padding * 2.5)
+                : _padding;
         IntFunction<String> function;
         if ( v instanceof double[] )
             function = i -> ( compact )
@@ -252,7 +255,7 @@ public class TsrAsString
         if ( _hasShape ) _strShape();
         if ( !_hasValue ) return _asStr.toString();
         _$( ":" );
-        if ( _isFormatted ) _format( _tensor.getNDConf().shape(), new int[ _tensor.rank() ], -1 );
+        if ( _isFormatted ) _format( new int[ _tensor.rank() ], -1 );
         else {
             if ( _legacy ) _$( "(" );
             else _$( "[" );
@@ -302,7 +305,7 @@ public class TsrAsString
     private void _stringifyAllValues()
     {
         int max = _shortage;
-        IntFunction<String> getter = _createValStringifier();
+        IntFunction<String> getter = _createValStringifier( _tensor.getData() );
         int size = _tensor.size();
         int trim = ( size - max );
         size = ( trim > 0 ) ? max : size;
@@ -316,73 +319,86 @@ public class TsrAsString
 
     //::: formatted...
 
-    private void _stringifyValueAt(
-            int max,
-            int[] idx,
-            int size
+    private void _buildRow(
+            int size, int trimStart, int trimEnd, int trim, int[] idx, Function<int[],String> getter, String delimiter
     ) {
-        int[] shape = _tensor.getNDConf().shape();
-        IntFunction<String> getter = _createValStringifier();
-        int trim = ( size - max );
-        trim = Math.max( trim, 0 );
-        int trimStart = (size / 2 - trim / 2);
-        int trimEnd = (size / 2 + trim / 2);
-        assert trimEnd - trimStart == trim;
-        //{
-        //    IndexAlias alias = _tensor.find( IndexAlias.class );
-        //    if ( alias != null && idx[ (_legacy) ? 0 : idx.length-1 ] == 0 ) {
-        //
-        //    }
-        //}
         for ( int i = 0; i < size; i++ ) {
             if ( i < trimStart || i >= trimEnd ) {
-                _$( getter.apply( ( _tensor.isVirtual() ) ? 0 : _tensor.i_of_idx( idx ) ) );
-                if ( i < size - 1 ) _$( ", " );
+                _$( getter.apply( idx ) );
+                if ( i < size - 1 ) _$( delimiter );
             }
             else if ( i == trimStart ) _$( "... " )._$( trim )._$( " more ..., " );
 
-            NDConfiguration.Utility.increment( idx, shape );
+            NDConfiguration.Utility.increment( idx, _shape );
         }
     }
 
 
     // A recursive stringifier for formatted tensors...
-    private void _format( int[] shape, int[] idx, int dim )
+    private void _format( int[] idx, int depth )
     {
         int max = ( _shortage * 32 / 50 );
-        dim = ( dim < 0 ) ? 0 : dim;
-        int depth = dim;
-
-        if ( dim == idx.length - 1 ) {
+        depth = ( depth < 0 ) ? 0 : depth;
+        int size = _shape[ depth ];
+        int trim = ( size - max );
+        trim = Math.max( trim, 0 );
+        int trimStart = (size / 2 - trim / 2);
+        int trimEnd = (size / 2 + trim / 2);
+        assert trimEnd - trimStart == trim;
+        IndexAlias alias = _tensor.find( IndexAlias.class );
+        if ( depth == idx.length - 1 ) {
+            if (
+                    alias != null &&
+                            idx[ idx.length - 1 ] == 0 &&
+                            idx[ Math.max( idx.length - 2, 0 ) ] == 0
+            ) {
+                List<Object> key = alias.keysOf( idx.length - 1 );
+                if ( key != null ) {
+                    _$( Util.indent( depth ) );
+                    _$( (_legacy) ? "[ " : "( " );
+                    IntFunction<String> getter = _createValStringifier( key.toArray() );
+                    _buildRow(
+                            size, trimStart, trimEnd, trim,
+                            new int[ idx.length ],
+                            iarr -> getter.apply( iarr[ iarr.length -1 ] ),
+                            (_legacy) ? "][" : ")("
+                    );
+                    _$( (_legacy) ? " ]\n" : " )\n" );
+                }
+            }
             _$( Util.indent( depth ) );
-            _$( "[ " );
-            _stringifyValueAt( max, idx, shape[ dim ] );
-            _$( " ]" );
-        } else {
-            _$( Util.indent( depth ) )._$( "[" );
-            _$( "\n" );
+            _$( (_legacy) ? "( " : "[ " );
+            IntFunction<String> getter = _createValStringifier( _tensor.getData() );
+            Function<int[], String> fun = ( _tensor.isVirtual() )
+                    ? iarr -> getter.apply(0)
+                    : iarr -> getter.apply(_tensor.i_of_idx( iarr ));
 
-            int size = shape[ dim ];
-            int trim = ( size - max );
-            trim = Math.max(trim, 0);
-            int trimStart = (size / 2 - trim / 2);
-            int trimEnd = (size / 2 + trim / 2);
-            assert trimEnd - trimStart == trim;
+            _buildRow( size, trimStart, trimEnd, trim, idx, fun, ", " );
+            _$( (_legacy) ? " )" : " ]" );
+        } else {
+            _$( Util.indent( depth ) )._$( (_legacy) ? "(\n" : "[\n" );
             int i = 0;
             do {
                 if ( i < trimStart || i >= trimEnd )
-                    _format( shape, idx, dim + 1 );
+                    _format( idx, depth + 1 );
                 else if ( i == trimStart )
                     _$( Util.indent( depth + 1 ) )._$( "... " )._$( trim )._$( " more ...\n" );
                 else
-                    idx[ dim ] = trimEnd + 1;
+                    idx[ depth ] = trimEnd + 1;
                 i++;
             }
-            while( idx[ dim ] != 0 );
-
-            _$( Util.indent( depth ) )._$( "]" );
+            while ( idx[ depth ] != 0 );
+            _$( Util.indent( depth ) )._$( (_legacy) ? ")" : "]" );
         }
-        int i = dim - 1;
+        if ( alias != null && depth - 1 >= 0 ) {
+            List<Object> key = alias.keysOf( depth - 1 );
+            if ( key != null ) {
+                _$( (_legacy) ? ":[ " : ":( ");
+                _$( key.get( idx[ depth - 1 ] ).toString() );
+                _$( (_legacy) ? " ]" : " )");
+            }
+        }
+        int i = depth - 1;
         if ( i >= 0 && i < idx.length && idx[ i ] != 0 ) _$( "," );
         _$( "\n" );
     }
@@ -390,10 +406,9 @@ public class TsrAsString
     private void _strShape() {
         boolean legacy = Neureka.instance().settings().view().isUsingLegacyView();
         _$( (legacy) ? "[" : "(" );
-        int[] shape = _tensor.getNDConf().shape();
-        for ( int i = 0; i < shape.length; i++ ) {
-            _$( shape[ i ] );
-            if ( i < shape.length - 1 ) _$( "x" );
+        for ( int i = 0; i < _shape.length; i++ ) {
+            _$( _shape[ i ] );
+            if ( i < _shape.length - 1 ) _$( "x" );
         }
         _$( (legacy) ? "]" : ")" );
     }

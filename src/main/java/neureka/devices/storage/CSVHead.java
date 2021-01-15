@@ -134,18 +134,18 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
 
         if ( !_firstColIsIndex ) {
             index = new String[ _numberOfRows ];
-            StringBuilder prefix = new StringBuilder();
-            for ( int i=0; i<index.length; i++ ) {
-                int position = i % 26;
-                if ( position == 25 ) prefix.append( 'a' + (i / 26) % 26 );
-                index[ i ] = String.join( "", prefix.toString() + ( 'a' + position ) );
-            }
+            for ( int i = 0; i < index.length; i++ ) index[ i ] = String.valueOf( i );
         }
         else index = _rowLabels;
 
         if ( !_firstRowIsLabels ) {
             labels = new String[ _numberOfColumns ];
-            for ( int i = 0; i < labels.length; i++ ) labels[ i ] = String.valueOf( i );
+            StringBuilder prefix = new StringBuilder( );
+            for ( int i=0; i<labels.length; i++ ) {
+                int position = i % 26;
+                if ( position == 25 ) prefix.append( (char) ( i / 26 ) % 26 );
+                labels[ i ] = String.join( "", prefix.toString() + ( (char)( 'a' + position )) );
+            }
         }
         else labels = _colLabels;
 
