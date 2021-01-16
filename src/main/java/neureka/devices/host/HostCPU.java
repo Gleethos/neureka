@@ -51,6 +51,16 @@ public class HostCPU extends AbstractDevice<Number>
     }
 
     @Override
+    public Object valueFor( Tsr<Number> tensor ) {
+        return tensor.getValue();
+    }
+
+    @Override
+    public Number valueFor( Tsr<Number> tensor, int index ) {
+        return tensor.getValueAt( index );
+    }
+
+    @Override
     public Device restore( Tsr tensor ) {
         return this;
     }
@@ -93,27 +103,6 @@ public class HostCPU extends AbstractDevice<Number>
     public Device swap( Tsr former, Tsr replacement ) {
         return this;
     }
-
-    @Override
-    public double[] value64f( Tsr tensor ) {
-        return tensor.value64();
-    }
-
-    @Override
-    public float[] value32f( Tsr tensor ) {
-        return tensor.value32();
-    }
-
-    @Override
-    public double value64f( Tsr tensor, int index ) {
-        return tensor.value64(index);
-    }
-
-    @Override
-    public float value32f( Tsr tensor, int index ) {
-        return tensor.value32(index);
-    }
-
 
     @Override
     public Collection<Tsr<Number>> getTensors() {

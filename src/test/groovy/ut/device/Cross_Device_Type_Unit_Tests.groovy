@@ -92,16 +92,16 @@ class Cross_Device_Type_Unit_Tests extends Specification
             (t.value64() as List<Float>) == expected
 
         when : 'The same underlying data is being queried by calling the device...'
-            def result = (0..<t.size()).collect{device.value32f(t, it)}
+            def result = (0..<t.size()).collect{device.valueFor(t, it)}
 
         then : 'This new result also contains the same elements.'
             result == expected
 
-        when : 'This procedure is now repeated using the method for double precision...'
-            result = (0..<t.size()).collect{device.value64f(t, it)}
-
-        then : 'Again the values are the same!'
-            result == expected as List<Double>
+        //when : 'This procedure is now repeated using the method for double precision...'
+        //    result = (0..<t.size()).collect{device.value64f(t, it)}
+//
+        //then : 'Again the values are the same!'
+        //    result == expected as List<Double>
 
 
         where : 'The following data is being used for tensor instantiation :'

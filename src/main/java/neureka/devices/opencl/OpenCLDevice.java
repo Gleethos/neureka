@@ -580,7 +580,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return this;
     }
 
-    @Override
     public double[] value64f( Tsr<Number> tensor ) {
         cl_tsr clt = tensor.find( cl_tsr.class );
         return _value64f( clt, clt.value.size, 0 );
@@ -606,7 +605,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         }
     }
 
-    @Override
     public float[] value32f( Tsr<Number> tensor ) {
         cl_tsr clt = tensor.find( cl_tsr.class );
         return _value32f( clt, clt.value.size, 0 );
@@ -632,12 +630,20 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
+    public Object valueFor( Tsr<Number> tensor ) {
+        return value32f( tensor );
+    }
+
+    @Override
+    public Number valueFor( Tsr<Number> tensor, int index ) {
+        return value32f( tensor, index );
+    }
+
     public double value64f( Tsr<Number> tensor, int index ) {
         cl_tsr clt = tensor.find( cl_tsr.class );
         return _value64f( clt, 1, index )[ 0 ];
     }
 
-    @Override
     public float value32f( Tsr<Number> tensor, int index ) {
         cl_tsr clt = tensor.find( cl_tsr.class );
         return _value32f( clt, 1, index )[ 0 ];

@@ -2246,9 +2246,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         if ( this.isOutsourced() ) {
             Device device = find( Device.class );
             if ( device != null ) {
-                return ( this.is32() )
-                        ? device.value32f( this )
-                        : device.value64f( this );
+                return device.valueFor( this );
+                //return ( this.is32() )
+                //        ? device.value32f( this )
+                //        : device.value64f( this );
             }
             else return getData();
         }
@@ -2359,7 +2360,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     public double value64( int i ) {
-        if ( this.isOutsourced() ) return find( Device.class ).value64f( this, i );
+        if ( this.isOutsourced() ) {
+            if ( find( Device.class ) instanceof  OpenCLDevice )
+                return find( OpenCLDevice.class ).value64f( (Tsr<Number>) this, i );
+            else return 0.0;
+        }
         if ( this.isVirtual() ) {
             if ( this.is64() ) return ( (double[]) getData() )[ 0 ];
             else return ( (float[]) getData() )[ 0 ];
@@ -2372,7 +2377,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public double[] value64() {
         Device found = this.find( Device.class );
         if ( getData() == null && this.isOutsourced() && found != null ) {
-            return found.value64f( this );
+            if ( found instanceof OpenCLDevice )
+                return ( (OpenCLDevice) found).value64f((Tsr<Number>) this);
+            else return null;
         }
         double[] newValue = DataConverter.instance().convert(getData(), double[].class );
 
@@ -2386,7 +2393,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     public float value32( int i ) {
-        if ( this.isOutsourced() ) return find( Device.class ).value32f( this, i );
+        if ( this.isOutsourced() ) {
+            if ( find( Device.class ) instanceof OpenCLDevice )
+                return find( OpenCLDevice.class ).value32f( (Tsr<Number>) this, i );
+            else return 0.0f;
+        }
         if ( this.isVirtual() ) {
             if ( this.is64() ) return (float) ( (double[]) getData() )[ 0 ];
             else return ( (float[]) getData())[ 0 ];
@@ -2399,7 +2410,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public float[] value32() {
         Device<ValueType> found = this.find( Device.class );
         if ( getData() == null && this.isOutsourced() && found != null ) {
-            return found.value32f( this );
+            if ( found instanceof OpenCLDevice )
+                return ( (OpenCLDevice) found ).value32f( (Tsr<Number>) this);
         }
         float[] newValue = DataConverter.instance().convert( getData(), float[].class );
         if ( this.isVirtual() && newValue != null ) {

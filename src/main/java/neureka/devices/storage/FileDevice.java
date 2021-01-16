@@ -210,23 +210,13 @@ public class FileDevice extends AbstractBaseDevice<Number>
     }
 
     @Override
-    public double[] value64f( Tsr<Number> tensor ) {
-        return new double[0];
+    public Object valueFor( Tsr<Number> tensor ) {
+        return tensor.getValue();
     }
 
     @Override
-    public float[] value32f( Tsr<Number> tensor ) {
-        return new float[0];
-    }
-
-    @Override
-    public double value64f( Tsr<Number> tensor, int index ) {
-        return 0;
-    }
-
-    @Override
-    public float value32f( Tsr<Number> tensor, int index ) {
-        return 0;
+    public Number valueFor( Tsr<Number> tensor, int index ) {
+        return tensor.getValueAt( index );
     }
 
     @Override

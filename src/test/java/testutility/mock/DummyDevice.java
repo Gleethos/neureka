@@ -65,23 +65,13 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public double[] value64f( Tsr tensor ) {
-        return new double[0];
+    public Object valueFor(Tsr<Object> tensor) {
+        return null;
     }
 
     @Override
-    public float[] value32f( Tsr tensor ) {
-        return new float[0];
-    }
-
-    @Override
-    public double value64f(Tsr tensor, int index) {
-        return 0;
-    }
-
-    @Override
-    public float value32f(Tsr tensor, int index) {
-        return 0;
+    public Object valueFor(Tsr<Object> tensor, int index) {
+        return null;
     }
 
     @Override

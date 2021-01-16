@@ -5,6 +5,7 @@ import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.opencl.OpenCLPlatform
 import neureka.devices.opencl.utility.DispatchUtility
+import neureka.dtype.DataType
 import neureka.utility.TsrAsString
 import spock.lang.Specification
 
@@ -35,6 +36,11 @@ class OpenCLDevice_Integration_Tests extends Specification
             Tsr t = new Tsr([4, 3], 2)
             Tsr s = t[1..3, 1..2]
 
+        expect : 'Both tensors share not only the same data but also the same data type.'
+            t.data == s.data
+            t.dataType == DataType.of( Double.class )
+            s.dataType == DataType.of( Double.class )
+
         when : 'We try to add the slice to the device.'
             device.store(s)
 
@@ -50,14 +56,23 @@ class OpenCLDevice_Integration_Tests extends Specification
     {
         given : 'This system supports OpenCL'
             if (!Neureka.instance().canAccessOpenCL()) return
-        and : 'A new tensor belonging to the first found OpenCLDevice instance.'
-            Tsr t = new Tsr([1, 2]).set(Device.find('first'))
+        and : 'A new tensor.'
+            Tsr t = new Tsr([1, 2])
+
+        expect : 'This tensor is initially of type "Double", meaning it is backed by a "double[]" array internally...'
+            t.dataType == DataType.of( Double.class )
+
+        when : 'The tensor is being transferred to the first found OpencCLDevice...'
+            Device.find('first').store( t )
+
+        then : 'The data type of the tensor is being converted to single precision.'
+            t.dataType == DataType.of( Float.class )
 
         when : 'The tensor value is being fetched...'
             def value = t.getValue()
 
-        then : 'This value object is an instance of a "double[]" array.'
-            value instanceof double[]
+        then : 'This value object is an instance of a "float[]" array because the device converted the value.'
+            value instanceof float[]
 
         //when : 'The tensor datatype is being change from double to float...'
         //    t.to32()
