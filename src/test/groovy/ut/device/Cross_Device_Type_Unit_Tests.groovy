@@ -14,6 +14,17 @@ import spock.lang.Specification
 
 class Cross_Device_Type_Unit_Tests extends Specification
 {
+    def setupSpec()
+    {
+        reportHeader """
+            <h2> Cross Device-Type Unit Tests </h2>
+            <p>
+                Specified below are strict tests for the factory methods in the
+                Device interface as well as its various implementations 
+                which should adhere to a certain set of common behaviours.
+            </p>
+        """
+    }
 
     def setup() {
         Neureka.instance().reset()
@@ -96,13 +107,6 @@ class Cross_Device_Type_Unit_Tests extends Specification
 
         then : 'This new result also contains the same elements.'
             result == expected
-
-        //when : 'This procedure is now repeated using the method for double precision...'
-        //    result = (0..<t.size()).collect{device.value64f(t, it)}
-//
-        //then : 'Again the values are the same!'
-        //    result == expected as List<Double>
-
 
         where : 'The following data is being used for tensor instantiation :'
             device                | shape           | data                                               || expected

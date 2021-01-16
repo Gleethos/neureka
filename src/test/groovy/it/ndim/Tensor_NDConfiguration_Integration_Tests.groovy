@@ -11,7 +11,18 @@ import spock.lang.Specification
 
 class Tensor_NDConfiguration_Integration_Tests extends Specification
 {
-    def setupSpec() {
+    def setupSpec()
+    {
+        reportHeader """
+            <h2> Tensor NDConfiguration Integration Tests </h2>
+            <p>
+                Specified below are strict integration tests for tensors and
+                their behaviour with regards to the usage of implementations of the
+                NDConfiguration interface. <br>
+                For certain situations the "Tsr" class should use the correct 
+                implementations of said interface as configuration for internal index mapping...
+            </p>
+        """
         Neureka.instance().reset()
         // Configure printing of tensors to be more compact:
         Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")

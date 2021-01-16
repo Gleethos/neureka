@@ -8,9 +8,8 @@ import spock.lang.Specification;
 
 class Autograd_NN_Integration extends Specification
 {
-
-
-    def setupSpec() {
+    def setupSpec()
+    {
         reportHeader """
             <h2>Simple Neural Network autograd integration test.</h2>
             <p>
