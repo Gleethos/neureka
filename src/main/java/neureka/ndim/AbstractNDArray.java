@@ -180,7 +180,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         };
     }
 
-    public abstract Object getValueAt( int i );
+    public abstract Object getDataAt(int i );
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

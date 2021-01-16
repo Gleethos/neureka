@@ -5,6 +5,7 @@ import lombok.experimental.Accessors;
 import neureka.Tsr;
 import neureka.devices.Storage;
 import neureka.dtype.DataType;
+import neureka.framing.IndexAlias;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
@@ -36,6 +37,29 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
     private Integer _numberOfBytes = null;
     private WeakReference<String[]> _rawData = null;
 
+    public CSVHead( Tsr tensor, String filename ) {
+        super( filename );
+        assert tensor.rank() == 2;
+        _delimiter = ",";
+        IndexAlias alias = (IndexAlias) tensor.find( IndexAlias.class );
+        List<Object> index = alias.keysOf( 0 );
+        List<Object> labels = alias.keysOf( 1 );
+        _firstRowIsLabels = labels != null;
+        _firstColIsIndex = index != null;
+        StringBuilder asCsv = new StringBuilder();
+
+        int[] shape = tensor.getNDConf().shape();
+        assert shape.length == 2;
+        int[] idx = new int[2];
+        for ( int i = 0; i < shape[0]; i++ ) {
+            for ( int ii = 0; ii < shape[1]; ii++ ) {
+                idx[0] = i;
+                idx[1] = ii;
+                //asCsv.append( tensor.getAt(idx) );
+            }
+        }
+
+    }
 
     public CSVHead(
             String fileName,

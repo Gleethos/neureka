@@ -257,11 +257,9 @@ public class TsrAsString
         _$( ":" );
         if ( _isFormatted ) _format( new int[ _tensor.rank() ], -1 );
         else {
-            if ( _legacy ) _$( "(" );
-            else _$( "[" );
+            _$( (_legacy) ? "(" : "[" );
             _stringifyAllValues();
-            if ( _legacy ) _$( ")" );
-            else _$( "]" );
+            _$( (_legacy) ? ")" : "]" );
         }
 
         if ( _hasGradient && ( _tensor.rqsGradient() || _tensor.hasGradient() ) ) {
@@ -376,7 +374,9 @@ public class TsrAsString
             _buildRow( size, trimStart, trimEnd, trim, idx, fun, ", " );
             _$( (_legacy) ? " )" : " ]" );
         } else {
-            _$( Util.indent( depth ) )._$( (_legacy) ? "(\n" : "[\n" );
+            _$( Util.indent( depth ) );
+            if ( depth - 1 > 0 && alias != null ) _buildSingleLabel( alias, depth, idx )._$(":");
+            _$( (_legacy) ? "(\n" : "[\n" );
             int i = 0;
             do {
                 if ( i < trimStart || i >= trimEnd )
@@ -390,17 +390,20 @@ public class TsrAsString
             while ( idx[ depth ] != 0 );
             _$( Util.indent( depth ) )._$( (_legacy) ? ")" : "]" );
         }
-        if ( alias != null && depth - 1 >= 0 ) {
-            List<Object> key = alias.keysOf( depth - 1 );
-            if ( key != null ) {
-                _$( (_legacy) ? ":[ " : ":( ");
-                _$( key.get( idx[ depth - 1 ] ).toString() );
-                _$( (_legacy) ? " ]" : " )");
-            }
-        }
+        if ( depth - 1 == 0 && alias != null ) _$(":")._buildSingleLabel( alias, depth, idx );
         int i = depth - 1;
         if ( i >= 0 && i < idx.length && idx[ i ] != 0 ) _$( "," );
         _$( "\n" );
+    }
+
+    private TsrAsString _buildSingleLabel( IndexAlias alias, int depth, int[] idx ) {
+        List<Object> key = alias.keysOf( depth - 1 );
+        if ( key != null ) {
+            _$( (_legacy) ? "[ " : "( ");
+            _$( key.get( idx[ depth - 1 ] ).toString() );
+            _$( (_legacy) ? " ]" : " )");
+        }
+        return this;
     }
 
     private void _strShape() {

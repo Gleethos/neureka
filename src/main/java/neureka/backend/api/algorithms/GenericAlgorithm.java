@@ -62,7 +62,7 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<Algorithm> {
                                                 ( start, end ) -> {
                                                     for ( int i = start; i < end; i++ ) {
                                                         for ( int ii = 0; ii < inputs.length; ii++ ) {
-                                                            inputs[ ii ] = call.getTensor(1+ii).getElement(i);
+                                                            inputs[ ii ] = call.getTensor(1+ii).getValueAt(i);
                                                         }
                                                         call.getTensor( 0 ).setAt(i, shell.evaluate( expression ) );
                                                     }

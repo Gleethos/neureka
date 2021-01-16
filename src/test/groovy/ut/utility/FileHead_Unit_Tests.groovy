@@ -174,8 +174,8 @@ class FileHead_Unit_Tests extends Specification
         when :
             CSVHead csv = new CSVHead( "build/resources/test/csv/" + filename, params )
             Tsr loaded = csv.load()
-            loaded.forEach( e -> hash = ( hash + e ).digest('md5') )
-            println(loaded)
+            hash = loaded.toString().digest('md5')//.forEach( e -> hash = ( hash + e ).digest('md5') )
+            //println(loaded)
         then :
             loaded != null
             !loaded.isVirtual()
@@ -194,9 +194,9 @@ class FileHead_Unit_Tests extends Specification
 
         where : 'The following jpg files with their expected shape and hash were used.'
             filename      | params                  || byteSize | shape    | expected
-            "biostats.csv"| [:]                     || 753      | [19, 5]  | "96aacf13cc7be153945722b31632b36a"
-            "biostats.csv"| [firstRowIsLabels:true] || 702      | [18, 5]  | "ddece2f325da089d191ef2efb1df3ba4"
-            "biostats.csv"| [firstColIsIndex:true]  || 639      | [19, 4]  | "c2bc090f87304b3844b83fa7bf2bba38"
+            "biostats.csv"| [:]                     || 753      | [19, 5]  | "2719bfaaff7cc11e12ccdc3ed7ddafd3"
+            "biostats.csv"| [firstRowIsLabels:true] || 702      | [18, 5]  | "e0362ab6eb19262af7f6dfab5c5e09df"
+            "biostats.csv"| [firstColIsIndex:true]  || 639      | [19, 4]  | "81a782982e43d6eb56237474657ef636"
     }
 
 

@@ -340,6 +340,17 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         );
     }
 
+    public Tsr( int[] shape, List<ValueType> range )
+    {
+        // Nested Groovy list should be unpacked:
+        if ( range.size() == 1 && range.get( 0 ) instanceof IntRange ) range = (List<ValueType>) range.get( 0 );
+        _constructForRange(
+                shape,
+                DataType.of( F64.class ),
+                (ValueType[]) range.toArray()
+        );
+    }
+
     private void _constructForRange( int[] shp, DataType<?> dataType, ValueType[] range ) {
         if ( range.length != 0 && !( range[ 0 ] instanceof Number ) ) {
             Class<?> givenClass = range[ 0 ].getClass();
@@ -1297,7 +1308,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
             @Override
             public ValueType next() {
-                Object o = getValueAt( _ndi.i() );
+                Object o = getDataAt( _ndi.i() );
                 _ndi.increment();
                 _count ++;
                 return (ValueType) o;
@@ -1664,15 +1675,27 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      */
 
     /**
+     *  The following method enables access to specific elements within the tensor.
+     *  The method name also translates to the subscript operator in Groovy.
+     *
+     * @param idx The index of the element which should be returned.
+     * @return An element located at the provided index.
+     */
+    public Object getAt( int[] idx ) {
+        return getDataAt( getNDConf().i_of_idx( idx ) );
+    }
+
+    /**
      *  The following method enables access to scalar values.
      *  The method name also translates to the subscript operator in Groovy.
      *
      * @param idx The index of the element which should be returned.
      * @return A scalar value located at the provided index.
      */
-    public double getAt( int[] idx ) {
+    public double getF64( int[] idx ) {
         return value64( i_of_idx( idx ) );
     }
+
 
     /**
      *  The following method enables the creation of tensor slices which access
@@ -1688,19 +1711,20 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return getAt( args );
     }
 
-    public Object getAt( int i ) {
-        return getAt( Arrays.asList(_NDConf.idx_of_i( i )).toArray() );
+    /**
+     *  This getter method creates and returns a slice of the original tensor.
+     *  The returned slice is a scalar tensor wrapping a single value element which
+     *  is being targeted by the provided integer index.
+     *
+     * @param i The index of the value item which should be returned as a tensor instance.
+     * @return A tensor holding a single value element which is internally still residing in the original tensor.
+     */
+    public Tsr<ValueType> getAt( int i ) {
+        return (Tsr<ValueType>) getAt( new Object[]{ i, i } );
     }
 
-    public Object getElement( int i ) {
-        if ( getData() instanceof Object[] ) return ( (Object[]) getData() )[ _NDConf.i_of_i( i ) ];
-        else if ( getData() instanceof float[]  ) return ( (float[])  getData() )[ _NDConf.i_of_i( i ) ];
-        else if ( getData() instanceof double[] ) return ( (double[]) getData() )[ _NDConf.i_of_i( i ) ];
-        else if ( getData() instanceof int[]    ) return ( (int[])    getData() )[ _NDConf.i_of_i( i ) ];
-        else if ( getData() instanceof long[]   ) return ( (long[])   getData() )[ _NDConf.i_of_i( i ) ];
-        else if ( getData() instanceof short[]  ) return ( (short[])  getData() )[ _NDConf.i_of_i( i ) ];
-        else if ( getData() instanceof byte[]   ) return ( (byte[])   getData() )[ _NDConf.i_of_i( i ) ];
-        return null;
+    public Object getValueAt( int i ) {
+        return getDataAt( _NDConf.i_of_i( i ) );
     }
 
     public Tsr<ValueType> setAt( int i, ValueType o ) {
@@ -2147,7 +2171,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
 
     @Override
-    public Object getValueAt( int i )
+    public Object getDataAt(int i )
     {
         if ( getData() instanceof float[] ) return ( (float[]) getData())[ i ];
         else if ( getData() instanceof double[] ) return ( (double[]) getData())[ i ];

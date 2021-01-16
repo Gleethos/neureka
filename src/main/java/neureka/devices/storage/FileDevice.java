@@ -140,6 +140,12 @@ public class FileDevice extends AbstractBaseDevice<Number>
             } catch ( Exception e ) {
                 e.printStackTrace();
             }
+        } else if ( filename.endsWith(".csv") ) {
+            try {
+                head = new CSVHead( tensor, _directory + "/" + filename );
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
         } else {
             try {
                 if ( !filename.endsWith(".idx") ) filename += ".idx";
