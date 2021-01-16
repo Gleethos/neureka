@@ -78,7 +78,9 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         def s = a[[1, -2]]
 
         then:
-        assert s == 2.0
+        assert s.toString() == "[1x1]:(2.0)"
+        assert s.getValueAt(0) == 2.0
+
         assert b.toString().contains(
                 "7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
         )
@@ -90,7 +92,10 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         s = a[1, -2]
 
         then:
-        assert s == 2.0
+        assert s.toString() == "[1x1]:(2.0)"
+        assert s.getValueAt(0) == 2.0
+        assert s.getDataAt(0) == 1.0
+        assert s.getDataAt(1) == 2.0
         assert b.toString().contains(
                 "7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
         )

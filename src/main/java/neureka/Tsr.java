@@ -88,6 +88,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.standard.operations.other.Reshape;
+import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.*;
 import neureka.ndim.AbstractNDArray;
@@ -1720,11 +1721,18 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @return A tensor holding a single value element which is internally still residing in the original tensor.
      */
     public Tsr<ValueType> getAt( int i ) {
-        return (Tsr<ValueType>) getAt( new Object[]{ i, i } );
+        return getAt( new Object[]{ i, i } );
     }
 
-    public Object getValueAt( int i ) {
-        return getDataAt( _NDConf.i_of_i( i ) );
+    /**
+     *  The following method return a raw vale item within this tensor
+     *  targeted by a scalar index.
+     *
+     * @param i The scalar index of the value item which should be returned by the method.
+     * @return The value item found at the targeted index.
+     */
+    public ValueType getValueAt( int i ) {
+        return (ValueType) getDataAt( _NDConf.i_of_i( i ) );
     }
 
     public Tsr<ValueType> setAt( int i, ValueType o ) {
@@ -1738,12 +1746,12 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this;
     }
 
-    public Object getAt( double i ) {
-        return getAt( Arrays.asList( _NDConf.idx_of_i( (int) Math.floor( i ) ) ).toArray() );
+    public Tsr<ValueType> getAt( double i ) {
+        return (Tsr<ValueType>) getAt( Arrays.asList( _NDConf.idx_of_i( (int) Math.floor( i ) ) ).toArray() );
     }
 
-    public Object getAt( BigDecimal i ) {
-        return getAt( Arrays.asList( _NDConf.idx_of_i(( i ).intValue()) ).toArray() );
+    public Tsr<ValueType> getAt( BigDecimal i ) {
+        return (Tsr<ValueType>) getAt( Arrays.asList( _NDConf.idx_of_i(( i ).intValue()) ).toArray() );
     }
 
     public Object getAt( Map<?,?> rangToStrides )
@@ -1782,12 +1790,12 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param key This object might be a wide range of objects including maps, lists or arrays...
      * @return A slice tensor or scalar value.
      */
-    public Object getAt( Object key ) {
+    public Tsr<ValueType> getAt( Object key ) {
         if ( key == null ) return this;
         if ( key instanceof Object[] && ((Object[]) key).length == 0 ) key = new ArrayList<>();
         if ( key instanceof List && ( (List<?>) key ).isEmpty() ) {
             /*
-                An empty List implementation instance is being interpreted as
+                An empty List instance is being interpreted as
                 the request to create an identical slice, meaning that the
                 resulting tensor views the same data as its parent while not
                 being the same instance. (In a sense, its a shallow copy!)
@@ -1804,24 +1812,24 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             boolean allInt = true;
             for ( Object o : (Object[]) key ) allInt = allInt && o instanceof Integer;
             if ( allInt && ((Object[]) key).length == rank() ) {
-                key = _intArray((Object[]) key);
-                newOffset = (int[]) key;
-                if ( key != null ) {
+                newOffset = _intArray((Object[]) key);
+                if ( newOffset != null ) {
                     for ( int i = 0; i < this.rank(); i++ )
                         newOffset[i] = ( newOffset[i] < 0 ) ? _NDConf.shape( i ) + newOffset[ i ] : newOffset[ i ];
-                    return IO.getFrom( this, newOffset );
+                    for ( int i = 0; i < this.rank(); i++ )
+                        ((Object[])key)[i] = newOffset[i];
+                    allInt = false;
                 }
-            } else {
-                boolean hasScale = false;
-                for ( Object o : (Object[]) key ) hasScale = hasScale || o instanceof Map;
-                if ( allInt ) _configureSubsetFromRanges(
-                        new Object[]{ _intArray( (Object[]) key ) },
-                        newOffset, newSpread, //idxbase,
-                        newShape,
-                        0
-                );
-                else _configureSubsetFromRanges( (Object[]) key, newOffset, newSpread, newShape, 0 );
             }
+            boolean hasScale = false;
+            for ( Object o : (Object[]) key ) hasScale = hasScale || o instanceof Map;
+            if ( allInt ) _configureSubsetFromRanges(
+                    new Object[]{ _intArray( (Object[]) key ) },
+                    newOffset, newSpread,
+                    newShape,
+                    0
+            );
+            else _configureSubsetFromRanges( (Object[]) key, newOffset, newSpread, newShape, 0 );
         } else {
             String message = "Cannot create tensor slice from key of type '" + key.getClass().getName() + "'!";
             _LOG.error( message );
@@ -1930,17 +1938,13 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             int first = 0;
             int last = 0;
             if ( ranges[ i ] instanceof int[] ) {
-                if ( ranges[ i ] instanceof int[] ) {
-                    List<Integer> intList = new ArrayList<>( ( (int[]) ranges[ i ] ).length );
-                    for ( int ii : (int[]) ranges[ i ] ) intList.add( ii );
-                    ranges[ i ] = intList;
-                }
+                List<Integer> intList = new ArrayList<>( ( (int[]) ranges[ i ] ).length );
+                for ( int ii : (int[]) ranges[ i ] ) intList.add( ii );
+                ranges[ i ] = intList;
             } else if ( ranges[ i ] instanceof String[] ) {
-                if ( ranges[ i ] instanceof String[] ) {
-                    List<String> strList = new ArrayList<>( ( (String[]) ranges[ i ] ).length);
-                    for ( String ii : (String[]) ranges[ i ] ) strList.add( ii );
-                    ranges[ i ] = strList;
-                }
+                List<String> strList = new ArrayList<>( ( (String[]) ranges[ i ] ).length);
+                for ( String ii : (String[]) ranges[ i ] ) strList.add( ii );
+                ranges[ i ] = strList;
             }
             if ( !( ranges[ i ] instanceof  List ) ) {
                 if ( ranges[ i ] instanceof Map ) {
@@ -2173,13 +2177,20 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     @Override
     public Object getDataAt(int i )
     {
-        if ( getData() instanceof float[] ) return ( (float[]) getData())[ i ];
+        if ( this.isOutsourced() ) {
+            Device<ValueType> device = this.find( Device.class );
+            if ( device instanceof OpenCLDevice ) {
+                return ( (OpenCLDevice) device ).value64f( (Tsr<Number>) this, i );
+            }
+        }
+        else if ( getData() instanceof float[] ) return ( (float[]) getData())[ i ];
         else if ( getData() instanceof double[] ) return ( (double[]) getData())[ i ];
         else if ( getData() instanceof short[] ) return ( (short[]) getData())[ i ];
         else if ( getData() instanceof int[] ) return ( (int[]) getData())[ i ];
         else if ( getData() instanceof byte[] ) return ( (byte[]) getData())[ i ];
         else if ( getData() instanceof long[] ) return ( (long[]) getData())[ i ];
         else return ( (ValueType[]) getData())[ i ];
+        return null;
     }
 
     public Tsr<ValueType> setValue64( double[] value ) {
