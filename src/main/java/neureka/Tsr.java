@@ -117,15 +117,17 @@ import java.util.stream.Collectors;
 
 
 /**
- *
- *  A tensor is a container which can house data in N dimensions.
- *  Usually elements of this container are numeric.
- *  This means that:
+ *  This class name "Tsr" is a 3 letter abbreviation of the term "tensor", a mathematical concept.
+ *  A tensor is a type of multidimensional data-structure with certain transformation properties.
+ *  Technically however, it is mostly a simple container / data-structure which can house data indexed by N dimensions.
+ *  Therefore it is often also described as an nd-array.
+ *  Elements of a tensor are also mostly numeric.
+ *  This means that: <br>
  *  ...a tensor of rank 0 is a scalar, a tensor of rank 1 is a vector and a tensor of rank 2 is a matrix, etc...
- *
- *  Therefore tensors are a perfect fit for applying various operations on them.
+ *  <br><br>
+ *  Consequently, tensors are a perfect fit for applying various operations on them.
  *  Such operations might be simple elementwise operations or more complex linear operations like
- *  matrix- or even tensor multiplications.
+ *  the dot-product, matrix- or even tensor multiplications.
  *
  * @param <ValueType>
  */
@@ -160,12 +162,12 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     /**
      *  The version of the data ( _data ) stored within this tensor.
-     *  Gets incremented every time an inline operation occurs!
+     *  It gets incremented every time an inline operation occurs!
      *  GraphNode instances tied to this tensor (as component) store
      *  a reference version which is a copy of this field.
-     *  If this version changes despite there being a GraphNode which might
-     *  perform auto-differentiation at some point then an exception will be thrown for debugging.
-     *
+     *  If this version changes, despite there being a GraphNode which might
+     *  perform auto-differentiation at some point, then an exception will be thrown for debugging.
+     *  <br>
      *  The getter returns the version of the data (_data) stored within this tensor.
      */
     @Getter
@@ -1725,7 +1727,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     /**
-     *  The following method return a raw vale item within this tensor
+     *  The following method returns a raw value item within this tensor
      *  targeted by a scalar index.
      *
      * @param i The scalar index of the value item which should be returned by the method.
@@ -1735,14 +1737,33 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return (ValueType) getDataAt( _NDConf.i_of_i( i ) );
     }
 
+    /**
+     *  This method returns a raw value item within this tensor
+     *  targeted by an index array which is expect to hold an index for
+     *  every dimension of the shape of this tensor.
+     *  So the provided array must have the same length as the
+     *  rank of this tensor!
+     *
+     * @param idx The index array which targets a single value item within this tensor.
+     * @return The found raw value item targeted by the provided index array.
+     */
+    public ValueType getValueAt( int[] idx ) {
+        return (ValueType) getDataAt( _NDConf.i_of_idx( idx ) );
+    }
+
+    /**
+     *  Individual entries for value items in this tensor can be set
+     *  via this method.
+     *
+     * @param i The scalar index targeting a specific value position within this tensor
+     *          which ought to be replaced by the one provided by the second parameter
+     *          of this method.
+     *
+     * @param o The item which ought to be placed at the targeted position.
+     * @return This very tensor in order to enable method chaining...
+     */
     public Tsr<ValueType> setAt( int i, ValueType o ) {
-        if ( getData() instanceof Object[] ) ( (Object[]) getData() )[ _NDConf.i_of_i( i ) ] = o;
-        else if ( getData() instanceof float[]  ) ( (float[])  getData() )[ _NDConf.i_of_i( i ) ] = (float)  o;
-        else if ( getData() instanceof double[] ) ( (double[]) getData() )[ _NDConf.i_of_i( i ) ] = (double) o;
-        else if ( getData() instanceof int[]    ) ( (int[])    getData() )[ _NDConf.i_of_i( i ) ] = (int)    o;
-        else if ( getData() instanceof long[]   ) ( (long[])   getData() )[ _NDConf.i_of_i( i ) ] = (long)   o;
-        else if ( getData() instanceof short[]  ) ( (short[])  getData() )[ _NDConf.i_of_i( i ) ] = (short)  o;
-        else if ( getData() instanceof byte[]   ) ( (byte[])   getData() )[ _NDConf.i_of_i( i ) ] = (byte)   o;
+        setDataAt( _NDConf.i_of_i( i ), o );
         return this;
     }
 
@@ -2173,9 +2194,14 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
+    /**
+     *  A tensor ought to have some way to access its underlying data array.
+     *  This method simple returns an element within this data array sitting at position "i".
+     * @param i The position of the targeted item within the raw data array of the tensor.
+     * @return The found object sitting at the specified index position.
+     */
     @Override
-    public Object getDataAt(int i )
+    public Object getDataAt( int i )
     {
         if ( this.isOutsourced() ) {
             Device<ValueType> device = this.find( Device.class );
@@ -2191,6 +2217,25 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         else if ( getData() instanceof long[] ) return ( (long[]) getData())[ i ];
         else return ( (ValueType[]) getData())[ i ];
         return null;
+    }
+
+    /**
+     *  A tensor ought to have some way to selectively modify its underlying data array.
+     *  This method simply returns an element within this data array sitting at position "i".
+     * @param i The index of the data array entry which ought to be addressed.
+     * @param o The object which ought to be placed at the requested position.
+     * @return This very tensor in order to enable method chaining.
+     */
+    @Override
+    public Tsr<ValueType> setDataAt( int i, ValueType o ) {
+        if ( getData() instanceof Object[] ) ( (Object[]) getData() )[ i ] = o;
+        else if ( getData() instanceof float[]  ) ( (float[])  getData() )[ i ] = (float)  o;
+        else if ( getData() instanceof double[] ) ( (double[]) getData() )[ i ] = (double) o;
+        else if ( getData() instanceof int[]    ) ( (int[])    getData() )[ i ] = (int)    o;
+        else if ( getData() instanceof long[]   ) ( (long[])   getData() )[ i ] = (long)   o;
+        else if ( getData() instanceof short[]  ) ( (short[])  getData() )[ i ] = (short)  o;
+        else if ( getData() instanceof byte[]   ) ( (byte[])   getData() )[ i ] = (byte)   o;
+        return this;
     }
 
     public Tsr<ValueType> setValue64( double[] value ) {

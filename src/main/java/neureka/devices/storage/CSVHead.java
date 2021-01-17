@@ -50,12 +50,12 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
 
         int[] shape = tensor.getNDConf().shape();
         assert shape.length == 2;
-        int[] idx = new int[2];
-        for ( int i = 0; i < shape[0]; i++ ) {
-            for ( int ii = 0; ii < shape[1]; ii++ ) {
+        int[] idx = new int[ 2 ];
+        for ( int i = 0; i < shape[ 0 ]; i++ ) {
+            for ( int ii = 0; ii < shape[ 1 ]; ii++ ) {
                 idx[0] = i;
                 idx[1] = ii;
-                //asCsv.append( tensor.getAt(idx) );
+                asCsv.append( tensor.getValueAt(0) );
             }
         }
 

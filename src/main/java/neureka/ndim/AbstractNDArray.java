@@ -87,6 +87,16 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         else return null;
     }
 
+    /**
+     *  This method enables modifying the data-type configuration of this NDArray.
+     *  Warning! The method should not be used unless absolutely necessary.
+     *  This is because it can cause unpredictable inconsistencies between the
+     *  underlying DataType instance of this NDArray and the actual type of the actual
+     *  data it is wrapping (or it is referencing on a Device).
+     *
+     * @param dataType The new dataType which ought to be set.
+     * @return The final instance type of this class which enables method chaining.
+     */
     public InstanceType setDataType( DataType<?> dataType )
     {
         if ( _data != null ) {
@@ -180,10 +190,33 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
         };
     }
 
-    public abstract Object getDataAt(int i );
+    /**
+     *  An NDArray implementation ought to have some way to access its underlying data array.
+     *  This method simple returns an element within this data array sitting at position "i".
+     * @param i The position of the targeted item within the raw data array of an NDArray implementation.
+     * @return The found object sitting at the specified index position.
+     */
+    public abstract Object getDataAt( int i );
+
+    /**
+     *  An NDArray implementation ought to have some way to selectively modify its underlying data array.
+     *  This method simply returns an element within this data array sitting at position "i".
+     * @param i The index of the data array entry which ought to be addressed.
+     * @param o The object which ought to be placed at the requested position.
+     * @return This very tensor in order to enable method chaining.
+     */
+    public abstract InstanceType setDataAt( int i, ValueType o );
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    /**
+     *  This method compares the passed class with the underlying data-type of this NDArray.
+     *  If the data-type of this NDArray is equivalent to the passed class then the returned
+     *  boolean will be true, otherwise the method returns false.
+     *
+     * @param typeClass The class which ought to be compared to the underlying data-type of this NDArray.
+     * @return The truth value of the question: Does this NDArray implementation hold the data of the passed type?
+     */
     public boolean is( Class<?> typeClass ) {
         DataType<?> type = DataType.of( typeClass );
         return type == _dataType;
@@ -213,12 +246,17 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
+    /**
+     *  This method sets the NDConfiguration of this NDArray.
+     *  Therefore, it should not be used lightly as it can cause major internal inconsistencies.
+     *
+     * @param ndConfiguration The new NDConfiguration instance which ought to be set.
+     * @return The final instance type of this class which enables method chaining.
+     */
     public InstanceType setNDConf( NDConfiguration ndConfiguration ) {
         _NDConf = ndConfiguration;
         return (InstanceType) this;
     }
-
 
     //---
 
@@ -266,7 +304,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
 
 
     /**
-     *  Static methods.
+     *  Static utility methods for the NDArray.
      */
     public static class Utility
     {
