@@ -1423,9 +1423,21 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      */
     public Tsr<ValueType> label( String[][] labels )
     {
+        _label( null, labels );
+        return this;
+    }
+
+    public Tsr<ValueType> label( String tensorName, String[][] labels )
+    {
+        _label( tensorName, labels );
+        return this;
+    }
+
+    private void _label( String tensorName, String[][] labels )
+    {
         IndexAlias indexAlias = find( IndexAlias.class );
         if ( indexAlias == null ) {
-            indexAlias = new IndexAlias( this.rank() );
+            indexAlias = new IndexAlias( this.rank(), tensorName );
             set( indexAlias );
         }
         assert labels.length <= this.rank();
@@ -1436,7 +1448,6 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 }
             }
         }
-        return this;
     }
 
     /**
@@ -1458,7 +1469,14 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public Tsr<ValueType> label( List<List<Object>> labels )
     {
         IndexAlias indexAlias = find( IndexAlias.class );
-        if ( indexAlias == null ) set( new IndexAlias( labels ) );
+        if ( indexAlias == null ) set( new IndexAlias( labels, null ) );
+        return this;
+    }
+
+    public Tsr<ValueType> label( String tensorName, List<List<Object>> labels )
+    {
+        IndexAlias indexAlias = find( IndexAlias.class );
+        if ( indexAlias == null ) set( new IndexAlias( labels, tensorName ) );
         return this;
     }
 
@@ -1479,10 +1497,15 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      */
     public Tsr<ValueType> label( Map<Object, List<Object>> labels )
     {
-        this.set( new IndexAlias<>( labels, this ) );
+        this.set( new IndexAlias<>( labels, this, null ) );
         return this;
     }
 
+    public Tsr<ValueType> label( String tensorName, Map<Object, List<Object>> labels )
+    {
+        this.set( new IndexAlias<>( labels, this, tensorName ) );
+        return this;
+    }
 
     /*==================================================================================================================
     |

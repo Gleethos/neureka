@@ -353,9 +353,9 @@ public class TsrAsString
                 List<Object> key = alias.keysOf( idx.length - 1 );
                 if ( key != null ) {
                     _$( Util.indent( depth ) );
-                    _$( (_legacy) ? "[ " : "( " );
-                    int startIndex = key.size() - _shape[ idx.length - 1 ];
-                    IntFunction<String> getter = _createValStringifier( key.subList( startIndex, key.size() ).toArray() );
+                    _$( (_legacy) ? "[ " : "( " ); // The following assert has prevented many String miscarriages!
+                    assert key.size() - _shape[ idx.length - 1 ] == 0; // This is a basic requirement for the label size...
+                    IntFunction<String> getter = _createValStringifier( key.toArray() );
                     _buildRow(
                             size, trimStart, trimEnd, trim,
                             new int[ idx.length ],
@@ -363,14 +363,8 @@ public class TsrAsString
                             (_legacy) ? "][" : ")("
                     );
                     _$( (_legacy) ? " ]" : " )" );
-                    if ( startIndex > 0 ) {
-                        String headLabel = key.subList(0, startIndex)
-                                .stream()
-                                .map(Object::toString)
-                                .collect(Collectors.joining(" | "));
-                        if ( !headLabel.trim().equals("") )
-                            _$( (_legacy) ? ":[ " : ":( " )._$( headLabel )._$( (_legacy) ? " ]" : " )" );
-                    }
+                    if ( alias.getTensorName() != null )
+                        _$( (_legacy) ? ":[ " : ":( " )._$( alias.getTensorName() )._$( (_legacy) ? " ]" : " )" );
                     _$( "\n" );
                 }
             }
@@ -378,11 +372,13 @@ public class TsrAsString
             _$( (_legacy) ? "( " : "[ " );
             IntFunction<String> getter = _createValStringifier( _tensor.getData() );
             Function<int[], String> fun = ( _tensor.isVirtual() )
-                    ? iarr -> getter.apply(0)
-                    : iarr -> getter.apply(_tensor.i_of_idx( iarr ));
+                    ? iarr -> getter.apply( 0 )
+                    : iarr -> getter.apply( _tensor.i_of_idx( iarr ) );
 
             _buildRow( size, trimStart, trimEnd, trim, idx, fun, ", " );
             _$( (_legacy) ? " )" : " ]" );
+
+            if ( alias != null ) _$( ":" )._buildSingleLabel( alias, depth, idx );
         } else {
             _$( Util.indent( depth ) );
             if ( depth - 1 > 0 && alias != null ) _buildSingleLabel( alias, depth, idx )._$(":");
@@ -394,23 +390,23 @@ public class TsrAsString
                 else if ( i == trimStart )
                     _$( Util.indent( depth + 1 ) )._$( "... " )._$( trim )._$( " more ...\n" );
                 else
-                    idx[ depth ] = trimEnd + 1;
+                    idx[ depth ] = trimEnd + 1; // Jumping over trimmed entries!
                 i++;
             }
             while ( idx[ depth ] != 0 );
             _$( Util.indent( depth ) )._$( (_legacy) ? ")" : "]" );
         }
-        if ( depth - 1 == 0 && alias != null ) _$( ":" )._buildSingleLabel( alias, depth, idx );
         int i = depth - 1;
         if ( i >= 0 && i < idx.length && idx[ i ] != 0 ) _$( "," );
         _$( "\n" );
     }
 
     private TsrAsString _buildSingleLabel( IndexAlias alias, int depth, int[] idx ) {
-        List<Object> key = alias.keysOf( depth - 1 );
+        int pos= depth - 1;
+        List<Object> key = alias.keysOf( pos );
         if ( key != null ) {
             _$( (_legacy) ? "[ " : "( ");
-            _$( key.get( idx[ depth - 1 ] ).toString() );
+            _$( key.get( ( _shape[ pos ] + idx[ pos ] - 1 ) % _shape[ pos ] ).toString() );
             _$( (_legacy) ? " ]" : " )");
         }
         return this;

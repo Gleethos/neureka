@@ -190,16 +190,16 @@ class FileHead_Unit_Tests extends Specification
             loaded.dataType == DataType.of( String.class )
 
         where : 'The following jpg files with their expected shape and hash were used.'
-            filename      | params                  || byteSize | shape    | expected
-            "biostats.csv"| [:]                     || 753      | [19, 5]  | "2719bfaaff7cc11e12ccdc3ed7ddafd3"
-            "biostats.csv"| [firstRowIsLabels:true] || 702      | [18, 5]  | "e0362ab6eb19262af7f6dfab5c5e09df"
-            "biostats.csv"| [firstColIsIndex:true]  || 639      | [19, 4]  | "81a782982e43d6eb56237474657ef636"
+            filename      | params                                        || byteSize | shape    | expected
+            "biostats.csv"| [:]                                           || 753      | [19, 5]  | "dd82721ee8d78239019836213978e167"
+            "biostats.csv"| [firstRowIsLabels:true]                       || 702      | [18, 5]  | "69840bb6a814c5f2767fb1534f355f31"
+            "biostats.csv"| [firstColIsIndex:true]                        || 639      | [19, 4]  | "64d61739211d552aa649c7f65771a155"
+            "biostats.csv"| [firstColIsIndex:true,firstRowIsLabels:true]  || 594      | [18, 4]  | "047af162925a68a47851f55670a83667"
     }
 
 
-    def '...labeled tenors are stored'() {
-
-
+    def 'Labeled tenors will be stored with their labels included when saving them as CSV.'()
+    {
         given:
             Tsr t = new Tsr([2,3], DataType.of(String.class), [
                     '1', 'hi', ':)',
@@ -212,8 +212,8 @@ class FileHead_Unit_Tests extends Specification
         expect:
             t.toString() == "(2x3):[\n" +
                             "   (        A       )(       B       )(       C        )\n" +
-                            "   [        1       ,        hi      ,        :)       ]:( r2 ),\n" +
-                            "   [        2       ,       hey      ,        ;)       ]:( r1 )\n" +
+                            "   [        1       ,        hi      ,        :)       ]:( r1 ),\n" +
+                            "   [        2       ,       hey      ,        ;)       ]:( r2 )\n" +
                             "]\n"
             !new File("build/resources/test/csv/test.csv").exists()
 
@@ -222,10 +222,10 @@ class FileHead_Unit_Tests extends Specification
             Tsr loaded = csvHead.load()
         then:
             loaded.toString() == "(2x3):[\n" +
-                    "   (        A       )(       B       )(       C        )\n" +
-                    "   [        1       ,        hi      ,        :)       ]:( r2 ),\n" +
-                    "   [        2       ,       hey      ,        ;)       ]:( r1 )\n" +
-                    "]\n"
+                                 "   (        A       )(       B       )(       C        ):( test )\n" +
+                                 "   [        1       ,        hi      ,        :)       ]:( r1 ),\n" +
+                                 "   [        2       ,       hey      ,        ;)       ]:( r2 )\n" +
+                                 "]\n"
             new File("build/resources/test/csv/test.csv").exists()
             new File("build/resources/test/csv/test.csv").text == ",A,B,C\nr1,1,hi,:)\nr2,2,hey,;)\n"
 

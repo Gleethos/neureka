@@ -1,16 +1,22 @@
 package neureka.framing;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import neureka.Component;
 import neureka.Tsr;
 import java.util.*;
 import java.util.function.Function;
 
+@Accessors( prefix = {"_"} )
 public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
 {
-
+    @Getter
     private Map<Object, Object> _mapping;
+    @Getter
+    private final String _tensorName;
 
-    public IndexAlias(List<List<Object>> labels) {
+    public IndexAlias( List<List<Object>> labels, String tensorName ) {
+        _tensorName = tensorName;
         _mapping = new LinkedHashMap<>(labels.size());
         for ( int i = 0; i < labels.size(); i++ ) _mapping.put( i, new LinkedHashMap<>() );
         for ( int i = 0; i < labels.size(); i++ ) {
@@ -22,12 +28,14 @@ public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
         }
     }
 
-    public IndexAlias( int size ) {
+    public IndexAlias( int size, String tensorName ) {
+        _tensorName = tensorName;
         _mapping = new LinkedHashMap<>( size );
         for ( int i = 0; i < size; i++ ) _mapping.put( i, new LinkedHashMap<>() );
     }
 
-    public IndexAlias( Map<Object, List<Object>> labels, Tsr<ValueType> host ) {
+    public IndexAlias( Map<Object, List<Object>> labels, Tsr<ValueType> host, String tensorName ) {
+        _tensorName = tensorName;
         _mapping = new LinkedHashMap<>( labels.size() * 3 );
         int[] index = {0};
         labels.forEach( ( k, v ) -> {

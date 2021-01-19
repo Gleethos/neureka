@@ -24,6 +24,7 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
         _LOG = LoggerFactory.getLogger( CSVHead.class );
     }
 
+    private String _tensorName;
     @Getter private final String _delimiter;
     @Getter private final boolean _firstRowIsLabels;
     @Getter private String[] _colLabels;
@@ -41,14 +42,15 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
         assert tensor.rank() == 2;
         _delimiter = ",";
         IndexAlias alias = tensor.find( IndexAlias.class );
-        List<Object> index = alias.keysOf( 0 );
-        List<Object> labels = alias.keysOf( 1 );
+        List<Object> index = (alias != null) ? alias.keysOf( 0 ) : null;
+        List<Object> labels = (alias != null ) ? alias.keysOf( 1 ) : null;
+        _tensorName = (alias != null) ? alias.getTensorName() : null;
         _firstRowIsLabels = labels != null;
         _firstColIsIndex = index != null;
         StringBuilder asCsv = new StringBuilder();
 
         if ( _firstRowIsLabels ) {
-            if ( _firstColIsIndex ) labels.add( 0, "" );
+            if ( _firstColIsIndex ) labels.add( 0, (_tensorName == null) ? "" : _tensorName );
             asCsv.append(
                     labels.stream().map( Object::toString ).collect( Collectors.joining(_delimiter ) )
                     + "\n"
@@ -118,7 +120,19 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
         int colHeight = 0;
         int size = 0;
         int numberOfBytes = 0;
-        if ( _firstRowIsLabels ) _colLabels = table.remove( 0 );
+        if ( _firstRowIsLabels ) {
+            _colLabels = table.remove( 0 );
+            if ( _firstColIsIndex ) {
+                if ( !_colLabels[0].trim().equals("") ) _tensorName = _colLabels[0].trim();
+                else _parseTensorNameFromFileName();
+                String[] newLabels = new String[ _colLabels.length - 1 ];
+                System.arraycopy( _colLabels, 1, newLabels, 0, newLabels.length );
+                _colLabels = newLabels;
+            }
+            else _parseTensorNameFromFileName();
+        }
+        else _parseTensorNameFromFileName();
+
         for ( int ri = 0; ri < table.size(); ri++ ) {
             String[] row = table.get( ri );
             if ( _firstColIsIndex ) {
@@ -152,6 +166,12 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
         return rawData;
     }
 
+    private void _parseTensorNameFromFileName() {
+        String[] parts = _fileName.replace("\\", "/").split("/");
+        if ( parts.length > 0 ) parts = parts[ parts.length - 1 ].split("\\.");
+        _tensorName = (parts.length > 0)? parts[0] : _tensorName;
+    }
+
     @Override
     public Storage<String> store( Tsr<String> tensor ) {
         return null;
@@ -182,19 +202,24 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
         if ( !_firstRowIsLabels ) {
             labels = new String[ _numberOfColumns ];
             StringBuilder prefix = new StringBuilder( );
-            for ( int i=0; i<labels.length; i++ ) {
+            for ( int i=0; i < labels.length; i++ ) {
                 int position = i % 26;
                 if ( position == 25 ) prefix.append( (char) ( i / 26 ) % 26 );
                 labels[ i ] = String.join( "", prefix.toString() + ( (char)( 'a' + position )) );
             }
         }
         else labels = _colLabels;
-
-        loaded.label( new String[][]{
+        loaded.label( _tensorName,
+                new String[][]{
                 index,
                 labels
         } );
         return loaded;
+    }
+
+    public String getTensorName() {
+        _lazyLoad();
+        return _tensorName;
     }
 
     @Override
