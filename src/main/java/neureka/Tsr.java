@@ -530,7 +530,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     {
         setDataType( dataType );
         _configureFromNewShape( shape.stream().mapToInt( e -> e ).toArray(), false, false );
-        _setData( data );
+        _setData( data.toArray() );
     }
 
     // Inner construction layer:

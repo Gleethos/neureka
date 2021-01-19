@@ -63,7 +63,7 @@ import java.util.function.IntFunction;
  * A tensor stored on a device will have its "isOutsourced" property set to true!
  *
  */
-public interface Device<ValueType> extends Component<Tsr<ValueType>>, Storage<ValueType>, Collection<Tsr<ValueType>>
+public interface Device<ValueType> extends Component<Tsr<ValueType>>, Storage<ValueType>, Iterable<Tsr<ValueType>>
 {
     /**
      * This method return Device instances matching
@@ -143,11 +143,6 @@ public interface Device<ValueType> extends Component<Tsr<ValueType>>, Storage<Va
     Object valueFor( Tsr<ValueType> tensor );
 
     ValueType valueFor( Tsr<ValueType> tensor, int index );
-
-    //double[] value64f( Tsr<ValueType> tensor );
-    //float[] value32f( Tsr<ValueType> tensor );
-    //double value64f( Tsr<ValueType> tensor, int index );
-    //float value32f( Tsr<ValueType> tensor, int index );
 
     Collection< Tsr<ValueType> > getTensors();
 

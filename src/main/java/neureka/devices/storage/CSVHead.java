@@ -8,16 +8,14 @@ import neureka.dtype.DataType;
 import neureka.framing.IndexAlias;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Accessors( prefix = {"_"} )
 public class CSVHead extends AbstractFileHead<CSVHead, String>
@@ -37,26 +35,45 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
     private Integer _numberOfBytes = null;
     private WeakReference<String[]> _rawData = null;
 
-    public CSVHead( Tsr tensor, String filename ) {
+    public CSVHead( Tsr<?> tensor, String filename )
+    {
         super( filename );
         assert tensor.rank() == 2;
         _delimiter = ",";
-        IndexAlias alias = (IndexAlias) tensor.find( IndexAlias.class );
+        IndexAlias alias = tensor.find( IndexAlias.class );
         List<Object> index = alias.keysOf( 0 );
         List<Object> labels = alias.keysOf( 1 );
         _firstRowIsLabels = labels != null;
         _firstColIsIndex = index != null;
         StringBuilder asCsv = new StringBuilder();
 
+        if ( _firstRowIsLabels ) {
+            if ( _firstColIsIndex ) labels.add( 0, "" );
+            asCsv.append(
+                    labels.stream().map( Object::toString ).collect( Collectors.joining(_delimiter ) )
+                    + "\n"
+            );
+        }
         int[] shape = tensor.getNDConf().shape();
         assert shape.length == 2;
+        if ( _firstColIsIndex ) assert index.size() == shape[ 0 ];
         int[] idx = new int[ 2 ];
         for ( int i = 0; i < shape[ 0 ]; i++ ) {
+            idx[ 0 ] = i;
+            if ( _firstColIsIndex ) asCsv.append( index.get( i ).toString() + "," );
             for ( int ii = 0; ii < shape[ 1 ]; ii++ ) {
-                idx[0] = i;
-                idx[1] = ii;
-                asCsv.append( tensor.getValueAt(0) );
+                idx[ 1 ] = ii;
+                asCsv.append( tensor.getValueAt( idx ) );
+                if ( ii < shape[ 1 ] - 1 ) asCsv.append( _delimiter );
             }
+            asCsv.append( "\n" );
+        }
+        try {
+            PrintWriter out = new PrintWriter( filename );
+            out.print( asCsv.toString() );
+            out.close();
+        } catch ( Exception e ) {
+            e.printStackTrace();
         }
 
     }
@@ -74,7 +91,7 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
     private String[] _lazyLoad() {
         if ( _rawData != null ) {
             String[] alreadyLoaded = _rawData.get();
-            if ( alreadyLoaded != null ) return  alreadyLoaded;
+            if ( alreadyLoaded != null ) return alreadyLoaded;
         }
         FileInputStream fis;
         try {

@@ -168,13 +168,10 @@ class FileHead_Unit_Tests extends Specification
     def 'The FileDevice component "CSVHead" can read CSV file formats and load them as tensors.'(
             String filename, Map<String, Object> params, int byteSize, List<Integer> shape, String expected
     ) {
-        given :
-            def hash = ""
-
         when :
             CSVHead csv = new CSVHead( "build/resources/test/csv/" + filename, params )
             Tsr loaded = csv.load()
-            hash = loaded.toString().digest('md5')//.forEach( e -> hash = ( hash + e ).digest('md5') )
+            def hash = loaded.toString().digest('md5')//.forEach( e -> hash = ( hash + e ).digest('md5') )
             //println(loaded)
         then :
             loaded != null
@@ -198,6 +195,48 @@ class FileHead_Unit_Tests extends Specification
             "biostats.csv"| [firstRowIsLabels:true] || 702      | [18, 5]  | "e0362ab6eb19262af7f6dfab5c5e09df"
             "biostats.csv"| [firstColIsIndex:true]  || 639      | [19, 4]  | "81a782982e43d6eb56237474657ef636"
     }
+
+
+    def '...labeled tenors are stored'() {
+
+
+        given:
+            Tsr t = new Tsr([2,3], DataType.of(String.class), [
+                    '1', 'hi', ':)',
+                    '2', 'hey', ';)'
+            ]).label([
+                    ['r1', 'r2'],
+                    ['A', 'B', 'C']
+            ])
+
+        expect:
+            t.toString() == "(2x3):[\n" +
+                            "   (        A       )(       B       )(       C        )\n" +
+                            "   [        1       ,        hi      ,        :)       ]:( r2 ),\n" +
+                            "   [        2       ,       hey      ,        ;)       ]:( r1 )\n" +
+                            "]\n"
+            !new File("build/resources/test/csv/test.csv").exists()
+
+        when:
+            def csvHead = new CSVHead( t, "build/resources/test/csv/test.csv" )
+            Tsr loaded = csvHead.load()
+        then:
+            loaded.toString() == "(2x3):[\n" +
+                    "   (        A       )(       B       )(       C        )\n" +
+                    "   [        1       ,        hi      ,        :)       ]:( r2 ),\n" +
+                    "   [        2       ,       hey      ,        ;)       ]:( r1 )\n" +
+                    "]\n"
+            new File("build/resources/test/csv/test.csv").exists()
+            new File("build/resources/test/csv/test.csv").text == ",A,B,C\nr1,1,hi,:)\nr2,2,hey,;)\n"
+
+        when:
+            csvHead.free()
+
+        then:
+            !new File("build/resources/test/csv/test.csv").exists()
+
+    }
+
 
 
 }

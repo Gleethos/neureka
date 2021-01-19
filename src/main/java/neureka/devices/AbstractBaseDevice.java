@@ -61,7 +61,7 @@ public abstract class AbstractBaseDevice<ValueType> implements Device<ValueType>
     }
 
     @Override
-    public boolean contains(Object o) {
+    public boolean contains( Tsr<ValueType> o ) {
         return this.getTensors().contains( o );
     }
 
@@ -71,79 +71,9 @@ public abstract class AbstractBaseDevice<ValueType> implements Device<ValueType>
         return this.getTensors().iterator();
     }
 
-    @NotNull
-    @Override
-    public Object[] toArray() {
-        return this.getTensors().toArray();
-    }
-
-    @NotNull
-    @Override
-    public <T> T[] toArray( @NotNull T[] a ) {
-        return this.getTensors().toArray( a );
-    }
-
     @Override
     public <T> T[] toArray( IntFunction<T[]> generator ) {
         return null; // this.getTensors().toArray( generator );
-    }
-
-    @Override
-    public boolean add(Tsr<ValueType> tsr) {
-        try {
-            this.store( tsr );
-        } catch ( Exception e ) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean remove( Object o ) {
-        if ( !(o instanceof Tsr) ) return false;
-        try {
-            this.free( (Tsr) o );
-        } catch ( Exception e ) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean containsAll(@NotNull Collection<?> c) {
-        return this.getTensors().containsAll( c );
-    }
-
-    @Override
-    public boolean addAll(@NotNull Collection<? extends Tsr<ValueType>> c) {
-        for ( Tsr<ValueType> t : c ) {
-            if ( !this.add( t ) ) return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean removeAll(@NotNull Collection<?> c) {
-        return false;
-    }
-
-    @Override
-    public boolean removeIf( Predicate<? super Tsr<ValueType>> filter ) {
-        int removed = 0;
-        for ( Tsr t : this.getTensors() ) removed += ( (this.remove(t))?1:0 );
-        return removed > 0;
-    }
-
-    @Override
-    public boolean retainAll(@NotNull Collection<?> c) {
-        return false;
-    }
-
-    @Override
-    public void clear() {
-        this.dispose();
     }
 
     @Override
@@ -151,13 +81,4 @@ public abstract class AbstractBaseDevice<ValueType> implements Device<ValueType>
         return getTensors().spliterator();
     }
 
-    @Override
-    public Stream<Tsr<ValueType>> stream() {
-        return this.getTensors().stream();
-    }
-
-    @Override
-    public Stream<Tsr<ValueType>> parallelStream() {
-        return this.getTensors().stream();
-    }
 }

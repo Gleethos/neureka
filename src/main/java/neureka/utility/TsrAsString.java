@@ -340,8 +340,8 @@ public class TsrAsString
         int size = _shape[ depth ];
         int trim = ( size - max );
         trim = Math.max( trim, 0 );
-        int trimStart = (size / 2 - trim / 2);
-        int trimEnd = (size / 2 + trim / 2);
+        int trimStart = ( size / 2 - trim / 2 );
+        int trimEnd = ( size / 2 + trim / 2 );
         assert trimEnd - trimStart == trim;
         IndexAlias alias = _tensor.find( IndexAlias.class );
         if ( depth == idx.length - 1 ) {
@@ -354,14 +354,24 @@ public class TsrAsString
                 if ( key != null ) {
                     _$( Util.indent( depth ) );
                     _$( (_legacy) ? "[ " : "( " );
-                    IntFunction<String> getter = _createValStringifier( key.toArray() );
+                    int startIndex = key.size() - _shape[ idx.length - 1 ];
+                    IntFunction<String> getter = _createValStringifier( key.subList( startIndex, key.size() ).toArray() );
                     _buildRow(
                             size, trimStart, trimEnd, trim,
                             new int[ idx.length ],
                             iarr -> getter.apply( iarr[ iarr.length -1 ] ),
                             (_legacy) ? "][" : ")("
                     );
-                    _$( (_legacy) ? " ]\n" : " )\n" );
+                    _$( (_legacy) ? " ]" : " )" );
+                    if ( startIndex > 0 ) {
+                        String headLabel = key.subList(0, startIndex)
+                                .stream()
+                                .map(Object::toString)
+                                .collect(Collectors.joining(" | "));
+                        if ( !headLabel.trim().equals("") )
+                            _$( (_legacy) ? ":[ " : ":( " )._$( headLabel )._$( (_legacy) ? " ]" : " )" );
+                    }
+                    _$( "\n" );
                 }
             }
             _$( Util.indent( depth ) );
@@ -390,7 +400,7 @@ public class TsrAsString
             while ( idx[ depth ] != 0 );
             _$( Util.indent( depth ) )._$( (_legacy) ? ")" : "]" );
         }
-        if ( depth - 1 == 0 && alias != null ) _$(":")._buildSingleLabel( alias, depth, idx );
+        if ( depth - 1 == 0 && alias != null ) _$( ":" )._buildSingleLabel( alias, depth, idx );
         int i = depth - 1;
         if ( i >= 0 && i < idx.length && idx[ i ] != 0 ) _$( "," );
         _$( "\n" );
@@ -431,7 +441,8 @@ public class TsrAsString
         }
 
         @Contract( pure = true )
-        public static String formatFP( double v ) {
+        public static String formatFP( double v )
+        {
             DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols( Locale.US );
             DecimalFormat Formatter = new DecimalFormat("##0.0##E0", formatSymbols);
             String vStr = String.valueOf( v );
