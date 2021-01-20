@@ -33,7 +33,8 @@ Neureka.instance {
                     (TsrAsString.Should.HAVE_VALUE)           : true,
                     (TsrAsString.Should.HAVE_RECURSIVE_GRAPH) : false,
                     (TsrAsString.Should.HAVE_DERIVATIVES)     : false,
-                    (TsrAsString.Should.HAVE_SHAPE)           : true
+                    (TsrAsString.Should.HAVE_SHAPE)           : true,
+                    (TsrAsString.Should.BE_CELL_BOUND)        : false
             ]
         }
 

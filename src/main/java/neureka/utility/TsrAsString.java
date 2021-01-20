@@ -74,6 +74,7 @@ public class TsrAsString
         HAVE_SHAPE,
         HAVE_DERIVATIVES,
         HAVE_RECURSIVE_GRAPH,
+        BE_CELL_BOUND
     }
 
     @Getter private int _padding = 6;
@@ -85,11 +86,12 @@ public class TsrAsString
     @Getter private boolean _hasShape = true;
     @Getter private boolean _hasRecursiveGraph = false;
     @Getter private boolean _hasDerivatives = false;
+    @Getter private boolean _isCellBound = false;
 
     private int[] _shape;
     private Tsr<?> _tensor;
     private StringBuilder _asStr;
-    private boolean _legacy = Neureka.instance().settings().view().isUsingLegacyView();
+    private final boolean _legacy = Neureka.instance().settings().view().isUsingLegacyView();
 
     private Map<Should, Object> _config;
 
@@ -146,6 +148,9 @@ public class TsrAsString
 
         if ( settings.containsKey( Should.HAVE_DERIVATIVES) )
             _hasDerivatives = (boolean) settings.get( Should.HAVE_DERIVATIVES);
+
+        if ( settings.containsKey( Should.BE_CELL_BOUND ) )
+            _isCellBound = (boolean) settings.get( Should.BE_CELL_BOUND );
     }
 
     private Map< Should, Object > _defaults( String modes ) {
@@ -157,15 +162,16 @@ public class TsrAsString
 
     public static Map<Should, Object> configFromCode( String code ) {
         Map< Should, Object > copy = new HashMap<>();
-        copy.put( Should.BE_SHORTENED_BY,      (code.contains( "s") ) ? 3 : 50                     );
-        copy.put( Should.BE_COMPACT,           code.contains( "c" )                                );
-        copy.put( Should.BE_FORMATTED,         code.contains( "f" )                                );
-        copy.put( Should.HAVE_GRADIENT,        code.contains( "g" )                                );
-        copy.put( Should.HAVE_PADDING_OF,     (code.contains( "p" )) ? 6 : -1                      );
-        copy.put( Should.HAVE_VALUE,          !(code.contains( "shp" ) || code.contains("shape"))  );
-        copy.put( Should.HAVE_RECURSIVE_GRAPH, code.contains( "r" )                                );
-        copy.put( Should.HAVE_DERIVATIVES,     code.contains( "d" )                                );
-        copy.put( Should.HAVE_SHAPE,           !code.contains( "v" )                               );
+        copy.put( Should.BE_SHORTENED_BY,      (code.contains( "s") ) ? 3 : 50                      );
+        copy.put( Should.BE_COMPACT,           code.contains( "c" )                                 );
+        copy.put( Should.BE_FORMATTED,         code.contains( "f" )                                 );
+        copy.put( Should.HAVE_GRADIENT,        code.contains( "g" )                                 );
+        copy.put( Should.HAVE_PADDING_OF,     (code.contains( "p" )) ? 6 : code.contains( "f" )?2:1 );
+        copy.put( Should.HAVE_VALUE,          !(code.contains( "shp" ) || code.contains("shape"))   );
+        copy.put( Should.HAVE_RECURSIVE_GRAPH, code.contains( "r" )                                 );
+        copy.put( Should.HAVE_DERIVATIVES,     code.contains( "d" )                                 );
+        copy.put( Should.HAVE_SHAPE,           !code.contains( "v" )                                );
+        copy.put( Should.BE_CELL_BOUND,        code.contains("b")                                   );
         return copy;
     }
 
@@ -205,7 +211,7 @@ public class TsrAsString
         int pad = ( _tensor.getDataType().getTypeClass() == String.class )
                 ? (int)(_padding * 2.5)
                 : _padding;
-        IntFunction<String> function;
+        final IntFunction<String> function;
         if ( v instanceof double[] )
             function = i -> ( compact )
                     ? Util.formatFP( ( (double[]) v )[ i ])
@@ -229,14 +235,26 @@ public class TsrAsString
         else
             function = i -> String.valueOf( ( (Object[]) v )[ i ] );
 
-        if ( pad < 3 ) return function;
-        else return i -> {
+        final IntFunction<String> postProcessing;
+        if ( pad >= 3 ) postProcessing = i -> {
             String s = function.apply( i );
             int margin = pad - s.length();
             int right = ( margin % 2 == 0 ) ? margin / 2 : ( margin-1 ) / 2;
             if ( margin > 0 ) s = Util.pad( margin - right, Util.pad( s, right ) );
             return s;
         };
+        else postProcessing = function;
+
+        final IntFunction<String> finalProcessing;
+        if ( _isCellBound ) finalProcessing = i -> {
+            String s = postProcessing.apply( i );
+            int margin =  s.length() - pad;
+            if ( margin > 0 ) s = s.substring( 0, pad - 2 ) + "..";
+            return s;
+        };
+        else finalProcessing = postProcessing;
+
+        return finalProcessing;
     }
 
     public String toString() {

@@ -198,7 +198,7 @@ class FileHead_Unit_Tests extends Specification
     }
 
 
-    def 'Labeled tenors will be stored with their labels included when saving them as CSV.'()
+    def 'Fully labeled tenors will be stored with their labels included when saving them as CSV.'()
     {
         given:
             Tsr t = new Tsr([2,3], DataType.of(String.class), [
@@ -228,6 +228,46 @@ class FileHead_Unit_Tests extends Specification
                                  "]\n"
             new File("build/resources/test/csv/test.csv").exists()
             new File("build/resources/test/csv/test.csv").text == ",A,B,C\nr1,1,hi,:)\nr2,2,hey,;)\n"
+
+        when:
+            csvHead.free()
+
+        then:
+            !new File("build/resources/test/csv/test.csv").exists()
+
+    }
+
+
+    def 'Partially labeled tenors will be stored with their labels included when saving them as CSV.'()
+    {
+        given:
+            Tsr t = new Tsr([2,3], DataType.of(String.class), [
+                    '1', 'hi', ':)',
+                    '2', 'hey', ';)'
+            ]).label([
+                    'ROW':null,
+                    'COL':['A', 'B', 'C']
+            ])
+
+        expect:
+            t.toString() == "(2x3):[\n" +
+                    "   (        A       )(       B       )(       C        )\n" +
+                    "   [        1       ,        hi      ,        :)       ]:( 0 ),\n" +
+                    "   [        2       ,       hey      ,        ;)       ]:( 1 )\n" +
+                    "]\n"
+            !new File("build/resources/test/csv/test.csv").exists()
+
+        when:
+            def csvHead = new CSVHead( t, "build/resources/test/csv/test.csv" )
+            Tsr loaded = csvHead.load()
+            then:
+            loaded.toString() == "(2x3):[\n" +
+                    "   (        A       )(       B       )(       C        ):( test )\n" +
+                    "   [        1       ,        hi      ,        :)       ]:( 0 ),\n" +
+                    "   [        2       ,       hey      ,        ;)       ]:( 1 )\n" +
+                    "]\n"
+            new File("build/resources/test/csv/test.csv").exists()
+            new File("build/resources/test/csv/test.csv").text == ",A,B,C\n0,1,hi,:)\n1,2,hey,;)\n"
 
         when:
             csvHead.free()

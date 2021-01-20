@@ -10,6 +10,8 @@ import java.util.function.Function;
 @Accessors( prefix = {"_"} )
 public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
 {
+    private final List<Object> _hiddenKeys = new ArrayList<>();
+
     @Getter
     private Map<Object, Object> _mapping;
     @Getter
@@ -37,15 +39,20 @@ public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
     public IndexAlias( Map<Object, List<Object>> labels, Tsr<ValueType> host, String tensorName ) {
         _tensorName = tensorName;
         _mapping = new LinkedHashMap<>( labels.size() * 3 );
-        int[] index = {0};
+        int[] index = { 0 };
         labels.forEach( ( k, v ) -> {
             if ( v != null ) {
                 Map<Object, Integer> idxmap = new LinkedHashMap<>( v.size() * 3 );
                 for ( int i = 0; i < v.size(); i++ ) idxmap.put( v.get( i ), i );
+                if ( !k.equals( index[ 0 ] ) ) _hiddenKeys.add( index[ 0 ] );
                 _mapping.put( k, idxmap );
+                _mapping.put( index[ 0 ], idxmap ); // default integer index should also always work!
             }
-            else _mapping.put( k, host.getNDConf().shape()[ index[ 0 ] ] );
-
+            else {
+                if ( !k.equals( index[ 0 ] ) ) _hiddenKeys.add( index[ 0 ] );
+                _mapping.put( k, host.getNDConf().shape()[ index[ 0 ] ] );
+                _mapping.put( index[ 0 ], host.getNDConf().shape()[ index[ 0 ] ] );// default integer index should also always work!
+            }
             index[ 0 ]++;
         });
     }
@@ -102,8 +109,9 @@ public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
 
     public List<Object> keysOf( Object axis )
     {
-        List<Object> keys = new ArrayList<>();
         Object am =  _mapping.get( axis );
+        if ( am == null ) return null;
+        List<Object> keys = new ArrayList<>();
         if ( am instanceof Map ) ( (Map<Object, Integer>) am ).forEach( ( k, v ) -> keys.add( k ) );
         else for ( int i = 0; i < ( (Integer) am ); i++ ) keys.add( i );
         return keys;
@@ -134,7 +142,8 @@ public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
 
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         final int WIDTH = 16;
         final String WALL = " | ";
         final String HEADLINE = "=";
@@ -150,12 +159,14 @@ public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
         int[] axisLabelSizes = new int[ _mapping.size() ];
         int[] axisCounter = { 0 };
         _mapping.forEach( ( k, v ) -> {
-            String axisHeader = k.toString();
-            axisHeader = _fixed( axisHeader, WIDTH );
-            axisLabelSizes[ axisCounter[ 0 ] ] = axisHeader.length();
-            builder.append( axisHeader );
-            builder.append( WALL );
-            axisCounter[ 0 ] ++;
+            if ( !_hiddenKeys.contains( k ) ) {
+                String axisHeader = k.toString();
+                axisHeader = _fixed(axisHeader, WIDTH);
+                axisLabelSizes[axisCounter[0]] = axisHeader.length();
+                builder.append(axisHeader);
+                builder.append(WALL);
+                axisCounter[0]++;
+            }
         });
         int lineLength = builder.length();
         builder.append( "\n" );
@@ -168,21 +179,23 @@ public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
             Object[] keyOfDepth = { null };
             builder.append( WALL );
             _mapping.forEach( ( k, v ) -> {
-                keyOfDepth[ 0 ] = null;
-                if ( v instanceof Map ) {
-                    ( (Map<Object, Integer>) v ).forEach( ( ik, iv ) -> {
-                        if ( iv.intValue() == depth[ 0 ] ) keyOfDepth[ 0 ] = ik;
-                    });
-                } else if ( v instanceof Integer ) {
-                    if ( depth[ 0 ] < ( (Integer) v ) ) keyOfDepth[ 0 ] = depth[ 0 ];
+                if ( !_hiddenKeys.contains( k ) ) {
+                    keyOfDepth[0] = null;
+                    if (v instanceof Map) {
+                        ((Map<Object, Integer>) v).forEach((ik, iv) -> {
+                            if (iv.intValue() == depth[0]) keyOfDepth[0] = ik;
+                        });
+                    } else if (v instanceof Integer) {
+                        if (depth[0] < ((Integer) v)) keyOfDepth[0] = depth[0];
+                    }
+                    if (keyOfDepth[0] != null) {
+                        builder.append(_fixed((keyOfDepth[0]).toString(), WIDTH));
+                    } else {
+                        builder.append(_fixed("---", WIDTH));
+                    }
+                    builder.append(WALL);
+                    axisCounter[0]++;
                 }
-                if ( keyOfDepth[ 0 ] != null ) {
-                    builder.append( _fixed( ( keyOfDepth[ 0 ] ).toString(), WIDTH ) );
-                } else {
-                    builder.append( _fixed( "---", WIDTH ) );
-                }
-                builder.append( WALL );
-                axisCounter[ 0 ] ++;
             });
             depth[ 0 ]++;
             builder.append( "\n" );

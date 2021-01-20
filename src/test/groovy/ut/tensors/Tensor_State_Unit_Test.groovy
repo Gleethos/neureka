@@ -25,6 +25,27 @@ class Tensor_State_Unit_Test extends Specification
         Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
 
+    def 'Tensors as String can be formatted on an entry based level.'() {
+
+        given :
+            Tsr t = new Tsr([2, 3], DataType.of(String.class), (i, idx)-> {
+                return ["sweet", "salty", "blue", "spinning", "confused", "shining"].get( (i + 17**i)%6 ) + ' ' +
+                    ["Saitan", "Apple", "Tofu",  "Strawberry", "Almond", "Salad"].get( (i + 7**i)%6 )
+            })
+
+        expect:
+            t.toString('bf') == "(2x3):[\n" +
+                                    "   [ sal.., swe.., spi.. ],\n" +
+                                    "   [ blu.., shi.., con.. ]\n" +
+                                    "]\n"
+        and:
+            t.toString('bfp') == "(2x3):[\n" +
+                    "   [   salty Apple  ,    sweet Tofu  , spinning Stra.. ],\n" +
+                    "   [   blue Almond  ,  shining Salad , confused Saitan ]\n" +
+                    "]\n"
+
+    }
+
     def 'Tensors as String can be formatted depending on shape.'(
             String mode, List<Integer> shape, String expected
     ){
@@ -64,6 +85,8 @@ class Tensor_State_Unit_Test extends Specification
            "f"  | [2, 100]  | "(2x100):[\n   [ -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, ... 68 more ..., 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0 ],\n   [ -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, ... 68 more ..., 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0 ]\n]\n"
            "f"  | [70, 2]   | "(70x2):[\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ],\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ],\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ],\n   [ -4.0, -3.0 ],\n   ... 38 more ...\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ],\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ],\n   [ -4.0, -3.0 ],\n   [ -2.0, -1.0 ],\n   [ 0.0, 1.0 ],\n   [ 2.0, 3.0 ],\n   [ 4.0, 5.0 ]\n]\n"
     }
+
+
 
     def 'Newly instantiated and unmodified scalar tensor has expected state.'()
     {
