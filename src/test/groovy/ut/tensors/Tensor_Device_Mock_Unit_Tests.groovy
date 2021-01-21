@@ -22,7 +22,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
     def setup() {
         Neureka.instance().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+        Neureka.instance().settings().view().asString = "dgc"
     }
 
     def 'Tensors try to migrate themselves to a device that is being added to them as component.'()

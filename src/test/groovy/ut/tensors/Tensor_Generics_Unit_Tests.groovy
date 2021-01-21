@@ -23,7 +23,7 @@ class Tensor_Generics_Unit_Tests extends Specification
     def setup() {
         Neureka.instance().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+        Neureka.instance().settings().view().asString = "dgc"
     }
 
     def 'Anonymous tensor instance has the default datatype class as defined in Neureka settings.'() {

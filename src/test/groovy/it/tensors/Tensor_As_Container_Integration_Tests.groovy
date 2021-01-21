@@ -17,7 +17,7 @@ class Tensor_As_Container_Integration_Tests extends Specification
                          
         """
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+        Neureka.instance().settings().view().asString = "dgc"
     }
 
 

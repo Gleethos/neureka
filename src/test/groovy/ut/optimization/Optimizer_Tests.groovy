@@ -14,7 +14,7 @@ class Optimizer_Tests extends Specification
     def setup() {
         Neureka.instance().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+        Neureka.instance().settings().view().asString = "dgc"
     }
 
     // WIP! : not yet completed!

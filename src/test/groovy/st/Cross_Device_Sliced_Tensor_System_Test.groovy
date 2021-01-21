@@ -18,7 +18,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
     def setup() {
         Neureka.instance().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+        Neureka.instance().settings().view().asString = "dgc"
     }
 
     def 'Cross device sliced tensor integration test runs without errors.'(

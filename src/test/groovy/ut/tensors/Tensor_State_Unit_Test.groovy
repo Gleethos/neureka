@@ -23,7 +23,7 @@ class Tensor_State_Unit_Test extends Specification
     {
         Neureka.instance().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+        Neureka.instance().settings().view().asString = "dgc"
     }
 
     def 'Tensors as String can be formatted on an entry based level.'()

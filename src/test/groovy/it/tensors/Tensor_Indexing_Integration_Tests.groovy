@@ -11,7 +11,7 @@ class Tensor_Indexing_Integration_Tests extends Specification
     def setup() {
         Neureka.instance().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+        Neureka.instance().settings().view().asString = "dgc"
     }
 
     void 'Test convolution with legacy indexing.'()

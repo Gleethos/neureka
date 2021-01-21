@@ -394,6 +394,10 @@ public class Neureka
                 _asString = should;
             }
 
+            public void setAsString( String modes ) {
+                setAsString( TsrAsString.Util.configFromCode( modes ) );
+            }
+
         }
 
         @Accessors( prefix = {"_"} )

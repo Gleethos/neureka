@@ -29,7 +29,7 @@ class ADAM_Tests extends Specification
         Neureka.instance().reset()
         w.set(o)
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+        Neureka.instance().settings().view().asString = "dgc"
     }
 
 

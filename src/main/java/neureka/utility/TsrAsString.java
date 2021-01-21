@@ -49,7 +49,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.IntFunction;
 
 /**
  *  This class is in essence a simple wrapper class for a tensor and a StringBuilder
@@ -73,6 +72,10 @@ public class TsrAsString
         HAVE_DERIVATIVES,
         HAVE_RECURSIVE_GRAPH,
         BE_CELL_BOUND
+    }
+
+    private interface ValStringifier {
+        String stringify( int i );
     }
 
     @Getter private int _padding = 6;
@@ -184,39 +187,49 @@ public class TsrAsString
         return this;
     }
 
-    private IntFunction<String> _createValStringifier( Object v )
+    /**
+     *  This method takes the data of a tensor and converts it into
+     *  a lambda responsible for creating formatted Strings of data entries by
+     *  taking the int index of a targeted entry and returning
+     *  a properly formatted String representation of said entry. <br>
+     *  <br>
+     *
+     * @param data The data which should be used as a basis for creating an entry stringification lambda.
+     * @return A lambda which can convert an array entry targeted by its index to a properly formatted String.
+     */
+    private ValStringifier _createValStringifier( Object data )
     {
         boolean compact = _isCompact;
         int pad = ( _tensor.getDataType().getTypeClass() == String.class )
                 ? (int)(_padding * 2.5)
                 : _padding;
-        final IntFunction<String> function;
-        if ( v instanceof double[] )
+        final ValStringifier function;
+        if ( data instanceof double[] )
             function = i -> ( compact )
-                    ? Util.formatFP( ( (double[]) v )[ i ])
-                    : String.valueOf( ( (double[] ) v )[ i ] );
-        else if ( v instanceof float[] )
+                    ? Util.formatFP( ( (double[]) data )[ i ])
+                    : String.valueOf( ( (double[] ) data )[ i ] );
+        else if ( data instanceof float[] )
             function = i -> ( compact )
-                    ? Util.formatFP( ( (float[]) v )[ i ] )
-                    : String.valueOf( ( (float[]) v )[ i ] );
-        else if ( v instanceof short[] )
+                    ? Util.formatFP( ( (float[]) data )[ i ] )
+                    : String.valueOf( ( (float[]) data )[ i ] );
+        else if ( data instanceof short[] )
             function = i -> ( compact )
-                    ? Util.formatFP( ( (short[]) v )[ i ] )
-                    : String.valueOf( ( (short[]) v )[ i ] );
-        else if ( v instanceof int[] )
+                    ? Util.formatFP( ( (short[]) data )[ i ] )
+                    : String.valueOf( ( (short[]) data )[ i ] );
+        else if ( data instanceof int[] )
             function = i -> ( compact )
-                    ? Util.formatFP( ( (int[]) v )[ i ] )
-                    : String.valueOf( ( (int[]) v )[ i ] );
-        else if ( v == null )
+                    ? Util.formatFP( ( (int[]) data )[ i ] )
+                    : String.valueOf( ( (int[]) data )[ i ] );
+        else if ( data == null )
             function = i -> ( compact )
                     ? Util.formatFP( _tensor.value64( i ) )
                     : String.valueOf( _tensor.value64( i ) );
         else
-            function = i -> String.valueOf( ( (Object[]) v )[ i ] );
+            function = i -> String.valueOf( ( (Object[]) data )[ i ] );
 
-        final IntFunction<String> postProcessing;
+        final ValStringifier postProcessing;
         if ( pad >= 3 ) postProcessing = i -> {
-            String s = function.apply( i );
+            String s = function.stringify( i );
             int margin = pad - s.length();
             int right = ( margin % 2 == 0 ) ? margin / 2 : ( margin-1 ) / 2;
             if ( margin > 0 ) s = Util.pad( margin - right, Util.pad( s, right ) );
@@ -224,9 +237,9 @@ public class TsrAsString
         };
         else postProcessing = function;
 
-        final IntFunction<String> finalProcessing;
+        final ValStringifier finalProcessing;
         if ( _isCellBound ) finalProcessing = i -> {
-            String s = postProcessing.apply( i );
+            String s = postProcessing.stringify( i );
             int margin =  s.length() - pad;
             if ( margin > 0 ) s = s.substring( 0, pad - 2 ) + "..";
             return s;
@@ -236,7 +249,8 @@ public class TsrAsString
         return finalProcessing;
     }
 
-    public String toString() {
+    public String toString()
+    {
         return toString("");
     }
 
@@ -252,7 +266,7 @@ public class TsrAsString
         if ( _hasShape ) _strShape();
         if ( !_hasValue ) return _asStr.toString();
         _$( ":" );
-        if ( _isFormatted ) _format( new int[ _tensor.rank() ], -1 );
+        if ( _isFormatted ) _recursiveFormatting( new int[ _tensor.rank() ], -1 );
         else {
             _$( (_legacy) ? "(" : "[" );
             _stringifyAllValues();
@@ -300,48 +314,66 @@ public class TsrAsString
     private void _stringifyAllValues()
     {
         int max = _shortage;
-        IntFunction<String> getter = _createValStringifier( _tensor.getData() );
+        ValStringifier getter = _createValStringifier( _tensor.getData() );
         int size = _tensor.size();
         int trim = ( size - max );
         size = ( trim > 0 ) ? max : size;
         for ( int i = 0; i < size; i++ ) {
-            String vStr = getter.apply( ( _tensor.isVirtual() ) ? 0 : _tensor.i_of_i( i ) );
+            String vStr = getter.stringify( ( _tensor.isVirtual() ) ? 0 : _tensor.i_of_i( i ) );
             _$( vStr );
             if ( i < size - 1 ) _$( ", " );
             else if ( trim > 0 ) _$( ", ... + " )._$( trim )._$( " more" );
         }
     }
 
-    //::: formatted...
-
+    /**
+     *  This method builds a single row of stringified and formatted tensor entries.
+     *  It will builds this row based on incrementing the last tensor dimension. <br>
+     *  <br>
+     * @param trimStart The row index where the trimming should start (no entries).
+     * @param trimEnd The row index where the trimming should end.
+     * @param trimSize The size of the row chunk which ought to be skipped.
+     * @param idx The current index array defining the current position inside the tensor.
+     * @param stringifier A lambda responsible for stringifying a tensor entry ba passing the current index array.
+     * @param delimiter The String which ought to separate of stringified entries.
+     */
     private void _buildRow(
-            int size, int trimStart, int trimEnd, int trim, int[] idx, Function<int[],String> getter, String delimiter
+            int trimStart, int trimEnd, int trimSize, int[] idx, Function<int[],String> stringifier, String delimiter
     ) {
-        for ( int i = 0; i < size; i++ ) {
+        for ( int i = 0; i < _shape[ _shape.length - 1 ]; i++ ) {
             if ( i < trimStart || i >= trimEnd ) {
-                _$( getter.apply( idx ) );
-                if ( i < size - 1 ) _$( delimiter );
+                _$( stringifier.apply( idx ) );
+                if ( i < _shape[ _shape.length - 1 ] - 1 ) _$( delimiter );
             }
-            else if ( i == trimStart ) _$( "... " )._$( trim )._$( " more ..., " );
+            else if ( i == trimStart ) _$( "... " )._$( trimSize )._$( " more ..., " );
 
             NDConfiguration.Utility.increment( idx, _shape );
         }
     }
 
 
-    // A recursive stringifier for formatted tensors...
-    private void _format( int[] idx, int depth )
+    /**
+     *  This method builds a properly indented and formatted tensor representation.
+     *  The depth of the recursion is also tracked by the current dimension which
+     *  will be incrementally passed down the recursion. <br>
+     *  Besides this dimension there is also the current index array
+     *  which will be incremented when tensor elements are being stringified... <br>
+     *  <br>
+     *
+     * @param idx The current index array containing the current index for all dimensions.
+     * @param dim The current dimension which is also the "depth" of the recursion.
+     */
+    private void _recursiveFormatting( int[] idx, int dim )
     {
         int max = ( _shortage * 32 / 50 );
-        depth = ( depth < 0 ) ? 0 : depth;
-        int size = _shape[ depth ];
-        int trim = ( size - max );
-        trim = Math.max( trim, 0 );
-        int trimStart = ( size / 2 - trim / 2 );
-        int trimEnd = ( size / 2 + trim / 2 );
-        assert trimEnd - trimStart == trim;
+        dim = ( dim < 0 ) ? 0 : dim;
+        int trimSize = ( _shape[ dim ] - max );
+        trimSize = Math.max( trimSize, 0 );
+        int trimStart = ( _shape[ dim ] / 2 - trimSize / 2 );
+        int trimEnd = ( _shape[ dim ] / 2 + trimSize / 2 );
+        assert trimEnd - trimStart == trimSize;
         IndexAlias alias = _tensor.find( IndexAlias.class );
-        if ( depth == idx.length - 1 ) {
+        if ( dim == idx.length - 1 ) {
             if (
                     alias != null &&
                             idx[ idx.length - 1 ] == 0 &&
@@ -349,14 +381,14 @@ public class TsrAsString
             ) {
                 List<Object> key = alias.keysOf( idx.length - 1 );
                 if ( key != null ) {
-                    _$( Util.indent( depth ) );
+                    _$( Util.indent( dim ) );
                     _$( (_legacy) ? "[ " : "( " ); // The following assert has prevented many String miscarriages!
                     assert key.size() - _shape[ idx.length - 1 ] == 0; // This is a basic requirement for the label size...
-                    IntFunction<String> getter = _createValStringifier( key.toArray() );
+                    ValStringifier getter = _createValStringifier( key.toArray() );
                     _buildRow(
-                            size, trimStart, trimEnd, trim,
+                            trimStart, trimEnd, trimSize,
                             new int[ idx.length ],
-                            iarr -> getter.apply( iarr[ iarr.length -1 ] ),
+                            iarr -> getter.stringify( iarr[ iarr.length -1 ] ),
                             (_legacy) ? "][" : ")("
                     );
                     _$( (_legacy) ? " ]" : " )" );
@@ -365,46 +397,46 @@ public class TsrAsString
                     _$( "\n" );
                 }
             }
-            _$( Util.indent( depth ) );
+            _$( Util.indent( dim ) );
             _$( (_legacy) ? "( " : "[ " );
-            IntFunction<String> getter = _createValStringifier( _tensor.getData() );
+            ValStringifier getter = _createValStringifier( _tensor.getData() );
             Function<int[], String> fun = ( _tensor.isVirtual() )
-                    ? iarr -> getter.apply( 0 )
-                    : iarr -> getter.apply( _tensor.i_of_idx( iarr ) );
+                    ? iarr -> getter.stringify( 0 )
+                    : iarr -> getter.stringify( _tensor.i_of_idx( iarr ) );
 
-            _buildRow( size, trimStart, trimEnd, trim, idx, fun, ", " );
+            _buildRow( trimStart, trimEnd, trimSize, idx, fun, ", " );
             _$( (_legacy) ? " )" : " ]" );
 
-            if ( alias != null ) _$( ":" )._buildSingleLabel( alias, depth, idx );
+            if ( alias != null ) _$( ":" )._buildSingleLabel( alias, dim, idx );
         } else {
-            _$( Util.indent( depth ) );
-            if ( depth > 0 && alias != null )
-                _buildSingleLabel( alias, depth, idx )._$(":");
+            _$( Util.indent( dim ) );
+            if ( dim > 0 && alias != null )
+                _buildSingleLabel( alias, dim, idx )._$(":");
             _$( (_legacy) ? "(\n" : "[\n" );
             int i = 0;
             do {
                 if ( i < trimStart || i >= trimEnd )
-                    _format( idx, depth + 1 );
+                    _recursiveFormatting( idx, dim + 1 );
                 else if ( i == trimStart )
-                    _$( Util.indent( depth + 1 ) )._$( "... " )._$( trim )._$( " more ...\n" );
+                    _$( Util.indent( dim + 1 ) )._$( "... " )._$( trimSize )._$( " more ...\n" );
                 else
-                    idx[ depth ] = trimEnd + 1; // Jumping over trimmed entries!
+                    idx[ dim ] = trimEnd + 1; // Jumping over trimmed entries!
                 i++;
             }
-            while ( idx[ depth ] != 0 );
-            _$( Util.indent( depth ) )._$( (_legacy) ? ")" : "]" );
+            while ( idx[ dim ] != 0 );
+            _$( Util.indent( dim ) )._$( (_legacy) ? ")" : "]" );
         }
-        int i = depth - 1;
+        int i = dim - 1;
         if ( i >= 0 && i < idx.length && idx[ i ] != 0 ) _$( "," );
         _$( "\n" );
     }
 
-    private TsrAsString _buildSingleLabel( IndexAlias alias, int depth, int[] idx ) {
-        int pos = depth - 1;
+    private TsrAsString _buildSingleLabel( IndexAlias alias, int dim, int[] idx ) {
+        int pos = dim - 1;
         List<Object> key = alias.keysOf( pos );
         if ( pos >= 0 && key != null ) {
             _$( (_legacy) ? "[ " : "( ");
-            int i = ( depth == idx.length - 1 )
+            int i = ( dim == idx.length - 1 )
                     ? ( _shape[ pos ] + idx[ pos ] - 1 ) % _shape[ pos ]
                     : idx[ pos ];
             _$( key.get( i ).toString() );
@@ -413,7 +445,12 @@ public class TsrAsString
         return this;
     }
 
-    private void _strShape() {
+    /**
+     *  This method builds a String representation of the
+     *  shape of the targeted tensor.
+     */
+    private void _strShape()
+    {
         boolean legacy = Neureka.instance().settings().view().isUsingLegacyView();
         _$( (legacy) ? "[" : "(" );
         for ( int i = 0; i < _shape.length; i++ ) {
@@ -423,16 +460,24 @@ public class TsrAsString
         _$( (legacy) ? "]" : ")" );
     }
 
+    /**
+     *  This class is a simple utility class which contains
+     *  a collection of static and stateless methods containing
+     *  useful functionalities for tensor stringification.
+     */
     public static class Util
     {
+        @Contract( pure = true )
         public static String indent( int n ){
             return String.join("", Collections.nCopies( n, "   " ));
         }
 
+        @Contract( pure = true )
         public static String pad( int left, String s ) {
             return String.join("", Collections.nCopies( left, " " )) + s;
         }
 
+        @Contract( pure = true )
         public static String pad( String s, int right ) {
             return s + String.join("", Collections.nCopies( right, " " ));
         }
@@ -441,7 +486,7 @@ public class TsrAsString
         public static String formatFP( double v )
         {
             DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols( Locale.US );
-            DecimalFormat Formatter = new DecimalFormat("##0.0##E0", formatSymbols);
+            DecimalFormat formatter = new DecimalFormat("##0.0##E0", formatSymbols);
             String vStr = String.valueOf( v );
             final int offset = 0;
             if ( vStr.length() > ( 7 - offset ) ) {
@@ -450,7 +495,7 @@ public class TsrAsString
                 } else if ( vStr.startsWith( "-0." ) ) {
                     vStr = vStr.substring( 0, 8-offset )+"E0";
                 } else {
-                    vStr = Formatter.format( v );
+                    vStr = formatter.format( v );
                     vStr = (!vStr.contains(".0E0"))?vStr:vStr.replace(".0E0",".0");
                     vStr = (vStr.contains("."))?vStr:vStr.replace("E0",".0");
                 }
@@ -458,6 +503,7 @@ public class TsrAsString
             return vStr;
         }
 
+        @Contract( pure = true )
         public static Map<Should, Object> configFromCode( String modes )
         {
             if ( modes == null )

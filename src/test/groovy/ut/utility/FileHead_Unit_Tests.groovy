@@ -39,7 +39,7 @@ class FileHead_Unit_Tests extends Specification
         Tsr<?> tensor, Class<NumericType<?,?,?,?>> type, String filename, String expected
     ) {
         given:
-            Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
+            Neureka.instance().settings().view().asString = "dgc"
 
         when : 'A new IDX file handle for the given filename is being instantiated.'
             IDXHead idx = new IDXHead(tensor, "build/test-can/"+filename)
