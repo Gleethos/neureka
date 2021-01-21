@@ -7,7 +7,33 @@ import spock.lang.Specification
 
 class Tensor_Version_Integration_Tests extends Specification
 {
-
+    def setupSpec() {
+        reportHeader """
+                <h2> Tensor Version Behavior </h2>
+                <br> 
+                <p>
+                    There are two fundamental categories of operations
+                    which can be applied to tensors : <br>
+                    Inline operations and Non-Inline  operations! <br>
+                    <br>
+                    Inline operations are often times problematic because they produce
+                    side effects by changing passed tensors instead of producing new ones... <br>   
+                    One such bad side effect can easily occur for tensors involved in the
+                    autograd system, more specifically: the recorded computation graph. <br>
+                    Inline operations can break the mathematically pureness of the back-propagation
+                    procedure by for example changing partial derivatives... <br>
+                    In order to prevent said errors to occur unnoticed tensors
+                    have versions which will increment when the underlying data of the tensor changes. <br>
+                    This version will be tracked by the computation graph as well in order to
+                    match it with the ones stored inside the tensor. <br>
+                    A mismatch would then yield an exception! <br>
+                    <br>
+                    This specification is responsible for defining the behaviour of this
+                    version number with respect to their wrapping tensors as well as computation graph nodes.
+                
+                </p>
+            """
+    }
 
     def setup() {
         Neureka.instance().reset()
@@ -23,18 +49,19 @@ class Tensor_Version_Integration_Tests extends Specification
             int version_of_b,
             String expected
     ) {
-        given :
+        given : 'Two tensors, one requiring gradients and the other one not.'
             Tsr a = new Tsr(6).setRqsGradient(true)
             Tsr b = new Tsr(-4)
+        and : 'A binding for both tensors as preparation for calling the Groovy shell.'
             Binding binding = new Binding()
             binding.setVariable('a', a)
             binding.setVariable('b', b)
 
-        expect :
+        expect : 'The versions of both tensors are 0 initially.'
             a.getVersion() == 0
             b.getVersion() == 0
 
-        when : 'The groovy code is being evaluated.'
+        when : 'The Groovy code is being evaluated inside the Groovy shell.'
             Tsr c = new GroovyShell(binding).evaluate((code))
 
         then : 'The resulting tensor (toString) will contain the expected String.'
@@ -46,7 +73,7 @@ class Tensor_Version_Integration_Tests extends Specification
             b.getVersion() == version_of_b
             c.getVersion() == version_of_c
 
-        where :
+        where : 'The following arguments are being used:'
             code       |  no_inline  || version_of_c | version_of_a | version_of_b | expected
             ' a + b '  |   false     ||      0       |      0       |      0       | "(1):[2.0]"
             ' a - b '  |   false     ||      0       |      0       |      0       | "(1):[10.0]"
