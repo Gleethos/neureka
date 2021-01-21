@@ -282,7 +282,7 @@ public class TsrAsString
 
         if ( _hasGradient && ( _tensor.rqsGradient() || _tensor.hasGradient() ) ) {
             _$( ":g" );
-            Tsr<?> gradient = _tensor.find( Tsr.class );
+            Tsr<?> gradient = _tensor.getGradient();
             if ( gradient != null )
                 _$( gradient.toString( "cv" ) );
             else

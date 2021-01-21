@@ -70,7 +70,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
             Tsr t = new Tsr(1).set(device)
 
         when : 'The device is being accessed via the "device()" method...'
-            Device found = t.device()
+            Device found = t.getDevice()
 
         then : 'This found device should be the one that was set originally.'
             found == device

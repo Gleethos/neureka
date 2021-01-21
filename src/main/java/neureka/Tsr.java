@@ -1242,7 +1242,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     /**
      * @return The device on which this tensor is stored or 'CPU' if it is not outsourced.
      */
-    public Device<ValueType> device() {
+    public Device<ValueType> getDevice() {
         if ( this.isOutsourced() ) return this.find( Device.class );
         return (Device<ValueType>) _CPU;
     }
@@ -1398,6 +1398,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      */
 
     /**
+     *  Tensors which are used or produced by the autograd system will have a GraphNode component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  If this tensor is part of a computation graph then this method
+     *  will traverse an error backward in the recorded history towards tensors which require
+     *  the accumulation of gradients.
      *
      * @param error A tensor which is back-propagated to gradients. Must match the size og this tensor.
      * @return The tensor on which this method was called. (factory pattern)
@@ -1410,9 +1415,15 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     /**
+     *  Tensors which are used or produced by the autograd system will have a GraphNode component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  If this tensor is part of a computation graph then this method
+     *  will traverse an error backward in the recorded history towards tensors which require
+     *  the accumulation of gradients.<br>
+     *  <br>
      *  This method turns the given scalar value and
-     *  turns it into a matching tensor (same shape)
-     *  which will be back-propagated through the
+     *  turns it into a matching tensor ( with the same shape)
+     *  which will then be back-propagated through the
      *  recorded computation graph.
      *
      * @param value A scalar which is back-propagated to gradients. Must match the size og this tensor.
@@ -1425,7 +1436,13 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     /**
-     *  This method assumes that the user wants to backpropagate
+     *  Tensors which are used or produced by the autograd system will have a GraphNode component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  If this tensor is part of a computation graph then this method
+     *  will traverse an error backward in the recorded history towards tensors which require
+     *  the accumulation of gradients. <br>
+     *  <br>
+     *  This method assumes that the user wants to back-propagate
      *  an error of "1" having the same shape as
      *  this tensor.
      *
@@ -1479,9 +1496,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *  Labeling an index means that for every dimension there
      *  must be a label for elements in this range array! <br>
      *  For example the shape (2,3) could be labeled as follows: <br>
-     *
-     *      dim 0 : ["A", "B"]
-     *      dim 1 : ["1", "2", "3"]
+     *  <br>
+     *      dim 0 : ["A", "B"] <br>
+     *      dim 1 : ["1", "2", "3"] <br>
+     *  <br>
      *
      * @param labels A nested String array containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
@@ -1492,6 +1510,25 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this;
     }
 
+    /**
+     *  This method receives a label for this tensor and a
+     *  nested String array which ought to contain a
+     *  label for the index of this tensor.
+     *  The index for a single element of this tensor would be an array
+     *  of numbers as long as the rank where every number is
+     *  in the range of the corresponding shape dimension...
+     *  Labeling an index means that for every dimension there
+     *  must be a label for elements in this range array! <br>
+     *  For example the shape (2,3) could be labeled as follows: <br>
+     *  <br>
+     *      dim 0 : ["A", "B"] <br>
+     *      dim 1 : ["1", "2", "3"] <br>
+     *  <br>
+     *
+     * @param tensorName A label for this tensor itself.
+     * @param labels A nested String array containing labels for indexes of the tensor dimensions.
+     * @return This tensor (method chaining).
+     */
     public Tsr<ValueType> label( String tensorName, String[][] labels )
     {
         _label( tensorName, labels );
@@ -2391,7 +2428,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
     
     public double[] gradient64() {
-        Tsr<ValueType> gradient = this.find( Tsr.class );
+        Tsr<ValueType> gradient = this.getGradient();
         if ( gradient == null ) return new double[ 0 ];
         return ( this.is32() )
                 ? DataConverter.Utility.floatToDouble( gradient.value32() )
@@ -2399,7 +2436,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     public float[] gradient32() {
-        Tsr<ValueType> gradient = this.find( Tsr.class );
+        Tsr<ValueType> gradient = this.getGradient();
         if ( gradient == null ) return new float[ 0 ];
         return ( this.is64() )
                 ? DataConverter.Utility.doubleToFloat( gradient.value64() )

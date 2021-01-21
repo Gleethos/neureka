@@ -52,7 +52,7 @@ public class SGD<ValueType> implements Optimizer<ValueType>
 
     @Override
     public void optimize( Tsr<ValueType> w ) {
-        Tsr g = w.find(Tsr.class);
+        Tsr g = w.getGradient();
         Function.Detached.IDY.call(_function.call( g ));
     }
 

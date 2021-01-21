@@ -381,7 +381,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         if ( parent == null ) {
             newClt.value = new cl_tsr.cl_value();
             _store( tensor, newClt, 1 );
-            if ( tensor.rqsGradient() && tensor.has( Tsr.class ) ) this.store( tensor.find( Tsr.class ) );
+            if ( tensor.rqsGradient() && tensor.has( Tsr.class ) ) this.store( tensor.getGradient() );
             {
                 final cl_mem clValMem = newClt.value.data;
                 cl_event clValEvent = newClt.value.event;

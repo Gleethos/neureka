@@ -118,7 +118,7 @@ class Cross_Device_System_Tests extends Specification
         and : Tsr t = new Tsr([2, 2], 4).setRqsGradient(true).set(gpu)
         when :
             t.backward(1)
-            Tsr g = t.find(Tsr.class)
+            Tsr g = t.getGradient()
 
         then :
             assert g.toString().contains("[2x2]:(1.0, 1.0, 1.0, 1.0)")

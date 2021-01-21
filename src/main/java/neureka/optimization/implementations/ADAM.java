@@ -60,7 +60,7 @@ public class ADAM<ValueType> implements Optimizer<ValueType> {
     }
 
     private void _optimize(Tsr<ValueType> w) {
-        Tsr<ValueType> g = w.find(Tsr.class);
+        Tsr<ValueType> g = w.getGradient();
         m = new Tsr<>(b1, "*", m, " + ( 1-", b1, ") *", g);
         v = new Tsr<>(b2, "*", v, " + ( 1-", b2, ") * (", g,"^2 )");
         Tsr<ValueType> mh = new Tsr<>(m, "/(1-", b1, ")");

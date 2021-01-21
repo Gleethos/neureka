@@ -244,7 +244,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
         if ( p == null ) _payload = null;
         else {
             _payload = new WeakReference<>( p );
-            p.device().cleaning( p, () -> {
+            p.getDevice().cleaning( p, () -> {
                 if (this.getPayload() == null) {
                     boolean allChildrenUseForwardAD = true;
                     if ( _children != null ) {
@@ -598,7 +598,7 @@ public class GraphNode<ValueType> implements Component<Tsr<ValueType>>
         Tsr<ValueType> payload = getPayload();
         if ( payload == null ) return; // Garbage collected!
         try {
-            if (payload.isOutsourced()) payload.device().store(e);
+            if (payload.isOutsourced()) payload.getDevice().store(e);
         } catch ( Exception exception ) {
             exception.printStackTrace();
         }

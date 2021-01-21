@@ -187,8 +187,8 @@ class Tensor_IO_Unit_Tests extends Specification
             !x.isSlice()
             !x.isSliceParent()
             !x.belongsToGraph()
-            x.device() !=null
-            x.device() instanceof HostCPU
+            x.getDevice() !=null
+            x.getDevice() instanceof HostCPU
             x.rank()==1
             !x.rqsGradient()
             x.size()==1

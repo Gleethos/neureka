@@ -182,7 +182,7 @@ class Tensor_Framing_Integration_Tests extends Specification
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
         and: 'And a labeled tensor of rank 3 is being created.'
             Tsr t = new Tsr([2, 3, 4], -7..7)
-            t.label([
+            t.label( 'My Tensor', [
                 ["1", "2"],
                 ["a", "b", "y"],
                 ["tim", "tom", "tina", "tanya"]
@@ -191,13 +191,13 @@ class Tensor_Framing_Integration_Tests extends Specification
         expect: 'When the tensor is converted to a String then the labels will be included:'
             t.toString('fp') == "[2x3x4]:(\n" +
                                       "   [ 1 ]:(\n" +
-                                      "      [   tim ][  tom ][ tina ][ tanya ]\n" +
+                                      "      [   tim ][  tom ][ tina ][ tanya ]:[ My Tensor ]\n" +
                                       "      (  -7.0 ,  -6.0 ,  -5.0 ,  -4.0  ):[ a ],\n" +
                                       "      (  -3.0 ,  -2.0 ,  -1.0 ,   0.0  ):[ b ],\n" +
                                       "      (   1.0 ,   2.0 ,   3.0 ,   4.0  ):[ y ]\n" +
                                       "   ),\n" +
                                       "   [ 2 ]:(\n" +
-                                      "      [   tim ][  tom ][ tina ][ tanya ]\n" +
+                                      "      [   tim ][  tom ][ tina ][ tanya ]:[ My Tensor ]\n" +
                                       "      (   5.0 ,   6.0 ,   7.0 ,  -7.0  ):[ a ],\n" +
                                       "      (  -6.0 ,  -5.0 ,  -4.0 ,  -3.0  ):[ b ],\n" +
                                       "      (  -2.0 ,  -1.0 ,   0.0 ,   1.0  ):[ y ]\n" +

@@ -157,7 +157,7 @@ public interface Function
             boolean resultIsUnique = true;
             if ( drain != null ) {
                 for( Tsr<T> t : inputs ) {
-                    Tsr<T> g = t.find( Tsr.class );
+                    Tsr<T> g = t.getGradient();
                     if (t == result || ( g != null && g == result ) ) {
                         resultIsUnique = false;
                         break;

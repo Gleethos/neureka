@@ -26,7 +26,7 @@ public class UnitTester_Tensor extends UnitTester
         println(BAR +"  Device: "+device.toString());
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         for(Tsr t : tsrs){
-            Device found = t.device();//((Device)t.find(Device.class));
+            Device found = t.getDevice();//((Device)t.find(Device.class));
             this.assertStringContains("result", (found==null)?"null":found.toString(), device.toString());
         }
         return (printSessionEnd()>0)?1:0;
@@ -43,7 +43,7 @@ public class UnitTester_Tensor extends UnitTester
         }
         DataType type = tensor.getDataType();
         if ( type != null ) {
-            if ( tensor.device() instanceof OpenCLDevice ) {
+            if ( tensor.getDevice() instanceof OpenCLDevice ) {
                 this.assertStringContains("Tensor data type :", type.getTypeClass().getName(), "F32");
             } else this.assertStringContains("Tensor data type :", type.getTypeClass().getName(), "F64");
         }

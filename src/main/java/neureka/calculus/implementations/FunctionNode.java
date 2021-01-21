@@ -311,7 +311,7 @@ public class FunctionNode extends AbstractBaseFunction
         Device device = inputs[ 0 ].find( Device.class );
         boolean onSameDevice = _shareGuestDevice( inputs );
         boolean doAccel = !_operation.getOperator().equals(",") && onSameDevice;
-        return ( doAccel && device != null ) ? device : inputs[ 0 ].device();
+        return ( doAccel && device != null ) ? device : inputs[ 0 ].getDevice();
     }
 
     private static boolean _shareGuestDevice( Tsr[] tsrs )

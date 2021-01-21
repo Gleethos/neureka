@@ -41,7 +41,7 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
             Function function = Mock( Function )
             Object context = Mock( GraphLock )
             Device device = Mock( Device )
-            payload.device() >> device
+            payload.getDevice() >> device
 
         when : 'We try to instantiate a GraphNode...'
             new GraphNode( function, context, supplier )
@@ -83,7 +83,7 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
             3 * context.getTensors() >> inputs
             5 * inputsNodeMock.getLock() >> Mock( GraphLock )
             1 * function.isDoingAD() >> true
-            1 * payload.device() >> device
+            1 * payload.getDevice() >> device
             1 * payload.set( _ )
             1 * device.cleaning( payload, _ )
             4 * inputs[0].find( GraphNode.class ) >> inputsNodeMock

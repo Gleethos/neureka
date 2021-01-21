@@ -55,7 +55,7 @@ class Backend_Extension_Unit_Tests extends Specification
             (1.._) * implementation.handleInsteadOfDevice(_,_) >> output
 
         and : 'The mocked output tensor never returns the mock device because our custom call hook replaces execution.'
-            0 * output.device() >> Mock(Device)
+            0 * output.getDevice() >> Mock(Device)
 
         and : 'The ADAnalyzer of the mock implementation will not be called because "doAD" is set to "false".'
             0 * implementation.isAlgorithmSuitableFor(_)
@@ -109,9 +109,9 @@ class Backend_Extension_Unit_Tests extends Specification
         and : 'The GraphNode instance which will be created as tensor component interacts as follows.'
             (1.._) * input.find( GraphNode.class ) >> node
             (1.._) * node.getLock() >> Mock(GraphLock)
-            (1.._) * input.device() >> Mock(Device) // Device is being queried for execution...
+            (1.._) * input.getDevice() >> Mock(Device) // Device is being queried for execution...
             _ * type.getOperator() >> 'test_identifier'
-            (1.._) * output.device() >> Mock(Device)
+            (1.._) * output.getDevice() >> Mock(Device)
 
         and : 'The given ADAnalyzer instance is being called because auto-differentiation is enabled.'
             (1.._) * input.rqsGradient() >> true
