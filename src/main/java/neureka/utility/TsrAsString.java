@@ -399,7 +399,8 @@ public class TsrAsString
             if ( alias != null ) _$( ":" )._buildSingleLabel( alias, depth, idx );
         } else {
             _$( Util.indent( depth ) );
-            if ( depth - 1 > 0 && alias != null ) _buildSingleLabel( alias, depth, idx )._$(":");
+            if ( depth > 0 && alias != null )
+                _buildSingleLabel( alias, depth, idx )._$(":");
             _$( (_legacy) ? "(\n" : "[\n" );
             int i = 0;
             do {
@@ -420,11 +421,14 @@ public class TsrAsString
     }
 
     private TsrAsString _buildSingleLabel( IndexAlias alias, int depth, int[] idx ) {
-        int pos= depth - 1;
+        int pos = depth - 1;
         List<Object> key = alias.keysOf( pos );
-        if ( key != null ) {
+        if ( pos >= 0 && key != null ) {
             _$( (_legacy) ? "[ " : "( ");
-            _$( key.get( ( _shape[ pos ] + idx[ pos ] - 1 ) % _shape[ pos ] ).toString() );
+            int i = ( depth == idx.length - 1 )
+                    ? ( _shape[ pos ] + idx[ pos ] - 1 ) % _shape[ pos ]
+                    : idx[ pos ];
+            _$( key.get( i ).toString() );
             _$( (_legacy) ? " ]" : " )");
         }
         return this;

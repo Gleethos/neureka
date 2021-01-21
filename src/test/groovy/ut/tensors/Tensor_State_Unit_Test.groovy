@@ -19,65 +19,69 @@ class Tensor_State_Unit_Test extends Specification
         """
     }
 
-    def setup() {
+    def setup()
+    {
         Neureka.instance().reset()
         // Configure printing of tensors to be more compact:
         Neureka.instance().settings().view().asString = TsrAsString.configFromCode("dgc")
     }
 
-    def 'Tensors as String can be formatted on an entry based level.'() {
-
-        given :
+    def 'Tensors as String can be formatted on an entry based level.'()
+    {
+        given : 'A new tensor of rank 2 storing Strings:'
             Tsr t = new Tsr([2, 3], DataType.of(String.class), (i, idx)-> {
                 return ["sweet", "salty", "blue", "spinning", "confused", "shining"].get( (i + 17**i)%6 ) + ' ' +
                     ["Saitan", "Apple", "Tofu",  "Strawberry", "Almond", "Salad"].get( (i + 7**i)%6 )
             })
 
-        expect:
+        expect: 'When we convert the tensor to a String via the flags "b" (cell bound) and "f" (formatted).'
             t.toString('bf') == "(2x3):[\n" +
                                     "   [ sal.., swe.., spi.. ],\n" +
                                     "   [ blu.., shi.., con.. ]\n" +
                                     "]\n"
-        and:
+        and: 'When additionally supplying the flag "p" (padding) then most String entries will be printed fully.'
             t.toString('bfp') == "(2x3):[\n" +
                     "   [   salty Apple  ,    sweet Tofu  , spinning Stra.. ],\n" +
                     "   [   blue Almond  ,  shining Salad , confused Saitan ]\n" +
                     "]\n"
+        and: 'When supplying the "p" and "b" flags manually then the result is as expected:'
+            t.toString([
+                    (TsrAsString.Should.BE_CELL_BOUND) : true,
+                    (TsrAsString.Should.HAVE_PADDING_OF) : 4
+            ]) == "(2x3):[salty Ap.., sweet Tofu, spinning.., blue Alm.., shining .., confused..]"
 
     }
 
     def 'Tensors as String can be formatted depending on shape.'(
             String mode, List<Integer> shape, String expected
     ){
-
-        given:
+        given: 'Four tensors of various data types:'
             Tsr t1 = new Tsr( shape, Float.class, -4..5 ).set( new Tsr( shape, -7..3 ) )
             Tsr t2 = new Tsr( shape, -4..5 ).set( new Tsr( shape, -7..3 ) )
             Tsr t3 = new Tsr( shape, Integer.class, -4..5 ).set( new Tsr( shape, -7..3 ) )
             Tsr t4 = new Tsr( shape, Short.class, -4..5 ).set( new Tsr( shape, -7..3 ) )
 
-        expect:
+        expect: 'The first tensor has the expected internals ans produces the correct String representation.'
             t1.toString(mode) == expected
             t1.dataType == DataType.of( Float.class )
             t1.data instanceof float[]
-        and :
+        and : 'The second tensor has the expected internals ans produces the correct String representation.'
             t2.toString(mode) == expected
             t2.dataType == DataType.of( Double.class )
             t2.data instanceof double[]
-        and :
+        and : 'The third tensor has the expected internals ans produces the correct String representation.'
             t3.toString(mode).replace(' ','') == expected.replace('.0','  ').replace(' ','')
             t3.dataType == DataType.of( Integer.class )
             t3.data instanceof int[]
-        and :
+        and : 'The fourth tensor has the expected internals ans produces the correct String representation.'
             t4.toString(mode).replace(' ','') == expected.replace('.0','  ').replace(' ','')
             t4.dataType == DataType.of( Short.class )
             t4.data instanceof short[]
 
-        where :
+        where : 'The print configurations codes "mode", a common shape and expected String representation will be supplied:'
            mode | shape     | expected
            "fap" | [2,3]    | "(2x3):[\n   [  -4.0 ,  -3.0 ,  -2.0  ],\n   [  -1.0 ,   0.0 ,   1.0  ]\n]\n"
            "fa"  | [2,3]    | "(2x3):[\n   [ -4.0, -3.0, -2.0 ],\n   [ -1.0, 0.0, 1.0 ]\n]\n"
-           //"apg"| [2,3]    | "(2x3):[\n   [  -4.0 ,  -3.0 ,  -2.0  ],\n   [  -1.0 ,   0.0 ,   1.0  ]\n]\n"
            "fp" | [3,2]     | "(3x2):[\n   [  -4.0 ,  -3.0  ],\n   [  -2.0 ,  -1.0  ],\n   [   0.0 ,   1.0  ]\n]\n"
            "fp" | [2,3,4]   | "(2x3x4):[\n   [\n      [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ],\n      [   0.0 ,   1.0 ,   2.0 ,   3.0  ],\n      [   4.0 ,   5.0 ,  -4.0 ,  -3.0  ]\n   ],\n   [\n      [  -2.0 ,  -1.0 ,   0.0 ,   1.0  ],\n      [   2.0 ,   3.0 ,   4.0 ,   5.0  ],\n      [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ]\n   ]\n]\n"
            "fp" | [2,2,3,4] | "(2x2x3x4):[\n   [\n      [\n         [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ],\n         [   0.0 ,   1.0 ,   2.0 ,   3.0  ],\n         [   4.0 ,   5.0 ,  -4.0 ,  -3.0  ]\n      ],\n      [\n         [  -2.0 ,  -1.0 ,   0.0 ,   1.0  ],\n         [   2.0 ,   3.0 ,   4.0 ,   5.0  ],\n         [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ]\n      ]\n   ],\n   [\n      [\n         [   0.0 ,   1.0 ,   2.0 ,   3.0  ],\n         [   4.0 ,   5.0 ,  -4.0 ,  -3.0  ],\n         [  -2.0 ,  -1.0 ,   0.0 ,   1.0  ]\n      ],\n      [\n         [   2.0 ,   3.0 ,   4.0 ,   5.0  ],\n         [  -4.0 ,  -3.0 ,  -2.0 ,  -1.0  ],\n         [   0.0 ,   1.0 ,   2.0 ,   3.0  ]\n      ]\n   ]\n]\n"

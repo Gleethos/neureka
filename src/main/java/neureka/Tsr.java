@@ -1125,41 +1125,103 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     --------------------------------------------
     */
 
+    /**
+     *  A tensor is empty if their is neither data set within the tensor directly
+     *  or within a device to which the tensor might belong.
+     *
+     * @return The truth value determining if this tensor has data.
+     */
     public boolean isEmpty() {
-        return getData() == null && !this.isOutsourced();
+        return getData() == null && !this.isOutsourced(); // Outsourced means that the tensor is stored on a device.
     }
 
     public boolean isUndefined() {
         return _NDConf ==null || _NDConf.shape() == null;
     }
 
+    /**
+     *  If this tensor is a slice of a parent tensor then this method will yield true.
+     *  Slices can be created by calling the variations of the "getAt" method.
+     *
+     * @return The truth value determining if this tensor is a slice of another tensor.
+     */
     public boolean isSlice() {
         Relation<ValueType> child = find( Relation.class );
         return ( child != null && child.hasParent() );
     }
 
+    /**
+     *  This method returns the number of slices which have been
+     *  created from this very tensor.
+     *  It does so by accessing the Relation component if present
+     *  which internally keeps track of slices via weak references.
+     *
+     * @return The number of slices derived from this tensor.
+     */
     public int sliceCount() {
         Relation<ValueType> child = find( Relation.class );
         return ( child != null ) ? child.childCount() : 0;
     }
 
+    /**
+     *  If slices have been derived from this tensor then it is a "slice parent".
+     *  This is what this method will determine, in which case, it will return true.
+     *
+     * @return The truth value determining if slices have been derived from this tensor.
+     */
     public boolean isSliceParent() {
         Relation<ValueType> parent = find( Relation.class );
         return ( parent != null && parent.hasChildren() );
     }
 
+    /**
+     *  Tensors which are used or produced by the autograd system will have a GraphNode component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  This autograd system however, will only be triggered by Function implementations which
+     *  are not "detached", meaning they have their "doAD" flags set to true! <br>
+     *  Detached functions (like those pre-instantiated in Function.Detached.*) will not attach GraphNode
+     *  instances to involved tensors which will prevent the formation of a computation graph.
+     *
+     * @return The truth value determining if this tensor belongs to a recorded computation graph.
+     */
     public boolean belongsToGraph() {
         return this.has( GraphNode.class );
     }
 
+    /**
+     *  Tensors which are used or produced by the autograd system will have a GraphNode component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  This autograd system however, will only be triggered by Function implementations which
+     *  are not "detached", meaning they have their "doAD" flags set to true! <br>
+     *  A tensor is a leave if it is attached to a computation graph in which it is not an intermediate / branch node
+     *  but input / branch node.
+     *
+     * @return The truth value determining if this tensor is attached to a computation graph as leave node.
+     */
     public boolean isLeave() {
         return (!this.has( GraphNode.class )) || this.find( GraphNode.class ).isLeave();
     }
 
+    /**
+     *  Tensors which are used or produced by the autograd system will have a GraphNode component attached to them.
+     *  This is because autograd requires recording a computation graph for back-prop traversal.
+     *  This autograd system however, will only be triggered by Function implementations which
+     *  are not "detached", meaning they have their "doAD" flags set to true! <br>
+     *  A tensor is a branch if it is attached to a computation graph in which it is not an input / leave node
+     *  but intermediate / branch node.
+     *
+     * @return The truth value determining if this tensor is attached to a computation graph as branch node.
+     */
     public boolean isBranch() {
         return !this.isLeave();
     }
 
+    /**
+     *  Tensors can be components of other tensors which makes the
+     *  implicitly their gradients.
+     *
+     * @return The truth value determining if this tensor has another tensor attached to it (which is its gradient).
+     */
     public boolean hasGradient() {
         return this.has( Tsr.class );
     }
@@ -1170,6 +1232,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         ----------------------------------------------
      */
 
+    /**
+     * @return The gradient of this tensor which is internally stored as component.
+     */
     public Tsr<ValueType> getGradient() {
         return this.find( Tsr.class );
     }
@@ -2497,9 +2562,14 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return _toString( mode, ( mode.contains( "f" ) ) ? "    " : null );
     }
 
-    public String toString( Map<TsrAsString.Should, Object> config, String deep ) {
-        return new TsrAsString( this, config ).toString( deep );
+    public String toString( Map<TsrAsString.Should, Object> config, String indent ) {
+        return new TsrAsString( this, config ).toString( indent );
     }
+
+    public String toString( Map<TsrAsString.Should, Object> config ) {
+        return new TsrAsString( this, config ).toString();
+    }
+
 
     protected String _toString( String mode, String deep )
     {
