@@ -260,7 +260,7 @@ class FileHead_Unit_Tests extends Specification
         when:
             def csvHead = new CSVHead( t, "build/resources/test/csv/test.csv" )
             Tsr loaded = csvHead.load()
-            then:
+        then:
             loaded.toString() == "(2x3):[\n" +
                     "   (        A       )(       B       )(       C        ):( test )\n" +
                     "   [        1       ,        hi      ,        :)       ]:( 0 ),\n" +

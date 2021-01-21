@@ -274,8 +274,14 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                 return;
             }
         }
-
-        // EXPRESSION:
+ 
+        /* EXPRESSION BASED CONSTRUCTION: 
+            The following allows the creation of tensors based on passing an expression
+            alongside input tensors to the constructor.
+            An example would be:
+            
+                Tsr<?> t = new Tsr( "tanh(", x, ") * 7 ^", y );  
+        */
         boolean containsString = false;
         int numberOfTensors = 0;
         ArrayList<Tsr<ValueType>> tsrList = new ArrayList<>();
@@ -766,10 +772,30 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _construct( tensors, expression, doAD );
     }
 
-    private void _construct( Tsr[] tensors, String operation, boolean doAD ) {
-        if ( tensors == null || tensors.length == 0 || tensors[ 0 ] == null ) return;
-        Tsr<ValueType> result = Function.Setup.commit( this, tensors, operation, doAD );
-        this._become( result );
+    /**
+     *  In essence tensors are merely fancy wrapper for some form of array of any type...
+     *  This wrapper usually stays the same of a given data array.
+     *  However, sometimes a tensor changes its identity, or rather the underlying
+     *  data changes the wrapping tensor instance. 
+     *
+     *  This change currently only happens when tensors are being instantiated by
+     *  passing inputs and a math expression to its constructor.
+     *  This triggers the creation of a Function instance and execution on the provided
+     *  input tensors. In that case the output tensor will be created somewhere
+     *  along the execution call stack, however the result is expected to be
+     *  stored within the tensor whose constructor initialized all of this.
+     *  In that case this tensor will rip out the guts of the resulting output
+     *  tensor and stuff onto its own field variables. <br>
+     *  <br>
+     *  
+     * @param tensors The tensors which will be passed to the function.
+     * @param expression The expression defining a function.
+     * @param doAD The flag which will enable or disable autograd for the instantiated Function.
+     */
+    private void _construct( Tsr[] tensors, String expression, boolean doAD ) 
+    {
+        if ( tensors == null || tensors.length == 0 || tensors[ 0 ] == null ) return; 
+        _become( Function.Setup.commit( this, tensors, expression, doAD ) );
     }
 
     /**
@@ -1248,7 +1274,6 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     /**
-     *
      * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
      */
     public GraphNode<ValueType> getGraphNode() {
@@ -1297,9 +1322,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      */
     public Tsr<ValueType> incrementVersionBecauseOf( ExecutionCall call ) {
         if ( Neureka.instance().settings().autograd().isPreventingInlineOperations() ) {
-            _version ++;
+            _version++;
             GraphNode<?> node = find( GraphNode.class );
-            if ( node != null && node.getPayloadReferenceVersion() != this._version ) {
+            if ( node != null && node.getPayloadReferenceVersion() != _version ) {
                 if ( node.usesAD() || node.isUsedAsDerivative() ) {
                     String error = "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\n" +
                             "The following OperationType caused an internal version mismatch: '"+call.getOperation().getFunction()+"'";
@@ -1311,7 +1336,17 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this;
     }
 
-
+    /**
+     *  Although tensors will be garbage collected when they are not strongly referenced,
+     *  there is also the option to manually free up the tensor and its associated data.
+     *  This is especially useful when tensors are stored on a device like the OpenCLDevice.
+     *  In that case calling the "delete" method will free the memory reserved for this tensor.
+     *  This manual memory freeing through this method can be faster than waiting for
+     *  the garbage collector to kick in... <br>
+     *  <br>
+     *      
+     * @return This very tensor instance to allow for method chaining.
+     */
     public Tsr<ValueType> delete() 
     {
         forComponent( GraphNode.class, n -> {
@@ -1330,6 +1365,24 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this;
     }
 
+    /**
+     *  In essence tensors are merely fancy wrapper for some form of array of any type... 
+     *  This wrapper usually stays the same of a given data array.
+     *  However, sometimes a tensor changes its identity, or rather the underlying
+     *  data changes the wrapping tensor instance. <br>
+     *  <br>
+     *  This change currently only happens when tensors are being instantiated by
+     *  passing inputs and a math expression to its constructor.
+     *  This triggers the creation of a Function instance and execution on the provided
+     *  input tensors. In that case the output tensor will be created somewhere
+     *  along the execution call stack, however the result is expected to be 
+     *  stored within the tensor whose constructor initialized all of this.
+     *  In that case this tensor will rip out the guts of the resulting output
+     *  tensor and stuff onto its own field variables.
+     * 
+     * @param tensor The tensor whose identity should be stolen.
+     * @return This very tensor instance in order to enable method chaining.
+     */
     protected Tsr<ValueType> _become( Tsr<ValueType> tensor )
     {
         if ( tensor == null ) return this;
@@ -1990,7 +2043,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         Tsr<ValueType> subset = new Tsr<>();
         subset.setDataType( this.getDataType() );
         subset._setData( this.getData() );
-        int[] newTranslation = this._NDConf.translation();
+        int[] newTranslation = _NDConf.translation();
         int[] newIdxmap = NDConfiguration.Utility.newTlnOf( newShape );
 
         for ( int i = 0; i < this.rank(); i++ )
