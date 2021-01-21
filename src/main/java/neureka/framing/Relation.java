@@ -63,6 +63,16 @@ import java.util.function.Consumer;
 @ToString
 public class Relation<ValueType> implements Component<Tsr<ValueType>>
 {
+    /**
+     *  If the the tensor to which this Relation is a component
+     *  is in fact a slice, then the following field will reference
+     *  the tensor from which the slice has been created. <br>
+     *  This "parent" tensor is referenced strongly so that the
+     *  data which is shared by its slice(s) cannot be garbage collected. <br>
+     *  One might wonder: "Why is the data not referenced here directly"? <br>
+     *  The answer is simple: The parent tensor (as well as its slices)
+     *  might be outsourced to a device which may store the data itself in various ways...
+     */
     @Getter
     private Tsr<ValueType> _parent; // Children need their parents. They shall not be garbage collected.
 

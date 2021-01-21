@@ -20,7 +20,6 @@ public class Reshape extends AbstractOperation
 
     public Reshape()
     {
-
         super(
                 "reshape", ",", -1,
                 true,
@@ -106,26 +105,27 @@ public class Reshape extends AbstractOperation
     }
 
 
-    public static Tsr reshaped( Tsr tensor, int[] newForm, boolean newTsr )
+    public static Tsr<?> reshaped( Tsr<?> tensor, int[] newForm, boolean newTsr )
     {
-        Tsr parent = tensor;
-        tensor = (newTsr) ? (Tsr) tensor.getAt(new ArrayList<>()) : tensor;
+        Tsr<?> parent = tensor;
+        tensor = (newTsr) ? (Tsr<?>) tensor.getAt( new ArrayList<>() ) : tensor;
         NDConfiguration newNDC = tensor.getNDConf().newReshaped( newForm );
         AbstractNDArray.Utility.Indexing.shpCheck( newNDC.shape(), tensor );
         tensor.setNDConf( newNDC );
         if ( newTsr ) {
-            Relation r = (Relation) parent.find(Relation.class);
+            Relation r = (Relation) parent.find( Relation.class );
             r.addReshapeRelationFor( tensor, newForm );
         }
         return tensor;
     }
 
-    public static int[] invert( int[] reshape ) {
+    public static int[] invert( int[] reshape )
+    {
         int reverseLength = 0;
         for ( int e : reshape ) {
             if ( e >= 0 ) reverseLength++;
         }
-        int[] reversed = new int[reverseLength];
+        int[] reversed = new int[ reverseLength ];
         int reshape_i = 0;
         int reverse_i = 0;
         while ( reverse_i < reverseLength ) {
@@ -139,7 +139,8 @@ public class Reshape extends AbstractOperation
     }
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+    public double calculate( double[] inputs, int j, int d, List<Function> src )
+    {
             return src.get( 0 ).call( inputs, j );
     }
 }

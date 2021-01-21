@@ -42,7 +42,6 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.framing.IndexAlias;
-import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
@@ -51,7 +50,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.IntFunction;
-import java.util.stream.Collectors;
 
 /**
  *  This class is in essence a simple wrapper class for a tensor and a StringBuilder
@@ -95,28 +93,31 @@ public class TsrAsString
 
     private Map<Should, Object> _config;
 
-    public TsrAsString( Tsr<?> tensor, Map< Should, Object > settings ) {
-        Map< Should, Object > copy = _defaults( "" );
+    public TsrAsString( Tsr<?> tensor, Map< Should, Object > settings )
+    {
+        Map< Should, Object > copy = Util.configFromCode( "" );
         for ( Should s : Should.values() )
             if ( settings.containsKey( s ) ) copy.put( s, settings.get( s ) );
         _construct( tensor, copy );
     }
 
-    public TsrAsString( Tsr<?> tensor, String modes ) {
+    public TsrAsString( Tsr<?> tensor, String modes )
+    {
         _construct(
                 tensor,
-                _defaults( modes )
+                Util.configFromCode( modes )
         );
     }
 
-    public TsrAsString( Tsr<?> tensor ) {
+    public TsrAsString( Tsr<?> tensor )
+    {
         _construct(
                 tensor,
-                _defaults( null )
+                Util.configFromCode( null )
         );
     }
 
-    private void _construct( Tsr tensor, Map< Should, Object > settings )
+    private void _construct( Tsr<?> tensor, Map< Should, Object > settings )
     {
         if ( tensor.getNDConf() != null ) _shape = tensor.getNDConf().shape();
         _config = settings;
@@ -151,28 +152,6 @@ public class TsrAsString
 
         if ( settings.containsKey( Should.BE_CELL_BOUND ) )
             _isCellBound = (boolean) settings.get( Should.BE_CELL_BOUND );
-    }
-
-    private Map< Should, Object > _defaults( String modes ) {
-        if ( modes == null ) {
-            return Neureka.instance().settings().view().getAsString();
-        }
-        return configFromCode( modes );
-    }
-
-    public static Map<Should, Object> configFromCode( String code ) {
-        Map< Should, Object > copy = new HashMap<>();
-        copy.put( Should.BE_SHORTENED_BY,      (code.contains( "s") ) ? 3 : 50                      );
-        copy.put( Should.BE_COMPACT,           code.contains( "c" )                                 );
-        copy.put( Should.BE_FORMATTED,         code.contains( "f" )                                 );
-        copy.put( Should.HAVE_GRADIENT,        code.contains( "g" )                                 );
-        copy.put( Should.HAVE_PADDING_OF,     (code.contains( "p" )) ? 6 : code.contains( "f" )?2:1 );
-        copy.put( Should.HAVE_VALUE,          !(code.contains( "shp" ) || code.contains("shape"))   );
-        copy.put( Should.HAVE_RECURSIVE_GRAPH, code.contains( "r" )                                 );
-        copy.put( Should.HAVE_DERIVATIVES,     code.contains( "d" )                                 );
-        copy.put( Should.HAVE_SHAPE,           !code.contains( "v" )                                );
-        copy.put( Should.BE_CELL_BOUND,        code.contains("b")                                   );
-        return copy;
     }
 
     /**
@@ -479,6 +458,24 @@ public class TsrAsString
             return vStr;
         }
 
+        public static Map<Should, Object> configFromCode( String modes )
+        {
+            if ( modes == null )
+                return Neureka.instance().settings().view().getAsString();
+            Map< Should, Object > conf = new HashMap<>();
+            conf.put( Should.BE_SHORTENED_BY,      (modes.contains( "s") ) ? 3 : 50                      );
+            conf.put( Should.BE_COMPACT,           modes.contains( "c" )                                 );
+            conf.put( Should.BE_FORMATTED,         modes.contains( "f" )                                 );
+            conf.put( Should.HAVE_GRADIENT,        modes.contains( "g" )                                 );
+            conf.put( Should.HAVE_PADDING_OF,     (modes.contains( "p" )) ? 6 : modes.contains( "f" )?2:1 );
+            conf.put( Should.HAVE_VALUE,          !(modes.contains( "shp" ) || modes.contains("shape"))   );
+            conf.put( Should.HAVE_RECURSIVE_GRAPH, modes.contains( "r" )                                 );
+            conf.put( Should.HAVE_DERIVATIVES,     modes.contains( "d" )                                 );
+            conf.put( Should.HAVE_SHAPE,           !modes.contains( "v" )                                );
+            conf.put( Should.BE_CELL_BOUND,        modes.contains("b")                                   );
+            return conf;
+        }
     }
+
 
 }
