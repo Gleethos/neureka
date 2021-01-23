@@ -3,7 +3,7 @@ package neureka.ndim.iterators.types.simple.main;
 import neureka.ndim.iterators.NDIterator;
 import neureka.ndim.config.types.simple.SimpleD3Configuration;
 
-public class SimpleD3CIterator extends SimpleD3Configuration implements NDIterator
+public final class SimpleD3CIterator extends SimpleD3Configuration implements NDIterator
 {
     protected int _d1 = 0;
     protected int _d2 = 0;

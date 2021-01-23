@@ -3,7 +3,7 @@ package neureka.ndim.iterators.types.complex.main;
 import neureka.ndim.iterators.NDIterator;
 import neureka.ndim.config.types.complex.ComplexD2Configuration;
 
-public class ComplexD2CIterator extends ComplexD2Configuration implements NDIterator
+public final class ComplexD2CIterator extends ComplexD2Configuration implements NDIterator
 {
     protected int _d1 = 0;
     protected int _d2 = 0;
@@ -53,8 +53,8 @@ public class ComplexD2CIterator extends ComplexD2Configuration implements NDIter
 
     @Override
     public void set( int[] idx ) {
-        _d1 = idx[0];
-        _d2 = idx[1];
+        _d1 = idx[ 0 ];
+        _d2 = idx[ 1 ];
     }
 
 }

@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  *
  */
 @Accessors( prefix = {"_"}, chain = true )
-public class DefaultADAgent implements ADAgent
+public final class DefaultADAgent implements ADAgent
 {
     /**
      * This interface is the declaration for

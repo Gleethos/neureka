@@ -59,7 +59,7 @@ import java.util.function.Function;
  *
  */
 @Accessors( prefix = {"_"} )
-public class TsrAsString
+public final class TsrAsString
 {
     public enum Should {
         BE_FORMATTED,

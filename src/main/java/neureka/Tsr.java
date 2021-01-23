@@ -948,10 +948,8 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                 Relation<ValType> relation = find( Relation.class );
                 if ( relation!=null ) relation.foreachChild( c -> c._setData( getData()) );
             } else {
-                Tsr<?> parentTensor = (this.isSlice())? find(Relation.class).getParent() : null;
-                if ( parentTensor != null ) {
-                    parentTensor.find( Relation.class ).remove( this );
-                }
+                Tsr<?> parentTensor = ( this.isSlice() ) ? find(Relation.class).getParent() : null;
+                if ( parentTensor != null ) parentTensor.find( Relation.class ).remove( this );
                 _actualize();
             }
             _setIsVirtual( isVirtual );
@@ -1509,21 +1507,30 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
     public void applyGradient()
     {
+        /*
+           If the tensor has a JITProp component then it will triggers the continuation of the back-propagation which
+           has been put on hold by saving the pending graph nodes inside the component. <br>
+           This is because the gradient most likely has not yet been fully calculated.
+         */
         forComponent( JITProp.class, JITProp::execute );
+        // Afterwards the JITProp component is not needed anymore!
         remove( JITProp.class );
+        // Now the gradient can be applied (Gradients are also tensors, which is why we provide its class).
         forComponent(
                 Tsr.class,
                 g -> {
+                    // If an optimizer is present then we also optimize the gradient first!
                     forComponent( Optimizer.class, o -> o.optimize( this ) );
+                    // And then we remove the gradient becuase it is no longer needed.
                     remove( Tsr.class );
+                    // We are now ready to apply the gradient to the tensor. This is an inline operation!
+                    // Therefore we need to turn off the inline operation safety net:
                     boolean inlineSafety = Neureka.instance().settings().autograd().isPreventingInlineOperations();
-                    if ( inlineSafety )
-                        Neureka.instance().settings().autograd().setIsPreventingInlineOperations( false );
+                    if ( inlineSafety ) Neureka.instance().settings().autograd().setIsPreventingInlineOperations( false );
                     // INLINE OPERATION :
-                    Function.Detached.PLUS_ASSIGN.call( new Tsr[]{ this, g } );
-                    // INLINE END !
-                    if ( inlineSafety )
-                        Neureka.instance().settings().autograd().setIsPreventingInlineOperations( true );
+                    Function.Detached.PLUS_ASSIGN.call( new Tsr[]{ this, g } ); //-> Finally applying the gradient!
+                    // INLINE END ! -> We can now revert to the previous setting:
+                    if ( inlineSafety ) Neureka.instance().settings().autograd().setIsPreventingInlineOperations( true );
                 }
         );
     }
@@ -1590,7 +1597,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
     private void _label( String tensorName, String[][] labels )
     {
-        IndexAlias indexAlias = find( IndexAlias.class );
+        IndexAlias<ValType> indexAlias = find( IndexAlias.class );
         if ( indexAlias == null ) {
             indexAlias = new IndexAlias( this.rank(), tensorName );
             set( indexAlias );
@@ -1623,14 +1630,14 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      */
     public Tsr<ValType> label( List<List<Object>> labels )
     {
-        IndexAlias indexAlias = find( IndexAlias.class );
+        IndexAlias<ValType> indexAlias = find( IndexAlias.class );
         if ( indexAlias == null ) set( new IndexAlias( labels, null ) );
         return this;
     }
 
     public Tsr<ValType> label( String tensorName, List<List<Object>> labels )
     {
-        IndexAlias indexAlias = find( IndexAlias.class );
+        IndexAlias<ValType> indexAlias = find( IndexAlias.class );
         if ( indexAlias == null ) set( new IndexAlias( labels, tensorName ) );
         return this;
     }
@@ -1755,7 +1762,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     /**
      * @return A new transposed tensor with the same underlying data as this tensor.
      */
-    public Tsr<ValType> T()  // Transposed!
+    public Tsr<ValType> T() // Transposed!
     {
         StringBuilder operation = new StringBuilder();
         for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( ( i == 0 ) ? "" : ", " );
@@ -1887,7 +1894,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      * @param i2
      * @return
      */
-    public Object getAt( Object i1, Object i2 ) {
+    public Tsr<ValType> getAt( Object i1, Object i2 ) {
         List<Object> args = Arrays.asList( i1, i2 );
         return getAt( args );
     }
@@ -1946,11 +1953,11 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     }
 
     public Tsr<ValType> getAt( double i ) {
-        return (Tsr<ValType>) getAt( Arrays.asList( _NDConf.idx_of_i( (int) Math.floor( i ) ) ).toArray() );
+        return getAt( Arrays.asList( _NDConf.idx_of_i( (int) Math.floor( i ) ) ).toArray() );
     }
 
     public Tsr<ValType> getAt( BigDecimal i ) {
-        return (Tsr<ValType>) getAt( Arrays.asList( _NDConf.idx_of_i(( i ).intValue()) ).toArray() );
+        return getAt( Arrays.asList( _NDConf.idx_of_i(( i ).intValue()) ).toArray() );
     }
 
     public Object getAt( Map<?,?> rangToStrides )
@@ -1978,7 +1985,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
             for ( int i = 0; i < e; i++ ) rangeAsList.add( i );
             ranges.add( rangeAsList);
         }
-        return (Tsr<ValType>) getAt( ranges.toArray() );
+        return getAt( ranges.toArray() );
     }
 
     /**
@@ -2074,7 +2081,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
                 The following uses an int array also called 'reshapeRelation'.
                 This is simply the 'reshape array' which has been recorded inside the 'Relation' component
-                by the 'Reshape' operation! ( Hopefully! :) )
+                by the 'Reshape' operation! ( Hopefully! :) ... custom shape operations need to consider this as well! )
 
                 The following would occur when : "new Tsr(...).T().gatAt(...);"
                 Transposing a tensor performs an inline reshaping of an identical

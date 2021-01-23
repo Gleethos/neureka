@@ -8,7 +8,7 @@ import neureka.calculus.assembly.FunctionBuilder;
 
 @Accessors( prefix = {"_"} )
 @ToString
-public class PendingError<ValType>
+public final class PendingError<ValType>
 {
     @Getter
     private int _toBeReceived;

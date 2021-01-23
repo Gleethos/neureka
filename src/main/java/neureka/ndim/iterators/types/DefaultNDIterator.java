@@ -3,7 +3,7 @@ package neureka.ndim.iterators.types;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 
-public class DefaultNDIterator implements NDIterator
+public final class DefaultNDIterator implements NDIterator
 {
     private final int[] _idx;
     private final int[] _shape;

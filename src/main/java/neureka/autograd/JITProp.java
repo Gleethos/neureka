@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class JITProp<ValType> implements Component<Tsr<ValType>>
+public final class JITProp<ValType> implements Component<Tsr<ValType>>
 {
     private Set<GraphNode<ValType>> _finished;
 
@@ -55,15 +55,20 @@ public class JITProp<ValType> implements Component<Tsr<ValType>>
 
 
     /**
-     *
+     *  This method triggers the continuation of the back-propagation which
+     *  has been put on hold by saving the pending graph nodes inside this class. <br>
+     *  The execution request happens when gradients are immediately required by a tensor,
+     *  which is the case when the tensor is about to apply its gradients. <br>
+     *  However because the gradient has not yet been fully calculated this method
+     *  will be called first (assuming the tensor has a JITProp component stored).
      */
     public void execute() {
         if ( _pending == null ) return;
         _pending.forEach( n -> {
             if ( _finished == null || !_finished.contains( n ) ) {
-                PendingError pe = n.getAndRemovePendingError();
+                PendingError<ValType> pe = n.getAndRemovePendingError();
                 if ( !pe.isFullyAccumulated() ) throw new IllegalStateException("Pending error has not received expected accumulation.");
-                n.backwardJIT( (Tsr<ValType>) pe.getAccumulatedError() );//Continue backprop recursively!
+                n.backwardJIT( pe.getAccumulatedError() ); // Continue back-prop recursively!
             }
         });
         if ( pendingCount() > 0 ) throw new IllegalStateException("Pending error has not received expected accumulation.");

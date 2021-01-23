@@ -47,20 +47,19 @@ import neureka.utility.DataConverter;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Spliterator;
 import java.util.function.Consumer;
 
 
 /**
  *  This is the precursor class to the final Tsr class from which
- *  tensor instances can be created.
- *  The inheritance model of a tensor is structured as follows:
+ *  tensor instances can be created. <br>
+ *  The inheritance model of a tensor is structured as follows: <br>
  *  Tsr inherits from AbstractNDArray which inherits from AbstractComponentOwner
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
- *
  */
 @Accessors( prefix = {"_"} )
 public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractComponentOwner<InstanceType> implements Iterable<ValType>
@@ -127,16 +126,45 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
         _data = data;
     }
 
+    /**
+     *  This method is responsible for allocating the data of this nd-array.
+     *  It is protected and located in this abstract class so that a high degree of encapsulation
+     *  is ensured for such crucial procedures like the allocation of the right data. <br>
+     *  The actual allocation takes place inside an instance of the DataType class.
+     *  This is because the data type has to be known in order to correctly perform an allocation.<br>
+     *  <br>
+     *
+     * @param size The size of the data array which ought to be allocated.
+     */
     protected void _allocate( int size )
     {
         _data = _dataType.allocate( size );
     }
 
+    /**
+     *  A virtual NDArray (tensor) is the opposite to an actual one. <br>
+     *  Virtual means that the size of the underlying data does not match the real size of the NDArray.
+     *  This is the case when the NDArray is filled with one element homogeneously.
+     *  An example would be an all zeros array.<br>
+     *  The reasoning behind this feature is memory efficiency.
+     *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!
+     *  <br>
+     */
     protected void _virtualize()
     {
         _data = _dataType.virtualize(_data);
     }
 
+    /**
+     *  An actual NDArray (tensor) is the opposite to a virtual one. <br>
+     *  Virtual means that the size of the underlying data does not match the real size of the NDArray.
+     *  This is the case when the NDArray is filled with one element homogeneously.
+     *  An example would be an all zeros array. The reasoning behind this feature is memory efficiency.
+     *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!<br>
+     *  <br>
+     *  This method turns the data of a virtual NDArray into a newly allocated data array matching the
+     *  size of the nd-array type... <br>
+     */
     protected void _actualize()
     {
         _data = _dataType.actualize(_data, this.size() );
@@ -144,7 +172,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
 
     protected Object _convertedDataOfType( Class<?> typeClass )
     {
-        DataType newDT = DataType.of( typeClass );
+        DataType<?> newDT = DataType.of( typeClass );
         if (
                 newDT.typeClassImplements( NumericType.class ) &&
                         getDataType().typeClassImplements( NumericType.class )

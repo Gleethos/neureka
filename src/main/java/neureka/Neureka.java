@@ -50,7 +50,7 @@ import java.util.Map;
 
 @Accessors( prefix = {"_"} )
 @ToString
-public class Neureka
+public final class Neureka
 {
     private static final ThreadLocal<Neureka> _INSTANCES;
 

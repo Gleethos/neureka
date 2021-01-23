@@ -3,7 +3,7 @@ package neureka.ndim.iterators.types.complex;
 import neureka.ndim.iterators.NDIterator;
 import neureka.ndim.config.types.complex.ComplexD1Configuration;
 
-public class ComplexD1CIterator extends ComplexD1Configuration implements NDIterator
+public final class ComplexD1CIterator extends ComplexD1Configuration implements NDIterator
 {
     private int _d1;
 

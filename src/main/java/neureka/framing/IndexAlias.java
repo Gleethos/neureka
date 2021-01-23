@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.function.Function;
 
 @Accessors( prefix = {"_"} )
-public class IndexAlias<ValType> implements Component<Tsr<ValType>>
+public final class IndexAlias<ValType> implements Component<Tsr<ValType>>
 {
     private final List<Object> _hiddenKeys = new ArrayList<>();
 

@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.function.Supplier;
 
-public class Cache
+public final class Cache
 {
     private static Cache _cache = new Cache();
     private Logger _log = LoggerFactory.getLogger( Cache.class );
