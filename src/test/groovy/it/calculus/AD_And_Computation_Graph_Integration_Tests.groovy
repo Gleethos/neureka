@@ -4,7 +4,6 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
 import neureka.calculus.Function
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class AD_And_Computation_Graph_Integration_Tests extends Specification{
@@ -67,7 +66,7 @@ class AD_And_Computation_Graph_Integration_Tests extends Specification{
 
         when : System.gc()
         then :
-            assert n.parents[0].isCachable()
+            assert n.parents[0].isCacheable()
             assert !n.parents[0].isLeave()
             assert n.parents[0].isGraphLeave()
             assert n.parents[1].isLeave()

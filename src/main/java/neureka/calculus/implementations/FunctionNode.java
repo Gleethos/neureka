@@ -41,21 +41,22 @@ public class FunctionNode extends AbstractBaseFunction
      * @param sources
      * @param doAD
      */
-    public FunctionNode(Operation type, List<Function> sources, boolean doAD)
+    public FunctionNode( Operation type, List<Function> sources, boolean doAD )
     {
         if ( type.getArity() >= 0 && sources.size() != type.getArity() ) {
             String tip = ( type.isIndexer() )
                     ? "\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."
                     : "";
             throw new IllegalArgumentException(
-                    "The function/operation '"+type.getOperator()+"' expects "+type.getArity()+" parameters, "+
-                            "however "+sources.size()+" where given!"+tip
+                    "The function/operation '" + type.getOperator() + "' expects " + type.getArity() + " parameters, " +
+                            "however " + sources.size() + " where given!" + tip
             );
         }
         boolean isFlat = true;
-        for ( Function f : sources ) { // AbstractFunction does only reference tip nodes of the function graph:
-            isFlat = ((f instanceof FunctionInput) || (f instanceof FunctionVariable) || (f instanceof FunctionConstant)) && isFlat;
-        }
+        for ( Function f : sources ) // AbstractFunction does only reference tip nodes of the function graph:
+            isFlat = (
+                    (f instanceof FunctionInput) || (f instanceof FunctionVariable) || (f instanceof FunctionConstant)
+            ) && isFlat;
 
         _operation = type;
         _isFlat = isFlat;
@@ -98,7 +99,7 @@ public class FunctionNode extends AbstractBaseFunction
     protected Tsr _tensor_activation( Tsr[] inputs, int j, int d )
     {
         ExecutionCall<Device> call = new ExecutionCall<>(
-                _device( inputs ),
+                _deviceFor( inputs ),
                 inputs,
                 d,
                 j,
@@ -109,8 +110,8 @@ public class FunctionNode extends AbstractBaseFunction
         if ( possiblyNewDevice != null ) finalCall = call.withNew( possiblyNewDevice );
         else finalCall = call;
 
-        /* The code below deals with deep functions (non flat) :  */
-        if ( _isFlat ) {
+        if ( _isFlat )
+        {
             /* The following code is reached in flat functions only:  */
             /* Autograd-Graph will be generated below for the new GraphNode: */
             /* only flat functions can be executed directly */
@@ -118,7 +119,7 @@ public class FunctionNode extends AbstractBaseFunction
                 return new GraphNode( this, finalCall, () -> __flat_execution( finalCall ) ).getPayload();
             else
                 return __flat_execution( finalCall );
-        }
+        }/* The code below deals with deep functions (non flat) :  */
         else if ( d < 0 ) return __deep_activation( finalCall );
         else return _deep_derivative( finalCall );
 
@@ -126,7 +127,7 @@ public class FunctionNode extends AbstractBaseFunction
 
     private Tsr __flat_execution( ExecutionCall<Device> call )
     {
-        Tsr alternative = call.getImplementation().handleInsteadOfDevice( (FunctionNode) this, call );
+        Tsr alternative = call.getImplementation().handleInsteadOfDevice( this, call );
         if ( alternative != null ) return alternative;
 
         if ( call.getDerivativeIndex() < 0 ) return __deep_activation( call );
@@ -144,27 +145,28 @@ public class FunctionNode extends AbstractBaseFunction
         int d = call.getDerivativeIndex();
         int j = call.getJ();
 
-        Tsr[] tsrs;
-        if ( _operation.isIndexer() ) tsrs = new Tsr[ 1 + inputs.length ];
-        else tsrs = new Tsr[ 1 + _src.size() ];
+        Tsr[] tensors;
+        if ( _operation.isIndexer() ) tensors = new Tsr[ 1 + inputs.length ];
+        else tensors = new Tsr[ 1 + _src.size() ];
 
         if ( _operation.isIndexer() ) {
-            for ( int i = 1; i < tsrs.length; i++ ) tsrs[ i ] = _src.get( 0 ).call(inputs, i - 1);
+            for ( int i = 1; i < tensors.length; i++ ) tensors[ i ] = _src.get( 0 ).call( inputs, i - 1 );
         } else if (
                 !_isFlat && j < 0 && (
                         _operation.isOperator() || _operation.supportsAlgorithm(Activation.class)
                 )
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
-            tsrs = srcActivation(inputs, j, d, 0);
-            List<String> stringedSource = IntStream.range(0, _src.size()).mapToObj(i -> "I[" + i + "]").collect(Collectors.toList());
-            String asStr = _operation.getStringifier().asString(stringedSource);
-            return FunctionBuilder.build(asStr, _isDoingAD).call(tsrs);
+            tensors = srcActivation(inputs, j, d, 0);
+            String asStr = _operation.getStringifier().asString(
+                    IntStream.range( 0, _src.size() ).mapToObj( i -> "I[" + i + "]" ).collect( Collectors.toList() )
+            );
+            return FunctionBuilder.build( asStr, _isDoingAD ).call( tensors );
         } else {
-            tsrs = srcActivation(inputs, j, d, 1);
+            tensors = srcActivation(inputs, j, d, 1);
         }
-        device.execute( new ExecutionCall<>( device, tsrs, d, _operation) );
+        device.execute( new ExecutionCall<>( device, tensors, d, _operation) );
 
-        return ( tsrs[ 0 ] == null ) ? tsrs[ 1 ] : tsrs[ 0 ];
+        return ( tensors[ 0 ] == null ) ? tensors[ 1 ] : tensors[ 0 ];
     }
 
     /**
@@ -174,21 +176,22 @@ public class FunctionNode extends AbstractBaseFunction
      *  whose value is "1.0" then it return -1, because the optimization cannot
      *  be made...
      *
-     * @param tsrs An array of tensors which ought to be analyzed.
+     * @param tensors An array of tensors which ought to be analyzed.
      * @return The index of the tensor whose value is "1.0" (if all other are "0.0"), otherwise : -1
      */
-    private int ___indexOfFoundDerivative( Tsr[] tsrs )
+    private int ___indexOfFoundDerivative( Tsr[] tensors )
     {
         boolean allVirtual = true;
-        for ( Tsr t : tsrs ) if ( t != null && !t.isVirtual() ) allVirtual = false;
+        for ( Tsr t : tensors ) if ( t != null && !t.isVirtual() ) allVirtual = false;
         if ( allVirtual ) {
             int index = -1;
-            for ( int i=0; i < tsrs.length; i++ ) {
-                double value = ( tsrs[ i ] == null ) ? 0.0 : tsrs[ i ].value64( 0 );
+            for ( int i = 0; i < tensors.length; i++ ) {
+                double value = ( tensors[ i ] == null ) ? 0.0 : tensors[ i ].value64( 0 );
                 if ( value == 1.0 ) {
                     if ( index >= 0 ) return -1;
                     index = i;
-                } else if ( value != 0.0 ) return -1;
+                }
+                else if ( value != 0.0 ) return -1;
             }
             return index;
         }
@@ -205,44 +208,48 @@ public class FunctionNode extends AbstractBaseFunction
                     int d = call.getDerivativeIndex();
                     int j = call.getJ();
 
-                    Tsr[] tsrs;
-                    if ( _operation.isIndexer() ) tsrs = new Tsr[ 1 + inputs.length ];
-                    else tsrs = new Tsr[ 1 + _src.size() ];
+                    Tsr[] tensors;
+                    if ( _operation.isIndexer() ) tensors = new Tsr[ 1 + inputs.length ];
+                    else tensors = new Tsr[ 1 + _src.size() ];
 
                     // Chain-rule (forward AutoDiff):
                     // inner times outer means:
                     // first derive source!
                     // like so:
                     if ( _operation.isIndexer() ) {
-                        for ( int i = 1; i < tsrs.length; i++ ) {
-                            tsrs[ i ] = _src.get( 0 ).derive(inputs, d, i - 1);
+                        for ( int i = 1; i < tensors.length; i++ ) {
+                            tensors[ i ] = _src.get( 0 ).derive( inputs, d, i - 1 );
                         }
                     } else {
-                        for ( int i = 1; i < tsrs.length; i++ ) {
-                            tsrs[ i ] = ( j >= 0 ) ? _src.get( i - 1 ).derive( inputs, d, j ) : _src.get( i - 1 ).derive( inputs, d );
+                        for ( int i = 1; i < tensors.length; i++ ) {
+                            tensors[ i ] =
+                                    ( j >= 0 )
+                                            ? _src.get( i - 1 ).derive( inputs, d, j )
+                                            : _src.get( i - 1 ).derive( inputs, d );
                         }
                     }
                     //...then add them all together! (is possible because of linearity...)
                     Tsr inner;
-                    if ( tsrs.length > 2 ) {// Optimization: Finds index of "1.0" among otherwise all "0.0" virtual tensors!
-                        int index = ___indexOfFoundDerivative( tsrs );
-                        if ( index >= 0 ) inner = tsrs[index];
+                    if ( tensors.length > 2 ) {// Optimization: Finds index of "1.0" among otherwise all "0.0" virtual tensors!
+                        int index = ___indexOfFoundDerivative( tensors );
+                        if ( index >= 0 ) inner = tensors[ index ];
                         else {
                             // Optimization above did not apply, so we accumulate all the derivatives!
-                            device.execute( new ExecutionCall<>( device, tsrs, -1, OperationContext.get().instance("+") ) );
-                            inner = tsrs[ 0 ];//this is now the inner derivative!
+                            device.execute( new ExecutionCall<>( device, tensors, -1, OperationContext.get().instance("+") ) );
+                            inner = tensors[ 0 ];//-> this is now the inner derivative!
                         }
-                    } else inner = tsrs[ 1 ];
+                    }
+                    else inner = tensors[ 1 ];
 
-                    tsrs[ 0 ] = null;
+                    tensors[ 0 ] = null;
                     //...then activate (No differentiation!) the source like so:
                     if ( _operation.isIndexer() ) { // Indexer pass an index j of course!
-                        for ( int i = 1; i < tsrs.length; i++ ) {
-                            tsrs[ i ] = _src.get( 0 ).call( inputs, i - 1 ); // i - 1 := j
+                        for ( int i = 1; i < tensors.length; i++ ) {
+                            tensors[ i ] = _src.get( 0 ).call( inputs, i - 1 ); // i - 1 := j
                         }
                     } else {
-                        for ( int i = 1; i < tsrs.length; i++ ) {
-                            tsrs[ i ] = ( j >= 0 ) ? _src.get(i - 1).call( inputs, j ) : _src.get(i - 1).call( inputs );
+                        for ( int i = 1; i < tensors.length; i++ ) {
+                            tensors[ i ] = ( j >= 0 ) ? _src.get(i - 1).call( inputs, j ) : _src.get(i - 1).call( inputs );
                         }
                     }
                     //...get derivative index within src list:
@@ -253,14 +260,14 @@ public class FunctionNode extends AbstractBaseFunction
                         }
                     }
                     // Use those tensors for the outer derivative:
-                    device.execute( new ExecutionCall<>( device, tsrs, d, _operation) );
+                    device.execute( new ExecutionCall<>( device, tensors, d, _operation) );
                     // At the end:
                     //...multiply inner times outer: ( if inner is not 1 entirely... )
                     if ( !( ( inner.isVirtual() || inner.size()==1 ) && inner.value64( 0 )==1.0) ) {
-                        tsrs = new Tsr[]{null, inner, tsrs[ 0 ]};
-                        device.execute( new ExecutionCall<>( device, tsrs, -1, OperationContext.get().instance("*") ) );
+                        tensors = new Tsr[]{null, inner, tensors[ 0 ]};
+                        device.execute( new ExecutionCall<>( device, tensors, -1, OperationContext.get().instance("*") ) );
                     } // done!
-                    return tsrs[ 0 ];
+                    return tensors[ 0 ];
 
                 };
         Device device = call.getDevice();
@@ -270,9 +277,13 @@ public class FunctionNode extends AbstractBaseFunction
             int di = ( _src.get( i ).dependsOn(d) ) ? i : -1;
             if ( di >= 0 ) {
                 if ( out == null ) out = actor.get();
-                else device.execute(
+                else
+                    device.execute(
                         new ExecutionCall<>(
-                                device, new Tsr[]{null, actor.get(), out}, -1, OperationContext.get().instance("+")
+                                device,
+                                new Tsr[]{ null, actor.get(), out },
+                                -1,
+                                OperationContext.get().instance("+")
                         )
                 );
             }
@@ -283,29 +294,34 @@ public class FunctionNode extends AbstractBaseFunction
     public Tsr[] srcActivation( Tsr[] inputs, int j, int d, int offset )
     {
         int[] tempShape = null;
-        Tsr[] tsrs = new Tsr[ _src.size() + offset ];
-        for ( int i = offset; i < tsrs.length; i++ ) {//constants need to be figured out!
+        Tsr[] tensors = new Tsr[ _src.size() + offset ];
+        for ( int i = offset; i < tensors.length; i++ ) {//constants need to be figured out!
             if ( !(_src.get(i - offset) instanceof FunctionConstant) ) {
-                if ( d < 0 ) {
-                    tsrs[ i ] = ( j >= 0 ) ? _src.get(i - offset).call( inputs, j ) : _src.get(i - offset).call( inputs );
-                } else {
-                    tsrs[ i ] = ( j >= 0 ) ? _src.get(i - offset).derive( inputs, d, j ) : _src.get(i - offset).derive( inputs, d );
-                }
-                tempShape = ( tempShape == null ) ? tsrs[ i ].getNDConf().shape() : tempShape;
+                if ( d < 0 )
+                    tensors[ i ] =
+                            ( j >= 0 )
+                                    ? _src.get(i - offset).call( inputs, j )
+                                    : _src.get(i - offset).call( inputs );
+                else
+                    tensors[ i ] =
+                            ( j >= 0 )
+                                    ? _src.get(i - offset).derive( inputs, d, j )
+                                    : _src.get(i - offset).derive( inputs, d );
+
+                tempShape = ( tempShape == null ) ? tensors[ i ].getNDConf().shape() : tempShape;
             }
         }
-        for ( int i = offset; i < tsrs.length; i++ ) {
-            if ( tsrs[ i ] == null ) {
-                tsrs[ i ] =
+        for ( int i = offset; i < tensors.length; i++ ) {
+            if ( tensors[ i ] == null )
+                    tensors[ i ] =
                         ( j < 0 )
                                 ? new Tsr(tempShape, ((FunctionConstant) _src.get(i - offset)).value())
                                 : new Tsr(tempShape, _src.get(i - offset).call(new double[]{}, j));
-            }
         }
-        return tsrs;
+        return tensors;
     }
 
-    private Device _device( Tsr<Object>[] inputs )
+    private Device _deviceFor( Tsr<Object>[] inputs )
     {
         if ( inputs.length == 0 ) return HostCPU.instance();
         Device device = inputs[ 0 ].find( Device.class );
@@ -314,21 +330,20 @@ public class FunctionNode extends AbstractBaseFunction
         return ( doAccel && device != null ) ? device : inputs[ 0 ].getDevice();
     }
 
-    private static boolean _shareGuestDevice( Tsr[] tsrs )
+    private static boolean _shareGuestDevice( Tsr[] tensors )
     {
         boolean onSameGuestDevice = true;
         Device device = null;
-        for ( Tsr<Object> tsr : tsrs ) device = ( tsr.isOutsourced() ) ? tsr.find( Device.class ) : device;
+        for ( Tsr<Object> tsr : tensors ) device = ( tsr.isOutsourced() ) ? tsr.find( Device.class ) : device;
 
         if ( device != null ) {
-            for ( Tsr tsr : tsrs ) {
+            for ( Tsr tsr : tensors ) {
                 onSameGuestDevice = ( !tsr.isVirtual() && device == tsr.find(Device.class) ) && onSameGuestDevice;
             }
-        } else onSameGuestDevice = false;
-
-        if ( device != null && tsrs.length == 2 && tsrs[ 1 ].size() == 1 ) {
-            onSameGuestDevice = true;
         }
+        else onSameGuestDevice = false;
+
+        if ( device != null && tensors.length == 2 && tensors[ 1 ].size() == 1 ) onSameGuestDevice = true;
         return onSameGuestDevice;
     }
 
@@ -336,22 +351,22 @@ public class FunctionNode extends AbstractBaseFunction
 
     @Override
     public Tsr call( Tsr[] inputs, int j ) {
-        return CACHE.preprocess( inputs, this, ()-> _tensor_activation(inputs, j, -1), -1, j );
+        return CACHE.preprocess( inputs, this, ()-> _tensor_activation( inputs, j, -1 ), -1, j );
     }
 
     @Override
     public Tsr call( Tsr[] inputs ) {
-        return CACHE.preprocess( inputs, this, ()-> _tensor_activation(inputs, -1, -1), -1, -1 );
+        return CACHE.preprocess( inputs, this, ()-> _tensor_activation( inputs, -1, -1 ), -1, -1 );
     }
 
     @Override
     public Tsr derive( Tsr[] inputs, int d, int j ) {
-        return CACHE.preprocess( inputs, this, ()-> _tensor_activation(inputs, j, d), d, j );
+        return CACHE.preprocess( inputs, this, ()-> _tensor_activation( inputs, j, d ), d, j );
     }
 
     @Override
     public Tsr derive( Tsr[] inputs, int d ) {
-        return CACHE.preprocess( inputs, this, ()-> _tensor_activation(inputs, -1, d), d, -1 );
+        return CACHE.preprocess( inputs, this, ()-> _tensor_activation( inputs, -1, d ), d, -1 );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -50,9 +50,9 @@ import neureka.Tsr;
  *  Besides the "Device" interface this interface is also extended by the FileHead interface
  *  which is an internal component of the FileDevice architecture...
  *
- * @param <ValueType>
+ * @param <ValType>
  */
-public interface Storage<ValueType>
+public interface Storage<ValType>
 {
     /**
      *  Implementations of this method ought to store the value
@@ -63,20 +63,20 @@ public interface Storage<ValueType>
      * @param tensor The tensor whose data ought to be stored.
      * @return A reference this object to allow for method chaining. (factory pattern)
      */
-    Storage store( Tsr<ValueType> tensor );
+    Storage store( Tsr<ValType> tensor );
 
     /**
      * @param tensor The tensor whose data ought to be restored (loaded to RAM).
      * @return A reference this object to allow for method chaining. (factory pattern)
      */
-    Storage restore( Tsr<ValueType> tensor );
+    Storage restore( Tsr<ValType> tensor );
 
 
     int size();
 
     boolean isEmpty();
 
-    boolean contains( Tsr<ValueType> o );
+    boolean contains( Tsr<ValType> o );
 
 
 }

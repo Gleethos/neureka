@@ -63,7 +63,7 @@ import java.util.function.Consumer;
  *
  */
 @Accessors( prefix = {"_"} )
-public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractComponentOwner<InstanceType> implements Iterable<ValueType>
+public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractComponentOwner<InstanceType> implements Iterable<ValType>
 {
 
     /**
@@ -159,22 +159,22 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public void forEach( Consumer<? super ValueType> action ) {
-        for ( ValueType v : this ) action.accept( v );
+    public void forEach( Consumer<? super ValType> action ) {
+        for ( ValType v : this ) action.accept( v );
     }
 
     @Override
-    public Spliterator<ValueType> spliterator()
+    public Spliterator<ValType> spliterator()
     {
-        return new Spliterator<ValueType>()
+        return new Spliterator<ValType>()
         {
             @Override
-            public boolean tryAdvance( Consumer<? super ValueType> action ) {
+            public boolean tryAdvance( Consumer<? super ValType> action ) {
                 return false;
             }
 
             @Override
-            public Spliterator<ValueType> trySplit() {
+            public Spliterator<ValType> trySplit() {
                 return null;
             }
 
@@ -205,7 +205,7 @@ public abstract class AbstractNDArray<InstanceType, ValueType> extends AbstractC
      * @param o The object which ought to be placed at the requested position.
      * @return This very tensor in order to enable method chaining.
      */
-    public abstract InstanceType setDataAt( int i, ValueType o );
+    public abstract InstanceType setDataAt( int i, ValType o );
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -45,12 +45,12 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public abstract class AbstractBaseDevice<ValueType> implements Device<ValueType>, Component<Tsr<ValueType>>
+public abstract class AbstractBaseDevice<ValType> implements Device<ValType>, Component<Tsr<ValType>>
 {
 
     @Override
     public int size() {
-        Collection<Tsr<ValueType>> tensors = this.getTensors();
+        Collection<Tsr<ValType>> tensors = this.getTensors();
         if ( tensors == null ) return 0;
         return tensors.size();
     }
@@ -61,13 +61,13 @@ public abstract class AbstractBaseDevice<ValueType> implements Device<ValueType>
     }
 
     @Override
-    public boolean contains( Tsr<ValueType> o ) {
+    public boolean contains( Tsr<ValType> o ) {
         return this.getTensors().contains( o );
     }
 
     @NotNull
     @Override
-    public Iterator<Tsr<ValueType>> iterator() {
+    public Iterator<Tsr<ValType>> iterator() {
         return this.getTensors().iterator();
     }
 
@@ -77,7 +77,7 @@ public abstract class AbstractBaseDevice<ValueType> implements Device<ValueType>
     }
 
     @Override
-    public Spliterator<Tsr<ValueType>> spliterator() {
+    public Spliterator<Tsr<ValType>> spliterator() {
         return getTensors().spliterator();
     }
 

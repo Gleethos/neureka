@@ -7,7 +7,7 @@ import neureka.dtype.DataType;
 
 import java.io.IOException;
 
-public interface FileHead<FinalType, ValueType> extends Storage<ValueType>
+public interface FileHead<FinalType, ValType> extends Storage<ValType>
 {
     /**
      *  An implementation of this method ought
@@ -17,7 +17,7 @@ public interface FileHead<FinalType, ValueType> extends Storage<ValueType>
      * @return A new tensor filled with the data from the targeted file.
      * @throws IOException If loading goes wrong an exception is being thrown.
      */
-    Tsr<ValueType> load() throws IOException;
+    Tsr<ValType> load() throws IOException;
 
     /**
      *

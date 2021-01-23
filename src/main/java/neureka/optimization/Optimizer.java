@@ -38,9 +38,9 @@ package neureka.optimization;
 import neureka.Component;
 import neureka.Tsr;
 
-public interface Optimizer<ValueType> extends Component<Tsr<ValueType>>
+public interface Optimizer<ValType> extends Component<Tsr<ValType>>
 {
 
-    void optimize(Tsr<ValueType> t);
+    void optimize(Tsr<ValType> t);
 
 }

@@ -36,6 +36,7 @@ SOFTWARE.
 package neureka.ndim;
 
 import neureka.Component;
+import neureka.Tsr;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,11 +71,11 @@ public abstract class AbstractComponentOwner<InstanceType>
      * @param <T> The type parameter defining the component class.
      * @return The correct component or null if nothing has been found.
      */
-    public <T> T find(Class<T> componentClass)
+    public <T extends Component<?>> T find( Class<T> componentClass )
     {
         if ( _components != null) {
-            for (Component<InstanceType> component : _components) {
-                if (componentClass.isInstance(component)) return (T)component;
+            for ( Component<?> component : _components ) {
+                if ( componentClass.isInstance( component ) ) return (T) component;
             }
         }
         return null;
@@ -107,7 +108,7 @@ public abstract class AbstractComponentOwner<InstanceType>
      * @param componentClass The class/type of a component that might exist in components.
      * @return True if the component of the given type/class has been found.
      */
-    public boolean has( Class<?> componentClass ) {
+    public <T extends Component<InstanceType>> boolean has( Class<T> componentClass ) {
         return find( componentClass ) != null;
     }
 

@@ -51,10 +51,10 @@ import java.util.function.IntFunction;
 
 /**
  * This is the interface for implementations representing
- * devices primarily store tensors, namely instances of the Tsr&lt;ValueType&gt; class.
+ * devices primarily store tensors, namely instances of the Tsr&lt;ValType&gt; class.
  * Optionally they might also be capable of executing operations on tensors.
  * Such instances are also components of tensors, which is why
- * this interface extends the Component &lt; Tsr &lt; ValueType&gt; &gt; interface.
+ * this interface extends the Component &lt; Tsr &lt; ValType&gt; &gt; interface.
  *
  * The device interface extends the "Storage" interface because devices
  * are also capable of storing tensors on them.
@@ -63,7 +63,7 @@ import java.util.function.IntFunction;
  * A tensor stored on a device will have its "isOutsourced" property set to true!
  *
  */
-public interface Device<ValueType> extends Component<Tsr<ValueType>>, Storage<ValueType>, Iterable<Tsr<ValueType>>
+public interface Device<ValType> extends Component<Tsr<ValType>>, Storage<ValType>, Iterable<Tsr<ValType>>
 {
     /**
      * This method return Device instances matching
@@ -124,27 +124,27 @@ public interface Device<ValueType> extends Component<Tsr<ValueType>>, Storage<Va
      * @param tensor The tensor whose data ought to be stored.
      * @return A reference this object to allow for method chaining. (factory pattern)
      */
-    Device store( Tsr<ValueType> tensor, Tsr<ValueType> parent );
+    Device store( Tsr<ValType> tensor, Tsr<ValType> parent );
 
-    boolean has( Tsr<ValueType> tensor );
+    boolean has( Tsr<ValType> tensor );
 
-    Device free( Tsr<ValueType> tensor );
+    Device free( Tsr<ValType> tensor );
 
-    Device cleaning( Tsr<ValueType> tensor, Runnable action );
+    Device cleaning( Tsr<ValType> tensor, Runnable action );
 
-    Device overwrite64( Tsr<ValueType> tensor, double[] value );
+    Device overwrite64( Tsr<ValType> tensor, double[] value );
 
-    Device overwrite32( Tsr<ValueType> tensor, float[] value );
+    Device overwrite32( Tsr<ValType> tensor, float[] value );
 
-    Device swap( Tsr<ValueType> former, Tsr<ValueType> replacement );
+    Device swap( Tsr<ValType> former, Tsr<ValType> replacement );
 
     Device execute( ExecutionCall call );
 
-    Object valueFor( Tsr<ValueType> tensor );
+    Object valueFor( Tsr<ValType> tensor );
 
-    ValueType valueFor( Tsr<ValueType> tensor, int index );
+    ValType valueFor( Tsr<ValType> tensor, int index );
 
-    Collection< Tsr<ValueType> > getTensors();
+    Collection< Tsr<ValType> > getTensors();
 
     /**
      *  This method has the same signature of the Collection interface in Java 11,

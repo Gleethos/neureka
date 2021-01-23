@@ -8,14 +8,14 @@ import neureka.calculus.assembly.FunctionBuilder;
 
 @Accessors( prefix = {"_"} )
 @ToString
-public class PendingError
+public class PendingError<ValType>
 {
     @Getter
     private int _toBeReceived;
     @Getter
-    private final Tsr<?> _accumulatedError;
+    private final Tsr<ValType> _accumulatedError;
 
-    public PendingError( Tsr<?> error, int toBeReceived ) {
+    public PendingError( Tsr<ValType> error, int toBeReceived ) {
         _toBeReceived = toBeReceived;
         _accumulatedError = error;
     }

@@ -39,17 +39,17 @@ import neureka.Tsr;
 import neureka.calculus.Function;
 import neureka.optimization.Optimizer;
 
-public class ADAM<ValueType> implements Optimizer<ValueType> {
+public class ADAM<ValType> implements Optimizer<ValType> {
 
     // VARIABLES...
-    private final Tsr<ValueType> a;
-    private final Tsr<ValueType> b1;
-    private final Tsr<ValueType> b2;
-    private final Tsr<ValueType> e;
-    Tsr<ValueType> m;
-    Tsr<ValueType> v;
+    private final Tsr<ValType> a;
+    private final Tsr<ValType> b1;
+    private final Tsr<ValType> b2;
+    private final Tsr<ValType> e;
+    Tsr<ValType> m;
+    Tsr<ValType> v;
 
-    ADAM(Tsr<ValueType> target) {
+    ADAM(Tsr<ValType> target) {
         int[] shape = target.getNDConf().shape();
         m  = new Tsr<>(shape, 0);
         v  = new Tsr<>(shape, 0);
@@ -59,23 +59,23 @@ public class ADAM<ValueType> implements Optimizer<ValueType> {
         e  = new Tsr<>(shape, 1e-7);
     }
 
-    private void _optimize(Tsr<ValueType> w) {
-        Tsr<ValueType> g = w.getGradient();
+    private void _optimize(Tsr<ValType> w) {
+        Tsr<ValType> g = w.getGradient();
         m = new Tsr<>(b1, "*", m, " + ( 1-", b1, ") *", g);
         v = new Tsr<>(b2, "*", v, " + ( 1-", b2, ") * (", g,"^2 )");
-        Tsr<ValueType> mh = new Tsr<>(m, "/(1-", b1, ")");
-        Tsr<ValueType> vh = new Tsr<>(v, "/(1-", b2, ")");
-        Tsr<ValueType> newg = new Tsr<>("-",a,"*",mh,"/(",vh,"^0.5+",e,")");
+        Tsr<ValType> mh = new Tsr<>(m, "/(1-", b1, ")");
+        Tsr<ValType> vh = new Tsr<>(v, "/(1-", b2, ")");
+        Tsr<ValType> newg = new Tsr<>("-",a,"*",mh,"/(",vh,"^0.5+",e,")");
         Function.Detached.IDY.call(new Tsr[]{g, newg});
     }
 
     @Override
-    public void optimize(Tsr<ValueType> t) {
+    public void optimize(Tsr<ValType> t) {
         _optimize(t);
     }
 
     @Override
-    public void update(Tsr<ValueType> oldOwner, Tsr<ValueType> newOwner) {
+    public void update(Tsr<ValType> oldOwner, Tsr<ValType> newOwner) {
         
     }
 }

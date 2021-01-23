@@ -129,10 +129,10 @@ import java.util.stream.Collectors;
  *  Such operations might be simple elementwise operations or more complex linear operations like
  *  the dot-product, matrix- or even tensor multiplications.
  *
- * @param <ValueType>
+ * @param <ValType>
  */
 @Accessors( prefix = {"_"} )
-public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> implements Component<Tsr<ValueType>>
+public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> implements Component<Tsr<ValType>>
 {
     static {
         _CPU = HostCPU.instance();
@@ -284,11 +284,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         */
         boolean containsString = false;
         int numberOfTensors = 0;
-        ArrayList<Tsr<ValueType>> tsrList = new ArrayList<>();
+        ArrayList<Tsr<ValType>> tsrList = new ArrayList<>();
         for ( Object o : args ) {
             containsString = ( o instanceof String ) || containsString;
             if ( o instanceof Tsr ) {
-                tsrList.add( (Tsr<ValueType>) o );
+                tsrList.add( (Tsr<ValType>) o );
                 numberOfTensors++;
             }
         }
@@ -338,33 +338,33 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         }
     }
 
-    public Tsr( List<Integer> shape, List<ValueType> range )
+    public Tsr( List<Integer> shape, List<ValType> range )
     {
         // Nested Groovy list should be unpacked:
-        if ( range.size() == 1 && range.get( 0 ) instanceof IntRange ) range = (List<ValueType>) range.get( 0 );
+        if ( range.size() == 1 && range.get( 0 ) instanceof IntRange ) range = (List<ValType>) range.get( 0 );
         _constructForRange(
                 shape.stream().mapToInt( e -> e ).toArray(),
                 DataType.of( F64.class ),
-                (ValueType[]) range.toArray()
+                (ValType[]) range.toArray()
         );
     }
 
-    public Tsr( int[] shape, List<ValueType> range )
+    public Tsr( int[] shape, List<ValType> range )
     {
         // Nested Groovy list should be unpacked:
-        if ( range.size() == 1 && range.get( 0 ) instanceof IntRange ) range = (List<ValueType>) range.get( 0 );
+        if ( range.size() == 1 && range.get( 0 ) instanceof IntRange ) range = (List<ValType>) range.get( 0 );
         _constructForRange(
                 shape,
                 DataType.of( F64.class ),
-                (ValueType[]) range.toArray()
+                (ValType[]) range.toArray()
         );
     }
 
-    private void _constructForRange( int[] shp, DataType<?> dataType, ValueType[] range ) {
+    private void _constructForRange( int[] shp, DataType<?> dataType, ValType[] range ) {
         if ( range.length != 0 && !( range[ 0 ] instanceof Number ) ) {
             Class<?> givenClass = range[ 0 ].getClass();
             @SuppressWarnings("unchecked")
-            final ValueType[] value = (ValueType[]) Array.newInstance(
+            final ValType[] value = (ValType[]) Array.newInstance(
                     givenClass,
                     NDConfiguration.Utility.szeOfShp( shp )
             );
@@ -522,7 +522,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public <T> Tsr( List<Integer> shape, Class<T> typeClass, List<T> data )
     {
-        _constructForRange( shape.stream().mapToInt( e -> e ).toArray(), DataType.of( typeClass ), (ValueType[]) data.toArray());
+        _constructForRange( shape.stream().mapToInt( e -> e ).toArray(), DataType.of( typeClass ), (ValType[]) data.toArray());
     }
 
     public Tsr( int[] shape, DataType<?> dataType, Object data )
@@ -608,12 +608,12 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _configureFromNewShape( shape, false, true );
     }
 
-    private void _construct( int[] shape, ValueType[] value ) {
+    private void _construct( int[] shape, ValType[] value ) {
         int size = NDConfiguration.Utility.szeOfShp( shape );
         if ( size != value.length ) {
             Class<?> givenClass = value[ 0 ].getClass();
             @SuppressWarnings("unchecked")
-            final ValueType[] newValue = (ValueType[]) Array.newInstance(
+            final ValType[] newValue = (ValType[]) Array.newInstance(
                     givenClass,
                     NDConfiguration.Utility.szeOfShp( shape )
             );
@@ -727,7 +727,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param tensor A tensor which serves as input to the Function instance parsed from the given expression.
      * @param expression The expression describing operations applied to the provided tensor.
      */
-    public Tsr( Tsr<ValueType> tensor, String expression ) {
+    public Tsr( Tsr<ValType> tensor, String expression ) {
         if ( tensor == null ) return;
         _construct( new Tsr[]{ tensor }, expression, true );
     }
@@ -745,7 +745,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      * @param expression The expression describing operations applied to the provided tensors.
      */
-    public Tsr( Tsr<ValueType>[] tensors, String expression ) {
+    public Tsr( Tsr<ValType>[] tensors, String expression ) {
         _construct( tensors, expression, true );
     }
 
@@ -767,7 +767,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param expression The expression describing operations applied to the provided tensors.
      * @param doAD A flag which when set to true commands the creation of a computation graph during operation execution.
      */
-    public Tsr( Tsr<ValueType>[] tensors, String expression, boolean doAD )
+    public Tsr( Tsr<ValType>[] tensors, String expression, boolean doAD )
     {
         _construct( tensors, expression, doAD );
     }
@@ -846,7 +846,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         --------------------------------------------
     */
 
-    public Tsr<ValueType> setRqsGradient( boolean rqsGradient ) {
+    public Tsr<ValType> setRqsGradient( boolean rqsGradient ) {
         if ( rqsGradient() != rqsGradient && !rqsGradient ) this.remove( Tsr.class );
         _setRqsGradient( rqsGradient );
         return this;
@@ -869,7 +869,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     ---------------------------------------------
     */
 
-    public Tsr<ValueType> setIsOutsourced( boolean isOutsourced ) {
+    public Tsr<ValType> setIsOutsourced( boolean isOutsourced ) {
         _setIsOutsourced( isOutsourced );
         if ( isOutsourced ) {
             _setData( null );
@@ -930,7 +930,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     --------------------------------------------
     */
 
-    public Tsr<ValueType> setIsVirtual( boolean isVirtual ) {
+    public Tsr<ValType> setIsVirtual( boolean isVirtual ) {
         if ( isVirtual() != isVirtual ) {
             Device device = this.find( Device.class );
             try {
@@ -945,7 +945,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             if ( isVirtual ) {
                 if ( getData() == null ) _allocate( 1 );
                 else _virtualize();
-                Relation<ValueType> relation = find( Relation.class );
+                Relation<ValType> relation = find( Relation.class );
                 if ( relation!=null ) relation.foreachChild( c -> c._setData( getData()) );
             } else {
                 Tsr<?> parentTensor = (this.isSlice())? find(Relation.class).getParent() : null;
@@ -993,7 +993,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     --------------------------------------------
     */
 
-    public Tsr<ValueType> setGradientApplyRqd( boolean applyRequested ) {
+    public Tsr<ValType> setGradientApplyRqd( boolean applyRequested ) {
         if ( gradientApplyRqd() != applyRequested ) {
             if ( applyRequested ) {
                 if (
@@ -1033,7 +1033,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @return The unchanged object or maybe in future versions: null (component rejected)
      */
     @Override
-    protected < T extends Component<Tsr<ValueType>> > T _setOrReject(T newComponent )
+    protected < T extends Component<Tsr<ValType>> > T _setOrReject(T newComponent )
     {
         if ( newComponent.getClass() == HostCPU.class ) return null;
         if ( newComponent instanceof Device && !( (Device) newComponent ).has( this ) )
@@ -1041,7 +1041,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             if ( this.has( Relation.class ) ) {
                 Relation relation = find( Relation.class );
                 if ( relation.hasParent() ) { // Root needs to be found ! :
-                    Tsr<ValueType> root = relation.findRootTensor();
+                    Tsr<ValType> root = relation.findRootTensor();
                     try {
                         ((Device)newComponent).store( root );
                     } catch ( Exception exception ) {
@@ -1091,10 +1091,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @return The unchanged object or when rejected: null (component rejected)
      */
     @Override
-    protected <T extends Component<Tsr<ValueType>>> T _removeOrReject( T newComponent )
+    protected <T extends Component<Tsr<ValType>>> T _removeOrReject( T newComponent )
     {
         if ( newComponent instanceof Device ) {
-            Device<ValueType> device = (Device<ValueType>) newComponent;
+            Device<ValType> device = (Device<ValType>) newComponent;
             /*
                 The following seems like a redundant check, however often times a tensor
                 will be removed from a Device implementation inside the "restore" method
@@ -1133,7 +1133,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param newOwner The new owner type instance.
      */
     @Override
-    public void update( Tsr<ValueType> oldOwner, Tsr<ValueType> newOwner ) {
+    public void update( Tsr<ValType> oldOwner, Tsr<ValType> newOwner ) {
         // This is means that this tensor is a gradient that is being
         // transferred to another tensor to serve as gradient...
         // No update task needs to occur. (This might change in the future...)
@@ -1172,7 +1172,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @return The truth value determining if this tensor is a slice of another tensor.
      */
     public boolean isSlice() {
-        Relation<ValueType> child = find( Relation.class );
+        Relation<ValType> child = find( Relation.class );
         return ( child != null && child.hasParent() );
     }
 
@@ -1185,7 +1185,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @return The number of slices derived from this tensor.
      */
     public int sliceCount() {
-        Relation<ValueType> child = find( Relation.class );
+        Relation<ValType> child = find( Relation.class );
         return ( child != null ) ? child.childCount() : 0;
     }
 
@@ -1196,7 +1196,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @return The truth value determining if slices have been derived from this tensor.
      */
     public boolean isSliceParent() {
-        Relation<ValueType> parent = find( Relation.class );
+        Relation<ValType> parent = find( Relation.class );
         return ( parent != null && parent.hasChildren() );
     }
 
@@ -1261,22 +1261,22 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     /**
      * @return The gradient of this tensor which is internally stored as component.
      */
-    public Tsr<ValueType> getGradient() {
+    public Tsr<ValType> getGradient() {
         return this.find( Tsr.class );
     }
 
     /**
      * @return The device on which this tensor is stored or 'CPU' if it is not outsourced.
      */
-    public Device<ValueType> getDevice() {
+    public Device<ValType> getDevice() {
         if ( this.isOutsourced() ) return this.find( Device.class );
-        return (Device<ValueType>) _CPU;
+        return (Device<ValType>) _CPU;
     }
 
     /**
      * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
      */
-    public GraphNode<ValueType> getGraphNode() {
+    public GraphNode<ValType> getGraphNode() {
         return find( GraphNode.class );
     }
 
@@ -1284,7 +1284,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *
      * @return Custom IndexAlias object.
      */
-    public IndexAlias<ValueType> index() {
+    public IndexAlias<ValType> index() {
         return find( IndexAlias.class );
     }
 
@@ -1320,7 +1320,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param call The context object containing all relevent informatin that defines a call for tensor execution.
      * @return This very tensor instance. (factory pattern)
      */
-    public Tsr<ValueType> incrementVersionBecauseOf( ExecutionCall call ) {
+    public Tsr<ValType> incrementVersionBecauseOf( ExecutionCall call ) {
         if ( Neureka.instance().settings().autograd().isPreventingInlineOperations() ) {
             _version++;
             GraphNode<?> node = find( GraphNode.class );
@@ -1347,7 +1347,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *      
      * @return This very tensor instance to allow for method chaining.
      */
-    public Tsr<ValueType> delete() 
+    public Tsr<ValType> delete() 
     {
         forComponent( GraphNode.class, n -> {
             if ( n.isUsedAsDerivative() ) {
@@ -1383,7 +1383,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param tensor The tensor whose identity should be stolen.
      * @return This very tensor instance in order to enable method chaining.
      */
-    protected Tsr<ValueType> _become( Tsr<ValueType> tensor )
+    protected Tsr<ValType> _become( Tsr<ValType> tensor )
     {
         if ( tensor == null ) return this;
         this.setDataType( tensor.getDataType() );
@@ -1393,8 +1393,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         _flags = tensor._flags;
         if ( tensor._components != null ) { // Inform components about their new owner:
             _components.addAll( tensor._components );
-            List<Component<Tsr<ValueType>>> snapshot = new ArrayList<>( tensor._components );
-            for ( Component<Tsr<ValueType>> o : snapshot ) o.update( tensor, this );
+            List<Component<Tsr<ValType>>> snapshot = new ArrayList<>( tensor._components );
+            for ( Component<Tsr<ValType>> o : snapshot ) o.update( tensor, this );
         }
         tensor._setData( null );
         tensor.setDataType( null );
@@ -1414,10 +1414,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     @NotNull
     @Override
-    public Iterator<ValueType> iterator()
+    public Iterator<ValType> iterator()
     {
         NDIterator _ndi = NDIterator.of( this );
-        return new Iterator<ValueType>() 
+        return new Iterator<ValType>() 
         {
             private int _count = 0;
             private final int _size = size();
@@ -1428,11 +1428,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             }
 
             @Override
-            public ValueType next() {
+            public ValType next() {
                 Object o = getDataAt( _ndi.i() );
                 _ndi.increment();
                 _count ++;
-                return (ValueType) o;
+                return (ValType) o;
             }
         };
     }
@@ -1460,7 +1460,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param error A tensor which is back-propagated to gradients. Must match the size og this tensor.
      * @return The tensor on which this method was called. (factory pattern)
      */
-    public Tsr<ValueType> backward( Tsr<ValueType> error ) {
+    public Tsr<ValType> backward( Tsr<ValType> error ) {
         if ( !forComponent( GraphNode.class, node -> node.backward( error ) ) && this.rqsGradient() ) {
             addToGradient( error );
         }
@@ -1482,7 +1482,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param value A scalar which is back-propagated to gradients. Must match the size og this tensor.
      * @return The tensor on which this method was called. (factory pattern)
      */
-    public Tsr<ValueType> backward( double value )
+    public Tsr<ValType> backward( double value )
     {
         backward( new Tsr( _NDConf.shape(), value ) );
         return this;
@@ -1501,7 +1501,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *
      * @return The tensor on which this method was called. (factory pattern)
      */
-    public Tsr<ValueType> backward()
+    public Tsr<ValType> backward()
     {
         backward( 1 );
         return this;
@@ -1557,7 +1557,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param labels A nested String array containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    public Tsr<ValueType> label( String[][] labels )
+    public Tsr<ValType> label( String[][] labels )
     {
         _label( null, labels );
         return this;
@@ -1582,7 +1582,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param labels A nested String array containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    public Tsr<ValueType> label( String tensorName, String[][] labels )
+    public Tsr<ValType> label( String tensorName, String[][] labels )
     {
         _label( tensorName, labels );
         return this;
@@ -1621,14 +1621,14 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param labels A nested String list containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    public Tsr<ValueType> label( List<List<Object>> labels )
+    public Tsr<ValType> label( List<List<Object>> labels )
     {
         IndexAlias indexAlias = find( IndexAlias.class );
         if ( indexAlias == null ) set( new IndexAlias( labels, null ) );
         return this;
     }
 
-    public Tsr<ValueType> label( String tensorName, List<List<Object>> labels )
+    public Tsr<ValType> label( String tensorName, List<List<Object>> labels )
     {
         IndexAlias indexAlias = find( IndexAlias.class );
         if ( indexAlias == null ) set( new IndexAlias( labels, tensorName ) );
@@ -1650,13 +1650,13 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param labels A map where keys are dimension labels and values are lists of index labels.
      * @return This tensor (method chaining).
      */
-    public Tsr<ValueType> label( Map<Object, List<Object>> labels )
+    public Tsr<ValType> label( Map<Object, List<Object>> labels )
     {
         this.set( new IndexAlias<>( labels, this, null ) );
         return this;
     }
 
-    public Tsr<ValueType> label( String tensorName, Map<Object, List<Object>> labels )
+    public Tsr<ValType> label( String tensorName, Map<Object, List<Object>> labels )
     {
         this.set( new IndexAlias<>( labels, this, tensorName ) );
         return this;
@@ -1674,75 +1674,75 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         -----------------------------
      */
 
-    public Tsr<ValueType> plus( Tsr<ValueType> other ) {
+    public Tsr<ValType> plus( Tsr<ValType> other ) {
         return Function.PLUS.call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<ValueType> plusAssign( Tsr<ValueType> other ) {
+    public Tsr<ValType> plusAssign( Tsr<ValType> other ) {
         return Function.Detached.PLUS_ASSIGN.call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<ValueType> plus( Double value ) {
+    public Tsr<ValType> plus( Double value ) {
         return plus( new Tsr<>( this.shape(), value ) );
     }
 
-    public Tsr<ValueType> minus( Tsr<ValueType> other ) {
+    public Tsr<ValType> minus( Tsr<ValType> other ) {
         return Function.MINUS.call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<ValueType> minusAssign( Tsr<ValueType> other ) {
+    public Tsr<ValType> minusAssign( Tsr<ValType> other ) {
         return Function.Detached.MINUS_ASSIGN.call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<ValueType> negative() {
+    public Tsr<ValType> negative() {
         return Function.NEG.call( new Tsr[]{ this } );
     }
 
-    public Tsr<ValueType> multiply( Tsr<ValueType> other ) {
+    public Tsr<ValType> multiply( Tsr<ValType> other ) {
         return Function.MUL.call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<ValueType> timesAssign( Tsr<ValueType> other ) {
+    public Tsr<ValType> timesAssign( Tsr<ValType> other ) {
         return Function.Detached.MUL_ASSIGN.call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<ValueType> multiply( Double value ) {
+    public Tsr<ValType> multiply( Double value ) {
         return multiply( new Tsr<>( this.shape(), value ) );
     }
 
-    public Tsr<ValueType> div( Tsr<ValueType> other ) {
+    public Tsr<ValType> div( Tsr<ValType> other ) {
         return Function.DIV.call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<ValueType> div( Double value ) {
+    public Tsr<ValType> div( Double value ) {
         return div( new Tsr<>( this.shape(), value ) );
     }
 
-    public Tsr<ValueType> divAssign( Tsr<ValueType> other ) {
+    public Tsr<ValType> divAssign( Tsr<ValType> other ) {
         return Function.Detached.DIV_ASSIGN.call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<ValueType> mod( Tsr<ValueType> other ) {
+    public Tsr<ValType> mod( Tsr<ValType> other ) {
         return Function.MOD.call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<ValueType> modAssign( Tsr<ValueType> other ) {
+    public Tsr<ValType> modAssign( Tsr<ValType> other ) {
         return Function.Detached.MOD_ASSIGN.call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<ValueType> power( Tsr<ValueType> other ) {
+    public Tsr<ValType> power( Tsr<ValType> other ) {
         return Function.POW.call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<ValueType> power( Double value ) {
+    public Tsr<ValType> power( Double value ) {
         return power( new Tsr<>( this.shape(), value ) );
     }
 
-    public Tsr<ValueType> xor( Tsr<ValueType> other ) {
+    public Tsr<ValType> xor( Tsr<ValType> other ) {
         return Function.POW.call( new Tsr[]{ this, other} );
     }
 
-    public Tsr<ValueType> xor( Double value ) {
+    public Tsr<ValType> xor( Double value ) {
         return xor( new Tsr<>( this.shape(), value ) );
     }
 
@@ -1755,7 +1755,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     /**
      * @return A new transposed tensor with the same underlying data as this tensor.
      */
-    public Tsr<ValueType> T()  // Transposed!
+    public Tsr<ValType> T()  // Transposed!
     {
         StringBuilder operation = new StringBuilder();
         for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( ( i == 0 ) ? "" : ", " );
@@ -1771,9 +1771,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *
      * @return A scalar tensor which is the mean value of all values of this very tensor.
      */
-    public Tsr<ValueType> mean() {
-        Tsr<ValueType> ones = new Tsr<>( this.getNDConf().shape(), 1 );
-        Tsr<ValueType> sum = Function.X.call( new Tsr[]{ this, ones } );
+    public Tsr<ValType> mean() {
+        Tsr<ValType> ones = new Tsr<>( this.getNDConf().shape(), 1 );
+        Tsr<ValType> sum = Function.X.call( new Tsr[]{ this, ones } );
         return Function.DIV.call( new Tsr[]{ sum, new Tsr( this.size() ) } );
         //TODO :Function.DIV.call(new Tsr[]{sum, new Tsr(this.size())});
     }
@@ -1785,8 +1785,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param b The tensor which is the right part of the dot product operation.
      * @return A new tensor which is the dot product of this tensor and the passed one.
      */
-    public Tsr<ValueType> dot( Tsr<ValueType> b ) {
-        Tsr<ValueType> a = this;
+    public Tsr<ValType> dot( Tsr<ValType> b ) {
+        Tsr<ValType> a = this;
         int[][] fitter = AbstractNDArray.Utility.Indexing.makeFit( a.getNDConf().shape(), b.getNDConf().shape() );
         boolean doReshape = false;
         for ( int i = 0; i < fitter[ 0 ].length && !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;
@@ -1808,7 +1808,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      *
      * @return A tensor with the same underlying data but possibly trimmed shape without preceding or trailing ones.
      */
-    public Tsr<ValueType> dimtrim() {
+    public Tsr<ValType> dimtrim() {
         return Function.DIMTRIM.call( this );
     }
 
@@ -1821,7 +1821,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param t The tensor which will be checked.
      * @return The answer to the following question: Is the data of the provided tensor a subset of the data of this tensor?
      */
-    public boolean isCase( Tsr<ValueType> t ) {
+    public boolean isCase( Tsr<ValType> t ) {
         boolean[] found = { false };
         this.forComponent( Relation.class, r -> r.foreachChild( c -> {
                 if ( c.equals( t ) ) found[ 0 ] = true;
@@ -1838,7 +1838,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param t The tensor which will be checked.
      * @return The answer to the following question: Is the data of the provided tensor a subset of the data of this tensor?
      */
-    public boolean contains( Tsr<ValueType> t ) {
+    public boolean contains( Tsr<ValType> t ) {
         return isCase( t );
     }
 
@@ -1900,7 +1900,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param i The index of the value item which should be returned as a tensor instance.
      * @return A tensor holding a single value element which is internally still residing in the original tensor.
      */
-    public Tsr<ValueType> getAt( int i ) {
+    public Tsr<ValType> getAt( int i ) {
         return getAt( new Object[]{ i, i } );
     }
 
@@ -1911,8 +1911,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param i The scalar index of the value item which should be returned by the method.
      * @return The value item found at the targeted index.
      */
-    public ValueType getValueAt( int i ) {
-        return (ValueType) getDataAt( _NDConf.i_of_i( i ) );
+    public ValType getValueAt( int i ) {
+        return (ValType) getDataAt( _NDConf.i_of_i( i ) );
     }
 
     /**
@@ -1925,8 +1925,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param idx The index array which targets a single value item within this tensor.
      * @return The found raw value item targeted by the provided index array.
      */
-    public ValueType getValueAt( int[] idx ) {
-        return (ValueType) getDataAt( _NDConf.i_of_idx( idx ) );
+    public ValType getValueAt( int[] idx ) {
+        return (ValType) getDataAt( _NDConf.i_of_idx( idx ) );
     }
 
     /**
@@ -1940,17 +1940,17 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param o The item which ought to be placed at the targeted position.
      * @return This very tensor in order to enable method chaining...
      */
-    public Tsr<ValueType> setAt( int i, ValueType o ) {
+    public Tsr<ValType> setAt( int i, ValType o ) {
         setDataAt( _NDConf.i_of_i( i ), o );
         return this;
     }
 
-    public Tsr<ValueType> getAt( double i ) {
-        return (Tsr<ValueType>) getAt( Arrays.asList( _NDConf.idx_of_i( (int) Math.floor( i ) ) ).toArray() );
+    public Tsr<ValType> getAt( double i ) {
+        return (Tsr<ValType>) getAt( Arrays.asList( _NDConf.idx_of_i( (int) Math.floor( i ) ) ).toArray() );
     }
 
-    public Tsr<ValueType> getAt( BigDecimal i ) {
-        return (Tsr<ValueType>) getAt( Arrays.asList( _NDConf.idx_of_i(( i ).intValue()) ).toArray() );
+    public Tsr<ValType> getAt( BigDecimal i ) {
+        return (Tsr<ValType>) getAt( Arrays.asList( _NDConf.idx_of_i(( i ).intValue()) ).toArray() );
     }
 
     public Object getAt( Map<?,?> rangToStrides )
@@ -1969,7 +1969,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return _sliceOf( newShape, newOffset, newSpread );
     }
 
-    public Tsr<ValueType> shallowCopy()
+    public Tsr<ValType> shallowCopy()
     {
         if ( this.isEmpty() || this.isUndefined() ) return this;
         List<List<Integer>> ranges = new ArrayList<>();
@@ -1978,7 +1978,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
             for ( int i = 0; i < e; i++ ) rangeAsList.add( i );
             ranges.add( rangeAsList);
         }
-        return (Tsr<ValueType>) getAt( ranges.toArray() );
+        return (Tsr<ValType>) getAt( ranges.toArray() );
     }
 
     /**
@@ -1989,7 +1989,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param key This object might be a wide range of objects including maps, lists or arrays...
      * @return A slice tensor or scalar value.
      */
-    public Tsr<ValueType> getAt( Object key ) {
+    public Tsr<ValType> getAt( Object key ) {
         if ( key == null ) return this;
         if ( key instanceof Object[] && ((Object[]) key).length == 0 ) key = new ArrayList<>();
         if ( key instanceof List && ( (List<?>) key ).isEmpty() ) {
@@ -2037,10 +2037,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return _sliceOf( newShape, newOffset, newSpread );
     }
 
-    private Tsr<ValueType> _sliceOf( int[] newShape, int[] newOffset, int[] newSpread )
+    private Tsr<ValType> _sliceOf( int[] newShape, int[] newOffset, int[] newSpread )
     {
         this.setIsVirtual( false );
-        Tsr<ValueType> subset = new Tsr<>();
+        Tsr<ValType> subset = new Tsr<>();
         subset.setDataType( this.getDataType() );
         subset._setData( this.getData() );
         int[] newTranslation = _NDConf.translation();
@@ -2233,9 +2233,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param key This object is a list defining a targeted index or range of indices...
      * @return A slice tensor or scalar value.
      */
-    public Tsr<ValueType> putAt( List<?> key, Tsr<ValueType> value ) {
+    public Tsr<ValType> putAt( List<?> key, Tsr<ValType> value ) {
         _putAtCheckFor( value );
-        Tsr<ValueType> slice = ( key == null ) ? this : (Tsr) getAt( key );
+        Tsr<ValType> slice = ( key == null ) ? this : (Tsr) getAt( key );
         return _putAt( slice, value );
     }
 
@@ -2249,9 +2249,9 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @param key This object is a map defining a stride and a targeted index or range of indices...
      * @return A slice tensor or scalar value.
      */
-    public Tsr<ValueType> putAt( Map<?,?> key, Tsr<ValueType> value ) {
+    public Tsr<ValType> putAt( Map<?,?> key, Tsr<ValType> value ) {
         _putAtCheckFor( value );
-        Tsr<ValueType> slice = ( key == null ) ? this : (Tsr<ValueType>) getAt( key );
+        Tsr<ValType> slice = ( key == null ) ? this : (Tsr<ValType>) getAt( key );
         return _putAt( slice, value );
     }
 
@@ -2263,11 +2263,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         }
     }
 
-    private Tsr<ValueType> _putAt( Tsr<ValueType> slice, Tsr<ValueType> value )
+    private Tsr<ValType> _putAt( Tsr<ValType> slice, Tsr<ValType> value )
     {
         boolean valueIsDeviceVisitor = false;
         if ( slice.isOutsourced() && !value.isOutsourced() ) {
-            Device<ValueType> device = slice.find( Device.class );
+            Device<ValType> device = slice.find( Device.class );
             try {
                 device.store( value );
             } catch ( Exception exce ) {
@@ -2382,7 +2382,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     public Object getDataAt( int i )
     {
         if ( this.isOutsourced() ) {
-            Device<ValueType> device = this.find( Device.class );
+            Device<ValType> device = this.find( Device.class );
             if ( device instanceof OpenCLDevice ) {
                 return ( (OpenCLDevice) device ).value64f( (Tsr<Number>) this, i );
             }
@@ -2393,7 +2393,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         else if ( getData() instanceof int[] ) return ( (int[]) getData())[ i ];
         else if ( getData() instanceof byte[] ) return ( (byte[]) getData())[ i ];
         else if ( getData() instanceof long[] ) return ( (long[]) getData())[ i ];
-        else return ( (ValueType[]) getData())[ i ];
+        else return ( (ValType[]) getData())[ i ];
         return null;
     }
 
@@ -2405,7 +2405,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
      * @return This very tensor in order to enable method chaining.
      */
     @Override
-    public Tsr<ValueType> setDataAt( int i, ValueType o ) {
+    public Tsr<ValType> setDataAt( int i, ValType o ) {
         if ( getData() instanceof Object[] ) ( (Object[]) getData() )[ i ] = o;
         else if ( getData() instanceof float[]  ) ( (float[])  getData() )[ i ] = (float)  o;
         else if ( getData() instanceof double[] ) ( (double[]) getData() )[ i ] = (double) o;
@@ -2416,7 +2416,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this;
     }
 
-    public Tsr<ValueType> setValue64( double[] value ) {
+    public Tsr<ValType> setValue64( double[] value ) {
         if ( this.isOutsourced() ) this.find( Device.class ).overwrite64( this, value );
         else if ( getData() == null ) {
             setDataType( DataType.of( F64.class ) );
@@ -2429,7 +2429,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this;
     }
 
-    public Tsr<ValueType> setValue32( float[] value ) {
+    public Tsr<ValType> setValue32( float[] value ) {
         if ( this.isOutsourced() ) this.find( Device.class ).overwrite32( this, value );
         else if ( getData() == null ) {
             setDataType( DataType.of( F32.class ) );
@@ -2442,7 +2442,8 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this;
     }
 
-    public Tsr<ValueType> setValue( Object value ) {
+    public Tsr<ValType> setValue( Object value )
+    {
         if ( value instanceof float[] ) this.setValue32( (float[]) value );
         else if ( value instanceof  double[] ) this.setValue64( (double[]) value );
         else if ( value instanceof Float ) {
@@ -2465,14 +2466,11 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
         return this;
     }
 
-    public Object getValue() { // TODO : Make this what it is supposed to be!!!
+    public Object getValue() { // TODO : Make this what it is supposed to be!!! (returning a copy of the targeted data)
         if ( this.isOutsourced() ) {
             Device device = find( Device.class );
             if ( device != null ) {
                 return device.valueFor( this );
-                //return ( this.is32() )
-                //        ? device.value32f( this )
-                //        : device.value64f( this );
             }
             else return getData();
         }
@@ -2481,7 +2479,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
     
     public double[] gradient64() {
-        Tsr<ValueType> gradient = this.getGradient();
+        Tsr<ValType> gradient = this.getGradient();
         if ( gradient == null ) return new double[ 0 ];
         return ( this.is32() )
                 ? DataConverter.Utility.floatToDouble( gradient.value32() )
@@ -2489,7 +2487,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     public float[] gradient32() {
-        Tsr<ValueType> gradient = this.getGradient();
+        Tsr<ValType> gradient = this.getGradient();
         if ( gradient == null ) return new float[ 0 ];
         return ( this.is64() )
                 ? DataConverter.Utility.doubleToFloat( gradient.value64() )
@@ -2497,7 +2495,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
 
-    public Tsr<ValueType> addToGradient( Tsr<ValueType> error ) {
+    public Tsr<ValType> addToGradient( Tsr<ValType> error ) {
         if (
                 !forComponent(
                     Tsr.class,
@@ -2520,15 +2518,16 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     /**
      *  This method constitutes a pure operation producing a new tensor instance
      *  which is a deep copy of this original tensor and contains data whose
-     *  elements have been converted to a new data type, namely :
-     *  the type specified by the argument
-     *
+     *  elements have been converted to a new data type, namely :<br>
+     *  The type specified by the argument <br>
+     *  <br>
      *  The method does not change this tensor, which is why the operation is pure.
      *  Important to note is that the method will return instances of the specified
      *  type but merely another tensor containing elements of that type...
      *  The name of this method for example translates to the "as" operator
-     *  found in Groovy, so the following code : " myTensor as Double "
-     *  would not return a Double instance!
+     *  found in Groovy, so the following code : <i>" myTensor as Double "</i> <br>
+     *  would not return a Double instance!<br>
+     *  <br>
      *
      * @param typeClass The class which is the target of the underlying type conversion...
      * @param <T> The value type of the tensor that will be returned.
@@ -2550,17 +2549,20 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     /**
      *  This method is an inline operation which changes the underlying data of this tensor.
-     *  It converts the data types of the elements of this tensor to the specified type!
-     *  WARNING : The use of this method is discouraged for the following reasons:
-     *  1. Inline operations are inherently error prone for most use cases.
+     *  It converts the data types of the elements of this tensor to the specified type!<br>
+     *  <br>
+     *  <b>WARNING : The use of this method is discouraged for the following reasons: </b><br>
+     *  <br>
+     *  1. Inline operations are inherently error prone for most use cases. <br>
      *  2. This inline operation in particular has no safety net,
      *     meaning that there is no implementation of version mismatch detection
-     *     like there is for those operations present in the operation backend...
-     *     No exceptions will be thrown during backpropagation!
+     *     like there is for those operations present in the standard operation backend...
+     *     No exceptions will be thrown during backpropagation! <br>
      *  3. This method has not yet been implemented to also handle instances which
      *     are slices of parent tensors!
      *     Therefore there might be unexpected performance penalties or side effects
-     *     associated with this method.
+     *     associated with this method.<br>
+     *     <br>
      *
      * @param typeClass The target type class for elements of this tensor.
      * @param <T> The type parameter for the returned tensor.
@@ -2584,7 +2586,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
 
     public double value64( int i ) {
         if ( this.isOutsourced() ) {
-            if ( find( Device.class ) instanceof  OpenCLDevice )
+            if ( find( Device.class ) instanceof OpenCLDevice )
                 return find( OpenCLDevice.class ).value64f( (Tsr<Number>) this, i );
             else return 0.0;
         }
@@ -2598,13 +2600,13 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     public double[] value64() {
-        Device found = this.find( Device.class );
+        Device<ValType> found = this.find( Device.class );
         if ( getData() == null && this.isOutsourced() && found != null ) {
             if ( found instanceof OpenCLDevice )
-                return ( (OpenCLDevice) found).value64f((Tsr<Number>) this);
+                return ( (OpenCLDevice) found).value64f( (Tsr<Number>) this );
             else return null;
         }
-        double[] newValue = DataConverter.instance().convert(getData(), double[].class );
+        double[] newValue = DataConverter.instance().convert( getData(), double[].class );
 
         if ( this.isVirtual() && newValue != null && this.size() > 1 ) {
 
@@ -2631,7 +2633,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
     public float[] value32() {
-        Device<ValueType> found = this.find( Device.class );
+        Device<ValType> found = this.find( Device.class );
         if ( getData() == null && this.isOutsourced() && found != null ) {
             if ( found instanceof OpenCLDevice )
                 return ( (OpenCLDevice) found ).value32f( (Tsr<Number>) this);
@@ -2673,21 +2675,22 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     }
 
 
-    public static void makeFit( Tsr[] tsrs, boolean doesAD )
+    public static void makeFit( Tsr[] tensors, boolean doesAD )
     {
         int largest = -1;
         int[] shape = null;
-        for ( Tsr t : tsrs ) if ( t.rank() > largest ) {
+        for ( Tsr t : tensors ) if ( t.rank() > largest ) {
             largest = t.rank();
             shape = t.getNDConf().shape();
         }
         int prefix = 0;
+        assert shape != null;
         for ( int s : shape ) if ( s == 1 ) prefix++; else break;
         int postfix = 0;
         for ( int i = shape.length-1; i>=0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;
-        for ( int i = 0; i < tsrs.length; i++ ) {
-            if ( tsrs[ i ].rank() != largest ) {
-                int[] oldShape = tsrs[ i ].getNDConf().shape();
+        for ( int i = 0; i < tensors.length; i++ ) {
+            if ( tensors[ i ].rank() != largest ) {
+                int[] oldShape = tensors[ i ].getNDConf().shape();
                 int[] newReshape = new int[ largest ];
                 int padding = largest - oldShape.length;
 
@@ -2699,7 +2702,7 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
                     AbstractNDArray.Utility.Stringify.strConf( newReshape ) + ":(I[ 0 ])",
                         doesAD
                 );
-                tsrs[ i ] = f.call( tsrs[ i ] );
+                tensors[ i ] = f.call( tensors[ i ] );
             }
         }
 
@@ -2712,6 +2715,10 @@ public class Tsr<ValueType> extends AbstractNDArray<Tsr<ValueType>, ValueType> i
     @NoArgsConstructor
     public static class Create
     {
+        public  static Tsr<?> E( List<Integer> shape ) {
+            return E( shape.stream().mapToInt( e -> e ).toArray() );
+        }
+
         public  static Tsr<?> E( int[] shape ) {
             return new Tsr( shape, 2.7182818284590452353602874713527 );
         }

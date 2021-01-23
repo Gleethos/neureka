@@ -50,9 +50,9 @@ import java.util.function.Supplier;
  *  represents the second most important feature of this library.
  *  Instances of Function implementations form an abstract syntax tree which is being built
  *  from a provided expression String containing function syntax.
-
-    Just like functions in the mathematical sense, implementations of this
-    interface receive inputs.
+ *
+ *  Just like functions in the mathematical sense, implementations of this
+ *  interface receive a fixed number of inputs.
  *  Within the expression String needed for instantiation, these inputs are
  *  recognized by 'I[j]', 'Ij' or 'ij', where j is the input index.
  *  Functions accept arrays as their inputs,
@@ -118,6 +118,10 @@ public interface Function
         return FunctionBuilder.build(expression, doAD);
     }
 
+    /**
+     *  This static nested class acts as namespace for a set of useful
+     *  entry points to
+     */
     class Setup
     {
         public static <T> Tsr<T> commit( Tsr<T>[] tensors, String operation, boolean doAD )
@@ -142,10 +146,10 @@ public interface Function
 
         public static <T> Tsr<T> commit( Tsr<T> drain, Tsr<T>[] inputs, Function function, Supplier<Tsr<T>> activation )
         {
-            Tsr.makeFit(inputs, function.isDoingAD()); // reshaping if needed
+            Tsr.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
 
-            GraphLock newLock = new GraphLock(function, inputs);
-            for (Tsr<T> t : inputs) {
+            GraphLock newLock = new GraphLock( function, inputs );
+            for ( Tsr<T> t : inputs ) {
                 if ( t.has( GraphNode.class ) ) t.find( GraphNode.class ).obtainLocking( newLock );
                 else new GraphNode( function, newLock, () -> t );
             }
@@ -197,7 +201,6 @@ public interface Function
 
 
     double derive( double[] inputs, int index, int j );
-
     double derive( double[] inputs, int index );
 
     //------------------------------------------------------------------------------------------------------------------
@@ -218,20 +221,17 @@ public interface Function
 
 
     <T> Tsr<T> derive( Tsr<T>[] inputs, int index, int j );
-
     <T> Tsr<T> derive( Tsr<T>[] inputs, int index );
 
     //---
 
     <T> Tsr<T> derive( List<Tsr<T>> inputs, int index, int j );
-
     <T> Tsr<T> derive( List<Tsr<T>> inputs, int index );
 
     //---
 
     String toString();
 
-    //------------------------------------------------------------------------------------------------------------------
 
 }
 

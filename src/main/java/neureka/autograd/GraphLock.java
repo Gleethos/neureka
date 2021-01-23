@@ -34,7 +34,7 @@ public class GraphLock
      * @param sources
      */
     public GraphLock( Function owner, Tsr[] sources ) {
-        this._owner = owner;
+        _owner = owner;
     }
 
     /**

@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.function.Function;
 
 @Accessors( prefix = {"_"} )
-public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
+public class IndexAlias<ValType> implements Component<Tsr<ValType>>
 {
     private final List<Object> _hiddenKeys = new ArrayList<>();
 
@@ -36,7 +36,7 @@ public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
         for ( int i = 0; i < size; i++ ) _mapping.put( i, new LinkedHashMap<>() );
     }
 
-    public IndexAlias( Map<Object, List<Object>> labels, Tsr<ValueType> host, String tensorName ) {
+    public IndexAlias( Map<Object, List<Object>> labels, Tsr<ValType> host, String tensorName ) {
         _tensorName = tensorName;
         _mapping = new LinkedHashMap<>( labels.size() * 3 );
         int[] index = { 0 };
@@ -215,7 +215,7 @@ public class IndexAlias<ValueType> implements Component<Tsr<ValueType>>
 
 
     @Override
-    public void update( Tsr<ValueType> oldOwner, Tsr<ValueType> newOwner ) {
+    public void update( Tsr<ValType> oldOwner, Tsr<ValType> newOwner ) {
         // This component does not have anything to do when switching owner...
     }
 }

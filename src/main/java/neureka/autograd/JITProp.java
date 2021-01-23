@@ -7,13 +7,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class JITProp<ValueType> implements Component<Tsr<ValueType>>
+public class JITProp<ValType> implements Component<Tsr<ValType>>
 {
-    private Set<GraphNode<ValueType>> _finished;
+    private Set<GraphNode<ValType>> _finished;
 
-    private  Set<GraphNode<ValueType>> _pending;
+    private  Set<GraphNode<ValType>> _pending;
 
-    public JITProp( Set<GraphNode<ValueType>> pendings ) {
+    public JITProp( Set<GraphNode<ValType>> pendings ) {
         _pending = new HashSet<>();
         _pending.addAll( pendings ); // Every JITProp component has their own Set.
         //... otherwise this would lead to finished JIT-Propagations where in fact traversals are still pending...
@@ -21,9 +21,9 @@ public class JITProp<ValueType> implements Component<Tsr<ValueType>>
 
     /**
      *
-     * @param pendings A set of GraphNode&lt;ValueType&gt; instance which are saved for future backprop continuation.
+     * @param pendings A set of GraphNode&lt;ValType&gt; instance which are saved for future backprop continuation.
      */
-    public void addPending( Set<GraphNode<ValueType>> pendings ) {
+    public void addPending( Set<GraphNode<ValType>> pendings ) {
         if ( pendings.isEmpty() ) throw new IllegalStateException("Trying to add empty pending errors set to JITProp.");
         if ( !isDone() ) throw new IllegalStateException("Trying to add pending errors to JITProp which is done.");
         _pending.addAll( pendings );
@@ -33,11 +33,11 @@ public class JITProp<ValueType> implements Component<Tsr<ValueType>>
      *
      * @param finishedJITProps The reference to a GraphNote which has finished (JITed) backpropation.
      */
-    public void noteFinished( GraphNode<ValueType> finishedJITProps ) {
+    public void noteFinished( GraphNode<ValType> finishedJITProps ) {
         if ( _finished == null ) _finished = new HashSet<>();
         _finished.add( finishedJITProps );
         if ( _pending != null ) {
-            Set<GraphNode<ValueType>> intersection = _finished.stream().filter(_pending::contains).collect(Collectors.toSet());
+            Set<GraphNode<ValType>> intersection = _finished.stream().filter(_pending::contains).collect(Collectors.toSet());
             _finished.removeAll( intersection );
             _pending.removeAll( intersection );
             if ( _finished.isEmpty() ) _finished = null;
@@ -63,7 +63,7 @@ public class JITProp<ValueType> implements Component<Tsr<ValueType>>
             if ( _finished == null || !_finished.contains( n ) ) {
                 PendingError pe = n.getAndRemovePendingError();
                 if ( !pe.isFullyAccumulated() ) throw new IllegalStateException("Pending error has not received expected accumulation.");
-                n.backwardJIT( (Tsr<ValueType>) pe.getAccumulatedError() );//Continue backprop recursively!
+                n.backwardJIT( (Tsr<ValType>) pe.getAccumulatedError() );//Continue backprop recursively!
             }
         });
         if ( pendingCount() > 0 ) throw new IllegalStateException("Pending error has not received expected accumulation.");
@@ -90,7 +90,7 @@ public class JITProp<ValueType> implements Component<Tsr<ValueType>>
 
 
     @Override
-    public void update( Tsr<ValueType> oldOwner, Tsr<ValueType> newOwner ) {
+    public void update( Tsr<ValType> oldOwner, Tsr<ValType> newOwner ) {
 
     }
 }

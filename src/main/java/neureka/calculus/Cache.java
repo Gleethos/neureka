@@ -65,27 +65,32 @@ public class Cache
         lock.release();
     }
 
-    public synchronized Tsr<Object> preprocess( Tsr<Object>[] inputs, Function function, Supplier<Tsr<Object>> activation, int d, int j )
-    {
+    public synchronized Tsr<Object> preprocess(
+            Tsr<Object>[] inputs,
+            Function function,
+            Supplier<Tsr<Object>> activation,
+            int d, int j
+    ) {
         if ( !function.isDoingAD() ) {
             return activation.get(); // TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD => NO GRAPH NODES
         }
-        boolean locked = true;//input tensors might all have graph nodes but are left from previous computation. (=>need to locked again!)
+        boolean allLocked = true; // Input tensors might all have graph nodes which are left from previous computation.
+        // ( => needs to be locked again! )
         Tsr<Object> untracked = null;
         for ( Tsr<Object> t : inputs ) {
             GraphNode<Object> node = t.find( GraphNode.class );
             if ( node != null ) {
-                untracked=t;
-                locked = (locked) && node.getLock().isLocked();
+                untracked = t;
+                allLocked = node.getLock().isLocked() && allLocked;
             }
         }
-        if ( untracked == null || !locked ) { // If graph tracking (nodes) has not yet been initialized!
+        if ( untracked == null || !allLocked ) { // If graph tracking (nodes) has not yet been initialized!
             return Function.Setup.commit( null, inputs, function, activation );
         }
         GraphLock lock =  untracked.find( GraphNode.class ).getLock();
         for ( Tsr<Object> t : inputs ) {
             if ( t.has( GraphNode.class ) ) t.find( GraphNode.class ).obtainLocking( lock );
-            else new GraphNode( function, lock, ()->t );
+            else new GraphNode( function, lock, () -> t );
         }
         GraphNode<Object> node = inputs[ 0 ].find( GraphNode.class );
         Tsr<Object> result = null;
@@ -122,7 +127,7 @@ public class Cache
             for ( int i=0; i<nodes.length; i++ ) tsrs[i] = nodes[i].getPayload();
         }
         long key = _keyOf( tsrs, d, j );
-        if ( node.isCachable() && key != 0 ) {
+        if ( node.isCacheable() && key != 0 ) {
             TreeMap<Long, Tsr<Object>> variables;
             if ( PROCESSING.containsKey( node.getLock() ) ) variables = PROCESSING.get( node.getLock() );
             else {

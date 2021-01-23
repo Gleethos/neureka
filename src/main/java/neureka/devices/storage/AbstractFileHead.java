@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public abstract class AbstractFileHead<FinalType, ValueType> implements FileHead<FinalType, ValueType>
+public abstract class AbstractFileHead<FinalType, ValType> implements FileHead<FinalType, ValType>
 {
     protected static Logger _LOG;
 
@@ -48,7 +48,7 @@ public abstract class AbstractFileHead<FinalType, ValueType> implements FileHead
         return _size == 0;
     }
 
-    public boolean contains( Tsr<ValueType> o ) {
+    public boolean contains( Tsr<ValType> o ) {
         return false; // TODO: implement...
     }
 
@@ -108,7 +108,7 @@ public abstract class AbstractFileHead<FinalType, ValueType> implements FileHead
     }
 
     @Override
-    public Storage<ValueType> restore( Tsr<ValueType> tensor ) {
+    public Storage<ValType> restore( Tsr<ValType> tensor ) {
         try {
             Object value = _loadData();
             tensor.setValue( value );
