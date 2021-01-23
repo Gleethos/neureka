@@ -121,15 +121,15 @@ import java.util.stream.Collectors;
  *  A tensor is a type of multidimensional data-structure with certain transformation properties.
  *  Technically however, it is mostly a simple container / data-structure which can house data indexed by N dimensions.
  *  Therefore it is often also described as an nd-array.
- *  Elements of a tensor are also mostly numeric.
+ *  Elements of a tensor are also mostly numeric.<br>
  *  This means that: <br>
- *  ...a tensor of rank 0 is a scalar, a tensor of rank 1 is a vector and a tensor of rank 2 is a matrix, etc...
+ *  <i>...a tensor of rank 0 is a scalar, a tensor of rank 1 is a vector and a tensor of rank 2 is a matrix, etc...</i>
  *  <br><br>
  *  Consequently, tensors are a perfect fit for applying various operations on them.
  *  Such operations might be simple elementwise operations or more complex linear operations like
  *  the dot-product, matrix- or even tensor multiplications.
  *
- * @param <ValType>
+ * @param <ValType> The type parameter for the individual value items within this tensor.
  */
 @Accessors( prefix = {"_"} )
 public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> implements Component<Tsr<ValType>>
@@ -140,7 +140,8 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     }
 
     /**
-     *  Default device (host cpu)
+     *  The default device is an instance of the "HostCPU" class. <br>
+     *  This field is a reference to this default device implementation.
      */
     private static final Device<Number> _CPU;
 
@@ -152,7 +153,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     private int _flags = 0;
 
     /**
-     *  This is a bit mask used to store true / false values
+     *  The following fields are bit masks used to store true / false values
      *  in a targeted bit inside the "_flags" variable.
      */
     private static final int RQS_GRADIENT_MASK = 1;
@@ -293,18 +294,18 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
             }
         }
         boolean doAD = true;
-        Tsr<?>[] tsrs = new Tsr[ numberOfTensors ];
+        Tsr<?>[] tensors = new Tsr[ numberOfTensors ];
         StringBuilder f = new StringBuilder();
         int ti = 0;
         for ( Object o : args ) {
             if ( tsrList.contains( o ) ) {
-                tsrs[ ti ] = ( (Tsr<?>) o );
+                tensors[ ti ] = ( (Tsr<?>) o );
                 f.append( "I[" ).append( ti ).append( "]" );
                 ti++;
             } else if ( o instanceof  String ) f.append( (String) o );
             else if ( o instanceof  Boolean ) doAD = (Boolean) o;
         }
-        _construct( tsrs, f.toString(), doAD );
+        _construct( tensors, f.toString(), doAD );
     }
 
 
@@ -410,8 +411,8 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
             double asNum = ( e instanceof BigDecimal ) ?
                     ( (BigDecimal) e ).doubleValue()
                     : ( e instanceof Double )
-                    ? (Double) e
-                    : (Integer) e;
+                        ? (Double) e
+                        : (Integer) e;
             isNatural = asNum % 1 == 0;
         }
         if ( isNatural ) {
@@ -441,7 +442,8 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
     /**
      *  This method receives a list of lists which represents a matrix of objects.
-     *  It parses this matrix into a 2D shape array and a double array.
+     *  It parses this matrix into a 2D shape array and a double array.<br>
+     *  <br>
      *
      * @param matrix A list of list which ought to resemble a matrix.
      */
@@ -718,11 +720,15 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  This method takes a tensor and a String expression describing
      *  operations which ought to be applied to said tensor.
      *  This expression will be parsed to a Function instance expecting one input,
-     *  namely : "I[0]"
+     *  namely : "I[0]" <br>
      *  An example would be the following :
-     *  'Tsr a = new Tsr( b, "sin( I[0] ) * 2" )'
+     * <ul>
+     *      <li><i> 'Tsr a = new Tsr( b, "sin( I[0] ) * 2" )'
+     * </ul>
+     *
      *  Which takes the tensor 'b' and applies the function "f(x) = sin(x) * 2"
-     *  elementwise to produce a new tensor 'a'!
+     *  elementwise to produce a new tensor 'a'! <br>
+     *  <br>
      *
      * @param tensor A tensor which serves as input to the Function instance parsed from the given expression.
      * @param expression The expression describing operations applied to the provided tensor.
@@ -736,11 +742,14 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  This method takes an array of tensors and a String expression describing
      *  operations which ought to be applied to the tensors in said array.
      *  This expression will be parsed to a Function instance expecting as many inputs
-     *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...
+     *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ... <br>
      *  An example would be the following :
-     *  'Tsr a = new Tsr( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'
+     * <ul>
+     *      <li><i> 'Tsr a = new Tsr( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'
+     * </ul>
+     *
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
-     *  elementwise to produce a new tensor 'a'!
+     *  elementwise to produce a new tensor 'a'! <br>
      *
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      * @param expression The expression describing operations applied to the provided tensors.
@@ -753,15 +762,17 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  This method takes an array of tensors and a String expression describing
      *  operations which ought to be applied to the tensors in said array.
      *  This expression will be parsed to a Function instance expecting as many inputs
-     *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...
-     *  An example would be the following :
-     *  'Tsr a = new Tsr( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'
+     *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...                    <br>
+     *  An example would be the following :                                                 <br>
+     * <ul>
+     *      <li><i> 'Tsr a = new Tsr( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'
+     * </ul>
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
      *  elementwise to produce a new tensor 'a'!
      *  Additionally there is a helpful flag which allows one to specify if the
      *  parsed Function instance emerging from the provided expression
      *  should also allow the tracking of computations via a computation graph (GraphNode instances).
-     *  This history tracking then enables auto-differentiation.
+     *  This history tracking then enables auto-differentiation. <br>
      *
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      * @param expression The expression describing operations applied to the provided tensors.
@@ -801,7 +812,8 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     /**
      *  This method is responsible for instantiating and setting the _conf variable.
      *  The core requirement for instantiating NDConfiguration interface implementation s
-     *  is a shape array of integers which is being passed to the method...
+     *  is a shape array of integers which is being passed to the method... <br>
+     *  <br>
      *
      * @param newShape An array if integers which are all greater 0 and represent the tensor dimensions.
      */
@@ -975,7 +987,8 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
     /**
      *  This method is the inner counterpart to the public "setIsVirtual" method.
-     *  It actually performs the bit flipping by applying the corresponding bit mask.
+     *  It actually performs the bit flipping by applying the corresponding bit mask. <br>
+     *  <br>
      * @param isVirtual The truth value which ought to be applied.
      */
     protected void _setIsVirtual( boolean isVirtual ) {
@@ -1410,6 +1423,11 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     |   ---------------------------------------
     */
 
+    /**
+     * This method returns an iterator over the elements of this tensor. <br>
+     *
+     * @return An iterator over elements of type ValType.
+     */
     @NotNull
     @Override
     public Iterator<ValType> iterator()
@@ -1505,6 +1523,11 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         return this;
     }
 
+    /**
+     *  If this tensor owns a gradient tensor as component, then it can be applied by this method. <br>
+     *  "Applying" a gradient to a tensor simply means adding the values inside the gradient element-wise
+     *  to the owning host tensor via an inline operation. <br>
+     */
     public void applyGradient()
     {
         /*
@@ -1535,6 +1558,13 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         );
     }
 
+    /**
+     *  <b>This method detaches this tensor from its underlying computation-graph
+     *  or simply does nothing if no graph is present.</b> <br>
+     *  Nodes within a computation graph are instances of the "GraphNode" class which are also
+     *  simple components of the tensors they represent in the graph. <br>
+     *  Therefore, "detaching" this tensor from the graph simply means removing its GraphNode component.
+     */
     public void detach()
     {
         this.remove( GraphNode.class );
@@ -1555,11 +1585,11 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  in the range of the corresponding shape dimension...
      *  Labeling an index means that for every dimension there
      *  must be a label for elements in this range array! <br>
-     *  For example the shape (2,3) could be labeled as follows: <br>
-     *  <br>
-     *      dim 0 : ["A", "B"] <br>
-     *      dim 1 : ["1", "2", "3"] <br>
-     *  <br>
+     *  For example the shape (2,3) could be labeled as follows:    <br>
+     *                                                              <br>
+     *      dim 0 : ["A", "B"]                                      <br>
+     *      dim 1 : ["1", "2", "3"]                                 <br>
+     *                                                              <br>
      *
      * @param labels A nested String array containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
@@ -1579,11 +1609,11 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  in the range of the corresponding shape dimension...
      *  Labeling an index means that for every dimension there
      *  must be a label for elements in this range array! <br>
-     *  For example the shape (2,3) could be labeled as follows: <br>
-     *  <br>
-     *      dim 0 : ["A", "B"] <br>
-     *      dim 1 : ["1", "2", "3"] <br>
-     *  <br>
+     *  For example the shape (2,3) could be labeled as follows:    <br>
+     *                                                              <br>
+     *      dim 0 : ["A", "B"]                                      <br>
+     *      dim 1 : ["1", "2", "3"]                                 <br>
+     *                                                              <br>
      *
      * @param tensorName A label for this tensor itself.
      * @param labels A nested String array containing labels for indexes of the tensor dimensions.
@@ -1621,10 +1651,10 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  Labeling an index means that for every dimension there
      *  must be a label for elements in this range array! <br>
      *  For example the shape (2,3) could be labeled as follows: <br>
-     *
-     *      dim 0 : ["A", "B"]
-     *      dim 1 : ["1", "2", "3"]
-     *
+     *                                                           <br>
+     *      dim 0 : ["A", "B"]                                   <br>
+     *      dim 1 : ["1", "2", "3"]                              <br>
+     *                                                           <br>
      * @param labels A nested String list containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
@@ -1649,12 +1679,13 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  The first and only argument of the method expects a map instance
      *  where keys are the objects which ought to act as dimension labels
      *  and the values are lists of labels for the indices of said dimensions.
-     *  For example the shape (2,3) could be labeled as follows: <br>
-     *  [
-     *      "dim 0" : ["A", "B"],
-     *      "dim 1" : ["1", "2", "3"]
-     *  ]
-     * @param labels A map where keys are dimension labels and values are lists of index labels.
+     *  For example the shape (2,3) could be labeled as follows:            <br>
+     *  [                                                                   <br>
+     *      "dim 0" : ["A", "B"],                                           <br>
+     *      "dim 1" : ["1", "2", "3"]                                       <br>
+     *  ]                                                                   <br>
+     *  <br>
+     * @param labels A map in which the keys are dimension labels and the values are lists of index labels for the dimension.
      * @return This tensor (method chaining).
      */
     public Tsr<ValType> label( Map<Object, List<Object>> labels )
