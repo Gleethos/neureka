@@ -113,6 +113,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -123,12 +124,12 @@ import java.util.stream.Collectors;
  *  Therefore it is often also described as an nd-array.
  *  Elements of a tensor are also mostly numeric.<br>
  *  This means that: <br>
- *  <i>...a tensor of rank 0 is a scalar, a tensor of rank 1 is a vector and a tensor of rank 2 is a matrix, etc...</i>
+ *  <i><b>...a tensor of rank 0 is a scalar, a tensor of rank 1 is a vector and a tensor of rank 2 is a matrix, etc...</b></i>
  *  <br><br>
  *  Consequently, tensors are a perfect fit for applying various operations on them.
  *  Such operations might be simple elementwise operations or more complex linear operations like
- *  the dot-product, matrix- or even tensor multiplications.
- *
+ *  the dot-product, matrix- or even tensor multiplications. <br>
+ *  <br>
  * @param <ValType> The type parameter for the individual value items within this tensor.
  */
 @Accessors( prefix = {"_"} )
@@ -321,16 +322,16 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
     public Tsr( List<?> arg1, String arg2 )
     {
-        java.util.function.Function<Class<?>, Boolean> isType = c -> arg1.stream().allMatch( e -> e.getClass() == c );
+        Predicate<Class<?>> isType = c -> arg1.stream().allMatch( e -> e.getClass() == c );
 
-        if ( isType.apply( Integer.class ) ) {
+        if ( isType.test( Integer.class ) ) {
             List<Integer> shape = (List<Integer>) arg1;
             int[] shp = new int[ shape.size() ];
             for ( int i=0; i < shp.length; i++ ) shp[ i ] = shape.get( i );
             _construct( shp, arg2 );
-        } else if ( isType.apply( Tsr.class ) ) {
+        } else if ( isType.test( Tsr.class ) ) {
             _construct( arg1.toArray( new Tsr[ 0 ] ), arg2, true );
-        } else {
+        } else if ( arg1 != null ) {
             _construct(
                     ( (List<Object>) arg1 ).stream().map( Tsr::new ).toArray( Tsr[]::new ),
                     arg2,
@@ -361,39 +362,40 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         );
     }
 
-    private void _constructForRange( int[] shp, DataType<?> dataType, ValType[] range ) {
+    private void _constructForRange( int[] shape, DataType<?> dataType, ValType[] range )
+    {
         if ( range.length != 0 && !( range[ 0 ] instanceof Number ) ) {
             Class<?> givenClass = range[ 0 ].getClass();
             @SuppressWarnings("unchecked")
             final ValType[] value = (ValType[]) Array.newInstance(
                     givenClass,
-                    NDConfiguration.Utility.szeOfShp( shp )
+                    NDConfiguration.Utility.szeOfShp( shape )
             );
             for ( int i = 0; i < value.length; i++ ) value[ i ] = range[ i % range.length ];
             setDataType( DataType.of( givenClass ) );
             _setData( value );
-            _construct( shp, value );
+            _construct( shape, value );
         } else {
             setDataType( dataType );
             if ( dataType.getTypeClass() == F64.class )
                 _constructForDoubles(
-                        shp,
-                        DataConverter.Utility.objectsToDoubles( range, NDConfiguration.Utility.szeOfShp( shp ) )
+                        shape,
+                        DataConverter.Utility.objectsToDoubles( range, NDConfiguration.Utility.szeOfShp( shape ) )
                 );
             else if ( dataType.getTypeClass() == F32.class  )
                 _constructForFloats(
-                        shp,
-                        DataConverter.Utility.objectsToFloats( range, NDConfiguration.Utility.szeOfShp( shp ) )
+                        shape,
+                        DataConverter.Utility.objectsToFloats( range, NDConfiguration.Utility.szeOfShp( shape ) )
                 );
             else if ( dataType.getTypeClass() == I32.class )
                 _constructForInts(
-                        shp,
-                        DataConverter.Utility.objectsToInts( range, NDConfiguration.Utility.szeOfShp( shp ) )
+                        shape,
+                        DataConverter.Utility.objectsToInts( range, NDConfiguration.Utility.szeOfShp( shape ) )
                 );
             else if ( dataType.getTypeClass() == I16.class )
                 _constructForShorts(
-                        shp,
-                        DataConverter.Utility.objectsToShorts( range, NDConfiguration.Utility.szeOfShp( shp ) )
+                        shape,
+                        DataConverter.Utility.objectsToShorts( range, NDConfiguration.Utility.szeOfShp( shape ) )
                 );
         }
     }
@@ -655,8 +657,6 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         --------------------------------------------
     */
 
-    public interface Initializer<T> {  T init( int i, int[] index );  }
-
     public <T> Tsr( List<Integer> shape, DataType<T> type, Initializer<T> initializer )
     {
         _constructFromInitializer( shape.stream().mapToInt(e -> e ).toArray(), type, initializer );
@@ -671,25 +671,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     {
         setDataType( type );
         _construct( shape, true, false );
-        Object data = getData();
-        if ( data instanceof double[] )
-            for ( int i=0; i<((double[])data).length; i++ )
-                ( (double[]) data )[i] = (double) initializer.init( i, _NDConf.idx_of_i( i )  );
-        else if ( data instanceof float[] )
-            for ( int i=0; i<((float[])data).length; i++ )
-                ( (float[]) data )[i] = (float) initializer.init( i, _NDConf.idx_of_i( i )  );
-        else if ( data instanceof int[] )
-            for ( int i=0; i<((int[])data).length; i++ )
-                ( (int[]) data )[i] = (int) initializer.init( i, _NDConf.idx_of_i( i )  );
-        else if ( data instanceof short[] )
-            for ( int i=0; i<((short[])data).length; i++ )
-                ( (short[]) data )[i] = (short) initializer.init( i, _NDConf.idx_of_i( i )  );
-        else if ( data instanceof byte[] )
-            for ( int i=0; i<((byte[])data).length; i++ )
-                ( (byte[]) data )[i] = (byte) initializer.init( i, _NDConf.idx_of_i( i )  );
-        else for ( int i=0; i<((Object[])data).length; i++ )
-                ( (Object[]) data )[i] = initializer.init( i, _NDConf.idx_of_i( i )  );
-
+        _initData( initializer );
     }
 
 
@@ -803,7 +785,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      * @param expression The expression defining a function.
      * @param doAD The flag which will enable or disable autograd for the instantiated Function.
      */
-    private void _construct( Tsr[] tensors, String expression, boolean doAD ) 
+    private void _construct( Tsr[] tensors, String expression, boolean doAD )
     {
         if ( tensors == null || tensors.length == 0 || tensors[ 0 ] == null ) return; 
         _become( Function.Setup.commit( this, tensors, expression, doAD ) );
@@ -828,21 +810,26 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         }
         if ( getData() == null && autoAllocate ) _allocate( size );
         int length = _dataLength();
-        if ( length >= 0 ) {
-            if ( size != length && ( !this.isVirtual() || !makeVirtual) ) {
+        if ( length >= 0 && size != length && ( !this.isVirtual() || !makeVirtual) ) {
                 String message = "Size of shape does not match stored value64!";
                 _LOG.error( message );
                 throw new IllegalArgumentException( message );
-            }
         }
-        if ( makeVirtual ) _NDConf = VirtualNDConfiguration.construct( newShape );
+        if ( makeVirtual ) setNDConf( VirtualNDConfiguration.construct( newShape ) );
         else {
             int[] newTranslation = NDConfiguration.Utility.newTlnOf( newShape );
-            int[] newIdxmap = newTranslation;
             int[] newSpread = new int[ newShape.length ];
             Arrays.fill( newSpread, 1 );
             int[] newOffset = new int[ newShape.length ];
-            _NDConf = AbstractNDC.construct( newShape, newTranslation, newIdxmap, newSpread, newOffset );
+            setNDConf(
+                AbstractNDC.construct(
+                    newShape,
+                    newTranslation,
+                    newTranslation, // idxmap
+                    newSpread,
+                    newOffset
+                )
+            );
         }
     }
 
@@ -888,9 +875,9 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         } else if (
                 !forComponent(
                         Device.class,
-                        d -> {
+                        device -> {
                             try {
-                                if ( d.has( this ) ) d.restore( this );
+                                if ( device.has( this ) ) device.restore( this );
                             } catch ( Exception exception ) {
                                 _LOG.error(
                                         "Tensor could not be restored from device component when trying to migrate it back to RAM.",
@@ -902,12 +889,13 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                             forComponent(
                                     Tsr.class,
                                     gradient ->
-                                            gradient.forComponent(
+                                            ( (Tsr<ValType>) gradient ).forComponent(
                                                     Device.class,
-                                                    gd -> {
+                                                    gradDevice -> {
                                                         try {
-                                                            if ( ( (Device) gd ).has( gradient ) ) ( (Device) gd ).restore( gradient );
-                                                        } catch ( Exception exception ) {
+                                                            if ( gradDevice.has( gradient ) ) gradDevice.restore( gradient );
+                                                        }
+                                                        catch ( Exception exception ) {
                                                             _LOG.error(
                                                                     "Gradient could not be restored from device component when trying to migrate it back to RAM.",
                                                                     exception
@@ -965,7 +953,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                 _actualize();
             }
             _setIsVirtual( isVirtual );
-            if ( _NDConf != null ) _configureFromNewShape( _NDConf.shape(), isVirtual, true );
+            if ( getNDConf() != null ) _configureFromNewShape( getNDConf().shape(), isVirtual, true );
             try {
                 if ( device != null ) device.store( this );
             } catch ( Exception exception ) {
@@ -982,7 +970,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     }
 
     public boolean isVirtual() {
-        return (_flags & IS_VIRTUAL_MASK) == IS_VIRTUAL_MASK;
+        return ( _flags & IS_VIRTUAL_MASK ) == IS_VIRTUAL_MASK;
     }
 
     /**
@@ -1020,7 +1008,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     }
 
     public boolean gradientApplyRqd() {
-        return (_flags & GRADIENT_APPLY_RQD_MASK) == GRADIENT_APPLY_RQD_MASK;
+        return ( _flags & GRADIENT_APPLY_RQD_MASK ) == GRADIENT_APPLY_RQD_MASK;
     }
 
     /*==================================================================================================================
@@ -1081,7 +1069,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         } else if ( newComponent instanceof Tsr ) {
             if (
                     ((Tsr)newComponent).shape().hashCode() != this.shape().hashCode() ||
-                            Arrays.hashCode(((Tsr)newComponent).getNDConf().shape()) != Arrays.hashCode( _NDConf.shape() )
+                            Arrays.hashCode(((Tsr)newComponent).getNDConf().shape()) != Arrays.hashCode( getNDConf().shape() )
             ) newComponent = null;
         }
         return newComponent;
@@ -1173,7 +1161,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     }
 
     public boolean isUndefined() {
-        return _NDConf ==null || _NDConf.shape() == null;
+        return getNDConf() == null || getNDConf().shape() == null;
     }
 
     /**
@@ -1367,12 +1355,12 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                 throw new IllegalStateException( message );
             }
         });
-        forComponent( Device.class, d -> d.free( this ) );
+        forComponent( Device.class, device -> device.free( this ) );
         _flags = -1;
         _setData( null );
-        _NDConf = null;
+        setNDConf( null );
         forComponent( Tsr.class, Tsr::delete );
-        _components = null;
+        _delComps();
         return this;
     }
 
@@ -1399,18 +1387,12 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         if ( tensor == null ) return this;
         this.setDataType( tensor.getDataType() );
         _setData( tensor.getData() );
-        _NDConf = tensor._NDConf;
-        _components = Collections.synchronizedList( new ArrayList<>() );
+        setNDConf( tensor.getNDConf() );
         _flags = tensor._flags;
-        if ( tensor._components != null ) { // Inform components about their new owner:
-            _components.addAll( tensor._components );
-            List<Component<Tsr<ValType>>> snapshot = new ArrayList<>( tensor._components );
-            for ( Component<Tsr<ValType>> o : snapshot ) o.update( tensor, this );
-        }
+        _transferFrom( tensor );
         tensor._setData( null );
         tensor.setDataType( null );
-        tensor._NDConf = null;
-        tensor._components = null;
+        tensor.setNDConf( null );
         tensor._flags = -1;
         return this;
     }
@@ -1500,7 +1482,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      */
     public Tsr<ValType> backward( double value )
     {
-        backward( new Tsr( _NDConf.shape(), value ) );
+        backward( new Tsr( getNDConf().shape(), value ) );
         return this;
     }
 
@@ -1950,7 +1932,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      * @return The value item found at the targeted index.
      */
     public ValType getValueAt( int i ) {
-        return (ValType) getDataAt( _NDConf.i_of_i( i ) );
+        return (ValType) getDataAt( getNDConf().i_of_i( i ) );
     }
 
     /**
@@ -1964,7 +1946,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      * @return The found raw value item targeted by the provided index array.
      */
     public ValType getValueAt( int[] idx ) {
-        return (ValType) getDataAt( _NDConf.i_of_idx( idx ) );
+        return (ValType) getDataAt( getNDConf().i_of_idx( idx ) );
     }
 
     /**
@@ -1979,16 +1961,16 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      * @return This very tensor in order to enable method chaining...
      */
     public Tsr<ValType> setAt( int i, ValType o ) {
-        setDataAt( _NDConf.i_of_i( i ), o );
+        setDataAt( getNDConf().i_of_i( i ), o );
         return this;
     }
 
     public Tsr<ValType> getAt( double i ) {
-        return getAt( Arrays.asList( _NDConf.idx_of_i( (int) Math.floor( i ) ) ).toArray() );
+        return getAt( Arrays.asList( getNDConf().idx_of_i( (int) Math.floor( i ) ) ).toArray() );
     }
 
     public Tsr<ValType> getAt( BigDecimal i ) {
-        return getAt( Arrays.asList( _NDConf.idx_of_i(( i ).intValue()) ).toArray() );
+        return getAt( Arrays.asList( getNDConf().idx_of_i(( i ).intValue()) ).toArray() );
     }
 
     public Object getAt( Map<?,?> rangToStrides )
@@ -2052,7 +2034,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                 newOffset = _intArray((Object[]) key);
                 if ( newOffset != null ) {
                     for ( int i = 0; i < this.rank(); i++ )
-                        newOffset[i] = ( newOffset[i] < 0 ) ? _NDConf.shape( i ) + newOffset[ i ] : newOffset[ i ];
+                        newOffset[i] = ( newOffset[i] < 0 ) ? getNDConf().shape( i ) + newOffset[ i ] : newOffset[ i ];
                     for ( int i = 0; i < this.rank(); i++ )
                         ((Object[])key)[i] = newOffset[i];
                     allInt = false;
@@ -2081,7 +2063,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         Tsr<ValType> subset = new Tsr<>();
         subset.setDataType( this.getDataType() );
         subset._setData( this.getData() );
-        int[] newTranslation = _NDConf.translation();
+        int[] newTranslation = getNDConf().translation();
         int[] newIdxmap = NDConfiguration.Utility.newTlnOf( newShape );
 
         for ( int i = 0; i < this.rank(); i++ )
@@ -2137,17 +2119,19 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
             }
         }
 
-        subset._NDConf = AbstractNDC.construct( newShape, newTranslation, newIdxmap, newSpread, newOffset );
+        subset.setNDConf(
+                AbstractNDC.construct( newShape, newTranslation, newIdxmap, newSpread, newOffset )
+        );
 
         if ( this.isOutsourced() ) {
-            Device device = this.find( Device.class );
+            Device<ValType> device = this.find( Device.class );
             device.store( subset, this );
             subset.setIsOutsourced( true );
         }
         if ( this.isVirtual() ) subset.setIsVirtual( true );
         subset.set( new Relation().addParent( this ) );
-        Relation parent = find( Relation.class );
-        parent = ( parent != null ) ? parent : new Relation();
+        Relation<ValType> parent = find( Relation.class );
+        parent = ( parent != null ) ? parent : new Relation<>();
         parent.addChild( subset );
         this.set( parent );
         return subset;
@@ -2246,8 +2230,8 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                 first = last;
                 last = temp;
             }
-            first = ( first < 0 ) ? _NDConf.shape( i ) + first : first;
-            last = ( last < 0 ) ? _NDConf.shape( i ) + last : last;
+            first = ( first < 0 ) ? getNDConf().shape( i ) + first : first;
+            last = ( last < 0 ) ? getNDConf().shape( i ) + last : last;
             newShape[ i + iOffset ] = ( last - first ) + 1;
             offset[ i + iOffset ] = first;
         }

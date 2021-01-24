@@ -61,6 +61,22 @@ public abstract class AbstractComponentOwner<InstanceType>
      */
     protected List<Component<InstanceType>> _components = Collections.synchronizedList(new ArrayList<>());
 
+    protected void _transferFrom( AbstractComponentOwner<InstanceType> other ) {
+        if ( other._components != null ) { // Inform components about their new owner:
+            _components.addAll( other._components );
+            List<Component<InstanceType>> snapshot = new ArrayList<>( other._components );
+            for ( Component<InstanceType> o : snapshot ) o.update(
+                    (InstanceType) other,
+                    (InstanceType) this
+            );
+        }
+        other._delComps();
+    }
+
+    protected void _delComps() {
+        _components = null;
+    }
+
     /**
      *  This method tries to find a component inside the stored
      *  component collection whose class matches the one provided.
@@ -86,9 +102,10 @@ public abstract class AbstractComponentOwner<InstanceType>
      *  instance if found in the stored component collection.
      *
      * @param componentClass The type/class of a component which will be removed by this method.
+     * @param <T> The type parameter of the component which will be removed by this method.
      * @return This very class.
      */
-    public <T extends Component<InstanceType>> InstanceType remove(Class<T> componentClass)
+    public <T extends Component<InstanceType>> InstanceType remove( Class<T> componentClass )
     {
         T oldComponent = find( componentClass );
         if ( oldComponent != null ) {
@@ -172,17 +189,17 @@ public abstract class AbstractComponentOwner<InstanceType>
     /**
      * This method tries to find a stored component by identifying it
      * via the given Class instance in order to pass it
-     * into th provided Consumer lambda.
+     * into the provided Consumer lambda.
      * If however no component was found then this lambda is being left untouched.
      *
      * @param cc Component class of whose type the requested component is.
      * @param action An action applied on the requested component if found.
      * @return True if a component could be found, false otherwise.
      */
-    public <T extends Component<InstanceType>> boolean forComponent(Class<T> cc, Consumer<T> action) {
-        T component = this.find(cc);
-        if (component!=null) {
-            action.accept(component);
+    public <T extends Component<InstanceType>> boolean forComponent( Class<T> cc, Consumer<T> action ) {
+        T component = this.find( cc );
+        if ( component != null ) {
+            action.accept( component );
             return true;
         } else return false;
     }

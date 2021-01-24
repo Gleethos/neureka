@@ -64,6 +64,7 @@ import java.util.function.Consumer;
 @Accessors( prefix = {"_"} )
 public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractComponentOwner<InstanceType> implements Iterable<ValType>
 {
+    public interface Initializer<T> {  T init( int i, int[] index );  }
 
     /**
      *  An interface provided by sl4j which enables a modular logging backend!
@@ -71,7 +72,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
     protected static Logger _LOG; // Why is this not final ? : For unit testing!
 
     @Getter
-    protected NDConfiguration _NDConf;
+    private NDConfiguration _NDConf;
 
     @Getter
     private DataType<?> _dataType = DataType.of( Neureka.instance().settings().dtype().getDefaultDataTypeClass() );
@@ -124,6 +125,30 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
             }
         }
         _data = data;
+    }
+
+    protected <T> void _initData( Tsr.Initializer<T> initializer )
+    {
+        Object data = getData();
+        if ( data instanceof double[] )
+            for ( int i=0; i<((double[])data).length; i++ )
+                ( (double[]) data )[i] = (double) initializer.init( i, _NDConf.idx_of_i( i )  );
+        else if ( data instanceof float[] )
+            for ( int i=0; i<((float[])data).length; i++ )
+                ( (float[]) data )[i] = (float) initializer.init( i, _NDConf.idx_of_i( i )  );
+        else if ( data instanceof int[] )
+            for ( int i=0; i<((int[])data).length; i++ )
+                ( (int[]) data )[i] = (int) initializer.init( i, _NDConf.idx_of_i( i )  );
+        else if ( data instanceof short[] )
+            for ( int i=0; i<((short[])data).length; i++ )
+                ( (short[]) data )[i] = (short) initializer.init( i, _NDConf.idx_of_i( i )  );
+        else if ( data instanceof byte[] )
+            for ( int i=0; i<((byte[])data).length; i++ )
+                ( (byte[]) data )[i] = (byte) initializer.init( i, _NDConf.idx_of_i( i )  );
+        else
+            for ( int i=0; i<((Object[])data).length; i++ )
+                ( (Object[]) data )[i] = initializer.init( i, _NDConf.idx_of_i( i )  );
+
     }
 
     /**
@@ -357,7 +382,12 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
                 if ( NDConfiguration.Utility.szeOfShp(newShp) != t.size() ) {
                     throw new IllegalArgumentException(
                             "New shape does not match tensor size!" +
-                                    " (" + Utility.Stringify.strConf(newShp) + ((NDConfiguration.Utility.szeOfShp(newShp) < t.size()) ? "<" : ">") + Utility.Stringify.strConf(t._NDConf.shape()) + ")");
+                                    " (" +
+                                    Utility.Stringify.strConf(newShp) +
+                                    ((NDConfiguration.Utility.szeOfShp(newShp) < t.size()) ? "<" : ">") +
+                                    Utility.Stringify.strConf(t.getNDConf().shape()) + "" +
+                                    ")"
+                    );
                 }
                 return newShp;
             }
