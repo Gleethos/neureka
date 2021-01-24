@@ -36,6 +36,18 @@ SOFTWARE.
 package neureka.ndim;
 
 import neureka.Component;
+import neureka.Tsr;
+import neureka.autograd.GraphNode;
+import neureka.autograd.JITProp;
+import neureka.devices.Device;
+import neureka.devices.opencl.OpenCLDevice;
+import neureka.framing.Relation;
+import neureka.optimization.Optimizer;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -50,11 +62,21 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractComponentOwner<InstanceType>
 {
+    private final static Map<Class<?>, Integer> _CLASS_ORDER = new HashMap<>();
+    static {
+            _CLASS_ORDER.put(Optimizer.class,	1   );
+            _CLASS_ORDER.put(JITProp.class,	2   );
+            _CLASS_ORDER.put(OpenCLDevice.class,	3   );
+            _CLASS_ORDER.put(Tsr.class,	4  );
+            _CLASS_ORDER.put(Relation.class,	5 );
+            _CLASS_ORDER.put(Device.class,	6 );
+            _CLASS_ORDER.put(GraphNode.class,	7 );
+    }
+
     /**
      *  (Tensor) components
      *  A collection of component.
      */
-    //protected List<Component<InstanceType>> _components = Collections.synchronizedList(new ArrayList<>());
     protected Component<InstanceType>[] _components = null;
 
     private synchronized void _mergeComps( Component<InstanceType>[] components ) {
@@ -64,6 +86,16 @@ public abstract class AbstractComponentOwner<InstanceType>
             System.arraycopy( _components, 0, newComponents, 0, _components.length );
             System.arraycopy( components, 0, newComponents, _components.length, components.length );
             _components = newComponents;
+            for ( int i = 1; i < _components.length; i++ ) {
+                Component<InstanceType> a = _components[ i-1 ];
+                Component<InstanceType> b = _components[ i ];
+                int orderA = ( a == null || !_CLASS_ORDER.containsKey(a.getClass()) ) ? 0 : _CLASS_ORDER.get( a.getClass() );
+                int orderB = ( b == null || !_CLASS_ORDER.containsKey(b.getClass())) ? 0 : _CLASS_ORDER.get( b.getClass() );
+                if ( orderB > orderA ) {
+                    _components[ i - 1 ] = b;
+                    _components[ i ] = a;
+                }
+            }
         }
     }
 
@@ -73,7 +105,7 @@ public abstract class AbstractComponentOwner<InstanceType>
             for ( int i = 0; i < _components.length; i++ )
                 if ( _components[ i ] == component ) _components[ i ] = null;
                 else count++;
-            assert  count == _components.length -1;
+            assert count == _components.length -1;
             Component<InstanceType>[] newComponents = new Component[ count ];
             if ( count != _components.length ) {
                 count = 0;
@@ -88,7 +120,7 @@ public abstract class AbstractComponentOwner<InstanceType>
     protected void _transferFrom( AbstractComponentOwner<InstanceType> other ) {
         if ( other._components != null ) { // Inform components about their new owner:
             _mergeComps( other._components );
-            for ( Component<InstanceType> o : other._components ) o.update(
+            for ( Component<InstanceType> o : other._components ) if (o!=null) o.update(
                     (InstanceType) other, (InstanceType) this
             );
         }
@@ -170,8 +202,9 @@ public abstract class AbstractComponentOwner<InstanceType>
             if ( oldCompartment != null ) {
                 _removeComp( oldCompartment );
             }
-        }// else _components = new ArrayList<>();
-        _mergeComps( new Component[]{_setOrReject( newComponent )} );
+        }
+        Component<InstanceType> newComp = _setOrReject( newComponent );
+        if ( newComp != null ) _mergeComps( new Component[]{newComp} );
         return (InstanceType) this;
     }
 
