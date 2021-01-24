@@ -48,6 +48,7 @@ import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -92,8 +93,8 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
      *  Warning! The method should not be used unless absolutely necessary.
      *  This is because it can cause unpredictable inconsistencies between the
      *  underlying DataType instance of this NDArray and the actual type of the actual
-     *  data it is wrapping (or it is referencing on a Device).
-     *
+     *  data it is wrapping (or it is referencing on a Device).<br>
+     *  <br>
      * @param dataType The new dataType which ought to be set.
      * @return The final instance type of this class which enables method chaining.
      */
@@ -116,7 +117,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
             throw new IllegalStateException( message );
         }
         if ( data != null && _dataType.typeClassImplements( NumericType.class ) ) {
-            NumericType numericType = (NumericType) _dataType.getTypeClassInstance();
+            NumericType<?,?,?,?> numericType = (NumericType<?,?,?,?>) _dataType.getTypeClassInstance();
             if ( numericType.targetArrayType() != data.getClass() ) {
                 String message = "Cannot set data whose type does not match what is defined by the DataType instance.\n" +
                         "Current type '"+numericType.targetArrayType().getSimpleName()+"' does not match '"+ data.getClass().getSimpleName()+"'.\n";
@@ -131,24 +132,23 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
     {
         Object data = getData();
         if ( data instanceof double[] )
-            for ( int i=0; i<((double[])data).length; i++ )
-                ( (double[]) data )[i] = (double) initializer.init( i, _NDConf.idx_of_i( i )  );
+            for ( int i = 0; i < ( (double[]) data ).length; i++ )
+                ( (double[]) data )[ i ] = (double) initializer.init( i, _NDConf.idx_of_i( i )  );
         else if ( data instanceof float[] )
-            for ( int i=0; i<((float[])data).length; i++ )
-                ( (float[]) data )[i] = (float) initializer.init( i, _NDConf.idx_of_i( i )  );
+            for ( int i = 0; i < ( (float[]) data ).length; i++ )
+                ( (float[]) data )[ i ] = (float) initializer.init( i, _NDConf.idx_of_i( i )  );
         else if ( data instanceof int[] )
-            for ( int i=0; i<((int[])data).length; i++ )
-                ( (int[]) data )[i] = (int) initializer.init( i, _NDConf.idx_of_i( i )  );
+            for ( int i = 0; i < ( (int[]) data ).length; i++ )
+                ( (int[]) data )[ i ] = (int) initializer.init( i, _NDConf.idx_of_i( i )  );
         else if ( data instanceof short[] )
-            for ( int i=0; i<((short[])data).length; i++ )
-                ( (short[]) data )[i] = (short) initializer.init( i, _NDConf.idx_of_i( i )  );
+            for ( int i = 0; i < ( (short[]) data ).length; i++ )
+                ( (short[]) data )[ i ] = (short) initializer.init( i, _NDConf.idx_of_i( i )  );
         else if ( data instanceof byte[] )
-            for ( int i=0; i<((byte[])data).length; i++ )
-                ( (byte[]) data )[i] = (byte) initializer.init( i, _NDConf.idx_of_i( i )  );
+            for ( int i = 0; i < ( (byte[]) data ).length; i++ )
+                ( (byte[]) data )[ i ] = (byte) initializer.init( i, _NDConf.idx_of_i( i )  );
         else
-            for ( int i=0; i<((Object[])data).length; i++ )
-                ( (Object[]) data )[i] = initializer.init( i, _NDConf.idx_of_i( i )  );
-
+            for ( int i = 0; i < ( (Object[]) data ).length; i++ )
+                ( (Object[]) data )[ i ] = initializer.init( i, _NDConf.idx_of_i( i )  );
     }
 
     /**
@@ -306,7 +306,13 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
      * @param ndConfiguration The new NDConfiguration instance which ought to be set.
      * @return The final instance type of this class which enables method chaining.
      */
-    public InstanceType setNDConf( NDConfiguration ndConfiguration ) {
+    public InstanceType setNDConf( NDConfiguration ndConfiguration )
+    {
+        if ( _NDConf != null && ndConfiguration != null ) {
+            int s1 = Arrays.stream( _NDConf.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -> a*b );
+            int s2 = Arrays.stream( ndConfiguration.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -> a*b );
+            assert s1 == s2;
+        }
         _NDConf = ndConfiguration;
         return (InstanceType) this;
     }

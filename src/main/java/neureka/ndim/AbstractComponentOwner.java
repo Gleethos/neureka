@@ -36,11 +36,6 @@ SOFTWARE.
 package neureka.ndim;
 
 import neureka.Component;
-import neureka.Tsr;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -59,15 +54,42 @@ public abstract class AbstractComponentOwner<InstanceType>
      *  (Tensor) components
      *  A collection of component.
      */
-    protected List<Component<InstanceType>> _components = Collections.synchronizedList(new ArrayList<>());
+    //protected List<Component<InstanceType>> _components = Collections.synchronizedList(new ArrayList<>());
+    protected Component<InstanceType>[] _components = null;
+
+    private synchronized void _mergeComps( Component<InstanceType>[] components ) {
+        if ( _components == null ) _components = components;
+        else if ( components != null ) {
+            Component<InstanceType>[] newComponents = new Component[ _components.length + components.length ];
+            System.arraycopy( _components, 0, newComponents, 0, _components.length );
+            System.arraycopy( components, 0, newComponents, _components.length, components.length );
+            _components = newComponents;
+        }
+    }
+
+    private synchronized void _removeComp( Component<InstanceType> component ) {
+        if ( _components != null && _components.length != 0 ) {
+            int count = 0;
+            for ( int i = 0; i < _components.length; i++ )
+                if ( _components[ i ] == component ) _components[ i ] = null;
+                else count++;
+            assert  count == _components.length -1;
+            Component<InstanceType>[] newComponents = new Component[ count ];
+            if ( count != _components.length ) {
+                count = 0;
+                for ( int i = 0; i < _components.length; i++ )
+                    if ( _components[ i ] == null ) count++;
+                    else newComponents[ i - count ] = _components[ i ];
+                _components = newComponents;
+            }
+        }
+    }
 
     protected void _transferFrom( AbstractComponentOwner<InstanceType> other ) {
         if ( other._components != null ) { // Inform components about their new owner:
-            _components.addAll( other._components );
-            List<Component<InstanceType>> snapshot = new ArrayList<>( other._components );
-            for ( Component<InstanceType> o : snapshot ) o.update(
-                    (InstanceType) other,
-                    (InstanceType) this
+            _mergeComps( other._components );
+            for ( Component<InstanceType> o : other._components ) o.update(
+                    (InstanceType) other, (InstanceType) this
             );
         }
         other._delComps();
@@ -109,10 +131,10 @@ public abstract class AbstractComponentOwner<InstanceType>
     {
         T oldComponent = find( componentClass );
         if ( oldComponent != null ) {
-            _components.remove( _removeOrReject( oldComponent ) );
+            _removeComp( _removeOrReject( oldComponent ) );
             //_components.trimToSize();
         }
-        if ( _components != null && _components.size() == 0 ) {
+        if ( _components != null && _components.length == 0 ) {
             _components = null;
         }
         return (InstanceType) this;
@@ -146,12 +168,10 @@ public abstract class AbstractComponentOwner<InstanceType>
         if ( _components != null ) {
             oldCompartment = (Component<InstanceType>) find( newComponent.getClass() );
             if ( oldCompartment != null ) {
-                _components.remove( oldCompartment );
-                //_components.trimToSize();
+                _removeComp( oldCompartment );
             }
-        } else _components = new ArrayList<>();
-
-        _components.add( _setOrReject( newComponent ) );
+        }// else _components = new ArrayList<>();
+        _mergeComps( new Component[]{_setOrReject( newComponent )} );
         return (InstanceType) this;
     }
 
