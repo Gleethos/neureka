@@ -31,6 +31,8 @@ SOFTWARE.
                                                                | |
                                                                |_|
 
+    An early precursor class of the AbstractNDArray class and the Tsr class...
+
 */
 
 package neureka.ndim;
@@ -60,20 +62,32 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractComponentOwner<InstanceType>
 {
-    private final static Map<Class<?>, Integer> _CLASS_ORDER = new HashMap<>();
+    /**
+     *  The following static map enables fast access to properties which describe
+     *  the "importance" of an implementation of the Component interface.
+     *  This is relevant only for performance reasons because
+     *  the component owner referencing this component among
+     *  others can store them according to their order to
+     *  make component access as fast as possible! <br>
+     *  There is not much more to this then that.
+     *  New component implementations will default to a class order of 0
+     *  and otherwise one should consider profiling the access patterns
+     *  of the component system and update this mapping...
+     *
+     */
+    private static final Map<Class<? extends Component>, Integer> _CLASS_ORDER = new HashMap<>();
     static {
-            _CLASS_ORDER.put(Optimizer.class,	1   );
-            _CLASS_ORDER.put(JITProp.class,	2   );
+            _CLASS_ORDER.put(Optimizer.class,	    1   );
+            _CLASS_ORDER.put(JITProp.class,	        2   );
             _CLASS_ORDER.put(OpenCLDevice.class,	3   );
-            _CLASS_ORDER.put(Tsr.class,	4  );
-            _CLASS_ORDER.put(Relation.class,	5 );
-            _CLASS_ORDER.put(Device.class,	6 );
-            _CLASS_ORDER.put(GraphNode.class,	7 );
+            _CLASS_ORDER.put(Tsr.class,	            4   );
+            _CLASS_ORDER.put(Relation.class,	    5   );
+            _CLASS_ORDER.put(Device.class,	        6   );
+            _CLASS_ORDER.put(GraphNode.class,	    7   );
     }
 
     /**
-     *  (Tensor) components
-     *  A collection of component.
+     *  A collection of components.
      */
     protected Component<InstanceType>[] _components = null;
 
@@ -100,7 +114,7 @@ public abstract class AbstractComponentOwner<InstanceType>
         } else {
             if ( _components == null ) _setComps( new Component[]{ component } );
             else if ( component != null ) {
-                for ( int i = 0; i < _components.length; i++ ) if ( _components[ i ] == component ) return;
+                for ( Component<InstanceType> c : _components ) if ( c == component ) return;
                 Component<InstanceType>[] newComponents = new Component[ _components.length + 1 ];
                 System.arraycopy( _components, 0, newComponents, 0, _components.length );
                 newComponents[ newComponents.length - 1 ] = component;
@@ -108,8 +122,8 @@ public abstract class AbstractComponentOwner<InstanceType>
                 for ( int i = 1; i < _components.length; i++ ) {
                     Component<InstanceType> a = _components[ i-1 ];
                     Component<InstanceType> b = _components[ i ];
-                    int orderA = ( a == null || !_CLASS_ORDER.containsKey(a.getClass()) ) ? 0 : _CLASS_ORDER.get( a.getClass() );
-                    int orderB = ( b == null || !_CLASS_ORDER.containsKey(b.getClass())) ? 0 : _CLASS_ORDER.get( b.getClass() );
+                    int orderA = _CLASS_ORDER.getOrDefault( a, 0 );
+                    int orderB = _CLASS_ORDER.getOrDefault( b, 0 );
                     if ( orderB > orderA ) {
                         _components[ i - 1 ] = b;
                         _components[ i ] = a;
@@ -119,16 +133,36 @@ public abstract class AbstractComponentOwner<InstanceType>
         }
     }
 
+    /**
+     *  A component owner might need to "changes its identity". <br>
+     *  Meaning that the components of another owner will be stripped of its components
+     *  which will be adopted by the current one.
+     *  During this process the transferred components will be notified of their new owner.
+     *  This is important because some components might reference their owners... <br>
+     *  <br>
+     *  This change currently only happens in the 'Tsr' sub-class when tensors are being instantiated by
+     *  certain constructors to which input tensors and a math expression is passed.
+     *  This triggers the creation of a Function instance and execution on the provided
+     *  input tensors. In that case the output tensor will be created somewhere
+     *  along the execution call stack, however the result is expected to be
+     *  stored within the tensor whose constructor initialized all of this.
+     *  In that case this tensor will rip out the guts of the resulting output
+     *  tensor and stuff onto its own field variables.
+     *
+     * @param other The other owner which will be stripped of its components which are then incorporated into this owner.
+     */
     protected void _transferFrom( AbstractComponentOwner<InstanceType> other ) {
-        if ( other._components != null ) { // Inform components about their new owner:
-            _delComps();
-            _setComps( other._components );
-            for ( int i = 0; i < other._components.length; i++ )
-                other._components[ i ].update( (InstanceType) other, (InstanceType) this );
+            if ( other._components != null ) {
+            _setComps( other._components ); // Inform components about their new owner:
+            for ( Component<InstanceType> c : _components ) c.update((InstanceType) other, (InstanceType) this);
+            other._delComps();
         }
-        other._delComps();
     }
 
+    /**
+     *  This method deletes the array of components of this component owner
+     *  by nulling the array variable field.
+     */
     protected void _delComps() {
         _components = null;
     }
@@ -205,10 +239,10 @@ public abstract class AbstractComponentOwner<InstanceType>
     }
 
     /**
-     * This method ought to be implemented further down
+     * This abstract method ought to be implemented further down
      * the inheritance hierarchy where it's responsibility
      * makes more sense, namely :
-     * An implementation of this method checks if the passes component
+     * An implementation of this method checks if the passed component
      * should be added or "rejected" to the component collection
      * of this class.
      * Rejection in this case simply means that it returns null instead
@@ -221,10 +255,10 @@ public abstract class AbstractComponentOwner<InstanceType>
 
 
     /**
-     * This method ought to be implemented further down
+     * This method abstract ought to be implemented further down
      * the inheritance hierarchy where it's responsibility
      * makes more sense, namely :
-     * An implementation of this method checks if the passes component
+     * An implementation of this method checks if the passed component
      * should be removed from the component collection of this class
      * or its removal should be "rejected".
      * Rejection in this case simply means that it returns null instead

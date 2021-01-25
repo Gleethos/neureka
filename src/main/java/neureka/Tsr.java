@@ -1371,7 +1371,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  data changes the wrapping tensor instance. <br>
      *  <br>
      *  This change currently only happens when tensors are being instantiated by
-     *  passing inputs and a math expression to its constructor.
+     *  certain constructors to which input tensors and a math expression is passed.
      *  This triggers the creation of a Function instance and execution on the provided
      *  input tensors. In that case the output tensor will be created somewhere
      *  along the execution call stack, however the result is expected to be 
