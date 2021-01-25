@@ -44,10 +44,8 @@ import neureka.devices.opencl.OpenCLDevice;
 import neureka.framing.Relation;
 import neureka.optimization.Optimizer;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -79,50 +77,54 @@ public abstract class AbstractComponentOwner<InstanceType>
      */
     protected Component<InstanceType>[] _components = null;
 
-    private synchronized void _mergeComps( Component<InstanceType>[] components ) {
-        if ( _components == null ) _components = components;
-        else if ( components != null ) {
-            Component<InstanceType>[] newComponents = new Component[ _components.length + components.length ];
-            System.arraycopy( _components, 0, newComponents, 0, _components.length );
-            System.arraycopy( components, 0, newComponents, _components.length, components.length );
-            _components = newComponents;
-            for ( int i = 1; i < _components.length; i++ ) {
-                Component<InstanceType> a = _components[ i-1 ];
-                Component<InstanceType> b = _components[ i ];
-                int orderA = ( a == null || !_CLASS_ORDER.containsKey(a.getClass()) ) ? 0 : _CLASS_ORDER.get( a.getClass() );
-                int orderB = ( b == null || !_CLASS_ORDER.containsKey(b.getClass())) ? 0 : _CLASS_ORDER.get( b.getClass() );
-                if ( orderB > orderA ) {
-                    _components[ i - 1 ] = b;
-                    _components[ i ] = a;
-                }
-            }
-        }
+    private synchronized void _setComps( Component<InstanceType>[] components ) {
+        _components = components;
     }
 
-    private synchronized void _removeComp( Component<InstanceType> component ) {
-        if ( _components != null && _components.length != 0 ) {
-            int count = 0;
-            for ( int i = 0; i < _components.length; i++ )
-                if ( _components[ i ] == component ) _components[ i ] = null;
-                else count++;
-            assert count == _components.length -1;
-            Component<InstanceType>[] newComponents = new Component[ count ];
-            if ( count != _components.length ) {
-                count = 0;
+    private synchronized void _addOrRemoveComp( Component<InstanceType> component, boolean remove ) {
+        if ( remove ) {
+            if ( _components != null && _components.length != 0 && component != null ) {
+                int count = 0;
                 for ( int i = 0; i < _components.length; i++ )
-                    if ( _components[ i ] == null ) count++;
-                    else newComponents[ i - count ] = _components[ i ];
-                _components = newComponents;
+                    if ( _components[ i ] == component ) _components[ i ] = null;
+                    else count++;
+                if ( count != _components.length ) {
+                    Component<InstanceType>[] newComponents = new Component[ count ];
+                    count = 0;
+                    for ( int i = 0; i < _components.length; i++ )
+                        if ( _components[ i ] == null ) count++;
+                        else newComponents[ i - count ] = _components[ i ];
+                    _components = newComponents;
+                }
+            }
+        } else {
+            if ( _components == null ) _setComps( new Component[]{ component } );
+            else if ( component != null ) {
+                for ( int i = 0; i < _components.length; i++ ) if ( _components[ i ] == component ) return;
+                Component<InstanceType>[] newComponents = new Component[ _components.length + 1 ];
+                System.arraycopy( _components, 0, newComponents, 0, _components.length );
+                newComponents[ newComponents.length - 1 ] = component;
+                _setComps( newComponents );
+                for ( int i = 1; i < _components.length; i++ ) {
+                    Component<InstanceType> a = _components[ i-1 ];
+                    Component<InstanceType> b = _components[ i ];
+                    int orderA = ( a == null || !_CLASS_ORDER.containsKey(a.getClass()) ) ? 0 : _CLASS_ORDER.get( a.getClass() );
+                    int orderB = ( b == null || !_CLASS_ORDER.containsKey(b.getClass())) ? 0 : _CLASS_ORDER.get( b.getClass() );
+                    if ( orderB > orderA ) {
+                        _components[ i - 1 ] = b;
+                        _components[ i ] = a;
+                    }
+                }
             }
         }
     }
 
     protected void _transferFrom( AbstractComponentOwner<InstanceType> other ) {
         if ( other._components != null ) { // Inform components about their new owner:
-            _mergeComps( other._components );
-            for ( Component<InstanceType> o : other._components ) if (o!=null) o.update(
-                    (InstanceType) other, (InstanceType) this
-            );
+            _delComps();
+            _setComps( other._components );
+            for ( int i = 0; i < other._components.length; i++ )
+                other._components[ i ].update( (InstanceType) other, (InstanceType) this );
         }
         other._delComps();
     }
@@ -133,7 +135,7 @@ public abstract class AbstractComponentOwner<InstanceType>
 
     /**
      *  This method tries to find a component inside the stored
-     *  component collection whose class matches the one provided.
+     *  component array whose class matches the one provided.
      *  If no such component could be found then
      *  the return value will simply be null.
      *
@@ -162,13 +164,8 @@ public abstract class AbstractComponentOwner<InstanceType>
     public <T extends Component<InstanceType>> InstanceType remove( Class<T> componentClass )
     {
         T oldComponent = find( componentClass );
-        if ( oldComponent != null ) {
-            _removeComp( _removeOrReject( oldComponent ) );
-            //_components.trimToSize();
-        }
-        if ( _components != null && _components.length == 0 ) {
-            _components = null;
-        }
+        if ( oldComponent != null ) _addOrRemoveComp( _removeOrReject( oldComponent ), true );
+        if ( _components != null && _components.length == 0 ) _components = null;
         return (InstanceType) this;
     }
 
@@ -196,15 +193,14 @@ public abstract class AbstractComponentOwner<InstanceType>
     public InstanceType set( Component<InstanceType> newComponent)
     {
         if ( newComponent == null ) return (InstanceType) this;
-        Component<InstanceType> oldCompartment = null;
+        Component<InstanceType> oldCompartment;
         if ( _components != null ) {
             oldCompartment = (Component<InstanceType>) find( newComponent.getClass() );
             if ( oldCompartment != null ) {
-                _removeComp( oldCompartment );
+                _addOrRemoveComp( oldCompartment, true );
             }
         }
-        Component<InstanceType> newComp = _setOrReject( newComponent );
-        if ( newComp != null ) _mergeComps( new Component[]{newComp} );
+        _addOrRemoveComp( _setOrReject( newComponent ), false );
         return (InstanceType) this;
     }
 

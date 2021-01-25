@@ -243,9 +243,10 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
     private void _setPayload( Tsr<ValType> p ) {
         if ( p == null ) _payload = null;
         else {
+            assert !p.isUndefined();
             _payload = new WeakReference<>( p );
             p.getDevice().cleaning( p, () -> {
-                if (this.getPayload() == null) {
+                if ( this.getPayload() == null ) {
                     boolean allChildrenUseForwardAD = true;
                     if ( _children != null ) {
                         for ( WeakReference<GraphNode<ValType>> childRef : _children ) {
@@ -603,7 +604,14 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
         try {
             if ( payload.isOutsourced() ) payload.getDevice().store( e );
         } catch ( Exception exception ) {
-            exception.printStackTrace();
+            if ( payload.isUndefined() ) {
+                throw new IllegalStateException(
+                        "An undefined payload tensor has been detected inside the computation graph!\n" +
+                        "This is most likely due to an error occurring during tensor identity transfer (Also see AbstractComponentOwner).\n" +
+                        "One type of constructor in the 'Tsr' class enables passing a String expression for execution, " +
+                        "whose resulting tensor needs to be merged into the newly created one..."
+                );
+            } else exception.printStackTrace();
         }
         if ( payload.rqsGradient() ) payload.addToGradient( e );
         if ( also!=null ) also.accept( payload );
