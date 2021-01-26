@@ -12,7 +12,6 @@ import java.io.*;
 import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -77,7 +76,8 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
         } catch ( Exception e ) {
             e.printStackTrace();
         }
-
+        tensor.setIsOutsourced( true );
+        tensor.setDataType( DataType.of( String.class ) );
     }
 
     public CSVHead(

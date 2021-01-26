@@ -1647,6 +1647,23 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         return this;
     }
 
+    /**
+     *  This method receives a label for this tensor and a nested
+     *  String list which ought to contain a label for the index of
+     *  this tensor The index for a single element of this tensor would
+     *  be an array of numbers as long as the rank where every number is
+     *  in the range of the corresponding shape dimension...
+     *  Labeling an index means that for every dimension there
+     *  must be a label for elements in this range array! <br>
+     *  For example the shape (2,3) could be labeled as follows: <br>
+     *                                                           <br>
+     *      dim 0 : ["A", "B"]                                   <br>
+     *      dim 1 : ["1", "2", "3"]                              <br>
+     *                                                           <br>
+     * @param tensorName A label for this tensor itself.
+     * @param labels A nested String list containing labels for indexes of the tensor dimensions.
+     * @return This tensor (method chaining).
+     */
     public Tsr<ValType> label( String tensorName, List<List<Object>> labels )
     {
         IndexAlias<ValType> indexAlias = find( IndexAlias.class );
@@ -1666,7 +1683,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *      "dim 0" : ["A", "B"],                                           <br>
      *      "dim 1" : ["1", "2", "3"]                                       <br>
      *  ]                                                                   <br>
-     *  <br>
+     *                                                                      <br>
      * @param labels A map in which the keys are dimension labels and the values are lists of index labels for the dimension.
      * @return This tensor (method chaining).
      */

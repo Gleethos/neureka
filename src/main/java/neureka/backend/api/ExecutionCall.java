@@ -29,8 +29,8 @@ SOFTWARE.
   | |____ >  <  __/ (__| |_| | |_| | (_) | | | | |___| (_| | | |
   |______/_/\_\___|\___|\__,_|\__|_|\___/|_| |_|\_____\__,_|_|_|
 
-    A very simple class which wraps essential arguments and context data
-    used for operation execution on Tsr instances.
+    A simple class which wraps essential arguments and context data
+    used for operation execution on Device instances.
 
 
 */
@@ -51,27 +51,31 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * This class is a simple container holding relevant
- * arguments needed to execute on a targeted Device which
- * is specified by the type parameter below.
- *
- * It also holds a context map responsible for storing
- * operation specific variables.
+ *  This class is a simple container holding relevant
+ *  arguments needed to execute on a targeted Device which
+ *  is specified by the type parameter below. <br>
+ *  <br>
+ *  It also holds a context map responsible for storing
+ *  operation specific variables.
  *
  * @param <DeviceType> The Device implementation targeted by an instance of this ExecutionCall!
  */
 @Accessors( prefix = {"_"} )
 @ToString
-public class ExecutionCall< DeviceType extends Device >
+public class ExecutionCall<DeviceType extends Device>
 {
-    public interface TensorCondition { boolean check( Tsr tensor ); }
-    public interface TensorCompare { boolean check( Tsr first, Tsr second ); }
-    public interface DeviceCondition { boolean check( Device device ); }
+    public interface TensorCondition { boolean check( Tsr<?> tensor ); }
+    public interface TensorCompare { boolean check( Tsr<?> first, Tsr<?> second ); }
+    public interface DeviceCondition { boolean check( Device<?> device ); }
     public interface OperationTypeCondition { boolean check( Operation type ); }
-    public interface Mutator { Tsr[] mutate( Tsr[] tensors ); }
+    public interface Mutator { Tsr<?>[] mutate( Tsr<?>[] tensors ); }
 
+    /**
+     *  This field references the device on which this ExecutionCall should be executed.
+     */
     @Getter
     private final DeviceType _device;
+
     /**
      * This method returns an import property whose
      * role might not be clear at first :
@@ -94,36 +98,66 @@ public class ExecutionCall< DeviceType extends Device >
     @Getter
     private final Operation _operation;
 
+    /**
+     *  The tensor arguments from which an operation will either
+     *  read or to which it will write. <br>
+     *  The first entry of this array is usually containing the output tensor,
+     *  however this is not a necessity.
+     *  Some operation algorithms might use multiple argument entries as output tensors.
+     */
     @Getter
     private Tsr[] _tensors;
 
+    /**
+     *  The following parameter is relevant for a particular type of operation, namely: an "indexer". <br>
+     *  An indexer automatically applies an operation on all inputs for a given function.
+     *  The (indexer) function will execute the sub functions (of the AST) for every input index.
+     *  If a particular index is not targeted however this variable will simply default to -1.
+     */
     @Getter
     private int _j = -1;
 
-    private Algorithm<Algorithm> _implementation;
+    private Algorithm<Algorithm<?>> _implementation;
 
+    /**
+     *  Certain operations might require additionally parameters then the ones
+     *  defined in this class... <br>
+     *
+     */
     @Getter
     private Map<String, Object> _context;
 
+    /**
+     *  This is a simple nested class offering various lambda based methods
+     *  for validating the tensor arguments stored inside this ExecutionCall.
+     *  It is a useful tool readable as well as concise validation of a given
+     *  request for execution, that is primarily used inside implementations of the middle
+     *  layer of the backend-API architecture (Algorithm::isAlgorithmSuitableFor).
+     */
     @Accessors( prefix = {"_"} )
     public class Validator
     {
         @Getter
         private boolean _isValid = true;
 
+        /**
+         *  The validity as float being 1.0/true && 0.0/false.
+         *
+         * @return The current validity of this Validator as float value.
+         */
         public float estimation() {
             return ( _isValid ) ? 1.0f : 0.0f;
         }
 
         public Validator first( TensorCondition condition ) {
-            if ( !condition.check( _tensors[0] ) ) _isValid = false;
+            if ( !condition.check( _tensors[ 0 ] ) ) _isValid = false;
             return this;
         }
 
         public Validator any( TensorCondition condition )
         {
             boolean any = false;
-            for ( Tsr t : _tensors ) any = ( condition.check( t ) ) ? true : any;
+            for ( Tsr<?> t : _tensors ) any = condition.check( t ) || any;
             if ( !any ) _isValid = false;
             return this;
         }
@@ -131,8 +165,8 @@ public class ExecutionCall< DeviceType extends Device >
         public Validator anyNotNull( TensorCondition condition )
         {
             boolean any = false;
-            for ( Tsr t : _tensors )
-                if ( t != null ) any = ( condition.check( t ) ) ? true : any;
+            for ( Tsr<?> t : _tensors )
+                if ( t != null ) any = condition.check( t ) || any;
             if ( !any ) _isValid = false;
             return this;
         }
@@ -140,7 +174,7 @@ public class ExecutionCall< DeviceType extends Device >
         public Validator all( TensorCondition condition )
         {
             boolean all = true;
-            for ( Tsr t : _tensors ) all = ( !condition.check( t ) ) ? false : all;
+            for ( Tsr<?> t : _tensors ) all = condition.check( t ) && all;
             if ( !all ) _isValid = false;
             return this;
         }
@@ -148,8 +182,8 @@ public class ExecutionCall< DeviceType extends Device >
         public Validator allNotNull( TensorCondition condition )
         {
             boolean all = true;
-            for ( Tsr t : _tensors )
-                if ( t != null ) all = ( !condition.check( t ) ) ? false : all;
+            for ( Tsr<?> t : _tensors )
+                if ( t != null ) all = condition.check( t ) && all;
             if ( !all ) _isValid = false;
             return this;
         }
@@ -182,7 +216,7 @@ public class ExecutionCall< DeviceType extends Device >
 
     public ExecutionCall(
             DeviceType device,
-            Tsr[] tensors,
+            Tsr<?>[] tensors,
             int d,
             Operation type
     ) {
@@ -196,7 +230,7 @@ public class ExecutionCall< DeviceType extends Device >
     
     public ExecutionCall(
             DeviceType device,
-            Tsr[] tensors,
+            Tsr<?>[] tensors,
             int d,
             int j,
             Operation type
@@ -212,65 +246,61 @@ public class ExecutionCall< DeviceType extends Device >
     public Tsr getTensor( int i ) { return _tensors[ i ];}
 
 
-    public Algorithm getImplementation() {
+    public Algorithm<?> getImplementation() {
         if ( _implementation != null ) return _implementation;
-        else _implementation = _operation.AlgorithmFor(this);
+        else _implementation = _operation.AlgorithmFor( this );
         return _implementation;
     }
     
     public boolean allowsForward() {
-        return getImplementation().canAlgorithmPerformForwardADFor(this);
+        return getImplementation().canAlgorithmPerformForwardADFor( this );
     }
 
     public boolean allowsBackward() {
-        return getImplementation().canAlgorithmPerformBackwardADFor(this);
+        return getImplementation().canAlgorithmPerformBackwardADFor( this );
     }
 
     public ADAgent getADAgentFrom( Function function, ExecutionCall<Device> call, boolean forward )
     {
         if ( this._context != null ) {
-            if ( call._context ==null ) call._context = new TreeMap<>();
-            call._context.putAll(this._context);
+            if ( call._context == null ) call._context = new TreeMap<>();
+            call._context.putAll( this._context );
         }
-        return getImplementation().supplyADAgentFor(function, call, forward);
+        return getImplementation().supplyADAgentFor( function, call, forward );
     }
     
     public void mutateArguments( Mutator mutation ) {
-        _tensors = mutation.mutate(_tensors);
+        _tensors = mutation.mutate( _tensors );
     }
     
-    public ExecutionCall<DeviceType> withNew( Tsr[] tensors ) {
-        return new ExecutionCall<DeviceType>(_device, tensors, _derivativeIndex, _j, _operation);
+    public ExecutionCall<DeviceType> withNew( Tsr<?>[] tensors ) {
+        return new ExecutionCall<>( _device, tensors, _derivativeIndex, _j, _operation );
     }
 
     public ExecutionCall<DeviceType> withNew( DeviceType device ) {
-        return new ExecutionCall<DeviceType>(device, _tensors, _derivativeIndex, _j, _operation);
+        return new ExecutionCall<>( device, _tensors, _derivativeIndex, _j, _operation );
     }
 
     public <T> T getAt( Class<T> type ) {
         if ( _context == null ) return null;
-        return (T) _context.get(getClass().getName());
+        return (T) _context.get( type.getName() );
     }
 
     public Object getAt( String varName ) {
         if ( _context == null ) return null;
-        return _context.get(varName);
+        return _context.get( varName );
     }
 
     public <T> ExecutionCall<DeviceType> putAt( String s, T o ) {
         if ( _context == null ) _context = new TreeMap<>();
-        _context.put(s,o);
+        _context.put( s, o );
         return this;
     }
 
     public void takeContext( Map<String, Object>  context ) {
-        if ( _context==null && context!=null )_context = new TreeMap<>();
-        if (context!=null) _context.putAll(_context);
+        if ( _context == null && context != null ) _context = new TreeMap<>();
+        if ( context != null ) _context.putAll( _context );
     }
-
-    // CONDITIONS:
-
-
 
 
 }

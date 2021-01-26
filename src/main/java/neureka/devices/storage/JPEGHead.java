@@ -163,6 +163,8 @@ public class JPEGHead extends AbstractFileHead<JPEGHead, Number>
         } catch ( Exception e ) {
             e.printStackTrace();
         }
+        tensor.setIsOutsourced( true );
+        tensor.setDataType( DataType.of( I16.class ) );
         return this;
     }
 

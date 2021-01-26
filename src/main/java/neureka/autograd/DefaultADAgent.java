@@ -16,16 +16,16 @@ import java.util.stream.Collectors;
  * forward- and reverse- mode differentiation actions.
  * These actions are accessible through the "forward(...)"
  * and "backward(...)" method which are being triggered
- * by instances of the GraphNode class during propagation.
- *
+ * by instances of the GraphNode class during propagation. <br>
+ * <br>
  * This class stores implementations for these methods
- * inside the agent as lambda instances.
+ * inside the agent as lambda instances. <br>
  *
  * So in essence this class is a container for lambda actions
  * allowing for easy instantiation of ADAgents.
  * Additionally this class the class manages a variable context
  * for storing useful data used by a particular operation to
- * perform propagation.
+ * perform propagation. <br>
  *
  */
 @Accessors( prefix = {"_"}, chain = true )
@@ -73,10 +73,7 @@ public final class DefaultADAgent implements ADAgent
 
     @Override
     public boolean hasForward() {
-        return (
-                _context != null &&
-                _context.containsKey( "derivative" )
-        );
+        return _context.containsKey( "derivative" );
     }
 
     @Override
@@ -86,10 +83,7 @@ public final class DefaultADAgent implements ADAgent
 
     @Override
     public String toString() {
-        if ( this.derivative() != null ) {
-            return derivative().toString();
-        }
-
+        if ( this.derivative() != null ) return derivative().toString();
         return _context.keySet().stream()
                 .map( key -> key + "=" + _context.get( key ) )
                 .collect( Collectors.joining( ", ", "{", "}" ) );
