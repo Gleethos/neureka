@@ -22,7 +22,8 @@ class FileDevice_Unit_Tests extends Specification
             """
     }
 
-    def setup() {
+    def setup()
+    {
         Neureka.instance().reset()
         // Configure printing of tensors to be more compact:
         Neureka.instance().settings().view().asString = "dgc"
@@ -48,14 +49,14 @@ class FileDevice_Unit_Tests extends Specification
         and : 'Tensor "a" does no longer have a value (stored in RAM).'
             a.data == null
 
-        when :
+        when : 'Freeing the tensor...'
             device.free( a )
 
-        then :
+        then : 'The file will have been deleted!'
             !new File( path + '/' + filename + '.idx' ).exists()
 
 
-        where :
+        where : 'The following parameters have been used:'
             path             | filename
             "build/test-can" | "tensor_2x4_"
     }
@@ -80,7 +81,7 @@ class FileDevice_Unit_Tests extends Specification
             new File( path + '/' + filename ).exists()
                     ||
             new File( path ).listFiles().any {
-                it.name.startsWith('tensor_'+shapeStr+'_f64_') && it.name.endsWith('.idx')
+                it.name.startsWith('tensor_' + shapeStr + '_f64_') && it.name.endsWith('.idx')
             }
 
         and : 'Tensor "a" does no longer have a value (stored in RAM).'
@@ -92,14 +93,14 @@ class FileDevice_Unit_Tests extends Specification
         and : 'The device contains a "FileHead" instances of the expected type.'
             device.fileHeadOf( a ).class == fileHeadClass
 
-        when :
+        when : 'Freeing the tensor...'
             device.free( a )
 
-        then :
+        then : 'The file will be deleted!'
             !new File( path + '/' + filename ).exists()
             !new File( path ).listFiles().any {it.name.startsWith('tensor_'+shapeStr+'_f64_') }
 
-        where :
+        where : 'The following parameters are being used:'
             path             | filename            |  shape  || fileHeadClass  | dataTypeClass
             "build/test-can" | "tensor_2x4x3_.idx" | [2,4,3] || IDXHead.class  | F64.class
             "build/test-can" | "tensor_2x4x3_.jpg" | [2,4,3] || JPEGHead.class | I16.class
@@ -107,6 +108,18 @@ class FileDevice_Unit_Tests extends Specification
             "build/test-can" | "tensor_4x3_.csv"   | [4,3]   || CSVHead.class  | String.class
     }
 
+/*
+    def '...'()
+    {
+        given :
+            def device = FileDevice.instance( 'build/resources/test/csv' )
 
+
+        expect :
+            true
+
+
+    }
+*/
 
 }
