@@ -85,9 +85,15 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
             Map<String, Object> settings
     ) {
         super( fileName );
-        _delimiter = (String) settings.getOrDefault( "delimiter", "," );
-        _firstRowIsLabels = (boolean) settings.getOrDefault( "firstRowIsLabels", false );
-        _firstColIsIndex = (boolean) settings.getOrDefault( "firstColIsIndex", false );
+        if ( settings != null ) {
+            _delimiter = (String) settings.getOrDefault( "delimiter", "," );
+            _firstRowIsLabels = (boolean) settings.getOrDefault( "firstRowIsLabels", false );
+            _firstColIsIndex = (boolean) settings.getOrDefault( "firstColIsIndex", false );
+        } else {
+            _delimiter = ",";
+            _firstRowIsLabels = false;
+            _firstColIsIndex = false;
+        }
     }
 
     private String[] _lazyLoad() {

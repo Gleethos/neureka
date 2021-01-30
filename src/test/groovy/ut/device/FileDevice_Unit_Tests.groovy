@@ -108,18 +108,68 @@ class FileDevice_Unit_Tests extends Specification
             "build/test-can" | "tensor_4x3_.csv"   | [4,3]   || CSVHead.class  | String.class
     }
 
-/*
-    def '...'()
+
+    def 'The file device can load known files in a directory.'()
     {
         given :
             def device = FileDevice.instance( 'build/resources/test/csv' )
-
-
         expect :
-            true
+            device.loadable == ['biostats-without-head.csv', 'biostats.csv']
 
+        when :
+            def t = device.load('biostats-without-head.csv')
 
+        then :
+            device.loadable == ['biostats.csv']
+            t.toString('fp') == '(18x5):[\n' +
+                    '   (        a       )(       b       )(       c       )(       d       )(       e        ):( biostats-without-head )\n' +
+                    '   [      "Alex"    ,           "M"  ,         41     ,           74   ,          170    ]:( 0 ),\n' +
+                    '   [      "Bert"    ,           "M"  ,         42     ,           68   ,          166    ]:( 1 ),\n' +
+                    '   [      "Carl"    ,           "M"  ,         32     ,           70   ,          155    ]:( 2 ),\n' +
+                    '   [      "Dave"    ,           "M"  ,         39     ,           72   ,          167    ]:( 3 ),\n' +
+                    '   [      "Elly"    ,           "F"  ,         30     ,           66   ,          124    ]:( 4 ),\n' +
+                    '   [      "Fran"    ,           "F"  ,         33     ,           66   ,          115    ]:( 5 ),\n' +
+                    '   [      "Gwen"    ,           "F"  ,         26     ,           64   ,          121    ]:( 6 ),\n' +
+                    '   [      "Hank"    ,           "M"  ,         30     ,           71   ,          158    ]:( 7 ),\n' +
+                    '   [      "Ivan"    ,           "M"  ,         53     ,           72   ,          175    ]:( 8 ),\n' +
+                    '   [      "Jake"    ,           "M"  ,         32     ,           69   ,          143    ]:( 9 ),\n' +
+                    '   [      "Kate"    ,           "F"  ,         47     ,           69   ,          139    ]:( 10 ),\n' +
+                    '   [      "Luke"    ,           "M"  ,         34     ,           72   ,          163    ]:( 11 ),\n' +
+                    '   [      "Myra"    ,           "F"  ,         23     ,           62   ,           98    ]:( 12 ),\n' +
+                    '   [      "Neil"    ,           "M"  ,         36     ,           75   ,          160    ]:( 13 ),\n' +
+                    '   [      "Omar"    ,           "M"  ,         38     ,           70   ,          145    ]:( 14 ),\n' +
+                    '   [      "Page"    ,           "F"  ,         31     ,           67   ,          135    ]:( 15 ),\n' +
+                    '   [      "Quin"    ,           "M"  ,         29     ,           71   ,          176    ]:( 16 ),\n' +
+                    '   [      "Ruth"    ,           "F"  ,         28     ,           65   ,          131    ]:( 17 )\n' +
+                    ']\n'
+
+        when :
+            t = device.load('biostats.csv', [firstRowIsLabels:true])
+
+        then :
+            device.loadable == []
+            t.toString('fp') == '(18x5):[\n' +
+                    '   (      "Name"    )(        "Sex"  )(      "Age"    )(  "Height (in)")( "Weight (lbs)" ):( biostats )\n' +
+                    '   [      "Alex"    ,           "M"  ,         41     ,           74   ,          170    ]:( 0 ),\n' +
+                    '   [      "Bert"    ,           "M"  ,         42     ,           68   ,          166    ]:( 1 ),\n' +
+                    '   [      "Carl"    ,           "M"  ,         32     ,           70   ,          155    ]:( 2 ),\n' +
+                    '   [      "Dave"    ,           "M"  ,         39     ,           72   ,          167    ]:( 3 ),\n' +
+                    '   [      "Elly"    ,           "F"  ,         30     ,           66   ,          124    ]:( 4 ),\n' +
+                    '   [      "Fran"    ,           "F"  ,         33     ,           66   ,          115    ]:( 5 ),\n' +
+                    '   [      "Gwen"    ,           "F"  ,         26     ,           64   ,          121    ]:( 6 ),\n' +
+                    '   [      "Hank"    ,           "M"  ,         30     ,           71   ,          158    ]:( 7 ),\n' +
+                    '   [      "Ivan"    ,           "M"  ,         53     ,           72   ,          175    ]:( 8 ),\n' +
+                    '   [      "Jake"    ,           "M"  ,         32     ,           69   ,          143    ]:( 9 ),\n' +
+                    '   [      "Kate"    ,           "F"  ,         47     ,           69   ,          139    ]:( 10 ),\n' +
+                    '   [      "Luke"    ,           "M"  ,         34     ,           72   ,          163    ]:( 11 ),\n' +
+                    '   [      "Myra"    ,           "F"  ,         23     ,           62   ,           98    ]:( 12 ),\n' +
+                    '   [      "Neil"    ,           "M"  ,         36     ,           75   ,          160    ]:( 13 ),\n' +
+                    '   [      "Omar"    ,           "M"  ,         38     ,           70   ,          145    ]:( 14 ),\n' +
+                    '   [      "Page"    ,           "F"  ,         31     ,           67   ,          135    ]:( 15 ),\n' +
+                    '   [      "Quin"    ,           "M"  ,         29     ,           71   ,          176    ]:( 16 ),\n' +
+                    '   [      "Ruth"    ,           "F"  ,         28     ,           65   ,          131    ]:( 17 )\n' +
+                    ']\n'
     }
-*/
+
 
 }

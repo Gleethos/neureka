@@ -9,10 +9,8 @@ import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.io.IOException;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -60,11 +58,14 @@ public class FileDevice extends AbstractBaseDevice<Number>
         _SAVERS.put( "idx", ( name, tensor, conf ) -> new IDXHead( tensor, name ) );
         _SAVERS.put( "jpg", ( name, tensor, conf ) -> new JPEGHead( tensor, name ) );
         _SAVERS.put( "png", ( name, tensor, conf ) -> null ); // TODO!
+        _SAVERS.put( "csv", ( name, tensor, conf ) -> new CSVHead( tensor, name ) );
     }
 
     @Getter
     private String _directory;
     private Map<Tsr<Number>, FileHead> _stored = new HashMap<>();
+    @Getter
+    private List<String> _loadable = new ArrayList<>();
 
     public static FileDevice instance( String path ) {
         FileDevice device = _DEVICES.get( path );
@@ -80,10 +81,37 @@ public class FileDevice extends AbstractBaseDevice<Number>
         if ( ! dir.exists() ) {
             dir.mkdirs();
         }
+        File[] files = dir.listFiles();
+        if ( files != null ) {
+            for ( File file : files ) {
+                int i = file.getName().lastIndexOf( '.' );
+                if ( i > 0 ) {
+                    String extension = file.getName().substring( i + 1 );
+                    if ( _LOADERS.containsKey( extension ) ) _loadable.add( file.getName() );
+                }
+            }
+        }
     }
 
-    public FileHead<?, Number> fileHeadOf( Tsr<Number> tensor ) {
-        return _stored.get(tensor);
+    public Tsr<?> load( String filename ) throws IOException {
+        return load( filename, null );
+    }
+
+    public Tsr<?> load( String filename, Map<String, Object> conf ) throws IOException {
+        if ( _loadable.contains( filename ) ) {
+            String extension = filename.substring( filename.lastIndexOf( '.' ) + 1 );
+            FileHead<?,?> head = _LOADERS.get( extension ).load( _directory + "/" + filename, conf );
+            assert head != null;
+            Tsr tensor = head.load();
+            _stored.put( tensor, head );
+            _loadable.remove( filename );
+            return tensor;
+        }
+        return null;
+    }
+
+    public FileHead<?, ?> fileHeadOf( Tsr<?> tensor ) {
+        return _stored.get( tensor );
     }
 
     @Override
@@ -133,29 +161,19 @@ public class FileDevice extends AbstractBaseDevice<Number>
 
     public FileDevice store( Tsr<Number> tensor, String filename, Map<String, Object> configurations )
     {
-        FileHead head = null;
-        if ( filename.endsWith(".jpg") || filename.endsWith(".jpeg") ) {
-            try {
-                head = new JPEGHead( tensor, _directory + "/" + filename );
-            } catch ( Exception e ) {
-                e.printStackTrace();
-            }
-        } else if ( filename.endsWith(".csv") ) {
-            try {
-                head = new CSVHead( tensor, _directory + "/" + filename );
-            } catch ( Exception e ) {
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                if ( !filename.endsWith(".idx") ) filename += ".idx";
-                head = new IDXHead( tensor, _directory + "/" + filename );
-            } catch ( Exception e ) {
-                e.printStackTrace();
-            }
+        int i = filename.lastIndexOf( '.' );
+        if ( i < 1 ) {
+            filename = filename + ".idx";
+            i = filename.lastIndexOf( '.' );
         }
-        _stored.put( tensor, head );
-        tensor.setIsOutsourced( true );
+        String extension = filename.substring( i + 1 );
+        if ( _SAVERS.containsKey( extension ) ) {
+            _stored.put(
+                    tensor,
+                    _SAVERS.get(extension).save( _directory + "/" + filename, tensor, configurations )
+            );
+            tensor.setIsOutsourced(true);
+        }
         return this;
     }
 
