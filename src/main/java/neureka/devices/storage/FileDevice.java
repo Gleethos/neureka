@@ -43,7 +43,7 @@ public class FileDevice extends AbstractBaseDevice<Number>
 
     private static final Map<String, FileDevice> _DEVICES = new WeakHashMap<>();
 
-    private static Map<String, Loader> _LOADERS;
+    private static final Map<String, Loader> _LOADERS;
     static {
         _LOADERS = new HashMap<>();
         _LOADERS.put( "idx", ( name, conf ) -> new IDXHead( name ) );
@@ -52,7 +52,7 @@ public class FileDevice extends AbstractBaseDevice<Number>
         _LOADERS.put( "csv", ( name, conf ) -> new CSVHead( name, conf ) );
     }
 
-    private static Map<String, Saver> _SAVERS;
+    private static final Map<String, Saver> _SAVERS;
     static {
         _SAVERS = new HashMap<>();
         _SAVERS.put( "idx", ( name, tensor, conf ) -> new IDXHead( tensor, name ) );
@@ -61,11 +61,14 @@ public class FileDevice extends AbstractBaseDevice<Number>
         _SAVERS.put( "csv", ( name, tensor, conf ) -> new CSVHead( tensor, name ) );
     }
 
+    private Map<Tsr<Number>, FileHead> _stored = new HashMap<>();
+
     @Getter
     private String _directory;
-    private Map<Tsr<Number>, FileHead> _stored = new HashMap<>();
     @Getter
-    private List<String> _loadable = new ArrayList<>();
+    private final List<String> _loadable = new ArrayList<>();
+    @Getter
+    private final List<String> _loaded = new ArrayList<>();
 
     public static FileDevice instance( String path ) {
         FileDevice device = _DEVICES.get( path );
@@ -78,16 +81,16 @@ public class FileDevice extends AbstractBaseDevice<Number>
     private FileDevice( String directory ) {
         _directory = directory;
         File dir = new File( directory );
-        if ( ! dir.exists() ) {
-            dir.mkdirs();
-        }
-        File[] files = dir.listFiles();
-        if ( files != null ) {
-            for ( File file : files ) {
-                int i = file.getName().lastIndexOf( '.' );
-                if ( i > 0 ) {
-                    String extension = file.getName().substring( i + 1 );
-                    if ( _LOADERS.containsKey( extension ) ) _loadable.add( file.getName() );
+        if ( ! dir.exists() ) dir.mkdirs();
+        else {
+            File[] files = dir.listFiles();
+            if ( files != null ) {
+                for ( File file : files ) {
+                    int i = file.getName().lastIndexOf( '.' );
+                    if ( i > 0 ) {
+                        String extension = file.getName().substring( i + 1 );
+                        if ( _LOADERS.containsKey( extension ) ) _loadable.add( file.getName() );
+                    }
                 }
             }
         }
@@ -105,6 +108,7 @@ public class FileDevice extends AbstractBaseDevice<Number>
             Tsr tensor = head.load();
             _stored.put( tensor, head );
             _loadable.remove( filename );
+            _loaded.add( filename );
             return tensor;
         }
         return null;
@@ -224,7 +228,7 @@ public class FileDevice extends AbstractBaseDevice<Number>
 
     @Override
     public Device execute( ExecutionCall call ) {
-        return null;
+        throw new IllegalAccessError("FileDevice instances do not support executions.");
     }
 
     @Override
@@ -244,7 +248,11 @@ public class FileDevice extends AbstractBaseDevice<Number>
 
     @Override
     public void update( Tsr<Number> oldOwner, Tsr<Number> newOwner ) {
-
+        if ( _stored.containsKey( oldOwner ) ) {
+            FileHead head = _stored.get( oldOwner );
+            _stored.remove( oldOwner );
+            _stored.put( newOwner, head );
+        }
     }
 
 

@@ -98,7 +98,7 @@ class FileDevice_Unit_Tests extends Specification
 
         then : 'The file will be deleted!'
             !new File( path + '/' + filename ).exists()
-            !new File( path ).listFiles().any {it.name.startsWith('tensor_'+shapeStr+'_f64_') }
+            !new File( path ).listFiles().any {it.name.startsWith('tensor_' + shapeStr + '_f64_') }
 
         where : 'The following parameters are being used:'
             path             | filename            |  shape  || fileHeadClass  | dataTypeClass
@@ -115,12 +115,14 @@ class FileDevice_Unit_Tests extends Specification
             def device = FileDevice.instance( 'build/resources/test/csv' )
         expect :
             device.loadable == ['biostats-without-head.csv', 'biostats.csv']
+            device.loaded == []
 
         when :
             def t = device.load('biostats-without-head.csv')
 
         then :
             device.loadable == ['biostats.csv']
+            device.loaded == ['biostats-without-head.csv']
             t.toString('fp') == '(18x5):[\n' +
                     '   (        a       )(       b       )(       c       )(       d       )(       e        ):( biostats-without-head )\n' +
                     '   [      "Alex"    ,           "M"  ,         41     ,           74   ,          170    ]:( 0 ),\n' +
@@ -148,6 +150,7 @@ class FileDevice_Unit_Tests extends Specification
 
         then :
             device.loadable == []
+            device.loaded == ['biostats-without-head.csv', 'biostats.csv']
             t.toString('fp') == '(18x5):[\n' +
                     '   (      "Name"    )(        "Sex"  )(      "Age"    )(  "Height (in)")( "Weight (lbs)" ):( biostats )\n' +
                     '   [      "Alex"    ,           "M"  ,         41     ,           74   ,          170    ]:( 0 ),\n' +
