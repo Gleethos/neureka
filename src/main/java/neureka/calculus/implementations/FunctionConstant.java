@@ -35,6 +35,11 @@ public class FunctionConstant extends AbstractBaseFunction
 	}
 
 	@Override
+	public Function getDerivative( int index ) {
+		return Function.create( "0" );
+	}
+
+	@Override
 	public Function newBuild(String expression)
 	{	
 		String number = "";

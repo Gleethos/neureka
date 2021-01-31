@@ -22,10 +22,6 @@ public abstract class AbstractOperation implements Operation
 {
     private static Logger _LOG = LoggerFactory.getLogger( AbstractOperation.class );
 
-    @Getter
-    @Setter
-    private Derivator _derivator = (children, d) -> {assert false; return "";};
-
     @Getter protected int _id;
     @Getter protected String _function;
     @Getter protected String _operator;

@@ -30,29 +30,34 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     }
 
     @Override
-    public boolean dependsOn(int index) {
+    public boolean dependsOn( int index ) {
         return true;
+    }
+
+    @Override
+    public Function getDerivative( int index ) {
+        return Function.create( "1" );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public Function newBuild(final String equation) {
-        if (equation.contains("g")) _providesGradient = true;
+    public Function newBuild( final String equation ) {
+        if ( equation.contains( "g" ) ) _providesGradient = true;
         return this;
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public double call(final double[] inputs, int j) {
+    public double call( final double[] inputs, int j ) {
         return inputs[j];
     }
 
     @Override
     public double call(final double[] inputs) {
         double sum = 0;
-        for ( int Ii = 0; Ii < inputs.length; Ii++) sum += call(inputs, Ii);
+        for ( int i = 0; i < inputs.length; i++ ) sum += call(inputs, i);
         return sum;
     }
 
@@ -62,7 +67,7 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     }
 
     @Override
-    public double derive(double[] inputs, int index, int j) {
+    public double derive( double[] inputs, int index, int j ) {
         if (j != index) return 0;
         return derive(inputs, index);
     }

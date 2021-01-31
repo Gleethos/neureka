@@ -356,6 +356,11 @@ public class Addition extends AbstractOperation {
             }
 
             @Override
+            public String asDerivative( Function[] children, int d ) {
+                throw new IllegalStateException("Operation does not support dynamic derivation!");
+            }
+
+            @Override
             public double calculate( double[] inputs, int j, int d, Function[] src ) {
                 return 0;
             }
@@ -368,6 +373,11 @@ public class Addition extends AbstractOperation {
             @Override
             public String stringify(String[] children) {
                 return null;
+            }
+
+            @Override
+            public String asDerivative( Function[] children, int d ) {
+                throw new IllegalStateException("Operation does not support dynamic derivation!");
             }
 
             @Override
@@ -392,6 +402,11 @@ public class Addition extends AbstractOperation {
                     }
                 }
                 return "(" + reconstructed + ")";
+            }
+
+            @Override
+            public String asDerivative( Function[] children, int d ) {
+                throw new IllegalStateException("Operation does not support dynamic derivation!");
             }
 
             @Override
@@ -457,6 +472,11 @@ public class Addition extends AbstractOperation {
             }
 
             @Override
+            public String asDerivative( Function[] children, int d ) {
+                throw new IllegalStateException("Operation does not support dynamic derivation!");
+            }
+
+            @Override
             public double calculate( double[] inputs, int j, int d, Function[] src ) {
             return src[ 0 ].call( inputs, j );
             }
@@ -467,6 +487,11 @@ public class Addition extends AbstractOperation {
             @Override
             public String stringify(String[] children) {
                 return null;
+            }
+
+            @Override
+            public String asDerivative( Function[] children, int d ) {
+                throw new IllegalStateException("Operation does not support dynamic derivation!");
             }
 
             @Override
@@ -490,6 +515,11 @@ public class Addition extends AbstractOperation {
             }
         }
         return "(" + reconstructed + ")";
+    }
+
+    @Override
+    public String asDerivative( Function[] children, int d ) {
+        throw new IllegalStateException("Operation does not support dynamic derivation!");
     }
 
     @Override

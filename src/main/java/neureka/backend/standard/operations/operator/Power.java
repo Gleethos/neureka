@@ -442,6 +442,11 @@ public class Power extends AbstractOperation
             }
 
             @Override
+            public String asDerivative( Function[] children, int d ) {
+                throw new IllegalStateException("Operation does not support dynamic derivation!");
+            }
+
+            @Override
             public double calculate( double[] inputs, int j, int d, Function[] src ) {
             return src[ 0 ].call( inputs, j );
             }
@@ -450,6 +455,11 @@ public class Power extends AbstractOperation
             @Override
             public String stringify(String[] children) {
                 return null;
+            }
+
+            @Override
+            public String asDerivative( Function[] children, int d ) {
+                throw new IllegalStateException("Operation does not support dynamic derivation!");
             }
 
             @Override
@@ -473,6 +483,11 @@ public class Power extends AbstractOperation
                     }
                 }
                 return "(" + reconstructed + ")";
+            }
+
+            @Override
+            public String asDerivative( Function[] children, int d ) {
+                throw new IllegalStateException("Operation does not support dynamic derivation!");
             }
 
             @Override
@@ -534,6 +549,11 @@ public class Power extends AbstractOperation
             }
 
             @Override
+            public String asDerivative( Function[] children, int d ) {
+                throw new IllegalStateException("Operation does not support dynamic derivation!");
+            }
+
+            @Override
             public double calculate( double[] inputs, int j, int d, Function[] src ) {
             return src[ 0 ].call( inputs, j );
             }
@@ -542,6 +562,11 @@ public class Power extends AbstractOperation
             @Override
             public String stringify(String[] children) {
                 return null;
+            }
+
+            @Override
+            public String asDerivative( Function[] children, int d ) {
+                throw new IllegalStateException("Operation does not support dynamic derivation!");
             }
 
             @Override
@@ -575,6 +600,11 @@ public class Power extends AbstractOperation
             if ( i < children.length - 1 ) reconstructed.append(" ^ ");
         }
         return "(" + reconstructed + ")";
+    }
+
+    @Override
+    public String asDerivative( Function[] children, int d ) {
+        throw new IllegalStateException("Operation does not support dynamic derivation!");
     }
 
     @Override

@@ -155,6 +155,11 @@ public class Gaussian extends AbstractOperation
     }
 
     @Override
+    public String asDerivative( Function[] children, int d ) {
+        throw new IllegalStateException("Operation does not support dynamic derivation!");
+    }
+
+    @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
         return calculate(
                 src[ 0 ].call( inputs, j ),

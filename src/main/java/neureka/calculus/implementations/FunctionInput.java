@@ -39,6 +39,11 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
         return index() == index;
     }
 
+    @Override
+    public Function getDerivative( int index ) {
+        return ( index == _index ) ? Function.create( "1" ) : Function.create( "0" );
+    }
+
     //------------------------------------------------------------------------------------------------------------------
 
     @Override

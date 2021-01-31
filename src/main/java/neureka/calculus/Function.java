@@ -111,7 +111,7 @@ public interface Function
     }
 
     static Function create( String expression ) {
-        return create(expression, true);
+        return create( expression, true );
     }
 
     static Function create( String expression, boolean doAD ) {
@@ -184,6 +184,8 @@ public interface Function
     Operation getOperation();
 
     boolean dependsOn( int index );
+
+    Function getDerivative( int index );
 
     //------------------------------------------------------------------------------------------------------------------
 

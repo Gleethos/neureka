@@ -15,7 +15,13 @@ public class OperationFactory
         String stringify( String[] children );
     }
 
+    interface Derivator
+    {
+        String asDerivative( Function[] children, int d );
+    }
+
     @Setter Stringifier _stringifier = null;
+    @Setter Derivator _derivator = null;
     @Setter String _function = null;
     @Setter String _operator = null;
     @Setter Integer _arity = null;
@@ -49,12 +55,17 @@ public class OperationFactory
                     _isInline
             ) {
                 @Override
-                public String stringify(String[] children) {
+                public String stringify( String[] children ) {
                     return _stringifier.stringify( children );
                 }
 
                 @Override
-                public double calculate(double[] inputs, int j, int d, Function[] src) {
+                public String asDerivative( Function[] children, int d ) {
+                    return _derivator.asDerivative( children, d );
+                }
+
+                @Override
+                public double calculate( double[] inputs, int j, int d, Function[] src ) {
                     return src[ 0 ].call( inputs, j );
                 }
             };

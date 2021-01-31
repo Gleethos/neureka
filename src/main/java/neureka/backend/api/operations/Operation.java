@@ -134,32 +134,9 @@ public interface Operation
 
     String stringify( String[] children );
 
-    //@FunctionalInterface
-    //interface Stringifier
-    //{
-    //    String asString( List<String> children );
-    //}
-//
-    ////---
-//
-    //Operation setStringifier( Stringifier stringifier );
-//
-    //Stringifier getStringifier();
-
     //==================================================================================================================
 
-    @FunctionalInterface
-    interface Derivator
-    {
-        String asDerivative( List<String> children, int d );
-    }
-
-    //---
-
-    Operation setDerivator( Derivator derivator );
-
-    Derivator getDerivator();
-
+    String asDerivative( Function[] children, int d );
 
     //==================================================================================================================
 

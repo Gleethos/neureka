@@ -91,6 +91,11 @@ public class FunctionNode extends AbstractBaseFunction
         return false;
     }
 
+    @Override
+    public Function getDerivative( int index ) {
+        return null;//_operation.getDerivator().asDerivative()
+    }
+
     //------------------------------------------------------------------------------------------------------------------
 
     /**
@@ -117,9 +122,9 @@ public class FunctionNode extends AbstractBaseFunction
 
         if ( _isFlat )
         {
-            /* The following code is reached in flat functions only:  */
-            /* Autograd-Graph will be generated below for the new GraphNode: */
-            /* only flat functions can be executed directly */
+            /* The following code is reached in flat functions only: 
+               Autograd-Graph will be generated below for the new GraphNode: 
+               only flat functions can be executed directly */
             if ( d < 0 && _isDoingAD )
                 return new GraphNode( this, finalCall, () -> __flat_execution( finalCall ) ).getPayload();
             else
@@ -138,11 +143,7 @@ public class FunctionNode extends AbstractBaseFunction
         if ( call.getDerivativeIndex() < 0 ) return __deep_activation( call );
         else return _deep_derivative( call  );
     }
-
-    public Function[] getChildren() {
-        return _src;
-    }
-
+ 
     private Tsr __deep_activation(ExecutionCall<Device> call )
     {
         Tsr[] inputs = call.getTensors();
@@ -187,10 +188,10 @@ public class FunctionNode extends AbstractBaseFunction
      * @param tensors An array of tensors which ought to be analyzed.
      * @return The index of the tensor whose value is "1.0" (if all other are "0.0"), otherwise : -1
      */
-    private int ___indexOfFoundDerivative( Tsr[] tensors )
+    private int ___indexOfFoundDerivative( Tsr<?>[] tensors )
     {
         boolean allVirtual = true;
-        for ( Tsr t : tensors ) if ( t != null && !t.isVirtual() ) allVirtual = false;
+        for ( Tsr<?> t : tensors ) if ( t != null && !t.isVirtual() ) allVirtual = false;
         if ( allVirtual ) {
             int index = -1;
             for ( int i = 0; i < tensors.length; i++ ) {
@@ -208,7 +209,7 @@ public class FunctionNode extends AbstractBaseFunction
 
     private Tsr _deep_derivative( ExecutionCall<Device> call )
     {
-        Supplier<Tsr> actor =
+        Supplier<Tsr<?>> actor =
                 () ->
                 {
                     Tsr[] inputs = call.getTensors();
@@ -381,22 +382,22 @@ public class FunctionNode extends AbstractBaseFunction
 
     @Override
     public double call( final double[] inputs, int j ) {
-        return this.getOperation().calculate( inputs, j, -1, this.getChildren() );
+        return this.getOperation().calculate( inputs, j, -1, _src );
     }
 
     @Override
     public double call( final double[] inputs ) {
-        return this.getOperation().calculate( inputs, -1, -1, this.getChildren() );
+        return this.getOperation().calculate( inputs, -1, -1, _src );
     }
 
     @Override
     public double derive( final double[] inputs, final int d, final int j ) {
-        return this.getOperation().calculate( inputs, j, d, this.getChildren() );
+        return this.getOperation().calculate( inputs, j, d, _src );
     }
 
     @Override
     public double derive( final double[] inputs, final int d ) {
-        return this.getOperation().calculate( inputs, -1, d, this.getChildren() );
+        return this.getOperation().calculate( inputs, -1, d, _src );
     }
 
 }
