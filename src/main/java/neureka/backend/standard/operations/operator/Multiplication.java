@@ -23,8 +23,8 @@ import org.jetbrains.annotations.Contract;
 import java.util.List;
 
 
-public class Multiplication extends AbstractOperation {
-
+public class Multiplication extends AbstractOperation
+{
 
     private static final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) -> {
@@ -61,19 +61,6 @@ public class Multiplication extends AbstractOperation {
         super(
                 "multiply", "*", -1,
                 true, false, true, false
-        );
-
-        setStringifier(
-                children -> {
-                    StringBuilder reconstructed = new StringBuilder();
-                    for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get( i ) );
-                        if ( i < children.size() - 1 ) {
-                            reconstructed.append(" * ");
-                        }
-                    }
-                    return "(" + reconstructed + ")";
-                }
         );
 
         Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
@@ -479,7 +466,12 @@ public class Multiplication extends AbstractOperation {
                 "", ((char) 171) + "*", 3, true, false, false, false
         ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            public String stringify(String[] children) {
+                return null;
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
                 return 0;
             }
         }.setAlgorithm(
@@ -579,7 +571,12 @@ public class Multiplication extends AbstractOperation {
                 "", "*" + ((char) 187), 3, true, false, false, false
         ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            public String stringify(String[] children) {
+                return null;
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
                 return 0;
             }
         }.setAlgorithm(
@@ -642,23 +639,35 @@ public class Multiplication extends AbstractOperation {
     @Contract(pure = true)
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+    public String stringify( String[] children ) {
+        StringBuilder reconstructed = new StringBuilder();
+        for ( int i = 0; i < children.length; ++i ) {
+            reconstructed.append( children[ i ] );
+            if ( i < children.length - 1 ) {
+                reconstructed.append(" * ");
+            }
+        }
+        return "(" + reconstructed + ")";
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
         if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
-            double result = src.get( 0 ).call( inputs, j );
-            for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get( i ).call( inputs, j );
+            double result = src[ 0 ].call( inputs, j );
+            for ( int i = 1; i < src.length; i++ ) {
+                final double current = src[ i ].call( inputs, j );
                 result *= current;
             }
             return result;
         } else {
             double u, ud, v, vd;
-            u = src.get( 0 ).call( inputs, j );
-            ud = src.get( 0 ).derive( inputs, d, j );
+            u = src[ 0 ].call( inputs, j );
+            ud = src[ 0 ].derive( inputs, d, j );
 
-            for ( int ji = 1; ji < src.size(); ji++ ) {
-                v = src.get( ji ).call( inputs, j );
-                vd = src.get( ji ).derive( inputs, d, j );
+            for ( int ji = 1; ji < src.length; ji++ ) {
+                v = src[ ji ].call( inputs, j );
+                vd = src[ ji ].derive( inputs, d, j );
                 ud = u * vd + v * ud;
                 u *= v;
             }
@@ -667,21 +676,21 @@ public class Multiplication extends AbstractOperation {
     }
 
     @Contract(pure = true)
-    public static double calculate( double[] inputs, int d, List<Function> src ) {
+    public static double calculate( double[] inputs, int d, Function[] src ) {
         if ( d < 0 ) {
-            double result = src.get( 0 ).call( inputs );
-            for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get( i ).call( inputs );
+            double result = src[ 0 ].call( inputs );
+            for ( int i = 1; i < src.length; i++ ) {
+                final double current = src[ i ].call( inputs );
                 result *= current;
             }
             return result;
         } else {
             double u, ud, v, vd;
-            u = src.get( 0 ).call( inputs );
-            ud = src.get( 0 ).derive( inputs, d );
-            for ( int j = 1; j < src.size(); j++ ) {
-                v = src.get(j).call( inputs );
-                vd = src.get(j).derive( inputs, d );
+            u = src[ 0 ].call( inputs );
+            ud = src[ 0 ].derive( inputs, d );
+            for ( int j = 1; j < src.length; j++ ) {
+                v = src[ j ].call( inputs );
+                vd = src[ j ].derive( inputs, d );
 
                 ud = u * vd + v * ud;
                 u *= v; // ...this step can be avoided (TODO optimize)

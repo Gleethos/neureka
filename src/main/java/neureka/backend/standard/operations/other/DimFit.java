@@ -7,6 +7,7 @@ import neureka.devices.Device;
 import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
 import neureka.backend.api.ExecutionCall;
+import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
@@ -24,16 +25,6 @@ public class DimFit extends AbstractOperation
                 false,
                 true,
                 false
-        );
-
-        setStringifier(
-                children -> {
-                    String expression = String.join( ", ", children );
-                    if (expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')') {
-                        return "dimfit" + expression;
-                    }
-                    return "dimfit" + "(" + expression + ")";
-                }
         );
 
         GenericAlgorithm implementation = new GenericAlgorithm("reshape")
@@ -125,12 +116,20 @@ public class DimFit extends AbstractOperation
                 GenericAlgorithm.class,
                 implementation
         );
-
     }
 
+    @Contract( pure = true )
+    @Override
+    public String stringify( String[] children ) {
+        String expression = String.join( ", ", children );
+        if (expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')') {
+            return "dimfit" + expression;
+        }
+        return "dimfit" + "(" + expression + ")";
+    }
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-        return src.get( 0 ).call( inputs, j );
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
+        return src[ 0 ].call( inputs, j );
     }
 }

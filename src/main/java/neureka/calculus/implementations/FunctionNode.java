@@ -14,6 +14,7 @@ import neureka.backend.standard.algorithms.Activation;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -31,7 +32,7 @@ public class FunctionNode extends AbstractBaseFunction
     @Getter
     private final boolean _isDoingAD;
 
-    private final List<Function> _src;
+    private final Function[] _src;
 
     //------------------------------------------------------------------------------------------------------------------
 
@@ -60,7 +61,7 @@ public class FunctionNode extends AbstractBaseFunction
 
         _operation = type;
         _isFlat = isFlat;
-        _src = sources;
+        _src = sources.toArray(new Function[0]);
         _isDoingAD = doAD;
     }
 
@@ -76,8 +77,12 @@ public class FunctionNode extends AbstractBaseFunction
     @Override
     public String toString()
     {
-        List<String> stringedSource = _src.stream().map(e->((e==null)?"(null)":e.toString())).collect(Collectors.toList());
-        return _operation.getStringifier().asString(stringedSource);
+        return _operation.stringify(
+                Arrays.stream(_src)
+                        .map( e -> ( e == null ) ? "(null)" : e.toString() )
+                        .collect(Collectors.toList())
+                        .toArray(new String[0])
+        );
     }
 
     @Override
@@ -134,7 +139,7 @@ public class FunctionNode extends AbstractBaseFunction
         else return _deep_derivative( call  );
     }
 
-    public List<Function> getChildren() {
+    public Function[] getChildren() {
         return _src;
     }
 
@@ -147,18 +152,21 @@ public class FunctionNode extends AbstractBaseFunction
 
         Tsr[] tensors;
         if ( _operation.isIndexer() ) tensors = new Tsr[ 1 + inputs.length ];
-        else tensors = new Tsr[ 1 + _src.size() ];
+        else tensors = new Tsr[ 1 + _src.length ];
 
         if ( _operation.isIndexer() ) {
-            for ( int i = 1; i < tensors.length; i++ ) tensors[ i ] = _src.get( 0 ).call( inputs, i - 1 );
+            for ( int i = 1; i < tensors.length; i++ ) tensors[ i ] = _src[ 0 ].call( inputs, i - 1 );
         } else if (
                 !_isFlat && j < 0 && (
                         _operation.isOperator() || _operation.supportsAlgorithm(Activation.class)
                 )
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
             tensors = srcActivation(inputs, j, d, 0);
-            String asStr = _operation.getStringifier().asString(
-                    IntStream.range( 0, _src.size() ).mapToObj( i -> "I[" + i + "]" ).collect( Collectors.toList() )
+            String asStr = _operation.stringify(
+                    IntStream.range( 0, _src.length )
+                            .mapToObj( i -> "I[" + i + "]" )
+                            .collect( Collectors.toList() )
+                            .toArray( new String[0] )
             );
             return FunctionBuilder.build( asStr, _isDoingAD ).call( tensors );
         } else {
@@ -210,7 +218,7 @@ public class FunctionNode extends AbstractBaseFunction
 
                     Tsr[] tensors;
                     if ( _operation.isIndexer() ) tensors = new Tsr[ 1 + inputs.length ];
-                    else tensors = new Tsr[ 1 + _src.size() ];
+                    else tensors = new Tsr[ 1 + _src.length ];
 
                     // Chain-rule (forward AutoDiff):
                     // inner times outer means:
@@ -218,14 +226,14 @@ public class FunctionNode extends AbstractBaseFunction
                     // like so:
                     if ( _operation.isIndexer() ) {
                         for ( int i = 1; i < tensors.length; i++ ) {
-                            tensors[ i ] = _src.get( 0 ).derive( inputs, d, i - 1 );
+                            tensors[ i ] = _src[ 0 ].derive( inputs, d, i - 1 );
                         }
                     } else {
                         for ( int i = 1; i < tensors.length; i++ ) {
                             tensors[ i ] =
                                     ( j >= 0 )
-                                            ? _src.get( i - 1 ).derive( inputs, d, j )
-                                            : _src.get( i - 1 ).derive( inputs, d );
+                                            ? _src[ i - 1 ].derive( inputs, d, j )
+                                            : _src[ i - 1 ].derive( inputs, d );
                         }
                     }
                     //...then add them all together! (is possible because of linearity...)
@@ -245,16 +253,16 @@ public class FunctionNode extends AbstractBaseFunction
                     //...then activate (No differentiation!) the source like so:
                     if ( _operation.isIndexer() ) { // Indexer pass an index j of course!
                         for ( int i = 1; i < tensors.length; i++ ) {
-                            tensors[ i ] = _src.get( 0 ).call( inputs, i - 1 ); // i - 1 := j
+                            tensors[ i ] = _src[ 0 ].call( inputs, i - 1 ); // i - 1 := j
                         }
                     } else {
                         for ( int i = 1; i < tensors.length; i++ ) {
-                            tensors[ i ] = ( j >= 0 ) ? _src.get(i - 1).call( inputs, j ) : _src.get(i - 1).call( inputs );
+                            tensors[ i ] = ( j >= 0 ) ? _src[ i - 1 ].call( inputs, j ) : _src[ i - 1 ].call( inputs );
                         }
                     }
                     //...get derivative index within src list:
-                    for ( int i = 0; i < _src.size(); i++ ) {
-                        if ( _src.get( i ).dependsOn(d) && !_operation.isIndexer() ) {
+                    for ( int i = 0; i < _src.length; i++ ) {
+                        if ( _src[ i ].dependsOn(d) && !_operation.isIndexer() ) {
                             d = i;
                             break;
                         }
@@ -273,8 +281,8 @@ public class FunctionNode extends AbstractBaseFunction
         Device device = call.getDevice();
         int d = call.getDerivativeIndex();
         Tsr out = null;
-        for ( int i = 0; i < _src.size(); i++ ) { // constants need to be figured out!
-            int di = ( _src.get( i ).dependsOn(d) ) ? i : -1;
+        for ( int i = 0; i < _src.length; i++ ) { // constants need to be figured out!
+            int di = ( _src[ i ].dependsOn(d) ) ? i : -1;
             if ( di >= 0 ) {
                 if ( out == null ) out = actor.get();
                 else
@@ -294,19 +302,19 @@ public class FunctionNode extends AbstractBaseFunction
     public Tsr[] srcActivation( Tsr[] inputs, int j, int d, int offset )
     {
         int[] tempShape = null;
-        Tsr[] tensors = new Tsr[ _src.size() + offset ];
+        Tsr[] tensors = new Tsr[ _src.length + offset ];
         for ( int i = offset; i < tensors.length; i++ ) {//constants need to be figured out!
-            if ( !(_src.get(i - offset) instanceof FunctionConstant) ) {
+            if ( !(_src[ i - offset ] instanceof FunctionConstant) ) {
                 if ( d < 0 )
                     tensors[ i ] =
                             ( j >= 0 )
-                                    ? _src.get(i - offset).call( inputs, j )
-                                    : _src.get(i - offset).call( inputs );
+                                    ? _src[ i - offset ].call( inputs, j )
+                                    : _src[ i - offset ].call( inputs );
                 else
                     tensors[ i ] =
                             ( j >= 0 )
-                                    ? _src.get(i - offset).derive( inputs, d, j )
-                                    : _src.get(i - offset).derive( inputs, d );
+                                    ? _src[ i - offset ].derive( inputs, d, j )
+                                    : _src[ i - offset ].derive( inputs, d );
 
                 tempShape = ( tempShape == null ) ? tensors[ i ].getNDConf().shape() : tempShape;
             }
@@ -315,8 +323,8 @@ public class FunctionNode extends AbstractBaseFunction
             if ( tensors[ i ] == null )
                     tensors[ i ] =
                         ( j < 0 )
-                                ? new Tsr(tempShape, ((FunctionConstant) _src.get(i - offset)).value())
-                                : new Tsr(tempShape, _src.get(i - offset).call(new double[]{}, j));
+                                ? new Tsr(tempShape, ((FunctionConstant) _src[ i - offset ]).value())
+                                : new Tsr(tempShape, _src[ i - offset ].call(new double[]{}, j));
         }
         return tensors;
     }

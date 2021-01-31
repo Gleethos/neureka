@@ -117,7 +117,7 @@ public class ExecutionCall<DeviceType extends Device>
     @Getter
     private int _j = -1;
 
-    private Algorithm<Algorithm<?>> _implementation;
+    private Algorithm<?> _implementation;
 
     /**
      *  Certain operations might require additionally parameters then the ones
@@ -248,7 +248,7 @@ public class ExecutionCall<DeviceType extends Device>
 
     public Algorithm<?> getImplementation() {
         if ( _implementation != null ) return _implementation;
-        else _implementation = _operation.AlgorithmFor( this );
+        else _implementation = _operation.getAlgorithmFor( this );
         return _implementation;
     }
     

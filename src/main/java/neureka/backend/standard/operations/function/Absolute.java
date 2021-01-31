@@ -14,7 +14,8 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
-public class Absolute extends AbstractOperation {
+public class Absolute extends AbstractOperation
+{
 
     private DefaultOperatorCreator<TertiaryNDIConsumer> _activationCreator =
             ( inputs, d ) -> {
@@ -32,14 +33,6 @@ public class Absolute extends AbstractOperation {
     public Absolute()
     {
         super("abs", "abs" , 1, false, false, true, false);
-
-        setStringifier(
-            children -> {
-                String expression = String.join( ", ", children );
-                if ( expression.startsWith("(") && expression.endsWith(")") ) return "abs" + expression;
-                return "abs" + "(" + expression + ")";
-            }
-        );
 
         Activation operationAlgorithm = new Activation()
             .setADAgentSupplier(
@@ -96,15 +89,22 @@ public class Absolute extends AbstractOperation {
     }
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-        return calculate(
-                src.get( 0 ).call( inputs, j ),
-                d >= 0
-        ) * ( ( d < 0 ) ? 1 : src.get( 0 ).derive( inputs, d, j ) );
+    public String stringify( String[] children ) {
+        String expression = String.join( ", ", children );
+        if ( expression.startsWith("(") && expression.endsWith(")") ) return "abs" + expression;
+        return "abs" + "(" + expression + ")";
     }
 
-    @Contract(pure = true)
-    public static double calculate(double input, boolean derive ) {
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
+        return calculate(
+                src[ 0 ].call( inputs, j ),
+                d >= 0
+        ) * ( ( d < 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );
+    }
+
+    @Contract( pure = true )
+    public static double calculate( double input, boolean derive ) {
         if ( !derive ) return Math.abs( input );
         else return ( input < 0 ) ? -1 : 1;
     }

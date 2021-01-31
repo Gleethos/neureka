@@ -115,7 +115,16 @@ public class Randomization extends AbstractOperation
     }
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-            return src.get( 0 ).call( inputs, j );
+    public String stringify( String[] children ) {
+        String expression = String.join( ", ", children );
+        if (expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')') {
+            return "rand" + expression;
+        }
+        return "rand" + "(" + expression + ")";
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
+            return src[ 0 ].call( inputs, j );
     }
 }

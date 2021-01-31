@@ -51,7 +51,7 @@ class Backend_Extension_Unit_Tests extends Specification
             def result = function.call(new Tsr[0])
 
         then : 'The custom call hook should be accessed as outlined below.'
-            (1.._) * type.AlgorithmFor(_) >> implementation
+            (1.._) * type.getAlgorithmFor(_) >> implementation
             (1.._) * implementation.handleInsteadOfDevice(_,_) >> output
 
         and : 'The mocked output tensor never returns the mock device because our custom call hook replaces execution.'
@@ -103,7 +103,7 @@ class Backend_Extension_Unit_Tests extends Specification
             (1.._) * input.getNDConf() >> ndc
             (1.._) * ndc.shape() >> new int[]{1,2}
             (1.._) * type.isDifferentiable() >> true
-            (1.._) * type.AlgorithmFor(_) >> implementation
+            (1.._) * type.getAlgorithmFor(_) >> implementation
             (1.._) * implementation.handleInsteadOfDevice(_,_) >> output
 
         and : 'The GraphNode instance which will be created as tensor component interacts as follows.'

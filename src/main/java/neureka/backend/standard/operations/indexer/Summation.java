@@ -36,17 +36,6 @@ public class Summation extends AbstractOperation
                 false
         );
 
-        setStringifier(
-                children ->
-                {
-                    String expression = String.join( ", ", children );
-                    if (expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')') {
-                        return "sumJs" + expression;
-                    }
-                    return "sumJs" + "(" + expression + ")";
-                }
-        );
-
         Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
@@ -320,41 +309,50 @@ public class Summation extends AbstractOperation
     }
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+    public String stringify( String[] children ) {
+        String expression = String.join( ", ", children );
+        if (expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')') {
+            return "sumJs" + expression;
+        }
+        return "sumJs" + "(" + expression + ")";
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
         if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
             double sum = 0;
             boolean nothingDone = true;
             for ( int i = 0; i < inputs.length; i++ ) {
-                sum += src.get( 0 ).call( inputs, i );
+                sum += src[ 0 ].call( inputs, i );
                 nothingDone = false;
             }
-            if ( nothingDone ) return src.get( 0 ).call( inputs );
+            if ( nothingDone ) return src[ 0 ].call( inputs );
             return sum;
         }
-        else return src.get( 0 ).derive( inputs, d, j );
+        else return src[ 0 ].derive( inputs, d, j );
     }
 
     @Contract(pure = true)
-    public static double calculate( double[] inputs, int d, List<Function> src ) {
+    public static double calculate( double[] inputs, int d, Function[] src ) {
         if ( d < 0 ) {
             double sum = 0;
             boolean nothingDone = true;
             for ( int i = 0; i < inputs.length; i++ ) {
-                sum += src.get( 0 ).call( inputs, i );
+                sum += src[ 0 ].call( inputs, i );
                 nothingDone = false;
             }
-            if ( nothingDone ) return src.get( 0 ).call( inputs );
+            if ( nothingDone ) return src[ 0 ].call( inputs );
             return sum;
         } else {
             double sum = 0;
             boolean nothingDone = true;
             for ( int i = 0; i < inputs.length; i++ ) {
-                double r = src.get( 0 ).derive( inputs, d, i );
+                double r = src[ 0 ].derive( inputs, d, i );
                 sum += r;
                 nothingDone = false;
             }
-            if ( nothingDone ) return src.get( 0 ).call( inputs );
+            if ( nothingDone ) return src[ 0 ].call( inputs );
             return sum;
         }
 

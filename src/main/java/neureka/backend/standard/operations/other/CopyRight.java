@@ -20,19 +20,6 @@ public class CopyRight extends AbstractOperation {
     {
         super("inject_right", ">", 2,true, false, false, true);
 
-        setStringifier(
-                children -> {
-                    StringBuilder reconstructed = new StringBuilder();
-                    for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get( i ) );
-                        if ( i < children.size() - 1 ) {
-                            reconstructed.append(" -> ");
-                        }
-                    }
-                    return "(" + reconstructed + ")";
-                }
-        );
-
         DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
@@ -101,7 +88,19 @@ public class CopyRight extends AbstractOperation {
     }
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-            return src.get( 0 ).call( inputs, j );
+    public String stringify( String[] children ) {
+        StringBuilder reconstructed = new StringBuilder();
+        for ( int i = 0; i < children.length; ++i ) {
+            reconstructed.append( children[ i ] );
+            if ( i < children.length - 1 ) {
+                reconstructed.append(" -> ");
+            }
+        }
+        return "(" + reconstructed + ")";
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
+            return src[ 0 ].call( inputs, j );
     }
 }

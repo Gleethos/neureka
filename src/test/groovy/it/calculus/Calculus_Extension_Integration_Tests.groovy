@@ -12,7 +12,7 @@ import neureka.backend.api.ExecutionCall
 import neureka.backend.standard.algorithms.GenericAlgorithm
 import neureka.backend.api.operations.OperationContext
 import neureka.backend.api.operations.Operation
-import neureka.backend.api.operations.OperationTypeFactory
+import neureka.backend.api.operations.OperationFactory
 import neureka.calculus.assembly.FunctionBuilder
 import spock.lang.Specification
 
@@ -35,7 +35,7 @@ class Calculus_Extension_Integration_Tests extends Specification
             OperationContext oldContext = OperationContext.get()
             OperationContext testContext = oldContext.clone()
             OperationContext.setInstance(testContext)
-        Operation type = new OperationTypeFactory()
+            Operation type = new OperationFactory()
                     .setFunction('test_function')
                     .setOperator('test_function')
                     .setArity(-1)
@@ -43,7 +43,6 @@ class Calculus_Extension_Integration_Tests extends Specification
                     .setIsOperator(false)
                     .setIsDifferentiable(true)
                     .setIsInline(false)
-                    .build()
                     .setStringifier(
                             children -> {
                                 String expression = String.join( ", ", children );
@@ -53,6 +52,7 @@ class Calculus_Extension_Integration_Tests extends Specification
                                 return "test_function" + "(" + expression + ")";
                             }
                     )
+                    .build()
                     .setAlgorithm(
                             GenericAlgorithm.class,
                             new GenericAlgorithm()

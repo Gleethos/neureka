@@ -24,7 +24,7 @@ public abstract class AbstractOperation implements Operation
 
     @Getter
     @Setter
-    private Stringifier _stringifier;
+    private Derivator _derivator = (children, d) -> {assert false; return "";};
 
     @Getter protected int _id;
     @Getter protected String _function;
@@ -101,33 +101,27 @@ public abstract class AbstractOperation implements Operation
     //==================================================================================================================
 
     @Override
-    public <T extends AbstractFunctionalAlgorithm> T getAlgorithm( Class<T> type ) {
+    public <T extends Algorithm<T>> T getAlgorithm( Class<T> type ) {
         return (T) _algorithms.get( type );
     }
 
     @Override
-    public <T extends AbstractFunctionalAlgorithm> boolean supportsAlgorithm( Class<T> type ) {
+    public <T extends Algorithm<T>> boolean supportsAlgorithm( Class<T> type ) {
         return _algorithms.containsKey( type );
     }
 
     @Override
-    public <T extends AbstractFunctionalAlgorithm> Operation setAlgorithm( Class<T> type, T instance ) {
+    public <T extends Algorithm<T>> Operation setAlgorithm( Class<T> type, T instance ) {
         _algorithms.put( type, instance );
-        return this;
-    }
-
-    @Override
-    public Operation forEachAlgorithm( Consumer<Algorithm> action ) {
-        _algorithms.values().forEach( action );
         return this;
     }
 
     //==================================================================================================================
 
     @Override
-    public Algorithm AlgorithmFor( ExecutionCall call ) {
+    public <T extends Algorithm<T>> Algorithm<T> getAlgorithmFor( ExecutionCall<?> call ) {
         float bestScore = 0f;
-        Algorithm bestImpl = null;
+        Algorithm<T> bestImpl = null;
         for( Algorithm impl : _algorithms.values() ) {
             float currentScore = impl.isAlgorithmSuitableFor( call );
             if ( currentScore > bestScore ) {
@@ -153,7 +147,7 @@ public abstract class AbstractOperation implements Operation
     //==================================================================================================================
 
     @Override
-    public boolean supports( Class implementation ) {
+    public <T extends Algorithm<T>> boolean supports( Class<T> implementation ) {
         return _algorithms.containsKey( implementation );
     }
 

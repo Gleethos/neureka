@@ -36,14 +36,6 @@ public class Sinus extends AbstractOperation
     {
         super("sin", "sin" , 1, false, false, true, false);
 
-        setStringifier(
-                children -> {
-                    String expression = String.join( ", ", children );
-                    if ( expression.startsWith("(") && expression.endsWith(")") ) return "sin" + expression;
-                    return "sin" + "(" + expression + ")";
-                }
-        );
-
         Activation operationAlgorithm = new Activation()
         .setBackwardADAnalyzer( call -> true )
         .setForwardADAnalyzer(
@@ -134,11 +126,18 @@ public class Sinus extends AbstractOperation
     }
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+    public String stringify( String[] children ) {
+        String expression = String.join( ", ", children );
+        if ( expression.startsWith("(") && expression.endsWith(")") ) return "sin" + expression;
+        return "sin" + "(" + expression + ")";
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
         return calculate(
-                src.get( 0 ).call( inputs, j ),
+                src[ 0 ].call( inputs, j ),
                 d >= 0
-        ) * ( ( d < 0 ) ? 1 : src.get( 0 ).derive( inputs, d, j ) );
+        ) * ( ( d < 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );
     }
 
     @Contract(pure = true)

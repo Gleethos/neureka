@@ -74,18 +74,6 @@ public class Power extends AbstractOperation
     {
         super("power", "^", -1, true, false, true, false);
 
-        setStringifier(
-                children ->
-                {
-                    StringBuilder reconstructed = new StringBuilder();
-                    for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get( i ) );
-                        if ( i < children.size() - 1 ) reconstructed.append(" ^ ");
-                    }
-                    return "(" + reconstructed + ")";
-                }
-        );
-
         //_____________________
         // DEFAULT OPERATION :
 
@@ -449,14 +437,24 @@ public class Power extends AbstractOperation
 
         new AbstractOperation("inv_power_left", ((char) 171) + "^", 3, true, false, false, false) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-            return src.get( 0 ).call( inputs, j );
+            public String stringify(String[] children) {
+                return null;
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
+            return src[ 0 ].call( inputs, j );
             }
         };
         new AbstractOperation("inv_power_right", "^" + ((char) 187), 3, true, false, false, false) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-            return src.get( 0 ).call( inputs, j );
+            public String stringify(String[] children) {
+                return null;
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
+            return src[ 0 ].call( inputs, j );
             }
         };
 
@@ -466,7 +464,19 @@ public class Power extends AbstractOperation
                 "power", "p", 2, true, false, false, false
                 ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            public String stringify(String[] children) {
+                StringBuilder reconstructed = new StringBuilder();
+                for ( int i = 0; i < children.length; ++i ) {
+                    reconstructed.append( children[ i ] );
+                    if ( i < children.length - 1 ) {
+                        reconstructed.append(" p ");
+                    }
+                }
+                return "(" + reconstructed + ")";
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
                 return 0;
             }
         }.setAlgorithm(
@@ -515,30 +525,28 @@ public class Power extends AbstractOperation
                             }
                     )
                     .build()
-        )
-        .setStringifier(
-                children -> {
-                    StringBuilder reconstructed = new StringBuilder();
-                    for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get( i ) );
-                        if ( i < children.size() - 1 ) {
-                            reconstructed.append(" p ");
-                        }
-                    }
-                    return "(" + reconstructed + ")";
-                }
         );
 
         new AbstractOperation("", ((char) 171) + "p", 3, true, false, false, false) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-            return src.get( 0 ).call( inputs, j );
+            public String stringify(String[] children) {
+                return null;
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
+            return src[ 0 ].call( inputs, j );
             }
         };
         new AbstractOperation("", "p" + ((char) 187), 3, true, false, false, false) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-            return src.get( 0 ).call( inputs, j );
+            public String stringify(String[] children) {
+                return null;
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
+            return src[ 0 ].call( inputs, j );
             }
         };
 
@@ -560,27 +568,37 @@ public class Power extends AbstractOperation
     @Contract(pure = true)
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+    public String stringify( String[] children ) {
+        StringBuilder reconstructed = new StringBuilder();
+        for ( int i = 0; i < children.length; ++i ) {
+            reconstructed.append( children[ i ] );
+            if ( i < children.length - 1 ) reconstructed.append(" ^ ");
+        }
+        return "(" + reconstructed + ")";
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
         if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
-            double result = src.get( 0 ).call( inputs, j );
-            for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get( i ).call( inputs, j );
+            double result = src[ 0 ].call( inputs, j );
+            for ( int i = 1; i < src.length; i++ ) {
+                final double current = src[ i ].call( inputs, j );
                 result = Math.pow(result, current);
             }
             return result;
         } else {
             double out = 0;
-            for ( int si = 0; si < src.size(); si++ ) {
+            for ( int si = 0; si < src.length; si++ ) {
                 double b = 1;
-                for ( int i = 1; i < src.size(); i++ ) {
-                    b *= src.get( i ).call( inputs, j );
+                for ( int i = 1; i < src.length; i++ ) {
+                    b *= src[ i ].call( inputs, j );
                 }
                 if ( si == 0 ) {
-                    out += src.get( 0 ).derive( inputs, d, j ) * b * Math.pow(src.get( 0 ).call( inputs, j ), b - 1);
+                    out += src[ 0 ].derive( inputs, d, j ) * b * Math.pow(src[ 0 ].call( inputs, j ), b - 1);
                 } else {
-                    double a = src.get( 0 ).call( inputs, j );
-                    out += ( a >= 0 ) ? src.get(si).derive( inputs, d, j ) * b * Math.log(a) : 0;
+                    double a = src[ 0 ].call( inputs, j );
+                    out += ( a >= 0 ) ? src[ si ].derive( inputs, d, j ) * b * Math.log(a) : 0;
                 }
             }
             return out;
@@ -588,11 +606,11 @@ public class Power extends AbstractOperation
     }
 
     @Contract(pure = true)
-    public static double calculate( double[] inputs, int d, List<Function> src ) {
+    public static double calculate( double[] inputs, int d, Function[] src ) {
         if ( d < 0 ) {
-            double result = src.get( 0 ).call( inputs );
-            for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get( i ).call( inputs );
+            double result = src[ 0 ].call( inputs );
+            for ( int i = 1; i < src.length; i++ ) {
+                final double current = src[ i ].call( inputs );
                 result = Math.pow(result, current);
             }
             return result;
@@ -600,19 +618,19 @@ public class Power extends AbstractOperation
             double b = 1;
             double bd = 0;
             double a = 0;
-            for ( int i = 1; i < src.size(); i++ ) {
+            for ( int i = 1; i < src.length; i++ ) {
                 double dd = 1;
-                a = src.get( i ).call( inputs );
-                for ( int di = 1; di < src.size(); di++ ) {
+                a = src[ i ].call( inputs );
+                for ( int di = 1; di < src.length; di++ ) {
                     if ( di != i ) dd *= a;
-                    else dd *= src.get(di).derive( inputs, d );
+                    else dd *= src[ di ].derive( inputs, d );
                 }
                 bd += dd;
                 b *= a;
             }
             double out = 0;
-            a = src.get( 0 ).call( inputs );
-            out += src.get( 0 ).derive( inputs, d ) * b * Math.pow(a, b - 1);
+            a = src[ 0 ].call( inputs );
+            out += src[ 0 ].derive( inputs, d ) * b * Math.pow(a, b - 1);
             out += (a >= 0) ? bd *  Math.pow(a, b) * Math.log(a) : 0;
             return out;
         }

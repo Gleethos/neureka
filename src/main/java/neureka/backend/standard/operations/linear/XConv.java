@@ -34,19 +34,6 @@ public class XConv extends AbstractOperation
                 false
         );
 
-        setStringifier(
-                children -> {
-                    StringBuilder reconstructed = new StringBuilder();
-                    for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get( i ) );
-                        if ( i < children.size() - 1 ) {
-                            reconstructed.append(" x ");
-                        }
-                    }
-                    return "(" + reconstructed + ")";
-                }
-        );
-
         Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
@@ -262,23 +249,23 @@ public class XConv extends AbstractOperation
                 false
         ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-                return src.get( 0 ).call( inputs, j );
-            }
-        }
-        .setAlgorithm(Convolution.class, convolution)
-        .setStringifier(
-            children -> {
+            public String stringify(String[] children) {
                 StringBuilder reconstructed = new StringBuilder();
-                for ( int i = 0; i < children.size(); ++i ) {
-                    reconstructed.append( children.get( i ) );
-                    if ( i < children.size() - 1 ) {
+                for ( int i = 0; i < children.length; ++i ) {
+                    reconstructed.append( children[ i ] );
+                    if ( i < children.length - 1 ) {
                         reconstructed.append(" "+((char) 171) + "x ");
                     }
                 }
                 return "(" + reconstructed + ")";
             }
-        );
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
+                return src[ 0 ].call( inputs, j );
+            }
+        }
+        .setAlgorithm(Convolution.class, convolution);
 
         new AbstractOperation(
                 "inv_convolve_mul_right", "x" + ((char) 187),
@@ -289,23 +276,23 @@ public class XConv extends AbstractOperation
                 false
                 ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            public String stringify(String[] children) {
+                StringBuilder reconstructed = new StringBuilder();
+                for ( int i = 0; i < children.length; ++i ) {
+                    reconstructed.append( children[ i ] );
+                    if ( i < children.length - 1 ) {
+                        reconstructed.append(" x" + ((char) 187)+" ");
+                    }
+                }
+                return "(" + reconstructed + ")";
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
                 return 0;
             }
         }
-        .setAlgorithm(Convolution.class, convolution)
-                .setStringifier(
-                        children -> {
-                            StringBuilder reconstructed = new StringBuilder();
-                            for ( int i = 0; i < children.size(); ++i ) {
-                                reconstructed.append( children.get( i ) );
-                                if ( i < children.size() - 1 ) {
-                                    reconstructed.append(" x" + ((char) 187)+" ");
-                                }
-                            }
-                            return "(" + reconstructed + ")";
-                        }
-                );
+        .setAlgorithm( Convolution.class, convolution );
 
 
 
@@ -314,7 +301,19 @@ public class XConv extends AbstractOperation
 
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-            return src.get( 0 ).call( inputs, j );
+    public String stringify( String[] children ) {
+        StringBuilder reconstructed = new StringBuilder();
+        for ( int i = 0; i < children.length; ++i ) {
+            reconstructed.append( children[ i ] );
+            if ( i < children.length - 1 ) {
+                reconstructed.append(" x ");
+            }
+        }
+        return "(" + reconstructed + ")";
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
+            return src[ 0 ].call( inputs, j );
     }
 }

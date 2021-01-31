@@ -92,19 +92,6 @@ public class Addition extends AbstractOperation {
                 false
         );
 
-        setStringifier(
-            children -> {
-                StringBuilder reconstructed = new StringBuilder();
-                for ( int i = 0; i < children.size(); ++i ) {
-                    reconstructed.append( children.get( i ) );
-                    if ( i < children.size() - 1 ) {
-                        reconstructed.append(" + ");
-                    }
-                }
-                return "(" + reconstructed + ")";
-            }
-        );
-
         Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
@@ -364,19 +351,31 @@ public class Addition extends AbstractOperation {
                 "", ((char) 171) + "+", 3, true, false, false, false
         ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            public String stringify(String[] children) {
+                return null;
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
                 return 0;
             }
-        }.setAlgorithm(Broadcast.class, _broadcast);
+        }
+        .setAlgorithm(Broadcast.class, _broadcast);
 
         new AbstractOperation(
                 "", "+" + ((char) 187), 3, true, false, false, false
         ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            public String stringify(String[] children) {
+                return null;
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
                 return 0;
             }
-        }.setAlgorithm(Broadcast.class, _broadcast);
+        }
+        .setAlgorithm(Broadcast.class, _broadcast);
 
         // Convolutoion:
 
@@ -384,7 +383,19 @@ public class Addition extends AbstractOperation {
                 "add", "a", 2, true, false, false, false
         ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            public String stringify(String[] children) {
+                StringBuilder reconstructed = new StringBuilder();
+                for ( int i = 0; i < children.length; ++i ) {
+                    reconstructed.append( children[ i ] );
+                    if ( i < children.length - 1 ) {
+                        reconstructed.append(" a ");
+                    }
+                }
+                return "(" + reconstructed + ")";
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
                 return 0;
             }
         }
@@ -435,34 +446,32 @@ public class Addition extends AbstractOperation {
                             }
                     )
                     .build()
-        )
-        .setStringifier(
-            children -> {
-                StringBuilder reconstructed = new StringBuilder();
-                for ( int i = 0; i < children.size(); ++i ) {
-                    reconstructed.append( children.get( i ) );
-                    if ( i < children.size() - 1 ) {
-                        reconstructed.append(" a ");
-                    }
-                }
-                return "(" + reconstructed + ")";
-            }
         );
 
         new AbstractOperation(
                 "", ((char) 171) + "a", 3, true, false, false, false
         ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-            return src.get( 0 ).call( inputs, j );
+            public String stringify(String[] children) {
+                return null;
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
+            return src[ 0 ].call( inputs, j );
             }
         };
         new AbstractOperation(
                 "", "a" + ((char) 187), 3, true, false, false, false
         ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-            return src.get( 0 ).call( inputs, j );
+            public String stringify(String[] children) {
+                return null;
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
+            return src[ 0 ].call( inputs, j );
             }
         };
 
@@ -470,34 +479,44 @@ public class Addition extends AbstractOperation {
     }
 
 
-
     @Contract(pure = true)
+    @Override
+    public String stringify( String[] children ) {
+        StringBuilder reconstructed = new StringBuilder();
+        for ( int i = 0; i < children.length; ++i ) {
+            reconstructed.append( children[ i ] );
+            if ( i < children.length - 1 ) {
+                reconstructed.append(" + ");
+            }
+        }
+        return "(" + reconstructed + ")";
+    }
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
         if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
-            double result = src.get( 0 ).call( inputs, j );
-            for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get( i ).call( inputs, j );
+            double result = src[ 0 ].call( inputs, j );
+            for ( int i = 1; i < src.length; i++ ) {
+                final double current = src[ i ].call( inputs, j );
                 result += current;
             }
             return result;
         } else {
             double derivative = 0;
-            for ( int i = 0; i < src.size(); ++i ) {
-                derivative += src.get( i ).derive( inputs, d, j );
+            for ( int i = 0; i < src.length; i++ ) {
+                derivative += src[ i ].derive( inputs, d, j );
             }
             return derivative;
         }
     }
 
     @Contract(pure = true)
-    public static double calculate( double[] inputs, int d, List<Function> src ) {
+    public static double calculate( double[] inputs, int d, Function[] src ) {
         if ( d < 0 ) {
-            double result = src.get( 0 ).call( inputs );
-            for ( int Vi = 1; Vi < src.size(); Vi++ ) {
-                final double current = src.get(Vi).call( inputs );
+            double result = src[ 0 ].call( inputs );
+            for ( int i = 1; i < src.length; i++ ) {
+                final double current = src[ i ].call( inputs );
                 result += current;
             }
             return result;

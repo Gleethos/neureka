@@ -43,7 +43,6 @@ public class OperationContext implements Cloneable
        for ( Operation operation : serviceLoader ) {
            assert operation.getFunction() != null;
            assert operation.getOperator() != null;
-           assert operation.getStringifier() != null;
            log.debug( "Operation: '" + operation.getFunction() + "' loaded!" );
        }
     }

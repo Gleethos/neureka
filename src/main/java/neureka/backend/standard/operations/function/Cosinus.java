@@ -14,7 +14,8 @@ import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
-public class Cosinus extends AbstractOperation {
+public class Cosinus extends AbstractOperation
+{
 
     private DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) -> {
@@ -39,14 +40,6 @@ public class Cosinus extends AbstractOperation {
                 false,
                 true,
                 false
-        );
-
-        setStringifier(
-                children -> {
-                    String expression = String.join( ", ", children );
-                    if ( expression.startsWith("(") && expression.endsWith(")") ) return "cos" + expression;
-                    return "cos" + "(" + expression + ")";
-                }
         );
 
         Activation operationAlgorithm = new Activation()
@@ -106,15 +99,22 @@ public class Cosinus extends AbstractOperation {
     }
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+    public String stringify( String[] children ) {
+        String expression = String.join( ", ", children );
+        if ( expression.startsWith("(") && expression.endsWith(")") ) return "cos" + expression;
+        return "cos" + "(" + expression + ")";
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
         return calculate(
-                src.get( 0 ).call( inputs, j ),
+                src[ 0 ].call( inputs, j ),
                 d >= 0
-        ) * ( ( d < 0 ) ? 1 : src.get( 0 ).derive( inputs, d, j ) );
+        ) * ( ( d < 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );
     }
 
     @Contract(pure = true)
-    public static double calculate(double input, boolean derive ) {
+    public static double calculate( double input, boolean derive ) {
         if ( !derive ) return Math.cos( input );
         else return -Math.sin( input );
     }

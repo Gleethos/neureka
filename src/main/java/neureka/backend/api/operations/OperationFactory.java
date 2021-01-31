@@ -2,13 +2,20 @@ package neureka.backend.api.operations;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import neureka.calculus.Function;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Accessors( prefix = {"_"}, chain = true )
-public class OperationTypeFactory
+public class OperationFactory
 {
+    interface Stringifier
+    {
+        String stringify( String[] children );
+    }
+
+    @Setter Stringifier _stringifier = null;
     @Setter String _function = null;
     @Setter String _operator = null;
     @Setter Integer _arity = null;
@@ -18,7 +25,7 @@ public class OperationTypeFactory
     @Setter Boolean _isInline = null;
 
 
-    public GenericOperation build()
+    public Operation build()
     {
         List<String> missing = new ArrayList<>();
         if ( _function == null ) missing.add( "function" );
@@ -32,7 +39,7 @@ public class OperationTypeFactory
         if ( !missing.isEmpty() )
             throw new IllegalStateException("Factory not satisfied! The following properties are missing: '"+ String.join(", ", missing) +"'");
         else
-            return new GenericOperation (
+            return new AbstractOperation(
                     _function,
                     _operator,
                     _arity,
@@ -40,9 +47,18 @@ public class OperationTypeFactory
                     _isIndexer,
                     _isDifferentiable,
                     _isInline
-            );
-    }
+            ) {
+                @Override
+                public String stringify(String[] children) {
+                    return _stringifier.stringify( children );
+                }
 
+                @Override
+                public double calculate(double[] inputs, int j, int d, Function[] src) {
+                    return src[ 0 ].call( inputs, j );
+                }
+            };
+    }
 }
 
 

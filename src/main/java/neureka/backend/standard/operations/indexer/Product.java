@@ -37,16 +37,6 @@ public class Product extends AbstractOperation {
                 false
         );
 
-        setStringifier(
-                children -> {
-                    String expression = String.join( ", ", children );
-                    if (expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')') {
-                        return "prodJs" + expression;
-                    }
-                    return "prodJs" + "(" + expression + ")";
-                }
-        );
-
         Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
@@ -342,25 +332,34 @@ public class Product extends AbstractOperation {
 
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List<Function> src )
+    public String stringify( String[] children ) {
+        String expression = String.join( ", ", children );
+        if (expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')') {
+            return "prodJs" + expression;
+        }
+        return "prodJs" + "(" + expression + ")";
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src )
     {
         if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
             double prod = 1;
             boolean nothingDone = true;
             for ( int Ii = 0; Ii < inputs.length; Ii++ ) {
-                prod *= src.get( 0 ).call( inputs, Ii );
+                prod *= src[ 0 ].call( inputs, Ii );
                 nothingDone = false;
             }
-            if ( nothingDone ) return src.get( 0 ).call( inputs, j );
+            if ( nothingDone ) return src[ 0 ].call( inputs, j );
             return prod;
         } else {
             double u, ud, v, vd;
-            u = src.get( 0 ).call( inputs, 0 );
-            ud = src.get( 0 ).derive(inputs, d, 0);
+            u = src[ 0 ].call( inputs, 0 );
+            ud = src[ 0 ].derive(inputs, d, 0);
             for ( int ji = 1; ji < inputs.length; ji++ ) {
-                v = src.get( 0 ).call( inputs, ji );
-                vd = src.get( 0 ).derive( inputs, d, ji );
+                v = src[ 0 ].call( inputs, ji );
+                vd = src[ 0 ].derive( inputs, d, ji );
                 ud = u * vd + v * ud;
                 u *= v;
             }
@@ -369,23 +368,23 @@ public class Product extends AbstractOperation {
     }
 
     @Contract(pure = true)
-    public static double calculate( double[] inputs, int d, List<Function> src ) {
+    public static double calculate( double[] inputs, int d, Function[] src ) {
         if ( d < 0 ) {
             double prod = 1;
             boolean nothingDone = true;
             for ( int i = 0; i < inputs.length; i++ ) {
-                prod *= src.get( 0 ).call( inputs, i );
+                prod *= src[ 0 ].call( inputs, i );
                 nothingDone = false;
             }
-            if ( nothingDone ) return src.get( 0 ).call( inputs );
+            if ( nothingDone ) return src[ 0 ].call( inputs );
             return prod;
         } else {
             double u, ud, v, vd;
-            u = src.get( 0 ).call(inputs, 0);
-            ud = src.get( 0 ).derive(inputs, d, 0);
+            u = src[ 0 ].call(inputs, 0);
+            ud = src[ 0 ].derive(inputs, d, 0);
             for ( int j = 1; j < inputs.length; j++ ) {
-                v = src.get( 0 ).call( inputs, j );
-                vd = src.get( 0 ).derive( inputs, d, j );
+                v = src[ 0 ].call( inputs, j );
+                vd = src[ 0 ].derive( inputs, d, j );
                 ud = u * vd + v * ud;
                 u *= v;
             }

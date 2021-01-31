@@ -28,41 +28,6 @@ public class Reshape extends AbstractOperation
                 false
         );
 
-        setStringifier(
-            children ->
-            {
-                java.util.function.Function<String, Boolean> isConstantNumeric =
-                s ->
-                {
-                    try {
-                        Double.parseDouble(s);
-                        return true;
-                    } catch (Exception e) { return false; }
-                };
-                StringBuilder reconstructed = new StringBuilder();
-                reconstructed.insert(0, "[");
-                for ( int i = 0; i < children.size(); ++i ) {
-                    if ( i == children.size() - 1 ) {
-                        reconstructed.append("]:(").append(
-                                ( isConstantNumeric.apply( children.get( i ) ) )
-                                        ? children.get( i ).split("\\.")[ 0 ]
-                                        : children.get( i )
-                        ).append(")");
-                    } else {
-                        reconstructed.append(
-                                ( isConstantNumeric.apply( children.get( i ) ) )
-                                        ? children.get( i ).split("\\.")[ 0 ]
-                                        : children.get( i )
-                        );
-                    }
-                    if ( i < children.size() - 2 ) {
-                        reconstructed.append(",");
-                    }
-                }
-                return "(" + reconstructed + ")";
-            }
-        );
-
         GenericAlgorithm implementation = new GenericAlgorithm( "reshape" )
                 .setSuitabilityChecker( call -> 1.0f )
                 .setBackwardADAnalyzer( call -> true )
@@ -139,8 +104,41 @@ public class Reshape extends AbstractOperation
     }
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List<Function> src )
+    public String stringify( String[] children ) {
+        java.util.function.Function<String, Boolean> isConstantNumeric =
+                s ->
+                {
+                    try {
+                        Double.parseDouble(s);
+                        return true;
+                    } catch (Exception e) { return false; }
+                };
+        StringBuilder reconstructed = new StringBuilder();
+        reconstructed.insert(0, "[");
+        for ( int i = 0; i < children.length; ++i ) {
+            if ( i == children.length - 1 ) {
+                reconstructed.append("]:(").append(
+                        ( isConstantNumeric.apply( children[ i ] ) )
+                                ? children[ i ].split("\\.")[ 0 ]
+                                : children[ i ]
+                ).append(")");
+            } else {
+                reconstructed.append(
+                        ( isConstantNumeric.apply( children[ i ] ) )
+                                ? children[ i ].split("\\.")[ 0 ]
+                                : children[ i ]
+                );
+            }
+            if ( i < children.length - 2 ) {
+                reconstructed.append(",");
+            }
+        }
+        return "(" + reconstructed + ")";
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src )
     {
-            return src.get( 0 ).call( inputs, j );
+            return src[ 0 ].call( inputs, j );
     }
 }

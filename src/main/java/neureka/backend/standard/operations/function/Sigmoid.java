@@ -44,14 +44,6 @@ public class Sigmoid extends AbstractOperation
                 false
         );
 
-        setStringifier(
-                children -> {
-                    String expression = String.join( ", ", children );
-                    if ( expression.startsWith("(") && expression.endsWith(")") ) return "sig" + expression;
-                    return "sig" + "(" + expression + ")";
-                }
-        );
-
         Activation operationAlgorithm = new Activation()
             .setADAgentSupplier(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
@@ -113,11 +105,18 @@ public class Sigmoid extends AbstractOperation
     }
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+    public String stringify( String[] children ) {
+        String expression = String.join( ", ", children );
+        if ( expression.startsWith("(") && expression.endsWith(")") ) return "sig" + expression;
+        return "sig" + "(" + expression + ")";
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
         return calculate(
-                src.get( 0 ).call( inputs, j ),
+                src[ 0 ].call( inputs, j ),
                 d >= 0
-        ) * ( ( d < 0 ) ? 1 : src.get( 0 ).derive( inputs, d, j ) );
+        ) * ( ( d < 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );
     }
 
     @Contract(pure = true)

@@ -73,19 +73,6 @@ public class Division extends AbstractOperation
                 false
         );
 
-        setStringifier(
-                children -> {
-                    StringBuilder reconstructed = new StringBuilder();
-                    for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get( i ) );
-                        if ( i < children.size() - 1 ) {
-                            reconstructed.append(" / ");
-                        }
-                    }
-                    return "(" + reconstructed + ")";
-                }
-        );
-
         Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
@@ -432,16 +419,26 @@ public class Division extends AbstractOperation
                 "inv_division_left", ((char) 171) + "/", 3, true, false, false, false
         ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-            return src.get( 0 ).call( inputs, j );
+            public String stringify(String[] children) {
+                return null;
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
+            return src[ 0 ].call( inputs, j );
             }
         };
         new AbstractOperation(
                 "inv_division_right", "/" + ((char) 187), 3, true, false, false, false
         ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-            return src.get( 0 ).call( inputs, j );
+            public String stringify(String[] children) {
+                return null;
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
+            return src[ 0 ].call( inputs, j );
             }
         };
 
@@ -451,7 +448,19 @@ public class Division extends AbstractOperation
                 "divide", "d", 2, true, false, true, false
                 ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+            public String stringify(String[] children) {
+                StringBuilder reconstructed = new StringBuilder();
+                for ( int i = 0; i < children.length; ++i ) {
+                    reconstructed.append( children[ i ] );
+                    if ( i < children.length - 1 ) {
+                        reconstructed.append(" d ");
+                    }
+                }
+                return "(" + reconstructed + ")";
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
                 return 0;
             }
         }.setAlgorithm(
@@ -500,57 +509,49 @@ public class Division extends AbstractOperation
                             }
                     )
                     .build()
-                ).setStringifier(
-                        children -> {
-                            StringBuilder reconstructed = new StringBuilder();
-                            for ( int i = 0; i < children.size(); ++i ) {
-                                reconstructed.append( children.get( i ) );
-                                if ( i < children.size() - 1 ) {
-                                    reconstructed.append(" d ");
-                                }
-                            }
-                            return "(" + reconstructed + ")";
-                        }
                 );
 
         new AbstractOperation(
                 "", ((char) 171) + "d", 3, true, false, true, false
         ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-            return src.get( 0 ).call( inputs, j );
-            }
-        }.setStringifier(
-                children -> {
-                    StringBuilder reconstructed = new StringBuilder();
-                    for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get( i ) );
-                        if ( i < children.size() - 1 ) {
-                            reconstructed.append(" "+((char) 171) + "d ");
-                        }
+            public String stringify(String[] children) {
+                StringBuilder reconstructed = new StringBuilder();
+                for ( int i = 0; i < children.length; ++i ) {
+                    reconstructed.append( children[ i ] );
+                    if ( i < children.length - 1 ) {
+                        reconstructed.append(" "+((char) 171) + "d ");
                     }
-                    return "(" + reconstructed + ")";
                 }
-        );
+                return "(" + reconstructed + ")";
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
+            return src[ 0 ].call( inputs, j );
+            }
+        };
+
         new AbstractOperation(
                 "", "d" + ((char) 187), 3, true, false, true, false
         ) {
             @Override
-            public double calculate( double[] inputs, int j, int d, List<Function> src ) {
-            return src.get( 0 ).call( inputs, j );
-            }
-        }.setStringifier(
-                children -> {
-                    StringBuilder reconstructed = new StringBuilder();
-                    for ( int i = 0; i < children.size(); ++i ) {
-                        reconstructed.append( children.get( i ) );
-                        if ( i < children.size() - 1 ) {
-                            reconstructed.append(" d" + ((char) 187)+" ");
-                        }
+            public String stringify(String[] children) {
+                StringBuilder reconstructed = new StringBuilder();
+                for ( int i = 0; i < children.length; ++i ) {
+                    reconstructed.append( children[ i ] );
+                    if ( i < children.length - 1 ) {
+                        reconstructed.append(" d" + ((char) 187)+" ");
                     }
-                    return "(" + reconstructed + ")";
                 }
-        );
+                return "(" + reconstructed + ")";
+            }
+
+            @Override
+            public double calculate( double[] inputs, int j, int d, Function[] src ) {
+                return src[ 0 ].call( inputs, j );
+            }
+        };
 
     }
 
@@ -559,22 +560,34 @@ public class Division extends AbstractOperation
     @Contract(pure = true)
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List<Function> src ) {
+    public String stringify( String[] children ) {
+        StringBuilder reconstructed = new StringBuilder();
+        for ( int i = 0; i < children.length; ++i ) {
+            reconstructed.append( children[ i ] );
+            if ( i < children.length - 1 ) {
+                reconstructed.append(" / ");
+            }
+        }
+        return "(" + reconstructed + ")";
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
         if ( j < 0 ) return calculate( inputs, d, src );
         if ( d < 0 ) {
-            double result = src.get( 0 ).call( inputs, j );
-            for ( int Vi = 1; Vi < src.size(); Vi++ ) {
-                final double current = src.get(Vi).call( inputs, j );
+            double result = src[ 0 ].call( inputs, j );
+            for ( int i = 1; i < src.length; i++ ) {
+                final double current = src[ i ].call( inputs, j );
                 result /= current;
             }
             return result;
         } else {
             double u, ud, v, vd;
-            u = src.get( 0 ).call( inputs, j );
-            ud = src.get( 0 ).derive( inputs, d, j );
-            for ( int i = 0; i < src.size() - 1; i++ ) {
-                v = src.get(i + 1).call( inputs, j );
-                vd = src.get(i + 1).derive( inputs, d, j );
+            u = src[ 0 ].call( inputs, j );
+            ud = src[ 0 ].derive( inputs, d, j );
+            for ( int i = 0; i < src.length - 1; i++ ) {
+                v = src[ i + 1 ].call( inputs, j );
+                vd = src[ i + 1 ].derive( inputs, d, j );
                 ud = (ud * v - u * vd) / Math.pow(v, 2);
                 u /= v;
             }
@@ -583,23 +596,23 @@ public class Division extends AbstractOperation
     }
 
     @Contract(pure = true)
-    public static double calculate( double[] inputs, int d, List<Function> src ) {
+    public static double calculate( double[] inputs, int d, Function[] src ) {
         if ( d < 0 ) {
-            double result = src.get( 0 ).call( inputs );
-            for ( int i = 1; i < src.size(); i++ ) {
-                final double current = src.get( i ).call( inputs );
+            double result = src[ 0 ].call( inputs );
+            for ( int i = 1; i < src.length; i++ ) {
+                final double current = src[ i ].call( inputs );
                 result /= current;
             }
             return result;
         } else {
             double derivative = 0;
-            double tempVar = src.get( 0 ).call( inputs );
-            derivative = src.get( 0 ).derive( inputs, d );
+            double tempVar = src[ 0 ].call( inputs );
+            derivative = src[ 0 ].derive( inputs, d );
 
-            for ( int i = 0; i < src.size() - 1; i++ ) {
+            for ( int i = 0; i < src.length - 1; i++ ) {
                 double u, ud, v, vd;
-                v = src.get(i + 1).call( inputs );
-                vd = src.get(i + 1).derive( inputs, d );
+                v = src[ i + 1 ].call( inputs );
+                vd = src[ i + 1 ].derive( inputs, d );
                 u = tempVar;
                 ud = derivative;
                 derivative = ( ud * v - u * vd ) / Math.pow(v, 2);

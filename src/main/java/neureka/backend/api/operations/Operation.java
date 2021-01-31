@@ -116,7 +116,7 @@ public interface Operation
 
     //==================================================================================================================
 
-    Algorithm AlgorithmFor( ExecutionCall call );
+    <T extends Algorithm<T>> Algorithm<T> getAlgorithmFor( ExecutionCall<?> call );
 
     //==================================================================================================================
 
@@ -124,27 +124,42 @@ public interface Operation
 
     //==================================================================================================================
 
-    <T extends AbstractFunctionalAlgorithm> T getAlgorithm( Class<T> type );
+    <T extends Algorithm<T>> T getAlgorithm( Class<T> type );
 
-    <T extends AbstractFunctionalAlgorithm> boolean supportsAlgorithm( Class<T> type );
+    <T extends Algorithm<T>> boolean supportsAlgorithm( Class<T> type );
 
-    <T extends AbstractFunctionalAlgorithm> Operation setAlgorithm( Class<T> type, T instance );
+    <T extends Algorithm<T>> Operation setAlgorithm( Class<T> type, T instance );
 
-    Operation forEachAlgorithm( Consumer<Algorithm> action );
+    //==================================================================================================================
+
+    String stringify( String[] children );
+
+    //@FunctionalInterface
+    //interface Stringifier
+    //{
+    //    String asString( List<String> children );
+    //}
+//
+    ////---
+//
+    //Operation setStringifier( Stringifier stringifier );
+//
+    //Stringifier getStringifier();
 
     //==================================================================================================================
 
     @FunctionalInterface
-    interface Stringifier
+    interface Derivator
     {
-        String asString( List<String> children );
+        String asDerivative( List<String> children, int d );
     }
 
     //---
 
-    Operation setStringifier( Stringifier stringifier );
+    Operation setDerivator( Derivator derivator );
 
-    Stringifier getStringifier();
+    Derivator getDerivator();
+
 
     //==================================================================================================================
 
@@ -166,19 +181,19 @@ public interface Operation
 
     boolean isInline();
 
-    boolean supports( Class<?> implementation );
+    <T extends Algorithm<T>> boolean supports( Class<T> implementation );
 
     /**
      * This method mainly ought to serve as a reference- and fallback- implementation for tensor backends and also
      * as the backend for handling the calculation of scalar inputs passed to a given abstract syntax tree of
-     * Function instances...
+     * Function instances... <br>
      * ( (almost) every Function instance contains an OperationType reference to which it passes scalar executions... )
-     *
+     * <br><br>
      * This is also the reason why the last parameter of this method is a list of Function objects :
      * The list stores the child nodes of the Function node that is currently being processed.
      * Therefore when implementing this method one should first call the child nodes in
      * order to get the "real inputs" of this current node.
-     *
+     * <br><br>
      * One might ask : Why does that not happen automatically?
      * The answer is to that question lies in the other parameters of this method.
      * Specifically the parameter "d" !
@@ -186,7 +201,7 @@ public interface Operation
      * also which value is being targeted within the input array.
      * Depending on this variable and also the nature of the operation,
      * the execution calls to the child nodes of this node change considerably!
-     *
+     * <br><br>
      *
      * @param inputs An array of scalar input variables.
      * @param j The index variable for indexed execution on the input array. (-1 if no indexing should occur)
@@ -194,7 +209,7 @@ public interface Operation
      * @param src The child nodes of the Function node to which this very OperationType belongs.
      * @return The result of the calculation.
      */
-    double calculate( double[] inputs, int j, int d, List<Function> src );
+    double calculate( double[] inputs, int j, int d, Function[] src );
 
 
     /**
