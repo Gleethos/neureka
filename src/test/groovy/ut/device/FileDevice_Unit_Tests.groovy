@@ -2,7 +2,9 @@ package ut.device
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.devices.storage.*
+import neureka.devices.file.FileDevice
+import neureka.devices.file.FileHead
+import neureka.devices.file.heads.*
 import neureka.dtype.DataType
 import neureka.dtype.custom.F64
 import neureka.dtype.custom.I16
@@ -102,7 +104,7 @@ class FileDevice_Unit_Tests extends Specification
 
         where : 'The following parameters are being used:'
             path             | filename            |  shape  || fileHeadClass  | dataTypeClass
-            "build/test-can" | "tensor_2x4x3_.idx" | [2,4,3] || IDXHead.class  | F64.class
+            "build/test-can" | "tensor_2x4x3_.idx" | [2,4,3] || IDXHead.class | F64.class
             "build/test-can" | "tensor_2x4x3_.jpg" | [2,4,3] || JPEGHead.class | I16.class
             "build/test-can" | null                | [2,4,3] || IDXHead.class  | F64.class
             "build/test-can" | "tensor_4x3_.csv"   | [4,3]   || CSVHead.class  | String.class

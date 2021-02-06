@@ -1,14 +1,18 @@
-package neureka.devices.storage;
+package neureka.devices.file;
 
 
 import neureka.Tsr;
 import neureka.devices.Storage;
+import neureka.devices.file.heads.util.HeadFactory;
 import neureka.dtype.DataType;
 
 import java.io.IOException;
+import java.util.Map;
 
 public interface FileHead<FinalType, ValType> extends Storage<ValType>
 {
+    final HeadFactory FACTORY = new HeadFactory();
+
     /**
      *  An implementation of this method ought
      *  to create a new tensor instance containing the data which

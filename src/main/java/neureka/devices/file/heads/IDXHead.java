@@ -1,10 +1,11 @@
-package neureka.devices.storage;
+package neureka.devices.file.heads;
 
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.devices.file.heads.util.NumberReader;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.dtype.custom.*;

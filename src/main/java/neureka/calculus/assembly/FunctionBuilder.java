@@ -93,20 +93,23 @@ public class FunctionBuilder {
         while ( i < expression.length() ) {
             final String newComponent = FunctionParser.findComponentIn( expression, i );
             if ( newComponent != null ) {
+                // Empty strings are not components and will be skipped:
                 if ( newComponent.trim().isEmpty()) i += newComponent.length();
-                else {
-                    if (foundComponents.size() <= foundJunctors.size()) {
+                else // String has content so lets add it to the lists:
+                {
+                    if ( foundComponents.size() <= foundJunctors.size() ) {
                         foundComponents.add(newComponent);
                     }
                     i += newComponent.length();
                     final String newOperation = FunctionParser.parsedOperation(expression, i);
-                    if (newOperation != null) {
+                    if ( newOperation != null ) {
                         i += newOperation.length();
-                        if (newOperation.length() <= 0) continue;
-                        foundJunctors.add(newOperation);
+                        if ( newOperation.length() <= 0 ) continue;
+                        foundJunctors.add( newOperation );
                     }
                 }
-            } else ++i;
+            }
+            else ++i; // Parsing failed for this index so let's try the next one!
         }
         //---
         int counter = OperationContext.get().id();

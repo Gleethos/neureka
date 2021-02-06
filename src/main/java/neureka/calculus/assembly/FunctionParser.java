@@ -47,7 +47,7 @@ public class FunctionParser
             if (exp.charAt( i ) == ')') --bracketDepth;
             else if (exp.charAt( i ) == '(') ++bracketDepth;
             if (bracketDepth == 0) {
-                String possibleOperation = "";
+                String possibleOperation;
                 for ( int ii = exp.length()-1; ii >= i+1; ii--) {
                     String found = FunctionParser.parsedOperation(exp.substring(i,ii), i);
                     if (

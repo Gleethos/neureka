@@ -72,11 +72,10 @@ class Calculus_Parsing_Unit_Tests extends Specification
             Function.create(equation).getDerivative( index ).toString() == expected
 
         where : 'The following expressions and derivation indices are being used :'
-        equation                   | index            || expected
-        "(I[0] * I[1] * I[0]) + 3" | 0                || "((I[1] * I[0]) + (I[0] * I[1]))"
-        "1 - I[0] * 3"              | 0                || "-3.0"
-        "(2 * I[0]) / (1 - I[0] * 3)"| 0                || "((2.0 / (1.0 - (I[0] * 3.0))) - (((2.0 * I[0]) * -3.0) / ((1.0 - (I[0] * 3.0)) ^ 2.0)))"
-
+        equation                     | index || expected
+        "(I[0] * I[1] * I[0]) + 3"   | 0     || "((I[1] * I[0]) + (I[0] * I[1]))"
+        "1 - I[0] * 3"               | 0     || "-3.0"
+        "(2 * I[0]) / (1 - I[0] * 3)"| 0     || "((2.0 / (1.0 - (I[0] * 3.0))) - (((2.0 * I[0]) * -3.0) / ((1.0 - (I[0] * 3.0)) ^ 2.0)))"
     }
 
 

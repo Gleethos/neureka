@@ -1,4 +1,4 @@
-package neureka.devices.storage;
+package neureka.devices.file.heads;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;

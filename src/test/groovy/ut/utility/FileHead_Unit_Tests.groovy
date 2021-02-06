@@ -2,15 +2,14 @@ package ut.utility
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.devices.storage.CSVHead
-import neureka.devices.storage.IDXHead
-import neureka.devices.storage.JPEGHead
+import neureka.devices.file.heads.CSVHead
+import neureka.devices.file.heads.IDXHead
+import neureka.devices.file.heads.JPEGHead
 import neureka.dtype.DataType
 import neureka.dtype.NumericType
 import neureka.dtype.custom.F64
 import neureka.dtype.custom.I16
 import neureka.dtype.custom.UI8
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class FileHead_Unit_Tests extends Specification

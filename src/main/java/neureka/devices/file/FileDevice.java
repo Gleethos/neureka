@@ -1,4 +1,4 @@
-package neureka.devices.storage;
+package neureka.devices.file;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -7,12 +7,13 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
+import neureka.devices.file.heads.CSVHead;
+import neureka.devices.file.heads.IDXHead;
+import neureka.devices.file.heads.JPEGHead;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -38,28 +39,7 @@ import java.util.stream.Collectors;
 @ToString
 public class FileDevice extends AbstractBaseDevice<Number>
 {
-    interface Loader { FileHead load( String name, Map<String, Object> config ); }
-    interface Saver { FileHead save( String name, Tsr tensor, Map<String, Object> config ); }
-
     private static final Map<String, FileDevice> _DEVICES = new WeakHashMap<>();
-
-    private static final Map<String, Loader> _LOADERS;
-    static {
-        _LOADERS = new HashMap<>();
-        _LOADERS.put( "idx", ( name, conf ) -> new IDXHead( name ) );
-        _LOADERS.put( "jpg", ( name, conf ) -> new JPEGHead( name ) );
-        _LOADERS.put( "png", ( name, conf ) -> null ); // TODO!
-        _LOADERS.put( "csv", ( name, conf ) -> new CSVHead( name, conf ) );
-    }
-
-    private static final Map<String, Saver> _SAVERS;
-    static {
-        _SAVERS = new HashMap<>();
-        _SAVERS.put( "idx", ( name, tensor, conf ) -> new IDXHead( tensor, name ) );
-        _SAVERS.put( "jpg", ( name, tensor, conf ) -> new JPEGHead( tensor, name ) );
-        _SAVERS.put( "png", ( name, tensor, conf ) -> null ); // TODO!
-        _SAVERS.put( "csv", ( name, tensor, conf ) -> new CSVHead( tensor, name ) );
-    }
 
     private Map<Tsr<Number>, FileHead> _stored = new HashMap<>();
 
@@ -89,7 +69,7 @@ public class FileDevice extends AbstractBaseDevice<Number>
                     int i = file.getName().lastIndexOf( '.' );
                     if ( i > 0 ) {
                         String extension = file.getName().substring( i + 1 );
-                        if ( _LOADERS.containsKey( extension ) ) _loadable.add( file.getName() );
+                        if ( FileHead.FACTORY.hasLoader( extension ) ) _loadable.add( file.getName() );
                     }
                 }
             }
@@ -103,7 +83,7 @@ public class FileDevice extends AbstractBaseDevice<Number>
     public Tsr<?> load( String filename, Map<String, Object> conf ) throws IOException {
         if ( _loadable.contains( filename ) ) {
             String extension = filename.substring( filename.lastIndexOf( '.' ) + 1 );
-            FileHead<?,?> head = _LOADERS.get( extension ).load( _directory + "/" + filename, conf );
+            FileHead<?,?> head = FileHead.FACTORY.getLoader( extension ).load( _directory + "/" + filename, conf );
             assert head != null;
             Tsr tensor = head.load();
             _stored.put( tensor, head );
@@ -171,10 +151,10 @@ public class FileDevice extends AbstractBaseDevice<Number>
             i = filename.lastIndexOf( '.' );
         }
         String extension = filename.substring( i + 1 );
-        if ( _SAVERS.containsKey( extension ) ) {
+        if ( FileHead.FACTORY.hasSaver( extension ) ) {
             _stored.put(
                     tensor,
-                    _SAVERS.get(extension).save( _directory + "/" + filename, tensor, configurations )
+                    FileHead.FACTORY.getSaver(extension).save( _directory + "/" + filename, tensor, configurations )
             );
             tensor.setIsOutsourced(true);
         }

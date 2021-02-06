@@ -1,10 +1,9 @@
-package neureka.devices.storage;
+package neureka.devices.file.heads;
 
 import neureka.Tsr;
 import neureka.devices.Storage;
 import neureka.devices.host.HostCPU;
 import neureka.dtype.DataType;
-import neureka.dtype.NumericType;
 import neureka.dtype.custom.I16;
 import neureka.dtype.custom.UI8;
 import neureka.utility.DataConverter;

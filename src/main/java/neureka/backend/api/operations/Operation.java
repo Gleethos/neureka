@@ -150,6 +150,12 @@ public interface Operation
      */
     int getArity();
 
+    /**
+     *  An operator is an alternative to a function like "sum()" or "prod()". <br>
+     *  Examples would be "+, -, * ..."!
+     *
+     * @return If this operation can be represented as operator like "+, -, * ..."!
+     */
     boolean isOperator();
 
     boolean isIndexer();

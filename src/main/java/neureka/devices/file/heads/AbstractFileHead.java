@@ -1,7 +1,8 @@
-package neureka.devices.storage;
+package neureka.devices.file.heads;
 
 import neureka.Tsr;
 import neureka.devices.Storage;
+import neureka.devices.file.FileHead;
 import org.slf4j.Logger;
 
 import java.io.File;
