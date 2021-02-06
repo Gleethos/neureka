@@ -8,6 +8,7 @@ import neureka.backend.api.algorithms.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.Operation;
 import neureka.backend.api.operations.OperationContext;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -26,13 +27,14 @@ public class MatMul extends AbstractOperation
     public MatMul()
     {
         super(
-                "matmul",
-                "@",
-                2,
-                true,
-                false,
-                true,
-                false
+                new OperationFactory()
+                        .setFunction(         "matmul"    )
+                        .setOperator(         "@"         )
+                        .setArity(            2           )
+                        .setIsOperator(       true        )
+                        .setIsIndexer(        false       )
+                        .setIsDifferentiable( true        )
+                        .setIsInline(         false       )
         );
 
         Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->

@@ -8,6 +8,7 @@ import neureka.backend.api.algorithms.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.Operation;
 import neureka.backend.api.operations.OperationContext;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
@@ -28,13 +29,14 @@ public class Product extends AbstractOperation {
     public Product()
     {
         super (
-                "prodJs",
-                "prodJs",
-                1,
-                false,
-                true,
-                true,
-                false
+                new OperationFactory()
+                        .setFunction(         "prodJs"    )
+                        .setOperator(         "prodJs"    )
+                        .setArity(            1           )
+                        .setIsOperator(       false       )
+                        .setIsIndexer(        true        )
+                        .setIsDifferentiable( true        )
+                        .setIsInline(         false       )
         );
 
         Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->

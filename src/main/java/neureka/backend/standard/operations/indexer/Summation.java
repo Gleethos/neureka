@@ -3,6 +3,7 @@ package neureka.backend.standard.operations.indexer;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.algorithms.Algorithm;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.devices.Device;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -27,13 +28,14 @@ public class Summation extends AbstractOperation
     public Summation()
     {
         super (
-                "sumJs",
-                "sumJs",
-                1,
-                false,
-                true,
-                true,
-                false
+                new OperationFactory()
+                        .setFunction(         "sumJs"    )
+                        .setOperator(         "sumJs"    )
+                        .setArity(            1           )
+                        .setIsOperator(       false       )
+                        .setIsIndexer(        true        )
+                        .setIsDifferentiable( true        )
+                        .setIsInline(         false       )
         );
 
         Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
