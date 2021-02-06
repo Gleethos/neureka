@@ -2,6 +2,7 @@ package neureka.backend.standard.operations.function;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.devices.Device;
@@ -34,7 +35,16 @@ public class Sinus extends AbstractOperation
 
     public Sinus()
     {
-        super("sin", "sin" , 1, false, false, true, false );
+        super(
+                new OperationFactory()
+                        .setFunction(         "sin"    )
+                        .setOperator(         "sin"    )
+                        .setArity(            1        )
+                        .setIsOperator(       false    )
+                        .setIsIndexer(        false    )
+                        .setIsDifferentiable( true     )
+                        .setIsInline(         false    )
+        );
 
         Activation operationAlgorithm = new Activation()
         .setBackwardADAnalyzer( call -> true )

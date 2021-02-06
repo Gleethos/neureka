@@ -53,15 +53,7 @@ public class OperationFactory
         if ( !missing.isEmpty() )
             throw new IllegalStateException("Factory not satisfied! The following properties are missing: '"+ String.join(", ", missing) +"'");
         else
-            return new AbstractOperation(
-                    _function,
-                    _operator,
-                    _arity,
-                    _isOperator,
-                    _isIndexer,
-                    _isDifferentiable,
-                    _isInline
-            ) {
+            return new AbstractOperation( this ) {
                 @Override
                 public String stringify( String[] children ) {
                     return _stringifier.stringify( children );
