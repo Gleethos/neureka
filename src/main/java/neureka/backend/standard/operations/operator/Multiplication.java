@@ -8,6 +8,7 @@ import neureka.backend.api.algorithms.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.Operation;
 import neureka.backend.api.operations.OperationContext;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
@@ -467,7 +468,14 @@ public class Multiplication extends AbstractOperation
         .build();
 
         new AbstractOperation(
-                "", ((char) 171) + "*", 3, true, false, false, false
+                new OperationFactory()
+                        .setFunction(         ""    )
+                        .setOperator(         ((char) 171) + "*"    )
+                        .setArity(            3          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false       )
+                        .setIsDifferentiable( false        )
+                        .setIsInline(         false       )
         ) {;
             @Override
             public String stringify(String[] children) {

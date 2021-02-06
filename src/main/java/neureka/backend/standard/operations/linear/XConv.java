@@ -8,6 +8,7 @@ import neureka.backend.api.algorithms.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.Operation;
 import neureka.backend.api.operations.OperationContext;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
@@ -25,13 +26,14 @@ public class XConv extends AbstractOperation
     public XConv()
     {
         super(
-                "multiply",
-                "x",
-                2,
-                true,
-                false,
-                true,
-                false
+                new OperationFactory()
+                        .setFunction(         "multiply"    )
+                        .setOperator(         "x"    )
+                        .setArity(            2          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false       )
+                        .setIsDifferentiable( true        )
+                        .setIsInline(         false       )
         );
 
         Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
