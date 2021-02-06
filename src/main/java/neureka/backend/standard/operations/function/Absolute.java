@@ -1,6 +1,7 @@
 package neureka.backend.standard.operations.function;
 
 import neureka.Neureka;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.devices.Device;
@@ -32,7 +33,16 @@ public class Absolute extends AbstractOperation
 
     public Absolute()
     {
-        super("abs", "abs" , 1, false, false, true, false );
+        super(
+                new OperationFactory()
+                .setFunction(         "abs"   )
+                .setOperator(         "abs"   )
+                .setArity(            1       )
+                .setIsOperator(       false   )
+                .setIsIndexer(        false   )
+                .setIsDifferentiable( true    )
+                .setIsInline(         false   )
+        );
 
         Activation operationAlgorithm = new Activation()
             .setADAgentSupplier(

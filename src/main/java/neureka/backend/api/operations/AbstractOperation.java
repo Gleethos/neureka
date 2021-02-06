@@ -56,7 +56,40 @@ public abstract class AbstractOperation implements Operation
     @Getter
     private final Algorithm _defaultAlgorithm = new GenericAlgorithm( "default", _arity, this );
 
+    public AbstractOperation( OperationFactory factory ) {
+        factory.dispose();
+        _construct(
+                factory.getFunction(),
+                factory.getOperator(),
+                factory.getArity(),
+                factory.getIsOperator(),
+                factory.getIsIndexer(),
+                factory.getIsDifferentiable(),
+                factory.getIsInline()
+        );
+    }
+
     public AbstractOperation(
+            String function,
+            String operator,
+            int arity,
+            boolean isOperator,
+            boolean isIndexer,
+            boolean isDifferentiable,
+            boolean isInline
+    ) {
+        _construct(
+                function,
+                operator,
+                arity,
+                isOperator,
+                isIndexer,
+                isDifferentiable,
+                isInline
+        );
+    }
+
+    private void _construct(
             String function,
             String operator,
             int arity,

@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationContext;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -22,7 +23,16 @@ public class Identity extends AbstractOperation
 
     public Identity()
     {
-        super("idy", "idy" , 1, false, false, true, false );
+        super(
+                new OperationFactory()
+                        .setFunction(         "idy"    )
+                        .setOperator(         "idy"    )
+                        .setArity(            1        )
+                        .setIsOperator(       false    )
+                        .setIsIndexer(        false    )
+                        .setIsDifferentiable( true     )
+                        .setIsInline(         false    )
+        );
 
         DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
                 ( inputs, d ) -> {

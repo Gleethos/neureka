@@ -1,6 +1,7 @@
 package neureka.backend.standard.operations.function;
 
 import neureka.Neureka;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.devices.Device;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -40,15 +41,15 @@ public class Quadratic extends AbstractOperation
             };
 
     public Quadratic() {
-
         super(
-                "quad",
-                "quad",
-                1,
-                false,
-                false,
-                true,
-                false
+                new OperationFactory()
+                        .setFunction(         "quad"  )
+                        .setOperator(         "quad"  )
+                        .setArity(            1      )
+                        .setIsOperator(       false  )
+                        .setIsIndexer(        false  )
+                        .setIsDifferentiable( true   )
+                        .setIsInline(         false  )
         );
 
         Activation operationAlgorithm = new Activation()

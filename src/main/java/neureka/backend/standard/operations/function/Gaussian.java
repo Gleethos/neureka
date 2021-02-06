@@ -2,6 +2,7 @@ package neureka.backend.standard.operations.function;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.devices.Device;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -18,9 +19,18 @@ import java.util.List;
 public class Gaussian extends AbstractOperation
 {
 
-    public Gaussian() {
-
-        super("gaus", "gaus", 1, false, false, true, false );
+    public Gaussian()
+    {
+        super(
+                new OperationFactory()
+                        .setFunction(         "gaus"    )
+                        .setOperator(         "gaus"    )
+                        .setArity(            1         )
+                        .setIsOperator(       false     )
+                        .setIsIndexer(        false     )
+                        .setIsDifferentiable( true      )
+                        .setIsInline(         false     )
+        );
 
         DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
                 ( inputs, d ) ->
