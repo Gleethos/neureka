@@ -72,7 +72,6 @@ public class Division extends AbstractOperation
                 true,
                 false,
                 true,
-                false,
                 false
         );
 
@@ -419,8 +418,8 @@ public class Division extends AbstractOperation
 
 
         new AbstractOperation(
-                "inv_division_left", ((char) 171) + "/", 3, true, false, false, false, false
-        ) {
+                "inv_division_left", ((char) 171) + "/", 3, true, false, false, false
+        ) {;
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -437,8 +436,8 @@ public class Division extends AbstractOperation
             }
         };
         new AbstractOperation(
-                "inv_division_right", "/" + ((char) 187), 3, true, false, false, false, false
-        ) {
+                "inv_division_right", "/" + ((char) 187), 3, true, false, false, false
+        ) {;
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -458,7 +457,7 @@ public class Division extends AbstractOperation
         // Convolution:
 
         new AbstractOperation(
-                "divide", "d", 2, true, false, true, false, false
+                "divide", "d", 2, true, false, true, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -530,7 +529,7 @@ public class Division extends AbstractOperation
                 );
 
         new AbstractOperation(
-                "", ((char) 171) + "d", 3, true, false, true, false, false
+                "", ((char) 171) + "d", 3, true, false, true, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -556,7 +555,7 @@ public class Division extends AbstractOperation
         };
 
         new AbstractOperation(
-                "", "d" + ((char) 187), 3, true, false, true, false, false
+                "", "d" + ((char) 187), 3, true, false, true, false
         ) {
             @Override
             public String stringify(String[] children) {

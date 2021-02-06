@@ -28,7 +28,7 @@ public class Modulo extends AbstractOperation {
     {
 
         super(
-                "modulo", "%", -1, true, false, true, false, false
+                "modulo", "%", -1, true, false, true, false
         );
 
         Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
@@ -431,8 +431,8 @@ public class Modulo extends AbstractOperation {
         // RELATED OPERATION TYPES :
 
         new AbstractOperation(
-                "", ((char) 171) + "%", 3, true, false, false, false, false
-        ) {
+                "", ((char) 171) + "%", 3, true, false, false, false
+        ) {;
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -449,8 +449,8 @@ public class Modulo extends AbstractOperation {
             }
         };
         new AbstractOperation(
-                "", "%" + ((char) 187), 3, true, false, false, false, false
-        ) {
+                "", "%" + ((char) 187), 3, true, false, false, false
+        ) {;
             @Override
             public String stringify(String[] children) {
                 return null;

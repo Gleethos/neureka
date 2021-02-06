@@ -74,7 +74,7 @@ public class Power extends AbstractOperation
 
     public Power()
     {
-        super("power", "^", -1, true, false, true, false, false);
+        super("power", "^", -1, true, false, true, false );
 
         //_____________________
         // DEFAULT OPERATION :
@@ -437,7 +437,7 @@ public class Power extends AbstractOperation
         //__________________________
         // RELATED OPERATION TYPES :
 
-        new AbstractOperation("inv_power_left", ((char) 171) + "^", 3, true, false, false, false, false) {
+        new AbstractOperation("inv_power_left", ((char) 171) + "^", 3, true, false, false, false) {
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -453,7 +453,7 @@ public class Power extends AbstractOperation
             return src[ 0 ].call( inputs, j );
             }
         };
-        new AbstractOperation("inv_power_right", "^" + ((char) 187), 3, true, false, false, false, false) {
+        new AbstractOperation("inv_power_right", "^" + ((char) 187), 3, true, false, false, false) {
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -473,7 +473,7 @@ public class Power extends AbstractOperation
         // Convolution:
 
         new AbstractOperation(
-                "power", "p", 2, true, false, false, false, false
+                "power", "p", 2, true, false, false, false
                 ) {
             @Override
             public String stringify(String[] children) {
@@ -544,7 +544,7 @@ public class Power extends AbstractOperation
                     .build()
         );
 
-        new AbstractOperation("", ((char) 171) + "p", 3, true, false, false, false, false) {
+        new AbstractOperation("", ((char) 171) + "p", 3, true, false, false, false) {
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -560,7 +560,7 @@ public class Power extends AbstractOperation
             return src[ 0 ].call( inputs, j );
             }
         };
-        new AbstractOperation("", "p" + ((char) 187), 3, true, false, false, false, false) {
+        new AbstractOperation("", "p" + ((char) 187), 3, true, false, false, false) {
             @Override
             public String stringify(String[] children) {
                 return null;

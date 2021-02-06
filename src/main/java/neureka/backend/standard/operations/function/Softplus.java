@@ -34,7 +34,7 @@ public class Softplus extends AbstractOperation
 
     public Softplus()
     {
-        super("softplus", "softplus" , 1, false, false, true, false, false);
+        super("softplus", "softplus" , 1, false, false, true, false );
 
         Activation operationAlgorithm = new Activation()
             .setADAgentSupplier(

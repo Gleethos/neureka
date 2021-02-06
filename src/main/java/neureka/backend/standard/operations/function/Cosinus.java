@@ -39,7 +39,6 @@ public class Cosinus extends AbstractOperation
                 false,
                 false,
                 true,
-                false,
                 false
         );
 

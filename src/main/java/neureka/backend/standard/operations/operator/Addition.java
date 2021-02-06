@@ -91,7 +91,6 @@ public class Addition extends AbstractOperation {
                 true,
                 false,
                 true,
-                false,
                 false
         );
 
@@ -351,8 +350,8 @@ public class Addition extends AbstractOperation {
         // RELATED OPERATION TYPES :
 
         new AbstractOperation(
-                "", ((char) 171) + "+", 3, true, false, false, false, false
-        ) {
+                "", ((char) 171) + "+", 3, true, false, false, false
+        ) {;
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -371,8 +370,8 @@ public class Addition extends AbstractOperation {
         .setAlgorithm(Broadcast.class, _broadcast);
 
         new AbstractOperation(
-                "", "+" + ((char) 187), 3, true, false, false, false, false
-        ) {
+                "", "+" + ((char) 187), 3, true, false, false, false
+        ) {;
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -393,8 +392,8 @@ public class Addition extends AbstractOperation {
         // Convolutoion:
 
         new AbstractOperation(
-                "add", "a", 2, true, false, false, false, false
-        ) {
+                "add", "a", 2, true, false, false, false
+        ) {;
             @Override
             public String stringify(String[] children) {
                 StringBuilder reconstructed = new StringBuilder();
@@ -467,8 +466,8 @@ public class Addition extends AbstractOperation {
         );
 
         new AbstractOperation(
-                "", ((char) 171) + "a", 3, true, false, false, false, false
-        ) {
+                "", ((char) 171) + "a", 3, true, false, false, false
+        ) {;
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -485,8 +484,8 @@ public class Addition extends AbstractOperation {
             }
         };
         new AbstractOperation(
-                "", "a" + ((char) 187), 3, true, false, false, false, false
-        ) {
+                "", "a" + ((char) 187), 3, true, false, false, false
+        ) {;
             @Override
             public String stringify(String[] children) {
                 return null;

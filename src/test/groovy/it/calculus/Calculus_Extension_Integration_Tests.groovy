@@ -43,7 +43,6 @@ class Calculus_Extension_Integration_Tests extends Specification
                     .setIsOperator(false)
                     .setIsDifferentiable(true)
                     .setIsInline(false)
-                    .setIsPrefix(false)
                     .setStringifier(
                             children -> {
                                 String expression = String.join( ", ", children );

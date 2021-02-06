@@ -20,7 +20,7 @@ public class Gaussian extends AbstractOperation
 
     public Gaussian() {
 
-        super("gaus", "gaus", 1, false, false, true, false, false);
+        super("gaus", "gaus", 1, false, false, true, false );
 
         DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
                 ( inputs, d ) ->

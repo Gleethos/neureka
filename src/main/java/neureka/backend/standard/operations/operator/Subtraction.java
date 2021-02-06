@@ -58,7 +58,7 @@ public class Subtraction extends AbstractOperation
     public Subtraction()
     {
         super(
-                "subtract", "-", -1, true, false, true, false, true
+                "subtract", "-", -1, true, false, true, false
         );
 
         Algorithm.RecursiveJunctionAgent rja =
@@ -348,8 +348,8 @@ public class Subtraction extends AbstractOperation
         // RELATED OPERATIONS :
 
         new AbstractOperation(
-                "", ((char) 171) + "-", 3, true, false, false, false, false
-        ) {
+                "", ((char) 171) + "-", 3, true, false, false, false
+        ) {;
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -366,8 +366,8 @@ public class Subtraction extends AbstractOperation
             }
         };
         new AbstractOperation(
-                "", "-" + ((char) 187), 3, true, false, false, false, false
-        ) {
+                "", "-" + ((char) 187), 3, true, false, false, false
+        ) {;
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -388,8 +388,8 @@ public class Subtraction extends AbstractOperation
 
 
         new AbstractOperation(
-                "", "s", 2, true, false, false, false, false
-        ) {
+                "", "s", 2, true, false, false, false
+        ) {;
             @Override
             public String stringify(String[] children) {
                 StringBuilder reconstructed = new StringBuilder();
@@ -414,8 +414,8 @@ public class Subtraction extends AbstractOperation
         };
 
         new AbstractOperation(
-                "", ((char) 171) + "s", 3, true, false, false, false, false
-        ) {
+                "", ((char) 171) + "s", 3, true, false, false, false
+        ) {;
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -432,8 +432,8 @@ public class Subtraction extends AbstractOperation
             }
         };
         new AbstractOperation(
-                "", "s" + ((char) 187), 3, true, false, false, false, false
-        ) {
+                "", "s" + ((char) 187), 3, true, false, false, false
+        ) {;
             @Override
             public String stringify(String[] children) {
                 return null;

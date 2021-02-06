@@ -34,7 +34,6 @@ public class Product extends AbstractOperation {
                 false,
                 true,
                 true,
-                false,
                 false
         );
 

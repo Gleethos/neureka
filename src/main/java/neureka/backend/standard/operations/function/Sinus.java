@@ -34,7 +34,7 @@ public class Sinus extends AbstractOperation
 
     public Sinus()
     {
-        super("sin", "sin" , 1, false, false, true, false, false);
+        super("sin", "sin" , 1, false, false, true, false );
 
         Activation operationAlgorithm = new Activation()
         .setBackwardADAnalyzer( call -> true )

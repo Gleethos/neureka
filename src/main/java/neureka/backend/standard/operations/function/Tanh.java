@@ -60,7 +60,6 @@ public class Tanh extends AbstractOperation
                 false,
                 false,
                 true,
-                false,
                 false
         );
 

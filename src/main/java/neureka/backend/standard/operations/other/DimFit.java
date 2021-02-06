@@ -24,7 +24,6 @@ public class DimFit extends AbstractOperation
                 false,
                 false,
                 true,
-                false,
                 false
         );
 

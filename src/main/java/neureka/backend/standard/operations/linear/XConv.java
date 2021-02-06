@@ -31,7 +31,6 @@ public class XConv extends AbstractOperation
                 true,
                 false,
                 true,
-                false,
                 false
         );
 
@@ -247,7 +246,6 @@ public class XConv extends AbstractOperation
                 true,
                 false,
                 false,
-                false,
                 false
         ) {
             @Override
@@ -278,7 +276,6 @@ public class XConv extends AbstractOperation
                 "inv_convolve_mul_right", "x" + ((char) 187),
                 3,
                 true,
-                false,
                 false,
                 false,
                 false

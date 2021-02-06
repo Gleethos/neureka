@@ -29,7 +29,6 @@ public class OperationFactory
     @Setter Boolean _isIndexer = null;
     @Setter Boolean _isDifferentiable = null;
     @Setter Boolean _isInline = null;
-    @Setter Boolean _isPrefix = null;
 
     public Operation build()
     {
@@ -41,7 +40,6 @@ public class OperationFactory
         if ( _isIndexer == null ) missing.add( "isIndexer" );
         if ( _isDifferentiable == null ) missing.add( "isDifferentiable" );
         if ( _isInline == null ) missing.add( "isInline" );
-        if ( _isPrefix == null ) missing.add( "isPrefix" );
 
         if ( !missing.isEmpty() )
             throw new IllegalStateException("Factory not satisfied! The following properties are missing: '"+ String.join(", ", missing) +"'");
@@ -53,8 +51,7 @@ public class OperationFactory
                     _isOperator,
                     _isIndexer,
                     _isDifferentiable,
-                    _isInline,
-                    _isPrefix
+                    _isInline
             ) {
                 @Override
                 public String stringify( String[] children ) {

@@ -64,7 +64,7 @@ public class Multiplication extends AbstractOperation
     {
         super(
                 "multiply", "*", -1,
-                true, false, true, false, false
+                true, false, true, false
         );
 
         Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
@@ -467,8 +467,8 @@ public class Multiplication extends AbstractOperation
         .build();
 
         new AbstractOperation(
-                "", ((char) 171) + "*", 3, true, false, false, false, false
-        ) {
+                "", ((char) 171) + "*", 3, true, false, false, false
+        ) {;
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -577,8 +577,8 @@ public class Multiplication extends AbstractOperation
             .build();
 
         new AbstractOperation(
-                "", "*" + ((char) 187), 3, true, false, false, false, false
-        ) {
+                "", "*" + ((char) 187), 3, true, false, false, false
+        ) {;
             @Override
             public String stringify(String[] children) {
                 return null;

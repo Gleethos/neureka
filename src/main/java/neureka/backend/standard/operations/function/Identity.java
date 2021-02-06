@@ -22,7 +22,7 @@ public class Identity extends AbstractOperation
 
     public Identity()
     {
-        super("idy", "idy" , 1, false, false, true, false, false);
+        super("idy", "idy" , 1, false, false, true, false );
 
         DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
                 ( inputs, d ) -> {

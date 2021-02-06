@@ -33,7 +33,6 @@ public abstract class AbstractOperation implements Operation
     @Getter protected boolean _isIndexer;
     @Getter protected boolean _isDifferentiable;
     @Getter protected boolean _isInline;
-    @Getter protected boolean _isPrefix;
     protected boolean _isOperator;
 
     private final Map<Class<?>, Algorithm<?>> _algorithms = new LinkedHashMap<>();
@@ -64,8 +63,7 @@ public abstract class AbstractOperation implements Operation
             boolean isOperator,
             boolean isIndexer,
             boolean isDifferentiable,
-            boolean isInline,
-            boolean isPrefix
+            boolean isInline
     ) {
         _function = function;
         _arity = arity;
@@ -76,7 +74,6 @@ public abstract class AbstractOperation implements Operation
         _isIndexer = isIndexer;
         _isDifferentiable = isDifferentiable;
         _isInline = isInline;
-        _isPrefix = isPrefix;
 
         OperationContext.get().instances().add( this );
         OperationContext.get().lookup().put( operator, this );

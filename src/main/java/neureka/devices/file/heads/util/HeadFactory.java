@@ -9,13 +9,19 @@ import neureka.devices.file.heads.JPEGHead;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *  This class is a simple wrapper around "Loader" & "Saver" lambdas
+ *  which instantiate FileHead classes.
+ */
 public class HeadFactory
 {
-    public interface Loader {
+    public interface Loader
+    {
         FileHead load(String name, Map<String, Object> config);
     }
 
-    public interface Saver {
+    public interface Saver
+    {
         FileHead save(String name, Tsr tensor, Map<String, Object> config);
     }
 
