@@ -20,7 +20,11 @@ import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class Multiplication extends AbstractOperation
@@ -60,7 +64,7 @@ public class Multiplication extends AbstractOperation
     {
         super(
                 "multiply", "*", -1,
-                true, false, true, false
+                true, false, true, false, false
         );
 
         Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
@@ -463,7 +467,7 @@ public class Multiplication extends AbstractOperation
         .build();
 
         new AbstractOperation(
-                "", ((char) 171) + "*", 3, true, false, false, false
+                "", ((char) 171) + "*", 3, true, false, false, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -573,7 +577,7 @@ public class Multiplication extends AbstractOperation
             .build();
 
         new AbstractOperation(
-                "", "*" + ((char) 187), 3, true, false, false, false
+                "", "*" + ((char) 187), 3, true, false, false, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -636,18 +640,10 @@ public class Multiplication extends AbstractOperation
                         )
                 )
         );
-
-
-
-
-
     }
 
 
-
-
     @Contract(pure = true)
-
     @Override
     public String stringify( String[] children ) {
         StringBuilder reconstructed = new StringBuilder();
@@ -662,7 +658,19 @@ public class Multiplication extends AbstractOperation
 
     @Override
     public String asDerivative( Function[] children, int d ) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
+        return Arrays.stream( children )
+                .filter( child -> child.dependsOn( d ) )
+                .map( child -> {
+                            String derivative = child.getDerivative( d ).toString();
+                            return ( (derivative.equals("1.0") ) ? "" : " * " ) +
+                                    Arrays.stream( children )
+                                            .filter( inner -> inner != child )
+                                            .map( Object::toString )
+                                            .collect( Collectors.joining( " * " ) );
+                        }
+                )
+                .map( Object::toString )
+                .collect( Collectors.joining( " + " ) );
     }
 
     @Override

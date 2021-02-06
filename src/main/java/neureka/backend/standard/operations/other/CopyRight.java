@@ -18,7 +18,7 @@ public class CopyRight extends AbstractOperation {
 
     public CopyRight()
     {
-        super("inject_right", ">", 2,true, false, false, true);
+        super("inject_right", ">", 2,true, false, false, true, false);
 
         DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
                 ( inputs, d ) -> {

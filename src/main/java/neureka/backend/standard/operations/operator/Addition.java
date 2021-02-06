@@ -21,7 +21,9 @@ import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Addition extends AbstractOperation {
 
@@ -89,6 +91,7 @@ public class Addition extends AbstractOperation {
                 true,
                 false,
                 true,
+                false,
                 false
         );
 
@@ -348,7 +351,7 @@ public class Addition extends AbstractOperation {
         // RELATED OPERATION TYPES :
 
         new AbstractOperation(
-                "", ((char) 171) + "+", 3, true, false, false, false
+                "", ((char) 171) + "+", 3, true, false, false, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -368,7 +371,7 @@ public class Addition extends AbstractOperation {
         .setAlgorithm(Broadcast.class, _broadcast);
 
         new AbstractOperation(
-                "", "+" + ((char) 187), 3, true, false, false, false
+                "", "+" + ((char) 187), 3, true, false, false, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -390,7 +393,7 @@ public class Addition extends AbstractOperation {
         // Convolutoion:
 
         new AbstractOperation(
-                "add", "a", 2, true, false, false, false
+                "add", "a", 2, true, false, false, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -464,7 +467,7 @@ public class Addition extends AbstractOperation {
         );
 
         new AbstractOperation(
-                "", ((char) 171) + "a", 3, true, false, false, false
+                "", ((char) 171) + "a", 3, true, false, false, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -482,7 +485,7 @@ public class Addition extends AbstractOperation {
             }
         };
         new AbstractOperation(
-                "", "a" + ((char) 187), 3, true, false, false, false
+                "", "a" + ((char) 187), 3, true, false, false, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -519,7 +522,13 @@ public class Addition extends AbstractOperation {
 
     @Override
     public String asDerivative( Function[] children, int d ) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
+        boolean dep = children[0].dependsOn(d);
+        String s =  Arrays.stream( children )
+                .filter( child -> child.dependsOn( d ) )
+                .map( child -> child.getDerivative( d ) )
+                .map( Object::toString )
+                .collect( Collectors.joining( " + " ) );
+        return s;
     }
 
     @Override

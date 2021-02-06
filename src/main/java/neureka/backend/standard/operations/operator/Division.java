@@ -21,7 +21,9 @@ import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class Division extends AbstractOperation
@@ -70,6 +72,7 @@ public class Division extends AbstractOperation
                 true,
                 false,
                 true,
+                false,
                 false
         );
 
@@ -416,7 +419,7 @@ public class Division extends AbstractOperation
 
 
         new AbstractOperation(
-                "inv_division_left", ((char) 171) + "/", 3, true, false, false, false
+                "inv_division_left", ((char) 171) + "/", 3, true, false, false, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -434,7 +437,7 @@ public class Division extends AbstractOperation
             }
         };
         new AbstractOperation(
-                "inv_division_right", "/" + ((char) 187), 3, true, false, false, false
+                "inv_division_right", "/" + ((char) 187), 3, true, false, false, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -455,8 +458,8 @@ public class Division extends AbstractOperation
         // Convolution:
 
         new AbstractOperation(
-                "divide", "d", 2, true, false, true, false
-                ) {
+                "divide", "d", 2, true, false, true, false, false
+        ) {
             @Override
             public String stringify(String[] children) {
                 StringBuilder reconstructed = new StringBuilder();
@@ -527,7 +530,7 @@ public class Division extends AbstractOperation
                 );
 
         new AbstractOperation(
-                "", ((char) 171) + "d", 3, true, false, true, false
+                "", ((char) 171) + "d", 3, true, false, true, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -553,7 +556,7 @@ public class Division extends AbstractOperation
         };
 
         new AbstractOperation(
-                "", "d" + ((char) 187), 3, true, false, true, false
+                "", "d" + ((char) 187), 3, true, false, true, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -598,7 +601,30 @@ public class Division extends AbstractOperation
 
     @Override
     public String asDerivative( Function[] children, int d ) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
+        return _asDerivative( children, d, children.length - 1 );
+    }
+
+    private String _asDerivative( Function[] children, int d, int index ) {
+        if ( d >= 0 ) {
+            if ( index <= 0 ) return children[ 0 ].getDerivative( d ).toString();
+            else {
+                String first = ( children[ index - 1 ].dependsOn( d ) )
+                        ? "(" + _asDerivative( children, d, index - 1 )+ " / " + children[ index ]  + " ) - "
+                        : "- ";
+
+                String s = first +
+                        "((" + // The second expression is the inner derivative (current index)! (inner times outer...)
+                            children[ index - 1 ] + " * " + children[ index ].getDerivative(d) +
+                        ") / ( "
+                            + children[ index ] + "^2 " +
+                        ") )";
+                return s;
+            }
+        } else {
+            if ( index <= 0 ) return children[ 0 ].toString();
+            else
+                return _asDerivative( children, -1, index - 1 ) + " / " + children[ index ].toString();
+        }
     }
 
     @Override

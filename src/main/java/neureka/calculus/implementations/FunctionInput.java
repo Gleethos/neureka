@@ -35,7 +35,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
     }
 
     @Override
-    public boolean dependsOn(int index) {
+    public boolean dependsOn( int index ) {
         return index() == index;
     }
 
@@ -66,7 +66,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
         }
         _index = number;
         if (equation.contains("g")) {
-            _index = -(_index+1);
+            _index = -(_index + 1 );
         }
 
         return this;

@@ -91,18 +91,22 @@ public class FunctionBuilder {
         List<String> foundComponents = new ArrayList<>();
         int i = 0;
         while ( i < expression.length() ) {
-            final String newComponent = FunctionParser.findComponentIn(expression, i);
+            final String newComponent = FunctionParser.findComponentIn( expression, i );
             if ( newComponent != null ) {
-                if ( foundComponents.size() <= foundJunctors.size() ) foundComponents.add( newComponent );
-                i += newComponent.length();
-                final String newOperation = FunctionParser.parsedOperation(expression, i);
-                if (newOperation != null) {
-                    i += newOperation.length();
-                    if (newOperation.length() <= 0) continue;
-                    foundJunctors.add(newOperation);
+                if ( newComponent.trim().isEmpty()) i += newComponent.length();
+                else {
+                    if (foundComponents.size() <= foundJunctors.size()) {
+                        foundComponents.add(newComponent);
+                    }
+                    i += newComponent.length();
+                    final String newOperation = FunctionParser.parsedOperation(expression, i);
+                    if (newOperation != null) {
+                        i += newOperation.length();
+                        if (newOperation.length() <= 0) continue;
+                        foundJunctors.add(newOperation);
+                    }
                 }
-            }
-            else ++i;
+            } else ++i;
         }
         //---
         int counter = OperationContext.get().id();

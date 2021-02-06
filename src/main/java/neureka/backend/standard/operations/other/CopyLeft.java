@@ -25,7 +25,8 @@ public class CopyLeft extends AbstractOperation {
                 true,
                 false,
                 false,
-                true
+                true,
+                false
         );
 
         Scalarization scalarization = new Scalarization()

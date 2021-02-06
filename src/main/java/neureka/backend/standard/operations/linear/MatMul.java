@@ -32,6 +32,7 @@ public class MatMul extends AbstractOperation
                 true,
                 false,
                 true,
+                false,
                 false
         );
 

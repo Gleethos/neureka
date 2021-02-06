@@ -158,6 +158,8 @@ public interface Operation
 
     boolean isInline();
 
+    boolean isPrefix();
+
     <T extends Algorithm<T>> boolean supports( Class<T> implementation );
 
     /**

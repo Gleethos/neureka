@@ -33,6 +33,7 @@ public class Summation extends AbstractOperation
                 false,
                 true,
                 true,
+                false,
                 false
         );
 

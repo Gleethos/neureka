@@ -54,12 +54,14 @@ public class FunctionParser
                          found != null && !OperationContext.get().instance(found).isOperator()
                     ) {
                         ii = -1; // end inner loop
-                        component.append(found.substring(0,found.length()-1));
+                        component.append( found, 0, found.length()-1 );
                         i += found.length()-1;
                     } else {
-                        possibleOperation = exp.substring(i+1, ii);
+                        possibleOperation = exp.substring( i + 1, ii );
                         if (FunctionParser.isAnyOperation(possibleOperation)) {
-                            if (exp.charAt( i )=='j' || !Character.isLetter(exp.charAt( i ))) {
+                            if (
+                                    ( exp.charAt( i )=='j' || !Character.isLetter(exp.charAt( i )) )
+                            ) {
                                 component.append(exp.charAt( i ));
                                 return component.toString();
                             }

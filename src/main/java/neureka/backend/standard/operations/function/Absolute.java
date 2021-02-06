@@ -32,7 +32,7 @@ public class Absolute extends AbstractOperation
 
     public Absolute()
     {
-        super("abs", "abs" , 1, false, false, true, false);
+        super("abs", "abs" , 1, false, false, true, false, false);
 
         Activation operationAlgorithm = new Activation()
             .setADAgentSupplier(

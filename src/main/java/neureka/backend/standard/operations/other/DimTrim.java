@@ -26,6 +26,7 @@ public class DimTrim extends AbstractOperation
                 false,
                 false,
                 true,
+                false,
                 false
         );
 

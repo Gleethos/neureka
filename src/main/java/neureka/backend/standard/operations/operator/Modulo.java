@@ -28,7 +28,7 @@ public class Modulo extends AbstractOperation {
     {
 
         super(
-                "modulo", "%", -1, true, false, true, false
+                "modulo", "%", -1, true, false, true, false, false
         );
 
         Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
@@ -431,7 +431,7 @@ public class Modulo extends AbstractOperation {
         // RELATED OPERATION TYPES :
 
         new AbstractOperation(
-                "", ((char) 171) + "%", 3, true, false, false, false
+                "", ((char) 171) + "%", 3, true, false, false, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -449,7 +449,7 @@ public class Modulo extends AbstractOperation {
             }
         };
         new AbstractOperation(
-                "", "%" + ((char) 187), 3, true, false, false, false
+                "", "%" + ((char) 187), 3, true, false, false, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -498,7 +498,7 @@ public class Modulo extends AbstractOperation {
 
     @Override
     public String asDerivative( Function[] children, int d ) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
+        return children[ 0 ].getDerivative( d ).toString();
     }
 
     @Override

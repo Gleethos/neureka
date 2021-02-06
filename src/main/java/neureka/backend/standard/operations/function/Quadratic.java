@@ -48,6 +48,7 @@ public class Quadratic extends AbstractOperation
                 false,
                 false,
                 true,
+                false,
                 false
         );
 

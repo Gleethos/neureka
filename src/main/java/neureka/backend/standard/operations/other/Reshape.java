@@ -25,6 +25,7 @@ public class Reshape extends AbstractOperation
                 true,
                 false,
                 true,
+                false,
                 false
         );
 

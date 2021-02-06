@@ -93,7 +93,7 @@ public class FunctionNode extends AbstractBaseFunction
 
     @Override
     public Function getDerivative( int index ) {
-        return null;//_operation.getDerivator().asDerivative()
+        return Function.create( _operation.asDerivative( _src, index ) );
     }
 
     //------------------------------------------------------------------------------------------------------------------

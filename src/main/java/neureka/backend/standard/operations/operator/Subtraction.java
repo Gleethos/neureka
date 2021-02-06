@@ -19,7 +19,9 @@ import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Subtraction extends AbstractOperation
 {
@@ -56,7 +58,7 @@ public class Subtraction extends AbstractOperation
     public Subtraction()
     {
         super(
-                "subtract", "-", -1, true, false, true, false
+                "subtract", "-", -1, true, false, true, false, true
         );
 
         Algorithm.RecursiveJunctionAgent rja =
@@ -346,7 +348,7 @@ public class Subtraction extends AbstractOperation
         // RELATED OPERATIONS :
 
         new AbstractOperation(
-                "", ((char) 171) + "-", 3, true, false, false, false
+                "", ((char) 171) + "-", 3, true, false, false, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -364,7 +366,7 @@ public class Subtraction extends AbstractOperation
             }
         };
         new AbstractOperation(
-                "", "-" + ((char) 187), 3, true, false, false, false
+                "", "-" + ((char) 187), 3, true, false, false, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -386,7 +388,7 @@ public class Subtraction extends AbstractOperation
 
 
         new AbstractOperation(
-                "", "s", 2, true, false, false, false
+                "", "s", 2, true, false, false, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -412,7 +414,7 @@ public class Subtraction extends AbstractOperation
         };
 
         new AbstractOperation(
-                "", ((char) 171) + "s", 3, true, false, false, false
+                "", ((char) 171) + "s", 3, true, false, false, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -430,7 +432,7 @@ public class Subtraction extends AbstractOperation
             }
         };
         new AbstractOperation(
-                "", "s" + ((char) 187), 3, true, false, false, false
+                "", "s" + ((char) 187), 3, true, false, false, false, false
         ) {
             @Override
             public String stringify(String[] children) {
@@ -467,7 +469,12 @@ public class Subtraction extends AbstractOperation
 
     @Override
     public String asDerivative( Function[] children, int d ) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
+        return ( ( children[0].dependsOn(d) ) ? "" : "-" ) +
+                    Arrays.stream( children )
+                    .filter( child -> child.dependsOn( d ) )
+                    .map( child -> child.getDerivative( d ) )
+                    .map( Object::toString )
+                    .collect( Collectors.joining( " - " ) );
     }
 
     @Override

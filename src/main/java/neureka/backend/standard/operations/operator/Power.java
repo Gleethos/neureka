@@ -22,6 +22,8 @@ import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Power extends AbstractOperation
 {
@@ -72,7 +74,7 @@ public class Power extends AbstractOperation
 
     public Power()
     {
-        super("power", "^", -1, true, false, true, false);
+        super("power", "^", -1, true, false, true, false, false);
 
         //_____________________
         // DEFAULT OPERATION :
@@ -435,7 +437,7 @@ public class Power extends AbstractOperation
         //__________________________
         // RELATED OPERATION TYPES :
 
-        new AbstractOperation("inv_power_left", ((char) 171) + "^", 3, true, false, false, false) {
+        new AbstractOperation("inv_power_left", ((char) 171) + "^", 3, true, false, false, false, false) {
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -451,7 +453,7 @@ public class Power extends AbstractOperation
             return src[ 0 ].call( inputs, j );
             }
         };
-        new AbstractOperation("inv_power_right", "^" + ((char) 187), 3, true, false, false, false) {
+        new AbstractOperation("inv_power_right", "^" + ((char) 187), 3, true, false, false, false, false) {
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -471,7 +473,7 @@ public class Power extends AbstractOperation
         // Convolution:
 
         new AbstractOperation(
-                "power", "p", 2, true, false, false, false
+                "power", "p", 2, true, false, false, false, false
                 ) {
             @Override
             public String stringify(String[] children) {
@@ -542,7 +544,7 @@ public class Power extends AbstractOperation
                     .build()
         );
 
-        new AbstractOperation("", ((char) 171) + "p", 3, true, false, false, false) {
+        new AbstractOperation("", ((char) 171) + "p", 3, true, false, false, false, false) {
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -558,7 +560,7 @@ public class Power extends AbstractOperation
             return src[ 0 ].call( inputs, j );
             }
         };
-        new AbstractOperation("", "p" + ((char) 187), 3, true, false, false, false) {
+        new AbstractOperation("", "p" + ((char) 187), 3, true, false, false, false, false) {
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -604,7 +606,17 @@ public class Power extends AbstractOperation
 
     @Override
     public String asDerivative( Function[] children, int d ) {
-        throw new IllegalStateException("Operation does not support dynamic derivation!");
+        Function a = children[0];
+        Function b = Function.create(
+                IntStream.range( 1, children.length )
+                .mapToObj(i -> children[ i ].toString() )
+                .collect(Collectors.joining(" * "))
+        );
+        String aAsStr = a.toString();
+        String bAsStr = b.toString();
+        String first = bAsStr + aAsStr + " ^ (" + bAsStr + " - 1)";
+        String second = "ln("+aAsStr+") * "+aAsStr+" ^ "+bAsStr;
+        return "( "+first+" )+("+second+")";
     }
 
     @Override
