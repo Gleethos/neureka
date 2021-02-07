@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationContext;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -19,13 +20,15 @@ import java.util.List;
 public class CopyLeft extends AbstractOperation {
 
     public CopyLeft() {
-
         super(
-                "left_inline", "<", 2,
-                true,
-                false,
-                false,
-                true
+                new OperationFactory()
+                        .setFunction(         "left_inline"    )
+                        .setOperator(         "<"        )
+                        .setArity(            -1         )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false       )
+                        .setIsInline(         true      )
         );
 
         Scalarization scalarization = new Scalarization()

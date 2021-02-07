@@ -64,8 +64,14 @@ public class Multiplication extends AbstractOperation
     public Multiplication()
     {
         super(
-                "multiply", "*", -1,
-                true, false, true, false
+                new OperationFactory()
+                        .setFunction(         "multiply"    )
+                        .setOperator(         "*"        )
+                        .setArity(            -1         )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( true       )
+                        .setIsInline(         false      )
         );
 
         Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->

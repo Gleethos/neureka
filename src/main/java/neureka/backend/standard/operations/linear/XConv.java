@@ -242,13 +242,16 @@ public class XConv extends AbstractOperation
                             )
                         )
         );
+
         new AbstractOperation(
-                "inv_convolve_mul_left", ((char) 171) + "x",
-                3,
-                true,
-                false,
-                false,
-                false
+                new OperationFactory()
+                        .setFunction(         "inv_convolve_mul_left"    )
+                        .setOperator(         ((char) 171) + "x"         )
+                        .setArity(            3                         )
+                        .setIsOperator(       true        )
+                        .setIsIndexer(        false       )
+                        .setIsDifferentiable( false       )
+                        .setIsInline(         false       )
         ) {
             @Override
             public String stringify(String[] children) {
@@ -275,12 +278,14 @@ public class XConv extends AbstractOperation
         .setAlgorithm(Convolution.class, convolution);
 
         new AbstractOperation(
-                "inv_convolve_mul_right", "x" + ((char) 187),
-                3,
-                true,
-                false,
-                false,
-                false
+                new OperationFactory()
+                        .setFunction(         "inv_convolve_mul_right"    )
+                        .setOperator(         "x" + ((char) 187)         )
+                        .setArity(            3                         )
+                        .setIsOperator(       true        )
+                        .setIsIndexer(        false       )
+                        .setIsDifferentiable( false       )
+                        .setIsInline(         false       )
                 ) {
             @Override
             public String stringify(String[] children) {

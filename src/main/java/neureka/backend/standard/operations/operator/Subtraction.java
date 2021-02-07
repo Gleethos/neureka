@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
@@ -58,7 +59,14 @@ public class Subtraction extends AbstractOperation
     public Subtraction()
     {
         super(
-                "subtract", "-", -1, true, false, true, false
+                new OperationFactory()
+                        .setFunction(         "subtract"    )
+                        .setOperator(         "-"        )
+                        .setArity(            -1         )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( true       )
+                        .setIsInline(         false      )
         );
 
         Algorithm.RecursiveJunctionAgent rja =

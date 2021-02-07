@@ -8,6 +8,7 @@ import neureka.backend.api.algorithms.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.Operation;
 import neureka.backend.api.operations.OperationContext;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.Operator;
@@ -74,7 +75,16 @@ public class Power extends AbstractOperation
 
     public Power()
     {
-        super("power", "^", -1, true, false, true, false );
+        super(
+                new OperationFactory()
+                        .setFunction(         "power"    )
+                        .setOperator(         "^"        )
+                        .setArity(            -1         )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( true       )
+                        .setIsInline(         false      )
+        );
 
         //_____________________
         // DEFAULT OPERATION :

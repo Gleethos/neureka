@@ -8,6 +8,7 @@ import neureka.backend.api.algorithms.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.Operation;
 import neureka.backend.api.operations.OperationContext;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.Operator;
@@ -85,13 +86,14 @@ public class Addition extends AbstractOperation {
     public Addition()
     {
         super (
-                "add",
-                "+",
-                -1,
-                true,
-                false,
-                true,
-                false
+                new OperationFactory()
+                        .setFunction(         "add"    )
+                        .setOperator(         "+"        )
+                        .setArity(            -1         )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( true       )
+                        .setIsInline(         false      )
         );
 
         Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
