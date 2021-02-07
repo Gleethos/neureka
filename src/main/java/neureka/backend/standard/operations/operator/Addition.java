@@ -352,7 +352,14 @@ public class Addition extends AbstractOperation {
         // RELATED OPERATION TYPES :
 
         new AbstractOperation(
-                "", ((char) 171) + "+", 3, true, false, false, false
+                new OperationFactory()
+                        .setFunction(         ""    )
+                        .setOperator(         ((char) 171) + "+"        )
+                        .setArity(            3          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false      )
+                        .setIsInline(         false      )
         ) {;
             @Override
             public String stringify(String[] children) {
@@ -372,7 +379,14 @@ public class Addition extends AbstractOperation {
         .setAlgorithm(Broadcast.class, _broadcast);
 
         new AbstractOperation(
-                "", "+" + ((char) 187), 3, true, false, false, false
+                new OperationFactory()
+                        .setFunction(         ""                 )
+                        .setOperator(         "+" + ((char) 187) )
+                        .setArity(            3                  )
+                        .setIsOperator(       true               )
+                        .setIsIndexer(        false              )
+                        .setIsDifferentiable( false              )
+                        .setIsInline(         false              )
         ) {;
             @Override
             public String stringify(String[] children) {
@@ -394,7 +408,14 @@ public class Addition extends AbstractOperation {
         // Convolutoion:
 
         new AbstractOperation(
-                "add", "a", 2, true, false, false, false
+                new OperationFactory()
+                        .setFunction(         "add"   )
+                        .setOperator(         "a" )
+                        .setArity(            2                  )
+                        .setIsOperator(       true               )
+                        .setIsIndexer(        false              )
+                        .setIsDifferentiable( false              )
+                        .setIsInline(         false              )
         ) {;
             @Override
             public String stringify(String[] children) {
@@ -468,7 +489,14 @@ public class Addition extends AbstractOperation {
         );
 
         new AbstractOperation(
-                "", ((char) 171) + "a", 3, true, false, false, false
+                new OperationFactory()
+                        .setFunction(         ""                 )
+                        .setOperator(         ((char) 171) + "a" )
+                        .setArity(            3                  )
+                        .setIsOperator(       true               )
+                        .setIsIndexer(        false              )
+                        .setIsDifferentiable( false              )
+                        .setIsInline(         false              )
         ) {;
             @Override
             public String stringify(String[] children) {
@@ -485,8 +513,16 @@ public class Addition extends AbstractOperation {
             return src[ 0 ].call( inputs, j );
             }
         };
+
         new AbstractOperation(
-                "", "a" + ((char) 187), 3, true, false, false, false
+                new OperationFactory()
+                        .setFunction(         ""                 )
+                        .setOperator(         "a" + ((char) 187) )
+                        .setArity(            3                  )
+                        .setIsOperator(       true               )
+                        .setIsIndexer(        false              )
+                        .setIsDifferentiable( false              )
+                        .setIsInline(         false              )
         ) {;
             @Override
             public String stringify(String[] children) {

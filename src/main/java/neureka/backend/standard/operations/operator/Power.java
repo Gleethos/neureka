@@ -447,7 +447,16 @@ public class Power extends AbstractOperation
         //__________________________
         // RELATED OPERATION TYPES :
 
-        new AbstractOperation("inv_power_left", ((char) 171) + "^", 3, true, false, false, false) {
+        new AbstractOperation(
+                new OperationFactory()
+                        .setFunction(         "inv_power_left"   )
+                        .setOperator(         ((char) 171) + "^" )
+                        .setArity(            3                  )
+                        .setIsOperator(       true               )
+                        .setIsIndexer(        false              )
+                        .setIsDifferentiable( false              )
+                        .setIsInline(         false              )
+        ) {
             @Override
             public String stringify(String[] children) {
                 return null;

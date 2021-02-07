@@ -2,6 +2,7 @@ package neureka.backend.standard.operations.other;
 
 import neureka.Tsr;
 import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.devices.Device;
 import neureka.autograd.DefaultADAgent;
@@ -21,11 +22,14 @@ public class Reshape extends AbstractOperation
     public Reshape()
     {
         super(
-                "reshape", ",", -1,
-                true,
-                false,
-                true,
-                false
+                new OperationFactory()
+                        .setFunction(         "reshape"    )
+                        .setOperator(         ","        )
+                        .setArity(            -1         )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( true       )
+                        .setIsInline(         false      )
         );
 
         GenericAlgorithm implementation = new GenericAlgorithm( "reshape" )

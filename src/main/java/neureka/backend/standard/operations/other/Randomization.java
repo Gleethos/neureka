@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationContext;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.HostImplementation;
@@ -21,8 +22,14 @@ public class Randomization extends AbstractOperation
     public Randomization()
     {
         super(
-                "random", "rand", 1,
-                true, false, false, true
+                new OperationFactory()
+                        .setFunction(         "random"    )
+                        .setOperator(         "rand"        )
+                        .setArity(            1          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false       )
+                        .setIsInline(         true      )
         );
 
         ScalarOperatorCreator< PrimaryNDIConsumer > creator =

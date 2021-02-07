@@ -438,7 +438,13 @@ public class Modulo extends AbstractOperation {
         // RELATED OPERATION TYPES :
 
         new AbstractOperation(
-                "", ((char) 171) + "%", 3, true, false, false, false
+                "",
+                ((char) 171) + "%",
+                3,
+                true,
+                false,
+                false,
+                false
         ) {;
             @Override
             public String stringify(String[] children) {

@@ -439,8 +439,16 @@ public class Subtraction extends AbstractOperation
             return src[ 0 ].call( inputs, j );
             }
         };
+
         new AbstractOperation(
-                "", "s" + ((char) 187), 3, true, false, false, false
+                new OperationFactory()
+                        .setFunction(         ""                 )
+                        .setOperator(         "s" + ((char) 187) )
+                        .setArity(            3                  )
+                        .setIsOperator(       true               )
+                        .setIsIndexer(        false              )
+                        .setIsDifferentiable( false              )
+                        .setIsInline(         false              )
         ) {;
             @Override
             public String stringify(String[] children) {

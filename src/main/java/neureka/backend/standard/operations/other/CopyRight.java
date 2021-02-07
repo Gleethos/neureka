@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationContext;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
@@ -18,7 +19,16 @@ public class CopyRight extends AbstractOperation {
 
     public CopyRight()
     {
-        super("inject_right", ">", 2,true, false, false, true);
+        super(
+                new OperationFactory()
+                        .setFunction(         "inject_right"    )
+                        .setOperator(         ">"        )
+                        .setArity(            2          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false       )
+                        .setIsInline(         true      )
+        );
 
         DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
                 ( inputs, d ) -> {

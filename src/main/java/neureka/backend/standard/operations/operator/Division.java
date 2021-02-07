@@ -460,7 +460,14 @@ public class Division extends AbstractOperation
         // Convolution:
 
         new AbstractOperation(
-                "divide", "d", 2, true, false, true, false
+                new OperationFactory()
+                        .setFunction(         "divide"           )
+                        .setOperator(         "d"                )
+                        .setArity(            2                  )
+                        .setIsOperator(       true               )
+                        .setIsIndexer(        false              )
+                        .setIsDifferentiable( true               )
+                        .setIsInline(         false              )
         ) {
             @Override
             public String stringify(String[] children) {
@@ -558,7 +565,14 @@ public class Division extends AbstractOperation
         };
 
         new AbstractOperation(
-                "", "d" + ((char) 187), 3, true, false, true, false
+                new OperationFactory()
+                        .setFunction(         ""                 )
+                        .setOperator(         "d" + ((char) 187) )
+                        .setArity(            3                  )
+                        .setIsOperator(       true               )
+                        .setIsIndexer(        false              )
+                        .setIsDifferentiable( true               )
+                        .setIsInline(         false              )
         ) {
             @Override
             public String stringify(String[] children) {
