@@ -438,13 +438,14 @@ public class Modulo extends AbstractOperation {
         // RELATED OPERATION TYPES :
 
         new AbstractOperation(
-                "",
-                ((char) 171) + "%",
-                3,
-                true,
-                false,
-                false,
-                false
+                new OperationFactory()
+                        .setFunction(         ""                 )
+                        .setOperator(         ((char) 171) + "%" )
+                        .setArity(            3          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false      )
+                        .setIsInline(         false      )
         ) {;
             @Override
             public String stringify(String[] children) {
@@ -461,8 +462,16 @@ public class Modulo extends AbstractOperation {
             return src[ 0 ].call( inputs, j );
             }
         };
+
         new AbstractOperation(
-                "", "%" + ((char) 187), 3, true, false, false, false
+                new OperationFactory()
+                        .setFunction(         "" )
+                        .setOperator(         "%" + ((char) 187)  )
+                        .setArity(            3          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false      )
+                        .setIsInline(         false      )
         ) {;
             @Override
             public String stringify(String[] children) {

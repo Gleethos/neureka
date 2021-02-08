@@ -56,75 +56,36 @@ public abstract class AbstractOperation implements Operation
     @Getter
     private final Algorithm _defaultAlgorithm = new GenericAlgorithm( "default", _arity, this );
 
-    public AbstractOperation( OperationFactory factory ) {
+    public AbstractOperation( OperationFactory factory )
+    {
         factory.dispose();
-        _construct(
-                factory.getFunction(),
-                factory.getOperator(),
-                factory.getArity(),
-                factory.getIsOperator(),
-                factory.getIsIndexer(),
-                factory.getIsDifferentiable(),
-                factory.getIsInline()
-        );
-    }
 
-    public AbstractOperation(
-            String function,
-            String operator,
-            int arity,
-            boolean isOperator,
-            boolean isIndexer,
-            boolean isDifferentiable,
-            boolean isInline
-    ) {
-        _construct(
-                function,
-                operator,
-                arity,
-                isOperator,
-                isIndexer,
-                isDifferentiable,
-                isInline
-        );
-    }
+        _function = factory.getFunction();
+        _arity = factory.getArity();
+        _operator = factory.getOperator();
+        _isOperator = factory.getIsOperator();
+        _isIndexer = factory.getIsIndexer();
+        _isDifferentiable = factory.getIsDifferentiable();
+        _isInline = factory.getIsInline();
 
-    private void _construct(
-            String function,
-            String operator,
-            int arity,
-            boolean isOperator,
-            boolean isIndexer,
-            boolean isDifferentiable,
-            boolean isInline
-    ) {
-        _function = function;
-        _arity = arity;
         _id = OperationContext.get().id();
         OperationContext.get().incrementID();
-        _operator = operator;
-        _isOperator = isOperator;
-        _isIndexer = isIndexer;
-        _isDifferentiable = isDifferentiable;
-        _isInline = isInline;
 
         OperationContext.get().instances().add( this );
-        OperationContext.get().lookup().put( operator, this );
-        OperationContext.get().lookup().put( operator.toLowerCase(), this );
+        OperationContext.get().lookup().put( _operator, this );
+        OperationContext.get().lookup().put( _operator.toLowerCase(), this );
         if (
-                operator
+                _operator
                         .replace((""+((char)171)), "")
                         .replace((""+((char)187)), "")
                         .matches("[a-z]")
         ) {
-            if ( operator.contains( ""+((char)171) ) )
-                OperationContext.get().lookup().put(operator.replace((""+((char)171)), "<<"), this);
+            if ( _operator.contains( ""+((char)171) ) )
+                OperationContext.get().lookup().put(_operator.replace((""+((char)171)), "<<"), this);
 
-            if ( operator.contains( ""+((char)187) ) )
-                OperationContext.get().lookup().put(operator.replace((""+((char)187)),">>"), this);
-
+            if ( _operator.contains( ""+((char)187) ) )
+                OperationContext.get().lookup().put(_operator.replace((""+((char)187)),">>"), this);
         }
-
     }
 
     //==================================================================================================================

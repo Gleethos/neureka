@@ -591,7 +591,14 @@ public class Multiplication extends AbstractOperation
             .build();
 
         new AbstractOperation(
-                "", "*" + ((char) 187), 3, true, false, false, false
+                new OperationFactory()
+                        .setFunction(         "" )
+                        .setOperator(         "*" + ((char) 187)  )
+                        .setArity(            3          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false      )
+                        .setIsInline(         false      )
         ) {;
             @Override
             public String stringify(String[] children) {

@@ -356,7 +356,14 @@ public class Subtraction extends AbstractOperation
         // RELATED OPERATIONS :
 
         new AbstractOperation(
-                "", ((char) 171) + "-", 3, true, false, false, false
+                new OperationFactory()
+                        .setFunction(         "" )
+                        .setOperator(         ((char) 171) + "-"  )
+                        .setArity(            3          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false      )
+                        .setIsInline(         false      )
         ) {;
             @Override
             public String stringify(String[] children) {
@@ -373,8 +380,16 @@ public class Subtraction extends AbstractOperation
             return src[ 0 ].call( inputs, j );
             }
         };
+
         new AbstractOperation(
-                "", "-" + ((char) 187), 3, true, false, false, false
+                new OperationFactory()
+                        .setFunction(         "" )
+                        .setOperator(         "-" + ((char) 187)  )
+                        .setArity(            3          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false      )
+                        .setIsInline(         false      )
         ) {;
             @Override
             public String stringify(String[] children) {
@@ -394,9 +409,15 @@ public class Subtraction extends AbstractOperation
 
         // Convolution:
 
-
         new AbstractOperation(
-                "", "s", 2, true, false, false, false
+                new OperationFactory()
+                        .setFunction(         "" )
+                        .setOperator(         "s"  )
+                        .setArity(            2          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false      )
+                        .setIsInline(         false      )
         ) {;
             @Override
             public String stringify(String[] children) {
@@ -422,7 +443,14 @@ public class Subtraction extends AbstractOperation
         };
 
         new AbstractOperation(
-                "", ((char) 171) + "s", 3, true, false, false, false
+                new OperationFactory()
+                        .setFunction(         "" )
+                        .setOperator(         ((char) 171) + "s"  )
+                        .setArity(            3          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false      )
+                        .setIsInline(         false      )
         ) {;
             @Override
             public String stringify(String[] children) {

@@ -472,7 +472,18 @@ public class Power extends AbstractOperation
             return src[ 0 ].call( inputs, j );
             }
         };
-        new AbstractOperation("inv_power_right", "^" + ((char) 187), 3, true, false, false, false) {
+
+
+        new AbstractOperation(
+                new OperationFactory()
+                        .setFunction(         "inv_power_right" )
+                        .setOperator(         "^" + ((char) 187)  )
+                        .setArity(            3          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false      )
+                        .setIsInline(         false      )
+        ) {
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -492,7 +503,14 @@ public class Power extends AbstractOperation
         // Convolution:
 
         new AbstractOperation(
-                "power", "p", 2, true, false, false, false
+                new OperationFactory()
+                        .setFunction(         "power" )
+                        .setOperator(         "p"  )
+                        .setArity(            2          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false      )
+                        .setIsInline(         false      )
                 ) {
             @Override
             public String stringify(String[] children) {
@@ -563,7 +581,16 @@ public class Power extends AbstractOperation
                     .build()
         );
 
-        new AbstractOperation("", ((char) 171) + "p", 3, true, false, false, false) {
+        new AbstractOperation(
+                new OperationFactory()
+                        .setFunction(         "" )
+                        .setOperator(         ((char) 171) + "p"  )
+                        .setArity(            3          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false      )
+                        .setIsInline(         false      )
+        ) {
             @Override
             public String stringify(String[] children) {
                 return null;
@@ -579,7 +606,18 @@ public class Power extends AbstractOperation
             return src[ 0 ].call( inputs, j );
             }
         };
-        new AbstractOperation("", "p" + ((char) 187), 3, true, false, false, false) {
+
+
+        new AbstractOperation(
+                new OperationFactory()
+                        .setFunction(         "" )
+                        .setOperator(         "p" + ((char) 187)  )
+                        .setArity(            3          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false      )
+                        .setIsInline(         false      )
+        ) {
             @Override
             public String stringify(String[] children) {
                 return null;

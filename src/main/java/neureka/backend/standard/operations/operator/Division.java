@@ -419,9 +419,15 @@ public class Division extends AbstractOperation
         //__________________________
         // RELATED OPERATION TYPES :
 
-
         new AbstractOperation(
-                "inv_division_left", ((char) 171) + "/", 3, true, false, false, false
+                new OperationFactory()
+                        .setFunction(         "inv_division_left" )
+                        .setOperator(         ((char) 171) + "/"  )
+                        .setArity(            3          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false      )
+                        .setIsInline(         false      )
         ) {;
             @Override
             public String stringify(String[] children) {
@@ -438,8 +444,16 @@ public class Division extends AbstractOperation
             return src[ 0 ].call( inputs, j );
             }
         };
+
         new AbstractOperation(
-                "inv_division_right", "/" + ((char) 187), 3, true, false, false, false
+                new OperationFactory()
+                        .setFunction(         "inv_division_right" )
+                        .setOperator(         "/" + ((char) 187)  )
+                        .setArity(            3          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( false      )
+                        .setIsInline(         false      )
         ) {;
             @Override
             public String stringify(String[] children) {
@@ -539,7 +553,14 @@ public class Division extends AbstractOperation
                 );
 
         new AbstractOperation(
-                "", ((char) 171) + "d", 3, true, false, true, false
+                new OperationFactory()
+                        .setFunction(         "" )
+                        .setOperator(         ((char) 171) + "d"  )
+                        .setArity(            3          )
+                        .setIsOperator(       true       )
+                        .setIsIndexer(        false      )
+                        .setIsDifferentiable( true      )
+                        .setIsInline(         false      )
         ) {
             @Override
             public String stringify(String[] children) {
