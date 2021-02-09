@@ -3,19 +3,25 @@ package neureka.backend.api.operations;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.Accessors;
-import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.Algorithm;
 import neureka.backend.api.algorithms.GenericAlgorithm;
-import neureka.backend.api.ExecutionCall;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
+/**
+ *  This abstract Operation implementation is a useful template for creating new operations.
+ *  It provides a partial implementation which consists of a simple component system for hosting Algorithm instances
+ *  as well as a set of properties which Operation implementations are expected to have. <br>
+ *  Therefore, the number of properties this class needs to receive is rather large.
+ *  In order to instantiate it one has to pass OperationFactory instance to the constructor.
+ *  Using the factory will make the property configuration as readable as possible. <br>
+ *
+ */
 @NoArgsConstructor
 @Accessors( prefix = {"_"}, chain = true )
 public abstract class AbstractOperation implements Operation
@@ -38,9 +44,9 @@ public abstract class AbstractOperation implements Operation
     private final Map<Class<?>, Algorithm<?>> _algorithms = new LinkedHashMap<>();
 
     /**
-     *  This is the default algorithm for every OperationType extending this class.
+     *  This is the default algorithm for every Operation extending this class.
      *  It may not fit the purpose of every Operation implementation,
-     *  however for most operation types it will provide useful functionality to use.
+     *  however for most operation types it will provide useful functionalities.
      *
      *  The default algorithm assumes an operation that is either a function or operator.
      *  Meaning that it assumes that the operation is also differentiable.
