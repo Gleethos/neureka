@@ -28,8 +28,36 @@ public abstract class AbstractOperation implements Operation
 {
     private static Logger _LOG = LoggerFactory.getLogger( AbstractOperation.class );
 
+    /**
+     *  The id (identification) number of an operation is expected to be unique
+     *  for every operation instance.
+     *  Besides providing identification it is also <b>the order of operations</b>
+     *  which determines <b>the binding strength of operators</b>.
+     *  For example the '+' operator binds variables stronger than the '+' operator.
+     *  Regular functions like 'sig', 'tanh', ... will not be affected by this id order!
+     */
     @Getter protected int _id;
+    /**
+     *  An operation may have two ways in which it can describe itself as String within a Function AST.
+     *  The first one is an operator style of representation and the second one a classical function.
+     *  So for the 'Addition' operation the following two representations exist: <br>
+     * <ul>
+     *      <li> Operator: '+';   Example: 'I[0] + 3 + 5 * I[1]'
+     *      <li> Function: 'add'; Example: 'add( I[0], 3, 5*I[1] )'
+     * </ul>
+     * The following String is the latter way of representing the operation, namely: a functional way.
+     */
     @Getter protected String _function;
+    /**
+     *  An operation may have two ways in which it can describe itself as String within a Function AST.
+     *  The first one is an operator style of representation and the second one a classical function.
+     *  So for the 'Addition' operation the following two representations exist: <br>
+     * <ul>
+     *      <li> Operator: '+';   Example: 'I[0] + 3 + 5 * I[1]'
+     *      <li> Function: 'add'; Example: 'add( I[0], 3, 5*I[1] )'
+     * </ul>
+     * The following String is the primer way of representing the operation, namely: as an operator.
+     */
     @Getter protected String _operator;
     /**
      * Arity is the number of arguments or operands
