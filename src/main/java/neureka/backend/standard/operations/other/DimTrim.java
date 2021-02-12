@@ -96,7 +96,7 @@ public class DimTrim extends AbstractOperation
         for ( int i = 0; i < shape.length; i++ ) {
             newShape.add(shape[ i ]);
             newTranslation.add(tensor.getNDConf().translation( i ));
-            newIdxmap.add(tensor.getNDConf().idxmap( i ));
+            newIdxmap.add(tensor.getNDConf().indicesMap( i ));
             newSpread.add(tensor.getNDConf().spread( i ));
             newOffset.add(tensor.getNDConf().offset( i ));
         }
@@ -135,7 +135,7 @@ public class DimTrim extends AbstractOperation
         for ( int i = prefix; i < shape.length-postfix; i++ ) {
             newShape.add(shape[ i ]);
             newTranslation.add(tensor.getNDConf().translation( i ));
-            newIdxmap.add(tensor.getNDConf().idxmap( i ));
+            newIdxmap.add(tensor.getNDConf().indicesMap( i ));
             newSpread.add(tensor.getNDConf().spread( i ));
             newOffset.add(tensor.getNDConf().offset( i ));
         }

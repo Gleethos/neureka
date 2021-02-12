@@ -60,8 +60,8 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
             int i, int end,
             Operation.PrimaryNDIConsumer operation
     ) {
-        NDIterator t0Idx = NDIterator.of( t0_drn ); //t0_drn.idx_of_i( i );
-        t0Idx.set( t0_drn.idx_of_i( i ) );
+        NDIterator t0Idx = NDIterator.of( t0_drn );
+        t0Idx.set( t0_drn.IndicesOfIndex( i ) );
         double[] t0_value = t0_drn.value64();
         while (i < end) // increment on drain accordingly:
         {
@@ -81,12 +81,12 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
             Operation.PrimaryNDXConsumer operation
     ) {
         int[] t0Shp = t0_drn.getNDConf().shape();
-        int[] t0Idx = t0_drn.idx_of_i( i );
+        int[] t0Idx = t0_drn.IndicesOfIndex( i );
         double[] t0_value = t0_drn.value64();
         while (i < end) // increment on drain accordingly:
         {
             // setInto _value in drn:
-            t0_value[t0_drn.i_of_idx(t0Idx)] = operation.execute( t0Idx );
+            t0_value[t0_drn.indexOfIndices(t0Idx)] = operation.execute( t0Idx );
             // increment on drain:
             NDConfiguration.Utility.increment(t0Idx, t0Shp);
             i++;

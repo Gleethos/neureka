@@ -68,12 +68,12 @@ class Tensor_As_Container_Integration_Tests extends Specification
             Tsr a = new Tsr(
                     [3, 2],
                     DataType.of(ComplexNumber.class),
-                    ( int i, int[] idx ) -> new ComplexNumber(idx[0], idx[1])
+                    ( int i, int[] indices ) -> new ComplexNumber(indices[0], indices[1])
             )
             Tsr b = new Tsr(
                     [3, 2],
                     DataType.of(ComplexNumber.class),
-                    ( int i, int[] idx ) -> new ComplexNumber(idx[1], idx[0])
+                    ( int i, int[] indices ) -> new ComplexNumber(indices[1], indices[0])
             )
 
         expect:

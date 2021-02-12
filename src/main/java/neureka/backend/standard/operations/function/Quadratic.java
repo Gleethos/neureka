@@ -13,8 +13,6 @@ import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
-import java.util.List;
-
 public class Quadratic extends AbstractOperation
 {
 
@@ -34,10 +32,10 @@ public class Quadratic extends AbstractOperation
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) {
                     return ( t0Idx, t1Idx, t2Idx ) -> {
-                        double input = t1_val[inputs[ 1 ].i_of_idx( t1Idx )];
+                        double input = t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
                         return input * input;
                     };
-                } else return ( t0Idx, t1Idx, t2Idx ) -> 2 * t1_val[inputs[ 1 ].i_of_idx( t1Idx )];
+                } else return ( t0Idx, t1Idx, t2Idx ) -> 2 * t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
             };
 
     public Quadratic() {

@@ -23,7 +23,6 @@ import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class Addition extends AbstractOperation {
@@ -42,7 +41,7 @@ public class Addition extends AbstractOperation {
                 double[] t2_val = inputs[ 2 ].value64();
                 NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                 NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-                if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.i_of_idx( t1Idx )] + t2_val[ndc2.i_of_idx(t2Idx)];
+                if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.indexOfIndices( t1Idx )] + t2_val[ndc2.indexOfIndices(t2Idx)];
                 else return ( t0Idx, t1Idx, t2Idx ) -> 1.0;
             };
 
@@ -143,7 +142,7 @@ public class Addition extends AbstractOperation {
                     double[] t2_val = inputs[ 2 ].value64();
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                     NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-                    if ( d < 0 ) return t1Idx -> t1_val[ndc1.i_of_idx( t1Idx )] + t2_val[ndc2.i_of_idx( t1Idx )];
+                    if ( d < 0 ) return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] + t2_val[ndc2.indexOfIndices( t1Idx )];
                     else return t1Idx -> 1.0;
                 };
 
@@ -290,7 +289,7 @@ public class Addition extends AbstractOperation {
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-                    if ( d < 0 ) return t1Idx -> t1_val[ndc1.i_of_idx( t1Idx )] + value;
+                    if ( d < 0 ) return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] + value;
                     else {
                         if (d == 0) return t1Idx -> 1;
                         else return t1Idx -> 1;

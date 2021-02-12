@@ -42,11 +42,11 @@ public final class IndexAlias<ValType> implements Component<Tsr<ValType>>
         int[] index = { 0 };
         labels.forEach( ( k, v ) -> {
             if ( v != null ) {
-                Map<Object, Integer> idxmap = new LinkedHashMap<>( v.size() * 3 );
-                for ( int i = 0; i < v.size(); i++ ) idxmap.put( v.get( i ), i );
+                Map<Object, Integer> indicesMap = new LinkedHashMap<>( v.size() * 3 );
+                for ( int i = 0; i < v.size(); i++ ) indicesMap.put( v.get( i ), i );
                 if ( !k.equals( index[ 0 ] ) ) _hiddenKeys.add( index[ 0 ] );
-                _mapping.put( k, idxmap );
-                _mapping.put( index[ 0 ], idxmap ); // default integer index should also always work!
+                _mapping.put( k, indicesMap );
+                _mapping.put( index[ 0 ], indicesMap ); // default integer index should also always work!
             }
             else {
                 if ( !k.equals( index[ 0 ] ) ) _hiddenKeys.add( index[ 0 ] );
@@ -57,22 +57,21 @@ public final class IndexAlias<ValType> implements Component<Tsr<ValType>>
         });
     }
 
-    public int[] get(List<Object> keys) {
+    public int[] get( List<Object> keys ) {
         return get( keys.toArray( new Object[ keys.size() ] ) );
     }
 
-    public int[] get(Object[] keys) {//Todo: iterate over _mapping
-        int[] idx = new int[ keys.length ];//_mapping.length];
-        for( int i = 0; i < idx.length; i++ ) {
+    public int[] get( Object[] keys ) {//Todo: iterate over _mapping
+        int[] indices = new int[ keys.length ];//_mapping.length];
+        for( int i = 0; i < indices.length; i++ ) {
             Object am =  _mapping.get( i );
             if ( am instanceof Map ) {
-                idx[ i ] = ( (Map<Object, Integer>) am ).get( keys[ i ] );
+                indices[ i ] = ( (Map<Object, Integer>) am ).get( keys[ i ] );
             } else if ( am instanceof Integer ) {
 
             }
-            //idx[ i ] = _mapping.get( i ).get(keys[ i ]);
         }
-        return idx;
+        return indices;
     }
 
     public int get( Object key, Object axis )

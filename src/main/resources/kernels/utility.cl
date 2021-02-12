@@ -15,7 +15,7 @@ void _cfg_of_cfg(__global int* cfg, int* new_cfg, int rank)
 
 //======================================================================================================================
 
-int _i_of_i(int i, int* cfg, int rank)// cfg:   <[ shape | translation | idxMap | idx | idxScale | idxBase ]>
+int _i_of_i(int i, int* cfg, int rank)// cfg:   <[ shape | translation | indicesMap | indices | indicesScale | idxBase ]>
 {
     int* idx = (cfg+rank*3);
     int* idxMap = (cfg+rank*2);

@@ -1,6 +1,5 @@
 package neureka.ndim.config.types.complex;
 
-import neureka.Neureka;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.AbstractNDC;
 
@@ -12,7 +11,7 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
      */
     protected final int[] _shape;
     /**
-     *  The translation from a shape index (idx) to the index of the underlying data array.
+     *  The translation from a shape index (indices) to the index of the underlying data array.
      */
     private final int[] _translation;
     /**
@@ -22,7 +21,7 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
      *  However it is also possible to creat an index array from an index integer.
      *  This is what the following property does :
      */
-    private final int[] _idxmap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
+    private final int[] _indicesMap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
     /**
      *  Produces the strides of a tensor subset / slice
      */
@@ -38,13 +37,13 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
     protected ComplexDefaultNDConfiguration(
             int[] shape,
             int[] translation,
-            int[] idxmap,
+            int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
         _shape = _cacheArray(shape);
         _translation = _cacheArray(translation);
-        _idxmap = _cacheArray(idxmap);
+        _indicesMap = _cacheArray(indicesMap);
         _spread = _cacheArray(spread);
         _offset = _cacheArray(offset);
     }
@@ -52,11 +51,11 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
     public static NDConfiguration construct(
             int[] shape,
             int[] translation,
-            int[] idxmap,
+            int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
-        return _cached(new ComplexDefaultNDConfiguration(shape, translation, idxmap, spread, offset));
+        return _cached(new ComplexDefaultNDConfiguration(shape, translation, indicesMap, spread, offset));
     }
 
     @Override
@@ -75,13 +74,13 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
     }
 
     @Override
-    public int[] idxmap() {
-        return _idxmap;
+    public int[] indicesMap() {
+        return _indicesMap;
     }
 
     @Override
-    public int idxmap( int i ) {
-        return _idxmap[ i ];
+    public int indicesMap(int i ) {
+        return _indicesMap[ i ];
     }
 
     @Override
@@ -118,24 +117,24 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public int i_of_i( int i ) {
-        return i_of_idx(idx_of_i( i ));
+    public int indexOfIndex( int index ) {
+        return indexOfIndices( indicesOfIndex( index ) );
     }
 
     @Override
-    public int[] idx_of_i( int i ) {
-        int[] idx = new int[_shape.length];
+    public int[] indicesOfIndex( int index ) {
+        int[] indices = new int[ _shape.length ];
         for ( int ii = 0; ii < rank(); ii++ ) {
-            idx[ ii ] += i / _idxmap[ ii ];
-            i %= _idxmap[ ii ];
+            indices[ ii ] += index / _indicesMap[ ii ];
+            index %= _indicesMap[ ii ];
         }
-        return idx;
+        return indices;
     }
 
     @Override
-    public int i_of_idx( int[] idx ) {
+    public int indexOfIndices( int[] indices ) {
         int i = 0;
-        for ( int ii = 0; ii < _shape.length; ii++ ) i += (idx[ ii ] * _spread[ ii ] + _offset[ ii ]) * _translation[ ii ];
+        for ( int ii = 0; ii < _shape.length; ii++ ) i += (indices[ ii ] * _spread[ ii ] + _offset[ ii ]) * _translation[ ii ];
         return i;
     }
 

@@ -5,13 +5,13 @@ import neureka.ndim.iterators.NDIterator;
 
 public final class DefaultNDIterator implements NDIterator
 {
-    private final int[] _idx;
+    private final int[] _indices;
     private final int[] _shape;
     private final NDConfiguration _conf;
 
     public DefaultNDIterator( NDConfiguration ndc ) {
         _shape = ndc.shape();
-        _idx = new int[ _shape.length ];
+        _indices = new int[ _shape.length ];
         _conf = ndc;
     }
 
@@ -27,7 +27,7 @@ public final class DefaultNDIterator implements NDIterator
 
     @Override
     public void increment() {
-        NDConfiguration.Utility.increment( _idx, _shape );
+        NDConfiguration.Utility.increment(_indices, _shape );
     }
 
     @Override
@@ -37,27 +37,27 @@ public final class DefaultNDIterator implements NDIterator
 
     @Override
     public int i() {
-        return _conf.i_of_idx( _idx );
+        return _conf.indexOfIndices(_indices);
     }
 
     @Override
     public int get( int axis ) {
-        return _idx[ axis ];
+        return _indices[ axis ];
     }
 
     @Override
     public int[] get() {
-        return _idx;
+        return _indices;
     }
 
     @Override
     public void set( int axis, int position ) {
-        _idx[ axis ] = position;
+        _indices[ axis ] = position;
     }
 
     @Override
-    public void set( int[] idx ) {
-        System.arraycopy( idx, 0, _idx, 0, idx.length );
+    public void set( int[] indices ) {
+        System.arraycopy( indices, 0, _indices, 0, indices.length );
     }
 
     @Override

@@ -1,6 +1,5 @@
 package neureka.ndim.config.types.views;
 
-import neureka.Neureka;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
@@ -16,7 +15,7 @@ public class SimpleReshapeView extends AbstractNDC
     private final int[] _formTranslator;
     private final int[] _shape;
     private final int[] _translation;
-    private final int[] _idxmap;
+    private final int[] _indicesMap;
     private final int[] _spread;
     private final int[] _offset;
 
@@ -39,7 +38,7 @@ public class SimpleReshapeView extends AbstractNDC
         NDConfiguration ndc = _simpleReshape( form, toBeViewed );
         _shape = ndc.shape();
         _translation = ndc.translation();
-        _idxmap = ndc.idxmap();
+        _indicesMap = ndc.indicesMap();
         _spread = ndc.spread();
         _offset = ndc.offset();
     }
@@ -60,13 +59,13 @@ public class SimpleReshapeView extends AbstractNDC
     }
 
     @Override
-    public int[] idxmap() {
-        return _idxmap;
+    public int[] indicesMap() {
+        return _indicesMap;
     }
 
     @Override
-    public int idxmap( int i ) {
-        return _idxmap[ i ];
+    public int indicesMap(int i ) {
+        return _indicesMap[ i ];
     }
 
     @Override
@@ -100,32 +99,32 @@ public class SimpleReshapeView extends AbstractNDC
     }
 
     @Override
-    public int i_of_i( int i ) {
-        return i_of_idx( idx_of_i( i ) );
+    public int indexOfIndex(int index) {
+        return indexOfIndices( indicesOfIndex(index) );
     }
 
     @Override
-    public int[] idx_of_i( int i ) {
-        int[] idx = new int[_shape.length];
+    public int[] indicesOfIndex( int index ) {
+        int[] indices = new int[ _shape.length ];
         for ( int ii = 0; ii < rank(); ii++ ) {
-            idx[ ii ] += i / _idxmap[ ii ];
-            i %= _idxmap[ ii ];
+            indices[ ii ] += index / _indicesMap[ ii ];
+            index %= _indicesMap[ ii ];
         }
-        return idx;
+        return indices;
     }
 
     @Override
-    public int i_of_idx( int[] idx ) {
-        int[] innerIdx = _rearrange( idx,_form, _formTranslator );
-        return _toBeViewed.i_of_idx( innerIdx );
+    public int indexOfIndices( int[] indices ) {
+        int[] innerIdx = _rearrange( indices, _form, _formTranslator );
+        return _toBeViewed.indexOfIndices( innerIdx );
     }
 
     @Contract(pure = true)
-    private static int[] _rearrange(@NotNull int[] array, @NotNull int[] ptr, @NotNull int[] idx) {
+    private static int[] _rearrange( @NotNull int[] array, @NotNull int[] ptr, @NotNull int[] indices ) {
         for ( int i = 0; i < ptr.length; i++ ) {
-            if ( ptr[ i ] >= 0 ) idx[ptr[ i ]] = array[ i ];
+            if ( ptr[ i ] >= 0 ) indices[ ptr[ i ] ] = array[ i ];
         }
-        return idx;
+        return indices;
     }
 
 }

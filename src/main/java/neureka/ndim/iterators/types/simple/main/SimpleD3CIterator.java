@@ -39,7 +39,7 @@ public final class SimpleD3CIterator extends SimpleD3Configuration implements ND
 
     @Override
     public int i() {
-        return this.i_of_idx( _d1, _d2, _d3 );
+        return this.indexOfIndices( _d1, _d2, _d3 );
     }
 
     @Override
@@ -60,10 +60,10 @@ public final class SimpleD3CIterator extends SimpleD3Configuration implements ND
     }
 
     @Override
-    public void set( int[] idx ) {
-        _d1 = idx[0];
-        _d2 = idx[1];
-        _d3 = idx[2];
+    public void set( int[] indices) {
+        _d1 = indices[0];
+        _d2 = indices[1];
+        _d3 = indices[2];
     }
 
 }

@@ -46,12 +46,12 @@ public class VirtualNDConfiguration extends AbstractNDC
     }
 
     @Override
-    public int[] idxmap() {
+    public int[] indicesMap() {
         return new int[rank()];
     }
 
     @Override
-    public int idxmap( int i ) {
+    public int indicesMap(int i ) {
         return 0;
     }
 
@@ -86,17 +86,17 @@ public class VirtualNDConfiguration extends AbstractNDC
     }
 
     @Override
-    public int i_of_i( int i ) {
+    public int indexOfIndex(int index) {
         return 0;
     }
 
     @Override
-    public int[] idx_of_i( int i ) {
+    public int[] indicesOfIndex(int index) {
         return new int[rank()];
     }
 
     @Override
-    public int i_of_idx( int[] idx ) {
+    public int indexOfIndices(int[] indices) {
         return 0;
     }
 

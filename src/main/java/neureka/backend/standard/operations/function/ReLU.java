@@ -13,8 +13,6 @@ import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
-import java.util.List;
-
 public class ReLU extends AbstractOperation
 {
 
@@ -39,12 +37,12 @@ public class ReLU extends AbstractOperation
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) {
                     return ( t0Idx, t1Idx, t2Idx ) -> {
-                        if (t1_val[inputs[ 1 ].i_of_idx( t1Idx )]>=0) return t1_val[inputs[ 1 ].i_of_idx( t1Idx )];
-                        else return t1_val[inputs[ 1 ].i_of_idx( t1Idx )]*0.01;
+                        if (t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]>=0) return t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
+                        else return t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]*0.01;
                     };
                 } else {
                     return ( t0Idx, t1Idx, t2Idx ) -> {
-                        if (t1_val[inputs[ 1 ].i_of_idx( t1Idx )]>=0) return 1;
+                        if (t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]>=0) return 1;
                         else return 0.01;
                     };
                 }

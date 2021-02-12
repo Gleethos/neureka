@@ -31,7 +31,7 @@ public final class SimpleD2CIterator extends SimpleD2Configuration implements ND
 
     @Override
     public int i() {
-        return this.i_of_idx( _d1, _d2 );
+        return this.indexOfIndices( _d1, _d2 );
     }
 
     @Override
@@ -51,9 +51,9 @@ public final class SimpleD2CIterator extends SimpleD2Configuration implements ND
     }
 
     @Override
-    public void set( int[] idx ) {
-        _d1 = idx[0];
-        _d2 = idx[1];
+    public void set( int[] indices ) {
+        _d1 = indices[0];
+        _d2 = indices[1];
     }
 
 }

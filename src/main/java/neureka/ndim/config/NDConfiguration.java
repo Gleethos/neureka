@@ -34,7 +34,6 @@ SOFTWARE.
 
 package neureka.ndim.config;
 
-import neureka.Neureka;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,9 +47,9 @@ public interface NDConfiguration
 
     int shape( int i );
 
-    int[] idxmap();
+    int[] indicesMap();
 
-    int idxmap( int i );
+    int indicesMap( int i );
 
     int[] translation();
 
@@ -66,11 +65,11 @@ public interface NDConfiguration
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    int i_of_i( int i );
+    int indexOfIndex( int index );
 
-    int[] idx_of_i( int i );
+    int[] indicesOfIndex( int index );
 
-    int i_of_idx( int[] idx );
+    int indexOfIndices( int[] indices );
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -86,15 +85,15 @@ public interface NDConfiguration
 
     NDConfiguration newReshaped(int[] newForm);
 
-    public class Utility {
+    class Utility {
 
         @Contract(pure = true)
-        public static int[] rearrange(int[] tln, int[] shp, @NotNull int[] newForm) {
-            int[] shpTln = newTlnOf(shp);
-            int[] newTln = new int[newForm.length];
+        public static int[] rearrange(int[] tln, int[] shape, @NotNull int[] newForm) {
+            int[] shpTln = newTlnOf( shape );
+            int[] newTln = new int[ newForm.length ];
             for ( int i = 0; i < newForm.length; i++ ) {
-                if (newForm[ i ] < 0) newTln[ i ] = shpTln[ i ];
-                else if (newForm[ i ] >= 0) newTln[ i ] = tln[newForm[ i ]];
+                if ( newForm[ i ] < 0 ) newTln[ i ] = shpTln[ i ];
+                else if ( newForm[ i ] >= 0 ) newTln[ i ] = tln[ newForm[ i ] ];
             }
             return newTln;
         }
@@ -121,18 +120,18 @@ public interface NDConfiguration
         }
 
         @Contract(pure = true)
-        public static void increment( @NotNull int[] shpIdx, @NotNull int[] shape ) {
+        public static void increment( @NotNull int[] indices, @NotNull int[] shape ) {
             int i = shape.length-1;
-            while ( i >= 0 && i < shape.length ) i = _incrementAt( i, shpIdx, shape );
+            while ( i >= 0 && i < shape.length ) i = _incrementAt( i, indices, shape );
         }
 
         @Contract(pure = true)
-        private static int _incrementAt( int i, @NotNull int[] shpIdx, @NotNull int[] shape )
+        private static int _incrementAt( int i, @NotNull int[] indices, @NotNull int[] shape )
         {
-            if ( shpIdx[ i ] < shape[ i ] ) {
-                shpIdx[ i ]++;
-                if ( shpIdx[ i ] == shape[ i ] ) {
-                    shpIdx[ i ] = 0;
+            if ( indices[ i ] < shape[ i ] ) {
+                indices[ i ]++;
+                if ( indices[ i ] == shape[ i ] ) {
+                    indices[ i ] = 0;
                     i--;
                 }
                 else i = -1;

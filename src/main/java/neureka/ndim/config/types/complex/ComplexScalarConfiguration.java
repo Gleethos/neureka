@@ -18,7 +18,7 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
     public static NDConfiguration construct(
             int[] shape,
             // translation, will always be 1
-            // idxmap, will also always be 1
+            // indicesMap, will also always be 1
             // spread, does not matter!
             int[] offset
     ) {
@@ -40,7 +40,7 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int[] shape() {
-        return new int[]{_shape};
+        return new int[]{ _shape };
     }
 
     @Override
@@ -49,12 +49,12 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
     }
 
     @Override
-    public int[] idxmap() {
+    public int[] indicesMap() {
         return new int[]{1};
     }
 
     @Override
-    public int idxmap( int i ) {
+    public int indicesMap(int i ) {
         return 1;
     }
 
@@ -70,7 +70,7 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int[] spread() {
-        return new int[]{1};
+        return new int[]{ 1 };
     }
 
     @Override
@@ -80,7 +80,7 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int[] offset() {
-        return new int[]{_offset};
+        return new int[]{ _offset };
     }
 
     @Override
@@ -90,18 +90,18 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
 
 
     @Override
-    public int i_of_i( int i ) {
-        return i + _offset;
+    public int indexOfIndex(int index) {
+        return index + _offset;
     }
 
     @Override
-    public int[] idx_of_i( int i ) {
-        return new int[]{i};
+    public int[] indicesOfIndex(int index) {
+        return new int[]{ index };
     }
 
     @Override
-    public int i_of_idx( int[] idx ) {
-        return idx[ 0 ] + _offset;
+    public int indexOfIndices(int[] indices) {
+        return indices[ 0 ] + _offset;
     }
 
 

@@ -6,7 +6,6 @@ import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.calculus.Function
 import neureka.dtype.DataType
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_IO_Unit_Tests extends Specification
@@ -47,7 +46,7 @@ class Tensor_IO_Unit_Tests extends Specification
             Tsr t = new Tsr(
                     [ 2, 3 ],
                     DataType.of( Integer.class ),
-                    ( int i, int[] idx ) -> { i - 2 }
+                    ( int i, int[] indices ) -> { i - 2 }
             )
 
         then :
@@ -57,7 +56,7 @@ class Tensor_IO_Unit_Tests extends Specification
             t = new Tsr(
                     [ 2, 3 ],
                     DataType.of( String.class ),
-                    ( int i, int[] idx ) -> { i+':'+idx.toString() }
+                    ( int i, int[] indices ) -> { i+':'+indices.toString() }
             )
 
         then :
@@ -114,22 +113,22 @@ class Tensor_IO_Unit_Tests extends Specification
             Tsr t1 = new Tsr([4, 3], 1..12)
 
         when : 'Recording the index behavior before and after a reshape operation...'
-            def t1_ioi_1 = t1.i_of_idx(new int[]{2, 1})
-            def t1_ioi_2 = t1.i_of_idx(new int[]{1, 2})
-            def t1_idx   = t1.idx_of_i(5)
+            def t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})
+            def t1_ioi_2 = t1.indexOfIndices(new int[]{1, 2})
+            def t1_indices = t1.IndicesOfIndex(5)
 
             Tsr t2 = Function.create(" [ 1, 0 ]:( I[0] ) ")(t1)
-            def t2_ioi_1 = t2.i_of_idx(new int[]{1, 2})
-            def t2_idx = t2.idx_of_i(7)
+            def t2_ioi_1 = t2.indexOfIndices(new int[]{1, 2})
+            def t2_idx = t2.IndicesOfIndex(7)
 
-            def t1_ioi_3 = t1.i_of_idx(t1.idx_of_i(7)) // Element 7 '8.0' is at index 7!
-            def t2_ioi_2 =  t2.i_of_idx(t2.idx_of_i(7)) // Element 7 '11.0' is at index 10!
+            def t1_ioi_3 = t1.indexOfIndices(t1.IndicesOfIndex(7)) // Element 7 '8.0' is at index 7!
+            def t2_ioi_2 =  t2.indexOfIndices(t2.IndicesOfIndex(7)) // Element 7 '11.0' is at index 10!
 
         then : 'These recorded values are as one would expect.'
             t1_ioi_1 == 7
             t1_ioi_2 == 5
-            t1_idx[0] == 1
-            t1_idx[1] == 2
+            t1_indices[0] == 1
+            t1_indices[1] == 2
 
             t2_ioi_1 == 7
             t2_idx[0] == 1
@@ -284,23 +283,23 @@ class Tensor_IO_Unit_Tests extends Specification
         then : t.toString().contains("[2x2]:(2.0, 3.0, 6.0, 6.0)")
 
         when :
-            int[] idx = new int[2]
-            idx[1] = 1
-            Tsr.IO.addInto(t, idx, -9.0)
+            int[] indices = new int[2]
+            indices[1] = 1
+            Tsr.IO.addInto(t, indices, -9.0)
         then :
             t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 6.0)")
-            Tsr.IO.getFrom(t, idx)==-6.0d
+            Tsr.IO.getFrom(t, indices)==-6.0d
 
         when :
-            idx[0] = 1
-            Tsr.IO.mulInto(t, idx, -1)
+            indices[0] = 1
+            Tsr.IO.mulInto(t, indices, -1)
 
         then : t.toString().contains("[2x2]:(2.0, -6.0, 6.0, -6.0)")
 
         when : Tsr.IO.mulInto(t, 3, -2)
         then : t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 12.0)")
 
-        when : Tsr.IO.setInto(t, idx, 0.0)
+        when : Tsr.IO.setInto(t, indices, 0.0)
         then : t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 0.0)")
 
         when : Tsr.IO.setInto(t, 2, 99.0)
@@ -310,8 +309,8 @@ class Tensor_IO_Unit_Tests extends Specification
         then : t.toString().contains("[2x2]:(2.0, -6.0, 0.0, 0.0)")
 
         when :
-            idx[0] = 0
-            Tsr.IO.subInto(t, idx, -9.0)
+            indices[0] = 0
+            Tsr.IO.subInto(t, indices, -9.0)
         then : t.toString().contains("[2x2]:(2.0, 3.0, 0.0, 0.0)")
 
         when : Tsr.IO.subInto(t, new Tsr([2, 2], [1, 2, 3, 4]))

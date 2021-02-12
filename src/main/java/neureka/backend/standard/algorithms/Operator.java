@@ -66,12 +66,12 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         } else {
             //int[] t0Shp = t0_drn.getNDConf().shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
             double[] t0_value = t0_drn.value64();
-            NDIterator t0Idx = NDIterator.of( t0_drn ); //t0_drn.idx_of_i( i );
+            NDIterator t0Idx = NDIterator.of( t0_drn );
             NDIterator t1Idx = NDIterator.of( t1_src );
             NDIterator t2Idx = NDIterator.of( t2_src );
-            t0Idx.set( t0_drn.idx_of_i( i ) );
-            t1Idx.set( t1_src.idx_of_i( i ) );
-            t2Idx.set( t2_src.idx_of_i( i ) );
+            t0Idx.set( t0_drn.IndicesOfIndex( i ) );
+            t1Idx.set( t1_src.IndicesOfIndex( i ) );
+            t2Idx.set( t2_src.IndicesOfIndex( i ) );
             while ( i < end ) {//increment on drain accordingly:
                 //setInto _value in drn:
                 t0_value[ t0Idx.i() ] = operation.execute( t1Idx, t2Idx );
@@ -97,11 +97,11 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         } else {
             NDConfiguration ndc0 = t0_drn.getNDConf();
             int[] t0Shp = ndc0.shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
-            int[] t0Idx = ndc0.idx_of_i( i );
+            int[] t0Idx = ndc0.indicesOfIndex( i );
             double[] t0_value = (double[]) t0_drn.getData();
             while (i < end) {//increment on drain accordingly:
                 //setInto _value in drn:
-                t0_value[ndc0.i_of_idx(t0Idx)] = operation.execute( t0Idx );
+                t0_value[ndc0.indexOfIndices(t0Idx)] = operation.execute( t0Idx );
                 //increment on drain:
                 NDConfiguration.Utility.increment( t0Idx, t0Shp );
                 i++;

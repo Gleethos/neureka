@@ -843,7 +843,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                 AbstractNDC.construct(
                     newShape,
                     newTranslation,
-                    newTranslation, // idxmap
+                    newTranslation, // indicesMap
                     newSpread,
                     newOffset
                 )
@@ -1972,11 +1972,11 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  The following method enables access to specific elements within the tensor.
      *  The method name also translates to the subscript operator in Groovy.
      *
-     * @param idx The index of the element which should be returned.
+     * @param indices The index array of the element which should be returned.
      * @return An element located at the provided index.
      */
-    public Object getAt( int[] idx ) {
-        return getDataAt( getNDConf().i_of_idx( idx ) );
+    public Object getAt( int[] indices ) {
+        return getDataAt( getNDConf().indexOfIndices( indices ) );
     }
 
     /**
@@ -1987,7 +1987,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      * @return A scalar value located at the provided index.
      */
     public double getF64( int[] idx ) {
-        return value64( i_of_idx( idx ) );
+        return value64( indexOfIndices( idx ) );
     }
 
 
@@ -2025,7 +2025,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      * @return The value item found at the targeted index.
      */
     public ValType getValueAt( int i ) {
-        return (ValType) getDataAt( getNDConf().i_of_i( i ) );
+        return (ValType) getDataAt( getNDConf().indexOfIndex( i ) );
     }
 
     /**
@@ -2039,7 +2039,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      * @return The found raw value item targeted by the provided index array.
      */
     public ValType getValueAt( int[] idx ) {
-        return (ValType) getDataAt( getNDConf().i_of_idx( idx ) );
+        return (ValType) getDataAt( getNDConf().indexOfIndices( idx ) );
     }
 
     /**
@@ -2054,16 +2054,16 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      * @return This very tensor in order to enable method chaining...
      */
     public Tsr<ValType> setAt( int i, ValType o ) {
-        setDataAt( getNDConf().i_of_i( i ), o );
+        setDataAt( getNDConf().indexOfIndex( i ), o );
         return this;
     }
 
     public Tsr<ValType> getAt( double i ) {
-        return getAt( Arrays.asList( getNDConf().idx_of_i( (int) Math.floor( i ) ) ).toArray() );
+        return getAt( Arrays.asList( getNDConf().indicesOfIndex( (int) Math.floor( i ) ) ).toArray() );
     }
 
     public Tsr<ValType> getAt( BigDecimal i ) {
-        return getAt( Arrays.asList( getNDConf().idx_of_i(( i ).intValue()) ).toArray() );
+        return getAt( Arrays.asList( getNDConf().indicesOfIndex(( i ).intValue()) ).toArray() );
     }
 
     public Object getAt( Map<?,?> rangToStrides )
@@ -2415,32 +2415,32 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         public static double getFrom( Tsr<?> t, int i ) {
             if ( t.isEmpty() || t.isUndefined() ) return 0;
             else if ( t.isVirtual() ) return t.value64()[ 0 ];
-            return t.value64()[ t.i_of_i( i ) ];
+            return t.value64()[ t.indexOfIndex( i ) ];
         }
 
         public static double getFrom( Tsr<?> t, int[] idx ) {
             t.setIsVirtual( false );
-            return t.value64()[ t.i_of_idx( idx ) ];
+            return t.value64()[ t.indexOfIndices( idx ) ];
         }
 
         public static void setInto( Tsr<?> t, int i, double value ) {
             t.setIsVirtual( false );
-            t.value64()[ t.i_of_i( i ) ] = value;
+            t.value64()[ t.indexOfIndex( i ) ] = value;
         }
 
         public static void setInto( Tsr<?> t, int[] idx, double value ) {
             t.setIsVirtual( false );
-            t.value64()[ t.i_of_idx( idx ) ] = value;
+            t.value64()[ t.indexOfIndices( idx ) ] = value;
         }
 
         public static void addInto( Tsr<?> t, int i, double value ) {
             t.setIsVirtual( false );
-            t.value64()[ t.i_of_i( i ) ] += value;
+            t.value64()[ t.indexOfIndex( i ) ] += value;
         }
 
         public static void addInto( Tsr<?> t, int[] idx, double value ) {
             t.setIsVirtual( false );
-            t.value64()[ t.i_of_idx( idx ) ] += value;
+            t.value64()[ t.indexOfIndices( idx ) ] += value;
         }
 
         public static Tsr<?> addInto( Tsr<?> t, Tsr<?> source ) {
@@ -2451,12 +2451,12 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
         public static void subInto( Tsr<?> t, int i, double value ) {
             t.setIsVirtual( false );
-            t.value64()[ t.i_of_i( i ) ] -= value;
+            t.value64()[ t.indexOfIndex( i ) ] -= value;
         }
 
         public static void subInto( Tsr<?> t, int[] idx, double value ) {
             t.setIsVirtual( false );
-            t.value64()[ t.i_of_idx( idx ) ] -= value;
+            t.value64()[ t.indexOfIndices( idx ) ] -= value;
         }
 
         public static void subInto( Tsr<?> t, Tsr<?> source ) {
@@ -2475,12 +2475,12 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
         public static void mulInto( Tsr<?> t, int i, double value ) {
             t.setIsVirtual( false );
-            t.value64()[ t.i_of_i( i ) ] *= value;
+            t.value64()[ t.indexOfIndex( i ) ] *= value;
         }
 
         public static void mulInto( Tsr<?> t, int[] idx, double value ) {
             t.setIsVirtual( false );
-            t.value64()[ t.i_of_idx( idx ) ] *= value;
+            t.value64()[ t.indexOfIndices( idx ) ] *= value;
         }
 
     }

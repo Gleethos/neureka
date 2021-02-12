@@ -6,7 +6,6 @@ import neureka.ndim.config.types.complex.ComplexD1Configuration
 import neureka.ndim.config.types.complex.ComplexScalarConfiguration
 import neureka.ndim.config.types.simple.SimpleD1Configuration
 import neureka.ndim.config.types.simple.SimpleScalarConfiguration
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_NDConfiguration_Integration_Tests extends Specification
@@ -41,7 +40,7 @@ class Tensor_NDConfiguration_Integration_Tests extends Specification
         and : 'This ND-Configuration behaves as expected.'
             a.NDConf.shape(0) == 1
             a.NDConf.translation(0) == 1
-            a.NDConf.idxmap(0) == 1
+            a.NDConf.indicesMap(0) == 1
             a.NDConf.offset(0) == 0
             a.NDConf.spread(0) == 1
     }
@@ -64,7 +63,7 @@ class Tensor_NDConfiguration_Integration_Tests extends Specification
         and : 'The configuration behaves as expected.'
             x.NDConf.shape(0) == 3
             x.NDConf.translation(0) == 1
-            x.NDConf.idxmap(0) == 1
+            x.NDConf.indicesMap(0) == 1
             x.NDConf.offset(0) == 0
             x.NDConf.spread(0) == 1
             x[2].NDConf instanceof ComplexScalarConfiguration
@@ -77,7 +76,7 @@ class Tensor_NDConfiguration_Integration_Tests extends Specification
         then : 'This also produces a valid slice with the expected properties :'
             x.NDConf.shape(0) == 1
             x.NDConf.translation(0) == 1
-            x.NDConf.idxmap(0) == 1
+            x.NDConf.indicesMap(0) == 1
             x.NDConf.offset(0) == 2
             x.NDConf.spread(0) == 1
 
@@ -88,7 +87,7 @@ class Tensor_NDConfiguration_Integration_Tests extends Specification
             y.NDConf instanceof ComplexD1Configuration
             y.NDConf.shape(0) == 2
             y.NDConf.translation(0) == 1
-            y.NDConf.idxmap(0) == 1
+            y.NDConf.indicesMap(0) == 1
             y.NDConf.offset(0) == 1
             y.NDConf.spread(0) == 1
 

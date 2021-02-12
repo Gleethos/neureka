@@ -13,8 +13,6 @@ import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
-import java.util.List;
-
 public class Sigmoid extends AbstractOperation
 {
 
@@ -28,8 +26,8 @@ public class Sigmoid extends AbstractOperation
     private DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
-                if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> calculate( t1_val[inputs[ 1 ].i_of_idx( t1Idx )], false );
-                else return ( t0Idx, t1Idx, t2Idx ) ->  calculate( t1_val[inputs[ 1 ].i_of_idx( t1Idx )], true );
+                if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> calculate( t1_val[inputs[ 1 ].indexOfIndices( t1Idx )], false );
+                else return ( t0Idx, t1Idx, t2Idx ) ->  calculate( t1_val[inputs[ 1 ].indexOfIndices( t1Idx )], true );
             };
 
 

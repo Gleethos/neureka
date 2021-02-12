@@ -20,8 +20,6 @@ import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
-import java.util.List;
-
 public class Summation extends AbstractOperation
 {
 
@@ -85,7 +83,7 @@ public class Summation extends AbstractOperation
                 {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
-                    if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].i_of_idx( t1Idx )] + t2_val[inputs[ 2 ].i_of_idx(t2Idx)];
+                    if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] + t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
                     else return ( t0Idx, t1Idx, t2Idx ) -> 1.0;
                 };
 
@@ -186,8 +184,8 @@ public class Summation extends AbstractOperation
         DefaultOperatorCreator<TertiaryNDXConsumer> activationXCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].i_of_idx( t1Idx )];
-                    else return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].i_of_idx( t1Idx )];
+                    if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
+                    else return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
                 };
 
         Activation activation = new Activation()

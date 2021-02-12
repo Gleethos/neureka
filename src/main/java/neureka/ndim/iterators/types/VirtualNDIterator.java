@@ -52,7 +52,7 @@ public final class VirtualNDIterator implements NDIterator
     }
 
     @Override
-    public void set( int[] idx ) {
+    public void set( int[] indices ) {
         // It's virtual and therefore does nothing :)
     }
 

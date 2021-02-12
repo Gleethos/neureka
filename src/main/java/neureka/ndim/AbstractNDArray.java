@@ -133,22 +133,22 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
         Object data = getData();
         if ( data instanceof double[] )
             for ( int i = 0; i < ( (double[]) data ).length; i++ )
-                ( (double[]) data )[ i ] = (double) initializer.init( i, _NDConf.idx_of_i( i )  );
+                ( (double[]) data )[ i ] = (double) initializer.init( i, _NDConf.indicesOfIndex( i )  );
         else if ( data instanceof float[] )
             for ( int i = 0; i < ( (float[]) data ).length; i++ )
-                ( (float[]) data )[ i ] = (float) initializer.init( i, _NDConf.idx_of_i( i )  );
+                ( (float[]) data )[ i ] = (float) initializer.init( i, _NDConf.indicesOfIndex( i )  );
         else if ( data instanceof int[] )
             for ( int i = 0; i < ( (int[]) data ).length; i++ )
-                ( (int[]) data )[ i ] = (int) initializer.init( i, _NDConf.idx_of_i( i )  );
+                ( (int[]) data )[ i ] = (int) initializer.init( i, _NDConf.indicesOfIndex( i )  );
         else if ( data instanceof short[] )
             for ( int i = 0; i < ( (short[]) data ).length; i++ )
-                ( (short[]) data )[ i ] = (short) initializer.init( i, _NDConf.idx_of_i( i )  );
+                ( (short[]) data )[ i ] = (short) initializer.init( i, _NDConf.indicesOfIndex( i )  );
         else if ( data instanceof byte[] )
             for ( int i = 0; i < ( (byte[]) data ).length; i++ )
-                ( (byte[]) data )[ i ] = (byte) initializer.init( i, _NDConf.idx_of_i( i )  );
+                ( (byte[]) data )[ i ] = (byte) initializer.init( i, _NDConf.indicesOfIndex( i )  );
         else
             for ( int i = 0; i < ( (Object[]) data ).length; i++ )
-                ( (Object[]) data )[ i ] = initializer.init( i, _NDConf.idx_of_i( i )  );
+                ( (Object[]) data )[ i ] = initializer.init( i, _NDConf.indicesOfIndex( i )  );
     }
 
     /**
@@ -285,16 +285,16 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public int i_of_i( int i ) {
-        return _NDConf.i_of_i( i );
+    public int indexOfIndex( int i ) {
+        return _NDConf.indexOfIndex( i );
     }
 
-    public int[] idx_of_i( int i ) {
-        return _NDConf.idx_of_i( i );
+    public int[] IndicesOfIndex( int index ) {
+        return _NDConf.indicesOfIndex( index );
     }
 
-    public int i_of_idx( int[] idx ) {
-        return _NDConf.i_of_idx(idx);
+    public int indexOfIndices( int[] indices ) {
+        return _NDConf.indexOfIndices(indices);
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -331,8 +331,8 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
         return _NDConf.shape()[ i ];
     }
 
-    public List<Integer> idxmap() {
-        return _asList(_NDConf.idxmap());
+    public List<Integer> indicesMap() {
+        return _asList(_NDConf.indicesMap());
     }
 
     public List<Integer> translation() {

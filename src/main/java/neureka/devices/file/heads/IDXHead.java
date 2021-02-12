@@ -86,7 +86,7 @@ public class IDXHead extends AbstractFileHead<IDXHead, Number>
         _dataType = (DataType<NumericType<?, ?, ?, ?>>) DataType.of( typeClass );
 
         int rank = numre.read( new UI8() );
-        int[] shape = new int[rank];
+        int[] shape = new int[ rank ];
 
         int size = 1;
         for ( int i = 0; i < rank; i++ ) {

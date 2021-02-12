@@ -102,10 +102,10 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
         int[] t1Shp = t1_src.getNDConf().shape();
         int[] t2Shp = (t2_src != null) ? t2_src.getNDConf().shape() : t1Shp;
         int rank = t0Shp.length;
-        NDIterator t0Idx = NDIterator.of( t0_drn );//t0_drn.idx_of_i( i );
+        NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src );
-        t0Idx.set( t0_drn.idx_of_i( i ) );
-        t1Idx.set( t0_drn.idx_of_i( i ) );
+        t0Idx.set( t0_drn.IndicesOfIndex( i ) );
+        t1Idx.set( t0_drn.IndicesOfIndex( i ) );
         NDIterator t2Idx = NDIterator.of( t2_src );
         double[] t0_value = t0_drn.value64();
         if ( d < 0 ) {
@@ -200,9 +200,9 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
         int[] t1Shp = ndc1.shape();
         int[] t2Shp = (t2_src != null) ? t2_src.getNDConf().shape() : t1Shp;
         int rank = t0Shp.length;
-        int[] t0Idx = ndc0.idx_of_i( i );
-        int[] t1Idx = new int[rank];
-        int[] t2Idx = new int[rank];
+        int[] t0Idx = ndc0.indicesOfIndex( i );
+        int[] t1Idx = new int[ rank ];
+        int[] t2Idx = new int[ rank ];
         double[] t0_value = (double[]) t0_drn.getData();
         if ( d < 0 ) {
             while ( i < end ) {//increment on drain accordingly:
@@ -222,7 +222,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                 }
                 //----------
                 //setInto _value in drn:
-                t0_value[ndc0.i_of_idx(t0Idx)] = operation.execute( t0Idx, t1Idx, t2Idx );
+                t0_value[ndc0.indexOfIndices(t0Idx)] = operation.execute( t0Idx, t1Idx, t2Idx );
                 //increment on drain:
                 NDConfiguration.Utility.increment(t0Idx, t0Shp);
                 i++;
@@ -272,7 +272,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                     }
                 }
                 //set value in drn:
-                t0_value[ndc0.i_of_idx(t0Idx)] = value;
+                t0_value[ndc0.indexOfIndices(t0Idx)] = value;
                 //increment on drain:
                 NDConfiguration.Utility.increment(t0Idx, t0Shp);
                 i++;

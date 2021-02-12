@@ -14,7 +14,7 @@ public class SimpleD3Configuration extends D3C //:= IMMUTABLE
     protected final int _shape2;
     protected final int _shape3;
     /**
-     *  The translation from a shape index (idx) to the index of the underlying data array.
+     *  The translation from a shape index (indices) to the index of the underlying data array.
      */
     private final int _translation1;
     private final int _translation2;
@@ -51,16 +51,16 @@ public class SimpleD3Configuration extends D3C //:= IMMUTABLE
 
     @Override
     public int shape( int i ) {
-        return (i==0)?_shape1:(i==1)?_shape2:_shape3;
+        return (i==0) ?_shape1 : (i==1) ? _shape2 : _shape3;
     }
 
     @Override
-    public int[] idxmap() {
+    public int[] indicesMap() {
         return new int[]{_translation1, _translation2, _translation3};
     }
 
     @Override
-    public int idxmap( int i ) {
+    public int indicesMap(int i ) {
         return (i==0)?_translation1:(i==1)?_translation2:_translation3;
     }
 
@@ -98,38 +98,38 @@ public class SimpleD3Configuration extends D3C //:= IMMUTABLE
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public int i_of_i( int i ) {
-        int idx1, idx2, idx3;
-        idx1 = i / _translation1;
-        i %= _translation1;
-        idx2 = i / _translation2;
-        i %= _translation2;
-        idx3 = i / _translation3;
-        return idx1 * _translation1 +
-                idx2 * _translation2 +
-                idx3 * _translation3;
+    public int indexOfIndex(int index) {
+        int indices1, indices2, indices3;
+        indices1 = index / _translation1;
+        index %= _translation1;
+        indices2 = index / _translation2;
+        index %= _translation2;
+        indices3 = index / _translation3;
+        return indices1 * _translation1 +
+                indices2 * _translation2 +
+                indices3 * _translation3;
     }
 
     @Override
-    public int[] idx_of_i( int i ) {
-        int idx1, idx2, idx3;
-        idx1 = i / _translation1;
-        i %= _translation1;
-        idx2 = i / _translation2;
-        i %= _translation2;
-        idx3 = i / _translation3;
-        return new int[]{idx1, idx2, idx3};
+    public int[] indicesOfIndex(int index) {
+        int indices1, indices2, indices3;
+        indices1 = index / _translation1;
+        index %= _translation1;
+        indices2 = index / _translation2;
+        index %= _translation2;
+        indices3 = index / _translation3;
+        return new int[]{ indices1, indices2, indices3 };
     }
 
     @Override
-    public int i_of_idx( int[] idx ) {
-        return idx[ 0 ] * _translation1 +
-                idx[ 1 ] * _translation2 +
-                idx[ 2 ] * _translation3;
+    public int indexOfIndices(int[] indices) {
+        return indices[ 0 ] * _translation1 +
+                indices[ 1 ] * _translation2 +
+                indices[ 2 ] * _translation3;
     }
 
     @Override
-    public int i_of_idx( int d1, int d2, int d3 ) {
+    public int indexOfIndices( int d1, int d2, int d3 ) {
         return d1 * _translation1 +
                 d2 * _translation2 +
                 d3 * _translation3;

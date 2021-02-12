@@ -8,7 +8,7 @@ public final class ComplexD1CIterator extends ComplexD1Configuration implements 
     private int _d1;
 
     public ComplexD1CIterator(ComplexD1Configuration ndc) {
-        super(ndc.shape(0), ndc.translation(0), ndc.idxmap(0), ndc.spread(0), ndc.offset(0));
+        super(ndc.shape(0), ndc.translation(0), ndc.indicesMap(0), ndc.spread(0), ndc.offset(0));
     }
 
     @Override
@@ -24,7 +24,7 @@ public final class ComplexD1CIterator extends ComplexD1Configuration implements 
 
     @Override
     public int i() {
-        return this.i_of_idx(_d1);
+        return this.indexOfIndices(_d1);
     }
 
     @Override
@@ -43,8 +43,8 @@ public final class ComplexD1CIterator extends ComplexD1Configuration implements 
     }
 
     @Override
-    public void set( int[] idx ) {
-        _d1 = idx[0];
+    public void set( int[] indices ) {
+        _d1 = indices[0];
     }
 
     @Override

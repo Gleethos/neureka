@@ -21,8 +21,6 @@ import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
-import java.util.List;
-
 public class Modulo extends AbstractOperation {
 
     public Modulo()
@@ -120,13 +118,13 @@ public class Modulo extends AbstractOperation {
                     double[] t2_val = inputs[ 2 ].value64();
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                     NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-                    if ( d < 0 ) return t1Idx -> t1_val[ndc1.i_of_idx( t1Idx )] % t2_val[ndc2.i_of_idx( t1Idx )];
+                    if ( d < 0 ) return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] % t2_val[ndc2.indexOfIndices( t1Idx )];
                     else {
                         return t1Idx -> {
                             if (d == 0) {
-                                return 1 / t2_val[ndc2.i_of_idx( t1Idx )];
+                                return 1 / t2_val[ndc2.indexOfIndices( t1Idx )];
                             } else {
-                                return -(t1_val[ndc1.i_of_idx( t1Idx )] / Math.pow(t2_val[ndc2.i_of_idx( t1Idx )], 2));
+                                return -(t1_val[ndc1.indexOfIndices( t1Idx )] / Math.pow(t2_val[ndc2.indexOfIndices( t1Idx )], 2));
                             }
                         };
                     }
@@ -230,13 +228,13 @@ public class Modulo extends AbstractOperation {
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                     NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
                     if ( d < 0 ) {
-                        return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ ndc1.i_of_idx( t1Idx ) ] % t2_val[ ndc2.i_of_idx(t2Idx) ];
+                        return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ ndc1.indexOfIndices( t1Idx ) ] % t2_val[ ndc2.indexOfIndices(t2Idx) ];
                     } else {
                         return ( t0Idx, t1Idx, t2Idx ) -> {
                             if (d == 0) {
-                                return 1 / t2_val[ ndc2.i_of_idx( t2Idx ) ];
+                                return 1 / t2_val[ ndc2.indexOfIndices( t2Idx ) ];
                             } else {
-                                return - ( t1_val[ ndc1.i_of_idx( t1Idx ) ] / Math.pow(t2_val[ ndc2.i_of_idx( t2Idx ) ], 2) );
+                                return - ( t1_val[ ndc1.indexOfIndices( t1Idx ) ] / Math.pow(t2_val[ ndc2.indexOfIndices( t2Idx ) ], 2) );
                             }
                         };
                     }
@@ -351,10 +349,10 @@ public class Modulo extends AbstractOperation {
                     double[] t1_val = inputs[ 1 ].value64();
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                     if ( d < 0 ) {
-                        return t1Idx -> t1_val[ndc1.i_of_idx( t1Idx )] % value;
+                        return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] % value;
                     } else {
                         if (d == 0) return t1Idx -> 1 / value;
-                        else return t1Idx -> - value / Math.pow(t1_val[ndc1.i_of_idx( t1Idx )], 2);
+                        else return t1Idx -> - value / Math.pow(t1_val[ndc1.indexOfIndices( t1Idx )], 2);
                     }
                 };
 

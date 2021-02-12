@@ -305,33 +305,33 @@ public class GEMMKernelReferenceImplementation
 
 //======================================================================================================================
 
-    private int _i_of_i(int i, int[] cfg, int rank)// cfg:   <[ shape | translation | idxMap | idx | idxScale | idxBase ]>
+    private int _i_of_i(int i, int[] cfg, int rank)// cfg: <[ shape | translation | indicesMap | indices | indicesScale | idxBase ]>
     {
-        int[] idx = new int[rank];//(cfg+rank*3);
-        int[] idxMap = new int[rank];//(cfg+rank*2);
-        for ( int ii = 0 ; ii < rank; ii++) idx[ii] = cfg[rank*3+ii];
-        for ( int ii = 0 ; ii < rank; ii++) idxMap[ii] = cfg[rank*2+ii];
+        int[] indices = new int[ rank ];//(cfg+rank*3);
+        int[] indicesMap = new int[ rank ];//(cfg+rank*2);
+        for ( int ii = 0 ; ii < rank; ii++) indices[ii] = cfg[rank*3+ii];
+        for ( int ii = 0 ; ii < rank; ii++) indicesMap[ii] = cfg[rank*2+ii];
         for ( int ii = 0; ii < rank; ii++ ) {
-            idx[ ii ] = ( i / idxMap[ ii ] );//is derived from the shape of a tensor. Translates scalar indexAlias to dim-Index
-            i %= idxMap[ ii ];
+            indices[ ii ] = ( i / indicesMap[ ii ] );//is derived from the shape of a tensor. Translates scalar indexAlias to dim-Index
+            i %= indicesMap[ ii ];
         }
         return _i_of_idx_on_tln(cfg, rank);
     }
 
 
-    private int _i_of_idx_on_tln(int[] cfg, int rank) // cfg:   <[ 0:shape | 1:translation | 2:idxMap | 3:idx | 4:idxScale | 5:idxBase ]>
+    private int _i_of_idx_on_tln(int[] cfg, int rank) // cfg: <[ 0:shape | 1:translation | 2:indicesMap | 3:indices | 4:indicesScale | 5:indicesBase ]>
     {
-        int[] idxBase = new int[rank];//(cfg+rank*5);
-        int[] idxScale = new int[rank];//(cfg+rank*4);
-        int[] idx = new int[rank];//(cfg+rank*3);
-        int[] translation = new int[rank];//(cfg+rank);
-        for ( int ii = 0 ; ii < rank; ii++) idxBase[ii] = cfg[rank*5+ii];
-        for ( int ii = 0 ; ii < rank; ii++) idxScale[ii] = cfg[rank*4+ii];
+        int[] indicesBase = new int[ rank ];//(cfg+rank*5);
+        int[] indicesScale = new int[ rank ];//(cfg+rank*4);
+        int[] idx = new int[ rank ];//(cfg+rank*3);
+        int[] translation = new int[ rank ];//(cfg+rank);
+        for ( int ii = 0 ; ii < rank; ii++) indicesBase[ii] = cfg[rank*5+ii];
+        for ( int ii = 0 ; ii < rank; ii++) indicesScale[ii] = cfg[rank*4+ii];
         for ( int ii = 0 ; ii < rank; ii++) idx[ii] = cfg[rank*3+ii];
         for ( int ii = 0 ; ii < rank; ii++) translation[ii] = cfg[rank+ii];
         int i = 0;
         for ( int ii = 0; ii < rank; ii++ ) {
-            i += (idx[ii]*idxScale[ii]+idxBase[ii]) * translation[ii];
+            i += (idx[ii]*indicesScale[ii]+indicesBase[ii]) * translation[ii];
         }
         return i;
     }

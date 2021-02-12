@@ -319,7 +319,7 @@ public final class TsrAsString
         int trim = ( size - max );
         size = ( trim > 0 ) ? max : size;
         for ( int i = 0; i < size; i++ ) {
-            String vStr = getter.stringify( ( _tensor.isVirtual() ) ? 0 : _tensor.i_of_i( i ) );
+            String vStr = getter.stringify( ( _tensor.isVirtual() ) ? 0 : _tensor.indexOfIndex( i ) );
             _$( vStr );
             if ( i < size - 1 ) _$( ", " );
             else if ( trim > 0 ) _$( ", ... + " )._$( trim )._$( " more" );
@@ -333,21 +333,21 @@ public final class TsrAsString
      * @param trimStart The row index where the trimming should start (no entries).
      * @param trimEnd The row index where the trimming should end.
      * @param trimSize The size of the row chunk which ought to be skipped.
-     * @param idx The current index array defining the current position inside the tensor.
+     * @param indices The current index array defining the current position inside the tensor.
      * @param stringifier A lambda responsible for stringifying a tensor entry ba passing the current index array.
      * @param delimiter The String which ought to separate of stringified entries.
      */
     private void _buildRow(
-            int trimStart, int trimEnd, int trimSize, int[] idx, Function<int[],String> stringifier, String delimiter
+            int trimStart, int trimEnd, int trimSize, int[] indices, Function<int[],String> stringifier, String delimiter
     ) {
         for ( int i = 0; i < _shape[ _shape.length - 1 ]; i++ ) {
             if ( i < trimStart || i >= trimEnd ) {
-                _$( stringifier.apply( idx ) );
+                _$( stringifier.apply( indices ) );
                 if ( i < _shape[ _shape.length - 1 ] - 1 ) _$( delimiter );
             }
             else if ( i == trimStart ) _$( "... " )._$( trimSize )._$( " more ..., " );
 
-            NDConfiguration.Utility.increment( idx, _shape );
+            NDConfiguration.Utility.increment( indices, _shape );
         }
     }
 
@@ -360,10 +360,10 @@ public final class TsrAsString
      *  which will be incremented when tensor elements are being stringified... <br>
      *  <br>
      *
-     * @param idx The current index array containing the current index for all dimensions.
+     * @param indices The current index array containing the current index for all dimensions.
      * @param dim The current dimension which is also the "depth" of the recursion.
      */
-    private void _recursiveFormatting( int[] idx, int dim )
+    private void _recursiveFormatting( int[] indices, int dim )
     {
         int max = ( _shortage * 32 / 50 );
         dim = ( dim < 0 ) ? 0 : dim;
@@ -373,21 +373,21 @@ public final class TsrAsString
         int trimEnd = ( _shape[ dim ] / 2 + trimSize / 2 );
         assert trimEnd - trimStart == trimSize;
         IndexAlias alias = _tensor.find( IndexAlias.class );
-        if ( dim == idx.length - 1 ) {
+        if ( dim == indices.length - 1 ) {
             if (
                     alias != null &&
-                            idx[ idx.length - 1 ] == 0 &&
-                            idx[ Math.max( idx.length - 2, 0 ) ] == 0
+                            indices[ indices.length - 1 ] == 0 &&
+                            indices[ Math.max( indices.length - 2, 0 ) ] == 0
             ) {
-                List<Object> key = alias.keysOf( idx.length - 1 );
+                List<Object> key = alias.keysOf( indices.length - 1 );
                 if ( key != null ) {
                     _$( Util.indent( dim ) );
                     _$( (_legacy) ? "[ " : "( " ); // The following assert has prevented many String miscarriages!
-                    assert key.size() - _shape[ idx.length - 1 ] == 0; // This is a basic requirement for the label size...
+                    assert key.size() - _shape[ indices.length - 1 ] == 0; // This is a basic requirement for the label size...
                     ValStringifier getter = _createValStringifier( key.toArray() );
                     _buildRow(
                             trimStart, trimEnd, trimSize,
-                            new int[ idx.length ],
+                            new int[ indices.length ],
                             iarr -> getter.stringify( iarr[ iarr.length -1 ] ),
                             (_legacy) ? "][" : ")("
                     );
@@ -402,43 +402,43 @@ public final class TsrAsString
             ValStringifier getter = _createValStringifier( _tensor.getData() );
             Function<int[], String> fun = ( _tensor.isVirtual() )
                     ? iarr -> getter.stringify( 0 )
-                    : iarr -> getter.stringify( _tensor.i_of_idx( iarr ) );
+                    : iarr -> getter.stringify( _tensor.indexOfIndices( iarr ) );
 
-            _buildRow( trimStart, trimEnd, trimSize, idx, fun, ", " );
+            _buildRow( trimStart, trimEnd, trimSize, indices, fun, ", " );
             _$( (_legacy) ? " )" : " ]" );
 
-            if ( alias != null ) _$( ":" )._buildSingleLabel( alias, dim, idx );
+            if ( alias != null ) _$( ":" )._buildSingleLabel( alias, dim, indices );
         } else {
             _$( Util.indent( dim ) );
             if ( dim > 0 && alias != null )
-                _buildSingleLabel( alias, dim, idx )._$(":");
+                _buildSingleLabel( alias, dim, indices )._$(":");
             _$( (_legacy) ? "(\n" : "[\n" );
             int i = 0;
             do {
                 if ( i < trimStart || i >= trimEnd )
-                    _recursiveFormatting( idx, dim + 1 );
+                    _recursiveFormatting( indices, dim + 1 );
                 else if ( i == trimStart )
                     _$( Util.indent( dim + 1 ) )._$( "... " )._$( trimSize )._$( " more ...\n" );
                 else
-                    idx[ dim ] = trimEnd + 1; // Jumping over trimmed entries!
+                    indices[ dim ] = trimEnd + 1; // Jumping over trimmed entries!
                 i++;
             }
-            while ( idx[ dim ] != 0 );
+            while ( indices[ dim ] != 0 );
             _$( Util.indent( dim ) )._$( (_legacy) ? ")" : "]" );
         }
         int i = dim - 1;
-        if ( i >= 0 && i < idx.length && idx[ i ] != 0 ) _$( "," );
+        if ( i >= 0 && i < indices.length && indices[ i ] != 0 ) _$( "," );
         _$( "\n" );
     }
 
-    private TsrAsString _buildSingleLabel( IndexAlias alias, int dim, int[] idx ) {
+    private TsrAsString _buildSingleLabel( IndexAlias alias, int dim, int[] indices ) {
         int pos = dim - 1;
         List<Object> key = alias.keysOf( pos );
         if ( pos >= 0 && key != null ) {
             _$( (_legacy) ? "[ " : "( ");
-            int i = ( dim == idx.length - 1 )
-                    ? ( _shape[ pos ] + idx[ pos ] - 1 ) % _shape[ pos ]
-                    : idx[ pos ];
+            int i = ( dim == indices.length - 1 )
+                    ? ( _shape[ pos ] + indices[ pos ] - 1 ) % _shape[ pos ]
+                    : indices[ pos ];
             _$( key.get( i ).toString() );
             _$( (_legacy) ? " ]" : " )");
         }

@@ -15,8 +15,6 @@ import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 
-import java.util.List;
-
 public class CopyLeft extends AbstractOperation {
 
     public CopyLeft() {
@@ -75,7 +73,7 @@ public class CopyLeft extends AbstractOperation {
         ScalarOperatorCreator<PrimaryNDXConsumer> scalarXCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if ( d < 0 ) return t1Idx -> t1_val[inputs[ 1 ].i_of_idx( t1Idx )] = value;
+                    if ( d < 0 ) return t1Idx -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] = value;
                     else return null;
                 };
 

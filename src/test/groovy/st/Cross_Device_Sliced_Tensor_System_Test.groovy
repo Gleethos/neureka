@@ -41,7 +41,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
              * */
             Tsr y = new Tsr([x, b, w], "((i0+i1)*i2)^2")
         then:
-            y.idxmap() != null
+            y.indicesMap() != null
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
         when:

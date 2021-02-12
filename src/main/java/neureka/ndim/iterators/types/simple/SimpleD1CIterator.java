@@ -26,7 +26,7 @@ public final class SimpleD1CIterator extends SimpleD1Configuration implements ND
 
     @Override
     public int i() {
-        return this.i_of_idx(_d1);
+        return this.indexOfIndices(_d1);
     }
 
     @Override
@@ -45,8 +45,8 @@ public final class SimpleD1CIterator extends SimpleD1Configuration implements ND
     }
 
     @Override
-    public void set( int[] idx ) {
-        _d1 = idx[0];
+    public void set( int[] indices) {
+        _d1 = indices[0];
     }
 
     @Override

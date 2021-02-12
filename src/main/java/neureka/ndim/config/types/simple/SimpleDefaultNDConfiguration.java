@@ -1,6 +1,5 @@
 package neureka.ndim.config.types.simple;
 
-import neureka.Neureka;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.AbstractNDC;
 
@@ -14,16 +13,16 @@ public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTAB
      */
     protected final int[] _shape;
     /**
-     *  The translation from a shape index (idx) to the index of the underlying data array.
+     *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int[] _translation_and_idxmap;
+    private final int[] _translation_and_indicesMap;
 
 
     protected SimpleDefaultNDConfiguration(
             int[] shape, int[] translation
     ) {
         _shape = _cacheArray( shape );
-        _translation_and_idxmap = _cacheArray( translation );
+        _translation_and_indicesMap = _cacheArray( translation );
     }
 
     public static NDConfiguration construct(
@@ -49,23 +48,23 @@ public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTAB
     }
 
     @Override
-    public int[] idxmap() {
-        return _translation_and_idxmap;
+    public int[] indicesMap() {
+        return _translation_and_indicesMap;
     }
 
     @Override
-    public int idxmap( int i ) {
-        return _translation_and_idxmap[ i ];
+    public int indicesMap(int i ) {
+        return _translation_and_indicesMap[ i ];
     }
 
     @Override
     public int[] translation() {
-        return _translation_and_idxmap;
+        return _translation_and_indicesMap;
     }
 
     @Override
     public int translation( int i ) {
-        return _translation_and_idxmap[ i ];
+        return _translation_and_indicesMap[ i ];
     }
 
     @Override
@@ -94,24 +93,24 @@ public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTAB
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public int i_of_i( int i ) {
-        return i_of_idx(idx_of_i( i ));
+    public int indexOfIndex( int index ) {
+        return indexOfIndices( indicesOfIndex( index ) );
     }
 
     @Override
-    public int[] idx_of_i( int i ) {
-        int[] idx = new int[ _shape.length ];
+    public int[] indicesOfIndex( int index ) {
+        int[] indices = new int[ _shape.length ];
         for ( int ii=0; ii<rank(); ii++ ) {
-            idx[ ii ] += i / _translation_and_idxmap[ ii ];
-            i %= _translation_and_idxmap[ ii ];
+            indices[ ii ] += index / _translation_and_indicesMap[ ii ];
+            index %= _translation_and_indicesMap[ ii ];
         }
-        return idx;
+        return indices;
     }
 
     @Override
-    public int i_of_idx( int[] idx ) {
+    public int indexOfIndices( int[] indices ) {
         int i = 0;
-        for ( int ii=0; ii<_shape.length; ii++ ) i += idx[ ii ] * _translation_and_idxmap[ ii ];
+        for ( int ii = 0; ii < _shape.length; ii++ ) i += indices[ ii ] * _translation_and_indicesMap[ ii ];
         return i;
     }
 

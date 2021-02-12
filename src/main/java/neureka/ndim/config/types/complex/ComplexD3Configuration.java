@@ -13,7 +13,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     protected final int _shape2;
     protected final int _shape3;
     /**
-     *  The translation from a shape index (idx) to the index of the underlying data array.
+     *  The translation from a shape index (indices) to the index of the underlying data array.
      */
     private final int _translation1;
     private final int _translation2;
@@ -21,9 +21,9 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     /**
      *  The mapping of idx array.
      */
-    private final int _idxmap1;
-    private final int _idxmap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
-    private final int _idxmap3;
+    private final int _indicesMap1;
+    private final int _indicesMap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
+    private final int _indicesMap3;
     /**
      *  Produces the strides of a tensor subset / slice
      */
@@ -43,7 +43,7 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     protected ComplexD3Configuration(
             int[] shape,
             int[] translation,
-            int[] idxmap,
+            int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
@@ -53,9 +53,9 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
         _translation1 = translation[ 0 ];
         _translation2 = translation[ 1 ];
         _translation3 = translation[ 2 ];
-        _idxmap1 = idxmap[ 0 ];
-        _idxmap2 = idxmap[ 1 ];
-        _idxmap3 = idxmap[ 2 ];
+        _indicesMap1 = indicesMap[ 0 ];
+        _indicesMap2 = indicesMap[ 1 ];
+        _indicesMap3 = indicesMap[ 2 ];
         _spread1 = spread[ 0 ];
         _spread2 = spread[ 1 ];
         _spread3 = spread[ 2 ];
@@ -67,11 +67,11 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     public static NDConfiguration construct(
             int[] shape,
             int[] translation,
-            int[] idxmap,
+            int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
-        return _cached(new ComplexD3Configuration(shape, translation, idxmap, spread, offset));
+        return _cached(new ComplexD3Configuration(shape, translation, indicesMap, spread, offset));
     }
 
     @Override
@@ -90,13 +90,13 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     }
 
     @Override
-    public int[] idxmap() {
-        return new int[]{_idxmap1, _idxmap2, _idxmap3};
+    public int[] indicesMap() {
+        return new int[]{_indicesMap1, _indicesMap2, _indicesMap3};
     }
 
     @Override
-    public int idxmap( int i ) {
-        return (i==0)?_idxmap1:(i==1)?_idxmap2:_idxmap3;
+    public int indicesMap(int i ) {
+        return (i==0)?_indicesMap1:(i==1)?_indicesMap2:_indicesMap3;
     }
 
     @Override
@@ -133,38 +133,38 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public int i_of_i( int i ) {
-        int idx1, idx2, idx3;
-        idx1 = i / _idxmap1;
-        i %= _idxmap1;
-        idx2 = i / _idxmap2;
-        i %= _idxmap2;
-        idx3 = i / _idxmap3;
-        return (idx1 * _spread1 + _offset1) * _translation1 +
-                (idx2 * _spread2 + _offset2) * _translation2 +
-                (idx3 * _spread3 + _offset3) * _translation3;
+    public int indexOfIndex(int index) {
+        int indices1, indices2, indices3;
+        indices1 = index / _indicesMap1;
+        index %= _indicesMap1;
+        indices2 = index / _indicesMap2;
+        index %= _indicesMap2;
+        indices3 = index / _indicesMap3;
+        return (indices1 * _spread1 + _offset1) * _translation1 +
+                (indices2 * _spread2 + _offset2) * _translation2 +
+                (indices3 * _spread3 + _offset3) * _translation3;
     }
 
     @Override
-    public int[] idx_of_i( int i ) {
-        int idx1, idx2, idx3;
-        idx1 = i / _idxmap1;
-        i %= _idxmap1;
-        idx2 = i / _idxmap2;
-        i %= _idxmap2;
-        idx3 = i / _idxmap3;
-        return new int[]{idx1, idx2, idx3};
+    public int[] indicesOfIndex(int index) {
+        int indices1, indices2, indices3;
+        indices1 = index / _indicesMap1;
+        index %= _indicesMap1;
+        indices2 = index / _indicesMap2;
+        index %= _indicesMap2;
+        indices3 = index / _indicesMap3;
+        return new int[]{indices1, indices2, indices3};
     }
 
     @Override
-    public int i_of_idx( int[] idx ) {
-        return (idx[ 0 ] * _spread1 + _offset1) * _translation1 +
-                    (idx[ 1 ] * _spread2 + _offset2) * _translation2 +
-                        (idx[ 2 ] * _spread3 + _offset3) * _translation3;
+    public int indexOfIndices(int[] indices) {
+        return (indices[ 0 ] * _spread1 + _offset1) * _translation1 +
+                    (indices[ 1 ] * _spread2 + _offset2) * _translation2 +
+                        (indices[ 2 ] * _spread3 + _offset3) * _translation3;
     }
 
     @Override
-    public int i_of_idx( int d1, int d2, int d3 ) {
+    public int indexOfIndices(int d1, int d2, int d3 ) {
         return (d1 * _spread1 + _offset1) * _translation1 +
                 (d2 * _spread2 + _offset2) * _translation2 +
                 (d3 * _spread3 + _offset3) * _translation3;

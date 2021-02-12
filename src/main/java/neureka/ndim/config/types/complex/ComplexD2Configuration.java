@@ -1,6 +1,5 @@
 package neureka.ndim.config.types.complex;
 
-import neureka.Neureka;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.D2C;
 
@@ -12,15 +11,15 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
     protected final int _shape1;
     protected final int _shape2;
     /**
-     *  The translation from a shape index (idx) to the index of the underlying data array.
+     *  The translation from a shape index (indices) to the index of the underlying data array.
      */
     private final int _translation1;
     private final int _translation2;
     /**
-     *  The mapping of idx array.
+     *  The mapping for the indices array.
      */
-    private final int _idxmap1;
-    private final int _idxmap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
+    private final int _indicesMap1;
+    private final int _indicesMap2; // Maps index integer to array like translation. Used to avoid distortion when slicing!
     /**
      *  Produces the strides of a tensor subset / slice
      */
@@ -38,7 +37,7 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
     protected ComplexD2Configuration(
             int[] shape,
             int[] translation,
-            int[] idxmap,
+            int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
@@ -46,8 +45,8 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
         _shape2 = shape[ 1 ];
         _translation1 = translation[ 0 ];
         _translation2 = translation[ 1 ];
-        _idxmap1 = idxmap[ 0 ];
-        _idxmap2 = idxmap[ 1 ];
+        _indicesMap1 = indicesMap[ 0 ];
+        _indicesMap2 = indicesMap[ 1 ];
         _spread1 = spread[ 0 ];
         _spread2 = spread[ 1 ];
         _offset1 = offset[ 0 ];
@@ -57,11 +56,11 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
     public static NDConfiguration construct(
             int[] shape,
             int[] translation,
-            int[] idxmap,
+            int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
-        return _cached(new ComplexD2Configuration(shape, translation, idxmap, spread, offset));
+        return _cached(new ComplexD2Configuration(shape, translation, indicesMap, spread, offset));
     }
 
     @Override
@@ -80,13 +79,13 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int[] idxmap() {
-        return new int[]{_idxmap1, _idxmap2};
+    public int[] indicesMap() {
+        return new int[]{_indicesMap1, _indicesMap2};
     }
 
     @Override
-    public int idxmap( int i ) {
-        return (i==0)?_idxmap1:_idxmap2;
+    public int indicesMap(int i ) {
+        return (i==0)?_indicesMap1:_indicesMap2;
     }
 
     @Override
@@ -123,30 +122,30 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public int i_of_i( int i ) {
-            return ((i / _idxmap1) * _spread1 + _offset1) * _translation1 +
-                    (((i%_idxmap1) / _idxmap2) * _spread2 + _offset2) * _translation2;
+    public int indexOfIndex(int index) {
+            return ((index / _indicesMap1) * _spread1 + _offset1) * _translation1 +
+                    (((index %_indicesMap1) / _indicesMap2) * _spread2 + _offset2) * _translation2;
     }
 
     @Override
-    public int[] idx_of_i( int i ) {
-        int[] idx = new int[ 2 ];
-        idx[ 0 ] += i / _idxmap1;
-        i %= _idxmap1;
-        idx[ 1 ] += i / _idxmap2;
-        return idx;
+    public int[] indicesOfIndex(int index) {
+        int[] indices = new int[ 2 ];
+        indices[ 0 ] += index / _indicesMap1;
+        index %= _indicesMap1;
+        indices[ 1 ] += index / _indicesMap2;
+        return indices;
     }
 
     @Override
-    public int i_of_idx( int[] idx ) {
+    public int indexOfIndices(int[] indices) {
         int i = 0;
-        i += (idx[ 0 ] * _spread1 + _offset1) * _translation1;
-        i += (idx[ 1 ] * _spread2 + _offset2) * _translation2;
+        i += (indices[ 0 ] * _spread1 + _offset1) * _translation1;
+        i += (indices[ 1 ] * _spread2 + _offset2) * _translation2;
         return i;
     }
 
     @Override
-    public int i_of_idx(int d1, int d2) {
+    public int indexOfIndices(int d1, int d2) {
         int i = 0;
         i += (d1 * _spread1 + _offset1) * _translation1;
         i += (d2 * _spread2 + _offset2) * _translation2;

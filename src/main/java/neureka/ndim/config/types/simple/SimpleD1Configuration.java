@@ -11,9 +11,9 @@ public class SimpleD1Configuration extends D1C //:= IMMUTABLE
      */
     protected final int _shape;
     /**
-     *  The translation from a shape index (idx) to the index of the underlying data array.
+     *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int _translation_and_idxmap;
+    private final int _translation_and_indicesMap;
 
 
     public static NDConfiguration construct(
@@ -28,7 +28,7 @@ public class SimpleD1Configuration extends D1C //:= IMMUTABLE
             int translation
     ) {
         _shape = shape;
-        _translation_and_idxmap = translation;
+        _translation_and_indicesMap = translation;
     }
 
     @Override
@@ -47,23 +47,23 @@ public class SimpleD1Configuration extends D1C //:= IMMUTABLE
     }
 
     @Override
-    public int[] idxmap() {
-        return new int[]{_translation_and_idxmap};
+    public int[] indicesMap() {
+        return new int[]{_translation_and_indicesMap};
     }
 
     @Override
-    public int idxmap( int i ) {
-        return _translation_and_idxmap;
+    public int indicesMap(int i ) {
+        return _translation_and_indicesMap;
     }
 
     @Override
     public int[] translation() {
-        return new int[]{_translation_and_idxmap};
+        return new int[]{_translation_and_indicesMap};
     }
 
     @Override
     public int translation( int i ) {
-        return _translation_and_idxmap;
+        return _translation_and_indicesMap;
     }
 
     @Override
@@ -88,23 +88,23 @@ public class SimpleD1Configuration extends D1C //:= IMMUTABLE
 
 
     @Override
-    public int i_of_i( int i ) {
-        return i;
+    public int indexOfIndex(int index) {
+        return index;
     }
 
     @Override
-    public int[] idx_of_i( int i ) {
-        return new int[]{i / _translation_and_idxmap};
+    public int[] indicesOfIndex(int index) {
+        return new int[]{index / _translation_and_indicesMap};
     }
 
     @Override
-    public int i_of_idx( int[] idx ) {
-        return idx[ 0 ] * _translation_and_idxmap;
+    public int indexOfIndices(int[] indices) {
+        return indices[ 0 ] * _translation_and_indicesMap;
     }
 
     @Override
-    public int i_of_idx( int d1 ) {
-        return d1 * _translation_and_idxmap;
+    public int indexOfIndices(int d1 ) {
+        return d1 * _translation_and_indicesMap;
     }
 
 }

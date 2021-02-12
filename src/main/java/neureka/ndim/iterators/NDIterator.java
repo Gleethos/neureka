@@ -35,8 +35,6 @@ SOFTWARE.
 
 package neureka.ndim.iterators;
 
-
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.complex.ComplexD1Configuration;
@@ -46,7 +44,8 @@ import neureka.ndim.config.types.simple.SimpleD1Configuration;
 import neureka.ndim.config.types.simple.SimpleD2Configuration;
 import neureka.ndim.config.types.simple.SimpleD3Configuration;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
-import neureka.ndim.iterators.types.*;
+import neureka.ndim.iterators.types.DefaultNDIterator;
+import neureka.ndim.iterators.types.VirtualNDIterator;
 import neureka.ndim.iterators.types.complex.ComplexD1CIterator;
 import neureka.ndim.iterators.types.complex.main.ComplexD2CIterator;
 import neureka.ndim.iterators.types.complex.main.ComplexD3CIterator;
@@ -93,7 +92,7 @@ public interface NDIterator
 
     void set( int axis, int position );
 
-    void set( int[] idx );
+    void set( int[] indices );
 
     int rank();
 

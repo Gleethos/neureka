@@ -34,7 +34,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src );
-        t0Idx.set( t0_drn.idx_of_i( i ) );
+        t0Idx.set( t0_drn.IndicesOfIndex( i ) );
         NDIterator t2Idx = NDIterator.of( t2_src );
         int rank = t0Idx.rank();
 
@@ -186,9 +186,9 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
         int[] t1Shp = ndc1.shape();
         int[] t2Shp = ndc2.shape();
         int rank = t0Shp.length;
-        int[] t0Idx = ndc0.idx_of_i( i );
-        int[] t1Idx = new int[rank];
-        int[] t2Idx = new int[rank];
+        int[] t0Idx = ndc0.indicesOfIndex( i );
+        int[] t1Idx = new int[ rank ];
+        int[] t2Idx = new int[ rank ];
         double[] t0_value = (double[]) t0_drn.getData();
 
         if ( d < 0 ) {
@@ -240,7 +240,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
                         } else ri++;
                     }
                 }//setInto _value in drn:
-                t0_value[ndc0.i_of_idx(t0Idx)] = value;
+                t0_value[ndc0.indexOfIndices(t0Idx)] = value;
                 //increment on drain:
                 NDConfiguration.Utility.increment(t0Idx, t0Shp);
 
@@ -311,7 +311,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
                     }
                 }
                 //set value in drn:
-                t0_value[ndc0.i_of_idx(t0Idx)] = value;
+                t0_value[ndc0.indexOfIndices(t0Idx)] = value;
                 //increment on drain:
                 NDConfiguration.Utility.increment(t0Idx, t0Shp);
                 i++;

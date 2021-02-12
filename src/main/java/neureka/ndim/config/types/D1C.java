@@ -5,6 +5,6 @@ import neureka.ndim.config.AbstractNDC;
 public abstract class D1C extends AbstractNDC
 {
 
-    public abstract int i_of_idx(int d1);
+    public abstract int indexOfIndices(int d1);
 
 }

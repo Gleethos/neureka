@@ -46,7 +46,7 @@ class ADAM_Tests extends Specification
             w.toString().contains(g.toString())
             w.shape().hashCode()==g.shape().hashCode()
             w.translation().hashCode()==g.translation().hashCode()
-            w.idxmap().hashCode()==g.idxmap().hashCode()
+            w.indicesMap().hashCode()==g.indicesMap().hashCode()
             w.spread().hashCode()==g.spread().hashCode()
             w.offset().hashCode()==g.offset().hashCode()
 

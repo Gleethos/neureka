@@ -69,7 +69,7 @@ public void iterateOver( Tsr t, int times )
     double[] tensorData = (double[]) t0_drn.getData();
     for ( int i = 0; i < times; i++ ) 
     { 
-        double current = tensorData[ ndc.i_of_idx( arrayIndex ) ];
+        double current = tensorData[ ndc.indexOfIndices( arrayIndex ) ];
         // ... used somehow ...
         // incrementing :
         NDConfiguration.Utility.increment( arrayIndex, tensorShape );

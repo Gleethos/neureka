@@ -29,7 +29,7 @@ class Tensor_State_Unit_Test extends Specification
     def 'Tensors as String can be formatted on an entry based level.'()
     {
         given : 'A new tensor of rank 2 storing Strings:'
-            Tsr t = new Tsr([2, 3], DataType.of(String.class), (i, idx)-> {
+            Tsr t = new Tsr([2, 3], DataType.of(String.class), (i, indices)-> {
                 return ["sweet", "salty", "blue", "spinning", "confused", "shining"].get( (i + 17**i)%6 ) + ' ' +
                     ["Saitan", "Apple", "Tofu",  "Strawberry", "Almond", "Salad"].get( (i + 7**i)%6 )
             })

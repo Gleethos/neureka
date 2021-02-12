@@ -58,13 +58,13 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
         int[] shape = tensor.getNDConf().shape();
         assert shape.length == 2;
         if ( _firstColIsIndex ) assert index.size() == shape[ 0 ];
-        int[] idx = new int[ 2 ];
+        int[] indices = new int[ 2 ];
         for ( int i = 0; i < shape[ 0 ]; i++ ) {
-            idx[ 0 ] = i;
+            indices[ 0 ] = i;
             if ( _firstColIsIndex ) asCsv.append( index.get( i ).toString() + "," );
             for ( int ii = 0; ii < shape[ 1 ]; ii++ ) {
-                idx[ 1 ] = ii;
-                asCsv.append( tensor.getValueAt( idx ) );
+                indices[ 1 ] = ii;
+                asCsv.append( tensor.getValueAt( indices ) );
                 if ( ii < shape[ 1 ] - 1 ) asCsv.append( _delimiter );
             }
             asCsv.append( "\n" );

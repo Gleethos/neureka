@@ -14,7 +14,7 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
     protected final int _shape1;
     protected final int _shape2;
     /**
-     *  The translation from a shape index (idx) to the index of the underlying data array.
+     *  The translation from a shape index (indices) to the index of the underlying data array.
      */
     private final int _translation1;
     private final int _translation2;
@@ -53,12 +53,12 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int[] idxmap() {
+    public int[] indicesMap() {
         return new int[]{_translation1, _translation2};
     }
 
     @Override
-    public int idxmap( int i ) {
+    public int indicesMap(int i ) {
         return 1;
     }
 
@@ -96,30 +96,30 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public int i_of_i( int i ) {
-        return (i / _translation1) * _translation1 +
-                ((i%_translation1) / _translation2) * _translation2;
+    public int indexOfIndex(int index) {
+        return (index / _translation1) * _translation1 +
+                ((index %_translation1) / _translation2) * _translation2;
     }
 
     @Override
-    public int[] idx_of_i( int i ) {
-        int[] idx = new int[ 2 ];
-        idx[ 0 ] += i / _translation1;
-        i %= _translation1;
-        idx[ 1 ] += i / _translation2;
-        return idx;
+    public int[] indicesOfIndex(int index) {
+        int[] indices = new int[ 2 ];
+        indices[ 0 ] += index / _translation1;
+        index %= _translation1;
+        indices[ 1 ] += index / _translation2;
+        return indices;
     }
 
     @Override
-    public int i_of_idx( int[] idx ) {
+    public int indexOfIndices(int[] indices) {
         int i = 0;
-        i += idx[ 0 ] * _translation1;
-        i += idx[ 1 ] * _translation2;
+        i += indices[ 0 ] * _translation1;
+        i += indices[ 1 ] * _translation2;
         return i;
     }
 
     @Override
-    public int i_of_idx( int d1, int d2 ) {
+    public int indexOfIndices(int d1, int d2 ) {
         int i = 0;
         i += d1 * _translation1;
         i += d2 * _translation2;

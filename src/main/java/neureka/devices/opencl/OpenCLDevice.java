@@ -394,7 +394,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             newClt.fp = parent.fp;
             newClt.value = parent.value;
         }
-        //CONFIG TRANSFER: <[ shape | translation | idxmap | idx | scale ]>
+        //CONFIG TRANSFER: <[ shape | translation | indicesMap | indices | scale ]>
         int[] config = tensor.getNDConf().asInlineArray();
 
         //SHAPE/TRANSLATION/IDXMAP/OFFSET/SPREAD TRANSFER:

@@ -63,12 +63,12 @@ public abstract class AbstractNDC implements NDConfiguration
     @Override
     public int[] asInlineArray()
     {
-        //CONFIG TRANSFER: <[ shape | translation | idxmap | idx | scale ]>
+        //CONFIG TRANSFER: <[ shape | translation | indicesMap | indices | scale ]>
         int rank = rank();
         int[] inline = new int[ rank * 5 ];
         System.arraycopy( shape(), 0, inline, 0, rank );// -=> SHAPE COPY
         System.arraycopy( translation(), 0, inline, rank * 1, rank );// -=> TRANSLATION COPY
-        System.arraycopy( idxmap(), 0, inline, rank * 2, rank );// -=> IDXMAP COPY (translates scalarization to dimension index)
+        System.arraycopy( indicesMap(), 0, inline, rank * 2, rank );// -=> IDXMAP COPY (translates scalarization to dimension index)
         System.arraycopy( offset(), 0, inline, rank * 3, rank );// -=> SPREAD
         System.arraycopy( spread(), 0, inline, rank * 4, rank );
         return inline;
@@ -82,7 +82,7 @@ public abstract class AbstractNDC implements NDConfiguration
     {
         return Arrays.hashCode( shape() ) +
                Arrays.hashCode( translation() ) * 2 +
-               Arrays.hashCode( idxmap() ) * 3 +
+               Arrays.hashCode( indicesMap() ) * 3 +
                Arrays.hashCode( spread() ) * 4 +
                Arrays.hashCode( offset() ) * 5;
     }
@@ -92,7 +92,7 @@ public abstract class AbstractNDC implements NDConfiguration
     {
         return  Arrays.equals(shape(), ndc.shape()) &&
                 Arrays.equals(translation(), ndc.translation()) &&
-                Arrays.equals(idxmap(), ndc.idxmap()) &&
+                Arrays.equals(indicesMap(), ndc.indicesMap()) &&
                 Arrays.equals(spread(), ndc.spread()) &&
                 Arrays.equals(offset(), ndc.offset());
     }
@@ -102,7 +102,7 @@ public abstract class AbstractNDC implements NDConfiguration
     public static NDConfiguration construct (
             int[] shape,
             int[] translation,
-            int[] idxmap,
+            int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
@@ -114,9 +114,9 @@ public abstract class AbstractNDC implements NDConfiguration
             }
         }
         if ( Neureka.instance().settings().ndim().isOnlyUsingDefaultNDConfiguration() ) {
-            return ComplexDefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);
+            return ComplexDefaultNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
         }
-        boolean isSimple = _isSimpleConfiguration(shape, translation, idxmap, spread, offset);
+        boolean isSimple = _isSimpleConfiguration(shape, translation, indicesMap, spread, offset);
         NDConfiguration ndc = null;
         if ( isSimple ) {
             if ( shape.length == 1 ) {
@@ -130,12 +130,12 @@ public abstract class AbstractNDC implements NDConfiguration
         } else {
             if ( shape.length == 1 ) {
                 if (shape[ 0 ]==1) ndc = ComplexScalarConfiguration.construct(shape, offset);
-                else ndc = ComplexD1Configuration.construct(shape, translation, idxmap, spread, offset);
+                else ndc = ComplexD1Configuration.construct(shape, translation, indicesMap, spread, offset);
             } else if ( shape.length == 2 ) {
-                ndc = ComplexD2Configuration.construct(shape, translation, idxmap, spread, offset);
+                ndc = ComplexD2Configuration.construct(shape, translation, indicesMap, spread, offset);
             } else if ( shape.length == 3 ) {
-                ndc = ComplexD3Configuration.construct(shape, translation, idxmap, spread, offset);
-            } else ndc = ComplexDefaultNDConfiguration.construct(shape, translation, idxmap, spread, offset);
+                ndc = ComplexD3Configuration.construct(shape, translation, indicesMap, spread, offset);
+            } else ndc = ComplexDefaultNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
         }
         return ndc;
     }
@@ -158,7 +158,7 @@ public abstract class AbstractNDC implements NDConfiguration
     private static boolean _isSimpleConfiguration(
             int[] shape,
             int[] translation,
-            int[] idxmap,
+            int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
@@ -166,7 +166,7 @@ public abstract class AbstractNDC implements NDConfiguration
         int[] newSpread = new int[ shape.length ];
         Arrays.fill( newSpread, 1 );
         return  Arrays.equals(translation, newTranslation) &&
-                Arrays.equals(idxmap, newTranslation) &&
+                Arrays.equals(indicesMap, newTranslation) &&
                 Arrays.equals(offset, new int[ shape.length ]) &&
                 Arrays.equals(spread, newSpread);
     }
@@ -178,7 +178,7 @@ public abstract class AbstractNDC implements NDConfiguration
         return "(NDConfiguration|@"+Integer.toHexString(hashCode())+"#"+Long.toHexString(keyCode())+"):{ " +
                     "shape : "+Arrays.toString(shape())+", "+
                     "translation : "+Arrays.toString(translation())+", "+
-                    "idxmap : "+Arrays.toString(idxmap())+", "+
+                    "indicesMap : "+Arrays.toString(indicesMap())+", "+
                     "spread : "+Arrays.toString(spread())+", "+
                     "offset : "+Arrays.toString(offset())+" "+
                 "}";
@@ -205,7 +205,7 @@ public abstract class AbstractNDC implements NDConfiguration
     public NDConfiguration newReshaped( int[] newForm )
     {
         //TODO : shape check!
-        if ( this._isSimpleConfiguration( shape(), translation(), idxmap(), spread(), offset() ) ) {
+        if ( this._isSimpleConfiguration( shape(), translation(), indicesMap(), spread(), offset() ) ) {
             return _simpleReshape( newForm, this );
         } else {
             return new SimpleReshapeView( newForm, this );
