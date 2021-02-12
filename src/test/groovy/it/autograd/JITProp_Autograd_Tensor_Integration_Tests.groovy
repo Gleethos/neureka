@@ -4,7 +4,6 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.JITProp
 import neureka.calculus.assembly.FunctionBuilder
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class JITProp_Autograd_Tensor_Integration_Tests extends Specification
@@ -264,7 +263,7 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
             c.toString().contains("(3.0):g:(null)")
             x.toString().contains("(-4.5)")
 
-        when : a.setGradientApplyRqd(true)
+        when : a.setGradientApplyRequested(true)
         then : a.toString().contains("g:(0.75)")
 
         when : result = f(inputs) // Changes to inputs AND derivatives!

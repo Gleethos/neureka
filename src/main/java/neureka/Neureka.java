@@ -281,7 +281,7 @@ public final class Neureka
             /**
              * Gradients will only be applied if requested.
              * Usually this happens immediately, however
-             * if the flag 'applyGradientWhenTensorIsUsed' is set
+             * if the flag <i>'applyGradientWhenTensorIsUsed'</i> is set
              * to true, then the tensor will only be updated by its
              * gradient if requested AND the tensor is used fo calculation! (GraphNode instantiation).
              */

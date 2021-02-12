@@ -3,7 +3,6 @@ package it.autograd
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -131,7 +130,7 @@ class Autograd_Flags_Explained extends Specification
             xAsStr.matches( afterUse )
 
         when :
-            x.setGradientApplyRqd( true )
+            x.setGradientApplyRequested( true )
             xAsStr = x.toString()
 
         then : 'The variable "x" contains every expected String :'

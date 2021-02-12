@@ -189,43 +189,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
     public Tsr() {}
 
-    public Tsr( Object arg ) {
-        _construct( new Object[]{ arg } );
-    }
-
-    public Tsr( Object arg1, Object arg2, Object arg3 ) {
-        _construct( new Object[]{ arg1, arg2, arg3 } );
-    }
-
-    public Tsr( Object arg1, Object arg2, Object arg3, String arg4 ) {
-        _construct( new Object[]{ arg1, arg2, arg3, arg4 } );
-    }
-
-    public Tsr( Object arg1, Object arg2, Object arg3, Object arg4, Object arg5 ) {
-        _construct( new Object[]{ arg1, arg2, arg3, arg4, arg5 } );
-    }
-
-    public Tsr( Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6 ) {
-        _construct( new Object[]{ arg1, arg2, arg3, arg4, arg5, arg6 } );
-    }
-
-    public Tsr ( Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7 ) {
-        _construct( new Object[]{arg1, arg2, arg3, arg4, arg5, arg6, arg7} );
-    }
-
-    public Tsr( Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8) {
-        _construct( new Object[]{ arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8 } );
-    }
-
-    public Tsr( Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8, Object arg9 ) {
-        _construct( new Object[]{ arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9 } );
-    }
-
-    public Tsr( Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6, Object arg7, Object arg8, Object arg9, Object arg10 ) {
-        _construct( new Object[]{ arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10 } );
-    }
-
-    public Tsr( Object[] args )
+    public Tsr( Object... args )
     {
         _construct( args );
     }
@@ -657,16 +621,52 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         --------------------------------------------
     */
 
+    /**
+     *  This constructor allows the creation of tensors with an additional initialization
+     *  lambda for filling the underlying data array with desired values.
+     *  Besides regular numeric types it is also possible to initialize the
+     *  tensor with regular Objects like String instances or custom data types like complex
+     *  numbers for example... <br>
+     *  Therefore the constructor requires not only a shape as argument but also
+     *  the data type which ought to be allocated as well as the initialization
+     *  lambda which will be called iteratively.
+     *
+     * @param shape The shape of this new tensor ought to have.
+     * @param type The data type this tensor ought to have.
+     * @param initializer The lambda Object which ought to fill this tensor with the appropriate data.
+     * @param <T> The type parameter for the actual data array items.
+     */
     public <T> Tsr( List<Integer> shape, DataType<T> type, Initializer<T> initializer )
     {
         _constructFromInitializer( shape.stream().mapToInt(e -> e ).toArray(), type, initializer );
     }
 
+    /**
+     *  This constructor allows the creation of tensors with an additional initialization
+     *  lambda for filling the underlying data array with desired values.
+     *  Besides regular numeric types it is also possible to initialize the
+     *  tensor with regular Objects like String instances or custom data types like complex
+     *  numbers for example... <br>
+     *  Therefore the constructor requires not only a shape as argument but also
+     *  the data type which ought to be allocated as well as the initialization
+     *  lambda which will be called iteratively.
+     *
+     * @param shape The shape of this new tensor ought to have.
+     * @param type The data type this tensor ought to have.
+     * @param initializer The lambda Object which ought to fill this tensor with the appropriate data.
+     * @param <T> The type parameter for the actual data array items.
+     */
     public <T> Tsr( int[] shape, DataType<T> type, Initializer<T> initializer )
     {
         _constructFromInitializer( shape, type, initializer );
     }
 
+    /**
+     * @param shape The shape of that this new tensor ought to have.
+     * @param type The data type that this tensor ought to have.
+     * @param initializer The lambda Object which ought to fill this tensor with the appropriate data.
+     * @param <T> The type parameter for the actual data array items.
+     */
     private <T> void _constructFromInitializer(int[] shape, DataType<T> type, Initializer<T> initializer )
     {
         setDataType( type );
@@ -681,7 +681,25 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         --------------------------------------------
      */
 
-
+    /**
+     *  This constructor allows for the creation and execution of Function instances
+     *  without actually instantiating them manually,
+     *  where the result will then become this very tensor. <br><br>
+     *  The passed String will be parsed into a Function AST which will be cached
+     *  using the expression as key in case it will be used in future constructor calls
+     *  like this one, or elsewhere...
+     *  The created / retrieved Function will then be called with the supplied input list
+     *  in order to trigger an execution.
+     *  The result of which will be used for the population of the fields of this
+     *  very instance.                                                                      <br>
+     *  An example would be the following :                                                 <br>
+     * <ul>
+     *      <li><i> 'Tsr a = new Tsr( "sin( I[0] ) / I[1]", List.of(b, c) )'
+     * </ul>
+     *
+     * @param expression A String which will be used for parsing a Function AST.
+     * @param inputs A list of inputs which can be tensors or numeric types.
+     */
     public Tsr( String expression, List<Object> inputs )
     {
         if ( inputs.stream().allMatch( e -> e instanceof Tsr ) )
@@ -766,7 +784,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     }
 
     /**
-     *  In essence tensors are merely fancy wrapper for some form of array of any type...
+     *  In essence tensors are merely fancy wrappers for some form of array of any type...
      *  This wrapper usually stays the same of a given data array.
      *  However, sometimes a tensor changes its identity, or rather the underlying
      *  data changes the wrapping tensor instance. 
@@ -930,6 +948,21 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     --------------------------------------------
     */
 
+    /**
+     *  Virtualizing is the opposite to actualizing a tensor.
+     *  A tensor is virtual if the size of the underlying data is not actually equal to
+     *  the number of elements which the tensor claims to store, aka its size.
+     *  This is for example the case when initializing a tensor filled with a single
+     *  value continuously. In that case the tensor will flag itself as virtual and only allocate the
+     *  underlying data array to hold a single item even though the tensor might actually hold
+     *  many more items.
+     *  The reasons for this feature is that it greatly improves performance in certain cases.
+     *  In essence this feature is a form of lazy loading.
+     *  <br><br>
+     *
+     * @param isVirtual The truth value determining if this tensor ought to be virtualized.
+     * @return This very tensor to enable method chaining.
+     */
     public Tsr<ValType> setIsVirtual( boolean isVirtual ) {
         if ( isVirtual() != isVirtual ) {
             Device device = this.find( Device.class );
@@ -952,7 +985,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                 if ( parentTensor != null ) parentTensor.find( Relation.class ).remove( this );
                 _actualize();
             }
-            _setIsVirtual( isVirtual );
+            _setIsVirtual( isVirtual ); //> Changing the flag now!
             if ( getNDConf() != null ) _configureFromNewShape( getNDConf().shape(), isVirtual, true );
             try {
                 if ( device != null ) device.store( this );
@@ -965,10 +998,22 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                 );
                 throw new IllegalStateException( message );
             }
-        } else if ( isVirtual && getData() == null ) _allocate( 1 );//_value = //new double[]{0};
+        } else if ( isVirtual && getData() == null ) _allocate( 1 ); //> Only a single value representing the rest.
         return this;
     }
 
+    /**
+     *  A tensor is virtual if the size of the underlying data is not actually equal to
+     *  the number of elements which the tensor claims to store, aka its size.
+     *  This is for example the case when initializing a tensor filled with a single
+     *  value continuously. In that case the tensor will flag itself as virtual and only allocate the
+     *  underlying data array to hold a single item even though the tensor might actually hold
+     *  many more items.
+     *  The reasons for this feature is that it greatly improves performance in certain cases.
+     *  In essence this feature is a form of lazy loading.
+     *  <br><br>
+     * @return The truth value determining if this tensor is virtual (and therefore not "actual").
+     */
     public boolean isVirtual() {
         return ( _flags & IS_VIRTUAL_MASK ) == IS_VIRTUAL_MASK;
     }
@@ -992,8 +1037,24 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     --------------------------------------------
     */
 
-    public Tsr<ValType> setGradientApplyRqd( boolean applyRequested ) {
-        if ( gradientApplyRqd() != applyRequested ) {
+    /**
+     *  This flag works alongside two autograd features which can be enables inside the library settings.
+     *  They will come into effect when flipping their feature flags, <br>
+     *  namely: <i>'isApplyingGradientWhenRequested'</i> & <i>'isApplyingGradientWhenTensorIsUsed'</i><br>
+     *  As the first flag name suggests gradients will be applied to their tensors when it is set to true,
+     *  however this will only happened when the second flag is set to true as well, because otherwise gradients
+     *  wouldn't be applied to their tensors automatically in the first place... <br>
+     *  <br>
+     *  Setting both flags to true will inhibit effect of the second setting <i>'isApplyingGradientWhenTensorIsUsed'</i>
+     *  unless a form of "permission" is being signaled to the autograd system.
+     *  This signal comes in the form of a "request" flag which marks a tensor as <b>allowed to
+     *  be updated by its gradient<b>.<br>
+     *  <br>
+     * @param applyRequested The truth value determining if the application of the gradient of this tensor is requested.
+     * @return This very tensor instance in order to enable method chaining.
+     */
+    public Tsr<ValType> setGradientApplyRequested( boolean applyRequested ) {
+        if ( gradientApplyRequested() != applyRequested ) {
             if ( applyRequested ) {
                 if (
                         Neureka.instance().settings().autograd().isApplyingGradientWhenRequested() &&
@@ -1007,7 +1068,22 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         return this;
     }
 
-    public boolean gradientApplyRqd() {
+    /**
+     *  This flag works alongside two autograd features which can be enables inside the library settings.
+     *  They will come into effect when flipping their feature flags, <br>
+     *  namely: <i>'isApplyingGradientWhenRequested'</i> & <i>'isApplyingGradientWhenTensorIsUsed'</i><br>
+     *  As the first flag name suggests gradients will be applied to their tensors when it is set to true,
+     *  however this will only happened when the second flag is set to true as well, because otherwise gradients
+     *  wouldn't be applied to their tensors automatically in the first place... <br>
+     *  <br>
+     *  Setting both flags to true will inhibit effect of the second setting <i>'isApplyingGradientWhenTensorIsUsed'</i>
+     *  unless a form of "permission" is being signaled to the autograd system.
+     *  This signal comes in the form of a "request" flag which marks a tensor as <b>allowed to
+     *  be updated by its gradient<b>.<br>
+     *  <br>
+     * @return The truth value determining if the application of the gradient of this tensor is requested.
+     */
+    public boolean gradientApplyRequested() {
         return ( _flags & GRADIENT_APPLY_RQD_MASK ) == GRADIENT_APPLY_RQD_MASK;
     }
 

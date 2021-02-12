@@ -37,6 +37,7 @@ public abstract class AbstractOperation implements Operation
      *  Regular functions like 'sig', 'tanh', ... will not be affected by this id order!
      */
     @Getter protected int _id;
+
     /**
      *  An operation may have two ways in which it can describe itself as String within a Function AST.
      *  The first one is an operator style of representation and the second one a classical function.
@@ -48,6 +49,7 @@ public abstract class AbstractOperation implements Operation
      * The following String is the latter way of representing the operation, namely: a functional way.
      */
     @Getter protected String _function;
+
     /**
      *  An operation may have two ways in which it can describe itself as String within a Function AST.
      *  The first one is an operator style of representation and the second one a classical function.
@@ -59,13 +61,35 @@ public abstract class AbstractOperation implements Operation
      * The following String is the primer way of representing the operation, namely: as an operator.
      */
     @Getter protected String _operator;
+
     /**
      * Arity is the number of arguments or operands
      * that this function or operation takes.
      */
     @Getter protected int _arity = -1;
+
+    /**
+     *  This flag determines if this operation is auto-indexing passed input arguments.
+     *  Auto-indexing in inputs means that for a given array of input arguments
+     *  the wrapping Function instance will call its child nodes targeted via an
+     *  index incrementally.
+     *  The variable 'j' in a Functions expressions containing 'I[j]' will then be
+     *  resolved to an actual input for a given indexer...
+     */
     @Getter protected boolean _isIndexer;
+
+    /**
+     *  Certain operations are not differentiable, meaning they cannot participate
+     *  in neither forward- or reverse- mode differentiation.
+     *  In order to avoid error prone behaviour trying involve
+     *  non- differentiable operations will yield proper exceptions.
+     */
     @Getter protected boolean _isDifferentiable;
+
+    /**
+     *  Inline operations are operations which change the state of the arguments passed to them.
+     *
+     */
     @Getter protected boolean _isInline;
     protected boolean _isOperator;
 
