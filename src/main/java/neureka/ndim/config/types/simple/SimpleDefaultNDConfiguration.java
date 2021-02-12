@@ -29,7 +29,7 @@ public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTAB
             int[] shape,
             int[] translation
     ) {
-        return _cached(new SimpleDefaultNDConfiguration(shape, translation));
+        return _cached( new SimpleDefaultNDConfiguration( shape, translation ) );
     }
 
     @Override
@@ -53,7 +53,7 @@ public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTAB
     }
 
     @Override
-    public int indicesMap(int i ) {
+    public int indicesMap( int i ) {
         return _translation_and_indicesMap[ i ];
     }
 
@@ -69,9 +69,9 @@ public final class SimpleDefaultNDConfiguration extends AbstractNDC //:= IMMUTAB
 
     @Override
     public int[] spread() {
-        int[] newSpred = new int[ _shape.length ];
-        Arrays.fill(newSpred, 1);
-        return newSpred;
+        int[] newSpread = new int[ _shape.length ];
+        Arrays.fill( newSpread, 1 );
+        return newSpread;
     }
 
     @Override

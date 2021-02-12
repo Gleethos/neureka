@@ -308,10 +308,12 @@ class Tensor_IO_Unit_Tests extends Specification
         when : Tsr.IO.subInto(t, 2, 99.0)
         then : t.toString().contains("[2x2]:(2.0, -6.0, 0.0, 0.0)")
 
-        when :
+        when : 'Modifying the first index of the indices array...'
             indices[0] = 0
+        and : 'Using this new indices array for IO...'
             Tsr.IO.subInto(t, indices, -9.0)
-        then : t.toString().contains("[2x2]:(2.0, 3.0, 0.0, 0.0)")
+        then : 'The underlying data will have changed.'
+            t.toString().contains("[2x2]:(2.0, 3.0, 0.0, 0.0)")
 
         when : Tsr.IO.subInto(t, new Tsr([2, 2], [1, 2, 3, 4]))
         then : t.toString().contains("[2x2]:(1.0, 1.0, -3.0, -4.0)")
