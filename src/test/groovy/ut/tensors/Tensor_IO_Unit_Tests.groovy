@@ -2,9 +2,9 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.calculus.Function
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
-import neureka.calculus.Function
 import neureka.dtype.DataType
 import spock.lang.Specification
 
@@ -18,6 +18,7 @@ class Tensor_IO_Unit_Tests extends Specification
                 This specification covers some basic behaviour related to
                 tensor instantiation and modification.
                 This includes the instantiation of tensors with custom seeds, shapes and values...
+                Included are also tests covering static factory methods.
             </p>
         """
     }
@@ -49,14 +50,14 @@ class Tensor_IO_Unit_Tests extends Specification
                     ( int i, int[] indices ) -> { i - 2 }
             )
 
-        then :
+        then : 'The tensor has been initialized with the expected values:'
             t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"
 
         when :
             t = new Tsr(
                     [ 2, 3 ],
                     DataType.of( String.class ),
-                    ( int i, int[] indices ) -> { i+':'+indices.toString() }
+                    ( int i, int[] indices ) -> { i + ':' + indices.toString() }
             )
 
         then :
@@ -72,41 +73,41 @@ class Tensor_IO_Unit_Tests extends Specification
             Tsr c = new Tsr(-1)
 
         when : Tsr t = new Tsr("1+", a, "*", b)
-        then : assert t.toString().contains("7.0")
+        then : t.toString().contains("7.0")
         when : t = new Tsr("1", "+", a, "*", b)
-        then : assert t.toString().contains("7.0")
+        then : t.toString().contains("7.0")
         when : t = new Tsr("(","1+", a,")", "*", b)
-        then : assert t.toString().contains("8.0")
+        then : t.toString().contains("8.0")
         when : t = new Tsr("(","1", "+", a,")", "*", b)
-        then : assert t.toString().contains("8.0")
+        then : t.toString().contains("8.0")
         when : t = new Tsr("(", c, "*3)+", "(","1+", a,")", "*", b)
-        then : assert t.toString().contains("5.0")
+        then : t.toString().contains("5.0")
         when : t = new Tsr("(", c, "*","3)+", "(","1+", a,")", "*", b)
-        then : assert t.toString().contains("5.0")
+        then : t.toString().contains("5.0")
         when : t = new Tsr("(", c, "*","3", ")+", "(","1+", a,")", "*", b)
-        then : assert t.toString().contains("5.0")
+        then : t.toString().contains("5.0")
 
         when : t = new Tsr([2, 2], [2, 4, 4])
-        then : assert t.toString().contains("(2x2):[2.0, 4.0, 4.0, 2.0]")
+        then : t.toString().contains("(2x2):[2.0, 4.0, 4.0, 2.0]")
         when : t = new Tsr([2], [3, 5, 7])
         then :
-            assert t.toString().contains("(2):[3.0, 5.0]")
-            assert t.value64().length==2
+            t.toString().contains("(2):[3.0, 5.0]")
+            t.value64().length==2
 
         // Now the same with primitive array ! :
         when : t = new Tsr(new int[]{2, 2}, new double[]{2, 4, 4})
-        then : assert t.toString().contains("(2x2):[2.0, 4.0, 4.0, 2.0]")
+        then : t.toString().contains("(2x2):[2.0, 4.0, 4.0, 2.0]")
         when : t = new Tsr(new int[]{2}, new double[]{3, 5, 7})
         then :
-            assert t.toString().contains("(2):[3.0, 5.0]")
-            assert t.value64().length==2
+            t.toString().contains("(2):[3.0, 5.0]")
+            t.value64().length==2
 
     }
 
 
     def 'Indexing after reshaping works as expected.'()
     {
-        given : 'Neureka indexing mode is set to "legacy".'
+        given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.instance().settings().view().isUsingLegacyView = true
 
         and : 'A new tensor instance with the shape (4x3).'
@@ -152,7 +153,7 @@ class Tensor_IO_Unit_Tests extends Specification
 
     def 'Tensor value type can not be changed by passing float or double arrays to it.'()
     {
-        given : 'Neureka indexing mode is set to "legacy".'
+        given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
         and : 'A new tensor instance.'
             Tsr x = new Tsr(3)
@@ -211,27 +212,27 @@ class Tensor_IO_Unit_Tests extends Specification
 
     def 'Tensors value type can be changed by calling "to64()" and "to32()".'()
     {
-        given : 'Neureka tensor view is set to legacy.'
+        given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
             Tsr x = new Tsr(3)
 
         when : x.toType( Float.class )
         then :
-            assert x.getValue() instanceof float[]
-            assert x.is32()
-            assert x.value32(0)==3.0f
+            x.getValue() instanceof float[]
+            x.is32()
+            x.value32(0)==3.0f
 
         when : x.toType( Double.class )
         then :
-            assert x.getValue() instanceof double[]
-            assert x.is64()
-            assert x.value32(0)==3.0f
+            x.getValue() instanceof double[]
+            x.is64()
+            x.value32(0)==3.0f
     }
 
 
     def 'A tensor produced by a function has expected properties.'()
     {
-        given : 'Neureka tensor view is set to "legacy".'
+        given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
         and : 'A simple scalar tensor containing the number "4".'
             Tsr x = new Tsr(4)
@@ -248,33 +249,37 @@ class Tensor_IO_Unit_Tests extends Specification
 
     def 'A tensor produced by the static "Tsr.Create.newRandom(shape)" has expected "random" value.'()
     {
-        given :
+        given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.instance().settings().view().isUsingLegacyView = true
 
-        when :
+        when : 'Creating a simple shape array...'
             int[] shape = new int[1]
             shape[0] = 4
+        and : '...and passing it to the "newRandom" factory method to produce tensor x...'
             Tsr x = Tsr.Create.newRandom(shape)
 
-        then : assert  x.toString().contains("[4]:(-0.14690E0, -0.13858E0, -2.30775E0, 0.67281E0)")
-        when : x = Tsr.Create.newRandom(shape, 106605040595L)
-        then : assert x.toString().contains("[4]:(-0.36765E0, -0.45818E0, -1.6556E0, 0.73242E0)")
+        then : '...the newly created variable x is as expected!'
+            x.toString().contains("[4]:(-0.14690E0, -0.13858E0, -2.30775E0, 0.67281E0)")
+        when : 'Again calling the "newRandom" method with a long seed...'
+            x = Tsr.Create.newRandom(shape, 106605040595L)
+        then : '...the newly created variable x is as expected!'
+            x.toString().contains("[4]:(-0.36765E0, -0.45818E0, -1.6556E0, 0.73242E0)")
     }
 
 
     void 'Tensor values can be manipulated via static method calls within the "Tsr.IO" class.'()
     {
-        given :
-            Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
+        given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.instance().settings().view().setIsUsingLegacyView(true)
+        and : 'Two tensors which will be used for testing IO.'
             Tsr t = new Tsr([2, 2], [
                     1.0, 4.0,
                     2.0, 7.0,
             ])
             Tsr v = new Tsr([2, 2], [
                     1.0, -1.0,
-                    1.0, -1.0]
-            )
+                    1.0, -1.0
+            ])
 
         when : Tsr.IO.addInto(t, v)
         then : t.toString().contains("[2x2]:(2.0, 3.0, 3.0, 6.0)")

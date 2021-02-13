@@ -1996,13 +1996,12 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  the same underlying data (possibly from a different view).
      *  The method name also translates to the subscript operator in Groovy.
      *
-     * @param i1
-     * @param i2
-     * @return
+     * @param args An arbitrary number of arguments which can be used for slicing.
+     * @return A slice tensor created based on the passed keys.
      */
-    public Tsr<ValType> getAt( Object i1, Object i2 ) {
-        List<Object> args = Arrays.asList( i1, i2 );
-        return getAt( args );
+    public Tsr<ValType> getAt( Object... args ) {
+        List<Object> argsList = Arrays.asList( args );
+        return getAt( argsList );
     }
 
     /**
@@ -2035,11 +2034,11 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  So the provided array must have the same length as the
      *  rank of this tensor!
      *
-     * @param idx The index array which targets a single value item within this tensor.
+     * @param indices The index array which targets a single value item within this tensor.
      * @return The found raw value item targeted by the provided index array.
      */
-    public ValType getValueAt( int[] idx ) {
-        return (ValType) getDataAt( getNDConf().indexOfIndices( idx ) );
+    public ValType getValueAt( int[] indices ) {
+        return (ValType) getDataAt( getNDConf().indexOfIndices( indices ) );
     }
 
     /**
@@ -2171,7 +2170,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
             The following code check the validity of the slice shape ranges with
             respect to the 'parentTensor' of this new slice.
          */
-        if ( parentTensor.rank() != newShape.length || rootTensor != parentTensor ) {
+        if( parentTensor.rank() != newShape.length || rootTensor != parentTensor ) {
             // TODO! This requires some more thought about how to check this!
             // THIS CASE HAS NOT YET BEEN THOUGHT TROUGH!
         } else {
@@ -2212,9 +2211,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
             }
         }
 
-        subset.setNDConf(
-                AbstractNDC.construct( newShape, newTranslation, newIdxmap, newSpread, newOffset )
-        );
+        subset.setNDConf( AbstractNDC.construct( newShape, newTranslation, newIdxmap, newSpread, newOffset ) );
 
         if ( this.isOutsourced() ) {
             Device<ValType> device = this.find( Device.class );
@@ -2233,20 +2230,23 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
     /**
      *
-     * @param ranges Elements of this array might be multiple things:
-     *               - A map whose first entry represents a mapping between range and steps.
-     *               - A list from which a first and last entry will be interpreted as range.
-     *               - Any other object which might bew found in a 'IndexAlias' component.
+     * @param ranges Elements of this array are either one of:
+     *               <ul style="margin-left: 60px;">
+     *                  <li> A map whose first entry represents a mapping between range and steps.
+     *                  <li> A list from which a first and last entry will be interpreted as range.
+     *                  <li> Any other object which might bew found in a 'IndexAlias' component.
+     *              </ul>
+     *
      * @param offset Start index for every rank.
      * @param newShape New shape of the new sub-tensor.
-     * @param iOffset Rank offset incremented according to recursive calls.
+     * @param dimIndex Dimension index/offset, incremented according to recursive calls.
      * @return A new rank index.
      */
     private int _configureSubsetFromRanges(
             Object[] ranges,
             int[] offset,  int[] spread,
             int[] newShape,
-            int iOffset
+            int dimIndex
     ) {
         for ( int i = 0; i < ranges.length; i++ ) {
             int first = 0;
@@ -2264,10 +2264,10 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                 if ( ranges[ i ] instanceof Map ) {
                     Object[] ks = ( (Map<?,?>) ranges[ i ] ).keySet().toArray();
                     Object[] steps = ( (Map<?,?>) ranges[ i ]).values().toArray();
-                    int newI = _configureSubsetFromRanges( ks, offset, spread, newShape, i + iOffset );
+                    int newI = _configureSubsetFromRanges( ks, offset, spread, newShape, i + dimIndex );
                     for ( int ii = 0; ii < steps.length; ii++ ) {
-                        spread[ ii + i + iOffset ] = (Integer) steps[ ii ];
-                        newShape[ ii + i + iOffset ] /= spread[ ii + i + iOffset ];
+                        spread[ ii + i + dimIndex ] = (Integer) steps[ ii ];
+                        newShape[ ii + i + dimIndex ] /= spread[ ii + i + dimIndex ];
                     }
                     i = newI;
                     continue;
@@ -2277,11 +2277,11 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                 } else {
                     IndexAlias<?> indexAlias = find( IndexAlias.class );
                     if ( indexAlias != null ) {
-                        int position = indexAlias.get( ranges[ i ], i + iOffset );
+                        int position = indexAlias.get( ranges[ i ], i + dimIndex );
                         first = position;
                         last = position;
                     } else {
-                        String message = "Given indexAlias key at axis " + ( i + iOffset ) + " not found!";
+                        String message = "Given indexAlias key at axis " + ( i + dimIndex ) + " not found!";
                         _LOG.error( message );
                         throw new IllegalStateException( message );
                     }
@@ -2298,7 +2298,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                     IndexAlias<?> indexAlias = find( IndexAlias.class );
                     if ( !( ( (Object[]) (ranges[ i ]) )[ 0 ] instanceof Integer ) ) {
                         if ( indexAlias != null ) {
-                            first = indexAlias.get( ( (Object[]) ranges[ i ])[ 0 ], i + iOffset );
+                            first = indexAlias.get( ( (Object[]) ranges[ i ])[ 0 ], i + dimIndex );
                         }
                     }
                     else first = (Integer) ( (Object[]) ranges[ i ] )[ 0 ];
@@ -2307,7 +2307,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                         if ( indexAlias != null ) {
                             last = indexAlias.get(
                                     ( (Object[]) ranges[ i ] )[ ( (Object[]) ranges[ i ] ).length - 1 ],
-                                    i + iOffset
+                                    i + dimIndex
                             );
                         }
                     }
@@ -2325,10 +2325,10 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
             }
             first = ( first < 0 ) ? getNDConf().shape( i ) + first : first;
             last = ( last < 0 ) ? getNDConf().shape( i ) + last : last;
-            newShape[ i + iOffset ] = ( last - first ) + 1;
-            offset[ i + iOffset ] = first;
+            newShape[ i + dimIndex ] = ( last - first ) + 1;
+            offset[ i + dimIndex ] = first;
         }
-        return ranges.length + iOffset - 1;
+        return ranges.length + dimIndex - 1;
     }
 
 
