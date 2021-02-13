@@ -1,14 +1,10 @@
 <h1 align="center"> :cyclone: <a href="https://gleethos.github.io/neureka/index.html">NEUREKA</a> :cyclone: </h1>
 
-<p align="center">	
- <h2 align="center"><b> A platform independent tensor library written in Java. </b></h2>
-</p>
+<h2 align="center"><b> A platform independent tensor library written in Java. </b></h2>
 
+<p align="center">OpenCL accelerated nd-arrays / tensors for Java, Kotlin, Groovy, Scala, Jython, JRuby...</p>
 
 ---
- 
-  > - OpenCL accelerated nd-arrays / tensors for Java, Kotlin, Groovy, Scala, Jython, JRuby...
- 
   
 - Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
   
