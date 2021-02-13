@@ -1,13 +1,9 @@
+<h1 align="center"> :cyclone: <a href="https://gleethos.github.io/neureka/index.html">NEUREKA</a> :cyclone: </h1>
 
-<p align="center">
- 
-# :cyclone: [NEUREKA](https://gleethos.github.io/neureka/index.html) :cyclone: #
-
-[![HitCount](http://hits.dwyl.com/Gleethos/neureka.svg)](http://hits.dwyl.com/Gleethos/neureka) 
- 
- ## **A platform independent tensor library written in Java.** ##
- 
+<p align="center">	
+ <h2 align="center"><b> A platform independent tensor library written in Java. </b></h2>
 </p>
+
 
 ---
  
@@ -17,6 +13,8 @@
 - Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
   
 - Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/lib/neureka-0.5.0.jar)
+  
+- [![HitCount](http://hits.dwyl.com/Gleethos/neureka.svg)](http://hits.dwyl.com/Gleethos/neureka) 
   
 [![Beerpay](https://beerpay.io/Gleethos/neureka/badge.svg?style=beer-square)](https://beerpay.io/Gleethos/neureka)  
 [![Beerpay](https://beerpay.io/Gleethos/neureka/make-wish.svg?style=flat-square)](https://beerpay.io/Gleethos/neureka?focus=wish)
