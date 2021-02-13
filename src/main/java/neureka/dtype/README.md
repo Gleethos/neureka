@@ -1,5 +1,5 @@
 
-# The 'dtype' package #
+# Dtype #
 
 Classes within this package are responsible for
 representing various data-types

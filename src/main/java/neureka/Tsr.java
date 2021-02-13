@@ -2370,7 +2370,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         return _putAt( slice, value );
     }
 
-    private void _putAtCheckFor( Tsr value ) {
+    private void _putAtCheckFor( Tsr<?> value ) {
         if ( value.isEmpty() ) {
             String message = "Provided tensor is empty! Empty tensors cannot be injected.";
             _LOG.error( message );
@@ -2406,12 +2406,10 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  This is a static nested utility class
      *  which is used to allow for fast access to
      *  tensors storing doubles.
-     *
      */
+    @NoArgsConstructor
     public static class IO
     {
-        private IO() {}
-
         public static double getFrom( Tsr<?> t, int i ) {
             if ( t.isEmpty() || t.isUndefined() ) return 0;
             else if ( t.isVirtual() ) return t.value64()[ 0 ];
@@ -2592,7 +2590,8 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         else if ( !this.isVirtual() ) return getData();
         else return getDataType().actualize( getData(), this.size() );
     }
-    
+
+    @Deprecated
     public double[] gradient64() {
         Tsr<ValType> gradient = this.getGradient();
         if ( gradient == null ) return new double[ 0 ];
@@ -2601,6 +2600,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                 : gradient.value64();
     }
 
+    @Deprecated
     public float[] gradient32() {
         Tsr<ValType> gradient = this.getGradient();
         if ( gradient == null ) return new float[ 0 ];

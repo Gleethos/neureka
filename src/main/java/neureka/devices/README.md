@@ -1,5 +1,5 @@
 
-# The 'devices' package #
+# Devices #
 
 The core file of this package is the "Device" interface. <br>
 Generally speaking devices are things that store tensors and

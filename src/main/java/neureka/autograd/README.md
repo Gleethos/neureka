@@ -1,5 +1,5 @@
 
-# The 'autograd' package #
+# Autograd #
 
 This package hosts the classes responsible for enabling 
 automatic differentiation and error propagation, namely "autograd".

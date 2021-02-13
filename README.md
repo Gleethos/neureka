@@ -1,11 +1,13 @@
 
-<center>
+<p align="center">
  
-# :cyclone: [NEUREKA](https://gleethos.github.io/neureka/index.html) - [![HitCount](http://hits.dwyl.com/Gleethos/neureka.svg)](http://hits.dwyl.com/Gleethos/neureka) #
+# :cyclone: [NEUREKA](https://gleethos.github.io/neureka/index.html) :cyclone: #
+
+[![HitCount](http://hits.dwyl.com/Gleethos/neureka.svg)](http://hits.dwyl.com/Gleethos/neureka) 
  
  ## **A platform independent tensor library written in Java.** ##
  
-</center>
+</p>
 
 ---
  
