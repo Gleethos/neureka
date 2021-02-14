@@ -150,6 +150,7 @@ public interface Device<ValType> extends Component<Tsr<ValType>>, Storage<ValTyp
      *  This method has the same signature of the Collection interface in Java 11,
      *  however in order to enable Java 8 support as well
      *  the method below is a substitution.
+     *
      * @param generator
      * @param <T>
      * @return

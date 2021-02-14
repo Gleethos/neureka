@@ -15,10 +15,12 @@ neureka.calculus
 neureka.calculus.assembly
 neureka.calculus.implementations
 neureka.devices
+neureka.devices.file
+neureka.devices.file.heads
+neureka.devices.file.heads.util
 neureka.devices.host
 neureka.devices.opencl
 neureka.devices.opencl.utility
-neureka.devices.storage
 neureka.dtype
 neureka.dtype.custom
 neureka.framing
@@ -32,10 +34,8 @@ neureka.ndim.config.types.virtual
 neureka.ndim.iterators
 neureka.ndim.iterators.types
 neureka.ndim.iterators.types.complex
-neureka.ndim.iterators.types.complex.legacy
 neureka.ndim.iterators.types.complex.main
 neureka.ndim.iterators.types.simple
-neureka.ndim.iterators.types.simple.legacy
 neureka.ndim.iterators.types.simple.main
 neureka.optimization
 neureka.optimization.implementations

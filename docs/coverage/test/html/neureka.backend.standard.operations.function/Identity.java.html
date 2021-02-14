@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationContext;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -15,21 +16,20 @@ import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
-import java.util.List;
-
 public class Identity extends AbstractOperation
 {
 
     public Identity()
     {
-<span class="fc" id="L25">        super(&quot;idy&quot;, &quot;idy&quot; , 1, false, false, true, false);</span>
-
-<span class="fc" id="L27">        setStringifier(</span>
-                children -&gt; {
-<span class="nc" id="L29">                    String expression = String.join( &quot;, &quot;, children );</span>
-<span class="nc bnc" id="L30" title="All 4 branches missed.">                    if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return &quot;idy&quot; + expression;</span>
-<span class="nc" id="L31">                    return &quot;idy&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
-                }
+<span class="fc" id="L24">        super(</span>
+                new OperationFactory()
+<span class="fc" id="L26">                        .setFunction(         &quot;idy&quot;    )</span>
+<span class="fc" id="L27">                        .setOperator(         &quot;idy&quot;    )</span>
+<span class="fc" id="L28">                        .setArity(            1        )</span>
+<span class="fc" id="L29">                        .setIsOperator(       false    )</span>
+<span class="fc" id="L30">                        .setIsIndexer(        false    )</span>
+<span class="fc" id="L31">                        .setIsDifferentiable( true     )</span>
+<span class="fc" id="L32">                        .setIsInline(         false    )</span>
         );
 
 <span class="fc" id="L35">        DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; activationCreator =</span>
@@ -42,7 +42,7 @@ public class Identity extends AbstractOperation
 <span class="fc" id="L42">        DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; activationXCreator =</span>
                 ( inputs, d ) -&gt; {
 <span class="fc" id="L44">                    double[] t1_val = inputs[ 1 ].value64();</span>
-<span class="pc bpc" id="L45" title="1 of 2 branches missed.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[inputs[ 1 ].i_of_idx( t1Idx )];</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];</span>
 <span class="nc" id="L46">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; 1;</span>
                 };
 
@@ -213,17 +213,29 @@ public class Identity extends AbstractOperation
 <span class="fc" id="L213">    }</span>
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List&lt;Function&gt; src ) {
-<span class="nc" id="L217">        return calculate(</span>
-<span class="nc bnc" id="L218" title="All 2 branches missed.">                src.get( 0 ).call( inputs, j ),</span>
+    public String stringify( String[] children ) {
+<span class="nc" id="L217">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="nc bnc" id="L218" title="All 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return &quot;idy&quot; + expression;</span>
+<span class="nc" id="L219">        return &quot;idy&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+    }
+
+    @Override
+    public String asDerivative( Function[] children, int d ) {
+<span class="nc" id="L224">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
+<span class="nc" id="L229">        return calculate(</span>
+<span class="nc bnc" id="L230" title="All 2 branches missed.">                src[ 0 ].call( inputs, j ),</span>
                 d &gt;= 0
-<span class="nc bnc" id="L220" title="All 2 branches missed.">        ) * ( ( d &lt; 0 ) ? 1 : src.get( 0 ).derive( inputs, d, j ) );</span>
+<span class="nc bnc" id="L232" title="All 2 branches missed.">        ) * ( ( d &lt; 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
     }
 
     @Contract(pure = true)
     public static double calculate(double input, boolean derive) {
-<span class="nc bnc" id="L225" title="All 2 branches missed.">        if ( !derive ) return input;</span>
-<span class="nc" id="L226">        else return 1;</span>
+<span class="nc bnc" id="L237" title="All 2 branches missed.">        if ( !derive ) return input;</span>
+<span class="nc" id="L238">        else return 1;</span>
     }
 
 

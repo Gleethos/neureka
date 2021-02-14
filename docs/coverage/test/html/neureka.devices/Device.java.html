@@ -51,10 +51,10 @@ import java.util.function.IntFunction;
 
 /**
  * This is the interface for implementations representing
- * devices primarily store tensors, namely instances of the Tsr&amp;lt;ValueType&amp;gt; class.
+ * devices primarily store tensors, namely instances of the Tsr&amp;lt;ValType&amp;gt; class.
  * Optionally they might also be capable of executing operations on tensors.
  * Such instances are also components of tensors, which is why
- * this interface extends the Component &amp;lt; Tsr &amp;lt; ValueType&amp;gt; &amp;gt; interface.
+ * this interface extends the Component &amp;lt; Tsr &amp;lt; ValType&amp;gt; &amp;gt; interface.
  *
  * The device interface extends the &quot;Storage&quot; interface because devices
  * are also capable of storing tensors on them.
@@ -63,7 +63,7 @@ import java.util.function.IntFunction;
  * A tensor stored on a device will have its &quot;isOutsourced&quot; property set to true!
  *
  */
-public interface Device&lt;ValueType&gt; extends Component&lt;Tsr&lt;ValueType&gt;&gt;, Storage&lt;ValueType&gt;, Collection&lt;Tsr&lt;ValueType&gt;&gt;
+public interface Device&lt;ValType&gt; extends Component&lt;Tsr&lt;ValType&gt;&gt;, Storage&lt;ValType&gt;, Iterable&lt;Tsr&lt;ValType&gt;&gt;
 {
     /**
      * This method return Device instances matching
@@ -124,36 +124,33 @@ public interface Device&lt;ValueType&gt; extends Component&lt;Tsr&lt;ValueType&g
      * @param tensor The tensor whose data ought to be stored.
      * @return A reference this object to allow for method chaining. (factory pattern)
      */
-    Device store( Tsr&lt;ValueType&gt; tensor, Tsr&lt;ValueType&gt; parent );
+    Device store( Tsr&lt;ValType&gt; tensor, Tsr&lt;ValType&gt; parent );
 
-    boolean has( Tsr&lt;ValueType&gt; tensor );
+    boolean has( Tsr&lt;ValType&gt; tensor );
 
-    Device free( Tsr&lt;ValueType&gt; tensor );
+    Device free( Tsr&lt;ValType&gt; tensor );
 
-    Device cleaning( Tsr&lt;ValueType&gt; tensor, Runnable action );
+    Device cleaning( Tsr&lt;ValType&gt; tensor, Runnable action );
 
-    Device overwrite64( Tsr&lt;ValueType&gt; tensor, double[] value );
+    Device overwrite64( Tsr&lt;ValType&gt; tensor, double[] value );
 
-    Device overwrite32( Tsr&lt;ValueType&gt; tensor, float[] value );
+    Device overwrite32( Tsr&lt;ValType&gt; tensor, float[] value );
 
-    Device swap( Tsr&lt;ValueType&gt; former, Tsr&lt;ValueType&gt; replacement );
+    Device swap( Tsr&lt;ValType&gt; former, Tsr&lt;ValType&gt; replacement );
 
     Device execute( ExecutionCall call );
 
-    double[] value64f( Tsr&lt;ValueType&gt; tensor );
+    Object valueFor( Tsr&lt;ValType&gt; tensor );
 
-    float[] value32f( Tsr&lt;ValueType&gt; tensor );
+    ValType valueFor( Tsr&lt;ValType&gt; tensor, int index );
 
-    double value64f( Tsr&lt;ValueType&gt; tensor, int index );
-
-    float value32f( Tsr&lt;ValueType&gt; tensor, int index );
-
-    Collection&lt; Tsr&lt;ValueType&gt; &gt; getTensors();
+    Collection&lt; Tsr&lt;ValType&gt; &gt; getTensors();
 
     /**
      *  This method has the same signature of the Collection interface in Java 11,
      *  however in order to enable Java 8 support as well
      *  the method below is a substitution.
+     *
      * @param generator
      * @param &lt;T&gt;
      * @return

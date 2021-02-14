@@ -715,7 +715,7 @@ neureka.backend.api.operations.OperationContext -> neureka.backend.api.operation
     84:84:int id() -> id
     30:30:java.lang.Object clone() -> clone
     30:49:void <clinit>() -> <clinit>
-neureka.backend.api.operations.OperationTypeFactory -> neureka.backend.api.operations.OperationTypeFactory:
+neureka.backend.api.operations.OperationFactory -> neureka.backend.api.operations.OperationFactory:
     java.lang.String _function -> a
     java.lang.String _operator -> b
     java.lang.Integer _arity -> c
@@ -725,13 +725,13 @@ neureka.backend.api.operations.OperationTypeFactory -> neureka.backend.api.opera
     java.lang.Boolean _isInline -> g
     10:18:void <init>() -> <init>
     23:35:neureka.backend.api.operations.GenericOperation build() -> build
-    12:12:neureka.backend.api.operations.OperationTypeFactory setFunction(java.lang.String) -> setFunction
-    13:13:neureka.backend.api.operations.OperationTypeFactory setOperator(java.lang.String) -> setOperator
-    14:14:neureka.backend.api.operations.OperationTypeFactory setArity(java.lang.Integer) -> setArity
-    15:15:neureka.backend.api.operations.OperationTypeFactory setIsOperator(java.lang.Boolean) -> setIsOperator
-    16:16:neureka.backend.api.operations.OperationTypeFactory setIsIndexer(java.lang.Boolean) -> setIsIndexer
-    17:17:neureka.backend.api.operations.OperationTypeFactory setIsDifferentiable(java.lang.Boolean) -> setIsDifferentiable
-    18:18:neureka.backend.api.operations.OperationTypeFactory setIsInline(java.lang.Boolean) -> setIsInline
+    12:12:neureka.backend.api.operations.OperationFactory setFunction(java.lang.String) -> setFunction
+    13:13:neureka.backend.api.operations.OperationFactory setOperator(java.lang.String) -> setOperator
+    14:14:neureka.backend.api.operations.OperationFactory setArity(java.lang.Integer) -> setArity
+    15:15:neureka.backend.api.operations.OperationFactory setIsOperator(java.lang.Boolean) -> setIsOperator
+    16:16:neureka.backend.api.operations.OperationFactory setIsIndexer(java.lang.Boolean) -> setIsIndexer
+    17:17:neureka.backend.api.operations.OperationFactory setIsDifferentiable(java.lang.Boolean) -> setIsDifferentiable
+    18:18:neureka.backend.api.operations.OperationFactory setIsInline(java.lang.Boolean) -> setIsInline
 neureka.backend.standard.algorithms.Activation -> neureka.backend.standard.algorithms.Activation:
     17:51:void <init>() -> <init>
     54:54:java.lang.String getKernelSource() -> getKernelSource

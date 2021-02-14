@@ -40,12 +40,12 @@ public final class I8 extends AbstractNumericType&lt;Byte, byte[], Byte, byte[]&
 
     @Override
     public Class&lt;Byte&gt; holderType() {
-<span class="nc" id="L43">        return Byte.class;</span>
+<span class="fc" id="L43">        return Byte.class;</span>
     }
 
     @Override
     public Class&lt;byte[]&gt; holderArrayType() {
-<span class="nc" id="L48">        return byte[].class;</span>
+<span class="fc" id="L48">        return byte[].class;</span>
     }
 
     @Override
@@ -89,18 +89,18 @@ public final class I8 extends AbstractNumericType&lt;Byte, byte[], Byte, byte[]&
 
     @Override
     public Byte convertToHolder( Object from ) {
-<span class="nc bnc" id="L92" title="All 2 branches missed.">        if ( Byte.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L93">            return ( (Byte) from );</span>
-<span class="nc bnc" id="L94" title="All 2 branches missed.">        else if ( Integer.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L95">            return ( (Integer) from ).byteValue();</span>
-<span class="nc bnc" id="L96" title="All 2 branches missed.">        else if ( Double.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L97">            return ( (Double) from ).byteValue();</span>
-<span class="nc bnc" id="L98" title="All 2 branches missed.">        else if ( Short.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L99">            return ( (Short) from ).byteValue();</span>
-<span class="nc bnc" id="L100" title="All 2 branches missed.">        else if ( Long.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L101">            return ( (Long) from ).byteValue();</span>
-<span class="nc bnc" id="L102" title="All 2 branches missed.">        else if ( Float.class.equals( from.getClass() ) )</span>
-<span class="nc" id="L103">            return ( (Float) from ).byteValue();</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if ( Byte.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L93">            return ( (Byte) from );</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        else if ( Integer.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L95">            return ( (Integer) from ).byteValue();</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        else if ( Double.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L97">            return ( (Double) from ).byteValue();</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">        else if ( Short.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L99">            return ( (Short) from ).byteValue();</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        else if ( Long.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L101">            return ( (Long) from ).byteValue();</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        else if ( Float.class.equals( from.getClass() ) )</span>
+<span class="fc" id="L103">            return ( (Float) from ).byteValue();</span>
         else
 <span class="nc" id="L105">            return null;</span>
     }

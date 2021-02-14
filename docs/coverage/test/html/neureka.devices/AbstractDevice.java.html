@@ -55,9 +55,9 @@ import org.slf4j.LoggerFactory;
  *
  *  - An implementation for the execution method which calls the underlying calculus backend.
  *
- * @param &lt;ValueType&gt;
+ * @param &lt;ValType&gt;
  */
-public abstract class AbstractDevice&lt;ValueType&gt; extends AbstractBaseDevice&lt;ValueType&gt;
+public abstract class AbstractDevice&lt;ValType&gt; extends AbstractBaseDevice&lt;ValType&gt;
 {
 <span class="fc" id="L62">    private static final NeurekaCleaner _CLEANER = new CustomCleaner();//Cleaner.create();</span>
 
@@ -97,7 +97,7 @@ public abstract class AbstractDevice&lt;ValueType&gt; extends AbstractBaseDevice
 <span class="fc" id="L97">    }</span>
 
     @Override
-    public Device&lt;ValueType&gt; execute( ExecutionCall call )
+    public Device&lt;ValType&gt; execute( ExecutionCall call )
     {
 <span class="fc" id="L102">        call = call.getImplementation().instantiateNewTensorsForExecutionIn( call );</span>
 <span class="fc bfc" id="L103" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : call.getTensors() ) {</span>

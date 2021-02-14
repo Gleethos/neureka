@@ -8,14 +8,14 @@ import neureka.calculus.assembly.FunctionBuilder;
 
 @Accessors( prefix = {&quot;_&quot;} )
 <span class="nc" id="L10">@ToString</span>
-public class PendingError
+public final class PendingError&lt;ValType&gt;
 {
 <span class="nc" id="L13">    @Getter</span>
     private int _toBeReceived;
 <span class="fc" id="L15">    @Getter</span>
-    private final Tsr&lt;?&gt; _accumulatedError;
+    private final Tsr&lt;ValType&gt; _accumulatedError;
 
-<span class="fc" id="L18">    public PendingError( Tsr&lt;?&gt; error, int toBeReceived ) {</span>
+<span class="fc" id="L18">    public PendingError( Tsr&lt;ValType&gt; error, int toBeReceived ) {</span>
 <span class="fc" id="L19">        _toBeReceived = toBeReceived;</span>
 <span class="fc" id="L20">        _accumulatedError = error;</span>
 <span class="fc" id="L21">    }</span>

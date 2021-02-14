@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 08 21:15:54 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Feb 14 00:38:13 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -331,7 +331,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.478 seconds</td>
+<td>0.450 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -376,7 +376,7 @@ div.footer {
 <td>
 <pre class='block-source'>Tsr a = new Tsr(new int[]{100, 60, 1, 2}, 4)
 Tsr b = new Tsr(new int[]{100, 1, 60, 2}, -2)
-Device cpu = a.device()
+Device cpu = a.getDevice()
 assert cpu!=null
 HostCPU.NativeExecutor exec = ((HostCPU)cpu).getExecutor()
 assert exec!=null

@@ -3,15 +3,15 @@
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 
-public class DefaultNDIterator implements NDIterator
+public final class DefaultNDIterator implements NDIterator
 {
-    private final int[] _idx;
+    private final int[] _indices;
     private final int[] _shape;
     private final NDConfiguration _conf;
 
 <span class="fc" id="L12">    public DefaultNDIterator( NDConfiguration ndc ) {</span>
 <span class="fc" id="L13">        _shape = ndc.shape();</span>
-<span class="fc" id="L14">        _idx = new int[ _shape.length ];</span>
+<span class="fc" id="L14">        _indices = new int[ _shape.length ];</span>
 <span class="fc" id="L15">        _conf = ndc;</span>
 <span class="fc" id="L16">    }</span>
 
@@ -27,7 +27,7 @@ public class DefaultNDIterator implements NDIterator
 
     @Override
     public void increment() {
-<span class="fc" id="L30">        NDConfiguration.Utility.increment( _idx, _shape );</span>
+<span class="fc" id="L30">        NDConfiguration.Utility.increment(_indices, _shape );</span>
 <span class="fc" id="L31">    }</span>
 
     @Override
@@ -37,27 +37,27 @@ public class DefaultNDIterator implements NDIterator
 
     @Override
     public int i() {
-<span class="fc" id="L40">        return _conf.i_of_idx( _idx );</span>
+<span class="fc" id="L40">        return _conf.indexOfIndices(_indices);</span>
     }
 
     @Override
     public int get( int axis ) {
-<span class="fc" id="L45">        return _idx[ axis ];</span>
+<span class="fc" id="L45">        return _indices[ axis ];</span>
     }
 
     @Override
     public int[] get() {
-<span class="nc" id="L50">        return _idx;</span>
+<span class="nc" id="L50">        return _indices;</span>
     }
 
     @Override
     public void set( int axis, int position ) {
-<span class="fc" id="L55">        _idx[ axis ] = position;</span>
+<span class="fc" id="L55">        _indices[ axis ] = position;</span>
 <span class="fc" id="L56">    }</span>
 
     @Override
-    public void set( int[] idx ) {
-<span class="fc" id="L60">        System.arraycopy( idx, 0, _idx, 0, idx.length );</span>
+    public void set( int[] indices ) {
+<span class="fc" id="L60">        System.arraycopy( indices, 0, _indices, 0, indices.length );</span>
 <span class="fc" id="L61">    }</span>
 
     @Override

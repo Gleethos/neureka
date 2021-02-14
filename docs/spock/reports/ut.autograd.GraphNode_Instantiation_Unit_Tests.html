@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 08 21:15:29 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Feb 14 00:37:52 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -331,7 +331,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>2.866 seconds</td>
+<td>3.140 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -386,7 +386,7 @@ Supplier&lt;Tsr&gt; supplier = () -&gt; payload
 Function function = Mock( Function )
 Object context = Mock( GraphLock )
 Device device = Mock( Device )
-payload.device() &gt;&gt; device</pre>
+payload.getDevice() &gt;&gt; device</pre>
 </td>
 </tr>
 <tr>
@@ -500,7 +500,7 @@ result.usesReverseAD()</pre>
 <pre class='block-source'>3 * context.getTensors() &gt;&gt; inputs
 5 * inputsNodeMock.getLock() &gt;&gt; Mock( GraphLock )
 1 * function.isDoingAD() &gt;&gt; true
-1 * payload.device() &gt;&gt; device
+1 * payload.getDevice() &gt;&gt; device
 1 * payload.set( _ )
 1 * device.cleaning( payload, _ )
 4 * inputs[0].find( GraphNode.class ) &gt;&gt; inputsNodeMock

@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JPEGHead.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.storage</a> &gt; <span class="el_source">JPEGHead.java</span></div><h1>JPEGHead.java</h1><pre class="source lang-java linenums">package neureka.devices.storage;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JPEGHead.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.file</a> &gt; <span class="el_source">JPEGHead.java</span></div><h1>JPEGHead.java</h1><pre class="source lang-java linenums">package neureka.devices.storage;
 
 import neureka.Tsr;
 import neureka.devices.Storage;
 import neureka.devices.host.HostCPU;
 import neureka.dtype.DataType;
+import neureka.dtype.NumericType;
 import neureka.dtype.custom.I16;
 import neureka.dtype.custom.UI8;
 import neureka.utility.DataConverter;
@@ -16,11 +17,11 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.io.*;
 
-<span class="pc bpc" id="L19" title="1 of 2 branches missed.">public class JPEGHead extends AbstractFileHead&lt;JPEGHead&gt;</span>
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">public class JPEGHead extends AbstractFileHead&lt;JPEGHead, Number&gt;</span>
 {
     static {
-<span class="fc" id="L22">        _LOG = LoggerFactory.getLogger( JPEGHead.class );</span>
-<span class="fc" id="L23">    }</span>
+<span class="fc" id="L23">        _LOG = LoggerFactory.getLogger( JPEGHead.class );</span>
+<span class="fc" id="L24">    }</span>
 
     int _width;
     int _height;
@@ -28,71 +29,70 @@ import java.io.*;
 
     public JPEGHead( String fileName )
     {
-<span class="fc" id="L31">        super( fileName );</span>
+<span class="fc" id="L32">        super( fileName );</span>
         try {
-<span class="fc" id="L33">            _loadHead();</span>
-<span class="nc" id="L34">        } catch( Exception e ) {</span>
-<span class="nc" id="L35">            System.err.print(&quot;Failed reading JPG file!&quot;);</span>
-<span class="fc" id="L36">        }</span>
-<span class="fc" id="L37">    }</span>
+<span class="fc" id="L34">            _loadHead();</span>
+<span class="nc" id="L35">        } catch( Exception e ) {</span>
+<span class="nc" id="L36">            System.err.print(&quot;Failed reading JPG file!&quot;);</span>
+<span class="fc" id="L37">        }</span>
+<span class="fc" id="L38">    }</span>
 
     public JPEGHead( Tsr&lt;Number&gt; t, String filename ) {
-<span class="fc" id="L40">        super( filename );</span>
-<span class="pc bpc" id="L41" title="2 of 4 branches missed.">        assert t.rank() == 3;</span>
-<span class="pc bpc" id="L42" title="2 of 4 branches missed.">        assert t.shape( 2 ) == 3;</span>
-<span class="fc" id="L43">        _height = t.shape(0);</span>
-<span class="fc" id="L44">        _width = t.shape(1);</span>
-<span class="fc" id="L45">        t.setIsVirtual( false );</span>
-<span class="fc" id="L46">        store( t );</span>
-<span class="fc" id="L47">    }</span>
+<span class="fc" id="L41">        super( filename );</span>
+<span class="pc bpc" id="L42" title="2 of 4 branches missed.">        assert t.rank() == 3;</span>
+<span class="pc bpc" id="L43" title="2 of 4 branches missed.">        assert t.shape( 2 ) == 3;</span>
+<span class="fc" id="L44">        _height = t.shape(0);</span>
+<span class="fc" id="L45">        _width = t.shape(1);</span>
+<span class="fc" id="L46">        t.setIsVirtual( false );</span>
+<span class="fc" id="L47">        store( t );</span>
+<span class="fc" id="L48">    }</span>
 
 
     private void _loadHead()
     {
-<span class="fc" id="L52">        File found = _loadFile();</span>
+<span class="fc" id="L53">        File found = _loadFile();</span>
 
-<span class="fc" id="L54">        BufferedImage image = null;</span>
+<span class="fc" id="L55">        BufferedImage image = null;</span>
         Raster data;
 
         try {
-<span class="fc" id="L58">            image = ImageIO.read(found);</span>
-<span class="fc" id="L59">            data = image.getData();</span>
-<span class="fc" id="L60">            _height = data.getHeight();</span>
-<span class="fc" id="L61">            _width = data.getWidth();</span>
-<span class="nc" id="L62">        } catch ( Exception exception ) {</span>
-<span class="nc" id="L63">            String message = &quot;JPEG '&quot;+_fileName+&quot;' could not be read from file!&quot;;</span>
-<span class="nc" id="L64">            _LOG.error( message, exception );</span>
-<span class="nc" id="L65">            exception.printStackTrace();</span>
-<span class="fc" id="L66">        }</span>
+<span class="fc" id="L59">            image = ImageIO.read(found);</span>
+<span class="fc" id="L60">            data = image.getData();</span>
+<span class="fc" id="L61">            _height = data.getHeight();</span>
+<span class="fc" id="L62">            _width = data.getWidth();</span>
+<span class="nc" id="L63">        } catch ( Exception exception ) {</span>
+<span class="nc" id="L64">            String message = &quot;JPEG '&quot;+_fileName+&quot;' could not be read from file!&quot;;</span>
+<span class="nc" id="L65">            _LOG.error( message, exception );</span>
+<span class="nc" id="L66">            exception.printStackTrace();</span>
+<span class="fc" id="L67">        }</span>
 
         try
         {
-<span class="pc bpc" id="L70" title="2 of 4 branches missed.">            if ( _height &lt; 1 || _width &lt; 1 ) {</span>
-<span class="nc" id="L71">                String message = &quot;The height and width of the jpeg at '&quot;+_fileName+&quot;' is &quot;+_height+&quot; &amp; &quot;+_width+&quot;.&quot; +</span>
+<span class="pc bpc" id="L71" title="2 of 4 branches missed.">            if ( _height &lt; 1 || _width &lt; 1 ) {</span>
+<span class="nc" id="L72">                String message = &quot;The height and width of the jpeg at '&quot;+_fileName+&quot;' is &quot;+_height+&quot; &amp; &quot;+_width+&quot;.&quot; +</span>
                         &quot;However both dimensions must at least be of size 1!&quot;;
-<span class="nc" id="L73">                Exception e = new IOException( message );</span>
-<span class="nc" id="L74">                _LOG.error( message, e );</span>
-<span class="nc" id="L75">                throw e;</span>
+<span class="nc" id="L74">                Exception e = new IOException( message );</span>
+<span class="nc" id="L75">                _LOG.error( message, e );</span>
+<span class="nc" id="L76">                throw e;</span>
             }
         }
-<span class="nc" id="L78">        catch ( Exception e )</span>
+<span class="nc" id="L79">        catch ( Exception e )</span>
         {
-<span class="nc" id="L80">            e.printStackTrace();</span>
-<span class="fc" id="L81">        }</span>
-<span class="fc" id="L82">    }</span>
+<span class="nc" id="L81">            e.printStackTrace();</span>
+<span class="fc" id="L82">        }</span>
+<span class="fc" id="L83">    }</span>
 
     @Override
     public Tsr&lt;Number&gt; load() throws IOException {
-<span class="fc" id="L86">        Object value = _loadData();</span>
-<span class="fc" id="L87">        Tsr&lt;Number&gt; t = new Tsr&lt;&gt;( new int[]{_height, _width, 3}, I16.class, value );</span>
-<span class="fc" id="L88">        return t;</span>
+<span class="fc" id="L87">        Object value = _loadData();</span>
+<span class="fc" id="L88">        Tsr&lt;Number&gt; t = new Tsr&lt;&gt;( new int[]{_height, _width, 3}, I16.class, value );</span>
+<span class="fc" id="L89">        return t;</span>
     }
 
     @Override
     protected Object _loadData() throws IOException
     {
-<span class="fc" id="L94">        File found = _loadFile();</span>
-
+<span class="fc" id="L95">        File found = _loadFile();</span>
 <span class="fc" id="L96">        BufferedImage image = null;</span>
         try
         {
@@ -147,7 +147,7 @@ import java.io.*;
     }
 
     @Override
-    public Storage store(Tsr&lt;Number&gt; tensor )
+    public Storage&lt;Number&gt; store( Tsr&lt;Number&gt; tensor )
     {
 <span class="fc" id="L152">        byte[] data = DataConverter.instance().convert( tensor.getData(), byte[].class );</span>
 
@@ -163,7 +163,9 @@ import java.io.*;
 <span class="nc" id="L163">        } catch ( Exception e ) {</span>
 <span class="nc" id="L164">            e.printStackTrace();</span>
 <span class="fc" id="L165">        }</span>
-<span class="fc" id="L166">        return this;</span>
+<span class="fc" id="L166">        tensor.setIsOutsourced( true );</span>
+<span class="fc" id="L167">        tensor.setDataType( DataType.of( I16.class ) );</span>
+<span class="fc" id="L168">        return this;</span>
     }
 
 

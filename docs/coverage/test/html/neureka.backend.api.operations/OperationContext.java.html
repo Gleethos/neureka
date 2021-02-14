@@ -43,17 +43,16 @@ public class OperationContext implements Cloneable
 <span class="fc bfc" id="L43" title="All 2 branches covered.">       for ( Operation operation : serviceLoader ) {</span>
 <span class="pc bpc" id="L44" title="2 of 4 branches missed.">           assert operation.getFunction() != null;</span>
 <span class="pc bpc" id="L45" title="2 of 4 branches missed.">           assert operation.getOperator() != null;</span>
-<span class="pc bpc" id="L46" title="2 of 4 branches missed.">           assert operation.getStringifier() != null;</span>
-<span class="fc" id="L47">           log.debug( &quot;Operation: '&quot; + operation.getFunction() + &quot;' loaded!&quot; );</span>
-<span class="fc" id="L48">       }</span>
-<span class="fc" id="L49">    }</span>
+<span class="fc" id="L46">           log.debug( &quot;Operation: '&quot; + operation.getFunction() + &quot;' loaded!&quot; );</span>
+<span class="fc" id="L47">       }</span>
+<span class="fc" id="L48">    }</span>
 
     /**
      * @return The OperationContext singleton instance!
      */
     public static OperationContext get()
     {
-<span class="fc" id="L56">        return _CONTEXTS.get();</span>
+<span class="fc" id="L55">        return _CONTEXTS.get();</span>
     }
 
     /**
@@ -65,35 +64,35 @@ public class OperationContext implements Cloneable
      */
     public static void setInstance( OperationContext context )
     {
-<span class="fc" id="L68">        _CONTEXTS.set(context);</span>
-<span class="fc" id="L69">    }</span>
+<span class="fc" id="L67">        _CONTEXTS.set(context);</span>
+<span class="fc" id="L68">    }</span>
 
     /**
      *  A mapping between OperationType identifiers and their corresponding instances.
      */
-<span class="fc" id="L74">    @Getter private final Map&lt;String, Operation&gt; _lookup;</span>
+<span class="fc" id="L73">    @Getter private final Map&lt;String, Operation&gt; _lookup;</span>
 
     /**
      *  A list of all OperationType instances.
      */
-<span class="fc" id="L79">    @Getter private final List&lt;Operation&gt; _instances;</span>
+<span class="fc" id="L78">    @Getter private final List&lt;Operation&gt; _instances;</span>
 
     /**
      *  The ID of the OperationType that will be instantiated next.
      */
-<span class="fc" id="L84">    @Getter private int _id;</span>
+<span class="fc" id="L83">    @Getter private int _id;</span>
 
     private OperationContext()
-<span class="fc" id="L87">    {</span>
-<span class="fc" id="L88">        _lookup = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L89">        _instances = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L90">        _id = 0;</span>
-<span class="fc" id="L91">    }</span>
+<span class="fc" id="L86">    {</span>
+<span class="fc" id="L87">        _lookup = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L88">        _instances = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L89">        _id = 0;</span>
+<span class="fc" id="L90">    }</span>
 
     public void incrementID()
     {
-<span class="fc" id="L95">        _id++;</span>
-<span class="fc" id="L96">    }</span>
+<span class="fc" id="L94">        _id++;</span>
+<span class="fc" id="L95">    }</span>
 
     /**
      *  This method queries the operations in this OperationContext
@@ -105,7 +104,7 @@ public class OperationContext implements Cloneable
      */
     public Operation instance( int id )
     {
-<span class="fc" id="L108">        return _instances.get( id );</span>
+<span class="fc" id="L107">        return _instances.get( id );</span>
     }
 
     /**
@@ -118,17 +117,17 @@ public class OperationContext implements Cloneable
      */
     public Operation instance( String identifier )
     {
-<span class="fc" id="L121">        return _lookup.getOrDefault( identifier, null );</span>
+<span class="fc" id="L120">        return _lookup.getOrDefault( identifier, null );</span>
     }
 
     @Override
     public OperationContext clone()
     {
-<span class="fc" id="L127">        OperationContext clone = new OperationContext();</span>
-<span class="fc" id="L128">        clone._id = _id;</span>
-<span class="fc" id="L129">        clone._lookup.putAll( _lookup );</span>
-<span class="fc" id="L130">        clone._instances.addAll( _instances );</span>
-<span class="fc" id="L131">        return clone;</span>
+<span class="fc" id="L126">        OperationContext clone = new OperationContext();</span>
+<span class="fc" id="L127">        clone._id = _id;</span>
+<span class="fc" id="L128">        clone._lookup.putAll( _lookup );</span>
+<span class="fc" id="L129">        clone._instances.addAll( _instances );</span>
+<span class="fc" id="L130">        return clone;</span>
     }
 
 }

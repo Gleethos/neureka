@@ -76,8 +76,7 @@ public final class JITProp<ValType> implements Component<Tsr<ValType>>
     }
 
     /**
-     *
-     * @return
+     * @return The truth value determining if the back-propagation has been completed.
      */
     public boolean isDone() {
         return ( _finished == null && _pending == null );

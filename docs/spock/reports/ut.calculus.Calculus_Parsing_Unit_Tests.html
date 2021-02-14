@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 08 21:15:51 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Feb 14 00:38:04 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -326,12 +326,12 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>2</td>
+<td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.066 seconds</td>
+<td>0.109 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -353,6 +353,9 @@ div.footer {
 </li>
 <li>
 <a href='#1166750340' class='feature-toc-pass'>Parsed equations throw expected error messages.</a>
+</li>
+<li>
+<a href='#1652353001' class='feature-toc-pass'>Functions can derive themselves according to a provided index.</a>
 </li>
 </ul>
 <tr>
@@ -435,8 +438,13 @@ div.footer {
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>2*3/2-1</td>
-<td class='ex-value'>((2.0 * (3.0 / 2.0)) - 1.0)</td>
+<td class='ex-value'>4 *-2</td>
+<td class='ex-value'>(4.0 * -2.0)</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>2*3/1-2</td>
+<td class='ex-value'>((2.0 * (3.0 / 1.0)) - 2.0)</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
@@ -514,7 +522,7 @@ div.footer {
 </div>
 </td>
 <td>
-<div class='spec-status'>22/22 passed</div>
+<div class='spec-status'>23/23 passed</div>
 </td>
 </tr>
 <tr>
@@ -609,6 +617,77 @@ Note: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]'
 </td>
 <td>
 <div class='spec-status'>5/5 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1652353001'>
+<span>Functions can derive themselves according to a provided index.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>A Function created from a given expression will produce the expected derivative String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Function.create(equation).getDerivative( index ).toString() == expected</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following expressions and derivation indices are being used :</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<th class='ex-header'>equation</th>
+<th class='ex-header'>index</th>
+<th class='ex-header'>expected</th>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>(I[0] * I[1] * I[0]) + 3</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>((I[1] * I[0]) + (I[0] * I[1]))</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>1 - I[0] * 3</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>-3.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(2 * I[0]) / (1 - I[0] * 3)</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>((2.0 / (1.0 - (I[0] * 3.0))) - (((2.0 * I[0]) * -3.0) / ((1.0 - (I[0] * 3.0)) ^ 2.0)))</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>3/3 passed</div>
 </td>
 </tr>
 </tbody>

@@ -35,8 +35,6 @@ SOFTWARE.
 
 package neureka.ndim.iterators;
 
-
-import neureka.Neureka;
 import neureka.Tsr;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.complex.ComplexD1Configuration;
@@ -46,15 +44,12 @@ import neureka.ndim.config.types.simple.SimpleD1Configuration;
 import neureka.ndim.config.types.simple.SimpleD2Configuration;
 import neureka.ndim.config.types.simple.SimpleD3Configuration;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
-import neureka.ndim.iterators.types.*;
+import neureka.ndim.iterators.types.DefaultNDIterator;
+import neureka.ndim.iterators.types.VirtualNDIterator;
 import neureka.ndim.iterators.types.complex.ComplexD1CIterator;
-import neureka.ndim.iterators.types.complex.legacy.ComplexLegacyD2CIterator;
-import neureka.ndim.iterators.types.complex.legacy.ComplexLegacyD3CIterator;
 import neureka.ndim.iterators.types.complex.main.ComplexD2CIterator;
 import neureka.ndim.iterators.types.complex.main.ComplexD3CIterator;
 import neureka.ndim.iterators.types.simple.SimpleD1CIterator;
-import neureka.ndim.iterators.types.simple.legacy.SimpleLegacyD2CIterator;
-import neureka.ndim.iterators.types.simple.legacy.SimpleLegacyD3CIterator;
 import neureka.ndim.iterators.types.simple.main.SimpleD2CIterator;
 import neureka.ndim.iterators.types.simple.main.SimpleD3CIterator;
 
@@ -65,27 +60,20 @@ public interface NDIterator
 {
     static NDIterator of( Tsr&lt;?&gt; t ) {
 
-<span class="fc" id="L68">        NDConfiguration ndc = t.getNDConf();</span>
+<span class="fc" id="L63">        NDConfiguration ndc = t.getNDConf();</span>
 
-<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        if ( ndc instanceof ComplexD1Configuration) return new ComplexD1CIterator( (ComplexD1Configuration) ndc );</span>
-<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        if ( ndc instanceof SimpleD1Configuration ) return new SimpleD1CIterator( (SimpleD1Configuration) ndc );</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">        if ( ndc instanceof ComplexD1Configuration) return new ComplexD1CIterator( (ComplexD1Configuration) ndc );</span>
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        if ( ndc instanceof SimpleD1Configuration ) return new SimpleD1CIterator( (SimpleD1Configuration) ndc );</span>
 
-<span class="fc bfc" id="L73" title="All 2 branches covered.">        if ( Neureka.instance().settings().indexing().isUsingLegacyIndexing() ) {</span>
-<span class="pc bpc" id="L74" title="1 of 2 branches missed.">            if ( ndc instanceof ComplexD2Configuration) return new ComplexLegacyD2CIterator( (ComplexD2Configuration) ndc );</span>
-<span class="pc bpc" id="L75" title="1 of 2 branches missed.">            if ( ndc instanceof ComplexD3Configuration) return new ComplexLegacyD3CIterator( (ComplexD3Configuration) ndc );</span>
-<span class="fc bfc" id="L76" title="All 2 branches covered.">            if ( ndc instanceof SimpleD2Configuration ) return new SimpleLegacyD2CIterator( (SimpleD2Configuration) ndc );</span>
-<span class="fc bfc" id="L77" title="All 2 branches covered.">            if ( ndc instanceof SimpleD3Configuration ) return new SimpleLegacyD3CIterator( (SimpleD3Configuration) ndc );</span>
-        } else {
-<span class="pc bpc" id="L79" title="1 of 2 branches missed.">            if ( ndc instanceof ComplexD2Configuration) return new ComplexD2CIterator( (ComplexD2Configuration) ndc );</span>
-<span class="pc bpc" id="L80" title="1 of 2 branches missed.">            if ( ndc instanceof ComplexD3Configuration) return new ComplexD3CIterator( (ComplexD3Configuration) ndc );</span>
-<span class="fc bfc" id="L81" title="All 2 branches covered.">            if ( ndc instanceof SimpleD2Configuration ) return new SimpleD2CIterator( (SimpleD2Configuration) ndc );</span>
-<span class="fc bfc" id="L82" title="All 2 branches covered.">            if ( ndc instanceof SimpleD3Configuration ) return new SimpleD3CIterator( (SimpleD3Configuration) ndc );</span>
-        }
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">        if ( ndc instanceof ComplexD2Configuration) return new ComplexD2CIterator( (ComplexD2Configuration) ndc );</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        if ( ndc instanceof ComplexD3Configuration) return new ComplexD3CIterator( (ComplexD3Configuration) ndc );</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if ( ndc instanceof SimpleD2Configuration ) return new SimpleD2CIterator( (SimpleD2Configuration) ndc );</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if ( ndc instanceof SimpleD3Configuration ) return new SimpleD3CIterator( (SimpleD3Configuration) ndc );</span>
 
-<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        if ( ndc instanceof VirtualNDConfiguration )</span>
-<span class="nc" id="L86">            return new VirtualNDIterator( (VirtualNDConfiguration) ndc );</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        if ( ndc instanceof VirtualNDConfiguration )</span>
+<span class="nc" id="L74">            return new VirtualNDIterator( (VirtualNDConfiguration) ndc );</span>
         else
-<span class="fc" id="L88">            return new DefaultNDIterator( ndc );</span>
+<span class="fc" id="L76">            return new DefaultNDIterator( ndc );</span>
     }
 
     int shape( int i );
@@ -104,25 +92,25 @@ public interface NDIterator
 
     void set( int axis, int position );
 
-    void set( int[] idx );
+    void set( int[] indices );
 
     int rank();
 
 
     default String asString()
     {
-<span class="nc" id="L114">        StringBuilder b = new StringBuilder();</span>
+<span class="nc" id="L102">        StringBuilder b = new StringBuilder();</span>
 
-<span class="nc" id="L116">        StringJoiner sj = new StringJoiner( &quot;,&quot; );</span>
-<span class="nc" id="L117">        StringJoiner finalSj1 = sj;</span>
-<span class="nc" id="L118">        IntStream.of( this.shape() ).forEach( x -&gt; finalSj1.add( String.valueOf(x) ) );</span>
+<span class="nc" id="L104">        StringJoiner sj = new StringJoiner( &quot;,&quot; );</span>
+<span class="nc" id="L105">        StringJoiner finalSj1 = sj;</span>
+<span class="nc" id="L106">        IntStream.of( this.shape() ).forEach( x -&gt; finalSj1.add( String.valueOf(x) ) );</span>
 
-<span class="nc" id="L120">        b.append( &quot;S[&quot; + sj.toString() + &quot;];&quot; );</span>
-<span class="nc" id="L121">        sj = new StringJoiner( &quot;,&quot; );</span>
-<span class="nc" id="L122">        StringJoiner finalSj = sj;</span>
-<span class="nc" id="L123">        IntStream.of( this.get() ).forEach( x -&gt; finalSj.add( String.valueOf( x ) ) );</span>
-<span class="nc" id="L124">        b.append( &quot;I[&quot; + sj.toString() + &quot;];&quot; );</span>
-<span class="nc" id="L125">        return b.toString();</span>
+<span class="nc" id="L108">        b.append( &quot;S[&quot; + sj.toString() + &quot;];&quot; );</span>
+<span class="nc" id="L109">        sj = new StringJoiner( &quot;,&quot; );</span>
+<span class="nc" id="L110">        StringJoiner finalSj = sj;</span>
+<span class="nc" id="L111">        IntStream.of( this.get() ).forEach( x -&gt; finalSj.add( String.valueOf( x ) ) );</span>
+<span class="nc" id="L112">        b.append( &quot;I[&quot; + sj.toString() + &quot;];&quot; );</span>
+<span class="nc" id="L113">        return b.toString();</span>
     }
 
 

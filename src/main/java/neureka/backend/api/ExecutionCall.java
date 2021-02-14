@@ -141,7 +141,7 @@ public class ExecutionCall<DeviceType extends Device>
         private boolean _isValid = true;
 
         /**
-         *  The validity as float being 1.0/true && 0.0/false.
+         *  The validity as float being 1.0/true and 0.0/false.
          *
          * @return The current validity of this Validator as float value.
          */

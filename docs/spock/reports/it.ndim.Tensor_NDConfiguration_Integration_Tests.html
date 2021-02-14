@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 08 21:15:18 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Feb 14 00:37:35 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -331,10 +331,22 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.333 seconds</td>
+<td>0.342 seconds</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class='spec-headers'>
+<div class='spec-header'>
+            <h2> Tensor NDConfiguration Integration Tests </h2>
+            <p>
+                Specified below are strict integration tests for tensors and
+                their behaviour with regards to the usage of implementations of the
+                NDConfiguration interface. <br>
+                For certain situations the "Tsr" class should use the correct 
+                implementations of said interface as configuration for internal index mapping...
+            </p>
+        </div>
 </div>
 <h3>Features:</h3>
 <table class='features-table'>
@@ -417,7 +429,7 @@ Tsr b = new Tsr(2)</pre>
 <td>
 <pre class='block-source'>a.NDConf.shape(0) == 1
 a.NDConf.translation(0) == 1
-a.NDConf.idxmap(0) == 1
+a.NDConf.indicesMap(0) == 1
 a.NDConf.offset(0) == 0
 a.NDConf.spread(0) == 1</pre>
 </td>
@@ -492,7 +504,7 @@ y.NDConf == z.NDConf</pre>
 <td>
 <pre class='block-source'>x.NDConf.shape(0) == 3
 x.NDConf.translation(0) == 1
-x.NDConf.idxmap(0) == 1
+x.NDConf.indicesMap(0) == 1
 x.NDConf.offset(0) == 0
 x.NDConf.spread(0) == 1
 x[2].NDConf instanceof ComplexScalarConfiguration
@@ -528,7 +540,7 @@ y[1.1].NDConf == z[1].NDConf</pre>
 <td>
 <pre class='block-source'>x.NDConf.shape(0) == 1
 x.NDConf.translation(0) == 1
-x.NDConf.idxmap(0) == 1
+x.NDConf.indicesMap(0) == 1
 x.NDConf.offset(0) == 2
 x.NDConf.spread(0) == 1</pre>
 </td>
@@ -562,7 +574,7 @@ x.NDConf.spread(0) == 1</pre>
 y.NDConf instanceof ComplexD1Configuration
 y.NDConf.shape(0) == 2
 y.NDConf.translation(0) == 1
-y.NDConf.idxmap(0) == 1
+y.NDConf.indicesMap(0) == 1
 y.NDConf.offset(0) == 1
 y.NDConf.spread(0) == 1</pre>
 </td>

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 08 21:15:35 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Feb 14 00:38:02 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -331,7 +331,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.953 seconds</td>
+<td>2.317 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -343,6 +343,7 @@ div.footer {
                 This specification covers some basic behaviour related to
                 tensor instantiation and modification.
                 This includes the instantiation of tensors with custom seeds, shapes and values...
+                Included are also tests covering static factory methods.
             </p>
         </div>
 </div>
@@ -453,7 +454,7 @@ t1.toString() != t3.toString()</pre>
 <pre class='block-source'>Tsr t = new Tsr(
         [ 2, 3 ],
         DataType.of( Integer.class ),
-        ( int i, int[] idx ) -&gt; { i - 2 }
+        ( int i, int[] indices ) -&gt; { i - 2 }
 )</pre>
 </td>
 </tr>
@@ -461,6 +462,12 @@ t1.toString() != t3.toString()</pre>
 <td>
 <div class='block-kind'>Then:</div>
 </td>
+<td>
+<div class='block-text'>The tensor has been initialized with the expected values:</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"</pre>
 </td>
@@ -473,7 +480,7 @@ t1.toString() != t3.toString()</pre>
 <pre class='block-source'>t = new Tsr(
         [ 2, 3 ],
         DataType.of( String.class ),
-        ( int i, int[] idx ) -&gt; { i+':'+idx.toString() }
+        ( int i, int[] indices ) -&gt; { i + ':' + indices.toString() }
 )</pre>
 </td>
 </tr>
@@ -524,7 +531,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>assert t.toString().contains("7.0")</pre>
+<pre class='block-source'>t.toString().contains("7.0")</pre>
 </td>
 </tr>
 <tr>
@@ -540,7 +547,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>assert t.toString().contains("7.0")</pre>
+<pre class='block-source'>t.toString().contains("7.0")</pre>
 </td>
 </tr>
 <tr>
@@ -556,7 +563,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>assert t.toString().contains("8.0")</pre>
+<pre class='block-source'>t.toString().contains("8.0")</pre>
 </td>
 </tr>
 <tr>
@@ -572,7 +579,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>assert t.toString().contains("8.0")</pre>
+<pre class='block-source'>t.toString().contains("8.0")</pre>
 </td>
 </tr>
 <tr>
@@ -588,7 +595,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>assert t.toString().contains("5.0")</pre>
+<pre class='block-source'>t.toString().contains("5.0")</pre>
 </td>
 </tr>
 <tr>
@@ -604,7 +611,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>assert t.toString().contains("5.0")</pre>
+<pre class='block-source'>t.toString().contains("5.0")</pre>
 </td>
 </tr>
 <tr>
@@ -620,7 +627,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>assert t.toString().contains("5.0")</pre>
+<pre class='block-source'>t.toString().contains("5.0")</pre>
 </td>
 </tr>
 <tr>
@@ -636,7 +643,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>assert t.toString().contains("(2x2):[2.0, 4.0, 4.0, 2.0]")</pre>
+<pre class='block-source'>t.toString().contains("(2x2):[2.0, 4.0, 4.0, 2.0]")</pre>
 </td>
 </tr>
 <tr>
@@ -652,8 +659,8 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>assert t.toString().contains("(2):[3.0, 5.0]")
-assert t.value64().length==2</pre>
+<pre class='block-source'>t.toString().contains("(2):[3.0, 5.0]")
+t.value64().length==2</pre>
 </td>
 </tr>
 <tr>
@@ -669,7 +676,7 @@ assert t.value64().length==2</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>assert t.toString().contains("(2x2):[2.0, 4.0, 4.0, 2.0]")</pre>
+<pre class='block-source'>t.toString().contains("(2x2):[2.0, 4.0, 4.0, 2.0]")</pre>
 </td>
 </tr>
 <tr>
@@ -685,8 +692,8 @@ assert t.value64().length==2</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>assert t.toString().contains("(2):[3.0, 5.0]")
-assert t.value64().length==2</pre>
+<pre class='block-source'>t.toString().contains("(2):[3.0, 5.0]")
+t.value64().length==2</pre>
 </td>
 </tr>
 <tr>
@@ -704,7 +711,7 @@ assert t.value64().length==2</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<div class='block-text'>Neureka indexing mode is set to "legacy".</div>
+<div class='block-text'>We are using the legacy view for tensors where bracket types are swapped, just because...</div>
 </td>
 </tr>
 <tr>
@@ -738,14 +745,14 @@ assert t.value64().length==2</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def t1_ioi_1 = t1.i_of_idx(new int[]{2, 1})
-def t1_ioi_2 = t1.i_of_idx(new int[]{1, 2})
-def t1_idx   = t1.idx_of_i(5)
+<pre class='block-source'>def t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})
+def t1_ioi_2 = t1.indexOfIndices(new int[]{1, 2})
+def t1_indices = t1.IndicesOfIndex(5)
 Tsr t2 = Function.create(" [ 1, 0 ]:( I[0] ) ")(t1)
-def t2_ioi_1 = t2.i_of_idx(new int[]{1, 2})
-def t2_idx = t2.idx_of_i(7)
-def t1_ioi_3 = t1.i_of_idx(t1.idx_of_i(7))
-def t2_ioi_2 =  t2.i_of_idx(t2.idx_of_i(7))</pre>
+def t2_ioi_1 = t2.indexOfIndices(new int[]{1, 2})
+def t2_idx = t2.IndicesOfIndex(7)
+def t1_ioi_3 = t1.indexOfIndices(t1.IndicesOfIndex(7))
+def t2_ioi_2 =  t2.indexOfIndices(t2.IndicesOfIndex(7))</pre>
 </td>
 </tr>
 <tr>
@@ -761,8 +768,8 @@ def t2_ioi_2 =  t2.i_of_idx(t2.idx_of_i(7))</pre>
 <td>
 <pre class='block-source'>t1_ioi_1 == 7
 t1_ioi_2 == 5
-t1_idx[0] == 1
-t1_idx[1] == 2
+t1_indices[0] == 1
+t1_indices[1] == 2
 t2_ioi_1 == 7
 t2_idx[0] == 1
 t2_idx[1] == 3
@@ -829,7 +836,7 @@ t2.toString().contains("[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<div class='block-text'>Neureka indexing mode is set to "legacy".</div>
+<div class='block-text'>We are using the legacy view for tensors where bracket types are swapped, just because...</div>
 </td>
 </tr>
 <tr>
@@ -923,8 +930,8 @@ x.isLeave()
 !x.isSlice()
 !x.isSliceParent()
 !x.belongsToGraph()
-x.device() !=null
-x.device() instanceof HostCPU
+x.getDevice() !=null
+x.getDevice() instanceof HostCPU
 x.rank()==1
 !x.rqsGradient()
 x.size()==1</pre>
@@ -982,7 +989,7 @@ x.value64(0)==7.0d</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<div class='block-text'>Neureka tensor view is set to legacy.</div>
+<div class='block-text'>We are using the legacy view for tensors where bracket types are swapped, just because...</div>
 </td>
 </tr>
 <tr>
@@ -1005,9 +1012,9 @@ Tsr x = new Tsr(3)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>assert x.getValue() instanceof float[]
-assert x.is32()
-assert x.value32(0)==3.0f</pre>
+<pre class='block-source'>x.getValue() instanceof float[]
+x.is32()
+x.value32(0)==3.0f</pre>
 </td>
 </tr>
 <tr>
@@ -1023,9 +1030,9 @@ assert x.value32(0)==3.0f</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>assert x.getValue() instanceof double[]
-assert x.is64()
-assert x.value32(0)==3.0f</pre>
+<pre class='block-source'>x.getValue() instanceof double[]
+x.is64()
+x.value32(0)==3.0f</pre>
 </td>
 </tr>
 <tr>
@@ -1043,7 +1050,7 @@ assert x.value32(0)==3.0f</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<div class='block-text'>Neureka tensor view is set to "legacy".</div>
+<div class='block-text'>We are using the legacy view for tensors where bracket types are swapped, just because...</div>
 </td>
 </tr>
 <tr>
@@ -1101,6 +1108,12 @@ y.toString().contains("[1]:(0.97014E0)")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
+<div class='block-text'>We are using the legacy view for tensors where bracket types are swapped, just because...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
 <pre class='block-source'>Neureka.instance().settings().view().isUsingLegacyView = true</pre>
 </td>
 </tr>
@@ -1109,9 +1122,28 @@ y.toString().contains("[1]:(0.97014E0)")</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
+<div class='block-text'>Creating a simple shape array...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
 <pre class='block-source'>int[] shape = new int[1]
-shape[0] = 4
-Tsr x = Tsr.Create.newRandom(shape)</pre>
+shape[0] = 4</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>...and passing it to the "newRandom" factory method to produce tensor x...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr x = Tsr.Create.newRandom(shape)</pre>
 </td>
 </tr>
 <tr>
@@ -1119,13 +1151,25 @@ Tsr x = Tsr.Create.newRandom(shape)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>assert  x.toString().contains("[4]:(-0.14690E0, -0.13858E0, -2.30775E0, 0.67281E0)")</pre>
+<div class='block-text'>...the newly created variable x is as expected!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>x.toString().contains("[4]:(-0.14690E0, -0.13858E0, -2.30775E0, 0.67281E0)")</pre>
 </td>
 </tr>
 <tr>
 <td>
 <div class='block-kind'>When:</div>
 </td>
+<td>
+<div class='block-text'>Again calling the "newRandom" method with a long seed...</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>x = Tsr.Create.newRandom(shape, 106605040595L)</pre>
 </td>
@@ -1135,7 +1179,13 @@ Tsr x = Tsr.Create.newRandom(shape)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>assert x.toString().contains("[4]:(-0.36765E0, -0.45818E0, -1.6556E0, 0.73242E0)")</pre>
+<div class='block-text'>...the newly created variable x is as expected!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>x.toString().contains("[4]:(-0.36765E0, -0.45818E0, -1.6556E0, 0.73242E0)")</pre>
 </td>
 </tr>
 <tr>
@@ -1153,14 +1203,34 @@ Tsr x = Tsr.Create.newRandom(shape)</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
-Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
-Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Tsr t = new Tsr([2, 2], [
+<div class='block-text'>We are using the legacy view for tensors where bracket types are swapped, just because...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Two tensors which will be used for testing IO.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr t = new Tsr([2, 2], [
         1.0, 4.0,
         2.0, 7.0,
 ])
-Tsr v = new Tsr([2, 2], [1.0, -1.0, 1.0, -1.0])</pre>
+Tsr v = new Tsr([2, 2], [
+        1.0, -1.0,
+        1.0, -1.0
+])</pre>
 </td>
 </tr>
 <tr>
@@ -1200,9 +1270,9 @@ Tsr v = new Tsr([2, 2], [1.0, -1.0, 1.0, -1.0])</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>int[] idx = new int[2]
-idx[1] = 1
-Tsr.IO.addInto(t, idx, -9.0)</pre>
+<pre class='block-source'>int[] indices = new int[2]
+indices[1] = 1
+Tsr.IO.addInto(t, indices, -9.0)</pre>
 </td>
 </tr>
 <tr>
@@ -1210,8 +1280,8 @@ Tsr.IO.addInto(t, idx, -9.0)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 6.0)")
-Tsr.IO.getFrom(t, idx)==-3.0d</pre>
+<pre class='block-source'>t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 6.0)")
+Tsr.IO.getFrom(t, indices)==-6.0d</pre>
 </td>
 </tr>
 <tr>
@@ -1219,8 +1289,8 @@ Tsr.IO.getFrom(t, idx)==-3.0d</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>idx[0] = 1
-Tsr.IO.mulInto(t, idx, -1)</pre>
+<pre class='block-source'>indices[0] = 1
+Tsr.IO.mulInto(t, indices, -1)</pre>
 </td>
 </tr>
 <tr>
@@ -1228,7 +1298,7 @@ Tsr.IO.mulInto(t, idx, -1)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, -3.0, -6.0)")</pre>
+<pre class='block-source'>t.toString().contains("[2x2]:(2.0, -6.0, 6.0, -6.0)")</pre>
 </td>
 </tr>
 <tr>
@@ -1244,7 +1314,7 @@ Tsr.IO.mulInto(t, idx, -1)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 12.0)")</pre>
+<pre class='block-source'>t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 12.0)")</pre>
 </td>
 </tr>
 <tr>
@@ -1252,7 +1322,7 @@ Tsr.IO.mulInto(t, idx, -1)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr.IO.setInto(t, idx, 0.0)</pre>
+<pre class='block-source'>Tsr.IO.setInto(t, indices, 0.0)</pre>
 </td>
 </tr>
 <tr>
@@ -1260,7 +1330,7 @@ Tsr.IO.mulInto(t, idx, -1)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, -3.0, 0.0)")</pre>
+<pre class='block-source'>t.toString().contains("[2x2]:(2.0, -6.0, 6.0, 0.0)")</pre>
 </td>
 </tr>
 <tr>
@@ -1276,7 +1346,7 @@ Tsr.IO.mulInto(t, idx, -1)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, 99.0, 0.0)")</pre>
+<pre class='block-source'>t.toString().contains("[2x2]:(2.0, -6.0, 99.0, 0.0)")</pre>
 </td>
 </tr>
 <tr>
@@ -1292,7 +1362,7 @@ Tsr.IO.mulInto(t, idx, -1)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, 0.0, 0.0)")</pre>
+<pre class='block-source'>t.toString().contains("[2x2]:(2.0, -6.0, 0.0, 0.0)")</pre>
 </td>
 </tr>
 <tr>
@@ -1300,8 +1370,27 @@ Tsr.IO.mulInto(t, idx, -1)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>idx[0] = 0
-Tsr.IO.subInto(t, idx, -9.0)</pre>
+<div class='block-text'>Modifying the first index of the indices array...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>indices[0] = 0</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Using this new indices array for IO...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr.IO.subInto(t, indices, -9.0)</pre>
 </td>
 </tr>
 <tr>
@@ -1309,7 +1398,13 @@ Tsr.IO.subInto(t, idx, -9.0)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, 9.0, 0.0)")</pre>
+<div class='block-text'>The underlying data will have changed.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.toString().contains("[2x2]:(2.0, 3.0, 0.0, 0.0)")</pre>
 </td>
 </tr>
 <tr>
@@ -1325,7 +1420,7 @@ Tsr.IO.subInto(t, idx, -9.0)</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>t.toString().contains("[2x2]:(1.0, 1.0, 6.0, -4.0)")</pre>
+<pre class='block-source'>t.toString().contains("[2x2]:(1.0, 1.0, -3.0, -4.0)")</pre>
 </td>
 </tr>
 <tr>

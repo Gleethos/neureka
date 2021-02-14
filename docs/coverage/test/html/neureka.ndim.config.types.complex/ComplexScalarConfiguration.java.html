@@ -18,7 +18,7 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
     public static NDConfiguration construct(
             int[] shape,
             // translation, will always be 1
-            // idxmap, will also always be 1
+            // indicesMap, will also always be 1
             // spread, does not matter!
             int[] offset
     ) {
@@ -40,7 +40,7 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int[] shape() {
-<span class="fc" id="L43">        return new int[]{_shape};</span>
+<span class="fc" id="L43">        return new int[]{ _shape };</span>
     }
 
     @Override
@@ -49,12 +49,12 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
     }
 
     @Override
-    public int[] idxmap() {
+    public int[] indicesMap() {
 <span class="fc" id="L53">        return new int[]{1};</span>
     }
 
     @Override
-    public int idxmap( int i ) {
+    public int indicesMap(int i ) {
 <span class="fc" id="L58">        return 1;</span>
     }
 
@@ -70,7 +70,7 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int[] spread() {
-<span class="fc" id="L73">        return new int[]{1};</span>
+<span class="fc" id="L73">        return new int[]{ 1 };</span>
     }
 
     @Override
@@ -80,7 +80,7 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
 
     @Override
     public int[] offset() {
-<span class="fc" id="L83">        return new int[]{_offset};</span>
+<span class="fc" id="L83">        return new int[]{ _offset };</span>
     }
 
     @Override
@@ -90,18 +90,18 @@ public final class ComplexScalarConfiguration extends AbstractNDC //:= IMMUTABLE
 
 
     @Override
-    public int i_of_i( int i ) {
-<span class="nc" id="L94">        return i + _offset;</span>
+    public int indexOfIndex(int index) {
+<span class="nc" id="L94">        return index + _offset;</span>
     }
 
     @Override
-    public int[] idx_of_i( int i ) {
-<span class="nc" id="L99">        return new int[]{i};</span>
+    public int[] indicesOfIndex(int index) {
+<span class="nc" id="L99">        return new int[]{ index };</span>
     }
 
     @Override
-    public int i_of_idx( int[] idx ) {
-<span class="nc" id="L104">        return idx[ 0 ] + _offset;</span>
+    public int indexOfIndices(int[] indices) {
+<span class="nc" id="L104">        return indices[ 0 ] + _offset;</span>
     }
 
 

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 08 21:15:28 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Feb 14 00:37:50 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -331,7 +331,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.620 seconds</td>
+<td>0.589 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -369,14 +369,13 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<div class='block-text'>The following library configuration (legacy) is being used.</div>
+<div class='block-text'>The following library configuration is being used.</div>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
-Neureka.instance().settings().view().setIsUsingLegacyView(true)
+<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)
 Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)</pre>
 </td>
 </tr>
@@ -391,12 +390,24 @@ Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(fals
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr i_a = new Tsr([2, 1], [1, 2])
-Tsr w_a = new Tsr([2, 2], [1, 3, 4, -1]).setRqsGradient(true)
+<pre class='block-source'>Tsr i_a = new Tsr([2, 1], [
+        1,
+        2
+])
+Tsr w_a = new Tsr([2, 2], [
+        1, 3,
+        4, -1
+]).setRqsGradient(true)
 Tsr o_a = new Tsr(i_a, "x", w_a)
-Tsr w_b = new Tsr([2, 2], [-2, 1, 2, -1]).setRqsGradient(true)
+Tsr w_b = new Tsr([2, 2], [
+        -2, 1,  // 9, 1 -&gt; -17
+        2, -1   // ... -&gt; 17
+]).setRqsGradient(true)
 Tsr o_b = new Tsr(o_a, "x", w_b)
-Tsr w_c = new Tsr([2, 2], [0.5, 3, -2, -0.5]).setRqsGradient(true)
+Tsr w_c = new Tsr([2, 2], [
+        0.5, 3,
+        -2, -0.5
+]).setRqsGradient(true)
 Tsr o_c = new Tsr(o_a, "x", w_c)
 Tsr out = o_b * o_c</pre>
 </td>
@@ -412,10 +423,10 @@ Tsr out = o_b * o_c</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>assert o_a.toString().contains("(7.0, 2.0)")
-assert out.toString().contains("(5.0, 100.0)")
-assert o_b.toString().contains("(-10.0, 5.0)")
-assert o_c.toString().contains("(-0.5, 20.0)")
+<pre class='block-source'>assert o_a.toString().contains("(9.0, 1.0)")
+assert out.toString().contains("(-127.5, -314.5)")
+assert o_b.toString().contains("(-17.0, 17.0)")
+assert o_c.toString().contains("(7.5, -18.5)")
 assert w_a.toString().contains("g:(null)")
 assert w_b.toString().contains("g:(null)")</pre>
 </td>
@@ -477,8 +488,9 @@ Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(f
 <td></td>
 <td>
 <pre class='block-source'>assert w_a.toString().contains("g:(null)")
-assert !w_a.toString().contains("1.0, 3.0, 4.0, -1.0")
-assert !w_b.toString().contains("g:(null)")</pre>
+assert w_a.toString().contains("(-93.5, -30.5, -185.0, -68.0):g:(null)")
+assert !w_b.toString().contains("g:(null)")
+assert w_b.toString().contains("g:(67.5, 7.5, -166.5, -18.5)")</pre>
 </td>
 </tr>
 <tr>
@@ -497,7 +509,6 @@ assert !w_b.toString().contains("g:(null)")</pre>
 </td>
 <td>
 <pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
 Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)</pre>
 </td>
 </tr>
@@ -581,8 +592,7 @@ assert !w_b.toString().contains("g:(null)")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
-Tsr t0 = new Tsr([3, 2, 1], [
+<pre class='block-source'>Tsr t0 = new Tsr([3, 2, 1], [
         1, 2,
         3, 4,
         5, 6
@@ -607,39 +617,6 @@ Tsr x0 = new Tsr([1, 2, 3], [
 </td>
 <td>
 <pre class='block-source'>out0.toString().equals("(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]")</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>And:</div>
-</td>
-<td>
-<pre class='block-source'>Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
-Tsr t1 = new Tsr([3, 2, 1], [
-        1, 2, 3,
-        4, 5, 6
-])
-Tsr x1 = new Tsr([1, 2, 3], [
-        1, 2,
-        3, 4,
-        5, 6
-])</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>When:</div>
-</td>
-<td>
-<pre class='block-source'>Tsr out1 = new Tsr([t0, x0], "i0xi1")</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>Then:</div>
-</td>
-<td>
-<pre class='block-source'>out1.toString().equals("(3x1x3):[9.0, 19.0, 29.0, 12.0, 26.0, 40.0, 15.0, 33.0, 51.0]")</pre>
 </td>
 </tr>
 </tbody>

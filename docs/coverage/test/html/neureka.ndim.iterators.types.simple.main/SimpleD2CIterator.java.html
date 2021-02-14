@@ -3,7 +3,7 @@
 import neureka.ndim.iterators.NDIterator;
 import neureka.ndim.config.types.simple.SimpleD2Configuration;
 
-public class SimpleD2CIterator extends SimpleD2Configuration implements NDIterator
+public final class SimpleD2CIterator extends SimpleD2Configuration implements NDIterator
 {
 <span class="fc" id="L8">    protected int _d1 = 0;</span>
 <span class="fc" id="L9">    protected int _d2 = 0;</span>
@@ -31,7 +31,7 @@ public class SimpleD2CIterator extends SimpleD2Configuration implements NDIterat
 
     @Override
     public int i() {
-<span class="fc" id="L34">        return this.i_of_idx( _d1, _d2 );</span>
+<span class="fc" id="L34">        return this.indexOfIndices( _d1, _d2 );</span>
     }
 
     @Override
@@ -51,9 +51,9 @@ public class SimpleD2CIterator extends SimpleD2Configuration implements NDIterat
 <span class="fc" id="L51">    }</span>
 
     @Override
-    public void set( int[] idx ) {
-<span class="fc" id="L55">        _d1 = idx[0];</span>
-<span class="fc" id="L56">        _d2 = idx[1];</span>
+    public void set( int[] indices ) {
+<span class="fc" id="L55">        _d1 = indices[0];</span>
+<span class="fc" id="L56">        _d2 = indices[1];</span>
 <span class="fc" id="L57">    }</span>
 
 }

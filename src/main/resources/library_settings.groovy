@@ -49,6 +49,6 @@ Neureka.instance {
 
     }
 
-    return "0.5.0"
+    return "0.6.0"
 
 }

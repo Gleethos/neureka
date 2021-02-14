@@ -8,7 +8,7 @@
   
 - Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
   
-- Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/lib/neureka-0.5.0.jar)
+- Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/lib/neureka-0.6.0.jar)
   
 - [![HitCount](http://hits.dwyl.com/Gleethos/neureka.svg)](http://hits.dwyl.com/Gleethos/neureka) 
   
@@ -88,7 +88,7 @@ This powerful feature has been inspired by PyTorch:
 <dependency>
   <groupId>com.github.gleethos</groupId>
   <artifactId>neureka</artifactId>
-  <version>0.5.0</version>
+  <version>0.6.0</version>
 </dependency>
 ```
 ---
@@ -96,11 +96,11 @@ This powerful feature has been inspired by PyTorch:
 ## Getting started with Gradle: ##
 Groovy DSL:
 ```
-implementation 'com.github.gleethos:neureka:0.5.0'
+implementation 'com.github.gleethos:neureka:0.6.0'
 ```
 Kotlin DSL:
 ```
-implementation("com.github.gleethos:neureka:0.5.0")
+implementation("com.github.gleethos:neureka:0.6.0")
 ```
 ...or alternatively: 
 
@@ -116,7 +116,7 @@ allprojects {
 2. Add Neureka as dependency:
 ```
 dependencies {
-	implementation 'com.github.Gleethos:neureka:v0.5.0'
+	implementation 'com.github.Gleethos:neureka:v0.6.0'
 }
 ```
 
@@ -126,7 +126,7 @@ dependencies {
 
 ```
 @GrabResolver(name = 'jitpack.io', root = 'https://jitpack.io')
-@Grab('com.github.Gleethos:neureka:v0.5.0')
+@Grab('com.github.Gleethos:neureka:v0.6.0')
 
 import neureka.*
 ```

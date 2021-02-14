@@ -39,17 +39,17 @@ import neureka.Tsr;
 import neureka.calculus.Function;
 import neureka.optimization.Optimizer;
 
-public class ADAM&lt;ValueType&gt; implements Optimizer&lt;ValueType&gt; {
+public class ADAM&lt;ValType&gt; implements Optimizer&lt;ValType&gt; {
 
     // VARIABLES...
-    private final Tsr&lt;ValueType&gt; a;
-    private final Tsr&lt;ValueType&gt; b1;
-    private final Tsr&lt;ValueType&gt; b2;
-    private final Tsr&lt;ValueType&gt; e;
-    Tsr&lt;ValueType&gt; m;
-    Tsr&lt;ValueType&gt; v;
+    private final Tsr&lt;ValType&gt; a;
+    private final Tsr&lt;ValType&gt; b1;
+    private final Tsr&lt;ValType&gt; b2;
+    private final Tsr&lt;ValType&gt; e;
+    Tsr&lt;ValType&gt; m;
+    Tsr&lt;ValType&gt; v;
 
-<span class="fc" id="L52">    ADAM(Tsr&lt;ValueType&gt; target) {</span>
+<span class="fc" id="L52">    ADAM(Tsr&lt;ValType&gt; target) {</span>
 <span class="fc" id="L53">        int[] shape = target.getNDConf().shape();</span>
 <span class="fc" id="L54">        m  = new Tsr&lt;&gt;(shape, 0);</span>
 <span class="fc" id="L55">        v  = new Tsr&lt;&gt;(shape, 0);</span>
@@ -59,23 +59,23 @@ public class ADAM&lt;ValueType&gt; implements Optimizer&lt;ValueType&gt; {
 <span class="fc" id="L59">        e  = new Tsr&lt;&gt;(shape, 1e-7);</span>
 <span class="fc" id="L60">    }</span>
 
-    private void _optimize(Tsr&lt;ValueType&gt; w) {
-<span class="fc" id="L63">        Tsr&lt;ValueType&gt; g = w.find(Tsr.class);</span>
+    private void _optimize(Tsr&lt;ValType&gt; w) {
+<span class="fc" id="L63">        Tsr&lt;ValType&gt; g = w.getGradient();</span>
 <span class="fc" id="L64">        m = new Tsr&lt;&gt;(b1, &quot;*&quot;, m, &quot; + ( 1-&quot;, b1, &quot;) *&quot;, g);</span>
 <span class="fc" id="L65">        v = new Tsr&lt;&gt;(b2, &quot;*&quot;, v, &quot; + ( 1-&quot;, b2, &quot;) * (&quot;, g,&quot;^2 )&quot;);</span>
-<span class="fc" id="L66">        Tsr&lt;ValueType&gt; mh = new Tsr&lt;&gt;(m, &quot;/(1-&quot;, b1, &quot;)&quot;);</span>
-<span class="fc" id="L67">        Tsr&lt;ValueType&gt; vh = new Tsr&lt;&gt;(v, &quot;/(1-&quot;, b2, &quot;)&quot;);</span>
-<span class="fc" id="L68">        Tsr&lt;ValueType&gt; newg = new Tsr&lt;&gt;(&quot;-&quot;,a,&quot;*&quot;,mh,&quot;/(&quot;,vh,&quot;^0.5+&quot;,e,&quot;)&quot;);</span>
+<span class="fc" id="L66">        Tsr&lt;ValType&gt; mh = new Tsr&lt;&gt;(m, &quot;/(1-&quot;, b1, &quot;)&quot;);</span>
+<span class="fc" id="L67">        Tsr&lt;ValType&gt; vh = new Tsr&lt;&gt;(v, &quot;/(1-&quot;, b2, &quot;)&quot;);</span>
+<span class="fc" id="L68">        Tsr&lt;ValType&gt; newg = new Tsr&lt;&gt;(&quot;-&quot;,a,&quot;*&quot;,mh,&quot;/(&quot;,vh,&quot;^0.5+&quot;,e,&quot;)&quot;);</span>
 <span class="fc" id="L69">        Function.Detached.IDY.call(new Tsr[]{g, newg});</span>
 <span class="fc" id="L70">    }</span>
 
     @Override
-    public void optimize(Tsr&lt;ValueType&gt; t) {
+    public void optimize(Tsr&lt;ValType&gt; t) {
 <span class="fc" id="L74">        _optimize(t);</span>
 <span class="fc" id="L75">    }</span>
 
     @Override
-    public void update(Tsr&lt;ValueType&gt; oldOwner, Tsr&lt;ValueType&gt; newOwner) {
+    public void update(Tsr&lt;ValType&gt; oldOwner, Tsr&lt;ValType&gt; newOwner) {
         
 <span class="nc" id="L80">    }</span>
 }

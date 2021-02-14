@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 08 21:15:13 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Feb 14 00:37:36 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -331,7 +331,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.774 seconds</td>
+<td>0.833 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -624,20 +624,6 @@ Tsr w = new Tsr(new int[]{1}, 2)</pre>
 </tr>
 <tr>
 <td>
-<div class='block-kind'>And:</div>
-</td>
-<td>
-<div class='block-text'>The Neureka instance is set to legacy indexing.</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)</pre>
-</td>
-</tr>
-<tr>
-<td>
 <div class='block-kind'>When:</div>
 </td>
 <td>
@@ -718,8 +704,7 @@ new double[]{
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
-x = new Tsr(
+<pre class='block-source'>x = new Tsr(
         new int[]{3, 3},
         new double[]{
                 1, 2, 5,
@@ -748,7 +733,7 @@ new double[]{
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>z = new Tsr(new Tsr[]{x, y}, "I0xi1")</pre>
+<pre class='block-source'>z = new Tsr(new Tsr[]{y, x}, "I0xi1")</pre>
 </td>
 </tr>
 <tr>
@@ -764,7 +749,7 @@ new double[]{
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>z = new Tsr(new Object[]{x, "x", y})</pre>
+<pre class='block-source'>z = new Tsr(new Object[]{y, "x", x})</pre>
 </td>
 </tr>
 <tr>

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 08 21:15:08 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Feb 14 00:37:34 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -326,12 +326,12 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>2</td>
+<td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>5.103 seconds</td>
+<td>4.953 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -360,7 +360,10 @@ div.footer {
 <a href='#542094272' class='feature-toc-pass'>Added labels to tensors are accessible through the "index()" method.</a>
 </li>
 <li>
-<a href='#614734030' class='feature-toc-pass'>Tensors can be labeled and their labels can be used to extract slices / subsets of tensors.</a>
+<a href='#-789088980' class='feature-toc-pass'>Rank 2 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.</a>
+</li>
+<li>
+<a href='#-1230843475' class='feature-toc-pass'>Rank 3 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.</a>
 </li>
 </ul>
 <tr>
@@ -494,8 +497,8 @@ asString.contains("2")</pre>
 </tr>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='614734030'>
-<span>Tensors can be labeled and their labels can be used to extract slices / subsets of tensors.</span>
+<div class='feature-description' id='-789088980'>
+<span>Rank 2 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.</span>
 <span style='float: right; font-size: 60%;'>
 <a href='#toc'>Return</a>
 </span>
@@ -507,9 +510,27 @@ asString.contains("2")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
-Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Tsr t = new Tsr([3, 4],[
+<div class='block-text'>Tensor printing is set to "legacy" for this test.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>And a labeled tensor of rank 2 is being created.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr t = new Tsr([3, 4], [
         1, 2, 3, 4,
         9, 8, 6, 5,
         4, 5, 6, 7
@@ -522,8 +543,27 @@ t.label([
 </tr>
 <tr>
 <td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>t.toString('fp') == "[3x4]:(\n" +
+"   [    a  ][   b  ][   y  ][   z   ]\n" +
+"   (   1.0 ,   2.0 ,   3.0 ,   4.0  ):[ 1 ],\n" +
+"   (   9.0 ,   8.0 ,   6.0 ,   5.0  ):[ 2 ],\n" +
+"   (   4.0 ,   5.0 ,   6.0 ,   7.0  ):[ 3 ]\n" +
+")\n"</pre>
+</td>
+</tr>
+<tr>
+<td>
 <div class='block-kind'>When:</div>
 </td>
+<td>
+<div class='block-text'>We use a label for slicing a row from the tensor (which is also a matrix in this case).</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>Tsr x = t["2", 1..2]</pre>
 </td>
@@ -533,9 +573,69 @@ t.label([
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>x in t
-t.contains(x)
-x.toString().contains("[1x2]:(8.0, 6.0)")</pre>
+<div class='block-text'>This new slice "x" then will yield true when using the "contains" operator on t.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>x in t</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Calling the "contains" method will also return true.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.contains(x)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The String representation is as expected.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>x.toString().contains("[1x2]:(8.0, 6.0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The tensor "x" is of course a slice:</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>x.isSlice()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The original tensor "t" is a "parent":</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.isSliceParent()</pre>
 </td>
 </tr>
 <tr>
@@ -543,7 +643,13 @@ x.toString().contains("[1x2]:(8.0, 6.0)")</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>x = t.getAt("2", new int[]{1,2})</pre>
+<div class='block-text'>We now call the "getAt" method manually with the same arguments...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>x = t.getAt("2", new int[]{ 1, 2 })</pre>
 </td>
 </tr>
 <tr>
@@ -551,15 +657,29 @@ x.toString().contains("[1x2]:(8.0, 6.0)")</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
+<div class='block-text'>This will produce the same result "x" with the same properties...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
 <pre class='block-source'>x in t
 t.contains(x)
-x.toString().contains("[1x2]:(8.0, 6.0)")</pre>
+x.toString().contains("[1x2]:(8.0, 6.0)")
+x.isSlice()
+t.isSliceParent()</pre>
 </td>
 </tr>
 <tr>
 <td>
 <div class='block-kind'>When:</div>
 </td>
+<td>
+<div class='block-text'>Supplying String ranges (whose entries are also labels) for slicing...</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>x = t["2".."3", "b".."y"]</pre>
 </td>
@@ -569,54 +689,222 @@ x.toString().contains("[1x2]:(8.0, 6.0)")</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>x in t
-t.contains(x)
-x.toString().contains("[2x2]:(8.0, 6.0, 5.0, 6.0)")</pre>
+<div class='block-text'>This slice will be as expected!</div>
 </td>
 </tr>
 <tr>
-<td>
-<div class='block-kind'>When:</div>
-</td>
-<td>
-<pre class='block-source'>x = t.getAt(new String[]{"2","3"}, new String[]{"b","y"})</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>Then:</div>
-</td>
+<td></td>
 <td>
 <pre class='block-source'>x in t
 t.contains(x)
-x.toString().contains("[2x2]:(8.0, 6.0, 5.0, 6.0)")</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>When:</div>
-</td>
-<td>
-<pre class='block-source'>t = new Tsr([2, 3, 4], 7)
-t.label([
-        ["1", "2"],
-        ["a", "b", "y"],
-        ["tim", "tom", "tina", "tanya"]
-])
-x = t["2", "b".."y", [["tim","tanya"]:2]]</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>Then:</div>
-</td>
-<td>
-<pre class='block-source'>x in t
-t.contains(x)
-x.toString().contains("[1x2x2]:(7.0, 7.0, 7.0, 7.0)")
-!x.isVirtual()
+x.toString().contains("[2x2]:(8.0, 6.0, 5.0, 6.0)")
 x.isSlice()
 t.isSliceParent()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>Calling the "getAt" method manually with "ranges" as String arrays...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>x = t.getAt(new String[]{"2", "3"}, new String[]{"b", "y"})</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>...this will produce the same result as previously:</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>x in t
+t.contains(x)
+x.toString().contains("[2x2]:(8.0, 6.0, 5.0, 6.0)")
+x.isSlice()
+t.isSliceParent()</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1230843475'>
+<span>Rank 3 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Tensor printing is set to "legacy" for this test.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>And a labeled tensor of rank 3 is being created.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr t = new Tsr([2, 3, 4], -7..7)
+t.label( 'My Tensor', [
+    ["1", "2"],
+    ["a", "b", "y"],
+    ["tim", "tom", "tina", "tanya"]
+])</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>When the tensor is converted to a String then the labels will be included:</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.toString('fp') == "[2x3x4]:(\n" +
+"   [ 1 ]:(\n" +
+"      [   tim ][  tom ][ tina ][ tanya ]:[ My Tensor ]\n" +
+"      (  -7.0 ,  -6.0 ,  -5.0 ,  -4.0  ):[ a ],\n" +
+"      (  -3.0 ,  -2.0 ,  -1.0 ,   0.0  ):[ b ],\n" +
+"      (   1.0 ,   2.0 ,   3.0 ,   4.0  ):[ y ]\n" +
+"   ),\n" +
+"   [ 2 ]:(\n" +
+"      [   tim ][  tom ][ tina ][ tanya ]:[ My Tensor ]\n" +
+"      (   5.0 ,   6.0 ,   7.0 ,  -7.0  ):[ a ],\n" +
+"      (  -6.0 ,  -5.0 ,  -4.0 ,  -3.0  ):[ b ],\n" +
+"      (  -2.0 ,  -1.0 ,   0.0 ,   1.0  ):[ y ]\n" +
+"   )\n" +
+")\n"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>Creating a slice by passing a single label, a range of labels and a range with stride...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr x = t["2", "b".."y", [["tim","tanya"]:2]]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>This new slice "x" then will yield true when using the "contains" operator on t.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>x in t</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Calling the "contains" method will also return true.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.contains(x)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The String representation is as expected.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>x.toString('fp') == "[1x2x2]:(\n" +
+"   (\n" +
+"      (  -6.0 ,  -4.0  ),\n" +
+"      (  -2.0 ,   0.0  )\n" +
+"   )\n" +
+")\n"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The tensor "x" is of course a slice:</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>x.isSlice()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The original tensor "t" is a "parent":</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.isSliceParent()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The slice is not virtual.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>!x.isVirtual()</pre>
 </td>
 </tr>
 <tr>
@@ -634,7 +922,12 @@ t.isSliceParent()</pre>
 <td>
 <pre class='block-source'>x in t
 t.contains(x)
-x.toString().contains("[1x2x2]:(7.0, 7.0, 7.0, 7.0)")
+x.toString('fp') == "[1x2x2]:(\n" +
+"   (\n" +
+"      (  -6.0 ,  -4.0  ),\n" +
+"      (  -2.0 ,   0.0  )\n" +
+"   )\n" +
+")\n"
 !x.isVirtual()
 x.isSlice()
 t.isSliceParent()
@@ -656,7 +949,12 @@ t.sliceCount()==2</pre>
 <td>
 <pre class='block-source'>x in t
 t.contains(x)
-x.toString().contains("[1x2x2]:(7.0, 7.0, 7.0, 7.0)")
+x.toString('fp') == "[1x2x2]:(\n" +
+"   (\n" +
+"      (  -6.0 ,  -4.0  ),\n" +
+"      (  -2.0 ,   0.0  )\n" +
+"   )\n" +
+")\n"
 !x.isVirtual()
 x.isSlice()
 t.isSliceParent()
@@ -669,13 +967,13 @@ t.sliceCount()==3</pre>
 </td>
 <td>
 <pre class='block-source'>t.label(
-        new String[][]{
-                new String[]{"1", "2"},
-                new String[]{"a", "b", "y"},
-                new String[]{"tim", "tom", "tina", "tanya"}
-        }
+    new String[][]{
+        new String[]{ "1", "2" },
+        new String[]{ "a", "b", "y" },
+        new String[]{ "tim", "tom", "tina", "tanya" }
+    }
 )
-x = t[["1","2"], "b".."y", [["tim","tanya"]:2]]</pre>
+x = t[ ["1","2"], "b".."y", [["tim","tanya"]:2] ]</pre>
 </td>
 </tr>
 <tr>
@@ -685,11 +983,20 @@ x = t[["1","2"], "b".."y", [["tim","tanya"]:2]]</pre>
 <td>
 <pre class='block-source'>x in t
 t.contains(x)
-x.toString().contains("[2x2x2]:(7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0, 7.0)")
+x.toString('fp') == "[2x2x2]:(\n" +
+"   (\n" +
+"      (  -3.0 ,  -1.0  ),\n" +
+"      (   1.0 ,   3.0  )\n" +
+"   ),\n" +
+"   (\n" +
+"      (  -6.0 ,  -4.0  ),\n" +
+"      (  -2.0 ,   0.0  )\n" +
+"   )\n" +
+")\n"
 !x.isVirtual()
 x.isSlice()
 t.isSliceParent()
-t.sliceCount()==4</pre>
+t.sliceCount() == 4</pre>
 </td>
 </tr>
 <tr>
@@ -706,8 +1013,8 @@ t.sliceCount()==4</pre>
 <pre class='block-source'>WeakReference weak = new WeakReference(x)
 x = null
 System.gc()
-for(int i : 1..100){
-    if(weak.get()==null) break
+for ( int i : 1..100 ) {
+    if( weak.get() == null ) break
     Thread.sleep(10)
 }</pre>
 </td>

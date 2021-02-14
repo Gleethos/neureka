@@ -27,12 +27,12 @@ public final class SimpleScalarConfiguration extends AbstractNDC //:= IMMUTABLE
     }
 
     @Override
-    public int[] idxmap() {
+    public int[] indicesMap() {
 <span class="fc" id="L31">        return new int[]{1};</span>
     }
 
     @Override
-    public int idxmap( int i ) {
+    public int indicesMap(int i ) {
 <span class="fc" id="L36">        return 1;</span>
     }
 
@@ -67,18 +67,18 @@ public final class SimpleScalarConfiguration extends AbstractNDC //:= IMMUTABLE
     }
 
     @Override
-    public int i_of_i( int i ) {
-<span class="fc" id="L71">        return i;</span>
+    public int indexOfIndex(int index) {
+<span class="fc" id="L71">        return index;</span>
     }
 
     @Override
-    public int[] idx_of_i( int i ) {
-<span class="fc" id="L76">        return new int[]{i};</span>
+    public int[] indicesOfIndex(int index) {
+<span class="fc" id="L76">        return new int[]{index};</span>
     }
 
     @Override
-    public int i_of_idx( int[] idx ) {
-<span class="fc" id="L81">        return idx[ 0 ];</span>
+    public int indexOfIndices(int[] indices) {
+<span class="fc" id="L81">        return indices[ 0 ];</span>
     }
 
 }

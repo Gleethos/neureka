@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IDXHead.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.storage</a> &gt; <span class="el_source">IDXHead.java</span></div><h1>IDXHead.java</h1><pre class="source lang-java linenums">package neureka.devices.storage;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IDXHead.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.file</a> &gt; <span class="el_source">IDXHead.java</span></div><h1>IDXHead.java</h1><pre class="source lang-java linenums">package neureka.devices.storage;
 
 
 import lombok.Getter;
@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 <span class="pc bpc" id="L20" title="1 of 2 branches missed.">@Accessors( prefix = {&quot;_&quot;} )</span>
-public class IDXHead extends AbstractFileHead&lt;IDXHead&gt;
+public class IDXHead extends AbstractFileHead&lt;IDXHead, Number&gt;
 {
     static {
 <span class="fc" id="L24">        _LOG = LoggerFactory.getLogger( IDXHead.class );</span>
@@ -96,105 +96,104 @@ public class IDXHead extends AbstractFileHead&lt;IDXHead&gt;
 <span class="fc" id="L96">        _shape = shape;</span>
 <span class="fc" id="L97">        _valueSize = size;</span>
 <span class="fc" id="L98">        _dataOffset = numre.bytesRead();</span>
-
-<span class="fc" id="L100">    }</span>
+<span class="fc" id="L99">    }</span>
 
 
     @Override
     public IDXHead store( Tsr&lt;Number&gt; tensor )
     {
-<span class="fc" id="L106">        Iterator&lt;Number&gt; data = tensor.iterator();</span>
+<span class="fc" id="L105">        Iterator&lt;Number&gt; data = tensor.iterator();</span>
         FileOutputStream fos;
         try
         {
-<span class="fc" id="L110">            fos = new FileOutputStream(_fileName);</span>
+<span class="fc" id="L109">            fos = new FileOutputStream(_fileName);</span>
         }
-<span class="nc" id="L112">        catch (FileNotFoundException e)</span>
+<span class="nc" id="L111">        catch (FileNotFoundException e)</span>
         {
             try {
-<span class="nc" id="L115">                File newFile = new File( _fileName );</span>
-<span class="nc" id="L116">                fos = new FileOutputStream( newFile );</span>
-<span class="nc" id="L117">            } catch ( Exception innerException ) {</span>
-<span class="nc" id="L118">                innerException.printStackTrace();</span>
-<span class="nc" id="L119">                return this;</span>
-<span class="nc" id="L120">            }</span>
-<span class="fc" id="L121">        }</span>
-<span class="fc" id="L122">        BufferedOutputStream f = new BufferedOutputStream(fos);</span>
+<span class="nc" id="L114">                File newFile = new File( _fileName );</span>
+<span class="nc" id="L115">                fos = new FileOutputStream( newFile );</span>
+<span class="nc" id="L116">            } catch ( Exception innerException ) {</span>
+<span class="nc" id="L117">                innerException.printStackTrace();</span>
+<span class="nc" id="L118">                return this;</span>
+<span class="nc" id="L119">            }</span>
+<span class="fc" id="L120">        }</span>
+<span class="fc" id="L121">        BufferedOutputStream f = new BufferedOutputStream(fos);</span>
 
-<span class="fc" id="L124">        int offset = 0;</span>
+<span class="fc" id="L123">        int offset = 0;</span>
 
         try {
-<span class="fc" id="L127">            f.write( new byte[]{ 0, 0 } );</span>
-<span class="fc" id="L128">            offset += 2;</span>
-<span class="fc" id="L129">            f.write( CODE_MAP.get( _dataType.getTypeClass() ).byteValue() );</span>
-<span class="fc" id="L130">            offset += 1;</span>
-<span class="fc" id="L131">            byte rank = (byte) _shape.length;</span>
-<span class="fc" id="L132">            f.write( rank );</span>
-<span class="fc" id="L133">            offset += 1;</span>
-<span class="fc" id="L134">            int bodySize = 1;</span>
-<span class="fc bfc" id="L135" title="All 2 branches covered.">            for ( int i = 0; i &lt; rank; i++ ) {</span>
-<span class="fc" id="L136">                byte[] integer = ByteBuffer.allocate( 4 ).putInt( _shape[ i ] ).array();</span>
-<span class="pc bpc" id="L137" title="2 of 4 branches missed.">                assert integer.length == 4;</span>
-<span class="fc" id="L138">                f.write(integer);</span>
-<span class="fc" id="L139">                bodySize *= _shape[ i ];</span>
-<span class="fc" id="L140">                offset += 4;</span>
+<span class="fc" id="L126">            f.write( new byte[]{ 0, 0 } );</span>
+<span class="fc" id="L127">            offset += 2;</span>
+<span class="fc" id="L128">            f.write( CODE_MAP.get( _dataType.getTypeClass() ).byteValue() );</span>
+<span class="fc" id="L129">            offset += 1;</span>
+<span class="fc" id="L130">            byte rank = (byte) _shape.length;</span>
+<span class="fc" id="L131">            f.write( rank );</span>
+<span class="fc" id="L132">            offset += 1;</span>
+<span class="fc" id="L133">            int bodySize = 1;</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">            for ( int i = 0; i &lt; rank; i++ ) {</span>
+<span class="fc" id="L135">                byte[] integer = ByteBuffer.allocate( 4 ).putInt( _shape[ i ] ).array();</span>
+<span class="pc bpc" id="L136" title="2 of 4 branches missed.">                assert integer.length == 4;</span>
+<span class="fc" id="L137">                f.write(integer);</span>
+<span class="fc" id="L138">                bodySize *= _shape[ i ];</span>
+<span class="fc" id="L139">                offset += 4;</span>
             }
-<span class="fc" id="L142">            _dataOffset = offset;</span>
-<span class="fc" id="L143">            _valueSize = bodySize;</span>
-<span class="fc" id="L144">            NumericType&lt;Number, Object, Number, Object&gt; type = (NumericType&lt;Number, Object, Number, Object&gt;) _dataType.getTypeClassInstance();</span>
+<span class="fc" id="L141">            _dataOffset = offset;</span>
+<span class="fc" id="L142">            _valueSize = bodySize;</span>
+<span class="fc" id="L143">            NumericType&lt;Number, Object, Number, Object&gt; type = (NumericType&lt;Number, Object, Number, Object&gt;) _dataType.getTypeClassInstance();</span>
 
-<span class="fc" id="L146">            type.writeDataTo( new DataOutputStream( f ), data );</span>
-<span class="fc" id="L147">            f.close();</span>
-<span class="nc" id="L148">        } catch ( Exception e ) {</span>
-<span class="nc" id="L149">            e.printStackTrace();</span>
-<span class="fc" id="L150">        }</span>
-<span class="fc" id="L151">        return this;</span>
+<span class="fc" id="L145">            type.writeDataTo( new DataOutputStream( f ), data );</span>
+<span class="fc" id="L146">            f.close();</span>
+<span class="nc" id="L147">        } catch ( Exception e ) {</span>
+<span class="nc" id="L148">            e.printStackTrace();</span>
+<span class="fc" id="L149">        }</span>
+<span class="fc" id="L150">        return this;</span>
     }
 
     @Override
     protected Object _loadData() throws IOException {
-<span class="fc" id="L156">        FileInputStream fs = new FileInputStream( _fileName );</span>
-<span class="fc" id="L157">        Class&lt;?&gt; clazz = _dataType.getTypeClass();</span>
-<span class="pc bpc" id="L158" title="1 of 2 branches missed.">        if ( NumericType.class.isAssignableFrom( clazz ) ) {</span>
-<span class="fc" id="L159">            NumericType&lt;?,?,?,?&gt; type = _dataType.getTypeClassInstance();</span>
-<span class="fc" id="L160">            DataInput stream = new DataInputStream(</span>
-<span class="fc" id="L161">                    new BufferedInputStream( fs, _dataOffset + _valueSize * type.numberOfBytes() )</span>
+<span class="fc" id="L155">        FileInputStream fs = new FileInputStream( _fileName );</span>
+<span class="fc" id="L156">        Class&lt;?&gt; clazz = _dataType.getTypeClass();</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        if ( NumericType.class.isAssignableFrom( clazz ) ) {</span>
+<span class="fc" id="L158">            NumericType&lt;?,?,?,?&gt; type = _dataType.getTypeClassInstance();</span>
+<span class="fc" id="L159">            DataInput stream = new DataInputStream(</span>
+<span class="fc" id="L160">                    new BufferedInputStream( fs, _dataOffset + _valueSize * type.numberOfBytes() )</span>
             );
-<span class="fc" id="L163">            stream.skipBytes( _dataOffset );</span>
-<span class="pc bpc" id="L164" title="1 of 2 branches missed.">            if ( Neureka.instance().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )</span>
-<span class="fc" id="L165">                return type.readAndConvertForeignDataFrom( stream, _valueSize);</span>
+<span class="fc" id="L162">            stream.skipBytes( _dataOffset );</span>
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">            if ( Neureka.instance().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )</span>
+<span class="fc" id="L164">                return type.readAndConvertForeignDataFrom( stream, _valueSize);</span>
             else
-<span class="nc" id="L167">                return type.readForeignDataFrom( stream, _valueSize);</span>
+<span class="nc" id="L166">                return type.readForeignDataFrom( stream, _valueSize);</span>
         }
-<span class="nc" id="L169">        return null;</span>
+<span class="nc" id="L168">        return null;</span>
     }
 
     @Override
     public Tsr&lt;Number&gt; load() throws IOException
     {
-<span class="fc" id="L175">        Object value = _loadData();</span>
-<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        DataType&lt;?&gt; type = ( Neureka.instance().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )</span>
-<span class="fc" id="L177">                ? DataType.of( _dataType.getTypeClassInstance().getNumericTypeTarget() )</span>
-<span class="pc" id="L178">                : _dataType;</span>
-<span class="fc" id="L179">        return new Tsr&lt;&gt;( _shape, type, value );</span>
+<span class="fc" id="L174">        Object value = _loadData();</span>
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">        DataType&lt;?&gt; type = ( Neureka.instance().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )</span>
+<span class="fc" id="L176">                ? DataType.of( _dataType.getTypeClassInstance().getNumericTypeTarget() )</span>
+<span class="pc" id="L177">                : _dataType;</span>
+<span class="fc" id="L178">        return new Tsr&lt;&gt;( _shape, type, value );</span>
     }
 
     @Override
     public int getDataSize() {
-<span class="pc bpc" id="L184" title="1 of 2 branches missed.">        int bytes = ( _dataType.typeClassImplements( NumericType.class ) )</span>
-<span class="fc" id="L185">                ? ( (NumericType) _dataType.getTypeClassInstance() ).numberOfBytes()</span>
-<span class="pc" id="L186">                : 1;</span>
-<span class="fc" id="L187">        return _valueSize * bytes;</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">        int bytes = ( _dataType.typeClassImplements( NumericType.class ) )</span>
+<span class="fc" id="L184">                ? _dataType.getTypeClassInstance().numberOfBytes()</span>
+<span class="pc" id="L185">                : 1;</span>
+<span class="fc" id="L186">        return _valueSize * bytes;</span>
     }
 
     @Override
     public int getTotalSize() {
-<span class="fc" id="L192">        return getDataSize() + _dataOffset;</span>
+<span class="fc" id="L191">        return getDataSize() + _dataOffset;</span>
     }
 
     @Override
     public String extension() {
-<span class="fc" id="L197">        return &quot;idx&quot;;</span>
+<span class="fc" id="L196">        return &quot;idx&quot;;</span>
     }
 
 

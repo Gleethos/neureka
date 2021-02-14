@@ -3,12 +3,12 @@
 import neureka.ndim.iterators.NDIterator;
 import neureka.ndim.config.types.complex.ComplexD1Configuration;
 
-public class ComplexD1CIterator extends ComplexD1Configuration implements NDIterator
+public final class ComplexD1CIterator extends ComplexD1Configuration implements NDIterator
 {
     private int _d1;
 
     public ComplexD1CIterator(ComplexD1Configuration ndc) {
-<span class="nc" id="L11">        super(ndc.shape(0), ndc.translation(0), ndc.idxmap(0), ndc.spread(0), ndc.offset(0));</span>
+<span class="nc" id="L11">        super(ndc.shape(0), ndc.translation(0), ndc.indicesMap(0), ndc.spread(0), ndc.offset(0));</span>
 <span class="nc" id="L12">    }</span>
 
     @Override
@@ -24,7 +24,7 @@ public class ComplexD1CIterator extends ComplexD1Configuration implements NDIter
 
     @Override
     public int i() {
-<span class="nc" id="L27">        return this.i_of_idx(_d1);</span>
+<span class="nc" id="L27">        return this.indexOfIndices(_d1);</span>
     }
 
     @Override
@@ -43,8 +43,8 @@ public class ComplexD1CIterator extends ComplexD1Configuration implements NDIter
 <span class="nc" id="L43">    }</span>
 
     @Override
-    public void set( int[] idx ) {
-<span class="nc" id="L47">        _d1 = idx[0];</span>
+    public void set( int[] indices ) {
+<span class="nc" id="L47">        _d1 = indices[0];</span>
 <span class="nc" id="L48">    }</span>
 
     @Override

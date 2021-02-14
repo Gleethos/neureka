@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 08 21:15:16 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Feb 14 00:37:39 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -331,7 +331,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.454 seconds</td>
+<td>0.599 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -374,7 +374,7 @@ Tsr t2 = new Tsr([com_sze, col_sze], -7..4)
 OperationContext oldContext = OperationContext.get()
 OperationContext testContext = oldContext.clone()
 OperationContext.setInstance(testContext)
-Operation type = new OperationTypeFactory()
+Operation type = new OperationFactory()
                     .setFunction('test_function')
                     .setOperator('test_function')
                     .setArity(-1)
@@ -382,7 +382,6 @@ Operation type = new OperationTypeFactory()
                     .setIsOperator(false)
                     .setIsDifferentiable(true)
                     .setIsInline(false)
-                    .build()
                     .setStringifier(
                             children -&gt; {
                                 String expression = String.join( ", ", children );
@@ -392,6 +391,7 @@ Operation type = new OperationTypeFactory()
                                 return "test_function" + "(" + expression + ")";
                             }
                     )
+                    .build()
                     .setAlgorithm(
                             GenericAlgorithm.class,
                             new GenericAlgorithm()

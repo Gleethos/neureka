@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 08 21:15:50 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Feb 14 00:38:03 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -331,7 +331,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>2.046 seconds</td>
+<td>3.720 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -629,7 +629,7 @@ exception.message ==
 <pre class='block-source'>1 * context.getTensors() &gt;&gt; inputs
 2 * inputsNodeMock.getLock() &gt;&gt; Mock( GraphLock )
 0 * function.isDoingAD() &gt;&gt; true
-0 * payload.device() &gt;&gt; device
+0 * payload.getDevice() &gt;&gt; device
 0 * payload.set( _ )
 0 * device.cleaning( payload, _ )
 (1..2) * function.getOperation() &gt;&gt; type
@@ -718,7 +718,7 @@ exception.message ==
 3 * inputsNodeMock.getLock() &gt;&gt; Mock( GraphLock )
 1 * otherInputsNodeMock.getLock() &gt;&gt; Mock( GraphLock )
 0 * function.isDoingAD() &gt;&gt; true
-0 * payload.device() &gt;&gt; device
+0 * payload.getDevice() &gt;&gt; device
 0 * payload.set( _ )
 0 * device.cleaning( payload, _ )
 (1.._) * function.getOperation() &gt;&gt; type
@@ -806,7 +806,7 @@ exception.message ==
 <pre class='block-source'>1 * context.getTensors() &gt;&gt; inputs
 2 * inputsNodeMock.getLock() &gt;&gt; Mock( GraphLock )
 0 * function.isDoingAD() &gt;&gt; true
-0 * payload.device() &gt;&gt; device
+0 * payload.getDevice() &gt;&gt; device
 0 * payload.set( _ )
 0 * device.cleaning( payload, _ )
 1 * inputs[0].find( GraphNode.class ) &gt;&gt; inputsNodeMock

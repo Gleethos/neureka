@@ -2,6 +2,7 @@
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.devices.Device;
@@ -13,35 +14,34 @@ import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
-import java.util.List;
-
 public class Sinus extends AbstractOperation
 {
 
-<span class="fc" id="L21">    private DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; _creator =</span>
+<span class="fc" id="L20">    private DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; _creator =</span>
             ( inputs, d ) -&gt; {
-<span class="nc" id="L23">                double[] t1_val = inputs[ 1 ].value64();</span>
-<span class="nc bnc" id="L24" title="All 2 branches missed.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.sin(t1_val[ t1Idx.i() ]);</span>
-<span class="nc" id="L25">                else return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.cos(t1_val[ t1Idx.i() ]);</span>
+<span class="nc" id="L22">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.sin(t1_val[ t1Idx.i() ]);</span>
+<span class="nc" id="L24">                else return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.cos(t1_val[ t1Idx.i() ]);</span>
             };
 
-<span class="fc" id="L28">    private DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; _creatorX =</span>
+<span class="fc" id="L27">    private DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; _creatorX =</span>
             ( inputs, d ) -&gt; {
-<span class="nc" id="L30">                double[] t1_val = inputs[ 1 ].value64();</span>
-<span class="nc bnc" id="L31" title="All 2 branches missed.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.sin(t1_val[inputs[ 1 ].i_of_idx( t1Idx )]);</span>
-<span class="nc" id="L32">                else return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.cos(t1_val[inputs[ 1 ].i_of_idx( t1Idx )]);</span>
+<span class="nc" id="L29">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.sin(t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]);</span>
+<span class="nc" id="L31">                else return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.cos(t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]);</span>
             };
 
     public Sinus()
     {
-<span class="fc" id="L37">        super(&quot;sin&quot;, &quot;sin&quot; , 1, false, false, true, false);</span>
-
-<span class="fc" id="L39">        setStringifier(</span>
-                children -&gt; {
-<span class="fc" id="L41">                    String expression = String.join( &quot;, &quot;, children );</span>
-<span class="pc bpc" id="L42" title="1 of 4 branches missed.">                    if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return &quot;sin&quot; + expression;</span>
-<span class="fc" id="L43">                    return &quot;sin&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
-                }
+<span class="fc" id="L36">        super(</span>
+                new OperationFactory()
+<span class="fc" id="L38">                        .setFunction(         &quot;sin&quot;    )</span>
+<span class="fc" id="L39">                        .setOperator(         &quot;sin&quot;    )</span>
+<span class="fc" id="L40">                        .setArity(            1        )</span>
+<span class="fc" id="L41">                        .setIsOperator(       false    )</span>
+<span class="fc" id="L42">                        .setIsIndexer(        false    )</span>
+<span class="fc" id="L43">                        .setIsDifferentiable( true     )</span>
+<span class="fc" id="L44">                        .setIsInline(         false    )</span>
         );
 
 <span class="fc" id="L47">        Activation operationAlgorithm = new Activation()</span>
@@ -134,17 +134,29 @@ public class Sinus extends AbstractOperation
 <span class="fc" id="L134">    }</span>
 
     @Override
-    public double calculate( double[] inputs, int j, int d, List&lt;Function&gt; src ) {
-<span class="fc" id="L138">        return calculate(</span>
-<span class="fc bfc" id="L139" title="All 2 branches covered.">                src.get( 0 ).call( inputs, j ),</span>
+    public String stringify( String[] children ) {
+<span class="fc" id="L138">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="pc bpc" id="L139" title="1 of 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return &quot;sin&quot; + expression;</span>
+<span class="fc" id="L140">        return &quot;sin&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+    }
+
+    @Override
+    public String asDerivative( Function[] children, int d ) {
+<span class="nc" id="L145">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
+<span class="fc" id="L150">        return calculate(</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">                src[ 0 ].call( inputs, j ),</span>
                 d &gt;= 0
-<span class="fc bfc" id="L141" title="All 2 branches covered.">        ) * ( ( d &lt; 0 ) ? 1 : src.get( 0 ).derive( inputs, d, j ) );</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">        ) * ( ( d &lt; 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
     }
 
     @Contract(pure = true)
     public static double calculate(double input, boolean derive ) {
-<span class="fc bfc" id="L146" title="All 2 branches covered.">        if ( !derive ) return Math.sin( input );</span>
-<span class="fc" id="L147">        else return Math.cos( input );</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">        if ( !derive ) return Math.sin( input );</span>
+<span class="fc" id="L159">        else return Math.cos( input );</span>
     }
 
 

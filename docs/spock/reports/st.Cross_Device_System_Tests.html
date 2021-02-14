@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 08 21:15:51 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Feb 14 00:38:11 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -331,7 +331,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>29.016 seconds</td>
+<td>29.042 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -383,21 +383,6 @@ Neureka.instance().settings().view().isUsingLegacyView = true</pre>
 </tr>
 <tr>
 <td>
-<div class='block-kind'>And:</div>
-</td>
-<td>
-<div class='block-text'>The indexing mode set to "legacy"!</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>Neureka.instance().settings().indexing().isUsingLegacyIndexing = legacyIndexing
-if ( device instanceof OpenCLDevice ) OpenCLPlatform.PLATFORMS().get(0).recompile()</pre>
-</td>
-</tr>
-<tr>
-<td>
 <div class='block-kind'>Expect:</div>
 </td>
 <td>
@@ -407,7 +392,7 @@ if ( device instanceof OpenCLDevice ) OpenCLPlatform.PLATFORMS().get(0).recompil
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>CrossDeviceSystemTest.on(device, legacyIndexing)</pre>
+<pre class='block-source'>CrossDeviceSystemTest.on(device)</pre>
 </td>
 </tr>
 <tr>
@@ -427,27 +412,14 @@ if ( device instanceof OpenCLDevice ) OpenCLPlatform.PLATFORMS().get(0).recompil
 <table class='ex-table'>
 <thead>
 <th class='ex-header'>deviceType</th>
-<th class='ex-header'>legacyIndexing</th>
 </thead>
 <tbody>
 <tr class='ex-pass'>
 <td class='ex-value'>CPU</td>
-<td class='ex-value'>false</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>CPU</td>
-<td class='ex-value'>true</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>GPU</td>
-<td class='ex-value'>true</td>
-<td class='ex-result'>OK</td>
-</tr>
-<tr class='ex-pass'>
-<td class='ex-value'>GPU</td>
-<td class='ex-value'>false</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -455,7 +427,7 @@ if ( device instanceof OpenCLDevice ) OpenCLPlatform.PLATFORMS().get(0).recompil
 </div>
 </td>
 <td>
-<div class='spec-status'>4/4 passed</div>
+<div class='spec-status'>2/2 passed</div>
 </td>
 </tr>
 <tr>
@@ -530,7 +502,7 @@ if ( device instanceof OpenCLDevice ) OpenCLPlatform.PLATFORMS().get(0).recompil
 </td>
 <td>
 <pre class='block-source'>t.backward(1)
-Tsr g = t.find(Tsr.class)</pre>
+Tsr g = t.getGradient()</pre>
 </td>
 </tr>
 <tr>

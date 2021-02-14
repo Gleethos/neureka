@@ -1,4 +1,39 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Relation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.framing</a> &gt; <span class="el_source">Relation.java</span></div><h1>Relation.java</h1><pre class="source lang-java linenums">package neureka.framing;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Relation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.framing</a> &gt; <span class="el_source">Relation.java</span></div><h1>Relation.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      _____      _       _   _
+     |  __ \    | |     | | (_)
+     | |__) |___| | __ _| |_ _  ___  _ __
+     |  _  // _ \ |/ _` | __| |/ _ \| '_ \
+     | | \ \  __/ | (_| | |_| | (_) | | | |
+     |_|  \_\___|_|\__,_|\__|_|\___/|_| |_|
+
+     A tensor component relating slices with their parent tensors.
+
+*/
+
+package neureka.framing;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -9,119 +44,209 @@ import neureka.Tsr;
 import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
 
-
+/**
+ *  This class is an important tensor component responsible for
+ *  managing the relationships between slices and the tensors from which
+ *  they have been derived.
+ *  In case a tensor is a slice then it will have a Relation instance as
+ *  component which will reference the parent tensor strongly (so that its data will not be lost).
+ *  However in case a tensor is the &quot;parent&quot; of a slice tensor then it will
+ *  contain a Relation instance which references the slices weakly (so that they can be garbage collected). &lt;br&gt;
+ *  &lt;br&gt;
+ *  Disclosure: The words &quot;children&quot; and &quot;parent&quot; are meant to be understood as
+ *  references to the core concepts present within graph theory, &lt;br&gt;
+ *  namely: synonyms to words like &quot;branch&quot;, &quot;leave&quot;, &quot;root&quot;, &quot;vertex&quot;... &lt;br&gt;
+ *
+ * @param &lt;ValType&gt; The data type class of the elements of the tensor to which this can Relation belong to.
+ */
 @Accessors( prefix = {&quot;_&quot;} )
-<span class="nc" id="L14">@ToString</span>
-<span class="fc" id="L15">public class Relation&lt;ValueType&gt; implements Component&lt;Tsr&lt;ValueType&gt;&gt;</span>
+<span class="nc" id="L63">@ToString</span>
+<span class="fc" id="L64">public class Relation&lt;ValType&gt; implements Component&lt;Tsr&lt;ValType&gt;&gt;</span>
 {
-<span class="fc" id="L17">    @Getter</span>
-    private Tsr&lt;ValueType&gt; _parent;// Children need their parents. They shall not be garbage collected.
+    /**
+     *  If the the tensor to which this Relation is a component
+     *  is in fact a slice, then the following field will reference
+     *  the tensor from which the slice has been created. &lt;br&gt;
+     *  This &quot;parent&quot; tensor is referenced strongly so that the
+     *  data which is shared by its slice(s) cannot be garbage collected. &lt;br&gt;
+     *  One might wonder: &quot;Why is the data not referenced here directly&quot;? &lt;br&gt;
+     *  The answer is simple: The parent tensor (as well as its slices)
+     *  might be outsourced to a device which may store the data itself in various ways...
+     */
+<span class="fc" id="L76">    @Getter</span>
+    private Tsr&lt;ValType&gt; _parent; // Children need their parents. They shall not be garbage collected.
 
-    private WeakReference&lt;Tsr&lt;ValueType&gt;&gt;[] _children;// Children may be garbage collected if not needed.
+    /**
+     *  This is an array of the weakly referenced slice children of the tensor
+     *  to which this Relation component belongs. &lt;br&gt;
+     *  Children are not referenced strongly so they can be garbage collected.
+     */
+    private WeakReference&lt;Tsr&lt;ValType&gt;&gt;[] _children;// Children may be garbage collected if not needed anywhere.
 
+    /**
+     *  When creating reshaped versions of slices then
+     *  there must be a translation between the shape configuration between
+     *  this new slice and the original parent tensor from which both slices
+     *  have been derived. &lt;br&gt;
+     *  This translation is in essence merely an int array which
+     *  contains the index mapping to a new shape.
+     *  When accessing data for a reshaped slice then this
+     *  translation will be necessary for getting the right data. &lt;br&gt;
+     *  &lt;br&gt;
+     *  This field variable stores an array of int arrays which represent
+     *  dimension order mappings for reshaped slice tensors of the tensor
+     *  to which this Relation instance is a component. &lt;br&gt;
+     */
     private int[][] _shapeRelations;
 
     @Override
-    public void update( Tsr&lt;ValueType&gt; oldOwner, Tsr&lt;ValueType&gt; newOwner ) {
-<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        if ( _parent != null) {</span>
-<span class="fc" id="L27">            Relation&lt;ValueType&gt; pr = _parent.find(Relation.class);</span>
-<span class="fc bfc" id="L28" title="All 2 branches covered.">            for ( int i=0; i &lt; pr._children.length; i++ ) {</span>
-<span class="fc bfc" id="L29" title="All 2 branches covered.">                if (pr._children[ i ].get() == oldOwner) {</span>
-<span class="fc" id="L30">                    pr._children[ i ] = new WeakReference&lt;&gt;(newOwner);</span>
+    public void update( Tsr&lt;ValType&gt; oldOwner, Tsr&lt;ValType&gt; newOwner )
+    {
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">        if ( _parent != null) {</span>
+<span class="fc" id="L106">            Relation&lt;ValType&gt; pr = _parent.find( Relation.class );</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">            for ( int i = 0; i &lt; pr._children.length; i++ ) {</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">                if ( pr._children[ i ].get() == oldOwner ) {</span>
+<span class="fc" id="L109">                    pr._children[ i ] = new WeakReference&lt;&gt;(newOwner);</span>
                 }
             }
         }
-<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        if ( _children != null ) {</span>
-<span class="nc bnc" id="L35" title="All 2 branches missed.">            for ( WeakReference&lt;Tsr&lt;ValueType&gt;&gt; c : _children ) {</span>
-<span class="nc" id="L36">                Tsr t = c.get();</span>
-<span class="nc bnc" id="L37" title="All 2 branches missed.">                if ( t != null ) {</span>
-<span class="nc" id="L38">                    Relation&lt;ValueType&gt; cr = (Relation&lt;ValueType&gt;) t.find( Relation.class );</span>
-<span class="nc bnc" id="L39" title="All 2 branches missed.">                    if ( cr != null ) cr._parent = newOwner;</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">        if ( _children != null ) {</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">            for ( WeakReference&lt;Tsr&lt;ValType&gt;&gt; c : _children ) {</span>
+<span class="nc" id="L115">                Tsr&lt;ValType&gt; t = c.get();</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">                if ( t != null ) {</span>
+<span class="nc" id="L117">                    Relation&lt;ValType&gt; cr = (Relation&lt;ValType&gt;) t.find( Relation.class );</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">                    if ( cr != null ) cr._parent = newOwner;</span>
                 }
             }
         }
-<span class="fc" id="L43">    }</span>
+<span class="fc" id="L122">    }</span>
 
 
-    public Relation addParent( Tsr parent ) {
-<span class="fc" id="L47">        _parent = parent;</span>
-<span class="fc" id="L48">        return this;</span>
+    public Relation&lt;ValType&gt; addParent( Tsr&lt;ValType&gt; parent )
+    {
+<span class="fc" id="L127">        _parent = parent;</span>
+<span class="fc" id="L128">        return this;</span>
     }
 
 
-    public Relation&lt;ValueType&gt; addChild( Tsr&lt;ValueType&gt; child ) {
-<span class="fc bfc" id="L53" title="All 2 branches covered.">        if ( _children == null ) {</span>
-<span class="fc" id="L54">            _children = new WeakReference[]{ new WeakReference( child ) };</span>
-<span class="fc" id="L55">            _shapeRelations = new int[1][];</span>
+    public Relation&lt;ValType&gt; addChild( Tsr&lt;ValType&gt; child )
+    {
+<span class="fc bfc" id="L134" title="All 2 branches covered.">        if ( _children == null ) {</span>
+<span class="fc" id="L135">            _children = new WeakReference[]{ new WeakReference( child ) };</span>
+<span class="fc" id="L136">            _shapeRelations = new int[ 1 ][];</span>
         } else {
-<span class="fc" id="L57">            WeakReference&lt;Tsr&lt;ValueType&gt;&gt;[] newChildren = new WeakReference[_children.length+1];</span>
-<span class="fc" id="L58">            int[][] newShapeRelations = new int[_children.length+1][];</span>
-<span class="fc" id="L59">            System.arraycopy( _children, 0, newChildren, 0, _children.length );</span>
-<span class="fc" id="L60">            System.arraycopy( _shapeRelations, 0, newShapeRelations, 0, _children.length );</span>
-<span class="fc" id="L61">            newChildren[_children.length] = new WeakReference(child);</span>
-<span class="fc" id="L62">            newShapeRelations[_children.length] = null;</span>
-<span class="fc" id="L63">            _children = newChildren;</span>
-<span class="fc" id="L64">            _shapeRelations = newShapeRelations;</span>
+<span class="fc" id="L138">            WeakReference&lt;Tsr&lt;ValType&gt;&gt;[] newChildren = new WeakReference[ _children.length + 1 ];</span>
+<span class="fc" id="L139">            int[][] newShapeRelations = new int[ _children.length + 1 ][];</span>
+<span class="fc" id="L140">            System.arraycopy( _children, 0, newChildren, 0, _children.length );</span>
+<span class="fc" id="L141">            System.arraycopy( _shapeRelations, 0, newShapeRelations, 0, _children.length );</span>
+<span class="fc" id="L142">            newChildren[_children.length] = new WeakReference( child );</span>
+<span class="fc" id="L143">            newShapeRelations[_children.length] = null;</span>
+<span class="fc" id="L144">            _children = newChildren;</span>
+<span class="fc" id="L145">            _shapeRelations = newShapeRelations;</span>
         }
-<span class="fc" id="L66">        return this;</span>
+<span class="fc" id="L147">        return this;</span>
     }
 
-    public Relation&lt;ValueType&gt; addReshapeRelationFor( Tsr child, int[] reshape ) {
-<span class="fc bfc" id="L70" title="All 2 branches covered.">        for ( int i=0; i&lt;_shapeRelations.length; i++ ) {</span>
-<span class="fc" id="L71">            Tsr c = _children[ i ].get();</span>
-<span class="pc bpc" id="L72" title="1 of 4 branches missed.">            if ( c != null &amp;&amp; c == child ) {</span>
-<span class="fc" id="L73">                _shapeRelations[ i ] = reshape;</span>
+    /**
+     *  When creating reshaped versions of slices then
+     *  there must be a translation between the shape configuration between
+     *  this new slice and the original parent tensor from which both slices
+     *  have been derived. &lt;br&gt;
+     *  This translation is in essence merely an int array which
+     *  contains the index mapping to a new shape.
+     *  When accessing data for a reshaped slice then this
+     *  translation will be necessary for getting the right data. &lt;br&gt;
+     *  &lt;br&gt;
+     *  This method enables adding such a reshape translation associated
+     *  to a slice, which is also the &quot;child&quot; of the tensor to which this
+     *  Reshape component belongs! &lt;br&gt;
+     *  &lt;br&gt;
+     *
+     * @param child The child (slice) tensor which has a shape whose dimensions are in a different order.
+     * @param reshape The int array defining the reshaping (dimension index mapping).
+     * @return This very Relation instance in order to enable method chaining on this component.
+     */
+    public Relation&lt;ValType&gt; addReshapeRelationFor( Tsr&lt;ValType&gt; child, int[] reshape ) {
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        for ( int i=0; i&lt;_shapeRelations.length; i++ ) {</span>
+<span class="fc" id="L171">            Tsr&lt;ValType&gt; c = _children[ i ].get();</span>
+<span class="pc bpc" id="L172" title="1 of 4 branches missed.">            if ( c != null &amp;&amp; c == child ) {</span>
+<span class="fc" id="L173">                _shapeRelations[ i ] = reshape;</span>
             }
         }
-<span class="fc" id="L76">        return this;</span>
+<span class="fc" id="L176">        return this;</span>
     }
 
-    public int[] getReshapeRelationFor( Tsr child ) {
-<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        for ( int i=0; i&lt;_shapeRelations.length; i++ ) {</span>
-<span class="fc" id="L81">            Tsr c = _children[ i ].get();</span>
-<span class="pc bpc" id="L82" title="1 of 4 branches missed.">            if ( c != null &amp;&amp; c == child ) {</span>
-<span class="fc" id="L83">                return _shapeRelations[ i ];</span>
+    /**
+     *  When creating reshaped versions of slices then
+     *  there must be a translation between the shape configuration between
+     *  this new slice and the original parent tensor from which both slices
+     *  have been derived. &lt;br&gt;
+     *  This translation is in essence merely an int array which
+     *  contains the index mapping to a new shape.
+     *  When accessing data for a reshaped slice then this
+     *  translation will be necessary for getting the right data. &lt;br&gt;
+     *  &lt;br&gt;
+     *  This method can be used to access the dimension order translation (reshape)
+     *  from the order of the parent tensor (which is the component owner of this Relation)
+     *  and the passed slice (which is a weakly referenced child tensor...). &lt;br&gt;
+     *  &lt;br&gt;
+     *
+     * @param child The child (slice) tensor which has a shape whose dimensions are in a different order.
+     * @return The int array defining the reshaping (dimension index mapping).
+     */
+    public int[] getReshapeRelationFor( Tsr&lt;ValType&gt; child )
+    {
+<span class="pc bpc" id="L199" title="1 of 2 branches missed.">        for ( int i=0; i&lt;_shapeRelations.length; i++ ) {</span>
+<span class="fc" id="L200">            Tsr&lt;ValType&gt; c = _children[ i ].get();</span>
+<span class="pc bpc" id="L201" title="1 of 4 branches missed.">            if ( c != null &amp;&amp; c == child ) {</span>
+<span class="fc" id="L202">                return _shapeRelations[ i ];</span>
             }
         }
-<span class="nc" id="L86">        return null;</span>
+<span class="nc" id="L205">        return null;</span>
     }
 
-    public Relation&lt;ValueType&gt; foreachChild( Consumer&lt;Tsr&lt;ValueType&gt;&gt; action ) {
-<span class="fc bfc" id="L90" title="All 2 branches covered.">        if ( _children != null ) {</span>
-<span class="fc bfc" id="L91" title="All 2 branches covered.">            for ( WeakReference&lt;Tsr&lt;ValueType&gt;&gt; r : _children ) {</span>
-<span class="fc" id="L92">                Tsr c = r.get();</span>
-<span class="pc bpc" id="L93" title="1 of 2 branches missed.">                if ( c != null ) {</span>
-<span class="fc" id="L94">                    action.accept( c );</span>
-<span class="fc" id="L95">                    Relation relation = (Relation&lt;ValueType&gt;) c.find( Relation.class );</span>
-<span class="pc bpc" id="L96" title="1 of 2 branches missed.">                    if ( relation != null ) relation.foreachChild( action );</span>
+    public Relation&lt;ValType&gt; foreachChild( Consumer&lt;Tsr&lt;ValType&gt;&gt; action )
+    {
+<span class="fc bfc" id="L210" title="All 2 branches covered.">        if ( _children != null ) {</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">            for ( WeakReference&lt;Tsr&lt;ValType&gt;&gt; r : _children ) {</span>
+<span class="fc" id="L212">                Tsr&lt;ValType&gt; c = r.get();</span>
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">                if ( c != null ) {</span>
+<span class="fc" id="L214">                    action.accept( c );</span>
+<span class="fc" id="L215">                    Relation&lt;ValType&gt; relation = (Relation&lt;ValType&gt;) c.find( Relation.class );</span>
+<span class="pc bpc" id="L216" title="1 of 2 branches missed.">                    if ( relation != null ) relation.foreachChild( action );</span>
                 }
             }
         }
-<span class="fc" id="L100">        return this;</span>
+<span class="fc" id="L220">        return this;</span>
     }
 
-    public Tsr findRootTensor() {
-<span class="fc bfc" id="L104" title="All 2 branches covered.">        if ( _parent == null ) return null;</span>
-<span class="pc bpc" id="L105" title="1 of 2 branches missed.">        else if ( !_parent.has( Relation.class ) ) return null;</span>
-<span class="fc bfc" id="L106" title="All 2 branches covered.">        else if ( !_parent.find( Relation.class ).hasParent() ) return _parent;</span>
-<span class="fc" id="L107">        else return _parent.find( Relation.class ).findRootTensor();</span>
+    public Tsr&lt;ValType&gt; findRootTensor()
+    {
+<span class="fc bfc" id="L225" title="All 2 branches covered.">        if ( _parent == null ) return null;</span>
+<span class="pc bpc" id="L226" title="1 of 2 branches missed.">        else if ( !_parent.has( Relation.class ) ) return null;</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">        else if ( !_parent.find( Relation.class ).hasParent() ) return _parent;</span>
+<span class="fc" id="L228">        else return _parent.find( Relation.class ).findRootTensor();</span>
     }
 
-    public boolean hasParent() {
-<span class="fc bfc" id="L111" title="All 2 branches covered.">        return _parent != null;</span>
+    public boolean hasParent()
+    {
+<span class="fc bfc" id="L233" title="All 2 branches covered.">        return _parent != null;</span>
     }
 
-    public boolean hasChildren() {
-<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        return _children != null;</span>
+    public boolean hasChildren()
+    {
+<span class="pc bpc" id="L238" title="1 of 2 branches missed.">        return _children != null;</span>
     }
 
-    public int childCount() {
-<span class="pc bpc" id="L119" title="1 of 2 branches missed.">        return ( _children == null ) ? 0 : _children.length;</span>
+    public int childCount()
+    {
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">        return ( _children == null ) ? 0 : _children.length;</span>
     }
 
-    public Relation&lt;ValueType&gt; remove( Tsr&lt;?&gt; child ) {
+    public Relation&lt;ValType&gt; remove( Tsr&lt;ValType&gt; child )
+    {
         //TODO!!
-<span class="nc" id="L124">        return this;</span>
+<span class="nc" id="L249">        return this;</span>
     }
 
 }

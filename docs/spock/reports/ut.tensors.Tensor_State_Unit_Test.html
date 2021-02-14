@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 08 21:15:53 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Feb 14 00:38:08 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -326,12 +326,12 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>4</td>
+<td>5</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.225 seconds</td>
+<td>1.458 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -354,6 +354,9 @@ div.footer {
 <tbody>
 <ul id='toc'>
 <li>
+<a href='#-1740871423' class='feature-toc-pass'>Tensors as String can be formatted on an entry based level.</a>
+</li>
+<li>
 <a href='#19584922' class='feature-toc-pass'>Tensors as String can be formatted depending on shape.</a>
 </li>
 <li>
@@ -366,6 +369,84 @@ div.footer {
 <a href='#-734513534' class='feature-toc-pass'>Tensor created from shape and datatype has expected state.</a>
 </li>
 </ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1740871423'>
+<span>Tensors as String can be formatted on an entry based level.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>A new tensor of rank 2 storing Strings:</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr t = new Tsr([2, 3], DataType.of(String.class), (i, indices) -&gt; {
+    return ["sweet", "salty", "blue", "spinning", "confused", "shining"].get( (i + 17**i)%6 ) + ' ' +
+        ["Saitan", "Apple", "Tofu",  "Strawberry", "Almond", "Salad"].get( (i + 7**i)%6 )
+})</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>When we convert the tensor to a String via the flags "b" (cell bound) and "f" (formatted).</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.toString('bf') == "(2x3):[\n" +
+"   [ sal.., swe.., spi.. ],\n" +
+"   [ blu.., shi.., con.. ]\n" +
+"]\n"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>When additionally supplying the flag "p" (padding) then most String entries will be printed fully.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.toString('bfp') == "(2x3):[\n" +
+"   [   salty Apple  ,    sweet Tofu  , spinning Stra.. ],\n" +
+"   [   blue Almond  ,  shining Salad , confused Saitan ]\n" +
+"]\n"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>When supplying the "p" and "b" flags manually then the result is as expected:</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.toString([
+        (TsrAsString.Should.BE_CELL_BOUND) : true,
+        (TsrAsString.Should.HAVE_PADDING_OF) : 4
+]) == "(2x3):[salty Ap.., sweet Tofu, spinning.., blue Alm.., shining .., confused..]"</pre>
+</td>
+</tr>
 <tr>
 <td colspan='10'>
 <div class='feature-description' id='19584922'>
@@ -381,9 +462,16 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr( shape, -4..5 ).set( new Tsr( shape, -7..3 ) )
-println(t.toString(mode))
-println(t.toString(mode).replace("\n", "\\n"))</pre>
+<div class='block-text'>Four tensors of various data types:</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr t1 = new Tsr( shape, Float.class, -4..5 ).set( new Tsr( shape, -7..3 ) )
+Tsr t2 = new Tsr( shape, -4..5 ).set( new Tsr( shape, -7..3 ) )
+Tsr t3 = new Tsr( shape, Integer.class, -4..5 ).set( new Tsr( shape, -7..3 ) )
+Tsr t4 = new Tsr( shape, Short.class, -4..5 ).set( new Tsr( shape, -7..3 ) )</pre>
 </td>
 </tr>
 <tr>
@@ -391,7 +479,71 @@ println(t.toString(mode).replace("\n", "\\n"))</pre>
 <div class='block-kind'>Expect:</div>
 </td>
 <td>
-<pre class='block-source'>t.toString(mode) == expected</pre>
+<div class='block-text'>The first tensor has the expected internals ans produces the correct String representation.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t1.toString(mode) == expected
+t1.dataType == DataType.of( Float.class )
+t1.data instanceof float[]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The second tensor has the expected internals ans produces the correct String representation.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t2.toString(mode) == expected
+t2.dataType == DataType.of( Double.class )
+t2.data instanceof double[]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The third tensor has the expected internals ans produces the correct String representation.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t3.toString(mode).replace(' ','') == expected.replace('.0','  ').replace(' ','')
+t3.dataType == DataType.of( Integer.class )
+t3.data instanceof int[]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The fourth tensor has the expected internals ans produces the correct String representation.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t4.toString(mode).replace(' ','') == expected.replace('.0','  ').replace(' ','')
+t4.dataType == DataType.of( Short.class )
+t4.data instanceof short[]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The print configurations codes "mode", a common shape and expected String representation will be supplied:</div>
 </td>
 </tr>
 <tr>

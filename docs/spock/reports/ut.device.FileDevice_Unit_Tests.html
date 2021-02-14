@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 08 21:15:51 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Feb 14 00:38:08 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -326,12 +326,12 @@ div.footer {
 </thead>
 <tbody>
 <tr>
-<td>2</td>
+<td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.560 seconds</td>
+<td>0.834 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -359,6 +359,9 @@ div.footer {
 </li>
 <li>
 <a href='#-1910441451' class='feature-toc-pass'>A file device stores tensors in various file formats.</a>
+</li>
+<li>
+<a href='#502880192' class='feature-toc-pass'>The file device can load known files in a directory.</a>
 </li>
 </ul>
 <tr>
@@ -460,6 +463,12 @@ div.footer {
 <div class='block-kind'>When:</div>
 </td>
 <td>
+<div class='block-text'>Freeing the tensor...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
 <pre class='block-source'>device.free( a )</pre>
 </td>
 </tr>
@@ -468,7 +477,21 @@ div.footer {
 <div class='block-kind'>Then:</div>
 </td>
 <td>
+<div class='block-text'>The file will have been deleted!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
 <pre class='block-source'>!new File( path + '/' + filename + '.idx' ).exists()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following parameters have been used:</div>
 </td>
 </tr>
 <tr>
@@ -517,7 +540,21 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr a = new Tsr([2, 4, 3], -8..8)</pre>
+<pre class='block-source'>Tsr a = new Tsr( shape, -8..8 )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A String representation of the shape.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def shapeStr = String.join('x',(shape as List&lt;Integer&gt;).collect {String.valueOf(it)})</pre>
 </td>
 </tr>
 <tr>
@@ -576,7 +613,7 @@ div.footer {
 <pre class='block-source'>new File( path + '/' + filename ).exists()
         ||
 new File( path ).listFiles().any {
-    it.name.startsWith('tensor_2x4x3_f64_') &amp;&amp; it.name.endsWith('.idx')
+    it.name.startsWith('tensor_' + shapeStr + '_f64_') &amp;&amp; it.name.endsWith('.idx')
 }</pre>
 </td>
 </tr>
@@ -599,6 +636,20 @@ new File( path ).listFiles().any {
 <div class='block-kind'>And:</div>
 </td>
 <td>
+<div class='block-text'>The tensor is now of the expected data-type.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>a.dataType == DataType.of( dataTypeClass )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
 <div class='block-text'>The device contains a "FileHead" instances of the expected type.</div>
 </td>
 </tr>
@@ -613,6 +664,12 @@ new File( path ).listFiles().any {
 <div class='block-kind'>When:</div>
 </td>
 <td>
+<div class='block-text'>Freeing the tensor...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
 <pre class='block-source'>device.free( a )</pre>
 </td>
 </tr>
@@ -621,8 +678,22 @@ new File( path ).listFiles().any {
 <div class='block-kind'>Then:</div>
 </td>
 <td>
+<div class='block-text'>The file will be deleted!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
 <pre class='block-source'>!new File( path + '/' + filename ).exists()
-!new File( path ).listFiles().any {it.name.startsWith("tensor_2x4x3_f64_") }</pre>
+!new File( path ).listFiles().any {it.name.startsWith('tensor_' + shapeStr + '_f64_') }</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following parameters are being used:</div>
 </td>
 </tr>
 <tr>
@@ -635,25 +706,41 @@ new File( path ).listFiles().any {
 <thead>
 <th class='ex-header'>path</th>
 <th class='ex-header'>filename</th>
+<th class='ex-header'>shape</th>
 <th class='ex-header'>fileHeadClass</th>
+<th class='ex-header'>dataTypeClass</th>
 </thead>
 <tbody>
 <tr class='ex-pass'>
 <td class='ex-value'>build/test-can</td>
 <td class='ex-value'>tensor_2x4x3_.idx</td>
-<td class='ex-value'>class neureka.devices.storage.IDXHead</td>
+<td class='ex-value'>[2, 4, 3]</td>
+<td class='ex-value'>class neureka.devices.file.heads.IDXHead</td>
+<td class='ex-value'>class neureka.dtype.custom.F64</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>build/test-can</td>
 <td class='ex-value'>tensor_2x4x3_.jpg</td>
-<td class='ex-value'>class neureka.devices.storage.JPEGHead</td>
+<td class='ex-value'>[2, 4, 3]</td>
+<td class='ex-value'>class neureka.devices.file.heads.JPEGHead</td>
+<td class='ex-value'>class neureka.dtype.custom.I16</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
 <td class='ex-value'>build/test-can</td>
 <td class='ex-value'>&lt;null&gt;</td>
-<td class='ex-value'>class neureka.devices.storage.IDXHead</td>
+<td class='ex-value'>[2, 4, 3]</td>
+<td class='ex-value'>class neureka.devices.file.heads.IDXHead</td>
+<td class='ex-value'>class neureka.dtype.custom.F64</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>build/test-can</td>
+<td class='ex-value'>tensor_4x3_.csv</td>
+<td class='ex-value'>[4, 3]</td>
+<td class='ex-value'>class neureka.devices.file.heads.CSVHead</td>
+<td class='ex-value'>class java.lang.String</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -661,7 +748,110 @@ new File( path ).listFiles().any {
 </div>
 </td>
 <td>
-<div class='spec-status'>3/3 passed</div>
+<div class='spec-status'>4/4 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='502880192'>
+<span>The file device can load known files in a directory.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>def device = FileDevice.instance( 'build/resources/test/csv' )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>device.loadable == ['biostats-without-head.csv', 'biostats.csv']
+device.loaded == []</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>def t = device.load('biostats-without-head.csv')</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>device.loadable == ['biostats.csv']
+device.loaded == ['biostats-without-head.csv']
+t.toString('fp') == '(18x5):[\n' +
+'   (        a       )(       b       )(       c       )(       d       )(       e        ):( biostats-without-head )\n' +
+'   [      "Alex"    ,           "M"  ,         41     ,           74   ,          170    ]:( 0 ),\n' +
+'   [      "Bert"    ,           "M"  ,         42     ,           68   ,          166    ]:( 1 ),\n' +
+'   [      "Carl"    ,           "M"  ,         32     ,           70   ,          155    ]:( 2 ),\n' +
+'   [      "Dave"    ,           "M"  ,         39     ,           72   ,          167    ]:( 3 ),\n' +
+'   [      "Elly"    ,           "F"  ,         30     ,           66   ,          124    ]:( 4 ),\n' +
+'   [      "Fran"    ,           "F"  ,         33     ,           66   ,          115    ]:( 5 ),\n' +
+'   [      "Gwen"    ,           "F"  ,         26     ,           64   ,          121    ]:( 6 ),\n' +
+'   [      "Hank"    ,           "M"  ,         30     ,           71   ,          158    ]:( 7 ),\n' +
+'   [      "Ivan"    ,           "M"  ,         53     ,           72   ,          175    ]:( 8 ),\n' +
+'   [      "Jake"    ,           "M"  ,         32     ,           69   ,          143    ]:( 9 ),\n' +
+'   [      "Kate"    ,           "F"  ,         47     ,           69   ,          139    ]:( 10 ),\n' +
+'   [      "Luke"    ,           "M"  ,         34     ,           72   ,          163    ]:( 11 ),\n' +
+'   [      "Myra"    ,           "F"  ,         23     ,           62   ,           98    ]:( 12 ),\n' +
+'   [      "Neil"    ,           "M"  ,         36     ,           75   ,          160    ]:( 13 ),\n' +
+'   [      "Omar"    ,           "M"  ,         38     ,           70   ,          145    ]:( 14 ),\n' +
+'   [      "Page"    ,           "F"  ,         31     ,           67   ,          135    ]:( 15 ),\n' +
+'   [      "Quin"    ,           "M"  ,         29     ,           71   ,          176    ]:( 16 ),\n' +
+'   [      "Ruth"    ,           "F"  ,         28     ,           65   ,          131    ]:( 17 )\n' +
+']\n'</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>t = device.load('biostats.csv', [firstRowIsLabels:true])</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>device.loadable == []
+device.loaded == ['biostats-without-head.csv', 'biostats.csv']
+t.toString('fp') == '(18x5):[\n' +
+'   (      "Name"    )(        "Sex"  )(      "Age"    )(  "Height (in)")( "Weight (lbs)" ):( biostats )\n' +
+'   [      "Alex"    ,           "M"  ,         41     ,           74   ,          170    ]:( 0 ),\n' +
+'   [      "Bert"    ,           "M"  ,         42     ,           68   ,          166    ]:( 1 ),\n' +
+'   [      "Carl"    ,           "M"  ,         32     ,           70   ,          155    ]:( 2 ),\n' +
+'   [      "Dave"    ,           "M"  ,         39     ,           72   ,          167    ]:( 3 ),\n' +
+'   [      "Elly"    ,           "F"  ,         30     ,           66   ,          124    ]:( 4 ),\n' +
+'   [      "Fran"    ,           "F"  ,         33     ,           66   ,          115    ]:( 5 ),\n' +
+'   [      "Gwen"    ,           "F"  ,         26     ,           64   ,          121    ]:( 6 ),\n' +
+'   [      "Hank"    ,           "M"  ,         30     ,           71   ,          158    ]:( 7 ),\n' +
+'   [      "Ivan"    ,           "M"  ,         53     ,           72   ,          175    ]:( 8 ),\n' +
+'   [      "Jake"    ,           "M"  ,         32     ,           69   ,          143    ]:( 9 ),\n' +
+'   [      "Kate"    ,           "F"  ,         47     ,           69   ,          139    ]:( 10 ),\n' +
+'   [      "Luke"    ,           "M"  ,         34     ,           72   ,          163    ]:( 11 ),\n' +
+'   [      "Myra"    ,           "F"  ,         23     ,           62   ,           98    ]:( 12 ),\n' +
+'   [      "Neil"    ,           "M"  ,         36     ,           75   ,          160    ]:( 13 ),\n' +
+'   [      "Omar"    ,           "M"  ,         38     ,           70   ,          145    ]:( 14 ),\n' +
+'   [      "Page"    ,           "F"  ,         31     ,           67   ,          135    ]:( 15 ),\n' +
+'   [      "Quin"    ,           "M"  ,         29     ,           71   ,          176    ]:( 16 ),\n' +
+'   [      "Ruth"    ,           "F"  ,         28     ,           65   ,          131    ]:( 17 )\n' +
+']\n'</pre>
 </td>
 </tr>
 </tbody>

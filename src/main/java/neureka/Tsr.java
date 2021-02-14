@@ -694,7 +694,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  very instance.                                                                      <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = new Tsr( "sin( I[0] ) / I[1]", List.of(b, c) )'
+     *      <li><i> 'Tsr a = new Tsr( "sin( I[0] ) / I[1]", List.of(b, c) )'</i></li>
      * </ul>
      *
      * @param expression A String which will be used for parsing a Function AST.
@@ -723,7 +723,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  namely : "I[0]" <br>
      *  An example would be the following :
      * <ul>
-     *      <li><i> 'Tsr a = new Tsr( b, "sin( I[0] ) * 2" )'
+     *      <li><i> 'Tsr a = new Tsr( b, "sin( I[0] ) * 2" )'</i></li>
      * </ul>
      *
      *  Which takes the tensor 'b' and applies the function "f(x) = sin(x) * 2"
@@ -745,7 +745,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ... <br>
      *  An example would be the following :
      * <ul>
-     *      <li><i> 'Tsr a = new Tsr( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'
+     *      <li><i> 'Tsr a = new Tsr( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'</i></li>
      * </ul>
      *
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
@@ -765,7 +765,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...                    <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = new Tsr( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'
+     *      <li><i> 'Tsr a = new Tsr( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'</i></li>
      * </ul>
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
      *  elementwise to produce a new tensor 'a'!
@@ -1040,7 +1040,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     /**
      *  This flag works alongside two autograd features which can be enables inside the library settings.
      *  They will come into effect when flipping their feature flags, <br>
-     *  namely: <i>'isApplyingGradientWhenRequested'</i> & <i>'isApplyingGradientWhenTensorIsUsed'</i><br>
+     *  namely: <i>'isApplyingGradientWhenRequested'</i> and <i>'isApplyingGradientWhenTensorIsUsed'</i><br>
      *  As the first flag name suggests gradients will be applied to their tensors when it is set to true,
      *  however this will only happened when the second flag is set to true as well, because otherwise gradients
      *  wouldn't be applied to their tensors automatically in the first place... <br>
@@ -1048,7 +1048,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  Setting both flags to true will inhibit effect of the second setting <i>'isApplyingGradientWhenTensorIsUsed'</i>
      *  unless a form of "permission" is being signaled to the autograd system.
      *  This signal comes in the form of a "request" flag which marks a tensor as <b>allowed to
-     *  be updated by its gradient<b>.<br>
+     *  be updated by its gradient</b>.<br>
      *  <br>
      * @param applyRequested The truth value determining if the application of the gradient of this tensor is requested.
      * @return This very tensor instance in order to enable method chaining.
@@ -1071,7 +1071,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     /**
      *  This flag works alongside two autograd features which can be enables inside the library settings.
      *  They will come into effect when flipping their feature flags, <br>
-     *  namely: <i>'isApplyingGradientWhenRequested'</i> & <i>'isApplyingGradientWhenTensorIsUsed'</i><br>
+     *  namely: <i>'isApplyingGradientWhenRequested'</i> and <i>'isApplyingGradientWhenTensorIsUsed'</i><br>
      *  As the first flag name suggests gradients will be applied to their tensors when it is set to true,
      *  however this will only happened when the second flag is set to true as well, because otherwise gradients
      *  wouldn't be applied to their tensors automatically in the first place... <br>
@@ -1079,7 +1079,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  Setting both flags to true will inhibit effect of the second setting <i>'isApplyingGradientWhenTensorIsUsed'</i>
      *  unless a form of "permission" is being signaled to the autograd system.
      *  This signal comes in the form of a "request" flag which marks a tensor as <b>allowed to
-     *  be updated by its gradient<b>.<br>
+     *  be updated by its gradient</b>.<br>
      *  <br>
      * @return The truth value determining if the application of the gradient of this tensor is requested.
      */

@@ -30,9 +30,7 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
      *  Defines the position of a subset / slice tensor within its parent!
      */
     private final int[] _offset;
-    /**
-     *  The value of this tensor. Usually a array of type double[] or float[].
-     */
+
 
     protected ComplexDefaultNDConfiguration(
             int[] shape,

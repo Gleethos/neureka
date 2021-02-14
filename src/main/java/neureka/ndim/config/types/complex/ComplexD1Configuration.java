@@ -25,9 +25,7 @@ public class ComplexD1Configuration extends D1C //:= IMMUTABLE
      *  Defines the position of a subset / slice tensor within its parent!
      */
     private final int _offset;
-    /**
-     *  The value of this tensor. Usually a array of type double[] or float[].
-     */
+
 
     public static NDConfiguration construct(
             int[] shape,

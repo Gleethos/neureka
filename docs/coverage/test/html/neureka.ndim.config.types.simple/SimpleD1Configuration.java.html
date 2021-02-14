@@ -11,9 +11,9 @@ public class SimpleD1Configuration extends D1C //:= IMMUTABLE
      */
     protected final int _shape;
     /**
-     *  The translation from a shape index (idx) to the index of the underlying data array.
+     *  The translation from a shape index (indices) to the index of the underlying data array.
      */
-    private final int _translation_and_idxmap;
+    private final int _translation_and_indicesMap;
 
 
     public static NDConfiguration construct(
@@ -28,7 +28,7 @@ public class SimpleD1Configuration extends D1C //:= IMMUTABLE
             int translation
 <span class="fc" id="L29">    ) {</span>
 <span class="fc" id="L30">        _shape = shape;</span>
-<span class="fc" id="L31">        _translation_and_idxmap = translation;</span>
+<span class="fc" id="L31">        _translation_and_indicesMap = translation;</span>
 <span class="fc" id="L32">    }</span>
 
     @Override
@@ -47,23 +47,23 @@ public class SimpleD1Configuration extends D1C //:= IMMUTABLE
     }
 
     @Override
-    public int[] idxmap() {
-<span class="fc" id="L51">        return new int[]{_translation_and_idxmap};</span>
+    public int[] indicesMap() {
+<span class="fc" id="L51">        return new int[]{_translation_and_indicesMap};</span>
     }
 
     @Override
-    public int idxmap( int i ) {
-<span class="fc" id="L56">        return _translation_and_idxmap;</span>
+    public int indicesMap(int i ) {
+<span class="fc" id="L56">        return _translation_and_indicesMap;</span>
     }
 
     @Override
     public int[] translation() {
-<span class="fc" id="L61">        return new int[]{_translation_and_idxmap};</span>
+<span class="fc" id="L61">        return new int[]{_translation_and_indicesMap};</span>
     }
 
     @Override
     public int translation( int i ) {
-<span class="fc" id="L66">        return _translation_and_idxmap;</span>
+<span class="fc" id="L66">        return _translation_and_indicesMap;</span>
     }
 
     @Override
@@ -88,23 +88,23 @@ public class SimpleD1Configuration extends D1C //:= IMMUTABLE
 
 
     @Override
-    public int i_of_i( int i ) {
-<span class="fc" id="L92">        return i;</span>
+    public int indexOfIndex(int index) {
+<span class="fc" id="L92">        return index;</span>
     }
 
     @Override
-    public int[] idx_of_i( int i ) {
-<span class="fc" id="L97">        return new int[]{i / _translation_and_idxmap};</span>
+    public int[] indicesOfIndex(int index) {
+<span class="fc" id="L97">        return new int[]{index / _translation_and_indicesMap};</span>
     }
 
     @Override
-    public int i_of_idx( int[] idx ) {
-<span class="fc" id="L102">        return idx[ 0 ] * _translation_and_idxmap;</span>
+    public int indexOfIndices(int[] indices) {
+<span class="fc" id="L102">        return indices[ 0 ] * _translation_and_indicesMap;</span>
     }
 
     @Override
-    public int i_of_idx( int d1 ) {
-<span class="nc" id="L107">        return d1 * _translation_and_idxmap;</span>
+    public int indexOfIndices(int d1 ) {
+<span class="nc" id="L107">        return d1 * _translation_and_indicesMap;</span>
     }
 
 }

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 08 21:15:22 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Feb 14 00:37:42 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -331,10 +331,37 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>3.894 seconds</td>
+<td>6.701 seconds</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class='spec-headers'>
+<div class='spec-header'>
+                <h2> Tensor Version Behavior </h2>
+                <br> 
+                <p>
+                    There are two fundamental categories of operations
+                    which can be applied to tensors : <br>
+                    Inline operations and Non-Inline  operations! <br>
+                    <br>
+                    Inline operations are often times problematic because they produce
+                    side effects by changing passed tensors instead of producing new ones... <br>   
+                    One such bad side effect can easily occur for tensors involved in the
+                    autograd system, more specifically: the recorded computation graph. <br>
+                    Inline operations can break the mathematically pureness of the back-propagation
+                    procedure by for example changing partial derivatives... <br>
+                    In order to prevent said errors to occur unnoticed tensors
+                    have versions which will increment when the underlying data of the tensor changes. <br>
+                    This version will be tracked by the computation graph as well in order to
+                    match it with the ones stored inside the tensor. <br>
+                    A mismatch would then yield an exception! <br>
+                    <br>
+                    This specification is responsible for defining the behaviour of this
+                    version number with respect to their wrapping tensors as well as computation graph nodes.
+                
+                </p>
+            </div>
 </div>
 <h3>Features:</h3>
 <table class='features-table'>
@@ -369,9 +396,28 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
+<div class='block-text'>Two tensors, one requiring gradients and the other one not.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
 <pre class='block-source'>Tsr a = new Tsr(6).setRqsGradient(true)
-Tsr b = new Tsr(-4)
-Binding binding = new Binding()
+Tsr b = new Tsr(-4)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A binding for both tensors as preparation for calling the Groovy shell.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Binding binding = new Binding()
 binding.setVariable('a', a)
 binding.setVariable('b', b)</pre>
 </td>
@@ -380,6 +426,12 @@ binding.setVariable('b', b)</pre>
 <td>
 <div class='block-kind'>Expect:</div>
 </td>
+<td>
+<div class='block-text'>The versions of both tensors are 0 initially.</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>a.getVersion() == 0
 b.getVersion() == 0</pre>
@@ -390,7 +442,7 @@ b.getVersion() == 0</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<div class='block-text'>The groovy code is being evaluated.</div>
+<div class='block-text'>The Groovy code is being evaluated inside the Groovy shell.</div>
 </td>
 </tr>
 <tr>
@@ -428,6 +480,14 @@ c != a</pre>
 <pre class='block-source'>a.getVersion() == version_of_a
 b.getVersion() == version_of_b
 c.getVersion() == version_of_c</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following arguments are being used:</div>
 </td>
 </tr>
 <tr>

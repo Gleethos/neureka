@@ -47,12 +47,12 @@ import java.util.List;
 {
 
     @Override
-    public double call(double input) {
+    public double call( double input ) {
 <span class="nc" id="L51">        return call(new double[]{input});</span>
     }
 
     @Override
-    public &lt;T&gt; Tsr&lt;T&gt; call(Tsr&lt;T&gt; input) {
+    public &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt; input ) {
 <span class="fc" id="L56">        return call(new Tsr[]{input});</span>
     }
 
@@ -64,54 +64,54 @@ import java.util.List;
     }
 
     @Override
-    public &lt;T&gt; Tsr&lt;T&gt; invoke(List&lt;Tsr&lt;T&gt;&gt; inputs) {
+    public &lt;T&gt; Tsr&lt;T&gt; invoke( List&lt;Tsr&lt;T&gt;&gt; inputs ) {
 <span class="nc" id="L68">        return call( inputs );</span>
     }
 
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public double invoke(double input) {
+    public double invoke( double input ) {
 <span class="nc" id="L75">        return call( input );</span>
     }
 
     @Override
-    public double invoke(double[] inputs, int j) {
+    public double invoke( double[] inputs, int j ) {
 <span class="nc" id="L80">        return call( inputs, j );</span>
     }
 
     @Override
-    public double invoke(double[] inputs) {
+    public double invoke( double[] inputs ) {
 <span class="nc" id="L85">        return call( inputs );</span>
     }
 
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public &lt;T&gt; Tsr&lt;T&gt; invoke(Tsr&lt;T&gt; input) {
+    public &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt; input ) {
 <span class="nc" id="L92">        return call( input );</span>
     }
 
     @Override
-    public &lt;T&gt; Tsr&lt;T&gt; invoke(Tsr&lt;T&gt;[] inputs, int j) {
+    public &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;[] inputs, int j ) {
 <span class="nc" id="L97">        return call( inputs, j );</span>
     }
 
     @Override
-    public &lt;T&gt; Tsr&lt;T&gt; invoke(Tsr&lt;T&gt;[] inputs) {
+    public &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;[] inputs ) {
 <span class="nc" id="L102">        return call( inputs );</span>
     }
 
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public &lt;T&gt; Tsr&lt;T&gt; derive(List&lt;Tsr&lt;T&gt;&gt; inputs, int index, int j) {
-<span class="nc" id="L109">        return derive(inputs.toArray(new Tsr[ 0 ]), index, j);</span>
+    public &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index, int j ) {
+<span class="nc" id="L109">        return derive( inputs.toArray( new Tsr[ 0 ] ), index, j );</span>
     }
 
     @Override
-    public &lt;T&gt; Tsr&lt;T&gt; derive(List&lt;Tsr&lt;T&gt;&gt; inputs, int index) {
-<span class="fc" id="L114">        return derive(inputs.toArray(new Tsr[ 0 ]), index);</span>
+    public &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index ) {
+<span class="fc" id="L114">        return derive( inputs.toArray( new Tsr[ 0 ] ), index );</span>
     }
 
 

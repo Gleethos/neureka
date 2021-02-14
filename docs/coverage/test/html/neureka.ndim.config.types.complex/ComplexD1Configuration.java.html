@@ -10,13 +10,13 @@ import neureka.ndim.config.types.D1C;
      */
     protected final int _shape;
     /**
-     *  The translation from a shape index (idx) to the index of the underlying data array.
+     *  The translation from a shape index (indices) to the index of the underlying data array.
      */
     private final int _translation;
     /**
-     *  The mapping of idx array.
+     *  The mapping of the indices array.
      */
-    private final int _idxmap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
+    private final int _indicesMap; // Maps index integer to array like translation. Used to avoid distortion when slicing!
     /**
      *  Produces the strides of a tensor subset / slice
      */
@@ -25,111 +25,109 @@ import neureka.ndim.config.types.D1C;
      *  Defines the position of a subset / slice tensor within its parent!
      */
     private final int _offset;
-    /**
-     *  The value of this tensor. Usually a array of type double[] or float[].
-     */
+
 
     public static NDConfiguration construct(
             int[] shape,
             int[] translation,
-            int[] idxmap,
+            int[] indicesMap,
             int[] spread,
             int[] offset
     ) {
-<span class="fc" id="L39">        return _cached(new ComplexD1Configuration(shape[ 0 ], translation[ 0 ],  idxmap[ 0 ], spread[ 0 ], offset[ 0 ]));</span>
+<span class="fc" id="L37">        return _cached(new ComplexD1Configuration(shape[ 0 ], translation[ 0 ],  indicesMap[ 0 ], spread[ 0 ], offset[ 0 ]));</span>
     }
 
     protected ComplexD1Configuration(
             int shape,
             int translation,
-            int idxmap,
+            int indicesMap,
             int spread,
             int offset
-<span class="fc" id="L48">    ) {</span>
-<span class="fc" id="L49">        _shape = shape;</span>
-<span class="fc" id="L50">        _translation = translation;</span>
-<span class="fc" id="L51">        _idxmap = idxmap;</span>
-<span class="fc" id="L52">        _spread = spread;</span>
-<span class="fc" id="L53">        _offset = offset;</span>
-<span class="pc bpc" id="L54" title="2 of 4 branches missed.">        assert translation != 0;</span>
-<span class="pc bpc" id="L55" title="2 of 4 branches missed.">        assert idxmap != 0;</span>
-<span class="pc bpc" id="L56" title="2 of 4 branches missed.">        assert spread != 0;</span>
-<span class="fc" id="L57">    }</span>
+<span class="fc" id="L46">    ) {</span>
+<span class="fc" id="L47">        _shape = shape;</span>
+<span class="fc" id="L48">        _translation = translation;</span>
+<span class="fc" id="L49">        _indicesMap = indicesMap;</span>
+<span class="fc" id="L50">        _spread = spread;</span>
+<span class="fc" id="L51">        _offset = offset;</span>
+<span class="pc bpc" id="L52" title="2 of 4 branches missed.">        assert translation != 0;</span>
+<span class="pc bpc" id="L53" title="2 of 4 branches missed.">        assert indicesMap != 0;</span>
+<span class="pc bpc" id="L54" title="2 of 4 branches missed.">        assert spread != 0;</span>
+<span class="fc" id="L55">    }</span>
 
     @Override
     public int rank() {
-<span class="nc" id="L61">        return 1;</span>
+<span class="nc" id="L59">        return 1;</span>
     }
 
     @Override
     public int[] shape() {
-<span class="fc" id="L66">        return new int[]{_shape};</span>
+<span class="fc" id="L64">        return new int[]{_shape};</span>
     }
 
     @Override
     public int shape( int i ) {
-<span class="fc" id="L71">        return _shape;</span>
+<span class="fc" id="L69">        return _shape;</span>
     }
 
     @Override
-    public int[] idxmap() {
-<span class="fc" id="L76">        return new int[]{_idxmap};</span>
+    public int[] indicesMap() {
+<span class="fc" id="L74">        return new int[]{_indicesMap};</span>
     }
 
     @Override
-    public int idxmap( int i ) {
-<span class="fc" id="L81">        return _idxmap;</span>
+    public int indicesMap(int i ) {
+<span class="fc" id="L79">        return _indicesMap;</span>
     }
 
     @Override
     public int[] translation() {
-<span class="fc" id="L86">        return new int[]{_translation};</span>
+<span class="fc" id="L84">        return new int[]{_translation};</span>
     }
 
     @Override
     public int translation( int i ) {
-<span class="fc" id="L91">        return _translation;</span>
+<span class="fc" id="L89">        return _translation;</span>
     }
 
     @Override
     public int[] spread() {
-<span class="fc" id="L96">        return new int[]{_spread};</span>
+<span class="fc" id="L94">        return new int[]{_spread};</span>
     }
 
     @Override
     public int spread( int i ) {
-<span class="fc" id="L101">        return _spread;</span>
+<span class="fc" id="L99">        return _spread;</span>
     }
 
     @Override
     public int[] offset() {
-<span class="fc" id="L106">        return new int[]{_offset};</span>
+<span class="fc" id="L104">        return new int[]{_offset};</span>
     }
 
     @Override
     public int offset( int i ) {
-<span class="fc" id="L111">        return _offset;</span>
+<span class="fc" id="L109">        return _offset;</span>
     }
 
 
     @Override
-    public int i_of_i( int i ) {
-<span class="fc" id="L117">        return ((i / _idxmap) * _spread + _offset) * _translation;</span>
+    public int indexOfIndex(int index) {
+<span class="fc" id="L115">        return ((index / _indicesMap) * _spread + _offset) * _translation;</span>
     }
 
     @Override
-    public int[] idx_of_i( int i ) {
-<span class="nc" id="L122">        return new int[]{i / _idxmap};</span>
+    public int[] indicesOfIndex(int index) {
+<span class="nc" id="L120">        return new int[]{index / _indicesMap};</span>
     }
     @Override
-    public int i_of_idx( int[] idx ) {
-<span class="nc" id="L126">        return (idx[ 0 ] * _spread + _offset) * _translation;</span>
+    public int indexOfIndices(int[] indices) {
+<span class="nc" id="L124">        return (indices[ 0 ] * _spread + _offset) * _translation;</span>
     }
 
 
     @Override
-    public int i_of_idx( int d1 ) {
-<span class="nc" id="L132">        return (d1 * _spread + _offset) * _translation;</span>
+    public int indexOfIndices(int d1 ) {
+<span class="nc" id="L130">        return (d1 * _spread + _offset) * _translation;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

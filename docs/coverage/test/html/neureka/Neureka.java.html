@@ -50,7 +50,7 @@ import java.util.Map;
 
 @Accessors( prefix = {&quot;_&quot;} )
 <span class="nc" id="L52">@ToString</span>
-public class Neureka
+public final class Neureka
 {
     private static final ThreadLocal&lt;Neureka&gt; _INSTANCES;
 
@@ -122,19 +122,18 @@ public class Neureka
 <span class="nc" id="L122">            settings().autograd().setIsRetainingPendingErrorForJITProp( true );</span>
 <span class="nc" id="L123">            settings().autograd().setIsApplyingGradientWhenTensorIsUsed( true );</span>
 <span class="nc" id="L124">            settings().autograd().setIsApplyingGradientWhenRequested( true );</span>
-<span class="nc" id="L125">            settings().indexing().setIsUsingLegacyIndexing( false );</span>
-<span class="nc" id="L126">            settings().indexing().setIsUsingArrayBasedIndexing( true );</span>
-<span class="nc" id="L127">            settings().debug().setIsKeepingDerivativeTargetPayloads( false );</span>
-<span class="nc" id="L128">            settings().view().setIsUsingLegacyView( false );</span>
-<span class="fc" id="L129">        }</span>
-<span class="fc" id="L130">    }</span>
+<span class="nc" id="L125">            settings().indexing().setIsUsingArrayBasedIndexing( true );</span>
+<span class="nc" id="L126">            settings().debug().setIsKeepingDerivativeTargetPayloads( false );</span>
+<span class="nc" id="L127">            settings().view().setIsUsingLegacyView( false );</span>
+<span class="fc" id="L128">        }</span>
+<span class="fc" id="L129">    }</span>
 
     private boolean _currentThreadIsAuthorized() {
-<span class="fc" id="L133">        return this.equals( _INSTANCES.get() );</span>
+<span class="fc" id="L132">        return this.equals( _INSTANCES.get() );</span>
     }
 
     @Accessors( prefix = {&quot;_&quot;} )
-<span class="nc" id="L137">    @ToString</span>
+<span class="nc" id="L136">    @ToString</span>
     public class Settings
     {
         private final Debug _debug;
@@ -144,82 +143,82 @@ public class Neureka
         private final NDim _ndim;
         private final DType _dtype;
 
-<span class="fc" id="L147">        private boolean _isLocked = false;</span>
+<span class="fc" id="L146">        private boolean _isLocked = false;</span>
 
-<span class="fc" id="L149">        private Settings() {</span>
-<span class="fc" id="L150">            _debug = new Debug();</span>
-<span class="fc" id="L151">            _autograd = new AutoGrad();</span>
-<span class="fc" id="L152">            _indexing = new Indexing();</span>
-<span class="fc" id="L153">            _view = new View();</span>
-<span class="fc" id="L154">            _ndim = new NDim();</span>
-<span class="fc" id="L155">            _dtype = new DType();</span>
-<span class="fc" id="L156">        }</span>
+<span class="fc" id="L148">        private Settings() {</span>
+<span class="fc" id="L149">            _debug = new Debug();</span>
+<span class="fc" id="L150">            _autograd = new AutoGrad();</span>
+<span class="fc" id="L151">            _indexing = new Indexing();</span>
+<span class="fc" id="L152">            _view = new View();</span>
+<span class="fc" id="L153">            _ndim = new NDim();</span>
+<span class="fc" id="L154">            _dtype = new DType();</span>
+<span class="fc" id="L155">        }</span>
 
         public Debug debug() {
-<span class="fc" id="L159">            return _debug;</span>
+<span class="fc" id="L158">            return _debug;</span>
         }
 
         public Debug debug(Object closure) {
-<span class="fc" id="L163">            SettingsLoader.tryGroovyClosureOn(closure, _debug);</span>
-<span class="fc" id="L164">            return _debug;</span>
+<span class="fc" id="L162">            SettingsLoader.tryGroovyClosureOn(closure, _debug);</span>
+<span class="fc" id="L163">            return _debug;</span>
         }
 
         public AutoGrad autograd() {
-<span class="fc" id="L168">            return _autograd;</span>
+<span class="fc" id="L167">            return _autograd;</span>
         }
 
         public AutoGrad autograd( Object closure ) {
-<span class="fc" id="L172">            SettingsLoader.tryGroovyClosureOn( closure, _autograd );</span>
-<span class="fc" id="L173">            return _autograd;</span>
+<span class="fc" id="L171">            SettingsLoader.tryGroovyClosureOn( closure, _autograd );</span>
+<span class="fc" id="L172">            return _autograd;</span>
         }
 
         public Indexing indexing() {
-<span class="fc" id="L177">            return _indexing;</span>
+<span class="fc" id="L176">            return _indexing;</span>
         }
 
         public Indexing indexing( Object closure ) {
-<span class="fc" id="L181">            SettingsLoader.tryGroovyClosureOn( closure, _indexing );</span>
-<span class="fc" id="L182">            return _indexing;</span>
+<span class="fc" id="L180">            SettingsLoader.tryGroovyClosureOn( closure, _indexing );</span>
+<span class="fc" id="L181">            return _indexing;</span>
         }
 
         public View view() {
-<span class="fc" id="L186">            return _view;</span>
+<span class="fc" id="L185">            return _view;</span>
         }
 
         public View view( Object closure ) {
-<span class="fc" id="L190">            SettingsLoader.tryGroovyClosureOn( closure, _view );</span>
-<span class="fc" id="L191">            return _view;</span>
+<span class="fc" id="L189">            SettingsLoader.tryGroovyClosureOn( closure, _view );</span>
+<span class="fc" id="L190">            return _view;</span>
         }
 
         public NDim ndim() {
-<span class="fc" id="L195">            return _ndim;</span>
+<span class="fc" id="L194">            return _ndim;</span>
         }
 
         public NDim ndim( Object closure ) {
-<span class="fc" id="L199">            SettingsLoader.tryGroovyClosureOn( closure, _ndim );</span>
-<span class="fc" id="L200">            return _ndim;</span>
+<span class="fc" id="L198">            SettingsLoader.tryGroovyClosureOn( closure, _ndim );</span>
+<span class="fc" id="L199">            return _ndim;</span>
         }
 
         public DType dtype() {
-<span class="fc" id="L204">            return _dtype;</span>
+<span class="fc" id="L203">            return _dtype;</span>
         }
 
         public DType dtype( Object closure ) {
-<span class="fc" id="L208">            SettingsLoader.tryGroovyClosureOn( closure, _dtype );</span>
-<span class="fc" id="L209">            return _dtype;</span>
+<span class="fc" id="L207">            SettingsLoader.tryGroovyClosureOn( closure, _dtype );</span>
+<span class="fc" id="L208">            return _dtype;</span>
         }
 
         public boolean isLocked() {
-<span class="fc" id="L213">            return  _isLocked;</span>
+<span class="fc" id="L212">            return  _isLocked;</span>
         }
 
         public void setIsLocked(boolean locked) {
-<span class="nc" id="L217">            _isLocked = locked;</span>
-<span class="nc" id="L218">        }</span>
+<span class="nc" id="L216">            _isLocked = locked;</span>
+<span class="nc" id="L217">        }</span>
 
         @Accessors( prefix = {&quot;_&quot;} )
-<span class="nc" id="L221">        @ToString</span>
-<span class="fc" id="L222">        public class Debug</span>
+<span class="nc" id="L220">        @ToString</span>
+<span class="fc" id="L221">        public class Debug</span>
         {
             /**
              * Every derivative is calculated with respect to some graph node.
@@ -236,29 +235,29 @@ public class Neureka
              * It is used in the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
              */
-<span class="fc" id="L239">            private boolean _isKeepingDerivativeTargetPayloads = false;</span>
+<span class="fc" id="L238">            private boolean _isKeepingDerivativeTargetPayloads = false;</span>
 
             public boolean isKeepingDerivativeTargetPayloads() {
-<span class="fc" id="L242">                return _isKeepingDerivativeTargetPayloads;</span>
+<span class="fc" id="L241">                return _isKeepingDerivativeTargetPayloads;</span>
             }
 
             public void setIsKeepingDerivativeTargetPayloads(boolean keep) {
-<span class="pc bpc" id="L246" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L247">                _isKeepingDerivativeTargetPayloads = keep;</span>
-<span class="fc" id="L248">            }</span>
+<span class="pc bpc" id="L245" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L246">                _isKeepingDerivativeTargetPayloads = keep;</span>
+<span class="fc" id="L247">            }</span>
 
         }
 
         @Accessors( prefix = {&quot;_&quot;} )
-<span class="nc" id="L253">        @ToString</span>
-<span class="fc" id="L254">        public class AutoGrad // Auto-Grad/Differentiation</span>
+<span class="nc" id="L252">        @ToString</span>
+<span class="fc" id="L253">        public class AutoGrad // Auto-Grad/Differentiation</span>
         {
             /**
              *  Inline operations are operations where the data of a tensor passed into an operation
              *  is being modified.
              *  Usually the result of an operation is stored inside a new tensor.
              */
-<span class="fc" id="L261">            private boolean _isPreventingInlineOperations = true;</span>
+<span class="fc" id="L260">            private boolean _isPreventingInlineOperations = true;</span>
 
             /**
              * This flag enables an optimization technique which only propagates error values to
@@ -270,186 +269,190 @@ public class Neureka
              * improve performance for some networks substantially.
              * The technique is termed JIT-Propagation.
              */
-<span class="fc" id="L273">            private boolean _isRetainingPendingErrorForJITProp = true;</span>
+<span class="fc" id="L272">            private boolean _isRetainingPendingErrorForJITProp = true;</span>
 
             /**
              * Gradients will automatically be applied (or JITed) to tensors as soon as
              * they are being used for calculation (GraphNode instantiation).
              * This feature works well with JIT-Propagation.
              */
-<span class="fc" id="L280">            private boolean _isApplyingGradientWhenTensorIsUsed = true;</span>
+<span class="fc" id="L279">            private boolean _isApplyingGradientWhenTensorIsUsed = true;</span>
 
             /**
              * Gradients will only be applied if requested.
              * Usually this happens immediately, however
-             * if the flag 'applyGradientWhenTensorIsUsed' is set
+             * if the flag &lt;i&gt;'applyGradientWhenTensorIsUsed'&lt;/i&gt; is set
              * to true, then the tensor will only be updated by its
              * gradient if requested AND the tensor is used fo calculation! (GraphNode instantiation).
              */
-<span class="fc" id="L289">            private boolean _isApplyingGradientWhenRequested = true;</span>
+<span class="fc" id="L288">            private boolean _isApplyingGradientWhenRequested = true;</span>
 
             public boolean isPreventingInlineOperations() {
-<span class="fc" id="L292">                return _isPreventingInlineOperations;</span>
+<span class="fc" id="L291">                return _isPreventingInlineOperations;</span>
             }
 
             public void setIsPreventingInlineOperations(boolean prevent) {
-<span class="pc bpc" id="L296" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L297">                _isPreventingInlineOperations = prevent;</span>
-<span class="fc" id="L298">            }</span>
+<span class="pc bpc" id="L295" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L296">                _isPreventingInlineOperations = prevent;</span>
+<span class="fc" id="L297">            }</span>
 
             public boolean isRetainingPendingErrorForJITProp() {
-<span class="fc" id="L301">                return _isRetainingPendingErrorForJITProp;</span>
+<span class="fc" id="L300">                return _isRetainingPendingErrorForJITProp;</span>
             }
 
             public void setIsRetainingPendingErrorForJITProp(boolean retain) {
-<span class="pc bpc" id="L305" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L306">                _isRetainingPendingErrorForJITProp = retain;</span>
-<span class="fc" id="L307">            }</span>
+<span class="pc bpc" id="L304" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L305">                _isRetainingPendingErrorForJITProp = retain;</span>
+<span class="fc" id="L306">            }</span>
 
             public boolean isApplyingGradientWhenTensorIsUsed() {
-<span class="fc" id="L310">                return _isApplyingGradientWhenTensorIsUsed;</span>
+<span class="fc" id="L309">                return _isApplyingGradientWhenTensorIsUsed;</span>
             }
 
             public void setIsApplyingGradientWhenTensorIsUsed(boolean apply) {
-<span class="pc bpc" id="L314" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L315">                _isApplyingGradientWhenTensorIsUsed = apply;</span>
-<span class="fc" id="L316">            }</span>
+<span class="pc bpc" id="L313" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L314">                _isApplyingGradientWhenTensorIsUsed = apply;</span>
+<span class="fc" id="L315">            }</span>
 
             public boolean isApplyingGradientWhenRequested() {
-<span class="fc" id="L319">                return _isApplyingGradientWhenRequested;</span>
+<span class="fc" id="L318">                return _isApplyingGradientWhenRequested;</span>
             }
 
             public void setIsApplyingGradientWhenRequested(boolean apply) {
-<span class="pc bpc" id="L323" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L324">                _isApplyingGradientWhenRequested = apply;</span>
-<span class="fc" id="L325">            }</span>
+<span class="pc bpc" id="L322" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L323">                _isApplyingGradientWhenRequested = apply;</span>
+<span class="fc" id="L324">            }</span>
 
         }
 
         @Accessors( prefix = {&quot;_&quot;} )
-<span class="nc" id="L330">        @ToString</span>
-<span class="fc" id="L331">        public class Indexing</span>
+<span class="nc" id="L329">        @ToString</span>
+<span class="fc" id="L330">        public class Indexing</span>
         {
-<span class="fc" id="L333">            private boolean _isUsingLegacyIndexing = false;</span>
+<span class="fc" id="L332">            private boolean _isUsingLegacyIndexing = false;</span>
 
-<span class="fc" id="L335">            private boolean _isUsingArrayBasedIndexing = true;</span>
+<span class="fc" id="L334">            private boolean _isUsingArrayBasedIndexing = true;</span>
 
 
 
-            public boolean isUsingLegacyIndexing() {
-<span class="fc" id="L340">                return _isUsingLegacyIndexing;</span>
-            }
+            //public boolean isUsingLegacyIndexing() {
+            //    return _isUsingLegacyIndexing;
+            //}
 
-            public void setIsUsingLegacyIndexing(boolean enabled) {
-<span class="pc bpc" id="L344" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L345">                _isUsingLegacyIndexing = enabled; // NOTE: gpu code must recompiled! (in OpenCLPlatform)</span>
-<span class="fc" id="L346">            }</span>
+            //public void setIsUsingLegacyIndexing(boolean enabled) {
+            //    if ( _isLocked || !_currentThreadIsAuthorized()) return;
+            //    _isUsingLegacyIndexing = enabled; // NOTE: gpu code must recompiled! (in OpenCLPlatform)
+            //}
 
             public boolean isUsingArrayBasedIndexing() {
-<span class="fc" id="L349">                return _isUsingArrayBasedIndexing;</span>
+<span class="fc" id="L348">                return _isUsingArrayBasedIndexing;</span>
             }
 
             public void setIsUsingArrayBasedIndexing( boolean thorough ) {
-<span class="pc bpc" id="L353" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L354">                _isUsingArrayBasedIndexing = thorough;</span>
-<span class="fc" id="L355">            }</span>
+<span class="pc bpc" id="L352" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L353">                _isUsingArrayBasedIndexing = thorough;</span>
+<span class="fc" id="L354">            }</span>
 
         }
 
         @Accessors( prefix = {&quot;_&quot;} )
-<span class="nc" id="L360">        @ToString</span>
+<span class="nc" id="L359">        @ToString</span>
         public class View
         {
-<span class="fc" id="L363">            View(){</span>
-<span class="fc" id="L364">                _asString = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L365">                _asString.put( TsrAsString.Should.BE_SHORTENED_BY,      50   );</span>
-<span class="fc" id="L366">                _asString.put( TsrAsString.Should.BE_COMPACT,           true );</span>
-<span class="fc" id="L367">                _asString.put( TsrAsString.Should.BE_FORMATTED,         true );</span>
-<span class="fc" id="L368">                _asString.put( TsrAsString.Should.HAVE_GRADIENT,        true );</span>
-<span class="fc" id="L369">                _asString.put( TsrAsString.Should.HAVE_PADDING_OF,     6     );</span>
-<span class="fc" id="L370">                _asString.put( TsrAsString.Should.HAVE_VALUE,          true );</span>
-<span class="fc" id="L371">                _asString.put( TsrAsString.Should.HAVE_RECURSIVE_GRAPH, false );</span>
-<span class="fc" id="L372">                _asString.put( TsrAsString.Should.HAVE_DERIVATIVES,     false );</span>
-<span class="fc" id="L373">                _asString.put( TsrAsString.Should.HAVE_SHAPE,           true  );</span>
-<span class="fc" id="L374">            }</span>
+<span class="fc" id="L362">            View(){</span>
+<span class="fc" id="L363">                _asString = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L364">                _asString.put( TsrAsString.Should.BE_SHORTENED_BY,      50   );</span>
+<span class="fc" id="L365">                _asString.put( TsrAsString.Should.BE_COMPACT,           true );</span>
+<span class="fc" id="L366">                _asString.put( TsrAsString.Should.BE_FORMATTED,         true );</span>
+<span class="fc" id="L367">                _asString.put( TsrAsString.Should.HAVE_GRADIENT,        true );</span>
+<span class="fc" id="L368">                _asString.put( TsrAsString.Should.HAVE_PADDING_OF,     6     );</span>
+<span class="fc" id="L369">                _asString.put( TsrAsString.Should.HAVE_VALUE,          true );</span>
+<span class="fc" id="L370">                _asString.put( TsrAsString.Should.HAVE_RECURSIVE_GRAPH, false );</span>
+<span class="fc" id="L371">                _asString.put( TsrAsString.Should.HAVE_DERIVATIVES,     false );</span>
+<span class="fc" id="L372">                _asString.put( TsrAsString.Should.HAVE_SHAPE,           true  );</span>
+<span class="fc" id="L373">            }</span>
 
-<span class="fc" id="L376">            private boolean _isUsingLegacyView = false;</span>
+<span class="fc" id="L375">            private boolean _isUsingLegacyView = false;</span>
 
             private Map&lt;TsrAsString.Should, Object&gt; _asString;
 
 
             public boolean isUsingLegacyView() {
-<span class="fc" id="L382">                return _isUsingLegacyView;</span>
+<span class="fc" id="L381">                return _isUsingLegacyView;</span>
             }
 
             public void setIsUsingLegacyView(boolean enabled) {
-<span class="pc bpc" id="L386" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L387">                _isUsingLegacyView = enabled;</span>
-<span class="fc" id="L388">            }</span>
+<span class="pc bpc" id="L385" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L386">                _isUsingLegacyView = enabled;</span>
+<span class="fc" id="L387">            }</span>
 
             public Map&lt;TsrAsString.Should, Object&gt; getAsString() {
-<span class="fc" id="L391">                return _asString;</span>
+<span class="fc" id="L390">                return _asString;</span>
             }
 
             public void setAsString( Map&lt;TsrAsString.Should, Object&gt; should ) {
-<span class="fc" id="L395">                _asString = should;</span>
-<span class="fc" id="L396">            }</span>
+<span class="fc" id="L394">                _asString = should;</span>
+<span class="fc" id="L395">            }</span>
+
+            public void setAsString( String modes ) {
+<span class="fc" id="L398">                setAsString( TsrAsString.Util.configFromCode( modes ) );</span>
+<span class="fc" id="L399">            }</span>
 
         }
 
         @Accessors( prefix = {&quot;_&quot;} )
-<span class="nc" id="L401">        @ToString</span>
-<span class="fc" id="L402">        public class NDim</span>
+<span class="nc" id="L404">        @ToString</span>
+<span class="fc" id="L405">        public class NDim</span>
         {
             /**
              *  The DefaultNDConfiguration class stores shape, translation...
              *  as cached int arrays.
              *  Disabling this flag allows for custom 1D, 2D, 3D classes to be loaded. (Improves memory locality)
              */
-<span class="fc" id="L409">            private boolean _isOnlyUsingDefaultNDConfiguration = false;</span>
+<span class="fc" id="L412">            private boolean _isOnlyUsingDefaultNDConfiguration = false;</span>
 
             public boolean isOnlyUsingDefaultNDConfiguration() {
-<span class="fc" id="L412">                return _isOnlyUsingDefaultNDConfiguration;</span>
+<span class="fc" id="L415">                return _isOnlyUsingDefaultNDConfiguration;</span>
             }
 
             public void setIsOnlyUsingDefaultNDConfiguration(boolean enabled) {
-<span class="pc bpc" id="L416" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L417">                _isOnlyUsingDefaultNDConfiguration = enabled;</span>
-<span class="fc" id="L418">            }</span>
+<span class="pc bpc" id="L419" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L420">                _isOnlyUsingDefaultNDConfiguration = enabled;</span>
+<span class="fc" id="L421">            }</span>
 
         }
 
         @Accessors( prefix = {&quot;_&quot;} )
-<span class="nc" id="L423">        @ToString</span>
-<span class="fc" id="L424">        public class DType {</span>
+<span class="nc" id="L426">        @ToString</span>
+<span class="fc" id="L427">        public class DType {</span>
 
-<span class="fc" id="L426">            private Class&lt;?&gt; _defaultDataTypeClass = F64.class;</span>
+<span class="fc" id="L429">            private Class&lt;?&gt; _defaultDataTypeClass = F64.class;</span>
 
-<span class="fc" id="L428">            private boolean _isAutoConvertingExternalDataToJVMTypes = true;</span>
+<span class="fc" id="L431">            private boolean _isAutoConvertingExternalDataToJVMTypes = true;</span>
 
             public Class&lt;?&gt; getDefaultDataTypeClass() {
-<span class="fc" id="L431">                return _defaultDataTypeClass;</span>
+<span class="fc" id="L434">                return _defaultDataTypeClass;</span>
             }
 
             public void setDefaultDataTypeClass( Class dtype ) {
-<span class="pc bpc" id="L435" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L436">                _defaultDataTypeClass = dtype;</span>
-<span class="fc" id="L437">            }</span>
+<span class="pc bpc" id="L438" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L439">                _defaultDataTypeClass = dtype;</span>
+<span class="fc" id="L440">            }</span>
 
             public boolean getIsAutoConvertingExternalDataToJVMTypes() {
-<span class="fc" id="L440">                return _isAutoConvertingExternalDataToJVMTypes;</span>
+<span class="fc" id="L443">                return _isAutoConvertingExternalDataToJVMTypes;</span>
             }
 
             public void setIsAutoConvertingExternalDataToJVMTypes( boolean autoConvert ) {
-<span class="pc bpc" id="L444" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
-<span class="fc" id="L445">                _isAutoConvertingExternalDataToJVMTypes = autoConvert;</span>
-<span class="fc" id="L446">            }</span>
+<span class="pc bpc" id="L447" title="2 of 4 branches missed.">                if ( _isLocked || !_currentThreadIsAuthorized()) return;</span>
+<span class="fc" id="L448">                _isAutoConvertingExternalDataToJVMTypes = autoConvert;</span>
+<span class="fc" id="L449">            }</span>
 
         }
 
     }
 
-<span class="fc" id="L452">    public static class Utility</span>
+<span class="fc" id="L455">    public static class Utility</span>
     {
         /**
          * Helper method which reads the file with the given name and returns
@@ -460,39 +463,39 @@ public class Neureka
          * @return The contents of the file
          */
         public String readResource( String path ) {
-<span class="fc" id="L463">            InputStream stream = getClass().getClassLoader().getResourceAsStream( path );</span>
+<span class="fc" id="L466">            InputStream stream = getClass().getClassLoader().getResourceAsStream( path );</span>
             try {
-<span class="fc" id="L465">                BufferedReader br = new BufferedReader(new InputStreamReader( stream ));</span>
-<span class="fc" id="L466">                StringBuffer sb = new StringBuffer();</span>
-<span class="fc" id="L467">                String line = &quot;&quot;;</span>
-<span class="fc bfc" id="L468" title="All 2 branches covered.">                while ( line != null ) {</span>
-<span class="fc" id="L469">                    line = br.readLine();</span>
-<span class="fc bfc" id="L470" title="All 2 branches covered.">                    if ( line != null ) sb.append( line ).append( &quot;\n&quot; );</span>
+<span class="fc" id="L468">                BufferedReader br = new BufferedReader(new InputStreamReader( stream ));</span>
+<span class="fc" id="L469">                StringBuffer sb = new StringBuffer();</span>
+<span class="fc" id="L470">                String line = &quot;&quot;;</span>
+<span class="fc bfc" id="L471" title="All 2 branches covered.">                while ( line != null ) {</span>
+<span class="fc" id="L472">                    line = br.readLine();</span>
+<span class="fc bfc" id="L473" title="All 2 branches covered.">                    if ( line != null ) sb.append( line ).append( &quot;\n&quot; );</span>
                 }
-<span class="fc" id="L472">                return sb.toString();</span>
-<span class="nc" id="L473">            } catch ( IOException e ) {</span>
-<span class="nc" id="L474">                e.printStackTrace();</span>
-<span class="nc" id="L475">                System.exit( 1 );</span>
-<span class="nc" id="L476">                return null;</span>
+<span class="fc" id="L475">                return sb.toString();</span>
+<span class="nc" id="L476">            } catch ( IOException e ) {</span>
+<span class="nc" id="L477">                e.printStackTrace();</span>
+<span class="nc" id="L478">                System.exit( 1 );</span>
+<span class="nc" id="L479">                return null;</span>
             }
         }
 
         public static boolean isPresent( String className ) {
-<span class="fc" id="L481">            boolean found = false;</span>
-<span class="pc bpc" id="L482" title="1 of 2 branches missed.">            String groovyInfo = ( (className.toLowerCase().contains(&quot;groovy&quot;) ) ? &quot; Neureka settings uninitialized!&quot; : &quot;&quot; );</span>
-<span class="fc" id="L483">            String cause = &quot; unknown &quot;;</span>
+<span class="fc" id="L484">            boolean found = false;</span>
+<span class="pc bpc" id="L485" title="1 of 2 branches missed.">            String groovyInfo = ( (className.toLowerCase().contains(&quot;groovy&quot;) ) ? &quot; Neureka settings uninitialized!&quot; : &quot;&quot; );</span>
+<span class="fc" id="L486">            String cause = &quot; unknown &quot;;</span>
             try {
-<span class="fc" id="L485">                Class.forName( className );</span>
-<span class="fc" id="L486">                found = true;</span>
-<span class="nc" id="L487">            } catch ( Throwable ex ) {// Class or one of its dependencies is not present...</span>
-<span class="nc" id="L488">                cause = ex.getMessage();</span>
+<span class="fc" id="L488">                Class.forName( className );</span>
+<span class="fc" id="L489">                found = true;</span>
+<span class="nc" id="L490">            } catch ( Throwable ex ) {// Class or one of its dependencies is not present...</span>
+<span class="nc" id="L491">                cause = ex.getMessage();</span>
             } finally {
-<span class="pc bpc" id="L490" title="5 of 6 branches missed.">                if ( !found ) {</span>
-<span class="nc" id="L491">                    System.out.println(</span>
+<span class="pc bpc" id="L493" title="5 of 6 branches missed.">                if ( !found ) {</span>
+<span class="nc" id="L494">                    System.out.println(</span>
                             &quot;[Info]: '&quot;+className+&quot;' dependencies not found!&quot;+groovyInfo+&quot;\n[Cause]: &quot;+cause
                     );
                 }
-<span class="pc" id="L495">                return found;</span>
+<span class="pc" id="L498">                return found;</span>
             }
         }
 

@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *  This class is a simple wrapper around "Loader" & "Saver" lambdas
+ *  This class is a simple wrapper around "Loader" and "Saver" lambdas
  *  which instantiate FileHead classes.
  */
 public class HeadFactory

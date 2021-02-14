@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Jan 08 21:15:27 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Sun Feb 14 00:37:49 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <th>Executed features</th>
@@ -331,7 +331,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>6.902 seconds</td>
+<td>5.149 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -425,6 +425,22 @@ Tsr s = t[1..3, 1..2]</pre>
 </tr>
 <tr>
 <td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>Both tensors share not only the same data but also the same data type.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.data == s.data
+t.dataType == DataType.of( Double.class )
+s.dataType == DataType.of( Double.class )</pre>
+</td>
+</tr>
+<tr>
+<td>
 <div class='block-kind'>When:</div>
 </td>
 <td>
@@ -494,13 +510,55 @@ Tsr s = t[1..3, 1..2]</pre>
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<div class='block-text'>A new tensor belonging to the first found OpenCLDevice instance.</div>
+<div class='block-text'>A new tensor.</div>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr([1, 2]).set(Device.find('first'))</pre>
+<pre class='block-source'>Tsr t = new Tsr([1, 2])</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>This tensor is initially of type "Double", meaning it is backed by a "double[]" array internally...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.dataType == DataType.of( Double.class )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The tensor is being transferred to the first found OpencCLDevice...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Device.find('first').store( t )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The data type of the tensor is being converted to single precision.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t.dataType == DataType.of( Float.class )</pre>
 </td>
 </tr>
 <tr>
@@ -522,13 +580,13 @@ Tsr s = t[1..3, 1..2]</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<div class='block-text'>This value object is an instance of a "double[]" array.</div>
+<div class='block-text'>This value object is an instance of a "float[]" array because the device converted the value.</div>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>value instanceof double[]</pre>
+<pre class='block-source'>value instanceof float[]</pre>
 </td>
 </tr>
 <tr>

@@ -30,9 +30,7 @@ public class ComplexD2Configuration extends D2C //:= IMMUTABLE
      */
     private final int _offset1;
     private final int _offset2;
-    /**
-     *  The value of this tensor. Usually a array of type double[] or float[].
-     */
+
 
     protected ComplexD2Configuration(
             int[] shape,

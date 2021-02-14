@@ -14,7 +14,7 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
     protected final int _shape1;
     protected final int _shape2;
     /**
-     *  The translation from a shape index (idx) to the index of the underlying data array.
+     *  The translation from a shape index (indices) to the index of the underlying data array.
      */
     private final int _translation1;
     private final int _translation2;
@@ -53,12 +53,12 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
     }
 
     @Override
-    public int[] idxmap() {
+    public int[] indicesMap() {
 <span class="fc" id="L57">        return new int[]{_translation1, _translation2};</span>
     }
 
     @Override
-    public int idxmap( int i ) {
+    public int indicesMap(int i ) {
 <span class="fc" id="L62">        return 1;</span>
     }
 
@@ -96,45 +96,34 @@ public class SimpleD2Configuration extends D2C //:= IMMUTABLE
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public int i_of_i( int i ) {
-<span class="fc bfc" id="L100" title="All 2 branches covered.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
-<span class="fc" id="L101">            return ((i%_translation2) / _translation1) * _translation1 +</span>
-                    (i / _translation2) * _translation2;
-        } else {
-<span class="fc" id="L104">            return (i / _translation1) * _translation1 +</span>
-                    ((i%_translation1) / _translation2) * _translation2;
-        }
+    public int indexOfIndex(int index) {
+<span class="fc" id="L100">        return (index / _translation1) * _translation1 +</span>
+                ((index %_translation1) / _translation2) * _translation2;
     }
 
     @Override
-    public int[] idx_of_i( int i ) {
-<span class="fc" id="L111">        int[] idx = new int[ 2 ];</span>
-<span class="fc bfc" id="L112" title="All 2 branches covered.">        if (Neureka.instance().settings().indexing().isUsingLegacyIndexing()) {</span>
-<span class="fc" id="L113">            idx[ 1 ] += i / _translation2;</span>
-<span class="fc" id="L114">            i %= _translation2;</span>
-<span class="fc" id="L115">            idx[ 0 ] += i / _translation1;</span>
-        } else {
-<span class="fc" id="L117">            idx[ 0 ] += i / _translation1;</span>
-<span class="fc" id="L118">            i %= _translation1;</span>
-<span class="fc" id="L119">            idx[ 1 ] += i / _translation2;</span>
-        }
-<span class="fc" id="L121">        return idx;</span>
+    public int[] indicesOfIndex(int index) {
+<span class="fc" id="L106">        int[] indices = new int[ 2 ];</span>
+<span class="fc" id="L107">        indices[ 0 ] += index / _translation1;</span>
+<span class="fc" id="L108">        index %= _translation1;</span>
+<span class="fc" id="L109">        indices[ 1 ] += index / _translation2;</span>
+<span class="fc" id="L110">        return indices;</span>
     }
 
     @Override
-    public int i_of_idx( int[] idx ) {
-<span class="fc" id="L126">        int i = 0;</span>
-<span class="fc" id="L127">        i += idx[ 0 ] * _translation1;</span>
-<span class="fc" id="L128">        i += idx[ 1 ] * _translation2;</span>
-<span class="fc" id="L129">        return i;</span>
+    public int indexOfIndices(int[] indices) {
+<span class="fc" id="L115">        int i = 0;</span>
+<span class="fc" id="L116">        i += indices[ 0 ] * _translation1;</span>
+<span class="fc" id="L117">        i += indices[ 1 ] * _translation2;</span>
+<span class="fc" id="L118">        return i;</span>
     }
 
     @Override
-    public int i_of_idx( int d1, int d2 ) {
-<span class="fc" id="L134">        int i = 0;</span>
-<span class="fc" id="L135">        i += d1 * _translation1;</span>
-<span class="fc" id="L136">        i += d2 * _translation2;</span>
-<span class="fc" id="L137">        return i;</span>
+    public int indexOfIndices(int d1, int d2 ) {
+<span class="fc" id="L123">        int i = 0;</span>
+<span class="fc" id="L124">        i += d1 * _translation1;</span>
+<span class="fc" id="L125">        i += d2 * _translation2;</span>
+<span class="fc" id="L126">        return i;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

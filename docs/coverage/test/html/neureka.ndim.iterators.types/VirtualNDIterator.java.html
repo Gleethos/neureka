@@ -3,7 +3,7 @@
 import neureka.ndim.iterators.NDIterator;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 
-public class VirtualNDIterator implements NDIterator
+public final class VirtualNDIterator implements NDIterator
 {
     private final VirtualNDConfiguration _conf;
 
@@ -52,7 +52,7 @@ public class VirtualNDIterator implements NDIterator
 <span class="nc" id="L52">    }</span>
 
     @Override
-    public void set( int[] idx ) {
+    public void set( int[] indices ) {
         // It's virtual and therefore does nothing :)
 <span class="nc" id="L57">    }</span>
 
