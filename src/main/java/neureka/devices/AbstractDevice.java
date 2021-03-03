@@ -96,17 +96,25 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
         _CLEANER.register( o, action );
     }
 
+    /**
+     *  <b>This method plays an important role in connecting two main conceptional components of this library.</b>
+     *  It dispatches the execution call object to the backends of Neureka.
+     *  This is the single connection points where these two parts of the library come together.
+     *
+     * @param call The execution call object containing tensor arguments and settings for the device to execute on.
+     * @return This very device instance in order to enable method chaining.
+     */
     @Override
     public Device<ValType> execute( ExecutionCall call )
     {
-        call = call.getImplementation().instantiateNewTensorsForExecutionIn( call );
+        call = call.getAlgorithm().instantiateNewTensorsForExecutionIn( call );
         for ( Tsr<?> t : call.getTensors() ) {
             if ( t == null ) throw new IllegalArgumentException(
                     "Device arguments may not be null!\n" +
                             "One or more tensor arguments within the given ExecutionCall instance is null."
             );
         }
-        ( (Algorithm<Object>) call.getImplementation() )
+        ( (Algorithm<Object>) call.getAlgorithm() )
                 .recursiveReductionOf(
                     call,
                     c -> _execute( c.getTensors(), c.getDerivativeIndex(), c.getOperation() )

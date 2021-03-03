@@ -48,22 +48,32 @@ public class Summation extends AbstractOperation
                 if ( d < 0 ) {
                     Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>(device, reduction, d, type)
+                            ExecutionCall.builder()
+                                    .device(device)
+                                    .tensors(reduction)
+                                    .derivativeIndex(d)
+                                    .operation(type)
+                                    .build()
                     );
                     tsrs[ 0 ] = reduction[ 0 ];
 
                     reduction = Utility.offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>(device, reduction, d, type)
+                            ExecutionCall.builder()
+                                    .device(device)
+                                    .tensors(reduction)
+                                    .derivativeIndex(d)
+                                    .operation(type)
+                                    .build()
                     );
                     tsrs[ 0 ] = reduction[ 0 ];
                 } else {
                     tsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[ 1 ]).setValue(1.0f);
                 }
                 return alternative;
-            } else {
+            } else
                 return alternative;
-            }
+
         };
 
         //________________

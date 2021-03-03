@@ -37,8 +37,7 @@ SOFTWARE.
 
 package neureka.backend.api;
 
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
 import neureka.backend.api.algorithms.Algorithm;
@@ -60,8 +59,10 @@ import java.util.TreeMap;
  *
  * @param <DeviceType> The Device implementation targeted by an instance of this ExecutionCall!
  */
+@Builder
 @Accessors( prefix = {"_"} )
 @ToString
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExecutionCall<DeviceType extends Device>
 {
     public interface TensorCondition { boolean check( Tsr<?> tensor ); }
@@ -73,11 +74,11 @@ public class ExecutionCall<DeviceType extends Device>
     /**
      *  This field references the device on which this ExecutionCall should be executed.
      */
-    @Getter
+    @Getter @With // Generates a method which constructs a copy of this call with the provided device!
     private final DeviceType _device;
 
     /**
-     * This method returns an import property whose
+     * This is an import property whose
      * role might not be clear at first :
      * An operation can have multiple inputs, however
      * when calculating the derivative for a forward or backward pass
@@ -85,11 +86,10 @@ public class ExecutionCall<DeviceType extends Device>
      * So the "derivative index" targets said input.
      * This property is -1 when no derivative should be calculated,
      * however 0... when targeting an input to calculate the derivative of.
-     *
-     * @return The index of the input whose derivative ought to be calculated.
      */
     @Getter
-    private final int _derivativeIndex;
+    @Builder.Default
+    private int _derivativeIndex = -1;
 
     /**
      *  This is the operation type which will be applied to this execution call.
@@ -105,7 +105,7 @@ public class ExecutionCall<DeviceType extends Device>
      *  however this is not a necessity.
      *  Some operation algorithms might use multiple argument entries as output tensors.
      */
-    @Getter
+    @Getter @With // Generates a method which constructs a copy of this call with the provided tensors!
     private Tsr[] _tensors;
 
     /**
@@ -114,18 +114,111 @@ public class ExecutionCall<DeviceType extends Device>
      *  The (indexer) function will execute the sub functions (of the AST) for every input index.
      *  If a particular index is not targeted however this variable will simply default to -1.
      */
-    @Getter
+    @Getter @With @Builder.Default
     private int _j = -1;
 
-    private Algorithm<?> _implementation;
+    /**
+     *  This Algorithm variable is the chosen algorithm for a given execution call instance.
+     *  The variable is initially null and will be chosen dynamically based on an access request
+     *  to the corresponding getter method for this variable.
+     *  So it is in essence a lazy load variable.
+     *  Choosing an algorithm occurs through the {@link ExecutionCall#_operation} variable,
+     *  which is of type {@link Operation} and contains multiple algorithms for different execution call scenarios...
+     */
+    @Builder.Default
+    private Algorithm<?> _algorithm = null;
 
     /**
      *  Certain operations might require additionally parameters then the ones
      *  defined in this class... <br>
-     *
      */
     @Getter
-    private Map<String, Object> _context;
+    @Builder.Default
+    private Map<String, Object> _context = null;
+
+    private ExecutionCall(
+            DeviceType device,
+            Tsr<?>[] tensors,
+            int d,
+            Operation type,
+            Algorithm<?> algorithm,
+            Map<String, Object> context
+    ) {
+        _device = device;
+        _tensors = tensors;
+        _derivativeIndex = d;
+        _operation = type;
+        _algorithm = algorithm;
+        _context = context;
+    }
+
+    public ExecutionCall(
+            DeviceType device,
+            Tsr<?>[] tensors,
+            int d,
+            int j,
+            Operation type
+    ) {
+        _device = device;
+        _tensors = tensors;
+        _derivativeIndex = d;
+        _j = j;
+        _operation = type;
+        _algorithm = null;
+    }
+
+    public <T extends Device<?>> ExecutionCall<T> forDeviceType(Class<T> type) {
+        assert _device.getClass() == type;
+        return (ExecutionCall<T>) this;
+    }
+
+    public Tsr getTensor( int i ) { return _tensors[ i ];}
+
+
+    public Algorithm<?> getAlgorithm() {
+        if ( _algorithm != null ) return _algorithm;
+        else _algorithm = _operation.getAlgorithmFor( this );
+        return _algorithm;
+    }
+
+    public boolean allowsForward() {
+        return getAlgorithm().canAlgorithmPerformForwardADFor( this );
+    }
+
+    public boolean allowsBackward() {
+        return getAlgorithm().canAlgorithmPerformBackwardADFor( this );
+    }
+
+    public ADAgent getADAgentFrom( Function function, ExecutionCall<Device> call, boolean forward )
+    {
+        if ( this._context != null ) {
+            if ( call._context == null ) call._context = new TreeMap<>();
+            call._context.putAll( this._context );
+        }
+        return getAlgorithm().supplyADAgentFor( function, call, forward );
+    }
+
+    public void mutateArguments( Mutator mutation ) {
+        _tensors = mutation.mutate( _tensors );
+    }
+
+    public <T> T getAt( Class<T> type ) {
+        if ( _context == null ) return null;
+        return (T) _context.get( type.getName() );
+    }
+
+    public Object getAt( String varName ) {
+        if ( _context == null ) return null;
+        return _context.get( varName );
+    }
+
+    public <T> ExecutionCall<DeviceType> putAt( String s, T o ) {
+        if ( _context == null ) _context = new TreeMap<>();
+        _context.put( s, o );
+        return this;
+    }
+
+    public Validator validate() { return new Validator(); }
 
     /**
      *  This is a simple nested class offering various lambda based methods
@@ -211,96 +304,5 @@ public class ExecutionCall<DeviceType extends Device>
             return this;
         }
     }
-
-    public Validator validate() { return new Validator(); }
-
-    public ExecutionCall(
-            DeviceType device,
-            Tsr<?>[] tensors,
-            int d,
-            Operation type
-    ) {
-        _device = device;
-        _tensors = tensors;
-        _derivativeIndex = d;
-        _operation = type;
-        _implementation = null;
-        _context = null;
-    }
-    
-    public ExecutionCall(
-            DeviceType device,
-            Tsr<?>[] tensors,
-            int d,
-            int j,
-            Operation type
-    ) {
-        _device = device;
-        _tensors = tensors;
-        _derivativeIndex = d;
-        _j = j;
-        _operation = type;
-        _implementation = null;
-    }
-
-    public Tsr getTensor( int i ) { return _tensors[ i ];}
-
-
-    public Algorithm<?> getImplementation() {
-        if ( _implementation != null ) return _implementation;
-        else _implementation = _operation.getAlgorithmFor( this );
-        return _implementation;
-    }
-    
-    public boolean allowsForward() {
-        return getImplementation().canAlgorithmPerformForwardADFor( this );
-    }
-
-    public boolean allowsBackward() {
-        return getImplementation().canAlgorithmPerformBackwardADFor( this );
-    }
-
-    public ADAgent getADAgentFrom( Function function, ExecutionCall<Device> call, boolean forward )
-    {
-        if ( this._context != null ) {
-            if ( call._context == null ) call._context = new TreeMap<>();
-            call._context.putAll( this._context );
-        }
-        return getImplementation().supplyADAgentFor( function, call, forward );
-    }
-    
-    public void mutateArguments( Mutator mutation ) {
-        _tensors = mutation.mutate( _tensors );
-    }
-    
-    public ExecutionCall<DeviceType> withNew( Tsr<?>[] tensors ) {
-        return new ExecutionCall<>( _device, tensors, _derivativeIndex, _j, _operation );
-    }
-
-    public ExecutionCall<DeviceType> withNew( DeviceType device ) {
-        return new ExecutionCall<>( device, _tensors, _derivativeIndex, _j, _operation );
-    }
-
-    public <T> T getAt( Class<T> type ) {
-        if ( _context == null ) return null;
-        return (T) _context.get( type.getName() );
-    }
-
-    public Object getAt( String varName ) {
-        if ( _context == null ) return null;
-        return _context.get( varName );
-    }
-
-    public <T> ExecutionCall<DeviceType> putAt( String s, T o ) {
-        if ( _context == null ) _context = new TreeMap<>();
-        _context.put( s, o );
-        return this;
-    }
-
-    public void takeContext( Map<String, Object>  context ) {
-        if ( _context == null && context != null ) _context = new TreeMap<>();
-        if ( context != null ) _context.putAll( _context );
-    }
-
 
 }

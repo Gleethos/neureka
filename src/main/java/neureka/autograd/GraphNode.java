@@ -488,6 +488,12 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
                                     srcNode,
                                     call.getADAgentFrom(
                                             function,
+                                            //ExecutionCall.builder()
+                                            //        .device(call.getDevice())
+                                            //        .tensors(call.getTensors())
+                                            //        .derivativeIndex(i)
+                                            //        .j(call.getJ())
+                                            //        .operation(call.getOperation()))
                                             new ExecutionCall<>(
                                                     call.getDevice(),
                                                     call.getTensors(),

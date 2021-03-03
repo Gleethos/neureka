@@ -122,23 +122,29 @@ public class UnitTester_Tensor extends UnitTester
         return (printSessionEnd()>0)?1:0;
     }
 
-    public int testTensCon(int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd){
-        printSessionStart("Test Tsr.indexing: tensMul_mxd");
+    public int testTensCon(
+            int[] frstShp, int[] scndShp, double[] frstData, double[] scondData, double[] expctd
+    ){
+        printSessionStart("Test tensor indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
         double[] rsltData = new double[NDConfiguration.Utility.szeOfShp(drnMxd)];
         OperationContext.get().instance("x")
                 .getAlgorithm(Convolution.class)
                 .getImplementationFor( HostCPU.class )
                 .run(
-                new ExecutionCall<>(
-                        HostCPU.instance(),
-                        new Tsr[]{
-                                new Tsr(drnMxd, rsltData),
-                                new Tsr(frstShp, frstData),
-                                new Tsr(scndShp, scondData)
-                        }, -1,
-                        OperationContext.get().instance("x")
-                )
+                        ExecutionCall.builder()
+                                .device(HostCPU.instance())
+                                .tensors(
+                                        new Tsr[] {
+                                                new Tsr(drnMxd, rsltData),
+                                                new Tsr(frstShp, frstData),
+                                                new Tsr(scndShp, scondData)
+                                        }
+                                )
+                                .derivativeIndex(-1)
+                                .operation(OperationContext.get().instance("x"))
+                                .build()
+                                .forDeviceType(HostCPU.class)
         );
         assertIsEqual(stringified(rsltData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
@@ -155,17 +161,20 @@ public class UnitTester_Tensor extends UnitTester
                 .getAlgorithm(Convolution.class)
                 .getImplementationFor( HostCPU.class )
                 .run(
-                new ExecutionCall<>(
-                        HostCPU.instance(),
-                        new Tsr[]{
-                                new Tsr(frstShp, frstData),
-                                (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
-                                (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
-                        },
-                        0,
-                        OperationContext.get().instance(((char) 171)+"x")
-                )
-        );
+                        ExecutionCall.builder()
+                            .device(HostCPU.instance())
+                            .tensors(
+                                    new Tsr[]{
+                                        new Tsr(frstShp, frstData),
+                                        (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
+                                        (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
+                                    }
+                            )
+                            .derivativeIndex(0)
+                            .operation(OperationContext.get().instance(((char) 171)+"x"))
+                            .build()
+                            .forDeviceType(HostCPU.class)
+                );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
     }
@@ -179,16 +188,19 @@ public class UnitTester_Tensor extends UnitTester
                 .getAlgorithm(Broadcast.class)
                 .getImplementationFor( HostCPU.class )
                 .run(
-                        new ExecutionCall<>(
-                                HostCPU.instance(),
-                                new Tsr[]{
-                                        new Tsr(drnMxd, rsltData),
-                                        new Tsr(frstShp, frstData),
-                                        new Tsr(scndShp, scondData)
-                                },
-                                -1,
-                                OperationContext.get().instance("*")
-                        )
+                        ExecutionCall.builder()
+                            .device(HostCPU.instance())
+                            .tensors(
+                                    new Tsr[]{
+                                            new Tsr(drnMxd, rsltData),
+                                            new Tsr(frstShp, frstData),
+                                            new Tsr(scndShp, scondData)
+                                    }
+                            )
+                            .derivativeIndex(-1)
+                            .operation(OperationContext.get().instance("*"))
+                            .build()
+                            .forDeviceType(HostCPU.class)
         );
         assertIsEqual(stringified(rsltData), stringified(expctd));
         return (printSessionEnd()>0)?1:0;
@@ -205,32 +217,38 @@ public class UnitTester_Tensor extends UnitTester
                 .getAlgorithm(Broadcast.class)
                 .getImplementationFor( HostCPU.class )
                 .run(
-                new ExecutionCall<>(
-                        HostCPU.instance(),
-                        new Tsr[]{
-                                new Tsr(frstShp, frstData),
-                                (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
-                                (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
-                        },
-                        0,
-                        OperationContext.get().instance(((char) 171) + "*")
-                )
+                        ExecutionCall.builder()
+                            .device(HostCPU.instance())
+                            .tensors(
+                                    new Tsr[]{
+                                            new Tsr(frstShp, frstData),
+                                            (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
+                                            (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
+                                    }
+                            )
+                            .derivativeIndex(0)
+                            .operation(OperationContext.get().instance(((char) 171) + "*"))
+                            .build()
+                            .forDeviceType(HostCPU.class)
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
         OperationContext.get().instance("*" + ((char) 187))
                 .getAlgorithm(Broadcast.class)
                 .getImplementationFor( HostCPU.class )
                 .run(
-                new ExecutionCall<>(
-                        HostCPU.instance(),
-                        new Tsr[]{
-                                new Tsr(frstShp, frstData),
-                                (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
-                                (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData),
-                        },
-                        0,
-                        OperationContext.get().instance("*" + ((char) 187))
-                )
+                        ExecutionCall.builder()
+                            .device(HostCPU.instance())
+                            .tensors(
+                                    new Tsr[]{
+                                            new Tsr(frstShp, frstData),
+                                            (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
+                                            (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData),
+                                    }
+                            )
+                            .derivativeIndex(0)
+                            .operation(OperationContext.get().instance("*" + ((char) 187)))
+                            .build()
+                            .forDeviceType(HostCPU.class)
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
 

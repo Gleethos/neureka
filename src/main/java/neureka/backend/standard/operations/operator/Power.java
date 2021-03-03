@@ -143,13 +143,13 @@ public class Power extends AbstractOperation
                 if ( d < 0 ) {
                     Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.apply(
-                            call.withNew( reduction )
+                            call.withTensors( reduction )
                     );
                     tsrs[ 0 ] = reduction[ 0 ];
 
                     reduction = Utility.offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
-                            call.withNew( reduction )
+                            call.withTensors( reduction )
                             );
                     tsrs[ 0 ] = reduction[ 0 ];
                 } else {
@@ -158,13 +158,23 @@ public class Power extends AbstractOperation
                         Tsr[] reduction = Utility.subset(tsrs, 1,  2, tsrs.length-2);
                         reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);
                         alternative = goDeeperWith.apply(
-                                new ExecutionCall<>( device, reduction, -1, OperationContext.get().instance("*") )
-                        );
+                                            ExecutionCall.builder()
+                                                .device( device )
+                                                .tensors( reduction )
+                                                .derivativeIndex( -1 )
+                                                .operation( OperationContext.get().instance("*") )
+                                                .build()
+                                        );
                         Tsr exp = reduction[ 0 ];
                         reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], exp};
                         alternative = goDeeperWith.apply(
-                                new ExecutionCall<>( device, reduction, 0, type )
-                        );
+                                            ExecutionCall.builder()
+                                                .device( device )
+                                                .tensors( reduction )
+                                                .derivativeIndex( 0 )
+                                                .operation( type )
+                                                .build()
+                                        );
                         tsrs[ 0 ] = reduction[ 0 ];
                         exp.delete();
                     } else {
@@ -172,19 +182,35 @@ public class Power extends AbstractOperation
 
                         reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);
                         alternative = goDeeperWith.apply(
-                                new ExecutionCall<>( device, reduction, d-1, OperationContext.get().instance("*") )
+                                ExecutionCall.builder()
+                                        .device(device)
+                                        .tensors(reduction)
+                                        .derivativeIndex(d-1)
+                                        .operation(OperationContext.get().instance("*"))
+                                        .build()
                         );
                         Tsr inner = reduction[ 0 ];
 
                         reduction = new Tsr[]{Tsr.Create.newTsrLike(tsrs[ 1 ]), inner, tsrs[d]};
                         alternative = goDeeperWith.apply(
-                                new ExecutionCall<>( device, reduction, -1, OperationContext.get().instance("*") )
+                                ExecutionCall.builder()
+                                    .device(device)
+                                    .tensors(reduction)
+                                    .derivativeIndex(-1)
+                                    .operation(OperationContext.get().instance("*"))
+                                    .build()
                         );
                         Tsr exp = reduction[ 0 ];
 
                         reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], exp};
                         alternative = goDeeperWith.apply(
-                                new ExecutionCall<>( device, reduction, 1, type )
+                                ExecutionCall.builder()
+                                    .device(device)
+                                    .tensors(reduction)
+                                    .derivativeIndex(1)
+                                    .operation(type)
+                                    .build()
+
                         );
                         tsrs[ 0 ] = reduction[ 0 ];
 
@@ -193,9 +219,9 @@ public class Power extends AbstractOperation
                     }
                 }
                 return alternative;
-            } else {
+            } else
                 return alternative;
-            }
+
 
 
         };
@@ -574,7 +600,13 @@ public class Power extends AbstractOperation
                             call -> {
                                 Tsr[] tsrs = call.getTensors();
                                 int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                                return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationContext.get().instance("idy") );
+                                return
+                                        ExecutionCall.builder()
+                                            .device( call.getDevice() )
+                                            .tensors( new Tsr[]{tsrs[offset], tsrs[1+offset]} )
+                                            .derivativeIndex( -1 )
+                                            .operation( OperationContext.get().instance("idy") )
+                                            .build();
                             }
                     )
                     .build()

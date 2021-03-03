@@ -144,7 +144,7 @@ sourceSets {
 }
 //*/
 
-
+// Note: Visit the library gradle plugin documentation for more information about api vs implementation.
 dependencies {
 
     // Core library dependencies :
@@ -206,7 +206,6 @@ compileJava13Java {
     sourceCompatibility = 13
     targetCompatibility = 13
     options.compilerArgs.addAll(['--release', '13'])
-
 }
 
 compileJava11Java {
@@ -273,6 +272,7 @@ check.dependsOn jacocoTestReport
 //----------------------------------------------------------------------------------------------------------------------
 // 9. CONFIGURING MUTATION TESTING :
 
+// This take forever to complete, strong test filtering is needed!
 pitest {
     junit5PluginVersion = '0.12' // This is important, otherwise pitest will not run.
     //jvmArgs = ['-Xmx1024m', '-ea']

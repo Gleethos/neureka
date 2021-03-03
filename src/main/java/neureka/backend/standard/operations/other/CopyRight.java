@@ -51,7 +51,13 @@ public class CopyRight extends AbstractOperation {
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[1+offset], tsrs[offset]}, -1, OperationContext.get().instance("idy") );
+                    return
+                            ExecutionCall.builder()
+                                .device( call.getDevice() )
+                                .tensors( new Tsr[]{tsrs[1+offset], tsrs[offset]} )
+                                .derivativeIndex( -1 )
+                                .operation( OperationContext.get().instance("idy") )
+                                .build();
                 }
         )
         .build();
@@ -62,12 +68,14 @@ public class CopyRight extends AbstractOperation {
                         new HostImplementation(
                                 call -> {
                                     int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
-                                    ExecutionCall<HostCPU> newCall = new ExecutionCall<>(
-                                            call.getDevice(),
-                                            new Tsr[]{call.getTensor(1+offset), call.getTensor(offset)},
-                                            -1,
-                                            call.getOperation()
-                                    );
+                                    ExecutionCall<HostCPU> newCall =
+                                            ExecutionCall.builder()
+                                                .device( call.getDevice() )
+                                                .tensors( new Tsr[]{call.getTensor(1+offset), call.getTensor(offset)} )
+                                                .derivativeIndex( -1 )
+                                                .operation( call.getOperation() )
+                                                .build()
+                                                .forDeviceType(HostCPU.class);
                                     OperationContext.get().instance("idy")
                                             .getAlgorithm(Activation.class)
                                             .getImplementationFor( HostCPU.class )
@@ -80,12 +88,13 @@ public class CopyRight extends AbstractOperation {
                         new CLImplementation(
                                 call -> {
                                     int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
-                                    ExecutionCall<OpenCLDevice> newCall = new ExecutionCall<>(
-                                            call.getDevice(),
-                                            new Tsr[]{call.getTensor(1+offset), call.getTensor(offset)},
-                                            -1,
-                                            call.getOperation()
-                                    );
+                                    ExecutionCall<OpenCLDevice> newCall = ExecutionCall.builder()
+                                            .device( call.getDevice() )
+                                            .tensors( new Tsr[]{call.getTensor(1+offset), call.getTensor(offset)} )
+                                            .derivativeIndex( -1 )
+                                            .operation( call.getOperation() )
+                                            .build()
+                                            .forDeviceType(OpenCLDevice.class);
                                     OperationContext.get().instance("idy")
                                             .getAlgorithm(Activation.class)
                                             .getImplementationFor( OpenCLDevice.class )

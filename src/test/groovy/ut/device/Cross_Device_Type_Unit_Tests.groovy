@@ -8,7 +8,6 @@ import neureka.devices.opencl.OpenCLDevice
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.algorithms.Algorithm
 import neureka.devices.file.FileDevice
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 
@@ -134,7 +133,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             device.execute(call)
 
         then : '...the implementation is being accessed in order to access the mocked lambda...'
-            1 * call.getImplementation() >> implementation
+            1 * call.getAlgorithm() >> implementation
             1 * implementation.instantiateNewTensorsForExecutionIn(call) >> call
         and : 'The tensor array is being accessed to check for null. (For exception throwing)'
             1 * call.getTensors() >> new Tsr[]{ Mock(Tsr), null }

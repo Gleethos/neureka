@@ -67,7 +67,12 @@ public class Identity extends AbstractOperation
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                    return new ExecutionCall( call.getDevice(), new Tsr[]{tsrs[offset], tsrs[1+offset]}, -1, OperationContext.get().instance("idy") );
+                    return ExecutionCall.builder()
+                                .device(call.getDevice())
+                                .tensors(new Tsr[]{tsrs[offset], tsrs[1+offset]})
+                                .derivativeIndex(-1)
+                                .operation(OperationContext.get().instance("idy"))
+                                .build();
                 }
         )
         .build();

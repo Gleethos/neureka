@@ -48,13 +48,23 @@ public class Modulo extends AbstractOperation {
                 if ( d < 0 ) {
                     Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>(device, reduction, d, type)
+                            ExecutionCall.builder()
+                                    .device(device)
+                                    .tensors(reduction)
+                                    .derivativeIndex(d)
+                                    .operation(type)
+                                    .build()
                     );
                     tsrs[ 0 ] = reduction[ 0 ];
 
                     reduction = Utility.offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>(device, reduction, d, type)
+                            ExecutionCall.builder()
+                                    .device(device)
+                                    .tensors(reduction)
+                                    .derivativeIndex(d)
+                                    .operation(type)
+                                    .build()
                     );
                     tsrs[ 0 ] = reduction[ 0 ];
                 } else {
@@ -63,7 +73,12 @@ public class Modulo extends AbstractOperation {
                         Tsr[] reduction = Utility.subset(tsrs, 1, 1, d+1);
                         reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);
                         alternative = goDeeperWith.apply(
-                                new ExecutionCall<>( device, reduction, -1, OperationContext.get().instance("/") )
+                                ExecutionCall.builder()
+                                        .device(device)
+                                        .tensors(reduction)
+                                        .derivativeIndex(-1)
+                                        .operation(OperationContext.get().instance("/"))
+                                        .build()
                         );
                         a = reduction[ 0 ];
                     } else if ( d == 1 ) a = tsrs[ 1 ];
@@ -74,24 +89,39 @@ public class Modulo extends AbstractOperation {
                         reduction[ 1 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);
                         reduction[ 0 ] = reduction[ 1 ];
                         alternative = goDeeperWith.apply(
-                                new ExecutionCall<>( device, reduction, -1, OperationContext.get().instance("/") )
+                                ExecutionCall.builder()
+                                        .device(device)
+                                        .tensors(reduction)
+                                        .derivativeIndex(-1)
+                                        .operation(OperationContext.get().instance("/"))
+                                        .build()
                         );
                         b = reduction[ 0 ];
                     } else b = Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);
 
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>( device, new Tsr[]{tsrs[ 0 ], a, b}, -1, OperationContext.get().instance("*") )
+                            ExecutionCall.builder()
+                                    .device(device)
+                                    .tensors(new Tsr[]{tsrs[ 0 ], a, b})
+                                    .derivativeIndex(-1)
+                                    .operation(OperationContext.get().instance("*"))
+                                    .build()
                     );
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>( device, new Tsr[]{tsrs[ 0 ], tsrs[ 0 ], tsrs[d+1]}, 1, OperationContext.get().instance("/") )
+                            ExecutionCall.builder()
+                                    .device(device)
+                                    .tensors(new Tsr[]{ tsrs[ 0 ], tsrs[ 0 ], tsrs[ d+1 ] })
+                                    .derivativeIndex(1)
+                                    .operation(OperationContext.get().instance("/"))
+                                    .build()
                     );
                     if ( d == 0 ) a.delete();
                     b.delete();
                 }
                 return alternative;
-            } else {
+            } else
                 return alternative;
-            }
+
         };
 
         //_____________________
@@ -134,9 +164,9 @@ public class Modulo extends AbstractOperation {
                    .setADAgentSupplier(
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-                )
-                .setRJAgent( rja )
-                .build();
+                    )
+                    .setRJAgent( rja )
+                    .build();
 
         setAlgorithm(
                 Operator.class,

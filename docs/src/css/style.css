@@ -271,12 +271,11 @@ hr {
 #top_most_nav_bar {
     background-color: black;
     width: 100%;
-    height: 5.0em;
+    height: 4.0em;
     position: fixed;
     top: 0px;
     margin: 0;
     padding: 0;
-    background: #1e5799; /* Old browsers */
     background: -moz-linear-gradient(top, #000000 0%, #031052 80%, #7db9e8 100%); /* FF3.6-15 */
     background: -webkit-linear-gradient(top, #000000 0%, #000b49 80%, #7db9e8 100%); /* Chrome10-25,Safari5.1-6 */
     background: linear-gradient(to bottom, #000000 0%, #000a38 80%, #7db9e8 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */

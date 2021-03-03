@@ -47,20 +47,30 @@ public class MatMul extends AbstractOperation
                 if ( d < 0 ) {
                     Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>(device, reduction, d, type)
+                            ExecutionCall.builder()
+                                    .device(device)
+                                    .tensors(reduction)
+                                    .derivativeIndex(d)
+                                    .operation(type)
+                                    .build()
                     );
                     tsrs[ 0 ] = reduction[ 0 ];
 
                     reduction = Utility.offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>(device, reduction, d, type)
+                            ExecutionCall.builder()
+                                    .device(device)
+                                    .tensors(reduction)
+                                    .derivativeIndex(d)
+                                    .operation(type)
+                                    .build()
                     );
                     tsrs[ 0 ] = reduction[ 0 ];
                 }
                 return alternative;
-            } else {
+            } else
                 return alternative;
-            }
+
         };
 
         DefaultOperatorCreator<TertiaryNDIConsumer> convolutionNDICreator =
@@ -133,14 +143,21 @@ public class MatMul extends AbstractOperation
                                         : null;
 
                                 for (Tsr t : tsrs) if (t != null) t.setIsVirtual( false );
-                                call.getDevice().execute(call.withNew(tsrs));
+                                call.getDevice().execute(call.withTensors(tsrs));
                                 return tsrs[ 0 ];
                             } else {
                                 if (call.getDerivativeIndex() < 0) {
                                     Tsr[] tsrs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
                                     Tsr.makeFit(tsrs, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                     for ( Tsr t : tsrs ) t.setIsVirtual( false );
-                                    call.getDevice().execute( new ExecutionCall( call.getDevice(), tsrs, 0, call.getOperation() ) );
+                                    call.getDevice().execute(
+                                            ExecutionCall.builder()
+                                                    .device(call.getDevice())
+                                                    .tensors( tsrs )
+                                                    .derivativeIndex( 0 )
+                                                    .operation( call.getOperation() )
+                                                    .build()
+                                    );
                                     if ( call.getOperation().getId() == OperationContext.get().instance("x>>").getId()) return tsrs[ 2 ];
                                     else return tsrs[ 0 ];
                                 }

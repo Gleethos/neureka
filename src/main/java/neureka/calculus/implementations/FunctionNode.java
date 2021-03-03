@@ -116,8 +116,8 @@ public class FunctionNode extends AbstractBaseFunction
                 _operation
         );
         ExecutionCall<Device> finalCall;
-        Device possiblyNewDevice = call.getImplementation().findDeviceFor( call );
-        if ( possiblyNewDevice != null ) finalCall = call.withNew( possiblyNewDevice );
+        Device possiblyNewDevice = call.getAlgorithm().findDeviceFor( call );
+        if ( possiblyNewDevice != null ) finalCall = call.withDevice( possiblyNewDevice );
         else finalCall = call;
 
         if ( _isFlat )
@@ -137,7 +137,7 @@ public class FunctionNode extends AbstractBaseFunction
 
     private Tsr __flat_execution( ExecutionCall<Device> call )
     {
-        Tsr alternative = call.getImplementation().handleInsteadOfDevice( this, call );
+        Tsr alternative = call.getAlgorithm().handleInsteadOfDevice( this, call );
         if ( alternative != null ) return alternative;
 
         if ( call.getDerivativeIndex() < 0 ) return __deep_activation( call );
@@ -173,7 +173,14 @@ public class FunctionNode extends AbstractBaseFunction
         } else {
             tensors = srcActivation(inputs, j, d, 1);
         }
-        device.execute( new ExecutionCall<>( device, tensors, d, _operation) );
+        device.execute(
+                ExecutionCall.builder()
+                        .device( device )
+                        .tensors( tensors )
+                        .derivativeIndex( d )
+                        .operation( _operation )
+                        .build()
+        );
 
         return ( tensors[ 0 ] == null ) ? tensors[ 1 ] : tensors[ 0 ];
     }
@@ -244,7 +251,14 @@ public class FunctionNode extends AbstractBaseFunction
                         if ( index >= 0 ) inner = tensors[ index ];
                         else {
                             // Optimization above did not apply, so we accumulate all the derivatives!
-                            device.execute( new ExecutionCall<>( device, tensors, -1, OperationContext.get().instance("+") ) );
+                            device.execute(
+                                    ExecutionCall.builder()
+                                        .device( device )
+                                        .tensors( tensors )
+                                        .derivativeIndex( -1 )
+                                        .operation( OperationContext.get().instance("+") )
+                                        .build()
+                            );
                             inner = tensors[ 0 ];//-> this is now the inner derivative!
                         }
                     }
@@ -269,12 +283,19 @@ public class FunctionNode extends AbstractBaseFunction
                         }
                     }
                     // Use those tensors for the outer derivative:
-                    device.execute( new ExecutionCall<>( device, tensors, d, _operation) );
+                    device.execute( ExecutionCall.builder().device( device ).tensors( tensors ).derivativeIndex( d ).operation( _operation ).build() );
                     // At the end:
                     //...multiply inner times outer: ( if inner is not 1 entirely... )
                     if ( !( ( inner.isVirtual() || inner.size()==1 ) && inner.value64( 0 )==1.0) ) {
                         tensors = new Tsr[]{null, inner, tensors[ 0 ]};
-                        device.execute( new ExecutionCall<>( device, tensors, -1, OperationContext.get().instance("*") ) );
+                        device.execute(
+                                ExecutionCall.builder()
+                                    .device( device )
+                                    .tensors( tensors )
+                                    .derivativeIndex( -1 )
+                                    .operation( OperationContext.get().instance("*") )
+                                    .build()
+                        );
                     } // done!
                     return tensors[ 0 ];
 
@@ -288,12 +309,12 @@ public class FunctionNode extends AbstractBaseFunction
                 if ( out == null ) out = actor.get();
                 else
                     device.execute(
-                        new ExecutionCall<>(
-                                device,
-                                new Tsr[]{ null, actor.get(), out },
-                                -1,
-                                OperationContext.get().instance("+")
-                        )
+                            ExecutionCall.builder()
+                                .device( device )
+                                .tensors( new Tsr[]{ null, actor.get(), out } )
+                                .derivativeIndex( -1 )
+                                .operation( OperationContext.get().instance("+") )
+                                .build()
                 );
             }
         }

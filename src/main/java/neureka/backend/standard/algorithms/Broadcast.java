@@ -50,7 +50,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                         Tsr[] tsrs = {call.getTensor( 0+offset ), call.getTensor(1+offset) };
                         Tsr.makeFit(tsrs, caller.isDoingAD() );
                         tsrs = new Tsr[]{null, tsrs[0], tsrs[1]};
-                        call.getDevice().execute( call.withNew( tsrs ) );
+                        call.getDevice().execute( call.withTensors( tsrs ) );
                         return tsrs[0];
                     }
                     return null;

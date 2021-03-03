@@ -441,12 +441,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
             double value = tensor.value64( 0 );
             tensor.setIsOutsourced( true );
             execute(
-                new ExecutionCall(
-                        this,
-                        new Tsr[]{ tensor, (Tsr) new Tsr( value ).set( this )},
-                        -1,
-                        OperationContext.get().instance( "<" )
-                )
+                ExecutionCall.builder()
+                    .device(this)
+                    .tensors(new Tsr[]{ tensor, (Tsr) new Tsr( value ).set( this )})
+                    .derivativeIndex(-1)
+                    .operation(OperationContext.get().instance( "<" ))
+                    .build()
             );
         }
         else tensor.setIsOutsourced( true );
@@ -649,8 +649,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return _value32f( clt, 1, index )[ 0 ];
     }
 
-    public KernelCaller getKernel( ExecutionCall call ) {
-        String chosen = call.getImplementation().getName() + "_" + call.getOperation().getFunction();
+    public KernelCaller getKernel( ExecutionCall<OpenCLDevice> call ) {
+        // We create the kernel name from the chosen algorithm:
+        String chosen = call.getAlgorithm().getName() + "_" + call.getOperation().getFunction();
         cl_kernel kernel = _platform.getKernels().get( chosen );
         return new KernelCaller( kernel, _queue );
     }
@@ -658,15 +659,15 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     protected void _execute( Tsr[] tensors, int d, Operation type )
     {
-        ExecutionCall<OpenCLDevice> call =
-                new ExecutionCall<OpenCLDevice>(
-                        this,
-                        tensors,
-                        d,
-                        type
-                );
+        ExecutionCall<OpenCLDevice> call = ExecutionCall.builder()
+                                                .device(this)
+                                                .tensors(tensors)
+                                                .derivativeIndex(d)
+                                                .operation(type)
+                                                .build()
+                                                .forDeviceType(OpenCLDevice.class);
         tensors[ 0 ].setIsVirtual( false );
-        call.getImplementation().getImplementationFor( OpenCLDevice.class ).run( call );
+        call.getAlgorithm().getImplementationFor( OpenCLDevice.class ).run( call );
     }
 
     /*

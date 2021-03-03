@@ -52,7 +52,7 @@ import neureka.backend.api.ExecutionCall;
  * @param <TargetDevice> The Device type for which an implementation of this interface has been made.
  */
 @FunctionalInterface
-public interface ImplementationFor< TargetDevice extends Device >
+public interface ImplementationFor< TargetDevice extends Device<?> >
 {
     /**
      *  The concrete implementation of the algorithm to which instances of this interface

@@ -49,13 +49,23 @@ public class Product extends AbstractOperation {
                 if ( d < 0 ) {
                     Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>(device, reduction, d, type)
+                            ExecutionCall.builder()
+                                    .device(device)
+                                    .tensors(reduction)
+                                    .derivativeIndex(d)
+                                    .operation(type)
+                                    .build()
                     );
                     tsrs[ 0 ] = reduction[ 0 ];
 
                     reduction = Utility.offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
-                            new ExecutionCall<>(device, reduction, d, type)
+                            ExecutionCall.builder()
+                                    .device(device)
+                                    .tensors(reduction)
+                                    .derivativeIndex(d)
+                                    .operation(type)
+                                    .build()
                     );
                     tsrs[ 0 ] = reduction[ 0 ];
                 } else {
@@ -63,15 +73,20 @@ public class Product extends AbstractOperation {
                     if ( reduction.length > 2 ) {
                         reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tsrs[ 1 ]) : reduction[ 0 ];
                         alternative = goDeeperWith.apply(
-                                new ExecutionCall<>( device, reduction, -1, OperationContext.get().instance("*") )
+                                ExecutionCall.builder()
+                                    .device(device)
+                                    .tensors(reduction)
+                                    .derivativeIndex(-1)
+                                    .operation(OperationContext.get().instance("*"))
+                                    .build()
                         );
                         tsrs[ 0 ] = reduction[ 0 ];
                     } else tsrs[ 0 ] = reduction[ 1 ];
                 }
                 return alternative;
-            } else {
+            } else
                 return alternative;
-            }
+
         };
 
 

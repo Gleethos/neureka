@@ -40,6 +40,8 @@ import lombok.ToString;
 import lombok.Value;
 import lombok.experimental.Accessors;
 import neureka.dtype.custom.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
@@ -47,6 +49,16 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
+/**
+ *  This class is a Multiton implementation for wrapping and representing type classes.
+ *  Every DataType instance uniquely wraps a Class instance which will always differ
+ *  from instances wrapped by other DataType instances.
+ *  This is because the Multiton implementation utilizes a hash map where classes are the
+ *  keys and their corresponding values are DataType instances.
+ *
+ *
+ * @param <Type> The type parameter of the type class whose instances ought to be represented.
+ */
 @Accessors( prefix = {"_"} )
 @ToString
 @Value
@@ -54,7 +66,14 @@ public class DataType<Type>
 {
     private static Map<Class<?>, DataType> _instances = new WeakHashMap<>();
 
-    private static Class<?> _trueType( Class<?> typeClass ) {
+    /**
+     *  This method finds the corresponding NumericType implementation representing
+     *  the passed type class or simply the provided class if no representation has been found.
+     *
+     * @param typeClass The type class whose "actual" / representation ought to be determined.
+     * @return The true representation or simply itself if no NumericType representation has been found.
+     */
+    private static Class<?> _numericTypeRepresentationOf(Class<?> typeClass ) {
         Class<?> realTypeClass = typeClass;
         if ( typeClass == Double.class ) realTypeClass = F64.class;
         else if ( typeClass == Float.class ) realTypeClass = F32.class;
@@ -72,7 +91,7 @@ public class DataType<Type>
 
     public static <T> DataType<T> of(Class<T> typeClass )
     {
-        Class<?> realTypeClass = _trueType( typeClass );
+        Class<?> realTypeClass = _numericTypeRepresentationOf( typeClass );
 
         if ( _instances.containsKey( realTypeClass ) ) {
             return _instances.get( realTypeClass );
@@ -84,33 +103,42 @@ public class DataType<Type>
 
     public static <T> void forType( Class<T> typeClass, Consumer<DataType<T>> action )
     {
-        Class<?> realTypeClass = _trueType( typeClass );
+        Class<?> realTypeClass = _numericTypeRepresentationOf( typeClass );
         if ( _instances.containsKey( realTypeClass ) ) {
             DataType<?> found = _instances.get( realTypeClass );
             if ( found.getTypeClass() == typeClass ) action.accept( (DataType<T>) found );
         }
     }
 
+    Logger _log;
+
     @Getter Class<Type> _typeClass;
 
     private DataType( Class<Type> type ) {
         _typeClass = type;
+        _log = LoggerFactory.getLogger(
+                DataType.class.getSimpleName() + ".of(" + _typeClass.getSimpleName() + ")"
+        );
     }
 
+    /**
+     * @return An instance of the type class if possible.
+     */
     public Type getTypeClassInstance()
     {
-        Constructor[] ctors = _typeClass.getDeclaredConstructors();
-        Constructor ctor = null;
-        for ( int i = 0; i < ctors.length; i++ ) {
-            ctor = ctors[ i ];
-            if ( ctor.getGenericParameterTypes().length == 0 )
+        Constructor<?>[] constructors = _typeClass.getDeclaredConstructors();
+        Constructor<?> constructor = null;
+        for ( Constructor<?> current : constructors ) {
+            constructor = current;
+            if (current.getGenericParameterTypes().length == 0)
                 break;
         }
 
         try {
-            ctor.setAccessible( true );
-            return (Type) ctor.newInstance();
+            constructor.setAccessible( true );
+            return (Type) constructor.newInstance();
         } catch ( Exception e ) {
+            _log.error("Could not instantiate type class '"+ _typeClass.getSimpleName()+"': "+e.getMessage());
             e.printStackTrace();
         }
         return null;
@@ -137,7 +165,6 @@ public class DataType<Type>
         else
             newValue = ( ( (Object[]) value ).length <= 1 ) ? value : new Object[]{ ( (Object[]) value )[ 0 ] };
 
-            //throw new IllegalStateException("Primitive array of type '"+getTypeClass().getSimpleName()+"' not supported.");
         return (TA) newValue;
     }
 

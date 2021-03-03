@@ -65,7 +65,12 @@ public abstract class AbstractBaseAlgorithm<FinalType> implements Algorithm<Fina
         Tsr result = handleRecursivelyAccordingToArity( call, c -> recursiveReductionOf( c, finalExecution ) );
         if ( result == null ) {
             finalExecution.accept(
-                    new ExecutionCall<>( device, call.getTensors(), d, type )
+                    ExecutionCall.builder()
+                            .device(device)
+                            .tensors(call.getTensors())
+                            .derivativeIndex(d)
+                            .operation(type)
+                            .build()
             );
         }
         else return result;
