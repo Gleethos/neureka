@@ -35,8 +35,6 @@ SOFTWARE.
 
 package neureka.utility;
 
-import lombok.NoArgsConstructor;
-import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
 import java.math.BigDecimal;
@@ -50,7 +48,7 @@ import java.util.Random;
  *  This class is a singleton.
  *  Its sole job is to simply take in any kind ob object and convert it into
  *  another object of a provided Class type...
- *  In essence the DataConverter is merely a utility class.
+ *  In essence the {@link DataConverter} is merely a utility class.
  *  It also contains a nested static class named "Utility" which
  *  provides useful methods to handle primitive data types and arrays
  *  of said types.

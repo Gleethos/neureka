@@ -7,13 +7,36 @@ import neureka.Tsr;
 import java.util.*;
 import java.util.function.Function;
 
+/**
+ *  Instances of this class are components of tensors, which store aliases for the indices of the tensor.
+ *  These indices aliases can be anything that has an identity, meaning any plain old object. <br>
+ *  There are two layers of aliasing/labeling provided by this class:
+ *  <ul>
+ *      <li>
+ *          Labels for the axis of a tensor, which are the indices of its shape array.
+ *      </li>
+ *      <li>
+ *          Labels for the indices of a specific axis.
+ *      </li>
+ *  </ul>
+ *  Let's for example imagine a tensor of rank 2 with the shape (3, 4), then the axis could for example be labeled
+ *  with a tuple of two String instances like: ("a","b"). <br>
+ *  Labeling the indices of the axis for this example requires 2 arrays whose length matches the axis sizes. <br>
+ *  The following mapping would be able to label both the axis as well as their indices: <br>
+ *                                                                             <br>
+ *  "a" : ["first", "second", "third"],                                <br>
+ *  "b" : ["one", "two", "three", "four"]                              <br>
+ *                                                                     <br>
+ *
+ * @param <ValType> The type parameter of the value type of the tensor type to whom this component should belong.
+ */
 @Accessors( prefix = {"_"} )
 public final class IndexAlias<ValType> implements Component<Tsr<ValType>>
 {
     private final List<Object> _hiddenKeys = new ArrayList<>();
 
     @Getter
-    private Map<Object, Object> _mapping;
+    private final Map<Object, Object> _mapping;
     @Getter
     private final String _tensorName;
 
@@ -68,7 +91,7 @@ public final class IndexAlias<ValType> implements Component<Tsr<ValType>>
             if ( am instanceof Map ) {
                 indices[ i ] = ( (Map<Object, Integer>) am ).get( keys[ i ] );
             } else if ( am instanceof Integer ) {
-
+                // TODO: Implement
             }
         }
         return indices;
@@ -124,47 +147,51 @@ public final class IndexAlias<ValType> implements Component<Tsr<ValType>>
         return keys;
     }
 
-    private String _fixed( String str, int size ) {
-        if ( str.length() < size ) {
-            int first = size / 2;
-            int second = size - first;
-            first -= str.length() / 2;
-            second -= str.length() - str.length() / 2;
-            StringBuilder strBuilder = new StringBuilder(str);
+    /**
+     *  This method simply pads the provided string based on the size passed to it.
+     *
+     * @param string
+     * @param cellSize
+     * @return
+     */
+    private String _paddedCentered( String string, int cellSize ) {
+        if ( string.length() < cellSize ) {
+            int first = cellSize / 2;
+            int second = cellSize - first;
+            first -= string.length() / 2;
+            second -= string.length() - string.length() / 2;
+            StringBuilder strBuilder = new StringBuilder(string);
+            // Now we prepend the prefix spaces:
             for ( int i = 0; i < first; i++ ) strBuilder.insert(0, " ");
             strBuilder.append( String.join("", Collections.nCopies(Math.max( 0, second ), " ")) );
-            //" ".repeat( Math.max( 0, second ) ) );
+            // ...equal to the following expression:  " ".repeat( Math.max( 0, second ) ) );
             return strBuilder.toString();
         }
-        return str;
+        return string;
     }
 
 
     @Override
     public String toString()
     {
-        final int WIDTH = 16;
+        final int TABLE_CELL_WIDTH = 16;
         final String WALL = " | ";
         final String HEADLINE = "=";
         final String ROWLINE = "-";
         final String CROSS = "+";
 
         int indexShift = WALL.length() / 2;
-        int crossMod = WIDTH+WALL.length();
+        int crossMod = TABLE_CELL_WIDTH+WALL.length();
         Function<Integer, Boolean> isCross = i -> ( i - indexShift ) % crossMod == 0;
         StringBuilder builder = new StringBuilder();
         builder.append( WALL );
 
-        int[] axisLabelSizes = new int[ _mapping.size() ];
-        int[] axisCounter = { 0 };
         _mapping.forEach( ( k, v ) -> {
             if ( !_hiddenKeys.contains( k ) ) {
                 String axisHeader = k.toString();
-                axisHeader = _fixed(axisHeader, WIDTH);
-                axisLabelSizes[axisCounter[0]] = axisHeader.length();
+                axisHeader = _paddedCentered(axisHeader, TABLE_CELL_WIDTH);
                 builder.append(axisHeader);
                 builder.append(WALL);
-                axisCounter[0]++;
             }
         });
         int lineLength = builder.length();
@@ -174,7 +201,6 @@ public final class IndexAlias<ValType> implements Component<Tsr<ValType>>
         boolean[] hasMoreIndexes = { true };
         int[] depth = { 0 };
         while ( hasMoreIndexes[ 0 ] ) {
-            axisCounter[ 0 ] = 0;
             Object[] keyOfDepth = { null };
             builder.append( WALL );
             _mapping.forEach( ( k, v ) -> {
@@ -188,12 +214,11 @@ public final class IndexAlias<ValType> implements Component<Tsr<ValType>>
                         if (depth[0] < ((Integer) v)) keyOfDepth[0] = depth[0];
                     }
                     if (keyOfDepth[0] != null) {
-                        builder.append(_fixed((keyOfDepth[0]).toString(), WIDTH));
+                        builder.append(_paddedCentered((keyOfDepth[0]).toString(), TABLE_CELL_WIDTH));
                     } else {
-                        builder.append(_fixed("---", WIDTH));
+                        builder.append(_paddedCentered("---", TABLE_CELL_WIDTH));
                     }
                     builder.append(WALL);
-                    axisCounter[0]++;
                 }
             });
             depth[ 0 ]++;

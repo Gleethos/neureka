@@ -118,7 +118,7 @@ import java.util.stream.Collectors;
 
 
 /**
- *  This class name "Tsr" is a 3 letter abbreviation of the term "tensor", a mathematical concept.
+ *  This class name "Tsr" is a 3 letter abbreviation of the word "tensor", a mathematical concept.
  *  A tensor is a type of multidimensional data-structure with certain transformation properties.
  *  Technically however, it is mostly a simple container / data-structure which can house data indexed by N dimensions.
  *  Therefore it is often also described as an nd-array.
@@ -141,7 +141,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     }
 
     /**
-     *  The default device is an instance of the "HostCPU" class. <br>
+     *  The default device is an instance of the "{@link HostCPU}" class. <br>
      *  This field is a reference to this default device implementation.
      */
     private static final Device<Number> _CPU;
@@ -645,7 +645,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  This constructor allows the creation of tensors with an additional initialization
      *  lambda for filling the underlying data array with desired values.
      *  Besides regular numeric types it is also possible to initialize the
-     *  tensor with regular Objects like String instances or custom data types like complex
+     *  tensor with regular objects like {@link String} instances or custom data types like complex
      *  numbers for example... <br>
      *  Therefore the constructor requires not only a shape as argument but also
      *  the data type which ought to be allocated as well as the initialization
@@ -685,10 +685,10 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  This constructor allows for the creation and execution of Function instances
      *  without actually instantiating them manually,
      *  where the result will then become this very tensor. <br><br>
-     *  The passed String will be parsed into a Function AST which will be cached
+     *  The passed {@link String} will be parsed into a {@link Function} AST which will be cached
      *  using the expression as key in case it will be used in future constructor calls
      *  like this one, or elsewhere...
-     *  The created / retrieved Function will then be called with the supplied input list
+     *  The created / retrieved {@link Function} will then be called with the supplied input list
      *  in order to trigger an execution.
      *  The result of which will be used for the population of the fields of this
      *  very instance.                                                                      <br>
@@ -719,7 +719,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     /**
      *  This method takes a tensor and a String expression describing
      *  operations which ought to be applied to said tensor.
-     *  This expression will be parsed to a Function instance expecting one input,
+     *  This expression will be parsed to a {@link Function} instance expecting one input,
      *  namely : "I[0]" <br>
      *  An example would be the following :
      * <ul>
@@ -741,7 +741,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     /**
      *  This method takes an array of tensors and a String expression describing
      *  operations which ought to be applied to the tensors in said array.
-     *  This expression will be parsed to a Function instance expecting as many inputs
+     *  This expression will be parsed to a {@link Function} instance expecting as many inputs
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ... <br>
      *  An example would be the following :
      * <ul>
@@ -770,8 +770,8 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
      *  elementwise to produce a new tensor 'a'!
      *  Additionally there is a helpful flag which allows one to specify if the
-     *  parsed Function instance emerging from the provided expression
-     *  should also allow the tracking of computations via a computation graph (GraphNode instances).
+     *  parsed {@link Function} instance emerging from the provided expression
+     *  should also allow the tracking of computations via a computation graph ({@link GraphNode} instances).
      *  This history tracking then enables auto-differentiation. <br>
      *
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
@@ -811,7 +811,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
     /**
      *  This method is responsible for instantiating and setting the _conf variable.
-     *  The core requirement for instantiating NDConfiguration interface implementation s
+     *  The core requirement for instantiating {@link NDConfiguration} interface implementation s
      *  is a shape array of integers which is being passed to the method... <br>
      *  <br>
      *
@@ -1019,7 +1019,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     }
 
     /**
-     *  This method is the inner counterpart to the public "setIsVirtual" method.
+     *  This method is the inner counterpart to the public "{@link Tsr#setIsVirtual}" method.
      *  It actually performs the bit flipping by applying the corresponding bit mask. <br>
      *  <br>
      * @param isVirtual The truth value which ought to be applied.
@@ -1101,10 +1101,10 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     /**
      * This method is executed when a new Component is added to the tensor.
      * The public add method is implemented in the super class
-     * 'AbstractComponentOwner' from which this class inherits.
+     * '{@link neureka.ndim.AbstractComponentOwner}' from which this class inherits.
      * In this super class the component logic is implemented.
      *
-     * @param newComponent A component used to access features. (GraphNode, IndexAlias, Relation, int[], ...)
+     * @param newComponent A component used to access features. ({@link GraphNode}, {@link IndexAlias}, {@link Relation}, int[], ...)
      * @return The unchanged object or maybe in future versions: null (component rejected)
      */
     @Override
@@ -1159,10 +1159,10 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     /**
      * This method is executed when a component is being removed from the tensor.
      * The public remove method is implemented in the super class
-     * 'AbstractComponentOwner' from which this class inherits.
+     * '{@link neureka.ndim.AbstractComponentOwner}' from which this class inherits.
      * In this super class the component logic is implemented.
      *
-     * @param newComponent A component used to access features. (GraphNode, IndexAlias, Relation, int[], ...)
+     * @param newComponent A component used to access features. ({@link GraphNode}, {@link IndexAlias}, {@link Relation}, int[], ...)
      * @return The unchanged object or when rejected: null (component rejected)
      */
     @Override
@@ -1242,7 +1242,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
     /**
      *  If this tensor is a slice of a parent tensor then this method will yield true.
-     *  Slices can be created by calling the variations of the "getAt" method.
+     *  Slices can be created by calling the variations of the "{@link Tsr#getAt}" method.
      *
      * @return The truth value determining if this tensor is a slice of another tensor.
      */
@@ -1254,7 +1254,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     /**
      *  This method returns the number of slices which have been
      *  created from this very tensor.
-     *  It does so by accessing the Relation component if present
+     *  It does so by accessing the {@link Relation} component if present
      *  which internally keeps track of slices via weak references.
      *
      * @return The number of slices derived from this tensor.
@@ -1276,11 +1276,11 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     }
 
     /**
-     *  Tensors which are used or produced by the autograd system will have a GraphNode component attached to them.
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
      *  This is because autograd requires recording a computation graph for back-prop traversal.
-     *  This autograd system however, will only be triggered by Function implementations which
-     *  are not "detached", meaning they have their "doAD" flags set to true! <br>
-     *  Detached functions (like those pre-instantiated in Function.Detached.*) will not attach GraphNode
+     *  This autograd system however, will only be triggered by {@link Function} implementations which
+     *  are not "detached", meaning they have their "{@link Function#isDoingAD()}" flags set to true! <br>
+     *  Detached functions (like those pre-instantiated in Function.Detached.*) will not attach {@link GraphNode}
      *  instances to involved tensors which will prevent the formation of a computation graph.
      *
      * @return The truth value determining if this tensor belongs to a recorded computation graph.
@@ -1290,10 +1290,10 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     }
 
     /**
-     *  Tensors which are used or produced by the autograd system will have a GraphNode component attached to them.
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
      *  This is because autograd requires recording a computation graph for back-prop traversal.
-     *  This autograd system however, will only be triggered by Function implementations which
-     *  are not "detached", meaning they have their "doAD" flags set to true! <br>
+     *  This autograd system however, will only be triggered by {@link Function} implementations which
+     *  are not "detached", meaning they have their "{@link Function#isDoingAD()}" flags set to true! <br>
      *  A tensor is a leave if it is attached to a computation graph in which it is not an intermediate / branch node
      *  but input / branch node.
      *
@@ -1304,10 +1304,10 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     }
 
     /**
-     *  Tensors which are used or produced by the autograd system will have a GraphNode component attached to them.
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
      *  This is because autograd requires recording a computation graph for back-prop traversal.
-     *  This autograd system however, will only be triggered by Function implementations which
-     *  are not "detached", meaning they have their "doAD" flags set to true! <br>
+     *  This autograd system however, will only be triggered by {@link Function} implementations which
+     *  are not "detached", meaning they have their "{@link Function#isDoingAD()}" flags set to true! <br>
      *  A tensor is a branch if it is attached to a computation graph in which it is not an input / leave node
      *  but intermediate / branch node.
      *
@@ -1392,7 +1392,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  Every time the underlying data (_value) changes this version ought to increment alongside.
      *  The method is called during the execution procedure.
      *
-     * @param call The context object containing all relevent informatin that defines a call for tensor execution.
+     * @param call The context object containing all relevant information that defines a call for tensor execution.
      * @return This very tensor instance. (factory pattern)
      */
     public Tsr<ValType> incrementVersionBecauseOf( ExecutionCall call ) {
@@ -1415,7 +1415,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  Although tensors will be garbage collected when they are not strongly referenced,
      *  there is also the option to manually free up the tensor and its associated data.
      *  This is especially useful when tensors are stored on a device like the OpenCLDevice.
-     *  In that case calling the "delete" method will free the memory reserved for this tensor.
+     *  In that case calling the "{@link Tsr#delete()}" method will free the memory reserved for this tensor.
      *  This manual memory freeing through this method can be faster than waiting for
      *  the garbage collector to kick in... <br>
      *  <br>
@@ -1448,7 +1448,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      *  <br>
      *  This change currently only happens when tensors are being instantiated by
      *  certain constructors to which input tensors and a math expression is passed.
-     *  This triggers the creation of a Function instance and execution on the provided
+     *  This triggers the creation of a {@link Function} instance and execution on the provided
      *  input tensors. In that case the output tensor will be created somewhere
      *  along the execution call stack, however the result is expected to be 
      *  stored within the tensor whose constructor initialized all of this.
@@ -1525,7 +1525,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      */
 
     /**
-     *  Tensors which are used or produced by the autograd system will have a GraphNode component attached to them.
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
      *  This is because autograd requires recording a computation graph for back-prop traversal.
      *  If this tensor is part of a computation graph then this method
      *  will traverse an error backward in the recorded history towards tensors which require
@@ -1542,7 +1542,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     }
 
     /**
-     *  Tensors which are used or produced by the autograd system will have a GraphNode component attached to them.
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
      *  This is because autograd requires recording a computation graph for back-prop traversal.
      *  If this tensor is part of a computation graph then this method
      *  will traverse an error backward in the recorded history towards tensors which require
@@ -1563,7 +1563,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     }
 
     /**
-     *  Tensors which are used or produced by the autograd system will have a GraphNode component attached to them.
+     *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
      *  This is because autograd requires recording a computation graph for back-prop traversal.
      *  If this tensor is part of a computation graph then this method
      *  will traverse an error backward in the recorded history towards tensors which require
@@ -1594,7 +1594,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
            This is because the gradient most likely has not yet been fully calculated.
          */
         forComponent( JITProp.class, JITProp::execute );
-        // Afterwards the JITProp component is not needed anymore!
+        // Afterwards the JITProp component is not needed anymore! So we remove it.
         remove( JITProp.class );
         // Now the gradient can be applied (Gradients are also tensors, which is why we provide its class).
         forComponent(
@@ -1602,7 +1602,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                 g -> {
                     // If an optimizer is present then we also optimize the gradient first!
                     forComponent( Optimizer.class, o -> o.optimize( this ) );
-                    // And then we remove the gradient becuase it is no longer needed.
+                    // And then we remove the gradient because it is no longer needed.
                     remove( Tsr.class );
                     // We are now ready to apply the gradient to the tensor. This is an inline operation!
                     // Therefore we need to turn off the inline operation safety net:
@@ -1619,9 +1619,9 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     /**
      *  <b>This method detaches this tensor from its underlying computation-graph
      *  or simply does nothing if no graph is present.</b> <br>
-     *  Nodes within a computation graph are instances of the "GraphNode" class which are also
+     *  Nodes within a computation graph are instances of the "{@link GraphNode}" class which are also
      *  simple components of the tensors they represent in the graph. <br>
-     *  Therefore, "detaching" this tensor from the graph simply means removing its GraphNode component.
+     *  Therefore, "detaching" this tensor from the graph simply means removing its {@link GraphNode} component.
      */
     public void detach()
     {
@@ -1636,7 +1636,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      */
 
     /**
-     *  This method receives a nested String array which
+     *  This method receives a nested {@link String} array which
      *  ought to contain a label for the index of this tensor.
      *  The index for a single element of this tensor would be an array
      *  of numbers as long as the rank where every number is
@@ -1660,7 +1660,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
     /**
      *  This method receives a label for this tensor and a
-     *  nested String array which ought to contain a
+     *  nested {@link String} array which ought to contain a
      *  label for the index of this tensor.
      *  The index for a single element of this tensor would be an array
      *  of numbers as long as the rank where every number is
@@ -1701,7 +1701,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     }
 
     /**
-     *  This method receives a nested String list which
+     *  This method receives a nested {@link String} list which
      *  ought to contain a label for the index of this tensor.
      *  The index for a single element of this tensor would be an array
      *  of numbers as long as the rank where every number is
@@ -1725,7 +1725,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
     /**
      *  This method receives a label for this tensor and a nested
-     *  String list which ought to contain a label for the index of
+     *  {@link String} list which ought to contain a label for the index of
      *  this tensor The index for a single element of this tensor would
      *  be an array of numbers as long as the rank where every number is
      *  in the range of the corresponding shape dimension...
@@ -1866,6 +1866,9 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      */
 
     /**
+     *  A method which returns a new {@link Tsr} instance which is a transposed twin of this instance.
+     *  Internally this method constructs a new reshape function which will be able to transform as expected.
+     *
      * @return A new transposed tensor with the same underlying data as this tensor.
      */
     public Tsr<ValType> T() // Transposed!
@@ -1877,7 +1880,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     }
 
     /**
-     *  This method performs various operations by calling Function instances
+     *  This method performs various operations by calling {@link Function} instances
      *  in order to ultimately calculate the mean value of all values
      *  of this very tensor!
      *  This scalar tensor is then returned.
@@ -1913,7 +1916,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
     /**
      *  This method creates a new tensor sharing the same data and whose shape is trimmed.
-     *  A trimmed shape is simply a shape without preceding and trailing ones.
+     *  A trimmed shape is simply a shape without preceding and trailing ones. <br>
      *  For example the shape (1x4x1x2x1) would be trimmed to (4x1x2).
      *  The underlying operation does not perform a removal of redundant ones all together.
      *  Only ones at the start and the beginning will be removed.
@@ -2281,7 +2284,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                         first = position;
                         last = position;
                     } else {
-                        String message = "Given indexAlias key at axis " + ( i + dimIndex ) + " not found!";
+                        String message = "Given "+IndexAlias.class.getSimpleName()+" key at axis " + ( i + dimIndex ) + " not found!";
                         _LOG.error( message );
                         throw new IllegalStateException( message );
                     }
@@ -2350,7 +2353,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      */
     public Tsr<ValType> putAt( List<?> key, Tsr<ValType> value ) {
         _putAtCheckFor( value );
-        Tsr<ValType> slice = ( key == null ) ? this : (Tsr) getAt( key );
+        Tsr<ValType> slice = ( key == null ) ? this : getAt( key );
         return _putAt( slice, value );
     }
 
@@ -2385,9 +2388,9 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
             Device<ValType> device = slice.find( Device.class );
             try {
                 device.store( value );
-            } catch ( Exception exce ) {
-                _LOG.error( "Trying to migrate target slice tensor to device failed.", exce );
-                throw exce;
+            } catch ( Exception e ) {
+                _LOG.error( "Trying to migrate target slice tensor to device failed.", e );
+                throw e;
             }
             valueIsDeviceVisitor = true;
         }
@@ -2401,89 +2404,6 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         }
         return this;
     }
-
-    /**
-     *  This is a static nested utility class
-     *  which is used to allow for fast access to
-     *  tensors storing doubles.
-     */
-    @NoArgsConstructor
-    public static class IO
-    {
-        public static double getFrom( Tsr<?> t, int i ) {
-            if ( t.isEmpty() || t.isUndefined() ) return 0;
-            else if ( t.isVirtual() ) return t.value64()[ 0 ];
-            return t.value64()[ t.indexOfIndex( i ) ];
-        }
-
-        public static double getFrom( Tsr<?> t, int[] idx ) {
-            t.setIsVirtual( false );
-            return t.value64()[ t.indexOfIndices( idx ) ];
-        }
-
-        public static void setInto( Tsr<?> t, int i, double value ) {
-            t.setIsVirtual( false );
-            t.value64()[ t.indexOfIndex( i ) ] = value;
-        }
-
-        public static void setInto( Tsr<?> t, int[] idx, double value ) {
-            t.setIsVirtual( false );
-            t.value64()[ t.indexOfIndices( idx ) ] = value;
-        }
-
-        public static void addInto( Tsr<?> t, int i, double value ) {
-            t.setIsVirtual( false );
-            t.value64()[ t.indexOfIndex( i ) ] += value;
-        }
-
-        public static void addInto( Tsr<?> t, int[] idx, double value ) {
-            t.setIsVirtual( false );
-            t.value64()[ t.indexOfIndices( idx ) ] += value;
-        }
-
-        public static Tsr<?> addInto( Tsr<?> t, Tsr<?> source ) {
-            if ( t.isVirtual() && source.isVirtual() ) t.value64()[ 0 ] += source.value64()[ 0 ];
-            else FunctionBuilder.build( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])", false ).call( new Tsr[]{ t, source } );
-            return source;
-        }
-
-        public static void subInto( Tsr<?> t, int i, double value ) {
-            t.setIsVirtual( false );
-            t.value64()[ t.indexOfIndex( i ) ] -= value;
-        }
-
-        public static void subInto( Tsr<?> t, int[] idx, double value ) {
-            t.setIsVirtual( false );
-            t.value64()[ t.indexOfIndices( idx ) ] -= value;
-        }
-
-        public static void subInto( Tsr<?> t, Tsr<?> source ) {
-            if ( t.isVirtual() && source.isVirtual() ) {
-                t.value64()[ 0 ] -= source.value64()[ 0 ];
-            } else {
-                if ( t.isVirtual() ) t.setIsVirtual( false );
-                int[] index = new int[ t.getNDConf().shape().length ];
-                int size = t.size();
-                for ( int i = 0; i < size; i++ ) {
-                    IO.subInto( t, index, IO.getFrom( source, index ) );
-                    NDConfiguration.Utility.increment( index, t.getNDConf().shape() );
-                }
-            }
-        }
-
-        public static void mulInto( Tsr<?> t, int i, double value ) {
-            t.setIsVirtual( false );
-            t.value64()[ t.indexOfIndex( i ) ] *= value;
-        }
-
-        public static void mulInto( Tsr<?> t, int[] idx, double value ) {
-            t.setIsVirtual( false );
-            t.value64()[ t.indexOfIndices( idx ) ] *= value;
-        }
-
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      *  A tensor ought to have some way to access its underlying data array.
@@ -2822,6 +2742,93 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         }
 
     }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+    /**
+     *  This is a static nested utility class
+     *  which is used to allow for fast access to
+     *  tensors storing doubles.
+     */
+    @NoArgsConstructor
+    public static class IO
+    {
+        public static double getFrom( Tsr<?> t, int i ) {
+            if ( t.isEmpty() || t.isUndefined() ) return 0;
+            else if ( t.isVirtual() ) return t.value64()[ 0 ];
+            return t.value64()[ t.indexOfIndex( i ) ];
+        }
+
+        public static double getFrom( Tsr<?> t, int[] idx ) {
+            t.setIsVirtual( false );
+            return t.value64()[ t.indexOfIndices( idx ) ];
+        }
+
+        public static void setInto( Tsr<?> t, int i, double value ) {
+            t.setIsVirtual( false );
+            t.value64()[ t.indexOfIndex( i ) ] = value;
+        }
+
+        public static void setInto( Tsr<?> t, int[] idx, double value ) {
+            t.setIsVirtual( false );
+            t.value64()[ t.indexOfIndices( idx ) ] = value;
+        }
+
+        public static void addInto( Tsr<?> t, int i, double value ) {
+            t.setIsVirtual( false );
+            t.value64()[ t.indexOfIndex( i ) ] += value;
+        }
+
+        public static void addInto( Tsr<?> t, int[] idx, double value ) {
+            t.setIsVirtual( false );
+            t.value64()[ t.indexOfIndices( idx ) ] += value;
+        }
+
+        public static Tsr<?> addInto( Tsr<?> t, Tsr<?> source ) {
+            if ( t.isVirtual() && source.isVirtual() ) t.value64()[ 0 ] += source.value64()[ 0 ];
+            else FunctionBuilder.build( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])", false ).call( new Tsr[]{ t, source } );
+            return source;
+        }
+
+        public static void subInto( Tsr<?> t, int i, double value ) {
+            t.setIsVirtual( false );
+            t.value64()[ t.indexOfIndex( i ) ] -= value;
+        }
+
+        public static void subInto( Tsr<?> t, int[] idx, double value ) {
+            t.setIsVirtual( false );
+            t.value64()[ t.indexOfIndices( idx ) ] -= value;
+        }
+
+        public static void subInto( Tsr<?> t, Tsr<?> source ) {
+            if ( t.isVirtual() && source.isVirtual() ) {
+                t.value64()[ 0 ] -= source.value64()[ 0 ];
+            } else {
+                if ( t.isVirtual() ) t.setIsVirtual( false );
+                int[] index = new int[ t.getNDConf().shape().length ];
+                int size = t.size();
+                for ( int i = 0; i < size; i++ ) {
+                    IO.subInto( t, index, IO.getFrom( source, index ) );
+                    NDConfiguration.Utility.increment( index, t.getNDConf().shape() );
+                }
+            }
+        }
+
+        public static void mulInto( Tsr<?> t, int i, double value ) {
+            t.setIsVirtual( false );
+            t.value64()[ t.indexOfIndex( i ) ] *= value;
+        }
+
+        public static void mulInto( Tsr<?> t, int[] idx, double value ) {
+            t.setIsVirtual( false );
+            t.value64()[ t.indexOfIndices( idx ) ] *= value;
+        }
+
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
     /**
      *  This is a nested static utility class which is used

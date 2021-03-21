@@ -12,19 +12,22 @@ import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 
 /**
- * This is the base class for implementations of the Algorithm interface.
+ * This is the base class for implementations of the {@link Algorithm} interface.
  * The class implements the component logic required by said interface.
- * Additionally it contains useful methods used to process passed arguments of execution calls.
+ * Additionally it contains useful methods used to process passed arguments of {@link ExecutionCall}.
  *
  * Conceptually this class represents "a way of execution" for
  * the Operation to which an instance of this class would belong.
- * The "+" operator for example has different Algorithm instances
- * for ExecutionCall instances hosting tensors which might require
+ * The "+" operator for example has different {@link Algorithm} instances
+ * for {@link ExecutionCall} instances hosting tensors which might require
  * either elementwise addition or broadcasting depending on the shapes.
  * Tensors within an execution call having the same shape would
- * trigger an elementwise Algorithm instance stored in the Operation,
- * whereas otherwise
- * the Convolution or Broadcast algorithm type might be called.
+ * trigger an elementwise {@link Algorithm} instance stored in the
+ * {@link neureka.backend.api.operations.Operation}, whereas otherwise
+ * the {@link neureka.backend.standard.algorithms.Convolution}
+ * or
+ * {@link neureka.backend.standard.algorithms.Broadcast}
+ * algorithm type might be called.
  *
  * @param <FinalType> The final type extending this class.
  */

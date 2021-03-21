@@ -32,14 +32,8 @@ public class Multiplication extends AbstractOperation
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 double[] t2_val = inputs[ 2 ].value64();
-                if ( d < 0 ) {
-                    return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
-                } else {
-                    return ( t0Idx, t1Idx, t2Idx ) -> {
-                        if (d == 0) return t2_val[t2Idx.i()];
-                        else return t1_val[ t1Idx.i() ];
-                    };
-                }
+                if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
+                else return ( t0Idx, t1Idx, t2Idx ) -> (d == 0) ? t2_val[t2Idx.i()] : t1_val[ t1Idx.i() ];
             };
 
     private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
@@ -83,24 +77,24 @@ public class Multiplication extends AbstractOperation
                 if ( d < 0 ) {
                     Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.apply(
-                            ExecutionCall.builder()
-                                    .device(device)
-                                    .tensors(reduction)
-                                    .derivativeIndex(d)
-                                    .operation(type)
-                                    .build()
-                    );
+                                        ExecutionCall.builder()
+                                                .device(device)
+                                                .tensors(reduction)
+                                                .derivativeIndex(d)
+                                                .operation(type)
+                                                .build()
+                                );
                     tsrs[ 0 ] = reduction[ 0 ];
 
                     reduction = Utility.offsetted(tsrs, 1);
                     alternative = goDeeperWith.apply(
-                            ExecutionCall.builder()
-                                    .device(device)
-                                    .tensors(reduction)
-                                    .derivativeIndex(d)
-                                    .operation(type)
-                                    .build()
-                    );
+                                        ExecutionCall.builder()
+                                                .device(device)
+                                                .tensors(reduction)
+                                                .derivativeIndex(d)
+                                                .operation(type)
+                                                .build()
+                                );
                     tsrs[ 0 ] = reduction[ 0 ];
                 } else {
                     Tsr[] reduction = Utility.without(tsrs, 1+d);
@@ -165,9 +159,9 @@ public class Multiplication extends AbstractOperation
                    .setADAgentSupplier(
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-                )
-                .setRJAgent( rja )
-                .build();
+                    )
+                    .setRJAgent( rja )
+                    .build();
 
         setAlgorithm(
                 Operator.class,
@@ -464,13 +458,9 @@ public class Multiplication extends AbstractOperation
                 else
                 {
                     Tsr deriv = f.derive( inputs, d );
-                    return new DefaultADAgent(
-                            deriv
-                        ).setForward(
-                            ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv})
-                        ).setBackward(
-                            ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv})
-                        );
+                    return new DefaultADAgent( deriv )
+                            .setForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
+                            .setBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
                 }
             }
         )

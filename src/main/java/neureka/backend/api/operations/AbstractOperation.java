@@ -14,11 +14,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- *  This abstract Operation implementation is a useful template for creating new operations.
- *  It provides a partial implementation which consists of a simple component system for hosting Algorithm instances
- *  as well as a set of properties which Operation implementations are expected to have. <br>
+ *  This abstract {@link Operation} implementation is a useful template for creating new operations.
+ *  It provides a partial implementation which consists of a simple component system for hosting {@link Algorithm} instances
+ *  as well as a set of properties which {@link Operation} implementations are expected to have. <br>
  *  Therefore, the number of properties this class needs to receive is rather large.
- *  In order to instantiate it one has to pass OperationFactory instance to the constructor.
+ *  In order to instantiate it one has to pass {@link OperationFactory} instance to the constructor.
  *  Using the factory will make the property configuration as readable as possible. <br>
  *
  */

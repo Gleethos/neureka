@@ -53,12 +53,15 @@ import java.util.function.Function;
  *   of Neureka's operation backend.
  *
  *   Conceptually an implementation of this interface represents "a way of execution" for
- *   the Operation to which an instance of said implementation would belong.
- *   The "+" operator for example has different Algorithm instances
- *   for different ExecutionCall instances.
+ *   the {@link neureka.backend.api.operations.Operation} to which an instance of said implementation would belong.
+ *   The "+" operator for example has different {@link Algorithm} instances
+ *   for different {@link ExecutionCall} instances.
  *   Tensors within an execution call having the same shape would
- *   trigger the Operation instance of an elementwise Algorithm instance, whereas otherwise
- *   the Convolution or Broadcast implementation might be called.
+ *   trigger the Operation instance of an elementwise {@link Algorithm} instance, whereas otherwise
+ *   the {@link neureka.backend.standard.algorithms.Convolution}
+ *   or
+ *   {@link neureka.backend.standard.algorithms.Broadcast}
+ *   implementation might be called.
  */
 public interface Algorithm<FinalType>
 {

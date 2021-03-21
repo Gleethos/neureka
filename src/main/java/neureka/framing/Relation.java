@@ -53,7 +53,7 @@ import java.util.function.Consumer;
  *  However in case a tensor is the "parent" of a slice tensor then it will
  *  contain a Relation instance which references the slices weakly (so that they can be garbage collected). <br>
  *  <br>
- *  Disclosure: The words "children" and "parent" are meant to be understood as
+ *  Disclosure: The words "children" and "parent" mentioned inside this file are meant to be understood as
  *  references to the core concepts present within graph theory, <br>
  *  namely: synonyms to words like "branch", "leave", "root", "vertex"... <br>
  *

@@ -58,7 +58,7 @@ import java.util.function.Supplier;
 
 /**
  *  Instances of this class are components of tensors.
- *  GraphNodes form a computation graph during runtime which is traversed during backpropagation.
+ *  {@link GraphNode}s form a computation graph during runtime which is traversed during backpropagation.
  *  Both parent and child references are use for traversal.
  *  Parents are the graph nodes of the tensors from which the tensor of the current node was formed,
  *  whereas children are the nodes (also) produced by said current node.

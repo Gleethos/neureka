@@ -6,10 +6,12 @@
         </h3>
         <p>
             Neureka has one common interface for many device implementations.
-            Therefore the instantiation of a device is also dependent on its implementation.
-            The most commonly used Device type is the OpenCLDevice!
-            However when one is not willing to read about the different types Neureka provides
-            one can simply query devices via the following method :
+            Therefore the instantiation of a device is dependent on its implementations.
+            <br>
+
+            However it can be time consuming to read about the different types of devices provided
+            and trying to reason about what is best,
+            therefore one can simply query devices via the following method :
         </p>
     </div>
 </div>
@@ -40,10 +42,10 @@
 <div class="col-sm-12 col-md-6 col-lg-6">
     <div class="ContentBox">
         <p>
-            There are multiple things that can put into this query string.
+            There are multiple things that can be put into this query string.
             It is for example also possible to simply pass the name of the device itself.
             Even if the name of the device contains spelling errors Neureka will
-            try to interpret what you mean.
+            try to interpret what you mean by performing similarity search on the available devices.
             If however it cannot find what you are looking for it will simply return null.
         </p>
     </div>
@@ -52,9 +54,13 @@
 <div class="col-sm-12 col-md-12 col-lg-12">
     <div class="ContentBox">
         <p>
-            If this level of control for device selection for your tensors
-            is too shallow then you can look
-            at concrete implementations :
+            If this level of control for device selection
+            is too shallow for you then you can simply take a look at concrete implementations.
+            The most common of which are the HostCPU type for CPU based execution and the OpenCLDevice
+            type for GPU based execution of tensor operations!
+        </p>
+        <p>
+            Let's see how we can access the available OpenCLDevice instances:
         </p>
     </div>
 </div>
@@ -91,6 +97,7 @@
             OpenCLDevice instances are instantiated during class loading.
             This is because a single instance of this class should
             only represent a single real device.
+            It is therefore assumed that the devices you want to use are already available during startup.
         </p>
     </div>
 </div>

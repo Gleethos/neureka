@@ -5,6 +5,12 @@ import java.lang.ref.ReferenceQueue;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *  This class stores actions which are being executed when an associated object is being garbage collected.
+ *  This class is similar to the cleaner class introduced in JDK 11, however the minimal version compatibility target
+ *  for Neureka is Java 8, which means that this cleaner class introduced in Java 11 is not available here!
+ *  That is why a custom cleaner implementation is being defined below.<br>
+ */
 public class CustomCleaner implements NeurekaCleaner, Runnable
 {
     private final ReferenceQueue<Object> _referenceQueue = new ReferenceQueue<>();
@@ -13,7 +19,7 @@ public class CustomCleaner implements NeurekaCleaner, Runnable
 
     List<Object> list = new ArrayList<>();
 
-    class ReferenceWithCleanup<T> extends PhantomReference<T>
+    static class ReferenceWithCleanup<T> extends PhantomReference<T>
     {
         private Runnable _action;
 
@@ -29,7 +35,7 @@ public class CustomCleaner implements NeurekaCleaner, Runnable
     @Override
     public void register(Object o, Runnable action) {
         synchronized ( _referenceQueue ) {
-            list.add(new ReferenceWithCleanup<Object>( o, action, _referenceQueue ));
+            list.add(new ReferenceWithCleanup<Object>(o, action, _referenceQueue));
             _registered++;
             if ( _registered == 1 ) new Thread( this::run ).start();
         }

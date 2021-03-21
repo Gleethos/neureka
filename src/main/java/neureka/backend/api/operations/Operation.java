@@ -53,11 +53,9 @@ import java.util.ServiceLoader;
 import java.util.function.Consumer;
 
 /**
- *  This interface describes an operation which
- *  ought to consist of a compositional system
- *  containing multiple algorithms which themselves
- *  ought to contain device specific implementations
- *  capable of processing ExecutionCall instances.
+ *  This interface describes an operation which ought to consist of a compositional system
+ *  containing multiple algorithms which themselves ought to contain device specific implementations
+ *  capable of processing {@link ExecutionCall} instances, or rather their state.
  *
  *  Besides the definition of the compositional system
  *  there is also the requirement for its integration into
@@ -65,7 +63,7 @@ import java.util.function.Consumer;
  *  This means that the operation should have a function name
  *  and optionally also an operator.
  *  Alongside there must be a stringifier which ought to generate
- *  a String view as part of a Function-AST.
+ *  a String view as part of a {@link Function}-AST.
  */
 public interface Operation
 {

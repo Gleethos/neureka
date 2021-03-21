@@ -51,7 +51,7 @@ import java.util.TreeMap;
 
 /**
  *  This class is a simple container holding relevant
- *  arguments needed to execute on a targeted Device which
+ *  arguments needed to execute on a targeted {@link Device} which
  *  is specified by the type parameter below. <br>
  *  <br>
  *  It also holds a context map responsible for storing

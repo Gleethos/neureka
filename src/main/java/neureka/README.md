@@ -22,8 +22,16 @@ structure of the library as a whole and should be kept in mind when extending it
 <br>
 These conceptual layers are the following:
 
-- The data layer: `Tsr` alongside `ndim`, `dtype`, `framing`
+- 1. The data layer
+  - `Tsr` alongside `ndim`, `dtype`, `framing`
   
-- The routing layer: `calculus` alongside `devices`
 
-- The execution layer: `backend`
+- 2. The routing layer: 
+  - `calculus` alongside `devices`
+
+
+- 3. The execution layer: 
+  - `backend`
+    - `api` >> `Operation`, `Algorithm`, `ImplementationFor`
+    - `default` : Default implementation of the API.
+    

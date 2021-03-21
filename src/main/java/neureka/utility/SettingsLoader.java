@@ -42,15 +42,14 @@ import groovy.lang.GroovySystem;
 import neureka.Neureka;
 
 /**
- *  This class is a helper class for Neureka instances.
+ *  This class is a helper class for {@link Neureka} instances (Thread local singletons).
  *  It tries to execute groovy scripts used as settings for said instances.
  *
- *  This logic is not included inside the Neureka class
- *  itself because otherwise there would be an obligate dependency
- *  on groovy.
- *  If groovy lang dependencies are however not found, then
- *  this very class will not be used, initialized and therefore
- *  neureka will continue to work without groovy.
+ *  This logic is not included inside the {@link Neureka} class
+ *  itself in order to encapsulate the dependency on the Groovy runtime.
+ *  If we decide to remove the dependencies on groovy or make it optionally, then
+ *  this very class will simply not be used or failed to be used, initialized and therefore
+ *  neureka will continue to work without Groovy.
  */
 public class SettingsLoader
 {

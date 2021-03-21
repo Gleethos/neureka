@@ -48,8 +48,8 @@ import java.util.function.Supplier;
 /**
  *  Besides the Tsr class, which is the core class of Neureka, this interface and its implementations
  *  represents the second most important feature of this library.
- *  Instances of Function implementations form an abstract syntax tree which is being built
- *  from a provided expression String containing function syntax.
+ *  Instances of {@link Function} implementations form an abstract syntax tree which is being built
+ *  from a provided expression {@link String} containing function syntax.
  *
  *  Just like functions in the mathematical sense, implementations of this
  *  interface receive a fixed number of inputs.
