@@ -48,13 +48,13 @@ import java.util.function.Consumer;
  *  This class is an important tensor component responsible for
  *  managing the relationships between slices and the tensors from which
  *  they have been derived.
- *  In case a tensor is a slice then it will have a Relation instance as
+ *  In case a tensor is a slice then it will have a {@link Relation} instance as
  *  component which will reference the parent tensor strongly (so that its data will not be lost).
  *  However in case a tensor is the "parent" of a slice tensor then it will
- *  contain a Relation instance which references the slices weakly (so that they can be garbage collected). <br>
+ *  contain a {@link Relation} instance which references the slices weakly (so that they can be garbage collected). <br>
  *  <br>
  *  Disclosure: The words "children" and "parent" mentioned inside this file are meant to be understood as
- *  references to the core concepts present within graph theory, <br>
+ *  references to core concepts within common graph theory, <br>
  *  namely: synonyms to words like "branch", "leave", "root", "vertex"... <br>
  *
  * @param <ValType> The data type class of the elements of the tensor to which this can Relation belong to.
@@ -81,7 +81,7 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
      *  to which this Relation component belongs. <br>
      *  Children are not referenced strongly so they can be garbage collected.
      */
-    private WeakReference<Tsr<ValType>>[] _children;// Children may be garbage collected if not needed anywhere.
+    private WeakReference<Tsr<ValType>>[] _children; // Children may be garbage collected if not needed anywhere.
 
     /**
      *  When creating reshaped versions of slices then
@@ -98,6 +98,7 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
      *  to which this Relation instance is a component. <br>
      */
     private int[][] _shapeRelations;
+
 
     @Override
     public void update( Tsr<ValType> oldOwner, Tsr<ValType> newOwner )
@@ -220,6 +221,13 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
         return this;
     }
 
+    /**
+     *  This method tries to find the root data ancestor of this tensor.
+     *  If this tensor is not a slice of another tensor, then it can not have data parents
+     *  and therefore also not a root tensor, in which case the method will return null!
+     *
+     * @return The root data parent which actually owns the data of the sliced data or null if the tensor is not a slice.
+     */
     public Tsr<ValType> findRootTensor()
     {
         if ( _parent == null ) return null;

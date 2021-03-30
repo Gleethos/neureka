@@ -66,7 +66,7 @@ public class FunctionConstant extends AbstractBaseFunction
     }
 
 	@Override
-	public double call(double[] inputs) {
+	public double call(double... inputs) {
 		return _value;
 	}
 
@@ -88,7 +88,7 @@ public class FunctionConstant extends AbstractBaseFunction
 	}
 
 	@Override
-	public Tsr call(Tsr[] inputs) {
+	public Tsr call(Tsr... inputs) {
 		return new Tsr(inputs[ 0 ].shape(), this._value);
 	}
 

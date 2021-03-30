@@ -33,13 +33,13 @@ import java.util.List;
 /**
  * This class implements certain methods by simply calling
  * other methods which are responsible for executing
- * the important logic implemented in sub classes.
+ * the important logic implemented in sub classes.    <br><br>
  *
  * The reason for this is simply that otherwise there
  * would be many redundantly implemented methods.
  * The 'call' and 'invoke' methods with the same arguments
  * are supposed to do the same thing, however
- * they are both part of the Function interface in order to
+ * they are both part of the {@link Function} interface in order to
  * allow for overloading the '()' operator in different
  * JVM languages...
  */
@@ -81,7 +81,7 @@ public abstract class AbstractBaseFunction implements Function
     }
 
     @Override
-    public double invoke( double[] inputs ) {
+    public double invoke( double... inputs ) {
         return call( inputs );
     }
 
@@ -98,7 +98,7 @@ public abstract class AbstractBaseFunction implements Function
     }
 
     @Override
-    public <T> Tsr<T> invoke( Tsr<T>[] inputs ) {
+    public <T> Tsr<T> invoke( Tsr<T>... inputs ) {
         return call( inputs );
     }
 

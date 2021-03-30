@@ -8,6 +8,10 @@ class Calculus_Parsing_Unit_Tests extends Specification
     def setupSpec()
     {
         reportHeader """
+            In essence, this specification assures that functions can be created from String expressions.
+            Internally this conversion occurs through a parser, which builds an abstract syntax tree.
+            This parsing procedure is rather complex, having many classes involved in it in order to produce
+            the final Function instance.   
         """
     }
 
@@ -26,7 +30,7 @@ class Calculus_Parsing_Unit_Tests extends Specification
             "softplus(I[3]^(3/i1)/sumJs(Ij^2)-23+I0/i1)"|| "softplus((((I[3] ^ (3.0 / I[1])) / sumJs(I[j] ^ 2.0)) - 23.0) + (I[0] / I[1]))"
             "1+3+5-23+I0*45/(345-651^I3-6)"             || "(1.0 + 3.0 + (5.0 - 23.0) + (I[0] * (45.0 / (345.0 - (651.0 ^ I[3]) - 6.0))))"
             "sin(23*i1)-cos(i0^0.3)+tanh(23)"           || "((sin(23.0 * I[1]) - cos(I[0] ^ 0.3)) + tanh(23.0))"
-            "4 *-2"                                    || "(4.0 * -2.0)"
+            "4 *-2"                                     || "(4.0 * -2.0)"
             "2*3/1-2"                                   || "((2.0 * (3.0 / 1.0)) - 2.0)"
             "3x5xI[4]xI[3]"                             || "(((3.0 x 5.0) x I[4]) x I[3])"
             "[1,0, 5,3, 4]:(tanh(i0xi1))"               || "([1,0,5,3,4]:(tanh(I[0] x I[1])))"
@@ -64,7 +68,7 @@ class Calculus_Parsing_Unit_Tests extends Specification
             "prodjs(I[0],I[1],I[2])"  || "The function/operation 'prodJs' expects 1 parameters, however 3 where given!\nNote: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]' inputs, where 'j' is the index of an iteration."
     }
 
-    def 'Functions can derive themselves according to a provided index.'(
+    def 'Functions can derive themselves according to the provided index of the input which ought to be derived.'(
             String equation, int index, String expected
     ) {
 
@@ -73,10 +77,32 @@ class Calculus_Parsing_Unit_Tests extends Specification
 
         where : 'The following expressions and derivation indices are being used :'
         equation                     | index || expected
-        "(I[0] * I[1] * I[0]) + 3"   | 0     || "((I[1] * I[0]) + (I[0] * I[1]))"
         "1 - I[0] * 3"               | 0     || "-3.0"
+        "i0 / 6"                     | 0     || "(1.0 / 6.0)"
+        "ln( 4 * i0 )"               | 0     || "(4.0 / (4.0 * I[0]))"
+        "4^I[0]"                     | 0     || "(ln(4.0) * (4.0 ^ I[0]))"
+        "i0 ^ 3"                     | 0     || "(3.0 * (I[0] ^ (3.0 - 1.0)))"
+        "(I[0] * I[1] * I[0]) + 3"   | 0     || "((I[1] * I[0]) + (I[0] * I[1]))"
+        "3 ^ (i0 / 2)"               | 0     || "((1.0 / 2.0) * (ln(3.0) * (3.0 ^ (I[0] / 2.0))))"
         "(2 * I[0]) / (1 - I[0] * 3)"| 0     || "((2.0 / (1.0 - (I[0] * 3.0))) - (((2.0 * I[0]) * -3.0) / ((1.0 - (I[0] * 3.0)) ^ 2.0)))"
+        //"(3 * I[0]) ^ (I[0]/6)"      | 0     || ""
+
     }
-
-
+    /*
+    (
+        (
+            (1.0 / 6.0)
+        )
+        *
+        (
+            (
+                3.0 * ( (3.0 * I[0]) ^ ( (I[0] / 6.0) - 1.0 ) )
+            )
+                +
+            (
+                ln(3.0 * I[0]) * ((3.0 * I[0]) ^ (I[0] / 6.0))
+            )
+        )
+    )
+     */
 }

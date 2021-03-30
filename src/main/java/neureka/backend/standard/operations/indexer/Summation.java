@@ -20,7 +20,7 @@ import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
-public class Summation extends AbstractOperation
+public final class Summation extends AbstractOperation
 {
 
     public Summation()

@@ -345,7 +345,6 @@ class Tensor_IO_Unit_Tests extends Specification
             t.has(Device.class)
             t.isOutsourced()
             gpu.has(t)
-
     }
 
 }

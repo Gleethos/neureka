@@ -475,7 +475,8 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
 
         if ( this.usesAD() && function.isFlat() ) {
             /* Preparing for back propagation: */
-            if ( this.usesForwardAD() ) {
+            if ( this.usesForwardAD() )
+            {
                 for ( int i = 0; i < inputs.length; i++ ) {
                     GraphNode<ValType> srcNode = inputs[ i ].find( GraphNode.class );
                     if ( srcNode.usesAD() ) {
@@ -488,19 +489,13 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
                                     srcNode,
                                     call.getADAgentFrom(
                                             function,
-                                            //ExecutionCall.builder()
-                                            //        .device(call.getDevice())
-                                            //        .tensors(call.getTensors())
-                                            //        .derivativeIndex(i)
-                                            //        .j(call.getJ())
-                                            //        .operation(call.getOperation()))
-                                            new ExecutionCall<>(
-                                                    call.getDevice(),
-                                                    call.getTensors(),
-                                                    i,
-                                                    call.getJ(),
-                                                    call.getOperation()
-                                            ),
+                                            ExecutionCall.builder()
+                                                    .device(call.getDevice())
+                                                    .tensors(call.getTensors())
+                                                    .derivativeIndex(i)
+                                                    .j(call.getJ())
+                                                    .operation(call.getOperation())
+                                                    .build(),
                                             true
                                     )
                             );
@@ -518,14 +513,14 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
                                             targetNode,
                                             call.getADAgentFrom(
                                                     function,
-                                                    new ExecutionCall<>(
-                                                            call.getDevice(),
-                                                            call.getTensors(),
-                                                            finalI,
-                                                            call.getJ(),
-                                                            call.getOperation()
-                                                    )
-                                                    .putAt( "derivative",targetDerivative ),
+                                                    ExecutionCall.builder()
+                                                            .device(call.getDevice())
+                                                            .tensors(call.getTensors())
+                                                            .derivativeIndex(finalI)
+                                                            .j(call.getJ())
+                                                            .operation(call.getOperation())
+                                                            .build()
+                                                            .putAt( "derivative",targetDerivative ),
                                                     true
                                             )
                                     );
@@ -544,13 +539,13 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
                                 srcNode,
                                 call.getADAgentFrom(
                                         function,
-                                        new ExecutionCall<>(
-                                                call.getDevice(),
-                                                call.getTensors(),
-                                                i,
-                                                call.getJ(),
-                                                call.getOperation()
-                                        ),
+                                        ExecutionCall.builder()
+                                                .device(call.getDevice())
+                                                .tensors(call.getTensors())
+                                                .derivativeIndex(i)
+                                                .j(call.getJ())
+                                                .operation(call.getOperation())
+                                                .build(),
                                         false
                                 )
                         );

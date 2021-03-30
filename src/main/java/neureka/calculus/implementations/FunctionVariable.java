@@ -55,7 +55,7 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     }
 
     @Override
-    public double call(final double[] inputs) {
+    public double call(final double... inputs) {
         double sum = 0;
         for ( int i = 0; i < inputs.length; i++ ) sum += call(inputs, i);
         return sum;
@@ -79,10 +79,10 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     }
 
     @Override
-    public <T> Tsr<T> call(Tsr<T>[] inputs) {
-        String exp = "I[ 0 ]";
-        for(int i=1; i<inputs.length; i++)exp += "+I["+i+"]";
-        return FunctionBuilder.build(exp, false).call( inputs );
+    public <T> Tsr<T> call(Tsr<T>... inputs) {
+        StringBuilder exp = new StringBuilder("I[ 0 ]");
+        for(int i=1; i<inputs.length; i++) exp.append("+I[").append(i).append("]");
+        return FunctionBuilder.build(exp.toString(), false).call( inputs );
     }
 
     @Override

@@ -700,11 +700,30 @@ public class Power extends AbstractOperation
                 .mapToObj(i -> children[ i ].toString() )
                 .collect(Collectors.joining(" * "))
         );
+        boolean aDerivable = a.dependsOn(d);
+        boolean bDerivable = b.dependsOn(d);
         String aAsStr = a.toString();
         String bAsStr = b.toString();
-        String first = bAsStr + aAsStr + " ^ (" + bAsStr + " - 1)";
-        String second = "ln("+aAsStr+") * "+aAsStr+" ^ "+bAsStr;
-        return "( "+first+" )+("+second+")";
+        String first = "";
+        if (aDerivable) {
+            String aAsDeriv = a.getDerivative(d).toString();
+            if ( !aAsDeriv.equals("0.0") ) {
+                first = ("( "+ bAsStr +" * "+ aAsStr + " ^ (" + bAsStr + " - 1) )");
+                if (!aAsDeriv.equals("1.0")) first = aAsDeriv + " * " + first;
+            }
+        }
+        String bAsDeriv = "";
+        if (bDerivable) bAsDeriv = b.getDerivative(d).toString();
+        if ( !bAsDeriv.isEmpty() && !bAsDeriv.equals("1.0") ) bAsDeriv += " * ";
+        else bAsDeriv = "";
+        String second = "";
+        if ( bDerivable ) second = "(ln("+aAsStr+") * "+aAsStr+" ^ "+bAsStr+")";
+        String result;
+        if ( !first.trim().isEmpty() && !second.trim().isEmpty() ) result = bAsDeriv+"("+first+" + "+second+")";
+        else if (!first.trim().isEmpty()) result = bAsDeriv + "("+first+")";
+        else if (!second.trim().isEmpty()) result = bAsDeriv + "(" +second + ")";
+        else result = bAsDeriv;
+        return result;
     }
 
     @Override

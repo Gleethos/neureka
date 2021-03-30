@@ -14,7 +14,7 @@ import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
-public class Gaussian extends AbstractOperation
+public final class Gaussian extends AbstractOperation
 {
 
     public Gaussian()

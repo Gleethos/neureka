@@ -198,8 +198,8 @@ public interface Function
     double invoke( double[] inputs, int j );
 
 
-    double call( double[] inputs );
-    double invoke( double[] inputs );
+    double call( double... inputs );
+    double invoke( double... inputs );
 
 
     double derive( double[] inputs, int index, int j );
@@ -218,8 +218,8 @@ public interface Function
     <T> Tsr<T> call( Tsr<T>[] inputs, int j );
     <T> Tsr<T> invoke( Tsr<T>[] inputs, int j );
 
-    <T> Tsr<T> call( Tsr<T>[] inputs );
-    <T> Tsr<T> invoke( Tsr<T>[] inputs );
+    <T> Tsr<T> call( Tsr<T>... inputs );
+    <T> Tsr<T> invoke( Tsr<T>... inputs );
 
 
     <T> Tsr<T> derive( Tsr<T>[] inputs, int index, int j );

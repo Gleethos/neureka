@@ -16,7 +16,7 @@ import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
-public class Identity extends AbstractOperation
+public final class Identity extends AbstractOperation
 {
 
     public Identity()

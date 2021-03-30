@@ -7,6 +7,22 @@ import neureka.calculus.Function;
 import neureka.calculus.AbstractBaseFunction;
 import neureka.calculus.assembly.FunctionBuilder;
 
+/**
+ *  Instances of this implementation of the {@link Function} interface
+ *  are leave nodes within the abstract syntax tree of a function, representing inputs to a function.
+ *  When parsing an expression to a function then these inputs are recognized by the character 'i'
+ *  followed by a whole number starting at zero, which is the index of the argument within the list/array
+ *  of arguments passed to a concrete {@link Function} instance. <br>
+ *  So for example, when creating a function by calling the following factory method...     <br>
+ *                                                                                          <br>
+ *  {@link Function#create}( "I[1] + (4 * I[0]) / 2" )                                      <br>
+ *                                                                                          <br>
+ *  ...then the substrings "I[1]" and "I[0]" will be parsed into instances of this class!   <br>
+ *  When calling this function by passing two arguments, let's say (first, second) then
+ *  the {@link FunctionInput} "I[0]" will pick the first argument, whereas "I[1]"
+ *  will pick the second argument when evaluating the array of arguments.
+ *
+ */
 public class FunctionInput extends AbstractBaseFunction implements GradientProvider
 {
     private int _index;
@@ -95,7 +111,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
     }
 
     @Override
-    public double call(final double[] inputs) {
+    public double call(final double... inputs) {
         return inputs[(_index>=0)?_index:(Math.abs(_index)-1)];
     }
 
@@ -117,7 +133,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
     }
 
     @Override
-    public Tsr call(Tsr[] inputs) {
+    public Tsr call(Tsr... inputs) {
         return _extract(inputs[index()]);
     }
 

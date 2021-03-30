@@ -2,7 +2,7 @@
 
 # Code Conventions #
 
-The code of this project deviates just slightly from official or common coding conventions
+The code of this project deviates slightly from official or common coding conventions
 as one would recognize them in typical Java code.
 These deviations boil down to just 3 simple rules which were chosen purposefully and are 
 in no way to be mistaken with arbitrariness, or a lack of thought.

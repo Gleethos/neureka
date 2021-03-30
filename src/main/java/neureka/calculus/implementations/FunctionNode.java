@@ -108,13 +108,13 @@ public class FunctionNode extends AbstractBaseFunction
      */
     protected Tsr _tensor_activation( Tsr[] inputs, int j, int d )
     {
-        ExecutionCall<Device> call = new ExecutionCall<>(
-                _deviceFor( inputs ),
-                inputs,
-                d,
-                j,
-                _operation
-        );
+        ExecutionCall<Device> call = ExecutionCall.builder()
+                                            .device(_deviceFor( inputs ))
+                                            .tensors( inputs )
+                                            .derivativeIndex( d )
+                                            .j( j )
+                                            .operation( _operation )
+                                            .build();
         ExecutionCall<Device> finalCall;
         Device possiblyNewDevice = call.getAlgorithm().findDeviceFor( call );
         if ( possiblyNewDevice != null ) finalCall = call.withDevice( possiblyNewDevice );
@@ -351,10 +351,10 @@ public class FunctionNode extends AbstractBaseFunction
         return tensors;
     }
 
-    private Device _deviceFor( Tsr<Object>[] inputs )
+    private Device<?> _deviceFor( Tsr<Object>[] inputs )
     {
         if ( inputs.length == 0 ) return HostCPU.instance();
-        Device device = inputs[ 0 ].find( Device.class );
+        Device<?> device = inputs[ 0 ].find( Device.class );
         boolean onSameDevice = _shareGuestDevice( inputs );
         boolean doAccel = !_operation.getOperator().equals(",") && onSameDevice;
         return ( doAccel && device != null ) ? device : inputs[ 0 ].getDevice();
@@ -363,11 +363,11 @@ public class FunctionNode extends AbstractBaseFunction
     private static boolean _shareGuestDevice( Tsr[] tensors )
     {
         boolean onSameGuestDevice = true;
-        Device device = null;
-        for ( Tsr<Object> tsr : tensors ) device = ( tsr.isOutsourced() ) ? tsr.find( Device.class ) : device;
+        Device<?> device = null;
+        for ( Tsr<?> tensor : tensors ) device = ( tensor.isOutsourced() ) ? tensor.find( Device.class ) : device;
 
         if ( device != null ) {
-            for ( Tsr tsr : tensors ) {
+            for ( Tsr<?> tsr : tensors ) {
                 onSameGuestDevice = ( !tsr.isVirtual() && device == tsr.find(Device.class) ) && onSameGuestDevice;
             }
         }
@@ -385,7 +385,7 @@ public class FunctionNode extends AbstractBaseFunction
     }
 
     @Override
-    public Tsr call( Tsr[] inputs ) {
+    public Tsr call( Tsr... inputs ) {
         return CACHE.preprocess( inputs, this, ()-> _tensor_activation( inputs, -1, -1 ), -1, -1 );
     }
 
@@ -407,7 +407,7 @@ public class FunctionNode extends AbstractBaseFunction
     }
 
     @Override
-    public double call( final double[] inputs ) {
+    public double call( final double... inputs ) {
         return this.getOperation().calculate( inputs, -1, -1, _src );
     }
 

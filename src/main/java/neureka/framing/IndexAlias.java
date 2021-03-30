@@ -35,10 +35,8 @@ public final class IndexAlias<ValType> implements Component<Tsr<ValType>>
 {
     private final List<Object> _hiddenKeys = new ArrayList<>();
 
-    @Getter
-    private final Map<Object, Object> _mapping;
-    @Getter
-    private final String _tensorName;
+    @Getter private final Map<Object, Object> _mapping;
+    @Getter private final String _tensorName;
 
     public IndexAlias( List<List<Object>> labels, String tensorName ) {
         _tensorName = tensorName;
@@ -85,7 +83,7 @@ public final class IndexAlias<ValType> implements Component<Tsr<ValType>>
     }
 
     public int[] get( Object[] keys ) {//Todo: iterate over _mapping
-        int[] indices = new int[ keys.length ];//_mapping.length];
+        int[] indices = new int[ keys.length ];
         for( int i = 0; i < indices.length; i++ ) {
             Object am =  _mapping.get( i );
             if ( am instanceof Map ) {
@@ -150,9 +148,9 @@ public final class IndexAlias<ValType> implements Component<Tsr<ValType>>
     /**
      *  This method simply pads the provided string based on the size passed to it.
      *
-     * @param string
-     * @param cellSize
-     * @return
+     * @param string The {@link String} which ought to be padded by white spaces.
+     * @param cellSize The length of the padded {@link String} which will be returned.
+     * @return The padded {@link String}.
      */
     private String _paddedCentered( String string, int cellSize ) {
         if ( string.length() < cellSize ) {

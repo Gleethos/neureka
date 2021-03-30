@@ -14,7 +14,7 @@ import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
 
-public class Softplus extends AbstractOperation
+public final class Softplus extends AbstractOperation
 {
 
     private final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =

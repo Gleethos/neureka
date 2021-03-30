@@ -78,7 +78,8 @@ class Calculus_Integration_Tests extends Specification
             "abs(I[0])"                      | [new Tsr([2, 3], [-4, 7, -1, 2, 3, 8])]                           |  0    || [[2,3]:[-1.0, 1.0, -1.0, 1.0, 1.0, 1.0]]
             "dimtrim(I[0])"                  | [new Tsr([1, 3, 1], [1, 2, 3])]                                   | null  || [[3]:[1, 2, 3]]
             "dimtrim(I[0])"                  | [new Tsr([1, 3, 1, 1], [-4, 2, 5])]                               | null  || [[3]:[-4, 2, 5]]
-
+            "ln(i0)"                         | [new Tsr(3)]                                                      | null  || [[1]:[Math.log(3)]]
+            "ln(i0)"                         | [new Tsr(3)]                                                      |  0    || [[1]:[0.3333333333333333]]
     }
 
 

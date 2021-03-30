@@ -13,7 +13,7 @@ import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
-public class Sigmoid extends AbstractOperation
+public final class Sigmoid extends AbstractOperation
 {
 
     private DefaultOperatorCreator<TertiaryNDIConsumer> _creator =

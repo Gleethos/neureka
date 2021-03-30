@@ -14,7 +14,7 @@ import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
-public class Sinus extends AbstractOperation
+public final class Sinus extends AbstractOperation
 {
 
     private DefaultOperatorCreator<TertiaryNDIConsumer> _creator =

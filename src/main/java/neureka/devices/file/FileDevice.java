@@ -43,12 +43,9 @@ public class FileDevice extends AbstractBaseDevice<Number>
 
     private Map<Tsr<Number>, FileHead> _stored = new HashMap<>();
 
-    @Getter
-    private String _directory;
-    @Getter
-    private final List<String> _loadable = new ArrayList<>();
-    @Getter
-    private final List<String> _loaded = new ArrayList<>();
+    @Getter private String _directory;
+    @Getter private final List<String> _loadable = new ArrayList<>();
+    @Getter private final List<String> _loaded = new ArrayList<>();
 
     public static FileDevice instance( String path ) {
         FileDevice device = _DEVICES.get( path );
@@ -60,18 +57,28 @@ public class FileDevice extends AbstractBaseDevice<Number>
 
     private FileDevice( String directory ) {
         _directory = directory;
-        File dir = new File( directory );
+        _updateFolderView();
+    }
+
+    /**
+     *  The underlying folder might change, files might be added or removed.
+     *  In order to have an up-to-date view of the folder this method updates the current view state.
+     */
+    private void _updateFolderView() {
+        File dir = new File( _directory );
         if ( ! dir.exists() ) dir.mkdirs();
         else {
+            List<String> found = new ArrayList<>();
             File[] files = dir.listFiles();
             if ( files != null ) {
                 for ( File file : files ) {
                     int i = file.getName().lastIndexOf( '.' );
                     if ( i > 0 ) {
                         String extension = file.getName().substring( i + 1 );
-                        if ( FileHead.FACTORY.hasLoader( extension ) ) _loadable.add( file.getName() );
+                        if ( FileHead.FACTORY.hasLoader( extension ) ) found.add( file.getName() );
                     }
                 }
+                _loadable.addAll( found ); // TODO!
             }
         }
     }

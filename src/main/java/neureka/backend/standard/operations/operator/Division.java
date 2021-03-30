@@ -676,17 +676,21 @@ public class Division extends AbstractOperation
         if ( d >= 0 ) {
             if ( index <= 0 ) return children[ 0 ].getDerivative( d ).toString();
             else {
-                String first = ( children[ index - 1 ].dependsOn( d ) )
-                        ? "(" + _asDerivative( children, d, index - 1 )+ " / " + children[ index ]  + " ) - "
-                        : "- ";
 
-                String s = first +
-                        "((" + // The second expression is the inner derivative (current index)! (inner times outer...)
-                            children[ index - 1 ] + " * " + children[ index ].getDerivative(d) +
+                String first = ( children[ index - 1 ].dependsOn( d ) )
+                        ? "(" + _asDerivative( children, d, index - 1 )+ " / " + children[ index ]  + " )"
+                        : "";
+
+                if ( !children[ index ].dependsOn(d) ) return first;
+                String s = children[ index - 1 ].toString();
+                if ( s.equals("0.0") ) return first;
+
+                return first +
+                        " - ((" + // The second expression is the inner derivative (current index)! (inner times outer...)
+                            s + " * " + children[ index ].getDerivative(d) +
                         ") / ( "
                             + children[ index ] + "^2 " +
                         ") )";
-                return s;
             }
         } else {
             if ( index <= 0 ) return children[ 0 ].toString();

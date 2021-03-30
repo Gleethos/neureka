@@ -13,7 +13,7 @@ import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
-public class Quadratic extends AbstractOperation
+public final class Quadratic extends AbstractOperation
 {
 
     private DefaultOperatorCreator<TertiaryNDIConsumer> _creatorNDI =

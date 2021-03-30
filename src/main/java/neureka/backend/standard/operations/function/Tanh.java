@@ -13,7 +13,7 @@ import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
-public class Tanh extends AbstractOperation
+public final class Tanh extends AbstractOperation
 {
 
     private DefaultOperatorCreator<TertiaryNDIConsumer> _creator =

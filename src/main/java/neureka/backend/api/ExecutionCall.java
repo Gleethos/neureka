@@ -152,20 +152,6 @@ public class ExecutionCall<DeviceType extends Device>
         _context = context;
     }
 
-    public ExecutionCall(
-            DeviceType device,
-            Tsr<?>[] tensors,
-            int d,
-            int j,
-            Operation type
-    ) {
-        _device = device;
-        _tensors = tensors;
-        _derivativeIndex = d;
-        _j = j;
-        _operation = type;
-        _algorithm = null;
-    }
 
     public <T extends Device<?>> ExecutionCall<T> forDeviceType(Class<T> type) {
         assert _device.getClass() == type;
