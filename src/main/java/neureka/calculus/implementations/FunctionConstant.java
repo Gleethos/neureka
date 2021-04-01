@@ -5,6 +5,18 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.calculus.Function;
 import neureka.calculus.AbstractBaseFunction;
 
+/**
+ *  Instances of this implementation of the {@link Function} interface
+ *  are leave nodes within the abstract syntax tree of a function, representing constant numeric values to a function.
+ *  When parsing an expression into a function then these constants are recognized by a series of digit characters
+ *  optionally separated by '.' to represent decimal digits. <br>
+ *  So for example, when creating a function by calling the following factory method...     	<br>
+ *                                                                                          	<br>
+ *  {@link Function#create}( "I[1] + (4 * I[0]) / 2.1" )                                      	<br>
+ *                                                                                          	<br>
+ *  ...then the substrings "4" and "2.1" will be parsed into instances of this class!   		<br>
+ *
+ */
 public class FunctionConstant extends AbstractBaseFunction
 {
 	private double _value;
@@ -30,7 +42,7 @@ public class FunctionConstant extends AbstractBaseFunction
 	}
 
 	@Override
-	public boolean dependsOn(int index) {
+	public boolean dependsOn( int index ) {
 		return false;
 	}
 
@@ -40,66 +52,66 @@ public class FunctionConstant extends AbstractBaseFunction
 	}
 
 	@Override
-	public Function newBuild(String expression)
+	public Function newBuild( String expression )
 	{	
-		String number = "";
-		for(int i=0; i<expression.length(); i++) 
+		StringBuilder number = new StringBuilder();
+		for ( int i = 0; i < expression.length(); i++ )
 		{
-			if (expression.charAt( i )>='0'
-			|| expression.charAt( i )<='9'
-			|| expression.charAt( i )=='.'
-			|| expression.charAt( i )=='-'
-			|| expression.charAt( i )=='+')
-			{
-				number += expression.charAt( i );
+			if (
+					Character.isDigit(expression.charAt( i ))
+					|| expression.charAt( i ) == '.'
+					|| expression.charAt( i ) == '-'
+					|| expression.charAt( i ) == '+'
+			) {
+				number.append( expression.charAt( i ) );
 			}
 		}
-		_value = Double.parseDouble(number);
+		_value = Double.parseDouble( number.toString() );
 		return this;
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-    public double call(final double[] inputs, int j) {
+    public double call( final double[] inputs, int j ) {
     	return _value;
     }
 
 	@Override
-	public double call(double... inputs) {
+	public double call( double... inputs ) {
 		return _value;
 	}
 
 	@Override
-	public double derive(double[] inputs, int index) {
+	public double derive( double[] inputs, int index ) {
 		return 0;
 	}
 
 	@Override
-	public double derive(double[] inputs, int index, int j) {
+	public double derive( double[] inputs, int index, int j ) {
 		return 0;
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public Tsr call(Tsr[] inputs, int j) {
-		return new Tsr(inputs[ 0 ].shape(), this._value);
+	public Tsr call( Tsr[] inputs, int j ) {
+		return new Tsr( inputs[ 0 ].shape(), this._value );
 	}
 
 	@Override
-	public Tsr call(Tsr... inputs) {
-		return new Tsr(inputs[ 0 ].shape(), this._value);
+	public Tsr call( Tsr... inputs ) {
+		return new Tsr( inputs[ 0 ].shape(), this._value );
 	}
 
 	@Override
-	public Tsr derive(Tsr[] inputs, int index, int j) {
-		return new Tsr(inputs[ 0 ].shape(), 0.0);
+	public Tsr derive( Tsr[] inputs, int index, int j ) {
+		return new Tsr( inputs[ 0 ].shape(), 0.0 );
 	}
 
 	@Override
-	public Tsr derive(Tsr[] inputs, int index) {
-		return new Tsr(inputs[ 0 ].shape(), 0.0);
+	public Tsr derive( Tsr[] inputs, int index ) {
+		return new Tsr( inputs[ 0 ].shape(), 0.0 );
 	}
 
 	//------------------------------------------------------------------------------------------------------------------

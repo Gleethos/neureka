@@ -8,10 +8,24 @@ import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 
 import java.util.*;
 
+/**
+ *  The following is an abstract implementation of the {@link NDConfiguration} which offers a basis for
+ *  instantiation and caching of concrete implementations extending this abstract class.
+ *  Concrete {@link NDConfiguration} implementations are expected to be immutable which ensures that sharing them is safe.
+ *  In order to cash instances based in their field variables, this class comes with a common
+ *  implementation of the {@link NDConfiguration#keyCode()} method.
+ *  {@link NDConfiguration} implementation instances will be used by tensors which often times
+ *  share the same shape, and way of mapping indices to their respective data.
+ *  In these cases tensors can simply share their {@link NDConfiguration} instances for memory efficiency.
+ */
 public abstract class AbstractNDC implements NDConfiguration
 {
     /**
-     *  Cached configuration
+     *  Instances implementing the {@link NDConfiguration} interface will be cached in the hashmap below.
+     *  In production we can expect a multitude of tensors having the same shape and also the same way of viewing their data.
+     *  Therefore they will have configuration instances with the same state.
+     *  Implementations of {@link NDConfiguration} are expected to be immutable which allows us to have them be
+     *  shared between tensors (because they are read only, meaning no side-effects).
      */
     private static final Map<Long, NDConfiguration> _CACHED_NDCS;
     static
@@ -20,15 +34,24 @@ public abstract class AbstractNDC implements NDConfiguration
     }
 
     /**
-     *  Cached configuration
+     *  The following is a global cache for readonly integer arrays.
+     *  Warning! This can of course become dangerous when these arrays are being shared and modified.
+     *  Please copy them when exposing them to the user.
      */
     private static final Map<Long, int[]> _CACHED_INT_ARRAYS;
-
     static
     {
         _CACHED_INT_ARRAYS = Collections.synchronizedMap( new WeakHashMap<>() ) ;
     }
 
+    /**
+     *  This method receives an int array and returns an int array which
+     *  can either be the one provided or an array found in the global int array cache residing inside
+     *  this class.
+     *
+     * @param data The integer array which ought to be cached.
+     * @return The provided array or an already present array found in the int array cache.
+     */
     protected static int[] _cacheArray( int[] data )
     {
         long key = 0;
@@ -81,10 +104,10 @@ public abstract class AbstractNDC implements NDConfiguration
     public long keyCode()
     {
         return Arrays.hashCode( shape() ) +
-               Arrays.hashCode( translation() ) * 2 +
-               Arrays.hashCode( indicesMap() ) * 3 +
-               Arrays.hashCode( spread() ) * 4 +
-               Arrays.hashCode( offset() ) * 5;
+               Arrays.hashCode( translation() ) * 2L +
+               Arrays.hashCode( indicesMap() ) * 3L +
+               Arrays.hashCode( spread() ) * 4L +
+               Arrays.hashCode( offset() ) * 5L;
     }
 
     @Override
@@ -129,7 +152,7 @@ public abstract class AbstractNDC implements NDConfiguration
             } else ndc = SimpleDefaultNDConfiguration.construct(shape, translation);
         } else {
             if ( shape.length == 1 ) {
-                if (shape[ 0 ]==1) ndc = ComplexScalarConfiguration.construct(shape, offset);
+                if ( shape[ 0 ] == 1 ) ndc = ComplexScalarConfiguration.construct(shape, offset);
                 else ndc = ComplexD1Configuration.construct(shape, translation, indicesMap, spread, offset);
             } else if ( shape.length == 2 ) {
                 ndc = ComplexD2Configuration.construct(shape, translation, indicesMap, spread, offset);
@@ -140,17 +163,14 @@ public abstract class AbstractNDC implements NDConfiguration
         return ndc;
     }
 
-    protected static <T extends NDConfiguration> NDConfiguration _cached(T ndc)
+    protected static <T extends NDConfiguration> NDConfiguration _cached( T ndc )
     {
         assert !( ndc instanceof VirtualNDConfiguration );
         long key = ndc.keyCode();
-        NDConfiguration found = _CACHED_NDCS.get(key);
-        if (
-                found != null && ndc.equals(found)
-        ) {
-            return found;
-        } else {
-            _CACHED_NDCS.put(key, ndc);
+        NDConfiguration found = _CACHED_NDCS.get( key );
+        if ( found != null && ndc.equals(found) ) return found;
+        else {
+            _CACHED_NDCS.put( key, ndc );
             return ndc;
         }
     }
@@ -162,13 +182,13 @@ public abstract class AbstractNDC implements NDConfiguration
             int[] spread,
             int[] offset
     ) {
-        int[] newTranslation = Utility.newTlnOf(shape);
+        int[] newTranslation = Utility.newTlnOf( shape );
         int[] newSpread = new int[ shape.length ];
         Arrays.fill( newSpread, 1 );
-        return  Arrays.equals(translation, newTranslation) &&
-                Arrays.equals(indicesMap, newTranslation) &&
-                Arrays.equals(offset, new int[ shape.length ]) &&
-                Arrays.equals(spread, newSpread);
+        return  Arrays.equals( translation, newTranslation ) &&
+                Arrays.equals( indicesMap, newTranslation ) &&
+                Arrays.equals( offset, new int[ shape.length ] ) &&
+                Arrays.equals( spread, newSpread );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -184,10 +204,11 @@ public abstract class AbstractNDC implements NDConfiguration
                 "}";
     }
 
-    protected static NDConfiguration _simpleReshape( int[] newForm, NDConfiguration ndc ) {
-        int[] newShape = Utility.rearrange(ndc.shape(), newForm);
-        int[] newTranslation = Utility.rearrange(ndc.translation(), newShape, newForm);
-        int[] newIdxmap = Utility.newTlnOf(newShape);
+    protected static NDConfiguration _simpleReshape( int[] newForm, NDConfiguration ndc )
+    {
+        int[] newShape = Utility.rearrange( ndc.shape(), newForm );
+        int[] newTranslation = Utility.rearrange( ndc.translation(), newShape, newForm );
+        int[] newIdxmap = Utility.newTlnOf( newShape );
         int[] newSpread = new int[ newForm.length ];
         for ( int i = 0; i < newForm.length; i++ ) {
             if ( newForm[ i ] < 0 ) newSpread[ i ] = 1;
@@ -205,7 +226,7 @@ public abstract class AbstractNDC implements NDConfiguration
     public NDConfiguration newReshaped( int[] newForm )
     {
         //TODO : shape check!
-        if ( this._isSimpleConfiguration( shape(), translation(), indicesMap(), spread(), offset() ) ) {
+        if ( _isSimpleConfiguration( shape(), translation(), indicesMap(), spread(), offset() ) ) {
             return _simpleReshape( newForm, this );
         } else {
             return new SimpleReshapeView( newForm, this );

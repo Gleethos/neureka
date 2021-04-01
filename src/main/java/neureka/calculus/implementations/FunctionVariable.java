@@ -6,6 +6,19 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.calculus.AbstractBaseFunction;
 import neureka.calculus.assembly.FunctionBuilder;
 
+/**
+ *  Instances of this implementation of the {@link Function} interface
+ *  are leave nodes within the abstract syntax tree of a function, representing indexed inputs to a function.
+ *  When parsing an expression into a function then these inputs are recognized by the character 'i' or 'I',
+ *  followed by the character 'j' or 'J' (optinally wrapped by '[' & ']'), which is a placeholder for the index
+ *  of the argument within the list/array of arguments passed to a concrete {@link Function} instance. <br>
+ *  So for example, when creating a function by calling the following factory method...     <br>
+ *                                                                                          <br>
+ *  {@link Function#create}( "3 * sum( (I[j] + 4) * I[0] )" )                               <br>
+ *                                                                                          <br>
+ *  ...then the substrings "I[j]" will be parsed into instances of this class!              <br>
+ *  The substring "I[0]" on the other hand will not be parsed into an instance of this class!
+ */
 public class FunctionVariable extends AbstractBaseFunction implements GradientProvider {
 
     private boolean _providesGradient = false;
@@ -55,14 +68,14 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     }
 
     @Override
-    public double call(final double... inputs) {
+    public double call( final double... inputs ) {
         double sum = 0;
         for ( int i = 0; i < inputs.length; i++ ) sum += call(inputs, i);
         return sum;
     }
 
     @Override
-    public double derive(final double[] inputs, final int index) {
+    public double derive( final double[] inputs, final int index ) {
         return 1.0;
     }
 
@@ -74,32 +87,32 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public <T> Tsr<T> call(Tsr<T>[] inputs, int j) {
+    public <T> Tsr<T> call( Tsr<T>[] inputs, int j ) {
         return inputs[j];
     }
 
     @Override
-    public <T> Tsr<T> call(Tsr<T>... inputs) {
+    public <T> Tsr<T> call( Tsr<T>... inputs ) {
         StringBuilder exp = new StringBuilder("I[ 0 ]");
         for(int i=1; i<inputs.length; i++) exp.append("+I[").append(i).append("]");
         return FunctionBuilder.build(exp.toString(), false).call( inputs );
     }
 
     @Override
-    public <T> Tsr<T> derive(Tsr<T>[] inputs, int index, int j) {
-        return (j != index) ? new Tsr<T>(inputs[ 0 ].shape(), 0.0) : derive(inputs, index);
+    public <T> Tsr<T> derive( Tsr<T>[] inputs, int index, int j ) {
+        return (j != index) ? new Tsr<T>( inputs[ 0 ].shape(), 0.0 ) : derive( inputs, index );
     }
 
     @Override
-    public <T> Tsr<T> derive(Tsr<T>[] inputs, int index) {
-        return new Tsr<T>(inputs[ 0 ].shape(), 1.0);
+    public <T> Tsr<T> derive( Tsr<T>[] inputs, int index ) {
+        return new Tsr<T>( inputs[ 0 ].shape(), 1.0 );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
     public String toString() {
-        return "I"+((this.providesGradient())?"g":"")+"[j]";
+        return "I" + ( (this.providesGradient()) ? "g" : "" ) + "[j]";
     }
 
 
