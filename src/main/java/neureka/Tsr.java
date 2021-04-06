@@ -2072,14 +2072,17 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     public Tsr<ValType> getAt( Map<?,Integer> rangToStrides )
     {
         if ( rangToStrides == null ) return this;
-        int[] newOffset = new int[ this.rank() ]; // ...not a simple slice... Advanced:
-        int[] newSpread = new int[ this.rank() ];
-        int[] newShape = new int[ this.rank() ];
-        RangeInterpreter interpreter = new RangeInterpreter(new Object[]{rangToStrides});
-        Object[] ranges = interpreter.getRanges();
-        newSpread = interpreter.getSteps();
-        _rangeConverter(  ranges, newOffset, newSpread, newShape );
-        return _sliceOf( newShape, newOffset, newSpread );
+        //int[] newOffset = new int[ this.rank() ]; // ...not a simple slice... Advanced:
+        //int[] newSpread = new int[ this.rank() ];
+        //int[] newShape = new int[ this.rank() ];
+        RangeInterpreter interpreter = new RangeInterpreter(this, new Object[]{rangToStrides});
+        //Object[] ranges = interpreter.getRanges();
+        //newSpread = interpreter.getSteps();
+        //_rangeConverter(  ranges, newOffset, newSpread, newShape );
+        return _sliceOf(
+                interpreter.getNewShape(), interpreter.getOffset(), interpreter.getSteps()
+        );
+                //_sliceOf( newShape, newOffset, newSpread );
     }
 
     public Tsr<ValType> shallowCopy()
@@ -2123,33 +2126,25 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         if ( key instanceof Object[] ) {
             boolean allInt = true;
             for ( Object o : (Object[]) key ) allInt = allInt && o instanceof Integer;
-            if ( allInt && ((Object[]) key).length == rank() ) {
+            if ( allInt && ( (Object[]) key ).length == rank() ) {
                 newOffset = _intArray((Object[]) key);
                 if ( newOffset != null ) {
                     for ( int i = 0; i < this.rank(); i++ )
-                        newOffset[i] = ( newOffset[i] < 0 ) ? getNDConf().shape( i ) + newOffset[ i ] : newOffset[ i ];
+                        newOffset[ i ] = ( newOffset[ i ] < 0 ) ? getNDConf().shape( i ) + newOffset[ i ] : newOffset[ i ];
                     for ( int i = 0; i < this.rank(); i++ )
-                        ((Object[])key)[i] = newOffset[i];
+                        ((Object[])key)[ i ] = newOffset[ i ];
                     allInt = false;
                 }
             }
             boolean hasScale = false;
             for ( Object o : (Object[]) key ) hasScale = hasScale || o instanceof Map;
-            RangeInterpreter interpreter = new RangeInterpreter(( allInt ) ? new Object[]{ _intArray( (Object[]) key ) } : (Object[]) key);
-            newSpread = interpreter.getSteps();
-
-            _rangeConverter(
-                    interpreter.getRanges()
-                    newOffset,
-                    newSpread,
-                    newShape
-            );
+            RangeInterpreter interpreter = new RangeInterpreter( this, ( allInt ) ? new Object[]{ _intArray( (Object[]) key ) } : (Object[]) key);
+            return _sliceOf( interpreter.getNewShape(), interpreter.getOffset(), interpreter.getSteps() );
         } else {
             String message = "Cannot create tensor slice from key of type '" + key.getClass().getName() + "'!";
             _LOG.error( message );
             throw new IllegalArgumentException( message );
         }
-        return _sliceOf( newShape, newOffset, newSpread );
     }
 
     private Tsr<ValType> _sliceOf( int[] newShape, int[] newOffset, int[] newSpread )
@@ -2230,84 +2225,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         return subset;
     }
 
-    /**
-     * @param ranges Elements of this array are either one of:
-     *               <ul style="margin-left: 60px;">
-     *                  <li> A list of integers, where the first element is the start and the last one is the end of the range.
-     *                  <li> A list of arbitrary objects which might serve as index aliases.
-     *              </ul>
-     *
-     * @param newShape New shape of the new sub-tensor.
-     */
-    private void _rangeConverter(
-            Object[] ranges,
-            int[] offset,
-            int[] spread,
-            int[] newShape
-    ) {
-        for ( int i = 0; i < ranges.length; i++ ) {
-            int first = 0;
-            int last = 0;
-            if ( !( ranges[ i ] instanceof  List ) ) {
-                if ( ranges[ i ] instanceof Integer ) {
-                    first = (Integer) ranges[ i ];
-                    last = (Integer) ranges[ i ];
-                } else {
-                    IndexAlias<?> indexAlias = find( IndexAlias.class );
-                    if ( indexAlias != null ) {
-                        int position = indexAlias.get( ranges[ i ], i );
-                        first = position;
-                        last = position;
-                    } else {
-                        String message = "Given "+IndexAlias.class.getSimpleName()+" key at axis " + ( i ) + " not found!";
-                        _LOG.error( message );
-                        throw new IllegalStateException( message );
-                    }
-                }
-            } else {
-                ranges[ i ] = ( (List<?>) ranges[ i ] ).toArray();
-                ranges[ i ] = ( ( (Object[]) ranges[ i ] )[ 0 ] instanceof List )
-                        ? ( (List<?>) ( (Object[]) ranges[ i ] )[ 0 ] ).toArray()
-                        : ( (Object[]) ranges[ i ] );
-                if (
-                        !( ( (Object[]) ( ranges[ i ] ) )[ 0 ] instanceof Integer )
-                                || !( ( (Object[]) ranges[ i ] )[ ( (Object[]) ( ranges[ i ] ) ).length - 1 ] instanceof Integer )
-                ) {
-                    IndexAlias<?> indexAlias = find( IndexAlias.class );
-                    if ( !( ( (Object[]) (ranges[ i ]) )[ 0 ] instanceof Integer ) ) {
-                        if ( indexAlias != null ) {
-                            first = indexAlias.get( ( (Object[]) ranges[ i ])[ 0 ], i );
-                        }
-                    }
-                    else first = (Integer) ( (Object[]) ranges[ i ] )[ 0 ];
 
-                    if ( !( ( (Object[]) ranges[ i ] )[ ( (Object[]) ranges[ i ] ).length - 1 ] instanceof Integer )  ) {
-                        if ( indexAlias != null ) {
-                            last = indexAlias.get(
-                                    ( (Object[]) ranges[ i ] )[ ( (Object[]) ranges[ i ] ).length - 1 ],
-                                    i
-                            );
-                        }
-                    }
-                    else last = (Integer) ( (Object[]) ranges[ i ] )[ ( (Object[]) ranges[ i ] ).length - 1 ];
-
-                } else {
-                    first = (Integer)( (Object[]) ranges[ i ] )[ 0 ];
-                    last = (Integer) ( (Object[]) ranges[ i ] )[ ( (Object[]) ranges[ i ] ).length - 1 ];
-                }
-            }
-            if ( first < 0 && last < 0 && first > last ) {
-                int temp = first;
-                first = last;
-                last = temp;
-            }
-            first = ( first < 0 ) ? getNDConf().shape( i ) + first : first;
-            last = ( last < 0 ) ? getNDConf().shape( i ) + last : last;
-            newShape[ i ] = ( last - first ) + 1;
-            offset[ i ] = first;
-            newShape[ i ] /= spread[ i ];
-        }
-    }
 
 
     /*
