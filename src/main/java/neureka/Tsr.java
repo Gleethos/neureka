@@ -106,6 +106,7 @@ import neureka.ndim.iterators.NDIterator;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 import neureka.optimization.Optimizer;
 import neureka.utility.DataConverter;
+import neureka.utility.RangeInterpreter;
 import neureka.utility.TsrAsString;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
@@ -2068,19 +2069,16 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         return getAt( Arrays.asList( getNDConf().indicesOfIndex(( i ).intValue()) ).toArray() );
     }
 
-    public Object getAt( Map<?,?> rangToStrides )
+    public Tsr<ValType> getAt( Map<?,Integer> rangToStrides )
     {
         if ( rangToStrides == null ) return this;
         int[] newOffset = new int[ this.rank() ]; // ...not a simple slice... Advanced:
         int[] newSpread = new int[ this.rank() ];
         int[] newShape = new int[ this.rank() ];
-        Object[] ranges = rangToStrides.keySet().toArray();
-        _configureSubsetFromRanges( ranges, newOffset, newSpread, newShape, 0 );
-        Object[] steps = rangToStrides.values().toArray();
-        for ( int i = 0; i < this.rank(); i++ ) {
-            newSpread[ i ] = (Integer) steps[ i ];
-            newShape[ i ] /= (Integer) steps[ i ];
-        }
+        RangeInterpreter interpreter = new RangeInterpreter(new Object[]{rangToStrides});
+        Object[] ranges = interpreter.getRanges();
+        newSpread = interpreter.getSteps();
+        _rangeConverter(  ranges, newOffset, newSpread, newShape );
         return _sliceOf( newShape, newOffset, newSpread );
     }
 
@@ -2137,13 +2135,15 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
             }
             boolean hasScale = false;
             for ( Object o : (Object[]) key ) hasScale = hasScale || o instanceof Map;
-            if ( allInt ) _configureSubsetFromRanges(
-                    new Object[]{ _intArray( (Object[]) key ) },
-                    newOffset, newSpread,
-                    newShape,
-                    0
+            RangeInterpreter interpreter = new RangeInterpreter(( allInt ) ? new Object[]{ _intArray( (Object[]) key ) } : (Object[]) key);
+            newSpread = interpreter.getSteps();
+
+            _rangeConverter(
+                    interpreter.getRanges()
+                    newOffset,
+                    newSpread,
+                    newShape
             );
-            else _configureSubsetFromRanges( (Object[]) key, newOffset, newSpread, newShape, 0 );
         } else {
             String message = "Cannot create tensor slice from key of type '" + key.getClass().getName() + "'!";
             _LOG.error( message );
@@ -2230,61 +2230,36 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         return subset;
     }
 
-
     /**
-     *
      * @param ranges Elements of this array are either one of:
      *               <ul style="margin-left: 60px;">
-     *                  <li> A map whose first entry represents a mapping between range and steps.
-     *                  <li> A list from which a first and last entry will be interpreted as range.
-     *                  <li> Any other object which might bew found in a 'IndexAlias' component.
+     *                  <li> A list of integers, where the first element is the start and the last one is the end of the range.
+     *                  <li> A list of arbitrary objects which might serve as index aliases.
      *              </ul>
      *
-     * @param offset Start index for every rank.
      * @param newShape New shape of the new sub-tensor.
-     * @param dimIndex Dimension index/offset, incremented according to recursive calls.
-     * @return A new rank index.
      */
-    private int _configureSubsetFromRanges(
+    private void _rangeConverter(
             Object[] ranges,
-            int[] offset,  int[] spread,
-            int[] newShape,
-            int dimIndex
+            int[] offset,
+            int[] spread,
+            int[] newShape
     ) {
         for ( int i = 0; i < ranges.length; i++ ) {
             int first = 0;
             int last = 0;
-            if ( ranges[ i ] instanceof int[] ) {
-                List<Integer> intList = new ArrayList<>( ( (int[]) ranges[ i ] ).length );
-                for ( int ii : (int[]) ranges[ i ] ) intList.add( ii );
-                ranges[ i ] = intList;
-            } else if ( ranges[ i ] instanceof String[] ) {
-                List<String> strList = new ArrayList<>( ( (String[]) ranges[ i ] ).length);
-                for ( String ii : (String[]) ranges[ i ] ) strList.add( ii );
-                ranges[ i ] = strList;
-            }
             if ( !( ranges[ i ] instanceof  List ) ) {
-                if ( ranges[ i ] instanceof Map ) {
-                    Object[] ks = ( (Map<?,?>) ranges[ i ] ).keySet().toArray();
-                    Object[] steps = ( (Map<?,?>) ranges[ i ]).values().toArray();
-                    int newI = _configureSubsetFromRanges( ks, offset, spread, newShape, i + dimIndex );
-                    for ( int ii = 0; ii < steps.length; ii++ ) {
-                        spread[ ii + i + dimIndex ] = (Integer) steps[ ii ];
-                        newShape[ ii + i + dimIndex ] /= spread[ ii + i + dimIndex ];
-                    }
-                    i = newI;
-                    continue;
-                } else if ( ranges[ i ] instanceof Integer ) {
+                if ( ranges[ i ] instanceof Integer ) {
                     first = (Integer) ranges[ i ];
                     last = (Integer) ranges[ i ];
                 } else {
                     IndexAlias<?> indexAlias = find( IndexAlias.class );
                     if ( indexAlias != null ) {
-                        int position = indexAlias.get( ranges[ i ], i + dimIndex );
+                        int position = indexAlias.get( ranges[ i ], i );
                         first = position;
                         last = position;
                     } else {
-                        String message = "Given "+IndexAlias.class.getSimpleName()+" key at axis " + ( i + dimIndex ) + " not found!";
+                        String message = "Given "+IndexAlias.class.getSimpleName()+" key at axis " + ( i ) + " not found!";
                         _LOG.error( message );
                         throw new IllegalStateException( message );
                     }
@@ -2301,7 +2276,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                     IndexAlias<?> indexAlias = find( IndexAlias.class );
                     if ( !( ( (Object[]) (ranges[ i ]) )[ 0 ] instanceof Integer ) ) {
                         if ( indexAlias != null ) {
-                            first = indexAlias.get( ( (Object[]) ranges[ i ])[ 0 ], i + dimIndex );
+                            first = indexAlias.get( ( (Object[]) ranges[ i ])[ 0 ], i );
                         }
                     }
                     else first = (Integer) ( (Object[]) ranges[ i ] )[ 0 ];
@@ -2310,7 +2285,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
                         if ( indexAlias != null ) {
                             last = indexAlias.get(
                                     ( (Object[]) ranges[ i ] )[ ( (Object[]) ranges[ i ] ).length - 1 ],
-                                    i + dimIndex
+                                    i
                             );
                         }
                     }
@@ -2328,10 +2303,10 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
             }
             first = ( first < 0 ) ? getNDConf().shape( i ) + first : first;
             last = ( last < 0 ) ? getNDConf().shape( i ) + last : last;
-            newShape[ i + dimIndex ] = ( last - first ) + 1;
-            offset[ i + dimIndex ] = first;
+            newShape[ i ] = ( last - first ) + 1;
+            offset[ i ] = first;
+            newShape[ i ] /= spread[ i ];
         }
-        return ranges.length + dimIndex - 1;
     }
 
 
@@ -2367,7 +2342,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      * @param key This object is a map defining a stride and a targeted index or range of indices...
      * @return A slice tensor or scalar value.
      */
-    public Tsr<ValType> putAt( Map<?,?> key, Tsr<ValType> value ) {
+    public Tsr<ValType> putAt( Map<?,Integer> key, Tsr<ValType> value ) {
         _putAtCheckFor( value );
         Tsr<ValType> slice = ( key == null ) ? this : (Tsr<ValType>) getAt( key );
         return _putAt( slice, value );
