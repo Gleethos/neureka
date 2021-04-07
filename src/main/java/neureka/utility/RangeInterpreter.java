@@ -22,7 +22,6 @@ public class RangeInterpreter {
     private final List<Object> _ranges = new ArrayList<>();
 
     @Getter private final int[] offset;
-    //@Getter private final int[] spread;
     @Getter private final int[] newShape;
 
 
@@ -48,7 +47,8 @@ public class RangeInterpreter {
                 for ( int ii : (int[]) range ) intList.add(ii);
                 _ranges.add(intList);
                 _steps.add(1);
-            } else if ( range instanceof String[] ) {
+            }
+            else if ( range instanceof String[] ) {
                 List<String> strList = new ArrayList<>(((String[]) range).length);
                 strList.addAll(Arrays.asList((String[]) range));
                 _ranges.add(strList);

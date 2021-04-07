@@ -2072,17 +2072,11 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     public Tsr<ValType> getAt( Map<?,Integer> rangToStrides )
     {
         if ( rangToStrides == null ) return this;
-        //int[] newOffset = new int[ this.rank() ]; // ...not a simple slice... Advanced:
-        //int[] newSpread = new int[ this.rank() ];
-        //int[] newShape = new int[ this.rank() ];
+        // ...not a simple slice... Advanced:
         RangeInterpreter interpreter = new RangeInterpreter(this, new Object[]{rangToStrides});
-        //Object[] ranges = interpreter.getRanges();
-        //newSpread = interpreter.getSteps();
-        //_rangeConverter(  ranges, newOffset, newSpread, newShape );
         return _sliceOf(
                 interpreter.getNewShape(), interpreter.getOffset(), interpreter.getSteps()
         );
-                //_sliceOf( newShape, newOffset, newSpread );
     }
 
     public Tsr<ValType> shallowCopy()
@@ -2118,12 +2112,10 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
             return shallowCopy();
         }
 
-        int[] newOffset = new int[ this.rank() ];
-        int[] newSpread = new int[ this.rank() ];
-        int[] newShape = new int[ this.rank() ];
         key = ( key instanceof List ) ? ((List<?>) key).toArray() : key;
 
         if ( key instanceof Object[] ) {
+            int[] newOffset = new int[ this.rank() ];
             boolean allInt = true;
             for ( Object o : (Object[]) key ) allInt = allInt && o instanceof Integer;
             if ( allInt && ( (Object[]) key ).length == rank() ) {
