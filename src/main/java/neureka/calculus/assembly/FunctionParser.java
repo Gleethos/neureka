@@ -255,13 +255,13 @@ public class FunctionParser
                 weights[ i ] = currentWeight;
                 weightSum += currentWeight;
                 currentWeight *= modifier;
-                for ( int si=0; si<shorter.length(); si++ ) {
-                    if (longer.charAt(i+si)==shorter.charAt(si)) alignment[ i ] ++;
+                for ( int si = 0; si < shorter.length(); si++ ) {
+                    if ( longer.charAt( i + si ) == shorter.charAt( si ) ) alignment[ i ] ++;
                     else if (
-                            Character.toLowerCase(longer.charAt(i+si)) == Character.toLowerCase(shorter.charAt(si))
+                            Character.toLowerCase(longer.charAt( i + si )) == Character.toLowerCase(shorter.charAt( si ))
                     ) alignment[ i ] += 0.5;
                     else if (
-                            Character.isAlphabetic(longer.charAt(i+si)) != Character.isAlphabetic(shorter.charAt(si))
+                            Character.isAlphabetic(longer.charAt( i + si )) != Character.isAlphabetic(shorter.charAt( si ))
                     ) alignment[ i ] -= 0.13571113;
                 }
                 alignment[ i ] /= longer.length();

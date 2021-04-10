@@ -14,7 +14,7 @@
         10. CUSTOM DEPLOYMENT TASKS
         11. JAR CREATION AND MINIFICATION
         12. CONFIGURING JDOC GENERATION
-        13. MAVEN DEPLOYMENT CONFIGURATION : (! WIP ! WIP ! WIP !)
+        13. MAVEN DEPLOYMENT CONFIGURATION
 
 */
 //______________________________________________________________________________________________________________________
@@ -148,16 +148,16 @@ sourceSets {
 dependencies {
 
     // Core library dependencies :
-    implementation 'org.codehaus.groovy:groovy:3.0.5'
-    implementation 'org.jocl:jocl:2.0.2' //-> Internal dependency!
+    implementation 'org.codehaus.groovy:groovy:3.0.7'
+    implementation 'org.jocl:jocl:2.0.4' //-> Internal dependency!
     implementation 'org.jetbrains:annotations:16.0.2'
     ///*
         // WIP - Multi-Release-Jar :
-        java11Implementation 'org.codehaus.groovy:groovy:3.0.5'
-        java11Implementation 'org.jocl:jocl:2.0.2' //-> Internal dependency!
+        java11Implementation 'org.codehaus.groovy:groovy:3.0.7'
+        java11Implementation 'org.jocl:jocl:2.0.4' //-> Internal dependency!
         java11Implementation 'org.jetbrains:annotations:16.0.2'
-        java13Implementation 'org.codehaus.groovy:groovy:3.0.5'
-        java13Implementation 'org.jocl:jocl:2.0.2' //-> Internal dependency!
+        java13Implementation 'org.codehaus.groovy:groovy:3.0.7'
+        java13Implementation 'org.jocl:jocl:2.0.4' //-> Internal dependency!
         java13Implementation 'org.jetbrains:annotations:16.0.2'
     //*/
 
@@ -171,18 +171,18 @@ dependencies {
     //implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.29' // adds log4j backend
 
     // Lombok :
-    compileOnly 'org.projectlombok:lombok:1.18.16'
-    annotationProcessor 'org.projectlombok:lombok:1.18.16'
+    compileOnly 'org.projectlombok:lombok:1.18.18'
+    annotationProcessor 'org.projectlombok:lombok:1.18.18'
     ///*
         // WIP - Multi-Release-Jar :
-        java11CompileOnly 'org.projectlombok:lombok:1.18.16'
-        java11AnnotationProcessor 'org.projectlombok:lombok:1.18.16'
-        java13CompileOnly 'org.projectlombok:lombok:1.18.16'
-        java13AnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+        java11CompileOnly 'org.projectlombok:lombok:1.18.18'
+        java11AnnotationProcessor 'org.projectlombok:lombok:1.18.18'
+        java13CompileOnly 'org.projectlombok:lombok:1.18.18'
+        java13AnnotationProcessor 'org.projectlombok:lombok:1.18.18'
     //*/
 
     // Test suite : Groovy, Spock (+ sl4j, + Spock-Reports)
-    testCompile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.5'
+    testCompile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.7'
     testCompile group: 'org.spockframework', name: 'spock-core', version: '2.0-M2-groovy-3.0'
     testCompile group: 'org.spockframework', name: 'spock-bom', version: '2.0-M2-groovy-3.0'
     testCompile 'com.athaydes:spock-reports:2.0-RC2', { transitive = false }
@@ -191,8 +191,8 @@ dependencies {
     testRuntime "net.bytebuddy:byte-buddy:1.9.3" // allows mocking of classes (in addition to interfaces)
     testRuntime "org.objenesis:objenesis:2.6"    // allows mocking of classes without default constructor (together with CGLIB)
     // Lombok :
-    testCompileOnly 'org.projectlombok:lombok:1.18.16'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+    testCompileOnly 'org.projectlombok:lombok:1.18.18'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.18'
 
     // WIP - Multi-Release-Jar :
     //java11Implementation files(sourceSets.main.output.classesDirs) { builtBy compileJava8Java }

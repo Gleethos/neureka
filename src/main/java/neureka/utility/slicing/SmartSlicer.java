@@ -1,42 +1,26 @@
-package neureka.utility;
+package neureka.utility.slicing;
+
+import neureka.Tsr;
+import neureka.framing.IndexAlias;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import lombok.Getter;
-import neureka.Tsr;
-import neureka.framing.IndexAlias;
-import org.slf4j.Logger;
-
-public class RangeInterpreter {
+public class SmartSlicer<ValType> extends SliceBuilder<ValType>{
 
     /**
      *  An interface provided by sl4j which enables a modular logging backend!
      */
     protected static Logger _LOG; // Why is this not final ? : For unit testing!
 
-
-    private final List<Integer> _steps = new ArrayList<>();
-    private final List<Object> _ranges = new ArrayList<>();
-
-    @Getter private final int[] offset;
-    @Getter private final int[] newShape;
-
-
-    public Object[] getRanges() {
-        return _ranges.toArray();
-    }
-
-    public int[] getSteps() {
-        return _steps.stream().mapToInt( s -> s ).toArray();
-    }
-
-
-
-    public RangeInterpreter( Tsr<?> source, Object[] ranges )
+    public SmartSlicer(Tsr<ValType> source, CreationCallback<ValType> callback, Object[] ranges )
     {
+        super(source, callback);
+        List<Object> _ranges = new ArrayList<>();
+        List<Integer> _steps = new ArrayList<>();
         for (Object range : ranges ) {
             if ( range instanceof Map) {
                 _ranges.addAll(((Map<?, ?>) range).keySet());
@@ -59,10 +43,8 @@ public class RangeInterpreter {
                 _steps.add(1);
             }
         }
-        offset   = new int[_ranges.size()];
-        newShape = new int[_ranges.size()];
 
-        ranges = getRanges();
+        ranges = _ranges.toArray();
 
         for ( int i = 0; i < ranges.length; i++ ) {
             int first = 0;
@@ -115,16 +97,14 @@ public class RangeInterpreter {
                     last = (Integer) ( (Object[]) ranges[ i ] )[ ( (Object[]) ranges[ i ] ).length - 1 ];
                 }
             }
-            if ( first < 0 && last < 0 && first > last ) {
-                int temp = first;
-                first = last;
-                last = temp;
-            }
-            first = ( first < 0 ) ? source.getNDConf().shape( i ) + first : first;
-            last = ( last < 0 ) ? source.getNDConf().shape( i ) + last : last;
-            newShape[ i ] = ( last - first ) + 1;
-            offset[ i ] = first;
-            newShape[ i ] /= _steps.get( i );
+
+            this
+                .axis( i )
+                .from( first )
+                .to( last )
+                .steps( _steps.get( i ) )
+                .then();
+
         }
     }
 

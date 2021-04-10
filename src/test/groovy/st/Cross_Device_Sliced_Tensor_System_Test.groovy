@@ -6,8 +6,6 @@ import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.devices.opencl.OpenCLDevice
-import neureka.devices.opencl.OpenCLPlatform
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 import testutility.mock.DummyDevice
@@ -19,6 +17,51 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         Neureka.instance().reset()
         // Configure printing of tensors to be more compact:
         Neureka.instance().settings().view().asString = "dgc"
+    }
+
+    def 'Slices can be created using the SliceBuilder.'() {
+
+        given: 'A tensor which ought to be sliced:'
+
+            Tsr a = new Tsr([4, 6], [
+                    1, 2, 3, 4, 5, 6,
+                    7, 8, 9, 1, 2, 3,
+                    4, 5, 6, 7, 8, 9,
+                    1, 2, 3, 4, 5, 6
+            ])
+            /*
+                1, 2, 3, 4, 5, 6,
+                7, 8, 9, 1, 2, 3, => 7, 8, 9, 1
+                4, 5, 6, 7, 8, 9, => 4, 5, 6, 7
+                1, 2, 3, 4, 5, 6  => 1, 2, 3, 4
+             */
+
+            device.store(a)
+
+        when:
+            Tsr b = a.slice() // [[-1..-3, -6..-3]]
+                        .axis(0).from(-1).to(-3)
+                        .then()
+                        .axis(1).from(-6).to(-3)
+                        .get()
+
+            Tsr s = a.slice() // [[1, -2]]
+                        .axis(0).at(1)
+                        .then()
+                        .axis(1).at(-2)
+                        .get()
+
+        then:
+            s.toString() == "(1x1):[2.0]"
+            s.getValueAt(0) == 2.0
+            b.toString().contains(
+                    "7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
+            )
+            b.spread() != null
+
+        where:
+            device << [ Device.find('gpu'), HostCPU.instance() ]
+
     }
 
     def 'Cross device sliced tensor integration test runs without errors.'(

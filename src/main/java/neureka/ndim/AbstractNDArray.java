@@ -70,7 +70,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
     /**
      *  An interface provided by sl4j which enables a modular logging backend!
      */
-    protected static Logger _LOG; // Why is this not final ? : For unit testing!
+    public static Logger _LOG; // Why is this not final ? -> For unit testing!
 
     @Getter
     private NDConfiguration _NDConf;

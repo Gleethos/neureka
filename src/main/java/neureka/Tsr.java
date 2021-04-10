@@ -106,7 +106,8 @@ import neureka.ndim.iterators.NDIterator;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 import neureka.optimization.Optimizer;
 import neureka.utility.DataConverter;
-import neureka.utility.RangeInterpreter;
+import neureka.utility.slicing.SmartSlicer;
+import neureka.utility.slicing.SliceBuilder;
 import neureka.utility.TsrAsString;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
@@ -2073,10 +2074,9 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     {
         if ( rangToStrides == null ) return this;
         // ...not a simple slice... Advanced:
-        RangeInterpreter interpreter = new RangeInterpreter(this, new Object[]{rangToStrides});
-        return _sliceOf(
-                interpreter.getNewShape(), interpreter.getOffset(), interpreter.getSteps()
-        );
+        return new SmartSlicer(
+                    this, this::_sliceOf, new Object[]{rangToStrides}
+                    ).get();
     }
 
     public Tsr<ValType> shallowCopy()
@@ -2130,8 +2130,11 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
             }
             boolean hasScale = false;
             for ( Object o : (Object[]) key ) hasScale = hasScale || o instanceof Map;
-            RangeInterpreter interpreter = new RangeInterpreter( this, ( allInt ) ? new Object[]{ _intArray( (Object[]) key ) } : (Object[]) key);
-            return _sliceOf( interpreter.getNewShape(), interpreter.getOffset(), interpreter.getSteps() );
+            return new SmartSlicer(
+                                this,
+                                    this::_sliceOf,
+                                    ( allInt ) ? new Object[]{ _intArray( (Object[]) key ) } : (Object[]) key
+                                ).get();
         } else {
             String message = "Cannot create tensor slice from key of type '" + key.getClass().getName() + "'!";
             _LOG.error( message );
@@ -2139,6 +2142,38 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         }
     }
 
+    /**
+     *  This method returns a {@link SliceBuilder} instance exposing a simple builder API
+     *  which enables the configuration of a slice of the current tensor via method chaining.    <br>
+     *  The following code snippet slices a 3-dimensional tensor into a tensor of shape (2x1x3)  <br>
+     * <pre>{@code
+     *  myTensor.slice()
+     *          .axis(0).from(0).to(1)
+     *          .then()
+     *          .axis(1).at(5) // equivalent to '.from(5).to(5)'
+     *          .then()
+     *          .axis().from(0).to(2)
+     *          .get();
+     * }</pre>
+     *
+     * @return An instance of the {@link SliceBuilder} class exposing a readable builder API for creating slices.
+     */
+    public SliceBuilder<ValType> slice() {
+        return new SliceBuilder<>( this, this::_sliceOf );
+    }
+
+    /**
+     *  This method is where the creation of a slice occurs.
+     *  When creating a slice via the {@link SliceBuilder} or simply by passing ranges in the form of
+     *  arrays, lists or maps to a {@link Tsr#getAt}(...) method, then this method will be called eventually.
+     *  The creation of a slice always requires information about the shape of the new slice
+     *  its position within the original tensor and also the strides / steps.
+     *
+     * @param newShape The of the slice which ought to be created.
+     * @param newOffset The position of the new slice within this tensor.
+     * @param newSpread The spread / steps / strides of the slice within this tensor.
+     * @return The newly created slice.
+     */
     private Tsr<ValType> _sliceOf( int[] newShape, int[] newOffset, int[] newSpread )
     {
         this.setIsVirtual( false );
@@ -2254,7 +2289,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      */
     public Tsr<ValType> putAt( Map<?,Integer> key, Tsr<ValType> value ) {
         _putAtCheckFor( value );
-        Tsr<ValType> slice = ( key == null ) ? this : (Tsr<ValType>) getAt( key );
+        Tsr<ValType> slice = ( key == null ) ? this : getAt( key );
         return _putAt( slice, value );
     }
 
