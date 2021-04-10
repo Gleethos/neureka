@@ -45,7 +45,12 @@ public class SliceBuilder<ValType>
                                                     return this;
                                                 });
         }
-        _create = () -> sliceCreator.sliceOf( newShape, newOffset, newSpread );
+        _create = () -> {
+            for ( AxisSliceBuilder<ValType> axis : _axisSliceBuilders ) {
+                if ( axis != null ) axis.then();
+            }
+            return sliceCreator.sliceOf( newShape, newOffset, newSpread );
+        };
     }
 
     /**

@@ -36,6 +36,8 @@ SOFTWARE.
 package neureka.utility;
 
 import org.jetbrains.annotations.Contract;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -55,6 +57,7 @@ import java.util.Random;
  */
 public class DataConverter
 {
+    private final static Logger _LOG = LoggerFactory.getLogger(DataConverter.class);
     /**
      *  This interface declares a simple lambda which represents type conversion implementations...
      *  These conversion lambdas are then stored within a nested Map that can be extended easily.
@@ -190,6 +193,17 @@ public class DataConverter
     public <T> T convert( Object from, Class<T> to ) {
         if ( from == null ) return null;
         if ( from.getClass() == to ) return (T) from;
+        Map<Class, Conversion> fromSpecific = _converters.get( from.getClass() );
+        if ( fromSpecific == null ) {
+            String fromName = from.getClass().getSimpleName();
+            String toName = to.getSimpleName();
+            String message =
+                    "Conversion from '"+fromName+"' to '"+toName+"' could not be performed.\n" +
+                            "No converter lambdas were found for type '"+fromName+"'!";
+            _LOG.error( message );
+            throw new IllegalArgumentException( message );
+        }
+
         return (T) _converters.get(from.getClass()).get(to).go(from);
     }
 

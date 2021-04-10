@@ -13,15 +13,34 @@ import testutility.mock.DummyDevice
 
 class Cross_Device_Sliced_Tensor_System_Test extends Specification
 {
+    def setupSpec() {
+        reportHeader """
+                <h2> Cross Device Tensor Slicing </h2>
+                <br> 
+                <p>
+                    This specification covers the behavior of tensors when being sliced
+                    on multiple different device types.           
+                </p>
+            """
+    }
+
+
     def setup() {
         Neureka.instance().reset()
         // Configure printing of tensors to be more compact:
         Neureka.instance().settings().view().asString = "dgc"
     }
 
-    def 'Slices can be created using the SliceBuilder.'() {
+    def 'Slices can be created using the SliceBuilder.'(
+        Device device
+    ) {
+    given :
+        if ( device == null ) return
+        Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
+        Neureka.instance().settings().view().setIsUsingLegacyView(false)
+        if ( device instanceof OpenCLDevice && !Neureka.instance().canAccessOpenCL() ) return
 
-        given: 'A tensor which ought to be sliced:'
+    and: 'A tensor which ought to be sliced:'
 
             Tsr a = new Tsr([4, 6], [
                     1, 2, 3, 4, 5, 6,

@@ -14,16 +14,15 @@ public class AxisSliceBuilder<ValType> implements FromOrAt<ValType>, To<ValType>
     interface Resolution<V> { SliceBuilder<V> resolve(int from, int to, int steps ); }
 
     private final Resolution<ValType> _then;
-    private final int _axisSize;
     private int _from;
     private int _to;
-    private int _steps = 1;
+    private int _steps;
 
     AxisSliceBuilder( int axisSize, Resolution<ValType> then ) {
         _then = then;
-        _axisSize = axisSize;
         _from = 0;
-        _to = _axisSize - 1;
+        _to = axisSize - 1;
+        _steps = 1;
     }
 
     /**

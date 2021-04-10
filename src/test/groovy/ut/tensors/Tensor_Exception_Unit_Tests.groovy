@@ -100,8 +100,6 @@ class Tensor_Exception_Unit_Tests extends Specification
                     "which is larger than the target shape '3' at the same index!",
                     _
             )
-
     }
-
 
 }
