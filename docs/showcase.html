@@ -232,13 +232,13 @@
                                     var TabBody = $(src.target).parent().parent().find('.TabBody');
                                     TabBody.children().css("display", "none");
                                     $(src.target).siblings().removeClass("selected");
-                                    $(src.target).parent().parent().find(target).css("display", "block");
+                                    $(src.target).parent().parent().find(target).css("display", "");
                                     $(src.target).addClass("selected");
                                     console.log($(src.target).html());
                                 }
                             </script>
 
-                            <div id="DynamicContent" class="row">
+                            <div id="DynamicContent" class="row no-gutters">
 
                             </div>
 

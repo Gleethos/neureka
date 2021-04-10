@@ -102,7 +102,7 @@ public class SmartSlicer<ValType> extends SliceBuilder<ValType>{
                 .axis( i )
                 .from( first )
                 .to( last )
-                .steps( _steps.get( i ) )
+                .step( _steps.get( i ) )
                 .then();
 
         }

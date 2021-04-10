@@ -1,74 +1,155 @@
+
 <div class="col-sm 12 col-md-12">
     <div class="ContentBox">
         <h3>
-            Slicing
+            The Slice Builder API
         </h3>
         <p>
-            Just as in libraries like NumPy
-            subsets/slices of tensors or 'nd-arrays' can
-            by extracted while also retaining the same underlying
-            data.
-            Groovy's '..' operator is equivalent to
-            Pythons ':'.
-            In NumPy this operator is used to extract subsets of
-            nd arrays. Here is the equivalent in Neureka:
+            Just as in libraries like NumPy subsets/slices of tensors can
+            be created which view the same underlying data.
+            Slicing is about defining ranges for certain axis of a tensor.
+            In order to make this rather abstract procedure as readable as possible
+            the slice builder API was created for the Tsr class.
         </p>
     </div>
 </div>
-<div class="col-sm-12 col-md-12">
-                                               <pre><code class="hljs java">
+<div class="col-sm-12 col-md-6 col-lg-7">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
 
-        // Use ranges (The '..' operator is similar to pythons ':' operator)
-        b = a[-3..-1, 0..3]  // Using range operator to extract slices!
-        //= a[ 1..3,  0..3]
+    Tsr t = new Tsr([3, 3, 4], -11..3)
+    Tsr s = t.slice()
+                .axis(0).at(1)
+                .then()
+                .axis(2).from(1).to(2)
+                .get()
+    /*
+        s.toString():
 
-        //  a:>> ->b
-        //  1, 2, 3, 4, 5, 6,
-        //  7, 8, 9, 1, 2, 3, => 7, 8, 9, 1
-        //  4, 5, 6, 7, 8, 9, => 4, 5, 6, 7
-        //  1, 2, 3, 4, 5, 6  => 1, 2, 3, 4
+        (1x3x2):[
+           [
+              [   2.0 ,   3.0  ],
+              [  -9.0 ,  -8.0  ],
+              [  -5.0 ,  -4.0  ]
+           ]
+        ]
 
-        //  b:>>
-        //  7.0, 8.0, 9.0, 1.0,
-        //  4.0, 5.0, 6.0, 7.0,
-        //  1.0, 2.0, 3.0, 4.0
 
-        a.value64()[1] = a.value64()[1] * 6  // Modifying a...
-        a.value64()[7] = a.value64()[7] * 2
+        Note: Axis 1 will be sliced implicitly if not specified!
+        ------------------------------------------------------------------
+    */
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+    Tsr t = new Tsr(
+                    new int[]{3, 3, 4},
+                    new double[]{-11, -10, ... 2, 3}
+            )
+    Tsr s = t.slice()
+                .axis(0).at(1)
+                .then()
+                .axis(2).from(1).to(2)
+                .get();
+    /*
+        s.toString():
 
-        //  b:>>
-        //  7.0, 16.0, 9.0, 1.0,  //  ...produces side effects in b now.
-        //  4.0, 5.0, 6.0, 7.0,
-        //  1.0, 2.0, 3.0, 4.0"
+        (1x3x2):[
+           [
+              [   2.0 ,   3.0  ],
+              [  -9.0 ,  -8.0  ],
+              [  -5.0 ,  -4.0  ]
+           ]
+        ]
 
-        Tsr c = new Tsr([3, 4], [
-                -3, 2, 3,
-                5, 6, 2,
-                -1, 1, 2,
-                3, 4, 2,
-        ])
 
-        Tsr d = b + c  // Slices can be used for operations just like their 'parents'.
-
-        //  4, 18, 12, 6     7, 16, 9, 1    -3, 2,  3, 5,
-        //  10, 7, 5,  8  =  4,  5, 6, 7  +  6, 2, -1, 1,
-        //  3,  5, 7   6     1,  2, 3, 4     2, 3,  4, 2,
-
-        b = a[1..3, 2..4]  // Another example:
-
-        //   a:>> ->b
-        //   1, 12, 3, 4, 5, 6,
-        //   7, 16, 9, 1, 2, 3, =>  9, 1, 2,
-        //   4, 5, 6, 7, 8, 9,  =>  6, 7, 8,
-        //   1, 2, 3, 4, 5, 6   =>  3, 4, 5,
-
-        //   b:>>
-        //   9.0, 1.0, 2.0,
-        //   6.0, 7.0, 8.0,
-        //   3.0, 4.0, 5.0
-
-                                                </code></pre>
+        Note: Axis 1 will be sliced implicitly if not specified!
+        ------------------------------------------------------------------
+    */
+                </code></pre>
+            </div>
+        </div>
+    </div>
 </div>
+<div class="col-sm-12 col-md-6 col-lg-5">
+    <div class="ContentBox">
+        <p>
+            When calling the "slice()" method on a tensor a new "SliceBuilder" instance will be exposed.
+            By calling the "axis(..)" method, this instance will return an instances of
+            the "AxisSliceBuilder" class which is responsible for slicing the specified axis. <br>
+            An axis can be sliced in 2 ways: <br>
+            By providing a range within the size of the current axis, namely by calling "from(..)" and then "to(..), "
+            or by simply calling "at(..)" to slice a single position within the full range of the current axis. <br><br>
+
+            After being done with a specific axis one can return to the original "SliceBuilder" instance
+            by calling "then()" which enables the possibility of another axis to be sliced. <br>
+            If however no more slicing needs to be performed one can simply call the "get()" method
+            to trigger the actual slicing based on the previously specified range(s).
+        </p>
+    </div>
+</div>
+
+
+<div class="col-sm 12 col-md-12">
+    <div class="ContentBox">
+        <h3>
+            Array / Collection based Slicing
+        </h3>
+        <p>
+            Besides using the slicing API one can also slice tensors by passing either primitive arrays
+            or lists to one of the various "getAt(..)" methods defined in the Tsr class.
+        </p>
+    </div>
+</div>
+
+<div class="col-sm-12 col-md-7 col-lg-6">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+    Tsr s = t[1, 0..2, 1..2]
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    Tsr s = t.getAt(
+                new int[]{1},    // Axis 0
+                new int[]{0, 2}, // Axis 1
+                new int[]{1, 2}  // Axis 2
+            )
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm-12 col-md-5 col-lg-6">
+    <div class="ContentBox">
+        <p>
+            This approach to slicing is especially useful when using languages with more syntax sugar.
+            Groovy's '..' range operator for example is similar to Pythons ':' operator.
+            In NumPy this operator is used to extract subsets of
+            nd-arrays. In Groovy it will simply create a range object which also implements the List interface.
+            Besides primitive int arrays a tensor can also interpret ranges for slicing based on passed lists.
+        </p>
+    </div>
+</div>
+
+
+
 <div class="col-sm 12 col-md-12">
     <div class="ContentBox">
         <h3>
@@ -83,60 +164,88 @@
         </p>
     </div>
 </div>
-<div class="col-sm-12 col-md-12">
-                                                <pre><code class="hljs java">
-
-        //  '[i..j]:k' is equivalent to pythons 'i:j:k' syntax for indexing! (numpy)
-        //  i.. start indexAlias.
-        //  j.. end indexAlias. (inclusive!)
-        //  k.. step size.
-
-        b = a[[[0..3]:2, [1..4]:2]]
-
-        //   b:>>
-        //   12.0, 4.0,
-        //   5.0,  7.0
-
-        //  a:>>
-        //  1, 12, 3, 4, 5, 6, => 12, 4,
-        //  7, 16, 9, 1, 2, 3,
-        //  4, 5, 6, 7, 8, 9,  => 5,  7,
-        //  1, 2, 3, 4, 5, 6
-
-        Tsr p = new Tsr([2,2], [2, 55, 4, 7])
-        Tsr u = new Tsr([2,2], [5, 2, 7, 34])
-
-        p[] = u  // 'Injecting' data into tensor!
-
-        //   p:>>
-        //   5.0, 2.0,
-        //   7.0, 34.0
-
-        a[[[0..3]:2, [1..4]:2]] = new Tsr([2, 2], [1, 2, 3, 4]) // Doing so in tensor a...
-
-        //   b:>>
-        //   1.0, 2.0,  //  ...has side effects in b.
-        //   3.0, 4.0   //  b's data is overwritten in this case.
-
-        //   a:>>
-        //   1.0,  1.0, 3.0, 2.0, 5.0, 6.0,
-        //   7.0, 16.0, 9.0, 1.0, 2.0, 3.0,
-        //   4.0,  3.0, 6.0, 4.0, 8.0, 9.0,
-        //   1.0,  2.0, 3.0, 4.0, 5.0, 6.0
-
-        a[1..2, 1..2] = new Tsr([2, 2], [8, 8, 8, 8])
-
-        //   b:>>
-        //   1.0, 2.0,  // Here b is partially overwritten.
-        //   8.0, 4.0,
-
-        //   a:>>
-        //   1.0, 1.0, 3.0, 2.0, 5.0, 6.0,
-        //   7.0, 8.0, 8.0, 1.0, 2.0, 3.0,
-        //   4.0, 8.0, 8.0, 4.0, 8.0, 9.0,
-        //   1.0, 2.0, 3.0, 4.0, 5.0, 6.0
 
 
 
-                                                </code></pre>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyExplainedTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaExplainedTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyExplainedTab row no-gutters">
+                <div class="col-sm-12 col-md-7 col-lg-6">
+                <pre><code class="hljs java">
+
+    Tsr s = t[[[0..0]:1, [0..0]:1, [0..3]:2]]
+
+    //  '[i..j]:k' is equivalent to pythons 'i:j:k' syntax for indexing! (numpy)
+    //  i.. start indexAlias.
+    //  j.. end indexAlias. (inclusive!)
+    //  k.. step size.
+
+    /*
+      s.toString() :
+
+      (1x1x2):[
+         [
+            [  -11.0,  -9.0  ]
+         ]
+      ]
+    */
+                </code></pre>
+                </div>
+                <div class="col-sm-12 col-md-5 col-lg-6">
+                    <div class="ContentBox">
+                        <p>
+                            Besides slicing by ranges and positions one can also
+                            set a step size for the specified range.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="javaExplainedTab row no-gutters" style="display:none">
+                <div class="col-sm-12 col-md-7 col-lg-6">
+                <pre><code class="hljs java">
+
+    Tsr s = t.slice()
+                 .axis(0).at(0)
+                 .then()
+                 .axis(1).at(0)
+                 .then()
+                 .axis(2).from(0).to(3).step(2)
+                 .get()
+
+    //  from.. start position
+    //  to.. end position (inclusive!)
+    //  step.. step size
+    //  at.. shortcut for when (from == to)
+
+    /*
+      s.toString() :
+
+      (1x1x2):[
+         [
+            [  -11.0,  -9.0  ]
+         ]
+      ]
+    */
+
+                </code></pre>
+                </div>
+                <div class="col-sm-12 col-md-5 col-lg-6">
+                    <div class="ContentBox">
+                        <p>
+                            Besides slicing by ranges and positions one can also
+                            set a step size for the specified range.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
+
+

@@ -61,12 +61,12 @@ public class AxisSliceBuilder<ValType> implements FromOrAt<ValType>, To<ValType>
      *  The {@link AxisSliceBuilder} class implements the {@link Then} interface in order to ensure
      *  that the builder methods of this API are being called in the correct order.
      *
-     * @param index The step size for the strides of the slice of the current axis.
+     * @param size The step size for the strides of the slice of the current axis.
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link Then} interface.
      */
     @Override
-    public Then<ValType> steps( int index) {
-        _steps = index;
+    public Then<ValType> step(int size) {
+        _steps = size;
         return this;
     }
 
