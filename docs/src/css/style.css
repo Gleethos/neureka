@@ -417,6 +417,10 @@ header p {
 .TabWrapper .TabBody div{
 }
 
+.TabBody {
+    padding: 0 0.33em 0 0.33em;
+}
+
 /*---*/
 
 /*Bootstrap correction:*/
@@ -492,10 +496,6 @@ header p {
     margin-bottom: 0.33em;
 }
 
-
-.SlimSidePadding {
-    padding: 0 0.01em 0 0.01em;
-}
 
 .ContentBox {
     background-color: rgb(217, 253, 255);
