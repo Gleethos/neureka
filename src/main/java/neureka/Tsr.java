@@ -2074,9 +2074,11 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     {
         if ( rangToStrides == null ) return this;
         // ...not a simple slice... Advanced:
-        return new SmartSlicer(
-                    this, this::_sliceOf, new Object[]{rangToStrides}
-                    ).get();
+        return SmartSlicer.slice(
+                        new Object[]{rangToStrides},
+                        this,
+                        this::_sliceOf
+                    );
     }
 
     public Tsr<ValType> shallowCopy()
@@ -2130,11 +2132,11 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
             }
             boolean hasScale = false;
             for ( Object o : (Object[]) key ) hasScale = hasScale || o instanceof Map;
-            return new SmartSlicer(
+            return SmartSlicer.slice(
+                                    ( allInt ) ? new Object[]{ _intArray( (Object[]) key ) } : (Object[]) key,
                                 this,
-                                    this::_sliceOf,
-                                    ( allInt ) ? new Object[]{ _intArray( (Object[]) key ) } : (Object[]) key
-                                ).get();
+                                    this::_sliceOf
+                                );
         } else {
             String message = "Cannot create tensor slice from key of type '" + key.getClass().getName() + "'!";
             _LOG.error( message );

@@ -26,7 +26,6 @@
     Tsr t = new Tsr([3, 3, 4], -11..3)
     Tsr s = t.slice()
                 .axis(0).at(1)
-                .then()
                 .axis(2).from(1).to(2)
                 .get()
     /*
@@ -51,10 +50,9 @@
     Tsr t = new Tsr(
                     new int[]{3, 3, 4},
                     new double[]{-11, -10, ... 2, 3}
-            )
+            );
     Tsr s = t.slice()
                 .axis(0).at(1)
-                .then()
                 .axis(2).from(1).to(2)
                 .get();
     /*
@@ -80,15 +78,15 @@
 <div class="col-sm-12 col-md-6 col-lg-5">
     <div class="ContentBox">
         <p>
-            When calling the "slice()" method on a tensor a new "SliceBuilder" instance will be exposed.
+            When calling the "slice()" method on a tensor a new 'SliceBuilder' instance will be exposed.
             By calling the "axis(..)" method, this instance will return an instances of
-            the "AxisSliceBuilder" class which is responsible for slicing the specified axis. <br>
+            the 'AxisSliceBuilder' class which is responsible for slicing the specified axis. <br>
             An axis can be sliced in 2 ways: <br>
             By providing a range within the size of the current axis, namely by calling "from(..)" and then "to(..), "
             or by simply calling "at(..)" to slice a single position within the full range of the current axis. <br><br>
 
-            After being done with a specific axis one can return to the original "SliceBuilder" instance
-            by calling "then()" which enables the possibility of another axis to be sliced. <br>
+            After being done with a specific axis one can switch to another 'AxisSliceBuilder' instance
+            by calling "axis(..)" with a different axis index... <br>
             If however no more slicing needs to be performed one can simply call the "get()" method
             to trigger the actual slicing based on the previously specified range(s).
         </p>
@@ -129,7 +127,7 @@
                 new int[]{1},    // Axis 0
                 new int[]{0, 2}, // Axis 1
                 new int[]{1, 2}  // Axis 2
-            )
+            );
 
                 </code></pre>
             </div>
@@ -211,11 +209,9 @@
 
     Tsr s = t.slice()
                  .axis(0).at(0)
-                 .then()
                  .axis(1).at(0)
-                 .then()
                  .axis(2).from(0).to(3).step(2)
-                 .get()
+                 .get();
 
     //  from.. start position
     //  to.. end position (inclusive!)

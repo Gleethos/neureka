@@ -1,12 +1,13 @@
 package neureka.utility.slicing;
 
 import neureka.Tsr;
+import neureka.utility.slicing.states.AxisOrGet;
 import neureka.utility.slicing.states.FromOrAt;
 
 import java.util.function.Supplier;
 
 
-public class SliceBuilder<ValType>
+public class SliceBuilder<ValType> implements AxisOrGet<ValType>
 {
     public interface CreationCallback<V> { Tsr<V> sliceOf(int[] newShape, int[] newOffset, int[] newSpread ); }
 
@@ -47,7 +48,7 @@ public class SliceBuilder<ValType>
         }
         _create = () -> {
             for ( AxisSliceBuilder<ValType> axis : _axisSliceBuilders ) {
-                if ( axis != null ) axis.then();
+                if ( axis != null ) axis.resolve();
             }
             return sliceCreator.sliceOf( newShape, newOffset, newSpread );
         };
@@ -61,6 +62,7 @@ public class SliceBuilder<ValType>
      * @param axis The index of the axis which ought to be sliced.
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link FromOrAt} interface.
      */
+    @Override
     public FromOrAt<ValType> axis(int axis ) {
         if ( axis >= _axisSliceBuilders.length ) throw new IllegalArgumentException("");
         return _axisSliceBuilders[ axis ];
@@ -73,6 +75,7 @@ public class SliceBuilder<ValType>
      *
      * @return The slice of the tensor supplied to the constructor of this {@link SliceBuilder} instance.
      */
+    @Override
     public Tsr<ValType> get() {
         return _create.get();
     }

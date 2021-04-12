@@ -4,9 +4,9 @@ package neureka.utility.slicing.states;
 import neureka.Tsr;
 import neureka.utility.slicing.SliceBuilder;
 
-public interface Then<V>  {
+public interface AxisOrGet<V>  {
 
-    SliceBuilder<V> then();
+    FromOrAt<V> axis(int axis );
 
     Tsr<V> get();
 

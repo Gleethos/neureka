@@ -60,13 +60,11 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         when:
             Tsr b = a.slice() // [[-1..-3, -6..-3]]
                         .axis(0).from(-1).to(-3)
-                        .then()
                         .axis(1).from(-6).to(-3)
                         .get()
 
             Tsr s = a.slice() // [[1, -2]]
                         .axis(0).at(1)
-                        .then()
                         .axis(1).at(-2)
                         .get()
 

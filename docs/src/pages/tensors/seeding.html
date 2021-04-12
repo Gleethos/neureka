@@ -17,12 +17,39 @@
 <div class="col-sm-12 col-md-12">
                                                <pre><code class="hljs java">
 
+                                                </code></pre>
+</div>
+<div class="col-sm-12 col-md-7 col-lg-6">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
         Tsr t1 = new Tsr([2, 3], "I am a seed! :)")
-        Tsr t2 = new Tsr(new int[]{2, 3}, "I am a seed! :)")
-        Tsr t3 = new Tsr(new int[]{2, 3}, "I am also a seed! But different. :)")
+        Tsr t2 = new Tsr([2, 3], "I am a seed! :)")
+        Tsr t3 = new Tsr([2, 3], "I am also a seed! But different. :)")
 
         // t1.toString() == t2.toString()
         // t3.toString() != t2.toString()
 
-                                                </code></pre>
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+        Tsr t1 = new Tsr(new int[]{2, 3], "I am a seed! :)");
+        Tsr t2 = new Tsr(new int[]{2, 3}, "I am a seed! :)");
+        Tsr t3 = new Tsr(new int[]{2, 3}, "I am also a seed! But different. :)");
+
+        // t1.toString() == t2.toString()
+        // t3.toString() != t2.toString()
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
 </div>

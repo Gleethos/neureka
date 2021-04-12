@@ -2,13 +2,12 @@ package neureka.utility.slicing;
 
 import lombok.experimental.Accessors;
 import neureka.Tsr;
-import neureka.utility.slicing.states.FromOrAt;
-import neureka.utility.slicing.states.StepsOrThen;
-import neureka.utility.slicing.states.Then;
-import neureka.utility.slicing.states.To;
+import neureka.utility.slicing.states.*;
+import neureka.utility.slicing.states.StepsOrAxisOrGet;
+import neureka.utility.slicing.states.AxisOrGet;
 
 @Accessors( fluent = true, prefix = {"_"}, chain = true )
-public class AxisSliceBuilder<ValType> implements FromOrAt<ValType>, To<ValType>, StepsOrThen<ValType>
+public class AxisSliceBuilder<ValType> implements FromOrAt<ValType>, To<ValType>, StepsOrAxisOrGet<ValType>, AxisOrGet<ValType>
 {
 
     interface Resolution<V> { SliceBuilder<V> resolve(int from, int to, int steps ); }
@@ -42,61 +41,67 @@ public class AxisSliceBuilder<ValType> implements FromOrAt<ValType>, To<ValType>
 
     /**
      *  This method returns an instance of this very {@link AxisSliceBuilder} instance
-     *  disguised by the {@link StepsOrThen} interface.
-     *  The {@link AxisSliceBuilder} class implements the {@link StepsOrThen} interface in order to ensure
+     *  disguised by the {@link StepsOrAxisOrGet} interface.
+     *  The {@link AxisSliceBuilder} class implements the {@link StepsOrAxisOrGet} interface in order to ensure
      *  that the builder methods of this API are being called in the correct order.
      *
      * @param index The ending index of the slice for this current axis.
-     * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link StepsOrThen} interface.
+     * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link StepsOrAxisOrGet} interface.
      */
     @Override
-    public StepsOrThen<ValType> to( int index ) {
+    public StepsOrAxisOrGet<ValType> to(int index ) {
         _to = index;
         return this;
     }
 
     /**
      *  This method returns an instance of this very {@link AxisSliceBuilder} instance
-     *  disguised by the {@link Then} interface.
-     *  The {@link AxisSliceBuilder} class implements the {@link Then} interface in order to ensure
+     *  disguised by the {@link AxisOrGet} interface.
+     *  The {@link AxisSliceBuilder} class implements the {@link AxisOrGet} interface in order to ensure
      *  that the builder methods of this API are being called in the correct order.
      *
      * @param size The step size for the strides of the slice of the current axis.
-     * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link Then} interface.
+     * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link AxisOrGet} interface.
      */
     @Override
-    public Then<ValType> step(int size) {
+    public AxisOrGet<ValType> step(int size) {
         _steps = size;
         return this;
     }
 
     /**
      *  This method returns an instance of this very {@link AxisSliceBuilder} instance
-     *  disguised by the {@link Then} interface.
-     *  The {@link AxisSliceBuilder} class implements the {@link Then} interface in order to ensure
+     *  disguised by the {@link AxisOrGet} interface.
+     *  The {@link AxisSliceBuilder} class implements the {@link AxisOrGet} interface in order to ensure
      *  that the builder methods of this API are being called in the correct order.
      *
      * @param index The starting and ending position for the slice of the current axis.
-     * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link Then} interface.
+     * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link AxisOrGet} interface.
      */
     @Override
-    public Then<ValType> at( int index ) {
+    public AxisOrGet<ValType> at(int index ) {
         _from = index;
         _to = index;
         return this;
     }
 
+
     /**
-     *  This method returns an instance of the original {@link SliceBuilder} instance.
+     *  This method returns an instance of the {@link AxisSliceBuilder} targeted by the provided index.
      */
     @Override
-    public SliceBuilder<ValType> then() {
-        return _then.resolve(_from, _to, _steps);
+    public FromOrAt<ValType> axis(int axis) {
+       return _then.resolve(_from, _to, _steps).axis(axis);
     }
 
     @Override
     public Tsr<ValType> get() {
         return _then.resolve(_from, _to, _steps).get();
+    }
+
+
+    public void resolve() {
+        _then.resolve(_from, _to, _steps);
     }
 
 }

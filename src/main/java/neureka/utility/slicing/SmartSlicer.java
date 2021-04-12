@@ -2,49 +2,58 @@ package neureka.utility.slicing;
 
 import neureka.Tsr;
 import neureka.framing.IndexAlias;
+import neureka.utility.slicing.states.AxisOrGet;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class SmartSlicer<ValType> extends SliceBuilder<ValType>{
+/**
+ *  This class is responsible for receiving any input and trying to interpret it so that a
+ *  slice can be formed.
+ */
+public class SmartSlicer {
 
     /**
      *  An interface provided by sl4j which enables a modular logging backend!
      */
-    protected static Logger _LOG; // Why is this not final ? : For unit testing!
+    private static Logger _LOG = LoggerFactory.getLogger(SmartSlicer.class); // Why is this not final ? : For unit testing!
 
-    public SmartSlicer(Tsr<ValType> source, CreationCallback<ValType> callback, Object[] ranges )
-    {
-        super(source, callback);
-        List<Object> _ranges = new ArrayList<>();
-        List<Integer> _steps = new ArrayList<>();
+    public static <ValType> Tsr<ValType> slice(
+            Object[] ranges,
+            Tsr<ValType> source,
+            SliceBuilder.CreationCallback<ValType> callback
+    ) {
+        AxisOrGet<ValType> sliceBuilder = new SliceBuilder<>(source, callback);
+        List<Object> rangeList = new ArrayList<>();
+        List<Integer> stepsList = new ArrayList<>();
         for (Object range : ranges ) {
             if ( range instanceof Map) {
-                _ranges.addAll(((Map<?, ?>) range).keySet());
-                _steps.addAll(((Map<?, Integer>) range).values());
+                rangeList.addAll(((Map<?, ?>) range).keySet());
+                stepsList.addAll(((Map<?, Integer>) range).values());
             }
             else if ( range instanceof int[] ) {
                 List<Integer> intList = new ArrayList<>(((int[]) range).length);
                 for ( int ii : (int[]) range ) intList.add(ii);
-                _ranges.add(intList);
-                _steps.add(1);
+                rangeList.add(intList);
+                stepsList.add(1);
             }
             else if ( range instanceof String[] ) {
                 List<String> strList = new ArrayList<>(((String[]) range).length);
                 strList.addAll(Arrays.asList((String[]) range));
-                _ranges.add(strList);
-                _steps.add(1);
+                rangeList.add(strList);
+                stepsList.add(1);
             }
             else {
-                _ranges.add( range );
-                _steps.add(1);
+                rangeList.add( range );
+                stepsList.add(1);
             }
         }
 
-        ranges = _ranges.toArray();
+        ranges = rangeList.toArray();
 
         for ( int i = 0; i < ranges.length; i++ ) {
             int first = 0;
@@ -98,14 +107,15 @@ public class SmartSlicer<ValType> extends SliceBuilder<ValType>{
                 }
             }
 
-            this
-                .axis( i )
-                .from( first )
-                .to( last )
-                .step( _steps.get( i ) )
-                .then();
+            sliceBuilder =
+                    sliceBuilder
+                        .axis( i )
+                        .from( first )
+                        .to( last )
+                        .step( stepsList.get( i ) );
 
         }
+        return sliceBuilder.get();
     }
 
 }

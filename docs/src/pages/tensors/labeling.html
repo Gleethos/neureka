@@ -68,8 +68,18 @@
         </div>
     </div>
 </div>
+
+
+
 <div class="col-sm-12 col-md-12">
-    <pre><code class="hljs java">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
 
         // Example II:
 
@@ -85,5 +95,49 @@
         x = t["2", [["b".."y"]:1, ["tim","tanya"]:2]] // x.toString(): "(1x2x2):[7.0, 7.0, 7.0, 7.0]"
         x = t[[["2"]:1, ["b".."y"]:1, ["tim","tanya"]:2]] // x.toString(): "(1x2x2):[7.0, 7.0, 7.0, 7.0]"
 
-    </code></pre>
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+        // Example II:
+
+        Tsr t = new Tsr(new int[]{2, 3, 4}, 7);
+        t.label(new String[]{
+                new String[]{"1", "2"},
+                new String[]{"a", "b", "y"},
+                new String[]{"tim", "tom", "tina", "tanya"}
+        });
+
+        Tsr x;
+        x = t.slice() //["2", "b".."y", [["tim","tanya"]:2]] // x.toString(): "(1x2x2):[7.0, 7.0, 7.0, 7.0]"
+                 .axis(0).at("2")
+                 .then()
+                 .axis(1).from("b").to("y")
+                 .then()
+                 .axis(2).from("tim").to("tanya").step(2)
+                 .get();
+
+
+
+        x = t["2", [["b".."y"]:1, ["tim","tanya"]:2]] // x.toString(): "(1x2x2):[7.0, 7.0, 7.0, 7.0]"
+
+
+        x = t[[["2"]:1, ["b".."y"]:1, ["tim","tanya"]:2]] // x.toString(): "(1x2x2):[7.0, 7.0, 7.0, 7.0]"
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
