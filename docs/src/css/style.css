@@ -492,8 +492,9 @@ header p {
 }
 
 .MainContentWrapper code {
-    margin-top: 0.33em;
+    margin-top: 0.34em;
     margin-bottom: 0.33em;
+    border-radius: 0.2em;
 }
 
 
