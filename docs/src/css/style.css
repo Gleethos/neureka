@@ -492,14 +492,6 @@ header p {
     margin-bottom: 0.33em;
 }
 
-code {
-    padding: 0.5em;
-    margin: 0.175em;
-    border: 0.05em solid black;
-    box-shadow: inset 0 0 3px 1px black;
-    border-radius: 0.2em;
-    color: black;
-}
 
 .ContentBox {
     background-color: rgb(217, 253, 255);
@@ -529,7 +521,6 @@ code {
     padding: 0.08em;
     margin: 0 0 0.2em;
     text-align: left;
-    float: left;
 }
 
 .ContentBox h3 {

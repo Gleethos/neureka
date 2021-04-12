@@ -76,20 +76,22 @@
     </div>
 </div>
 <div class="col-sm-12 col-md-6 col-lg-5">
-    <div class="ContentBox">
-        <p>
-            When calling the "slice()" method on a tensor a new 'SliceBuilder' instance will be exposed.
-            By calling the "axis(..)" method, this instance will return an instances of
-            the 'AxisSliceBuilder' class which is responsible for slicing the specified axis. <br>
-            An axis can be sliced in 2 ways: <br>
-            By providing a range within the size of the current axis, namely by calling "from(..)" and then "to(..), "
-            or by simply calling "at(..)" to slice a single position within the full range of the current axis. <br><br>
+    <div class="ContentBox MarkdownMe">
 
-            After being done with a specific axis one can switch to another 'AxisSliceBuilder' instance
-            by calling "axis(..)" with a different axis index... <br>
-            If however no more slicing needs to be performed one can simply call the "get()" method
-            to trigger the actual slicing based on the previously specified range(s).
-        </p>
+When calling the `slice()` method on a tensor a new `SliceBuilder` instance will be exposed.
+By calling the `axis(..)` method, an instances of
+the `AxisSliceBuilder` class will be returned which is **responsible for slicing the specified axis.**
+An axis can be sliced in 2 ways:
+
+- By providing a range within the size of the current axis, namely by calling `from(..)` and then `to(..)`,
+
+- or by simply calling `at(..)` to slice a single position within the full range of the current axis.
+
+After being done with a specific axis one can switch to another `AxisSliceBuilder` instance
+by calling `axis(..)` with a different axis index... <br>
+If however no more slicing needs to be performed one can simply call the `get()` method
+to trigger the actual slicing based on the previously specified range(s).
+
     </div>
 </div>
 
@@ -243,5 +245,10 @@
         </div>
     </div>
 </div>
+
+
+
+
+
 
 

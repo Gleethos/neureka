@@ -172,6 +172,7 @@
                     </div>
                     <div class="MainContentWrapper">
                         <div class=container-fluid>
+                            <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
                             <script>
                                 function capitalize(input) {
                                     let words = input.replaceAll('_', ' ').split(' ');
@@ -209,6 +210,16 @@
                                                 setTimeout(function () {
                                                         hljs.initHighlighting.called = false;
                                                         hljs.initHighlighting();
+                                                        $( '.MarkdownMe' ).each(function() {
+                                                            toBeMD = $( this );
+                                                                setTimeout(function () {
+                                                                        console.log(toBeMD.html());
+                                                                        console.log(marked(toBeMD.html()));
+                                                                        toBeMD.html(marked(toBeMD.html()))
+                                                                    },
+                                                                    100
+                                                                );
+                                                        });
                                                         $('#DynamicContent').show("fast");
                                                     },
                                                     100
