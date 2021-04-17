@@ -7,6 +7,18 @@ import neureka.utility.slicing.states.FromOrAt;
 import java.util.function.Supplier;
 
 
+/**
+ *  This class is the heart of the slice builder API, collecting range configurations by
+ *  exposing an API consisting of multiple interfaces which form a call state transition graph.
+ *  Instances of this class do not perform the actual slicing of a {@link Tsr} instance themselves,
+ *  however instead they merely serve as collectors of slice configuration data.
+ *  The API exposed by the {@link SliceBuilder} uses method chaining as well as a set of implemented interfaces
+ *  which reference themselves in the form of the return types defined by the method signatures of said interfaces.
+ *  A user of the API can only call methods exposed by the current "view" of the builder, namely a interface.
+ *  This ensures a controlled order of calls to the API...
+ *
+ * @param <ValType> The type of the value(s) held by the tensor which ought to be sliced with the help of this builder.
+ */
 public class SliceBuilder<ValType> implements AxisOrGet<ValType>
 {
     public interface CreationCallback<V> { Tsr<V> sliceOf(int[] newShape, int[] newOffset, int[] newSpread ); }
@@ -14,6 +26,15 @@ public class SliceBuilder<ValType> implements AxisOrGet<ValType>
     private final Supplier<Tsr<ValType>> _create;
     private final AxisSliceBuilder<ValType>[]  _axisSliceBuilders;
 
+    /**
+     *  An instance of a slice builder does not perform the actual slicing itself!
+     *  Instead it merely serves as a collector of slice configuration data.
+     *  The actual slicing will be performed by the {@link CreationCallback} passed
+     *  to this constructor.
+     *
+     * @param toBeSliced The {@link Tsr} instance which ought to be sliced.
+     * @param sliceCreator A callback lambda which receives the final slice configuration to perform the actual slicing.
+     */
     public SliceBuilder( Tsr<ValType> toBeSliced, CreationCallback<ValType> sliceCreator )
     {
         int[] shape = toBeSliced.getNDConf().shape();
@@ -35,10 +56,6 @@ public class SliceBuilder<ValType> implements AxisOrGet<ValType>
                                                     to = ( to < 0 ) ? shape[finalI] + to : to;
                                                     if ( to < 0 ) to += shape[ finalI ];
                                                     if ( from < 0 ) from += shape[ finalI ];
-                                                    //while ( to < 0 ) to += shape[ finalI ];
-                                                    //while ( from < 0 ) from += shape[ finalI ];
-                                                    //to %= shape[ finalI ];
-                                                    //from %= shape[ finalI ];
                                                     newOffset[ finalI ] = from;
                                                     newShape[ finalI ] = ( to - from + 1 ) / step;
                                                     newSpread[ finalI ] = step;

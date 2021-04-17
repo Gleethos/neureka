@@ -23,31 +23,32 @@ SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-   ______                     _   _             ______
-  |  ____|                   | | (_)           |  ____|
-  | |__  __  _____  ___ _   _| |_ _  ___  _ __ | |__ ___  _ __
-  |  __| \ \/ / _ \/ __| | | | __| |/ _ \| '_ \|  __/ _ \| '__|
-  | |____ >  <  __/ (__| |_| | |_| | (_) | | | | | | (_) | |
-  |______/_/\_\___|\___|\__,_|\__|_|\___/|_| |_|_|  \___/|_|
-
+  _____                 _                           _        _   _             ______
+ |_   _|               | |                         | |      | | (_)           |  ____|
+   | |  _ __ ___  _ __ | | ___ _ __ ___   ___ _ __ | |_ __ _| |_ _  ___  _ __ | |__ ___  _ __
+   | | | '_ ` _ \| '_ \| |/ _ \ '_ ` _ \ / _ \ '_ \| __/ _` | __| |/ _ \| '_ \|  __/ _ \| '__|
+  _| |_| | | | | | |_) | |  __/ | | | | |  __/ | | | || (_| | |_| | (_) | | | | | | (_) | |
+ |_____|_| |_| |_| .__/|_|\___|_| |_| |_|\___|_| |_|\__\__,_|\__|_|\___/|_| |_|_|  \___/|_|
+                 | |
+                 |_|
 
 ------------------------------------------------------------------------------------------------------------------------
 
 */
 
 
-package neureka.backend.api.implementations;
+package neureka.backend.api;
 
 import neureka.devices.Device;
-import neureka.backend.api.ExecutionCall;
 
 /**
- * This interface describes the functionality of an implementation
- * of an execution procedure for a specific Device (interface) instance
- * and Algorithm (interface) instance!
+ * Generally speaking, this interface describes the functionality of an implementation
+ * of an execution procedure tailored to a specific {@link Device} (interface) instance
+ * and {@link Algorithm} (interface) instance!
+ * Instances of implementations of the {@link ImplementationFor} interface are components
+ * of instances of implementations of the {@link Algorithm} interface,
+ * which themselves are components of {@link Operation} implementation instances.
  *
- * An instance of this interface is then a component of an Algorithm instance
- * which is itself a component of the Operation class.
  *
  * @param <TargetDevice> The Device type for which an implementation of this interface has been made.
  */
@@ -55,11 +56,12 @@ import neureka.backend.api.ExecutionCall;
 public interface ImplementationFor< TargetDevice extends Device<?> >
 {
     /**
-     *  The concrete implementation of the algorithm to which instances of this interface
-     *  belongs and the device on which this is implemented.
+     *  This method is the entrypoint for a concrete implementation
+     *  of the algorithm to which instances of this interface
+     *  belong and the device on which this is implemented.
      *  One has to keep in mind that the implementation details
-     *  with respect to the target device a specific to the
-     *  methods of the "TargetDevice" type  on which this call should run...
+     *  with respect to the target device are specific to the
+     *  methods of the "TargetDevice" type on which this call should run...
      *
      *  @param call The call which ought to be executed on this implementation.
      */

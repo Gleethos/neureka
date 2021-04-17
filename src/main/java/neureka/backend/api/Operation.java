@@ -22,35 +22,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    ____                       _   _          _______
-   / __ \                     | | (_)        |__   __|
-  | |  | |_ __   ___ _ __ __ _| |_ _  ___  _ __ | |_   _ _ __   ___
-  | |  | | '_ \ / _ \ '__/ _` | __| |/ _ \| '_ \| | | | | '_ \ / _ \
-  | |__| | |_) |  __/ | | (_| | |_| | (_) | | | | | |_| | |_) |  __/
-   \____/| .__/ \___|_|  \__,_|\__|_|\___/|_| |_|_|\__, | .__/ \___|
-         | |                                        __/ | |
-         |_|                                       |___/|_|
+    ____                       _   _
+   / __ \                     | | (_)
+  | |  | |_ __   ___ _ __ __ _| |_ _  ___  _ __
+  | |  | | '_ \ / _ \ '__/ _` | __| |/ _ \| '_ \
+  | |__| | |_) |  __/ | | (_| | |_| | (_) | | | |
+   \____/| .__/ \___|_|  \__,_|\__|_|\___/|_| |_|
+         | |
+         |_|
 
-         The representation class for tensor operations.
+    The representation for operations on tensors.
 
 ------------------------------------------------------------------------------------------------------------------------
-
 */
 
 
-package neureka.backend.api.operations;
+package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
-import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
-import neureka.backend.api.algorithms.Algorithm;
 import neureka.calculus.Function;
-import neureka.backend.api.ExecutionCall;
 import neureka.ndim.iterators.NDIterator;
-
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.function.Consumer;
 
 /**
  *  This interface describes an operation which ought to consist of a compositional system
@@ -167,7 +159,7 @@ public interface Operation
     /**
      * This method mainly ought to serve as a reference- and fallback- implementation for tensor backends and also
      * as the backend for handling the calculation of scalar inputs passed to a given abstract syntax tree of
-     * Function instances... <br>
+     * {@link Function} instances... <br>
      * ( (almost) every Function instance contains an OperationType reference to which it passes scalar executions... )
      * <br><br>
      * This is also the reason why the last parameter of this method is a list of Function objects :

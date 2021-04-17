@@ -3,7 +3,7 @@ package neureka.backend.standard.algorithms;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
-import neureka.backend.api.operations.Operation;
+import neureka.backend.api.Operation;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
@@ -17,8 +17,8 @@ public class Activation extends AbstractFunctionalAlgorithm< Activation >
         super("activation");
         setSuitabilityChecker(
                 call -> call.validate()
-                        .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
-                        .estimation()
+                            .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
+                            .estimation()
         );
         setBackwardADAnalyzer( call -> true );
         setForwardADAnalyzer(

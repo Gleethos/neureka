@@ -3,8 +3,9 @@ package neureka.backend.api.algorithms;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
-import neureka.backend.api.implementations.ImplementationFor;
-import neureka.backend.api.operations.Operation;
+import neureka.backend.api.Algorithm;
+import neureka.backend.api.ImplementationFor;
+import neureka.backend.api.Operation;
 import neureka.devices.Device;
 import neureka.backend.api.ExecutionCall;
 

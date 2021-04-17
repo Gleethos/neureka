@@ -19,7 +19,9 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
                 <br> 
                 <p>
                     This specification covers the behavior of tensors when being sliced
-                    on multiple different device types.           
+                    on multiple different device types in conjunction with 
+                    the autograd system.
+                    Autograd should work on slices as well.          
                 </p>
             """
     }
@@ -68,14 +70,24 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
                         .axis(1).at(-2)
                         .get()
 
+            s.rqsGradient = true
+
         then:
-            s.toString() == "(1x1):[2.0]"
+            s.toString() == "(1x1):[2.0]:g:[null]"
             s.getValueAt(0) == 2.0
+            s.rqsGradient()
             b.toString().contains(
                     "7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
             )
             b.spread() != null
+        /*
+        when :
+            Tsr y = ( s * 4 ) ^ 1.5
 
+
+        then :
+             y.toString() == ''
+        */
         where:
             device << [ Device.find('gpu'), HostCPU.instance() ]
 

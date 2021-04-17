@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
-import neureka.backend.api.operations.Operation;
+import neureka.backend.api.Operation;
 import neureka.backend.api.ExecutionCall;
 
 import java.util.*;

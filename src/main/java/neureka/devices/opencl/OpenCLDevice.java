@@ -54,7 +54,7 @@ import lombok.experimental.Accessors;
 import neureka.Component;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.operations.Operation;
+import neureka.backend.api.Operation;
 import neureka.backend.api.operations.OperationContext;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;

@@ -2,7 +2,7 @@ package neureka.backend.standard.operations.indexer;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.algorithms.Algorithm;
+import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.OperationFactory;
 import neureka.devices.Device;
 import neureka.backend.standard.implementations.HostImplementation;
@@ -14,7 +14,7 @@ import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.operations.Operation;
+import neureka.backend.api.Operation;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;

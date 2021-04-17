@@ -5,7 +5,7 @@ import neureka.Tsr
 import neureka.autograd.ADAgent
 import neureka.calculus.Function
 import neureka.backend.api.ExecutionCall
-import neureka.backend.api.algorithms.Algorithm
+import neureka.backend.api.Algorithm
 import neureka.backend.standard.algorithms.Activation
 import neureka.backend.standard.algorithms.Broadcast
 import neureka.backend.standard.algorithms.Convolution

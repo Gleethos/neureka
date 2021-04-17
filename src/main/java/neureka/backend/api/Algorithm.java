@@ -23,24 +23,22 @@ SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-   _____                    _   _          _______            _____               _                           _        _   _
-  / __  \                  | | (_)        |__   __|          |_   _|             | |                         | |      | | (_)
- | |  |_|__   ___ _ __ __ _| |_ _  ___  _ __ | L   _ _ __  ___ | | _ __ ___  _ __| | ___ _ __ ___   ___ _ __ | |_ __ _| |_ _  ___  _ __
- | |  | '_ \ / _ \ '__/ _` | __| |/ _ \| '_ \|| | | | '_ \/ _ \| || '_ ` _ \| '_ \ |/ _ \ '_ ` _ \ / _ \ '_ \| __/ _` | __| |/ _ \| '_ \
- | |__| |_) |  __/ | | (_| | |_| | (_) | | | || |_| | |_) | __/| || | | | | | |_) ||  __/ | | | | |  __/ | | | || (_| | |_| | (_) | | | |
-  \___| .__/ \___|_|  \__,_|\__|_|\___/|_| |_||\__, | .__/\___|___|_| |_| |_| .__/_|\___|_| |_| |_|\___|_| |_|\__\__,_|\__|_|\___/|_| |_|
-      | |                                       __/ | |                     | |
-      |_|                                      |___/|_|                     |_|
+           _                  _ _   _
+     /\   | |                (_) | | |
+    /  \  | | __ _  ___  _ __ _| |_| |__  _ __ ___
+   / /\ \ | |/ _` |/ _ \| '__| | __| '_ \| '_ ` _ \
+  / ____ \| | (_| | (_) | |  | | |_| | | | | | | | |
+ /_/    \_\_|\__, |\___/|_|  |_|\__|_| |_|_| |_| |_|
+              __/ |
+             |___/
 
 ------------------------------------------------------------------------------------------------------------------------
 */
 
 
-package neureka.backend.api.algorithms;
+package neureka.backend.api;
 
 import neureka.Tsr;
-import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.implementations.ImplementationFor;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
 import neureka.autograd.ADAgent;
@@ -49,19 +47,16 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- *   This class is the middle layer of the 3 tier abstraction architecture
- *   of Neureka's operation backend.
+ *   This class is the middle layer of the 3 tier abstraction architecture of this backend. <br>
  *
- *   Conceptually an implementation of this interface represents "a way of execution" for
- *   the {@link neureka.backend.api.operations.Operation} to which an instance of said implementation would belong.
- *   The "+" operator for example has different {@link Algorithm} instances
- *   for different {@link ExecutionCall} instances.
- *   Tensors within an execution call having the same shape would
- *   trigger the Operation instance of an elementwise {@link Algorithm} instance, whereas otherwise
- *   the {@link neureka.backend.standard.algorithms.Convolution}
- *   or
- *   {@link neureka.backend.standard.algorithms.Broadcast}
- *   implementation might be called.
+ *   Conceptually an implementation of the {@link Algorithm} interface represents "a sub-kind of operation" for
+ *   an instance of an implementation of the {@link Operation} interface. <br>
+ *   The "+" operator for example has different {@link Algorithm} instances tailored to specific requirements
+ *   originating from different {@link ExecutionCall} instances with unique arguments.
+ *   {@link Tsr} instances within an execution call having the same shape would
+ *   cause the {@link Operation} instance to chose an {@link Algorithm} instance which is responsible
+ *   for performing elementwise operations, whereas otherwise the {@link neureka.backend.standard.algorithms.Broadcast}
+ *   algorithm might be called to perform the operation.
  */
 public interface Algorithm<FinalType>
 {

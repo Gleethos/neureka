@@ -6,7 +6,7 @@ import neureka.devices.host.HostCPU
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
 import neureka.backend.api.ExecutionCall
-import neureka.backend.api.algorithms.Algorithm
+import neureka.backend.api.Algorithm
 import neureka.backend.standard.algorithms.Activation
 import neureka.backend.standard.algorithms.Operator
 import neureka.backend.api.operations.OperationContext

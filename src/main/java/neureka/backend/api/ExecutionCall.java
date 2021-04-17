@@ -40,8 +40,6 @@ package neureka.backend.api;
 import lombok.*;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
-import neureka.backend.api.algorithms.Algorithm;
-import neureka.backend.api.operations.Operation;
 import neureka.devices.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
@@ -208,10 +206,10 @@ public class ExecutionCall<DeviceType extends Device>
 
     /**
      *  This is a simple nested class offering various lambda based methods
-     *  for validating the tensor arguments stored inside this ExecutionCall.
+     *  for validating the tensor arguments stored inside this {@link ExecutionCall}.
      *  It is a useful tool readable as well as concise validation of a given
      *  request for execution, that is primarily used inside implementations of the middle
-     *  layer of the backend-API architecture (Algorithm::isAlgorithmSuitableFor).
+     *  layer of the backend-API architecture ({@link Algorithm#isAlgorithmSuitableFor(ExecutionCall)}).
      */
     @Accessors( prefix = {"_"} )
     public class Validator

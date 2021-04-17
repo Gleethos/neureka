@@ -36,8 +36,8 @@ package neureka.devices;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.Algorithm;
-import neureka.backend.api.operations.Operation;
+import neureka.backend.api.Algorithm;
+import neureka.backend.api.Operation;
 import neureka.utility.CustomCleaner;
 import neureka.utility.NeurekaCleaner;
 import org.slf4j.Logger;

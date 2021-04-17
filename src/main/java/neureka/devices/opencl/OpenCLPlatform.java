@@ -7,7 +7,7 @@ import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.*;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.api.operations.Operation;
+import neureka.backend.api.Operation;
 import org.jocl.*;
 import java.util.*;
 

@@ -36,24 +36,20 @@ nonetheless extremely powerful.
 
 ## Architecture ## 
 
+
+
 The package hosts a 3 tier layered API
-for Neureka's operation implementation backend.
-
-For every layer of this architecture there is one package
-in this `api` package, namely <br>
-
-- `implementations` : Device specific implementations of an algorithm.
-
-- `algorithms` : Representations of algorithms hosting multiple device specific implementations.
+made up of core concepts, namely: <br>
 
 - `operations` : A collection of species of algorithms.
 
-The architecture of the package consists of a composition / component based <br>
-top to bottom structure where instances of the type defined in the 'implementations' package <br>
-are components of those defines in the `algorithms` package <br>
-which are themselves components of those defined in the 'operations' package. <br>
+- `algorithms` : Representations of algorithms hosting multiple device specific implementations.
 
-The 3 interfaces which govern this described relationship are the following :
+- `implementations` : Implementations of an algorithm tailored to a specific `Device`.
+
+This package models this architecture by exposing 3 interfaces which govern these concepts, 
+and their relationship.
+The interfaces are the following :
 
 - `ImplementationFor< TargetDeice extends Device >`
 
@@ -61,16 +57,18 @@ The 3 interfaces which govern this described relationship are the following :
 
 - `Operation`
 
-So to restate this relationship for clarity : <br>
-Instances implementing the `ImplementationFor` interface are components <br>
+
+Implementations of these interfaces are expected to form a composition / component based <br>
+top to bottom structure.
+This means that instances implementing the `ImplementationFor` interface are components <br>
 of instances implementing the `Algorithm` interface <br>
-which are themselves ultimately components of an Operation instance. <br>
+which are themselves ultimately components of an `Operation` instance. <br>
 
 ## ExecutionCall ##
 
-The architecture mainly deals with processing `ExecutionCall` instances. <br>
+A key class within Neureka is the `ExecutionCall`. <br>
 Instances of the class contain important context information for a <br>
-given request for execution, namely : <br>
+given request for execution, just to name a view : <br>
 
 - `Device` : The targeted device for the execution.
 
@@ -81,7 +79,9 @@ given request for execution, namely : <br>
 - ... 
 
 Instances of this class are being routed through this three tier <br>
-architecture for final execution on instances of the `ImplementationFor< TargetDeice extends Device >` interface! <br>
+architecture for final execution on instances of the 
+`ImplementationFor< TargetDeice extends Device >` interface! <br>
+
 
 
 

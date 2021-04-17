@@ -3,7 +3,7 @@ package neureka.calculus.implementations;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
-import neureka.backend.api.operations.Operation;
+import neureka.backend.api.Operation;
 import neureka.backend.api.operations.OperationContext;
 import neureka.calculus.AbstractBaseFunction;
 import neureka.devices.Device;

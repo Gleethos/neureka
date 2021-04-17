@@ -11,7 +11,7 @@ import neureka.calculus.Function
 import neureka.backend.api.ExecutionCall
 import neureka.backend.standard.algorithms.GenericAlgorithm
 import neureka.backend.api.operations.OperationContext
-import neureka.backend.api.operations.Operation
+import neureka.backend.api.Operation
 import neureka.backend.api.operations.OperationFactory
 import neureka.calculus.assembly.FunctionBuilder
 import spock.lang.Specification

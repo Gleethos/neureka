@@ -2,9 +2,8 @@ package neureka.backend.standard.implementations;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import neureka.Neureka;
 import neureka.backend.api.implementations.AbstractImplementationFor;
-import neureka.backend.api.implementations.ImplementationFor;
+import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.devices.opencl.OpenCLDevice;
 

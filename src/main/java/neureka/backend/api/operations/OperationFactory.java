@@ -3,6 +3,7 @@ package neureka.backend.api.operations;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import neureka.backend.api.Operation;
 import neureka.calculus.Function;
 
 import java.util.ArrayList;

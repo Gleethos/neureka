@@ -6,7 +6,7 @@ import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.devices.opencl.OpenCLDevice
 import neureka.backend.api.ExecutionCall
-import neureka.backend.api.algorithms.Algorithm
+import neureka.backend.api.Algorithm
 import neureka.devices.file.FileDevice
 import spock.lang.Specification
 

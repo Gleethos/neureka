@@ -1,6 +1,7 @@
 package neureka.backend.api.implementations;
 
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.ImplementationFor;
 import neureka.devices.Device;
 
 public class AbstractImplementationFor< TargetDevice extends Device<?> > implements ImplementationFor<TargetDevice>

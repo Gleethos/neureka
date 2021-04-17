@@ -5,29 +5,31 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
+import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Operation;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 
 /**
- * This is the base class for implementations of the {@link Algorithm} interface.
- * The class implements the component logic required by said interface.
- * Additionally it contains useful methods used to process passed arguments of {@link ExecutionCall}.
+ *  This is the base class for implementations of the {@link Algorithm} interface.
+ *  The class implements a basic component system, as is implicitly expected by said interface.
+ *  Additionally it contains useful methods used to process passed arguments of {@link ExecutionCall}
+ *  as well as an implementation of the {@link Algorithm} interface which allows its methods to
+ *  be implemented in a functional programming style, meaning that instances of concrete implementations
+ *  extending this abstract class have setters for lambdas representing the {@link Algorithm} methods.
+ *  It is being used by the standard backend of Neureka as abstract base class for various algorithms.
  *
- * Conceptually this class represents "a way of execution" for
- * the Operation to which an instance of this class would belong.
- * The "+" operator for example has different {@link Algorithm} instances
- * for {@link ExecutionCall} instances hosting tensors which might require
- * either elementwise addition or broadcasting depending on the shapes.
- * Tensors within an execution call having the same shape would
- * trigger an elementwise {@link Algorithm} instance stored in the
- * {@link neureka.backend.api.operations.Operation}, whereas otherwise
- * the {@link neureka.backend.standard.algorithms.Convolution}
- * or
- * {@link neureka.backend.standard.algorithms.Broadcast}
- * algorithm type might be called.
+ *  Conceptually an implementation of the {@link Algorithm} interface represents "a sub-kind of operation" for
+ *  an instance of an implementation of the {@link Operation} interface. <br>
+ *  The "+" operator for example has different {@link Algorithm} instances tailored to specific requirements
+ *  originating from different {@link ExecutionCall} instances with unique arguments.
+ *  {@link Tsr} instances within an execution call having the same shape would
+ *  cause the {@link Operation} instance to chose an {@link Algorithm} instance which is responsible
+ *  for performing elementwise operations, whereas otherwise the {@link neureka.backend.standard.algorithms.Broadcast}
+ *  algorithm might be called to perform the operation.
  *
  * @param <FinalType> The final type extending this class.
  */

@@ -1,7 +1,7 @@
 package neureka.backend.standard.implementations;
 
 import neureka.backend.api.implementations.AbstractImplementationFor;
-import neureka.backend.api.implementations.ImplementationFor;
+import neureka.backend.api.ImplementationFor;
 import neureka.devices.host.HostCPU;
 
 /**

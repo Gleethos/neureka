@@ -8,8 +8,7 @@ import neureka.autograd.GraphNode
 import neureka.calculus.Function
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.operations.AbstractOperation
-import neureka.backend.api.operations.Operation
-import neureka.utility.TsrAsString
+import neureka.backend.api.Operation
 import spock.lang.Specification
 
 import java.util.function.Supplier
