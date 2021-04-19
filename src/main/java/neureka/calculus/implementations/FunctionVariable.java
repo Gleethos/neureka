@@ -60,6 +60,7 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
         return this;
     }
 
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
@@ -87,25 +88,25 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public <T> Tsr<T> call( Tsr<T>[] inputs, int j ) {
+    public Tsr<?> execute( Tsr<?>[] inputs, int j ) {
         return inputs[j];
     }
 
     @Override
-    public <T> Tsr<T> call( Tsr<T>... inputs ) {
+    public Tsr<?> execute( Tsr<?>... inputs ) {
         StringBuilder exp = new StringBuilder("I[ 0 ]");
         for(int i=1; i<inputs.length; i++) exp.append("+I[").append(i).append("]");
-        return FunctionBuilder.build(exp.toString(), false).call( inputs );
+        return FunctionBuilder.build(exp.toString(), false).execute( inputs );
     }
 
     @Override
-    public <T> Tsr<T> derive( Tsr<T>[] inputs, int index, int j ) {
-        return (j != index) ? new Tsr<T>( inputs[ 0 ].shape(), 0.0 ) : derive( inputs, index );
+    public Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) {
+        return (j != index) ? new Tsr<>( inputs[ 0 ].shape(), 0.0 ) : executeDerive( inputs, index );
     }
 
     @Override
-    public <T> Tsr<T> derive( Tsr<T>[] inputs, int index ) {
-        return new Tsr<T>( inputs[ 0 ].shape(), 1.0 );
+    public Tsr<?> executeDerive( Tsr<?>[] inputs, int index ) {
+        return new Tsr<>( inputs[ 0 ].shape(), 1.0 );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

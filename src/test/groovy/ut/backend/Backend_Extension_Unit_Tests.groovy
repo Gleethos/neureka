@@ -58,7 +58,7 @@ class Backend_Extension_Unit_Tests extends Specification
             0 * output.getDevice() >> Mock(Device)
 
         and : 'The ADAnalyzer of the mock implementation will not be called because "doAD" is set to "false".'
-            0 * implementation.isAlgorithmSuitableFor(_)
+            0 * implementation.isSuitableFor(_)
 
         and : 'The agent creator is never accessed because "doAD" is set to false.'
             0 * implementation.supplyADAgentFor(_,_,_)
@@ -115,8 +115,8 @@ class Backend_Extension_Unit_Tests extends Specification
 
         and : 'The given ADAnalyzer instance is being called because auto-differentiation is enabled.'
             (1.._) * input.rqsGradient() >> true
-            (1.._) * implementation.canAlgorithmPerformForwardADFor(_) >> false
-            (1.._) * implementation.canAlgorithmPerformBackwardADFor(_) >> true
+            (1.._) * implementation.canPerformForwardADFor(_) >> false
+            (1.._) * implementation.canPerformBackwardADFor(_) >> true
             (1.._) * node.getPayload() >> input
             (1.._) * node.usesAD() >> true
 

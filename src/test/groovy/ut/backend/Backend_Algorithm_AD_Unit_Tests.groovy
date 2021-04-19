@@ -32,7 +32,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             def call = Mock(ExecutionCall)
 
         when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
-            ADAgent agent = imp.ADAgentSupplier.getADAgentOf(
+            ADAgent agent = imp.supplyADAgentFor(
                     function,
                     call,
                     true
@@ -43,7 +43,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         when : 'The agent generator is called once more with the forward flag set to false...'
-            agent = imp.ADAgentSupplier.getADAgentOf(
+            agent = imp.supplyADAgentFor(
                     function,
                     call,
                     false
@@ -58,11 +58,10 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
                     .instances()
                     .stream()
                     .filter(
-                            e ->
-                                    e.isOperator() &&
-                                            e.getOperator().length()==1 &&
-                                                e.supports( Operator.class )
-                    ).map( e -> e.getAlgorithm( Operator.class ) )
+                            e -> e.isOperator() && e.getOperator().length()==1 && e.supports( Operator.class )
+                    ).map(
+                    e -> e.getAlgorithm( Operator.class )
+                    )
     }
 
 
@@ -82,7 +81,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             def call = Mock(ExecutionCall)
 
         when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
-            ADAgent agent = imp.ADAgentSupplier.getADAgentOf(
+            ADAgent agent = imp.supplyADAgentFor(
                 function,
                 call,
                 true
@@ -93,7 +92,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         when : 'The agent generator is called once more with the forward flag set to false...'
-            agent = imp.ADAgentSupplier.getADAgentOf(
+            agent = imp.supplyADAgentFor(
                 function,
                 call,
                 false
@@ -130,7 +129,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             def call = Mock(ExecutionCall)
 
         when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
-            ADAgent agent = imp.ADAgentSupplier.getADAgentOf(
+            ADAgent agent = imp.supplyADAgentFor(
                     function,
                     call,
                     true
@@ -141,14 +140,14 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             exception.message == "Convolution of does not support forward-AD!"
 
         when : 'The agent generator is called once more with the forward flag set to false...'
-            agent = imp.ADAgentSupplier.getADAgentOf(
+            agent = imp.supplyADAgentFor(
                 function,
                 call,
                 false
             )
 
         then : 'No exception is being thrown and the agent is configured to perform backward-AD.'
-            //!agent.isForward() //TODO: Fix tis
+            //!agent.isForward() //TODO: Fix this
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Convolution".'
@@ -159,7 +158,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
                         e ->
                                 e.isOperator() &&
                                         e.getOperator().length()==1 &&
-                                        e.supports( Convolution.class )
+                                            e.supports( Convolution.class )
                 ).map( e -> e.getAlgorithm( Convolution.class ) )
     }
 
@@ -181,7 +180,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             def call = Mock( ExecutionCall )
 
         when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
-            ADAgent agent = imp.ADAgentSupplier.getADAgentOf(
+            ADAgent agent = imp.supplyADAgentFor(
                 function,
                 call,
                 true
@@ -192,7 +191,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             exception.message == "Broadcast implementation does not support forward-AD!"
 
         when : 'The agent generator is called once more with the forward flag set to false...'
-            agent = imp.ADAgentSupplier.getADAgentOf(
+            agent = imp.supplyADAgentFor(
                 function,
                 call,
                 false
@@ -204,13 +203,13 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Convolution".'
             imp << OperationContext.get()
-                .instances()
-                .stream()
-                .filter(
-                        e ->
-                                e.isOperator() &&
-                                        e.supports( Broadcast.class )
-                ).map( e -> e.getAlgorithm( Broadcast.class ) )
+                                .instances()
+                                .stream()
+                                .filter(
+                                        e ->
+                                                e.isOperator() &&
+                                                        e.supports( Broadcast.class )
+                                ).map( e -> e.getAlgorithm( Broadcast.class ) )
     }
 
 

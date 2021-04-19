@@ -1,18 +1,19 @@
 
 # The 'algorithms' package
 
-This package is the middle layer of the 3 tier 
-calculus backend API architecture. <br>
-Extending this layer is the most complicated of the three. <br> 
+This package expands the middle layer of the 3 tier 
+calculus backend API architecture by partially implementing
+the `Algorithm` interface. <br>
+Implementing the `Algorithm` layer is the most complicated of the three. <br> 
 This is because such extensions / implementations 
 can literally be **any procedure done to an `ExecutionCall` instance**, 
 and the tensor arguments contained within this call. <br>
 Hence the package name "algorithms"! <br>
 
-Consequently, the core component of this layer is the <br>
-`Algorithm<FinalType>` interface! <br>
+Consequently, this package contains some basic implementations
+for the `Algorithm` interface! <br>
 
-However, when extending existing operations or creating new ones,   <br>
+When extending existing operations or creating new ones,   <br>
 this interface should almost never be implemented directly. <br>
 Instead there are 2 useful abstract classes which already <br>
 implement the component logic expected by the interface. <br> 
@@ -22,6 +23,8 @@ The referenced classes are :
 - `AbstractBaseAlgorithm`
 
 - `AbstractFunctionalAlgorithm`
+
+- `GenericAlgorithm`
 
 The first abstract class implements a component system for `ImplementationFor<TargetDevice>` <br>
 instances, and the second class extends the first one and adds support for functional <br>
@@ -60,7 +63,7 @@ that the implementation is not suitable at all and 1 means that <br>
 that it fits the call best! <br>
 
 ```
-    float isAlgorithmSuitableFor( ExecutionCall call );
+    float isSuitableFor( ExecutionCall call );
 ```
 ---
 
@@ -77,7 +80,7 @@ implementation can perform forward mode AD on
 the given `ExecutionCall` instance.
 
 ```
-    boolean canAlgorithmPerformForwardADFor( ExecutionCall call );
+    boolean canPerformForwardADFor( ExecutionCall call );
 ```
 ---
 
@@ -87,7 +90,7 @@ algorithm can perform backward mode AD on
 the given `ExecutionCall` instance.
 
 ```
-    boolean canAlgorithmPerformBackwardADFor( ExecutionCall call );
+    boolean canPerformBackwardADFor( ExecutionCall call );
 ```
 ---
 

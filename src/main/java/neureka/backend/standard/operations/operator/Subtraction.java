@@ -132,11 +132,11 @@ public class Subtraction extends AbstractOperation
                 };
 
         Operator operator = new Operator()
-                   .setADAgentSupplier(
+                   .setSupplyADAgentFor(
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
-                .setRJAgent( rja )
+                .setHandleRecursivelyAccordingToArity( rja )
                 .build();
 
         setAlgorithm(
@@ -152,8 +152,8 @@ public class Subtraction extends AbstractOperation
                                                         ? ( start, end ) ->
                                                                 Operator.operate (
                                                                         call.getTensor( 0 ),
-                                                                        call.getTensor(1),
-                                                                        call.getTensor(2),
+                                                                        call.getTensor( 1 ),
+                                                                        call.getTensor( 2 ),
                                                                         call.getDerivativeIndex(),
                                                                         start, end,
                                                                         operationXCreator.create(call.getTensors(), call.getDerivativeIndex())
@@ -161,8 +161,8 @@ public class Subtraction extends AbstractOperation
                                                         : ( start, end ) ->
                                                                 Operator.operate (
                                                                         call.getTensor( 0 ),
-                                                                        call.getTensor(1),
-                                                                        call.getTensor(2),
+                                                                        call.getTensor( 1 ),
+                                                                        call.getTensor( 2 ),
                                                                         call.getDerivativeIndex(),
                                                                         start, end,
                                                                         operationCreator.create(call.getTensors(), call.getDerivativeIndex())
@@ -216,14 +216,14 @@ public class Subtraction extends AbstractOperation
                 };
 
         Scalarization scalarization = new Scalarization()
-                .setBackwardADAnalyzer( call -> true )
-                .setForwardADAnalyzer( call -> true )
-                .setADAgentSupplier(
+                .setCanPerformBackwardADFor( call -> true )
+                .setCanPerformForwardADFor( call -> true )
+                .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
-                .setCallHook( (caller, call ) -> null )
-                .setRJAgent( rja )
+                .setHandleInsteadOfDevice( (caller, call ) -> null )
+                .setHandleRecursivelyAccordingToArity( rja )
                 .build();
 
         setAlgorithm(
@@ -285,17 +285,17 @@ public class Subtraction extends AbstractOperation
         // BROADCASTING :
 
         Broadcast broadcast = new Broadcast()
-                .setBackwardADAnalyzer( call -> true )
-                .setForwardADAnalyzer( call -> true )
-                .setADAgentSupplier(
+                .setCanPerformBackwardADFor( call -> true )
+                .setCanPerformForwardADFor( call -> true )
+                .setSupplyADAgentFor(
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                         {
                             Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
                             Function mul = Function.Detached.MUL;
                             if ( ctxDerivative != null ) {
                                 return new DefaultADAgent( ctxDerivative )
-                                        .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                                        .setBackward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
+                                        .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
+                                        .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
                             }
                             Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
@@ -304,12 +304,12 @@ public class Subtraction extends AbstractOperation
                             {
                                 Tsr deriv = f.derive( inputs, d );
                                 return new DefaultADAgent( deriv )
-                                        .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                        .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                        .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
+                                        .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
                             }
                         }
                 )
-                .setRJAgent( rja )
+                .setHandleRecursivelyAccordingToArity( rja )
                 .build();
 
         setAlgorithm(
@@ -325,13 +325,13 @@ public class Subtraction extends AbstractOperation
                                                             (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
                                                                     ? ( start, end ) ->
                                                                     Broadcast.broadcast (
-                                                                            call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                            call.getTensor( 0 ), call.getTensor( 1 ), call.getTensor( 2 ),
                                                                             call.getDerivativeIndex(), start, end,
                                                                             _creatorX.create(call.getTensors(), call.getDerivativeIndex())
                                                                     )
                                                                     : ( start, end ) ->
                                                                     Broadcast.broadcast (
-                                                                            call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                            call.getTensor( 0 ), call.getTensor( 1 ), call.getTensor( 2 ),
                                                                             call.getDerivativeIndex(), start, end,
                                                                             _creator.create(call.getTensors(), call.getDerivativeIndex())
                                                                     )

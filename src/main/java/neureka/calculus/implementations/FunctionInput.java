@@ -128,22 +128,22 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public Tsr call(Tsr[] inputs, int j) {
+    public Tsr<?> execute(Tsr<?>[] inputs, int j) {
         return _extract(inputs[index()]);
     }
 
     @Override
-    public Tsr call(Tsr... inputs) {
+    public Tsr<?> execute(Tsr<?>... inputs) {
         return _extract(inputs[index()]);
     }
 
     @Override
-    public Tsr derive(Tsr[] inputs, int index, int j) {
-        return derive(inputs, index);
+    public Tsr<?> executeDerive(Tsr<?>[] inputs, int index, int j) {
+        return executeDerive(inputs, index);
     }
 
     @Override
-    public Tsr derive(Tsr[] inputs, int index) {
+    public Tsr<?> executeDerive(Tsr<?>[] inputs, int index) {
         return ( index == index() )
                 ? new Tsr(inputs[ 0 ].shape(), 1.0)
                 : new Tsr(inputs[ 0 ].shape(), 0.0);

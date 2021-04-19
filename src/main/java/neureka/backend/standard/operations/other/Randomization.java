@@ -13,7 +13,6 @@ import neureka.calculus.Function;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 
-import java.util.List;
 import java.util.Random;
 
 public class Randomization extends AbstractOperation
@@ -56,8 +55,8 @@ public class Randomization extends AbstractOperation
                 };
 
         Scalarization scalarization = new Scalarization()
-        .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
+        .setCanPerformBackwardADFor( call -> true )
+        .setCanPerformForwardADFor(
                 call -> {
                     if ( call.getOperation().supports(Convolution.class) ) return false;
                     if ( call.getOperation().getOperator().equals(",") ) return false; //Reshape
@@ -69,13 +68,13 @@ public class Randomization extends AbstractOperation
                     return true;
                 }
         )
-        .setADAgentSupplier(
+        .setSupplyADAgentFor(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
         )
-        .setCallHook( (caller, call ) -> null )
-        .setRJAgent( ( call, goDeeperWith ) -> null )
-        .setDrainInstantiation(
+        .setHandleInsteadOfDevice( (caller, call ) -> null )
+        .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
+        .setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;

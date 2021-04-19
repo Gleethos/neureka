@@ -15,21 +15,21 @@ public class Activation extends AbstractFunctionalAlgorithm< Activation >
 
     public Activation() {
         super("activation");
-        setSuitabilityChecker(
+        setIsSuitableFor(
                 call -> call.validate()
                             .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
                             .estimation()
         );
-        setBackwardADAnalyzer( call -> true );
-        setForwardADAnalyzer(
+        setCanPerformBackwardADFor( call -> true );
+        setCanPerformForwardADFor(
                         call -> call
                                 .validate()
                                 .all( ( first, second ) -> first.shape().equals(second.shape()) )
                                 .isValid()
                 );
-        setCallHook( (caller, call ) -> null );
-        setRJAgent( ( call, goDeeperWith ) -> null );
-        setDrainInstantiation(
+        setHandleInsteadOfDevice( (caller, call ) -> null );
+        setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null );
+        setInstantiateNewTensorsForExecutionIn(
                         call -> {
                             Tsr[] tsrs = call.getTensors();
                             Device device = call.getDevice();

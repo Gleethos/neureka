@@ -111,8 +111,8 @@ public class XConv extends AbstractOperation
                 };
 
         Convolution convolution = new Convolution()
-            .setBackwardADAnalyzer( call -> true )
-            .setForwardADAnalyzer(
+            .setCanPerformBackwardADFor( call -> true )
+            .setCanPerformForwardADFor(
                 call -> {
                     if ( call.getOperation().supports(Convolution.class) ) return false;
                     if ( call.getOperation().getOperator().equals(",") ) return false; //Reshape
@@ -124,7 +124,7 @@ public class XConv extends AbstractOperation
                     return true;
                 }
             )
-            .setADAgentSupplier(
+            .setSupplyADAgentFor(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                 {
                     Tsr ctxDerivative = (Tsr)call.getAt("derivative");
@@ -142,11 +142,11 @@ public class XConv extends AbstractOperation
                     assert deriv != null;
                     assert invX != null;
                     return new DefaultADAgent( deriv )
-                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                    .setBackward( (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)}) );
+                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
+                    .setBackward( (t, error) -> invX.call( error, deriv, new Tsr(t.getPayload().shape(), 0) ) );
                 }
             )
-            .setCallHook(
+            .setHandleInsteadOfDevice(
                     ( caller, call ) -> {
                         if ( !caller.isFlat() ) return null;
                         if ( call.getOperation().getOperator().equals("x") ) {
@@ -178,8 +178,8 @@ public class XConv extends AbstractOperation
                         return null;
                     }
             )
-            .setRJAgent( rja )
-            .setDrainInstantiation(
+            .setHandleRecursivelyAccordingToArity( rja )
+            .setInstantiateNewTensorsForExecutionIn(
                     call -> {
                         Tsr[] tsrs = call.getTensors();
                         Device device = call.getDevice();
@@ -213,7 +213,7 @@ public class XConv extends AbstractOperation
                                                                 (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
                                                                 ? ( start, end ) ->
                                                                         Convolution.convolve (
-                                                                                call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                                call.getTensor( 0 ), call.getTensor( 1 ), call.getTensor( 2 ),
                                                                                 call.getDerivativeIndex(), start, end,
                                                                                 convolutionCreator.create(
                                                                                         call.getTensors(),
@@ -222,7 +222,7 @@ public class XConv extends AbstractOperation
                                                                         )
                                                                 :  ( start, end ) ->
                                                                         Convolution.convolve (
-                                                                                call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                                call.getTensor( 0 ), call.getTensor( 1 ), call.getTensor( 2 ),
                                                                                 call.getDerivativeIndex(), start, end,
                                                                                 convolutionNDICreator.create(
                                                                                         call.getTensors(),

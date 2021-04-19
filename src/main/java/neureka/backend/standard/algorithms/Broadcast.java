@@ -15,7 +15,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
 
     public Broadcast() {
         super("broadcast");
-        setSuitabilityChecker(
+        setIsSuitableFor(
                 call->
                 {
                     if (
@@ -40,7 +40,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                     return 1.0f;
                 }
         );
-        setCallHook(
+        setHandleInsteadOfDevice(
                 ( caller, call ) -> {
                     int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
                     if (
@@ -56,7 +56,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                     return null;
                 }
         );
-        setDrainInstantiation(
+        setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();

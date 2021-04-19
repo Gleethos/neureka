@@ -55,11 +55,11 @@ class Calculus_Extension_Integration_Tests extends Specification
                     .build()
                     .setAlgorithm(
                             GenericAlgorithm.class,
-                            new GenericAlgorithm()
-                                    .setSuitabilityChecker( call -> 1.0f )
-                                    .setBackwardADAnalyzer( call -> true )
-                                    .setForwardADAnalyzer(call -> false )
-                                    .setADAgentSupplier(
+                            new GenericAlgorithm(null)
+                                    .setIsSuitableFor( call -> 1.0f )
+                                    .setCanPerformBackwardADFor(call -> true )
+                                    .setCanPerformForwardADFor(call -> false )
+                                    .setSupplyADAgentFor(
                                             (Function f, ExecutionCall<Device> call, boolean forward ) ->
                                             {
                                                 if(forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
@@ -68,9 +68,9 @@ class Calculus_Extension_Integration_Tests extends Specification
                                                         .setBackward((t, error) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0));
                                             }
                                     )
-                                    .setCallHook( (caller, call ) -> null )
-                                    .setRJAgent( ( call, goDeeperWith ) -> null )
-                                    .setDrainInstantiation(
+                                    .setHandleInsteadOfDevice( (caller, call ) -> null )
+                                    .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
+                                    .setInstantiateNewTensorsForExecutionIn(
                                             call ->
                                             {
                                                 Tsr[] tsrs = call.getTensors();

@@ -144,24 +144,24 @@ public interface Function
             return commit( drain, inputs, function, null );
         }
 
-        public static <T> Tsr<T> commit( Tsr<T> drain, Tsr<T>[] inputs, Function function, Supplier<Tsr<T>> activation )
+        public static <T> Tsr<T> commit( Tsr<?> drain, Tsr<?>[] inputs, Function function, Supplier<Tsr<Object>> activation )
         {
             Tsr.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
 
             GraphLock newLock = new GraphLock( function, inputs );
-            for ( Tsr<T> t : inputs ) {
+            for ( Tsr<?> t : inputs ) {
                 if ( t.has( GraphNode.class ) ) t.find( GraphNode.class ).obtainLocking( newLock );
                 else new GraphNode( function, newLock, () -> t );
             }
             Tsr<T> result;
-            if ( activation == null ) result = function.call( inputs );
-            else result = activation.get();
+            if ( activation == null ) result = (Tsr<T>) function.execute( inputs );
+            else result = (Tsr<T>) activation.get();
 
             Function.CACHE.free( newLock );
             boolean resultIsUnique = true;
             if ( drain != null ) {
-                for( Tsr<T> t : inputs ) {
-                    Tsr<T> g = t.getGradient();
+                for( Tsr<?> t : inputs ) {
+                    Tsr<?> g = t.getGradient();
                     if (t == result || ( g != null && g == result ) ) {
                         resultIsUnique = false;
                         break;
@@ -207,6 +207,13 @@ public interface Function
 
     //------------------------------------------------------------------------------------------------------------------
 
+    Tsr<?> execute( Tsr<?>... inputs );
+    Tsr<?> execute( Tsr<?>[] inputs, int j );
+    Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j );
+    Tsr<?> executeDerive( Tsr<?>[] inputs, int index );
+
+    //------------------------------------------------------------------------------------------------------------------
+
     <T> Tsr<T> call( Tsr<T> input );
     <T> Tsr<T> invoke( Tsr<T> input );
 
@@ -220,6 +227,8 @@ public interface Function
 
     <T> Tsr<T> call( Tsr<T>... inputs );
     <T> Tsr<T> invoke( Tsr<T>... inputs );
+
+    //------------------------------------------------------------------------------------------------------------------
 
 
     <T> Tsr<T> derive( Tsr<T>[] inputs, int index, int j );

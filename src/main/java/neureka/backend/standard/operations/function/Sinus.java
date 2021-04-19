@@ -45,8 +45,8 @@ public final class Sinus extends AbstractOperation
         );
 
         Activation operationAlgorithm = new Activation()
-        .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
+        .setCanPerformBackwardADFor( call -> true )
+        .setCanPerformForwardADFor(
              call -> {
                  Tsr last = null;
                  for ( Tsr t : call.getTensors() ) {
@@ -55,12 +55,12 @@ public final class Sinus extends AbstractOperation
                  }
                  return true;
              }
-        ).setADAgentSupplier(
+        ).setSupplyADAgentFor(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-        ).setCallHook(  (caller, call ) -> null )
-         .setRJAgent( ( call, goDeeperWith ) -> null )
-         .setDrainInstantiation(
+        ).setHandleInsteadOfDevice(  (caller, call ) -> null )
+         .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
+         .setInstantiateNewTensorsForExecutionIn(
              call -> {
                  Tsr[] tsrs = call.getTensors();
                  Device device = call.getDevice();

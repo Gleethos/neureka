@@ -156,11 +156,11 @@ public class Multiplication extends AbstractOperation
                 };
 
         Operator operator = new Operator()
-                   .setADAgentSupplier(
+                   .setSupplyADAgentFor(
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                     )
-                    .setRJAgent( rja )
+                    .setHandleRecursivelyAccordingToArity( rja )
                     .build();
 
         setAlgorithm(
@@ -176,8 +176,8 @@ public class Multiplication extends AbstractOperation
                                                         ? ( start, end ) ->
                                                                 Operator.operate (
                                                                         call.getTensor( 0 ),
-                                                                        call.getTensor(1),
-                                                                        call.getTensor(2),
+                                                                        call.getTensor( 1 ),
+                                                                        call.getTensor( 2 ),
                                                                         call.getDerivativeIndex(),
                                                                         start, end,
                                                                         defaultOperatorXcreator.create(call.getTensors(), call.getDerivativeIndex())
@@ -185,8 +185,8 @@ public class Multiplication extends AbstractOperation
                                                         : ( start, end ) ->
                                                                 Operator.operate (
                                                                         call.getTensor( 0 ),
-                                                                        call.getTensor(1),
-                                                                        call.getTensor(2),
+                                                                        call.getTensor( 1 ),
+                                                                        call.getTensor( 2 ),
                                                                         call.getDerivativeIndex(),
                                                                         start, end,
                                                                         defaultOperatorcreator.create(call.getTensors(), call.getDerivativeIndex())
@@ -222,17 +222,17 @@ public class Multiplication extends AbstractOperation
         // BROADCASTING :
 
         Broadcast broadcast = new Broadcast()
-                .setBackwardADAnalyzer( call -> true )
-                .setForwardADAnalyzer( call -> true )
-                .setADAgentSupplier(
+                .setCanPerformBackwardADFor( call -> true )
+                .setCanPerformForwardADFor( call -> true )
+                .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         Tsr ctxDerivative = (Tsr)call.getAt( "derivative" );
                         Function mul = Function.Detached.MUL;
                         if ( ctxDerivative != null ) {
                             return new DefaultADAgent( ctxDerivative )
-                                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                                    .setBackward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
+                                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
+                                    .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
                         }
                         Tsr[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
@@ -241,12 +241,12 @@ public class Multiplication extends AbstractOperation
                         {
                             Tsr deriv = f.derive( inputs, d );
                             return new DefaultADAgent( deriv )
-                                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                    .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
+                                    .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
                         }
                     }
                 )
-                .setRJAgent( rja )
+                .setHandleRecursivelyAccordingToArity( rja )
                 .build();
 
         setAlgorithm(Broadcast.class,
@@ -260,13 +260,13 @@ public class Multiplication extends AbstractOperation
                                                     (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
                                                     ? ( start, end ) ->
                                                             Broadcast.broadcast (
-                                                                call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                call.getTensor( 0 ), call.getTensor( 1 ), call.getTensor( 2 ),
                                                                 call.getDerivativeIndex(), start, end,
                                                                 _creatorX.create(call.getTensors(), call.getDerivativeIndex())
                                                             )
                                                     : ( start, end ) ->
                                                             Broadcast.broadcast (
-                                                                call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                call.getTensor( 0 ), call.getTensor( 1 ), call.getTensor( 2 ),
                                                                 call.getDerivativeIndex(), start, end,
                                                                 _creator.create(call.getTensors(), call.getDerivativeIndex())
                                                             )
@@ -324,16 +324,16 @@ public class Multiplication extends AbstractOperation
                 };
 
         Scalarization scalarization = new Scalarization()
-                .setBackwardADAnalyzer( call -> true )
-                .setForwardADAnalyzer( call -> true )
-                .setADAgentSupplier(
+                .setCanPerformBackwardADFor( call -> true )
+                .setCanPerformForwardADFor( call -> true )
+                .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         Tsr ctxDerivative = (Tsr)call.getAt("derivative");
                         Function mul = Function.Detached.MUL;
                         if ( ctxDerivative != null ) {
                             return new DefaultADAgent( ctxDerivative )
-                                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
                                     .setBackward( null );
                         }
                         Tsr[] inputs = call.getTensors();
@@ -342,20 +342,20 @@ public class Multiplication extends AbstractOperation
                         {
                             Tsr deriv = f.derive( inputs, d );
                             return new DefaultADAgent(  deriv )
-                                    .setForward( (t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}) )
+                                    .setForward( (t, derivative ) -> mul.call( derivative, deriv ) )
                                     .setBackward( null );
                         }
                         else
                         {
                             Tsr deriv = f.derive( inputs, d );
                             return new DefaultADAgent(  deriv )
-                                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                    .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
+                                    .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
                         }
                     }
                 )
-                .setCallHook( (caller, call ) -> null )
-                .setRJAgent( rja )
+                .setHandleInsteadOfDevice( (caller, call ) -> null )
+                .setHandleRecursivelyAccordingToArity( rja )
                 .build();
 
         setAlgorithm(
@@ -364,7 +364,7 @@ public class Multiplication extends AbstractOperation
                         HostCPU.class,
                         new HostImplementation(
                                 call -> {
-                                    double value = call.getTensor( 0 ).value64(2);
+                                    double value = call.getTensor( 0 ).value64( 2 );
                                     call.getDevice().getExecutor()
                                             .threaded (
                                                     call.getTensor( 0 ).size(),
@@ -432,8 +432,8 @@ public class Multiplication extends AbstractOperation
                 };
 
         Broadcast xBroadcast = new Broadcast()
-        .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
+        .setCanPerformBackwardADFor( call -> true )
+        .setCanPerformForwardADFor(
                 call -> {
                     Tsr<?> last = null;
                     for ( Tsr<?> t : call.getTensors() ) {
@@ -442,14 +442,14 @@ public class Multiplication extends AbstractOperation
                     }
                     return true;
                 }
-        ).setADAgentSupplier(
+        ).setSupplyADAgentFor(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
                 Tsr ctxDerivative = (Tsr)call.getAt("derivative");
                 Function mul = Function.Detached.MUL;
                 if ( ctxDerivative != null ) {
                     return new DefaultADAgent( ctxDerivative )
-                            .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
+                            .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
                             .setBackward( null );
                 }
                 Tsr[] inputs = call.getTensors();
@@ -459,14 +459,14 @@ public class Multiplication extends AbstractOperation
                 {
                     Tsr deriv = f.derive( inputs, d );
                     return new DefaultADAgent( deriv )
-                            .setForward( ( node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                            .setBackward( ( node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                            .setForward( ( node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
+                            .setBackward( ( node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
                 }
             }
         )
-        .setCallHook( (caller, call ) -> null )
-        .setRJAgent( ( call, goDeeperWith ) -> null )
-        .setDrainInstantiation(
+        .setHandleInsteadOfDevice( (caller, call ) -> null )
+        .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
+        .setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
@@ -516,13 +516,13 @@ public class Multiplication extends AbstractOperation
                                                         (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
                                                         ? ( start, end ) ->
                                                                 Broadcast.broadcast (
-                                                                        call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                        call.getTensor( 0 ), call.getTensor( 1 ), call.getTensor( 2 ),
                                                                         call.getDerivativeIndex(), start, end,
                                                                         xBCCreatorX.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                         : ( start, end ) ->
                                                                 Broadcast.broadcast (
-                                                                        call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                        call.getTensor( 0 ), call.getTensor( 1 ), call.getTensor( 2 ),
                                                                         call.getDerivativeIndex(), start, end,
                                                                         xBCCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
@@ -553,8 +553,8 @@ public class Multiplication extends AbstractOperation
         );
 
         xBroadcast = new Broadcast()
-            .setBackwardADAnalyzer( call -> true )
-            .setForwardADAnalyzer(
+            .setCanPerformBackwardADFor( call -> true )
+            .setCanPerformForwardADFor(
                     call -> {
                         Tsr<?> last = null;
                     for ( Tsr<?> t : call.getTensors() ) {
@@ -564,15 +564,15 @@ public class Multiplication extends AbstractOperation
                     return true;
                     }
             )
-            .setADAgentSupplier(
+            .setSupplyADAgentFor(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                 {
                     Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
                     Function mul = Function.Detached.MUL;
                     if ( ctxDerivative != null ) {
                         return new DefaultADAgent( ctxDerivative )
-                                .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                                .setBackward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
+                                .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
+                                .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
                     }
                     Tsr[] inputs = call.getTensors();
                     int d = call.getDerivativeIndex();
@@ -581,14 +581,14 @@ public class Multiplication extends AbstractOperation
                     {
                         Tsr deriv = f.derive( inputs, d );
                         return new DefaultADAgent( deriv )
-                                .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
+                                .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
                     }
                 }
             )
-            .setCallHook( (caller, call ) -> null )
-            .setRJAgent( ( call, goDeeperWith ) -> null )
-            .setDrainInstantiation(
+            .setHandleInsteadOfDevice( (caller, call ) -> null )
+            .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
+            .setInstantiateNewTensorsForExecutionIn(
                     call -> {
                         Tsr[] tsrs = call.getTensors();
                         int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
@@ -639,13 +639,13 @@ public class Multiplication extends AbstractOperation
                                                         (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
                                                         ? ( start, end ) ->
                                                                 Broadcast.broadcast (
-                                                                        call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                        call.getTensor( 0 ), call.getTensor( 1 ), call.getTensor( 2 ),
                                                                         call.getDerivativeIndex(), start, end,
                                                                         xBCCreatorX.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                         : ( start, end ) ->
                                                                 Broadcast.broadcast (
-                                                                        call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                        call.getTensor( 0 ), call.getTensor( 1 ), call.getTensor( 2 ),
                                                                         call.getDerivativeIndex(), start, end,
                                                                         xBCCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )

@@ -10,8 +10,6 @@ import neureka.calculus.Function;
 import neureka.backend.api.ExecutionCall;
 import org.jetbrains.annotations.Contract;
 
-import java.util.List;
-
 public class DimFit extends AbstractOperation
 {
 
@@ -29,10 +27,10 @@ public class DimFit extends AbstractOperation
         );
 
         GenericAlgorithm implementation = new GenericAlgorithm("reshape")
-                .setSuitabilityChecker( call -> 1.0f )
-                .setBackwardADAnalyzer( call -> true )
-                .setForwardADAnalyzer( call -> false )
-                .setADAgentSupplier(
+                .setIsSuitableFor( call -> 1.0f )
+                .setCanPerformBackwardADFor( call -> true )
+                .setCanPerformForwardADFor( call -> false )
+                .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         //int index = call.getDerivativeIndex();
@@ -49,7 +47,7 @@ public class DimFit extends AbstractOperation
                                 );
                     }
                 )
-                .setCallHook(
+                .setHandleInsteadOfDevice(
                         ( caller, call ) ->
                         {
                             Tsr<?>[] inputs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
@@ -109,8 +107,8 @@ public class DimFit extends AbstractOperation
                             //}
                         }
                 )
-                .setRJAgent( ( call, goDeeperWith ) -> null )
-                .setDrainInstantiation( call -> call )
+                .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
+                .setInstantiateNewTensorsForExecutionIn( call -> call )
                 .build();
 
         setAlgorithm(

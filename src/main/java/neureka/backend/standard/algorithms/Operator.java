@@ -16,7 +16,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
 {
     public Operator() {
         super("operator");
-        setSuitabilityChecker(
+        setIsSuitableFor(
                 call -> {
                     List<Integer> shape = ( call.getTensors()[ 0 ] == null ) ? call.getTensors()[ 1 ].shape() : call.getTensors()[ 0 ].shape();
                     int size = shape.stream().reduce(1,( x, y )-> x * y );
@@ -26,10 +26,10 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
                             .estimation();
                 }
         );
-        setBackwardADAnalyzer( call -> true );
-        setForwardADAnalyzer( call -> true );
-        setCallHook( (caller, call ) -> null );
-        setDrainInstantiation(
+        setCanPerformBackwardADFor( call -> true );
+        setCanPerformForwardADFor( call -> true );
+        setHandleInsteadOfDevice( (caller, call ) -> null );
+        setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();

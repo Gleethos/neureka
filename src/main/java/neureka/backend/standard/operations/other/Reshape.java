@@ -14,7 +14,6 @@ import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.NDConfiguration;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Reshape extends AbstractOperation
 {
@@ -33,10 +32,10 @@ public class Reshape extends AbstractOperation
         );
 
         GenericAlgorithm implementation = new GenericAlgorithm( "reshape" )
-                .setSuitabilityChecker( call -> 1.0f )
-                .setBackwardADAnalyzer( call -> true )
-                .setForwardADAnalyzer(call -> false )
-                .setADAgentSupplier(
+                .setIsSuitableFor( call -> 1.0f )
+                .setCanPerformBackwardADFor( call -> true )
+                .setCanPerformForwardADFor( call -> false )
+                .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
                         //Tsr ctxDerivative = (Tsr)call.getAt("derivative");
@@ -47,7 +46,7 @@ public class Reshape extends AbstractOperation
                                 .setForward( (t, derivative ) -> FunctionBuilder.build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
                                 .setBackward( (t, error ) -> FunctionBuilder.build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
                     }
-                ).setCallHook(
+                ).setHandleInsteadOfDevice(
                     ( caller, call ) ->
                     {
                         Tsr<?>[] inputs = caller.srcActivation( call.getTensors(), call.getJ(), -1, 0 );
@@ -62,8 +61,8 @@ public class Reshape extends AbstractOperation
                         return reshaped( t, newForm, true );
                     }
                 )
-                .setRJAgent( ( call, goDeeperWith ) -> null )
-                .setDrainInstantiation( call -> call)
+                .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
+                .setInstantiateNewTensorsForExecutionIn( call -> call)
                 .build();
 
         setAlgorithm(

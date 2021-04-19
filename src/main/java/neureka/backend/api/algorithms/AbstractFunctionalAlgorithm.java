@@ -34,16 +34,16 @@ import neureka.calculus.Function;
  * @param <FinalType> The final type extending this class.
  */
 @Accessors( prefix = {"_"}, chain = true )
-public abstract class AbstractFunctionalAlgorithm< FinalType > extends AbstractBaseAlgorithm< FinalType >
+public abstract class AbstractFunctionalAlgorithm< FinalType extends Algorithm<FinalType> > extends AbstractBaseAlgorithm< FinalType >
 {
-    @Getter @Setter private SuitabilityChecker _suitabilityChecker;
-    @Getter @Setter private DeviceFinder _deviceFinder;
-    @Getter @Setter private ForwardADAnalyzer _forwardADAnalyzer;
-    @Getter @Setter private BackwardADAnalyzer _backwardADAnalyzer;
-    @Getter @Setter private ADAgentSupplier _ADAgentSupplier;
-    @Getter @Setter private InitialCallHook _callHook;
-    @Getter @Setter private RecursiveJunctionAgent _RJAgent;
-    @Getter @Setter private DrainInstantiation _drainInstantiation;
+    @Getter @Setter private Algorithm.SuitabilityChecker _isSuitableFor;
+    @Getter @Setter private Algorithm.DeviceFinder _findDeviceFor;
+    @Getter @Setter private Algorithm.ForwardADAnalyzer _canPerformForwardADFor;
+    @Getter @Setter private Algorithm.BackwardADAnalyzer _canPerformBackwardADFor;
+    @Getter @Setter private Algorithm.ADAgentSupplier _supplyADAgentFor;
+    @Getter @Setter private Algorithm.InitialCallHook _handleInsteadOfDevice;
+    @Getter @Setter private Algorithm.RecursiveJunctionAgent _handleRecursivelyAccordingToArity;
+    @Getter @Setter private Algorithm.DrainInstantiation _instantiateNewTensorsForExecutionIn;
 
     public AbstractFunctionalAlgorithm(String name ) {
         super(name);
@@ -52,57 +52,57 @@ public abstract class AbstractFunctionalAlgorithm< FinalType > extends AbstractB
     //---
 
     @Override
-    public float isAlgorithmSuitableFor(ExecutionCall call ) {
-        return _suitabilityChecker.canHandle(call);
+    public float isSuitableFor( ExecutionCall call ) {
+        return _isSuitableFor.canHandle(call);
     }
 
     ///---
 
     @Override
     public Device findDeviceFor( ExecutionCall call ) {
-        return ( _deviceFinder == null ) ? null : _deviceFinder.findFor(call);
+        return ( _findDeviceFor == null ) ? null : _findDeviceFor.findFor(call);
     }
 
     //---
 
     @Override
-    public boolean canAlgorithmPerformForwardADFor(ExecutionCall call ) {
-        return _forwardADAnalyzer.allowsForward(call);
+    public boolean canPerformForwardADFor( ExecutionCall call ) {
+        return _canPerformForwardADFor.allowsForward(call);
     }
 
     //---
 
     @Override
-    public boolean canAlgorithmPerformBackwardADFor( ExecutionCall call ) {
-        return _backwardADAnalyzer.allowsBackward( call );
+    public boolean canPerformBackwardADFor( ExecutionCall call ) {
+        return _canPerformBackwardADFor.allowsBackward( call );
     }
 
     //---
 
     @Override
     public ADAgent supplyADAgentFor( Function f, ExecutionCall<Device> call, boolean forward ) {
-        return _ADAgentSupplier.getADAgentOf( f, call, forward );
+        return _supplyADAgentFor.getADAgentOf( f, call, forward );
     }
 
     //---
 
     @Override
     public Tsr handleInsteadOfDevice( FunctionNode caller, ExecutionCall call ) {
-        return _callHook.handle( caller, call );
+        return _handleInsteadOfDevice.handle( caller, call );
     }
 
     //---
 
     @Override
     public Tsr handleRecursivelyAccordingToArity( ExecutionCall call, java.util.function.Function<ExecutionCall, Tsr<?>> goDeeperWith ) {
-        return _RJAgent.handle( call, goDeeperWith );
+        return _handleRecursivelyAccordingToArity.handle( call, goDeeperWith );
     }
 
     //---
 
     @Override
     public ExecutionCall instantiateNewTensorsForExecutionIn( ExecutionCall call ) {
-        return _drainInstantiation.handle( call );
+        return _instantiateNewTensorsForExecutionIn.handle( call );
     }
 
     //---

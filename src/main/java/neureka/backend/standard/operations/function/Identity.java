@@ -47,8 +47,8 @@ public final class Identity extends AbstractOperation
                 };
 
         Activation operationAlgorithm = new Activation()
-        .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer(
+        .setCanPerformBackwardADFor( call -> true )
+        .setCanPerformForwardADFor(
                 call -> {
                     Tsr<?> last = null;
                     for ( Tsr<?> t : call.getTensors() ) {
@@ -57,13 +57,13 @@ public final class Identity extends AbstractOperation
                     }
                     return true;
                 }
-        ).setADAgentSupplier(
+        ).setSupplyADAgentFor(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
         )
-        .setCallHook( (caller, call ) -> null )
-        .setRJAgent( ( call, goDeeperWith ) -> null )
-        .setDrainInstantiation(
+        .setHandleInsteadOfDevice( (caller, call ) -> null )
+        .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
+        .setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
@@ -132,8 +132,8 @@ public final class Identity extends AbstractOperation
                     else return t1Idx -> value;
                 };
         Scalarization scalarization = new Scalarization()
-            .setBackwardADAnalyzer( call -> true )
-            .setForwardADAnalyzer(
+            .setCanPerformBackwardADFor( call -> true )
+            .setCanPerformForwardADFor(
                     call -> {
                         Tsr<?> last = null;
                     for ( Tsr<?> t : call.getTensors() ) {
@@ -143,13 +143,13 @@ public final class Identity extends AbstractOperation
                     return true;
                     }
             )
-            .setADAgentSupplier(
+            .setSupplyADAgentFor(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
-            .setCallHook( (caller, call ) -> null )
-            .setRJAgent( ( call, goDeeperWith ) -> null )
-            .setDrainInstantiation(
+            .setHandleInsteadOfDevice( (caller, call ) -> null )
+            .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
+            .setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();
@@ -176,7 +176,7 @@ public final class Identity extends AbstractOperation
                         HostCPU.class,
                         new HostImplementation(
                                 call  -> {
-                                    double value = call.getTensor( 0 ).value64(2);
+                                    double value = call.getTensor( 0 ).value64( 2 );
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTensor( 0 ).size(),

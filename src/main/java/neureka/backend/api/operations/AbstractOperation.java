@@ -172,7 +172,7 @@ public abstract class AbstractOperation implements Operation
         float bestScore = 0f;
         Algorithm<T> bestImpl = null;
         for( Algorithm impl : _algorithms.values() ) {
-            float currentScore = impl.isAlgorithmSuitableFor( call );
+            float currentScore = impl.isSuitableFor( call );
             if ( currentScore > bestScore ) {
                 if ( currentScore == 1.0 ) return impl;
                 else {
@@ -182,7 +182,7 @@ public abstract class AbstractOperation implements Operation
             }
         }
 
-        if ( _defaultAlgorithm.isAlgorithmSuitableFor( call ) > 0.0f ) return _defaultAlgorithm;
+        if ( _defaultAlgorithm.isSuitableFor( call ) > 0.0f ) return _defaultAlgorithm;
 
         if ( bestImpl == null ) {
             String message = "No suitable implementation for execution call '"+call+"' could be found.\n" +

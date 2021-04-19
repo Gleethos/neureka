@@ -58,7 +58,7 @@ import java.util.function.Function;
  *   for performing elementwise operations, whereas otherwise the {@link neureka.backend.standard.algorithms.Broadcast}
  *   algorithm might be called to perform the operation.
  */
-public interface Algorithm<FinalType>
+public interface Algorithm<FinalType extends Algorithm<FinalType>>
 {
     String getName();
 
@@ -66,7 +66,7 @@ public interface Algorithm<FinalType>
         float canHandle( ExecutionCall call );
     }
 
-    float isAlgorithmSuitableFor(ExecutionCall call );
+    float isSuitableFor( ExecutionCall call );
 
     interface DeviceFinder {
         Device findFor( ExecutionCall call );
@@ -78,13 +78,13 @@ public interface Algorithm<FinalType>
         boolean allowsForward( ExecutionCall call );
     }
 
-    boolean canAlgorithmPerformForwardADFor( ExecutionCall call );
+    boolean canPerformForwardADFor( ExecutionCall call );
 
     interface BackwardADAnalyzer {
         boolean allowsBackward( ExecutionCall call );
     }
 
-    boolean canAlgorithmPerformBackwardADFor( ExecutionCall call );
+    boolean canPerformBackwardADFor( ExecutionCall call );
 
     interface ADAgentSupplier {
         ADAgent getADAgentOf(

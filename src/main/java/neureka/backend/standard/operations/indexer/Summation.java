@@ -98,17 +98,17 @@ public final class Summation extends AbstractOperation
                 };
 
         Broadcast operationAlgorithm = new Broadcast()
-                .setBackwardADAnalyzer( call -> true )
-                .setForwardADAnalyzer( call -> true )
-                .setADAgentSupplier(
+                .setCanPerformBackwardADFor( call -> true )
+                .setCanPerformForwardADFor( call -> true )
+                .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                     {
-                        Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
+                        Tsr<?> ctxDerivative = (Tsr<?>) call.getAt("derivative");
                         Function mul = Function.Detached.MUL;
                         if ( ctxDerivative != null ) {
                             return new DefaultADAgent( ctxDerivative )
-                                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                                    .setBackward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) );
+                                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
+                                    .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
                         }
                         Tsr[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
@@ -117,12 +117,12 @@ public final class Summation extends AbstractOperation
                         {
                             Tsr deriv = f.derive( inputs, d );
                             return new DefaultADAgent( deriv )
-                                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                    .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
+                                    .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
                         }
                     }
                 )
-                .setRJAgent( rja )
+                .setHandleRecursivelyAccordingToArity( rja )
                 .build();
 
 
@@ -139,8 +139,8 @@ public final class Summation extends AbstractOperation
                                                                 ? ( start, end ) ->
                                                                     Broadcast.broadcast (
                                                                             call.getTensor( 0 ),
-                                                                            call.getTensor(1),
-                                                                            call.getTensor(2),
+                                                                            call.getTensor( 1 ),
+                                                                            call.getTensor( 2 ),
                                                                             call.getDerivativeIndex(),
                                                                             start, end,
                                                                             _creatorX.create(call.getTensors(), call.getDerivativeIndex())
@@ -148,8 +148,8 @@ public final class Summation extends AbstractOperation
                                                                 :  ( start, end ) ->
                                                                     Broadcast.broadcast (
                                                                             call.getTensor( 0 ),
-                                                                            call.getTensor(1),
-                                                                            call.getTensor(2),
+                                                                            call.getTensor( 1 ),
+                                                                            call.getTensor( 2 ),
                                                                             call.getDerivativeIndex(),
                                                                             start, end,
                                                                             _creator.create(call.getTensors(), call.getDerivativeIndex())
@@ -199,17 +199,17 @@ public final class Summation extends AbstractOperation
                 };
 
         Activation activation = new Activation()
-        .setBackwardADAnalyzer( call -> true )
-        .setForwardADAnalyzer( call -> true )
-        .setADAgentSupplier(
+        .setCanPerformBackwardADFor( call -> true )
+        .setCanPerformForwardADFor( call -> true )
+        .setSupplyADAgentFor(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
             {
                 Tsr ctxDerivative = (Tsr) call.getAt("derivative");
                 Function mul = Function.Detached.MUL;
                 if ( ctxDerivative != null )
                     return new DefaultADAgent( ctxDerivative )
-                            .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, ctxDerivative}) )
-                            .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{backwardError, ctxDerivative} ) );
+                            .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
+                            .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, ctxDerivative } ) );
 
                 Tsr[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
@@ -217,7 +217,7 @@ public final class Summation extends AbstractOperation
                 {
                     Tsr deriv = f.derive( inputs, d );
                     return new DefaultADAgent( deriv )
-                            .setForward( ( t, derivative ) -> mul.call(new Tsr[]{derivative, deriv}) )
+                            .setForward( ( t, derivative ) -> mul.call( derivative, deriv ) )
                             .setBackward( ( t, derivative ) -> mul.call( new Tsr[]{derivative, deriv} ) );
                 }
                 else
@@ -230,22 +230,22 @@ public final class Summation extends AbstractOperation
                         );
                         Tsr deriv = f.derive( inputs, d );
                         return new DefaultADAgent( deriv )
-                                .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                .setBackward( (t, error) -> invX.call(new Tsr[]{error, deriv, new Tsr(t.getPayload().shape(), 0)}) );
+                                .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
+                                .setBackward( (t, error) -> invX.call( error, deriv, new Tsr(t.getPayload().shape(), 0) ) );
                     }
                     else
                     {
                         Tsr deriv = f.derive( inputs, d );
                         return new DefaultADAgent( deriv )
-                                .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, deriv}) )
-                                .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, deriv}) );
+                                .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
+                                .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
                     }
                 }
             }
         )
-        .setCallHook( (caller, call ) -> null )
-        .setRJAgent( rja )
-        .setDrainInstantiation(
+        .setHandleInsteadOfDevice( (caller, call ) -> null )
+        .setHandleRecursivelyAccordingToArity( rja )
+        .setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();

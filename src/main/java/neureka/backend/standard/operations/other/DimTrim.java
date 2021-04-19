@@ -31,10 +31,10 @@ public class DimTrim extends AbstractOperation
         );
 
         GenericAlgorithm implementation = new GenericAlgorithm("reshape")
-                .setSuitabilityChecker( call -> 1.0f )
-                .setBackwardADAnalyzer( call -> true )
-                .setForwardADAnalyzer( call -> false )
-                .setADAgentSupplier(
+                .setIsSuitableFor( call -> 1.0f )
+                .setCanPerformBackwardADFor( call -> true )
+                .setCanPerformForwardADFor( call -> false )
+                .setSupplyADAgentFor(
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                         {
                             int prefix = ((int[]) call.getAt("ends"))[ 0 ];
@@ -48,7 +48,7 @@ public class DimTrim extends AbstractOperation
                                     .setBackward( (t, error) -> pad(error, new int[]{prefix, postfix}, true) );
                         }
                 )
-                .setCallHook(
+                .setHandleInsteadOfDevice(
                         ( caller, call ) ->
                         {
                             Tsr<?>[] inputs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
@@ -65,8 +65,8 @@ public class DimTrim extends AbstractOperation
                             }
                         }
                 )
-                .setRJAgent( ( call, goDeeperWith ) -> null )
-                .setDrainInstantiation( call -> call )
+                .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
+                .setInstantiateNewTensorsForExecutionIn( call -> call )
                 .build();
 
         setAlgorithm(
@@ -87,9 +87,9 @@ public class DimTrim extends AbstractOperation
         int prefix = ends[ 0 ];
         int postfix = ends[ 1 ];
         for ( int i = 0; i < prefix; i++ ) {
-            newShape.add(1);
-            newTranslation.add(1);
-            newIdxmap.add(1);
+            newShape.add( 1 );
+            newTranslation.add( 1 );
+            newIdxmap.add( 1 );
             newSpread.add( 0 );
             newOffset.add( 0 );
         }
@@ -101,9 +101,9 @@ public class DimTrim extends AbstractOperation
             newOffset.add(tensor.getNDConf().offset( i ));
         }
         for ( int i = 0; i < postfix; i++ ) {
-            newShape.add(1);
-            newTranslation.add(1);
-            newIdxmap.add(1);
+            newShape.add( 1 );
+            newTranslation.add( 1 );
+            newIdxmap.add( 1 );
             newSpread.add( 0 );
             newOffset.add( 0 );
         }

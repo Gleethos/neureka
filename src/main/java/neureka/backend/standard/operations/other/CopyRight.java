@@ -13,8 +13,6 @@ import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 
-import java.util.List;
-
 public class CopyRight extends AbstractOperation {
 
     public CopyRight()
@@ -39,15 +37,15 @@ public class CopyRight extends AbstractOperation {
 
 
         Activation activation = new Activation()
-        .setBackwardADAnalyzer( call -> false )
-        .setForwardADAnalyzer( call -> false )
-        .setADAgentSupplier(
+        .setCanPerformBackwardADFor( call -> false )
+        .setCanPerformForwardADFor( call -> false )
+        .setSupplyADAgentFor(
             ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
         )
-        .setCallHook( (caller, call ) -> null )
-        .setRJAgent( ( call, goDeeperWith ) -> null )
-        .setDrainInstantiation(
+        .setHandleInsteadOfDevice( (caller, call ) -> null )
+        .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
+        .setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;

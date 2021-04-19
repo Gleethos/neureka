@@ -166,11 +166,11 @@ public class ExecutionCall<DeviceType extends Device>
     }
 
     public boolean allowsForward() {
-        return getAlgorithm().canAlgorithmPerformForwardADFor( this );
+        return getAlgorithm().canPerformForwardADFor( this );
     }
 
     public boolean allowsBackward() {
-        return getAlgorithm().canAlgorithmPerformBackwardADFor( this );
+        return getAlgorithm().canPerformBackwardADFor( this );
     }
 
     public ADAgent getADAgentFrom( Function function, ExecutionCall<Device> call, boolean forward )
@@ -209,7 +209,7 @@ public class ExecutionCall<DeviceType extends Device>
      *  for validating the tensor arguments stored inside this {@link ExecutionCall}.
      *  It is a useful tool readable as well as concise validation of a given
      *  request for execution, that is primarily used inside implementations of the middle
-     *  layer of the backend-API architecture ({@link Algorithm#isAlgorithmSuitableFor(ExecutionCall)}).
+     *  layer of the backend-API architecture ({@link Algorithm#isSuitableFor(ExecutionCall)}).
      */
     @Accessors( prefix = {"_"} )
     public class Validator

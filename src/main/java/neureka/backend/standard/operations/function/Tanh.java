@@ -64,7 +64,7 @@ public final class Tanh extends AbstractOperation
         );
 
         Activation operationAlgorithm = new Activation()
-            .setADAgentSupplier(
+            .setSupplyADAgentFor(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )

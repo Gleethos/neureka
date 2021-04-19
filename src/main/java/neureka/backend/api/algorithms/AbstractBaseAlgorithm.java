@@ -14,11 +14,11 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @Accessors( prefix = {"_"} )
-public abstract class AbstractBaseAlgorithm<FinalType> implements Algorithm<FinalType>
+public abstract class AbstractBaseAlgorithm<FinalType extends Algorithm<FinalType>> implements Algorithm<FinalType>
 {
     @Getter private final String _name;
 
-    protected final Map< Class< Device<?> >, ImplementationFor< Device<?> >> _executions = new HashMap<>();
+    protected final Map< Class< Device<?> >, ImplementationFor< Device<?> >> _implementations = new HashMap<>();
 
     public AbstractBaseAlgorithm(String name) { _name = name; }
 
@@ -87,7 +87,7 @@ public abstract class AbstractBaseAlgorithm<FinalType> implements Algorithm<Fina
 
     @Override
     public <D extends Device<?>, E extends ImplementationFor<D>> FinalType setImplementationFor( Class<D> deviceClass, E implementation ) {
-        _executions.put(
+        _implementations.put(
                 (Class<Device<?>>) deviceClass,
                 (ImplementationFor<Device<?>>) implementation
         );
@@ -96,7 +96,7 @@ public abstract class AbstractBaseAlgorithm<FinalType> implements Algorithm<Fina
 
     @Override
     public <D extends Device<?>> ImplementationFor<D> getImplementationFor( Class<D> deviceClass ) {
-        return (ImplementationFor<D>) _executions.get( deviceClass );
+        return (ImplementationFor<D>) _implementations.get( deviceClass );
     }
 
 }

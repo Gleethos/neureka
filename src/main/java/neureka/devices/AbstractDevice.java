@@ -114,7 +114,7 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
                             "One or more tensor arguments within the given ExecutionCall instance is null."
             );
         }
-        ( (Algorithm<Object>) call.getAlgorithm() )
+        ( (Algorithm<?>) call.getAlgorithm() )
                 .recursiveReductionOf(
                     call,
                     c -> _execute( c.getTensors(), c.getDerivativeIndex(), c.getOperation() )

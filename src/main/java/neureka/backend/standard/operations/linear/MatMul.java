@@ -103,8 +103,8 @@ public class MatMul extends AbstractOperation
 
 
         GenericAlgorithm convolution = new GenericAlgorithm("matmul")
-                .setBackwardADAnalyzer( call -> true )
-                .setForwardADAnalyzer(
+                .setCanPerformBackwardADFor( call -> true )
+                .setCanPerformForwardADFor(
                         call -> {
                             if ( call.getOperation().supports(Convolution.class) ) return false;
                             if ( call.getOperation().getOperator().equals(",") ) return false; //Reshape
@@ -116,8 +116,8 @@ public class MatMul extends AbstractOperation
                             return true;
                         }
                 )
-                .setADAgentSupplier(
-                        (Function f, ExecutionCall<Device> call, boolean forward ) ->
+                .setSupplyADAgentFor(
+                        ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                         {
                             //Tsr ctxDerivative = (Tsr) call.getAt("derivative");
                             if ( forward ) throw new IllegalArgumentException("Matrix multiplication of does not support forward-AD!");
@@ -131,7 +131,7 @@ public class MatMul extends AbstractOperation
                                     .setBackward( (t, error) -> invX.call(new Tsr[]{ error, deriv }) );
                         }
                 )
-                .setCallHook(
+                .setHandleInsteadOfDevice(
                         ( caller, call ) -> {
                             if ( !caller.isFlat() ) return null;
                             if ( call.getOperation().getOperator().equals("x") ) {
@@ -165,8 +165,8 @@ public class MatMul extends AbstractOperation
                             return null;
                         }
                 )
-                .setRJAgent( rja )
-                .setDrainInstantiation(
+                .setHandleRecursivelyAccordingToArity( rja )
+                .setInstantiateNewTensorsForExecutionIn(
                         call -> {
                             Tsr[] tsrs = call.getTensors();
                             Device device = call.getDevice();
@@ -200,7 +200,7 @@ public class MatMul extends AbstractOperation
                                                                 (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
                                                                         ? ( start, end ) ->
                                                                         Convolution.convolve (
-                                                                                call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                                call.getTensor( 0 ), call.getTensor( 1 ), call.getTensor( 2 ),
                                                                                 call.getDerivativeIndex(), start, end,
                                                                                 convolutionCreator.create(
                                                                                         call.getTensors(),
@@ -209,7 +209,7 @@ public class MatMul extends AbstractOperation
                                                                         )
                                                                         :  ( start, end ) ->
                                                                         Convolution.convolve (
-                                                                                call.getTensor( 0 ), call.getTensor(1), call.getTensor(2),
+                                                                                call.getTensor( 0 ), call.getTensor( 1 ), call.getTensor( 2 ),
                                                                                 call.getDerivativeIndex(), start, end,
                                                                                 convolutionNDICreator.create(
                                                                                         call.getTensors(),
@@ -245,7 +245,7 @@ public class MatMul extends AbstractOperation
                                                 "   __global float* inputA,                         " +
                                                 "   __global float* inputB                          " +
                                                 ") {                                                " +
-                                                "   int row = get_global_id(1);                     " +
+                                                "   int row = get_global_id( 1 );                     " +
                                                 "   int col = get_global_id(0);                     " +
                                                 "   float sum = 0.0f;                               " +
                                                 "   for ( int i = 0; i < widthA; i++ ) {            " +

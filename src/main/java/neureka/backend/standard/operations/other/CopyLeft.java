@@ -30,7 +30,7 @@ public class CopyLeft extends AbstractOperation {
         );
 
         Scalarization scalarization = new Scalarization()
-                .setSuitabilityChecker(
+                .setIsSuitableFor(
                         call ->
                         {
                             if ( call.getTensor( 1 ).isVirtual() || call.getTensor( 1 ).size() == 1 ) {
@@ -38,15 +38,15 @@ public class CopyLeft extends AbstractOperation {
                             } else return 0.0f;
                         }
                 )
-                .setBackwardADAnalyzer( call -> false )
-                .setForwardADAnalyzer( call -> false )
-                .setADAgentSupplier(
+                .setCanPerformBackwardADFor( call -> false )
+                .setCanPerformForwardADFor( call -> false )
+                .setSupplyADAgentFor(
                         ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
-                .setCallHook( (caller, call ) -> null )
-                .setRJAgent( ( call, goDeeperWith ) -> null )
-                .setDrainInstantiation(
+                .setHandleInsteadOfDevice( (caller, call ) -> null )
+                .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
+                .setInstantiateNewTensorsForExecutionIn(
                         call ->
                         {
                             Tsr[] tsrs = call.getTensors();
@@ -130,15 +130,15 @@ public class CopyLeft extends AbstractOperation {
         );
 
         Activation activation = new Activation()
-            .setBackwardADAnalyzer( call -> false )
-            .setForwardADAnalyzer( call -> false )
-            .setADAgentSupplier(
+            .setCanPerformBackwardADFor( call -> false )
+            .setCanPerformForwardADFor( call -> false )
+            .setSupplyADAgentFor(
                 ( Function f, ExecutionCall<Device> call, boolean forward ) ->
                         getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
-            .setCallHook( (caller, call ) -> null )
-            .setRJAgent( ( call, goDeeperWith ) -> null )
-            .setDrainInstantiation(
+            .setHandleInsteadOfDevice( (caller, call ) -> null )
+            .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
+            .setInstantiateNewTensorsForExecutionIn(
                     call ->
                     {
                         Tsr[] tsrs = call.getTensors();

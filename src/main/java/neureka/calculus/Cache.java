@@ -81,8 +81,8 @@ public final class Cache
         }
         boolean allLocked = true; // Input tensors might all have graph nodes which are left from previous computation.
         // ( => needs to be locked again! )
-        Tsr<Object> untracked = null;
-        for ( Tsr<Object> t : inputs ) {
+        Tsr<?> untracked = null;
+        for ( Tsr<?> t : inputs ) {
             GraphNode<Object> node = t.find( GraphNode.class );
             if ( node != null ) {
                 untracked = t;

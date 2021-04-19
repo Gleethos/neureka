@@ -114,5 +114,27 @@ public abstract class AbstractBaseFunction implements Function
         return derive( inputs.toArray( new Tsr[ 0 ] ), index );
     }
 
+    // ---
+
+    @Override
+    public <T> Tsr<T> call( Tsr<T>[] inputs, int j ) {
+        return (Tsr<T>) execute(inputs, j);
+    }
+
+    @Override
+    public <T> Tsr<T> call( Tsr<T>... inputs ) {
+        return (Tsr<T>) execute(inputs);
+    }
+
+    @Override
+    public <T> Tsr<T> derive( Tsr<T>[] inputs, int d, int j ) {
+        return (Tsr<T>) executeDerive( inputs, d, j );
+    }
+
+    @Override
+    public <T> Tsr<T> derive( Tsr<T>[] inputs, int d ) {
+        return (Tsr<T>) executeDerive( inputs, d );
+    }
+
 
 }

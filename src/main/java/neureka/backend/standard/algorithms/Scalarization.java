@@ -15,7 +15,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
 
     public Scalarization() {
         super("scalarization");
-        setSuitabilityChecker( call -> {
+        setIsSuitableFor( call -> {
             if (
                     !call.validate()
                             .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
@@ -27,7 +27,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
             if ( size != 1 || tsrs.length!=2 ) return 0f;
             return 1.0f;
         });
-        setDrainInstantiation(
+        setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();

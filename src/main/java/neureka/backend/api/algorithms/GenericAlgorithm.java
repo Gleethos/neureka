@@ -18,7 +18,7 @@ import neureka.dtype.NumericType;
 
 import java.util.Arrays;
 
-public class GenericAlgorithm extends AbstractBaseAlgorithm<Algorithm> {
+public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
 
     public GenericAlgorithm( String name, int arity, Operation type )
     {
@@ -78,7 +78,7 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<Algorithm> {
     }
 
     @Override
-    public float isAlgorithmSuitableFor( ExecutionCall call ) {
+    public float isSuitableFor( ExecutionCall call ) {
         int[] shape = null;
         for ( Tsr<?> t : call.getTensors() ) {
             if ( shape == null ) if ( t != null ) shape = t.getNDConf().shape();
@@ -92,29 +92,29 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<Algorithm> {
      * @return null because the default implementation is not outsourced.
      */
     @Override
-    public Device findDeviceFor(ExecutionCall call ) {
+    public Device findDeviceFor( ExecutionCall call ) {
         return null;
     }
 
     @Override
-    public boolean canAlgorithmPerformForwardADFor(ExecutionCall call ) {
+    public boolean canPerformForwardADFor( ExecutionCall call ) {
         return true;
     }
 
     @Override
-    public boolean canAlgorithmPerformBackwardADFor(ExecutionCall call ) {
+    public boolean canPerformBackwardADFor( ExecutionCall call ) {
         return true;
     }
 
     @Override
-    public ADAgent supplyADAgentFor(Function f, ExecutionCall<Device> call, boolean forward)
+    public ADAgent supplyADAgentFor( Function f, ExecutionCall<Device> call, boolean forward)
     {
-        Tsr<?> ctxDerivative = (Tsr<?>) call.getAt("derivative");
+        Tsr<Object> ctxDerivative = (Tsr<Object>) call.getAt("derivative");
         Function mul = Function.Detached.MUL;
         if ( ctxDerivative != null ) {
             return new DefaultADAgent( ctxDerivative )
-                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{forwardDerivative, ctxDerivative} ) )
-                    .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{backwardError, ctxDerivative} ) );
+                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
+                    .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, ctxDerivative } ) );
         }
         Tsr<?> localDerivative = f.derive(call.getTensors(), call.getDerivativeIndex());
         return new DefaultADAgent( localDerivative )
