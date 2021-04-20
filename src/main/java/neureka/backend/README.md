@@ -1,6 +1,5 @@
 
 # Backend #
- 
 
 This package consists of two important sub-packages:
 
@@ -16,3 +15,8 @@ It would be bad practise to hardcode these operation algorithms
 tightly alongside or even into the nd-array / tensor data structure...
 This leads to a clean divide of the library into a backend which
 consists of operations, and a "frontend", which is simply the rest of the library. 
+<br>
+
+> For more information on how to implement custom operations, <br>
+read through the
+[backend API architecture documentation](api/README.md)!

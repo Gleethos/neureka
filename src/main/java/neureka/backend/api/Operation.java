@@ -45,17 +45,16 @@ import neureka.calculus.Function;
 import neureka.ndim.iterators.NDIterator;
 
 /**
- *  This interface describes an operation which ought to consist of a compositional system
+ *  This interface describes an operation which ought to consist of a component system
  *  containing multiple algorithms which themselves ought to contain device specific implementations
- *  capable of processing {@link ExecutionCall} instances, or rather their state.
+ *  capable of processing {@link ExecutionCall} instances, or rather their state. <br><br>
  *
- *  Besides the definition of the compositional system
- *  there is also the requirement for its integration into
- *  the calculus package.
+ *  Besides the component system, there is also the definition for how its supposed to integrate into
+ *  the {@link neureka.calculus} package.
  *  This means that the operation should have a function name
- *  and optionally also an operator.
- *  Alongside there must be a stringifier which ought to generate
- *  a String view as part of a {@link Function}-AST.
+ *  and optionally also an operator in the form of {@link String} instances.
+ *  Alongside there must be an implementation og the {@link Operation#stringify(String[])} method,
+ *  which ought to generate a String view as part of a {@link Function}-AST.
  */
 public interface Operation
 {
