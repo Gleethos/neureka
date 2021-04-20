@@ -125,22 +125,22 @@ import neureka.*
 
 Execute the following:
 ```sh
-$ gradlew build
+ gradlew build
 ```
 
 Tests:
 ```sh
-$ gradlew check
+ gradlew check
 ```
 
 Jar file:
 ```sh
-$ gradlew jar
+ gradlew jar
 ```
 
 Min-jar file:
 ```sh
-$ gradlew proguard
+ gradlew proguard
 ```
 
 ---
@@ -148,29 +148,23 @@ $ gradlew proguard
 ## :mount_fuji: Dependencies ##
 
 - OpenCL - 2.^ (JOCL binding)
-
-- Groovy - 2.^ 
-
+- Groovy - 2.^
 - SLF4J
 
 ---
 
 ## :book: Documentation ###
 
-- [By example](https://gleethos.github.io/neureka/showcase.html) 
-
+- [By example](https://gleethos.github.io/neureka/showcase.html)
 - [Java-Docs](https://gleethos.github.io/neureka/jdocs/index.html)
-
 - [Living Documentation](https://gleethos.github.io/neureka/spock/reports/index.html)!
-
 - [GitHub Wiki](https://github.com/Gleethos/neureka/wiki)
 
 ---
 
 ## :microscope: Testing & Specification :scroll: ###
 
-- BDD & living documentation with Spock! 
-
+- BDD & living documentation with Spock!
 - Yes ! Readable html test reports. [Check it out!](https://gleethos.github.io/neureka/spock/reports/index.html)!
 
 ---
