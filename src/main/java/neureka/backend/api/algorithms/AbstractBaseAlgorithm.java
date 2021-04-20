@@ -24,8 +24,8 @@ public abstract class AbstractBaseAlgorithm<FinalType extends Algorithm<FinalTyp
 
     @Override
     public Tsr recursiveReductionOf(
-            ExecutionCall<Device> call,
-            Consumer<ExecutionCall<Device>> finalExecution
+            ExecutionCall<? extends Device<?>> call,
+            Consumer<ExecutionCall<? extends Device<?>>> finalExecution
     ) {
         Device device = call.getDevice();
         Tsr[] tsrs = call.getTensors();

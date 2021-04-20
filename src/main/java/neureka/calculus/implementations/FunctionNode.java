@@ -108,15 +108,15 @@ public class FunctionNode extends AbstractBaseFunction
      */
     protected Tsr _tensor_activation( Tsr[] inputs, int j, int d )
     {
-        ExecutionCall<Device> call = ExecutionCall.builder()
+        ExecutionCall<? extends Device<?>> call = ExecutionCall.builder()
                                             .device(_deviceFor( inputs ))
                                             .tensors( inputs )
                                             .derivativeIndex( d )
                                             .j( j )
                                             .operation( _operation )
                                             .build();
-        ExecutionCall<Device> finalCall;
-        Device possiblyNewDevice = call.getAlgorithm().findDeviceFor( call );
+        ExecutionCall<? extends Device<?>> finalCall;
+        Device<?> possiblyNewDevice = call.getAlgorithm().findDeviceFor( call );
         if ( possiblyNewDevice != null ) finalCall = call.withDevice( possiblyNewDevice );
         else finalCall = call;
 
@@ -135,7 +135,7 @@ public class FunctionNode extends AbstractBaseFunction
 
     }
 
-    private Tsr __flat_execution( ExecutionCall<Device> call )
+    private Tsr __flat_execution( ExecutionCall<? extends Device<?>> call )
     {
         Tsr alternative = call.getAlgorithm().handleInsteadOfDevice( this, call );
         if ( alternative != null ) return alternative;
@@ -144,7 +144,7 @@ public class FunctionNode extends AbstractBaseFunction
         else return _deep_derivative( call  );
     }
  
-    private Tsr __deep_activation(ExecutionCall<Device> call )
+    private Tsr __deep_activation(ExecutionCall<? extends Device<?>> call )
     {
         Tsr[] inputs = call.getTensors();
         Device device = call.getDevice();
@@ -214,7 +214,7 @@ public class FunctionNode extends AbstractBaseFunction
         return -1;
     }
 
-    private Tsr _deep_derivative( ExecutionCall<Device> call )
+    private Tsr _deep_derivative( ExecutionCall<? extends Device<?>> call )
     {
         Supplier<Tsr<?>> actor =
                 () ->

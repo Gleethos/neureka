@@ -88,14 +88,14 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
         return this;
     }
 
-    private Tsr _extract(Tsr t)
+    private Tsr<?> _extract(Tsr<?> t)
     {
         if (this.providesGradient() && t.rqsGradient()) {
-            Tsr gradient = (Tsr) t.getGradient();
+            Tsr<?> gradient = t.getGradient();
             if (t.rqsGradient()) {
                 if (gradient==null) {
-                    gradient = new Tsr(t.shape(), 0);
-                    t.set(gradient);
+                    gradient = new Tsr<>(t.shape(), 0);
+                    t.set((Tsr)gradient);
                 }
                 return gradient;
             }

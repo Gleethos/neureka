@@ -40,7 +40,7 @@ public class CopyRight extends AbstractOperation {
         .setCanPerformBackwardADFor( call -> false )
         .setCanPerformForwardADFor( call -> false )
         .setSupplyADAgentFor(
-            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+            ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
         )
         .setHandleInsteadOfDevice( (caller, call ) -> null )

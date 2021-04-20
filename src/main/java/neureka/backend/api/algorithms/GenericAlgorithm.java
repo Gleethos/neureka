@@ -78,7 +78,7 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
     }
 
     @Override
-    public float isSuitableFor( ExecutionCall call ) {
+    public float isSuitableFor( ExecutionCall<? extends Device<?>> call ) {
         int[] shape = null;
         for ( Tsr<?> t : call.getTensors() ) {
             if ( shape == null ) if ( t != null ) shape = t.getNDConf().shape();
@@ -92,22 +92,22 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
      * @return null because the default implementation is not outsourced.
      */
     @Override
-    public Device findDeviceFor( ExecutionCall call ) {
+    public Device<?> findDeviceFor( ExecutionCall<? extends Device<?>> call ) {
         return null;
     }
 
     @Override
-    public boolean canPerformForwardADFor( ExecutionCall call ) {
+    public boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call ) {
         return true;
     }
 
     @Override
-    public boolean canPerformBackwardADFor( ExecutionCall call ) {
+    public boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call ) {
         return true;
     }
 
     @Override
-    public ADAgent supplyADAgentFor( Function f, ExecutionCall<Device> call, boolean forward)
+    public ADAgent supplyADAgentFor( Function f, ExecutionCall<? extends Device<?>> call, boolean forward)
     {
         Tsr<Object> ctxDerivative = (Tsr<Object>) call.getAt("derivative");
         Function mul = Function.Detached.MUL;
@@ -123,18 +123,18 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
     }
 
     @Override
-    public Tsr handleInsteadOfDevice( FunctionNode caller, ExecutionCall call ) {
+    public Tsr handleInsteadOfDevice( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
         return null;
     }
 
     @Override
-    public Tsr handleRecursivelyAccordingToArity( ExecutionCall call, java.util.function.Function<ExecutionCall, Tsr<?>> goDeeperWith )
+    public Tsr<?> handleRecursivelyAccordingToArity( ExecutionCall<? extends Device<?>> call, java.util.function.Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith )
     {
         return null;
     }
 
     @Override
-    public ExecutionCall instantiateNewTensorsForExecutionIn( ExecutionCall call )
+    public ExecutionCall<? extends Device<?>> instantiateNewTensorsForExecutionIn( ExecutionCall<? extends Device<?>> call )
     {
         Tsr[] tensors = call.getTensors();
         Device device = call.getDevice();

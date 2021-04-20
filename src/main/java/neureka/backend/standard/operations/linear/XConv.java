@@ -125,7 +125,7 @@ public class XConv extends AbstractOperation
                 }
             )
             .setSupplyADAgentFor(
-                ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                 {
                     Tsr ctxDerivative = (Tsr)call.getAt("derivative");
                     if ( forward ) throw new IllegalArgumentException("Convolution of does not support forward-AD!");

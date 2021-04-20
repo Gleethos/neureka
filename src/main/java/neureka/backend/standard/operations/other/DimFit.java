@@ -31,7 +31,7 @@ public class DimFit extends AbstractOperation
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> false )
                 .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
                         //int index = call.getDerivativeIndex();
                         //int prefix = ((int[]) call.getAt("ends"))[ 0 ];

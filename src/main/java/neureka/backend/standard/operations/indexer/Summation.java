@@ -101,7 +101,7 @@ public final class Summation extends AbstractOperation
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> true )
                 .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
                         Tsr<?> ctxDerivative = (Tsr<?>) call.getAt("derivative");
                         Function mul = Function.Detached.MUL;
@@ -202,7 +202,7 @@ public final class Summation extends AbstractOperation
         .setCanPerformBackwardADFor( call -> true )
         .setCanPerformForwardADFor( call -> true )
         .setSupplyADAgentFor(
-            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+            ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
             {
                 Tsr ctxDerivative = (Tsr) call.getAt("derivative");
                 Function mul = Function.Detached.MUL;

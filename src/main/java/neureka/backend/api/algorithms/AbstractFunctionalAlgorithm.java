@@ -52,56 +52,56 @@ public abstract class AbstractFunctionalAlgorithm< FinalType extends Algorithm<F
     //---
 
     @Override
-    public float isSuitableFor( ExecutionCall call ) {
+    public float isSuitableFor( ExecutionCall<? extends Device<?>> call ) {
         return _isSuitableFor.canHandle(call);
     }
 
     ///---
 
     @Override
-    public Device findDeviceFor( ExecutionCall call ) {
+    public Device findDeviceFor( ExecutionCall<? extends Device<?>> call ) {
         return ( _findDeviceFor == null ) ? null : _findDeviceFor.findFor(call);
     }
 
     //---
 
     @Override
-    public boolean canPerformForwardADFor( ExecutionCall call ) {
+    public boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call ) {
         return _canPerformForwardADFor.allowsForward(call);
     }
 
     //---
 
     @Override
-    public boolean canPerformBackwardADFor( ExecutionCall call ) {
+    public boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call ) {
         return _canPerformBackwardADFor.allowsBackward( call );
     }
 
     //---
 
     @Override
-    public ADAgent supplyADAgentFor( Function f, ExecutionCall<Device> call, boolean forward ) {
+    public ADAgent supplyADAgentFor( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) {
         return _supplyADAgentFor.getADAgentOf( f, call, forward );
     }
 
     //---
 
     @Override
-    public Tsr handleInsteadOfDevice( FunctionNode caller, ExecutionCall call ) {
+    public Tsr handleInsteadOfDevice( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
         return _handleInsteadOfDevice.handle( caller, call );
     }
 
     //---
 
     @Override
-    public Tsr handleRecursivelyAccordingToArity( ExecutionCall call, java.util.function.Function<ExecutionCall, Tsr<?>> goDeeperWith ) {
+    public Tsr<?> handleRecursivelyAccordingToArity( ExecutionCall<? extends Device<?>> call, java.util.function.Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith ) {
         return _handleRecursivelyAccordingToArity.handle( call, goDeeperWith );
     }
 
     //---
 
     @Override
-    public ExecutionCall instantiateNewTensorsForExecutionIn( ExecutionCall call ) {
+    public ExecutionCall instantiateNewTensorsForExecutionIn( ExecutionCall<? extends Device<?>> call ) {
         return _instantiateNewTensorsForExecutionIn.handle( call );
     }
 

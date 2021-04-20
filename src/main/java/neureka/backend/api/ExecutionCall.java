@@ -61,7 +61,7 @@ import java.util.TreeMap;
 @Accessors( prefix = {"_"} )
 @ToString
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class ExecutionCall<DeviceType extends Device>
+public class ExecutionCall<DeviceType extends Device<?>>
 {
     public interface TensorCondition { boolean check( Tsr<?> tensor ); }
     public interface TensorCompare { boolean check( Tsr<?> first, Tsr<?> second ); }
@@ -72,8 +72,21 @@ public class ExecutionCall<DeviceType extends Device>
     /**
      *  This field references the device on which this ExecutionCall should be executed.
      */
-    @Getter @With // Generates a method which constructs a copy of this call with the provided device!
+    @Getter
     private final DeviceType _device;
+
+    // Constructs a copy of this call with the provided device!
+    public ExecutionCall<? extends Device<?>> withDevice(Device<?> newDevice) {
+        return ExecutionCall.builder()
+                .device(newDevice)
+                .tensors( _tensors )
+                .derivativeIndex( _derivativeIndex )
+                .j( _j )
+                .operation( _operation )
+                .context(_context)
+                .algorithm(_algorithm)
+                .build();
+    }
 
     /**
      * This is an import property whose
@@ -173,7 +186,7 @@ public class ExecutionCall<DeviceType extends Device>
         return getAlgorithm().canPerformBackwardADFor( this );
     }
 
-    public ADAgent getADAgentFrom( Function function, ExecutionCall<Device> call, boolean forward )
+    public ADAgent getADAgentFrom( Function function, ExecutionCall<? extends Device<?>> call, boolean forward )
     {
         if ( this._context != null ) {
             if ( call._context == null ) call._context = new TreeMap<>();

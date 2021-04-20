@@ -58,7 +58,7 @@ public final class Identity extends AbstractOperation
                     return true;
                 }
         ).setSupplyADAgentFor(
-            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+            ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
         )
         .setHandleInsteadOfDevice( (caller, call ) -> null )
@@ -144,7 +144,7 @@ public final class Identity extends AbstractOperation
                     }
             )
             .setSupplyADAgentFor(
-                ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
             .setHandleInsteadOfDevice( (caller, call ) -> null )

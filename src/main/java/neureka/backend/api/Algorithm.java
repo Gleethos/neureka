@@ -63,63 +63,63 @@ public interface Algorithm<FinalType extends Algorithm<FinalType>>
     String getName();
 
     interface SuitabilityChecker {
-        float canHandle( ExecutionCall call );
+        float canHandle( ExecutionCall<? extends Device<?>> call );
     }
 
-    float isSuitableFor( ExecutionCall call );
+    float isSuitableFor( ExecutionCall<? extends Device<?>> call );
 
     interface DeviceFinder {
-        Device findFor( ExecutionCall call );
+        Device<?> findFor( ExecutionCall<? extends Device<?>> call );
     }
 
-    Device findDeviceFor( ExecutionCall call );
+    Device<?> findDeviceFor( ExecutionCall<? extends Device<?>> call );
 
     interface ForwardADAnalyzer {
-        boolean allowsForward( ExecutionCall call );
+        boolean allowsForward( ExecutionCall<? extends Device<?>> call );
     }
 
-    boolean canPerformForwardADFor( ExecutionCall call );
+    boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call );
 
     interface BackwardADAnalyzer {
-        boolean allowsBackward( ExecutionCall call );
+        boolean allowsBackward( ExecutionCall<? extends Device<?>> call );
     }
 
-    boolean canPerformBackwardADFor( ExecutionCall call );
+    boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call );
 
     interface ADAgentSupplier {
         ADAgent getADAgentOf(
                 neureka.calculus.Function f,
-                ExecutionCall<Device> call,
+                ExecutionCall<? extends Device<?>> call,
                 boolean forward
         );
     }
 
     ADAgent supplyADAgentFor(
             neureka.calculus.Function f,
-            ExecutionCall<Device> call,
+            ExecutionCall<? extends Device<?>> call,
             boolean forward
     );
 
     interface InitialCallHook {
-        Tsr handle( FunctionNode caller,  ExecutionCall call );
+        Tsr<?> handle( FunctionNode caller,  ExecutionCall<? extends Device<?>> call );
     }
 
-    Tsr handleInsteadOfDevice( FunctionNode caller, ExecutionCall call );
+    Tsr<?> handleInsteadOfDevice( FunctionNode caller, ExecutionCall<? extends Device<?>> call );
 
     interface RecursiveJunctionAgent {
-        Tsr handle( ExecutionCall call, Function<ExecutionCall, Tsr<?>> goDeeperWith );
+        Tsr<?> handle( ExecutionCall<? extends Device<?>> call, Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith );
     }
 
-    Tsr handleRecursivelyAccordingToArity( ExecutionCall call, Function<ExecutionCall, Tsr<?>> goDeeperWith );
+    Tsr<?> handleRecursivelyAccordingToArity( ExecutionCall<? extends Device<?>> call, Function<ExecutionCall<? extends Device<?>> , Tsr<?>> goDeeperWith );
 
     interface DrainInstantiation {
-        ExecutionCall handle( ExecutionCall call );
+        ExecutionCall<? extends Device<?>> handle( ExecutionCall<? extends Device<?>> call );
     }
 
-    ExecutionCall instantiateNewTensorsForExecutionIn( ExecutionCall call );
+    ExecutionCall<? extends Device<?>> instantiateNewTensorsForExecutionIn( ExecutionCall<? extends Device<?>> call );
 
 
-    Tsr recursiveReductionOf( ExecutionCall<Device> call, Consumer<ExecutionCall<Device>> finalExecution );
+    Tsr<?> recursiveReductionOf( ExecutionCall<? extends Device<?>> call, Consumer<ExecutionCall<? extends Device<?>>> finalExecution );
 
     /**
      *

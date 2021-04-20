@@ -46,7 +46,7 @@ public final class Sigmoid extends AbstractOperation
 
         Activation operationAlgorithm = new Activation()
             .setSupplyADAgentFor(
-                ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
             .build();

@@ -58,7 +58,7 @@ public class Addition extends AbstractOperation {
                     return true;
                 }
         ).setSupplyADAgentFor(
-            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+            ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
             {
                 Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
                 Function mul = Function.Detached.MUL;
@@ -158,7 +158,7 @@ public class Addition extends AbstractOperation {
 
         Operator operator = new Operator()
                 .setSupplyADAgentFor(
-                        ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
                 .setHandleRecursivelyAccordingToArity( rja )
@@ -278,7 +278,7 @@ public class Addition extends AbstractOperation {
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> true )
                 .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                             getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
                 .setHandleInsteadOfDevice( (caller, call ) -> null )
@@ -463,7 +463,7 @@ public class Addition extends AbstractOperation {
                             }
                     )
                     .setSupplyADAgentFor(
-                        ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
                             Tsr<?> ctxDerivative = (Tsr<?>) call.getAt("derivative");
                             Function mul = Function.Detached.MUL;

@@ -35,7 +35,7 @@ public class DimTrim extends AbstractOperation
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> false )
                 .setSupplyADAgentFor(
-                        ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
                             int prefix = ((int[]) call.getAt("ends"))[ 0 ];
                             int postfix = ((int[]) call.getAt("ends"))[ 1 ];

@@ -434,7 +434,7 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
      * @param call
      * @param lock
      */
-    private void _construct(  Tsr<ValType> output, Function function, ExecutionCall<Device> call, GraphLock lock )
+    private void _construct(  Tsr<ValType> output, Function function, ExecutionCall<? extends Device<?>> call, GraphLock lock )
     {
         Tsr<Object>[] inputs = ( call == null ) ? null : call.getTensors();
         if ( output == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
@@ -566,7 +566,7 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
      * @param function The function which produced the payload tensor of this GraphNode.
      * @return int The mode of this GraphNode! ( m<0 : backward-AD, m>0 : forward-AD, m=0 : no-AD )
      */
-    private int _modeOf( ExecutionCall<Device> call, Function function )
+    private int _modeOf( ExecutionCall<? extends Device<?>> call, Function function )
     {
         Tsr<ValType>[] inputs = call.getTensors();
         int resultMode = 0;

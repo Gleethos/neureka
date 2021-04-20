@@ -69,7 +69,7 @@ public class Randomization extends AbstractOperation
                 }
         )
         .setSupplyADAgentFor(
-            ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+            ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
         )
         .setHandleInsteadOfDevice( (caller, call ) -> null )

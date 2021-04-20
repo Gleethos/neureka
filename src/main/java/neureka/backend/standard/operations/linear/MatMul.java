@@ -117,7 +117,7 @@ public class MatMul extends AbstractOperation
                         }
                 )
                 .setSupplyADAgentFor(
-                        ( Function f, ExecutionCall<Device> call, boolean forward ) ->
+                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
                             //Tsr ctxDerivative = (Tsr) call.getAt("derivative");
                             if ( forward ) throw new IllegalArgumentException("Matrix multiplication of does not support forward-AD!");

@@ -105,7 +105,7 @@ to perform said procedures.
 ```
     ADAgent supplyADAgentFor(
             neureka.calculus.Function f,
-            ExecutionCall<Device> call,
+            ExecutionCall<? extends Device<?>> call,
             boolean forward
     );
 ```
@@ -160,7 +160,7 @@ ought to either execute the given call which is passed to it or
 continue to go deeper by calling the passed lambda... <br>
 
 ```
-    Tsr recursiveReductionOf( ExecutionCall<Device> call, Consumer<ExecutionCall<Device>> finalExecution );
+    Tsr recursiveReductionOf( ExecutionCall<? extends Device<?>> call, Consumer<ExecutionCall<? extends Device<?>>> finalExecution );
 ```
 ---
 
