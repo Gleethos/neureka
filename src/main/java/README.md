@@ -1,5 +1,3 @@
-
-
 # Code Conventions #
 
 The code of this project deviates slightly from official or common coding conventions
@@ -11,14 +9,14 @@ practice in other languages, namely : C#, C++ and Python.
 
 ---
 
-## The rules are as follows : ##
+## The rules are as follows ##
 
 ---
 
 ***1. The names of things may be as long and as descriptive, as their purpose is non-trivial and unknown.***
 
 > **Example :**
->```
+>```java
 >   Tsr<Double> tensor = new Tsr(...);
 >   int number = 345335;
 >   char letter = 'h';
@@ -42,7 +40,7 @@ practice in other languages, namely : C#, C++ and Python.
 ***2. Private or protected variable and method names always start with an underscore.***
 
 > **Example :** 
->```
+>```java
 >    private String _stringVariable;
 > 
 >    protected int _intVariable;
@@ -60,8 +58,8 @@ practice in other languages, namely : C#, C++ and Python.
 >   very considerable way : <br>
 >   One can **immediately distinguish local- from field-variables**! 
 >   Meaning the code improves in terms of : <br>
->   1. Clearer scope.
->   2. Clearer access levels.
+>  1. Clearer scope.
+>  2. Clearer access levels.
 >
 >   **Why not just use ``this.fieldVar;`` instead?! :** <br>
 >   Because of rule 1 : ``_`` is shorter than ``this`` and the meaning of both is trivial
@@ -70,7 +68,7 @@ practice in other languages, namely : C#, C++ and Python.
 
 ***3. Round brackets have a white space padding for improved readability.***
 
->```
+>```java
 >    a += c + d;
 >    a = ( a + b ) / ( c * d ); // Instead of : a = (a + b) / (c * d);
 >    
@@ -80,8 +78,8 @@ practice in other languages, namely : C#, C++ and Python.
 >    printSize( "size is " + foo + "\n" ); // Instead of : printSize("size is "+foo+"\n");
 >```
 >   This rule guarantees readability in two ways : <br>
->   1. It forces longer statements to be broken down into multiple lines simply due to their length.
->   2. The spaces around involved variables simply makes it easier to identify said variables.
+>  1. It forces longer statements to be broken down into multiple lines simply due to their length.
+>  2. The spaces around involved variables simply makes it easier to identify said variables.
 >
 
 

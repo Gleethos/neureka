@@ -6,11 +6,9 @@
 
 ---
   
-- Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
-  
-- Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/lib/neureka-0.6.0.jar)
-  
-- [![HitCount](http://hits.dwyl.com/Gleethos/neureka.svg)](http://hits.dwyl.com/Gleethos/neureka) 
+  - Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
+  - Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/lib/neureka-0.6.0.jar)
+  - [![HitCount](http://hits.dwyl.com/Gleethos/neureka.svg)](http://hits.dwyl.com/Gleethos/neureka) 
   
 [![Beerpay](https://beerpay.io/Gleethos/neureka/badge.svg?style=beer-square)](https://beerpay.io/Gleethos/neureka)  
 [![Beerpay](https://beerpay.io/Gleethos/neureka/make-wish.svg?style=flat-square)](https://beerpay.io/Gleethos/neureka?focus=wish)
@@ -19,32 +17,22 @@
 | ------------- |:-------------:|:--------:|:-------:| -------:| 
 | [![Build Status](https://circleci.com/gh/Gleethos/neureka.svg?branch=master&style=shield)](https://app.circleci.com/pipelines/github/Gleethos/neureka) [![Build Status](https://travis-ci.org/Gleethos/neureka.svg?branch=master)](https://travis-ci.org/Gleethos/neureka) | [![Code Coverage](https://img.shields.io/codecov/c/github/gleethos/neureka)](https://codecov.io/github/gleethos/neureka) | [![GitHub version](https://badge.fury.io/gh/Gleethos%2Fneureka.svg)](https://github.com/Gleethos/neureka) | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6bfd22ba9b8c410285b19e3d37f4fbc6)](https://www.codacy.com/manual/Gleethos/neureka?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Gleethos/neureka&amp;utm_campaign=Badge_Grade) | [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) |
 
-
-
 ---  
 
 ## :hammer_and_wrench: Features ##
 
-  - dynamic computation graph
-
-  - auto differentiation (forwards/backwards)
-
-  - nd-convolution
-  
-  - nd-broadcasting
-
-  - flexible tensor indexing and slicing
-  
-  - seeding
-  
-  - labeling
-
-  - loading and saving as jpg/idx files
+-   dynamic computation graph
+-   auto differentiation (forwards/backwards)
+-   nd-convolution
+-   nd-broadcasting
+-   flexible tensor indexing and slicing
+-   seeding
+-   labeling
+-   loading and saving as jpg/idx files
 
 ### Take a quick look: ###
 
 - [Neureka with Java](docs/markdown/java_example.md) :coffee:
-
 - [Neureka with Groovy](docs/markdown/groovy_example.md) :star:
 
 ---
