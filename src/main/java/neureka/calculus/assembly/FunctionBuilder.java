@@ -6,12 +6,21 @@ import neureka.calculus.Function;
 import neureka.calculus.implementations.FunctionConstant;
 import neureka.calculus.implementations.FunctionInput;
 import neureka.calculus.implementations.FunctionNode;
+import neureka.calculus.implementations.FunctionVariable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
-public class FunctionBuilder {
+public class FunctionBuilder
+{
+    private static final Pattern nodePattern = Pattern.compile("^([\\(]{1}.+[\\)]{1})");
+    private static final Pattern variablePattern = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[jJ]+[ ]*\\]?)");
+    private static final Pattern inputPattern    = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[0-9]+[ ]*\\]?)");//^([iI]{1}\[?[0-9]+\]?)
+    private static final Pattern constantPattern = Pattern.compile("^((-{1}[0-9]*|[0-9]*)[.]?[0-9]*(e[-]?[0-9]+)?)");
+
+
 
     /**
      * @param type
@@ -120,35 +129,40 @@ public class FunctionBuilder {
                 j = 0;
             }
         }
-        int ID = 0;
-        while ( ID < counter ) {
+        int operationID = 0;
+        while ( operationID < counter ) {
             final List<String> newJunctors = new ArrayList<>();
             final List<String> newComponents = new ArrayList<>();
-            if ( foundJunctors.contains( OperationContext.get().instance( ID ).getOperator() ) ) {
+            if ( foundJunctors.contains( OperationContext.get().instance( operationID ).getOperator() ) ) {
                 String currentChain = null;
                 boolean groupingOccured = false;
                 boolean enoughtPresent = FunctionParser.numberOfOperationsWithin( foundJunctors ) > 1;// Otherwise: I[j]^4 goes nuts!
                 if ( enoughtPresent ) {
                     String[] ComponentsArray = foundComponents.toArray(new String[ 0 ]);
                     int length = ComponentsArray.length;
-                    for ( int Ci = 0; Ci < length; Ci++ ) {
+                    for ( int ci = 0; ci < length; ci++ ) {
                         String currentComponent;
-                        currentComponent = ComponentsArray[Ci];
+                        currentComponent = ComponentsArray[ci];
                         String currentOperation = null;
-                        if ( foundJunctors.size() > Ci ) {
-                            currentOperation = foundJunctors.get(Ci);
+                        if ( foundJunctors.size() > ci ) {
+                            currentOperation = foundJunctors.get(ci);
                         }
                         if ( currentOperation != null ) {
-                            if ( currentOperation.equals(OperationContext.get().instance(ID).getOperator()) ) {
+                            if ( currentOperation.equals(OperationContext.get().instance(operationID).getOperator()) ) {
                                 final String newChain =
-                                        FunctionParser.groupBy(OperationContext.get().instance(ID).getOperator(), currentChain, currentComponent, currentOperation);
+                                        FunctionParser.groupBy(
+                                                OperationContext.get().instance(operationID).getOperator(),
+                                                currentChain,
+                                                currentComponent,
+                                                currentOperation
+                                        );
                                 if (newChain != null) {
                                     currentChain = newChain;
                                 }
                                 groupingOccured = true;
                             } else {
                                 if (currentChain == null) newComponents.add(currentComponent);
-                                else newComponents.add(currentChain + currentComponent); //= String.value64Of(currentChain) + currentComponent
+                                else newComponents.add(currentChain + currentComponent);
                                 newJunctors.add(currentOperation);
                                 groupingOccured = true;
                                 currentChain = null;
@@ -169,7 +183,7 @@ public class FunctionBuilder {
                     foundComponents = newComponents;
                 }
             }
-            ++ID;
+            ++operationID;
         }
 
         // identifying function id:
@@ -190,7 +204,7 @@ public class FunctionBuilder {
             if (possibleFunction != null && possibleFunction.length() > 1) {
 
                 for ( int oi = 0; oi < OperationContext.get().id(); oi++ ) {
-                    if (OperationContext.get().instance(oi).getOperator().toLowerCase().equals(possibleFunction.toLowerCase())) {
+                    if (OperationContext.get().instance(oi).getOperator().equalsIgnoreCase(possibleFunction)) {
                         typeId = oi;
                         List<String> parameters = FunctionParser.findParametersIn(
                                 foundComponents.get( 0 ),
@@ -207,40 +221,15 @@ public class FunctionBuilder {
             }
             //---
             String component = FunctionParser.unpackAndCorrect( foundComponents.get( 0 ) );
-            boolean possiblyInverseInput = ( component.length()>1 && component.toLowerCase().startsWith("-i") );
-            if (!possiblyInverseInput &&
-                    (
-                            ((component.charAt( 0 ) <= '9') && (component.charAt( 0 ) >= '0')) ||
-                                    (component.charAt( 0 ) == '-') ||
-                                    (component.charAt( 0 ) == '+')
-                    )
-                ) {
-                if (
-                        component.startsWith( "-" ) &&
-                                component.length()>2 &&
-                                !component.substring(1, 2).matches( "[0-9]+" )
-                ) {
-                    component = "-1 * "+component.substring(1);
-                    return _build(component, doAD);
-                } else {
-                    Function newFunction = new FunctionConstant();
-                    newFunction = newFunction.newBuild(component);
-                    return newFunction;
-                }
+
+            if ( constantPattern.matcher(component).matches() ) return new FunctionConstant().newBuild(component);
+            else if ( inputPattern.matcher(component).find() ) return new FunctionInput().newBuild( component );
+            else if ( variablePattern.matcher(component).find() ) return new FunctionVariable().newBuild( component );
+            else if ( component.startsWith("-") ) {
+                component = "-1 * "+component.substring(1);
+                return _build(component, doAD);
             }
-            if (
-                    possiblyInverseInput ||
-                            (component.charAt( 0 ) == 'i') ||
-                            (component.charAt( 0 ) == 'I') ||
-                            (
-                                    component.contains("[") && component.contains("]")
-                                            && component.matches(".[0-9]+.")
-                            )
-            ) {//TODO: Make this regex better!!
-                Function newFunction = new FunctionInput();
-                newFunction = newFunction.newBuild(component);
-                return newFunction;
-            }
+
             String cleaned = FunctionParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
             String raw = component.replace(cleaned, "");
             String assumed = FunctionParser.assumptionBasedOn(raw);

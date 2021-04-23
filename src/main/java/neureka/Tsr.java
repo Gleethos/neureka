@@ -1891,9 +1891,8 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      */
     public Tsr<ValType> mean() {
         Tsr<ValType> ones = new Tsr<>( this.getNDConf().shape(), 1 );
-        Tsr<ValType> sum = Function.X.call( new Tsr[]{ this, ones } );
-        return Function.DIV.call( new Tsr[]{ sum, new Tsr( this.size() ) } );
-        //TODO :Function.DIV.call(new Tsr[]{sum, new Tsr(this.size())});
+        Tsr<ValType> sum = Function.X.call( this, ones );
+        return Function.DIV.call( sum, new Tsr( this.size() ) );
     }
 
     /**

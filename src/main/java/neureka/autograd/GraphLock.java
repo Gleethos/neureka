@@ -1,6 +1,6 @@
 package neureka.autograd;
+
 import lombok.Getter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
 import neureka.calculus.Function;
@@ -31,9 +31,8 @@ public class GraphLock
     /**
      * CONSTRUCTOR
      * @param owner The function which currently processes the graph of nodes of which this lock is referenced by.
-     * @param sources
      */
-    public GraphLock( Function owner, Tsr[] sources ) {
+    public GraphLock( Function owner ) {
         _owner = owner;
     }
 

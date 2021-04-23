@@ -78,7 +78,7 @@ public class FileDevice extends AbstractBaseDevice<Number>
                         if ( FileHead.FACTORY.hasLoader( extension ) ) found.add( file.getName() );
                     }
                 }
-                _loadable.addAll( found ); // TODO!
+                _loadable.addAll( found ); // TODO! -> Update so that new files will be detected...
             }
         }
     }

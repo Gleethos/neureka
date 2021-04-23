@@ -384,18 +384,17 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
         public static class Indexing
         {
             @Contract(pure = true)
-            public static int[] shpCheck( int[] newShp, Tsr t ) {
+            public static void shpCheck( int[] newShp, Tsr t ) {
                 if ( NDConfiguration.Utility.szeOfShp(newShp) != t.size() ) {
                     throw new IllegalArgumentException(
                             "New shape does not match tensor size!" +
                                     " (" +
-                                    Utility.Stringify.strConf(newShp) +
-                                    ((NDConfiguration.Utility.szeOfShp(newShp) < t.size()) ? "<" : ">") +
-                                    Utility.Stringify.strConf(t.getNDConf().shape()) + "" +
+                                        Utility.Stringify.strConf(newShp) +
+                                        ((NDConfiguration.Utility.szeOfShp(newShp) < t.size()) ? "<" : ">") +
+                                        Utility.Stringify.strConf(t.getNDConf().shape()) + "" +
                                     ")"
                     );
                 }
-                return newShp;
             }
 
             @Contract(pure = true)

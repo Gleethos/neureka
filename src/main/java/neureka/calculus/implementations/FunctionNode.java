@@ -164,10 +164,7 @@ public class FunctionNode extends AbstractBaseFunction
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
             tensors = srcActivation(inputs, j, d, 0);
             String asStr = _operation.stringify(
-                    IntStream.range( 0, _src.length )
-                            .mapToObj( i -> "I[" + i + "]" )
-                            .collect( Collectors.toList() )
-                            .toArray( new String[0] )
+                    IntStream.range(0, _src.length).mapToObj(i -> "I[" + i + "]").toArray(String[]::new)
             );
             return FunctionBuilder.build( asStr, _isDoingAD ).call( tensors );
         } else {

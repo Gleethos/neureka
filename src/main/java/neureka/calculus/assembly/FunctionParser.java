@@ -120,6 +120,7 @@ public class FunctionParser
         return group;
     }
 
+    @Contract( pure = true )
     private static boolean isForbiddenChar( char c ) {
         return c == '"' || c == '$' || c == '%' || c == '&' || c == '=' || c == '#' || c == '|' || c == '~' || c == ':'
                 || c == ';' || c == '@' || c == '?' || c == '\\' || c == '>' || c == '<' || c == ' ';
@@ -238,39 +239,48 @@ public class FunctionParser
         return ( largest > 0.1 ) ? OperationContext.get().instance(best).getOperator() : "";
     }
 
+    /**
+     *  This method estimates the similarity between 2 provided {@link String} instances.
+     *
+     * @param s1
+     * @param s2
+     * @return
+     */
     @Contract( pure = true )
     public static double similarity( final String s1, final String s2 ) {
             String longer = (s1.length() > s2.length()) ?s1 : s2;
             String shorter = (s1.length() > s2.length()) ? s2 : s1;
             // longer should always have greater length
-            if (longer.length() == 0) return 1.0; /* both strings are zero length */
+            if ( longer.length() == 0 ) return 1.0; /* both strings are zero length */
 
             int delta = (longer.length()-shorter.length());
-            double[] alignment = new double[delta+1];
-            double[] weights = new double[delta+1];
+            double[] alignment = new double[ delta + 1 ];
+            double[] weights = new double[ delta + 1 ];
             double currentWeight = longer.length();
             double weightSum = 0;
-            double modifier = delta / (double)longer.length();
-            for ( int i=0; i<(delta+1); i++ ) {
+            double modifier = delta / (double) longer.length();
+            for ( int i = 0; i < ( delta + 1 ); i++ ) {
                 weights[ i ] = currentWeight;
                 weightSum += currentWeight;
                 currentWeight *= modifier;
                 for ( int si = 0; si < shorter.length(); si++ ) {
-                    if ( longer.charAt( i + si ) == shorter.charAt( si ) ) alignment[ i ] ++;
-                    else if (
-                            Character.toLowerCase(longer.charAt( i + si )) == Character.toLowerCase(shorter.charAt( si ))
+                    char lChar = longer.charAt( i + si );
+                    char sChar = shorter.charAt( si );
+                    if ( lChar == sChar ) alignment[ i ] ++;
+                    else if ( // Custom modifiers:
+                        Character.toLowerCase( lChar ) == Character.toLowerCase( sChar )
                     ) alignment[ i ] += 0.5;
                     else if (
-                            Character.isAlphabetic(longer.charAt( i + si )) != Character.isAlphabetic(shorter.charAt( si ))
+                        Character.isAlphabetic( lChar ) != Character.isAlphabetic( sChar )
                     ) alignment[ i ] -= 0.13571113;
                 }
                 alignment[ i ] /= longer.length();
-                alignment[ i ] = Math.min(Math.max(alignment[ i ], 0.0), 1.0);
+                alignment[ i ] = Math.min( Math.max( alignment[ i ], 0.0 ), 1.0 );
             }
-            Arrays.sort(alignment);
-            Arrays.sort(weights);
+            Arrays.sort( alignment );
+            Arrays.sort( weights );
             double similarity = 0;
-            for ( int i=0; i<(delta+1); i++) similarity += alignment[ i ] * (weights[ i ]/weightSum);
+            for ( int i = 0; i < ( delta + 1 ); i++ ) similarity += alignment[ i ] * ( weights[ i ] / weightSum );
             assert similarity <= 1.0;
             return similarity;
     }
