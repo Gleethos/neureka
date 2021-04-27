@@ -66,15 +66,10 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
     public Function newBuild(final String equation) {
 
         if (equation.charAt( 0 )=='-') {
-            return FunctionBuilder.build(equation.substring(1)+"*-1", true);
+            return FunctionBuilder.build(equation.substring(1)+"*-1", true); // TODO: This might be false!
         }
         int number = 0;
         for ( int i = 0; i < equation.length(); ++i) {
-            if (equation.charAt( i ) == 'j') {
-                Function newCore = new FunctionVariable();
-                newCore = newCore.newBuild(equation);
-                return newCore;
-            }
             if (equation.charAt( i ) <= '9' && equation.charAt( i ) >= '0') {
                 number *= 10;
                 number += Integer.parseInt(equation.charAt( i ) + "");

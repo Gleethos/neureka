@@ -17,9 +17,9 @@ public class FunctionBuilder
 {
     private static final Pattern nodePattern = Pattern.compile("^([\\(]{1}.+[\\)]{1})");
     private static final Pattern variablePattern = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[jJ]+[ ]*\\]?)");
-    private static final Pattern inputPattern    = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[0-9]+[ ]*\\]?)");//^([iI]{1}\[?[0-9]+\]?)
+    private static final Pattern inputPattern    = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[0-9]+[ ]*\\]?)");
     private static final Pattern constantPattern = Pattern.compile("^((-{1}[0-9]*|[0-9]*)[.]?[0-9]*(e[-]?[0-9]+)?)");
-
+    private static final Pattern reshapePattern = Pattern.compile("^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))");
 
 
     /**
@@ -28,8 +28,8 @@ public class FunctionBuilder
      * @param doAD
      * @return
      */
-    public static Function build(Operation type, int size, boolean doAD ) {
-        if (type.getId() == 18) {
+    public static Function build( Operation type, int size, boolean doAD ) {
+        if ( type.getId() == 18 ) {
             size = 2;
         } else if ( type.getOperator().equals(",") ) {
             ArrayList<Function> srcs = new ArrayList<>();
@@ -109,7 +109,8 @@ public class FunctionBuilder
                     if ( foundComponents.size() <= foundJunctors.size() ) {
                         foundComponents.add(newComponent);
                     }
-                    i += newComponent.length();
+                    i += newComponent.length(); // And now we continue parsing where the string ends...
+                    // After a component however, we expect an operator:
                     final String newOperation = FunctionParser.parsedOperation(expression, i);
                     if ( newOperation != null ) {
                         i += newOperation.length();
@@ -123,11 +124,10 @@ public class FunctionBuilder
         //---
         int counter = OperationContext.get().id();
         for ( int j = OperationContext.get().id(); j > 0; --j ) {
-            if ( !foundJunctors.contains(OperationContext.get().instance(j - 1).getOperator()) ) {
+            if ( !foundJunctors.contains( OperationContext.get().instance(j - 1).getOperator() ) )
                 --counter;
-            } else {
+            else
                 j = 0;
-            }
         }
         int operationID = 0;
         while ( operationID < counter ) {
@@ -135,9 +135,9 @@ public class FunctionBuilder
             final List<String> newComponents = new ArrayList<>();
             if ( foundJunctors.contains( OperationContext.get().instance( operationID ).getOperator() ) ) {
                 String currentChain = null;
-                boolean groupingOccured = false;
-                boolean enoughtPresent = FunctionParser.numberOfOperationsWithin( foundJunctors ) > 1;// Otherwise: I[j]^4 goes nuts!
-                if ( enoughtPresent ) {
+                boolean groupingOccurred = false;
+                boolean enoughPresent = FunctionParser.numberOfOperationsWithin( foundJunctors ) > 1;// Otherwise: I[j]^4 goes nuts!
+                if ( enoughPresent ) {
                     String[] ComponentsArray = foundComponents.toArray(new String[ 0 ]);
                     int length = ComponentsArray.length;
                     for ( int ci = 0; ci < length; ci++ ) {
@@ -156,29 +156,27 @@ public class FunctionBuilder
                                                 currentComponent,
                                                 currentOperation
                                         );
-                                if (newChain != null) {
-                                    currentChain = newChain;
-                                }
-                                groupingOccured = true;
+                                if ( newChain != null ) currentChain = newChain;
+
+                                groupingOccurred = true;
                             } else {
-                                if (currentChain == null) newComponents.add(currentComponent);
-                                else newComponents.add(currentChain + currentComponent);
-                                newJunctors.add(currentOperation);
-                                groupingOccured = true;
+                                if ( currentChain == null ) newComponents.add(currentComponent);
+                                else newComponents.add( currentChain + currentComponent );
+                                newJunctors.add( currentOperation );
+                                groupingOccurred = true;
                                 currentChain = null;
                             }
                         } else {
-                            if (currentChain == null) {
-                                newComponents.add(currentComponent);
-                            } else {
+                            if ( currentChain == null ) newComponents.add(currentComponent);
+                            else {
                                 newComponents.add(currentChain + currentComponent);
-                                groupingOccured = true;
+                                groupingOccurred = true;
                             }
                             currentChain = null;
                         }
                     }
                 }
-                if (groupingOccured) {
+                if (groupingOccurred) {
                     foundJunctors = newJunctors;
                     foundComponents = newComponents;
                 }
@@ -222,25 +220,32 @@ public class FunctionBuilder
             //---
             String component = FunctionParser.unpackAndCorrect( foundComponents.get( 0 ) );
 
-            if ( constantPattern.matcher(component).matches() ) return new FunctionConstant().newBuild(component);
-            else if ( inputPattern.matcher(component).find() ) return new FunctionInput().newBuild( component );
-            else if ( variablePattern.matcher(component).find() ) return new FunctionVariable().newBuild( component );
+            if ( constantPattern.matcher( component ).matches() ) return new FunctionConstant().newBuild( component );
+            else if ( inputPattern.matcher( component ).find() ) return new FunctionInput().newBuild( component );
+            else if ( variablePattern.matcher( component ).find() ) return new FunctionVariable().newBuild( component );
             else if ( component.startsWith("-") ) {
                 component = "-1 * "+component.substring(1);
                 return _build(component, doAD);
             }
 
             String cleaned = FunctionParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
-            String raw = component.replace(cleaned, "");
-            String assumed = FunctionParser.assumptionBasedOn(raw);
+            String raw = component.replace( cleaned, "" );
+            String assumed = FunctionParser.assumptionBasedOn( raw );
             if ( assumed.trim().equals("") ) component = cleaned;
             else component = assumed + cleaned;
 
             return FunctionBuilder.build(component, doAD);
         } else {// More than one component left:
-            if (OperationContext.get().instance(typeId).getOperator().equals("x") || OperationContext.get().instance(typeId).getOperator().equals("<") || OperationContext.get().instance(typeId).getOperator().equals(">")) {
+            if (
+                    OperationContext.get().instance( typeId ).getOperator().equals( "x" ) ||
+                    OperationContext.get().instance( typeId ).getOperator().equals( "<" ) ||
+                    OperationContext.get().instance( typeId ).getOperator().equals( ">" )
+            ) {
                 foundComponents = _rebindPairwise( foundComponents, typeId );
-            } else if (OperationContext.get().instance(typeId).getOperator().equals(",") && foundComponents.get( 0 ).startsWith("[")) {
+            } else if (
+                    OperationContext.get().instance(typeId).getOperator().equals(",") &&
+                    foundComponents.get( 0 ).startsWith("[")
+            ) {
 
                 foundComponents.set(0, foundComponents.get( 0 ).substring(1));
                 String[] splitted;

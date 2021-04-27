@@ -39,21 +39,25 @@ SOFTWARE.
 
 package neureka.backend.api;
 
+import lombok.NonNull;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
 import neureka.ndim.iterators.NDIterator;
 
 /**
- *  This interface describes an operation which ought to consist of a component system
- *  containing multiple algorithms which themselves ought to contain device specific implementations
+ *  This interface is part of the backend API and it embodies the top layer of the 3 tier backend architecture.
+ *  It represents broad and high level requests for execution which might be executed differently depending
+ *  on the provided {@link ExecutionCall} arguments.
+ *  An {@link Operation} implementation ought to consist of a component system
+ *  containing multiple {@link Algorithm} instances, which themselves ought to contain device specific implementations
  *  capable of processing {@link ExecutionCall} instances, or rather their state. <br><br>
  *
  *  Besides the component system, there is also the definition for how its supposed to integrate into
- *  the {@link neureka.calculus} package.
+ *  the {@link neureka.calculus} package in order to serve as part of an {@link Function} AST.
  *  This means that the operation should have a function name
  *  and optionally also an operator in the form of {@link String} instances.
- *  Alongside there must be an implementation og the {@link Operation#stringify(String[])} method,
+ *  Alongside there must be an implementation of the {@link Operation#stringify(String[])} method,
  *  which ought to generate a String view as part of a {@link Function}-AST.
  */
 public interface Operation
@@ -109,6 +113,13 @@ public interface Operation
 
     //==================================================================================================================
 
+    /**
+     *  Concrete {@link Operation} types ought to be representable by a function name.
+     *  The following ensures that this contract is met when overriding the method.
+     *
+     * @return
+     */
+    @NonNull
     String getFunction();
 
     //==================================================================================================================

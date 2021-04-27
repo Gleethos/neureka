@@ -29,7 +29,7 @@ public class FunctionParser
         String operation = "";
         for ( int i = exp.length()-1; i >= index; i--) {
             operation = exp.substring(index, i);
-            if (FunctionParser.isAnyOperation(operation) || FunctionParser.isAnyOperation(operation.toLowerCase())) {
+            if (FunctionParser.isAnOperation(operation) || FunctionParser.isAnOperation(operation.toLowerCase())) {
                 return operation;
             }
         }
@@ -58,7 +58,7 @@ public class FunctionParser
                         i += found.length()-1;
                     } else {
                         possibleOperation = exp.substring( i + 1, ii );
-                        if (FunctionParser.isAnyOperation(possibleOperation)) {
+                        if (FunctionParser.isAnOperation(possibleOperation)) {
                             if (
                                     ( exp.charAt( i )=='j' || !Character.isLetter(exp.charAt( i )) )
                             ) {
@@ -103,13 +103,19 @@ public class FunctionParser
     }
 
     @Contract( pure = true )
-    public static boolean isAnyOperation( final String operation ) {
-        if ( operation.length() > 32 ) return false;
-        return (OperationContext.get().instance( operation ) != null) && OperationContext.get().instance(operation).getId() >= 0;
+    public static boolean isAnOperation( final String operationName ) {
+        if ( operationName.length() > 32 ) return false;
+        Operation operation = OperationContext.get().instance( operationName );
+        return operation != null && operation.getId() >= 0;
     }
 
     @Contract( pure = true )
-    public static String groupBy( final String operation, final String currentChain, final String currentComponent, final String currentOperation ) {
+    public static String groupBy(
+            final String operation,
+            final String currentChain,
+            final String currentComponent,
+            final String currentOperation
+    ) {
         String group = null;
         if (currentOperation != null) {
             if (currentOperation.equals(operation)) {
@@ -145,20 +151,24 @@ public class FunctionParser
             ci = 0;
             condition = true;
             int l = exp.length() - 1;
-            while (condition) {
-                if (FunctionParser.isForbiddenChar(exp.charAt(ci)) || (exp.charAt(l - ci) >= 'A' && exp.charAt(l - ci) <= 'Z') || (exp.charAt(l - ci) >= 'a' && exp.charAt(l - ci) <= 'z')) {
+            while ( condition ) {
+                if (
+                        isForbiddenChar( exp.charAt( ci ) ) ||
+                        ( exp.charAt( l - ci ) >= 'A' && exp.charAt( l - ci ) <= 'Z' ) ||
+                        ( exp.charAt( l - ci ) >= 'a' && exp.charAt( l - ci ) <= 'z' )
+                ) {
                     ci++;
                 } else condition = false;
-                if (l - ci < 0) condition = false;
+                if ( l - ci < 0 ) condition = false;
             }
-            for ( int gi = 0; gi <= l - ci; gi++) updated.append(exp.charAt(gi));
+            for ( int gi = 0; gi <= l - ci; gi++) updated.append( exp.charAt(gi) );
             exp = updated.toString();
         }
-        if (exp.length() > 0) {
-            if (exp.charAt( 0 ) == '(' && exp.charAt(exp.length() - 1) != ')') {
+        if ( exp.length() > 0 ) {
+            if ( exp.charAt( 0 ) == '(' && exp.charAt( exp.length() - 1 ) != ')' ) {
                 exp = exp.substring(1, exp.length()-1);
             }
-            if (exp.charAt(exp.length() - 1) == ')' && exp.charAt( 0 ) != '(') {
+            if ( exp.charAt(exp.length() - 1) == ')' && exp.charAt( 0 ) != '(' ) {
                 exp = exp.substring(1, exp.length()-1);
             }
         }
@@ -167,7 +177,7 @@ public class FunctionParser
     }
 
     @Contract( pure = true )
-    public static String unpackAndCorrect(String exp) {
+    public static String unpackAndCorrect( String exp ) {
         if ( exp == null ) return null;
         if ( exp.length() == 0 ) return "";
         if ( exp.equals("()") ) return "";
@@ -224,13 +234,19 @@ public class FunctionParser
         return exp.trim();
     }
 
+    /**
+     *  This method tries to find the next best operation {@link String} the user might have meant.
+     *
+     * @param expression
+     * @return
+     */
     @Contract( pure = true )
-    public static String assumptionBasedOn(String expression) {
+    public static String assumptionBasedOn( String expression ) {
         double largest = -1;
         int best = 0;
         for ( int i = 0; i< OperationContext.get().id(); i++ ) {
-            double s = similarity(expression, OperationContext.get().instance( i ).getOperator());
-            if (largest==-1) largest = s;
+            double s = similarity( expression, OperationContext.get().instance( i ).getOperator() );
+            if ( largest == -1 ) largest = s;
             else if (s > largest) {
                 best = i;
                 largest = s;
