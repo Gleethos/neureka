@@ -169,7 +169,7 @@ class Calculus_Extension_Integration_Tests extends Specification
 
 
 
-    def 'Tile parsing for kernel parameter claculation yields expected tile dimensions.'(
+    def 'Tile parsing for kernel parameter calculation yields expected tile dimensions.'(
             int size, int[] shape, List<Integer> expected
     ){
 
@@ -178,6 +178,7 @@ class Calculus_Extension_Integration_Tests extends Specification
 
         then :
             result == expected as int[]
+            println( size - expected.inject(1, {a,b -> a*b}) )
 
         where :
             size  | shape                 || expected
