@@ -172,7 +172,11 @@ public class ExecutionCall<DeviceType extends Device<?>>
         return (ExecutionCall<T>) this;
     }
 
-    public Tsr getTensor( int i ) { return _tensors[ i ];}
+
+    public <V> Tsr<V> getTsrOfType( Class<V> valueTypeClass, int i ) {
+        // TODO: perform type checking!
+        return (Tsr<V>) _tensors[ i ];
+    }
 
 
     public Algorithm<?> getAlgorithm() {

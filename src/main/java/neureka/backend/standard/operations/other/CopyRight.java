@@ -65,11 +65,11 @@ public class CopyRight extends AbstractOperation {
                         HostCPU.class,
                         new HostImplementation(
                                 call -> {
-                                    int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
+                                    int offset = ( call.getTsrOfType( Number.class, 0 ) == null ) ? 1 : 0;
                                     ExecutionCall<HostCPU> newCall =
                                             ExecutionCall.builder()
                                                 .device( call.getDevice() )
-                                                .tensors( new Tsr[]{call.getTensor(1+offset), call.getTensor(offset)} )
+                                                .tensors( new Tsr[]{call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)} )
                                                 .derivativeIndex( -1 )
                                                 .operation( call.getOperation() )
                                                 .build()
@@ -85,10 +85,10 @@ public class CopyRight extends AbstractOperation {
                         OpenCLDevice.class,
                         new CLImplementation(
                                 call -> {
-                                    int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
+                                    int offset = ( call.getTsrOfType( Number.class, 0 ) == null ) ? 1 : 0;
                                     ExecutionCall<OpenCLDevice> newCall = ExecutionCall.builder()
                                             .device( call.getDevice() )
-                                            .tensors( new Tsr[]{call.getTensor(1+offset), call.getTensor(offset)} )
+                                            .tensors( new Tsr[]{call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)} )
                                             .derivativeIndex( -1 )
                                             .operation( call.getOperation() )
                                             .build()

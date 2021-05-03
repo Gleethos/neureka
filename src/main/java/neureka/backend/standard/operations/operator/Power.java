@@ -241,22 +241,22 @@ public class Power extends AbstractOperation
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor( 0 ).size(),
+                                                        call.getTsrOfType( Number.class, 0 ).size(),
                                                         (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
                                                         ? ( start, end ) ->
                                                                 Operator.operate (
-                                                                        call.getTensor( 0 ),
-                                                                        call.getTensor( 1 ),
-                                                                        call.getTensor( 2 ),
+                                                                        call.getTsrOfType( Number.class, 0 ),
+                                                                        call.getTsrOfType( Number.class, 1 ),
+                                                                        call.getTsrOfType( Number.class, 2 ),
                                                                         call.getDerivativeIndex(),
                                                                         start, end,
                                                                         operationXCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                         : ( start, end ) ->
                                                                 Operator.operate (
-                                                                        call.getTensor( 0 ),
-                                                                        call.getTensor( 1 ),
-                                                                        call.getTensor( 2 ),
+                                                                        call.getTsrOfType( Number.class, 0 ),
+                                                                        call.getTsrOfType( Number.class, 1 ),
+                                                                        call.getTsrOfType( Number.class, 2 ),
                                                                         call.getDerivativeIndex(),
                                                                         start, end,
                                                                         operationCreator.create(call.getTensors(), call.getDerivativeIndex())
@@ -269,15 +269,15 @@ public class Power extends AbstractOperation
                         new CLImplementation(
                                 call ->
                                 {
-                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null)
-                                            ? call.getTensor( 0 ).size()
-                                            : call.getTensor( 1 ).size();
+                                    int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                    int gwz = (call.getTsrOfType( Number.class, 0 ) != null)
+                                            ? call.getTsrOfType( Number.class, 0 ).size()
+                                            : call.getTsrOfType( Number.class, 1 ).size();
                                     call.getDevice().getKernel(call)
-                                            .pass( call.getTensor( offset ) )
-                                            .pass( call.getTensor( offset + 1 ) )
-                                            .pass( call.getTensor( offset + 2 ) )
-                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getTsrOfType( Number.class, offset ) )
+                                            .pass( call.getTsrOfType( Number.class, offset + 1 ) )
+                                            .pass( call.getTsrOfType( Number.class, offset + 2 ) )
+                                            .pass( call.getTsrOfType( Number.class, 0 ).rank() )
                                             .pass( call.getDerivativeIndex() )
                                             .call( gwz );
                                 },
@@ -333,17 +333,17 @@ public class Power extends AbstractOperation
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor( 0 ).size(),
+                                                        call.getTsrOfType( Number.class, 0 ).size(),
                                                         (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
                                                ? ( start, end ) ->
                                                                 Broadcast.broadcast (
-                                                                        call.getTensor( 0 ), call.getTensor( 1 ), call.getTensor( 2 ),
+                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
                                                                         call.getDerivativeIndex(), start, end,
                                                                         _creatorX.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 : ( start, end ) ->
                                                                 Broadcast.broadcast (
-                                                                        call.getTensor( 0 ), call.getTensor( 1 ), call.getTensor( 2 ),
+                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
                                                                         call.getDerivativeIndex(), start, end,
                                                                         _creator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
@@ -354,13 +354,13 @@ public class Power extends AbstractOperation
                         OpenCLDevice.class,
                         new CLImplementation(
                                 call -> {
-                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
+                                    int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                    int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
                                     call.getDevice().getKernel(call)
-                                            .pass( call.getTensor( offset ) )
-                                            .pass( call.getTensor( offset + 1 ) )
-                                            .pass( call.getTensor( offset + 2 ) )
-                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getTsrOfType( Number.class, offset ) )
+                                            .pass( call.getTsrOfType( Number.class, offset + 1 ) )
+                                            .pass( call.getTsrOfType( Number.class, offset + 2 ) )
+                                            .pass( call.getTsrOfType( Number.class, 0 ).rank() )
                                             .pass( call.getDerivativeIndex() )
                                             .call( gwz );
                                 },
@@ -418,20 +418,20 @@ public class Power extends AbstractOperation
                         HostCPU.class,
                         new HostImplementation(
                                 call -> {
-                                    double value = call.getTensor( 0 ).value64( 2 );
+                                    double value = call.getTsrOfType( Number.class, 0 ).value64( 2 );
                                     call.getDevice().getExecutor()
                                             .threaded (
-                                                    call.getTensor( 0 ).size(),
+                                                    call.getTsrOfType( Number.class, 0 ).size(),
                                                     (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
                                                     ? ( start, end ) ->
                                                             Scalarization.scalarize (
-                                                                    call.getTensor( 0 ),
+                                                                    call.getTsrOfType( Number.class, 0 ),
                                                                     start, end,
                                                                     scalarXCreator.create(call.getTensors(), value, -1)
                                                             )
                                                     : ( start, end ) ->
                                                     Scalarization.scalarize (
-                                                            call.getTensor( 0 ),
+                                                            call.getTsrOfType( Number.class, 0 ),
                                                             start, end,
                                                             scalarCreator.create(call.getTensors(), value, -1)
                                                     )
@@ -443,13 +443,13 @@ public class Power extends AbstractOperation
                         OpenCLDevice.class,
                         new CLImplementation(
                                 call -> {
-                                    int offset = (call.getTensor( 2 ).isVirtual() || call.getTensor( 2 ).size() == 1)?1:0;
-                                    int gwz = call.getTensor( 0 ).size();
+                                    int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
+                                    int gwz = call.getTsrOfType( Number.class, 0 ).size();
                                     call.getDevice().getKernel(call)
-                                            .pass(call.getTensor( 0 ))
-                                            .pass(call.getTensor( 0 ))
-                                            .pass((float)call.getTensor(1+offset).value64( 0 ))
-                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass(call.getTsrOfType( Number.class, 0 ))
+                                            .pass(call.getTsrOfType( Number.class, 0 ))
+                                            .pass((float)call.getTsrOfType( Number.class, 1+offset).value64( 0 ))
+                                            .pass( call.getTsrOfType( Number.class, 0 ).rank() )
                                             .pass( call.getDerivativeIndex() )
                                             .call( gwz );
                                 },

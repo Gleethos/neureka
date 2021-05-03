@@ -57,17 +57,17 @@ public final class Cosinus extends AbstractOperation
                             call  ->
                                         call.getDevice().getExecutor()
                                     .threaded (
-                                        call.getTensor( 0 ).size(),
+                                        call.getTsrOfType( Number.class, 0 ).size(),
                                             (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
                                                 ? ( start, end ) ->
                                                     Activation.activate (
-                                                            call.getTensor( 0 ),
+                                                            call.getTsrOfType( Number.class, 0 ),
                                                             start, end,
                                                             _creatorX.create(call.getTensors(), call.getDerivativeIndex())
                                                     )
                                                 : ( start, end ) ->
                                                         Activation.activate (
-                                                                call.getTensor( 0 ), call.getTensor( 1 ),
+                                                                call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
                                                                 start, end,
                                                                 _creator.create(call.getTensors(), call.getDerivativeIndex())
                                                         )
@@ -78,12 +78,12 @@ public final class Cosinus extends AbstractOperation
                         OpenCLDevice.class,
                         new CLImplementation(
                                 call -> {
-                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
+                                    int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                    int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
                                     call.getDevice().getKernel(call)
-                                            .pass( call.getTensor( offset ) )
-                                            .pass( call.getTensor( offset + 1 ) )
-                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getTsrOfType( Number.class, offset ) )
+                                            .pass( call.getTsrOfType( Number.class, offset + 1 ) )
+                                            .pass( call.getTsrOfType( Number.class, 0 ).rank() )
                                             .pass( call.getDerivativeIndex() )
                                             .call( gwz );
                                 },

@@ -33,7 +33,7 @@ public class CopyLeft extends AbstractOperation {
                 .setIsSuitableFor(
                         call ->
                         {
-                            if ( call.getTensor( 1 ).isVirtual() || call.getTensor( 1 ).size() == 1 ) {
+                            if ( call.getTsrOfType( Number.class, 1 ).isVirtual() || call.getTsrOfType( Number.class, 1 ).size() == 1 ) {
                                 return 1.0f;
                             } else return 0.0f;
                         }
@@ -51,8 +51,8 @@ public class CopyLeft extends AbstractOperation {
                         {
                             Tsr[] tsrs = call.getTensors();
                             int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                            call.getTensor(offset).incrementVersionBecauseOf(call);
-                            call.getTensor(offset).setIsVirtual( false );
+                            call.getTsrOfType( Number.class, offset).incrementVersionBecauseOf(call);
+                            call.getTsrOfType( Number.class, offset).setIsVirtual( false );
                             return
                                     ExecutionCall.builder()
                                         .device( call.getDevice() )
@@ -85,20 +85,20 @@ public class CopyLeft extends AbstractOperation {
                         new HostImplementation(
                                 call ->
                                 {
-                                    double value = call.getTensor( 1 ).value64( 0 );
+                                    double value = call.getTsrOfType( Number.class, 1 ).value64( 0 );
                                     call.getDevice().getExecutor()
                                             .threaded (
-                                                    call.getTensor( 0 ).size(),
+                                                    call.getTsrOfType( Number.class, 0 ).size(),
                                                     (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
                                                     ? ( start, end ) ->
                                                             Scalarization.scalarize (
-                                                                    call.getTensor( 0 ),
+                                                                    call.getTsrOfType( Number.class, 0 ),
                                                                     start, end,
                                                                     scalarXCreator.create(call.getTensors(), value, -1)
                                                             )
                                                     : ( start, end ) ->
                                                             Scalarization.scalarize (
-                                                                    call.getTensor( 0 ),
+                                                                    call.getTsrOfType( Number.class, 0 ),
                                                                     start, end,
                                                                     scalarCreator.create(call.getTensors(), value, -1)
                                                             )
@@ -110,12 +110,12 @@ public class CopyLeft extends AbstractOperation {
                         OpenCLDevice.class,
                         new CLImplementation(
                                 call -> {
-                                    Tsr t = call.getTensor( 0 );
+                                    Tsr t = call.getTsrOfType( Number.class, 0 );
                                     int gwz = t.size();
                                     call.getDevice().getKernel(call)
                                             .pass( t )
                                             .pass( t )
-                                            .pass( call.getTensor( 1 ).value32( 0 ) )
+                                            .pass( call.getTsrOfType( Number.class, 1 ).value32( 0 ) )
                                             .pass( t.rank() )
                                             .pass( call.getDerivativeIndex() )
                                             .call( gwz );
@@ -143,7 +143,7 @@ public class CopyLeft extends AbstractOperation {
                     {
                         Tsr[] tsrs = call.getTensors();
                         int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                        call.getTensor(offset).incrementVersionBecauseOf(call);
+                        call.getTsrOfType( Number.class, offset).incrementVersionBecauseOf(call);
                         return ExecutionCall.builder()
                                     .device(call.getDevice())
                                     .tensors(new Tsr[]{tsrs[offset], tsrs[1+offset]})
@@ -162,7 +162,7 @@ public class CopyLeft extends AbstractOperation {
                         new HostImplementation(
                                 call ->
                                 {
-                                    call.getTensor( 0 ).setIsVirtual( false );
+                                    call.getTsrOfType( Number.class, 0 ).setIsVirtual( false );
                                     OperationContext.get().instance("idy")
                                             .getAlgorithm( Activation.class )
                                             .getImplementationFor( HostCPU.class )
@@ -175,7 +175,7 @@ public class CopyLeft extends AbstractOperation {
                         OpenCLDevice.class,
                         new CLImplementation(
                                 call -> {
-                                    call.getTensor( 0 ).setIsVirtual( false );
+                                    call.getTsrOfType( Number.class, 0 ).setIsVirtual( false );
                                     OperationContext.get().instance("idy")
                                             .getAlgorithm(Activation.class)
                                             .getImplementationFor( OpenCLDevice.class )

@@ -96,25 +96,25 @@ public class Randomization extends AbstractOperation
                         new HostImplementation(
                                 call -> call.getDevice().getExecutor()
                                         .threaded (
-                                                call.getTensor( 0 ).size(),
+                                                call.getTsrOfType( Number.class, 0 ).size(),
                                                 (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
                                                 ? ( start, end ) ->
                                                         Scalarization.scalarize (
-                                                                call.getTensor( 0 ),
+                                                                call.getTsrOfType( Number.class, 0 ),
                                                                 start, end,
                                                                 creatorX.create(
                                                                         call.getTensors(),
-                                                                        call.getTensor( 1 ).value64( 0 ),
+                                                                        call.getTsrOfType( Number.class, 1 ).value64( 0 ),
                                                                         call.getDerivativeIndex()
                                                                 )
                                                         )
                                                 : ( start, end ) ->
                                                         Scalarization.scalarize (
-                                                            call.getTensor( 0 ),
+                                                            call.getTsrOfType( Number.class, 0 ),
                                                             start, end,
                                                             creator.create(
                                                                     call.getTensors(),
-                                                                    call.getTensor( 1 ).value64( 0 ),
+                                                                    call.getTsrOfType( Number.class, 1 ).value64( 0 ),
                                                                     call.getDerivativeIndex()
                                                             )
                                                 )

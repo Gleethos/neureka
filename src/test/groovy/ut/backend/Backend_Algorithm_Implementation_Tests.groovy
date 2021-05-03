@@ -93,7 +93,7 @@ class Backend_Algorithm_Implementation_Tests extends Specification
             (1.._) * call.getDevice() >> device
             1 * device.getExecutor() >> nativeExecutor
             1 * nativeExecutor.threaded( _, _ )
-            (1.._) * call.getTensor(0) >> tensor
+            (1.._) * call.getTsrOfType( Number.class, 0) >> tensor
             (1.._) * tensor.size() >> 0
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
@@ -126,7 +126,7 @@ class Backend_Algorithm_Implementation_Tests extends Specification
             clExecutor.run( call )
 
         then : 'The mock objects are being called as expected.'
-            (1.._) * call.getTensor(0) >> tensor
+            (1.._) * call.getTsrOfType( Number.class, 0) >> tensor
             (1.._) * tensor.size() >> 0
             (1.._) * call.getDevice() >> device
              1 * device.getKernel(call) >> kernel

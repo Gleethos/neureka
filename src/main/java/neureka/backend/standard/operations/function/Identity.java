@@ -85,17 +85,17 @@ public final class Identity extends AbstractOperation
                                 call  ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor( 0 ).size(),
+                                                        call.getTsrOfType( Number.class, 0 ).size(),
                                                         (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
                                                         ? ( start, end ) ->
                                                                 Activation.activate (
-                                                                        call.getTensor( 0 ),
+                                                                        call.getTsrOfType( Number.class, 0 ),
                                                                         start, end,
                                                                         activationXCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                         : ( start, end ) ->
                                                                 Activation.activate (
-                                                                        call.getTensor( 0 ), call.getTensor( 1 ),
+                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
                                                                         start, end,
                                                                         activationCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
@@ -106,14 +106,14 @@ public final class Identity extends AbstractOperation
                         OpenCLDevice.class,
                         new CLImplementation(
                                 call -> {
-                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();
+                                    int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                    int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
                                     // Drain tensor needs to be 'actual'! :
-                                    if (!call.getTensor(offset + 1).isVirtual()) call.getTensor(offset).setIsVirtual( false );
+                                    if (!call.getTsrOfType( Number.class, offset + 1).isVirtual()) call.getTsrOfType( Number.class, offset).setIsVirtual( false );
                                     call.getDevice().getKernel(call)
-                                            .pass( call.getTensor( offset ) )
-                                            .pass( call.getTensor( offset + 1 ) )
-                                            .pass( call.getTensor( 0 ).rank() )
+                                            .pass( call.getTsrOfType( Number.class, offset ) )
+                                            .pass( call.getTsrOfType( Number.class, offset + 1 ) )
+                                            .pass( call.getTsrOfType( Number.class, 0 ).rank() )
                                             .pass( call.getDerivativeIndex() )
                                             .call( gwz );
                                 },
@@ -176,13 +176,13 @@ public final class Identity extends AbstractOperation
                         HostCPU.class,
                         new HostImplementation(
                                 call  -> {
-                                    double value = call.getTensor( 0 ).value64( 2 );
+                                    double value = call.getTsrOfType( Number.class, 0 ).value64( 2 );
                                         call.getDevice().getExecutor()
                                                 .threaded (
-                                                        call.getTensor( 0 ).size(),
+                                                        call.getTsrOfType( Number.class, 0 ).size(),
                                                         (start, end) ->
                                                                 Scalarization.scalarize(
-                                                                        call.getTensor( 0 ), start, end,
+                                                                        call.getTsrOfType( Number.class, 0 ), start, end,
                                                                         scalarizationCreator.create(
                                                                                 call.getTensors(), value, call.getDerivativeIndex()
                                                                         )
@@ -195,12 +195,12 @@ public final class Identity extends AbstractOperation
                         OpenCLDevice.class,
                         new CLImplementation(
                                 call -> {
-                                    Tsr t = call.getTensor( 0 );
+                                    Tsr t = call.getTsrOfType( Number.class, 0 );
                                     int gwz = t.size();
                                     call.getDevice().getKernel(call)
                                             .pass(t)
                                             .pass(t)
-                                            .pass((float)call.getTensor( 1 ).value64( 0 ))
+                                            .pass((float)call.getTsrOfType( Number.class, 1 ).value64( 0 ))
                                             .pass(t.rank())
                                             .pass( call.getDerivativeIndex() )
                                             .call( gwz );

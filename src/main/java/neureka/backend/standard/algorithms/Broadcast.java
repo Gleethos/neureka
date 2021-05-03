@@ -42,12 +42,12 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
         );
         setHandleInsteadOfDevice(
                 ( caller, call ) -> {
-                    int offset = ( call.getTensor( 0 ) == null ) ? 1 : 0;
+                    int offset = ( call.getTsrOfType( Number.class, 0 ) == null ) ? 1 : 0;
                     if (
-                            call.getTensor( 0+offset ).shape().size() != call.getTensor(1+offset).shape().size()
+                            call.getTsrOfType( Number.class, 0+offset ).shape().size() != call.getTsrOfType( Number.class, 1+offset).shape().size()
                     ) // Creating a new tensor:
                     {
-                        Tsr[] tsrs = {call.getTensor( 0+offset ), call.getTensor(1+offset) };
+                        Tsr[] tsrs = {call.getTsrOfType( Number.class, 0+offset ), call.getTsrOfType( Number.class, 1+offset) };
                         Tsr.makeFit(tsrs, caller.isDoingAD() );
                         tsrs = new Tsr[]{null, tsrs[0], tsrs[1]};
                         call.getDevice().execute( call.withTensors( tsrs ) );

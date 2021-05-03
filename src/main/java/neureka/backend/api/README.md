@@ -268,11 +268,11 @@ ImplementationFor<?> impl =
             new CLImplementation( // implements 'ImplementationFor<OpenCLDevice>'
                 (call) -> // A nested lambda containing the actual implementation...
                 {
-                   int gwz = call.getTensor( 0 ).size();
+                   int gwz = call.getTsrOfType( Number.class, 0 ).size();
                    call.getDevice().getKernel(call)
-                           .pass( call.getTensor( 0 ) )
-                           .pass( call.getTensor( 1 ) )
-                           .pass( call.getTensor( 0 ).rank() )
+                           .pass( call.getTsrOfType( Number.class, 0 ) )
+                           .pass( call.getTsrOfType( Number.class, 1 ) )
+                           .pass( call.getTsrOfType( Number.class, 0 ).rank() )
                            .pass( call.getDerivativeIndex() ) 
                            .call( gwz );
                },

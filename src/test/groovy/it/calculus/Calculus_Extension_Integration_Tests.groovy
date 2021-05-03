@@ -91,9 +91,9 @@ class Calculus_Extension_Integration_Tests extends Specification
                                             new HostImplementation(
                                                     (call) ->
                                                     {
-                                                        Tsr drn = call.getTensor(0)
-                                                        Tsr src1 = call.getTensor(1)
-                                                        Tsr src2 = call.getTensor(2)
+                                                        Tsr drn = call.getTsrOfType( Number.class, 0 )
+                                                        Tsr src1 = call.getTsrOfType( Number.class, 1 )
+                                                        Tsr src2 = call.getTsrOfType( Number.class, 2 )
                                                         assert src1.shape(1) == src2.shape(0)
 
                                                         //for ( int i=0; i<clContext.getGws(); i++ ) {
@@ -104,7 +104,7 @@ class Calculus_Extension_Integration_Tests extends Specification
                                                         //            src1.getNDConf().asInlineArray(),  //__global int[] src1_conf,
                                                         //            src2.value32(),                    //const __global float[] src2,
                                                         //            src2.getNDConf().asInlineArray(),  //__global int[] src2_conf,
-                                                        //            //call.getTensor(0).rank(),//int rank, == 2
+                                                        //            //call.getTsrOfType( Number.class, 0).rank(),//int rank, == 2
                                                         //            //-1, //const int d,
                                                         //            clContext.getMaxTSRow(),//128, //const u int max_ts_row,//  = 128, // ts := tile size
                                                         //            clContext.getMaxTSCol(),//128, //const u int max_ts_col,//  = 128,

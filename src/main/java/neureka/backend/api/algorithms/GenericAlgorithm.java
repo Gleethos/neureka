@@ -39,13 +39,13 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
                                         .getDevice()
                                         .getExecutor()
                                         .threaded (
-                                                call.getTensor( 0 ).size(),
+                                                call.getTsrOfType( Number.class, 0 ).size(),
                                                 ( start, end ) -> {
                                                     for ( int i = start; i < end; i++ ) {
                                                         for ( int ii = 0; ii < inputs.length; ii++ ) {
-                                                            inputs[ ii ] = call.getTensor(1+ii).value64( i );
+                                                            inputs[ ii ] = call.getTsrOfType( Number.class, 1+ii).value64( i );
                                                         }
-                                                        call.getTensor( 0 ).value64()[ i ] = f.call( inputs );
+                                                        call.getTsrOfType( Number.class, 0 ).value64()[ i ] = f.call( inputs );
                                                     }
                                                 }
                                         );
@@ -59,13 +59,13 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
                                         .getDevice()
                                         .getExecutor()
                                         .threaded (
-                                                call.getTensor( 0 ).size(),
+                                                call.getTsrOfType( Number.class, 0 ).size(),
                                                 ( start, end ) -> {
                                                     for ( int i = start; i < end; i++ ) {
                                                         for ( int ii = 0; ii < inputs.length; ii++ ) {
-                                                            inputs[ ii ] = call.getTensor(1+ii).getValueAt(i);
+                                                            inputs[ ii ] = call.getTsrOfType( Number.class, 1+ii).getValueAt(i);
                                                         }
-                                                        call.getTensor( 0 ).setAt(i, shell.evaluate( expression ) );
+                                                        call.getTsrOfType( Object.class, 0 ).setAt(i, shell.evaluate( expression ));
                                                     }
                                                 }
                                         );
