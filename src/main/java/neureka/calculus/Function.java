@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 /**
- *  Besides the Tsr class, which is the core class of Neureka, this interface and its implementations
+ *  Besides the {@link Tsr} class, which is the core class of Neureka, this interface and its implementations
  *  represents the second most important feature of this library.
  *  Instances of {@link Function} implementations form an abstract syntax tree which is being built
  *  from a provided expression {@link String} containing function syntax.
@@ -71,8 +71,8 @@ public interface Function
     Function PLUS = create("(I[ 0 ] + I[ 1 ])");
     Function PLUS_ASSIGN = create("I[ 0 ] <- (I[ 0 ] + I[ 1 ])");
     Function MINUS = create("(I[ 0 ] - I[ 1 ])");
-    Function MINUS_ASSIGN = create("I[ 0 ] <- (I[ 0 ]-I[ 1 ])");
-    Function DIV = create("(I[ 0 ]/I[ 1 ])");
+    Function MINUS_ASSIGN = create("I[ 0 ] <- (I[ 0 ] - I[ 1 ])");
+    Function DIV = create("(I[ 0 ] / I[ 1 ])");
     Function DIV_ASSIGN = create("I[ 0 ] <- (I[ 0 ] / I[ 1 ])");
     Function POW = create("(I[ 0 ] ^ I[ 1 ])");
     Function POW_ASSIGN = create("I[ 0 ] <- (I[ 0 ] ^ I[ 1 ])");
@@ -120,7 +120,7 @@ public interface Function
 
     /**
      *  This static nested class acts as namespace for a set of useful
-     *  entry points to
+     *  entry points to executing the provided parameters.
      */
     class Setup
     {
@@ -177,7 +177,7 @@ public interface Function
 
     Function newBuild( String expression );
 
-    boolean isDoingAD();//Note: only branch nodes can 'do Auto-Differentiation'
+    boolean isDoingAD(); // Note: only branch nodes can 'do Auto-Differentiation'
 
     boolean isFlat();
 

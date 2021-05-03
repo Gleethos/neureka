@@ -64,48 +64,25 @@ public interface Operation
 {
 
     @FunctionalInterface
-    interface TertiaryNDIConsumer
-    {
-        double execute( NDIterator t0Idx, NDIterator t1Idx, NDIterator t2Idx );
-    }
+    interface TertiaryNDIConsumer { double execute( NDIterator t0Idx, NDIterator t1Idx, NDIterator t2Idx ); }
     @FunctionalInterface
-    interface TertiaryNDXConsumer
-    {
-        double execute( int[] t0Idx, int[] t1Idx, int[] t2Idx );
-    }
+    interface TertiaryNDXConsumer { double execute( int[] t0Idx, int[] t1Idx, int[] t2Idx ); }
     @FunctionalInterface
-    interface SecondaryNDIConsumer
-    {
-        double execute( NDIterator t0Idx, NDIterator t1Idx );
-    }
+    interface SecondaryNDIConsumer { double execute( NDIterator t0Idx, NDIterator t1Idx ); }
     @FunctionalInterface
-    interface SecondaryNDXConsumer
-    {
-        double execute( int[] t0Idx, int[] t1Idx );
-    }
+    interface SecondaryNDXConsumer { double execute( int[] t0Idx, int[] t1Idx ); }
     @FunctionalInterface
-    interface PrimaryNDIConsumer
-    {
-        double execute( NDIterator t0Idx );
-    }
+    interface PrimaryNDIConsumer { double execute( NDIterator t0Idx ); }
     @FunctionalInterface
-    interface PrimaryNDXConsumer
-    {
-        double execute( int[] t0Idx );
-    }
+    interface PrimaryNDXConsumer { double execute( int[] t0Idx ); }
 
     //---
 
     @FunctionalInterface
-    interface DefaultOperatorCreator<T>
-    {
-        T create( Tsr<?>[] inputs, int d );
-    }
+    interface DefaultOperatorCreator<T> {  T create( Tsr<?>[] inputs, int d ); }
     @FunctionalInterface
     interface ScalarOperatorCreator<T>
-    {
-        T create( Tsr<?>[] inputs, double scalar, int d );
-    }
+    {  T create( Tsr<?>[] inputs, double scalar, int d ); }
 
     //==================================================================================================================
 
@@ -117,18 +94,49 @@ public interface Operation
      *  Concrete {@link Operation} types ought to be representable by a function name.
      *  The following ensures that this contract is met when overriding the method.
      *
-     * @return
+     * @return the function name which serves as identifier when parsing {@link Function} instances.
      */
     @NonNull
     String getFunction();
 
     //==================================================================================================================
 
+    /**
+     *  {@link Operation} implementations embody a component system hosting unique {@link Algorithm} instances.
+     *  For a given class implementing the {@link Algorithm} class, there can only be a single
+     *  instance of it referenced (aka supported) by a given {@link Operation} instance.
+     *  This method enables the registration of {@link Algorithm} types in the component system of this {@link Operation}.
+     *
+     * @param type The class of the type which implements {@link Algorithm} as key for the provided instance.
+     * @param instance The instance of the provided type class which ought to be referenced (supported) by this {@link Operation}.
+     * @param <T> The type parameter of the {@link Algorithm} type class.
+     * @return This very {@link Operation} instance to enable method chaining on it.
+     */
+    <T extends Algorithm<T>> Operation setAlgorithm( Class<T> type, T instance );
+
+
+    /**
+     *  {@link Operation} implementations embody a component system hosting unique {@link Algorithm} instances.
+     *  For a given class implementing the {@link Algorithm} class, there can only be a single
+     *  instance of it referenced (aka supported) by a given {@link Operation} instance.
+     *  This method ensures this in terms of read access by returning only a single instance or null
+     *  based on the provided class instance whose type extends the {@link Algorithm} interface.
+     *
+     * @param type The class of the type which implements {@link Algorithm} as a key to get an existing instance.
+     * @param <T> The type parameter of the {@link Algorithm} type class.
+     * @return The instance of the specified type if any exists within this {@link Operation}.
+     */
     <T extends Algorithm<T>> T getAlgorithm( Class<T> type );
 
+    /**
+     *  This method checks if this {@link Operation} contains an instance of the
+     *  {@link Algorithm} implementation specified via its type class.
+     *
+     * @param type The class of the type which implements {@link Algorithm}.
+     * @param <T> The type parameter of the {@link Algorithm} type class.
+     * @return The truth value determining if this {@link Operation} contains an instance of the specified {@link Algorithm} type.
+     */
     <T extends Algorithm<T>> boolean supportsAlgorithm( Class<T> type );
-
-    <T extends Algorithm<T>> Operation setAlgorithm( Class<T> type, T instance );
 
     //==================================================================================================================
 
@@ -158,6 +166,12 @@ public interface Operation
      */
     boolean isOperator();
 
+    /**
+     *  This boolean property tell the {@link Function} implementations that this {@link Operation}
+     *  ought to be viewed as something
+     *
+     * @return
+     */
     boolean isIndexer();
 
     boolean isDifferentiable();

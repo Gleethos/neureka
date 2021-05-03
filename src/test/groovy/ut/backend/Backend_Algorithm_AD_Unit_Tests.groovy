@@ -26,7 +26,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
         and : 'A mock Function.'
             def function = Mock(Function)
             def derivative = Mock(Tsr)
-            function.derive(*_) >> derivative
+            function.executeDerive(*_) >> derivative
 
         and : 'A mock ExecutionCall.'
             def call = Mock(ExecutionCall)
@@ -76,6 +76,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             def function = Mock(Function)
             def derivative = Mock(Tsr)
             function.derive(*_) >> derivative
+            function.executeDerive(*_) >> derivative
 
         and : 'A mock ExecutionCall.'
             def call = Mock(ExecutionCall)

@@ -15,12 +15,12 @@ import java.util.regex.Pattern;
 
 public class FunctionBuilder
 {
-    private static final Pattern nodePattern = Pattern.compile("^([\\(]{1}.+[\\)]{1})");
     private static final Pattern variablePattern = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[jJ]+[ ]*\\]?)");
     private static final Pattern inputPattern    = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[0-9]+[ ]*\\]?)");
     private static final Pattern constantPattern = Pattern.compile("^((-{1}[0-9]*|[0-9]*)[.]?[0-9]*(e[-]?[0-9]+)?)");
-    private static final Pattern reshapePattern = Pattern.compile("^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))");
 
+    private static final Pattern reshapePattern = Pattern.compile("^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))");
+    private static final Pattern nodePattern = Pattern.compile("^([\\(]{1}.+[\\)]{1})");
 
     /**
      * @param type
@@ -54,7 +54,7 @@ public class FunctionBuilder
      * @param doAD       is used to turn autograd on or off for this function
      * @return the function which has been built from the expression
      */
-    public static Function build(String expression, boolean doAD) {
+    public static Function build( String expression, boolean doAD ) {
         expression =
                 (expression.length() > 0
                         && (expression.charAt( 0 ) != '(' || expression.charAt( expression.length() - 1 ) != ')'))
@@ -138,7 +138,7 @@ public class FunctionBuilder
                 boolean groupingOccurred = false;
                 boolean enoughPresent = FunctionParser.numberOfOperationsWithin( foundJunctors ) > 1;// Otherwise: I[j]^4 goes nuts!
                 if ( enoughPresent ) {
-                    String[] ComponentsArray = foundComponents.toArray(new String[ 0 ]);
+                    String[] ComponentsArray = foundComponents.toArray( new String[ 0 ] );
                     int length = ComponentsArray.length;
                     for ( int ci = 0; ci < length; ci++ ) {
                         String currentComponent;
@@ -181,7 +181,7 @@ public class FunctionBuilder
                     foundComponents = newComponents;
                 }
             }
-            ++operationID;
+            operationID += 1;
         }
 
         // identifying function id:

@@ -40,9 +40,9 @@ package neureka.backend.api;
 import lombok.*;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
-import neureka.devices.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.devices.Device;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -68,6 +68,10 @@ public class ExecutionCall<DeviceType extends Device<?>>
     public interface DeviceCondition { boolean check( Device<?> device ); }
     public interface OperationTypeCondition { boolean check( Operation type ); }
     public interface Mutator { Tsr<?>[] mutate( Tsr<?>[] tensors ); }
+
+    public enum Argument {
+        DERIVATIVE
+    }
 
     /**
      *  This field references the device on which this ExecutionCall should be executed.
@@ -117,7 +121,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
      *  Some operation algorithms might use multiple argument entries as output tensors.
      */
     @Getter @With // Generates a method which constructs a copy of this call with the provided tensors!
-    private Tsr[] _tensors;
+    private Tsr<?>[] _tensors;
 
     /**
      *  The following parameter is relevant for a particular type of operation, namely: an "indexer". <br>
@@ -162,7 +166,6 @@ public class ExecutionCall<DeviceType extends Device<?>>
         _algorithm = algorithm;
         _context = context;
     }
-
 
     public <T extends Device<?>> ExecutionCall<T> forDeviceType(Class<T> type) {
         assert _device.getClass() == type;

@@ -88,7 +88,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
 
     @Contract(pure = true)
     public static void operate(
-            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int d, int i, int end,
             Operation.PrimaryNDXConsumer operation
     ) {

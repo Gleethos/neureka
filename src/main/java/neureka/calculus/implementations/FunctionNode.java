@@ -284,7 +284,7 @@ public class FunctionNode extends AbstractBaseFunction
                     // At the end:
                     //...multiply inner times outer: ( if inner is not 1 entirely... )
                     if ( !( ( inner.isVirtual() || inner.size()==1 ) && inner.value64( 0 )==1.0) ) {
-                        tensors = new Tsr[]{null, inner, tensors[ 0 ]};
+                        tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
                         device.execute(
                                 ExecutionCall.builder()
                                     .device( device )
@@ -318,22 +318,22 @@ public class FunctionNode extends AbstractBaseFunction
         return out;
     }
 
-    public Tsr[] srcActivation( Tsr[] inputs, int j, int d, int offset )
+    public Tsr<?>[] srcActivation( Tsr<?>[] inputs, int j, int d, int offset )
     {
         int[] tempShape = null;
-        Tsr[] tensors = new Tsr[ _src.length + offset ];
+        Tsr<?>[] tensors = new Tsr[ _src.length + offset ];
         for ( int i = offset; i < tensors.length; i++ ) {//constants need to be figured out!
             if ( !(_src[ i - offset ] instanceof FunctionConstant) ) {
-                if ( d < 0 )
+                if ( d < 0 ) // Not deriving this!
                     tensors[ i ] =
                             ( j >= 0 )
-                                    ? _src[ i - offset ].call( inputs, j )
-                                    : _src[ i - offset ].call( inputs );
-                else
+                                    ? _src[ i - offset ].execute( inputs, j )
+                                    : _src[ i - offset ].execute( inputs );
+                else // ...deriving at specified index...
                     tensors[ i ] =
                             ( j >= 0 )
-                                    ? _src[ i - offset ].derive( inputs, d, j )
-                                    : _src[ i - offset ].derive( inputs, d );
+                                    ? _src[ i - offset ].executeDerive( inputs, d, j )
+                                    : _src[ i - offset ].executeDerive( inputs, d );
 
                 tempShape = ( tempShape == null ) ? tensors[ i ].getNDConf().shape() : tempShape;
             }
@@ -342,8 +342,8 @@ public class FunctionNode extends AbstractBaseFunction
             if ( tensors[ i ] == null )
                     tensors[ i ] =
                         ( j < 0 )
-                                ? new Tsr(tempShape, ((FunctionConstant) _src[ i - offset ]).value())
-                                : new Tsr(tempShape, _src[ i - offset ].call(new double[]{}, j));
+                                ? new Tsr<>(tempShape, ((FunctionConstant) _src[ i - offset ]).value())
+                                : new Tsr<>(tempShape, _src[ i - offset ].call(new double[]{}, j));
         }
         return tensors;
     }

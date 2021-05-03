@@ -71,7 +71,7 @@ public abstract class AbstractOperation implements Operation
 
     /**
      *  This flag determines if this operation is auto-indexing passed input arguments.
-     *  Auto-indexing in inputs means that for a given array of input arguments
+     *  Auto-indexing inputs means that for a given array of input arguments
      *  the wrapping Function instance will call its child nodes targeted via an
      *  index incrementally.
      *  The variable 'j' in a Functions expressions containing 'I[j]' will then be

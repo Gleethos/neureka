@@ -436,7 +436,7 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
      */
     private void _construct(  Tsr<ValType> output, Function function, ExecutionCall<? extends Device<?>> call, GraphLock lock )
     {
-        Tsr<Object>[] inputs = ( call == null ) ? null : call.getTensors();
+        Tsr<Object>[] inputs = ( call == null ) ? null : (Tsr<Object>[]) call.getTensors();
         if ( output == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
         _payloadReferenceVersion = output.getVersion();
         if ( !function.isDoingAD() ) return; // Only functions with AutoDiff enabled create computation graph!
@@ -568,7 +568,7 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
      */
     private int _modeOf( ExecutionCall<? extends Device<?>> call, Function function )
     {
-        Tsr<ValType>[] inputs = call.getTensors();
+        Tsr<ValType>[] inputs = (Tsr<ValType>[]) call.getTensors();
         int resultMode = 0;
         int[] modes = new int[ inputs.length ];
         int inputMode = 0;
