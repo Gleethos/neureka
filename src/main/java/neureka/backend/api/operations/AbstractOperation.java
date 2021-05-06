@@ -129,7 +129,6 @@ public abstract class AbstractOperation implements Operation
 
         _id = OperationContext.get().id();
         OperationContext.get().incrementID();
-
         OperationContext.get().instances().add( this );
         OperationContext.get().lookup().put( _operator, this );
         OperationContext.get().lookup().put( _operator.toLowerCase(), this );

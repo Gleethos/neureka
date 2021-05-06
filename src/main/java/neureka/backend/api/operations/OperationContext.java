@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import neureka.backend.api.Operation;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  *    This class is a (thread-local) Singleton managing Operation instances,
@@ -57,6 +58,45 @@ public class OperationContext implements Cloneable
         return _CONTEXTS.get();
     }
 
+    public Runner runner() {
+        return new Runner( this, OperationContext.get() );
+    }
+
+    public static class Runner {
+
+        private final OperationContext originalContext;
+        private final OperationContext visitedContext;
+
+        private Runner( OperationContext visited, OperationContext originalContext ) {
+            this.originalContext = originalContext;
+            this.visitedContext = visited;
+        }
+
+        public Runner useFor( Runnable contextSpecificAction ) {
+            OperationContext.set( visitedContext );
+            contextSpecificAction.run();
+            OperationContext.set( originalContext );
+            return this;
+        }
+
+        public <T> T useAndProduce( Supplier<T> contextSpecificAction ) {
+            OperationContext.set( visitedContext );
+            T result = contextSpecificAction.get();
+            OperationContext.set( originalContext );
+            return result;
+        }
+
+        public <T> T call( Supplier<T> contextSpecificAction ) {
+            return useAndProduce( contextSpecificAction );
+        }
+
+        public <T> T invoke( Supplier<T> contextSpecificAction ) {
+            return call( contextSpecificAction );
+        }
+
+    }
+
+
     /**
      *  The OperationContext is a thread local singleton.
      *  Therefore, this method will only set the context instance
@@ -64,9 +104,9 @@ public class OperationContext implements Cloneable
      *
      * @param context The context which ought to be set as thread local singleton.
      */
-    public static void setInstance( OperationContext context )
+    public static void set( OperationContext context )
     {
-        _CONTEXTS.set(context);
+        _CONTEXTS.set( context );
     }
 
     /**

@@ -167,8 +167,8 @@ public class GEMMKernelReferenceImplementation
     ) {
 
         // Constraints on settings for kernels 6 -- 10
-        assertInt( (double)max_ts_row/ (double)max_wpt_row );
-        assertInt( (double)max_ts_col/ (double)max_wpt_col );
+        assertInt( (double)max_ts_row / (double)max_wpt_row );
+        assertInt( (double)max_ts_col / (double)max_wpt_col );
 
         // Note: max_ts_row/WIDTH has to be integer // Dont know width...
         // Note: max_ts_col/WIDTH has to be integer
