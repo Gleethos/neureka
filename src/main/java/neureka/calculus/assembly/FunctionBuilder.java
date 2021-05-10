@@ -237,11 +237,9 @@ public class FunctionBuilder
             return FunctionBuilder.build(component, doAD);
         } else { // More than one component left:
             if (
-                    OperationContext.get().instance( typeId ).getOperator().equals( "x" ) ||
-                    OperationContext.get().instance( typeId ).getOperator().equals( "<" ) ||
-                    OperationContext.get().instance( typeId ).getOperator().equals( ">" )
+                    OperationContext.get().instance( typeId ).getArity() == 2
             ) {
-                foundComponents = _rebindPairwise( foundComponents, typeId );
+                foundComponents = _rebindPairwise( foundComponents, typeId ); // TODO: make n-wise
             } else if (
                     OperationContext.get().instance(typeId).getOperator().equals(",") &&
                     foundComponents.get( 0 ).startsWith("[")
