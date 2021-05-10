@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class FunctionBuilder
 {
@@ -236,10 +238,12 @@ public class FunctionBuilder
 
             return FunctionBuilder.build(component, doAD);
         } else { // More than one component left:
-            if (
-                    OperationContext.get().instance( typeId ).getArity() == 2
-            ) {
-                foundComponents = _rebindPairwise( foundComponents, typeId ); // TODO: make n-wise
+            if ( OperationContext.get().instance( typeId ).getArity() > 1 ) {
+                foundComponents = _groupAccordingToArity(
+                                            OperationContext.get().instance( typeId ).getArity(),
+                                            foundComponents,
+                                            typeId
+                                    );
             } else if (
                     OperationContext.get().instance(typeId).getOperator().equals(",") &&
                     foundComponents.get( 0 ).startsWith("[")
@@ -278,18 +282,21 @@ public class FunctionBuilder
         }
     }
 
-    /**
-     * @param components
-     * @param f_id
-     * @return
-     */
-    private static List<String> _rebindPairwise(List<String> components, int f_id) {
-        if ( components.size() > 2 ) {
-            String newComponent = "(" + components.get( 0 ) + OperationContext.get().instance(f_id).getOperator() + components.get(1) + ")";
-            components.remove(components.get( 0 ));
-            components.remove(components.get( 0 ));
+
+    private static List<String> _groupAccordingToArity(int arity, List<String> components, int f_id) {
+        if ( components.size() > arity && arity > 1 ) {
+            String newComponent =
+                    "(" +
+                            IntStream.iterate(0, n -> n + 1)
+                             .limit(arity)
+                             .mapToObj(components::get)
+                             .collect(Collectors.joining(
+                                     OperationContext.get().instance(f_id).getOperator()
+                             )) +
+                    ")";
+            for ( int i = 0; i < arity; i++ )  components.remove(components.get( 0 ));
             components.add(0, newComponent);
-            components = _rebindPairwise(components, f_id);
+            return _groupAccordingToArity(arity, components, f_id);
         }
         return components;
     }
