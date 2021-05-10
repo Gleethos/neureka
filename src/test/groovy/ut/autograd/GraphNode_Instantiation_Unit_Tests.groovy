@@ -59,7 +59,7 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
             Tsr payload = Mock( Tsr )
             Tsr[] inputs = new Tsr[]{ Mock(Tsr), Mock(Tsr), Mock(Tsr) }
             Supplier<Tsr> supplier = () -> payload
-        AbstractOperation type = Mock( AbstractOperation )
+            AbstractOperation type = Mock( AbstractOperation )
             Function function = Mock( Function )
             Object context = Mock( ExecutionCall )
             Device device = Mock( Device )
@@ -95,8 +95,9 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
             1 * inputs[2].rqsGradient() >> true
             1 * context.allowsForward() >> true
             1 * context.allowsBackward() >> true
-            4 * function.getOperation() >> type
-            4 * type.isDifferentiable() >> true
+            3 * function.getOperation() >> type
+            0 * type.isDifferentiable() >> true
+            3 * type.isInline() >> false
             0 * type.getOperator() >> "*"
             3 * inputsNodeMock.getPayload() >> payload
             3 * payload.hashCode() >> 3

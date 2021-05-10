@@ -409,7 +409,7 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
                                     "The given input tensors of a new node must be part of the same locked computation graph!"
                     );
                 }
-                if ( !function.getOperation().isDifferentiable() && child.usesAD() ) { // && Math.abs(child.mode())>1
+                if ( function.getOperation().isInline() && child.usesAD() ) {
                     throw new IllegalStateException(
                             "Trying to apply inline operation '" + function.getOperation().getFunction() + "'\n" +
                             "on active autograd computation graph in non detached function.\n" +
@@ -429,8 +429,8 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
     /**
      * This method handles the construction of a GraphNode instance in more detail.
      *
-     * @param output
-     * @param function
+     * @param output The container for the result of the execution, in a sense, its the output of this node / its payload!
+     * @param function The function which produced this {@link GraphNode} instance.
      * @param call
      * @param lock
      */
@@ -556,11 +556,14 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
     }
 
     /**
-     * Evaluate auto-grad/auto-differentiation mode:
-     * A positive value means that the AD-procedure will be forward mode AD,
-     * whereas a negative value is backward mode AD.
-     * If the resulting mode equals 0 then this means that
-     * no auto differentiation is needed.
+     *  Evaluate auto-grad/auto-differentiation mode:
+     *  A positive value means that the AD-procedure will be forward mode AD,
+     *  whereas a negative value is backward mode AD.
+     *  If the resulting mode equals 0 then this means that no auto differentiation is needed.
+     *  This class tries to optimize the calculation of partial derivatives by forward propagating them
+     *  for as long as only a single input for every computation graph node requires gradients
+     *  and they all are differentiable!
+     *
      *
      * @param call The call containing inputs for the function which created the payload tensor of this GraphNode.
      * @param function The function which produced the payload tensor of this GraphNode.
@@ -588,7 +591,7 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
             }
         } // Reverse mode auto-differentiation :
         else if ( _allows_backward ) resultMode = -inputMode;
-        if ( !function.getOperation().isDifferentiable() ) resultMode = 0;
+       // if ( !function.getOperation().isDifferentiable() ) resultMode = 0;
         return resultMode;
     }
 

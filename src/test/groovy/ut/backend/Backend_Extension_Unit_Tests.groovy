@@ -102,7 +102,7 @@ class Backend_Extension_Unit_Tests extends Specification
         then : 'The custom call hook is being accessed as outlined below.'
             (1.._) * input.getNDConf() >> ndc
             (1.._) * ndc.shape() >> new int[]{1,2}
-            (1.._) * type.isDifferentiable() >> true
+            (1.._) * type.isInline() >> false
             (1.._) * type.getAlgorithmFor(_) >> implementation
             (1.._) * implementation.handleInsteadOfDevice(_,_) >> output
 

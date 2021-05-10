@@ -168,9 +168,15 @@ public interface Operation
 
     /**
      *  This boolean property tell the {@link Function} implementations that this {@link Operation}
-     *  ought to be viewed as something
+     *  ought to be viewed as something to be indexed.
+     *  The {@link Function} will use this information to iterate over all the provided inputs and
+     *  then execute the function wile also passing the index to the function AST.
+     *  The resulting array will then be available to this {@link Operation} as argument list.
+     *  This feature works alongside the {@link Function} implementation found in
+     *  {@link neureka.calculus.implementations.FunctionVariable}, which represents an input indexed
+     *  by the identifier 'j'!
      *
-     * @return
+     * @return If this operation is an indexer.
      */
     boolean isIndexer();
 

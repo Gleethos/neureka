@@ -639,7 +639,7 @@ neureka.backend.api.operations.AbstractOperation -> neureka.backend.api.operatio
     boolean _isOperator -> _isOperator
     java.util.Map _algorithms -> b
     neureka.backend.api.algorithms.Algorithm _defaultAlgorithm -> c
-    69:147:void <init>(neureka.backend.api.operations.OperationFactory) -> <init>
+    69:147:void <init>(neureka.backend.api.operations.OperationBuilder) -> <init>
     153:153:neureka.backend.api.algorithms.Algorithm getAlgorithm(java.lang.Class) -> getAlgorithm
     158:158:boolean supportsAlgorithm(java.lang.Class) -> supportsAlgorithm
     163:164:neureka.backend.api.operations.Operation setAlgorithm(java.lang.Class,neureka.backend.api.algorithms.Algorithm) -> setAlgorithm
@@ -714,9 +714,9 @@ neureka.backend.api.operations.OperationContext -> neureka.backend.api.operation
     83:83:int id() -> id
     30:30:java.lang.Object clone() -> clone
     30:48:void <clinit>() -> <clinit>
-neureka.backend.api.operations.OperationFactory -> neureka.backend.api.operations.OperationFactory:
-    neureka.backend.api.operations.OperationFactory$Stringifier _stringifier -> a
-    neureka.backend.api.operations.OperationFactory$Derivator _derivator -> b
+neureka.backend.api.operations.OperationBuilder -> neureka.backend.api.operations.OperationBuilder:
+    neureka.backend.api.operations.OperationBuilder$Stringifier _stringifier -> a
+    neureka.backend.api.operations.OperationBuilder$Derivator _derivator -> b
     java.lang.String _function -> c
     java.lang.String _operator -> d
     java.lang.Integer _arity -> e
@@ -728,35 +728,35 @@ neureka.backend.api.operations.OperationFactory -> neureka.backend.api.operation
     12:35:void <init>() -> <init>
     38:39:void dispose() -> dispose
     43:56:neureka.backend.api.operations.Operation build() -> build
-    26:26:neureka.backend.api.operations.OperationFactory$Stringifier getStringifier() -> getStringifier
-    26:26:neureka.backend.api.operations.OperationFactory setStringifier(neureka.backend.api.operations.OperationFactory$Stringifier) -> setStringifier
-    27:27:neureka.backend.api.operations.OperationFactory$Derivator getDerivator() -> getDerivator
-    27:27:neureka.backend.api.operations.OperationFactory setDerivator(neureka.backend.api.operations.OperationFactory$Derivator) -> setDerivator
+    26:26:neureka.backend.api.operations.OperationBuilder$Stringifier getStringifier() -> getStringifier
+    26:26:neureka.backend.api.operations.OperationBuilder setStringifier(neureka.backend.api.operations.OperationBuilder$Stringifier) -> setStringifier
+    27:27:neureka.backend.api.operations.OperationBuilder$Derivator getDerivator() -> getDerivator
+    27:27:neureka.backend.api.operations.OperationBuilder setDerivator(neureka.backend.api.operations.OperationBuilder$Derivator) -> setDerivator
     28:28:java.lang.String getFunction() -> getFunction
-    28:28:neureka.backend.api.operations.OperationFactory setFunction(java.lang.String) -> setFunction
+    28:28:neureka.backend.api.operations.OperationBuilder setFunction(java.lang.String) -> setFunction
     29:29:java.lang.String getOperator() -> getOperator
-    29:29:neureka.backend.api.operations.OperationFactory setOperator(java.lang.String) -> setOperator
+    29:29:neureka.backend.api.operations.OperationBuilder setOperator(java.lang.String) -> setOperator
     30:30:java.lang.Integer getArity() -> getArity
-    30:30:neureka.backend.api.operations.OperationFactory setArity(java.lang.Integer) -> setArity
+    30:30:neureka.backend.api.operations.OperationBuilder setArity(java.lang.Integer) -> setArity
     31:31:java.lang.Boolean getIsOperator() -> getIsOperator
-    31:31:neureka.backend.api.operations.OperationFactory setIsOperator(java.lang.Boolean) -> setIsOperator
+    31:31:neureka.backend.api.operations.OperationBuilder setIsOperator(java.lang.Boolean) -> setIsOperator
     32:32:java.lang.Boolean getIsIndexer() -> getIsIndexer
-    32:32:neureka.backend.api.operations.OperationFactory setIsIndexer(java.lang.Boolean) -> setIsIndexer
+    32:32:neureka.backend.api.operations.OperationBuilder setIsIndexer(java.lang.Boolean) -> setIsIndexer
     33:33:java.lang.Boolean getIsDifferentiable() -> getIsDifferentiable
-    33:33:neureka.backend.api.operations.OperationFactory setIsDifferentiable(java.lang.Boolean) -> setIsDifferentiable
+    33:33:neureka.backend.api.operations.OperationBuilder setIsDifferentiable(java.lang.Boolean) -> setIsDifferentiable
     34:34:java.lang.Boolean getIsInline() -> getIsInline
-    34:34:neureka.backend.api.operations.OperationFactory setIsInline(java.lang.Boolean) -> setIsInline
-    12:12:neureka.backend.api.operations.OperationFactory$Stringifier access$000(neureka.backend.api.operations.OperationFactory) -> a
-    12:12:neureka.backend.api.operations.OperationFactory$Derivator access$100(neureka.backend.api.operations.OperationFactory) -> b
-neureka.backend.api.operations.OperationFactory$1 -> neureka.backend.api.operations.OperationFactory$1:
-    neureka.backend.api.operations.OperationFactory this$0 -> a
-    56:56:void <init>(neureka.backend.api.operations.OperationFactory,neureka.backend.api.operations.OperationFactory) -> <init>
+    34:34:neureka.backend.api.operations.OperationBuilder setIsInline(java.lang.Boolean) -> setIsInline
+    12:12:neureka.backend.api.operations.OperationBuilder$Stringifier access$000(neureka.backend.api.operations.OperationBuilder) -> a
+    12:12:neureka.backend.api.operations.OperationBuilder$Derivator access$100(neureka.backend.api.operations.OperationBuilder) -> b
+neureka.backend.api.operations.OperationBuilder$1 -> neureka.backend.api.operations.OperationBuilder$1:
+    neureka.backend.api.operations.OperationBuilder this$0 -> a
+    56:56:void <init>(neureka.backend.api.operations.OperationBuilder,neureka.backend.api.operations.OperationBuilder) -> <init>
     59:59:java.lang.String stringify(java.lang.String[]) -> stringify
     64:64:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     69:69:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
-neureka.backend.api.operations.OperationFactory$Derivator -> neureka.backend.api.operations.OperationFactory$a:
+neureka.backend.api.operations.OperationBuilder$Derivator -> neureka.backend.api.operations.OperationBuilder$a:
     java.lang.String asDerivative$574684d7() -> a
-neureka.backend.api.operations.OperationFactory$Stringifier -> neureka.backend.api.operations.OperationFactory$b:
+neureka.backend.api.operations.OperationBuilder$Stringifier -> neureka.backend.api.operations.OperationBuilder$b:
     java.lang.String stringify$4af589aa() -> a
 neureka.backend.standard.algorithms.Activation -> neureka.backend.standard.algorithms.Activation:
     17:51:void <init>() -> <init>
@@ -1192,12 +1192,12 @@ neureka.backend.standard.operations.linear.XConv -> neureka.backend.standard.ope
     67:67:neureka.Tsr[] lambda$new$0(neureka.Tsr[]) -> b
     21:21:void <clinit>() -> <clinit>
 neureka.backend.standard.operations.linear.XConv$1 -> neureka.backend.standard.operations.linear.XConv$1:
-    253:253:void <init>(neureka.backend.standard.operations.linear.XConv,neureka.backend.api.operations.OperationFactory) -> <init>
+    253:253:void <init>(neureka.backend.standard.operations.linear.XConv,neureka.backend.api.operations.OperationBuilder) -> <init>
     256:263:java.lang.String stringify(java.lang.String[]) -> stringify
     268:268:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     273:273:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.linear.XConv$2 -> neureka.backend.standard.operations.linear.XConv$2:
-    287:287:void <init>(neureka.backend.standard.operations.linear.XConv,neureka.backend.api.operations.OperationFactory) -> <init>
+    287:287:void <init>(neureka.backend.standard.operations.linear.XConv,neureka.backend.api.operations.OperationBuilder) -> <init>
     290:297:java.lang.String stringify(java.lang.String[]) -> stringify
     302:302:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     307:307:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
@@ -1270,27 +1270,27 @@ neureka.backend.standard.operations.operator.Addition -> neureka.backend.standar
     34:34:double lambda$static$0(double[],double[],neureka.ndim.iterators.NDIterator,neureka.ndim.iterators.NDIterator,neureka.ndim.iterators.NDIterator) -> a
     30:83:void <clinit>() -> <clinit>
 neureka.backend.standard.operations.operator.Addition$1 -> neureka.backend.standard.operations.operator.Addition$1:
-    362:362:void <init>(neureka.backend.standard.operations.operator.Addition,neureka.backend.api.operations.OperationFactory) -> <init>
+    362:362:void <init>(neureka.backend.standard.operations.operator.Addition,neureka.backend.api.operations.OperationBuilder) -> <init>
     365:365:java.lang.String stringify(java.lang.String[]) -> stringify
     370:370:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     375:375:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Addition$2 -> neureka.backend.standard.operations.operator.Addition$2:
-    389:389:void <init>(neureka.backend.standard.operations.operator.Addition,neureka.backend.api.operations.OperationFactory) -> <init>
+    389:389:void <init>(neureka.backend.standard.operations.operator.Addition,neureka.backend.api.operations.OperationBuilder) -> <init>
     392:392:java.lang.String stringify(java.lang.String[]) -> stringify
     397:397:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     402:402:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Addition$3 -> neureka.backend.standard.operations.operator.Addition$3:
-    418:418:void <init>(neureka.backend.standard.operations.operator.Addition,neureka.backend.api.operations.OperationFactory) -> <init>
+    418:418:void <init>(neureka.backend.standard.operations.operator.Addition,neureka.backend.api.operations.OperationBuilder) -> <init>
     421:428:java.lang.String stringify(java.lang.String[]) -> stringify
     433:433:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     438:438:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Addition$4 -> neureka.backend.standard.operations.operator.Addition$4:
-    499:499:void <init>(neureka.backend.standard.operations.operator.Addition,neureka.backend.api.operations.OperationFactory) -> <init>
+    499:499:void <init>(neureka.backend.standard.operations.operator.Addition,neureka.backend.api.operations.OperationBuilder) -> <init>
     502:502:java.lang.String stringify(java.lang.String[]) -> stringify
     507:507:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     512:512:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Addition$5 -> neureka.backend.standard.operations.operator.Addition$5:
-    525:525:void <init>(neureka.backend.standard.operations.operator.Addition,neureka.backend.api.operations.OperationFactory) -> <init>
+    525:525:void <init>(neureka.backend.standard.operations.operator.Addition,neureka.backend.api.operations.OperationBuilder) -> <init>
     528:528:java.lang.String stringify(java.lang.String[]) -> stringify
     533:533:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     538:538:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
@@ -1360,27 +1360,27 @@ neureka.backend.standard.operations.operator.Division -> neureka.backend.standar
     33:33:double lambda$static$0(double[],double[],neureka.ndim.iterators.NDIterator,neureka.ndim.iterators.NDIterator,neureka.ndim.iterators.NDIterator) -> a
     28:45:void <clinit>() -> <clinit>
 neureka.backend.standard.operations.operator.Division$1 -> neureka.backend.standard.operations.operator.Division$1:
-    427:427:void <init>(neureka.backend.standard.operations.operator.Division,neureka.backend.api.operations.OperationFactory) -> <init>
+    427:427:void <init>(neureka.backend.standard.operations.operator.Division,neureka.backend.api.operations.OperationBuilder) -> <init>
     430:430:java.lang.String stringify(java.lang.String[]) -> stringify
     435:435:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     440:440:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Division$2 -> neureka.backend.standard.operations.operator.Division$2:
-    453:453:void <init>(neureka.backend.standard.operations.operator.Division,neureka.backend.api.operations.OperationFactory) -> <init>
+    453:453:void <init>(neureka.backend.standard.operations.operator.Division,neureka.backend.api.operations.OperationBuilder) -> <init>
     456:456:java.lang.String stringify(java.lang.String[]) -> stringify
     461:461:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     466:466:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Division$3 -> neureka.backend.standard.operations.operator.Division$3:
-    481:481:void <init>(neureka.backend.standard.operations.operator.Division,neureka.backend.api.operations.OperationFactory) -> <init>
+    481:481:void <init>(neureka.backend.standard.operations.operator.Division,neureka.backend.api.operations.OperationBuilder) -> <init>
     484:491:java.lang.String stringify(java.lang.String[]) -> stringify
     496:496:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     501:501:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Division$4 -> neureka.backend.standard.operations.operator.Division$4:
-    560:560:void <init>(neureka.backend.standard.operations.operator.Division,neureka.backend.api.operations.OperationFactory) -> <init>
+    560:560:void <init>(neureka.backend.standard.operations.operator.Division,neureka.backend.api.operations.OperationBuilder) -> <init>
     563:570:java.lang.String stringify(java.lang.String[]) -> stringify
     575:575:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     580:580:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Division$5 -> neureka.backend.standard.operations.operator.Division$5:
-    593:593:void <init>(neureka.backend.standard.operations.operator.Division,neureka.backend.api.operations.OperationFactory) -> <init>
+    593:593:void <init>(neureka.backend.standard.operations.operator.Division,neureka.backend.api.operations.OperationBuilder) -> <init>
     596:603:java.lang.String stringify(java.lang.String[]) -> stringify
     608:608:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     613:613:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
@@ -1438,12 +1438,12 @@ neureka.backend.standard.operations.operator.Modulo -> neureka.backend.standard.
     104:104:double lambda$new$1(double[],double[],neureka.ndim.iterators.NDIterator,neureka.ndim.iterators.NDIterator) -> a
     41:93:neureka.Tsr lambda$new$0(neureka.backend.api.ExecutionCall,java.util.function.Function) -> c
 neureka.backend.standard.operations.operator.Modulo$1 -> neureka.backend.standard.operations.operator.Modulo$1:
-    447:447:void <init>(neureka.backend.standard.operations.operator.Modulo,neureka.backend.api.operations.OperationFactory) -> <init>
+    447:447:void <init>(neureka.backend.standard.operations.operator.Modulo,neureka.backend.api.operations.OperationBuilder) -> <init>
     450:450:java.lang.String stringify(java.lang.String[]) -> stringify
     455:455:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     460:460:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Modulo$2 -> neureka.backend.standard.operations.operator.Modulo$2:
-    473:473:void <init>(neureka.backend.standard.operations.operator.Modulo,neureka.backend.api.operations.OperationFactory) -> <init>
+    473:473:void <init>(neureka.backend.standard.operations.operator.Modulo,neureka.backend.api.operations.OperationBuilder) -> <init>
     476:476:java.lang.String stringify(java.lang.String[]) -> stringify
     481:481:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     486:486:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
@@ -1540,12 +1540,12 @@ neureka.backend.standard.operations.operator.Multiplication -> neureka.backend.s
     36:36:double lambda$static$0(double[],double[],neureka.ndim.iterators.NDIterator,neureka.ndim.iterators.NDIterator,neureka.ndim.iterators.NDIterator) -> b
     31:45:void <clinit>() -> <clinit>
 neureka.backend.standard.operations.operator.Multiplication$1 -> neureka.backend.standard.operations.operator.Multiplication$1:
-    482:482:void <init>(neureka.backend.standard.operations.operator.Multiplication,neureka.backend.api.operations.OperationFactory) -> <init>
+    482:482:void <init>(neureka.backend.standard.operations.operator.Multiplication,neureka.backend.api.operations.OperationBuilder) -> <init>
     485:485:java.lang.String stringify(java.lang.String[]) -> stringify
     490:490:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     495:495:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Multiplication$2 -> neureka.backend.standard.operations.operator.Multiplication$2:
-    599:599:void <init>(neureka.backend.standard.operations.operator.Multiplication,neureka.backend.api.operations.OperationFactory) -> <init>
+    599:599:void <init>(neureka.backend.standard.operations.operator.Multiplication,neureka.backend.api.operations.OperationBuilder) -> <init>
     602:602:java.lang.String stringify(java.lang.String[]) -> stringify
     607:607:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     612:612:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
@@ -1615,27 +1615,27 @@ neureka.backend.standard.operations.operator.Power -> neureka.backend.standard.o
     35:35:double lambda$static$0(double[],double[],neureka.ndim.iterators.NDIterator,neureka.ndim.iterators.NDIterator,neureka.ndim.iterators.NDIterator) -> a
     31:54:void <clinit>() -> <clinit>
 neureka.backend.standard.operations.operator.Power$1 -> neureka.backend.standard.operations.operator.Power$1:
-    458:458:void <init>(neureka.backend.standard.operations.operator.Power,neureka.backend.api.operations.OperationFactory) -> <init>
+    458:458:void <init>(neureka.backend.standard.operations.operator.Power,neureka.backend.api.operations.OperationBuilder) -> <init>
     461:461:java.lang.String stringify(java.lang.String[]) -> stringify
     466:466:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     471:471:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Power$2 -> neureka.backend.standard.operations.operator.Power$2:
-    485:485:void <init>(neureka.backend.standard.operations.operator.Power,neureka.backend.api.operations.OperationFactory) -> <init>
+    485:485:void <init>(neureka.backend.standard.operations.operator.Power,neureka.backend.api.operations.OperationBuilder) -> <init>
     488:488:java.lang.String stringify(java.lang.String[]) -> stringify
     493:493:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     498:498:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Power$3 -> neureka.backend.standard.operations.operator.Power$3:
-    513:513:void <init>(neureka.backend.standard.operations.operator.Power,neureka.backend.api.operations.OperationFactory) -> <init>
+    513:513:void <init>(neureka.backend.standard.operations.operator.Power,neureka.backend.api.operations.OperationBuilder) -> <init>
     516:523:java.lang.String stringify(java.lang.String[]) -> stringify
     528:528:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     533:533:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Power$4 -> neureka.backend.standard.operations.operator.Power$4:
-    592:592:void <init>(neureka.backend.standard.operations.operator.Power,neureka.backend.api.operations.OperationFactory) -> <init>
+    592:592:void <init>(neureka.backend.standard.operations.operator.Power,neureka.backend.api.operations.OperationBuilder) -> <init>
     595:595:java.lang.String stringify(java.lang.String[]) -> stringify
     600:600:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     605:605:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Power$5 -> neureka.backend.standard.operations.operator.Power$5:
-    619:619:void <init>(neureka.backend.standard.operations.operator.Power,neureka.backend.api.operations.OperationFactory) -> <init>
+    619:619:void <init>(neureka.backend.standard.operations.operator.Power,neureka.backend.api.operations.OperationBuilder) -> <init>
     622:622:java.lang.String stringify(java.lang.String[]) -> stringify
     627:627:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     632:632:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
@@ -1696,27 +1696,27 @@ neureka.backend.standard.operations.operator.Subtraction -> neureka.backend.stan
     33:33:double lambda$static$0(double[],double[],neureka.ndim.iterators.NDIterator,neureka.ndim.iterators.NDIterator,neureka.ndim.iterators.NDIterator) -> a
     28:42:void <clinit>() -> <clinit>
 neureka.backend.standard.operations.operator.Subtraction$1 -> neureka.backend.standard.operations.operator.Subtraction$1:
-    366:366:void <init>(neureka.backend.standard.operations.operator.Subtraction,neureka.backend.api.operations.OperationFactory) -> <init>
+    366:366:void <init>(neureka.backend.standard.operations.operator.Subtraction,neureka.backend.api.operations.OperationBuilder) -> <init>
     369:369:java.lang.String stringify(java.lang.String[]) -> stringify
     374:374:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     379:379:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Subtraction$2 -> neureka.backend.standard.operations.operator.Subtraction$2:
-    392:392:void <init>(neureka.backend.standard.operations.operator.Subtraction,neureka.backend.api.operations.OperationFactory) -> <init>
+    392:392:void <init>(neureka.backend.standard.operations.operator.Subtraction,neureka.backend.api.operations.OperationBuilder) -> <init>
     395:395:java.lang.String stringify(java.lang.String[]) -> stringify
     400:400:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     405:405:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Subtraction$3 -> neureka.backend.standard.operations.operator.Subtraction$3:
-    420:420:void <init>(neureka.backend.standard.operations.operator.Subtraction,neureka.backend.api.operations.OperationFactory) -> <init>
+    420:420:void <init>(neureka.backend.standard.operations.operator.Subtraction,neureka.backend.api.operations.OperationBuilder) -> <init>
     423:430:java.lang.String stringify(java.lang.String[]) -> stringify
     435:435:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     440:440:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Subtraction$4 -> neureka.backend.standard.operations.operator.Subtraction$4:
-    453:453:void <init>(neureka.backend.standard.operations.operator.Subtraction,neureka.backend.api.operations.OperationFactory) -> <init>
+    453:453:void <init>(neureka.backend.standard.operations.operator.Subtraction,neureka.backend.api.operations.OperationBuilder) -> <init>
     456:456:java.lang.String stringify(java.lang.String[]) -> stringify
     461:461:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     466:466:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate
 neureka.backend.standard.operations.operator.Subtraction$5 -> neureka.backend.standard.operations.operator.Subtraction$5:
-    479:479:void <init>(neureka.backend.standard.operations.operator.Subtraction,neureka.backend.api.operations.OperationFactory) -> <init>
+    479:479:void <init>(neureka.backend.standard.operations.operator.Subtraction,neureka.backend.api.operations.OperationBuilder) -> <init>
     482:482:java.lang.String stringify(java.lang.String[]) -> stringify
     487:487:java.lang.String asDerivative(neureka.calculus.Function[],int) -> asDerivative
     492:492:double calculate(double[],int,int,neureka.calculus.Function[]) -> calculate

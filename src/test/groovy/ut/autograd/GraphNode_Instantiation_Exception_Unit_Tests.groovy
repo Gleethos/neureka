@@ -114,7 +114,8 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             0 * payload.set( _ )
             0 * device.cleaning( payload, _ )
             (1..2) * function.getOperation() >> type
-            (1.._) * type.isDifferentiable() >> true
+            (0.._) * type.isDifferentiable() >> true
+            (1.._) * type.isInline() >> true
             1 * inputs[0].find( GraphNode.class ) >> inputsNodeMock
             1 * inputs[1].find( GraphNode.class ) >> null
             0 * inputs[2].find( GraphNode.class ) >> null
@@ -153,7 +154,8 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             0 * payload.set( _ )
             0 * device.cleaning( payload, _ )
             (1.._) * function.getOperation() >> type
-            (1.._) * type.isDifferentiable() >> true
+            (0.._) * type.isDifferentiable() >> true
+            (1.._) * type.isInline() >> true
             1 * inputs[0].find( GraphNode.class ) >> inputsNodeMock
             1 * inputs[1].find( GraphNode.class ) >> inputsNodeMock
             1 * inputs[2].find( GraphNode.class ) >> otherInputsNodeMock
@@ -187,6 +189,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             1 * context.getTensors() >> inputs
             2 * inputsNodeMock.getLock() >> Mock( GraphLock )
             0 * function.isDoingAD() >> true
+            1 * type.isInline() >> true
             0 * payload.getDevice() >> device
             0 * payload.set( _ )
             0 * device.cleaning( payload, _ )
