@@ -8,7 +8,7 @@ import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.Operation;
 import neureka.backend.api.operations.OperationContext;
-import neureka.backend.api.operations.OperationFactory;
+import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -25,7 +25,7 @@ public class MatMul extends AbstractOperation
     public MatMul()
     {
         super(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "matmul"    )
                         .setOperator(         "@"         )
                         .setArity(            2           )

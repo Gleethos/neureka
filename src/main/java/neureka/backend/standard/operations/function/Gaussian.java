@@ -2,7 +2,7 @@ package neureka.backend.standard.operations.function;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.operations.OperationFactory;
+import neureka.backend.api.operations.OperationBuilder;
 import neureka.devices.Device;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -20,7 +20,7 @@ public final class Gaussian extends AbstractOperation
     public Gaussian()
     {
         super(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "gaus"    )
                         .setOperator(         "gaus"    )
                         .setArity(            1         )

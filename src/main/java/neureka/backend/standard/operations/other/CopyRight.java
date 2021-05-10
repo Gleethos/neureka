@@ -3,8 +3,8 @@ package neureka.backend.standard.operations.other;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.api.operations.OperationContext;
-import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
@@ -18,7 +18,7 @@ public class CopyRight extends AbstractOperation {
     public CopyRight()
     {
         super(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "inject_right"    )
                         .setOperator(         ">"        )
                         .setArity(            2          )

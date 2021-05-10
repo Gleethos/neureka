@@ -19,7 +19,7 @@ import java.util.Map;
  *  It provides a partial implementation which consists of a simple component system for hosting {@link Algorithm} instances
  *  as well as a set of properties which {@link Operation} implementations are expected to have. <br>
  *  Therefore, the number of properties this class needs to receive is rather large.
- *  In order to instantiate it one has to pass {@link OperationFactory} instance to the constructor.
+ *  In order to instantiate it one has to pass {@link OperationBuilder} instance to the constructor.
  *  Using the factory will make the property configuration as readable as possible. <br>
  *
  */
@@ -115,7 +115,7 @@ public abstract class AbstractOperation implements Operation
     @Getter
     private final Algorithm _defaultAlgorithm = new GenericAlgorithm( "default", _arity, this );
 
-    public AbstractOperation( OperationFactory factory )
+    public AbstractOperation( OperationBuilder factory )
     {
         factory.dispose();
 
@@ -128,10 +128,11 @@ public abstract class AbstractOperation implements Operation
         _isInline = factory.getIsInline();
 
         _id = OperationContext.get().id();
-        OperationContext.get().incrementID();
-        OperationContext.get().instances().add( this );
-        OperationContext.get().lookup().put( _operator, this );
-        OperationContext.get().lookup().put( _operator.toLowerCase(), this );
+        OperationContext.get().addOperation( this );
+        //OperationContext.get().incrementID();
+        //OperationContext.get().instances().add( this );
+        //OperationContext.get().lookup().put( _operator, this );
+        //OperationContext.get().lookup().put( _operator.toLowerCase(), this );
         if (
                 _operator
                         .replace((""+((char)171)), "")

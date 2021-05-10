@@ -8,7 +8,7 @@ import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.Operation;
 import neureka.backend.api.operations.OperationContext;
-import neureka.backend.api.operations.OperationFactory;
+import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
@@ -26,7 +26,7 @@ public class Modulo extends AbstractOperation {
     public Modulo()
     {
         super(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "modulo"    )
                         .setOperator(         "%"         )
                         .setArity(            -1          )
@@ -466,7 +466,7 @@ public class Modulo extends AbstractOperation {
         // RELATED OPERATION TYPES :
 
         new AbstractOperation(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         ""                 )
                         .setOperator(         ((char) 171) + "%" )
                         .setArity(            3          )
@@ -492,7 +492,7 @@ public class Modulo extends AbstractOperation {
         };
 
         new AbstractOperation(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "" )
                         .setOperator(         "%" + ((char) 187)  )
                         .setArity(            3          )

@@ -7,8 +7,8 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.Operation;
+import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.api.operations.OperationContext;
-import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.Operator;
@@ -64,7 +64,7 @@ public class Division extends AbstractOperation
     public Division()
     {
         super(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "divide"   )
                         .setOperator(         "/"        )
                         .setArity(            -1         )
@@ -446,7 +446,7 @@ public class Division extends AbstractOperation
         // RELATED OPERATION TYPES :
 
         new AbstractOperation(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "inv_division_left" )
                         .setOperator(         ((char) 171) + "/"  )
                         .setArity(            3          )
@@ -472,7 +472,7 @@ public class Division extends AbstractOperation
         };
 
         new AbstractOperation(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "inv_division_right" )
                         .setOperator(         "/" + ((char) 187)  )
                         .setArity(            3          )
@@ -500,7 +500,7 @@ public class Division extends AbstractOperation
         // Convolution:
 
         new AbstractOperation(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "divide"           )
                         .setOperator(         "d"                )
                         .setArity(            2                  )
@@ -584,7 +584,7 @@ public class Division extends AbstractOperation
                 );
 
         new AbstractOperation(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "" )
                         .setOperator(         ((char) 171) + "d"  )
                         .setArity(            3          )
@@ -617,7 +617,7 @@ public class Division extends AbstractOperation
         };
 
         new AbstractOperation(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         ""                 )
                         .setOperator(         "d" + ((char) 187) )
                         .setArity(            3                  )

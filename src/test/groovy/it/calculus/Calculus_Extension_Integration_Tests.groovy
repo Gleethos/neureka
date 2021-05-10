@@ -12,7 +12,7 @@ import neureka.backend.api.ExecutionCall
 import neureka.backend.standard.algorithms.GenericAlgorithm
 import neureka.backend.api.operations.OperationContext
 import neureka.backend.api.Operation
-import neureka.backend.api.operations.OperationFactory
+import neureka.backend.api.operations.OperationBuilder
 import neureka.calculus.assembly.FunctionBuilder
 import spock.lang.Specification
 
@@ -37,7 +37,7 @@ class Calculus_Extension_Integration_Tests extends Specification
             def run = testContext.runner()
             //OperationContext.setInstance(testContext)
             run { // TODO: Make operations not add themselves to contexts!
-                Operation type = new OperationFactory()
+                Operation type = new OperationBuilder()
                         .setFunction('test_function')
                         .setOperator('test_function')
                         .setArity(-1)

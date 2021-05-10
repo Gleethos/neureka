@@ -60,7 +60,7 @@ class OperationContext_Unit_Tests extends Specification
             def spy = Mock(Function)
 
         when : 'We pass a lambda to the "useFor" method to the runner, containing a closure with the spy...'
-            run.useFor({spy.apply(OperationContext.get())})
+            run.run({spy.apply(OperationContext.get())})
 
         then : 'The spy will tell us that the passed lambda has been executed by the runner in the clone context!'
             1 * spy.apply(clone)
@@ -102,7 +102,7 @@ class OperationContext_Unit_Tests extends Specification
             runWrapper << [
                     (OperationContext.Runner runner) -> { (arg) -> runner.call(arg) },
                     (OperationContext.Runner runner) -> { (arg) -> runner.invoke(arg) },
-                    (OperationContext.Runner runner) -> { (arg) -> runner.useAndProduce(arg) }
+                    (OperationContext.Runner runner) -> { (arg) -> runner.runAndGet(arg) }
             ]
     }
 

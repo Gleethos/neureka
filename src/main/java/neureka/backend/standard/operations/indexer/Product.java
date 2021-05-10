@@ -7,8 +7,8 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.Operation;
+import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.api.operations.OperationContext;
-import neureka.backend.api.operations.OperationFactory;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
@@ -27,7 +27,7 @@ public final class Product extends AbstractOperation {
     public Product()
     {
         super (
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "prodJs"    )
                         .setOperator(         "prodJs"    )
                         .setArity(            1           )

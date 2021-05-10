@@ -8,7 +8,7 @@ import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.Operation;
 import neureka.backend.api.operations.OperationContext;
-import neureka.backend.api.operations.OperationFactory;
+import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
@@ -24,7 +24,7 @@ public class XConv extends AbstractOperation
     public XConv()
     {
         super(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "multiply"    )
                         .setOperator(         "x"    )
                         .setArity(            2          )
@@ -257,7 +257,7 @@ public class XConv extends AbstractOperation
         );
 
         new AbstractOperation(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "inv_convolve_mul_left"    )
                         .setOperator(         ((char) 171) + "x"         )
                         .setArity(            3                         )
@@ -291,7 +291,7 @@ public class XConv extends AbstractOperation
         .setAlgorithm(Convolution.class, convolution);
 
         new AbstractOperation(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "inv_convolve_mul_right"    )
                         .setOperator(         "x" + ((char) 187)         )
                         .setArity(            3                         )

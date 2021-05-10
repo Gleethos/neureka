@@ -5,7 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.operations.OperationFactory;
+import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
@@ -58,7 +58,7 @@ public class Subtraction extends AbstractOperation
     public Subtraction()
     {
         super(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "subtract"    )
                         .setOperator(         "-"        )
                         .setArity(            -1         )
@@ -365,7 +365,7 @@ public class Subtraction extends AbstractOperation
         // RELATED OPERATIONS :
 
         new AbstractOperation(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "" )
                         .setOperator(         ((char) 171) + "-"  )
                         .setArity(            3          )
@@ -391,7 +391,7 @@ public class Subtraction extends AbstractOperation
         };
 
         new AbstractOperation(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "" )
                         .setOperator(         "-" + ((char) 187)  )
                         .setArity(            3          )
@@ -419,7 +419,7 @@ public class Subtraction extends AbstractOperation
         // Convolution:
 
         new AbstractOperation(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "" )
                         .setOperator(         "s"  )
                         .setArity(            2          )
@@ -452,7 +452,7 @@ public class Subtraction extends AbstractOperation
         };
 
         new AbstractOperation(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "" )
                         .setOperator(         ((char) 171) + "s"  )
                         .setArity(            3          )
@@ -478,7 +478,7 @@ public class Subtraction extends AbstractOperation
         };
 
         new AbstractOperation(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         ""                 )
                         .setOperator(         "s" + ((char) 187) )
                         .setArity(            3                  )

@@ -2,7 +2,7 @@ package neureka.backend.standard.operations.function;
 
 import neureka.Neureka;
 import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.operations.OperationFactory;
+import neureka.backend.api.operations.OperationBuilder;
 import neureka.devices.Device;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -51,7 +51,7 @@ public final class ReLU extends AbstractOperation
     public ReLU()
     {
         super(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "relu"    )
                         .setOperator(         "relu"    )
                         .setArity(            1        )

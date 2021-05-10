@@ -62,6 +62,12 @@ public class OperationContext implements Cloneable
         return new Runner( this, OperationContext.get() );
     }
 
+    /**
+     *  This is a very simple class with a single purpose, namely
+     *  it exposes methods which receive lambda instances in order to then execute them
+     *  in a given context just to then switch back to the original context again.
+     *
+     */
     public static class Runner {
 
         private final OperationContext originalContext;
@@ -72,14 +78,14 @@ public class OperationContext implements Cloneable
             this.visitedContext = visited;
         }
 
-        public Runner useFor( Runnable contextSpecificAction ) {
+        public Runner run( Runnable contextSpecificAction ) {
             OperationContext.set( visitedContext );
             contextSpecificAction.run();
             OperationContext.set( originalContext );
             return this;
         }
 
-        public <T> T useAndProduce( Supplier<T> contextSpecificAction ) {
+        public <T> T runAndGet( Supplier<T> contextSpecificAction ) {
             OperationContext.set( visitedContext );
             T result = contextSpecificAction.get();
             OperationContext.set( originalContext );
@@ -87,7 +93,7 @@ public class OperationContext implements Cloneable
         }
 
         public <T> T call( Supplier<T> contextSpecificAction ) {
-            return useAndProduce( contextSpecificAction );
+            return runAndGet( contextSpecificAction );
         }
 
         public <T> T invoke( Supplier<T> contextSpecificAction ) {
@@ -129,6 +135,13 @@ public class OperationContext implements Cloneable
         _lookup = new HashMap<>();
         _instances = new ArrayList<>();
         _id = 0;
+    }
+
+    public void addOperation( Operation operation ) {
+        OperationContext.get().incrementID();
+        OperationContext.get().instances().add( operation );
+        OperationContext.get().lookup().put( operation.getOperator(), operation );
+        OperationContext.get().lookup().put( operation.getOperator().toLowerCase(), operation );
     }
 
     public void incrementID()

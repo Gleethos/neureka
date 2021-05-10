@@ -2,7 +2,7 @@ package neureka.backend.standard.operations.other;
 
 import neureka.Tsr;
 import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.operations.OperationFactory;
+import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.devices.Device;
 import neureka.autograd.DefaultADAgent;
@@ -20,7 +20,7 @@ public class DimTrim extends AbstractOperation
     public DimTrim()
     {
         super(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "dimtrim"   )
                         .setOperator(         "dimtrim"   )
                         .setArity(            1           )

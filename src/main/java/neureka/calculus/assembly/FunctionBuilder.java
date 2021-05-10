@@ -235,7 +235,7 @@ public class FunctionBuilder
             else component = assumed + cleaned;
 
             return FunctionBuilder.build(component, doAD);
-        } else {// More than one component left:
+        } else { // More than one component left:
             if (
                     OperationContext.get().instance( typeId ).getOperator().equals( "x" ) ||
                     OperationContext.get().instance( typeId ).getOperator().equals( "<" ) ||
@@ -246,7 +246,6 @@ public class FunctionBuilder
                     OperationContext.get().instance(typeId).getOperator().equals(",") &&
                     foundComponents.get( 0 ).startsWith("[")
             ) {
-
                 foundComponents.set(0, foundComponents.get( 0 ).substring(1));
                 String[] splitted;
                 if (foundComponents.get(foundComponents.size() - 1).contains("]")) {

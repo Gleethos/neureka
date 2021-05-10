@@ -2,7 +2,7 @@ package neureka.backend.standard.operations.function;
 
 import neureka.Neureka;
 import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.operations.OperationFactory;
+import neureka.backend.api.operations.OperationBuilder;
 import neureka.devices.Device;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -53,7 +53,7 @@ public final class Tanh extends AbstractOperation
     public Tanh()
     {
         super (
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "tanh"    )
                         .setOperator(         "tanh"    )
                         .setArity(            1         )

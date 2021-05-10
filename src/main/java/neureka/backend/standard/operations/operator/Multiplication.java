@@ -8,7 +8,7 @@ import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.Operation;
 import neureka.backend.api.operations.OperationContext;
-import neureka.backend.api.operations.OperationFactory;
+import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
@@ -55,7 +55,7 @@ public class Multiplication extends AbstractOperation
     public Multiplication()
     {
         super(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "multiply"    )
                         .setOperator(         "*"        )
                         .setArity(            -1         )
@@ -481,7 +481,7 @@ public class Multiplication extends AbstractOperation
         .build();
 
         new AbstractOperation(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         ""    )
                         .setOperator(         ((char) 171) + "*"    )
                         .setArity(            3          )
@@ -604,7 +604,7 @@ public class Multiplication extends AbstractOperation
             .build();
 
         new AbstractOperation(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "" )
                         .setOperator(         "*" + ((char) 187)  )
                         .setArity(            3          )

@@ -3,7 +3,7 @@ package neureka.backend.standard.operations.indexer;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Algorithm;
-import neureka.backend.api.operations.OperationFactory;
+import neureka.backend.api.operations.OperationBuilder;
 import neureka.devices.Device;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -26,7 +26,7 @@ public final class Summation extends AbstractOperation
     public Summation()
     {
         super (
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "sumJs"    )
                         .setOperator(         "sumJs"    )
                         .setArity(            1           )

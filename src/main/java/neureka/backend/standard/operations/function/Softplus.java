@@ -1,7 +1,7 @@
 package neureka.backend.standard.operations.function;
 
 import neureka.Neureka;
-import neureka.backend.api.operations.OperationFactory;
+import neureka.backend.api.operations.OperationBuilder;
 import neureka.devices.Device;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -34,7 +34,7 @@ public final class Softplus extends AbstractOperation
     public Softplus()
     {
         super(
-                new OperationFactory()
+                new OperationBuilder()
                         .setFunction(         "softplus"    )
                         .setOperator(         "softplus"    )
                         .setArity(            1             )
