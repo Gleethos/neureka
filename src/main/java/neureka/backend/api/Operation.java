@@ -180,6 +180,7 @@ public interface Operation
      */
     boolean isIndexer();
 
+    @Deprecated
     boolean isDifferentiable();
 
     boolean isInline();

@@ -39,15 +39,17 @@ public class OperationContext implements Cloneable
 
     static
     {
-       // loading operations!
-       ServiceLoader<Operation> serviceLoader = ServiceLoader.load(Operation.class);
-       serviceLoader.reload();
-       //checking if load was successful
-       for ( Operation operation : serviceLoader ) {
-           assert operation.getFunction() != null;
-           assert operation.getOperator() != null;
-           log.debug( "Operation: '" + operation.getFunction() + "' loaded!" );
-       }
+        OperationContext context = OperationContext.get();
+        // loading operations!
+        ServiceLoader<Operation> serviceLoader = ServiceLoader.load(Operation.class);
+        serviceLoader.reload();
+        //checking if load was successful
+        for ( Operation operation : serviceLoader ) {
+            assert operation.getFunction() != null;
+            assert operation.getOperator() != null;
+            //context.addOperation(operation);
+            log.debug( "Operation: '" + operation.getFunction() + "' loaded!" );
+        }
     }
 
     /**
@@ -142,6 +144,18 @@ public class OperationContext implements Cloneable
         OperationContext.get().instances().add( operation );
         OperationContext.get().lookup().put( operation.getOperator(), operation );
         OperationContext.get().lookup().put( operation.getOperator().toLowerCase(), operation );
+        if (
+                operation.getOperator()
+                        .replace((""+((char)171)), "")
+                        .replace((""+((char)187)), "")
+                        .matches("[a-z]")
+        ) {
+            if ( operation.getOperator().contains( ""+((char)171) ) )
+                this.lookup().put(operation.getOperator().replace((""+((char)171)), "<<"), operation);
+
+            if ( operation.getOperator().contains( ""+((char)187) ) )
+                this.lookup().put(operation.getOperator().replace((""+((char)187)),">>"), operation);
+        }
     }
 
     public void incrementID()

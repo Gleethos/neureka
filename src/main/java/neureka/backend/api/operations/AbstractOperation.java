@@ -129,22 +129,7 @@ public abstract class AbstractOperation implements Operation
 
         _id = OperationContext.get().id();
         OperationContext.get().addOperation( this );
-        //OperationContext.get().incrementID();
-        //OperationContext.get().instances().add( this );
-        //OperationContext.get().lookup().put( _operator, this );
-        //OperationContext.get().lookup().put( _operator.toLowerCase(), this );
-        if (
-                _operator
-                        .replace((""+((char)171)), "")
-                        .replace((""+((char)187)), "")
-                        .matches("[a-z]")
-        ) {
-            if ( _operator.contains( ""+((char)171) ) )
-                OperationContext.get().lookup().put(_operator.replace((""+((char)171)), "<<"), this);
 
-            if ( _operator.contains( ""+((char)187) ) )
-                OperationContext.get().lookup().put(_operator.replace((""+((char)187)),">>"), this);
-        }
     }
 
     //==================================================================================================================
