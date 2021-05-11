@@ -104,28 +104,26 @@ public abstract class AbstractOperation implements Operation
      *  The default algorithm assumes an operation that is either a function or operator.
      *  Meaning that it assumes that the operation is also differentiable.
      *  Therefore it contains functionality that goes alongside this assumption,
-     *  just to name a few :
-     *
-     *  - An ADAgent supplier returning ADAgent instances capable of performing both forward- and reverse- mode AD.
-     *
-     *  - A simple result tensor instantiation implementation.
-     *
-     *  - A basic threaded execution based on the AST of a given Function object.
+     *  just to name a few :                                                                                            <br>
+     *                                                                                                                  <br>
+     *  - An ADAgent supplier returning ADAgent instances capable of performing both forward- and reverse- mode AD.     <br>
+     *  - A simple result tensor instantiation implementation.                                                          <br>
+     *  - A basic threaded execution based on the AST of a given Function object.                                       <br>
      */
     @Getter
     private final Algorithm _defaultAlgorithm = new GenericAlgorithm( "default", _arity, this );
 
-    public AbstractOperation( OperationBuilder factory )
+    public AbstractOperation( OperationBuilder builder )
     {
-        factory.dispose();
+        builder.dispose();
 
-        _function = factory.getFunction();
-        _arity = factory.getArity();
-        _operator = factory.getOperator();
-        _isOperator = factory.getIsOperator();
-        _isIndexer = factory.getIsIndexer();
-        _isDifferentiable = factory.getIsDifferentiable();
-        _isInline = factory.getIsInline();
+        _function = builder.getFunction();
+        _arity = builder.getArity();
+        _operator = builder.getOperator();
+        _isOperator = builder.getIsOperator();
+        _isIndexer = builder.getIsIndexer();
+        _isDifferentiable = builder.getIsDifferentiable();
+        _isInline = builder.getIsInline();
 
         _id = OperationContext.get().id();
         OperationContext.get().addOperation( this );

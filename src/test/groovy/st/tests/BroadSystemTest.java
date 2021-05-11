@@ -2,6 +2,7 @@ package st.tests;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.operations.OperationContext;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
@@ -31,8 +32,8 @@ public class BroadSystemTest
         tester.testTensor(x, new String[]{"[2x2]:(-1.0, 2.0, -3.0, 3.0):g:(-3.0, -3.0, -3.0, -3.0)"});
         //---
         x = new Tsr(new int[]{1}, 0.1).setRqsGradient(true);
-        Function tanh = FunctionBuilder.build("tanh(i0)", true);
-        Function tenxx = FunctionBuilder.build("i0*100", true);
+        Function tanh = new FunctionBuilder(OperationContext.get()).build("tanh(i0)", true);
+        Function tenxx = new FunctionBuilder(OperationContext.get()).build("i0*100", true);
         z = tenxx.call(new Tsr[]{tanh.call(new Tsr[]{x})});
         tester.testTensor(z, new String[]{"[1]:(9.95037E0)"});
         Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(true);

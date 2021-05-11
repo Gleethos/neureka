@@ -11,6 +11,7 @@ import neureka.calculus.implementations.FunctionVariable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -24,13 +25,20 @@ public class FunctionBuilder
     private static final Pattern reshapePattern = Pattern.compile("^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))");
     private static final Pattern nodePattern = Pattern.compile("^([\\(]{1}.+[\\)]{1})");
 
+    private final OperationContext _context;
+    
+    public FunctionBuilder(OperationContext context)
+    {
+        _context = context;
+    }
+    
     /**
      * @param type
      * @param size
      * @param doAD
      * @return
      */
-    public static Function build( Operation type, int size, boolean doAD ) {
+    public Function build( Operation type, int size, boolean doAD ) {
         if ( type.getId() == 18 ) {
             size = 2;
         } else if ( type.getOperator().equals(",") ) {
@@ -56,7 +64,7 @@ public class FunctionBuilder
      * @param doAD       is used to turn autograd on or off for this function
      * @return the function which has been built from the expression
      */
-    public static Function build( String expression, boolean doAD ) {
+    public Function build( String expression, boolean doAD ) {
         expression =
                 (expression.length() > 0
                         && (expression.charAt( 0 ) != '(' || expression.charAt( expression.length() - 1 ) != ')'))
@@ -70,7 +78,7 @@ public class FunctionBuilder
         Function built = _build( expression, doAD );
         if ( built != null )
             Function.CACHE.FUNCTIONS().put(
-                    (( (doAD) ? "d" : "" ) + "(" + built.toString() + ")").intern(),
+                    ( ( (doAD) ? "d" : "" ) + "(" + built + ")" ).intern(), // Make the String unique!
                     built
             );
 
@@ -82,7 +90,7 @@ public class FunctionBuilder
      * @param doAD       enables or disables autograd for this function
      * @return a function which has been built by the given expression
      */
-    private static Function _build( String expression, boolean doAD )
+    private Function _build( String expression, boolean doAD )
     {
         expression = expression
                 .replace("<<", "" + ((char) 171))
@@ -124,9 +132,9 @@ public class FunctionBuilder
             else ++i; // Parsing failed for this index so let's try the next one!
         }
         //---
-        int counter = OperationContext.get().id();
-        for ( int j = OperationContext.get().id(); j > 0; --j ) {
-            if ( !foundJunctors.contains( OperationContext.get().instance(j - 1).getOperator() ) )
+        int counter = _context.id();
+        for ( int j = _context.id(); j > 0; --j ) {
+            if ( !foundJunctors.contains( _context.instance(j - 1).getOperator() ) )
                 --counter;
             else
                 j = 0;
@@ -135,7 +143,7 @@ public class FunctionBuilder
         while ( operationID < counter ) {
             final List<String> newJunctors = new ArrayList<>();
             final List<String> newComponents = new ArrayList<>();
-            if ( foundJunctors.contains( OperationContext.get().instance( operationID ).getOperator() ) ) {
+            if ( foundJunctors.contains( _context.instance( operationID ).getOperator() ) ) {
                 String currentChain = null;
                 boolean groupingOccurred = false;
                 boolean enoughPresent = FunctionParser.numberOfOperationsWithin( foundJunctors ) > 1;// Otherwise: I[j]^4 goes nuts!
@@ -150,10 +158,10 @@ public class FunctionBuilder
                             currentOperation = foundJunctors.get(ci);
                         }
                         if ( currentOperation != null ) {
-                            if ( currentOperation.equals(OperationContext.get().instance(operationID).getOperator()) ) {
+                            if ( currentOperation.equals(_context.instance(operationID).getOperator()) ) {
                                 final String newChain =
                                         FunctionParser.groupBy(
-                                                OperationContext.get().instance(operationID).getOperator(),
+                                                _context.instance(operationID).getOperator(),
                                                 currentChain,
                                                 currentComponent,
                                                 currentOperation
@@ -189,8 +197,8 @@ public class FunctionBuilder
         // identifying function id:
         int typeId = 0;
         if ( foundJunctors.size() >= 1 ) {
-            for ( int id = 0; id < OperationContext.get().id(); ++id) {
-                if ( OperationContext.get().instance(id).getOperator().equals(foundJunctors.get( 0 )) ) {
+            for ( int id = 0; id < _context.id(); ++id) {
+                if ( _context.instance(id).getOperator().equals(foundJunctors.get( 0 )) ) {
                     typeId = id;
                 }
             }
@@ -203,8 +211,8 @@ public class FunctionBuilder
             );
             if (possibleFunction != null && possibleFunction.length() > 1) {
 
-                for ( int oi = 0; oi < OperationContext.get().id(); oi++ ) {
-                    if (OperationContext.get().instance(oi).getOperator().equalsIgnoreCase(possibleFunction)) {
+                for ( int oi = 0; oi < _context.id(); oi++ ) {
+                    if (_context.instance(oi).getOperator().equalsIgnoreCase(possibleFunction)) {
                         typeId = oi;
                         List<String> parameters = FunctionParser.findParametersIn(
                                 foundComponents.get( 0 ),
@@ -212,9 +220,9 @@ public class FunctionBuilder
                         );
                         assert parameters != null;
                         for ( String p : parameters ) {
-                            sources.add(FunctionBuilder.build(p, doAD));
+                            sources.add(build(p, doAD));
                         }
-                        function = new FunctionNode(OperationContext.get().instance(typeId), sources, doAD);
+                        function = new FunctionNode(_context.instance(typeId), sources, doAD);
                         return function;
                     }
                 }
@@ -236,16 +244,16 @@ public class FunctionBuilder
             if ( assumed.trim().equals("") ) component = cleaned;
             else component = assumed + cleaned;
 
-            return FunctionBuilder.build(component, doAD);
+            return build(component, doAD);
         } else { // More than one component left:
-            if ( OperationContext.get().instance( typeId ).getArity() > 1 ) {
+            if ( _context.instance( typeId ).getArity() > 1 ) {
                 foundComponents = _groupAccordingToArity(
-                                            OperationContext.get().instance( typeId ).getArity(),
+                                            _context.instance( typeId ).getArity(),
                                             foundComponents,
                                             typeId
                                     );
             } else if (
-                    OperationContext.get().instance(typeId).getOperator().equals(",") &&
+                    _context.instance(typeId).getOperator().equals(",") &&
                     foundComponents.get( 0 ).startsWith("[")
             ) {
                 foundComponents.set(0, foundComponents.get( 0 ).substring(1));
@@ -266,7 +274,7 @@ public class FunctionBuilder
                 }
             }
             for (String currentComponent2 : foundComponents) {
-                Function newCore2 = FunctionBuilder.build(currentComponent2, doAD);//Dangerous recursion lives here!
+                Function newCore2 = build(currentComponent2, doAD);//Dangerous recursion lives here!
                 sources.add(newCore2);
             }
             sources.trimToSize();
@@ -277,22 +285,20 @@ public class FunctionBuilder
                 if (source != null) newVariable.add(source);
             }
             sources = newVariable;
-            function = new FunctionNode(OperationContext.get().instance(typeId), sources, doAD);
+            function = new FunctionNode(_context.instance(typeId), sources, doAD);
             return function;
         }
     }
 
 
-    private static List<String> _groupAccordingToArity(int arity, List<String> components, int f_id) {
+    private List<String> _groupAccordingToArity(int arity, List<String> components, int f_id) {
         if ( components.size() > arity && arity > 1 ) {
             String newComponent =
                     "(" +
                             IntStream.iterate(0, n -> n + 1)
                              .limit(arity)
-                             .mapToObj(components::get)
-                             .collect(Collectors.joining(
-                                     OperationContext.get().instance(f_id).getOperator()
-                             )) +
+                             .mapToObj( components::get )
+                             .collect(Collectors.joining( _context.instance(f_id).getOperator() )) +
                     ")";
             for ( int i = 0; i < arity; i++ )  components.remove(components.get( 0 ));
             components.add(0, newComponent);

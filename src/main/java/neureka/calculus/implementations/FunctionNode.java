@@ -69,7 +69,7 @@ public class FunctionNode extends AbstractBaseFunction
 
     @Override
     public Function newBuild( String expression ) {
-        return FunctionBuilder.build( expression, true );
+        return new FunctionBuilder(OperationContext.get()).build( expression, true );
     }
 
     //---
@@ -166,7 +166,7 @@ public class FunctionNode extends AbstractBaseFunction
             String asStr = _operation.stringify(
                     IntStream.range(0, _src.length).mapToObj(i -> "I[" + i + "]").toArray(String[]::new)
             );
-            return FunctionBuilder.build( asStr, _isDoingAD ).call( tensors );
+            return new FunctionBuilder(OperationContext.get()).build( asStr, _isDoingAD ).call( tensors );
         } else {
             tensors = srcActivation(inputs, j, d, 1);
         }

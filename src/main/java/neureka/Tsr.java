@@ -87,6 +87,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.operations.other.Reshape;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
@@ -2708,7 +2709,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
         public static Tsr<?> addInto( Tsr<?> t, Tsr<?> source ) {
             if ( t.isVirtual() && source.isVirtual() ) t.value64()[ 0 ] += source.value64()[ 0 ];
-            else FunctionBuilder.build( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])", false ).call( new Tsr[]{ t, source } );
+            else new FunctionBuilder(OperationContext.get()).build( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])", false ).call( new Tsr[]{ t, source } );
             return source;
         }
 

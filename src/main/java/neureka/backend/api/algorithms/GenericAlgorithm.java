@@ -5,14 +5,14 @@ import groovy.lang.GroovyShell;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.autograd.DefaultADAgent;
-import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.backend.api.operations.OperationContext;
+import neureka.backend.standard.implementations.HostImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
-import neureka.backend.standard.implementations.HostImplementation;
 import neureka.devices.host.HostCPU;
 import neureka.dtype.NumericType;
 
@@ -27,7 +27,7 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
                 HostCPU.class,
                 new HostImplementation(
                         call -> {
-                            Function f = FunctionBuilder.build( type, call.getTensors().length-1, false);
+                            Function f = new FunctionBuilder(OperationContext.get()).build( type, call.getTensors().length-1, false);
                             boolean allNumeric = call.validate()
                                     .all( t -> t.getDataType().typeClassImplements(NumericType.class) )
                                     .isValid();

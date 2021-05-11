@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
+import neureka.backend.api.operations.OperationContext;
 import neureka.calculus.assembly.FunctionBuilder;
 
 @Accessors( prefix = {"_"} )
@@ -21,7 +22,7 @@ public final class PendingError<ValType>
     }
 
     public void accumulate( Tsr<?> error ) {
-        FunctionBuilder.build(
+        new FunctionBuilder(OperationContext.get()).build(
                 "I[ 0 ]<-(I[ 0 ]+I[ 1 ])", false
         ).call( new Tsr[]{ _accumulatedError, error } );
         _toBeReceived--;

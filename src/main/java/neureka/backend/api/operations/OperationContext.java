@@ -10,20 +10,17 @@ import java.util.*;
 import java.util.function.Supplier;
 
 /**
- *    This class is a (thread-local) Singleton managing Operation instances,
- *    which is also cloneable for testing purposes.
+ *    This class is a (thread-local) Singleton / Multiton managing Operation instances,
+ *    which is also cloneable for testing purposes and to enable extending the backend dynamically.
  *    <br><br>
- *    It initializes and stores Operation instances
- *    in various data structures for fast access and querying. (Mostly used by the FunctionParser)
+ *    It initializes and stores {@link Operation} instances in various data structures
+ *    for fast access and querying (Mostly used by the {@link neureka.calculus.assembly.FunctionParser}).
  *    <br>
- *    Operation instance are always managed by ThreadLocal reference to
- *    OperationContext singleton instances represented by the static "_CONTEXTS" variable.
- *    In these context instances
- *    operations are stored in simple list and map collections,
+ *    Operation instance are always managed by {@link OperationContext}
+ *    singleton instances. These contexts are store in the static {@link ThreadLocal} "_CONTEXTS" mapping.
+ *    In these context instances {@link Operation}s are stored in simple list and map collections,
  *    namely: <br>
- *    The "_instances" list
- *    and the "_lookup" map
- *    as declared below.
+ *    The "_instances" list and the "_lookup" map as declared below.
  *    <br>
  *    <br>
  *    During class initialization concrete classes extending the Operation class
@@ -36,13 +33,12 @@ import java.util.function.Supplier;
 public class OperationContext implements Cloneable
 {
     private static final ThreadLocal<OperationContext> _CONTEXTS = ThreadLocal.withInitial( OperationContext::new );
-
-    static
-    {
-        OperationContext context = OperationContext.get();
+    static {
+        //OperationContext context = OperationContext.get();
         // loading operations!
         ServiceLoader<Operation> serviceLoader = ServiceLoader.load(Operation.class);
-        serviceLoader.reload();
+        //serviceLoader.reload();
+
         //checking if load was successful
         for ( Operation operation : serviceLoader ) {
             assert operation.getFunction() != null;

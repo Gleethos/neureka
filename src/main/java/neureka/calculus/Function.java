@@ -40,6 +40,7 @@ import neureka.Tsr;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.Operation;
+import neureka.backend.api.operations.OperationContext;
 import neureka.calculus.assembly.FunctionBuilder;
 
 import java.util.List;
@@ -115,7 +116,7 @@ public interface Function
     }
 
     static Function create( String expression, boolean doAD ) {
-        return FunctionBuilder.build(expression, doAD);
+        return new FunctionBuilder(OperationContext.get()).build(expression, doAD);
     }
 
     /**
@@ -126,12 +127,12 @@ public interface Function
     {
         public static <T> Tsr<T> commit( Tsr<T>[] tensors, String operation, boolean doAD )
         {
-            return commit( null, tensors, FunctionBuilder.build( operation, doAD ) );
+            return commit( null, tensors, new FunctionBuilder(OperationContext.get()).build( operation, doAD ) );
         }
 
         public static <T> Tsr<T> commit( Tsr<T> drain, Tsr<T>[] tensors, String operation, boolean doAD )
         {
-            return commit( drain, tensors, FunctionBuilder.build( operation, doAD ) );
+            return commit( drain, tensors, new FunctionBuilder(OperationContext.get()).build( operation, doAD ) );
         }
 
         public static <T> Tsr<T> commit( Tsr<T>[] inputs, Function function )

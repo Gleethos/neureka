@@ -49,7 +49,6 @@ public final class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Lo
         BigInteger UNSIGNED_LONG_MASK = BigInteger.ONE.shiftLeft(Long.SIZE).subtract(BigInteger.ONE);
         long unsignedLong = new BigInteger(bytes).longValue(); // sample input value
         BigInteger bi =  BigInteger.valueOf(unsignedLong).and(UNSIGNED_LONG_MASK);
-        System.out.println("To big integer : "+bi);
         return bi;
     }
 

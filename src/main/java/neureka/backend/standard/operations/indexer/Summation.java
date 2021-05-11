@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.OperationBuilder;
+import neureka.backend.api.operations.OperationContext;
 import neureka.devices.Device;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -224,7 +225,7 @@ public final class Summation extends AbstractOperation
                 {
                     if ( this.supports(Convolution.class) )
                     {
-                        Function invX = FunctionBuilder.build(
+                        Function invX = new FunctionBuilder(OperationContext.get()).build(
                                 "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
                                 false
                         );

@@ -2,6 +2,7 @@ package it.tensors
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.backend.api.operations.OperationContext
 import neureka.calculus.assembly.FunctionBuilder
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
@@ -374,10 +375,10 @@ class Tensor_Operation_Integration_Tests extends Specification
         and : Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
 
         when : Tsr[] trs = new Tsr[]{x}
-        then : FunctionBuilder.build("Ig[0]", false)(trs).toString().equals("[1]:(-8.0)")
+        then : new FunctionBuilder(OperationContext.get()).build("Ig[0]", false)(trs).toString().equals("[1]:(-8.0)")
 
         when : trs[0] = y
-        then : assert FunctionBuilder.build("Ig[0]", false)(trs).toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
+        then : assert new FunctionBuilder(OperationContext.get()).build("Ig[0]", false)(trs).toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
     }
 
 

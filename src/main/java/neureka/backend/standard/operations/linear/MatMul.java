@@ -122,7 +122,7 @@ public class MatMul extends AbstractOperation
                             //Tsr ctxDerivative = (Tsr) call.getAt("derivative");
                             if ( forward ) throw new IllegalArgumentException("Matrix multiplication of does not support forward-AD!");
 
-                            Function invX = FunctionBuilder.build( "I[ 0 ] @ I[ 1 ]", false );
+                            Function invX = new FunctionBuilder(OperationContext.get()).build( "I[ 0 ] @ I[ 1 ]", false );
                             Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
                             Tsr deriv = inputs[1+d].T();//f.derive( inputs, d );

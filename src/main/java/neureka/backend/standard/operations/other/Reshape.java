@@ -3,6 +3,7 @@ package neureka.backend.standard.operations.other;
 import neureka.Tsr;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
+import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.devices.Device;
 import neureka.autograd.DefaultADAgent;
@@ -43,8 +44,8 @@ public class Reshape extends AbstractOperation
                             throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                         }
                         return new DefaultADAgent( null )
-                                .setForward( (t, derivative ) -> FunctionBuilder.build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
-                                .setBackward( (t, error ) -> FunctionBuilder.build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
+                                .setForward( (t, derivative ) -> new FunctionBuilder(OperationContext.get()).build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
+                                .setBackward( (t, error ) -> new FunctionBuilder(OperationContext.get()).build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
                     }
                 ).setHandleInsteadOfDevice(
                     ( caller, call ) ->

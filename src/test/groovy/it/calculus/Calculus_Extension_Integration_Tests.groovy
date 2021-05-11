@@ -65,8 +65,8 @@ class Calculus_Extension_Integration_Tests extends Specification
                                                 (Function f, ExecutionCall<Device> call, boolean forward) -> {
                                                     if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                                                     return new DefaultADAgent(null)
-                                                            .setForward((t, derivative) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
-                                                            .setBackward((t, error) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error}, 0));
+                                                            .setForward((t, derivative) -> new FunctionBuilder(OperationContext.get()).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
+                                                            .setBackward((t, error) -> new FunctionBuilder(OperationContext.get()).build(f.toString(), false).derive(new Tsr[]{error}, 0));
                                                 }
                                         )
                                         .setHandleInsteadOfDevice((caller, call) -> null)

@@ -134,7 +134,7 @@ public class XConv extends AbstractOperation
                     Tsr[] inputs = call.getTensors();
                     int d = call.getDerivativeIndex();
 
-                    Function invX = FunctionBuilder.build(
+                    Function invX = new FunctionBuilder(OperationContext.get()).build(
                             "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
                             false
                     );

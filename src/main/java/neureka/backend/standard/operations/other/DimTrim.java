@@ -3,6 +3,7 @@ package neureka.backend.standard.operations.other;
 import neureka.Tsr;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
+import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.devices.Device;
 import neureka.autograd.DefaultADAgent;
@@ -44,7 +45,7 @@ public class DimTrim extends AbstractOperation
                             }
                             return new DefaultADAgent()
                                     .withContext(call.getContext())
-                                    .setForward((t, derivative) -> FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0))
+                                    .setForward((t, derivative) -> new FunctionBuilder(OperationContext.get()).build(f.toString(), false).derive(new Tsr[]{derivative},0))
                                     .setBackward( (t, error) -> pad(error, new int[]{prefix, postfix}, true) );
                         }
                 )
