@@ -5,7 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.api.operations.OperationContext;
-import neureka.backend.standard.operations.operator.JunctionUtil;
+import neureka.backend.standard.operations.JunctionUtil;
 import neureka.devices.Device;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.implementations.CLImplementation;

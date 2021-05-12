@@ -124,7 +124,8 @@ public final class Gaussian extends AbstractOperation
                                                 ),
                                 3
                         )
-                ).setImplementationFor(
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         new CLImplementation(
                                 call -> {

@@ -1,4 +1,4 @@
-package neureka.backend.standard.operations.operator;
+package neureka.backend.standard.operations;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
@@ -10,6 +10,60 @@ import java.util.function.Function;
 
 public class JunctionUtil
 {
+
+    public static Tsr<?> forMultiplications(
+            ExecutionCall<? extends Device<?>> call,
+            Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith
+    ) {
+        Tsr[] tsrs = call.getTensors();
+        Device device = call.getDevice();
+        int d = call.getDerivativeIndex();
+        Operation type = call.getOperation();
+
+        Tsr alternative = null;
+        if (tsrs.length > 3) {
+            if ( d < 0 ) {
+                Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
+                alternative = goDeeperWith.apply(
+                        ExecutionCall.builder()
+                                .device(device)
+                                .tensors(reduction)
+                                .derivativeIndex(d)
+                                .operation(type)
+                                .build()
+                );
+                tsrs[ 0 ] = reduction[ 0 ];
+
+                reduction = Operation.Utility.offsetted(tsrs, 1);
+                alternative = goDeeperWith.apply(
+                        ExecutionCall.builder()
+                                .device(device)
+                                .tensors(reduction)
+                                .derivativeIndex(d)
+                                .operation(type)
+                                .build()
+                );
+                tsrs[ 0 ] = reduction[ 0 ];
+            } else {
+                Tsr[] reduction = Operation.Utility.without(tsrs, 1+d);
+                if ( reduction.length > 2 ) {
+                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tsrs[ 1 ]) : reduction[ 0 ];
+                    alternative = goDeeperWith.apply(
+                            ExecutionCall.builder()
+                                    .device( device )
+                                    .tensors( reduction )
+                                    .derivativeIndex( -1 )
+                                    .operation( OperationContext.get().instance("*") )
+                                    .build()
+                    );
+                    tsrs[ 0 ] = reduction[ 0 ];
+                } else tsrs[ 0 ] = reduction[ 1 ];
+            }
+            return alternative;
+        } else
+            return alternative;
+
+    }
 
 
     public static Tsr<?> forDivisionsOrModuli(

@@ -65,8 +65,30 @@ public interface NDConfiguration
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    /**
+     *  The following method calculates the true index for an element in the data array
+     *  based on a provided "virtual index".
+     *  This virtual index might be different from the true index, for example because the nd-array is
+     *  a slice of another larger nd-array, or maybe because it is in fact a reshaped version of another nd-array.
+     *  This virtual index will be turned into an index array which defines the position for every axis.
+     *  Then this index array will be converted into the final and true index targeting an underlying item.
+     *  The information needed for performing this translation is contained within an implementation of
+     *  the {@link NDConfiguration} interface array, which contains everything
+     *  needed to treat a given block of data as an nd-array!
+     *
+     * @param index The virtual index of the tensor having this configuration.
+     * @return The true index which targets the actual data within the underlying data array of an nd-array / tensor.
+     */
     int indexOfIndex( int index );
 
+    /**
+     *  The following method calculates the axis indices for an element in the nd-array array
+     *  based on a provided "virtual index".
+     *  The resulting index defines the position of the element for every axis.
+     *
+     * @param index The virtual index of the tensor having this configuration.
+     * @return The position of the (virtually) targeted element represented as an array of axis indices.
+     */
     int[] indicesOfIndex( int index );
 
     int indexOfIndices( int[] indices );
@@ -88,7 +110,7 @@ public interface NDConfiguration
     class Utility {
 
         @Contract(pure = true)
-        public static int[] rearrange(int[] tln, int[] shape, @NotNull int[] newForm) {
+        public static int[] rearrange(int[] tln, int[] shape, int[] newForm) {
             int[] shpTln = newTlnOf( shape );
             int[] newTln = new int[ newForm.length ];
             for ( int i = 0; i < newForm.length; i++ ) {
@@ -99,7 +121,7 @@ public interface NDConfiguration
         }
 
         @Contract(pure = true)
-        public static int[] rearrange(@NotNull int[] array, @NotNull int[] ptr) {
+        public static int[] rearrange(int[] array, int[] ptr) {
             int[] newShp = new int[ptr.length];
             for ( int i = 0; i < ptr.length; i++ ) {
                 if (ptr[ i ] < 0) newShp[ i ] = Math.abs(ptr[ i ]);
@@ -120,13 +142,13 @@ public interface NDConfiguration
         }
 
         @Contract(pure = true)
-        public static void increment( @NotNull int[] indices, @NotNull int[] shape ) {
+        public static void increment( int[] indices, int[] shape ) {
             int i = shape.length-1;
             while ( i >= 0 && i < shape.length ) i = _incrementAt( i, indices, shape );
         }
 
         @Contract(pure = true)
-        private static int _incrementAt( int i, @NotNull int[] indices, @NotNull int[] shape )
+        private static int _incrementAt( int i, int[] indices, int[] shape )
         {
             if ( indices[ i ] < shape[ i ] ) {
                 indices[ i ]++;

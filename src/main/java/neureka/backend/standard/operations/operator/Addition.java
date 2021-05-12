@@ -14,6 +14,7 @@ import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.operations.JunctionUtil;
 import neureka.calculus.Function;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;

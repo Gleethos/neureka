@@ -21,7 +21,7 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
 {
     private final java.util.function.Function<String, String> _aliasSwapper =
             s ->
-            "//-=<PARSED>=-//\n" +
+                "//-=<PARSED>=-//\n" +
                     s.replace("src1", "src1[_i_of_idx_on_tln(prv_src1_cfg, rank)]")
                             .replace("src2", "src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]")
                             .replace("input1", "src1[_i_of_i(i, prv_src1_cfg, rank)]")
@@ -71,10 +71,6 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
             AbstractOperation type
     ) {
         super( lambda, arity );
-        kernelSource = kernelSource.replace(
-                "Neureka.instance().settings().indexing().REVERSE_INDEX_TRANSLATION",
-                "false"
-        );
         boolean templateFound;
         if (kernelSource.contains("__kernel")) {
             String[] parts = kernelSource.split("__kernel")[ 1 ].split("\\(")[ 0 ].split(" ");

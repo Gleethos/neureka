@@ -9,6 +9,7 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
+import neureka.backend.standard.operations.JunctionUtil;
 import neureka.devices.Device;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.implementations.CLImplementation;

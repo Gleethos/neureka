@@ -6,7 +6,6 @@ import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.Operation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.Activation;
@@ -14,6 +13,7 @@ import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.operations.JunctionUtil;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
@@ -37,57 +37,7 @@ public final class Product extends AbstractOperation {
                         .setIsInline(         false       )
         );
 
-        Algorithm.RecursiveJunctor rja = (call, goDeeperWith)->
-        {
-            Tsr[] tsrs = call.getTensors();
-            Device device = call.getDevice();
-            int d = call.getDerivativeIndex();
-            Operation type = call.getOperation();
-
-            Tsr alternative = null;
-            if (tsrs.length > 3) {
-                if ( d < 0 ) {
-                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
-                    alternative = goDeeperWith.apply(
-                            ExecutionCall.builder()
-                                    .device(device)
-                                    .tensors(reduction)
-                                    .derivativeIndex(d)
-                                    .operation(type)
-                                    .build()
-                    );
-                    tsrs[ 0 ] = reduction[ 0 ];
-
-                    reduction = Utility.offsetted(tsrs, 1);
-                    alternative = goDeeperWith.apply(
-                            ExecutionCall.builder()
-                                    .device(device)
-                                    .tensors(reduction)
-                                    .derivativeIndex(d)
-                                    .operation(type)
-                                    .build()
-                    );
-                    tsrs[ 0 ] = reduction[ 0 ];
-                } else {
-                    Tsr[] reduction = Utility.without(tsrs, 1+d);
-                    if ( reduction.length > 2 ) {
-                        reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tsrs[ 1 ]) : reduction[ 0 ];
-                        alternative = goDeeperWith.apply(
-                                ExecutionCall.builder()
-                                    .device(device)
-                                    .tensors(reduction)
-                                    .derivativeIndex(-1)
-                                    .operation(OperationContext.get().instance("*"))
-                                    .build()
-                        );
-                        tsrs[ 0 ] = reduction[ 0 ];
-                    } else tsrs[ 0 ] = reduction[ 1 ];
-                }
-                return alternative;
-            } else
-                return alternative;
-
-        };
+        Algorithm.RecursiveJunctor rja = JunctionUtil::forMultiplications;
 
 
         //________________
