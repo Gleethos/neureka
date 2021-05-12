@@ -192,7 +192,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
     public static void broadcast(
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int d, int i, int end,
-            Operation.TertiaryNDXConsumer operation
+            Operation.TertiaryNDAConsumer operation
     ) {
         NDConfiguration ndc0 = t0_drn.getNDConf();
         NDConfiguration ndc1 = t1_src.getNDConf();

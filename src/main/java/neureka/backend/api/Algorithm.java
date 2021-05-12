@@ -106,7 +106,7 @@ public interface Algorithm<FinalType extends Algorithm<FinalType>>
 
     Tsr<?> handleInsteadOfDevice( FunctionNode caller, ExecutionCall<? extends Device<?>> call );
 
-    interface RecursiveJunctionAgent {
+    interface RecursiveJunctor {
         Tsr<?> handle( ExecutionCall<? extends Device<?>> call, Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith );
     }
 

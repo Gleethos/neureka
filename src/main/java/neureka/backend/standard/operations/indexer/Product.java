@@ -37,7 +37,7 @@ public final class Product extends AbstractOperation {
                         .setIsInline(         false       )
         );
 
-        Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
+        Algorithm.RecursiveJunctor rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();
@@ -108,7 +108,7 @@ public final class Product extends AbstractOperation {
                     }
                 };
 
-        DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
+        DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
                 ( inputs, d ) ->
                 {
                     double[] t1_val = inputs[ 1 ].value64();
@@ -215,7 +215,7 @@ public final class Product extends AbstractOperation {
                     else return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
                 };
 
-        DefaultOperatorCreator<TertiaryNDXConsumer> activationXCreator =
+        DefaultOperatorCreator<TertiaryNDAConsumer> activationXCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];

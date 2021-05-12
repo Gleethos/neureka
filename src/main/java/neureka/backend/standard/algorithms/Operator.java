@@ -90,7 +90,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
     public static void operate(
             Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int d, int i, int end,
-            Operation.PrimaryNDXConsumer operation
+            Operation.PrimaryNDAConsumer operation
     ) {
         if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
             ((double[])t0_drn.getData())[ 0 ] = operation.execute( new int[t0_drn.rank()] );

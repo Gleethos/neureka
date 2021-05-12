@@ -22,7 +22,7 @@ public final class Logarithm extends AbstractOperation
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.log(t1_val[ t1Idx.i() ]);
                 else return ( t0Idx, t1Idx, t2Idx ) -> 1.0/(t1_val[ t1Idx.i() ]);
             };
-    private final DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
+    private final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.log(t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]);

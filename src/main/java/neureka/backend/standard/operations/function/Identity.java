@@ -39,7 +39,7 @@ public final class Identity extends AbstractOperation
                     else return ( t0Idx, t1Idx, t2Idx ) -> 1;
                 };
 
-        DefaultOperatorCreator<TertiaryNDXConsumer> activationXCreator =
+        DefaultOperatorCreator<TertiaryNDAConsumer> activationXCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];

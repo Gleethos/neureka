@@ -45,7 +45,7 @@ public final class Gaussian extends AbstractOperation
                     }
                 };
 
-        DefaultOperatorCreator<TertiaryNDXConsumer> activationXCreator =
+        DefaultOperatorCreator<TertiaryNDAConsumer> activationXCreator =
                 ( inputs, d ) ->
                 {
                     double[] t1_val = inputs[ 1 ].value64();

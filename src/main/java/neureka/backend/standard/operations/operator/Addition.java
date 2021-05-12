@@ -6,7 +6,6 @@ import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.Operation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.Broadcast;
@@ -35,7 +34,7 @@ public class Addition extends AbstractOperation {
                 else return ( t0Idx, t1Idx, t2Idx ) -> 1.0;
             };
 
-    private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
+    private static final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 double[] t2_val = inputs[ 2 ].value64();
@@ -94,9 +93,7 @@ public class Addition extends AbstractOperation {
                         .setIsInline(         false      )
         );
 
-        Algorithm.RecursiveJunctionAgent rja =
-                (call, goDeeperWith)->
-                    neureka.backend.standard.operations.operator.Utility.handlePairedExecutionForAdditionAndSubtraction(call, goDeeperWith, true);
+        Algorithm.RecursiveJunctor rja = JunctionUtil::forAdditions;
 
         //_____________________
         // DEFAULT OPERATION :
@@ -109,7 +106,7 @@ public class Addition extends AbstractOperation {
                     else return ( t1Idx, t2Idx ) -> 1.0;
                 };
 
-        DefaultOperatorCreator<PrimaryNDXConsumer> operationXCreator =
+        DefaultOperatorCreator<PrimaryNDAConsumer> operationXCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
@@ -258,7 +255,7 @@ public class Addition extends AbstractOperation {
                     }
                 };
 
-        ScalarOperatorCreator<PrimaryNDXConsumer> scalarXCreator =
+        ScalarOperatorCreator<PrimaryNDAConsumer> scalarXCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();

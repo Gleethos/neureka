@@ -66,15 +66,15 @@ public interface Operation
     @FunctionalInterface
     interface TertiaryNDIConsumer { double execute( NDIterator t0Idx, NDIterator t1Idx, NDIterator t2Idx ); }
     @FunctionalInterface
-    interface TertiaryNDXConsumer { double execute( int[] t0Idx, int[] t1Idx, int[] t2Idx ); }
+    interface TertiaryNDAConsumer { double execute( int[] t0Idx, int[] t1Idx, int[] t2Idx ); }
     @FunctionalInterface
     interface SecondaryNDIConsumer { double execute( NDIterator t0Idx, NDIterator t1Idx ); }
     @FunctionalInterface
-    interface SecondaryNDXConsumer { double execute( int[] t0Idx, int[] t1Idx ); }
+    interface SecondaryNDAConsumer { double execute( int[] t0Idx, int[] t1Idx ); }
     @FunctionalInterface
     interface PrimaryNDIConsumer { double execute( NDIterator t0Idx ); }
     @FunctionalInterface
-    interface PrimaryNDXConsumer { double execute( int[] t0Idx ); }
+    interface PrimaryNDAConsumer { double execute( int[] t0Idx ); }
 
     //---
 

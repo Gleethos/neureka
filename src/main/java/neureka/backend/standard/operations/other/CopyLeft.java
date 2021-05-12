@@ -71,7 +71,7 @@ public class CopyLeft extends AbstractOperation {
                     else return null;
                 };
 
-        ScalarOperatorCreator<PrimaryNDXConsumer> scalarXCreator =
+        ScalarOperatorCreator<PrimaryNDAConsumer> scalarXCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     if ( d < 0 ) return t1Idx -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] = value;

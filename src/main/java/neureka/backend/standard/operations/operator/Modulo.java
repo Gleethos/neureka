@@ -6,8 +6,6 @@ import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.Operation;
-import neureka.backend.api.operations.OperationContext;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
@@ -36,7 +34,7 @@ public class Modulo extends AbstractOperation {
                         .setIsInline(         false       )
         );
 
-        Algorithm.RecursiveJunctionAgent rja = neureka.backend.standard.operations.operator.Utility::handlePairedExecutionForDivionAndModulo;
+        Algorithm.RecursiveJunctor rja = JunctionUtil::forDivisionsOrModuli;
 
         //_____________________
         // DEFAULT OPERATION :
@@ -56,7 +54,7 @@ public class Modulo extends AbstractOperation {
                         };
                     }
                 };
-        DefaultOperatorCreator<PrimaryNDXConsumer> operationXCreator =
+        DefaultOperatorCreator<PrimaryNDAConsumer> operationXCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
@@ -165,7 +163,7 @@ public class Modulo extends AbstractOperation {
                     }
                 };
 
-        DefaultOperatorCreator<TertiaryNDXConsumer> creatorX =
+        DefaultOperatorCreator<TertiaryNDAConsumer> creatorX =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
@@ -288,7 +286,7 @@ public class Modulo extends AbstractOperation {
                     }
                 };
 
-        ScalarOperatorCreator<PrimaryNDXConsumer> scalarXCreator =
+        ScalarOperatorCreator<PrimaryNDAConsumer> scalarXCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();

@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.api.operations.OperationContext;
+import neureka.backend.standard.operations.operator.JunctionUtil;
 import neureka.devices.Device;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -15,7 +16,6 @@ import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.Operation;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -37,45 +37,7 @@ public final class Summation extends AbstractOperation
                         .setIsInline(         false       )
         );
 
-        Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
-        {
-            Tsr[] tsrs = call.getTensors();
-            Device device = call.getDevice();
-            int d = call.getDerivativeIndex();
-            Operation type = call.getOperation();
-
-            Tsr alternative = null;
-            if (tsrs.length > 3) {
-                if ( d < 0 ) {
-                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
-                    alternative = goDeeperWith.apply(
-                            ExecutionCall.builder()
-                                    .device(device)
-                                    .tensors(reduction)
-                                    .derivativeIndex(d)
-                                    .operation(type)
-                                    .build()
-                    );
-                    tsrs[ 0 ] = reduction[ 0 ];
-
-                    reduction = Utility.offsetted(tsrs, 1);
-                    alternative = goDeeperWith.apply(
-                            ExecutionCall.builder()
-                                    .device(device)
-                                    .tensors(reduction)
-                                    .derivativeIndex(d)
-                                    .operation(type)
-                                    .build()
-                    );
-                    tsrs[ 0 ] = reduction[ 0 ];
-                } else {
-                    tsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[ 1 ]).setValue(1.0f);
-                }
-                return alternative;
-            } else
-                return alternative;
-
-        };
+        Algorithm.RecursiveJunctor rja = JunctionUtil::forAdditions;
 
         //________________
         // BROADCASTING :
@@ -89,7 +51,7 @@ public final class Summation extends AbstractOperation
                     else return ( t0Idx, t1Idx, t2Idx ) -> 1.0;
                 };
 
-        DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
+        DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
                 ( inputs, d ) ->
                 {
                     double[] t1_val = inputs[ 1 ].value64();
@@ -192,7 +154,7 @@ public final class Summation extends AbstractOperation
                     else return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
                 };
 
-        DefaultOperatorCreator<TertiaryNDXConsumer> activationXCreator =
+        DefaultOperatorCreator<TertiaryNDAConsumer> activationXCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];

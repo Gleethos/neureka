@@ -80,7 +80,7 @@ public class Activation extends AbstractFunctionalAlgorithm< Activation >
     public static void activate(
             Tsr t0_drn,
             int i, int end,
-            Operation.TertiaryNDXConsumer operation
+            Operation.TertiaryNDAConsumer operation
     ) {
         NDConfiguration ndc0 = t0_drn.getNDConf();
         int[] t0Shp = ndc0.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0

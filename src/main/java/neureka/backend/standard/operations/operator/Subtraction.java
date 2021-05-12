@@ -9,7 +9,6 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
-import neureka.backend.api.Operation;
 import neureka.devices.Device;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -39,7 +38,7 @@ public class Subtraction extends AbstractOperation
                 }
             };
 
-    private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
+    private static final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 double[] t2_val = inputs[ 2 ].value64();
@@ -68,9 +67,7 @@ public class Subtraction extends AbstractOperation
                         .setIsInline(         false      )
         );
 
-        Algorithm.RecursiveJunctionAgent rja =
-                (call, goDeeperWith)->
-                        neureka.backend.standard.operations.operator.Utility.handlePairedExecutionForAdditionAndSubtraction(call, goDeeperWith, false);
+        Algorithm.RecursiveJunctor rja = JunctionUtil::forSubtractions;
 
 
         //_____________________
@@ -84,7 +81,7 @@ public class Subtraction extends AbstractOperation
                         return ( t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] - t2_val[t2Idx.i()];
                     } else return ( t1Idx, t2Idx ) -> ( d == 0 ) ? 1.0 : -1.0;
                 };
-        DefaultOperatorCreator<PrimaryNDXConsumer> operationXCreator =
+        DefaultOperatorCreator<PrimaryNDAConsumer> operationXCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
@@ -171,7 +168,7 @@ public class Subtraction extends AbstractOperation
                     else if ( d == 0 ) return t1Idx -> 1; else return t1Idx -> -1;
                 };
 
-        ScalarOperatorCreator<PrimaryNDXConsumer> scalarOperatorXCreator =
+        ScalarOperatorCreator<PrimaryNDAConsumer> scalarOperatorXCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();

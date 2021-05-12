@@ -36,7 +36,7 @@ public class Multiplication extends AbstractOperation
                 else return ( t0Idx, t1Idx, t2Idx ) -> (d == 0) ? t2_val[t2Idx.i()] : t1_val[ t1Idx.i() ];
             };
 
-    private static final DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
+    private static final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 double[] t2_val = inputs[ 2 ].value64();
@@ -65,7 +65,7 @@ public class Multiplication extends AbstractOperation
                         .setIsInline(         false      )
         );
 
-        Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
+        Algorithm.RecursiveJunctor rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();
@@ -137,7 +137,7 @@ public class Multiplication extends AbstractOperation
                 };
 
 
-        DefaultOperatorCreator<PrimaryNDXConsumer> defaultOperatorXcreator =
+        DefaultOperatorCreator<PrimaryNDAConsumer> defaultOperatorXcreator =
                 ( inputs, d ) -> {
                     inputs[ 1 ].setIsVirtual( false );
                     inputs[ 2 ].setIsVirtual( false );
@@ -312,7 +312,7 @@ public class Multiplication extends AbstractOperation
                     }
                 };
 
-        ScalarOperatorCreator<PrimaryNDXConsumer> scalarOperatorXCreator =
+        ScalarOperatorCreator<PrimaryNDAConsumer> scalarOperatorXCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
@@ -422,7 +422,7 @@ public class Multiplication extends AbstractOperation
                     return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
                 };
 
-        DefaultOperatorCreator<TertiaryNDXConsumer> xBCCreatorX =
+        DefaultOperatorCreator<TertiaryNDAConsumer> xBCCreatorX =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();

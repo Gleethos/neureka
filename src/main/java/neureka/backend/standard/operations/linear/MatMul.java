@@ -35,7 +35,7 @@ public class MatMul extends AbstractOperation
                         .setIsInline(         false       )
         );
 
-        Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
+        Algorithm.RecursiveJunctor rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();
@@ -87,7 +87,7 @@ public class MatMul extends AbstractOperation
                     }
                 };
 
-        DefaultOperatorCreator<TertiaryNDXConsumer> convolutionCreator =
+        DefaultOperatorCreator<TertiaryNDAConsumer> convolutionCreator =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();

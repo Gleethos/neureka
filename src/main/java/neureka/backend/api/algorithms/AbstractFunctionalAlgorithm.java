@@ -42,7 +42,7 @@ public abstract class AbstractFunctionalAlgorithm< FinalType extends Algorithm<F
     @Getter @Setter private Algorithm.BackwardADAnalyzer _canPerformBackwardADFor;
     @Getter @Setter private Algorithm.ADAgentSupplier _supplyADAgentFor;
     @Getter @Setter private Algorithm.InitialCallHook _handleInsteadOfDevice;
-    @Getter @Setter private Algorithm.RecursiveJunctionAgent _handleRecursivelyAccordingToArity;
+    @Getter @Setter private RecursiveJunctor _handleRecursivelyAccordingToArity;
     @Getter @Setter private Algorithm.DrainInstantiation _instantiateNewTensorsForExecutionIn;
 
     public AbstractFunctionalAlgorithm(String name ) {

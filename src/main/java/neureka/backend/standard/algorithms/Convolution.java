@@ -200,7 +200,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
     public static void convolve (
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int d, int i, int end,
-            Operation.TertiaryNDXConsumer operation
+            Operation.TertiaryNDAConsumer operation
     ) {
         if ( d < 0 ) _convolve(t0_drn, t1_src, t2_src, i, end, operation);
         else _deConvolve(t0_drn, t1_src, t2_src, i, end, operation);
@@ -211,7 +211,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
     private static void _convolve (
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int i, int end,
-            Operation.TertiaryNDXConsumer operation
+            Operation.TertiaryNDAConsumer operation
     ) {
         NDConfiguration ndc0 = t0_drn.getNDConf();
         NDConfiguration ndc1 = t1_src.getNDConf();
@@ -285,7 +285,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
     private static void _deConvolve (
             Tsr t0_drn, Tsr t1_src, Tsr t2_src,
             int i, int end,
-            Operation.TertiaryNDXConsumer operation
+            Operation.TertiaryNDAConsumer operation
     ) {
         NDConfiguration ndc0 = t0_drn.getNDConf();
         NDConfiguration ndc1 = t1_src.getNDConf();

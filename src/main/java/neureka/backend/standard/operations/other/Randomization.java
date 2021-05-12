@@ -43,7 +43,7 @@ public class Randomization extends AbstractOperation
                     };
                 };
 
-        ScalarOperatorCreator< PrimaryNDXConsumer > creatorX =
+        ScalarOperatorCreator<PrimaryNDAConsumer> creatorX =
                 ( inputs, value, d ) -> {
                     return t1Idx -> {
                         int sum = 0;

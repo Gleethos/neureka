@@ -32,7 +32,7 @@ public final class ReLU extends AbstractOperation
                 }
             };
 
-    private DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
+    private DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) {

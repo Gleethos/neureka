@@ -78,7 +78,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
     public static void scalarize (
             Tsr t0_drn,
             int i, int end,
-            Operation.PrimaryNDXConsumer operation
+            Operation.PrimaryNDAConsumer operation
     ) {
         int[] t0Shp = t0_drn.getNDConf().shape();
         int[] t0Idx = t0_drn.IndicesOfIndex( i );

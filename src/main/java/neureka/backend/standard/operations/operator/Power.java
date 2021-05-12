@@ -51,7 +51,7 @@ public class Power extends AbstractOperation
         }
     };
 
-    private final static DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX = ( inputs, d )->
+    private final static DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX = (inputs, d )->
     {
         double[] t1_val = inputs[ 1 ].value64();
         double[] t2_val = inputs[ 2 ].value64();
@@ -111,7 +111,7 @@ public class Power extends AbstractOperation
             }
         };
 
-        DefaultOperatorCreator<PrimaryNDXConsumer> operationXCreator = ( inputs, d )->
+        DefaultOperatorCreator<PrimaryNDAConsumer> operationXCreator = (inputs, d )->
         {
             double[] t1_val = inputs[ 1 ].value64();
             double[] t2_val = inputs[ 2 ].value64();
@@ -130,7 +130,7 @@ public class Power extends AbstractOperation
             }
         };
 
-        Algorithm.RecursiveJunctionAgent rja = (call, goDeeperWith)->
+        Algorithm.RecursiveJunctor rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();
@@ -390,7 +390,7 @@ public class Power extends AbstractOperation
                     }
                 };
 
-        ScalarOperatorCreator<PrimaryNDXConsumer> scalarXCreator =
+        ScalarOperatorCreator<PrimaryNDAConsumer> scalarXCreator =
                 ( inputs, value, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();

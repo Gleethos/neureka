@@ -27,7 +27,7 @@ public final class Quadratic extends AbstractOperation
                 } else return ( t0Idx, t1Idx, t2Idx ) -> 2 * t1_val[ t1Idx.i() ];
             };
 
-    private DefaultOperatorCreator<TertiaryNDXConsumer> _creatorNDX =
+    private DefaultOperatorCreator<TertiaryNDAConsumer> _creatorNDX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) {

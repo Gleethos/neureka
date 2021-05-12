@@ -23,7 +23,7 @@ public final class Sigmoid extends AbstractOperation
                 else return ( t0Idx, t1Idx, t2Idx ) ->  calculate( t1_val[ t1Idx.i() ], true );
             };
 
-    private DefaultOperatorCreator<TertiaryNDXConsumer> _creatorX =
+    private DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> calculate( t1_val[inputs[ 1 ].indexOfIndices( t1Idx )], false );

@@ -1,7 +1,6 @@
 package neureka.backend.standard.operations.operator;
 
 import neureka.Tsr;
-import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.operations.OperationContext;
@@ -9,11 +8,11 @@ import neureka.devices.Device;
 
 import java.util.function.Function;
 
-public class Utility
+public class JunctionUtil
 {
 
 
-    public static Tsr<?> handlePairedExecutionForDivionAndModulo(
+    public static Tsr<?> forDivisionsOrModuli(
             ExecutionCall<? extends Device<?>> call,
             Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith
     ) {
@@ -94,11 +93,21 @@ public class Utility
             return alternative;
     }
 
+    public static Tsr<?> forAdditions(
+            ExecutionCall<? extends Device<?>> call,
+            Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith
+    ) {
+        return _forAdditionsOrSubtractions(call, goDeeperWith, true);
+    }
 
+    public static Tsr<?> forSubtractions(
+            ExecutionCall<? extends Device<?>> call,
+            Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith
+    ) {
+        return _forAdditionsOrSubtractions(call, goDeeperWith, false);
+    }
 
-
-
-    public static Tsr<?> handlePairedExecutionForAdditionAndSubtraction(
+    private static Tsr<?> _forAdditionsOrSubtractions(
             ExecutionCall<? extends Device<?>> call,
             Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith,
             boolean thisIsForAddition

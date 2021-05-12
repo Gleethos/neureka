@@ -22,7 +22,7 @@ public final class Absolute extends AbstractOperation
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.abs(t1_val[ t1Idx.i() ]);
                 else return ( t0Idx, t1Idx, t2Idx ) -> ( t1_val[ t1Idx.i() ] < 0 ) ? -1 : 1;
             };
-    private DefaultOperatorCreator<TertiaryNDXConsumer> _activationXCreator =
+    private DefaultOperatorCreator<TertiaryNDAConsumer> _activationXCreator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.abs(t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]);
