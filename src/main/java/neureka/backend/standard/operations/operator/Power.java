@@ -670,13 +670,6 @@ public class Power extends AbstractOperation
 
     }
 
-
-
-
-
-
-
-
     // d/dx(f(x)^g(x))=
     // f(x)^g(x) * d/dx(g(x)) * ln(f(x))
     // + f(x)^(g(x)-1) * g(x) * d/dx(f(x))

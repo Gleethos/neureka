@@ -47,40 +47,39 @@ public class Addition extends AbstractOperation {
 
 
     private static final Broadcast _broadcast = new Broadcast()
-        .setCanPerformBackwardADFor( call -> true )
-        .setCanPerformForwardADFor(
-                call -> {
-                    Tsr<?> last = null;
-                    for ( Tsr<?> t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
-                    }
-                    return true;
-                }
-        ).setSupplyADAgentFor(
-            ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-            {
-                Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
-                Function mul = Function.Detached.MUL;
-                if ( ctxDerivative != null ) {
-                    return new DefaultADAgent( ctxDerivative )
-                            .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
-                            .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
-                }
-                Tsr[] inputs = call.getTensors();
-                int d = call.getDerivativeIndex();
-                if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                else
-                {
-                    Tsr deriv = f.derive( inputs, d );
-                    return new DefaultADAgent( deriv )
-                            .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
-                            .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
-                }
-            }
-        )
-        .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
-        .build();
+                                                    .setCanPerformBackwardADFor( call -> true )
+                                                    .setCanPerformForwardADFor( call -> {
+                                                                Tsr<?> last = null;
+                                                                for ( Tsr<?> t : call.getTensors() ) {
+                                                                    if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                                                                    last = t;
+                                                                }
+                                                                return true;
+                                                            }
+                                                    ).setSupplyADAgentFor(
+                                                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                                                        {
+                                                            Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
+                                                            Function mul = Function.Detached.MUL;
+                                                            if ( ctxDerivative != null ) {
+                                                                return new DefaultADAgent( ctxDerivative )
+                                                                        .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
+                                                                        .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
+                                                            }
+                                                            Tsr[] inputs = call.getTensors();
+                                                            int d = call.getDerivativeIndex();
+                                                            if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
+                                                            else
+                                                            {
+                                                                Tsr deriv = f.derive( inputs, d );
+                                                                return new DefaultADAgent( deriv )
+                                                                        .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
+                                                                        .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
+                                                            }
+                                                        }
+                                                    )
+                                                    .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
+                                                    .build();
 
     public Addition()
     {
@@ -573,7 +572,6 @@ public class Addition extends AbstractOperation {
 
     @Override
     public String asDerivative( Function[] children, int d ) {
-        boolean dep = children[0].dependsOn(d);
         String s =  Arrays.stream( children )
                 .filter( child -> child.dependsOn( d ) )
                 .map( child -> child.getDerivative( d ) )
