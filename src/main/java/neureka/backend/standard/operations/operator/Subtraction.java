@@ -69,45 +69,9 @@ public class Subtraction extends AbstractOperation
         );
 
         Algorithm.RecursiveJunctionAgent rja =
-        (call, goDeeperWith)->
-        {
-            Tsr[] tsrs = call.getTensors();
-            Device device = call.getDevice();
-            int d = call.getDerivativeIndex();
-            Operation type = call.getOperation();
+                (call, goDeeperWith)->
+                        neureka.backend.standard.operations.operator.Utility.handlePairedExecutionForAdditionAndSubtraction(call, goDeeperWith, false);
 
-            Tsr alternative = null;
-            if (tsrs.length > 3) {
-                if ( d < 0 ) {
-                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
-                    alternative = goDeeperWith.apply(
-                            ExecutionCall.builder()
-                                    .device(device)
-                                    .tensors(reduction)
-                                    .derivativeIndex(d)
-                                    .operation(type)
-                                    .build()
-                    );
-                    tsrs[ 0 ] = reduction[ 0 ];
-
-                    reduction = Utility.offsetted(tsrs, 1);
-                    alternative = goDeeperWith.apply(
-                            ExecutionCall.builder()
-                                    .device(device)
-                                    .tensors(reduction)
-                                    .derivativeIndex(d)
-                                    .operation(type)
-                                    .build()
-                    );
-                    tsrs[ 0 ] = reduction[ 0 ];
-                } else {
-                    tsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[ 1 ]).setValue((d==0)?1.0f:-1.0f);
-                }
-                return alternative;
-            } else
-                return alternative;
-
-        };
 
         //_____________________
         // DEFAULT OPERATION :

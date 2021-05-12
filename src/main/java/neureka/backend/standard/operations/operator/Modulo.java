@@ -36,7 +36,7 @@ public class Modulo extends AbstractOperation {
                         .setIsInline(         false       )
         );
 
-        Algorithm.RecursiveJunctionAgent rja = new neureka.backend.standard.operations.operator.Utility();
+        Algorithm.RecursiveJunctionAgent rja = neureka.backend.standard.operations.operator.Utility::handlePairedExecutionForDivionAndModulo;
 
         //_____________________
         // DEFAULT OPERATION :
