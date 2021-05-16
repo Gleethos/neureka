@@ -1,6 +1,22 @@
+/*
+    The kernel define in this file is used to perform element wise
+    operations on the data within nd-arrays / tensors.
+    Contrary to other element wise kernels, this kernel takes a single nd-array as input.
+    The kernel is a rather high level kernel because it take into account the
+    entirety of an nd-configuration of a given nd-array / tensor.
+    This means that the supplied nd-array might be a slice of another tensor
+    which might also have strides or is positioned by an offset within
+    some data array...
+    This kernel is built to support all of this for element wise operations.
 
+*/
+//======================================================================================================================
+
+    // These are from the "utility.cl" file! The methods convert types of indices...
     void _cfg_of_cfg(__global int* cfg, int* prv_cfg, int rank);
     int _i_of_i(int i, int* cfg, int rank);
+
+//======================================================================================================================
 
     __kernel void activation_template(
         __global float *drn, __global int *drn_conf,
@@ -25,3 +41,5 @@
 //-=<OPERATION>=-//
         }
     }
+
+//======================================================================================================================

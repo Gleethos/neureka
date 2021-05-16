@@ -39,12 +39,31 @@ import org.jetbrains.annotations.NotNull;
 
 public interface NDConfiguration
 {
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+    /**
+     *  This method returns the number of axis of
+     *  an nd-array / {@link neureka.Tsr} which is equal to the
+     *  length of the shape of an nd-array / {@link neureka.Tsr}.
+     *
+     * @return The number of axis of an nd-array.
+     */
     int rank();
 
+    /**
+     *  This method returns an array of axis sizes.
+     *
+     * @return An array of axis sizes.
+     */
     int[] shape();
 
+    /**
+     *  This method receives an axis index and return the
+     *  size of the axis.
+     *  It enables readable access to the shape
+     *  of this configuration.
+     *
+     * @param i The index of the axis whose size ought to be returned.
+     * @return The axis size targeted by the provided index.
+     */
     int shape( int i );
 
     int[] indicesMap();
@@ -91,10 +110,26 @@ public interface NDConfiguration
      */
     int[] indicesOfIndex( int index );
 
+    /**
+     * The following method calculates the true index for an element in the data array
+     * based on a provided index array.
+     *
+     * @param indices The indices for every axis of a given nd-array.
+     * @return The true index targeting the underlying data array of a given nd-array.
+     */
     int indexOfIndices( int[] indices );
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    /**
+     *  This method returns an array of flattened arrays which
+     *  define this nd-configuration in a compact manner.
+     *  The array consists of the following arrays joined
+     *  in the following order:
+     *  [ shape | translation | idxMap | idx | idxScale | idxBase ]
+     *
+     * @return An array of flattened arrays which define this nd-configuration in a compact manner.
+     */
     int[] asInlineArray();
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -105,10 +140,24 @@ public interface NDConfiguration
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    NDConfiguration newReshaped(int[] newForm);
+    /**
+     *  This method enables reshaping for {@link NDConfiguration} implementation instances.
+     *  Because {@link NDConfiguration}s are in essence things which define
+     *  the access relationship from shape indices to the actual underlying data,
+     *  the creation of reshaped {@link NDConfiguration} is up to a specific implementation.
+     *
+     * @param newForm An array of indices which define how the axis ought to be rearranged.
+     * @return A new {@link NDConfiguration} which carries the needed information for the reshaped view.
+     */
+    NDConfiguration newReshaped( int[] newForm );
 
-    class Utility {
-
+    /**
+     *  This utility class provides static methods which are helpful
+     *  for nd-configuration related operations like reshaping,
+     *  incrementing or decrementing index arrays...
+     */
+    class Utility
+    {
         @Contract(pure = true)
         public static int[] rearrange(int[] tln, int[] shape, int[] newForm) {
             int[] shpTln = newTlnOf( shape );

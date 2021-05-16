@@ -1,15 +1,20 @@
+//======================================================================================================================
 
-void _cfg_of_cfg(__global int* cfg, int* prv_cfg, int rank);
-int  _i_of_i(int i, int* config, int rank);
-int  _i_of_idx_on_tln(int* conf, int rank);
+    // These are from the "utility.cl" file! The methods convert types of indices...
+    void _cfg_of_cfg(__global int* cfg, int* prv_cfg, int rank);
+    int  _i_of_i(int i, int* config, int rank);
+    int  _i_of_idx_on_tln(int* conf, int rank);
 
-__kernel void convolution_template(
-    //-=<ARGUMENT>=-//__global float *frn, __global int *frn_conf,
-    __global float *drn, __global int *drn_conf,
-    __global float *src1, __global int *src1_conf,
-    __global float *src2, __global int *src2_conf,
-    int rank,
-    int d
+//======================================================================================================================
+
+
+    __kernel void convolution_template(
+        //-=<ARGUMENT>=-//__global float *frn, __global int *frn_conf,
+        __global float *drn, __global int *drn_conf,
+        __global float *src1, __global int *src1_conf,
+        __global float *src2, __global int *src2_conf,
+        int rank,
+        int d
     ){
         int prv_drn_cfg[32]; _cfg_of_cfg(drn_conf, prv_drn_cfg, rank);
         int prv_src1_cfg[32]; _cfg_of_cfg(src1_conf, prv_src1_cfg, rank);
@@ -134,8 +139,7 @@ __kernel void convolution_template(
             }
             drn[di] = value;
         }
-
-
     }
 
+//======================================================================================================================
 

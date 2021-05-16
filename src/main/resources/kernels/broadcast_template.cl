@@ -1,7 +1,22 @@
+/*
+    The kernel defined in this file takes two tensors / nd-arrays and performs a broadcast operation
+    on them if the shapes of both tensors allow this type operation.
+    For example, the following shapes allow broadcasting,
+    which produce the expected output shapes:
+
+        ( 3, 2, 1 )o( 1, 1, 5 ) = ( 3, 2, 5 )
+        ( 1, 1, 4 )o( 3, 1, 1 ) = ( 3, 1, 4 )
+
+    Similar as the kernel within "operator_template.cl", this kernel can be used
+    for operators like "+", "-", "*", ...
+*/
+//======================================================================================================================
 
 void _cfg_of_cfg(__global int* cfg, int* prv_cfg, int rank);
 int  _i_of_i(int i, int* config, int rank);
 int  _i_of_idx_on_tln(int* conf, int rank);
+
+//======================================================================================================================
 
 __kernel void broadcast_template(
     //-=<ARGUMENT>=-//__global float *frn, __global int *frn_conf,
@@ -95,5 +110,7 @@ __kernel void broadcast_template(
             drn[di] = value;
         }
     }
+
+//======================================================================================================================
 
 

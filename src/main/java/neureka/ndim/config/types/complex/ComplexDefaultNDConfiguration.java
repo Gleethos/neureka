@@ -132,7 +132,8 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
     @Override
     public int indexOfIndices( int[] indices ) {
         int i = 0;
-        for ( int ii = 0; ii < _shape.length; ii++ ) i += (indices[ ii ] * _spread[ ii ] + _offset[ ii ]) * _translation[ ii ];
+        for ( int ii = 0; ii < _shape.length; ii++ )
+            i += ( indices[ ii ] * _spread[ ii ] + _offset[ ii ] ) * _translation[ ii ];
         return i;
     }
 

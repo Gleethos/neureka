@@ -1,4 +1,8 @@
-
+/*
+    This file doe not contain an OpenCL kernel!
+    It is merely hosting various utility methods which are generally needed
+    by other OpenCL kernels.
+*/
 //======================================================================================================================
 
 /*
