@@ -2,7 +2,6 @@ package it.framing
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 import java.lang.ref.WeakReference
@@ -34,7 +33,7 @@ class Tensor_Framing_Integration_Tests extends Specification
                     ["a", "b", "c"],
                     [1, 2]
             ])
-            String asString = t.index().toString()
+            String asString = t.frame().toString()
 
         expect :
             asString.contains("a")
@@ -52,7 +51,7 @@ class Tensor_Framing_Integration_Tests extends Specification
                     "Axis Two" : ["a", "b", "c"],
                     "Axis Three" : [1, 2]
             ])
-            asString = t.index().toString()
+            asString = t.frame().toString()
 
         then :
             asString.contains("a")
@@ -72,13 +71,13 @@ class Tensor_Framing_Integration_Tests extends Specification
                     "Axis Two" : null,
                     "Axis Three" : ["tim", "tina"]
             ])
-            asString = t.index().toString()
+            asString = t.frame().toString()
 
         then :
-            t.index().keysOf("Axis Three", 0).contains("tim")
-            t.index().keysOf("Axis Three", 1).contains("tina")
-            t.index().keysOf("Axis One").contains("x")
-            t.index().keysOf("Axis One").contains("y")
+            t.frame().keysOf("Axis Three", 0).contains("tim")
+            t.frame().keysOf("Axis Three", 1).contains("tina")
+            t.frame().keysOf("Axis One").contains("x")
+            t.frame().keysOf("Axis One").contains("y")
             !asString.contains(" a ")
             !asString.contains(" b ")
             !asString.contains(" c ")
@@ -96,8 +95,9 @@ class Tensor_Framing_Integration_Tests extends Specification
             asString.contains("|     Axis One     |     Axis Two     |    Axis Three    |")
 
         when :
-            t.index().replace("Axis Two", 1, "Hello")
-            asString = t.index().toString()
+            //t.index().replace("Axis Two", 1, "Hello")
+            t.frame().atAxis("Axis Two").replace(1).with("Hello")
+            asString = t.frame().toString()
 
         then :
             !asString.contains(" a ")

@@ -92,10 +92,11 @@ import neureka.backend.standard.operations.other.Reshape;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.*;
+import neureka.framing.NDFrame;
+import neureka.framing.states.AxisFrame;
 import neureka.ndim.AbstractNDArray;
 import neureka.devices.host.HostCPU;
 import neureka.devices.Device;
-import neureka.framing.IndexAlias;
 import neureka.framing.Relation;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
@@ -1107,7 +1108,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      * '{@link neureka.ndim.AbstractComponentOwner}' from which this class inherits.
      * In this super class the component logic is implemented.
      *
-     * @param newComponent A component used to access features. ({@link GraphNode}, {@link IndexAlias}, {@link Relation}, int[], ...)
+     * @param newComponent A component used to access features. ({@link GraphNode}, {@link NDFrame}, {@link Relation}, int[], ...)
      * @return The unchanged object or maybe in future versions: null (component rejected)
      */
     @Override
@@ -1165,7 +1166,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      * '{@link neureka.ndim.AbstractComponentOwner}' from which this class inherits.
      * In this super class the component logic is implemented.
      *
-     * @param newComponent A component used to access features. ({@link GraphNode}, {@link IndexAlias}, {@link Relation}, int[], ...)
+     * @param newComponent A component used to access features. ({@link GraphNode}, {@link NDFrame}, {@link Relation}, int[], ...)
      * @return The unchanged object or when rejected: null (component rejected)
      */
     @Override
@@ -1359,11 +1360,10 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
     }
 
     /**
-     *
-     * @return Custom IndexAlias object.
+     * @return An instance of the {@link NDFrame} component if present.
      */
-    public IndexAlias<ValType> index() {
-        return find( IndexAlias.class );
+    public NDFrame<ValType> frame() {
+        return find( NDFrame.class );
     }
 
 
@@ -1688,16 +1688,18 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
 
     private void _label( String tensorName, String[][] labels )
     {
-        IndexAlias<ValType> indexAlias = find( IndexAlias.class );
-        if ( indexAlias == null ) {
-            indexAlias = new IndexAlias( this.rank(), tensorName );
-            set( indexAlias );
+        NDFrame<ValType> frame = find( NDFrame.class );
+        if ( frame == null ) {
+            frame = new NDFrame( this.rank(), tensorName );
+            set(frame);
         }
         assert labels.length <= this.rank();
         for( int i = 0; i < labels.length; i++ ) {
             if ( labels[ i ] != null ) {
+                AxisFrame<Integer, ValType> atAxis = frame.atAxis( i );
                 for ( int ii = 0; ii < labels[ i ].length; ii++ ) {
-                    if ( labels[ i ][ ii ] != null ) indexAlias.set( i, labels[ i ][ ii ], ii );
+                    if ( labels[ i ][ ii ] != null )
+                        atAxis.atIndexAlias( labels[ i ][ ii ] ).setIndex( ii );
                 }
             }
         }
@@ -1721,8 +1723,8 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      */
     public Tsr<ValType> label( List<List<Object>> labels )
     {
-        IndexAlias<ValType> indexAlias = find( IndexAlias.class );
-        if ( indexAlias == null ) set( new IndexAlias( labels, null ) );
+        NDFrame<ValType> frame = find( NDFrame.class );
+        if ( frame == null ) set( new NDFrame( labels, null ) );
         return this;
     }
 
@@ -1745,8 +1747,8 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      */
     public Tsr<ValType> label( String tensorName, List<List<Object>> labels )
     {
-        IndexAlias<ValType> indexAlias = find( IndexAlias.class );
-        if ( indexAlias == null ) set( new IndexAlias( labels, tensorName ) );
+        NDFrame<ValType> frame = find( NDFrame.class );
+        if ( frame == null ) set( new NDFrame( labels, tensorName ) );
         return this;
     }
 
@@ -1768,13 +1770,13 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      */
     public Tsr<ValType> label( Map<Object, List<Object>> labels )
     {
-        this.set( new IndexAlias<>( labels, this, null ) );
+        this.set( new NDFrame<>( labels, this, null ) );
         return this;
     }
 
     public Tsr<ValType> label( String tensorName, Map<Object, List<Object>> labels )
     {
-        this.set( new IndexAlias<>( labels, this, tensorName ) );
+        this.set( new NDFrame<>( labels, this, tensorName ) );
         return this;
     }
 

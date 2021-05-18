@@ -1,7 +1,7 @@
 package neureka.utility.slicing;
 
 import neureka.Tsr;
-import neureka.framing.IndexAlias;
+import neureka.framing.NDFrame;
 import neureka.utility.slicing.states.AxisOrGet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,13 +63,14 @@ public class SmartSlicer {
                     first = (Integer) ranges[ i ];
                     last = (Integer) ranges[ i ];
                 } else {
-                    IndexAlias<?> indexAlias = source.find( IndexAlias.class );
-                    if ( indexAlias != null ) {
-                        int position = indexAlias.get( ranges[ i ], i );
+                    NDFrame<?> frame = source.find( NDFrame.class );
+                    if ( frame != null ) {
+                        int position = frame.atAxis( i ).getIndexAtAlias( ranges[i] );
+                                    //frame.get( ranges[ i ], i );
                         first = position;
                         last = position;
                     } else {
-                        String message = "Given "+IndexAlias.class.getSimpleName()+" key at axis " + ( i ) + " not found!";
+                        String message = "Given "+ NDFrame.class.getSimpleName()+" key at axis " + ( i ) + " not found!";
                         _LOG.error( message );
                         throw new IllegalStateException( message );
                     }
@@ -83,20 +84,25 @@ public class SmartSlicer {
                         !( ( (Object[]) ( ranges[ i ] ) )[ 0 ] instanceof Integer )
                                 || !( ( (Object[]) ranges[ i ] )[ ( (Object[]) ( ranges[ i ] ) ).length - 1 ] instanceof Integer )
                 ) {
-                    IndexAlias<?> indexAlias = source.find( IndexAlias.class );
+                    NDFrame<?> frame = source.find( NDFrame.class );
                     if ( !( ( (Object[]) (ranges[ i ]) )[ 0 ] instanceof Integer ) ) {
-                        if ( indexAlias != null ) {
-                            first = indexAlias.get( ( (Object[]) ranges[ i ])[ 0 ], i );
+                        if ( frame != null ) {
+                            first =
+                                    frame
+                                        .atAxis( i )
+                                        .getIndexAtAlias( ( (Object[]) ranges[ i ])[ 0 ] );
                         }
                     }
                     else first = (Integer) ( (Object[]) ranges[ i ] )[ 0 ];
 
                     if ( !( ( (Object[]) ranges[ i ] )[ ( (Object[]) ranges[ i ] ).length - 1 ] instanceof Integer )  ) {
-                        if ( indexAlias != null ) {
-                            last = indexAlias.get(
-                                    ( (Object[]) ranges[ i ] )[ ( (Object[]) ranges[ i ] ).length - 1 ],
-                                    i
-                            );
+                        if ( frame != null ) {
+                            last =
+                                    frame
+                                        .atAxis( i )
+                                        .getIndexAtAlias(
+                                                ( (Object[]) ranges[ i ] )[ ( (Object[]) ranges[ i ] ).length - 1 ]
+                                        );
                         }
                     }
                     else last = (Integer) ( (Object[]) ranges[ i ] )[ ( (Object[]) ranges[ i ] ).length - 1 ];

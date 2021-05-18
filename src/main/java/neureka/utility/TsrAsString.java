@@ -41,7 +41,7 @@ import lombok.experimental.Accessors;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
-import neureka.framing.IndexAlias;
+import neureka.framing.NDFrame;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 
@@ -372,7 +372,7 @@ public final class TsrAsString
         int trimStart = ( _shape[ dim ] / 2 - trimSize / 2 );
         int trimEnd = ( _shape[ dim ] / 2 + trimSize / 2 );
         assert trimEnd - trimStart == trimSize;
-        IndexAlias alias = _tensor.find( IndexAlias.class );
+        NDFrame alias = _tensor.find( NDFrame.class );
         if ( dim == indices.length - 1 ) {
             if (
                     alias != null &&
@@ -431,7 +431,7 @@ public final class TsrAsString
         _$( "\n" );
     }
 
-    private TsrAsString _buildSingleLabel( IndexAlias alias, int dim, int[] indices ) {
+    private TsrAsString _buildSingleLabel(NDFrame alias, int dim, int[] indices ) {
         int pos = dim - 1;
         List<Object> key = alias.keysOf( pos );
         if ( pos >= 0 && key != null ) {

@@ -5,7 +5,7 @@ import lombok.experimental.Accessors;
 import neureka.Tsr;
 import neureka.devices.Storage;
 import neureka.dtype.DataType;
-import neureka.framing.IndexAlias;
+import neureka.framing.NDFrame;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
@@ -40,7 +40,7 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
         super( filename );
         assert tensor.rank() == 2;
         _delimiter = ",";
-        IndexAlias alias = tensor.find( IndexAlias.class );
+        NDFrame alias = tensor.find( NDFrame.class );
         List<Object> index = (alias != null) ? alias.keysOf( 0 ) : null;
         List<Object> labels = (alias != null ) ? alias.keysOf( 1 ) : null;
         _tensorName = (alias != null) ? alias.getTensorName() : null;

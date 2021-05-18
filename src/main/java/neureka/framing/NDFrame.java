@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import neureka.Component;
 import neureka.Tsr;
+import neureka.framing.states.AxisFrame;
+
 import java.util.*;
 import java.util.function.Function;
 
@@ -20,44 +22,53 @@ import java.util.function.Function;
  *      </li>
  *  </ul>
  *  Let's for example imagine a tensor of rank 2 with the shape (3, 4), then the axis could for example be labeled
- *  with a tuple of two String instances like: ("a","b"). <br>
+ *  with a tuple of two {@link String} instances like: ("a","b"). <br>
  *  Labeling the indices of the axis for this example requires 2 arrays whose length matches the axis sizes. <br>
  *  The following mapping would be able to label both the axis as well as their indices: <br>
  *                                                                             <br>
- *  "a" : ["first", "second", "third"],                                <br>
- *  "b" : ["one", "two", "three", "four"]                              <br>
- *                                                                     <br>
+ *  "a" : ["first", "second", "third"],                                        <br>
+ *  "b" : ["one", "two", "three", "four"]                                      <br>
+ *                                                                             <br>
  *
  * @param <ValType> The type parameter of the value type of the tensor type to whom this component should belong.
  */
 @Accessors( prefix = {"_"} )
-public final class IndexAlias<ValType> implements Component<Tsr<ValType>>
+public final class NDFrame<ValType> implements Component<Tsr<ValType>>
 {
     private final List<Object> _hiddenKeys = new ArrayList<>();
-
+    /**
+     *  This {@link Map} contains all the aliases for axis as well as individual
+     *  positions for a given axis (in the form of yet another {@link Map}).
+     */
     @Getter private final Map<Object, Object> _mapping;
+    /**
+     *  A frame can also carry a name.
+     *  When loading a CSV file for example the label would be the first cell if
+     *  both index as well as header labels are included in the file.
+     */
     @Getter private final String _tensorName;
 
-    public IndexAlias( List<List<Object>> labels, String tensorName ) {
+    public NDFrame(List<List<Object>> labels, String tensorName ) {
         _tensorName = tensorName;
         _mapping = new LinkedHashMap<>(labels.size());
         for ( int i = 0; i < labels.size(); i++ ) _mapping.put( i, new LinkedHashMap<>() );
         for ( int i = 0; i < labels.size(); i++ ) {
             if ( labels.get( i ) != null ) {
                 for ( int ii = 0; ii < labels.get( i ).size(); ii++ ) {
-                    if ( labels.get( i ).get( ii ) != null ) set( i, labels.get( i ).get( ii ), ii );
+                    if ( labels.get( i ).get( ii ) != null )
+                        atAxis( i ).atIndexAlias( labels.get( i ).get( ii ) ).setIndex( ii );
                 }
             }
         }
     }
 
-    public IndexAlias( int size, String tensorName ) {
+    public NDFrame(int size, String tensorName ) {
         _tensorName = tensorName;
         _mapping = new LinkedHashMap<>( size );
         for ( int i = 0; i < size; i++ ) _mapping.put( i, new LinkedHashMap<>() );
     }
 
-    public IndexAlias( Map<Object, List<Object>> labels, Tsr<ValType> host, String tensorName ) {
+    public NDFrame(Map<Object, List<Object>> labels, Tsr<ValType> host, String tensorName ) {
         _tensorName = tensorName;
         _mapping = new LinkedHashMap<>( labels.size() * 3 );
         int[] index = { 0 };
@@ -79,10 +90,10 @@ public final class IndexAlias<ValType> implements Component<Tsr<ValType>>
     }
 
     public int[] get( List<Object> keys ) {
-        return get( keys.toArray( new Object[ keys.size() ] ) );
+        return get( keys.toArray( new Object[0] ) );
     }
 
-    public int[] get( Object[] keys ) {//Todo: iterate over _mapping
+    public int[] get( Object... keys ) {//Todo: iterate over _mapping
         int[] indices = new int[ keys.length ];
         for( int i = 0; i < indices.length; i++ ) {
             Object am =  _mapping.get( i );
@@ -95,36 +106,60 @@ public final class IndexAlias<ValType> implements Component<Tsr<ValType>>
         return indices;
     }
 
-    public int get( Object key, Object axis )
+    /**
+     *  This method returns a view on a axis which is targeted by an axis alias as key.
+     *  This view is an instance of the {@link AxisFrame} class which provides useful methods
+     *  for getting or setting alias objects for individual positions for a given axis.
+     *
+     * @param axisAlias The axis alias object which targets an {@link AxisFrame} of {@link NDFrame}.
+     * @return
+     */
+    public AxisFrame<Integer, ValType> atAxis( Object axisAlias )
     {
+        return AxisFrame.<Integer, Integer, ValType>builder()
+                .getter(
+                        atKey -> () ->
+                        {
+                            Object am =  _mapping.get( axisAlias );
+                            if ( am instanceof Map )
+                                return ((Map<Object, Integer>) _mapping.get( axisAlias )).get(atKey);
+                            else
+                                return 0;
+                        }
+                )
+                .setter(
+                        atKey -> (int setValue) ->
+                        {
+                            Map<Object, Integer> am = _initializeIdxmap( axisAlias, atKey, setValue );
+                            am.put( atKey, setValue );
+                            return this;
+                        }
+                )
+                .replacer(
+                        ( currentIndexKey ) -> (newIndexKey ) -> {
+                            Map<Object, Integer> am = _initializeIdxmap( axisAlias, currentIndexKey, (Integer) currentIndexKey );
+                            if (am.containsKey( currentIndexKey ) )
+                                am.put( newIndexKey, am.remove( currentIndexKey ) ); // This...
+                            return this;
+                        }
+                )
+                .build();
+    }
+
+    private Map<Object, Integer> _initializeIdxmap( Object axis, Object key, int index ) {
         Object am =  _mapping.get( axis );
-        if ( am instanceof Map ) return ( (Map<Object, Integer>) am ).get( key );
-        return ( key instanceof Integer ) ? ( (Integer) key ) : 0;
-    }
-
-    public void replace( Object axis, Object indexKey, Object newIndexKey )
-    {
-        Object am =  _mapping.get(axis);
         if ( am instanceof Map )
-            ( (Map<Object, Integer>) am ).put( newIndexKey, ((Map<Object, Integer>) am ).remove( indexKey ) );
-        else
-            if ( am instanceof Integer ) _initializeIdxmap( axis, (Integer) am, newIndexKey, (Integer) indexKey );
-    }
+            return (Map<Object, Integer>) _mapping.get( axis );
 
-    private void _initializeIdxmap( Object axis, int size, Object key, int index ) {
+        int size = (Integer) am;
+
         Map<Object, Integer> newIdxmap = new LinkedHashMap<>( size * 3 );
         for( int i = 0; i < size; i++ ) {
             if ( index == i ) newIdxmap.put( key, i );
             else newIdxmap.put( i, i );
         }
         _mapping.put( axis, newIdxmap );
-    }
-
-    public void set( Object axis, Object indexKey, int index )
-    {
-        Object am =  _mapping.get( axis );
-        if ( am instanceof Map ) ( (Map<Object, Integer>) am ).put( indexKey, index );
-        else if ( am instanceof Integer ) _initializeIdxmap( axis, (Integer) am, indexKey, index );
+        return newIdxmap;
     }
 
     public List<Object> keysOf( Object axis )
@@ -206,7 +241,7 @@ public final class IndexAlias<ValType> implements Component<Tsr<ValType>>
                     keyOfDepth[0] = null;
                     if (v instanceof Map) {
                         ((Map<Object, Integer>) v).forEach((ik, iv) -> {
-                            if (iv.intValue() == depth[0]) keyOfDepth[0] = ik;
+                            if ( iv == depth[0] ) keyOfDepth[0] = ik;
                         });
                     } else if (v instanceof Integer) {
                         if (depth[0] < ((Integer) v)) keyOfDepth[0] = depth[0];
