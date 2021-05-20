@@ -10,7 +10,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public abstract class AbstractFileHead<FinalType, ValType> implements FileHead<FinalType, ValType>
+/**
+ * @param <C> The concrete type extending this class.
+ * @param <V> The value type of the data in the file represented by this class.
+ */
+public abstract class AbstractFileHead<C, V> implements FileHead<C, V>
 {
     protected static Logger _LOG;
 
@@ -49,7 +53,7 @@ public abstract class AbstractFileHead<FinalType, ValType> implements FileHead<F
         return _size == 0;
     }
 
-    public boolean contains( Tsr<ValType> o ) {
+    public boolean contains( Tsr<V> o ) {
         return false; // TODO: implement...
     }
 
@@ -87,14 +91,14 @@ public abstract class AbstractFileHead<FinalType, ValType> implements FileHead<F
 
 
     @Override
-    public FinalType free() {
+    public C free() {
         boolean success = new File(_fileName).delete();
         if ( !success ) {
             String message = "Freeing "+extension()+" file '"+_fileName+"' failed!\n";
             _LOG.error( message );
             throw new IllegalStateException( message );
         } else _size --;
-        return (FinalType) this;
+        return (C) this;
     }
 
     @Override
@@ -109,7 +113,7 @@ public abstract class AbstractFileHead<FinalType, ValType> implements FileHead<F
     }
 
     @Override
-    public Storage<ValType> restore( Tsr<ValType> tensor ) {
+    public Storage<V> restore(Tsr<V> tensor ) {
         try {
             Object value = _loadData();
             tensor.setValue( value );

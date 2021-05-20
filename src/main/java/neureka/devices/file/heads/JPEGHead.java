@@ -16,6 +16,12 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.io.*;
 
+/**
+ *  This class is one of many extensions of the {@link AbstractFileHead} which
+ *  is therefore ultimately an implementation of the {@link neureka.devices.file.FileHead} interface.
+ *  Like other {@link neureka.devices.file.FileHead} implementations this class represents a file
+ *  of a given type, in this case it represents a CSV file.
+ */
 public class JPEGHead extends AbstractFileHead<JPEGHead, Number>
 {
     static {

@@ -48,7 +48,7 @@ public final class NDFrame<ValType> implements Component<Tsr<ValType>>
      */
     @Getter private final String _tensorName;
 
-    public NDFrame(List<List<Object>> labels, String tensorName ) {
+    public NDFrame( List<List<Object>> labels, String tensorName ) {
         _tensorName = tensorName;
         _mapping = new LinkedHashMap<>(labels.size());
         for ( int i = 0; i < labels.size(); i++ ) _mapping.put( i, new LinkedHashMap<>() );
@@ -62,13 +62,13 @@ public final class NDFrame<ValType> implements Component<Tsr<ValType>>
         }
     }
 
-    public NDFrame(int size, String tensorName ) {
+    public NDFrame( int size, String tensorName ) {
         _tensorName = tensorName;
         _mapping = new LinkedHashMap<>( size );
         for ( int i = 0; i < size; i++ ) _mapping.put( i, new LinkedHashMap<>() );
     }
 
-    public NDFrame(Map<Object, List<Object>> labels, Tsr<ValType> host, String tensorName ) {
+    public NDFrame( Map<Object, List<Object>> labels, Tsr<ValType> host, String tensorName ) {
         _tensorName = tensorName;
         _mapping = new LinkedHashMap<>( labels.size() * 3 );
         int[] index = { 0 };
@@ -107,12 +107,14 @@ public final class NDFrame<ValType> implements Component<Tsr<ValType>>
     }
 
     /**
+     *  A {@link NDFrame} exposes aliases for axis as well as aliases for individual positions within an axis.
      *  This method returns a view on a axis which is targeted by an axis alias as key.
      *  This view is an instance of the {@link AxisFrame} class which provides useful methods
-     *  for getting or setting alias objects for individual positions for a given axis.
+     *  for getting or setting alias objects for individual positions for the given axis.
+     *  This is useful when when for example replacing certain aliases or simply taking a look at them.
      *
      * @param axisAlias The axis alias object which targets an {@link AxisFrame} of {@link NDFrame}.
-     * @return
+     * @return A view of the targeted axis in the for of an{@link AxisFrame} which provides getters and setters for aliases.
      */
     public AxisFrame<Integer, ValType> atAxis( Object axisAlias )
     {
@@ -143,6 +145,25 @@ public final class NDFrame<ValType> implements Component<Tsr<ValType>>
                             return this;
                         }
                 )
+                .allAliasGetter(
+                        () -> {
+                            Object am =  _mapping.get( axisAlias );
+                            if ( am == null ) return null;
+                            List<Object> keys = new ArrayList<>();
+                            if ( am instanceof Map ) ( (Map<Object, Integer>) am ).forEach( ( k, v ) -> keys.add( k ) );
+                            else for ( int i = 0; i < ( (Integer) am ); i++ ) keys.add( i );
+                            return keys;
+                        }
+                )
+                .allAliasGetterFor(
+                        (index) -> {
+                            List<Object> keys = new ArrayList<>();
+                            Object am =  _mapping.get( axisAlias );
+                            if ( am instanceof Map ) ( (Map<Object, Integer>) am ).forEach( (k, v) -> { if (v.equals(index)) keys.add( k ); } );
+                            else keys.add( index );
+                            return keys;
+                        }
+                )
                 .build();
     }
 
@@ -160,24 +181,6 @@ public final class NDFrame<ValType> implements Component<Tsr<ValType>>
         }
         _mapping.put( axis, newIdxmap );
         return newIdxmap;
-    }
-
-    public List<Object> keysOf( Object axis )
-    {
-        Object am =  _mapping.get( axis );
-        if ( am == null ) return null;
-        List<Object> keys = new ArrayList<>();
-        if ( am instanceof Map ) ( (Map<Object, Integer>) am ).forEach( ( k, v ) -> keys.add( k ) );
-        else for ( int i = 0; i < ( (Integer) am ); i++ ) keys.add( i );
-        return keys;
-    }
-
-    public List<Object> keysOf( Object axis, int index ) {
-        List<Object> keys = new ArrayList<>();
-        Object am =  _mapping.get( axis );
-        if ( am instanceof Map ) ( (Map<Object, Integer>) am ).forEach( (k, v) -> { if ( v == index ) keys.add( k ); } );
-        else keys.add( index );
-        return keys;
     }
 
     /**

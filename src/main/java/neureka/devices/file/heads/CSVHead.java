@@ -16,6 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ *  This class is one of many extensions of the {@link AbstractFileHead} which
+ *  is therefore ultimately an implementation of the {@link neureka.devices.file.FileHead} interface.
+ *  Like other {@link neureka.devices.file.FileHead} implementations this class represents a file
+ *  of a given type, in this case it represents a CSV file.
+ */
 @Accessors( prefix = {"_"} )
 public class CSVHead extends AbstractFileHead<CSVHead, String>
 {
@@ -40,9 +46,9 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
         super( filename );
         assert tensor.rank() == 2;
         _delimiter = ",";
-        NDFrame alias = tensor.find( NDFrame.class );
-        List<Object> index = (alias != null) ? alias.keysOf( 0 ) : null;
-        List<Object> labels = (alias != null ) ? alias.keysOf( 1 ) : null;
+        NDFrame<?> alias = tensor.find( NDFrame.class );
+        List<Object> index = (alias != null) ? alias.atAxis( 0 ).getAllAliases() : null;
+        List<Object> labels = (alias != null ) ? alias.atAxis( 1 ).getAllAliases() : null;
         _tensorName = (alias != null) ? alias.getTensorName() : null;
         _firstRowIsLabels = labels != null;
         _firstColIsIndex = index != null;

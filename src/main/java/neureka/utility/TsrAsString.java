@@ -372,19 +372,19 @@ public final class TsrAsString
         int trimStart = ( _shape[ dim ] / 2 - trimSize / 2 );
         int trimEnd = ( _shape[ dim ] / 2 + trimSize / 2 );
         assert trimEnd - trimStart == trimSize;
-        NDFrame alias = _tensor.find( NDFrame.class );
+        NDFrame<?> alias = _tensor.find( NDFrame.class );
         if ( dim == indices.length - 1 ) {
             if (
                     alias != null &&
                             indices[ indices.length - 1 ] == 0 &&
                             indices[ Math.max( indices.length - 2, 0 ) ] == 0
             ) {
-                List<Object> key = alias.keysOf( indices.length - 1 );
-                if ( key != null ) {
+                List<Object> aliases = alias.atAxis( indices.length - 1 ).getAllAliases();
+                if ( aliases != null ) {
                     _$( Util.indent( dim ) );
                     _$( (_legacy) ? "[ " : "( " ); // The following assert has prevented many String miscarriages!
-                    assert key.size() - _shape[ indices.length - 1 ] == 0; // This is a basic requirement for the label size...
-                    ValStringifier getter = _createValStringifier( key.toArray() );
+                    assert aliases.size() - _shape[ indices.length - 1 ] == 0; // This is a basic requirement for the label size...
+                    ValStringifier getter = _createValStringifier( aliases.toArray() );
                     _buildRow(
                             trimStart, trimEnd, trimSize,
                             new int[ indices.length ],
@@ -431,9 +431,9 @@ public final class TsrAsString
         _$( "\n" );
     }
 
-    private TsrAsString _buildSingleLabel(NDFrame alias, int dim, int[] indices ) {
+    private TsrAsString _buildSingleLabel(NDFrame<?> alias, int dim, int[] indices ) {
         int pos = dim - 1;
-        List<Object> key = alias.keysOf( pos );
+        List<Object> key = alias.atAxis( pos ).getAllAliases();
         if ( pos >= 0 && key != null ) {
             _$( (_legacy) ? "[ " : "( ");
             int i = ( dim == indices.length - 1 )

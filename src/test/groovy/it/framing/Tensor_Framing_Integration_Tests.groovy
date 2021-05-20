@@ -74,10 +74,10 @@ class Tensor_Framing_Integration_Tests extends Specification
             asString = t.frame().toString()
 
         then :
-            t.frame().keysOf("Axis Three", 0).contains("tim")
-            t.frame().keysOf("Axis Three", 1).contains("tina")
-            t.frame().keysOf("Axis One").contains("x")
-            t.frame().keysOf("Axis One").contains("y")
+            t.frame().atAxis("Axis Three").getAllAliasesForIndex(0)
+            t.frame().atAxis("Axis Three").getAllAliasesForIndex(1)
+            t.frame().atAxis("Axis One").getAllAliases().contains("x")
+            t.frame().atAxis("Axis One").getAllAliases().contains("y")
             !asString.contains(" a ")
             !asString.contains(" b ")
             !asString.contains(" c ")

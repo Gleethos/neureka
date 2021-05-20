@@ -1580,7 +1580,7 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
      */
     public Tsr<ValType> backward()
     {
-        backward( 1 );
+        backward( 1 ); // By default we back-propagate a base factor of 1.
         return this;
     }
 
@@ -1686,6 +1686,13 @@ public class Tsr<ValType> extends AbstractNDArray<Tsr<ValType>, ValType> impleme
         return this;
     }
 
+    /**
+     *  This private method is used by public {@link Tsr#label} methods as a single source of
+     *  responsibility for performing the actual labeling based on the user input...
+     *
+     * @param tensorName The name of this tensor which will be stored in an {@link NDFrame} component.
+     * @param labels The label / alias information which will also be stored in an {@link NDFrame} component.
+     */
     private void _label( String tensorName, String[][] labels )
     {
         NDFrame<ValType> frame = find( NDFrame.class );
