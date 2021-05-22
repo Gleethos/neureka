@@ -235,24 +235,26 @@ public class XConv extends AbstractOperation
                         )
                         .setImplementationFor(
                             OpenCLDevice.class,
-                            new CLImplementation(
-                                    call -> {
-                                        int offset = ( call.getTsrOfType( Number.class, 0 ) != null ) ? 0 : 1;
-                                        int gwz = ( call.getTsrOfType( Number.class, 0 ) != null ) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                        call.getDevice().getKernel(call)
-                                                .pass( call.getTsrOfType( Number.class, offset ) )
-                                                .pass( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                .pass( call.getTsrOfType( Number.class, offset + 2 ) )
-                                                .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                .pass( call.getDerivativeIndex() ) //call.getDerivativeIndex()
-                                                .call( gwz );
-                                    },
-                                    3,
-                                    convolution.getKernelSource(), // kernelSource
-                                    "value = src1 * src2;\n",
-                                    "value += handle * drain;\n",
-                                    this // OperationType
-                            )
+                            CLImplementation.compiler()
+                                    .arity( 3 )
+                                    .kernelSource( convolution.getKernelSource() )
+                                    .activationSource( "value = src1 * src2;\n" )
+                                    .differentiationSource( "value += handle * drain;\n" )
+                                    .type( this )
+                                    .lambda(
+                                            call -> {
+                                                int offset = ( call.getTsrOfType( Number.class, 0 ) != null ) ? 0 : 1;
+                                                int gwz = ( call.getTsrOfType( Number.class, 0 ) != null ) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                                                call.getDevice().getKernel(call)
+                                                        .pass( call.getTsrOfType( Number.class, offset ) )
+                                                        .pass( call.getTsrOfType( Number.class, offset + 1 ) )
+                                                        .pass( call.getTsrOfType( Number.class, offset + 2 ) )
+                                                        .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                                        .pass( call.getDerivativeIndex() ) //call.getDerivativeIndex()
+                                                        .call( gwz );
+                                            }
+                                    )
+                                    .build()
                         )
         );
 

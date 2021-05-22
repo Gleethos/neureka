@@ -76,23 +76,25 @@ public final class Logarithm extends AbstractOperation
                         )
                 ).setImplementationFor(
                         OpenCLDevice.class,
-                        new CLImplementation(
-                                call -> {
-                                    int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                    call.getDevice().getKernel(call)
-                                            .pass( call.getTsrOfType( Number.class, offset ) )
-                                            .pass( call.getTsrOfType( Number.class, offset + 1 ) )
-                                            .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                            .pass( call.getDerivativeIndex() )
-                                            .call( gwz );
-                                },
-                                3,
-                                operationAlgorithm.getKernelSource(), // kernelSource
-                                "output = log( input );\n", // activationSource
-                                "output = 1.0 / ( input );\n", //differentiationSource
-                                this // OperationType
-                        )
+                        CLImplementation.compiler()
+                                .arity( 3 )
+                                .kernelSource( operationAlgorithm.getKernelSource() )
+                                .activationSource( "output = log( input );\n" )
+                                .differentiationSource( "output = 1.0 / ( input );\n" )
+                                .type( this )
+                                .lambda(
+                                        call -> {
+                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                                            call.getDevice().getKernel(call)
+                                                    .pass( call.getTsrOfType( Number.class, offset ) )
+                                                    .pass( call.getTsrOfType( Number.class, offset + 1 ) )
+                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                                    .pass( call.getDerivativeIndex() )
+                                                    .call( gwz );
+                                        }
+                                )
+                                .build()
                 )
         );
 

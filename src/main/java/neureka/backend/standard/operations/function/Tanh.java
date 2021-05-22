@@ -97,23 +97,25 @@ public final class Tanh extends AbstractOperation
                         )
                 ).setImplementationFor(
                         OpenCLDevice.class,
-                        new CLImplementation(
-                                call -> {
-                                    int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                    call.getDevice().getKernel(call)
-                                            .pass( call.getTsrOfType( Number.class, offset ) )
-                                            .pass( call.getTsrOfType( Number.class, offset + 1 ) )
-                                            .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                            .pass( call.getDerivativeIndex() )
-                                            .call( gwz );
-                                },
-                                3,
-                                operationAlgorithm.getKernelSource(), // kernelSource
-                                "output = input/pow(1+pow(input, 2.0f), 0.5f);\n",
-                                "output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n",
-                                this // OperationType
-                        )
+                        CLImplementation.compiler()
+                                .arity( 3 )
+                                .kernelSource( operationAlgorithm.getKernelSource() )
+                                .activationSource( "output = input/pow(1+pow(input, 2.0f), 0.5f);\n" )
+                                .differentiationSource( "output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n" )
+                                .type( this )
+                                .lambda(
+                                        call -> {
+                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                                            call.getDevice().getKernel(call)
+                                                    .pass( call.getTsrOfType( Number.class, offset ) )
+                                                    .pass( call.getTsrOfType( Number.class, offset + 1 ) )
+                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                                    .pass( call.getDerivativeIndex() )
+                                                    .call( gwz );
+                                        }
+                                )
+                                .build()
                 )
         );
 
