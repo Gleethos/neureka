@@ -41,7 +41,15 @@ public final class DefaultADAgent implements ADAgent
          Tsr<?> execute(GraphNode<?> t, Tsr<?> error);
     }
 
+    /**
+     *  This lambda ought to perform the forward propagation
+     *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
+     */
     @Setter private ADAction _forward;
+    /**
+     *  This lambda ought to perform the backward propagation
+     *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
+     */
     @Setter private ADAction _backward;
     private final Map<String, Object> _context = new TreeMap<>();
 
@@ -81,6 +89,15 @@ public final class DefaultADAgent implements ADAgent
         return _backward != null;
     }
 
+    /**
+     *  An {@link ADAgent} also contains a context of variables which have been
+     *  passed to it by an {@link neureka.backend.api.ExecutionCall}.
+     *  These variables specify how an implementation of an operation ought to execute.
+     *  This method let's us view the current state of these variables for this agent in the form of
+     *  a nice {@ink String}...
+     *
+     * @return A String view of this {@link ADAgent}.
+     */
     @Override
     public String toString() {
         if ( this.derivative() != null ) return derivative().toString();

@@ -127,30 +127,36 @@ public final class Gaussian extends AbstractOperation
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,
-                        new CLImplementation(
-                                call -> {
-                                    int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                    call.getDevice().getKernel(call)
-                                            .pass( call.getTsrOfType( Number.class, offset ) )
-                                            .pass( call.getTsrOfType( Number.class, offset + 1 ) )
-                                            .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                            .pass( call.getDerivativeIndex() )
-                                            .call( gwz );
-                                },
-                                3,
-                                operationAlgorithm.getKernelSource(), // kernelSource
-                                "output =\n" +
-                                        "    (float)pow(\n" +
-                                        "        (float)M_E,\n" +
-                                        "        -(float)pow(\n" +
-                                        "            (float)input,\n" +
-                                        "            (float)2\n" +
-                                        "        )\n" +
-                                        "    );\n",
-                                "output = 1 / (1 + (float)pow((float)M_E, -input));\n",
-                                this // OperationType
-                        )
+                        CLImplementation.compiler()
+                                .arity( 3 )
+                                .kernelSource( operationAlgorithm.getKernelSource() )
+                                .activationSource(
+                                        "output =\n" +
+                                                "    (float)pow(\n" +
+                                                "        (float)M_E,\n" +
+                                                "        -(float)pow(\n" +
+                                                "            (float)input,\n" +
+                                                "            (float)2\n" +
+                                                "        )\n" +
+                                                "    );\n"
+                                )
+                                .differentiationSource(
+                                        "output = 1 / (1 + (float)pow((float)M_E, -input));\n"
+                                )
+                                .type( this )
+                                .lambda(
+                                        call -> {
+                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                                            call.getDevice().getKernel(call)
+                                                    .pass( call.getTsrOfType( Number.class, offset ) )
+                                                    .pass( call.getTsrOfType( Number.class, offset + 1 ) )
+                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                                    .pass( call.getDerivativeIndex() )
+                                                    .call( gwz );
+                                        }
+                                )
+                                .build()
                 )
         );
 

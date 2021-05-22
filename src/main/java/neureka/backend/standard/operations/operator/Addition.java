@@ -132,7 +132,8 @@ public class Addition extends AbstractOperation {
                             HostCPU.class,
                                 new HostImplementation(
                                         call ->
-                                                call.getDevice().getExecutor()
+                                                call.getDevice()
+                                                        .getExecutor()
                                                         .threaded (
                                                                 call.getTsrOfType( Number.class, 0 ).size(),
                                                                 (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
@@ -164,7 +165,8 @@ public class Addition extends AbstractOperation {
                                 call -> {
                                     int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
                                     int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                    call.getDevice().getKernel(call)
+                                    call.getDevice()
+                                            .getKernel(call)
                                             .pass( call.getTsrOfType( Number.class, offset ) )
                                             .pass( call.getTsrOfType( Number.class, offset + 1 ) )
                                             .pass( call.getTsrOfType( Number.class, offset + 2 ) )

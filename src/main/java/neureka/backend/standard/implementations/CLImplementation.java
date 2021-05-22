@@ -2,8 +2,8 @@ package neureka.backend.standard.implementations;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import neureka.backend.api.implementations.AbstractImplementationFor;
 import neureka.backend.api.ImplementationFor;
+import neureka.backend.api.implementations.AbstractImplementationFor;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.devices.opencl.OpenCLDevice;
 
@@ -19,6 +19,7 @@ import java.util.Map;
 @Accessors( prefix = {"_"} )
 public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
 {
+
     private final java.util.function.Function<String, String> _aliasSwapper =
             s ->
                 "//-=<PARSED>=-//\n" +
@@ -92,6 +93,18 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
         }
     }
 
+    public static SimpleBuilder fromLambda() {
+        return new SimpleBuilder();
+    }
+
+    public static SourceBuilder fromSource() {
+        return new SourceBuilder();
+    }
+
+    public static Compiler compiler() {
+        return new Compiler();
+    }
+
     private interface Parser
     {
         void apply(String name, String first, String second);
@@ -135,5 +148,52 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
         return code;
     }
 
+    /**
+     *  This builder builds the most basic type of {@link CLImplementation} which
+     *  is in essence merely a wrapper for a lambda and the arity of this implementation.
+     */
+    public static class SimpleBuilder {
+        private ImplementationFor<OpenCLDevice> lambda;
+        private int arity;
 
+        SimpleBuilder() { }
+
+        public SimpleBuilder lambda(ImplementationFor<OpenCLDevice> lambda) { this.lambda = lambda;return this; }
+        public SimpleBuilder arity(int arity) { this.arity = arity; return this; }
+        public CLImplementation build() { return new CLImplementation(lambda, arity); }
+    }
+
+    public static class SourceBuilder {
+        private ImplementationFor<OpenCLDevice> lambda;
+        private int arity;
+        private String kernelName;
+        private String kernelSource;
+
+        SourceBuilder() { }
+
+        public SourceBuilder lambda(ImplementationFor<OpenCLDevice> lambda) { this.lambda = lambda;return this; }
+        public SourceBuilder arity(int arity) { this.arity = arity; return this; }
+        public SourceBuilder kernelName(String kernelName) { this.kernelName = kernelName;return this; }
+        public SourceBuilder kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }
+        public CLImplementation build() { return new CLImplementation(lambda, arity, kernelName, kernelSource); }
+    }
+
+    public static class Compiler {
+        private ImplementationFor<OpenCLDevice> lambda;
+        private int arity;
+        private String kernelSource;
+        private String activationSource;
+        private String differentiationSource;
+        private AbstractOperation type;
+
+        Compiler() { }
+
+        public Compiler lambda(ImplementationFor<OpenCLDevice> lambda) { this.lambda = lambda;return this; }
+        public Compiler arity(int arity) { this.arity = arity; return this; }
+        public Compiler kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }
+        public Compiler activationSource(String activationSource) { this.activationSource = activationSource;return this; }
+        public Compiler differentiationSource(String differentiationSource) { this.differentiationSource = differentiationSource;return this; }
+        public Compiler type(AbstractOperation type) { this.type = type;return this; }
+        public CLImplementation build() { return new CLImplementation(lambda, arity, kernelSource, activationSource, differentiationSource, type); }
+    }
 }

@@ -104,25 +104,27 @@ public final class Identity extends AbstractOperation
                         )
                 ).setImplementationFor(
                         OpenCLDevice.class,
-                        new CLImplementation(
-                                call -> {
-                                    int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                    // Drain tensor needs to be 'actual'! :
-                                    if (!call.getTsrOfType( Number.class, offset + 1).isVirtual()) call.getTsrOfType( Number.class, offset).setIsVirtual( false );
-                                    call.getDevice().getKernel(call)
-                                            .pass( call.getTsrOfType( Number.class, offset ) )
-                                            .pass( call.getTsrOfType( Number.class, offset + 1 ) )
-                                            .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                            .pass( call.getDerivativeIndex() )
-                                            .call( gwz );
-                                },
-                                2,
-                                operationAlgorithm.getKernelSource(), // kernelSource
-                                "output = input;\n", // activationSource
-                                "output = input;\n", //differentiationSource
-                                this // OperationType
-                        )
+                        CLImplementation.compiler()
+                                .arity( 2 )
+                                .kernelSource( operationAlgorithm.getKernelSource() )
+                                .activationSource( "output = input;\n" )
+                                .differentiationSource( "output = input;\n" )
+                                .type( this )
+                                .lambda(
+                                        call -> {
+                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                                            // Drain tensor needs to be 'actual'! :
+                                            if (!call.getTsrOfType( Number.class, offset + 1).isVirtual()) call.getTsrOfType( Number.class, offset).setIsVirtual( false );
+                                            call.getDevice().getKernel(call)
+                                                    .pass( call.getTsrOfType( Number.class, offset ) )
+                                                    .pass( call.getTsrOfType( Number.class, offset + 1 ) )
+                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                                    .pass( call.getDerivativeIndex() )
+                                                    .call( gwz );
+                                        }
+                                )
+                                .build()
                 )
         );
 
@@ -193,24 +195,26 @@ public final class Identity extends AbstractOperation
                         )
                 ).setImplementationFor(
                         OpenCLDevice.class,
-                        new CLImplementation(
-                                call -> {
-                                    Tsr t = call.getTsrOfType( Number.class, 0 );
-                                    int gwz = t.size();
-                                    call.getDevice().getKernel(call)
-                                            .pass(t)
-                                            .pass(t)
-                                            .pass((float)call.getTsrOfType( Number.class, 1 ).value64( 0 ))
-                                            .pass(t.rank())
-                                            .pass( call.getDerivativeIndex() )
-                                            .call( gwz );
-                                },
-                                2,
-                                scalarization.getKernelSource(), // kernelSource
-                                "output = value;\n",
-                                "output = value;\n",
-                                this // OperationType
-                        )
+                        CLImplementation.compiler()
+                                .arity( 2 )
+                                .kernelSource( scalarization.getKernelSource() )
+                                .activationSource( "output = value;\n" )
+                                .differentiationSource( "output = value;\n" )
+                                .type( this )
+                                .lambda(
+                                        call -> {
+                                            Tsr t = call.getTsrOfType( Number.class, 0 );
+                                            int gwz = t.size();
+                                            call.getDevice().getKernel(call)
+                                                    .pass(t)
+                                                    .pass(t)
+                                                    .pass((float)call.getTsrOfType( Number.class, 1 ).value64( 0 ))
+                                                    .pass(t.rank())
+                                                    .pass( call.getDerivativeIndex() )
+                                                    .call( gwz );
+                                        }
+                                )
+                                .build()
                 )
         );
 
