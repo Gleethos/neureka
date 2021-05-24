@@ -453,12 +453,12 @@ public class Power extends AbstractOperation
                         CLImplementation.compiler()
                                 .arity( 3 )
                                 .kernelSource( scalarization.getKernelSource() )
-                                .activationSource( "output = pow(input1, value);" )
+                                .activationSource( "output = pow( input1, value );" )
                                 .differentiationSource(
-                                        "if ( d==0 ) {                                     \n" +
-                                        "    output = value * pow(input1, value-(float)1 );   \n" +
+                                        "if ( d == 0 ) {                                      \n" +
+                                        "    output = value * pow( input1, value - (float) 1 );   \n" +
                                         "} else {                                             \n" +
-                                        "    output = pow(input1, value) * log(value);        \n" +
+                                        "    output = pow( input1, value ) * log( value );        \n" +
                                         "}"
                                 )
                                 .kernelPostfix( this.getFunction() )
@@ -466,7 +466,7 @@ public class Power extends AbstractOperation
                                         call -> {
                                             int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
                                             int gwz = call.getTsrOfType( Number.class, 0 ).size();
-                                            call.getDevice().getKernel(call)
+                                            call.getDevice().getKernel( call )
                                                     .pass(call.getTsrOfType( Number.class, 0 ))
                                                     .pass(call.getTsrOfType( Number.class, 0 ))
                                                     .pass((float)call.getTsrOfType( Number.class, 1+offset).value64( 0 ))
@@ -478,122 +478,6 @@ public class Power extends AbstractOperation
                                 .build()
                 )
         );
-
-
-
-
-        //__________________________
-        // RELATED OPERATION TYPES :
-
-        new AbstractOperation(
-                new OperationBuilder()
-                        .setFunction(         "inv_power_left"   )
-                        .setOperator(         ((char) 171) + "^" )
-                        .setArity(            3                  )
-                        .setIsOperator(       true               )
-                        .setIsIndexer(        false              )
-                        .setIsDifferentiable( false              )
-                        .setIsInline(         false              )
-        ) {
-            @Override
-            public String stringify(String[] children) {
-                return null;
-            }
-
-            @Override
-            public String asDerivative( Function[] children, int d ) {
-                throw new IllegalStateException("Operation does not support dynamic derivation!");
-            }
-
-            @Override
-            public double calculate( double[] inputs, int j, int d, Function[] src ) {
-            return src[ 0 ].call( inputs, j );
-            }
-        };
-
-
-        new AbstractOperation(
-                new OperationBuilder()
-                        .setFunction(         "inv_power_right" )
-                        .setOperator(         "^" + ((char) 187)  )
-                        .setArity(            3          )
-                        .setIsOperator(       true       )
-                        .setIsIndexer(        false      )
-                        .setIsDifferentiable( false      )
-                        .setIsInline(         false      )
-        ) {
-            @Override
-            public String stringify(String[] children) {
-                return null;
-            }
-
-            @Override
-            public String asDerivative( Function[] children, int d ) {
-                throw new IllegalStateException("Operation does not support dynamic derivation!");
-            }
-
-            @Override
-            public double calculate( double[] inputs, int j, int d, Function[] src ) {
-            return src[ 0 ].call( inputs, j );
-            }
-        };
-
-        // Convolution:
-
-        new AbstractOperation(
-                new OperationBuilder()
-                        .setFunction(         "" )
-                        .setOperator(         ((char) 171) + "p"  )
-                        .setArity(            3          )
-                        .setIsOperator(       true       )
-                        .setIsIndexer(        false      )
-                        .setIsDifferentiable( false      )
-                        .setIsInline(         false      )
-        ) {
-            @Override
-            public String stringify(String[] children) {
-                return null;
-            }
-
-            @Override
-            public String asDerivative( Function[] children, int d ) {
-                throw new IllegalStateException("Operation does not support dynamic derivation!");
-            }
-
-            @Override
-            public double calculate( double[] inputs, int j, int d, Function[] src ) {
-            return src[ 0 ].call( inputs, j );
-            }
-        };
-
-
-        new AbstractOperation(
-                new OperationBuilder()
-                        .setFunction(         "" )
-                        .setOperator(         "p" + ((char) 187)  )
-                        .setArity(            3          )
-                        .setIsOperator(       true       )
-                        .setIsIndexer(        false      )
-                        .setIsDifferentiable( false      )
-                        .setIsInline(         false      )
-        ) {
-            @Override
-            public String stringify(String[] children) {
-                return null;
-            }
-
-            @Override
-            public String asDerivative( Function[] children, int d ) {
-                throw new IllegalStateException("Operation does not support dynamic derivation!");
-            }
-
-            @Override
-            public double calculate( double[] inputs, int j, int d, Function[] src ) {
-            return src[ 0 ].call( inputs, j );
-            }
-        };
-
-
 
 
     }
