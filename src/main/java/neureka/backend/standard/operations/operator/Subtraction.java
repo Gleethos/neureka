@@ -332,62 +332,6 @@ public class Subtraction extends AbstractOperation
                                 .build()
                     )
                 );
-
-        //______________________
-        // RELATED OPERATIONS :
-
-        new AbstractOperation(
-                new OperationBuilder()
-                        .setFunction(         "" )
-                        .setOperator(         ((char) 171) + "-"  )
-                        .setArity(            3          )
-                        .setIsOperator(       true       )
-                        .setIsIndexer(        false      )
-                        .setIsDifferentiable( false      )
-                        .setIsInline(         false      )
-        ) {;
-            @Override
-            public String stringify(String[] children) {
-                return null;
-            }
-
-            @Override
-            public String asDerivative( Function[] children, int d ) {
-                throw new IllegalStateException("Operation does not support dynamic derivation!");
-            }
-
-            @Override
-            public double calculate( double[] inputs, int j, int d, Function[] src ) {
-            return src[ 0 ].call( inputs, j );
-            }
-        };
-
-        new AbstractOperation(
-                new OperationBuilder()
-                        .setFunction(         "" )
-                        .setOperator(         "-" + ((char) 187)  )
-                        .setArity(            3          )
-                        .setIsOperator(       true       )
-                        .setIsIndexer(        false      )
-                        .setIsDifferentiable( false      )
-                        .setIsInline(         false      )
-        ) {;
-            @Override
-            public String stringify(String[] children) {
-                return null;
-            }
-
-            @Override
-            public String asDerivative( Function[] children, int d ) {
-                throw new IllegalStateException("Operation does not support dynamic derivation!");
-            }
-
-            @Override
-            public double calculate( double[] inputs, int j, int d, Function[] src ) {
-            return src[ 0 ].call( inputs, j );
-            }
-        };
-
     }
 
 

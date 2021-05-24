@@ -18,6 +18,7 @@ neureka.backend.standard.operations.indexer.Product
 
 # operator :
 neureka.backend.standard.operations.operator.Power
+neureka.backend.standard.operations.operator.PowerConv
 neureka.backend.standard.operations.operator.Division
 neureka.backend.standard.operations.operator.Multiplication
 neureka.backend.standard.operations.operator.Modulo
