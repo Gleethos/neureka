@@ -9,8 +9,8 @@ public class AbstractImplementationFor< TargetDevice extends Device<?> > impleme
     private int _arity = -1;
     private final ImplementationFor<TargetDevice> _lambda;
 
-    public AbstractImplementationFor( ImplementationFor<TargetDevice> lambda, int arity ) {
-        _lambda = lambda;
+    public AbstractImplementationFor( ImplementationFor<TargetDevice> implementationLambda, int arity ) {
+        _lambda = implementationLambda;
         _arity = arity;
     }
 

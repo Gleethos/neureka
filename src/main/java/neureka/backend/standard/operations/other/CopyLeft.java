@@ -175,16 +175,13 @@ public class CopyLeft extends AbstractOperation {
                     )
                     .setImplementationFor(
                         OpenCLDevice.class,
-                        new CLImplementation(
-                                call -> {
-                                    call.getTsrOfType( Number.class, 0 ).setIsVirtual( false );
-                                    OperationContext.get().instance("idy")
-                                            .getAlgorithm(Activation.class)
-                                            .getImplementationFor( OpenCLDevice.class )
-                                            .run(call);
-                                },
-                                2
-                        )
+                        call -> {
+                            call.getTsrOfType( Number.class, 0 ).setIsVirtual( false );
+                            OperationContext.get().instance("idy")
+                                    .getAlgorithm(Activation.class)
+                                    .getImplementationFor( OpenCLDevice.class )
+                                    .run(call);
+                        }
                 )
         );
     }

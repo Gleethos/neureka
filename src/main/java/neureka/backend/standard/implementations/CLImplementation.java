@@ -45,25 +45,18 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
     @Getter private String _source;
     @Getter private String _name;
 
-    public CLImplementation(
-            ImplementationFor<OpenCLDevice> lambda,
-            int arity
-    ) {
-        super( lambda, arity );
-    }
-
-    public CLImplementation(
-            ImplementationFor<OpenCLDevice> lambda,
+    private CLImplementation(
+            ImplementationFor<OpenCLDevice> execution,
             int arity,
             String kernelName,
             String kernelSource
     ) {
-        super( lambda, arity );
+        super( execution, arity );
         _name = kernelName;
         _source = kernelSource;
     }
 
-    public CLImplementation(
+    private CLImplementation(
             ImplementationFor<OpenCLDevice> lambda,
             int arity,
             String kernelSource,
@@ -91,10 +84,6 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
                 _source = map.values().toArray(new String[ 0 ])[ 0 ];
             }
         }
-    }
-
-    public static SimpleBuilder fromLambda() {
-        return new SimpleBuilder();
     }
 
     public static SourceBuilder fromSource() {
@@ -152,17 +141,6 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
      *  This builder builds the most basic type of {@link CLImplementation} which
      *  is in essence merely a wrapper for a lambda and the arity of this implementation.
      */
-    public static class SimpleBuilder {
-        private ImplementationFor<OpenCLDevice> lambda;
-        private int arity;
-
-        SimpleBuilder() { }
-
-        public SimpleBuilder lambda(ImplementationFor<OpenCLDevice> lambda) { this.lambda = lambda;return this; }
-        public SimpleBuilder arity(int arity) { this.arity = arity; return this; }
-        public CLImplementation build() { return new CLImplementation(lambda, arity); }
-    }
-
     public static class SourceBuilder {
         private ImplementationFor<OpenCLDevice> lambda;
         private int arity;

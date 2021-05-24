@@ -83,23 +83,20 @@ public class CopyRight extends AbstractOperation {
                         )
                 ).setImplementationFor(
                         OpenCLDevice.class,
-                        new CLImplementation(
-                                call -> {
-                                    int offset = ( call.getTsrOfType( Number.class, 0 ) == null ) ? 1 : 0;
-                                    ExecutionCall<OpenCLDevice> newCall = ExecutionCall.builder()
-                                            .device( call.getDevice() )
-                                            .tensors( new Tsr[]{call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)} )
-                                            .derivativeIndex( -1 )
-                                            .operation( call.getOperation() )
-                                            .build()
-                                            .forDeviceType(OpenCLDevice.class);
-                                    OperationContext.get().instance("idy")
-                                            .getAlgorithm(Activation.class)
-                                            .getImplementationFor( OpenCLDevice.class )
-                                            .run(call);
-                                },
-                                2
-                        )
+                        call -> {
+                            int offset = ( call.getTsrOfType( Number.class, 0 ) == null ) ? 1 : 0;
+                            ExecutionCall<OpenCLDevice> newCall = ExecutionCall.builder()
+                                    .device( call.getDevice() )
+                                    .tensors( new Tsr[]{call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)} )
+                                    .derivativeIndex( -1 )
+                                    .operation( call.getOperation() )
+                                    .build()
+                                    .forDeviceType(OpenCLDevice.class);
+                            OperationContext.get().instance("idy")
+                                    .getAlgorithm(Activation.class)
+                                    .getImplementationFor( OpenCLDevice.class )
+                                    .run(call);
+                        }
                 )
         );
     }
