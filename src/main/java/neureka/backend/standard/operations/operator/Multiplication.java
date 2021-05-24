@@ -147,24 +147,26 @@ public class Multiplication extends AbstractOperation
                         )
                 ).setImplementationFor(
                         OpenCLDevice.class,
-                        new CLImplementation(
-                                call -> {
-                                    int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                    int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                    call.getDevice().getKernel(call)
-                                            .pass( call.getTsrOfType( Number.class, offset ) )
-                                            .pass( call.getTsrOfType( Number.class, offset + 1 ) )
-                                            .pass( call.getTsrOfType( Number.class, offset + 2 ) )
-                                            .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                            .pass( call.getDerivativeIndex() )
-                                            .call( gwz );
-                                },
-                                3,
-                                operator.getKernelSource(), // kernelSource
-                                "output = input1 * input2;\n",
-                                "if (d==0) {output = input2;}else{output = input1;}\n",
-                                this // OperationType
-                        )
+                        CLImplementation.compiler()
+                                .arity( 3 )
+                                .kernelSource( operator.getKernelSource() )
+                                .activationSource( "output = input1 * input2;\n" )
+                                .differentiationSource( "if (d==0) {output = input2;}else{output = input1;}\n" )
+                                .type( this )
+                                .lambda(
+                                        call -> {
+                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                                            call.getDevice().getKernel(call)
+                                                    .pass( call.getTsrOfType( Number.class, offset ) )
+                                                    .pass( call.getTsrOfType( Number.class, offset + 1 ) )
+                                                    .pass( call.getTsrOfType( Number.class, offset + 2 ) )
+                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                                    .pass( call.getDerivativeIndex() )
+                                                    .call( gwz );
+                                        }
+                                )
+                                .build()
                 )
         );
 
@@ -226,24 +228,26 @@ public class Multiplication extends AbstractOperation
                     )
             ).setImplementationFor(
                     OpenCLDevice.class,
-                    new CLImplementation(
-                            call -> {
-                                int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                call.getDevice().getKernel(call)
-                                        .pass( call.getTsrOfType( Number.class, offset ) )
-                                        .pass( call.getTsrOfType( Number.class, offset + 1 ) )
-                                        .pass( call.getTsrOfType( Number.class, offset + 2 ) )
-                                        .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                        .pass( call.getDerivativeIndex() )
-                                        .call( gwz );
-                            },
-                            3,
-                            broadcast.getKernelSource(), // kernelSource
-                            "value = src1 * src2;\n",
-                            "value += handle * drain;\n",
-                            this // OperationType
-                    )
+                    CLImplementation.compiler()
+                            .arity( 3 )
+                            .kernelSource( broadcast.getKernelSource() )
+                            .activationSource( "value = src1 * src2;\n" )
+                            .differentiationSource( "value += handle * drain;\n" )
+                            .type( this )
+                            .lambda(
+                                    call -> {
+                                        int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                        int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                                        call.getDevice().getKernel(call)
+                                                .pass( call.getTsrOfType( Number.class, offset ) )
+                                                .pass( call.getTsrOfType( Number.class, offset + 1 ) )
+                                                .pass( call.getTsrOfType( Number.class, offset + 2 ) )
+                                                .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                                .pass( call.getDerivativeIndex() )
+                                                .call( gwz );
+                                    }
+                            )
+                            .build()
             )
         );
 

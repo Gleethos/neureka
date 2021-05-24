@@ -100,7 +100,7 @@ public class OpenCLPlatform {
                 if ( !templateFound ) names.add(parts[parts.length - 1]);
                 else
                 {
-                    String preName = parts[parts.length - 1].replace("template", "");
+                    String preName = parts[ parts.length - 1 ].replace("template", "");
                     // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
                     // Tsr t0_drain,  Tsr t1_src1,   Tsr t2_src2
                     // drn[di], src1[_i_of_idx_on_tln(prv_src1_cfg, rank)], src2[_i_of_idx_on_tln(prv_src2_cfg, rank)]

@@ -127,7 +127,8 @@ public final class Gaussian extends AbstractOperation
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,
-                        CLImplementation.compiler()
+                        CLImplementation
+                                .compiler()
                                 .arity( 3 )
                                 .kernelSource( operationAlgorithm.getKernelSource() )
                                 .activationSource(

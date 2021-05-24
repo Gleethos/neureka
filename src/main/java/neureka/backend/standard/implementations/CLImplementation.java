@@ -194,6 +194,11 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
         public Compiler activationSource(String activationSource) { this.activationSource = activationSource;return this; }
         public Compiler differentiationSource(String differentiationSource) { this.differentiationSource = differentiationSource;return this; }
         public Compiler type(AbstractOperation type) { this.type = type;return this; }
-        public CLImplementation build() { return new CLImplementation(lambda, arity, kernelSource, activationSource, differentiationSource, type); }
+        public CLImplementation build() {
+            if ( lambda == null ) throw new IllegalStateException(
+                    CLImplementation.class.getSimpleName()+" builder not satisfied."
+            );
+            return new CLImplementation(lambda, arity, kernelSource, activationSource, differentiationSource, type);
+        }
     }
 }

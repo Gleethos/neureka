@@ -303,24 +303,26 @@ public class Addition extends AbstractOperation {
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,
-                        new CLImplementation(
-                                call -> {
-                                    int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
-                                    int gwz = call.getTsrOfType( Number.class, 0 ).size();
-                                    call.getDevice().getKernel(call)
-                                            .pass(call.getTsrOfType( Number.class, 0 ))
-                                            .pass(call.getTsrOfType( Number.class, 0 ))
-                                            .pass((float)call.getTsrOfType( Number.class, 1+offset).value64( 0 ))
-                                            .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                            .pass( call.getDerivativeIndex() )
-                                            .call( gwz );
-                                },
-                                3,
-                                scalarization.getKernelSource(), // kernelSource
-                                "output = input1 + value;\n",
-                                "output = 1;\n",
-                                this // OperationType
-                        )
+                        CLImplementation.compiler()
+                                .arity( 3 )
+                                .kernelSource( scalarization.getKernelSource() )
+                                .activationSource( "output = input1 + value;\n" )
+                                .differentiationSource( "output = 1;\n" )
+                                .type( this )
+                                .lambda(
+                                        call -> {
+                                            int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
+                                            int gwz = call.getTsrOfType( Number.class, 0 ).size();
+                                            call.getDevice().getKernel(call)
+                                                    .pass(call.getTsrOfType( Number.class, 0 ))
+                                                    .pass(call.getTsrOfType( Number.class, 0 ))
+                                                    .pass((float)call.getTsrOfType( Number.class, 1+offset).value64( 0 ))
+                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                                    .pass( call.getDerivativeIndex() )
+                                                    .call( gwz );
+                                        }
+                                )
+                                .build()
                 )
         );
 

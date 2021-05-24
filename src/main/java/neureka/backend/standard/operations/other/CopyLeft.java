@@ -108,24 +108,26 @@ public class CopyLeft extends AbstractOperation {
                         )
                 ).setImplementationFor(
                         OpenCLDevice.class,
-                        new CLImplementation(
-                                call -> {
-                                    Tsr t = call.getTsrOfType( Number.class, 0 );
-                                    int gwz = t.size();
-                                    call.getDevice().getKernel(call)
-                                            .pass( t )
-                                            .pass( t )
-                                            .pass( call.getTsrOfType( Number.class, 1 ).value32( 0 ) )
-                                            .pass( t.rank() )
-                                            .pass( call.getDerivativeIndex() )
-                                            .call( gwz );
-                                },
-                                2,
-                                scalarization.getKernelSource(), // kernelSource
-                                "output = value;\n",
-                                "output = value;\n",
-                                this // OperationType
-                        )
+                        CLImplementation.compiler()
+                                .arity( 2 )
+                                .kernelSource( scalarization.getKernelSource() )
+                                .activationSource( "output = value;\n" )
+                                .differentiationSource( "output = value;\n" )
+                                .type( this )
+                                .lambda(
+                                        call -> {
+                                            Tsr t = call.getTsrOfType( Number.class, 0 );
+                                            int gwz = t.size();
+                                            call.getDevice().getKernel(call)
+                                                    .pass( t )
+                                                    .pass( t )
+                                                    .pass( call.getTsrOfType( Number.class, 1 ).value32( 0 ) )
+                                                    .pass( t.rank() )
+                                                    .pass( call.getDerivativeIndex() )
+                                                    .call( gwz );
+                                        }
+                                )
+                                .build()
                 )
         );
 
