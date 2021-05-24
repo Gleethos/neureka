@@ -102,8 +102,8 @@ public final class Tanh extends AbstractOperation
                                 .kernelSource( operationAlgorithm.getKernelSource() )
                                 .activationSource( "output = input/pow(1+pow(input, 2.0f), 0.5f);\n" )
                                 .differentiationSource( "output = 1-pow(input/pow((1.0f+pow(input,2.0f)),0.5f), 2.0f);\n" )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call -> {
                                             int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
                                             int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();

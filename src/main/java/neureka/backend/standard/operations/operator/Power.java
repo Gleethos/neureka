@@ -277,8 +277,8 @@ public class Power extends AbstractOperation
                                         "    output = pow(input1, input2) * log(input1);  \n" +
                                         "}"
                                 )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call ->
                                         {
                                             int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
@@ -368,8 +368,8 @@ public class Power extends AbstractOperation
                                         "    value += (pow(target, handle) * log(handle)) * drain;\n" +
                                         "}"
                                 )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call -> {
                                             int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
                                             int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
@@ -461,8 +461,8 @@ public class Power extends AbstractOperation
                                         "    output = pow(input1, value) * log(value);        \n" +
                                         "}"
                                 )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call -> {
                                             int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
                                             int gwz = call.getTsrOfType( Number.class, 0 ).size();

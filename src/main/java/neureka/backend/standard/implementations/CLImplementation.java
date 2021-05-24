@@ -69,7 +69,7 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
             String kernelSource,
             String activationSource,
             String differentiationSource,
-            AbstractOperation type
+            String postfix
     ) {
         super( lambda, arity );
         boolean templateFound;
@@ -85,7 +85,7 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
                         kernelSource,
                         activationSource,
                         differentiationSource,
-                        type
+                        postfix
                 );
                 _name = map.keySet().toArray(new String[ 0 ])[ 0 ];
                 _source = map.values().toArray(new String[ 0 ])[ 0 ];
@@ -115,7 +115,7 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
             String kernelSource,
             String activationSource,
             String differentiationSource,
-            AbstractOperation type
+            String postfix
     ) {
         Map<String, String> code = new HashMap<>();
         String preName = templateName.replace("template", "");
@@ -141,7 +141,7 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
         //inverse:  src1/fdrn <-src2 <- drain
         //===========================================================================
         parser.apply(
-                type.getFunction(),
+                postfix,
                 activationSource,
                 differentiationSource
         );
@@ -184,16 +184,16 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
         private String kernelSource;
         private String activationSource;
         private String differentiationSource;
-        private AbstractOperation type;
+        private String type;
 
         Compiler() { }
 
-        public Compiler lambda(ImplementationFor<OpenCLDevice> lambda) { this.lambda = lambda;return this; }
+        public Compiler execution(ImplementationFor<OpenCLDevice> lambda) { this.lambda = lambda;return this; }
         public Compiler arity(int arity) { this.arity = arity; return this; }
         public Compiler kernelSource(String kernelSource) { this.kernelSource = kernelSource;return this; }
         public Compiler activationSource(String activationSource) { this.activationSource = activationSource;return this; }
         public Compiler differentiationSource(String differentiationSource) { this.differentiationSource = differentiationSource;return this; }
-        public Compiler type(AbstractOperation type) { this.type = type;return this; }
+        public Compiler kernelPostfix(String type) { this.type = type;return this; }
         public CLImplementation build() {
             if ( lambda == null ) throw new IllegalStateException(
                     CLImplementation.class.getSimpleName()+" builder not satisfied."

@@ -113,8 +113,8 @@ public class CopyLeft extends AbstractOperation {
                                 .kernelSource( scalarization.getKernelSource() )
                                 .activationSource( "output = value;\n" )
                                 .differentiationSource( "output = value;\n" )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call -> {
                                             Tsr t = call.getTsrOfType( Number.class, 0 );
                                             int gwz = t.size();

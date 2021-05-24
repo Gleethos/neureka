@@ -167,8 +167,8 @@ public class Division extends AbstractOperation
                                         "    output = -input2 /(float)pow(input1, 2.0f);\n" +
                                         "}"
                                 )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call -> {
                                             int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
                                             int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
@@ -262,8 +262,8 @@ public class Division extends AbstractOperation
                                         "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
                                         "}"
                                 )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call -> {
                                             int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
                                             int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
@@ -357,8 +357,8 @@ public class Division extends AbstractOperation
                                         "    output = -value /(float)pow(input1, 2.0f);\n" +
                                         "}"
                                 )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call -> {
                                             int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
                                             int gwz = call.getTsrOfType( Number.class, 0 ).size();

@@ -6,7 +6,6 @@ import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.Operation;
 import neureka.backend.api.operations.OperationContext;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
@@ -152,8 +151,8 @@ public class Multiplication extends AbstractOperation
                                 .kernelSource( operator.getKernelSource() )
                                 .activationSource( "output = input1 * input2;\n" )
                                 .differentiationSource( "if (d==0) {output = input2;}else{output = input1;}\n" )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call -> {
                                             int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
                                             int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
@@ -233,8 +232,8 @@ public class Multiplication extends AbstractOperation
                             .kernelSource( broadcast.getKernelSource() )
                             .activationSource( "value = src1 * src2;\n" )
                             .differentiationSource( "value += handle * drain;\n" )
-                            .type( this )
-                            .lambda(
+                            .kernelPostfix( this.getFunction() )
+                            .execution(
                                     call -> {
                                         int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
                                         int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
@@ -347,8 +346,8 @@ public class Multiplication extends AbstractOperation
                                 .kernelSource( scalarization.getKernelSource() )
                                 .activationSource( "output = input1 * value;\n" )
                                 .differentiationSource( "if (d==0) {output = value;}else{output = input1;}\n" )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call -> {
                                             int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
                                             int gwz = call.getTsrOfType( Number.class, 0 ).size();
@@ -493,8 +492,8 @@ public class Multiplication extends AbstractOperation
                                 .kernelSource( xBroadcast.getKernelSource() )
                                 .activationSource( "value = src1 * src2;\n" )
                                 .differentiationSource( "value += handle * drain;\n" )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call -> {
                                             int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
                                             int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
@@ -619,8 +618,8 @@ public class Multiplication extends AbstractOperation
                                 .kernelSource( xBroadcast.getKernelSource() )
                                 .activationSource( "value = src1 * src2;\n" )
                                 .differentiationSource( "value += handle * drain;\n" )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call -> {
                                             int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
                                             int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();

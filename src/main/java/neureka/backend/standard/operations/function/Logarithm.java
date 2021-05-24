@@ -81,8 +81,8 @@ public final class Logarithm extends AbstractOperation
                                 .kernelSource( operationAlgorithm.getKernelSource() )
                                 .activationSource( "output = log( input );\n" )
                                 .differentiationSource( "output = 1.0 / ( input );\n" )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call -> {
                                             int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
                                             int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();

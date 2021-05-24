@@ -166,8 +166,8 @@ public class Addition extends AbstractOperation {
                                     .kernelSource( operator.getKernelSource() )
                                     .activationSource( "output = input1 + input2;\n" )
                                     .differentiationSource( "output = 1;\n" )
-                                    .type( this )
-                                    .lambda(
+                                    .kernelPostfix( this.getFunction() )
+                                    .execution(
                                             call -> {
                                                 int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
                                                 int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
@@ -220,8 +220,8 @@ public class Addition extends AbstractOperation {
                                 .kernelSource( _broadcast.getKernelSource() )
                                 .activationSource( "value = src1 + src2;\n" )
                                 .differentiationSource( "value += 1 * drain;\n" )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call -> {
                                             int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
                                             int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
@@ -308,8 +308,8 @@ public class Addition extends AbstractOperation {
                                 .kernelSource( scalarization.getKernelSource() )
                                 .activationSource( "output = input1 + value;\n" )
                                 .differentiationSource( "output = 1;\n" )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call -> {
                                             int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
                                             int gwz = call.getTsrOfType( Number.class, 0 ).size();

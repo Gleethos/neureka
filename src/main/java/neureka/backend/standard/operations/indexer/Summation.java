@@ -128,8 +128,8 @@ public final class Summation extends AbstractOperation
                                 .kernelSource( operationAlgorithm.getKernelSource() )
                                 .activationSource( "value = src1 + src2;\n" )
                                 .differentiationSource( "value += 1 * drain;\n" )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call -> {
                                             int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
                                             int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
@@ -265,8 +265,8 @@ public final class Summation extends AbstractOperation
                                 .kernelSource( activation.getKernelSource() )
                                 .activationSource( "output = input;" )
                                 .differentiationSource( "output = 1;" )
-                                .type( this )
-                                .lambda(
+                                .kernelPostfix( this.getFunction() )
+                                .execution(
                                         call -> {
                                             int offset = ( call.getTsrOfType( Number.class, 0 ) != null ) ? 0 : 1;
                                             int gwz =

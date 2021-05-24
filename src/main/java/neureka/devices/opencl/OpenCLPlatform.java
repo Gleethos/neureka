@@ -87,10 +87,6 @@ public class OpenCLPlatform {
         for ( int i = 0; i < fileNames.length; i++ )
         {
             String kernelSource = templateSources.get( i );
-                    kernelSource = kernelSource.replace(
-                    "Neureka.instance().settings().indexing().REVERSE_INDEX_TRANSLATION",
-                    "false"
-            );
             boolean templateFound = false;
             if ( kernelSource.contains( "__kernel" ) )
             {
@@ -108,25 +104,25 @@ public class OpenCLPlatform {
                     // inverse:  src1/fdrn <- src2 <- drain
                     //===========================================================================
                     Map<String, String> code = new HashMap<>();
-                    CLImplementation exec = null;
+                    CLImplementation impl = null;
                     for ( Operation type : OperationContext.get().instances() ) {
                         if ( preName.contains("activation") && type.supportsAlgorithm(Activation.class) ) {
-                            exec = (CLImplementation) type.getAlgorithm(Activation.class).getImplementationFor( OpenCLDevice.class );
+                            impl = (CLImplementation) type.getAlgorithm(Activation.class).getImplementationFor( OpenCLDevice.class );
                         } else if ( preName.contains("operator") && type.supportsAlgorithm(Operator.class) ) {
-                            exec = (CLImplementation) type.getAlgorithm(Operator.class).getImplementationFor( OpenCLDevice.class );
+                            impl = (CLImplementation) type.getAlgorithm(Operator.class).getImplementationFor( OpenCLDevice.class );
                         } else if ( preName.contains("scalarization") && type.supportsAlgorithm(Scalarization.class) ) {
-                            exec = (CLImplementation) type.getAlgorithm(Scalarization.class).getImplementationFor( OpenCLDevice.class );
+                            impl = (CLImplementation) type.getAlgorithm(Scalarization.class).getImplementationFor( OpenCLDevice.class );
                         } else if ( preName.contains("broadcast") && type.supportsAlgorithm(Broadcast.class) ) {//broadcast
-                            exec = (CLImplementation) type.getAlgorithm(Broadcast.class).getImplementationFor( OpenCLDevice.class );
+                            impl = (CLImplementation) type.getAlgorithm(Broadcast.class).getImplementationFor( OpenCLDevice.class );
                         } else if ( preName.contains("convolution") && type.supportsAlgorithm(Convolution.class) ) {
-                            exec = (CLImplementation) type.getAlgorithm(Convolution.class).getImplementationFor( OpenCLDevice.class );
+                            impl = (CLImplementation) type.getAlgorithm(Convolution.class).getImplementationFor( OpenCLDevice.class );
                         } else if (
                                 type.supportsAlgorithm(GenericAlgorithm.class)
                                 && preName.contains(type.getAlgorithm(GenericAlgorithm.class).getName())
                         ) { // TODO: cover!
-                            exec = (CLImplementation) type.getAlgorithm(GenericAlgorithm.class).getImplementationFor( OpenCLDevice.class );
+                            impl = (CLImplementation) type.getAlgorithm(GenericAlgorithm.class).getImplementationFor( OpenCLDevice.class );
                         }
-                        if ( exec != null && exec.getSource() != null ) code.put( exec.getName(), exec.getSource() );
+                        if ( impl != null && impl.getSource() != null ) code.put( impl.getName(), impl.getSource() );
                     }
                     code.forEach( ( n, s ) -> {
                                 names.add( n );
