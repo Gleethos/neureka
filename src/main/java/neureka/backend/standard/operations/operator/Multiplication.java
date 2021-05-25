@@ -217,10 +217,12 @@ public class Multiplication extends AbstractOperation
                 .setHandleRecursivelyAccordingToArity( rja )
                 .build();
 
-        setAlgorithm(Broadcast.class,
-            broadcast.setImplementationFor(
-                    HostCPU.class,
-                    new HostImplementation(
+        setAlgorithm(
+                Broadcast.class,
+                broadcast
+                    .setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
                             call ->
                                     call.getDevice().getExecutor()
                                             .threaded (
@@ -240,10 +242,11 @@ public class Multiplication extends AbstractOperation
                                                             )
                                             ),
                             3
+                        )
                     )
-            ).setImplementationFor(
-                    OpenCLDevice.class,
-                    CLImplementation.compiler()
+                    .setImplementationFor(
+                        OpenCLDevice.class,
+                        CLImplementation.compiler()
                             .arity( 3 )
                             .kernelSource( broadcast.getKernelSource() )
                             .activationSource( "value = src1 * src2;\n" )
@@ -355,7 +358,8 @@ public class Multiplication extends AbstractOperation
                                 },
                                 3
                         )
-                ).setImplementationFor(
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
                                 .arity( 3 )
@@ -380,137 +384,6 @@ public class Multiplication extends AbstractOperation
                 )
         );
 
-
-
-
-        //__________________________
-        // RELATED OPERATION TYPES :
-
-        Broadcast xBroadcast = new Broadcast()
-            .setCanPerformBackwardADFor( call -> true )
-            .setCanPerformForwardADFor(
-                    call -> {
-                        Tsr<?> last = null;
-                    for ( Tsr<?> t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
-                    }
-                    return true;
-                    }
-            )
-            .setSupplyADAgentFor(
-                ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                {
-                    Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
-                    Function mul = Function.Detached.MUL;
-                    if ( ctxDerivative != null ) {
-                        return new DefaultADAgent( ctxDerivative )
-                                .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
-                                .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
-                    }
-                    Tsr[] inputs = call.getTensors();
-                    int d = call.getDerivativeIndex();
-                    if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
-                    else
-                    {
-                        Tsr deriv = f.derive( inputs, d );
-                        return new DefaultADAgent( deriv )
-                                .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
-                                .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
-                    }
-                }
-            )
-            .setHandleInsteadOfDevice( (caller, call ) -> null )
-            .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
-            .setInstantiateNewTensorsForExecutionIn(
-                    call -> {
-                        Tsr[] tsrs = call.getTensors();
-                        int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                        return
-                                ExecutionCall.builder()
-                                    .device( call.getDevice() )
-                                    .tensors( new Tsr[]{tsrs[offset], tsrs[1+offset]} )
-                                    .derivativeIndex( -1 )
-                                    .operation( OperationContext.get().instance("idy") )
-                                    .build();
-                    }
-            )
-            .build();
-
-        new AbstractOperation(
-                new OperationBuilder()
-                        .setFunction(         "" )
-                        .setOperator(         "*" + ((char) 187)  )
-                        .setArity(            3          )
-                        .setIsOperator(       true       )
-                        .setIsIndexer(        false      )
-                        .setIsDifferentiable( false      )
-                        .setIsInline(         false      )
-        ) {;
-            @Override
-            public String stringify(String[] children) {
-                return null;
-            }
-
-            @Override
-            public String asDerivative( Function[] children, int d ) {
-                throw new IllegalStateException("Operation does not support dynamic derivation!");
-            }
-
-            @Override
-            public double calculate( double[] inputs, int j, int d, Function[] src ) {
-                return 0;
-            }
-        }.setAlgorithm(
-                Broadcast.class,
-                xBroadcast.setImplementationFor(
-                        HostCPU.class,
-                        new HostImplementation(
-                                call ->
-                                        call.getDevice().getExecutor()
-                                                .threaded (
-                                                        call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
-                                                        ? ( start, end ) ->
-                                                                Broadcast.broadcast (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getDerivativeIndex(), start, end,
-                                                                        xBCCreatorX.create(call.getTensors(), call.getDerivativeIndex())
-                                                                )
-                                                        : ( start, end ) ->
-                                                                Broadcast.broadcast (
-                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getDerivativeIndex(), start, end,
-                                                                        xBCCreator.create(call.getTensors(), call.getDerivativeIndex())
-                                                                )
-                                                ),
-                                3
-                        )
-                )
-                .setImplementationFor(
-                        OpenCLDevice.class,
-                        CLImplementation.compiler()
-                                .arity( 3 )
-                                .kernelSource( xBroadcast.getKernelSource() )
-                                .activationSource( "value = src1 * src2;\n" )
-                                .differentiationSource( "value += handle * drain;\n" )
-                                .kernelPostfix( this.getFunction() )
-                                .execution(
-                                        call -> {
-                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
-                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
-                                            call.getDevice().getKernel(call)
-                                                    .pass( call.getTsrOfType( Number.class, offset ) )
-                                                    .pass( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                    .pass( call.getTsrOfType( Number.class, offset + 2 ) )
-                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getDerivativeIndex() )
-                                                    .call( gwz );
-                                        }
-                                )
-                                .build()
-                )
-        );
     }
 
 
