@@ -34,6 +34,9 @@ neureka.backend.standard.operations.operator.SubtractionConv
 neureka.backend.standard.operations.operator.SubtractionLeftConv
 neureka.backend.standard.operations.operator.SubtractionRightConv
 neureka.backend.standard.operations.operator.Addition
+neureka.backend.standard.operations.operator.AdditionConv
+neureka.backend.standard.operations.operator.AdditionLeftConv
+neureka.backend.standard.operations.operator.AdditionRightConv
 
 # convolution :
 neureka.backend.standard.operations.linear.XConv
