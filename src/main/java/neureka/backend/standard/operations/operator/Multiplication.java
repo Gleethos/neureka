@@ -160,7 +160,8 @@ public class Multiplication extends AbstractOperation
                                                 ),
                                 3
                         )
-                ).setImplementationFor(
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
                                 .arity( 3 )

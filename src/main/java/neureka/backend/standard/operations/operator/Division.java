@@ -463,7 +463,8 @@ public class Division extends AbstractOperation
             public double calculate( double[] inputs, int j, int d, Function[] src ) {
                 return 0;
             }
-        }.setAlgorithm(
+        }
+        .setAlgorithm(
                 Convolution.class,
                 new Convolution()
                     .setCanPerformBackwardADFor( call -> true )

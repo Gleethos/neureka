@@ -178,11 +178,10 @@ public class Modulo extends AbstractOperation {
                         return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ ndc1.indexOfIndices( t1Idx ) ] % t2_val[ ndc2.indexOfIndices(t2Idx) ];
                     } else {
                         return ( t0Idx, t1Idx, t2Idx ) -> {
-                            if (d == 0) {
+                            if (d == 0)
                                 return 1 / t2_val[ ndc2.indexOfIndices( t2Idx ) ];
-                            } else {
-                                return - ( t1_val[ ndc1.indexOfIndices( t1Idx ) ] / Math.pow(t2_val[ ndc2.indexOfIndices( t2Idx ) ], 2) );
-                            }
+                            else
+                                return -( t1_val[ ndc1.indexOfIndices( t1Idx ) ] / Math.pow(t2_val[ ndc2.indexOfIndices( t2Idx ) ], 2) );
                         };
                     }
                 };
@@ -287,9 +286,9 @@ public class Modulo extends AbstractOperation {
         ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
-                    if ( d < 0 ) {
+                    if ( d < 0 )
                         return t1Idx -> t1_val[ t1Idx.i() ] % value;
-                    } else {
+                    else {
                         if (d == 0) return t1Idx -> 1 / value;
                         else return t1Idx -> -value / Math.pow(t1_val[ t1Idx.i() ], 2);
                     }
@@ -299,9 +298,9 @@ public class Modulo extends AbstractOperation {
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-                    if ( d < 0 ) {
+                    if ( d < 0 )
                         return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] % value;
-                    } else {
+                    else {
                         if (d == 0) return t1Idx -> 1 / value;
                         else return t1Idx -> - value / Math.pow(t1_val[ndc1.indexOfIndices( t1Idx )], 2);
                     }
@@ -354,7 +353,8 @@ public class Modulo extends AbstractOperation {
                                 },
                                 3
                         )
-                ).setImplementationFor(
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
                                 .arity( 3 )
@@ -385,62 +385,6 @@ public class Modulo extends AbstractOperation {
                 )
         );
 
-
-
-        //__________________________
-        // RELATED OPERATION TYPES :
-
-        new AbstractOperation(
-                new OperationBuilder()
-                        .setFunction(         ""                 )
-                        .setOperator(         ((char) 171) + "%" )
-                        .setArity(            3          )
-                        .setIsOperator(       true       )
-                        .setIsIndexer(        false      )
-                        .setIsDifferentiable( false      )
-                        .setIsInline(         false      )
-        ) {;
-            @Override
-            public String stringify(String[] children) {
-                return null;
-            }
-
-            @Override
-            public String asDerivative( Function[] children, int d ) {
-                throw new IllegalStateException("Operation does not support dynamic derivation!");
-            }
-
-            @Override
-            public double calculate( double[] inputs, int j, int d, Function[] src ) {
-            return src[ 0 ].call( inputs, j );
-            }
-        };
-
-        new AbstractOperation(
-                new OperationBuilder()
-                        .setFunction(         "" )
-                        .setOperator(         "%" + ((char) 187)  )
-                        .setArity(            3          )
-                        .setIsOperator(       true       )
-                        .setIsIndexer(        false      )
-                        .setIsDifferentiable( false      )
-                        .setIsInline(         false      )
-        ) {;
-            @Override
-            public String stringify(String[] children) {
-                return null;
-            }
-
-            @Override
-            public String asDerivative( Function[] children, int d ) {
-                throw new IllegalStateException("Operation does not support dynamic derivation!");
-            }
-
-            @Override
-            public double calculate( double[] inputs, int j, int d, Function[] src ) {
-            return src[ 0 ].call( inputs, j );
-            }
-        };
     }
 
 
