@@ -119,11 +119,11 @@ public class Modulo extends AbstractOperation {
                                 .kernelSource( operator.getKernelSource() )
                                 .activationSource( "output = ((int)input1) % ((int)input2);\n" )
                                 .differentiationSource(
-                                        "if ( d==0 ) {\n" +
-                                                "    output = 1/input2;\n" +
-                                                "} else {\n" +
-                                                "    output = -input2 / (float) pow(input1, 2.0f);\n" +
-                                                "}"
+                                        "if ( d==0 ) {                                        \n" +
+                                        "    output = 1/input2;                               \n" +
+                                        "} else {                                             \n" +
+                                        "    output = -input2 / (float) pow(input1, 2.0f);    \n" +
+                                        "}"
                                 )
                                 .kernelPostfix( this.getFunction() )
                                 .execution(

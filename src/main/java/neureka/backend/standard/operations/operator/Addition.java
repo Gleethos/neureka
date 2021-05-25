@@ -256,10 +256,8 @@ public class Addition extends AbstractOperation {
                 (inputs, value, d) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     if ( d < 0 ) return t1Idx -> t1_val[ t1Idx.i() ] + value;
-                    else {
-                        if (d == 0) return t1Idx -> 1;
-                        else return t1Idx -> 1;
-                    }
+                    else
+                        return t1Idx -> 1;
                 };
 
         ScalarOperatorCreator<PrimaryNDAConsumer> scalarXCreator =
@@ -267,10 +265,8 @@ public class Addition extends AbstractOperation {
                     double[] t1_val = inputs[ 1 ].value64();
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                     if ( d < 0 ) return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] + value;
-                    else {
-                        if (d == 0) return t1Idx -> 1;
-                        else return t1Idx -> 1;
-                    }
+                    else
+                        return t1Idx -> 1;
                 };
 
         setAlgorithm(
@@ -326,63 +322,6 @@ public class Addition extends AbstractOperation {
                 )
         );
 
-        //__________________________
-        // RELATED OPERATION TYPES :
-
-        new AbstractOperation(
-                new OperationBuilder()
-                        .setFunction(         ""    )
-                        .setOperator(         ((char) 171) + "+"        )
-                        .setArity(            3          )
-                        .setIsOperator(       true       )
-                        .setIsIndexer(        false      )
-                        .setIsDifferentiable( false      )
-                        .setIsInline(         false      )
-        ) {;
-            @Override
-            public String stringify(String[] children) {
-                return null;
-            }
-
-            @Override
-            public String asDerivative( Function[] children, int d ) {
-                throw new IllegalStateException("Operation does not support dynamic derivation!");
-            }
-
-            @Override
-            public double calculate( double[] inputs, int j, int d, Function[] src ) {
-                return 0;
-            }
-        }
-        .setAlgorithm(Broadcast.class, _broadcast);
-
-        new AbstractOperation(
-                new OperationBuilder()
-                        .setFunction(         ""                 )
-                        .setOperator(         "+" + ((char) 187) )
-                        .setArity(            3                  )
-                        .setIsOperator(       true               )
-                        .setIsIndexer(        false              )
-                        .setIsDifferentiable( false              )
-                        .setIsInline(         false              )
-        ) {;
-            @Override
-            public String stringify(String[] children) {
-                return null;
-            }
-
-            @Override
-            public String asDerivative( Function[] children, int d ) {
-                throw new IllegalStateException("Operation does not support dynamic derivation!");
-            }
-
-            @Override
-            public double calculate( double[] inputs, int j, int d, Function[] src ) {
-                return 0;
-            }
-        }
-        .setAlgorithm(Broadcast.class, _broadcast);
-
         // Convolutoion:
 
         new AbstractOperation(
@@ -424,11 +363,11 @@ public class Addition extends AbstractOperation {
                     .setCanPerformForwardADFor(
                             call -> {
                                 Tsr<?> last = null;
-                    for ( Tsr<?> t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
-                    }
-                    return true;
+                                for ( Tsr<?> t : call.getTensors() ) {
+                                    if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                                    last = t; // Note: shapes are cached!
+                                }
+                                return true;
                             }
                     )
                     .setSupplyADAgentFor(
