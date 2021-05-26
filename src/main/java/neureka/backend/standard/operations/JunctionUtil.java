@@ -10,6 +10,56 @@ import java.util.function.Function;
 
 public class JunctionUtil
 {
+    public static Tsr<?> forConvolution(
+            ExecutionCall<? extends Device<?>> call,
+            Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith
+    ) {
+        Tsr[] tsrs = call.getTensors();
+        Device device = call.getDevice();
+        int d = call.getDerivativeIndex();
+        Operation type = call.getOperation();
+
+        Tsr alternative = null;
+        if (tsrs.length > 3) {
+            if ( d < 0 ) {
+                Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
+                alternative = goDeeperWith.apply(
+                        ExecutionCall.builder()
+                                .device(device)
+                                .tensors(reduction)
+                                .derivativeIndex(d)
+                                .operation(type)
+                                .build()
+                );
+                tsrs[ 0 ] = reduction[ 0 ];
+
+                reduction = Operation.Utility.offsetted(tsrs, 1);
+                alternative = goDeeperWith.apply(
+                        ExecutionCall.builder()
+                                .device(device)
+                                .tensors(reduction)
+                                .derivativeIndex(d)
+                                .operation(type)
+                                .build()
+                );
+                tsrs[ 0 ] = reduction[ 0 ];
+            }
+            return alternative;
+        } else {
+            if ( call.getOperation().getOperator().equals("x") ) {
+                if (d >= 0) {
+                    if (d == 0) tsrs[ 0 ] = tsrs[ 2 ];
+                    else tsrs[ 0 ] = tsrs[ 1 ];
+                    return tsrs[ 0 ];
+                } else {
+                    call.mutateArguments( t -> new Tsr[]{t[ 0 ], t[ 1 ], t[ 2 ]} );
+                }
+            } else if ( call.getOperation().getOperator().equals("x"+ ((char) 187)) ) {
+                call.mutateArguments( t -> new Tsr[]{t[ 2 ], t[ 1 ], t[ 0 ]} );
+            }
+            return alternative;
+        }
+    }
 
     public static Tsr<?> forMultiplications(
             ExecutionCall<? extends Device<?>> call,
