@@ -3,7 +3,6 @@ package neureka.backend.standard.operations;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.Operation;
 import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.calculus.Function;
@@ -12,7 +11,9 @@ import neureka.devices.Device;
 
 public class ConvUtil {
 
-    public static Convolution createDeconvolutionFor( Operation operation ) {
+    private static Convolution conv = null;
+
+    public static Convolution createDeconvolutionFor( String operator ) {
         return new Convolution()
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor(
@@ -38,7 +39,7 @@ public class ConvUtil {
                             int d = call.getDerivativeIndex();
 
                             Function invX = new FunctionBuilder(OperationContext.get()).build(
-                                    "I[ 0 ]" + operation.getOperator() + ">>I[ 1 ]" + operation.getOperator() + ">>I[ 2 ]",
+                                    "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
                                     false
                             );
                             Tsr deriv = f.derive( inputs, d );
@@ -104,4 +105,8 @@ public class ConvUtil {
                 .build();
     }
 
+    public static Convolution getConv() {
+        if ( conv == null ) conv = createDeconvolutionFor("x");
+        return ConvUtil.conv;
+    }
 }

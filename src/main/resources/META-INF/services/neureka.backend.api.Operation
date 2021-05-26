@@ -40,6 +40,8 @@ neureka.backend.standard.operations.operator.AdditionRightConv
 
 # convolution :
 neureka.backend.standard.operations.linear.XConv
+neureka.backend.standard.operations.linear.XConvLeft
+neureka.backend.standard.operations.linear.XConvRight
 
 # other :
 neureka.backend.standard.operations.other.DimTrim
