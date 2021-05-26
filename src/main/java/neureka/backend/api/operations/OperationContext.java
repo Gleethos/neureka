@@ -34,7 +34,7 @@ public class OperationContext implements Cloneable
 {
     private static final ThreadLocal<OperationContext> _CONTEXTS = ThreadLocal.withInitial( OperationContext::new );
     static {
-        //OperationContext context = OperationContext.get();
+        OperationContext context = OperationContext.get();
         // loading operations!
         ServiceLoader<Operation> serviceLoader = ServiceLoader.load(Operation.class);
         //serviceLoader.reload();
@@ -43,7 +43,7 @@ public class OperationContext implements Cloneable
         for ( Operation operation : serviceLoader ) {
             assert operation.getFunction() != null;
             assert operation.getOperator() != null;
-            //context.addOperation(operation);
+            context.addOperation(operation);
             log.debug( "Operation: '" + operation.getFunction() + "' loaded!" );
         }
     }

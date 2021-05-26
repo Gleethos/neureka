@@ -27,99 +27,107 @@ class Calculus_Extension_Integration_Tests extends Specification
             int col_sze
     ) {
         given :
-            Tsr t1 = new Tsr([row_sze, com_sze], -3..8)
-            Tsr t2 = new Tsr([com_sze, col_sze], -7..4)
             //def clContext = new CLContext(lws, rws, com_sze, row_sze, col_sze)
             //def kernel = new GEMMKernelReferenceImplementation( clContext )
 
             OperationContext oldContext = OperationContext.get()
             OperationContext testContext = oldContext.clone()
-            def run = testContext.runner()
-            //OperationContext.setInstance(testContext)
-            run { // TODO: Make operations not add themselves to contexts!
-                Operation type = new OperationBuilder()
-                        .setFunction('test_function')
-                        .setOperator('test_function')
-                        .setArity(-1)
-                        .setIsIndexer(false)
-                        .setIsOperator(false)
-                        .setIsDifferentiable(true)
-                        .setIsInline(false)
-                        .setStringifier(
-                                children -> {
-                                    String expression = String.join(", ", children);
-                                    if (expression.charAt(0) === '(' && expression.charAt(expression.length() - 1) === ')') {
-                                        return "test_function" + expression;
-                                    }
-                                    return "test_function" + "(" + expression + ")";
-                                }
-                        )
-                        .build()
-                        .setAlgorithm(
-                                GenericAlgorithm.class,
-                                new GenericAlgorithm(null)
-                                        .setIsSuitableFor(call -> 1.0f)
-                                        .setCanPerformBackwardADFor(call -> true)
-                                        .setCanPerformForwardADFor(call -> false)
-                                        .setSupplyADAgentFor(
-                                                (Function f, ExecutionCall<Device> call, boolean forward) -> {
-                                                    if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
-                                                    return new DefaultADAgent(null)
-                                                            .setForward((t, derivative) -> new FunctionBuilder(OperationContext.get()).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
-                                                            .setBackward((t, error) -> new FunctionBuilder(OperationContext.get()).build(f.toString(), false).derive(new Tsr[]{error}, 0));
-                                                }
-                                        )
-                                        .setHandleInsteadOfDevice((caller, call) -> null)
-                                        .setHandleRecursivelyAccordingToArity((call, goDeeperWith) -> null)
-                                        .setInstantiateNewTensorsForExecutionIn(
-                                                call -> {
-                                                    Tsr[] tsrs = call.getTensors();
-                                                    Device device = call.getDevice();
-                                                    if (tsrs[0] == null) // Creating a new tensor:
-                                                    {
-                                                        int[] shp = new int[]{tsrs[1].getNDConf().shape()[0], tsrs[2].getNDConf().shape()[1]}
-                                                        Tsr output = new Tsr(shp, 0.0);
-                                                        output.setIsVirtual(false);
-                                                        device.store(output);
-                                                        tsrs[0] = output;
-                                                    }
-                                                    return call;
-                                                }
-                                        )
-                                        .setImplementationFor(
-                                                HostCPU.class,
-                                                new HostImplementation(
-                                                        (call) -> {
-                                                            Tsr drn = call.getTsrOfType(Number.class, 0)
-                                                            Tsr src1 = call.getTsrOfType(Number.class, 1)
-                                                            Tsr src2 = call.getTsrOfType(Number.class, 2)
-                                                            assert src1.shape(1) == src2.shape(0)
 
-                                                            //for ( int i=0; i<clContext.getGws(); i++ ) {
-                                                            //    kernel.gemm_template(
-                                                            //            drn.value32(),                     //__global float[] drain,
-                                                            //            drn.getNDConf().asInlineArray(),   //__global int[] drn_conf,
-                                                            //            src1.value32(),                    //const __global float[] src1,
-                                                            //            src1.getNDConf().asInlineArray(),  //__global int[] src1_conf,
-                                                            //            src2.value32(),                    //const __global float[] src2,
-                                                            //            src2.getNDConf().asInlineArray(),  //__global int[] src2_conf,
-                                                            //            //call.getTsrOfType( Number.class, 0).rank(),//int rank, == 2
-                                                            //            //-1, //const int d,
-                                                            //            clContext.getMaxTSRow(),//128, //const u int max_ts_row,//  = 128, // ts := tile size
-                                                            //            clContext.getMaxTSCol(),//128, //const u int max_ts_col,//  = 128,
-                                                            //            clContext.getMaxTSCom(),//16, //const u int max_ts_com,//  = 16,
-                                                            //            clContext.getMaxWPTRow(),//8, //const u int max_wpt_row,// = 8,   // wpt := work per thread
-                                                            //            clContext.getMaxWPTCol()//8  //const u int max_wpt_col // = 8,
-                                                            //    )
-                                                            //    clContext.increment()
-                                                            //}
-                                                        },
-                                                        3
+        when:
+            def run = testContext.runner()
+
+        then:
+            run { testContext == OperationContext.get() }
+
+        when:
+            Tsr t1 = new Tsr([row_sze, com_sze], -3..8)
+            Tsr t2 = new Tsr([com_sze, col_sze], -7..4)
+            run {
+                OperationContext.get()
+                    .addOperation(
+                        new OperationBuilder()
+                                .setFunction('test_function')
+                                .setOperator('test_function')
+                                .setArity(-1)
+                                .setIsIndexer(false)
+                                .setIsOperator(false)
+                                .setIsDifferentiable(true)
+                                .setIsInline(false)
+                                .setStringifier(
+                                        children -> {
+                                            String expression = String.join(", ", children);
+                                            if (expression.charAt(0) === '(' && expression.charAt(expression.length() - 1) === ')') {
+                                                return "test_function" + expression;
+                                            }
+                                            return "test_function" + "(" + expression + ")";
+                                        }
+                                )
+                                .build()
+                                .setAlgorithm(
+                                        GenericAlgorithm.class,
+                                        new GenericAlgorithm(null)
+                                                .setIsSuitableFor(call -> 1.0f)
+                                                .setCanPerformBackwardADFor(call -> true)
+                                                .setCanPerformForwardADFor(call -> false)
+                                                .setSupplyADAgentFor(
+                                                        (Function f, ExecutionCall<Device> call, boolean forward) -> {
+                                                            if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
+                                                            return new DefaultADAgent(null)
+                                                                    .setForward((t, derivative) -> new FunctionBuilder(OperationContext.get()).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
+                                                                    .setBackward((t, error) -> new FunctionBuilder(OperationContext.get()).build(f.toString(), false).derive(new Tsr[]{error}, 0));
+                                                        }
                                                 )
-                                        )
-                        )
+                                                .setHandleInsteadOfDevice((caller, call) -> null)
+                                                .setHandleRecursivelyAccordingToArity((call, goDeeperWith) -> null)
+                                                .setInstantiateNewTensorsForExecutionIn(
+                                                        call -> {
+                                                            Tsr[] tsrs = call.getTensors();
+                                                            Device device = call.getDevice();
+                                                            if (tsrs[0] == null) // Creating a new tensor:
+                                                            {
+                                                                int[] shp = new int[]{tsrs[1].getNDConf().shape()[0], tsrs[2].getNDConf().shape()[1]}
+                                                                Tsr output = new Tsr(shp, 0.0);
+                                                                output.setIsVirtual(false);
+                                                                device.store(output);
+                                                                tsrs[0] = output;
+                                                            }
+                                                            return call;
+                                                        }
+                                                )
+                                                .setImplementationFor(
+                                                        HostCPU.class,
+                                                        new HostImplementation(
+                                                                (call) -> {
+                                                                    Tsr drn = call.getTsrOfType(Number.class, 0)
+                                                                    Tsr src1 = call.getTsrOfType(Number.class, 1)
+                                                                    Tsr src2 = call.getTsrOfType(Number.class, 2)
+                                                                    assert src1.shape(1) == src2.shape(0)
+
+                                                                    //for ( int i=0; i<clContext.getGws(); i++ ) {
+                                                                    //    kernel.gemm_template(
+                                                                    //            drn.value32(),                     //__global float[] drain,
+                                                                    //            drn.getNDConf().asInlineArray(),   //__global int[] drn_conf,
+                                                                    //            src1.value32(),                    //const __global float[] src1,
+                                                                    //            src1.getNDConf().asInlineArray(),  //__global int[] src1_conf,
+                                                                    //            src2.value32(),                    //const __global float[] src2,
+                                                                    //            src2.getNDConf().asInlineArray(),  //__global int[] src2_conf,
+                                                                    //            //call.getTsrOfType( Number.class, 0).rank(),//int rank, == 2
+                                                                    //            //-1, //const int d,
+                                                                    //            clContext.getMaxTSRow(),//128, //const u int max_ts_row,//  = 128, // ts := tile size
+                                                                    //            clContext.getMaxTSCol(),//128, //const u int max_ts_col,//  = 128,
+                                                                    //            clContext.getMaxTSCom(),//16, //const u int max_ts_com,//  = 16,
+                                                                    //            clContext.getMaxWPTRow(),//8, //const u int max_wpt_row,// = 8,   // wpt := work per thread
+                                                                    //            clContext.getMaxWPTCol()//8  //const u int max_wpt_col // = 8,
+                                                                    //    )
+                                                                    //    clContext.increment()
+                                                                    //}
+                                                                },
+                                                                3
+                                                        )
+                                                )
+                                )
+                )
             }
-        when :
             Function matMul = run { Function.create("test_function(I[0],I[1])") }
 
 

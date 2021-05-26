@@ -126,7 +126,6 @@ public abstract class AbstractOperation implements Operation
         _isInline = builder.getIsInline();
 
         _id = OperationContext.get().id();
-        OperationContext.get().addOperation( this );
 
     }
 
