@@ -69,20 +69,20 @@ def change = { c -> new Object() {
             def between = { String a, String b -> new Object() {
                     def inFile = { String p, boolean unchanged=false ->
                         File file = new File("$rootDir" + p)
-                        if(!file.exists()) return
+                        if ( !file.exists() ) return
                         String[] parts = file.text.split( a )
-                        if ( parts.length==1 ) println( '-=>\n'+ a )
+                        if ( parts.length == 1 ) println( '-=>\n'+ a )
                         assert parts.length == 2
-                        String[] tails = parts[1].split(b)
-                        if ( tails.length==1 ) println( '-=>\n'+ b )
-                        assert tails.length>=2
+                        String[] tails = parts[1].split( b )
+                        if ( tails.length == 1 ) println( '-=>\n'+ b )
+                        assert tails.length >= 2
                         b = b.replace("\\", "")
                         a = a.replace("\\", "")
                         if( tails.length > 2 ) {
-                            tails[1] = (tails as List)[1..tails.length-1].inject('',{s,v->s+b+v})
+                            tails[1] = (tails as List)[1..tails.length-1].join(b)//.inject('',{s,v->s+b+v})
                             println(tails as List)
                         }
-                        if(!unchanged) file.write( parts[0] + a + c(tails[0]) + b + tails[1] )
+                        if( !unchanged ) file.write( parts[0] + a + c(tails[0]) + b + tails[1] )
                     }
                 }
             }
@@ -97,7 +97,8 @@ task setVersionAcrossProject() {
     change({VERSION}).between( "assert Neureka.version\\(\\)==\"", "\"//version" ).inFile("/src/test/groovy/ThoroughGroovyTests.groovy")
     change({VERSION}).between( "Neureka.version\\(\\)==\"", "\"//version" ).inFile("/src/test/groovy/ut/neureka/Neureka_Unit_Tests.groovy")
 
-    change({VERSION}).between( "production/lib/neureka-", "\\.jar\\)" ).inFile("/README.md")
+    change({VERSION}).between( "raw/master/production/lib/neureka-", "\\.jar\\)" ).inFile("/README.md")
+    change({VERSION}).between( "neureka/master/production/lib/neureka-", "\\.jar\\)" ).inFile("/README.md")
     change({VERSION}).between( "<version>", "</version>").inFile("/README.md")
 
     File readme = new File("$rootDir/README.md")
