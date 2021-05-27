@@ -340,10 +340,10 @@ public class Addition extends AbstractOperation {
     }
 
     @Override
-    public String asDerivative( Function[] children, int d ) {
+    public String asDerivative( Function[] children, int derivationIndex) {
         String s =  Arrays.stream( children )
-                .filter( child -> child.dependsOn( d ) )
-                .map( child -> child.getDerivative( d ) )
+                .filter( child -> child.dependsOn(derivationIndex) )
+                .map( child -> child.getDerivative(derivationIndex) )
                 .map( Object::toString )
                 .collect( Collectors.joining( " + " ) );
         return s;

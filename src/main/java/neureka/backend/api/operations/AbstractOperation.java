@@ -131,16 +131,46 @@ public abstract class AbstractOperation implements Operation
 
     //==================================================================================================================
 
+    /**
+     *  {@link Operation} implementations embody a component system hosting unique {@link Algorithm} instances.
+     *  For a given class implementing the {@link Algorithm} class, there can only be a single
+     *  instance of it referenced (aka supported) by a given {@link Operation} instance.
+     *  This method ensures this in terms of read access by returning only a single instance or null
+     *  based on the provided class instance whose type extends the {@link Algorithm} interface.
+     *
+     * @param type The class of the type which implements {@link Algorithm} as a key to get an existing instance.
+     * @param <T> The type parameter of the {@link Algorithm} type class.
+     * @return The instance of the specified type if any exists within this {@link Operation}.
+     */
     @Override
     public <T extends Algorithm<T>> T getAlgorithm( Class<T> type ) {
         return (T) _algorithms.get( type );
     }
 
+    /**
+     *  This method checks if this {@link Operation} contains an instance of the
+     *  {@link Algorithm} implementation specified via its type class.
+     *
+     * @param type The class of the type which implements {@link Algorithm}.
+     * @param <T> The type parameter of the {@link Algorithm} type class.
+     * @return The truth value determining if this {@link Operation} contains an instance of the specified {@link Algorithm} type.
+     */
     @Override
     public <T extends Algorithm<T>> boolean supportsAlgorithm( Class<T> type ) {
         return _algorithms.containsKey( type );
     }
 
+    /**
+     *  {@link Operation} implementations embody a component system hosting unique {@link Algorithm} instances.
+     *  For a given class implementing the {@link Algorithm} class, there can only be a single
+     *  instance of it referenced (aka supported) by a given {@link Operation} instance.
+     *  This method enables the registration of {@link Algorithm} types in the component system of this {@link Operation}.
+     *
+     * @param type The class of the type which implements {@link Algorithm} as key for the provided instance.
+     * @param instance The instance of the provided type class which ought to be referenced (supported) by this {@link Operation}.
+     * @param <T> The type parameter of the {@link Algorithm} type class.
+     * @return This very {@link Operation} instance to enable method chaining on it.
+     */
     @Override
     public <T extends Algorithm<T>> Operation setAlgorithm( Class<T> type, T instance ) {
         _algorithms.put( type, instance );

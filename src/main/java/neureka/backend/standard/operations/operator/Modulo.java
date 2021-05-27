@@ -416,8 +416,8 @@ public class Modulo extends AbstractOperation {
     }
 
     @Override
-    public String asDerivative( Function[] children, int d ) {
-        return children[ 0 ].getDerivative( d ).toString();
+    public String asDerivative( Function[] children, int derivationIndex) {
+        return children[ 0 ].getDerivative(derivationIndex).toString();
     }
 
     @Override

@@ -402,11 +402,11 @@ public class Multiplication extends AbstractOperation
     }
 
     @Override
-    public String asDerivative( Function[] children, int d ) {
+    public String asDerivative( Function[] children, int derivationIndex) {
         return Arrays.stream( children )
-                .filter( child -> child.dependsOn( d ) )
+                .filter( child -> child.dependsOn(derivationIndex) )
                 .map( child -> {
-                            String derivative = child.getDerivative( d ).toString();
+                            String derivative = child.getDerivative(derivationIndex).toString();
                             return ( (derivative.equals("1.0") ) ? "" : " * " ) +
                                     Arrays.stream( children )
                                             .filter( inner -> inner != child )

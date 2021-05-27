@@ -93,8 +93,8 @@ public class OperationBuilder
                 }
 
                 @Override
-                public String asDerivative( Function[] children, int d ) {
-                    return _derivator.asDerivative( children, d );
+                public String asDerivative( Function[] children, int derivationIndex) {
+                    return _derivator.asDerivative( children, derivationIndex);
                 }
 
                 @Override

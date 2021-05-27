@@ -349,11 +349,11 @@ public class Subtraction extends AbstractOperation
     }
 
     @Override
-    public String asDerivative( Function[] children, int d ) {
-        return ( ( children[0].dependsOn(d) ) ? "" : "-" ) +
+    public String asDerivative( Function[] children, int derivationIndex) {
+        return ( ( children[0].dependsOn(derivationIndex) ) ? "" : "-" ) +
                     Arrays.stream( children )
-                    .filter( child -> child.dependsOn( d ) )
-                    .map( child -> child.getDerivative( d ) )
+                    .filter( child -> child.dependsOn(derivationIndex) )
+                    .map( child -> child.getDerivative(derivationIndex) )
                     .map( Object::toString )
                     .collect( Collectors.joining( " - " ) );
     }

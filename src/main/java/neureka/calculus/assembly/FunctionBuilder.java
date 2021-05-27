@@ -39,7 +39,7 @@ public class FunctionBuilder
      * @return
      */
     public Function build( Operation type, int size, boolean doAD ) {
-        if ( type.getId() == 18 ) {
+        if ( type.getId() == 18 ) { // TODO: REMOVE HARD CODING! THIS IS DANGEROUS
             size = 2;
         } else if ( type.getOperator().equals(",") ) {
             ArrayList<Function> srcs = new ArrayList<>();

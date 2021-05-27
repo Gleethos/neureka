@@ -86,6 +86,16 @@ public interface Operation
 
     //==================================================================================================================
 
+    /**
+     *  Alongside a component system made up of {@link Algorithm} instances, implementations
+     *  of this interface also ought to express a routing mechanism which finds the best {@link Algorithm}
+     *  for a given {@link ExecutionCall} instance.
+     *  This method signature describes this requirement.
+     *
+     * @param call The {@link ExecutionCall} instance which needs the best {@link Algorithm} for execution.
+     * @param <T> The type parameter describing the concrete type of the {@link Algorithm} implementation.
+     * @return The chosen {@link Algorithm} which ought to be fir for execution the provided call.
+     */
     <T extends Algorithm<T>> Algorithm<T> getAlgorithmFor( ExecutionCall<?> call );
 
     //==================================================================================================================
@@ -144,7 +154,20 @@ public interface Operation
 
     //==================================================================================================================
 
-    String asDerivative( Function[] children, int d );
+    /**
+     *  {@link Operation} implementations and {@link Function} implementations are in a tight relationship
+     *  where the {@link Function} describes an abstract syntax tree based on the syntactic information provided
+     *  by the {@link Operation} (through methods like {@link Operation#getOperator()} or {@link Operation#getFunction()}).
+     *  One important feature of the {@link Function} is the ability to create
+     *  derivatives by calling the {@link Function#getDerivative(int)} method.
+     *  Implementations of this {@link Function} method ought to call the method defined below in order to
+     *  form the derivation based on the child nodes of the abstract syntax tree of the given {@link Function} node.
+     *
+     * @param children The child nodes of a AST node referencing this operation.
+     * @param derivationIndex The index of the input node which ought to be derived.
+     * @return The derivative as a {@link String} which should be parsable into yet another AST.
+     */
+    String asDerivative( Function[] children, int derivationIndex );
 
     //==================================================================================================================
 
@@ -180,9 +203,21 @@ public interface Operation
      */
     boolean isIndexer();
 
+    /**
+     *  This has currently no use!
+     */
     @Deprecated
     boolean isDifferentiable();
 
+    /**
+     *  This flag indicates that the implementation of this {@link Operation}
+     *  performs an operation which modifies the inputs to that operation.
+     *  An example of this would be an assignment operation which copies the contents of one nd-array / tensor
+     *  into another tensor. This second tensor will then have changed its state.
+     *  This can be dangerous when auto-differentiation is involved.
+     *
+     * @return The truth value determining if this {@link Operation} changes the contents of inputs.
+     */
     boolean isInline();
 
     <T extends Algorithm<T>> boolean supports( Class<T> implementation );

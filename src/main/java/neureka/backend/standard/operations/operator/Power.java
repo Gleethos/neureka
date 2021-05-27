@@ -499,27 +499,27 @@ public class Power extends AbstractOperation
     }
 
     @Override
-    public String asDerivative( Function[] children, int d ) {
+    public String asDerivative( Function[] children, int derivationIndex) {
         Function a = children[0];
         Function b = Function.create(
                 IntStream.range( 1, children.length )
                 .mapToObj(i -> children[ i ].toString() )
                 .collect(Collectors.joining(" * "))
         );
-        boolean aDerivable = a.dependsOn(d);
-        boolean bDerivable = b.dependsOn(d);
+        boolean aDerivable = a.dependsOn(derivationIndex);
+        boolean bDerivable = b.dependsOn(derivationIndex);
         String aAsStr = a.toString();
         String bAsStr = b.toString();
         String first = "";
         if (aDerivable) {
-            String aAsDeriv = a.getDerivative(d).toString();
+            String aAsDeriv = a.getDerivative(derivationIndex).toString();
             if ( !aAsDeriv.equals("0.0") ) {
                 first = ("( "+ bAsStr +" * "+ aAsStr + " ^ (" + bAsStr + " - 1) )");
                 if (!aAsDeriv.equals("1.0")) first = aAsDeriv + " * " + first;
             }
         }
         String bAsDeriv = "";
-        if (bDerivable) bAsDeriv = b.getDerivative(d).toString();
+        if (bDerivable) bAsDeriv = b.getDerivative(derivationIndex).toString();
         if ( !bAsDeriv.isEmpty() && !bAsDeriv.equals("1.0") ) bAsDeriv += " * ";
         else bAsDeriv = "";
         String second = "";

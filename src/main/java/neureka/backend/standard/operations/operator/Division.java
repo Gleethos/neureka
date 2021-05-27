@@ -393,8 +393,8 @@ public class Division extends AbstractOperation
     }
 
     @Override
-    public String asDerivative( Function[] children, int d ) {
-        return _asDerivative( children, d, children.length - 1 );
+    public String asDerivative( Function[] children, int derivationIndex) {
+        return _asDerivative( children, derivationIndex, children.length - 1 );
     }
 
     private String _asDerivative( Function[] children, int d, int index ) {

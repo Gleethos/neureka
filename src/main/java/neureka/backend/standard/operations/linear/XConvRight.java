@@ -35,7 +35,7 @@ public class XConvRight extends AbstractOperation {
     }
 
     @Override
-    public String asDerivative(Function[] children, int d ) {
+    public String asDerivative(Function[] children, int derivationIndex) {
         throw new IllegalStateException("Operation does not support dynamic derivation!");
     }
 
