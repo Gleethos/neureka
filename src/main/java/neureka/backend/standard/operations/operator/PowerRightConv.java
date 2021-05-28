@@ -9,7 +9,7 @@ public class PowerRightConv extends AbstractOperation {
     public PowerRightConv() {
         super(
                 new OperationBuilder()
-                        .setFunction(         "" )
+                        .setFunction(         "power_conv_right" )
                         .setOperator(         "p" + ((char) 187)  )
                         .setArity(            3          )
                         .setIsOperator(       true       )

@@ -20,7 +20,7 @@ public class MultiplicationLeftConv extends AbstractOperation {
     public MultiplicationLeftConv() {
         super(
                 new OperationBuilder()
-                        .setFunction(         ""    )
+                        .setFunction(         "mul_conv_left"    )
                         .setOperator(         ((char) 171) + "*"    )
                         .setArity(            3          )
                         .setIsOperator(       true       )

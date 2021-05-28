@@ -15,7 +15,7 @@ public class PowerConv extends AbstractOperation {
     public PowerConv() {
         super(
                 new OperationBuilder()
-                        .setFunction(         "power" )
+                        .setFunction(         "power_conv" )
                         .setOperator(         "p"  )
                         .setArity(            2          )
                         .setIsOperator(       true       )

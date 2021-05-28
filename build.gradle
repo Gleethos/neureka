@@ -67,8 +67,8 @@ String BASENAME = "neureka"
 
 def change = { c -> new Object() {
             def between = { String a, String b -> new Object() {
-                    def inFile = { String p, boolean unchanged=false ->
-                        File file = new File("$rootDir" + p)
+                    def inFile = { String p, boolean unchanged = false ->
+                        File file = new File( "$rootDir" + p )
                         if ( !file.exists() ) return
                         String[] parts = file.text.split( a )
                         if ( parts.length == 1 ) println( '-=>\n'+ a )
@@ -78,9 +78,8 @@ def change = { c -> new Object() {
                         assert tails.length >= 2
                         b = b.replace("\\", "")
                         a = a.replace("\\", "")
-                        if( tails.length > 2 ) {
-                            tails[1] = (tails as List)[1..tails.length-1].join(b)//.inject('',{s,v->s+b+v})
-                            println(tails as List)
+                        if ( tails.length > 2 ) {
+                            tails[1] = (tails as List)[1..tails.length-1].join(b)
                         }
                         if( !unchanged ) file.write( parts[0] + a + c(tails[0]) + b + tails[1] )
                     }

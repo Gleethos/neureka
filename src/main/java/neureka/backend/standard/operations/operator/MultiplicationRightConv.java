@@ -21,7 +21,7 @@ public class MultiplicationRightConv extends AbstractOperation {
     public MultiplicationRightConv() {
         super(
                 new OperationBuilder()
-                        .setFunction(         "" )
+                        .setFunction(         "mul_conv_right" )
                         .setOperator(         "*" + ((char) 187)  )
                         .setArity(            3          )
                         .setIsOperator(       true       )

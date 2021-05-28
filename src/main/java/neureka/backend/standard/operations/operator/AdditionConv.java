@@ -15,7 +15,7 @@ public class AdditionConv extends AbstractOperation {
     public AdditionConv() {
         super(
                 new OperationBuilder()
-                        .setFunction(         "add"              )
+                        .setFunction(         "add_conv"              )
                         .setOperator(         "a"                )
                         .setArity(            2                  )
                         .setIsOperator(       true               )

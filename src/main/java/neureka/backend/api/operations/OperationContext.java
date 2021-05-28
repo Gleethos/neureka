@@ -138,7 +138,10 @@ public class OperationContext implements Cloneable
     public void addOperation( Operation operation ) {
         OperationContext.get().incrementID();
         OperationContext.get().instances().add( operation );
+        assert !OperationContext.get().lookup().containsKey( operation.getOperator() );
+        assert !OperationContext.get().lookup().containsKey( operation.getFunction() );
         OperationContext.get().lookup().put( operation.getOperator(), operation );
+        OperationContext.get().lookup().put( operation.getFunction(), operation );
         OperationContext.get().lookup().put( operation.getOperator().toLowerCase(), operation );
         if (
                 operation.getOperator()

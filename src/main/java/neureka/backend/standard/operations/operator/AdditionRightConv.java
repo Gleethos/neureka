@@ -9,7 +9,7 @@ public class AdditionRightConv extends AbstractOperation {
     public AdditionRightConv() {
         super(
                 new OperationBuilder()
-                        .setFunction(         ""                 )
+                        .setFunction(         "add_conv_right"                 )
                         .setOperator(         "a" + ((char) 187) )
                         .setArity(            3                  )
                         .setIsOperator(       true               )

@@ -9,7 +9,7 @@ public class SubtractionLeftConv extends AbstractOperation {
     public SubtractionLeftConv() {
         super(
                 new OperationBuilder()
-                        .setFunction(         "" )
+                        .setFunction(         "sub_conv_left" )
                         .setOperator(         ((char) 171) + "s"  )
                         .setArity(            3          )
                         .setIsOperator(       true       )

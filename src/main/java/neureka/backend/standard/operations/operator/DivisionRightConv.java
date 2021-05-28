@@ -9,7 +9,7 @@ public class DivisionRightConv extends AbstractOperation {
     public DivisionRightConv() {
         super(
                 new OperationBuilder()
-                        .setFunction(         ""                 )
+                        .setFunction(         "div_conv_right"                 )
                         .setOperator(         "d" + ((char) 187) )
                         .setArity(            3                  )
                         .setIsOperator(       true               )

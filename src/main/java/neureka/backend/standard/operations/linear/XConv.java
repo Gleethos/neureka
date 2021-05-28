@@ -27,7 +27,7 @@ public class XConv extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .setFunction(         "multiply"    )
+                        .setFunction(         "mul_conv"    )
                         .setOperator(         "x"    )
                         .setArity(            2          )
                         .setIsOperator(       true       )

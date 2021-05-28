@@ -46,6 +46,7 @@ class Calculus_Parsing_Unit_Tests extends Specification
             "ijssumJs(i0+Ij)"                           || "(I[j] s sumJs(I[0] + I[j]))"
             "i[0] d>> i[1] d>> I[2]"                    || "(I[0] d"+((char)187)+" I[1] d"+((char)187)+" I[2])"
             "dimtrim(I[0])"                             || "dimtrim(I[0])"
+            //"add(I[0], 3, 3/I[1])"                      || "I[0] + 3 + (3 / I[1])"
     }
 
 

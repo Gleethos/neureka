@@ -15,7 +15,7 @@ public class DivisionConv extends AbstractOperation {
     public DivisionConv() {
         super(
                 new OperationBuilder()
-                        .setFunction(         "divide"           )
+                        .setFunction(         "divide_conv"           )
                         .setOperator(         "d"                )
                         .setArity(            2                  )
                         .setIsOperator(       true               )
