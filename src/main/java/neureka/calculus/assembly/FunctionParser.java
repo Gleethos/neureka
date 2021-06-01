@@ -44,25 +44,26 @@ public class FunctionParser
         StringBuilder component = new StringBuilder();
         for ( int i = index; i < exp.length(); ++i)
         {
-            if (exp.charAt( i ) == ')') --bracketDepth;
-            else if (exp.charAt( i ) == '(') ++bracketDepth;
-            if (bracketDepth == 0) {
+            if ( exp.charAt( i ) == ')' ) --bracketDepth;
+            else if ( exp.charAt( i ) == '(' ) ++bracketDepth;
+            if ( bracketDepth == 0 ) {
                 String possibleOperation;
                 for ( int ii = exp.length()-1; ii >= i+1; ii--) {
-                    String found = FunctionParser.parsedOperation(exp.substring(i,ii), i);
+                    String found = FunctionParser.parsedOperation( exp.substring( i, ii ), i );
                     if (
-                         found != null && !OperationContext.get().instance(found).isOperator()
+                         found != null && // If the found string is a function then we continue!
+                                 !OperationContext.get().instance(found).getOperator().equals(found)
                     ) {
                         ii = -1; // end inner loop
-                        component.append( found, 0, found.length()-1 );
+                        component.append( found, 0, found.length() - 1 );
                         i += found.length()-1;
                     } else {
                         possibleOperation = exp.substring( i + 1, ii );
-                        if (FunctionParser.isAnOperation(possibleOperation)) {
+                        if ( FunctionParser.isAnOperation( possibleOperation ) ) {
                             if (
-                                    ( exp.charAt( i )=='j' || !Character.isLetter(exp.charAt( i )) )
+                                    ( exp.charAt( i ) == 'j' || !Character.isLetter( exp.charAt( i ) ) )
                             ) {
-                                component.append(exp.charAt( i ));
+                                component.append( exp.charAt( i ) );
                                 return component.toString();
                             }
                         }
