@@ -84,19 +84,19 @@ public class FunctionParser
         StringBuilder component = new StringBuilder();
         for ( int i = index; i < exp.length(); ++i)
         {
-            if (exp.charAt( i ) == '(' || exp.charAt( i ) == '[') {
-                if (bracketDepth != 0) component.append(exp.charAt( i ));
+            if ( exp.charAt( i ) == '(' || exp.charAt( i ) == '[' ) {
+                if ( bracketDepth != 0 ) component.append(exp.charAt( i ));
                 ++bracketDepth;
-            } else if (exp.charAt( i ) == ')' || exp.charAt( i ) == ']') {
+            } else if ( exp.charAt( i ) == ')' || exp.charAt( i ) == ']' ) {
                 --bracketDepth;
-                if (bracketDepth != 0) component.append(exp.charAt( i ));
-            } else {
-                component.append(exp.charAt( i ));
+                if ( bracketDepth != 0 ) component.append(exp.charAt( i ));
+            } else if ( exp.charAt( i ) != ',' || bracketDepth > 1 ) { // Use depth!
+                component.append( exp.charAt( i ) );
             }
-            if (bracketDepth == 0) {
-                parameters.add(component.toString());
-            } else if (bracketDepth == 1 && exp.charAt( i )==',' ) {
-                parameters.add(component.toString());
+            if ( bracketDepth == 0 ) {
+                parameters.add( component.toString() );
+            } else if ( bracketDepth == 1 && exp.charAt( i ) == ',' ) {
+                parameters.add( component.toString() );
                 component = new StringBuilder();
             }
         }

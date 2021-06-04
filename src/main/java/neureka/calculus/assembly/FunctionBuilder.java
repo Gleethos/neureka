@@ -204,25 +204,23 @@ public class FunctionBuilder
             }
         }
         // building sources and function:
-        if (foundComponents.size() == 1) {
+        if ( foundComponents.size() == 1 ) {
             String possibleFunction = FunctionParser.parsedOperation(
                     foundComponents.get( 0 ),
                     0
             );
-            if (possibleFunction != null && possibleFunction.length() > 1) {
+            if ( possibleFunction != null && possibleFunction.length() > 1 ) {
 
                 for ( int oi = 0; oi < _context.id(); oi++ ) {
-                    if (_context.instance(oi).getOperator().equalsIgnoreCase(possibleFunction)) {
+                    if (_context.instance(oi).getFunction().equalsIgnoreCase(possibleFunction)) {
                         typeId = oi;
                         List<String> parameters = FunctionParser.findParametersIn(
-                                foundComponents.get( 0 ),
-                                possibleFunction.length()
-                        );
+                                                                            foundComponents.get( 0 ),
+                                                                            possibleFunction.length()
+                                                                    );
                         assert parameters != null;
-                        for ( String p : parameters ) {
-                            sources.add(build(p, doAD));
-                        }
-                        function = new FunctionNode(_context.instance(typeId), sources, doAD);
+                        for ( String p : parameters ) sources.add(build(p, doAD));
+                        function = new FunctionNode( _context.instance( typeId ), sources, doAD );
                         return function;
                     }
                 }
