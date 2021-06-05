@@ -36,6 +36,7 @@ SOFTWARE.
 
 package neureka.calculus;
 
+import lombok.experimental.Accessors;
 import neureka.Tsr;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
@@ -59,57 +60,22 @@ import java.util.function.Supplier;
  *  Functions accept arrays as their inputs,
  *  which is why variables must be targeted in such a way.
  */
+@Accessors( prefix = { "_" } )
 public interface Function
 {
     // Global context and cache:
     Cache CACHE = Cache.instance();
 
-    Function DIMTRIM = create("dimtrim(I[ 0 ])");
-
-    Function IDY = create("I[ 0 ] <- I[ 1 ]");
-
-    Function X = create("I[ 0 ] x I[ 1 ]");
-    Function PLUS = create("(I[ 0 ] + I[ 1 ])");
-    Function PLUS_ASSIGN = create("I[ 0 ] <- (I[ 0 ] + I[ 1 ])");
-    Function MINUS = create("(I[ 0 ] - I[ 1 ])");
-    Function MINUS_ASSIGN = create("I[ 0 ] <- (I[ 0 ] - I[ 1 ])");
-    Function DIV = create("(I[ 0 ] / I[ 1 ])");
-    Function DIV_ASSIGN = create("I[ 0 ] <- (I[ 0 ] / I[ 1 ])");
-    Function POW = create("(I[ 0 ] ^ I[ 1 ])");
-    Function POW_ASSIGN = create("I[ 0 ] <- (I[ 0 ] ^ I[ 1 ])");
-    Function MUL = create("I[ 0 ] * I[ 1 ]");
-    Function MUL_ASSIGN = create("I[ 0 ] <- (I[ 0 ] * I[ 1 ])");
-    Function MOD = create("(I[ 0 ] % I[ 1 ])");
-    Function MOD_ASSIGN = create("I[ 0 ] <- (I[ 0 ] % I[ 1 ])");
-    Function NEG = create("(-1 * I[ 0 ])");
-
     /**
-     *  This static nested class acts as namespace for pre-instantiated
-     *  Function instances which are configured to not track their computational history.
+     *  This static {@link Functions} instance wraps pre-instantiated
+     *  {@link Function} instances which are configured to not track their computational history.
      *  This means that no computation graph will be built by these instances.
      *  ( Computation graphs in Neureka are made of instances of the "GraphNode" class... )
      */
-    class Detached
-    {
-        public static Function IDY = create("I[ 0 ]<-I[ 1 ]", false);
+    Functions DETACHED = new Functions( false );
 
-        public static Function X = create("I[ 0 ]xI[ 1 ]", false);
-        public static Function PLUS = create("(I[ 0 ]+I[ 1 ])", false);
-        public static Function PLUS_ASSIGN = create("I[ 0 ]<-(I[ 0 ]+I[ 1 ])", false);
-        public static Function MINUS = create("(I[ 0 ]-I[ 1 ])", false);
-        public static Function MINUS_ASSIGN = create("I[ 0 ]<-(I[ 0 ]-I[ 1 ])", false);
-        public static Function DIV = create("(I[ 0 ]/I[ 1 ])", false);
-        public static Function DIV_ASSIGN = create("I[ 0 ]<-(I[ 0 ]/I[ 1 ])", false);
-        public static Function POW = create("(I[ 0 ]^I[ 1 ])", false);
-        public static Function POW_ASSIGN = create("I[ 0 ]<-(I[ 0 ]^I[ 1 ])", false);
-        public static Function MUL = create("I[ 0 ]*I[ 1 ]", false);
-        public static Function MUL_ASSIGN = create("I[ 0 ]<-(I[ 0 ]*I[ 1 ])", false);
-        public static Function ADD = create("I[ 0 ]+I[ 1 ]", false);
-        public static Function ADD_ASSIGN = create("I[ 0 ]<-(I[ 0 ]+I[ 1 ])", false);
-        public static Function MOD = create("(I[ 0 ]%I[ 1 ])", false);
-        public static Function MOD_ASSIGN = create("I[ 0 ]<-(I[ 0 ]%I[ 1 ])", false);
-        public static Function NEG = create("(-1*I[ 0 ])", false);
-    }
+    Functions INSTANCES = new Functions( true );
+
 
     static Function create( String expression ) {
         return create( expression, true );

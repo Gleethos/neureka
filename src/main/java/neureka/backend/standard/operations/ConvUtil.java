@@ -34,7 +34,7 @@ public class ConvUtil {
                             Tsr ctxDerivative = (Tsr)call.getAt("derivative");
                             if ( forward ) throw new IllegalArgumentException("Convolution of does not support forward-AD!");
 
-                            Function mul = Function.Detached.MUL;
+                            Function mul = Function.DETACHED.MUL();
                             Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
 

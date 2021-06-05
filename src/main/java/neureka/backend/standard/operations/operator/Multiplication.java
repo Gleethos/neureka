@@ -6,7 +6,6 @@ import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.operations.OperationContext;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
@@ -197,7 +196,7 @@ public class Multiplication extends AbstractOperation
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
                         Tsr ctxDerivative = (Tsr)call.getAt( "derivative" );
-                        Function mul = Function.Detached.MUL;
+                        Function mul = Function.DETACHED.MUL();
                         if ( ctxDerivative != null ) {
                             return new DefaultADAgent( ctxDerivative )
                                     .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
@@ -304,7 +303,7 @@ public class Multiplication extends AbstractOperation
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
                         Tsr ctxDerivative = (Tsr)call.getAt("derivative");
-                        Function mul = Function.Detached.MUL;
+                        Function mul = Function.DETACHED.MUL();
                         if ( ctxDerivative != null ) {
                             return new DefaultADAgent( ctxDerivative )
                                     .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )

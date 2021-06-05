@@ -52,8 +52,8 @@ public class SGD<ValType> implements Optimizer<ValType>
 
     @Override
     public void optimize( Tsr<ValType> w ) {
-        Tsr g = w.getGradient();
-        Function.Detached.IDY.call(_function.call( g ));
+        Tsr<ValType> g = w.getGradient();
+        Function.DETACHED.IDY().call( _function.call( g ) );
     }
 
     public double learningRate() {

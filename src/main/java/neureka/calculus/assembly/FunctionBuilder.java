@@ -11,7 +11,6 @@ import neureka.calculus.implementations.FunctionVariable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ServiceLoader;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -40,11 +39,11 @@ public class FunctionBuilder
      */
     public Function build( Operation type, int size, boolean doAD )
     {
-        if ( type.isIndexer() ) return build( type.getFunction() + "(I[j])", doAD );
+        if ( type.isIndexer() ) return build( type.getFunction() + "( I[j] )", doAD );
 
         String args = IntStream.iterate( 0, n -> n + 1 )
                                 .limit( size )
-                                .mapToObj( i -> "I["+i+"]" )
+                                .mapToObj( i -> "I[" + i + "]" )
                                 .collect( Collectors.joining( ", " ) );
 
         return build( type.getFunction() + "(" + args + ")", doAD );

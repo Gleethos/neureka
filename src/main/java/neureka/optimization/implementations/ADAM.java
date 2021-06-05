@@ -66,7 +66,7 @@ public class ADAM<ValType> implements Optimizer<ValType> {
         Tsr<ValType> mh = new Tsr<>(m, "/(1-", b1, ")");
         Tsr<ValType> vh = new Tsr<>(v, "/(1-", b2, ")");
         Tsr<ValType> newg = new Tsr<>("-",a,"*",mh,"/(",vh,"^0.5+",e,")");
-        Function.Detached.IDY.call(new Tsr[]{g, newg});
+        Function.DETACHED.IDY().call(new Tsr[]{g, newg});
     }
 
     @Override

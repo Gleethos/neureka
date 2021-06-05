@@ -101,20 +101,19 @@ public abstract class AbstractOperation implements Operation
      *  - A basic threaded execution based on the AST of a given Function object.                                       <br>
      */
     @Getter
-    private final Algorithm _defaultAlgorithm = new GenericAlgorithm( "default", _arity, this );
+    private final Algorithm<?> _defaultAlgorithm = new GenericAlgorithm( "default", _arity, this );
 
     public AbstractOperation( OperationBuilder builder )
     {
         builder.dispose();
 
-        _function = builder.getFunction();
-        _arity = builder.getArity();
-        _operator = builder.getOperator();
-        _isOperator = builder.getIsOperator();
-        _isIndexer = builder.getIsIndexer();
+        _function         = builder.getFunction();
+        _arity            = builder.getArity();
+        _operator         = builder.getOperator();
+        _isOperator       = builder.getIsOperator();
+        _isIndexer        = builder.getIsIndexer();
         _isDifferentiable = builder.getIsDifferentiable();
-        _isInline = builder.getIsInline();
-
+        _isInline         = builder.getIsInline();
     }
 
     //==================================================================================================================
@@ -171,18 +170,18 @@ public abstract class AbstractOperation implements Operation
     public <T extends Algorithm<T>> Algorithm<T> getAlgorithmFor( ExecutionCall<?> call ) {
         float bestScore = 0f;
         Algorithm<T> bestImpl = null;
-        for( Algorithm impl : _algorithms.values() ) {
+        for( Algorithm<?> impl : _algorithms.values() ) {
             float currentScore = impl.isSuitableFor( call );
             if ( currentScore > bestScore ) {
-                if ( currentScore == 1.0 ) return impl;
+                if ( currentScore == 1.0 ) return (Algorithm<T>) impl;
                 else {
                     bestScore = currentScore;
-                    bestImpl = impl;
+                    bestImpl = (Algorithm<T>) impl;
                 }
             }
         }
 
-        if ( _defaultAlgorithm.isSuitableFor( call ) > 0.0f ) return _defaultAlgorithm;
+        if ( _defaultAlgorithm.isSuitableFor( call ) > 0.0f ) return (Algorithm<T>) _defaultAlgorithm;
 
         if ( bestImpl == null ) {
             String message = "No suitable implementation for execution call '"+call+"' could be found.\n" +

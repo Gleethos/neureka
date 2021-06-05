@@ -36,7 +36,7 @@ public class OperationContext implements Cloneable
     static {
         OperationContext context = OperationContext.get();
         // loading operations!
-        ServiceLoader<Operation> serviceLoader = ServiceLoader.load(Operation.class);
+        ServiceLoader<Operation> serviceLoader = ServiceLoader.load( Operation.class );
         //serviceLoader.reload();
 
         //checking if load was successful
@@ -64,7 +64,6 @@ public class OperationContext implements Cloneable
      *  This is a very simple class with a single purpose, namely
      *  it exposes methods which receive lambda instances in order to then execute them
      *  in a given context just to then switch back to the original context again.
-     *
      */
     public static class Runner {
 
