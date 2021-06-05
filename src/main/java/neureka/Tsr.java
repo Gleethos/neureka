@@ -1612,7 +1612,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     boolean inlineSafety = Neureka.instance().settings().autograd().isPreventingInlineOperations();
                     if ( inlineSafety ) Neureka.instance().settings().autograd().setIsPreventingInlineOperations( false );
                     // INLINE OPERATION :
-                    Function.DETACHED().PLUS_ASSIGN().call( new Tsr[]{ this, g } ); //-> Finally applying the gradient!
+                    Function.get().PLUS_ASSIGN().call( new Tsr[]{ this, g } ); //-> Finally applying the gradient!
                     // INLINE END ! -> We can now revert to the previous setting:
                     if ( inlineSafety ) Neureka.instance().settings().autograd().setIsPreventingInlineOperations( true );
                 }
@@ -1800,11 +1800,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
 
     public Tsr<V> plus(Tsr<V> other ) {
-        return Function.INSTANCES().PLUS().call( new Tsr[]{ this, other } );
+        return Function.getAutograd().PLUS().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> plusAssign(Tsr<V> other ) {
-        return Function.DETACHED().PLUS_ASSIGN().call( new Tsr[]{ this, other } );
+        return Function.get().PLUS_ASSIGN().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> plus(Double value ) {
@@ -1812,23 +1812,23 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> minus(Tsr<V> other ) {
-        return Function.INSTANCES().MINUS().call( new Tsr[]{ this, other } );
+        return Function.getAutograd().MINUS().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> minusAssign(Tsr<V> other ) {
-        return Function.DETACHED().MINUS_ASSIGN().call( new Tsr[]{ this, other } );
+        return Function.get().MINUS_ASSIGN().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> negative() {
-        return Function.INSTANCES().NEG().call( new Tsr[]{ this } );
+        return Function.getAutograd().NEG().call( new Tsr[]{ this } );
     }
 
     public Tsr<V> multiply(Tsr<V> other ) {
-        return Function.INSTANCES().MUL().call( new Tsr[]{ this, other } );
+        return Function.getAutograd().MUL().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> timesAssign(Tsr<V> other ) {
-        return Function.DETACHED().MUL_ASSIGN().call( new Tsr[]{ this, other } );
+        return Function.get().MUL_ASSIGN().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> multiply(Double value ) {
@@ -1836,7 +1836,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> div(Tsr<V> other ) {
-        return Function.INSTANCES().DIV().call( new Tsr[]{ this, other } );
+        return Function.getAutograd().DIV().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> div(Double value ) {
@@ -1844,19 +1844,19 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> divAssign(Tsr<V> other ) {
-        return Function.DETACHED().DIV_ASSIGN().call( new Tsr[]{ this, other } );
+        return Function.get().DIV_ASSIGN().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> mod(Tsr<V> other ) {
-        return Function.INSTANCES().MOD().call( new Tsr[]{ this, other } );
+        return Function.getAutograd().MOD().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> modAssign(Tsr<V> other ) {
-        return Function.DETACHED().MOD_ASSIGN().call( new Tsr[]{ this, other } );
+        return Function.get().MOD_ASSIGN().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> power(Tsr<V> other ) {
-        return Function.INSTANCES().POW().call( new Tsr[]{ this, other } );
+        return Function.getAutograd().POW().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> power(Double value ) {
@@ -1864,7 +1864,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> xor(Tsr<V> other ) {
-        return Function.INSTANCES().POW().call( new Tsr[]{ this, other} );
+        return Function.getAutograd().POW().call( new Tsr[]{ this, other} );
     }
 
     public Tsr<V> xor(Double value ) {
@@ -1901,8 +1901,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public Tsr<V> mean() {
         Tsr<V> ones = new Tsr<>( this.getNDConf().shape(), 1 );
-        Tsr<V> sum = Function.INSTANCES().X().call( this, ones );
-        return Function.INSTANCES().DIV().call( sum, new Tsr( this.size() ) );
+        Tsr<V> sum = Function.getAutograd().X().call( this, ones );
+        return Function.getAutograd().DIV().call( sum, new Tsr( this.size() ) );
     }
 
     /**
@@ -1922,7 +1922,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             a = Function.create( AbstractNDArray.Utility.Stringify.strConf( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
             b = Function.create( AbstractNDArray.Utility.Stringify.strConf( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( b );
         }
-        return Function.INSTANCES().X().call( new Tsr[]{ a, b } ).dimtrim();
+        return Function.getAutograd().X().call( new Tsr[]{ a, b } ).dimtrim();
     }
 
     /**
@@ -1936,7 +1936,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return A tensor with the same underlying data but possibly trimmed shape without preceding or trailing ones.
      */
     public Tsr<V> dimtrim() {
-        return Function.INSTANCES().DIMTRIM().call( this );
+        return Function.getAutograd().DIMTRIM().call( this );
     }
 
     /**
@@ -2467,7 +2467,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     Tsr.class,
                         gradient ->
                         this.set(
-                                Function.DETACHED().PLUS_ASSIGN().call( new Tsr[]{ gradient, error } )
+                                Function.get().PLUS_ASSIGN().call( new Tsr[]{ gradient, error } )
                         )
                 )
         ) set( error ).forComponent( Device.class, device -> {

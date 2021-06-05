@@ -72,7 +72,7 @@ public interface Function
      *  This means that no computation graph will be built by these instances.
      *  ( Computation graphs in Neureka are made of instances of the "GraphNode" class... )
      */
-    static Functions DETACHED() {
+    static Functions get() {
         return OperationContext.get().getFunction();
     }
 
@@ -82,7 +82,7 @@ public interface Function
      *  This means that a computation graph will be built by these instances.
      *  ( Computation graphs in Neureka are made of instances of the "GraphNode" class... )
      */
-    static Functions INSTANCES() {
+    static Functions getAutograd() {
         return OperationContext.get().getAutogradFunction();
     }
 
