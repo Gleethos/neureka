@@ -67,15 +67,24 @@ public interface Function
     Cache CACHE = Cache.instance();
 
     /**
-     *  This static {@link Functions} instance wraps pre-instantiated
+     *  This static method returns a {@link Functions} instance which wraps pre-instantiated
      *  {@link Function} instances which are configured to not track their computational history.
      *  This means that no computation graph will be built by these instances.
      *  ( Computation graphs in Neureka are made of instances of the "GraphNode" class... )
      */
-    Functions DETACHED = new Functions( false );
+    static Functions DETACHED() {
+        return OperationContext.get().getFunction();
+    }
 
-    Functions INSTANCES = new Functions( true );
-
+    /**
+     *  This static method returns a {@link Functions} instance which wraps pre-instantiated
+     *  {@link Function} instances which are configured to track their computational history.
+     *  This means that a computation graph will be built by these instances.
+     *  ( Computation graphs in Neureka are made of instances of the "GraphNode" class... )
+     */
+    static Functions INSTANCES() {
+        return OperationContext.get().getAutogradFunction();
+    }
 
     static Function create( String expression ) {
         return create( expression, true );

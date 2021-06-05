@@ -307,7 +307,7 @@ public class Power extends AbstractOperation
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
                         Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
-                        Function mul = Function.DETACHED.MUL();
+                        Function mul = Function.DETACHED().MUL();
                         if ( ctxDerivative != null ) {
                             return new DefaultADAgent( ctxDerivative )
                                     .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
