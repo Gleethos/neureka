@@ -22,19 +22,27 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
 
     public GenericAlgorithm( String name, int arity, Operation type )
     {
-        super(name);
+        super( name );
         setImplementationFor(
                 HostCPU.class,
                 new HostImplementation(
                         call -> {
-                            Function f = new FunctionBuilder(OperationContext.get()).build( type, call.getTensors().length-1, false);
+                            Function f = new FunctionBuilder(
+                                                OperationContext.get()
+                                            )
+                                            .build(
+                                                    type,
+                                                    call.getTensors().length-1,
+                                                    false
+                                            );
+
                             boolean allNumeric = call.validate()
-                                    .all( t -> t.getDataType().typeClassImplements(NumericType.class) )
-                                    .isValid();
+                                                        .all( t -> t.getDataType().typeClassImplements(NumericType.class) )
+                                                        .isValid();
 
                             if ( allNumeric )
                             {
-                                double[] inputs = new double[call.getTensors().length-1];
+                                double[] inputs = new double[ call.getTensors().length-1 ];
                                 call
                                         .getDevice()
                                         .getExecutor()
@@ -43,7 +51,7 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
                                                 ( start, end ) -> {
                                                     for ( int i = start; i < end; i++ ) {
                                                         for ( int ii = 0; ii < inputs.length; ii++ ) {
-                                                            inputs[ ii ] = call.getTsrOfType( Number.class, 1+ii).value64( i );
+                                                            inputs[ ii ] = call.getTsrOfType( Number.class, 1 + ii ).value64( i );
                                                         }
                                                         call.getTsrOfType( Number.class, 0 ).value64()[ i ] = f.call( inputs );
                                                     }
@@ -54,7 +62,7 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
                                 String expression = f.toString();
                                 Binding binding = new Binding();
                                 binding.setVariable("I", inputs);
-                                GroovyShell shell = new GroovyShell(binding);
+                                GroovyShell shell = new GroovyShell( binding );
                                 call
                                         .getDevice()
                                         .getExecutor()

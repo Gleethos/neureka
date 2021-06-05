@@ -158,8 +158,10 @@ public class MatMul extends AbstractOperation
                                                     .operation( call.getOperation() )
                                                     .build()
                                     );
-                                    if ( call.getOperation().getId() == OperationContext.get().instance("x>>").getId()) return tsrs[ 2 ];
-                                    else return tsrs[ 0 ];
+                                    if ( call.getOperation() == OperationContext.get().instance("x>>") )
+                                        return tsrs[ 2 ];
+                                    else
+                                        return tsrs[ 0 ];
                                 }
                             }
                             return null;

@@ -38,25 +38,16 @@ public class FunctionBuilder
      * @param doAD
      * @return
      */
-    public Function build( Operation type, int size, boolean doAD ) {
-        if ( type.getId() == 18 ) { // TODO: REMOVE HARD CODING! THIS IS DANGEROUS
-            size = 2;
-        } else if ( type.getOperator().equals(",") ) {
-            ArrayList<Function> srcs = new ArrayList<>();
-            for ( int i = 0; i < size; i++) srcs.add( new FunctionInput().newBuild("" + i) );
-            return new FunctionNode(type, srcs, doAD);
-        }
-        if ( type.getId() < 10 ) {
-            return build(type.getFunction() + "(I[ 0 ])", doAD);
-        } else if ( type.isIndexer() ) {
-            return build(type.getFunction() + "I[j]", doAD);
-        } else {
-            StringBuilder expression = new StringBuilder("I[ 0 ]");
-            for ( int i = 0; i < size - 1; i++ ) {
-                expression.append(type.getOperator()).append("I[").append(i + 1).append("]");
-            }
-            return build(expression.toString(), doAD);
-        }
+    public Function build( Operation type, int size, boolean doAD )
+    {
+        if ( type.isIndexer() ) return build( type.getFunction() + "(I[j])", doAD );
+
+        String args = IntStream.iterate( 0, n -> n + 1 )
+                                .limit( size )
+                                .mapToObj( i -> "I["+i+"]" )
+                                .collect( Collectors.joining( ", " ) );
+
+        return build( type.getFunction() + "(" + args + ")", doAD );
     }
 
     /**

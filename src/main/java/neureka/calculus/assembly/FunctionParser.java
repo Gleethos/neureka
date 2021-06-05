@@ -78,11 +78,11 @@ public class FunctionParser
     @Contract( pure = true )
     public static List<String> findParametersIn( String exp, final int index ) {
         exp = exp.trim();
-        if (exp.length() <= index) return null;
+        if ( exp.length() <= index ) return null;
         int bracketDepth = 0;
         List<String> parameters = new ArrayList<>();
         StringBuilder component = new StringBuilder();
-        for ( int i = index; i < exp.length(); ++i)
+        for ( int i = index; i < exp.length(); ++i )
         {
             if ( exp.charAt( i ) == '(' || exp.charAt( i ) == '[' ) {
                 if ( bracketDepth != 0 ) component.append(exp.charAt( i ));
@@ -107,7 +107,7 @@ public class FunctionParser
     public static boolean isAnOperation( final String operationName ) {
         if ( operationName.length() > 32 ) return false;
         Operation operation = OperationContext.get().instance( operationName );
-        return operation != null && operation.getId() >= 0;
+        return operation != null;
     }
 
     @Contract( pure = true )
