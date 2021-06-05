@@ -43,7 +43,7 @@ public class MultiplicationLeftConv extends AbstractOperation {
                 ).setSupplyADAgentFor(
                         (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
-                            Tsr ctxDerivative = (Tsr)call.getAt("derivative");
+                            Tsr ctxDerivative = (Tsr) call.getAt("derivative");
                             Function mul = Function.DETACHED.MUL();
                             if ( ctxDerivative != null ) {
                                 return new DefaultADAgent( ctxDerivative )

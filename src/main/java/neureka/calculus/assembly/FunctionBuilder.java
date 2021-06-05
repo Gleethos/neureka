@@ -122,8 +122,8 @@ public class FunctionBuilder
             else ++i; // Parsing failed for this index so let's try the next one!
         }
         //---
-        int counter = _context.id();
-        for ( int j = _context.id(); j > 0; --j ) {
+        int counter = _context.size();
+        for (int j = _context.size(); j > 0; --j ) {
             if ( !foundJunctors.contains( _context.instance(j - 1).getOperator() ) )
                 --counter;
             else
@@ -187,7 +187,7 @@ public class FunctionBuilder
         // identifying function id:
         int typeId = 0;
         if ( foundJunctors.size() >= 1 ) {
-            for ( int id = 0; id < _context.id(); ++id) {
+            for (int id = 0; id < _context.size(); ++id) {
                 if ( _context.instance(id).getOperator().equals(foundJunctors.get( 0 )) ) {
                     typeId = id;
                 }
@@ -201,7 +201,7 @@ public class FunctionBuilder
             );
             if ( possibleFunction != null && possibleFunction.length() > 1 ) {
 
-                for ( int oi = 0; oi < _context.id(); oi++ ) {
+                for (int oi = 0; oi < _context.size(); oi++ ) {
                     if (_context.instance(oi).getFunction().equalsIgnoreCase(possibleFunction)) {
                         typeId = oi;
                         List<String> parameters = FunctionParser.findParametersIn(

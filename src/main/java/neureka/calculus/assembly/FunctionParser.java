@@ -245,7 +245,7 @@ public class FunctionParser
     public static String assumptionBasedOn( String expression ) {
         double largest = -1;
         int best = 0;
-        for ( int i = 0; i< OperationContext.get().id(); i++ ) {
+        for (int i = 0; i< OperationContext.get().size(); i++ ) {
             double s = similarity( expression, OperationContext.get().instance( i ).getOperator() );
             if ( largest == -1 ) largest = s;
             else if (s > largest) {

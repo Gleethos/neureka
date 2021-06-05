@@ -22,7 +22,7 @@ class OperationContext_Unit_Tests extends Specification
             clone != context
 
         and : 'They contain the same entries.'
-            clone.id() == context.id()
+            clone.size() == context.size()
             clone.lookup() == context.lookup()
             clone.instances() == context.instances()
 
@@ -32,12 +32,12 @@ class OperationContext_Unit_Tests extends Specification
             clone.instances().add( mockOperation )
 
         then : 'Their properties will no longer be the same.'
-            clone.id() != context.id()
+            clone.size() != context.size()
             clone.lookup() != context.lookup()
             clone.instances() != context.instances()
 
         and : 'The change will be as expected.'
-            clone.id() == context.id() + 1
+            clone.size() == context.size() + 1
             clone.lookup().size() == context.lookup().size() + 1
             clone.lookup().containsKey("TEST KEY")
             clone.instances().size() == context.instances().size() + 1

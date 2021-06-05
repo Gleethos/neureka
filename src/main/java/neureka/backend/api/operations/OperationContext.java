@@ -5,6 +5,8 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import neureka.backend.api.Operation;
+import neureka.calculus.Function;
+import neureka.calculus.Functions;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -123,15 +125,35 @@ public class OperationContext implements Cloneable
     @Getter private final List<Operation> _instances;
 
     /**
-     *  The ID of the OperationType that will be instantiated next.
+     *  The number of operation instances stored in this context.
      */
-    @Getter private int _id;
+    @Getter private int _size;
+
+    /**
+     *  This static {@link Functions} instance wraps pre-instantiated
+     *  {@link Function} instances which are configured to not track their computational history.
+     *  This means that no computation graph will be built by these instances.
+     *  ( Computation graphs in Neureka are made of instances of the "GraphNode" class... )
+     */
+    private Functions _getFunction = null;
+
+    public Functions getFunction() {
+        if ( _getFunction == null ) _getFunction = new Functions( false );
+        return _getFunction;
+    }
+
+    private Functions _getAutogradFunction = null;
+
+    public Functions getAutogradFunction() {
+        if ( _getAutogradFunction == null ) _getAutogradFunction = new Functions( true );
+        return _getAutogradFunction;
+    }
 
     private OperationContext()
     {
         _lookup = new HashMap<>();
         _instances = new ArrayList<>();
-        _id = 0;
+        _size = 0;
     }
 
     public void addOperation( Operation operation ) {
@@ -158,7 +180,7 @@ public class OperationContext implements Cloneable
 
     public void incrementID()
     {
-        _id++;
+        _size++;
     }
 
     /**
@@ -191,7 +213,7 @@ public class OperationContext implements Cloneable
     public OperationContext clone()
     {
         OperationContext clone = new OperationContext();
-        clone._id = _id;
+        clone._size = _size;
         clone._lookup.putAll( _lookup );
         clone._instances.addAll( _instances );
         return clone;
