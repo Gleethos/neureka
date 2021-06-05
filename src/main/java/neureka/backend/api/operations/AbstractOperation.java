@@ -30,16 +30,6 @@ public abstract class AbstractOperation implements Operation
     private static Logger _LOG = LoggerFactory.getLogger( AbstractOperation.class );
 
     /**
-     *  The id (identification) number of an operation is expected to be unique
-     *  for every operation instance.
-     *  Besides providing identification it is also <b>the order of operations</b>
-     *  which determines <b>the binding strength of operators</b>.
-     *  For example the '+' operator binds variables stronger than the '+' operator.
-     *  Regular functions like 'sig', 'tanh', ... will not be affected by this id order!
-     */
-    @Getter protected int _id;
-
-    /**
      *  An operation may have two ways in which it can describe itself as String within a Function AST.
      *  The first one is an operator style of representation and the second one a classical function.
      *  So for the 'Addition' operation the following two representations exist: <br>
@@ -124,8 +114,6 @@ public abstract class AbstractOperation implements Operation
         _isIndexer = builder.getIsIndexer();
         _isDifferentiable = builder.getIsDifferentiable();
         _isInline = builder.getIsInline();
-
-        _id = OperationContext.get().id();
 
     }
 
