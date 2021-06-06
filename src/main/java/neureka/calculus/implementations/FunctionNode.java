@@ -378,22 +378,22 @@ public class FunctionNode extends AbstractBaseFunction
 
     @Override
     public Tsr<?> execute(Tsr<?>... inputs) {
-        return CACHE.preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, -1, -1 ), -1, -1 );
+        return OperationContext.get().functionCache().preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, -1, -1 ), -1, -1 );
     }
 
     @Override
     public Tsr<?> execute(Tsr<?>[] inputs, int j) {
-        return CACHE.preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, j, -1 ), -1, j );
+        return OperationContext.get().functionCache().preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, j, -1 ), -1, j );
     }
 
     @Override
     public Tsr<?> executeDerive(Tsr<?>[] inputs, int d, int j) {
-        return CACHE.preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, j, d ), d, j );
+        return OperationContext.get().functionCache().preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, j, d ), d, j );
     }
 
     @Override
     public Tsr<?> executeDerive(Tsr<?>[] inputs, int d) {
-        return CACHE.preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, -1, d ), d, -1 );
+        return OperationContext.get().functionCache().preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, -1, d ), d, -1 );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

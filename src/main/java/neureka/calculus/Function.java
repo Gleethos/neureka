@@ -22,13 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   ______                _   _
-  |  ____|              | | (_)
-  | |__ _   _ _ __   ___| |_ _  ___  _ __
-  |  __| | | | '_ \ / __| __| |/ _ \| '_ \
-  | |  | |_| | | | | (__| |_| | (_) | | | |
-  |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|
-
+     ______                _   _
+    |  ____|              | | (_)
+    | |__ _   _ _ __   ___| |_ _  ___  _ __
+    |  __| | | | '_ \ / __| __| |/ _ \| '_ \
+    | |  | |_| | | | | (__| |_| | (_) | | | |
+    |_|   \__,_|_| |_|\___|\__|_|\___/|_| |_|
+  
     Function instances represent an abstract syntax
     tree which performs operations on tensors or arrays of primitive scalars.
 
@@ -63,9 +63,6 @@ import java.util.function.Supplier;
 @Accessors( prefix = { "_" } )
 public interface Function
 {
-    // Global context and cache:
-    Cache CACHE = Cache.instance();
-
     static Function create( String expression ) {
         return create( expression, true );
     }
@@ -113,7 +110,7 @@ public interface Function
             if ( activation == null ) result = (Tsr<T>) function.execute( inputs );
             else result = (Tsr<T>) activation.get();
 
-            Function.CACHE.free( newLock );
+            OperationContext.get().functionCache().free( newLock );
             boolean resultIsUnique = true;
             if ( drain != null ) {
                 for( Tsr<?> t : inputs ) {

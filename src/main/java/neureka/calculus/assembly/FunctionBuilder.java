@@ -62,12 +62,13 @@ public class FunctionBuilder
                         : expression;
         String k = ( doAD ) ? "d" + expression : expression;
 
-        if ( Function.CACHE.FUNCTIONS().containsKey( k ) ) return Function.CACHE.FUNCTIONS().get( k );
+        if ( OperationContext.get().functionCache().FUNCTIONS().containsKey( k ) )
+            return OperationContext.get().functionCache().FUNCTIONS().get( k );
 
         expression = FunctionParser.unpackAndCorrect( expression );
         Function built = _build( expression, doAD );
         if ( built != null )
-            Function.CACHE.FUNCTIONS().put(
+            OperationContext.get().functionCache().FUNCTIONS().put(
                     ( ( (doAD) ? "d" : "" ) + "(" + built + ")" ).intern(), // Make the String unique!
                     built
             );

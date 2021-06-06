@@ -5,6 +5,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import neureka.backend.api.Operation;
+import neureka.calculus.Cache;
 import neureka.calculus.Function;
 import neureka.calculus.Functions;
 
@@ -129,6 +130,10 @@ public class OperationContext implements Cloneable
      */
     @Getter private int _size;
 
+    // Global context and cache:
+    @Getter private final Cache _functionCache = new Cache();
+
+
     /**
      *  This static {@link Functions} instance wraps pre-instantiated
      *  {@link Function} instances which are configured to not track their computational history.
@@ -138,10 +143,10 @@ public class OperationContext implements Cloneable
     private Functions _getFunction = null;
 
     /**
-     *  This static method returns a {@link Functions} instance which wraps pre-instantiated
+     *  This method returns a {@link Functions} instance which wraps pre-instantiated
      *  {@link Function} instances which are configured to not track their computational history.
      *  This means that no computation graph will be built by these instances.
-     *  ( Computation graphs in Neureka are made of instances of the "GraphNode" class... )
+     *  ( Computation graphs in Neureka are made of instances of the {@link neureka.autograd.GraphNode} class... )
      */
     public Functions getFunction() {
         if ( _getFunction == null ) _getFunction = new Functions( false );
@@ -151,10 +156,10 @@ public class OperationContext implements Cloneable
     private Functions _getAutogradFunction = null;
 
     /**
-     *  This static method returns a {@link Functions} instance which wraps pre-instantiated
+     *  This method returns a {@link Functions} instance which wraps pre-instantiated
      *  {@link Function} instances which are configured to track their computational history.
      *  This means that a computation graph will be built by these instances.
-     *  ( Computation graphs in Neureka are made of instances of the "GraphNode" class... )
+     *  ( Computation graphs in Neureka are made of instances of the {@link neureka.autograd.GraphNode} class... )
      */
     public Functions getAutogradFunction() {
         if ( _getAutogradFunction == null ) _getAutogradFunction = new Functions( true );
