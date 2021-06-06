@@ -57,17 +57,17 @@ public final class Cache
         return c;
     }
 
-    private final Map<String, Function> FUNCTIONS = Collections.synchronizedMap(new WeakHashMap<>());
+    private final Map<String, Function> functionCache = Collections.synchronizedMap( new WeakHashMap<>() );
 
-    public synchronized Map<String, Function> FUNCTIONS() {
-        return this.FUNCTIONS;
+    public synchronized Map<String, Function> functions() {
+        return this.functionCache;
     }
 
-    private final Map<GraphLock, TreeMap<Long, Tsr<Object>>> PROCESSING = Collections.synchronizedMap( new TreeMap<>( ( a, b )-> a.hashCode() - b.hashCode() ) );
+    private final Map<GraphLock, TreeMap<Long, Tsr<Object>>> functionResultCache = Collections.synchronizedMap( new TreeMap<>( (a, b )-> a.hashCode() - b.hashCode() ) );
 
     public synchronized void free( GraphLock lock )
     {
-        PROCESSING.remove( lock );
+        functionResultCache.remove( lock );
         lock.release();
     }
 
@@ -115,11 +115,11 @@ public final class Cache
     {
         GraphLock lock = tsrs[ 0 ].find( GraphNode.class ).getLock();
         long key = _keyOf( tsrs, d, j );
-        if ( key != 0 && PROCESSING.containsKey( lock ) && PROCESSING.get( lock ).containsKey( key ) ) {
+        if ( key != 0 && functionResultCache.containsKey( lock ) && functionResultCache.get( lock ).containsKey( key ) ) {
                 _log.debug(
                         "Result cache hit occurred! Function lock : '{}'; Key : '{}';", lock, key
                 );
-                return PROCESSING.get( lock ).get( key );
+                return functionResultCache.get( lock ).get( key );
         }
         return null;
     }
@@ -135,10 +135,10 @@ public final class Cache
         long key = _keyOf( tsrs, d, j );
         if ( node.isCacheable() && key != 0 ) {
             TreeMap<Long, Tsr<Object>> variables;
-            if ( PROCESSING.containsKey( node.getLock() ) ) variables = PROCESSING.get( node.getLock() );
+            if ( functionResultCache.containsKey( node.getLock() ) ) variables = functionResultCache.get( node.getLock() );
             else {
                 variables = new TreeMap<>((a, b) -> (a.hashCode() - b.hashCode()));
-                PROCESSING.put( node.getLock(), variables );
+                functionResultCache.put( node.getLock(), variables );
             }
             variables.put( key, t );
         }

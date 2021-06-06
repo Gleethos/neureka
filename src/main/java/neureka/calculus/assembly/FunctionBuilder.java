@@ -62,13 +62,13 @@ public class FunctionBuilder
                         : expression;
         String k = ( doAD ) ? "d" + expression : expression;
 
-        if ( OperationContext.get().functionCache().FUNCTIONS().containsKey( k ) )
-            return OperationContext.get().functionCache().FUNCTIONS().get( k );
+        if ( _context.functionCache().functions().containsKey( k ) )
+            return _context.functionCache().functions().get( k );
 
         expression = FunctionParser.unpackAndCorrect( expression );
         Function built = _build( expression, doAD );
         if ( built != null )
-            OperationContext.get().functionCache().FUNCTIONS().put(
+            _context.functionCache().functions().put(
                     ( ( (doAD) ? "d" : "" ) + "(" + built + ")" ).intern(), // Make the String unique!
                     built
             );
@@ -89,7 +89,7 @@ public class FunctionBuilder
         expression = expression
                 .replace("<-", "<")
                 .replace("->", ">");
-        Function function;
+
         ArrayList<Function> sources = new ArrayList<>();
         if ( expression.equals("") ) {
             Function newCore = new FunctionConstant();
@@ -99,39 +99,40 @@ public class FunctionBuilder
         expression = FunctionParser.unpackAndCorrect(expression);
         List<String> foundJunctors = new ArrayList<>();
         List<String> foundComponents = new ArrayList<>();
-        int i = 0;
-        while ( i < expression.length() ) {
-            final String newComponent = FunctionParser.findComponentIn( expression, i );
+
+        for ( int ei = 0; ei < expression.length(); ) {
+            final String newComponent = FunctionParser.findComponentIn( expression, ei );
             if ( newComponent != null ) {
                 // Empty strings are not components and will be skipped:
-                if ( newComponent.trim().isEmpty()) i += newComponent.length();
+                if ( newComponent.trim().isEmpty()) ei += newComponent.length();
                 else // String has content so lets add it to the lists:
                 {
                     if ( foundComponents.size() <= foundJunctors.size() ) {
                         foundComponents.add(newComponent);
                     }
-                    i += newComponent.length(); // And now we continue parsing where the string ends...
+                    ei += newComponent.length(); // And now we continue parsing where the string ends...
                     // After a component however, we expect an operator:
-                    final String newOperation = FunctionParser.parsedOperation(expression, i);
+                    final String newOperation = FunctionParser.parsedOperation( expression, ei );
                     if ( newOperation != null ) {
-                        i += newOperation.length();
+                        ei += newOperation.length();
                         if ( newOperation.length() <= 0 ) continue;
                         foundJunctors.add( newOperation );
                     }
                 }
             }
-            else ++i; // Parsing failed for this index so let's try the next one!
+            else
+                ++ei; // Parsing failed for this index so let's try the next one!
         }
         //---
+
         int counter = _context.size();
-        for (int j = _context.size(); j > 0; --j ) {
+        for ( int j = _context.size(); j > 0; --j ) {
             if ( !foundJunctors.contains( _context.instance(j - 1).getOperator() ) )
                 --counter;
             else
                 j = 0;
         }
-        int operationID = 0;
-        while ( operationID < counter ) {
+        for ( int operationID = 0; operationID < counter; operationID++ ) {
             final List<String> newJunctors = new ArrayList<>();
             final List<String> newComponents = new ArrayList<>();
             if ( foundJunctors.contains( _context.instance( operationID ).getOperator() ) ) {
@@ -149,7 +150,9 @@ public class FunctionBuilder
                             currentOperation = foundJunctors.get(ci);
                         }
                         if ( currentOperation != null ) {
-                            if ( currentOperation.equals(_context.instance(operationID).getOperator()) ) {
+                            if (
+                                    currentOperation.equals(_context.instance(operationID).getOperator())
+                            ) {
                                 final String newChain =
                                         FunctionParser.groupBy(
                                                 _context.instance(operationID).getOperator(),
@@ -168,29 +171,29 @@ public class FunctionBuilder
                                 currentChain = null;
                             }
                         } else {
-                            if ( currentChain == null ) newComponents.add(currentComponent);
+                            if ( currentChain == null )
+                                newComponents.add( currentComponent );
                             else {
-                                newComponents.add(currentChain + currentComponent);
+                                newComponents.add( currentChain + currentComponent );
                                 groupingOccurred = true;
                             }
                             currentChain = null;
                         }
                     }
                 }
-                if (groupingOccurred) {
+                if ( groupingOccurred ) {
                     foundJunctors = newJunctors;
                     foundComponents = newComponents;
                 }
             }
-            operationID += 1;
         }
 
         // identifying function id:
-        int typeId = 0;
+        int operationIndex = 0;
         if ( foundJunctors.size() >= 1 ) {
-            for (int id = 0; id < _context.size(); ++id) {
-                if ( _context.instance(id).getOperator().equals(foundJunctors.get( 0 )) ) {
-                    typeId = id;
+            for (int currentIndex = 0; currentIndex < _context.size(); ++currentIndex) {
+                if ( _context.instance(currentIndex).getOperator().equals(foundJunctors.get( 0 )) ) {
+                    operationIndex = currentIndex;
                 }
             }
         }
@@ -202,17 +205,16 @@ public class FunctionBuilder
             );
             if ( possibleFunction != null && possibleFunction.length() > 1 ) {
 
-                for (int oi = 0; oi < _context.size(); oi++ ) {
+                for ( int oi = 0; oi < _context.size(); oi++ ) {
                     if (_context.instance(oi).getFunction().equalsIgnoreCase(possibleFunction)) {
-                        typeId = oi;
+                        operationIndex = oi;
                         List<String> parameters = FunctionParser.findParametersIn(
                                                                             foundComponents.get( 0 ),
                                                                             possibleFunction.length()
                                                                     );
                         assert parameters != null;
                         for ( String p : parameters ) sources.add(build(p, doAD));
-                        function = new FunctionNode( _context.instance( typeId ), sources, doAD );
-                        return function;
+                        return new FunctionNode( _context.instance( operationIndex ), sources, doAD );
                     }
                 }
             }
@@ -235,14 +237,14 @@ public class FunctionBuilder
 
             return build(component, doAD);
         } else { // More than one component left:
-            if ( _context.instance( typeId ).getArity() > 1 ) {
+            if ( _context.instance( operationIndex ).getArity() > 1 ) {
                 foundComponents = _groupAccordingToArity(
-                                            _context.instance( typeId ).getArity(),
+                                            _context.instance( operationIndex ).getArity(),
                                             foundComponents,
-                                            typeId
+                                            operationIndex
                                     );
             } else if (
-                    _context.instance(typeId).getOperator().equals(",") &&
+                    _context.instance(operationIndex).getOperator().equals(",") &&
                     foundComponents.get( 0 ).startsWith("[")
             ) {
                 foundComponents.set(0, foundComponents.get( 0 ).substring(1));
@@ -274,8 +276,7 @@ public class FunctionBuilder
                 if (source != null) newVariable.add(source);
             }
             sources = newVariable;
-            function = new FunctionNode(_context.instance(typeId), sources, doAD);
-            return function;
+            return new FunctionNode( _context.instance(operationIndex), sources, doAD );
         }
     }
 
