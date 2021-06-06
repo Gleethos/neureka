@@ -58,13 +58,14 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    Function.SIG(4)
+    OperationContext.get().getAutogradFunction().sig(4)
+
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    Function.SIG.call(4);
+    OperationContext.get().getAutogradFunction().sig().call(4);
 
                 </code></pre>
             </div>
@@ -75,7 +76,7 @@
     <div class="ContentBox">
         <p>
             There are plenty of pre-instantiated and optimized Functions
-            to pick from in the Function interface.
+            to pick from in the operation context.
         </p>
     </div>
 </div>
@@ -91,14 +92,14 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    Function.Detached.SIG(4)
+    OperationContext.get().getFunction().sig(4)
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    Function.Detached.SIG.call(4);
+    OperationContext.get().getFunction().sig().call(4);
 
                 </code></pre>
             </div>
@@ -108,8 +109,8 @@
 <div class="col-sm-12 col-md-6 col-lg-6">
     <div class="ContentBox">
         <p>
-            Usually a Function creates a dynamic computation grapgh responsible for
-            enabling Neurekas autograd system.
+            Usually a Function creates a dynamic computation graph responsible for
+            enabling Neureka's autograd system.
             If you have tensors attached to a graph requiring autograd, but
             you do not want there to be derivatives created simply
             use the Functions within the 'Detached' subclass of the Function interface.

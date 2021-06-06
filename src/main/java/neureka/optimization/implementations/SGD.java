@@ -54,7 +54,7 @@ public class SGD<ValType> implements Optimizer<ValType>
     @Override
     public void optimize( Tsr<ValType> w ) {
         Tsr<ValType> g = w.getGradient();
-        OperationContext.get().getFunction().IDY().call( _function.call( g ) );
+        OperationContext.get().getFunction().idy().call( _function.call( g ) );
     }
 
     public double learningRate() {
