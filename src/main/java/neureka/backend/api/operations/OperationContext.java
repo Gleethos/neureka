@@ -137,6 +137,12 @@ public class OperationContext implements Cloneable
      */
     private Functions _getFunction = null;
 
+    /**
+     *  This static method returns a {@link Functions} instance which wraps pre-instantiated
+     *  {@link Function} instances which are configured to not track their computational history.
+     *  This means that no computation graph will be built by these instances.
+     *  ( Computation graphs in Neureka are made of instances of the "GraphNode" class... )
+     */
     public Functions getFunction() {
         if ( _getFunction == null ) _getFunction = new Functions( false );
         return _getFunction;
@@ -144,6 +150,12 @@ public class OperationContext implements Cloneable
 
     private Functions _getAutogradFunction = null;
 
+    /**
+     *  This static method returns a {@link Functions} instance which wraps pre-instantiated
+     *  {@link Function} instances which are configured to track their computational history.
+     *  This means that a computation graph will be built by these instances.
+     *  ( Computation graphs in Neureka are made of instances of the "GraphNode" class... )
+     */
     public Functions getAutogradFunction() {
         if ( _getAutogradFunction == null ) _getAutogradFunction = new Functions( true );
         return _getAutogradFunction;

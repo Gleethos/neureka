@@ -46,7 +46,7 @@ public class MultiplicationRightConv extends AbstractOperation {
                         (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
                             Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
-                            Function mul = Function.get().MUL();
+                            Function mul = OperationContext.get().getFunction().MUL();
                             if ( ctxDerivative != null ) {
                                 return new DefaultADAgent( ctxDerivative )
                                         .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )

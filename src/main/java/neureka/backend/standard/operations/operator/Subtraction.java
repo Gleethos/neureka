@@ -6,6 +6,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
+import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
@@ -261,7 +262,7 @@ public class Subtraction extends AbstractOperation
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
                             Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
-                            Function mul = Function.get().MUL();
+                            Function mul = OperationContext.get().getFunction().MUL();
                             if ( ctxDerivative != null ) {
                                 return new DefaultADAgent( ctxDerivative )
                                         .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
