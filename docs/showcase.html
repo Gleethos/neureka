@@ -207,22 +207,17 @@
                                         $('#DynamicContent').html("").load(
                                             'src/pages/' + target + '.html',
                                             function(){
-                                                setTimeout(function () {
-                                                        hljs.initHighlighting.called = false;
-                                                        hljs.initHighlighting();
-                                                        $( '.MarkdownMe' ).each(function() {
-                                                            toBeMD = $( this );
-                                                                setTimeout(function () {
-                                                                        console.log(toBeMD.html());
-                                                                        console.log(marked(toBeMD.html()));
-                                                                        toBeMD.html(marked(toBeMD.html()))
-                                                                    },
-                                                                    100
-                                                                );
-                                                        });
+                                                console.log('Executing format procedure...');
+                                                hljs.initHighlighting.called = false;
+                                                hljs.initHighlighting();
+                                                setTimeout(() => {
+                                                        for (let item of document.getElementsByClassName("MarkdownMe")) {
+                                                            item.innerHTML = marked(item.innerHTML)
+                                                            item.classList.remove("MarkdownMe");
+                                                        }
                                                         $('#DynamicContent').show("fast");
                                                     },
-                                                    100
+                                                    250
                                                 );
                                             }
                                         );
