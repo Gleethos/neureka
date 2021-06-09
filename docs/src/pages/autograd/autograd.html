@@ -126,8 +126,24 @@
 </div>
 <div class="col-sm-12 col-md-12 col-lg-12">
     <div class="ContentBox" id="AUTOGRAD_EXPLAINED" style="overflow-x: scroll;">
-    <script>
-        $('#AUTOGRAD_EXPLAINED').html("").load('spock/reports/it.autograd.Autograd_Explained.html');
-    </script>
     </div>
+    <script>
+        $( document ).ready(function() {
+            console.log('Loading report...');
+            $('#AUTOGRAD_EXPLAINED').html("").load(
+                'spock/reports/it.autograd.Autograd_Explained.html',
+                () => {
+                    console.log('Executing format procedure for autograd...');
+                    setTimeout(() => {
+                            for (let item of document.getElementsByClassName("MarkdownMe")) {
+                                item.innerHTML = marked(item.innerHTML);
+                                item.classList.remove("MarkdownMe");
+                            }
+                        },
+                        375
+                    );
+                }
+            );
+        });
+    </script>
 </div>

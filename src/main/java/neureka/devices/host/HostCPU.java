@@ -133,17 +133,17 @@ public class HostCPU extends AbstractDevice<Number>
             cores = ( cores == 0 ) ? 1 : cores;
             if ( sze >= 32 && ( ( sze / cores ) >= 8 ) ) {
                 final int chunk = sze / cores;
-                Future[] futures = new Future[cores];
+                Future<?>[] futures = new Future[ cores ];
                 for ( int i = 0; i < cores; i++ ) {
                     final int start = i * chunk;
                     final int end = ( i == cores - 1 ) ? sze : ( (i + 1) * chunk );
                     Neureka neureka = Neureka.instance();
                     futures[ i ] = _pool.submit(() -> {
-                        Neureka.setContext( neureka );
-                        range.execute(start, end);
+                        Neureka.setInstance( neureka ); // This ensures that the threads in the pool have the same settings!
+                        range.execute( start, end );
                     });
                 }
-                for (Future f : futures) {
+                for ( Future<?> f : futures ) {
                     try {
                         f.get();
                     } catch (InterruptedException e) {

@@ -77,14 +77,14 @@ public final class Neureka
         if ( n == null ) {
             n = new Neureka();
             synchronized ( Neureka.class ) {
-                setContext( n );
+                setInstance( n );
                 n.reset(); // Initial reset must be synchronized because of dependency issues!
             }
         }
         return n;
     }
 
-    public static void setContext( Neureka instance ) {
+    public static void setInstance(Neureka instance ) {
         _INSTANCES.set(instance);
     }
 
@@ -329,20 +329,7 @@ public final class Neureka
         @ToString
         public class Indexing
         {
-            private boolean _isUsingLegacyIndexing = false;
-
             private boolean _isUsingArrayBasedIndexing = true;
-
-
-
-            //public boolean isUsingLegacyIndexing() {
-            //    return _isUsingLegacyIndexing;
-            //}
-
-            //public void setIsUsingLegacyIndexing(boolean enabled) {
-            //    if ( _isLocked || !_currentThreadIsAuthorized()) return;
-            //    _isUsingLegacyIndexing = enabled; // NOTE: gpu code must recompiled! (in OpenCLPlatform)
-            //}
 
             public boolean isUsingArrayBasedIndexing() {
                 return _isUsingArrayBasedIndexing;
@@ -434,7 +421,7 @@ public final class Neureka
                 return _defaultDataTypeClass;
             }
 
-            public void setDefaultDataTypeClass( Class dtype ) {
+            public void setDefaultDataTypeClass( Class<?> dtype ) {
                 if ( _isLocked || !_currentThreadIsAuthorized()) return;
                 _defaultDataTypeClass = dtype;
             }
