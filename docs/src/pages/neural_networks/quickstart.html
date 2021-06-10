@@ -24,14 +24,14 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    def settings = Neureka.instance().settings()
+    def settings = Neureka.get().settings()
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    Settings settings = Neureka.instance().settings();
+    Settings settings = Neureka.get().settings();
 
                 </code></pre>
             </div>
@@ -59,22 +59,22 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    Neureka.instance().reset() // First we reset everything, just in case! 👍
+    Neureka.get().reset() // First we reset everything, just in case! 👍
     // Then we use the following autograd settings :
-    Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested( false )
-    Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
-    Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp( false )
+    Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false )
+    Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
+    Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false )
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    Neureka.instance().reset(); // First we reset everything, just in case! 👍
+    Neureka.get().reset(); // First we reset everything, just in case! 👍
     // Then we use the following autograd settings :
-    Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested( false );
-    Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false );
-    Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp( false );
+    Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false );
+    Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false );
+    Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false );
 
                 </code></pre>
             </div>
