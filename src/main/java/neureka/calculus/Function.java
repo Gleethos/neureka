@@ -37,6 +37,7 @@ SOFTWARE.
 package neureka.calculus;
 
 import lombok.experimental.Accessors;
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
@@ -68,7 +69,7 @@ public interface Function
     }
 
     static Function create( String expression, boolean doAD ) {
-        return new FunctionBuilder(OperationContext.get()).build(expression, doAD);
+        return new FunctionBuilder(Neureka.instance().context()).build(expression, doAD);
     }
 
     /**
@@ -79,12 +80,12 @@ public interface Function
     {
         public static <T> Tsr<T> commit( Tsr<T>[] tensors, String operation, boolean doAD )
         {
-            return commit( null, tensors, new FunctionBuilder(OperationContext.get()).build( operation, doAD ) );
+            return commit( null, tensors, new FunctionBuilder(Neureka.instance().context()).build( operation, doAD ) );
         }
 
         public static <T> Tsr<T> commit( Tsr<T> drain, Tsr<T>[] tensors, String operation, boolean doAD )
         {
-            return commit( drain, tensors, new FunctionBuilder(OperationContext.get()).build( operation, doAD ) );
+            return commit( drain, tensors, new FunctionBuilder(Neureka.instance().context()).build( operation, doAD ) );
         }
 
         public static <T> Tsr<T> commit( Tsr<T>[] inputs, Function function )
@@ -110,7 +111,7 @@ public interface Function
             if ( activation == null ) result = (Tsr<T>) function.execute( inputs );
             else result = (Tsr<T>) activation.get();
 
-            OperationContext.get().functionCache().free( newLock );
+            Neureka.instance().context().functionCache().free( newLock );
             boolean resultIsUnique = true;
             if ( drain != null ) {
                 for( Tsr<?> t : inputs ) {

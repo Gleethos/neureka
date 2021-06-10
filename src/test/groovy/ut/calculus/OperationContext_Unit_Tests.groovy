@@ -1,6 +1,6 @@
 package ut.calculus
 
-
+import neureka.Neureka
 import neureka.backend.api.operations.AbstractOperation
 import neureka.backend.api.operations.OperationContext
 import spock.lang.Specification
@@ -13,7 +13,7 @@ class OperationContext_Unit_Tests extends Specification
     {
         given : 'The singleton OperationContext instance and a OperationType mock.'
             def mockOperation = Mock(AbstractOperation)
-            def context = OperationContext.get()
+            def context = Neureka.instance().context()
 
         when : 'A clone is being created by calling "clone()" on the given context...'
             def clone = context.clone()
@@ -48,7 +48,7 @@ class OperationContext_Unit_Tests extends Specification
     def 'OperationContext instances return Runner instances for easy visiting.'()
     {
         given : 'The current thread local OperationContext instance.'
-            def current = OperationContext.get()
+            def current = Neureka.instance().context()
 
         and : 'A clone is being created by calling "clone()" on the given context...'
             def clone = current.clone()
@@ -60,13 +60,13 @@ class OperationContext_Unit_Tests extends Specification
             def spy = Mock(Function)
 
         when : 'We pass a lambda to the "useFor" method to the runner, containing a closure with the spy...'
-            run.run({spy.apply(OperationContext.get())})
+            run.run({spy.apply(Neureka.instance().context())})
 
         then : 'The spy will tell us that the passed lambda has been executed by the runner in the clone context!'
             1 * spy.apply(clone)
 
         and : 'The context accessible through the static "get" method will indeed be the current context!'
-            current == OperationContext.get()
+            current == Neureka.instance().context()
 
     }
 
@@ -76,7 +76,7 @@ class OperationContext_Unit_Tests extends Specification
     ) {
 
         given : 'The current thread local OperationContext instance.'
-            def current = OperationContext.get()
+            def current = Neureka.instance().context()
 
         and : 'A clone is being created by calling "clone()" on the given context...'
             def clone = current.clone()
@@ -85,9 +85,9 @@ class OperationContext_Unit_Tests extends Specification
             def run = runWrapper( clone.runner() )
 
         when : 'Querying the thread local context inside the Runner...'
-            def innerContext = run { OperationContext.get() }
+            def innerContext = run { Neureka.instance().context() }
         and : '...also outside the Runner lambda...'
-            def outerContext = OperationContext.get()
+            def outerContext = Neureka.instance().context()
 
         then : 'These two context instances will be different objects!'
             innerContext != outerContext

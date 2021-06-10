@@ -1,19 +1,19 @@
 package it.calculus
 
 import it.calculus.mocks.CLContext
+import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.DefaultADAgent
-import neureka.devices.Device
+import neureka.backend.api.ExecutionCall
+import neureka.backend.api.operations.OperationBuilder
+import neureka.backend.api.operations.OperationContext
+import neureka.backend.standard.algorithms.GenericAlgorithm
 import neureka.backend.standard.implementations.HostImplementation
+import neureka.calculus.Function
+import neureka.calculus.assembly.FunctionBuilder
+import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.devices.opencl.utility.DispatchUtility
-import neureka.calculus.Function
-import neureka.backend.api.ExecutionCall
-import neureka.backend.standard.algorithms.GenericAlgorithm
-import neureka.backend.api.operations.OperationContext
-import neureka.backend.api.Operation
-import neureka.backend.api.operations.OperationBuilder
-import neureka.calculus.assembly.FunctionBuilder
 import spock.lang.Specification
 
 class Calculus_Extension_Integration_Tests extends Specification
@@ -30,20 +30,20 @@ class Calculus_Extension_Integration_Tests extends Specification
             //def clContext = new CLContext(lws, rws, com_sze, row_sze, col_sze)
             //def kernel = new GEMMKernelReferenceImplementation( clContext )
 
-            OperationContext oldContext = OperationContext.get()
+            OperationContext oldContext = Neureka.instance().context()
             OperationContext testContext = oldContext.clone()
 
         when:
             def run = testContext.runner()
 
         then:
-            run { testContext == OperationContext.get() }
+            run { testContext == Neureka.instance().context() }
 
         when:
             Tsr t1 = new Tsr([row_sze, com_sze], -3..8)
             Tsr t2 = new Tsr([com_sze, col_sze], -7..4)
             run {
-                OperationContext.get()
+                Neureka.instance().context()
                     .addOperation(
                         new OperationBuilder()
                                 .setFunction('test_function')
@@ -73,8 +73,8 @@ class Calculus_Extension_Integration_Tests extends Specification
                                                         (Function f, ExecutionCall<Device> call, boolean forward) -> {
                                                             if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                                                             return new DefaultADAgent(null)
-                                                                    .setForward((t, derivative) -> new FunctionBuilder(OperationContext.get()).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
-                                                                    .setBackward((t, error) -> new FunctionBuilder(OperationContext.get()).build(f.toString(), false).derive(new Tsr[]{error}, 0));
+                                                                    .setForward((t, derivative) -> new FunctionBuilder(Neureka.instance().context()).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
+                                                                    .setBackward((t, error) -> new FunctionBuilder(Neureka.instance().context()).build(f.toString(), false).derive(new Tsr[]{error}, 0));
                                                         }
                                                 )
                                                 .setHandleInsteadOfDevice((caller, call) -> null)
@@ -141,7 +141,7 @@ class Calculus_Extension_Integration_Tests extends Specification
             t3 != null
             //t3.toString() == "..."
         and :
-            OperationContext.get() == oldContext
+            Neureka.instance().context() == oldContext
 
         where :
             lws | rws | com_sze | row_sze | col_sze

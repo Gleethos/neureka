@@ -31,7 +31,7 @@ class Calculus_Integration_Tests extends Specification
             String equation, List<Tsr> inputs, Integer index, Map<List<Integer>,List<Double>> expected
     ) {
         given : "A new Function instance created from ${equation}."
-            Function f = new FunctionBuilder(OperationContext.get()).build(equation, true) // TODO : test with 'doAD' : false!
+            Function f = new FunctionBuilder(Neureka.instance().context()).build(equation, true) // TODO : test with 'doAD' : false!
 
         and : 'The result is being calculated by invoking the Function instance.'
             Tsr<?> result = ( index != null )

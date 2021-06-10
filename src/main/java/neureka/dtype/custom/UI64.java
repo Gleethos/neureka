@@ -54,7 +54,6 @@ public final class UI64 extends AbstractNumericType<BigInteger, BigInteger[], Lo
 
     @Override
     public BigInteger toTarget( Long original ) {
-        System.out.println("To unsigned string : "+Long.toUnsignedString( original ));
         return new BigInteger( Long.toUnsignedString( original ) );
     }
 

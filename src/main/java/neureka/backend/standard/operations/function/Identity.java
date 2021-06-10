@@ -5,7 +5,6 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
-import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
@@ -71,7 +70,7 @@ public final class Identity extends AbstractOperation
                                 .device(call.getDevice())
                                 .tensors(new Tsr[]{tsrs[offset], tsrs[1+offset]})
                                 .derivativeIndex(-1)
-                                .operation(OperationContext.get().instance("idy"))
+                                .operation(Neureka.instance().context().instance("idy"))
                                 .build();
                 }
         )

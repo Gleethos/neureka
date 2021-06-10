@@ -35,8 +35,8 @@ SOFTWARE.
 
 package neureka.optimization.implementations;
 
+import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.operations.OperationContext;
 import neureka.calculus.Function;
 import neureka.optimization.Optimizer;
 
@@ -54,7 +54,7 @@ public class SGD<ValType> implements Optimizer<ValType>
     @Override
     public void optimize( Tsr<ValType> w ) {
         Tsr<ValType> g = w.getGradient();
-        OperationContext.get().getFunction().idy().call( _function.call( g ) );
+        Neureka.instance().context().getFunction().idy().call( _function.call( g ) );
     }
 
     public double learningRate() {

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import neureka.Neureka;
 import neureka.backend.api.Operation;
 import neureka.calculus.Cache;
 import neureka.calculus.Function;
@@ -35,32 +36,8 @@ import java.util.function.Supplier;
 @Accessors( prefix = {"_"}, fluent = true ) // Getters don't have a "get" prefix for better readability!
 public class OperationContext implements Cloneable
 {
-    private static final ThreadLocal<OperationContext> _CONTEXTS = ThreadLocal.withInitial( OperationContext::new );
-    static {
-        OperationContext context = OperationContext.get();
-        // loading operations!
-        ServiceLoader<Operation> serviceLoader = ServiceLoader.load( Operation.class );
-        //serviceLoader.reload();
-
-        //checking if load was successful
-        for ( Operation operation : serviceLoader ) {
-            assert operation.getFunction() != null;
-            assert operation.getOperator() != null;
-            context.addOperation(operation);
-            log.debug( "Operation: '" + operation.getFunction() + "' loaded!" );
-        }
-    }
-
-    /**
-     * @return The OperationContext singleton instance!
-     */
-    public static OperationContext get()
-    {
-        return _CONTEXTS.get();
-    }
-
     public Runner runner() {
-        return new Runner( this, OperationContext.get() );
+        return new Runner( this, Neureka.instance().context());
     }
 
     /**
@@ -74,21 +51,22 @@ public class OperationContext implements Cloneable
         private final OperationContext visitedContext;
 
         private Runner( OperationContext visited, OperationContext originalContext ) {
+            if ( visited == originalContext ) log.warn("Context runner encountered two identical contexts!");
             this.originalContext = originalContext;
             this.visitedContext = visited;
         }
 
         public Runner run( Runnable contextSpecificAction ) {
-            OperationContext.set( visitedContext );
+            Neureka.instance().setContext( visitedContext );
             contextSpecificAction.run();
-            OperationContext.set( originalContext );
+            Neureka.instance().setContext( originalContext );
             return this;
         }
 
         public <T> T runAndGet( Supplier<T> contextSpecificAction ) {
-            OperationContext.set( visitedContext );
+            Neureka.instance().setContext( visitedContext );
             T result = contextSpecificAction.get();
-            OperationContext.set( originalContext );
+            Neureka.instance().setContext( originalContext );
             return result;
         }
 
@@ -99,20 +77,6 @@ public class OperationContext implements Cloneable
         public <T> T invoke( Supplier<T> contextSpecificAction ) {
             return call( contextSpecificAction );
         }
-
-    }
-
-
-    /**
-     *  The OperationContext is a thread local singleton.
-     *  Therefore, this method will only set the context instance
-     *  for the thread which is calling this method.
-     *
-     * @param context The context which ought to be set as thread local singleton.
-     */
-    public static void set( OperationContext context )
-    {
-        _CONTEXTS.set( context );
     }
 
     /**
@@ -166,7 +130,7 @@ public class OperationContext implements Cloneable
         return _getAutogradFunction;
     }
 
-    private OperationContext()
+    public OperationContext()
     {
         _lookup = new HashMap<>();
         _instances = new ArrayList<>();
@@ -174,13 +138,13 @@ public class OperationContext implements Cloneable
     }
 
     public void addOperation( Operation operation ) {
-        OperationContext.get().incrementID();
-        OperationContext.get().instances().add( operation );
-        assert !OperationContext.get().lookup().containsKey( operation.getOperator() );
-        assert !OperationContext.get().lookup().containsKey( operation.getFunction() );
-        OperationContext.get().lookup().put( operation.getOperator(), operation );
-        OperationContext.get().lookup().put( operation.getFunction(), operation );
-        OperationContext.get().lookup().put( operation.getOperator().toLowerCase(), operation );
+        incrementID();
+        instances().add( operation );
+        assert !lookup().containsKey( operation.getOperator() );
+        assert !lookup().containsKey( operation.getFunction() );
+        lookup().put( operation.getOperator(), operation );
+        lookup().put( operation.getFunction(), operation );
+        lookup().put( operation.getOperator().toLowerCase(), operation );
         if (
                 operation.getOperator()
                         .replace((""+((char)171)), "")

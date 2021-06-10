@@ -1,22 +1,13 @@
 package neureka.backend.standard.operations.linear;
 
 import neureka.Neureka;
-import neureka.Tsr;
-import neureka.autograd.DefaultADAgent;
-import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.Algorithm;
 import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.Operation;
-import neureka.backend.api.operations.OperationContext;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.operations.ConvUtil;
-import neureka.backend.standard.operations.JunctionUtil;
 import neureka.calculus.Function;
-import neureka.calculus.assembly.FunctionBuilder;
-import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 

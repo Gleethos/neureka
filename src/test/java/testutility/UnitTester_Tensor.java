@@ -1,9 +1,9 @@
 package testutility;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.devices.Device;
@@ -128,7 +128,7 @@ public class UnitTester_Tensor extends UnitTester
         printSessionStart("Test tensor indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
         double[] rsltData = new double[NDConfiguration.Utility.szeOfShp(drnMxd)];
-        OperationContext.get().instance("x")
+        Neureka.instance().context().instance("x")
                 .getAlgorithm(Convolution.class)
                 .getImplementationFor( HostCPU.class )
                 .run(
@@ -142,7 +142,7 @@ public class UnitTester_Tensor extends UnitTester
                                         }
                                 )
                                 .derivativeIndex(-1)
-                                .operation(OperationContext.get().instance("x"))
+                                .operation(Neureka.instance().context().instance("x"))
                                 .build()
                                 .forDeviceType(HostCPU.class)
         );
@@ -157,7 +157,7 @@ public class UnitTester_Tensor extends UnitTester
     ){
         printSessionStart("Test Tsr.indexing: tensMul_mxd");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfCon(frstShp, scndShp);
-        OperationContext.get().instance(((char) 171)+"x")
+        Neureka.instance().context().instance(((char) 171)+"x")
                 .getAlgorithm(Convolution.class)
                 .getImplementationFor( HostCPU.class )
                 .run(
@@ -171,7 +171,7 @@ public class UnitTester_Tensor extends UnitTester
                                     }
                             )
                             .derivativeIndex(0)
-                            .operation(OperationContext.get().instance(((char) 171)+"x"))
+                            .operation(Neureka.instance().context().instance(((char) 171)+"x"))
                             .build()
                             .forDeviceType(HostCPU.class)
                 );
@@ -184,7 +184,7 @@ public class UnitTester_Tensor extends UnitTester
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
         double[] rsltData = new double[NDConfiguration.Utility.szeOfShp(drnMxd)];
 
-        OperationContext.get().instance("*")
+        Neureka.instance().context().instance("*")
                 .getAlgorithm(Broadcast.class)
                 .getImplementationFor( HostCPU.class )
                 .run(
@@ -198,7 +198,7 @@ public class UnitTester_Tensor extends UnitTester
                                     }
                             )
                             .derivativeIndex(-1)
-                            .operation(OperationContext.get().instance("*"))
+                            .operation(Neureka.instance().context().instance("*"))
                             .build()
                             .forDeviceType(HostCPU.class)
         );
@@ -213,7 +213,7 @@ public class UnitTester_Tensor extends UnitTester
     ){
         printSessionStart("Test Tsr.indexing: tensor broadcast_template.cl");
         int[] drnMxd  = Tsr.Utility.Indexing.shpOfBrc(frstShp, scndShp);
-        OperationContext.get().instance(((char) 171) + "*")
+        Neureka.instance().context().instance(((char) 171) + "*")
                 .getAlgorithm(Broadcast.class)
                 .getImplementationFor( HostCPU.class )
                 .run(
@@ -227,12 +227,12 @@ public class UnitTester_Tensor extends UnitTester
                                     }
                             )
                             .derivativeIndex(0)
-                            .operation(OperationContext.get().instance(((char) 171) + "*"))
+                            .operation(Neureka.instance().context().instance(((char) 171) + "*"))
                             .build()
                             .forDeviceType(HostCPU.class)
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
-        OperationContext.get().instance("*" + ((char) 187))
+        Neureka.instance().context().instance("*" + ((char) 187))
                 .getAlgorithm(Broadcast.class)
                 .getImplementationFor( HostCPU.class )
                 .run(
@@ -246,7 +246,7 @@ public class UnitTester_Tensor extends UnitTester
                                     }
                             )
                             .derivativeIndex(0)
-                            .operation(OperationContext.get().instance("*" + ((char) 187)))
+                            .operation(Neureka.instance().context().instance("*" + ((char) 187)))
                             .build()
                             .forDeviceType(HostCPU.class)
         );

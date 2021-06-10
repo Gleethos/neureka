@@ -2,12 +2,12 @@ package neureka.backend.api.algorithms;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
@@ -28,7 +28,7 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
                 new HostImplementation(
                         call -> {
                             Function f = new FunctionBuilder(
-                                                OperationContext.get()
+                                                Neureka.instance().context()
                                             )
                                             .build(
                                                     type,
@@ -118,7 +118,7 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
     public ADAgent supplyADAgentFor( Function f, ExecutionCall<? extends Device<?>> call, boolean forward)
     {
         Tsr<Object> ctxDerivative = (Tsr<Object>) call.getAt("derivative");
-        Function mul = OperationContext.get().getFunction().mul();
+        Function mul = Neureka.instance().context().getFunction().mul();
         if ( ctxDerivative != null ) {
             return new DefaultADAgent( ctxDerivative )
                     .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )

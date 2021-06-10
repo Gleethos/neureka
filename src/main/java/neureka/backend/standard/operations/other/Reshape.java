@@ -1,15 +1,15 @@
 package neureka.backend.standard.operations.other;
 
+import neureka.Neureka;
 import neureka.Tsr;
+import neureka.autograd.DefaultADAgent;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
-import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
-import neureka.devices.Device;
-import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
-import neureka.backend.api.ExecutionCall;
 import neureka.calculus.assembly.FunctionBuilder;
+import neureka.devices.Device;
 import neureka.framing.Relation;
 import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.NDConfiguration;
@@ -44,8 +44,8 @@ public class Reshape extends AbstractOperation
                             throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                         }
                         return new DefaultADAgent( null )
-                                .setForward( (t, derivative ) -> new FunctionBuilder(OperationContext.get()).build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
-                                .setBackward( (t, error ) -> new FunctionBuilder(OperationContext.get()).build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
+                                .setForward( (t, derivative ) -> new FunctionBuilder(Neureka.instance().context()).build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
+                                .setBackward( (t, error ) -> new FunctionBuilder(Neureka.instance().context()).build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
                     }
                 ).setHandleInsteadOfDevice(
                     ( caller, call ) ->

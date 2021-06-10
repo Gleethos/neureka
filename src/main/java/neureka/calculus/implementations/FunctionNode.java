@@ -2,17 +2,17 @@ package neureka.calculus.implementations;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import neureka.Neureka;
 import neureka.Tsr;
+import neureka.autograd.GraphNode;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.operations.OperationContext;
+import neureka.backend.standard.algorithms.Activation;
 import neureka.calculus.AbstractBaseFunction;
+import neureka.calculus.Function;
+import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
-import neureka.calculus.Function;
-import neureka.backend.api.ExecutionCall;
-import neureka.backend.standard.algorithms.Activation;
-import neureka.calculus.assembly.FunctionBuilder;
-import neureka.autograd.GraphNode;
 
 import java.util.Arrays;
 import java.util.List;
@@ -69,7 +69,7 @@ public class FunctionNode extends AbstractBaseFunction
 
     @Override
     public Function newBuild( String expression ) {
-        return new FunctionBuilder(OperationContext.get()).build( expression, true );
+        return new FunctionBuilder(Neureka.instance().context()).build( expression, true );
     }
 
     //---
@@ -166,7 +166,7 @@ public class FunctionNode extends AbstractBaseFunction
             String asStr = _operation.stringify(
                     IntStream.range(0, _src.length).mapToObj(i -> "I[" + i + "]").toArray(String[]::new)
             );
-            return new FunctionBuilder(OperationContext.get()).build( asStr, _isDoingAD ).call( tensors );
+            return new FunctionBuilder(Neureka.instance().context()).build( asStr, _isDoingAD ).call( tensors );
         } else {
             tensors = srcActivation(inputs, j, d, 1);
         }
@@ -253,7 +253,7 @@ public class FunctionNode extends AbstractBaseFunction
                                         .device( device )
                                         .tensors( tensors )
                                         .derivativeIndex( -1 )
-                                        .operation( OperationContext.get().instance("+") )
+                                        .operation( Neureka.instance().context().instance("+") )
                                         .build()
                             );
                             inner = tensors[ 0 ];//-> this is now the inner derivative!
@@ -290,7 +290,7 @@ public class FunctionNode extends AbstractBaseFunction
                                     .device( device )
                                     .tensors( tensors )
                                     .derivativeIndex( -1 )
-                                    .operation( OperationContext.get().instance("*") )
+                                    .operation( Neureka.instance().context().instance("*") )
                                     .build()
                         );
                     } // done!
@@ -310,7 +310,7 @@ public class FunctionNode extends AbstractBaseFunction
                                 .device( device )
                                 .tensors( new Tsr[]{ null, actor.get(), out } )
                                 .derivativeIndex( -1 )
-                                .operation( OperationContext.get().instance("+") )
+                                .operation( Neureka.instance().context().instance("+") )
                                 .build()
                 );
             }
@@ -378,22 +378,22 @@ public class FunctionNode extends AbstractBaseFunction
 
     @Override
     public Tsr<?> execute(Tsr<?>... inputs) {
-        return OperationContext.get().functionCache().preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, -1, -1 ), -1, -1 );
+        return Neureka.instance().context().functionCache().preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, -1, -1 ), -1, -1 );
     }
 
     @Override
     public Tsr<?> execute(Tsr<?>[] inputs, int j) {
-        return OperationContext.get().functionCache().preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, j, -1 ), -1, j );
+        return Neureka.instance().context().functionCache().preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, j, -1 ), -1, j );
     }
 
     @Override
     public Tsr<?> executeDerive(Tsr<?>[] inputs, int d, int j) {
-        return OperationContext.get().functionCache().preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, j, d ), d, j );
+        return Neureka.instance().context().functionCache().preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, j, d ), d, j );
     }
 
     @Override
     public Tsr<?> executeDerive(Tsr<?>[] inputs, int d) {
-        return OperationContext.get().functionCache().preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, -1, d ), d, -1 );
+        return Neureka.instance().context().functionCache().preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, -1, d ), d, -1 );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

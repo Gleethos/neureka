@@ -35,8 +35,13 @@ SOFTWARE.
 
 package neureka;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
+import neureka.backend.api.Operation;
+import neureka.backend.api.operations.OperationContext;
 import neureka.dtype.custom.F64;
 import neureka.utility.SettingsLoader;
 import neureka.utility.TsrAsString;
@@ -47,9 +52,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 @Accessors( prefix = {"_"} )
 @ToString
+@Slf4j
 public final class Neureka
 {
     private static final ThreadLocal<Neureka> _INSTANCES;
@@ -66,6 +73,27 @@ public final class Neureka
 
     private final Settings _settings;
     private final Utility _utility;
+
+    @Getter @Setter
+    private OperationContext _context;
+
+    public OperationContext context() {
+        if ( _context == null ) {
+            _context = new OperationContext();
+            // loading operations!
+            ServiceLoader<Operation> serviceLoader = ServiceLoader.load( Operation.class );
+            //serviceLoader.reload();
+
+            //checking if load was successful
+            for ( Operation operation : serviceLoader ) {
+                assert operation.getFunction() != null;
+                assert operation.getOperator() != null;
+                _context.addOperation(operation);
+                log.debug( "Operation: '" + operation.getFunction() + "' loaded!" );
+            }
+        }
+        return _context;
+    }
 
     private Neureka() {
         _settings = new Settings();
@@ -84,7 +112,14 @@ public final class Neureka
         return n;
     }
 
-    public static void setInstance(Neureka instance ) {
+    /**
+     *  {@link Neureka} is a thread local singleton.
+     *  Therefore, this method will only set the provided {@link Neureka} instance
+     *  for the thread which is calling this method.
+     *
+     * @param instance The {@link Neureka} instance which ought to be set as thread local singleton.
+     */
+    public static void setInstance( Neureka instance ) {
         _INSTANCES.set(instance);
     }
 

@@ -1,9 +1,9 @@
 package neureka.backend.standard.operations;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
@@ -34,11 +34,11 @@ public class ConvUtil {
                             Tsr ctxDerivative = (Tsr)call.getAt("derivative");
                             if ( forward ) throw new IllegalArgumentException("Convolution of does not support forward-AD!");
 
-                            Function mul = OperationContext.get().getFunction().mul();
+                            Function mul = Neureka.instance().context().getFunction().mul();
                             Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
 
-                            Function invX = new FunctionBuilder(OperationContext.get()).build(
+                            Function invX = new FunctionBuilder(Neureka.instance().context()).build(
                                     "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
                                     false
                             );
@@ -75,7 +75,7 @@ public class ConvUtil {
                                             .derivativeIndex( 0 )
                                             .operation( call.getOperation() )
                                             .build() );
-                                    if ( call.getOperation() == OperationContext.get().instance("x>>") )
+                                    if ( call.getOperation() == Neureka.instance().context().instance("x>>") )
                                         return tsrs[ 2 ];
                                     else
                                         return tsrs[ 0 ];

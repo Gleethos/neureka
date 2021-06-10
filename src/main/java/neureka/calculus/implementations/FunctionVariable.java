@@ -1,10 +1,10 @@
 package neureka.calculus.implementations;
 
+import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.operations.OperationContext;
-import neureka.calculus.Function;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.calculus.AbstractBaseFunction;
+import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 
 /**
@@ -97,7 +97,7 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     public Tsr<?> execute( Tsr<?>... inputs ) {
         StringBuilder exp = new StringBuilder("I[ 0 ]");
         for(int i=1; i<inputs.length; i++) exp.append("+I[").append(i).append("]");
-        return new FunctionBuilder(OperationContext.get()).build(exp.toString(), false).execute( inputs );
+        return new FunctionBuilder(Neureka.instance().context()).build(exp.toString(), false).execute( inputs );
     }
 
     @Override

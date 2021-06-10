@@ -86,31 +86,33 @@ import groovy.lang.IntRange;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.operations.OperationContext;
-import neureka.backend.standard.operations.other.Reshape;
-import neureka.devices.opencl.OpenCLDevice;
-import neureka.dtype.DataType;
-import neureka.dtype.custom.*;
-import neureka.framing.NDFrame;
-import neureka.framing.states.AxisFrame;
-import neureka.ndim.AbstractNDArray;
-import neureka.devices.host.HostCPU;
-import neureka.devices.Device;
-import neureka.framing.Relation;
-import neureka.calculus.Function;
-import neureka.calculus.assembly.FunctionBuilder;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.standard.operations.other.Reshape;
+import neureka.calculus.Function;
+import neureka.calculus.assembly.FunctionBuilder;
+import neureka.devices.Device;
+import neureka.devices.host.HostCPU;
+import neureka.devices.opencl.OpenCLDevice;
+import neureka.dtype.DataType;
+import neureka.dtype.custom.F32;
+import neureka.dtype.custom.F64;
+import neureka.dtype.custom.I16;
+import neureka.dtype.custom.I32;
+import neureka.framing.NDFrame;
+import neureka.framing.Relation;
+import neureka.framing.states.AxisFrame;
+import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.iterators.NDIterator;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
+import neureka.ndim.iterators.NDIterator;
 import neureka.optimization.Optimizer;
 import neureka.utility.DataConverter;
-import neureka.utility.slicing.SmartSlicer;
-import neureka.utility.slicing.SliceBuilder;
 import neureka.utility.TsrAsString;
+import neureka.utility.slicing.SliceBuilder;
+import neureka.utility.slicing.SmartSlicer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
@@ -1612,7 +1614,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     boolean inlineSafety = Neureka.instance().settings().autograd().isPreventingInlineOperations();
                     if ( inlineSafety ) Neureka.instance().settings().autograd().setIsPreventingInlineOperations( false );
                     // INLINE OPERATION :
-                    OperationContext.get().getFunction().plusAssign().call( new Tsr[]{ this, g } ); //-> Finally applying the gradient!
+                    Neureka.instance().context().getFunction().plusAssign().call( new Tsr[]{ this, g } ); //-> Finally applying the gradient!
                     // INLINE END ! -> We can now revert to the previous setting:
                     if ( inlineSafety ) Neureka.instance().settings().autograd().setIsPreventingInlineOperations( true );
                 }
@@ -1800,11 +1802,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
 
     public Tsr<V> plus(Tsr<V> other ) {
-        return OperationContext.get().getAutogradFunction().plus().call( new Tsr[]{ this, other } );
+        return Neureka.instance().context().getAutogradFunction().plus().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> plusAssign(Tsr<V> other ) {
-        return OperationContext.get().getFunction().plusAssign().call( new Tsr[]{ this, other } );
+        return Neureka.instance().context().getFunction().plusAssign().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> plus(Double value ) {
@@ -1812,23 +1814,23 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> minus(Tsr<V> other ) {
-        return OperationContext.get().getAutogradFunction().minus().call( new Tsr[]{ this, other } );
+        return Neureka.instance().context().getAutogradFunction().minus().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> minusAssign(Tsr<V> other ) {
-        return OperationContext.get().getFunction().minusAssign().call( new Tsr[]{ this, other } );
+        return Neureka.instance().context().getFunction().minusAssign().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> negative() {
-        return OperationContext.get().getAutogradFunction().neg().call( new Tsr[]{ this } );
+        return Neureka.instance().context().getAutogradFunction().neg().call( new Tsr[]{ this } );
     }
 
     public Tsr<V> multiply(Tsr<V> other ) {
-        return OperationContext.get().getAutogradFunction().mul().call( new Tsr[]{ this, other } );
+        return Neureka.instance().context().getAutogradFunction().mul().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> timesAssign(Tsr<V> other ) {
-        return OperationContext.get().getFunction().mulAssign().call( new Tsr[]{ this, other } );
+        return Neureka.instance().context().getFunction().mulAssign().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> multiply(Double value ) {
@@ -1836,7 +1838,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> div(Tsr<V> other ) {
-        return OperationContext.get().getAutogradFunction().div().call( new Tsr[]{ this, other } );
+        return Neureka.instance().context().getAutogradFunction().div().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> div(Double value ) {
@@ -1844,19 +1846,19 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> divAssign(Tsr<V> other ) {
-        return OperationContext.get().getFunction().divAssign().call( new Tsr[]{ this, other } );
+        return Neureka.instance().context().getFunction().divAssign().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> mod(Tsr<V> other ) {
-        return OperationContext.get().getAutogradFunction().mod().call( new Tsr[]{ this, other } );
+        return Neureka.instance().context().getAutogradFunction().mod().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> modAssign(Tsr<V> other ) {
-        return OperationContext.get().getFunction().modAssign().call( new Tsr[]{ this, other } );
+        return Neureka.instance().context().getFunction().modAssign().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> power(Tsr<V> other ) {
-        return OperationContext.get().getAutogradFunction().pow().call( new Tsr[]{ this, other } );
+        return Neureka.instance().context().getAutogradFunction().pow().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> power(Double value ) {
@@ -1864,7 +1866,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> xor(Tsr<V> other ) {
-        return OperationContext.get().getAutogradFunction().pow().call( new Tsr[]{ this, other} );
+        return Neureka.instance().context().getAutogradFunction().pow().call( new Tsr[]{ this, other} );
     }
 
     public Tsr<V> xor(Double value ) {
@@ -1901,8 +1903,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public Tsr<V> mean() {
         Tsr<V> ones = new Tsr<>( this.getNDConf().shape(), 1 );
-        Tsr<V> sum = OperationContext.get().getAutogradFunction().conv().call( this, ones );
-        return OperationContext.get().getAutogradFunction().div().call( sum, new Tsr( this.size() ) );
+        Tsr<V> sum = Neureka.instance().context().getAutogradFunction().conv().call( this, ones );
+        return Neureka.instance().context().getAutogradFunction().div().call( sum, new Tsr( this.size() ) );
     }
 
     /**
@@ -1922,7 +1924,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             a = Function.create( AbstractNDArray.Utility.Stringify.strConf( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
             b = Function.create( AbstractNDArray.Utility.Stringify.strConf( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( b );
         }
-        return OperationContext.get().getAutogradFunction().conv().call( new Tsr[]{ a, b } ).dimtrim();
+        return Neureka.instance().context().getAutogradFunction().conv().call( new Tsr[]{ a, b } ).dimtrim();
     }
 
     /**
@@ -1936,7 +1938,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return A tensor with the same underlying data but possibly trimmed shape without preceding or trailing ones.
      */
     public Tsr<V> dimtrim() {
-        return OperationContext.get().getAutogradFunction().dimTrim().call( this );
+        return Neureka.instance().context().getAutogradFunction().dimTrim().call( this );
     }
 
     /**
@@ -2467,7 +2469,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     Tsr.class,
                         gradient ->
                         this.set(
-                                OperationContext.get().getFunction().plusAssign().call( new Tsr[]{ gradient, error } )
+                                Neureka.instance().context().getFunction().plusAssign().call( new Tsr[]{ gradient, error } )
                         )
                 )
         ) set( error ).forComponent( Device.class, device -> {
@@ -2718,7 +2720,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
         public static Tsr<?> addInto( Tsr<?> t, Tsr<?> source ) {
             if ( t.isVirtual() && source.isVirtual() ) t.value64()[ 0 ] += source.value64()[ 0 ];
-            else new FunctionBuilder(OperationContext.get()).build( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])", false ).call( new Tsr[]{ t, source } );
+            else new FunctionBuilder(Neureka.instance().context()).build( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])", false ).call( new Tsr[]{ t, source } );
             return source;
         }
 

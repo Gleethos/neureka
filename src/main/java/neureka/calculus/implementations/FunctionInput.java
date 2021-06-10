@@ -1,11 +1,11 @@
 package neureka.calculus.implementations;
 
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.operations.OperationContext;
-import neureka.calculus.Function;
 import neureka.calculus.AbstractBaseFunction;
+import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 
 /**
@@ -67,7 +67,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
     public Function newBuild(final String equation) {
 
         if (equation.charAt( 0 )=='-') {
-            return new FunctionBuilder(OperationContext.get()).build(equation.substring(1)+"*-1", true); // TODO: This might be false!
+            return new FunctionBuilder(Neureka.instance().context()).build(equation.substring(1)+"*-1", true); // TODO: This might be false!
         }
         int number = 0;
         for ( int i = 0; i < equation.length(); ++i) {

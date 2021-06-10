@@ -1,5 +1,6 @@
 package neureka.backend.standard.operations.other;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
@@ -54,7 +55,7 @@ public class CopyRight extends AbstractOperation {
                                 .device( call.getDevice() )
                                 .tensors( new Tsr[]{tsrs[1+offset], tsrs[offset]} )
                                 .derivativeIndex( -1 )
-                                .operation( OperationContext.get().instance("idy") )
+                                .operation( Neureka.instance().context().instance("idy") )
                                 .build();
                 }
         )
@@ -74,7 +75,7 @@ public class CopyRight extends AbstractOperation {
                                                 .operation( call.getOperation() )
                                                 .build()
                                                 .forDeviceType(HostCPU.class);
-                                    OperationContext.get().instance("idy")
+                                    Neureka.instance().context().instance("idy")
                                             .getAlgorithm(Activation.class)
                                             .getImplementationFor( HostCPU.class )
                                             .run(call);
@@ -92,7 +93,7 @@ public class CopyRight extends AbstractOperation {
                                     .operation( call.getOperation() )
                                     .build()
                                     .forDeviceType(OpenCLDevice.class);
-                            OperationContext.get().instance("idy")
+                            Neureka.instance().context().instance("idy")
                                     .getAlgorithm(Activation.class)
                                     .getImplementationFor( OpenCLDevice.class )
                                     .run(call);

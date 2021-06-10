@@ -4,16 +4,14 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import neureka.Neureka;
 import neureka.backend.api.ImplementationFor;
-import neureka.backend.api.operations.OperationContext;
-import neureka.backend.standard.algorithms.*;
-import neureka.backend.standard.algorithms.GenericAlgorithm;
-import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.api.Operation;
+import neureka.backend.standard.algorithms.*;
+import neureka.backend.standard.implementations.CLImplementation;
 import org.jocl.*;
+
 import java.util.*;
 
 import static org.jocl.CL.*;
-import static org.jocl.CL.CL_DEVICE_TYPE_ALL;
 
 @Accessors( prefix = {"_"} )
 public class OpenCLPlatform {
@@ -106,7 +104,7 @@ public class OpenCLPlatform {
                     //===========================================================================
                     Map<String, String> code = new HashMap<>();
                     ImplementationFor<OpenCLDevice> impl = null;
-                    for ( Operation type : OperationContext.get().instances() ) {
+                    for ( Operation type : Neureka.instance().context().instances() ) {
                         if ( preName.contains("activation") && type.supportsAlgorithm(Activation.class) ) {
                             impl = type.getAlgorithm(Activation.class).getImplementationFor( OpenCLDevice.class );
                         } else if ( preName.contains("operator") && type.supportsAlgorithm(Operator.class) ) {

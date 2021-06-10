@@ -1,11 +1,11 @@
 package neureka.backend.standard.operations.operator;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
-import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.calculus.Function;
 import neureka.devices.Device;
@@ -41,7 +41,7 @@ public class DivisionConv extends AbstractOperation {
                                 (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                 {
                                     Tsr<?> ctxDerivative = (Tsr<?>) call.getAt("derivative");
-                                    Function mul = OperationContext.get().getFunction().mul();
+                                    Function mul = Neureka.instance().context().getFunction().mul();
                                     if ( ctxDerivative != null ) {
                                         return new DefaultADAgent( ctxDerivative )
                                                 .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
@@ -70,7 +70,7 @@ public class DivisionConv extends AbstractOperation {
                                             .device( call.getDevice() )
                                             .tensors( new Tsr[]{tsrs[offset], tsrs[1+offset]} )
                                             .derivativeIndex( -1 )
-                                            .operation( OperationContext.get().instance("idy") )
+                                            .operation( Neureka.instance().context().instance("idy") )
                                             .build();
                                 }
                         )

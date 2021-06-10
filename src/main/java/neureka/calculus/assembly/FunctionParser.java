@@ -1,5 +1,6 @@
 package neureka.calculus.assembly;
 
+import neureka.Neureka;
 import neureka.backend.api.Operation;
 import neureka.backend.api.operations.OperationContext;
 import org.jetbrains.annotations.Contract;
@@ -17,7 +18,7 @@ public class FunctionParser
     @Contract( pure = true ) 
     public static int numberOfOperationsWithin( final List<String> operations ) {
         int counter = 0;
-        for( Operation ot : OperationContext.get().instances() ) {
+        for( Operation ot : Neureka.instance().context().instances() ) {
             if (operations.contains(ot.getOperator())) ++counter;
         }
         return counter;
@@ -52,7 +53,7 @@ public class FunctionParser
                     String found = FunctionParser.parsedOperation( exp.substring( i, ii ), i );
                     if (
                          found != null && // If the found string is a function then we continue!
-                                 !OperationContext.get().instance(found).getOperator().equals(found)
+                                 !Neureka.instance().context().instance(found).getOperator().equals(found)
                     ) {
                         ii = -1; // end inner loop
                         component.append( found, 0, found.length() - 1 );
@@ -106,7 +107,7 @@ public class FunctionParser
     @Contract( pure = true )
     public static boolean isAnOperation( final String operationName ) {
         if ( operationName.length() > 32 ) return false;
-        Operation operation = OperationContext.get().instance( operationName );
+        Operation operation = Neureka.instance().context().instance( operationName );
         return operation != null;
     }
 
@@ -245,15 +246,15 @@ public class FunctionParser
     public static String assumptionBasedOn( String expression ) {
         double largest = -1;
         int best = 0;
-        for (int i = 0; i< OperationContext.get().size(); i++ ) {
-            double s = similarity( expression, OperationContext.get().instance( i ).getOperator() );
+        for (int i = 0; i< Neureka.instance().context().size(); i++ ) {
+            double s = similarity( expression, Neureka.instance().context().instance( i ).getOperator() );
             if ( largest == -1 ) largest = s;
             else if (s > largest) {
                 best = i;
                 largest = s;
             }
         }
-        return ( largest > 0.1 ) ? OperationContext.get().instance(best).getOperator() : "";
+        return ( largest > 0.1 ) ? Neureka.instance().context().instance(best).getOperator() : "";
     }
 
     /**

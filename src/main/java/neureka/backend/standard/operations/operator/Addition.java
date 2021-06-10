@@ -3,11 +3,10 @@ package neureka.backend.standard.operations.operator;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Algorithm;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
-import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
@@ -59,7 +58,7 @@ public class Addition extends AbstractOperation {
                                                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                                         {
                                                             Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
-                                                            Function mul = OperationContext.get().getFunction().mul();
+                                                            Function mul = Neureka.instance().context().getFunction().mul();
                                                             if ( ctxDerivative != null ) {
                                                                 return new DefaultADAgent( ctxDerivative )
                                                                         .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )

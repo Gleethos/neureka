@@ -43,8 +43,8 @@ class Benchmark_System_Test extends Specification
             def configuration = [ "iterations":1, "sample_size":20, "difficulty":15, "intensifier":0 ]
 
         and : 'Function cache mocking is being prepared to test logging...'
-            Logger oldLogger = OperationContext.get().functionCache()._log
-            OperationContext.get().functionCache()._log = Mock( Logger )
+            Logger oldLogger = Neureka.instance().context().functionCache()._log
+            Neureka.instance().context().functionCache()._log = Mock( Logger )
 
         and : 'The benchmark script is being loaded into a GroovyShell instance.'
             def session = new GroovyShell().evaluate(Utility.readResource("benchmark.groovy", this))
@@ -66,10 +66,10 @@ class Benchmark_System_Test extends Specification
             hash == expected
 
         and : 'No logging occurs because the benchmark does not render a scenario where a cache hit could occur.'
-            0 * OperationContext.get().functionCache()._log.debug(_)
+            0 * Neureka.instance().context().functionCache()._log.debug(_)
 
         when : 'The cache logging is being reverted to the original state...'
-            OperationContext.get().functionCache()._log = oldLogger
+            Neureka.instance().context().functionCache()._log = oldLogger
         and : 'Only continue if testing system supports OpenCL.'
             if ( !Neureka.instance().canAccessOpenCL() ) return
 

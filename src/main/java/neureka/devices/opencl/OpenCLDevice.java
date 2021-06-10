@@ -52,6 +52,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import neureka.Component;
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
@@ -445,7 +446,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     .device(this)
                     .tensors(new Tsr[]{ tensor, (Tsr) new Tsr( value ).set( this )})
                     .derivativeIndex(-1)
-                    .operation(OperationContext.get().instance( "<" ))
+                    .operation(Neureka.instance().context().instance( "<" ))
                     .build()
             );
         }

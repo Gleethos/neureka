@@ -3,11 +3,10 @@ package neureka.backend.standard.operations.linear;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Algorithm;
-import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.operations.OperationContext;
+import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
@@ -122,7 +121,7 @@ public class MatMul extends AbstractOperation
                             //Tsr ctxDerivative = (Tsr) call.getAt("derivative");
                             if ( forward ) throw new IllegalArgumentException("Matrix multiplication of does not support forward-AD!");
 
-                            Function invX = new FunctionBuilder(OperationContext.get()).build( "I[ 0 ] @ I[ 1 ]", false );
+                            Function invX = new FunctionBuilder(Neureka.instance().context()).build( "I[ 0 ] @ I[ 1 ]", false );
                             Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
                             Tsr deriv = inputs[1+d].T();//f.derive( inputs, d );
@@ -158,7 +157,7 @@ public class MatMul extends AbstractOperation
                                                     .operation( call.getOperation() )
                                                     .build()
                                     );
-                                    if ( call.getOperation() == OperationContext.get().instance("x>>") )
+                                    if ( call.getOperation() == Neureka.instance().context().instance("x>>") )
                                         return tsrs[ 2 ];
                                     else
                                         return tsrs[ 0 ];

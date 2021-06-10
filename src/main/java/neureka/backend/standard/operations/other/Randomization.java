@@ -83,7 +83,7 @@ public class Randomization extends AbstractOperation
                                 .device( call.getDevice() )
                                 .tensors( new Tsr[]{tsrs[offset], tsrs[1+offset]} )
                                 .derivativeIndex( -1 )
-                                .operation( OperationContext.get().instance("idy") )
+                                .operation( Neureka.instance().context().instance("idy") )
                                 .build();
                 }
         )

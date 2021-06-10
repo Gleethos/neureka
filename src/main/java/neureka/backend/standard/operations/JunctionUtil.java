@@ -1,9 +1,9 @@
 package neureka.backend.standard.operations;
 
+import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.operations.OperationContext;
 import neureka.devices.Device;
 
 import java.util.function.Function;
@@ -103,7 +103,7 @@ public class JunctionUtil
                                     .device( device )
                                     .tensors( reduction )
                                     .derivativeIndex( -1 )
-                                    .operation( OperationContext.get().instance("*") )
+                                    .operation( Neureka.instance().context().instance("*") )
                                     .build()
                     );
                     tsrs[ 0 ] = reduction[ 0 ];
@@ -150,7 +150,7 @@ public class JunctionUtil
                                                 .device(device)
                                                 .tensors(reduction)
                                                 .derivativeIndex(-1)
-                                                .operation(OperationContext.get().instance("/"))
+                                                .operation(Neureka.instance().context().instance("/"))
                                                 .build()
                     );
                     a = reduction[ 0 ];
@@ -167,7 +167,7 @@ public class JunctionUtil
                                     .device(device)
                                     .tensors(reduction)
                                     .derivativeIndex(-1)
-                                    .operation(OperationContext.get().instance("/"))
+                                    .operation(Neureka.instance().context().instance("/"))
                                     .build()
                     );
                     b = reduction[ 0 ];
@@ -178,7 +178,7 @@ public class JunctionUtil
                                 .device(device)
                                 .tensors( new Tsr[]{tsrs[ 0 ], a, b} )
                                 .derivativeIndex( -1 )
-                                .operation( OperationContext.get().instance("*") )
+                                .operation( Neureka.instance().context().instance("*") )
                                 .build()
                 );
                 alternative = goDeeperWith.apply(
@@ -186,7 +186,7 @@ public class JunctionUtil
                                 .device(device)
                                 .tensors( new Tsr[]{tsrs[ 0 ], tsrs[ 0 ], tsrs[d+1]} )
                                 .derivativeIndex( 1 )
-                                .operation( OperationContext.get().instance("/") )
+                                .operation( Neureka.instance().context().instance("/") )
                                 .build()
                 );
                 if ( d == 0 ) a.delete();

@@ -156,7 +156,7 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
             x.toString().contains("(-4.5)")
 
         when :
-            def f = new FunctionBuilder(OperationContext.get()).build("I[0]*I[1]", false)
+            def f = new FunctionBuilder(Neureka.instance().context()).build("I[0]*I[1]", false)
             Tsr[] inputs = new Tsr[]{c, a}
             Tsr result = f(inputs) // Should have no affect!
 
@@ -173,7 +173,7 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
             x.toString().contains("(-4.5)")
 
         when :
-            f = new FunctionBuilder(OperationContext.get()).build("I[0]*I[1]", true)
+            f = new FunctionBuilder(Neureka.instance().context()).build("I[0]*I[1]", true)
             result = f(inputs) // Should trigger JIT
 
         then :
@@ -240,7 +240,7 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
             x.toString().contains("(-4.5)")
 
         when :
-            def f = new FunctionBuilder(OperationContext.get()).build("I[0]*I[1]", false)
+            def f = new FunctionBuilder(Neureka.instance().context()).build("I[0]*I[1]", false)
             Tsr[] inputs = new Tsr[]{c, a}
             Tsr result = f(inputs) // No changes to inputs! No derivatives!
 
@@ -253,7 +253,7 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
             x.toString().contains("(-4.5)")
 
         when :
-            f = new FunctionBuilder(OperationContext.get()).build("I[0]*I[1]", true)
+            f = new FunctionBuilder(Neureka.instance().context()).build("I[0]*I[1]", true)
             result = f(inputs) // No changes to inputs, BUT derivatives!
 
         then :

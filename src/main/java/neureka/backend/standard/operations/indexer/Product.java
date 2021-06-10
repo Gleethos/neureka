@@ -3,11 +3,10 @@ package neureka.backend.standard.operations.indexer;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Algorithm;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
-import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
@@ -80,7 +79,7 @@ public final class Product extends AbstractOperation {
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
                         Tsr ctxDerivative = (Tsr)call.getAt("derivative");
-                        Function mul = OperationContext.get().getFunction().mul();
+                        Function mul = Neureka.instance().context().getFunction().mul();
                         if ( ctxDerivative != null ) {
                                 return new DefaultADAgent( ctxDerivative )
                                     .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
@@ -181,7 +180,7 @@ public final class Product extends AbstractOperation {
             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
                         Tsr ctxDerivative = (Tsr)call.getAt("derivative");
-                        Function mul = OperationContext.get().getFunction().mul();
+                        Function mul = Neureka.instance().context().getFunction().mul();
                         if ( ctxDerivative != null ) {
                             return new DefaultADAgent( ctxDerivative )
                                 .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
@@ -200,7 +199,7 @@ public final class Product extends AbstractOperation {
                         {
                             if ( this.supports(Convolution.class) )
                             {
-                                Function invX = new FunctionBuilder(OperationContext.get()).build(
+                                Function invX = new FunctionBuilder(Neureka.instance().context()).build(
                                         "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
                                         false
                                 );
