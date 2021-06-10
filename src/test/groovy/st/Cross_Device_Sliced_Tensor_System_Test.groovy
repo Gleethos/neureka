@@ -28,9 +28,9 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
 
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'Slices can be created using the SliceBuilder.'(
@@ -38,9 +38,9 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
     ) {
     given :
         if ( device == null ) return
-        Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
-        Neureka.instance().settings().view().setIsUsingLegacyView(false)
-        if ( device instanceof OpenCLDevice && !Neureka.instance().canAccessOpenCL() ) return
+        Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
+        Neureka.get().settings().view().setIsUsingLegacyView(false)
+        if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
     and: 'A tensor which ought to be sliced:'
 
@@ -98,9 +98,9 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
     ) {
         given :
             if ( device == null ) return
-            Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
-            Neureka.instance().settings().view().setIsUsingLegacyView(true)
-            if ( device instanceof OpenCLDevice && !Neureka.instance().canAccessOpenCL() ) return
+            Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
         when :
             Tsr x = new Tsr([1], 3).setRqsGradient(true)

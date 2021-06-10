@@ -1,16 +1,15 @@
 package st
 
 import neureka.Neureka
-import neureka.utility.TsrAsString
 import st.tests.BroadSystemTest
 import spock.lang.Specification
 
 class Broad_System_Test extends Specification
 {
     def setupSpec() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'Test integration broadly.'()

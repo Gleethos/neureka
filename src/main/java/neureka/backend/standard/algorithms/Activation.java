@@ -51,7 +51,7 @@ public class Activation extends AbstractFunctionalAlgorithm< Activation >
     }
 
     public String getKernelSource() {
-        return Neureka.instance().utility().readResource("kernels/activation_template.cl");
+        return Neureka.get().utility().readResource("kernels/activation_template.cl");
     }
 
     @Contract(pure = true)

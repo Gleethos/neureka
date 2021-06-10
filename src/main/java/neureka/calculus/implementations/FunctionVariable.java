@@ -97,7 +97,7 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     public Tsr<?> execute( Tsr<?>... inputs ) {
         StringBuilder exp = new StringBuilder("I[ 0 ]");
         for(int i=1; i<inputs.length; i++) exp.append("+I[").append(i).append("]");
-        return new FunctionBuilder(Neureka.instance().context()).build(exp.toString(), false).execute( inputs );
+        return new FunctionBuilder(Neureka.get().context()).build(exp.toString(), false).execute( inputs );
     }
 
     @Override

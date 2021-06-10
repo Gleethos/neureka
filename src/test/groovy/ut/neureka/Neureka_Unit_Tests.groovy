@@ -1,7 +1,6 @@
 package ut.neureka
 
 import neureka.Neureka
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Neureka_Unit_Tests extends Specification
@@ -20,25 +19,25 @@ class Neureka_Unit_Tests extends Specification
     }
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
 
     def 'Neureka class instance has expected behaviour.'()
     {
         expect : 'Important settings have their expected states.'
-            assert !Neureka.instance().settings().isLocked()
-            assert !Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads()
-            assert Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed()
+            assert !Neureka.get().settings().isLocked()
+            assert !Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads()
+            assert Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
 
         when : 'One settings is changes to false...'
-            Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
+            Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
 
         then : 'This setting change applies!'
-            assert !Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed()
-            assert Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp()
+            assert !Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
+            assert Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()
 
         and : 'The version number is as expected!'
             assert Neureka.version()=="0.6.0"//version
@@ -51,8 +50,8 @@ class Neureka_Unit_Tests extends Specification
             def map = ['instance 1':null, 'instance 2':null]
 
         when : 'Two newly instantiated tensors store their Neureka instances in the map.'
-            def t1 = new Thread({ map['instance 1'] = Neureka.instance() })
-            def t2 = new Thread({ map['instance 2'] = Neureka.instance() })
+            def t1 = new Thread({ map['instance 1'] = Neureka.get() })
+            def t2 = new Thread({ map['instance 2'] = Neureka.get() })
 
         and : 'The tensors are being started and joined.'
             t1.start()

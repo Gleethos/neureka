@@ -22,9 +22,9 @@ class Tensor_NDConfiguration_Integration_Tests extends Specification
                 implementations of said interface as configuration for internal index mapping...
             </p>
         """
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'NDConfiguration instances of tensors have expected state.'()

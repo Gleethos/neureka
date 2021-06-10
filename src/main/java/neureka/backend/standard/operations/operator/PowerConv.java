@@ -41,7 +41,7 @@ public class PowerConv extends AbstractOperation {
                         (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
                             Tsr<?> ctxDerivative = (Tsr<?>) call.getAt("derivative");
-                            Function mul = Neureka.instance().context().getFunction().mul();
+                            Function mul = Neureka.get().context().getFunction().mul();
                             if ( ctxDerivative != null ) {
                                 return new DefaultADAgent( ctxDerivative )
                                         .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
@@ -71,7 +71,7 @@ public class PowerConv extends AbstractOperation {
                                                     .device( call.getDevice() )
                                                     .tensors( new Tsr[]{tsrs[offset], tsrs[1+offset]} )
                                                     .derivativeIndex( -1 )
-                                                    .operation( Neureka.instance().context().instance("idy") )
+                                                    .operation( Neureka.get().context().instance("idy") )
                                                     .build();
                                 }
                         )

@@ -3,7 +3,6 @@ package ut.tensors
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_Device_Mock_Unit_Tests extends Specification
@@ -20,9 +19,9 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
     }
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'Tensors try to migrate themselves to a device that is being added to them as component.'()

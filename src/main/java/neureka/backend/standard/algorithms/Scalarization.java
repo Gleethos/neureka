@@ -50,7 +50,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
 
 
     public String getKernelSource() {
-        return Neureka.instance().utility().readResource("kernels/scalarization_template.cl");
+        return Neureka.get().utility().readResource("kernels/scalarization_template.cl");
     }
 
 

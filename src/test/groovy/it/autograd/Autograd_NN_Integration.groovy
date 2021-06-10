@@ -3,7 +3,6 @@ package it.autograd
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
-import neureka.utility.TsrAsString
 import spock.lang.Specification;
 
 class Autograd_NN_Integration extends Specification
@@ -24,18 +23,18 @@ class Autograd_NN_Integration extends Specification
     }
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'Autograd works in a simple feed forward neural network.'()
     {
 
         given :
-            Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested( false )
-            Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
-            Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp( false )
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false )
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
+            Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false )
             def X = new Tsr(
                 [[0.6667, 1.0000],
                  [0.3333, 0.5556],

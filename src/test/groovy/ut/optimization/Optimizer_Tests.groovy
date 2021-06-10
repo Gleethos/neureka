@@ -4,10 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionParser
-import neureka.ndim.config.NDConfiguration
-import neureka.ndim.config.types.complex.ComplexD2Configuration
 import neureka.ndim.config.types.views.SimpleReshapeView
-import neureka.utility.TsrAsString
 import spock.lang.Ignore
 
 //import org.junit.Test
@@ -17,9 +14,9 @@ class Optimizer_Tests extends Specification
 {
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     // WIP! : not yet completed! // FIXME: Not working in CI

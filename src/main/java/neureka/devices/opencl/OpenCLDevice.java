@@ -56,7 +56,6 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.operations.OperationContext;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
 import neureka.dtype.custom.F32;
@@ -446,7 +445,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     .device(this)
                     .tensors(new Tsr[]{ tensor, (Tsr) new Tsr( value ).set( this )})
                     .derivativeIndex(-1)
-                    .operation(Neureka.instance().context().instance( "<" ))
+                    .operation(Neureka.get().context().instance( "<" ))
                     .build()
             );
         }

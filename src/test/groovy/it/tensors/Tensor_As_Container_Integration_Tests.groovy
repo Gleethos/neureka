@@ -3,7 +3,6 @@ package it.tensors
 import neureka.Neureka
 import neureka.Tsr
 import neureka.dtype.DataType
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_As_Container_Integration_Tests extends Specification
@@ -11,13 +10,13 @@ class Tensor_As_Container_Integration_Tests extends Specification
 
     def setupSpec()
     {
-        Neureka.instance().reset()
+        Neureka.get().reset()
 
         reportHeader """
                          
         """
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
 

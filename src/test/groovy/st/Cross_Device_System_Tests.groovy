@@ -1,7 +1,6 @@
 package st
 
 import groovy.transform.CompileDynamic
-import neureka.utility.TsrAsString
 import st.tests.CrossDeviceSystemTest
 import neureka.Neureka
 import neureka.Tsr
@@ -16,9 +15,9 @@ import testutility.mock.DummyDevice
 class Cross_Device_System_Tests extends Specification
 {
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     /*  ! WIP !
@@ -85,11 +84,11 @@ class Cross_Device_System_Tests extends Specification
         given : 'A given device of any type and the settings configured for testing.'
             if (
                 deviceType == "GPU" && // OpenCL cannot run inside TravisCI ! :/
-                !Neureka.instance().canAccessOpenCL()
+                !Neureka.get().canAccessOpenCL()
             ) return
             Device device = ( deviceType == "CPU" ) ? HostCPU.instance() : Device.find('first')
-            Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads = true
-            Neureka.instance().settings().view().isUsingLegacyView = true
+            Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true
+            Neureka.get().settings().view().isUsingLegacyView = true
 
         expect : 'The integration test runs successful.'
             CrossDeviceSystemTest.on(device)
@@ -103,13 +102,13 @@ class Cross_Device_System_Tests extends Specification
     def 'Test simple NN implementation with manual backprop'()
     {
         given :
-            Neureka.instance().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
 
         when : Device device = new DummyDevice()
         then : SimpleNNSystemTest.on(device)
 
         and :
-        if ( !Neureka.instance().canAccessOpenCL() ) return
+        if ( !Neureka.get().canAccessOpenCL() ) return
 
         when : Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0)
         then : SimpleNNSystemTest.on(gpu)

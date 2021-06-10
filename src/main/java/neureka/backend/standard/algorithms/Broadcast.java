@@ -89,7 +89,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
     }
 
     public String getKernelSource() {
-        return Neureka.instance().utility().readResource("kernels/broadcast_template.cl");
+        return Neureka.get().utility().readResource("kernels/broadcast_template.cl");
     }
 
     @Contract(pure = true)

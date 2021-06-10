@@ -137,9 +137,9 @@ public class HostCPU extends AbstractDevice<Number>
                 for ( int i = 0; i < cores; i++ ) {
                     final int start = i * chunk;
                     final int end = ( i == cores - 1 ) ? sze : ( (i + 1) * chunk );
-                    Neureka neureka = Neureka.instance();
+                    Neureka neureka = Neureka.get();
                     futures[ i ] = _pool.submit(() -> {
-                        Neureka.setInstance( neureka ); // This ensures that the threads in the pool have the same settings!
+                        Neureka.set( neureka ); // This ensures that the threads in the pool have the same settings!
                         range.execute( start, end );
                     });
                 }

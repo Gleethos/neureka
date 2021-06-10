@@ -31,12 +31,12 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         setHandleInsteadOfDevice( (caller, call ) -> null );
         setInstantiateNewTensorsForExecutionIn(
                 call -> {
-                    Tsr[] tsrs = call.getTensors();
-                    Device device = call.getDevice();
+                    Tsr<?>[] tsrs = call.getTensors();
+                    Device<Object> device = (Device<Object>) call.getDevice();
                     if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[ 1 ].getNDConf().shape();
-                        Tsr output = new Tsr( shp, 0.0 );
+                        Tsr<Object> output = new Tsr<>( shp, 0.0 );
                         output.setIsVirtual( false );
                         try {
                             device.store( output );
@@ -51,18 +51,18 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
     }
 
     public String getKernelSource() {
-        return Neureka.instance().utility().readResource("kernels/operator_template.cl");
+        return Neureka.get().utility().readResource("kernels/operator_template.cl");
     }
 
 
     @Contract(pure = true)
     public static void operate(
-            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int d, int i, int end,
             Operation.SecondaryNDIConsumer operation
     ) {
         if ( t0_drn.isVirtual() && t1_src.isVirtual() && t2_src.isVirtual() ) {
-            ((double[])t0_drn.getData())[ 0 ] = operation.execute( NDIterator.of( t1_src ), NDIterator.of( t2_src ) ); // new int[t0_drn.rank()]
+            ( (double[]) t0_drn.getData() )[ 0 ] = operation.execute( NDIterator.of( t1_src ), NDIterator.of( t2_src ) );
         } else {
             //int[] t0Shp = t0_drn.getNDConf().shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
             double[] t0_value = t0_drn.value64();

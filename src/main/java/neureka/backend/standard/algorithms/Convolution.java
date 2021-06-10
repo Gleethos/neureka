@@ -23,7 +23,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
 
 
     public String getKernelSource() {
-        return Neureka.instance().utility().readResource("kernels/convolution_template.cl");
+        return Neureka.get().utility().readResource("kernels/convolution_template.cl");
     }
 
     @Contract(pure = true)

@@ -2,24 +2,23 @@ package it.tensors
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_Indexing_Integration_Tests extends Specification
 {
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     void 'Test convolution with legacy indexing.'()
     {
         given : 'The following library configuration is being used.'
             //Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
-            Neureka.instance().settings().view().setIsUsingLegacyView(true)
-            Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
 
         when : 'The following calculations are being executed...'
             Tsr i_a = new Tsr([2, 1], [
@@ -66,9 +65,9 @@ class Tensor_Indexing_Integration_Tests extends Specification
             assert !w_b.toString().contains("g:(null)")
 
         when : 'Neureka is being configured to apply tensors when host tensor is being used...'
-            Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
             w_a * 3
-            Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
 
         then : 'The tensors change their states as expected.'
             assert w_a.toString().contains("g:(null)")
@@ -83,9 +82,9 @@ class Tensor_Indexing_Integration_Tests extends Specification
     def 'Convolution using legacy indexing works as expected.'()
     {
         given :
-            Neureka.instance().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
             //Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
-            Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
 
         when :
             Tsr i_a = new Tsr([2, 1], [1, 2])
@@ -120,9 +119,9 @@ class Tensor_Indexing_Integration_Tests extends Specification
             assert !w_b.toString().contains("g:(null)")
 
         when :
-            Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
             w_a * 3
-            Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
 
         then :
             assert w_a.toString().contains("g:(null)")

@@ -167,7 +167,7 @@ public class IDXHead extends AbstractFileHead<IDXHead, Number>
                     new BufferedInputStream( fs, _dataOffset + _valueSize * type.numberOfBytes() )
             );
             stream.skipBytes( _dataOffset );
-            if ( Neureka.instance().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )
+            if ( Neureka.get().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )
                 return type.readAndConvertForeignDataFrom( stream, _valueSize);
             else
                 return type.readForeignDataFrom( stream, _valueSize);
@@ -179,7 +179,7 @@ public class IDXHead extends AbstractFileHead<IDXHead, Number>
     public Tsr<Number> load() throws IOException
     {
         Object value = _loadData();
-        DataType<?> type = ( Neureka.instance().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )
+        DataType<?> type = ( Neureka.get().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )
                 ? DataType.of( _dataType.getTypeClassInstance().getNumericTypeTarget() )
                 : _dataType;
         return new Tsr<>( _shape, type, value );

@@ -24,9 +24,9 @@ class Tensor_IO_Unit_Tests extends Specification
     }
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
 
@@ -108,7 +108,7 @@ class Tensor_IO_Unit_Tests extends Specification
     def 'Indexing after reshaping works as expected.'()
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
-            Neureka.instance().settings().view().isUsingLegacyView = true
+            Neureka.get().settings().view().isUsingLegacyView = true
 
         and : 'A new tensor instance with the shape (4x3).'
             Tsr t1 = new Tsr([4, 3], 1..12)
@@ -154,7 +154,7 @@ class Tensor_IO_Unit_Tests extends Specification
     def 'Tensor value type can not be changed by passing float or double arrays to it.'()
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
-            Neureka.instance().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
         and : 'A new tensor instance.'
             Tsr x = new Tsr(3)
 
@@ -213,7 +213,7 @@ class Tensor_IO_Unit_Tests extends Specification
     def 'Tensors value type can be changed by calling "to64()" and "to32()".'()
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
-            Neureka.instance().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
             Tsr x = new Tsr(3)
 
         when : x.toType( Float.class )
@@ -233,7 +233,7 @@ class Tensor_IO_Unit_Tests extends Specification
     def 'A tensor produced by a function has expected properties.'()
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
-            Neureka.instance().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
         and : 'A simple scalar tensor containing the number "4".'
             Tsr x = new Tsr(4)
 
@@ -250,7 +250,7 @@ class Tensor_IO_Unit_Tests extends Specification
     def 'A tensor produced by the static "Tsr.Create.newRandom(shape)" has expected "random" value.'()
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
-            Neureka.instance().settings().view().isUsingLegacyView = true
+            Neureka.get().settings().view().isUsingLegacyView = true
 
         when : 'Creating a simple shape array...'
             int[] shape = new int[1]
@@ -270,7 +270,7 @@ class Tensor_IO_Unit_Tests extends Specification
     void 'Tensor values can be manipulated via static method calls within the "Tsr.IO" class.'()
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
-            Neureka.instance().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
         and : 'Two tensors which will be used for testing IO.'
             Tsr t = new Tsr([2, 2], [
                     1.0, 4.0,
@@ -329,7 +329,7 @@ class Tensor_IO_Unit_Tests extends Specification
     def 'Adding OpenCL device to tensor makes tensor be "outsourced" and contain the Device instance as component.'()
     {
         given : 'Neureka can access OpenCL (JOCL).'
-            if ( !Neureka.instance().canAccessOpenCL() ) return
+            if ( !Neureka.get().canAccessOpenCL() ) return
             Device gpu = Device.find("nvidia")
             Tsr t = new Tsr([3, 4, 1], 3)
 

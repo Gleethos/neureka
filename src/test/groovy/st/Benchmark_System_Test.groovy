@@ -2,11 +2,8 @@ package st
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.backend.api.operations.OperationContext
-import neureka.calculus.Function
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
-import neureka.utility.TsrAsString
 import org.slf4j.Logger
 import spock.lang.Specification
 import testutility.Utility
@@ -15,9 +12,9 @@ class Benchmark_System_Test extends Specification
 {
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'Tensor can be constructed by passing List instances.'()
@@ -43,8 +40,8 @@ class Benchmark_System_Test extends Specification
             def configuration = [ "iterations":1, "sample_size":20, "difficulty":15, "intensifier":0 ]
 
         and : 'Function cache mocking is being prepared to test logging...'
-            Logger oldLogger = Neureka.instance().context().functionCache()._log
-            Neureka.instance().context().functionCache()._log = Mock( Logger )
+            Logger oldLogger = Neureka.get().context().functionCache()._log
+            Neureka.get().context().functionCache()._log = Mock( Logger )
 
         and : 'The benchmark script is being loaded into a GroovyShell instance.'
             def session = new GroovyShell().evaluate(Utility.readResource("benchmark.groovy", this))
@@ -66,12 +63,12 @@ class Benchmark_System_Test extends Specification
             hash == expected
 
         and : 'No logging occurs because the benchmark does not render a scenario where a cache hit could occur.'
-            0 * Neureka.instance().context().functionCache()._log.debug(_)
+            0 * Neureka.get().context().functionCache()._log.debug(_)
 
         when : 'The cache logging is being reverted to the original state...'
-            Neureka.instance().context().functionCache()._log = oldLogger
+            Neureka.get().context().functionCache()._log = oldLogger
         and : 'Only continue if testing system supports OpenCL.'
-            if ( !Neureka.instance().canAccessOpenCL() ) return
+            if ( !Neureka.get().canAccessOpenCL() ) return
 
         and : 'The benchmark is now being executed with the first found OpenCLDevice instance...'
             hash = ""

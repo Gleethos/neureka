@@ -10,7 +10,6 @@ import neureka.backend.standard.algorithms.Activation
 import neureka.backend.standard.algorithms.Broadcast
 import neureka.backend.standard.algorithms.Convolution
 import neureka.backend.standard.algorithms.Operator
-import neureka.backend.api.operations.OperationContext
 import spock.lang.Specification
 
 class Backend_Algorithm_AD_Unit_Tests extends Specification
@@ -21,7 +20,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
     ){
 
         given : 'The current Neureka instance is being reset.'
-            Neureka.instance().reset()
+            Neureka.get().reset()
 
         and : 'A mock Function.'
             def function = Mock(Function)
@@ -54,7 +53,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
-            imp << Neureka.instance().context()
+            imp << Neureka.get().context()
                     .instances()
                     .stream()
                     .filter(
@@ -70,7 +69,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
     ){
 
         given : 'The current Neureka instance is being reset.'
-            Neureka.instance().reset()
+            Neureka.get().reset()
 
         and : 'A mock Function.'
             def function = Mock(Function)
@@ -104,7 +103,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Activation".'
-            imp << Neureka.instance().context()
+            imp << Neureka.get().context()
                 .instances()
                 .stream()
                 .filter(
@@ -119,7 +118,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
     ){
 
         given : 'The current Neureka instance is being reset.'
-            Neureka.instance().reset()
+            Neureka.get().reset()
 
         and : 'A mock Function.'
             def function = Mock(Function)
@@ -152,7 +151,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Convolution".'
-            imp << Neureka.instance().context()
+            imp << Neureka.get().context()
                 .instances()
                 .stream()
                 .filter(
@@ -170,7 +169,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
     ){
 
         given : 'The current Neureka instance is being reset.'
-            Neureka.instance().reset()
+            Neureka.get().reset()
 
         and : 'A mock Function.'
             def function = Mock( Function )
@@ -203,7 +202,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Convolution".'
-            imp << Neureka.instance().context()
+            imp << Neureka.get().context()
                                 .instances()
                                 .stream()
                                 .filter(

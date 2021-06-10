@@ -24,7 +24,7 @@ class GraphNode_Tensor_Exception_Unit_Tests extends Specification
     }
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         oldLogger = Tsr._LOG
         Tsr._LOG = Mock( Logger )
     }

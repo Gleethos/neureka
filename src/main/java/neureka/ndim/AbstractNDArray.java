@@ -76,7 +76,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
     private NDConfiguration _NDConf;
 
     @Getter
-    private DataType<?> _dataType = DataType.of( Neureka.instance().settings().dtype().getDefaultDataTypeClass() );
+    private DataType<?> _dataType = DataType.of( Neureka.get().settings().dtype().getDefaultDataTypeClass() );
 
     @Getter
     private Object _data;

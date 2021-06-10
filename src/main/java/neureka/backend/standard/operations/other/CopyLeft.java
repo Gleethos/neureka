@@ -88,7 +88,7 @@ public class CopyLeft extends AbstractOperation {
                                     call.getDevice().getExecutor()
                                             .threaded (
                                                     call.getTsrOfType( Number.class, 0 ).size(),
-                                                    (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                    (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
                                                     ? ( start, end ) ->
                                                             Scalarization.scalarize (
                                                                     call.getTsrOfType( Number.class, 0 ),
@@ -149,7 +149,7 @@ public class CopyLeft extends AbstractOperation {
                                     .device(call.getDevice())
                                     .tensors(new Tsr[]{tsrs[offset], tsrs[1+offset]})
                                     .derivativeIndex(-1)
-                                    .operation(Neureka.instance().context().instance("idy"))
+                                    .operation(Neureka.get().context().instance("idy"))
                                     .build();
                     }
             )
@@ -164,7 +164,7 @@ public class CopyLeft extends AbstractOperation {
                                 call ->
                                 {
                                     call.getTsrOfType( Number.class, 0 ).setIsVirtual( false );
-                                    Neureka.instance().context().instance("idy")
+                                    Neureka.get().context().instance("idy")
                                             .getAlgorithm( Activation.class )
                                             .getImplementationFor( HostCPU.class )
                                             .run(call);
@@ -176,7 +176,7 @@ public class CopyLeft extends AbstractOperation {
                         OpenCLDevice.class,
                         call -> {
                             call.getTsrOfType( Number.class, 0 ).setIsVirtual( false );
-                            Neureka.instance().context().instance("idy")
+                            Neureka.get().context().instance("idy")
                                     .getAlgorithm(Activation.class)
                                     .getImplementationFor( OpenCLDevice.class )
                                     .run(call);

@@ -62,7 +62,7 @@ public final class Softplus extends AbstractOperation
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
                                                         ? ( start, end ) ->
                                                                 Activation.activate (
                                                                         call.getTsrOfType( Number.class, 0 ),

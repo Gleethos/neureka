@@ -5,9 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
-import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.Activation;
-import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.calculus.Function;
 import neureka.devices.Device;
@@ -55,7 +53,7 @@ public class CopyRight extends AbstractOperation {
                                 .device( call.getDevice() )
                                 .tensors( new Tsr[]{tsrs[1+offset], tsrs[offset]} )
                                 .derivativeIndex( -1 )
-                                .operation( Neureka.instance().context().instance("idy") )
+                                .operation( Neureka.get().context().instance("idy") )
                                 .build();
                 }
         )
@@ -75,7 +73,7 @@ public class CopyRight extends AbstractOperation {
                                                 .operation( call.getOperation() )
                                                 .build()
                                                 .forDeviceType(HostCPU.class);
-                                    Neureka.instance().context().instance("idy")
+                                    Neureka.get().context().instance("idy")
                                             .getAlgorithm(Activation.class)
                                             .getImplementationFor( HostCPU.class )
                                             .run(call);
@@ -93,7 +91,7 @@ public class CopyRight extends AbstractOperation {
                                     .operation( call.getOperation() )
                                     .build()
                                     .forDeviceType(OpenCLDevice.class);
-                            Neureka.instance().context().instance("idy")
+                            Neureka.get().context().instance("idy")
                                     .getAlgorithm(Activation.class)
                                     .getImplementationFor( OpenCLDevice.class )
                                     .run(call);

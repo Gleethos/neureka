@@ -4,7 +4,6 @@ import neureka.Neureka
 import neureka.Tsr;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU
-import neureka.utility.TsrAsString
 import spock.lang.Specification;
 
 class HostCPU_Unit_Tests extends Specification
@@ -23,9 +22,9 @@ class HostCPU_Unit_Tests extends Specification
     }
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
 

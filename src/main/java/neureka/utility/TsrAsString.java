@@ -92,7 +92,7 @@ public final class TsrAsString
     private int[] _shape;
     private Tsr<?> _tensor;
     private StringBuilder _asStr;
-    private final boolean _legacy = Neureka.instance().settings().view().isUsingLegacyView();
+    private final boolean _legacy = Neureka.get().settings().view().isUsingLegacyView();
 
     private Map<Should, Object> _config;
 
@@ -451,7 +451,7 @@ public final class TsrAsString
      */
     private void _strShape()
     {
-        boolean legacy = Neureka.instance().settings().view().isUsingLegacyView();
+        boolean legacy = Neureka.get().settings().view().isUsingLegacyView();
         _$( (legacy) ? "[" : "(" );
         for ( int i = 0; i < _shape.length; i++ ) {
             _$( _shape[ i ] );
@@ -507,7 +507,7 @@ public final class TsrAsString
         public static Map<Should, Object> configFromCode( String modes )
         {
             if ( modes == null )
-                return Neureka.instance().settings().view().getAsString();
+                return Neureka.get().settings().view().getAsString();
             Map< Should, Object > conf = new HashMap<>();
             conf.put( Should.BE_SHORTENED_BY,      (modes.contains( "s") ) ? 3 : 50                      );
             conf.put( Should.BE_COMPACT,           modes.contains( "c" )                                 );

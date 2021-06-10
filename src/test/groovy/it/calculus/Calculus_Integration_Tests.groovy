@@ -2,10 +2,8 @@ package it.calculus
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.backend.api.operations.OperationContext
 import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionBuilder
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Calculus_Integration_Tests extends Specification
@@ -22,16 +20,16 @@ class Calculus_Integration_Tests extends Specification
     }
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'Tensor results of various Function instances return expected results.'(
             String equation, List<Tsr> inputs, Integer index, Map<List<Integer>,List<Double>> expected
     ) {
         given : "A new Function instance created from ${equation}."
-            Function f = new FunctionBuilder(Neureka.instance().context()).build(equation, true) // TODO : test with 'doAD' : false!
+            Function f = new FunctionBuilder(Neureka.get().context()).build(equation, true) // TODO : test with 'doAD' : false!
 
         and : 'The result is being calculated by invoking the Function instance.'
             Tsr<?> result = ( index != null )
@@ -87,7 +85,7 @@ class Calculus_Integration_Tests extends Specification
     def 'Reshaping on 3D tensors works by instantiate a Function instance built from a String.'()
     {
         given :
-            Neureka.instance().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
             Function f = Function.create("[2, 0, 1]:(I[0])")
 
         when : Tsr t = new Tsr([3, 4, 2], 1..5)

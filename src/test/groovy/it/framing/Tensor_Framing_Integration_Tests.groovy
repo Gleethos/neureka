@@ -19,9 +19,9 @@ class Tensor_Framing_Integration_Tests extends Specification
                     tensor indices.          
                 </p>
             """
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'Added labels to tensors are accessible through the "index()" method.'()
@@ -115,7 +115,7 @@ class Tensor_Framing_Integration_Tests extends Specification
     void 'Rank 2 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.'()
     {
         given: 'Tensor printing is set to "legacy" for this test.'
-            Neureka.instance().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
         and: 'And a labeled tensor of rank 2 is being created.'
             Tsr t = new Tsr([3, 4], [
                     1, 2, 3, 4,
@@ -179,7 +179,7 @@ class Tensor_Framing_Integration_Tests extends Specification
     def 'Rank 3 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.' ()
     {
         given: 'Tensor printing is set to "legacy" for this test.'
-            Neureka.instance().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
         and: 'And a labeled tensor of rank 3 is being created.'
             Tsr t = new Tsr([2, 3, 4], -7..7)
             t.label( 'My Tensor', [

@@ -6,7 +6,6 @@ import neureka.devices.Device
 import neureka.devices.opencl.OpenCLPlatform
 import neureka.devices.opencl.utility.DispatchUtility
 import neureka.dtype.DataType
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class OpenCLDevice_Integration_Tests extends Specification
@@ -21,15 +20,15 @@ class OpenCLDevice_Integration_Tests extends Specification
                 operations on them.
             </p>
         """
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'An OpenCLDevice will throw an exception when trying to add a tensor whose "data parent" is not outsourced.'()
     {
         given: 'This system supports OpenCL.'
-            if (!Neureka.instance().canAccessOpenCL()) return
+            if (!Neureka.get().canAccessOpenCL()) return
         and : 'The first found OpenCLDevice instance.'
             Device device = Device.find('first')
         and : 'A tensor and a slice tensor of the prior.'
@@ -55,7 +54,7 @@ class OpenCLDevice_Integration_Tests extends Specification
     def 'The "getValue()" method of an outsourced tensor will return the expected array type.'()
     {
         given : 'This system supports OpenCL'
-            if (!Neureka.instance().canAccessOpenCL()) return
+            if (!Neureka.get().canAccessOpenCL()) return
         and : 'A new tensor.'
             Tsr t = new Tsr([1, 2])
 
@@ -84,7 +83,7 @@ class OpenCLDevice_Integration_Tests extends Specification
     def 'The "getData()" method of an outsourced tensor will return null when outsourced.'()
     {
         given : 'This system supports OpenCL'
-            if ( !Neureka.instance().canAccessOpenCL() ) return
+            if ( !Neureka.get().canAccessOpenCL() ) return
         and : 'A new tensor belonging to the first found OpenCLDevice instance.'
             Tsr t = new Tsr([1, 2])
 
@@ -103,7 +102,7 @@ class OpenCLDevice_Integration_Tests extends Specification
     def 'Ad hoc compilation produces executable kernel.'() {
 
         given : 'This system supports OpenCL'
-            if ( !Neureka.instance().canAccessOpenCL() ) return
+            if ( !Neureka.get().canAccessOpenCL() ) return
             def device = OpenCLPlatform.PLATFORMS()[0].devices[0]
             def someData = new Tsr( new float[]{ 2, -5, -3, 9, -1 } ).set( device )
 
@@ -156,7 +155,7 @@ class OpenCLDevice_Integration_Tests extends Specification
     ) {
 
         given : 'This system supports OpenCL'
-            if ( !Neureka.instance().canAccessOpenCL() ) return
+            if ( !Neureka.get().canAccessOpenCL() ) return
             def device = OpenCLPlatform.PLATFORMS()[0].devices[0]
             def kernelName = "dummy_mm_${M}x${K}x${N}"
             def params = DispatchUtility.findBestParams(locSize, regSize, K, M, N)

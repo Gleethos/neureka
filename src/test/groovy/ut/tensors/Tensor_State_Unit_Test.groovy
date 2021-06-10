@@ -21,9 +21,9 @@ class Tensor_State_Unit_Test extends Specification
 
     def setup()
     {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'Tensors as String can be formatted on an entry based level.'()
@@ -135,7 +135,7 @@ class Tensor_State_Unit_Test extends Specification
         then : 'The tensor is now outsourced and its data is gone. (garbage collected)'
             t.isOutsourced()
             !t.is64() && !t.is32()
-            t.dataType.getTypeClass() == Neureka.instance().settings().dtype().defaultDataTypeClass
+            t.dataType.getTypeClass() == Neureka.get().settings().dtype().defaultDataTypeClass
             t.value64() == null
             t.value32() == null
             t.data == null

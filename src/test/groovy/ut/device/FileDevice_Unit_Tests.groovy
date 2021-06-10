@@ -26,9 +26,9 @@ class FileDevice_Unit_Tests extends Specification
 
     def setup()
     {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'A file device stores tensors in idx files by default.'(

@@ -26,16 +26,16 @@ class Cross_Device_Type_Unit_Tests extends Specification
     }
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'Querying for Device implementations works as expected.'(
             String query, Class type
     ) {
         given : 'This system supports OpenCL.'
-            if ( !Neureka.instance().canAccessOpenCL() ) return
+            if ( !Neureka.get().canAccessOpenCL() ) return
 
         when : 'The query is being passed to the "find" method...'
             def device = Device.find(query)

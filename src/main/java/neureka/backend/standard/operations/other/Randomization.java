@@ -5,7 +5,6 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
-import neureka.backend.api.operations.OperationContext;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.HostImplementation;
@@ -83,7 +82,7 @@ public class Randomization extends AbstractOperation
                                 .device( call.getDevice() )
                                 .tensors( new Tsr[]{tsrs[offset], tsrs[1+offset]} )
                                 .derivativeIndex( -1 )
-                                .operation( Neureka.instance().context().instance("idy") )
+                                .operation( Neureka.get().context().instance("idy") )
                                 .build();
                 }
         )
@@ -97,7 +96,7 @@ public class Randomization extends AbstractOperation
                                 call -> call.getDevice().getExecutor()
                                         .threaded (
                                                 call.getTsrOfType( Number.class, 0 ).size(),
-                                                (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
                                                 ? ( start, end ) ->
                                                         Scalarization.scalarize (
                                                                 call.getTsrOfType( Number.class, 0 ),

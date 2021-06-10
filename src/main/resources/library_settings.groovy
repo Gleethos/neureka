@@ -2,7 +2,7 @@ import neureka.Neureka
 import neureka.dtype.custom.F64
 import neureka.utility.TsrAsString
 
-Neureka.instance {
+Neureka.configure {
 
     settings {
 

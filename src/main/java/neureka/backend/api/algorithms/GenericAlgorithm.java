@@ -28,7 +28,7 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
                 new HostImplementation(
                         call -> {
                             Function f = new FunctionBuilder(
-                                                Neureka.instance().context()
+                                                Neureka.get().context()
                                             )
                                             .build(
                                                     type,
@@ -118,7 +118,7 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
     public ADAgent supplyADAgentFor( Function f, ExecutionCall<? extends Device<?>> call, boolean forward)
     {
         Tsr<Object> ctxDerivative = (Tsr<Object>) call.getAt("derivative");
-        Function mul = Neureka.instance().context().getFunction().mul();
+        Function mul = Neureka.get().context().getFunction().mul();
         if ( ctxDerivative != null ) {
             return new DefaultADAgent( ctxDerivative )
                     .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )

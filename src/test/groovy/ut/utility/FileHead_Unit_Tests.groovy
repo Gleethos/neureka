@@ -28,7 +28,7 @@ class FileHead_Unit_Tests extends Specification
     }
 
     def setup() {
-        Neureka.instance().reset() 
+        Neureka.get().reset()
 
         File dir = new File( "build/test-can" )
         if ( ! dir.exists() ) dir.mkdirs()
@@ -38,7 +38,7 @@ class FileHead_Unit_Tests extends Specification
         Tsr<?> tensor, Class<NumericType<?,?,?,?>> type, String filename, String expected
     ) {
         given:
-            Neureka.instance().settings().view().asString = "dgc"
+            Neureka.get().settings().view().asString = "dgc"
 
         when : 'A new IDX file handle for the given filename is being instantiated.'
             IDXHead idx = new IDXHead(tensor, "build/test-can/"+filename)

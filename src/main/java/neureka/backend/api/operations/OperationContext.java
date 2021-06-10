@@ -14,15 +14,14 @@ import java.util.*;
 import java.util.function.Supplier;
 
 /**
- *    This class is a (thread-local) Singleton / Multiton managing Operation instances,
- *    which is also cloneable for testing purposes and to enable extending the backend dynamically.
+ *    This class is managed by {@link Neureka}, a (thread-local) Singleton / Multiton.
+ *    An instance of this {@link OperationContext} class hosts {@link Operation} instances.
+ *    The context is also cloneable for testing purposes and to enable extending the backend dynamically.
  *    <br><br>
  *    It initializes and stores {@link Operation} instances in various data structures
  *    for fast access and querying (Mostly used by the {@link neureka.calculus.assembly.FunctionParser}).
  *    <br>
- *    Operation instance are always managed by {@link OperationContext}
- *    singleton instances. These contexts are store in the static {@link ThreadLocal} "_CONTEXTS" mapping.
- *    In these context instances {@link Operation}s are stored in simple list and map collections,
+ *    {@link Operation}s are stored in simple list and map collections,
  *    namely: <br>
  *    The "_instances" list and the "_lookup" map as declared below.
  *    <br>
@@ -37,7 +36,7 @@ import java.util.function.Supplier;
 public class OperationContext implements Cloneable
 {
     public Runner runner() {
-        return new Runner( this, Neureka.instance().context());
+        return new Runner( this, Neureka.get().context());
     }
 
     /**
@@ -57,16 +56,16 @@ public class OperationContext implements Cloneable
         }
 
         public Runner run( Runnable contextSpecificAction ) {
-            Neureka.instance().setContext( visitedContext );
+            Neureka.get().setContext( visitedContext );
             contextSpecificAction.run();
-            Neureka.instance().setContext( originalContext );
+            Neureka.get().setContext( originalContext );
             return this;
         }
 
         public <T> T runAndGet( Supplier<T> contextSpecificAction ) {
-            Neureka.instance().setContext( visitedContext );
+            Neureka.get().setContext( visitedContext );
             T result = contextSpecificAction.get();
-            Neureka.instance().setContext( originalContext );
+            Neureka.get().setContext( originalContext );
             return result;
         }
 

@@ -136,7 +136,7 @@ public abstract class AbstractNDC implements NDConfiguration
                 throw new IllegalStateException( message );
             }
         }
-        if ( Neureka.instance().settings().ndim().isOnlyUsingDefaultNDConfiguration() ) {
+        if ( Neureka.get().settings().ndim().isOnlyUsingDefaultNDConfiguration() ) {
             return ComplexDefaultNDConfiguration.construct(shape, translation, indicesMap, spread, offset);
         }
         boolean isSimple = _isSimpleConfiguration(shape, translation, indicesMap, spread, offset);

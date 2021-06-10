@@ -30,20 +30,20 @@ class Calculus_Extension_Integration_Tests extends Specification
             //def clContext = new CLContext(lws, rws, com_sze, row_sze, col_sze)
             //def kernel = new GEMMKernelReferenceImplementation( clContext )
 
-            OperationContext oldContext = Neureka.instance().context()
+            OperationContext oldContext = Neureka.get().context()
             OperationContext testContext = oldContext.clone()
 
         when:
             def run = testContext.runner()
 
         then:
-            run { testContext == Neureka.instance().context() }
+            run { testContext == Neureka.get().context() }
 
         when:
             Tsr t1 = new Tsr([row_sze, com_sze], -3..8)
             Tsr t2 = new Tsr([com_sze, col_sze], -7..4)
             run {
-                Neureka.instance().context()
+                Neureka.get().context()
                     .addOperation(
                         new OperationBuilder()
                                 .setFunction('test_function')
@@ -73,8 +73,8 @@ class Calculus_Extension_Integration_Tests extends Specification
                                                         (Function f, ExecutionCall<Device> call, boolean forward) -> {
                                                             if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                                                             return new DefaultADAgent(null)
-                                                                    .setForward((t, derivative) -> new FunctionBuilder(Neureka.instance().context()).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
-                                                                    .setBackward((t, error) -> new FunctionBuilder(Neureka.instance().context()).build(f.toString(), false).derive(new Tsr[]{error}, 0));
+                                                                    .setForward((t, derivative) -> new FunctionBuilder(Neureka.get().context()).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
+                                                                    .setBackward((t, error) -> new FunctionBuilder(Neureka.get().context()).build(f.toString(), false).derive(new Tsr[]{error}, 0));
                                                         }
                                                 )
                                                 .setHandleInsteadOfDevice((caller, call) -> null)
@@ -141,7 +141,7 @@ class Calculus_Extension_Integration_Tests extends Specification
             t3 != null
             //t3.toString() == "..."
         and :
-            Neureka.instance().context() == oldContext
+            Neureka.get().context() == oldContext
 
         where :
             lws | rws | com_sze | row_sze | col_sze

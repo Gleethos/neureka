@@ -66,7 +66,7 @@ public class XConv extends AbstractOperation
                                                 call.getDevice().getExecutor()
                                                         .threaded (
                                                                 call.getTsrOfType( Number.class, 0 ).size(),
-                                                                (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                                (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
                                                                 ? ( start, end ) ->
                                                                         Convolution.convolve (
                                                                                 call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),

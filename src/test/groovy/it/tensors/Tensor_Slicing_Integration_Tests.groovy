@@ -21,8 +21,8 @@ class Tensor_Slicing_Integration_Tests extends Specification
     }
 
     def setup() {
-        Neureka.instance().reset()
-        Neureka.instance().settings().view().setIsUsingLegacyView(false)
+        Neureka.get().reset()
+        Neureka.get().settings().view().setIsUsingLegacyView(false)
     }
 
     def 'When Slicing only one axis using the SliceBuilder API, the other axis will be sliced implicitly.' (
@@ -32,7 +32,7 @@ class Tensor_Slicing_Integration_Tests extends Specification
             if ( device == null ) return
 
         and: 'The found device is also supported (Which might not always be the case for the OpenCLDevice).'
-            if ( device instanceof OpenCLDevice && !Neureka.instance().canAccessOpenCL() ) return
+            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
         and : 'A 3 dimensional tensor which will be sliced.'
             Tsr t = new Tsr([2, 4, 3], -3..7)
@@ -77,7 +77,7 @@ class Tensor_Slicing_Integration_Tests extends Specification
             if ( device == null ) return
 
         and: 'The found device is also supported (Which might not always be the case for the OpenCLDevice).'
-            if ( device instanceof OpenCLDevice && !Neureka.instance().canAccessOpenCL() ) return
+            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
         and : 'A 3 dimensional tensor which will be sliced.'
             Tsr t = new Tsr([3, 3, 4], -11..3)
@@ -123,7 +123,7 @@ class Tensor_Slicing_Integration_Tests extends Specification
             if ( device == null ) return
 
         and: 'The found device is also supported (Which might not always be the case for the OpenCLDevice).'
-            if ( device instanceof OpenCLDevice && !Neureka.instance().canAccessOpenCL() ) return
+            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
         and : 'A 3 dimensional tensor which will be sliced.'
             Tsr t = new Tsr([3, 3, 4], -11..3)
@@ -169,7 +169,7 @@ class Tensor_Slicing_Integration_Tests extends Specification
             if ( device == null ) return
 
         and: 'The found device is also supported (Which might not always be the case for the OpenCLDevice).'
-            if ( device instanceof OpenCLDevice && !Neureka.instance().canAccessOpenCL() ) return
+            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
         and : 'A 3 dimensional tensor which will be sliced.'
             Tsr t = new Tsr([3, 3, 4], -11..3)
@@ -210,7 +210,7 @@ class Tensor_Slicing_Integration_Tests extends Specification
             if ( device == null ) return
 
         and: 'The found device is also supported (Which might not always be the case for the OpenCLDevice).'
-            if ( device instanceof OpenCLDevice && !Neureka.instance().canAccessOpenCL() ) return
+            if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
         and : 'A 3 dimensional tensor which will be sliced.'
             Tsr t = new Tsr([3, 3, 4], -11..3)

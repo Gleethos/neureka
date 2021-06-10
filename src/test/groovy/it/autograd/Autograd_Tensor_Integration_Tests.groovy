@@ -2,7 +2,6 @@ package it.autograd
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 /**
@@ -22,17 +21,17 @@ class Autograd_Tensor_Integration_Tests extends Specification
     }
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'Test basic autograd behaviour. (Not on device)'()
     {
         given: 'Gradient auto apply for tensors in ue is set to false.'
-            Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
         and: 'Tensor legacy view is set to true.'
-            Neureka.instance().settings().view().setIsUsingLegacyView(true);
+            Neureka.get().settings().view().setIsUsingLegacyView(true);
 
         and: 'Three scalar tensors "x", "b", "w" are being instantiated, and "x" requires gradients.'
             Tsr x = new Tsr(new int[]{1}, 3).setRqsGradient(true);
@@ -76,9 +75,9 @@ class Autograd_Tensor_Integration_Tests extends Specification
     def 'Second-Test "x-mul" autograd behaviour. (Not on device)'()
     {
         given : 'Gradient auto apply for tensors in ue is set to false.'
-            Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
         and: 'Tensor legacy view is set to true.'
-            Neureka.instance().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
         when :
             def x = new Tsr(
                     new int[]{3, 3},

@@ -25,9 +25,9 @@ class Autograd_Flags_Explained extends Specification
     }
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
 
@@ -85,9 +85,9 @@ class Autograd_Flags_Explained extends Specification
         """
 
         given : 'We configure Neureka autograd:'
-            Neureka.instance().settings().autograd().isApplyingGradientWhenRequested = whenRsd
-            Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
-            Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJIT
+            Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd
+            Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
+            Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT
 
         and :
             def x = new Tsr([2, 2], 1).setRqsGradient(true)

@@ -9,15 +9,15 @@ import spock.lang.Specification
 class AD_And_Computation_Graph_Integration_Tests extends Specification{
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def "Reverse indexing with AD produces expected computation graph."(){
 
         given :
-            Neureka.instance().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
             Tsr a = new Tsr([2, 3], [
                     1, 2, 3,
                     4, 5, 6

@@ -2,29 +2,27 @@ package it.tensors
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.backend.api.operations.OperationContext
 import neureka.calculus.assembly.FunctionBuilder
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_Operation_Integration_Tests extends Specification
 {
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'Test "x-mul" operator produces expected results. (Not on device)'(
             String expected
     ) {
         given: 'Gradient auto apply for tensors in ue is set to false.'
-            Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
         and: 'Tensor legacy view is set to true.'
-            Neureka.instance().settings().view().setIsUsingLegacyView(true);
+            Neureka.get().settings().view().setIsUsingLegacyView(true);
         and: 'Two new 3D tensor instances with the shapes: [2x3x1] & [1x3x2].'
             //Same test again but this time with reversed indexing:
             def x = new Tsr(
@@ -106,7 +104,7 @@ class Tensor_Operation_Integration_Tests extends Specification
             String code, String expected
     ) {
         given :
-            Neureka.instance().settings().view().setIsUsingLegacyView true
+            Neureka.get().settings().view().setIsUsingLegacyView true
             Tsr a = new Tsr(5)
             Tsr b = new Tsr(3)
             Binding binding = new Binding()
@@ -139,7 +137,7 @@ class Tensor_Operation_Integration_Tests extends Specification
     def 'Overloaded operation methods on tensors produce expected results when called.'()
     {
         given :
-            Neureka.instance().settings().view().setIsUsingLegacyView true
+            Neureka.get().settings().view().setIsUsingLegacyView true
             Tsr a = new Tsr(2).setRqsGradient(true)
             Tsr b = new Tsr(-4)
             Tsr c = new Tsr(3).setRqsGradient(true)
@@ -158,7 +156,7 @@ class Tensor_Operation_Integration_Tests extends Specification
     def 'Manual convolution produces expected result.'()
     {
         given :
-            Neureka.instance().settings().view().setIsUsingLegacyView(false)
+            Neureka.get().settings().view().setIsUsingLegacyView(false)
             Tsr a = new Tsr([100, 100], 3..19)
             Tsr x = a[1..-2,0..-1]
             Tsr y = a[0..-3,0..-1]
@@ -216,7 +214,7 @@ class Tensor_Operation_Integration_Tests extends Specification
          Device device
     ) {
         given :
-            Neureka.instance().settings().view().setIsUsingLegacyView(false)
+            Neureka.get().settings().view().setIsUsingLegacyView(false)
             Tsr a = new Tsr([4, 4], 0..16).set( device )
 
             Tsr x = a[1..-2,0..-1]
@@ -288,7 +286,7 @@ class Tensor_Operation_Integration_Tests extends Specification
             Device device
     ) {
         given :
-        Neureka.instance().settings().view().setIsUsingLegacyView(false)
+        Neureka.get().settings().view().setIsUsingLegacyView(false)
         Tsr a = new Tsr([11, 11], 3..19).set( device )
         Tsr x = a[1..-2,0..-1]
         Tsr y = a[0..-3,0..-1]
@@ -317,7 +315,7 @@ class Tensor_Operation_Integration_Tests extends Specification
     def 'Auto reshape and broadcasting occurs.'()
     {
         given :
-            Neureka.instance().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
             Tsr a = new Tsr([2,2], 1..5)
             Tsr b = new Tsr([2,1], 3..4)
             Tsr c = new Tsr([2], 8..9).setRqsGradient(true)
@@ -331,7 +329,7 @@ class Tensor_Operation_Integration_Tests extends Specification
             assert t1.toString().contains("(9.0, 11.0, 11.0, 13.0)")
             //t.backward(new Tsr([2, 2], [5, -2, 7, 3])) // TODO!
             assert c.toString().contains("")
-            Neureka.instance().settings().view().setIsUsingLegacyView(false)
+            Neureka.get().settings().view().setIsUsingLegacyView(false)
             assert t1.toString().contains("):[9.0, 11.0, 11.0, 13.0]")
 
     }
@@ -339,7 +337,7 @@ class Tensor_Operation_Integration_Tests extends Specification
     void 'A new transposed version of a given tensor will be returned by the "T()" method.'()
     {
         given :
-            Neureka.instance().settings().view().isUsingLegacyView = true
+            Neureka.get().settings().view().isUsingLegacyView = true
 
         when : 'A three by two matrix is being transposed...'
             Tsr t = new Tsr([2, 3], [
@@ -353,7 +351,7 @@ class Tensor_Operation_Integration_Tests extends Specification
     def 'Operators "+,*,**,^" produce expected results with gradients which can be accessed via a "Ig[0]" Function instance'()
     {
         given : 'Neurekas view is set to legacy and three tensors of which one requires gradients.'
-            Neureka.instance().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
             Tsr x = new Tsr(3).setRqsGradient(true)
             Tsr b = new Tsr(-4)
             Tsr w = new Tsr(2)
@@ -365,20 +363,20 @@ class Tensor_Operation_Integration_Tests extends Specification
         when : y = ((x+b)*w)^2
         then :  y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
-        and : Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(true)
+        and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true)
 
         when : y.backward(new Tsr(1))
         then :
             new Tsr([y], "Ig[0]").toString().equals("empty")
             new Tsr([x], "Ig[0]").toString().equals("empty")
 
-        and : Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
+        and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
 
         when : Tsr[] trs = new Tsr[]{x}
-        then : new FunctionBuilder(Neureka.instance().context()).build("Ig[0]", false)(trs).toString().equals("[1]:(-8.0)")
+        then : new FunctionBuilder(Neureka.get().context()).build("Ig[0]", false)(trs).toString().equals("[1]:(-8.0)")
 
         when : trs[0] = y
-        then : assert new FunctionBuilder(Neureka.instance().context()).build("Ig[0]", false)(trs).toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
+        then : assert new FunctionBuilder(Neureka.get().context()).build("Ig[0]", false)(trs).toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
     }
 
 

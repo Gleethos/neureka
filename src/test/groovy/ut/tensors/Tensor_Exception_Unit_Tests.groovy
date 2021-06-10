@@ -22,7 +22,7 @@ class Tensor_Exception_Unit_Tests extends Specification
     @Shared def oldLogger
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         if (Tsr._LOG != null) oldLogger = Tsr._LOG
         Tsr._LOG = Mock( Logger )
     }

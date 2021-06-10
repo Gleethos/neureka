@@ -17,7 +17,7 @@ class Backend_Extension_Unit_Tests extends Specification
 {
     def setupSpec()
     {
-        Neureka.instance().reset()
+        Neureka.get().reset()
 
         reportHeader """
                    This specification defines the behavior of

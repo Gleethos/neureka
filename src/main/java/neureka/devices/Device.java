@@ -80,7 +80,7 @@ public interface Device<ValType> extends Component<Tsr<ValType>>, Storage<ValTyp
                 }
         ).anyMatch(search::contains);
 
-        if ( !Neureka.instance().canAccessOpenCL() ) {
+        if ( !Neureka.get().canAccessOpenCL() ) {
             if ( probablyWantsGPU ) {
                 return null; // User wants OpenCL but cannot have it :/
             } else return HostCPU.instance();

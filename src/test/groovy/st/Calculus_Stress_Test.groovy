@@ -4,24 +4,21 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
-import neureka.devices.opencl.OpenCLDevice
-import neureka.devices.opencl.OpenCLPlatform
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Calculus_Stress_Test extends Specification
 {
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'Stress test runs error free and produces expected result'(
         Device device, boolean arrayIndexing
     ) {
         given:
-            Neureka.instance().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing
+            Neureka.get().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing
 
         and :
             def stress = ( Tsr t ) -> {
@@ -72,7 +69,7 @@ class Calculus_Stress_Test extends Specification
             boolean arrayIndexing, List<Integer> shape, String expected
     ) {
         given:
-            Neureka.instance().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing
+            Neureka.get().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing
 
         and :
             Tsr t = new Tsr( shape, -4..2 )
@@ -99,7 +96,7 @@ class Calculus_Stress_Test extends Specification
             String expected
     ) {
         given:
-            Neureka.instance().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing
+            Neureka.get().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing
 
         and :
             Tsr t1 = new Tsr( shape1, -4..2 ).set( device )

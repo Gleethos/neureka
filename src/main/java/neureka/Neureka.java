@@ -22,12 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   _   _                     _
-  | \ | |                   | |
-  |  \| | ___ _   _ _ __ ___| | ____ _
-  | . ` |/ _ \ | | | '__/ _ \ |/ / _` |
-  | |\  |  __/ |_| | | |  __/   < (_| |
-  |_| \_|\___|\__,_|_|  \___|_|\_\__,_|
+     _   _                     _
+    | \ | |                   | |
+    |  \| | ___ _   _ _ __ ___| | ____ _
+    | . ` |/ _ \ | | | '__/ _ \ |/ / _` |
+    | |\  |  __/ |_| | | |  __/   < (_| |
+    |_| \_|\___|\__,_|_|  \___|_|\_\__,_|
 
     This is a central singleton class used to configure the Neureka library.
 
@@ -54,6 +54,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+/**
+ *    Instances of classes like {@link OperationContext} or {@link Settings}
+ *    are always managed by a thread local {@link Neureka} singleton instances.
+ *    These instances are store in the static {@link ThreadLocal} "_INSTANCES" mapping.
+ *
+ */
 @Accessors( prefix = {"_"} )
 @ToString
 @Slf4j
@@ -100,12 +106,20 @@ public final class Neureka
         _utility = new Utility();
     }
 
-    public static Neureka instance() {
+    /**
+     *  The {@link Neureka} class represents the configuration of this library.
+     *  Instances of this configuration are stored local to every thread in order to make
+     *  both the library settings as well as the execution context threadsafe!
+     *  This method will return the {@link Neureka} instance which corresponds to the thread calling it.
+     *
+     * @return The thread local library configuration state called {@link Neureka}.
+     */
+    public static Neureka get() {
         Neureka n = _INSTANCES.get();
         if ( n == null ) {
             n = new Neureka();
             synchronized ( Neureka.class ) {
-                setInstance( n );
+                set( n );
                 n.reset(); // Initial reset must be synchronized because of dependency issues!
             }
         }
@@ -116,23 +130,32 @@ public final class Neureka
      *  {@link Neureka} is a thread local singleton.
      *  Therefore, this method will only set the provided {@link Neureka} instance
      *  for the thread which is calling this method.
+     *  Other threads calling the {@link #get()} method to retrieve the instance
+     *  will get their own instance...
+     *  (This can theoretically be bypassed by sharing instances)
      *
      * @param instance The {@link Neureka} instance which ought to be set as thread local singleton.
      */
-    public static void setInstance( Neureka instance ) {
+    public static void set( Neureka instance ) {
         _INSTANCES.set(instance);
     }
 
-    public static Neureka instance(Object closure) {
-        Object o = SettingsLoader.tryGroovyClosureOn(closure, Neureka.instance());
-        if (o instanceof String) _VERSION = (String) o;
-        return Neureka.instance();
+    public static Neureka configure( Object closure ) {
+        Object o = SettingsLoader.tryGroovyClosureOn(closure, Neureka.get());
+        if ( o instanceof String ) _VERSION = (String) o;
+        return Neureka.get();
     }
 
+    /**
+     * @return The truth value determining if OpenCL is accessible.
+     */
     public boolean canAccessOpenCL() {
         return _OPENCL_AVAILABLE;
     }
 
+    /**
+     * @return An instance of library wide {@link Settings} determining the behaviour of many classes...
+     */
     public Settings settings() {
         return _settings;
     }
@@ -142,14 +165,25 @@ public final class Neureka
         return _settings;
     }
 
+    /**
+     * @return An instance of an utility class useful for loading resources or checking if they are even available.
+     */
     public Utility utility() {
         return _utility;
     }
 
+    /**
+     * @return The semantic version of the Neureka library.
+     */
     public static String version() {
         return _VERSION;
     }
 
+    /**
+     *  This method will try to reload the "library_settings.groovy" script
+     *  which will re-configure the library wide {@link Settings} instance nested inside {@link Neureka}.
+     *  If the execution of this file fails then the settings will be reverted to a hardcoded default state.
+     */
     public void reset() {
         try {
             SettingsLoader.tryGroovyScriptsOn(this);
@@ -163,8 +197,8 @@ public final class Neureka
         }
     }
 
-    private boolean _currentThreadIsAuthorized() {
-        return this.equals( _INSTANCES.get() );
+    private boolean _currentThreadIsNotAuthorized() {
+        return !this.equals(_INSTANCES.get());
     }
 
     @Accessors( prefix = {"_"} )
@@ -277,7 +311,7 @@ public final class Neureka
             }
 
             public void setIsKeepingDerivativeTargetPayloads(boolean keep) {
-                if ( _isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
                 _isKeepingDerivativeTargetPayloads = keep;
             }
 
@@ -327,7 +361,7 @@ public final class Neureka
             }
 
             public void setIsPreventingInlineOperations(boolean prevent) {
-                if ( _isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
                 _isPreventingInlineOperations = prevent;
             }
 
@@ -336,7 +370,7 @@ public final class Neureka
             }
 
             public void setIsRetainingPendingErrorForJITProp(boolean retain) {
-                if ( _isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
                 _isRetainingPendingErrorForJITProp = retain;
             }
 
@@ -345,7 +379,7 @@ public final class Neureka
             }
 
             public void setIsApplyingGradientWhenTensorIsUsed(boolean apply) {
-                if ( _isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
                 _isApplyingGradientWhenTensorIsUsed = apply;
             }
 
@@ -354,7 +388,7 @@ public final class Neureka
             }
 
             public void setIsApplyingGradientWhenRequested(boolean apply) {
-                if ( _isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
                 _isApplyingGradientWhenRequested = apply;
             }
 
@@ -371,7 +405,7 @@ public final class Neureka
             }
 
             public void setIsUsingArrayBasedIndexing( boolean thorough ) {
-                if ( _isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
                 _isUsingArrayBasedIndexing = thorough;
             }
 
@@ -404,7 +438,7 @@ public final class Neureka
             }
 
             public void setIsUsingLegacyView(boolean enabled) {
-                if ( _isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
                 _isUsingLegacyView = enabled;
             }
 
@@ -438,7 +472,7 @@ public final class Neureka
             }
 
             public void setIsOnlyUsingDefaultNDConfiguration(boolean enabled) {
-                if ( _isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
                 _isOnlyUsingDefaultNDConfiguration = enabled;
             }
 
@@ -457,7 +491,7 @@ public final class Neureka
             }
 
             public void setDefaultDataTypeClass( Class<?> dtype ) {
-                if ( _isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
                 _defaultDataTypeClass = dtype;
             }
 
@@ -466,7 +500,7 @@ public final class Neureka
             }
 
             public void setIsAutoConvertingExternalDataToJVMTypes( boolean autoConvert ) {
-                if ( _isLocked || !_currentThreadIsAuthorized()) return;
+                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
                 _isAutoConvertingExternalDataToJVMTypes = autoConvert;
             }
 

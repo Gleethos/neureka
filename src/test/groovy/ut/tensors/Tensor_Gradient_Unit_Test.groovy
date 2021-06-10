@@ -2,7 +2,6 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_Gradient_Unit_Test extends Specification
@@ -20,9 +19,9 @@ class Tensor_Gradient_Unit_Test extends Specification
                     This is what the prior property is for.            
                 </p>
             """
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'Tensors can have gradients but not require them.'()

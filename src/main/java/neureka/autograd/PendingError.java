@@ -22,7 +22,7 @@ public final class PendingError<ValType>
     }
 
     public void accumulate( Tsr<?> error ) {
-        new FunctionBuilder(Neureka.instance().context()).build(
+        new FunctionBuilder(Neureka.get().context()).build(
                 "I[ 0 ]<-(I[ 0 ]+I[ 1 ])", false
         ).call( new Tsr[]{ _accumulatedError, error } );
         _toBeReceived--;

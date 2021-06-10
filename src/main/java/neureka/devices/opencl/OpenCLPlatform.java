@@ -79,7 +79,7 @@ public class OpenCLPlatform {
                 "utility.cl"
         };
         for ( String name : fileNames )
-            templateSources.add(Neureka.instance().utility().readResource("kernels/"+name));
+            templateSources.add(Neureka.get().utility().readResource("kernels/"+name));
 
         ArrayList<String> names = new ArrayList<>();
         ArrayList<String> sources = new ArrayList<>();
@@ -104,7 +104,7 @@ public class OpenCLPlatform {
                     //===========================================================================
                     Map<String, String> code = new HashMap<>();
                     ImplementationFor<OpenCLDevice> impl = null;
-                    for ( Operation type : Neureka.instance().context().instances() ) {
+                    for ( Operation type : Neureka.get().context().instances() ) {
                         if ( preName.contains("activation") && type.supportsAlgorithm(Activation.class) ) {
                             impl = type.getAlgorithm(Activation.class).getImplementationFor( OpenCLDevice.class );
                         } else if ( preName.contains("operator") && type.supportsAlgorithm(Operator.class) ) {

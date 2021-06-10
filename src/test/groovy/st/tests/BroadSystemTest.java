@@ -13,7 +13,7 @@ public class BroadSystemTest
     public static boolean on()
     {
         //Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true);
-        Neureka.instance().settings().view().setIsUsingLegacyView(true);
+        Neureka.get().settings().view().setIsUsingLegacyView(true);
 
         UnitTester_Tensor tester = new UnitTester_Tensor("Testing core tensor functionality");
 
@@ -31,15 +31,15 @@ public class BroadSystemTest
         tester.testTensor(x, new String[]{"[2x2]:(-1.0, 2.0, -3.0, 3.0):g:(-3.0, -3.0, -3.0, -3.0)"});
         //---
         x = new Tsr(new int[]{1}, 0.1).setRqsGradient(true);
-        Function tanh = new FunctionBuilder(Neureka.instance().context()).build("tanh(i0)", true);
-        Function tenxx = new FunctionBuilder(Neureka.instance().context()).build("i0*100", true);
+        Function tanh = new FunctionBuilder(Neureka.get().context()).build("tanh(i0)", true);
+        Function tenxx = new FunctionBuilder(Neureka.get().context()).build("i0*100", true);
         z = tenxx.call(new Tsr[]{tanh.call(new Tsr[]{x})});
         tester.testTensor(z, new String[]{"[1]:(9.95037E0)"});
-        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
+        Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
         z.backward(new Tsr(new int[]{1}, 1));
         tester.testTensor(x, new String[]{"[1]:(0.1):g:(99.0099E0)"});
         tester.testTensor(z, new String[]{"[1]:(9.95037E0); ->d[1]:(99.0099E0), "});
-        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
+        Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
         //---
         tester.testContains(
                 z.toString("dgc"),
@@ -87,7 +87,7 @@ public class BroadSystemTest
         tensor2 = new Tsr(new int[]{2, 1}, -1);
         tensor1.setRqsGradient(true);
         tensor2.setRqsGradient(true);
-        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
+        Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2},
                 "relu(I[0]xI[1])",
@@ -129,7 +129,7 @@ public class BroadSystemTest
                         " =>d|[ [2x1]:(-1.0, -1.0) ]|:t{ [1x3]:(2.0, 2.0, 2.0) },",
                         "  }, "
                 }, "");
-        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
+        Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
         //---
         tensor1 = new Tsr(new int[]{2, 3, 4}, 2);
         tensor1.setRqsGradient(false);
@@ -160,7 +160,7 @@ public class BroadSystemTest
                 }
         );
         //---
-        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
+        Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
         tensor1 = new Tsr(new int[]{3, 2, 1}, 4);
         tensor2 = new Tsr(new int[]{1, 1, 4}, -1);
         tensor3 = new Tsr(new int[]{3, 2, 1}, 2);
@@ -188,7 +188,7 @@ public class BroadSystemTest
                         "[5x4x2]:(-24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0, -24.0); =>d|[ [1x1x2]:(3.0, 3.0) ]|:t{ [5x4x1]:(-8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0, -8.0); =>d|[ [1x4x1]:(-2.0, -2.0, -2.0, -2.0) ]|:t{ [5x1x1]:(4.0, 4.0, 4.0, 4.0, 4.0) },  }, "
                 }
         );
-        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
+        Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
         //=====================
         tensor1 = new Tsr(new int[]{2, 2}, new double[]{1, 2, 3, 4});//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
@@ -327,7 +327,7 @@ public class BroadSystemTest
                 -2, 3,
                 1, 2,
         });
-        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
+        Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);
         tester.testTensorAutoGrad(//4, 5, -13, -4 <= result values
                 new Tsr[]{tensor1, tensor2},
                 "i0xi1",
@@ -335,7 +335,7 @@ public class BroadSystemTest
                 new Tsr(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
                 new double[][]{{1.0, 3.0, 1.0, 3.0}, new double[0]}
         );
-        Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
+        Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
         //---
         //======================
         int[] shape = {4, 2, 9, 5, 6, 2};

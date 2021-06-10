@@ -70,7 +70,7 @@ public final class Identity extends AbstractOperation
                                 .device(call.getDevice())
                                 .tensors(new Tsr[]{tsrs[offset], tsrs[1+offset]})
                                 .derivativeIndex(-1)
-                                .operation(Neureka.instance().context().instance("idy"))
+                                .operation(Neureka.get().context().instance("idy"))
                                 .build();
                 }
         )
@@ -85,7 +85,7 @@ public final class Identity extends AbstractOperation
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
                                                         ? ( start, end ) ->
                                                                 Activation.activate (
                                                                         call.getTsrOfType( Number.class, 0 ),

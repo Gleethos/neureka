@@ -18,13 +18,13 @@ class OpenCLDevice_Exception_Integration_Tests extends Specification
                 where insightful error messages are important.
             </p>
         """
-        Neureka.instance().reset()
+        Neureka.get().reset()
     }
 
     def 'Ad hoc compilation produces expected exceptions.'()
     {
         given : 'This system supports OpenCL'
-            if ( !Neureka.instance().canAccessOpenCL() ) return
+            if ( !Neureka.get().canAccessOpenCL() ) return
             def device = OpenCLPlatform.PLATFORMS()[0].devices[0]
 
         expect : 'Initially there is no ad hoc kernel with the following name.'
@@ -56,7 +56,7 @@ class OpenCLDevice_Exception_Integration_Tests extends Specification
     def 'Ad hoc compilation produces expected exceptions when duplication is found.'()
     {
         given : 'This system supports OpenCL'
-            if ( !Neureka.instance().canAccessOpenCL() ) return
+            if ( !Neureka.get().canAccessOpenCL() ) return
             def device = OpenCLPlatform.PLATFORMS()[0].devices[0]
             def code = """
                         __kernel void right_dummy_kernel_name (
@@ -97,7 +97,7 @@ class OpenCLDevice_Exception_Integration_Tests extends Specification
     def 'Trying to restore a tensor which is not on a device raises exception.'()
     {
         given : 'This system supports OpenCL'
-            if ( !Neureka.instance().canAccessOpenCL() ) return
+            if ( !Neureka.get().canAccessOpenCL() ) return
             def device = OpenCLPlatform.PLATFORMS()[0].devices[0]
         and : 'We create a new mock logger for the OpenCL device.'
             def oldLogger = device._log
@@ -118,7 +118,7 @@ class OpenCLDevice_Exception_Integration_Tests extends Specification
             )
 
         cleanup : 'Afterwards we restore the original logger!'
-            if ( Neureka.instance().canAccessOpenCL() ) device._log = oldLogger
+            if ( Neureka.get().canAccessOpenCL() ) device._log = oldLogger
     }
 
 

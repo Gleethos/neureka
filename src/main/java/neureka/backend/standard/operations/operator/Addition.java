@@ -58,7 +58,7 @@ public class Addition extends AbstractOperation {
                                                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                                         {
                                                             Tsr<?> ctxDerivative = (Tsr<?>)call.getAt("derivative");
-                                                            Function mul = Neureka.instance().context().getFunction().mul();
+                                                            Function mul = Neureka.get().context().getFunction().mul();
                                                             if ( ctxDerivative != null ) {
                                                                 return new DefaultADAgent( ctxDerivative )
                                                                         .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
@@ -134,7 +134,7 @@ public class Addition extends AbstractOperation {
                                                         .getExecutor()
                                                         .threaded (
                                                                 call.getTsrOfType( Number.class, 0 ).size(),
-                                                                (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                                (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
                                                                 ? ( start, end ) ->
                                                                         Operator.operate (
                                                                                 call.getTsrOfType( Number.class, 0 ),
@@ -195,7 +195,7 @@ public class Addition extends AbstractOperation {
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
                                                ? ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
@@ -278,7 +278,7 @@ public class Addition extends AbstractOperation {
                                             call.getDevice().getExecutor()
                                                     .threaded (
                                                             call.getTsrOfType( Number.class, 0 ).size(),
-                                                            (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                            (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
                                                             ? ( start, end ) ->
                                                                     Scalarization.scalarize (
                                                                             call.getTsrOfType( Number.class, 0 ),

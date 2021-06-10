@@ -14,7 +14,7 @@ class OpenCL_Unit_Test extends Specification
     def 'First found OpenCLDevice will have realistic properties inside summary query.'()
     {
         given: 'This system supports OpenCL.'
-            if (!Neureka.instance().canAccessOpenCL()) return
+            if (!Neureka.get().canAccessOpenCL()) return
 
         when: 'Information about all existing OpenCL devices is being queried.'
             String query = DeviceQuery.query()
@@ -32,7 +32,7 @@ class OpenCL_Unit_Test extends Specification
     def 'First found OpenCLDevice will have realistic numeric properties.'()
     {
        given : 'This system supports OpenCL.'
-            if ( !Neureka.instance().canAccessOpenCL() ) return
+            if ( !Neureka.get().canAccessOpenCL() ) return
 
        when : 'The first found Device instance is used.'
             OpenCLDevice cld = Device.find('first') as OpenCLDevice
@@ -60,7 +60,7 @@ class OpenCL_Unit_Test extends Specification
     def 'First found OpenCLDevice will have realistic text properties.'()
     {
         given : 'This system supports OpenCL.'
-            if ( !Neureka.instance().canAccessOpenCL() ) return
+            if ( !Neureka.get().canAccessOpenCL() ) return
 
         when : 'The first found Device instance is used.'
             OpenCLDevice cld = Device.find('first') as OpenCLDevice
@@ -76,7 +76,7 @@ class OpenCL_Unit_Test extends Specification
     def 'An OpenCLDevice will throw an exception when trying to add a tensor whose "data parent" is not outsourced.'()
     {
         given: 'This system supports OpenCL.'
-            if (!Neureka.instance().canAccessOpenCL()) return
+            if (!Neureka.get().canAccessOpenCL()) return
 
         and : 'The first found OpenCLDevice instance.'
             Device device = Device.find('first')

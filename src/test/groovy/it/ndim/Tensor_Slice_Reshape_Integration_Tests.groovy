@@ -3,15 +3,14 @@ package it.ndim
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
-import neureka.utility.TsrAsString
 import spock.lang.Specification
 
 class Tensor_Slice_Reshape_Integration_Tests extends Specification
 {
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'A slice of a tensor changes as expected when reshaping it.'()

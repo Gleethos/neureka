@@ -3,9 +3,7 @@ package it.autograd
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
-import neureka.utility.TsrAsString
 import spock.lang.Specification
-import spock.lang.Unroll
 
 class Autograd_Explained extends Specification
 {
@@ -52,9 +50,9 @@ class Autograd_Explained extends Specification
     }
 
     def setup() {
-        Neureka.instance().reset()
+        Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.instance().settings().view().asString = "dgc"
+        Neureka.get().settings().view().asString = "dgc"
     }
 
     def 'Simple automatic differentiation and propagation.'()
@@ -67,9 +65,9 @@ class Autograd_Explained extends Specification
                 Because (by default) Neureka is not too eager when it comes to backpropagation
                 we have to set the following flags :
             """
-            Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
-            Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
-            Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(false)
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
+            Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)
 
         and : 'We create a simple tensor and set rqsGradient to true in order to track dependent computation.'
             def x = new Tsr([2, 2], 1).setRqsGradient(true)

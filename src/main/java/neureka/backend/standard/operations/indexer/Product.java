@@ -79,7 +79,7 @@ public final class Product extends AbstractOperation {
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
                         Tsr ctxDerivative = (Tsr)call.getAt("derivative");
-                        Function mul = Neureka.instance().context().getFunction().mul();
+                        Function mul = Neureka.get().context().getFunction().mul();
                         if ( ctxDerivative != null ) {
                                 return new DefaultADAgent( ctxDerivative )
                                     .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
@@ -109,7 +109,7 @@ public final class Product extends AbstractOperation {
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
                                                         ? ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTsrOfType( Number.class, 0 ),
@@ -180,7 +180,7 @@ public final class Product extends AbstractOperation {
             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
                         Tsr ctxDerivative = (Tsr)call.getAt("derivative");
-                        Function mul = Neureka.instance().context().getFunction().mul();
+                        Function mul = Neureka.get().context().getFunction().mul();
                         if ( ctxDerivative != null ) {
                             return new DefaultADAgent( ctxDerivative )
                                 .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
@@ -199,7 +199,7 @@ public final class Product extends AbstractOperation {
                         {
                             if ( this.supports(Convolution.class) )
                             {
-                                Function invX = new FunctionBuilder(Neureka.instance().context()).build(
+                                Function invX = new FunctionBuilder(Neureka.get().context()).build(
                                         "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
                                         false
                                 );
@@ -251,7 +251,7 @@ public final class Product extends AbstractOperation {
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTsrOfType( Number.class, 0 ).size(),
-                                                        (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())
+                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
                                                         ? ( start, end ) ->
                                                                 Activation.activate (
                                                                         call.getTsrOfType( Number.class, 0 ),

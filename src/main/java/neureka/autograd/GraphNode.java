@@ -386,7 +386,7 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
             ExecutionCall call = (ExecutionCall) context;
             Tsr<ValType>[] inputs = call.getTensors();
             /* Applying JITProp and gradients */
-            Neureka.Settings.AutoGrad adSetting = Neureka.instance().settings().autograd();
+            Neureka.Settings.AutoGrad adSetting = Neureka.get().settings().autograd();
             if ( adSetting.isApplyingGradientWhenTensorIsUsed() ) {
                 for ( Tsr<ValType> t : inputs ) {
                     if ( !adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRequested() ) {
@@ -634,7 +634,7 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
     public void backward( Tsr<ValType> error ) {
         Set<GraphNode<ValType>> pendingNodes = new HashSet<>();
         _backward( error, pendingNodes, false ); // Entry-point to private recursive back-propagation!
-        if ( Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp() ) {
+        if ( Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp() ) {
             pendingNodes.forEach( n -> n._carryPendingBackPropToGradients( pendingNodes ) );
         } else {
             pendingNodes.forEach( n -> {
@@ -761,7 +761,7 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
      * deviate from its default state, namely: true!
      */
     private void _deleteDerivativesRecursively() {
-        if ( !Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads() ) { // <=- This flag is almost always false. (Used for testing)
+        if ( !Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads() ) { // <=- This flag is almost always false. (Used for testing)
             if ( !this.isReliesOnJustInTimeProp() ) _targets_derivatives = null;
             if ( !this.isGraphLeave() ) forEachTarget( GraphNode::_deleteDerivativesRecursively );
         }
