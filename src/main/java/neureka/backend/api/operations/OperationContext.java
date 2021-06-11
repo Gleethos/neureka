@@ -179,13 +179,9 @@ public class OperationContext implements Cloneable
             if ( operator.contains( ""+((char)187) ) )
                 this.lookup().put(operator.replace((""+((char)187)),">>"), operation);
         }
-        incrementID();
-    }
-
-    public void incrementID()
-    {
         _size++;
     }
+
 
     /**
      *  This method queries the operations in this OperationContext
