@@ -55,10 +55,15 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 /**
- *    Instances of classes like {@link OperationContext} or {@link Settings}
- *    are always managed by a thread local {@link Neureka} singleton instances.
- *    These instances are store in the static {@link ThreadLocal} "_INSTANCES" mapping.
- *
+ *    {@link Neureka} is the key access point for thread local / global library settings ( see{@link Settings})
+ *    as well as execution contexts (see {@link OperationContext})
+ *    and pre-instantiated {@link neureka.calculus.Function}s.
+ *    {@link Neureka} exposes the execution context via the {@link #context()} method,
+ *    the library settings which govern the behaviour of various library components
+ *    can be accessed via the {@link #settings()} method.
+ *    Common functions can be accessed within a given {@link OperationContext} instance based on which they were built.
+ *    If one wishes to modify the default library settings it is possible to do so by editing
+ *    the "library_settings.groovy" DSL file.
  */
 @Accessors( prefix = {"_"} )
 @ToString
@@ -67,8 +72,14 @@ public final class Neureka
 {
     private static final ThreadLocal<Neureka> _INSTANCES;
 
+    /**
+     *  The current semantic version of this library build.
+     */
     private static String _VERSION;
 
+    /**
+     *  The truth value determining if OpenCL is available or not.
+     */
     private static final boolean _OPENCL_AVAILABLE;
 
     static
@@ -289,6 +300,8 @@ public final class Neureka
         @ToString
         public class Debug
         {
+            private boolean _isKeepingDerivativeTargetPayloads = false;
+
             /**
              * Every derivative is calculated with respect to some graph node.
              * Graph nodes contain payload tensors.
@@ -304,12 +317,25 @@ public final class Neureka
              * It is used in the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
              */
-            private boolean _isKeepingDerivativeTargetPayloads = false;
-
             public boolean isKeepingDerivativeTargetPayloads() {
                 return _isKeepingDerivativeTargetPayloads;
             }
 
+            /**
+             * Every derivative is calculated with respect to some graph node.
+             * Graph nodes contain payload tensors.
+             * A tensor might not always be used for backpropagation.
+             * Therefore it will be deleted if possible.
+             * Targeted tensors are either leave tensors (They require gradients)
+             * or they are angle points between forward- and reverse-mode-AutoDiff!
+             * In this case:
+             * If the tensor is not needed for backpropagation it will be deleted.
+             * The graph node will dereference the tensor either way.
+             *
+             * The flag determines this behavior with respect to target nodes.
+             * It is used in the test suit to validate that the right tensors were calculated.
+             * This flag should not be modified in production! (memory leak)
+             */
             public void setIsKeepingDerivativeTargetPayloads(boolean keep) {
                 if ( _isLocked || _currentThreadIsNotAuthorized()) return;
                 _isKeepingDerivativeTargetPayloads = keep;
@@ -321,72 +347,110 @@ public final class Neureka
         @ToString
         public class AutoGrad // Auto-Grad/Differentiation
         {
+            private boolean _isPreventingInlineOperations = true;
+            private boolean _isRetainingPendingErrorForJITProp = true;
+            private boolean _isApplyingGradientWhenTensorIsUsed = true;
+            private boolean _isApplyingGradientWhenRequested = true;
+
             /**
              *  Inline operations are operations where the data of a tensor passed into an operation
              *  is being modified.
              *  Usually the result of an operation is stored inside a new tensor.
              */
-            private boolean _isPreventingInlineOperations = true;
+            public boolean isPreventingInlineOperations() {
+                return _isPreventingInlineOperations;
+            }
 
             /**
-             * This flag enables an optimization technique which only propagates error values to
-             * gradients if needed by a tensor (the tensor is used again) and otherwise accumulate them
-             * at divergent differentiation paths within the computation graph.<br>
-             * If the flag is set to true <br>
-             * then error values will accumulate at such junction nodes.
-             * This technique however uses more memory but will
-             * improve performance for some networks substantially.
-             * The technique is termed JIT-Propagation.
+             *  Inline operations are operations where the data of a tensor passed into an operation
+             *  is being modified.
+             *  Usually the result of an operation is stored inside a new tensor.
              */
-            private boolean _isRetainingPendingErrorForJITProp = true;
+            public void setIsPreventingInlineOperations(boolean prevent) {
+                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
+                _isPreventingInlineOperations = prevent;
+            }
 
             /**
-             * Gradients will automatically be applied (or JITed) to tensors as soon as
-             * they are being used for calculation (GraphNode instantiation).
-             * This feature works well with JIT-Propagation.
+             *  This flag enables an optimization technique which only propagates error values to
+             *  gradients if needed by a tensor (the tensor is used again) and otherwise accumulate them
+             *  at divergent differentiation paths within the computation graph.<br>
+             *  If the flag is set to true <br>
+             *  then error values will accumulate at such junction nodes.
+             *  This technique however uses more memory but will
+             *  improve performance for some networks substantially.
+             *  The technique is termed JIT-Propagation.
              */
-            private boolean _isApplyingGradientWhenTensorIsUsed = true;
+            public boolean isRetainingPendingErrorForJITProp() {
+                return _isRetainingPendingErrorForJITProp;
+            }
+
+            /**
+             *  This flag enables an optimization technique which only propagates error values to
+             *  gradients if needed by a tensor (the tensor is used again) and otherwise accumulate them
+             *  at divergent differentiation paths within the computation graph.<br>
+             *  If the flag is set to true <br>
+             *  then error values will accumulate at such junction nodes.
+             *  This technique however uses more memory but will
+             *  improve performance for some networks substantially.
+             *  The technique is termed JIT-Propagation.
+             */
+            public void setIsRetainingPendingErrorForJITProp(boolean retain) {
+                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
+                _isRetainingPendingErrorForJITProp = retain;
+            }
+
+            /**
+             *  Gradients will automatically be applied (or JITed) to tensors as soon as
+             *  they are being used for calculation ({@link neureka.autograd.GraphNode} instantiation).
+             *  This feature works well with JIT-Propagation.
+             */
+            public boolean isApplyingGradientWhenTensorIsUsed() {
+                return _isApplyingGradientWhenTensorIsUsed;
+            }
+
+            /**
+             *  Gradients will automatically be applied (or JITed) to tensors as soon as
+             *  they are being used for calculation ({@link neureka.autograd.GraphNode} instantiation).
+             *  This feature works well with JIT-Propagation.
+             */
+            public void setIsApplyingGradientWhenTensorIsUsed(boolean apply) {
+                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
+                _isApplyingGradientWhenTensorIsUsed = apply;
+            }
+
+            /**
+             *  Gradients will only be applied if requested.
+             *  Usually this happens immediately, however
+             *  if the flag <i>'applyGradientWhenTensorIsUsed'</i> is set
+             *  to true, then the tensor will only be updated by its
+             *  gradient if requested AND the tensor is used for calculation!
+             *  ({@link neureka.autograd.GraphNode} instantiation).  <br> <br>
+             *
+             *  This flag works alongside two other autograd features which can be enables by flipping the feature flags <br>
+             *  <i>'isApplyingGradientWhenRequested'</i> and <i>'isApplyingGradientWhenTensorIsUsed'</i><br>
+             *  As the first flag name suggests gradients will be applied to their tensors when it is set to true,
+             *  however this will only happened when the second flag is set to true as well, because otherwise gradients
+             *  wouldn't be applied to their tensors automatically in the first place... <br>
+             *  <br>
+             *  Setting both flags to true will inhibit the effect of the second setting <i>'isApplyingGradientWhenTensorIsUsed'</i>
+             *  unless a form of "permission" is being signaled to the autograd system.
+             *  This signal comes in the form of a "request" flag which marks a tensor as <b>allowed to
+             *  be updated by its gradient</b>. This request can be dispatched to a {@link Tsr}
+             *  by setting {@link Tsr#setGradientApplyRequested(boolean)} to {@code true}.<br>
+             */
+            public boolean isApplyingGradientWhenRequested() {
+                return _isApplyingGradientWhenRequested;
+            }
 
             /**
              * Gradients will only be applied if requested.
              * Usually this happens immediately, however
              * if the flag <i>'applyGradientWhenTensorIsUsed'</i> is set
              * to true, then the tensor will only be updated by its
-             * gradient if requested AND the tensor is used fo calculation! (GraphNode instantiation).
+             * gradient if requested AND the tensor is used for calculation!
+             * ({@link neureka.autograd.GraphNode} instantiation).
              */
-            private boolean _isApplyingGradientWhenRequested = true;
-
-            public boolean isPreventingInlineOperations() {
-                return _isPreventingInlineOperations;
-            }
-
-            public void setIsPreventingInlineOperations(boolean prevent) {
-                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
-                _isPreventingInlineOperations = prevent;
-            }
-
-            public boolean isRetainingPendingErrorForJITProp() {
-                return _isRetainingPendingErrorForJITProp;
-            }
-
-            public void setIsRetainingPendingErrorForJITProp(boolean retain) {
-                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
-                _isRetainingPendingErrorForJITProp = retain;
-            }
-
-            public boolean isApplyingGradientWhenTensorIsUsed() {
-                return _isApplyingGradientWhenTensorIsUsed;
-            }
-
-            public void setIsApplyingGradientWhenTensorIsUsed(boolean apply) {
-                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
-                _isApplyingGradientWhenTensorIsUsed = apply;
-            }
-
-            public boolean isApplyingGradientWhenRequested() {
-                return _isApplyingGradientWhenRequested;
-            }
-
             public void setIsApplyingGradientWhenRequested(boolean apply) {
                 if ( _isLocked || _currentThreadIsNotAuthorized()) return;
                 _isApplyingGradientWhenRequested = apply;
@@ -417,12 +481,12 @@ public final class Neureka
         {
             View(){
                 _asString = new HashMap<>();
-                _asString.put( TsrAsString.Should.BE_SHORTENED_BY,      50   );
-                _asString.put( TsrAsString.Should.BE_COMPACT,           true );
-                _asString.put( TsrAsString.Should.BE_FORMATTED,         true );
-                _asString.put( TsrAsString.Should.HAVE_GRADIENT,        true );
-                _asString.put( TsrAsString.Should.HAVE_PADDING_OF,     6     );
-                _asString.put( TsrAsString.Should.HAVE_VALUE,          true );
+                _asString.put( TsrAsString.Should.BE_SHORTENED_BY,      50    );
+                _asString.put( TsrAsString.Should.BE_COMPACT,           true  );
+                _asString.put( TsrAsString.Should.BE_FORMATTED,         true  );
+                _asString.put( TsrAsString.Should.HAVE_GRADIENT,        true  );
+                _asString.put( TsrAsString.Should.HAVE_PADDING_OF,      6     );
+                _asString.put( TsrAsString.Should.HAVE_VALUE,           true  );
                 _asString.put( TsrAsString.Should.HAVE_RECURSIVE_GRAPH, false );
                 _asString.put( TsrAsString.Should.HAVE_DERIVATIVES,     false );
                 _asString.put( TsrAsString.Should.HAVE_SHAPE,           true  );
@@ -461,8 +525,8 @@ public final class Neureka
         public class NDim
         {
             /**
-             *  The DefaultNDConfiguration class stores shape, translation...
-             *  as cached int arrays.
+             *  The {@link neureka.ndim.config.types.complex.ComplexDefaultNDConfiguration}
+             *  class stores shape, translation... as cached int arrays.
              *  Disabling this flag allows for custom 1D, 2D, 3D classes to be loaded. (Improves memory locality)
              */
             private boolean _isOnlyUsingDefaultNDConfiguration = false;
@@ -522,7 +586,7 @@ public final class Neureka
             InputStream stream = getClass().getClassLoader().getResourceAsStream( path );
             try {
                 BufferedReader br = new BufferedReader(new InputStreamReader( stream ));
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 String line = "";
                 while ( line != null ) {
                     line = br.readLine();
@@ -536,6 +600,12 @@ public final class Neureka
             }
         }
 
+        /**
+         *  This method checks if a class addressed by it's name has been loaded into the runtime.
+         *
+         * @param className The class whose presents ought to be checked.
+         * @return The truth value determining if the class is present or not.
+         */
         public static boolean isPresent( String className ) {
             boolean found = false;
             String groovyInfo = ( (className.toLowerCase().contains("groovy") ) ? " Neureka settings uninitialized!" : "" );

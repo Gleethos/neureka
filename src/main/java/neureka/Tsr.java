@@ -1082,7 +1082,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  however this will only happened when the second flag is set to true as well, because otherwise gradients
      *  wouldn't be applied to their tensors automatically in the first place... <br>
      *  <br>
-     *  Setting both flags to true will inhibit effect of the second setting <i>'isApplyingGradientWhenTensorIsUsed'</i>
+     *  Setting both flags to true will inhibit the effect of the second setting <i>'isApplyingGradientWhenTensorIsUsed'</i>
      *  unless a form of "permission" is being signaled to the autograd system.
      *  This signal comes in the form of a "request" flag which marks a tensor as <b>allowed to
      *  be updated by its gradient</b>.<br>
