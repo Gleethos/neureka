@@ -14,11 +14,14 @@ import java.util.*;
 import java.util.function.Supplier;
 
 /**
- *    This class is managed by {@link Neureka}, a (thread-local) Singleton / Multiton.
- *    An instance of this {@link OperationContext} class hosts {@link Operation} instances.
- *    The context is also cloneable for testing purposes and to enable extending the backend dynamically.
+ *    Instances of this class are execution contexts hosting {@link Operation} instances which receive {@link neureka.Tsr}
+ *    instances for execution.
+ *    {@link OperationContext}s managed by {@link Neureka}, a (thread-local) Singleton / Multiton.  <br>
+ *    Contexts are cloneable for testing purposes and to enable extending the backend dynamically.
+ *    A given instance also hosts a reference to a {@link Functions} instance which exposes commonly used
+ *    pre-instantiated {@link Function} implementation instances.
  *    <br><br>
- *    It initializes and stores {@link Operation} instances in various data structures
+ *    The {@link OperationContext} initializes and stores {@link Operation} instances in various data structures
  *    for fast access and querying (Mostly used by the {@link neureka.calculus.assembly.FunctionParser}).
  *    <br>
  *    {@link Operation}s are stored in simple list and map collections,
@@ -26,8 +29,11 @@ import java.util.function.Supplier;
  *    The "_instances" list and the "_lookup" map as declared below.
  *    <br>
  *    <br>
- *    During class initialization concrete classes extending the Operation class
- *    are being instantiated in the static block below via a ServiceLoader.
+ *    During class initialization concrete classes extending the {@link Operation} class
+ *    are being instantiated in the static block below via a {@link ServiceLoader}.
+ *    {@link OperationContext} instances expose a useful class called {@link Runner},
+ *    which performs temporary context switching between the caller's context and this
+ *    context during the execution of provided lambdas.
  *
  */
 @Slf4j
@@ -35,6 +41,14 @@ import java.util.function.Supplier;
 @Accessors( prefix = {"_"}, fluent = true ) // Getters don't have a "get" prefix for better readability!
 public class OperationContext implements Cloneable
 {
+    /**
+     *  A {@link Runner} wraps both the called context as well as the context of the caller in order
+     *  to perform temporary context switching during the execution of lambdas passed to the {@link Runner}.
+     *  After a given lambda was executed successfully, the original context will be restored
+     *  in the current thread local {@link Neureka} instance.
+     *
+     * @return A lambda {@link Runner} which performs temporary context switching between the caller's context and this context.
+     */
     public Runner runner() {
         return new Runner( this, Neureka.get().context());
     }
@@ -43,9 +57,13 @@ public class OperationContext implements Cloneable
      *  This is a very simple class with a single purpose, namely
      *  it exposes methods which receive lambda instances in order to then execute them
      *  in a given context just to then switch back to the original context again.
+     *  A {@link Runner} wraps both the called context as well as the context of the caller in order
+     *  to perform temporary context switching during the execution of lambdas passed to the {@link Runner}.
+     *  After a given lambda was executed executed, the original context will be restored
+     *  in the current thread local {@link Neureka} instance.
      */
-    public static class Runner {
-
+    public static class Runner
+    {
         private final OperationContext originalContext;
         private final OperationContext visitedContext;
 
@@ -129,6 +147,10 @@ public class OperationContext implements Cloneable
         return _getAutogradFunction;
     }
 
+    /**
+     *  This creates a new context which is completely void of any {@link Operation} implementation instances.
+     *  Use this constructor to test, debug, build and populate custom execution contexts.
+     */
     public OperationContext()
     {
         _lookup = new HashMap<>();
@@ -137,25 +159,27 @@ public class OperationContext implements Cloneable
     }
 
     public void addOperation( Operation operation ) {
-        incrementID();
         instances().add( operation );
-        assert !lookup().containsKey( operation.getOperator() );
-        assert !lookup().containsKey( operation.getFunction() );
-        lookup().put( operation.getOperator(), operation );
-        lookup().put( operation.getFunction(), operation );
-        lookup().put( operation.getOperator().toLowerCase(), operation );
+        String function = operation.getFunction();
+        String operator = operation.getOperator();
+        assert !lookup().containsKey( operator );
+        assert !lookup().containsKey( function );
+        lookup().put( operator, operation );
+        lookup().put( function, operation );
+        lookup().put( operator.toLowerCase(), operation );
         if (
-                operation.getOperator()
+                operator
                         .replace((""+((char)171)), "")
                         .replace((""+((char)187)), "")
                         .matches("[a-z]")
         ) {
-            if ( operation.getOperator().contains( ""+((char)171) ) )
-                this.lookup().put(operation.getOperator().replace((""+((char)171)), "<<"), operation);
+            if ( operator.contains( ""+((char)171) ) )
+                this.lookup().put(operator.replace((""+((char)171)), "<<"), operation);
 
-            if ( operation.getOperator().contains( ""+((char)187) ) )
-                this.lookup().put(operation.getOperator().replace((""+((char)187)),">>"), operation);
+            if ( operator.contains( ""+((char)187) ) )
+                this.lookup().put(operator.replace((""+((char)187)),">>"), operation);
         }
+        incrementID();
     }
 
     public void incrementID()

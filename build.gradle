@@ -182,14 +182,19 @@ dependencies {
     //*/
 
     // Test suite : Groovy, Spock (+ sl4j, + Spock-Reports)
-    testCompile group: 'org.codehaus.groovy', name: 'groovy', version: '3.0.7'
-    testCompile group: 'org.spockframework', name: 'spock-core', version: '2.0-M2-groovy-3.0'
-    testCompile group: 'org.spockframework', name: 'spock-bom', version: '2.0-M2-groovy-3.0'
-    testCompile 'com.athaydes:spock-reports:2.0-RC2', { transitive = false }
+    // mandatory dependencies for using Spock
+    implementation "org.codehaus.groovy:groovy:3.0.7"
+    testImplementation platform("org.spockframework:spock-bom:2.0-groovy-3.0")
+    testImplementation "org.spockframework:spock-core"
+    testImplementation "org.spockframework:spock-junit4"  // you can remove this if your code does not rely on old JUnit 4 rules
+    testImplementation 'com.athaydes:spock-reports:2.0-groovy-3.0'//, { transitive = false }
+
     testImplementation 'org.slf4j:slf4j-api:1.7.30'  // LOGGING
     testRuntimeClasspath 'org.slf4j:slf4j-simple:1.7.30'
-    testRuntime "net.bytebuddy:byte-buddy:1.9.3" // allows mocking of classes (in addition to interfaces)
-    testRuntime "org.objenesis:objenesis:2.6"    // allows mocking of classes without default constructor (together with CGLIB)
+
+    testRuntimeOnly "net.bytebuddy:byte-buddy:1.10.10" // allows mocking of classes (in addition to interfaces)
+    testRuntimeOnly "org.objenesis:objenesis:3.1"      // allows mocking of classes without default constructor (together with ByteBuddy or CGLIB)
+
     // Lombok :
     testCompileOnly 'org.projectlombok:lombok:1.18.18'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.18'

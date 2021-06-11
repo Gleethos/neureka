@@ -2503,6 +2503,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public <T> Tsr<T> asType( Class<T> typeClass )
     {
+        if ( typeClass == Tsr.class ) return (Tsr<T>) this.slice().get();
         DataType newDT = DataType.of( typeClass );
         Object newData;
         if ( this.isOutsourced() ) {

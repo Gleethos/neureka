@@ -1,7 +1,7 @@
 package ut.calculus
 
 import neureka.Neureka
-import neureka.backend.api.operations.AbstractOperation
+import neureka.backend.api.Operation
 import neureka.backend.api.operations.OperationContext
 import spock.lang.Specification
 
@@ -12,7 +12,7 @@ class OperationContext_Unit_Tests extends Specification
     def 'OperationContext instances can be created by cloning from Singleton instance.'()
     {
         given : 'The singleton OperationContext instance and a OperationType mock.'
-            def mockOperation = Mock(AbstractOperation)
+            def mockOperation = Mock(Operation)
             def context = Neureka.get().context()
 
         when : 'A clone is being created by calling "clone()" on the given context...'
@@ -22,14 +22,16 @@ class OperationContext_Unit_Tests extends Specification
             clone != context
 
         and : 'They contain the same entries.'
-            clone.size() == context.size()
-            clone.lookup() == context.lookup()
+            clone.size()      == context.size()
+            clone.lookup()    == context.lookup()
             clone.instances() == context.instances()
 
-        when : 'The clone is changes its state.'
-            clone.incrementID()
-            clone.lookup().put("TEST KEY", null)
-            clone.instances().add( mockOperation )
+        when :
+            1 * mockOperation.getOperator() >> ""
+            1 * mockOperation.getFunction() >> ""
+
+        and : 'The clone is changes its state.'
+            clone.addOperation( mockOperation )
 
         then : 'Their properties will no longer be the same.'
             clone.size() != context.size()
@@ -39,7 +41,7 @@ class OperationContext_Unit_Tests extends Specification
         and : 'The change will be as expected.'
             clone.size() == context.size() + 1
             clone.lookup().size() == context.lookup().size() + 1
-            clone.lookup().containsKey("TEST KEY")
+            clone.lookup().containsKey("")
             clone.instances().size() == context.instances().size() + 1
 
     }
