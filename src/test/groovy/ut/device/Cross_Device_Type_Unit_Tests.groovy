@@ -66,10 +66,8 @@ class Cross_Device_Type_Unit_Tests extends Specification
             Tsr t = new Tsr<>(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).set(device)
 
         when : 'A numeric array is passed to said tensor...'
-            if( data1 instanceof float[] ) t.setValue32(data1)
-            else t.setValue64(data1 as double[])
-            if( data2 instanceof float[] ) t.setValue32(data2)
-            else t.setValue64(data2 as double[])
+            t.setValue(data1)
+            t.setValue(data2)
 
         then : 'The tensor (as String) contains the expected String.'
             t.toString().contains(expected)

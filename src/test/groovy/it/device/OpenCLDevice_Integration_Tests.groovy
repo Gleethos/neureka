@@ -169,7 +169,7 @@ class OpenCLDevice_Integration_Tests extends Specification
 
             long[] local=   new long[]{ TSM/WPTM, TSN/WPTN }
             long[] global = new long[]{ (M/WPTM), (N/WPTN) }
-            println('TSM:'+TSM+' - TSN:'+TSN+' - TSK:'+TSK+' - WPTM'+WPTM+' - WPTN:'+WPTN+' |'+local+'|'+global)
+            //println('TSM:'+TSM+' - TSN:'+TSN+' - TSK:'+TSK+' - WPTM'+WPTM+' - WPTN:'+WPTN+' |'+local+'|'+global)
 
             Tsr A = new Tsr( [M,K], 0 )
             Tsr B = new Tsr( [K,N], 0 )
@@ -290,7 +290,7 @@ class OpenCLDevice_Integration_Tests extends Specification
                     .pass( M ).pass( N ).pass( K )
                     .passRaw( A ).passRaw( B ).passRaw( C )
                     .call( global, local )
-            println(C)
+
         then :
             C.toString() == expected
 

@@ -30,7 +30,7 @@ SOFTWARE.
      \/_____/_|         A long yet shallow class.
 
     This is the the core work-horse class of Neureka. The 'Tsr' class!
-    It is a three-letter abbreviation of the word "tensor"!
+    It is a three-letter abbreviation of the word "Tensor"!
 
 ------------------------------------------------------------------------------------------------------------------------
 
@@ -193,6 +193,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         --------------------------------------------
     */
 
+    /**
+     *  This constructor creates a completely empty tensor which is void of any contents and meaning.
+     *  The use case for this would be to use the produced {@link Tsr}
+     *  instance as a target for an inline operations which fills this instance with an actual value. <br>
+     *  An example of this approach would be to call the {@link #putAt(List, Tsr)} method with an empty list as key.
+     *  This will be interpreted as an inline copy of the contents of the
+     *  second parameter into this {@link Tsr} instance.
+     */
     public Tsr() {}
 
     public Tsr( Object... args )
@@ -2284,7 +2292,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param key This object is a list defining a targeted index or range of indices...
      * @return A slice tensor or scalar value.
      */
-    public Tsr<V> putAt(List<?> key, Tsr<V> value ) {
+    public Tsr<V> putAt( List<?> key, Tsr<V> value ) {
         _putAtCheckFor( value );
         Tsr<V> slice = ( key == null ) ? this : getAt( key );
         return _putAt( slice, value );
@@ -2382,7 +2390,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return this;
     }
 
-    public Tsr<V> setValue64(double[] value ) {
+    /**
+     * @param value The primitive double array whose value ought to be used to populate this tensor.
+     */
+    private void _setValue64( double[] value ) {
         if ( this.isOutsourced() ) this.find( Device.class ).overwrite64( this, value );
         else if ( getData() == null ) {
             setDataType( DataType.of( F64.class ) );
@@ -2391,27 +2402,28 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         else if ( getData() instanceof float[] )
             for ( int i = 0; i < value.length; i++ ) ( (float[]) getData())[ i ] = (float) value[ i ];
         else if ( getData() instanceof double[] )
-            for ( int i = 0; i < value.length; i++ ) ( (double[]) getData())[ i ] = value[ i ];
-        return this;
+            System.arraycopy(value, 0, getData(), 0, value.length);
     }
 
-    public Tsr<V> setValue32(float[] value ) {
+    /**
+     * @param value The primitive float array whose value ought to be used to populate this tensor.
+     */
+    private void _setValue32( float[] value ) {
         if ( this.isOutsourced() ) this.find( Device.class ).overwrite32( this, value );
         else if ( getData() == null ) {
             setDataType( DataType.of( F32.class ) );
             _setData( value );
         }
         else if ( getData() instanceof float[] )
-            for ( int i = 0; i < value.length; i++ ) ( (float[]) getData())[ i ] = value[ i ];
+            System.arraycopy(value, 0, getData(), 0, value.length);
         else if ( getData() instanceof double[] )
             for ( int i = 0; i < value.length; i++ ) ( (double[]) getData())[ i ] = value[ i ];
-        return this;
     }
 
     public Tsr<V> setValue(Object value )
     {
-        if ( value instanceof float[] ) this.setValue32( (float[]) value );
-        else if ( value instanceof  double[] ) this.setValue64( (double[]) value );
+        if ( value instanceof float[] ) this._setValue32( (float[]) value );
+        else if ( value instanceof  double[] ) this._setValue64( (double[]) value );
         else if ( value instanceof Float ) {
             this.setIsVirtual( true );
             if ( this.is32() ) ( (float[]) getData())[ 0 ] = (Float) value;
@@ -2434,10 +2446,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public Object getValue() { // TODO : Make this what it is supposed to be!!! (returning a copy of the targeted data)
         if ( this.isOutsourced() ) {
-            Device device = find( Device.class );
-            if ( device != null ) {
+            Device<V> device = find( Device.class );
+            if ( device != null )
                 return device.valueFor( this );
-            }
+
             else return getData();
         }
         else if ( !this.isVirtual() ) return getData();
@@ -2453,16 +2465,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 : gradient.value64();
     }
 
-    @Deprecated
-    public float[] gradient32() {
-        Tsr<V> gradient = this.getGradient();
-        if ( gradient == null ) return new float[ 0 ];
-        return ( this.is64() )
-                ? DataConverter.Utility.doubleToFloat( gradient.value64() )
-                : gradient.value32();
-    }
-
-
+    /**
+     *  This method takes the provided {@link Tsr} instance and adds it's
+     *  contents to the contents of the {@link Tsr} which is set as gradient of this very {@link Tsr}.
+     *
+     * @param error The error gradient which ought to be added to the gradient of this tensor.
+     * @return This very tensor instance to enable method chaining.
+     */
     public Tsr<V> addToGradient(Tsr<V> error ) {
         if (
                 !forComponent(
@@ -2617,8 +2626,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    //DISPLAY :
-    //=========================
     public String toString( String mode ) {
         return _toString( mode, ( mode.contains( "f" ) ) ? "    " : null );
     }
@@ -2648,7 +2655,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     {
         int largest = -1;
         int[] shape = null;
-        for ( Tsr t : tensors ) if ( t.rank() > largest ) {
+        for ( Tsr<?> t : tensors ) if ( t.rank() > largest ) {
             largest = t.rank();
             shape = t.getNDConf().shape();
         }
@@ -2775,11 +2782,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             return E( shape.stream().mapToInt( e -> e ).toArray() );
         }
 
-        public  static Tsr<?> E( int[] shape ) {
-            return new Tsr( shape, 2.7182818284590452353602874713527 );
+        public  static Tsr<Number> E( int... shape ) {
+            return new Tsr<>( shape, 2.7182818284590452353602874713527 );
         }
 
-        public static Tsr<?> newRandom( int[] shape ) {
+        public static Tsr<?> newRandom( int... shape ) {
             return newRandom( shape, 8701252152903546L );
         }
 
@@ -2802,9 +2809,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         }
 
         public static Tsr<?> newTsrLike( Tsr<?> template ) { // The output tensor will not have gradients!
-            Tsr t = _newEmptyLike( template );
-            if ( template.is32() ) t.setValue32( new float[ template.size() ] );
-            else t.setValue64( new double[ template.size() ] );
+            Tsr<Object> t = (Tsr<Object>) _newEmptyLike( template );
+            if ( template.is32() ) t._setValue32( new float[ template.size() ] );
+            else t._setValue64( new double[ template.size() ] );
             try {
                 if ( template.isOutsourced() ) ( (Device<Object>) template.find( Device.class ) ).store( t );
             } catch ( Exception exception ) {

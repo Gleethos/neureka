@@ -1,10 +1,11 @@
 package st.tests
 
-import neureka.Neureka
+
 import neureka.Tsr
 import neureka.devices.Device
 
-class SimpleNNSystemTest {
+class SimpleNNSystemTest
+{
     static void on(Device device)
     {
         Tsr X = new Tsr(// input data: 5 vectors in binary form
