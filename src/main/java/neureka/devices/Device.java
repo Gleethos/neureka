@@ -66,12 +66,12 @@ import java.util.function.IntFunction;
 public interface Device<ValType> extends Component<Tsr<ValType>>, Storage<ValType>, Iterable<Tsr<ValType>>
 {
     /**
-     * This method return Device instances matching
+     * This method returns {@link Device} instances matching
      * the given search parameter.
-     * @param name The search parameter and name of the requested Device instance.
-     * @return The found Device instance or simply the HostCPU instance by default.
+     * @param name The search parameter and name of the requested {@link Device} instance.
+     * @return The found {@link Device} instance or simply the HostCPU instance by default.
      */
-    static Device find( String name )
+    static Device<?> find( String name )
     {
         String search = name.toLowerCase();
         boolean probablyWantsGPU = Arrays.stream(
@@ -118,27 +118,27 @@ public interface Device<ValType> extends Component<Tsr<ValType>>, Storage<ValTyp
      *  Implementations of this method ought to store the value
      *  of the given tensor and the "parent" tensor in whatever
      *  formant suites the underlying implementation and or final type.
-     *  Device implementations are also tensor storages
+     *  {@link Device} implementations are also tensor storages
      *  which may also have to store tensors which are slices of bigger tensors.
      *
      * @param tensor The tensor whose data ought to be stored.
      * @return A reference this object to allow for method chaining. (factory pattern)
      */
-    Device store( Tsr<ValType> tensor, Tsr<ValType> parent );
+    Device<ValType> store( Tsr<ValType> tensor, Tsr<ValType> parent );
 
     boolean has( Tsr<ValType> tensor );
 
-    Device free( Tsr<ValType> tensor );
+    Device<ValType> free( Tsr<ValType> tensor );
 
-    Device cleaning( Tsr<ValType> tensor, Runnable action );
+    Device<ValType> cleaning( Tsr<ValType> tensor, Runnable action );
 
-    Device overwrite64( Tsr<ValType> tensor, double[] value );
+    Device<ValType> overwrite64( Tsr<ValType> tensor, double[] value );
 
-    Device overwrite32( Tsr<ValType> tensor, float[] value );
+    Device<ValType> overwrite32( Tsr<ValType> tensor, float[] value );
 
-    Device swap( Tsr<ValType> former, Tsr<ValType> replacement );
+    Device<ValType> swap( Tsr<ValType> former, Tsr<ValType> replacement );
 
-    Device execute( ExecutionCall call );
+    Device<ValType> execute( ExecutionCall call );
 
     Object valueFor( Tsr<ValType> tensor );
 
