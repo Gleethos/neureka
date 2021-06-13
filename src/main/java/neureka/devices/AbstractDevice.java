@@ -105,9 +105,9 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
      * @return This very device instance in order to enable method chaining.
      */
     @Override
-    public Device<ValType> execute( ExecutionCall call )
+    public Device<ValType> execute( ExecutionCall<Device<?>> call )
     {
-        call = call.getAlgorithm().instantiateNewTensorsForExecutionIn( call );
+        call = (ExecutionCall<Device<?>>) call.getAlgorithm().instantiateNewTensorsForExecutionIn( call );
         for ( Tsr<?> t : call.getTensors() ) {
             if ( t == null ) throw new IllegalArgumentException(
                     "Device arguments may not be null!\n" +

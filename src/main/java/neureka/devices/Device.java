@@ -138,7 +138,7 @@ public interface Device<ValType> extends Component<Tsr<ValType>>, Storage<ValTyp
 
     Device<ValType> swap( Tsr<ValType> former, Tsr<ValType> replacement );
 
-    Device<ValType> execute( ExecutionCall call );
+    Device<ValType> execute( ExecutionCall<Device<?>> call );
 
     Object valueFor( Tsr<ValType> tensor );
 

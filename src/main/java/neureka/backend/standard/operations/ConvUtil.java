@@ -62,7 +62,7 @@ public class ConvUtil {
                                         : null;
 
                                 for (Tsr t : tsrs) if (t != null) t.setIsVirtual( false );
-                                call.getDevice().execute(call.withTensors(tsrs));
+                                call.getDevice().execute((ExecutionCall<Device<?>>) call.withTensors(tsrs));
                                 return tsrs[ 0 ];
                             } else {
                                 if (call.getDerivativeIndex() < 0) {

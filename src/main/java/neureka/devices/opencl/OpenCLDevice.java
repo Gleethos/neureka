@@ -70,7 +70,7 @@ import java.util.*;
 import static org.jocl.CL.*;
 
 /**
- *  This class is a concrete implementation of the Device interface by extending the AbstractDevice class.
+ *  This class is a concrete implementation of the {@link Device} interface by extending the {@link AbstractDevice} class.
  *  Instances of this class internally utilize the OpenCL API in order to use supported
  *  accelerator hardware like GPUs or FPGAs for storing tensors and executing operations on them.
  */
@@ -464,9 +464,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * @return The truth value of the fact that the provided tensor is on this device.
      */
     @Override
-    public boolean has( Tsr<Number> tensor ) {
-        return _tensors.contains( tensor );
-    }
+    public boolean has( Tsr<Number> tensor ) { return _tensors.contains( tensor ); }
 
 
     private void _store( Tsr<Number> tensor, cl_tsr newClTsr, int fp ) {
@@ -547,7 +545,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
 
     @Override
-    public Device overwrite32( Tsr<Number> tensor, float[] value) {
+    public Device<Number> overwrite32( Tsr<Number> tensor, float[] value) {
         cl_tsr clt = tensor.find( cl_tsr.class );
         if ( clt.fp == 1 ) {
             if ( clt.value.event != null ) clWaitForEvents( 1, new cl_event[]{ clt.value.event } );
@@ -570,7 +568,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public Device swap(Tsr<Number> former, Tsr<Number> replacement)
+    public Device<Number> swap(Tsr<Number> former, Tsr<Number> replacement)
     {
         cl_tsr clTsr = former.find( cl_tsr.class );
         former.remove( cl_tsr.class );

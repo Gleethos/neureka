@@ -2,6 +2,7 @@ package neureka.backend.standard.algorithms;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.api.Operation;
 import neureka.devices.Device;
@@ -50,7 +51,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                         Tsr[] tsrs = {call.getTsrOfType( Number.class, 0+offset ), call.getTsrOfType( Number.class, 1+offset) };
                         Tsr.makeFit(tsrs, caller.isDoingAD() );
                         tsrs = new Tsr[]{null, tsrs[0], tsrs[1]};
-                        call.getDevice().execute( call.withTensors( tsrs ) );
+                        call.getDevice().execute( (ExecutionCall<Device<?>>) call.withTensors( tsrs ) );
                         return tsrs[0];
                     }
                     return null;

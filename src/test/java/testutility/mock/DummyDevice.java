@@ -15,19 +15,13 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public Device restore(Tsr tensor) {
-        return this;
-    }
+    public Device<Object> restore(Tsr tensor) { return this; }
 
     @Override
-    public Device store(Tsr tensor) {
-        return this;
-    }
+    public Device<Object> store(Tsr tensor) { return this; }
 
     @Override
-    public Device store(Tsr tensor, Tsr parent) {
-        return this;
-    }
+    public Device<Object> store(Tsr tensor, Tsr parent) { return this; }
 
     @Override
     public boolean has(Tsr tensor) {
@@ -35,52 +29,32 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public Device free(Tsr tensor) {
-        return this;
-    }
+    public Device<Object> free(Tsr tensor) { return this; }
 
     @Override
-    public Device cleaning(Tsr tensor, Runnable action) {
-        return null;
-    }
+    public Device<Object> cleaning(Tsr tensor, Runnable action) { return null; }
 
     @Override
-    public Device overwrite64(Tsr tensor, double[] value) {
-        return this;
-    }
+    public Device<Object> overwrite64(Tsr tensor, double[] value) { return this; }
 
     @Override
-    public Device overwrite32(Tsr tensor, float[] value) {
-        return this;
-    }
+    public Device<Object> overwrite32(Tsr tensor, float[] value) { return this; }
 
     @Override
-    public Device swap(Tsr former, Tsr replacement) {
-        return this;
-    }
+    public Device<Object> swap(Tsr former, Tsr replacement) { return this; }
 
     @Override
-    public Device execute( ExecutionCall call ) {
-        return this;
-    }
+    public Device<Object> execute( ExecutionCall<Device<?>> call ) { return this; }
 
     @Override
-    public Object valueFor(Tsr<Object> tensor) {
-        return null;
-    }
+    public Object valueFor(Tsr<Object> tensor) { return null; }
 
     @Override
-    public Object valueFor(Tsr<Object> tensor, int index) {
-        return null;
-    }
+    public Object valueFor(Tsr<Object> tensor, int index) { return null; }
 
     @Override
-    public Collection<Tsr<Object>> getTensors() {
-        return null;
-    }
+    public Collection<Tsr<Object>> getTensors() { return null; }
 
     @Override
-    public void update(Tsr oldOwner, Tsr newOwner) {
-
-    }
+    public void update(Tsr oldOwner, Tsr newOwner) { }
 }
