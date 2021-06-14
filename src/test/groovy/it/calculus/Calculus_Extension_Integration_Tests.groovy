@@ -6,7 +6,7 @@ import neureka.Tsr
 import neureka.autograd.DefaultADAgent
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.operations.OperationBuilder
-import neureka.backend.api.operations.OperationContext
+import neureka.backend.api.OperationContext
 import neureka.backend.standard.algorithms.GenericAlgorithm
 import neureka.backend.standard.implementations.HostImplementation
 import neureka.calculus.Function

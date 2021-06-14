@@ -41,7 +41,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import neureka.backend.api.Operation;
-import neureka.backend.api.operations.OperationContext;
+import neureka.backend.api.OperationContext;
 import neureka.dtype.custom.F64;
 import neureka.utility.SettingsLoader;
 import neureka.utility.TsrAsString;

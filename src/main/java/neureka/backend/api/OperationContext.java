@@ -1,10 +1,9 @@
-package neureka.backend.api.operations;
+package neureka.backend.api;
 
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import neureka.Neureka;
-import neureka.backend.api.Operation;
 import neureka.calculus.Cache;
 import neureka.calculus.Function;
 import neureka.calculus.Functions;
@@ -40,105 +39,6 @@ import java.util.function.Supplier;
 @Accessors( prefix = {"_"}, fluent = true ) // Getters don't have a "get" prefix for better readability!
 public class OperationContext implements Cloneable
 {
-    /**
-     *  This is a very simple class with a single purpose, namely
-     *  it exposes methods which receive lambda instances in order to then execute them
-     *  in a given {@link OperationContext}, just to then switch back to the original context again.
-     *  Switching a context simply means that the {@link OperationContext} which produced this {@link Runner}
-     *  will temporarily be set as execution context for the current thread
-     *  local {@link Neureka} instance.                                              <br><br>
-     *
-     *  A {@link Runner} wraps both the called context as well as the context of the caller in order
-     *  to perform this temporary context switching throughout the execution of the lambdas passed to the {@link Runner}.
-     *  After a given lambda was executed, the original context will be restored in the current thread
-     *  local {@link Neureka} instance through the {@link Neureka#setContext(OperationContext)}) method.
-     */
-    public static class Runner
-    {
-        private final OperationContext originalContext;
-        private final OperationContext visitedContext;
-
-        private Runner( OperationContext visited, OperationContext originalContext ) {
-            if ( visited == originalContext ) log.warn("Context runner encountered two identical contexts!");
-            this.originalContext = originalContext;
-            this.visitedContext = visited;
-        }
-
-        /**
-         *  Use this method to supply a lambda which will be executed in the {@link OperationContext}
-         *  which produced this very {@link Runner} instance.
-         *  After the lambda finished execution successfully the original {@link OperationContext} will
-         *  be restored for the current thread local {@link Neureka} instance.
-         *
-         * @param contextSpecificAction The context specific action which will be execute in the {@link OperationContext} which produced this {@link Runner}.
-         * @return This very {@link Runner} instance to enable method chaining.
-         */
-        public Runner run( Runnable contextSpecificAction ) {
-            Neureka.get().setContext( visitedContext );
-            contextSpecificAction.run();
-            Neureka.get().setContext( originalContext );
-            return this;
-        }
-
-        /**
-         *  Use this method to supply a lambda which will be executed in the {@link OperationContext}
-         *  which produced this very {@link Runner} instance.
-         *  After the lambda finished execution successfully the original {@link OperationContext} will be restored.
-         *  This method distinguishes itself from the {@link #run(Runnable)} method because the
-         *  lambda supplied to this method is expected to return something.
-         *  What may be returned is up to the user, one might want to return the result
-         *  of a tensor operation which might be exclusively available in the used context.
-         *
-         * @param contextSpecificAction The context specific action which will be execute in the {@link OperationContext} which produced this {@link Runner}.
-         * @param <T> The return type of the supplied context action which will also be returned by this method.
-         * @return The result of the supplied context action.
-         */
-        public <T> T runAndGet( Supplier<T> contextSpecificAction ) {
-            Neureka.get().setContext( visitedContext );
-            T result = contextSpecificAction.get();
-            Neureka.get().setContext( originalContext );
-            return result;
-        }
-
-        /**
-         *  Use this method to supply a lambda which will be executed in the {@link OperationContext}
-         *  which produced this very {@link Runner} instance.
-         *  After the lambda finished execution successfully the original {@link OperationContext} will be restored.
-         *  This method distinguishes itself from the {@link #run(Runnable)} method because the
-         *  lambda supplied to this method is expected to return something.                            <br>
-         *  What may be returned is up to the user, one might want to return the result
-         *  of a tensor operation which might be exclusively available in the used context.
-         *  This method is doing the exact same thing as the {@link #runAndGet(Supplier)} method,
-         *  however its name is shorter and it can even be omitted entirely when using Groovy.          <br><br>
-         *
-         * @param contextSpecificAction The context specific action which will be execute in the {@link OperationContext} which produced this {@link Runner}.
-         * @param <T> The return type of the supplied context action which will also be returned by this method.
-         * @return The result of the supplied context action.
-         */
-        public <T> T call( Supplier<T> contextSpecificAction ) {
-            return runAndGet( contextSpecificAction );
-        }
-
-        /**
-         *  Use this method to supply a lambda which will be executed in the {@link OperationContext}
-         *  which produced this very {@link Runner} instance.
-         *  After the lambda finished execution successfully the original {@link OperationContext} will be restored.
-         *  This method distinguishes itself from the {@link #run(Runnable)} method because the
-         *  lambda supplied to this method is expected to return something.                            <br>
-         *  What may be returned is up to the user, one might want to return the result
-         *  of a tensor operation which might be exclusively available in the used context.
-         *  This method is doing the exact same thing as the {@link #runAndGet(Supplier)} method,
-         *  however its name is shorter and it can even be omitted entirely when using Kotlin.          <br><br>
-         *
-         * @param contextSpecificAction The context specific action which will be execute in the {@link OperationContext} which produced this {@link Runner}.
-         * @param <T> The return type of the supplied context action which will also be returned by this method.
-         * @return The result of the supplied context action.
-         */
-        public <T> T invoke( Supplier<T> contextSpecificAction ) {
-            return call( contextSpecificAction );
-        }
-    }
-
     /**
      *  A mapping between OperationType identifiers and their corresponding instances.
      */
@@ -309,6 +209,106 @@ public class OperationContext implements Cloneable
         clone._lookup.putAll( _lookup );
         clone._instances.addAll( _instances );
         return clone;
+    }
+
+
+    /**
+     *  This is a very simple class with a single purpose, namely
+     *  it exposes methods which receive lambda instances in order to then execute them
+     *  in a given {@link OperationContext}, just to then switch back to the original context again.
+     *  Switching a context simply means that the {@link OperationContext} which produced this {@link Runner}
+     *  will temporarily be set as execution context for the current thread
+     *  local {@link Neureka} instance.                                              <br><br>
+     *
+     *  A {@link Runner} wraps both the called context as well as the context of the caller in order
+     *  to perform this temporary context switching throughout the execution of the lambdas passed to the {@link Runner}.
+     *  After a given lambda was executed, the original context will be restored in the current thread
+     *  local {@link Neureka} instance through the {@link Neureka#setContext(OperationContext)}) method.
+     */
+    public static class Runner
+    {
+        private final OperationContext originalContext;
+        private final OperationContext visitedContext;
+
+        private Runner( OperationContext visited, OperationContext originalContext ) {
+            if ( visited == originalContext ) log.warn("Context runner encountered two identical contexts!");
+            this.originalContext = originalContext;
+            this.visitedContext = visited;
+        }
+
+        /**
+         *  Use this method to supply a lambda which will be executed in the {@link OperationContext}
+         *  which produced this very {@link Runner} instance.
+         *  After the lambda finished execution successfully the original {@link OperationContext} will
+         *  be restored for the current thread local {@link Neureka} instance.
+         *
+         * @param contextSpecificAction The context specific action which will be execute in the {@link OperationContext} which produced this {@link Runner}.
+         * @return This very {@link Runner} instance to enable method chaining.
+         */
+        public Runner run( Runnable contextSpecificAction ) {
+            Neureka.get().setContext( visitedContext );
+            contextSpecificAction.run();
+            Neureka.get().setContext( originalContext );
+            return this;
+        }
+
+        /**
+         *  Use this method to supply a lambda which will be executed in the {@link OperationContext}
+         *  which produced this very {@link Runner} instance.
+         *  After the lambda finished execution successfully the original {@link OperationContext} will be restored.
+         *  This method distinguishes itself from the {@link #run(Runnable)} method because the
+         *  lambda supplied to this method is expected to return something.
+         *  What may be returned is up to the user, one might want to return the result
+         *  of a tensor operation which might be exclusively available in the used context.
+         *
+         * @param contextSpecificAction The context specific action which will be execute in the {@link OperationContext} which produced this {@link Runner}.
+         * @param <T> The return type of the supplied context action which will also be returned by this method.
+         * @return The result of the supplied context action.
+         */
+        public <T> T runAndGet( Supplier<T> contextSpecificAction ) {
+            Neureka.get().setContext( visitedContext );
+            T result = contextSpecificAction.get();
+            Neureka.get().setContext( originalContext );
+            return result;
+        }
+
+        /**
+         *  Use this method to supply a lambda which will be executed in the {@link OperationContext}
+         *  which produced this very {@link Runner} instance.
+         *  After the lambda finished execution successfully the original {@link OperationContext} will be restored.
+         *  This method distinguishes itself from the {@link #run(Runnable)} method because the
+         *  lambda supplied to this method is expected to return something.                            <br>
+         *  What may be returned is up to the user, one might want to return the result
+         *  of a tensor operation which might be exclusively available in the used context.
+         *  This method is doing the exact same thing as the {@link #runAndGet(Supplier)} method,
+         *  however its name is shorter and it can even be omitted entirely when using Groovy.          <br><br>
+         *
+         * @param contextSpecificAction The context specific action which will be execute in the {@link OperationContext} which produced this {@link Runner}.
+         * @param <T> The return type of the supplied context action which will also be returned by this method.
+         * @return The result of the supplied context action.
+         */
+        public <T> T call( Supplier<T> contextSpecificAction ) {
+            return runAndGet( contextSpecificAction );
+        }
+
+        /**
+         *  Use this method to supply a lambda which will be executed in the {@link OperationContext}
+         *  which produced this very {@link Runner} instance.
+         *  After the lambda finished execution successfully the original {@link OperationContext} will be restored.
+         *  This method distinguishes itself from the {@link #run(Runnable)} method because the
+         *  lambda supplied to this method is expected to return something.                            <br>
+         *  What may be returned is up to the user, one might want to return the result
+         *  of a tensor operation which might be exclusively available in the used context.
+         *  This method is doing the exact same thing as the {@link #runAndGet(Supplier)} method,
+         *  however its name is shorter and it can even be omitted entirely when using Kotlin.          <br><br>
+         *
+         * @param contextSpecificAction The context specific action which will be execute in the {@link OperationContext} which produced this {@link Runner}.
+         * @param <T> The return type of the supplied context action which will also be returned by this method.
+         * @return The result of the supplied context action.
+         */
+        public <T> T invoke( Supplier<T> contextSpecificAction ) {
+            return call( contextSpecificAction );
+        }
     }
 
 }

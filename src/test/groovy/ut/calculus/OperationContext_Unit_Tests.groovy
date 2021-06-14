@@ -2,7 +2,7 @@ package ut.calculus
 
 import neureka.Neureka
 import neureka.backend.api.Operation
-import neureka.backend.api.operations.OperationContext
+import neureka.backend.api.OperationContext
 import spock.lang.Specification
 
 import java.util.function.Function

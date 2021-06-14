@@ -68,7 +68,8 @@ public final class AxisFrame<G, V> {
         return _allAliasGetterForIndex.apply( index );
     } 
 
-    public static class Builder<SetType, GetType, ValueType> {
+    public static class Builder<SetType, GetType, ValueType>
+    {
         private At<Object, Get<GetType>> keyBasedGetter;
         private At<Object, Set<ValueType>> keyBasedSetter;
         private Replace<Object, Object, NDFrame<ValueType>> replacer;

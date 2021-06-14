@@ -1,7 +1,7 @@
 package neureka.calculus.assembly;
 
 import neureka.backend.api.Operation;
-import neureka.backend.api.operations.OperationContext;
+import neureka.backend.api.OperationContext;
 import neureka.calculus.Function;
 import neureka.calculus.implementations.FunctionConstant;
 import neureka.calculus.implementations.FunctionInput;

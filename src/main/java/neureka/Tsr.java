@@ -111,6 +111,7 @@ import neureka.ndim.iterators.NDIterator;
 import neureka.optimization.Optimizer;
 import neureka.utility.DataConverter;
 import neureka.utility.TsrAsString;
+import neureka.utility.fluent.TensorBuilder;
 import neureka.utility.slicing.SliceBuilder;
 import neureka.utility.slicing.SmartSlicer;
 import org.jetbrains.annotations.NotNull;
@@ -216,10 +217,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 _construct( (Object[]) args[ 0 ] );
                 return;
             } else if ( args[ 0 ] instanceof BigDecimal ) {
-                _construct( new int[]{ 1 }, ( (BigDecimal) args[ 0 ] ).doubleValue());
+                _constructAllF64( new int[]{ 1 }, ( (BigDecimal) args[ 0 ] ).doubleValue());
                 return;
             } else if ( args[ 0 ] instanceof Integer ) {
-                _construct( new int[]{ 1 }, ( (Integer) args[ 0 ] ).doubleValue() );
+                _constructAllF64( new int[]{ 1 }, ( (Integer) args[ 0 ] ).doubleValue() );
                 return;
             } else {
                 String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
@@ -242,7 +243,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         if ( args[ 0 ] instanceof int[] ) {
             if ( args[ 1 ] instanceof Double || args[ 1 ] instanceof Integer ) {
                 args[ 1 ] = ( args[ 1 ] instanceof Integer ) ? ( (Integer) args[ 1 ] ).doubleValue() : args[ 1 ];
-                _construct( (int[]) args[ 0 ], (Double) args[ 1 ] );
+                _constructAllF64( (int[]) args[ 0 ], (Double) args[ 1 ] );
                 return;
             } else if ( args[ 1 ] instanceof double[] ) {
                 _constructForDoubles( (int[]) args[ 0 ], (double[]) args[ 1 ] );
@@ -460,7 +461,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public Tsr( double value )
     {
-        _construct( new int[]{ 1 }, value );
+        _constructAllF64( new int[]{ 1 }, value );
     }
 
     public Tsr( float[] value )
@@ -480,7 +481,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public Tsr( int[] shape, double value )
     {
-        _construct( shape, value );
+        _constructAllF64( shape, value );
     }
 
 
@@ -509,6 +510,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public Tsr( int[] shape, DataType<?> dataType, Object data )
     {
+        if ( dataType == DataType.of( data.getClass() ) ) {
+            if ( data instanceof Double  ) { _constructAllF64( shape, (Double) data );  return; }
+            if ( data instanceof Float   ) { _constructAllF32( shape, (Float) data );   return; }
+            if ( data instanceof Integer ) { _constructAllI32( shape, (Integer) data ); return; }
+        }
         setDataType( dataType );
         _configureFromNewShape( shape, false, false );
         _setData( data );
@@ -536,7 +542,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         _configureFromNewShape( shape, virtual, true );
     }
 
-    private void _construct( int[] shape, double value )
+    private void _constructAllF64( int[] shape, double value )
     {
         int size = NDConfiguration.Utility.szeOfShp( shape );
         setDataType( DataType.of( F64.class ) );
@@ -544,6 +550,26 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         setIsVirtual( size > 1 );
         _configureFromNewShape( shape, size > 1, true );
         ( (double[]) getData())[ 0 ] = value;
+    }
+
+    private void _constructAllF32( int[] shape, float value )
+    {
+        int size = NDConfiguration.Utility.szeOfShp( shape );
+        setDataType( DataType.of( F32.class ) );
+        _allocate( 1 );
+        setIsVirtual( size > 1 );
+        _configureFromNewShape( shape, size > 1, true );
+        ( (float[]) getData())[ 0 ] = value;
+    }
+
+    private void _constructAllI32( int[] shape, int value )
+    {
+        int size = NDConfiguration.Utility.szeOfShp( shape );
+        setDataType( DataType.of( I32.class ) );
+        _allocate( 1 );
+        setIsVirtual( size > 1 );
+        _configureFromNewShape( shape, size > 1, true );
+        ( (int[]) getData())[ 0 ] = value;
     }
 
     private void _constructForDoubles(int[] shape, double[] value )
@@ -2770,6 +2796,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    public static <V> TensorBuilder<V> forType( Class<V> typeClass ) { return new TensorBuilder( typeClass ); }
 
     /**
      *  This is a nested static utility class which is used
