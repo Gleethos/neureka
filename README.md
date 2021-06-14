@@ -202,4 +202,10 @@ Help me out for a couple of :beers:!
 
 ---
 
+<!---
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/Gleethos/neureka.svg)](https://starchart.cc/Gleethos/neureka)
+-->      
+
 [![Tweet](https://img.shields.io/twitter/url/https/github.com/Gleethos/neureka.svg?style=social)](https://twitter.com/intent/tweet?text=Check%20out%20Neureka!%20https://github.com/Gleethos/neureka)
