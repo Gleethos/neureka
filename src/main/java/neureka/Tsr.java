@@ -2796,7 +2796,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public static <V> TensorBuilder<V> forType( Class<V> typeClass ) { return new TensorBuilder( typeClass ); }
+    public static <V> TensorBuilder<V> of( Class<V> typeClass ) { return new TensorBuilder( typeClass ); }
 
     /**
      *  This is a nested static utility class which is used

@@ -10,24 +10,44 @@ import neureka.utility.fluent.states.WithShapeOrScalarOrVector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
 
-    /*
-        Tsr.forType(Double.class)
-              .withShape( 2, 3, 4 )
-              .iterativelyFilledBy( 5, 3, 5 )
-
-        Tsr.forType(Double.class)
-              .withShape( 2, 3, 4 )
-              .iterativelyFilledFrom( 2 ).to( 9 ).step( 2 )
-
-        Tsr.forType(Float.class).scalar( 3f )
-
-        Tsr.forType(Byte.class).vector( 2, 5, 6, 7, 8 )
-
-     */
-
+/**
+ *  This class exposes a fluent builder API for creating {@link Tsr} instances.
+ *  An simple example would be:
+ * <pre>{@code
+ *
+ *    Tsr.of(Double.class)
+ *          .withShape( 2, 3, 4 )
+ *          .iterativelyFilledBy( 5, 3, 5 )
+ *
+ * }</pre>
+ *
+ * It is also possible to define a range using the API to populate the tensor with values:
+ * <pre>{@code
+ *
+ *    Tsr.of(Double.class)
+ *          .withShape( 2, 3, 4 )
+ *          .iterativelyFilledFrom( 2 ).to( 9 ).step( 2 )
+ *
+ * }</pre>
+ *
+ * If one needs a simple scalar then the following shortcut is possible:
+ * <pre>{@code
+ *
+ *    Tsr.of(Float.class).scalar( 3f )
+ *
+ * }</pre>
+ *
+ * This principle works for vectors as well:
+ * <pre>{@code
+ *
+ *     Tsr.of(Byte.class).vector( 2, 5, 6, 7, 8 )
+ *
+ * }</pre>
+ *
+ *
+ * @param <V> The type of the values which ought to be represent.
+ */
 public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrIterFromOrAll<V>, To<V>, Step<V>
 {
     private final DataType<V> _dataType;
@@ -39,7 +59,7 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
 
     @SafeVarargs
     @Override
-    public final Tsr<V> iterativelyFilledBy(V... values) {
+    public final Tsr<V> iterativelyFilledBy( V... values ) {
         return new Tsr<>( _shape, _dataType, values );
     }
 
@@ -80,25 +100,33 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
     @Override
     public Tsr<V> step( double size ) {
         Object data = null;
+        int itemLimit = _size();
+        int itemIndex = 0;
         if ( _dataType == DataType.of( Integer.class ) ) {
             List<Integer> range = new ArrayList<>();
-            for ( int index = ((Integer) _from); index < ((Integer)_to); index += size )
+            for ( int index = ((Integer) _from); index < ((Integer)_to) && itemIndex < itemLimit; index += size ) {
                 range.add( index );
+                itemIndex++;
+            }
             data = range.stream().mapToInt( v -> v ).toArray();
         }
         else if ( _dataType == DataType.of( Double.class ) ) {
             List<Double> range = new ArrayList<>();
-            for ( double index = ((Double) _from); index < ((Double)_to); index += size )
+            for ( double index = ((Double) _from); index < ((Double)_to) && itemIndex < itemLimit; index += size ) {
                 range.add( index );
+                itemIndex++;
+            }
             data = range.stream().mapToDouble( v -> v ).toArray();
         }
         else if ( _dataType == DataType.of( Float.class ) ) {
             List<Float> range = new ArrayList<>();
-            for ( float index = ((Float) _from); index < ((Float)_to); index += size )
-                range.add( index );
+            for ( double index = ((Float) _from); index < ((Float)_to) && itemIndex < itemLimit; index += size ) {
+                range.add( (float) index );
+                itemIndex++;
+            }
             float[] primData = new float[range.size()];
-            for ( int i = 0; i < range.size(); i ++) {
-                primData[i] = range.get(i);
+            for ( int ii = 0; ii < range.size(); ii ++) {
+                primData[ii] = range.get(ii);
             }
             data = primData;
         }
@@ -107,4 +135,11 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
         }
         return new Tsr<V>( _shape, _dataType, data );
     }
+
+    private int _size() {
+        int size = 1;
+        for ( int axis : _shape ) size *= axis;
+        return size;
+    }
+
 }
