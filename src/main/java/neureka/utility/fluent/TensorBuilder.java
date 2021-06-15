@@ -60,7 +60,7 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
     @SafeVarargs
     @Override
     public final Tsr<V> iterativelyFilledBy( V... values ) {
-        return new Tsr<>( _shape, _dataType, values );
+        return Tsr.of( _shape, _dataType, values );
     }
 
     @Override
@@ -71,7 +71,7 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
 
     @Override
     public Tsr<V> all( V value ) {
-        return new Tsr<>( _shape, _dataType, value );
+        return Tsr.of( _shape, _dataType, value );
     }
 
     @Override
@@ -82,12 +82,12 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
 
     @Override
     public Tsr<V> vector( Object[] values ) {
-        return new Tsr<>( new int[]{ values.length }, _dataType, values );
+        return Tsr.of( new int[]{ values.length }, _dataType, values );
     }
 
     @Override
     public Tsr<V> scalar( V value ) {
-        return new Tsr<>( value );
+        return Tsr.of( new int[]{1}, value.getClass(), value );
     }
 
     @Override
@@ -133,7 +133,7 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
         else if ( _from instanceof Comparable && _to instanceof Comparable ) {
             data = new ObjectRange( (Comparable<V>) _from, (Comparable<V>) _to ).step( (int) size );
         }
-        return new Tsr<V>( _shape, _dataType, data );
+        return Tsr.of( _shape, _dataType, data );
     }
 
     private int _size() {

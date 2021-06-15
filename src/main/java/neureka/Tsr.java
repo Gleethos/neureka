@@ -204,11 +204,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  This will be interpreted as an inline copy of the contents of the
      *  second parameter into this {@link Tsr} instance.
      */
-    public Tsr() {}
+    private Tsr() {}
 
     public static Tsr<Object> of( Object... args ) { return new Tsr<>( args ); }
 
-    public Tsr( Object... args )
+    private Tsr( Object... args )
     {
         _construct( args );
     }
@@ -265,7 +265,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             alongside input tensors to the constructor.
             An example would be:
             
-                Tsr<?> t = new Tsr( "tanh(", x, ") * 7 ^", y );  
+                Tsr<?> t = Tsr.of( "tanh(", x, ") * 7 ^", y );  
         */
         boolean containsString = false;
         int numberOfTensors = 0;
@@ -299,15 +299,15 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         --------------------------------------------
     */
 
-    public static Tsr<?> of( List<Integer> arg1, Object arg2 ) { return new Tsr<>( arg1, arg2 ); }
+    public static Tsr of( List<Integer> arg1, Object arg2 ) { return new Tsr<>( arg1, arg2 ); }
 
-    public Tsr( List<Integer> arg1, Object arg2 ) {
+    private Tsr( List<Integer> arg1, Object arg2 ) {
         _construct( new Object[]{ arg1, arg2 } );
     }
 
     public static Tsr<?> of( List<?> arg1, String arg2 ) { return new Tsr<>( arg1, arg2 ); }
 
-    public Tsr( List<?> arg1, String arg2 )
+    private Tsr( List<?> arg1, String arg2 )
     {
         Predicate<Class<?>> isType = c -> arg1.stream().allMatch( e -> e.getClass() == c );
 
@@ -331,7 +331,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return new Tsr<>( shape, range );
     }
 
-    public Tsr( List<Integer> shape, List<V> range )
+    private Tsr( List<Integer> shape, List<V> range )
     {
         // Nested Groovy list should be unpacked:
         if ( range.size() == 1 && range.get( 0 ) instanceof IntRange ) range = (List<V>) range.get( 0 );
@@ -344,7 +344,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public static <V> Tsr<V> of( int[] shape, List<V> range ) { return new Tsr<>( shape, range ); }
 
-    public Tsr( int[] shape, List<V> range )
+    private Tsr( int[] shape, List<V> range )
     {
         // Nested Groovy list should be unpacked:
         if ( range.size() == 1 && range.get( 0 ) instanceof IntRange ) range = (List<V>) range.get( 0 );
@@ -393,11 +393,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         }
     }
 
-    public Tsr<Object> of( List<Object> conf ) {
+    public static Tsr<Object> of( List<Object> conf ) {
         return new Tsr<>( conf );
     }
 
-    public Tsr( List<Object> conf ) {
+    private Tsr( List<Object> conf ) {
         boolean isMatrix = conf.stream().allMatch( e -> e instanceof List );
         if ( isMatrix ) {
             _construct( conf.stream().map( e -> (List<Object>) e ).collect( Collectors.toList() ) );
@@ -478,41 +478,41 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public static <V> TensorBuilder<V> of( Class<V> typeClass ) { return new TensorBuilder( typeClass ); }
 
-    public static Tsr<Double> of( double value ) { return new Tsr<>(value); }
+    public static Tsr of( double value ) { return new Tsr(value); }
 
-    public Tsr( double value ) { _constructAllF64( new int[]{ 1 }, value ); }
+    private Tsr( double value ) { _constructAllF64( new int[]{ 1 }, value ); }
 
     public static Tsr<Float> of( float[] value ) { return new Tsr<>( value ); }
 
-    public Tsr( float[] value ) { _constructForFloats( new int[]{ value.length }, value ); }
+    private Tsr( float[] value ) { _constructForFloats( new int[]{ value.length }, value ); }
 
     public static Tsr<Double> of( int[] shape, String seed ) { return new Tsr<>( shape, seed ); }
 
-    public Tsr( int[] shape, String seed ) { _construct( shape, seed ); }
+    private Tsr( int[] shape, String seed ) { _construct( shape, seed ); }
 
     public static Tsr<Double> of( int[] shape ) { return new Tsr<>( shape ); }
 
-    public Tsr( int[] shape ) { _construct( shape, true, true ); }
+    private Tsr( int[] shape ) { _construct( shape, true, true ); }
 
     public static Tsr<Double> of( int[] shape, double value ) { return new Tsr<>( shape, value ); }
 
-    public Tsr( int[] shape, double value ) { _constructAllF64( shape, value ); }
+    private Tsr( int[] shape, double value ) { _constructAllF64( shape, value ); }
 
     public static Tsr<Double> of( int[] shape, double[] value ) { return new Tsr<>( shape, value ); }
 
-    public Tsr( int[] shape, double[] value ) { _constructForDoubles( shape, value ); }
+    private Tsr( int[] shape, double[] value ) { _constructForDoubles( shape, value ); }
 
     public static <V> Tsr<V> of( int[] shape, DataType<V> type ) { return new Tsr<>( shape, type ); }
 
-    public Tsr( int[] shape, DataType<?> type )
+    private Tsr( int[] shape, DataType<?> type )
     {
         setDataType( DataType.of( type.getTypeClass() ) );
         _construct( shape, true, true );
     }
 
-    public static <V> Tsr<V> of( int[] shape, Class<V> typeClass, Object data ) { return new Tsr<>( shape, typeClass, data ); }
+    public static <V> Tsr of( int[] shape, Class<V> typeClass, Object data ) { return new Tsr<>( shape, typeClass, data ); }
 
-    public Tsr( int[] shape, Class<?> typeClass, Object data )
+    private Tsr( int[] shape, Class<?> typeClass, Object data )
     {
         setDataType( DataType.of( typeClass ) );
         _configureFromNewShape( shape, false, false );
@@ -527,11 +527,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         _constructForRange( shape.stream().mapToInt( e -> e ).toArray(), DataType.of( typeClass ), (V[]) data.toArray());
     }
 
-    public static <V> Tsr<V> of( int[] shape, DataType<V> dataType, Object data ) {
+    public static <V> Tsr of( int[] shape, DataType<V> dataType, Object data ) {
         return new Tsr<>( shape, dataType, data );
     }
 
-    public Tsr( int[] shape, DataType<?> dataType, Object data )
+    private Tsr( int[] shape, DataType<?> dataType, Object data )
     {
         if ( dataType == DataType.of( data.getClass() ) ) {
             if ( data instanceof Double  ) { _constructAllF64( shape, (Double) data );  return; }
@@ -688,6 +688,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         --------------------------------------------
     */
 
+    public static <T> Tsr<T> of( List<Integer> shape, DataType<T> type, Initializer<T> initializer ) {
+        return new Tsr<>( shape, type, initializer );
+    }
+
     /**
      *  This constructor allows the creation of tensors with an additional initialization
      *  lambda for filling the underlying data array with desired values.
@@ -723,6 +727,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param initializer The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
+    public static <T> Tsr<T> of( int[] shape, DataType<T> type, Initializer<T> initializer ) {
+        return new Tsr<>( shape, type, initializer );
+    }
+
+    /**
+     * see {@link #of(int[], DataType, Initializer)}
+     */
     public <T> Tsr( int[] shape, DataType<T> type, Initializer<T> initializer )
     {
         _constructFromInitializer( shape, type, initializer );
@@ -748,6 +759,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         --------------------------------------------
      */
 
+    public static <V> Tsr<V> of( String expression, List<Object> inputs ) {
+        return new Tsr<>( expression, inputs );
+    }
+
     /**
      *  This constructor allows for the creation and execution of Function instances
      *  without actually instantiating them manually,
@@ -761,13 +776,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  very instance.                                                                      <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = new Tsr( "sin( I[0] ) / I[1]", List.of(b, c) )'</i></li>
+     *      <li><i> 'Tsr a = Tsr.of( "sin( I[0] ) / I[1]", List.of(b, c) )'</i></li>
      * </ul>
      *
      * @param expression A String which will be used for parsing a Function AST.
      * @param inputs A list of inputs which can be tensors or numeric types.
      */
-    public Tsr( String expression, List<Object> inputs )
+    private Tsr( String expression, List<Object> inputs )
     {
         if ( inputs.stream().allMatch( e -> e instanceof Tsr ) )
             _construct(
@@ -783,6 +798,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             );
     }
 
+    public static <V> Tsr<V> of( Tsr<V> tensor, String expression ) {
+        return new Tsr<>( tensor, expression );
+    }
+
     /**
      *  This method takes a tensor and a String expression describing
      *  operations which ought to be applied to said tensor.
@@ -790,7 +809,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  namely : "I[0]" <br>
      *  An example would be the following :
      * <ul>
-     *      <li><i> 'Tsr a = new Tsr( b, "sin( I[0] ) * 2" )'</i></li>
+     *      <li><i> 'Tsr a = Tsr.of( b, "sin( I[0] ) * 2" )'</i></li>
      * </ul>
      *
      *  Which takes the tensor 'b' and applies the function "f(x) = sin(x) * 2"
@@ -800,9 +819,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param tensor A tensor which serves as input to the Function instance parsed from the given expression.
      * @param expression The expression describing operations applied to the provided tensor.
      */
-    public Tsr(Tsr<V> tensor, String expression ) {
+    private Tsr(Tsr<V> tensor, String expression ) {
         if ( tensor == null ) return;
         _construct( new Tsr[]{ tensor }, expression, true );
+    }
+
+    public static <V> Tsr<V> of( Tsr<V>[] tensors, String expression ) {
+        return new Tsr<>( tensors, expression );
     }
 
     /**
@@ -812,7 +835,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ... <br>
      *  An example would be the following :
      * <ul>
-     *      <li><i> 'Tsr a = new Tsr( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'</i></li>
+     *      <li><i> 'Tsr a = Tsr.of( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'</i></li>
      * </ul>
      *
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
@@ -821,8 +844,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      * @param expression The expression describing operations applied to the provided tensors.
      */
-    public Tsr(Tsr<V>[] tensors, String expression ) {
+    private Tsr(Tsr<V>[] tensors, String expression ) {
         _construct( tensors, expression, true );
+    }
+
+    public static <V> Tsr<V> of( Tsr<V>[] tensors, String expression, boolean doAD ) {
+        return new Tsr<>(tensors, expression, doAD);
     }
 
     /**
@@ -832,7 +859,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...                    <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = new Tsr( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'</i></li>
+     *      <li><i> 'Tsr a = Tsr.of( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'</i></li>
      * </ul>
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
      *  elementwise to produce a new tensor 'a'!
@@ -845,7 +872,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param expression The expression describing operations applied to the provided tensors.
      * @param doAD A flag which when set to true commands the creation of a computation graph during operation execution.
      */
-    public Tsr(Tsr<V>[] tensors, String expression, boolean doAD )
+    private Tsr(Tsr<V>[] tensors, String expression, boolean doAD )
     {
         _construct( tensors, expression, doAD );
     }
@@ -1624,7 +1651,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public Tsr<V> backward(double value )
     {
-        backward( new Tsr( getNDConf().shape(), value ) );
+        backward( new Tsr<>( getNDConf().shape(), value ) );
         return this;
     }
 
@@ -1965,7 +1992,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public Tsr<V> mean() {
         Tsr<V> ones = new Tsr<>( this.getNDConf().shape(), 1 );
         Tsr<V> sum = Neureka.get().context().getAutogradFunction().conv().call( this, ones );
-        return Neureka.get().context().getAutogradFunction().div().call( sum, new Tsr( this.size() ) );
+        return Neureka.get().context().getAutogradFunction().div().call( sum, new Tsr<>( this.size() ) );
     }
 
     /**
@@ -2287,7 +2314,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 This is simply the 'reshape array' which has been recorded inside the 'Relation' component
                 by the 'Reshape' operation! ( Hopefully! :) ... custom shape operations need to consider this as well! )
 
-                The following would occur when : "new Tsr(...).T().gatAt(...);"
+                The following would occur when : "new Tsr<>(...).T().gatAt(...);"
                 Transposing a tensor performs an inline reshaping of an identical
                 slice of the original tensor! Then again slicing this tensor
                 via the 'getAt(...)' method leads us to a situation where
@@ -2389,7 +2416,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             valueIsDeviceVisitor = true;
         }
         if ( this.isEmpty() && slice.isEmpty() || slice.size() != value.size() ) _become( value ); // TODO: Rethink this a little
-        else new Tsr( new Tsr[]{ slice, value }, "I[ 0 ] <- I[ 1 ]", false );
+        else new Tsr<>( new Tsr[]{ slice, value }, "I[ 0 ] <- I[ 1 ]", false );
         try {
             if ( valueIsDeviceVisitor ) value.find( Device.class ).restore( value );
         } catch ( Exception exception ) {
@@ -2575,7 +2602,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             device.store( this );
         }
         else newData = _convertedDataOfType( typeClass );
-        return (Tsr<T>) new Tsr( this.getNDConf().shape(), newDT, newData );
+        return (Tsr<T>) new Tsr<>( this.getNDConf().shape(), newDT, newData );
     }
 
     /**
@@ -2834,7 +2861,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             return E( shape.stream().mapToInt( e -> e ).toArray() );
         }
 
-        public  static Tsr<Number> E( int... shape ) {
+        public  static Tsr<Double> E(int... shape ) {
             return new Tsr<>( shape, 2.7182818284590452353602874713527 );
         }
 
@@ -2844,7 +2871,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
         public static Tsr<?> newRandom( int[] shape, long seed ) {
             int size = NDConfiguration.Utility.szeOfShp( shape );
-            return new Tsr<>( shape, DataConverter.Utility.newSeededDoubleArray( seed, size ) );
+            return Tsr.of( shape, DataConverter.Utility.newSeededDoubleArray( seed, size ) );
         }
 
         public static Tsr<?> newTsrLike( Tsr<?> template, double value ) {
@@ -2874,7 +2901,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         }
 
         private static Tsr<?> _newEmptyLike( Tsr<?> template ) {
-            Tsr<?> t = new Tsr<>();
+            Tsr<?> t = Tsr.of();
             t._configureFromNewShape( template.getNDConf().shape(), false, true );
             return t;
         }

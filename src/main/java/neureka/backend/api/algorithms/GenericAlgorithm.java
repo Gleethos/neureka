@@ -149,7 +149,7 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
         if ( tensors[ 0 ] == null ) // Creating a new tensor:
         {
             int[] shp = tensors[ 1 ].getNDConf().shape();
-            Tsr output = new Tsr( shp, tensors[ 1 ].getDataType() );
+            Tsr output = Tsr.of( shp, tensors[ 1 ].getDataType() );
             output.setIsVirtual( false );
             try {
                 device.store( output );

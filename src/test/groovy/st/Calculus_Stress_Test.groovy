@@ -22,22 +22,22 @@ class Calculus_Stress_Test extends Specification
 
         and :
             def stress = ( Tsr t ) -> {
-                t = t + new Tsr( t.shape(), -3..12 )
-                t = t * new Tsr( t.shape(),  2..3 )
-                t = t / new Tsr( t.shape(),  1..2 )
-                t = t ^ new Tsr( t.shape(),  2..1 )
-                t = t - new Tsr( t.shape(), -2..2 )
+                t = t + Tsr.of( t.shape(), -3..12 )
+                t = t * Tsr.of( t.shape(),  2..3 )
+                t = t / Tsr.of( t.shape(),  1..2 )
+                t = t ^ Tsr.of( t.shape(),  2..1 )
+                t = t - Tsr.of( t.shape(), -2..2 )
                 return t
             }
         and :
-            Tsr t = new Tsr( [3, 3, 3, 3], 0 ).set( device )
+            Tsr t = Tsr.of( [3, 3, 3, 3], 0 ).set( device )
 
         when :
-            t[1..2, 0..2, 1..1, 0..2] = new Tsr( [2, 3, 1, 3], -4..2 )
+            t[1..2, 0..2, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4..2 )
             t = t[1..2, 0..2, 1..1, 0..2]
 
         then :
-            t.toString() == new Tsr( [2, 3, 1, 3], -4..2 ).toString()
+            t.toString() == Tsr.of( [2, 3, 1, 3], -4..2 ).toString()
 
         when :
             t = stress(t)
@@ -72,7 +72,7 @@ class Calculus_Stress_Test extends Specification
             Neureka.get().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing
 
         and :
-            Tsr t = new Tsr( shape, -4..2 )
+            Tsr t = Tsr.of( shape, -4..2 )
 
         when :
             t = t.dot( t.T() )
@@ -99,11 +99,11 @@ class Calculus_Stress_Test extends Specification
             Neureka.get().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing
 
         and :
-            Tsr t1 = new Tsr( shape1, -4..2 ).set( device )
-            Tsr t2 = new Tsr( shape2, -3..5 ).set( device )
+            Tsr t1 = Tsr.of( shape1, -4..2 ).set( device )
+            Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )
 
         when :
-            Tsr t = new Tsr( operation, [t1,t2] )
+            Tsr t = Tsr.of( operation, [t1,t2] )
 
         then :
             t.toString() == expected

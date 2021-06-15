@@ -20,7 +20,7 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    Tsr t = new Tsr([2, 4],[
+    Tsr t = Tsr.of([2, 4],[
             1, 2, 3, 4,
             9, 8, 6, 5
     ])
@@ -29,7 +29,7 @@
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    Tsr t = new Tsr(
+    Tsr t = Tsr.of(
          new int[]{2, 4},
          new double[]{
                 1, 2, 3, 4,
@@ -60,14 +60,14 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-        Tsr t = new Tsr([2, 4], -5)
+        Tsr t = Tsr.of([2, 4], -5)
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-        Tsr t = new Tsr(new int[]{2, 4}, -5);
+        Tsr t = Tsr.of(new int[]{2, 4}, -5);
 
                 </code></pre>
             </div>
@@ -96,14 +96,14 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    Tsr t = new Tsr(-5)
+    Tsr t = Tsr.of(-5)
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    Tsr t = new Tsr(-5);
+    Tsr t = Tsr.of(-5);
 
                 </code></pre>
             </div>

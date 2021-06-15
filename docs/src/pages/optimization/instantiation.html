@@ -21,7 +21,7 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-        Tsr w = new Tsr(0)
+        Tsr w = Tsr.of(0)
         def o = new SGD(w)
         w.set(o)
 
@@ -30,7 +30,7 @@
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-        Tsr w = new Tsr(0);
+        Tsr w = Tsr.of(0);
         Optimizer o = new SGD(w);
         w.set(o);
 
@@ -65,7 +65,7 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-        Tsr w = new Tsr(0)
+        Tsr w = Tsr.of(0)
         def o = new ADAM(w)
         w.set(o)
 
@@ -74,7 +74,7 @@
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-        Tsr w = new Tsr(0);
+        Tsr w = Tsr.of(0);
         Optimizer o = new ADAM(w);
         w.set(o);
 

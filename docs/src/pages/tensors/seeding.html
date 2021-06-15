@@ -29,9 +29,9 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-        Tsr t1 = new Tsr([2, 3], "I am a seed! :)")
-        Tsr t2 = new Tsr([2, 3], "I am a seed! :)")
-        Tsr t3 = new Tsr([2, 3], "I am also a seed! But different. :)")
+        Tsr t1 = Tsr.of([2, 3], "I am a seed! :)")
+        Tsr t2 = Tsr.of([2, 3], "I am a seed! :)")
+        Tsr t3 = Tsr.of([2, 3], "I am also a seed! But different. :)")
 
         // t1.toString() == t2.toString()
         // t3.toString() != t2.toString()
@@ -41,9 +41,9 @@
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-        Tsr t1 = new Tsr(new int[]{2, 3], "I am a seed! :)");
-        Tsr t2 = new Tsr(new int[]{2, 3}, "I am a seed! :)");
-        Tsr t3 = new Tsr(new int[]{2, 3}, "I am also a seed! But different. :)");
+        Tsr t1 = Tsr.of(new int[]{2, 3], "I am a seed! :)");
+        Tsr t2 = Tsr.of(new int[]{2, 3}, "I am a seed! :)");
+        Tsr t3 = Tsr.of(new int[]{2, 3}, "I am also a seed! But different. :)");
 
         // t1.toString() == t2.toString()
         // t3.toString() != t2.toString()

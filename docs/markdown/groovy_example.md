@@ -2,11 +2,11 @@
 
 Simple scalar calculation:
 ```groovy
-    def x = new Tsr(3).setRqsGradient(true) 
-    def b = new Tsr(-4)
-    def w = new Tsr(2)
+    def x = Tsr.of(3).setRqsGradient(true) 
+    def b = Tsr.of(-4)
+    def w = Tsr.of(2)
         
-    def y = new Tsr([x, b, w], '((i0+i1)*i2)^2')
+    def y = Tsr.of([x, b, w], '((i0+i1)*i2)^2')
     
     /*
      *   f(x) = ((x-4)*2)^2; :=>  f(3) = 4
@@ -17,21 +17,21 @@ Simple scalar calculation:
 ```
 Matrix multiplication:
 ```groovy
-    x = new Tsr(
+    x = Tsr.of(
                 [2, 3, 1],
                 [
                         3,   2, -1,
                         -2,  2,  4
                 ]
     )
-    y = new Tsr(
+    y = Tsr.of(
             [1, 3, 2],
             [
                     4, -1,  
                     3,  2,  
                     3, -1
             ])
-    def z = new Tsr([x, y], "I[0] x I[1]")
+    def z = Tsr.of([x, y], "I[0] x I[1]")
     
     /*
      *   z.toString(): "(2x1x2):[15.0, 2.0, 10.0, 2.0]"    
@@ -39,7 +39,7 @@ Matrix multiplication:
 ```
 Convolution:
 ```groovy
-        x = new Tsr(
+        x = Tsr.of(
                 [3, 3],
                 [
                          1, 2, 5,
@@ -47,17 +47,17 @@ Convolution:
                         -2, 3, 4,
                 ]
         );
-        y = new Tsr(
+        y = Tsr.of(
                 [2, 2],
                 [
                        -1, 3,
                         2, 3,
                 ]);
-        z = new Tsr([x, y], 'I[0] x I[1]') 
+        z = Tsr.of([x, y], 'I[0] x I[1]') 
 
         // z.toString(): "(2x2):[15.0, 15.0, 18.0, 8.0)]"
 
-        z.backward(new Tsr([2, 2], 1));
+        z.backward(Tsr.of([2, 2], 1));
         /*
          *   y.toString(): "(2x2):[-1.0, 3.0, 2.0, 3.0]:g:[6.0, 9.0, 4.0, 9.0]"    
          */
@@ -66,7 +66,7 @@ Convolution:
 GPU execution:
 ```groovy
         def gpu = Device.find('nvidia')
-        x = new Tsr(
+        x = Tsr.of(
                 [3, 3],
                 [
                         1, 2, 5,
@@ -74,18 +74,18 @@ GPU execution:
                         -2, 3, 4,
                 ]
         )
-        y = new Tsr(
+        y = Tsr.of(
                 [2, 2],
                 [
                         -1, 3,
                         2, 3,
                 ])
         gpu.store(x).store(y)      
-        z = new Tsr([x, y], 'I[0]xI[1]'); // <= executed on gpu!
+        z = Tsr.of([x, y], 'I[0]xI[1]'); // <= executed on gpu!
 
         // z.toString(): "(2x2):[15.0, 15.0, 18.0, 8.0], "
 
-        z.backward(new Tsr([2, 2], 1))
+        z.backward(Tsr.of([2, 2], 1))
         /*
          *   y.toString(): "(2x2):[-1.0, 3.0, 2.0, 3.0]:g:[6.0, 9.0, 4.0, 9.0]"    
          */

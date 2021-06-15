@@ -234,9 +234,9 @@
                                 <div class="col-sm-12 col-md-6">
                                                        <pre><code class="hljs java">
     //Groovy:
-    Tsr x = new Tsr(3).setRqsGradient(true)
-    Tsr b = new Tsr(-4)
-    Tsr w = new Tsr(2)
+    Tsr x = Tsr.of(3).setRqsGradient(true)
+    Tsr b = Tsr.of(-4)
+    Tsr w = Tsr.of(2)
 
     Tsr y = ((x+b)*w)**2
     // y: "[1]:(4.0); ->d[1]:(-8.0), "
@@ -257,10 +257,10 @@
                                 <div class="col-sm-12 col-md-8">
                                                        <pre><code class="hljs java">
     //Java:
-    Tsr x = new Tsr(3).setRqsGradient(true);
-    Tsr b = new Tsr(-4);
-    Tsr w = new Tsr(2);
-    Tsr y = new Tsr(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
+    Tsr x = Tsr.of(3).setRqsGradient(true);
+    Tsr b = Tsr.of(-4);
+    Tsr w = Tsr.of(2);
+    Tsr y = Tsr.of(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
 
     // y: "(1):[4.0]; ->d(1):[-8.0], "
                                                         </code></pre>

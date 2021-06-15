@@ -138,7 +138,7 @@ public class MatMul extends AbstractOperation
                                 Tsr[] inputs = call.getTensors();
                                 Tsr[] tsrs = new Tsr[]{null, inputs[ 0 ], inputs[ 1 ]};
                                 tsrs[ 0 ] = (call.getDerivativeIndex() < 0)
-                                        ? new Tsr( Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape()) )
+                                        ? Tsr.of( Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape()) )
                                         : null;
 
                                 for (Tsr t : tsrs) if (t != null) t.setIsVirtual( false );
@@ -174,7 +174,7 @@ public class MatMul extends AbstractOperation
                             if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                             {
                                 int[] shp = Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape());
-                                Tsr output = new Tsr( shp, 0.0 );
+                                Tsr output = Tsr.of( shp, 0.0 );
                                 output.setIsVirtual( false );
                                 try {
                                     device.store(output);

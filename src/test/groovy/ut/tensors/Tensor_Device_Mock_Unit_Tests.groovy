@@ -28,7 +28,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
     {
         given : 'A mock device and a simple tensor instance.'
             def device = Mock(Device)
-            Tsr t = new Tsr(2)
+            Tsr t = Tsr.of(2)
             device.has(t) >>> [false, true, true]
 
         when : 'The mock device is being added to the tensor...'
@@ -49,7 +49,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
         given : 'A simple tensor instance with a mock device as component.'
             def device = Mock(Device)
             device.has(_) >>> [false, true, true, false]
-            Tsr t = new Tsr(2).set(device)
+            Tsr t = Tsr.of(2).set(device)
 
         when : 'The "isOutsourced" property is being set to false...'
             t.isOutsourced = false
@@ -66,7 +66,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
         given : 'A simple tensor having a device as component'
             def device = Mock(Device)
             device.has(_) >>> [false, true, true]
-            Tsr t = new Tsr(1).set(device)
+            Tsr t = Tsr.of(1).set(device)
 
         when : 'The device is being accessed via the "device()" method...'
             Device found = t.getDevice()
@@ -79,7 +79,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
     {
         given : 'A 2D tensor having a device as component'
             def device = Mock(Device)
-            Tsr t = new Tsr([3, 3],[1, 2, 3, 4, 5, 6, 7, 8, 9])
+            Tsr t = Tsr.of([3, 3],[1, 2, 3, 4, 5, 6, 7, 8, 9])
             device.has(t) >>> [false, true]
 
         when : 'A slice is being created from the given tensor...'

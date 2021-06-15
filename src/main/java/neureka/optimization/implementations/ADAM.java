@@ -51,21 +51,21 @@ public class ADAM<ValType> implements Optimizer<ValType> {
 
     ADAM(Tsr<ValType> target) {
         int[] shape = target.getNDConf().shape();
-        m  = new Tsr<>(shape, 0);
-        v  = new Tsr<>(shape, 0);
-        a  = new Tsr<>(shape, 0.01); // Step size!
-        b1 = new Tsr<>(shape, 0.9);
-        b2 = new Tsr<>(shape, 0.999);
-        e  = new Tsr<>(shape, 1e-7);
+        m  = (Tsr<ValType>) Tsr.of(shape, 0);
+        v  = (Tsr<ValType>) Tsr.of(shape, 0);
+        a  = (Tsr<ValType>) Tsr.of(shape, 0.01); // Step size!
+        b1 = (Tsr<ValType>) Tsr.of(shape, 0.9);
+        b2 = (Tsr<ValType>) Tsr.of(shape, 0.999);
+        e  = (Tsr<ValType>) Tsr.of(shape, 1e-7);
     }
 
     private void _optimize(Tsr<ValType> w) {
         Tsr<ValType> g = w.getGradient();
-        m = new Tsr<>(b1, "*", m, " + ( 1-", b1, ") *", g);
-        v = new Tsr<>(b2, "*", v, " + ( 1-", b2, ") * (", g,"^2 )");
-        Tsr<ValType> mh = new Tsr<>(m, "/(1-", b1, ")");
-        Tsr<ValType> vh = new Tsr<>(v, "/(1-", b2, ")");
-        Tsr<ValType> newg = new Tsr<>("-",a,"*",mh,"/(",vh,"^0.5+",e,")");
+        m = (Tsr<ValType>) Tsr.of(b1, "*", m, " + ( 1-", b1, ") *", g);
+        v = (Tsr<ValType>) Tsr.of(b2, "*", v, " + ( 1-", b2, ") * (", g,"^2 )");
+        Tsr<ValType> mh = (Tsr<ValType>) Tsr.of(m, "/(1-", b1, ")");
+        Tsr<ValType> vh = (Tsr<ValType>) Tsr.of(v, "/(1-", b2, ")");
+        Tsr<ValType> newg = (Tsr<ValType>) Tsr.of("-",a,"*",mh,"/(",vh,"^0.5+",e,")");
         Neureka.get().context().getFunction().idy().call(new Tsr[]{g, newg});
     }
 

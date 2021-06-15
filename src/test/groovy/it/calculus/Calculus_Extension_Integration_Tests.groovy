@@ -40,8 +40,8 @@ class Calculus_Extension_Integration_Tests extends Specification
             run { testContext == Neureka.get().context() }
 
         when:
-            Tsr t1 = new Tsr([row_sze, com_sze], -3..8)
-            Tsr t2 = new Tsr([com_sze, col_sze], -7..4)
+            Tsr t1 = Tsr.of([row_sze, com_sze], -3..8)
+            Tsr t2 = Tsr.of([com_sze, col_sze], -7..4)
             run {
                 Neureka.get().context()
                     .addOperation(
@@ -86,7 +86,7 @@ class Calculus_Extension_Integration_Tests extends Specification
                                                             if (tsrs[0] == null) // Creating a new tensor:
                                                             {
                                                                 int[] shp = new int[]{tsrs[1].getNDConf().shape()[0], tsrs[2].getNDConf().shape()[1]}
-                                                                Tsr output = new Tsr(shp, 0.0);
+                                                                Tsr output = Tsr.of(shp, 0.0);
                                                                 output.setIsVirtual(false);
                                                                 device.store(output);
                                                                 tsrs[0] = output;

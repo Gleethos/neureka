@@ -19,16 +19,16 @@ class Benchmark_System_Test extends Specification
 
     def 'Tensor can be constructed by passing List instances.'()
     {
-        when : Tsr t = new Tsr([1, 3, 6])
+        when : Tsr t = Tsr.of([1, 3, 6])
         then :
             assert !t.toString().contains("empty")
             assert t.toString().contains("(1x3x6)")
 
-        when : t = new Tsr([1, 3.0, 6])
+        when : t = Tsr.of([1, 3.0, 6])
         then :
             assert !t.toString().contains("empty")
             assert t.toString().contains("(1x3x6):[0.0, 0.0, 0.0")
-        when : t = new Tsr([1, 3.3, 6])
+        when : t = Tsr.of([1, 3.3, 6])
         then :
             assert !t.toString().contains("empty")
             assert t.toString().contains("(3):[1.0, 3.3, 6.0]")
@@ -146,7 +146,7 @@ class Benchmark_System_Test extends Specification
                         "iterating":{
                         iterations, difficulty ->
                             iterations.times {
-                                Tsr t = new Tsr([difficulty,difficulty], -5..9)
+                                Tsr t = Tsr.of([difficulty,difficulty], -5..9)
                                 t.forEach( n -> n )
                             }
                     }]

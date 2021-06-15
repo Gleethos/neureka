@@ -10,7 +10,7 @@ import spock.lang.Specification
 
 class ADAM_Tests extends Specification
 {
-    @Shared Tsr w = new Tsr(0)
+    @Shared Tsr w = Tsr.of(0)
     @Shared Optimizer o = new ADAM(w)
 
     def setupSpec()
@@ -36,9 +36,9 @@ class ADAM_Tests extends Specification
             int input, double gradient
     ) {
         given : 'A new scalar gradient tensor is being created.'
-            Tsr g = new Tsr(gradient)
+            Tsr g = Tsr.of(gradient)
         and : 'The following input is being applied to the tensor (and internal optimizer)...'
-            w.set( new Tsr( input ) )
+            w.set( Tsr.of( input ) )
             w.applyGradient()
 
         expect : 'The following state emerges:'
@@ -77,7 +77,7 @@ class ADAM_Tests extends Specification
             String expression, List<Object> inputs, String expected
     ) {
         when : 'A new tensor is being created from the given equation and array of input tensors...'
-            def t = new Tsr( expression, inputs )
+            def t = Tsr.of( expression, inputs )
         then : '...this produces the expected result String.'
             t.toString().contains( expected )
 

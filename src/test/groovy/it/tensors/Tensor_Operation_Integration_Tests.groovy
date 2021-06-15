@@ -25,7 +25,7 @@ class Tensor_Operation_Integration_Tests extends Specification
             Neureka.get().settings().view().setIsUsingLegacyView(true);
         and: 'Two new 3D tensor instances with the shapes: [2x3x1] & [1x3x2].'
             //Same test again but this time with reversed indexing:
-            def x = new Tsr(
+            def x = Tsr.of(
                 new int[]{2, 3, 1},
                 new double[]{
                         3,  2, -1, //<=- Format of legacy : false
@@ -37,7 +37,7 @@ class Tensor_Operation_Integration_Tests extends Specification
                          */
                 }
             );
-            def y = new Tsr(
+            def y = Tsr.of(
                 new int[]{1, 3, 2},
                 new double[]{
                         4, -1,
@@ -49,12 +49,12 @@ class Tensor_Operation_Integration_Tests extends Specification
                 10, 2
             */
         when : 'The x-mul result is being instantiated by passing a simple equation to the tensor constructor.'
-            def z = new Tsr(new Tsr[]{x, y}, "I0xi1");
+            def z = Tsr.of(new Tsr[]{x, y}, "I0xi1");
         then: 'The result contains the expected String.'
             z.toString().contains(expected);
 
         when: 'The x-mul result is being instantiated by passing a object array containing equation parameters and syntax.'
-            z = new Tsr(new Object[]{x, "x", y});
+            z = Tsr.of(new Object[]{x, "x", y});
         then: 'The result contains the expected String.'
             z.toString().contains(expected);
 
@@ -66,8 +66,8 @@ class Tensor_Operation_Integration_Tests extends Specification
     def 'The "dot" operation reshapes and produces valid "x" operation result.'()
     {
         given : 'Two multi-dimensional tensors.'
-            Tsr a = new Tsr([1, 4, 4, 1], [4..12])
-            Tsr b = new Tsr([1, 3, 5, 2, 1], [-5..3])
+            Tsr a = Tsr.of([1, 4, 4, 1], [4..12])
+            Tsr b = Tsr.of([1, 3, 5, 2, 1], [-5..3])
 
         when : 'The "dot" method is being called on "a" receiving "b"...'
             Tsr c = a.dot(b)
@@ -80,8 +80,8 @@ class Tensor_Operation_Integration_Tests extends Specification
             String code, String expected
     ) {
         given :
-            Tsr a = new Tsr([1,2], [3, 2])
-            Tsr b = new Tsr([2,1], [-1, 4])
+            Tsr a = Tsr.of([1,2], [3, 2])
+            Tsr b = Tsr.of([2,1], [-1, 4])
             Binding binding = new Binding()
             binding.setVariable('a', a)
             binding.setVariable('b', b)
@@ -105,8 +105,8 @@ class Tensor_Operation_Integration_Tests extends Specification
     ) {
         given :
             Neureka.get().settings().view().setIsUsingLegacyView true
-            Tsr a = new Tsr(5)
-            Tsr b = new Tsr(3)
+            Tsr a = Tsr.of(5)
+            Tsr b = Tsr.of(3)
             Binding binding = new Binding()
             binding.setVariable('a', a)
             binding.setVariable('b', b)
@@ -138,9 +138,9 @@ class Tensor_Operation_Integration_Tests extends Specification
     {
         given :
             Neureka.get().settings().view().setIsUsingLegacyView true
-            Tsr a = new Tsr(2).setRqsGradient(true)
-            Tsr b = new Tsr(-4)
-            Tsr c = new Tsr(3).setRqsGradient(true)
+            Tsr a = Tsr.of(2).setRqsGradient(true)
+            Tsr b = Tsr.of(-4)
+            Tsr c = Tsr.of(3).setRqsGradient(true)
 
         expect :
             (a/a).toString().contains("[1]:(1.0)")
@@ -149,7 +149,7 @@ class Tensor_Operation_Integration_Tests extends Specification
             (a *= b).toString().contains("(-8.0)")
             (a += -c).toString().contains("(-11.0)")
             (a -= c).toString().contains("(-14.0)")
-            (a /= new Tsr(2)).toString().contains("(-7.0)")
+            (a /= Tsr.of(2)).toString().contains("(-7.0)")
             (a %= c).toString().contains("(-1.0)")
     }
 
@@ -157,7 +157,7 @@ class Tensor_Operation_Integration_Tests extends Specification
     {
         given :
             Neureka.get().settings().view().setIsUsingLegacyView(false)
-            Tsr a = new Tsr([100, 100], 3..19)
+            Tsr a = Tsr.of([100, 100], 3..19)
             Tsr x = a[1..-2,0..-1]
             Tsr y = a[0..-3,0..-1]
             Tsr z = a[2..-1,0..-1]
@@ -215,7 +215,7 @@ class Tensor_Operation_Integration_Tests extends Specification
     ) {
         given :
             Neureka.get().settings().view().setIsUsingLegacyView(false)
-            Tsr a = new Tsr([4, 4], 0..16).set( device )
+            Tsr a = Tsr.of([4, 4], 0..16).set( device )
 
             Tsr x = a[1..-2,0..-1]
             Tsr y = a[0..-3,0..-1]
@@ -259,7 +259,7 @@ class Tensor_Operation_Integration_Tests extends Specification
     //    given :
     //        Neureka.instance().reset()
     //        Neureka.instance().settings().view().setIsUsingLegacyView(false)
-    //        Tsr a = new Tsr([8, 8], 0..63)
+    //        Tsr a = Tsr.of([8, 8], 0..63)
     //        Tsr x = a[1..-2,0..-1]
     //        Tsr y = a[0..-3,0..-1]
     //        Tsr z = a[2..-1,0..-1]
@@ -287,7 +287,7 @@ class Tensor_Operation_Integration_Tests extends Specification
     ) {
         given :
         Neureka.get().settings().view().setIsUsingLegacyView(false)
-        Tsr a = new Tsr([11, 11], 3..19).set( device )
+        Tsr a = Tsr.of([11, 11], 3..19).set( device )
         Tsr x = a[1..-2,0..-1]
         Tsr y = a[0..-3,0..-1]
 
@@ -316,9 +316,9 @@ class Tensor_Operation_Integration_Tests extends Specification
     {
         given :
             Neureka.get().settings().view().setIsUsingLegacyView(true)
-            Tsr a = new Tsr([2,2], 1..5)
-            Tsr b = new Tsr([2,1], 3..4)
-            Tsr c = new Tsr([2], 8..9).setRqsGradient(true)
+            Tsr a = Tsr.of([2,2], 1..5)
+            Tsr b = Tsr.of([2,1], 3..4)
+            Tsr c = Tsr.of([2], 8..9).setRqsGradient(true)
 
         when :
             Tsr t1 = (a+c)
@@ -327,7 +327,7 @@ class Tensor_Operation_Integration_Tests extends Specification
         then :
             assert t2.toString().contains("(4.0, 5.0, 7.0, 8.0)")
             assert t1.toString().contains("(9.0, 11.0, 11.0, 13.0)")
-            //t.backward(new Tsr([2, 2], [5, -2, 7, 3])) // TODO!
+            //t.backward(Tsr.of([2, 2], [5, -2, 7, 3])) // TODO!
             assert c.toString().contains("")
             Neureka.get().settings().view().setIsUsingLegacyView(false)
             assert t1.toString().contains("):[9.0, 11.0, 11.0, 13.0]")
@@ -340,7 +340,7 @@ class Tensor_Operation_Integration_Tests extends Specification
             Neureka.get().settings().view().isUsingLegacyView = true
 
         when : 'A three by two matrix is being transposed...'
-            Tsr t = new Tsr([2, 3], [
+            Tsr t = Tsr.of([2, 3], [
                     1, 2, 3,
                     4, 5, 6
             ]).T()
@@ -352,9 +352,9 @@ class Tensor_Operation_Integration_Tests extends Specification
     {
         given : 'Neurekas view is set to legacy and three tensors of which one requires gradients.'
             Neureka.get().settings().view().setIsUsingLegacyView(true)
-            Tsr x = new Tsr(3).setRqsGradient(true)
-            Tsr b = new Tsr(-4)
-            Tsr w = new Tsr(2)
+            Tsr x = Tsr.of(3).setRqsGradient(true)
+            Tsr b = Tsr.of(-4)
+            Tsr w = Tsr.of(2)
 
         when : Tsr y = ( (x+b)*w )**2
 
@@ -365,10 +365,10 @@ class Tensor_Operation_Integration_Tests extends Specification
 
         and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true)
 
-        when : y.backward(new Tsr(1))
+        when : y.backward(Tsr.of(1))
         then :
-            new Tsr([y], "Ig[0]").toString().equals("empty")
-            new Tsr([x], "Ig[0]").toString().equals("empty")
+            Tsr.of([y], "Ig[0]").toString().equals("empty")
+            Tsr.of([x], "Ig[0]").toString().equals("empty")
 
         and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
 

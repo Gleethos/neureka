@@ -70,7 +70,7 @@ class Autograd_Explained extends Specification
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)
 
         and : 'We create a simple tensor and set rqsGradient to true in order to track dependent computation.'
-            def x = new Tsr([2, 2], 1).setRqsGradient(true)
+            def x = Tsr.of([2, 2], 1).setRqsGradient(true)
 
         expect : 'The tensor should look as follows : '
             x.toString().contains("(2x2):[1.0, 1.0, 1.0, 1.0]")
@@ -101,7 +101,7 @@ class Autograd_Explained extends Specification
             result.toString().contains("(1x1):[27.0]")
 
         when : 'Any new tensor is created...'
-            def someTensor = new Tsr()
+            def someTensor = Tsr.of()
 
         then : 'The autograd flag will always default to "false" :'
             someTensor.rqsGradient() == false
@@ -119,7 +119,7 @@ class Autograd_Explained extends Specification
 
         when : """
                 We now try to backpropagate! Because "result" contains a single scalar,
-                result.backward() is equivalent to out.backward(new Tsr(1)).
+                result.backward() is equivalent to out.backward(Tsr.of(1)).
             """
             z.backward(0.25)
 

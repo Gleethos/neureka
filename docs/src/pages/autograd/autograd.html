@@ -32,10 +32,10 @@
 </div>
 <div class="col-sm-12 col-md-8">
                                                 <pre><code class="hljs java">
-    Tsr x = new Tsr(3).setRqsGradient(true);
-    Tsr b = new Tsr(-4);
-    Tsr w = new Tsr(2);
-    Tsr y = new Tsr(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
+    Tsr x = Tsr.of(3).setRqsGradient(true);
+    Tsr b = Tsr.of(-4);
+    Tsr w = Tsr.of(2);
+    Tsr y = Tsr.of(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
 
     //   f(x) = ((x-4)*2)^2; :=>  f(3) = 4
     //   f(x)' = 8*x - 32 ;  :=>  f(3)' = -8
@@ -88,10 +88,10 @@
 </div>
 <div class="col-sm-12 col-md-8">
                                                 <pre><code class="hljs java">
-     Tsr a = new Tsr(-3).setRqsGradient(true);
-     Tsr b = new Tsr(4).setRqsGradient(true);
-     Tsr c = new Tsr(2);
-     Tsr d = new Tsr(Tsr[]{a, b, c},"(relu(i0*i1)+i1)/i2");
+     Tsr a = Tsr.of(-3).setRqsGradient(true);
+     Tsr b = Tsr.of(4).setRqsGradient(true);
+     Tsr c = Tsr.of(2);
+     Tsr d = Tsr.of(Tsr[]{a, b, c},"(relu(i0*i1)+i1)/i2");
 
      //  s:>>
      //  (1):[1.94];

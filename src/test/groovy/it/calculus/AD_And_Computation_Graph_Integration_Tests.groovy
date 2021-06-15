@@ -18,7 +18,7 @@ class AD_And_Computation_Graph_Integration_Tests extends Specification{
 
         given :
             Neureka.get().settings().view().setIsUsingLegacyView(true)
-            Tsr a = new Tsr([2, 3], [
+            Tsr a = Tsr.of([2, 3], [
                     1, 2, 3,
                     4, 5, 6
             ]).setRqsGradient(true)
@@ -32,7 +32,7 @@ class AD_And_Computation_Graph_Integration_Tests extends Specification{
         then :
             assert na.getChildren().size()==1
             assert b.toString().contains("")//Todo!
-            b.backward(new Tsr([3, 2],[
+            b.backward(Tsr.of([3, 2],[
                     -1, 2,
                     4, 7,
                     -9, 8
@@ -57,9 +57,9 @@ class AD_And_Computation_Graph_Integration_Tests extends Specification{
     def "Payloads and derivatives are null."()
     {
         given :
-            Tsr a = new Tsr(2).setRqsGradient(true)
+            Tsr a = Tsr.of(2).setRqsGradient(true)
             Tsr b = a * 3 / 5
-            Tsr c = new Tsr(3)
+            Tsr c = Tsr.of(3)
             Tsr d = b ^ c
             Tsr e = d * c
             GraphNode n = e.find( GraphNode.class )

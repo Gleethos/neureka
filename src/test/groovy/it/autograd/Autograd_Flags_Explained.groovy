@@ -90,7 +90,7 @@ class Autograd_Flags_Explained extends Specification
             Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT
 
         and :
-            def x = new Tsr([2, 2], 1).setRqsGradient(true)
+            def x = Tsr.of([2, 2], 1).setRqsGradient(true)
             def y = x + 2
             Binding binding = new Binding()
             binding.setVariable('x', x)
@@ -114,7 +114,7 @@ class Autograd_Flags_Explained extends Specification
 
         when : """
                 We now try to backpropagate! Because "result" contains a single scalar,
-                result.backward() is equivalent to out.backward(new Tsr(1)).
+                result.backward() is equivalent to out.backward(Tsr.of(1)).
             """
             z.backward(0.25)
             def xAsStr = x.toString()

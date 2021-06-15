@@ -67,7 +67,7 @@ public final class Sinus extends AbstractOperation
                  if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                  {
                      int[] shp = tsrs[ 1 ].getNDConf().shape();
-                     Tsr output = new Tsr( shp, 0.0 );
+                     Tsr output = Tsr.of( shp, 0.0 );
                      output.setIsVirtual( false );
                      try {
                          device.store(output);

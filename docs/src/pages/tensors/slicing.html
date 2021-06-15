@@ -23,7 +23,7 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    Tsr t = new Tsr([3, 3, 4], -11..3)
+    Tsr t = Tsr.of([3, 3, 4], -11..3)
     Tsr s = t.slice()
                 .axis(0).at(1)
                 .axis(2).from(1).to(2)
@@ -47,7 +47,7 @@
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
-    Tsr t = new Tsr(
+    Tsr t = Tsr.of(
                     new int[]{3, 3, 4},
                     new double[]{-11, -10, ... 2, 3}
             );

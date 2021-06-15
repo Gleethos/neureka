@@ -34,16 +34,16 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
         given : 'The view settings are being set to legacy.'
             Neureka.get().settings().view().isUsingLegacyView = true
         and : 'The simple scalar tensors are being instantiated, where one requires gradients.'
-            Tsr a = new Tsr(2).setRqsGradient(true)
-            Tsr b = new Tsr(-4)
-            Tsr c = new Tsr(3).setRqsGradient(true)
+            Tsr a = Tsr.of(2).setRqsGradient(true)
+            Tsr b = Tsr.of(-4)
+            Tsr c = Tsr.of(3).setRqsGradient(true)
 
         when : 'The following calculations are being executed :'
             Tsr s =  (a*b) + 2
             Tsr x = s * (s+c)
 
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)
-            x.backward(new Tsr(1))
+            x.backward(Tsr.of(1))
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
 
         then :
@@ -64,14 +64,14 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
     {
         given :
             Neureka.get().settings().view().setIsUsingLegacyView(true)
-            Tsr a = new Tsr(2).setRqsGradient(true)
-            Tsr b = new Tsr(-4)
-            Tsr c = new Tsr(3).setRqsGradient(true)
+            Tsr a = Tsr.of(2).setRqsGradient(true)
+            Tsr b = Tsr.of(-4)
+            Tsr c = Tsr.of(3).setRqsGradient(true)
 
             Tsr s =  (a*b) + 2
             Tsr x = s * (s+c)
 
-        when : x.backward(new Tsr(1))
+        when : x.backward(Tsr.of(1))
         then :
             c.toString().contains("g:(-6.0)")
             a.toString().contains("g:(null)")
@@ -89,14 +89,14 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
         given :
             Neureka.get().settings().view().setIsUsingLegacyView(true)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
-            Tsr a = new Tsr(2).setRqsGradient(true)
-            Tsr b = new Tsr(-4)
-            Tsr c = new Tsr(3).setRqsGradient(true)
+            Tsr a = Tsr.of(2).setRqsGradient(true)
+            Tsr b = Tsr.of(-4)
+            Tsr c = Tsr.of(3).setRqsGradient(true)
 
             Tsr s =  (a*b) + 2 // -6 = (2*-4) +2
             Tsr x = s * (s+c) //  -6 * (-6+3) // 18
 
-        when : x.backward(new Tsr(1))
+        when : x.backward(Tsr.of(1))
 
         then :
             c.toString().contains("g:(-6.0)")
@@ -124,9 +124,9 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
 
-            Tsr a = new Tsr(2).setRqsGradient(true)
-            Tsr b = new Tsr(-3)
-            Tsr c = new Tsr(3).setRqsGradient(true)
+            Tsr a = Tsr.of(2).setRqsGradient(true)
+            Tsr b = Tsr.of(-3)
+            Tsr c = Tsr.of(3).setRqsGradient(true)
 
         when :
             Tsr s = (a+b) * c // (2 - 3) * 3 = -3
@@ -202,9 +202,9 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(true)
 
-            Tsr a = new Tsr(2).setRqsGradient(true)
-            Tsr b = new Tsr(-3)
-            Tsr c = new Tsr(3).setRqsGradient(true)
+            Tsr a = Tsr.of(2).setRqsGradient(true)
+            Tsr b = Tsr.of(-3)
+            Tsr c = Tsr.of(3).setRqsGradient(true)
 
         when :
             Tsr s = (a+b) * c // (2 - 3) * 3 = -3
@@ -294,9 +294,9 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
             Neureka.get().settings().view().setIsUsingLegacyView(true)
 
-            Tsr a = new Tsr(2).setRqsGradient(true)
-            Tsr b = new Tsr(-3)
-            Tsr c = new Tsr(3).setRqsGradient(true)
+            Tsr a = Tsr.of(2).setRqsGradient(true)
+            Tsr b = Tsr.of(-3)
+            Tsr c = Tsr.of(3).setRqsGradient(true)
 
         when :
             Tsr s = (a+b) * c // (2 - 3) * 3 = -3
@@ -333,9 +333,9 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
             Neureka.get().settings().view().setIsUsingLegacyView(true)
 
-            Tsr a = new Tsr(2).setRqsGradient(true)
-            Tsr b = new Tsr(-3)
-            Tsr c = new Tsr(3).setRqsGradient(true)
+            Tsr a = Tsr.of(2).setRqsGradient(true)
+            Tsr b = Tsr.of(-3)
+            Tsr c = Tsr.of(3).setRqsGradient(true)
 
         when :
             Tsr s = (a+b) * c // (2 - 3) * 3 = -3
@@ -365,9 +365,9 @@ class JITProp_Autograd_Tensor_Integration_Tests extends Specification
             Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
             Neureka.get().settings().view().setIsUsingLegacyView(true)
 
-            Tsr a = new Tsr(2).setRqsGradient(true)
-            Tsr b = new Tsr(-4)
-            Tsr c = new Tsr(3).setRqsGradient(true)
+            Tsr a = Tsr.of(2).setRqsGradient(true)
+            Tsr b = Tsr.of(-4)
+            Tsr c = Tsr.of(3).setRqsGradient(true)
 
         when :
             Tsr s = (a+b) * c

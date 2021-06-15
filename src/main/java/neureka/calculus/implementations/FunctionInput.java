@@ -90,7 +90,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
             Tsr<?> gradient = t.getGradient();
             if (t.rqsGradient()) {
                 if (gradient==null) {
-                    gradient = new Tsr<>(t.shape(), 0);
+                    gradient = Tsr.of(t.shape(), 0);
                     t.set((Tsr)gradient);
                 }
                 return gradient;
@@ -141,8 +141,8 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
     @Override
     public Tsr<?> executeDerive(Tsr<?>[] inputs, int index) {
         return ( index == index() )
-                ? new Tsr(inputs[ 0 ].shape(), 1.0)
-                : new Tsr(inputs[ 0 ].shape(), 0.0);
+                ? Tsr.of(inputs[ 0 ].shape(), 1.0)
+                : Tsr.of(inputs[ 0 ].shape(), 0.0);
     }
 
     //------------------------------------------------------------------------------------------------------------------

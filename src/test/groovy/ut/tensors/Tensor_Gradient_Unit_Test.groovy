@@ -27,10 +27,10 @@ class Tensor_Gradient_Unit_Test extends Specification
     def 'Tensors can have gradients but not require them.'()
     {
         given : 'A new simple tensor.'
-            Tsr t = new Tsr(-3)
+            Tsr t = Tsr.of(-3)
 
         and : 'A second tensor viewed as gradient.'
-            Tsr g = new Tsr(9)
+            Tsr g = Tsr.of(9)
 
         when : 'The gradient tensor is added to the prior tensor as component.'
             t.set( g )
@@ -45,10 +45,10 @@ class Tensor_Gradient_Unit_Test extends Specification
     def 'Tensors that have gradients but do not require them still print them.'()
     {
         given : 'A new simple tensor.'
-            Tsr t = new Tsr(-3)
+            Tsr t = Tsr.of(-3)
 
         and : 'A second tensor viewed as gradient.'
-            Tsr g = new Tsr(9)
+            Tsr g = Tsr.of(9)
 
         when : 'The gradient tensor is added to the prior tensor as component.'
             t.set( g )
@@ -62,10 +62,10 @@ class Tensor_Gradient_Unit_Test extends Specification
         boolean requiresGradient, String expected
     ) {
         given : 'A new simple tensor.'
-            Tsr t = new Tsr(-3)
+            Tsr t = Tsr.of(-3)
 
         and : 'A second tensor viewed as gradient.'
-            Tsr g = new Tsr(9)
+            Tsr g = Tsr.of(9)
 
         and : 'The gradient tensor is added to the prior tensor as component.'
             t.set( g )

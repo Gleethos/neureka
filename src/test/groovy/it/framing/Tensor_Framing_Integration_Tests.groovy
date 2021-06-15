@@ -27,7 +27,7 @@ class Tensor_Framing_Integration_Tests extends Specification
     def 'Added labels to tensors are accessible through the "index()" method.'()
     {
         given :
-            Tsr t = new Tsr([2, 3, 2], 1..100)
+            Tsr t = Tsr.of([2, 3, 2], 1..100)
             t.label([
                     ["1", "2"],
                     ["a", "b", "c"],
@@ -117,7 +117,7 @@ class Tensor_Framing_Integration_Tests extends Specification
         given: 'Tensor printing is set to "legacy" for this test.'
             Neureka.get().settings().view().setIsUsingLegacyView(true)
         and: 'And a labeled tensor of rank 2 is being created.'
-            Tsr t = new Tsr([3, 4], [
+            Tsr t = Tsr.of([3, 4], [
                     1, 2, 3, 4,
                     9, 8, 6, 5,
                     4, 5, 6, 7
@@ -181,7 +181,7 @@ class Tensor_Framing_Integration_Tests extends Specification
         given: 'Tensor printing is set to "legacy" for this test.'
             Neureka.get().settings().view().setIsUsingLegacyView(true)
         and: 'And a labeled tensor of rank 3 is being created.'
-            Tsr t = new Tsr([2, 3, 4], -7..7)
+            Tsr t = Tsr.of([2, 3, 4], -7..7)
             t.label( 'My Tensor', [
                 ["1", "2"],
                 ["a", "b", "y"],

@@ -197,7 +197,7 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
     @Override
     public Tsr<String> load() throws IOException {
         String[] data = _lazyLoad();
-        Tsr<String> loaded = new Tsr<>(
+        Tsr<String> loaded = Tsr.of(
                 getShape(),
                 DataType.of( String.class ),
                 data

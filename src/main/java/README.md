@@ -17,7 +17,7 @@ practice in other languages, namely : C#, C++ and Python.
 
 > **Example :**
 >```java
->   Tsr<Double> tensor = new Tsr(...);
+>   Tsr<Double> tensor = Tsr.of(...);
 >   int number = 345335;
 >   char letter = 'h';
 >```

@@ -24,7 +24,7 @@ class Optimizer_Tests extends Specification
     def 'Dot product operation based weight feed forwarded calculation is being optimized'()
     {
         given :
-            def data = new Tsr([8, 4], [ // a-b*c
+            def data = Tsr.of([8, 4], [ // a-b*c
                                           1,  2,  2, -3,
                                           3, -1, -1, 4,
                                          -1, -2, -3, -7,
@@ -46,9 +46,9 @@ class Optimizer_Tests extends Specification
             X.NDConf.shape()       == [ 3, 8 ] as int[]
 
         when:
-            def w1 = new Tsr([8, 3], ":-)").setRqsGradient(true)
-            def w2 = new Tsr([7, 8], "O.o").setRqsGradient(true)
-            def w3 = new Tsr([1, 7], ":P").setRqsGradient(true)
+            def w1 = Tsr.of([8, 3], ":-)").setRqsGradient(true)
+            def w2 = Tsr.of([7, 8], "O.o").setRqsGradient(true)
+            def w3 = Tsr.of([1, 7], ":P").setRqsGradient(true)
 
         then:
             w1.toString() == "(8x3):[-0.97380E0, -0.07925E0, 1.78121E0, -1.39653E0, -2.01835E0, -0.41131E0, 0.64522E0, -2.5104E0, 1.40632E0, -0.51236E0, -0.62507E0, -0.09238E0, -0.52655E0, 0.57702E0, -1.37303E0, -1.27665E0, 0.63007E0, -2.15027E0, -1.12862E0, 1.48548E0, -0.37397E0, -0.51683E0, 1.14686E0, 0.87993E0]:g:[null]"
@@ -67,7 +67,7 @@ class Optimizer_Tests extends Specification
             Tsr a = f(s)
             Tsr b = f(w2.dot(a))
             def y = w3.dot(b)
-            //dox(new Tsr[]{abs(y-Y), new Tsr(y.shape(), 1,)}) // TODO!
+            //dox(new Tsr[]{abs(y-Y), Tsr.of(y.shape(), 1,)}) // TODO!
 
         then:
             //s.toString().contains("(8x1x8):[2.4301E0, -4.62335E0, -4.21131E0, 9.31021E0, -6.07271E0, -0.65769E0, -3.49196E0, 7.77466E0, -6.25586E0, -1.75993E0, 6.66718E0, 7.20285E0, -15.2666E0, -13.6498E0, -16.6534E0, 12.8369E0, -1.56292E0, 3.03975E0, 0.15659E0, 11.866E0, -11.3774E0, 3.06953E0, -0.20197E0, 10.2733E0, -1.94728E0, -0.81962E0, 2.03966E0, 2.53039E0, -5.08241E0, -4.60147E0, -5.64652E0, 4.36496E0, -2.11855E0, -0.78365E0, 3.49157E0, -6.17009E0, 2.15197E0, -6.12432E0, -4.70082E0, -2.94796E0, -4.31705E0, -2.30974E0, 6.46733E0, -7.93802E0, 0.19404E0, -12.8506E0, -11.3469E0, -1.71425E0, 1.09438E0, -4.49735E0, ... + 14 more]")

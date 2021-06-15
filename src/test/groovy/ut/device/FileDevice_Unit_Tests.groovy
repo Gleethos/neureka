@@ -35,7 +35,7 @@ class FileDevice_Unit_Tests extends Specification
         String path, String filename
     ) {
         given : 'A new tensor is being created for testing.'
-            Tsr a = new Tsr([2, 4], [ 5, 4, -7, 3, -2, 6, -4, 3 ])
+            Tsr a = Tsr.of([2, 4], [ 5, 4, -7, 3, -2, 6, -4, 3 ])
         and : 'A file device instance is being accessed for a given path.'
             def device = FileDevice.instance( path )
 
@@ -67,7 +67,7 @@ class FileDevice_Unit_Tests extends Specification
             String path, String filename, int[] shape, Class<FileHead<?,Number>> fileHeadClass, Class<?> dataTypeClass
     ) {
         given : 'A new tensor is being created for testing.'
-            Tsr a = new Tsr( shape, -8..8 )
+            Tsr a = Tsr.of( shape, -8..8 )
         and : 'A String representation of the shape.'
             def shapeStr = String.join('x',(shape as List<Integer>).collect {String.valueOf(it)})
         and : 'A file device instance is being accessed for a given path.'

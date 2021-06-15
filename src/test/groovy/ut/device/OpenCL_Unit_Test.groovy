@@ -82,7 +82,7 @@ class OpenCL_Unit_Test extends Specification
             Device device = Device.find('first')
 
         and : 'A mocked tensor that is not outsourced.'
-            Tsr t = Mock(Tsr) // Could be : new Tsr([4, 3], 2)
+            Tsr t = Mock(Tsr) // Could be : Tsr.of([4, 3], 2)
             t.isOutsourced() >> false
 
         and : 'Another mocked tensor that represents a slice of the prior one.'

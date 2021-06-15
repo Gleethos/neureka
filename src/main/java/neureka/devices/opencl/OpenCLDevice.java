@@ -443,7 +443,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             execute(
                 ExecutionCall.builder()
                     .device(this)
-                    .tensors(new Tsr[]{ tensor, (Tsr) new Tsr( value ).set( this )})
+                    .tensors(new Tsr[]{ tensor, (Tsr) Tsr.of( value ).set( this )})
                     .derivativeIndex(-1)
                     .operation(Neureka.get().context().instance( "<" ))
                     .build()

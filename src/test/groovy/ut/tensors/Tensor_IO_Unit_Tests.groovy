@@ -33,9 +33,9 @@ class Tensor_IO_Unit_Tests extends Specification
     def 'Tensors can be instantiated with String seed.'()
     {
         given : 'Three seeded 2D tensors are being instantiated.'
-            Tsr t1 = new Tsr([2, 3], "I am a seed! :)")
-            Tsr t2 = new Tsr(new int[]{2, 3}, "I am a seed! :)")
-            Tsr t3 = new Tsr(new int[]{2, 3}, "I am also a seed! But different. :)")
+            Tsr t1 = Tsr.of([2, 3], "I am a seed! :)")
+            Tsr t2 = Tsr.of(new int[]{2, 3}, "I am a seed! :)")
+            Tsr t3 = Tsr.of(new int[]{2, 3}, "I am also a seed! But different. :)")
         expect : 'Equal seeds produce equal values.'
             t1.toString() == t2.toString()
             t1.toString() != t3.toString()
@@ -44,7 +44,7 @@ class Tensor_IO_Unit_Tests extends Specification
     def 'Tensor initialization lambdas produce expected tensors.'()
     {
         when : 'Instantiating a tensor using an initializer lambda...'
-            Tsr t = new Tsr(
+            Tsr t = Tsr.of(
                     [ 2, 3 ],
                     DataType.of( Integer.class ),
                     ( int i, int[] indices ) -> { i - 2 }
@@ -54,7 +54,7 @@ class Tensor_IO_Unit_Tests extends Specification
             t.toString() == "(2x3):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0]"
 
         when :
-            t = new Tsr(
+            t = Tsr.of(
                     [ 2, 3 ],
                     DataType.of( String.class ),
                     ( int i, int[] indices ) -> { i + ':' + indices.toString() }
@@ -68,36 +68,36 @@ class Tensor_IO_Unit_Tests extends Specification
     def 'Smart tensor constructors yield expected results.'()
     {
         given : 'Three scalar tensors.'
-            Tsr a = new Tsr(3)
-            Tsr b = new Tsr(2)
-            Tsr c = new Tsr(-1)
+            Tsr a = Tsr.of(3)
+            Tsr b = Tsr.of(2)
+            Tsr c = Tsr.of(-1)
 
-        when : Tsr t = new Tsr("1+", a, "*", b)
+        when : Tsr t = Tsr.of("1+", a, "*", b)
         then : t.toString().contains("7.0")
-        when : t = new Tsr("1", "+", a, "*", b)
+        when : t = Tsr.of("1", "+", a, "*", b)
         then : t.toString().contains("7.0")
-        when : t = new Tsr("(","1+", a,")", "*", b)
+        when : t = Tsr.of("(","1+", a,")", "*", b)
         then : t.toString().contains("8.0")
-        when : t = new Tsr("(","1", "+", a,")", "*", b)
+        when : t = Tsr.of("(","1", "+", a,")", "*", b)
         then : t.toString().contains("8.0")
-        when : t = new Tsr("(", c, "*3)+", "(","1+", a,")", "*", b)
+        when : t = Tsr.of("(", c, "*3)+", "(","1+", a,")", "*", b)
         then : t.toString().contains("5.0")
-        when : t = new Tsr("(", c, "*","3)+", "(","1+", a,")", "*", b)
+        when : t = Tsr.of("(", c, "*","3)+", "(","1+", a,")", "*", b)
         then : t.toString().contains("5.0")
-        when : t = new Tsr("(", c, "*","3", ")+", "(","1+", a,")", "*", b)
+        when : t = Tsr.of("(", c, "*","3", ")+", "(","1+", a,")", "*", b)
         then : t.toString().contains("5.0")
 
-        when : t = new Tsr([2, 2], [2, 4, 4])
+        when : t = Tsr.of([2, 2], [2, 4, 4])
         then : t.toString().contains("(2x2):[2.0, 4.0, 4.0, 2.0]")
-        when : t = new Tsr([2], [3, 5, 7])
+        when : t = Tsr.of([2], [3, 5, 7])
         then :
             t.toString().contains("(2):[3.0, 5.0]")
             t.value64().length==2
 
         // Now the same with primitive array ! :
-        when : t = new Tsr(new int[]{2, 2}, new double[]{2, 4, 4})
+        when : t = Tsr.of(new int[]{2, 2}, new double[]{2, 4, 4})
         then : t.toString().contains("(2x2):[2.0, 4.0, 4.0, 2.0]")
-        when : t = new Tsr(new int[]{2}, new double[]{3, 5, 7})
+        when : t = Tsr.of(new int[]{2}, new double[]{3, 5, 7})
         then :
             t.toString().contains("(2):[3.0, 5.0]")
             t.value64().length==2
@@ -111,7 +111,7 @@ class Tensor_IO_Unit_Tests extends Specification
             Neureka.get().settings().view().isUsingLegacyView = true
 
         and : 'A new tensor instance with the shape (4x3).'
-            Tsr t1 = new Tsr([4, 3], 1..12)
+            Tsr t1 = Tsr.of([4, 3], 1..12)
 
         when : 'Recording the index behavior before and after a reshape operation...'
             def t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})
@@ -145,9 +145,9 @@ class Tensor_IO_Unit_Tests extends Specification
 
     def 'Passing String seed to tensor produces expected values.'()
     {
-        when : Tsr r = new Tsr([2, 2], "jnrejn")
+        when : Tsr r = Tsr.of([2, 2], "jnrejn")
         then : r.toString().contains("0.02600E0, -2.06129E0, -0.48373E0, 0.94884E0")
-        when : r = new Tsr([2, 2], "jnrejn2")
+        when : r = Tsr.of([2, 2], "jnrejn2")
         then : !r.toString().contains("0.02600E0, -2.06129E0, -0.48373E0, 0.94884E0")
     }
 
@@ -156,7 +156,7 @@ class Tensor_IO_Unit_Tests extends Specification
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.get().settings().view().setIsUsingLegacyView(true)
         and : 'A new tensor instance.'
-            Tsr x = new Tsr(3)
+            Tsr x = Tsr.of(3)
 
         when : 'Setting the value of the tensor...'
             float[] value32 = new float[1]
@@ -214,7 +214,7 @@ class Tensor_IO_Unit_Tests extends Specification
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.get().settings().view().setIsUsingLegacyView(true)
-            Tsr x = new Tsr(3)
+            Tsr x = Tsr.of(3)
 
         when : x.toType( Float.class )
         then :
@@ -235,9 +235,9 @@ class Tensor_IO_Unit_Tests extends Specification
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.get().settings().view().setIsUsingLegacyView(true)
         and : 'A simple scalar tensor containing the number "4".'
-            Tsr x = new Tsr(4)
+            Tsr x = Tsr.of(4)
 
-        when: Tsr y = new Tsr(x, "th(I[0])")
+        when: Tsr y = Tsr.of(x, "th(I[0])")
 
         then:
             y.isBranch()
@@ -272,11 +272,11 @@ class Tensor_IO_Unit_Tests extends Specification
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
             Neureka.get().settings().view().setIsUsingLegacyView(true)
         and : 'Two tensors which will be used for testing IO.'
-            Tsr t = new Tsr([2, 2], [
+            Tsr t = Tsr.of([2, 2], [
                     1.0, 4.0,
                     2.0, 7.0,
             ])
-            Tsr v = new Tsr([2, 2], [
+            Tsr v = Tsr.of([2, 2], [
                     1.0, -1.0,
                     1.0, -1.0
             ])
@@ -320,7 +320,7 @@ class Tensor_IO_Unit_Tests extends Specification
         then : 'The underlying data will have changed.'
             t.toString().contains("[2x2]:(2.0, 3.0, 0.0, 0.0)")
 
-        when : Tsr.IO.subInto(t, new Tsr([2, 2], [1, 2, 3, 4]))
+        when : Tsr.IO.subInto(t, Tsr.of([2, 2], [1, 2, 3, 4]))
         then : t.toString().contains("[2x2]:(1.0, 1.0, -3.0, -4.0)")
 
     }
@@ -331,7 +331,7 @@ class Tensor_IO_Unit_Tests extends Specification
         given : 'Neureka can access OpenCL (JOCL).'
             if ( !Neureka.get().canAccessOpenCL() ) return
             Device gpu = Device.find("nvidia")
-            Tsr t = new Tsr([3, 4, 1], 3)
+            Tsr t = Tsr.of([3, 4, 1], 3)
 
         expect : 'The following is to be expected with respect to the given :'
             !t.has(Device.class)

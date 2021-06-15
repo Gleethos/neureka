@@ -44,7 +44,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
 
     and: 'A tensor which ought to be sliced:'
 
-            Tsr a = new Tsr([4, 6], [
+            Tsr a = Tsr.of([4, 6], [
                     1, 2, 3, 4, 5, 6,
                     7, 8, 9, 1, 2, 3,
                     4, 5, 6, 7, 8, 9,
@@ -103,35 +103,35 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
         when :
-            Tsr x = new Tsr([1], 3).setRqsGradient(true)
-            Tsr b = new Tsr([1], -4)
-            Tsr w = new Tsr([1], 2)
+            Tsr x = Tsr.of([1], 3).setRqsGradient(true)
+            Tsr b = Tsr.of([1], -4)
+            Tsr w = Tsr.of([1], 2)
             device.store(x).store(b).store(w)
             /**
              *      ((3-4)*2)^2 = 4
              *  dx:   8*3 - 32  = -8
              * */
-            Tsr y = new Tsr([x, b, w], "((i0+i1)*i2)^2")
+            Tsr y = Tsr.of([x, b, w], "((i0+i1)*i2)^2")
         then:
             y.indicesMap() != null
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
         when:
-            y.backward(new Tsr(2))
+            y.backward(Tsr.of(2))
             y = ((x+b)*w)**2
 
         then:
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
         when:
-            y.backward(new Tsr(2))
+            y.backward(Tsr.of(2))
             x.toString().contains("-32.0")
             y = b + w * x
 
             /**
              *  Subset:
              */
-            Tsr a = new Tsr([4, 6], [
+            Tsr a = Tsr.of([4, 6], [
                     1, 2, 3, 4, 5, 6,
                     7, 8, 9, 1, 2, 3,
                     4, 5, 6, 7, 8, 9,
@@ -181,7 +181,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
                 a.value64()[1] = a.value64()[1] * 6
                 a.value64()[7] = a.value64()[7] * 2
             } else {
-                Tsr k = new Tsr([4, 6], [
+                Tsr k = Tsr.of([4, 6], [
                         1, 6, 1, 1,
                         1, 1, 1, 2,
                         1, 1, 1, 1,
@@ -202,7 +202,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             //---
 
         when:
-            Tsr c = new Tsr([3, 4], [
+            Tsr c = Tsr.of([3, 4], [
                     -3, 2, 3,
                     5, 6, 2,
                     -1, 1, 2,
@@ -265,8 +265,8 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
              */
             //---
         when:
-            Tsr p = new Tsr([2,2], [2, 55, 4, 7]).set((device instanceof DummyDevice)?null:device)
-            Tsr u = new Tsr([2,2], [5, 2, 7, 34]).set((device instanceof DummyDevice)?null:device)
+            Tsr p = Tsr.of([2,2], [2, 55, 4, 7]).set((device instanceof DummyDevice)?null:device)
+            Tsr u = Tsr.of([2,2], [5, 2, 7, 34]).set((device instanceof DummyDevice)?null:device)
 
             p[] = u
             //tester.testContains(p.toString(), ["5.0, 2.0, 7.0, 34.0"], "Testing slicing")
@@ -275,7 +275,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
 
         //---
         when:
-            a[[[0..3]:2, [1..4]:2]] = new Tsr([2, 2], [1, 2, 3, 4])
+            a[[[0..3]:2, [1..4]:2]] = Tsr.of([2, 2], [1, 2, 3, 4])
         then:
             b.toString().contains("1.0, 2.0, 3.0, 4.0")
             a.toString().contains(
@@ -292,7 +292,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
              */
             //---
         when:
-            a[1..2, 1..2] = new Tsr([2, 2], [8, 8, 8, 8])
+            a[1..2, 1..2] = Tsr.of([2, 2], [8, 8, 8, 8])
         then:
             b.toString().contains(
                     "1.0, 2.0, "+
@@ -317,12 +317,12 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             //      3, 4
         when:
             b.setRqsGradient(true)
-            c = new Tsr([2, 2], [
+            c = Tsr.of([2, 2], [
                     -2, 3,//-2 + 24 + 3 + 8
                     1, 2,
             ])
             device.store(b).store(c) // -2 + 6 + 8 + 8 = 22
-            x = new Tsr(b, "x", c) // This test is important because it tests convolution on slices!
+            x = Tsr.of(b, "x", c) // This test is important because it tests convolution on slices!
         then:
             x.toString().contains(
                     "[1x1]:(20.0); ->d[2x2]:(-2.0, 3.0, 1.0, 2.0)"

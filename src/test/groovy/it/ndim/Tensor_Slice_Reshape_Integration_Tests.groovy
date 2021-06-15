@@ -16,7 +16,7 @@ class Tensor_Slice_Reshape_Integration_Tests extends Specification
     def 'A slice of a tensor changes as expected when reshaping it.'()
     {
         given : 'A parent tensor.'
-            Tsr A = new Tsr([
+            Tsr A = Tsr.of([
                     [  1,  5,  3, -6, -3,  8, -9,  4  ],
                     [  0, -2,  2,  1, -1,  0,  5,  4  ],
                     [ -6,  7,  7, -2,  9,  0,  1, -1  ],
@@ -55,7 +55,7 @@ class Tensor_Slice_Reshape_Integration_Tests extends Specification
     def 'Two slices of one big tensor perform matrix multiplication flawless.'()
     {
         given : 'A parent tensor.'
-            Tsr X = new Tsr([
+            Tsr X = Tsr.of([
                     [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000],
                     [1000,   -2,    2, 1000, 1000, 1000, 1000, 1000],
                     [1000,    7,    7, 1000, 1000, 1000, 1000, 1000],
@@ -91,7 +91,7 @@ class Tensor_Slice_Reshape_Integration_Tests extends Specification
     def 'Reshaping a slice works as expected.'()
     {
         given : 'A parent tensor.'
-            Tsr X = new Tsr([
+            Tsr X = Tsr.of([
                     [1000, 1000, 1000, 1000, ],
                     [1000,   -1,    4, 1000, ],
                     [1000,    2,    7, 1000, ],

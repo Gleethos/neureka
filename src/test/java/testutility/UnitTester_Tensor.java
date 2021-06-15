@@ -66,7 +66,7 @@ public class UnitTester_Tensor extends UnitTester
         printSessionStart("Testing Tsr: autograd!");
         println(BAR +"  Function: "+operation);
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
-        Tsr product = new Tsr(source, operation);
+        Tsr product = Tsr.of(source, operation);
         String result = product.toString("rc");
         for(String element : expected){
             this.assertStringContains("result", result, element);
@@ -79,7 +79,7 @@ public class UnitTester_Tensor extends UnitTester
         printSessionStart("Testing Tsr: autograd!");
         println(BAR +"  Function: "+operation);
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
-        Tsr product = new Tsr(source, operation);
+        Tsr product = Tsr.of(source, operation);
         product.backward(error);
         String result = product.toString("rc");
         for(String element : expected){
@@ -136,9 +136,9 @@ public class UnitTester_Tensor extends UnitTester
                                 .device(HostCPU.instance())
                                 .tensors(
                                         new Tsr[] {
-                                                new Tsr(drnMxd, rsltData),
-                                                new Tsr(frstShp, frstData),
-                                                new Tsr(scndShp, scondData)
+                                                Tsr.of(drnMxd, rsltData),
+                                                Tsr.of(frstShp, frstData),
+                                                Tsr.of(scndShp, scondData)
                                         }
                                 )
                                 .derivativeIndex(-1)
@@ -165,9 +165,9 @@ public class UnitTester_Tensor extends UnitTester
                             .device(HostCPU.instance())
                             .tensors(
                                     new Tsr[]{
-                                        new Tsr(frstShp, frstData),
-                                        (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
-                                        (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
+                                        Tsr.of(frstShp, frstData),
+                                        (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
+                                        (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
                                     }
                             )
                             .derivativeIndex(0)
@@ -192,9 +192,9 @@ public class UnitTester_Tensor extends UnitTester
                             .device(HostCPU.instance())
                             .tensors(
                                     new Tsr[]{
-                                            new Tsr(drnMxd, rsltData),
-                                            new Tsr(frstShp, frstData),
-                                            new Tsr(scndShp, scondData)
+                                            Tsr.of(drnMxd, rsltData),
+                                            Tsr.of(frstShp, frstData),
+                                            Tsr.of(scndShp, scondData)
                                     }
                             )
                             .derivativeIndex(-1)
@@ -221,9 +221,9 @@ public class UnitTester_Tensor extends UnitTester
                             .device(HostCPU.instance())
                             .tensors(
                                     new Tsr[]{
-                                            new Tsr(frstShp, frstData),
-                                            (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
-                                            (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData)
+                                            Tsr.of(frstShp, frstData),
+                                            (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
+                                            (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
                                     }
                             )
                             .derivativeIndex(0)
@@ -240,9 +240,9 @@ public class UnitTester_Tensor extends UnitTester
                             .device(HostCPU.instance())
                             .tensors(
                                     new Tsr[]{
-                                            new Tsr(frstShp, frstData),
-                                            (first)?new Tsr(scndShp, scondData):new Tsr(drnMxd, drnData),
-                                            (first)?new Tsr(drnMxd, drnData):new Tsr(scndShp, scondData),
+                                            Tsr.of(frstShp, frstData),
+                                            (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
+                                            (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData),
                                     }
                             )
                             .derivativeIndex(0)
@@ -265,7 +265,7 @@ public class UnitTester_Tensor extends UnitTester
     {
         printSessionStart("Test injection: I[0] <- I[1], I[0] -> I[1] : "+f);
         Tsr[] result = new Tsr[tensors.length+1];
-        result[0] = new Tsr(tensors, f, false);
+        result[0] = Tsr.of(tensors, f, false);
         assert result[0].find( GraphNode.class ) == null; // Because "doAD" is false!
         System.arraycopy(tensors, 0, result, 1, result.length - 1);
         for(int i=0; i<result.length; i++){

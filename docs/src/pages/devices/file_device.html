@@ -73,7 +73,7 @@
     def device = FileDevice.instance( 'my/relative/path/to/directory' )
 
     // ... and a tensor which we want to persist :
-    Tsr a = new Tsr([2, 4, 3], 4)
+    Tsr a = Tsr.of([2, 4, 3], 4)
 
     // Initially the device does not know about the tensor "a" :
     assert !device.contains(a)
@@ -102,7 +102,7 @@
     Device device = FileDevice.instance( "my/relative/path/to/directory" );
 
     // ... and a tensor which we want to persist :
-    Tsr a = new Tsr([2, 4, 3], 4);
+    Tsr a = Tsr.of([2, 4, 3], 4);
 
     // Initially the device does not know about the tensor "a" :
     assert !device.contains(a);

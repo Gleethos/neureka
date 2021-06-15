@@ -38,7 +38,7 @@
                 <pre><code class="hljs java">
 
     def device = OpenCLPlatform.PLATFORMS()[0].devices[0]
-    def someData = new Tsr( new float[]{ 2, -5, -3, 9, -1 } ).set( device )
+    def someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).set( device )
 
     assert !device.hasAdHocKernel( 'dummy_kernel' )
 
@@ -70,7 +70,7 @@
                 <pre><code class="hljs java">
 
     OpenCLDevice device = OpenCLPlatform.PLATFORMS().getAt( 0 ).getDevices.getAt( 0 );
-    Tsr someData = new Tsr( new float[]{ 2, -5, -3, 9, -1 } ).set( device );
+    Tsr someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).set( device );
 
     assert !device.hasAdHocKernel( 'dummy_kernel' );
 

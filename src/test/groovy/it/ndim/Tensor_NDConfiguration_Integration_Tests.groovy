@@ -30,8 +30,8 @@ class Tensor_NDConfiguration_Integration_Tests extends Specification
     def 'NDConfiguration instances of tensors have expected state.'()
     {
         given: 'Two scalar tensors "a" and "b" storing values "1" and "2".'
-            Tsr a = new Tsr(1)
-            Tsr b = new Tsr(2)
+            Tsr a = Tsr.of(1)
+            Tsr b = Tsr.of(2)
 
         expect: 'Tensor "a" contains an instance of the "SimpleScalarConfiguration".'
             a.NDConf instanceof SimpleScalarConfiguration
@@ -49,9 +49,9 @@ class Tensor_NDConfiguration_Integration_Tests extends Specification
     def 'NDConfiguration instances of tensors have expected state and behaviour.'()
     {
         given: 'Three vector tensors containing different numeric values.'
-            Tsr x = new Tsr([1.0, 2.0, 3.1])
-            Tsr y = new Tsr([3, 4.5, 2])
-            Tsr z = new Tsr([1.4, 2, 4])
+            Tsr x = Tsr.of([1.0, 2.0, 3.1])
+            Tsr y = Tsr.of([3, 4.5, 2])
+            Tsr z = Tsr.of([1.4, 2, 4])
 
         expect : 'All of them possess "SimpleD1Configuration" NDConfiguration implementations.'
             x.NDConf instanceof SimpleD1Configuration

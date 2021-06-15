@@ -32,11 +32,11 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr<?>[] tsrs = call.getTensors();
-                    Device<Object> device = (Device<Object>) call.getDevice();
+                    Device<Double> device = (Device<Double>) call.getDevice();
                     if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[ 1 ].getNDConf().shape();
-                        Tsr<Object> output = new Tsr<>( shp, 0.0 );
+                        Tsr<Double> output = Tsr.of( shp, 0.0 );
                         output.setIsVirtual( false );
                         try {
                             device.store( output );

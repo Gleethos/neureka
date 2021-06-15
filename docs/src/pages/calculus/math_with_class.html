@@ -148,12 +148,12 @@ public class ComplexNumber
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs java">
-Tsr a = new Tsr(
+Tsr a = Tsr.of(
         [ 3, 2 ],
         DataType.of( ComplexNumber.class ),
         ( int i, int[] idx ) -> new ComplexNumber( idx[0], idx[1] )
     )
-Tsr b = new Tsr(
+Tsr b = Tsr.of(
         [ 3, 2 ],
         DataType.of( ComplexNumber.class ),
         ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )

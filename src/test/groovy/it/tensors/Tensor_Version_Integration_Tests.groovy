@@ -49,8 +49,8 @@ class Tensor_Version_Integration_Tests extends Specification
             String expected
     ) {
         given : 'Two tensors, one requiring gradients and the other one not.'
-            Tsr a = new Tsr(6).setRqsGradient(true)
-            Tsr b = new Tsr(-4)
+            Tsr a = Tsr.of(6).setRqsGradient(true)
+            Tsr b = Tsr.of(-4)
         and : 'A binding for both tensors as preparation for calling the Groovy shell.'
             Binding binding = new Binding()
             binding.setVariable('a', a)
@@ -96,8 +96,8 @@ class Tensor_Version_Integration_Tests extends Specification
     ) {
         given :
             Neureka.get().settings().autograd().setIsPreventingInlineOperations( save_inline )
-            Tsr a = new Tsr(4) + new Tsr(2)
-            Tsr b = new Tsr(-1) + new Tsr(-3).setRqsGradient(true)
+            Tsr a = Tsr.of(4) + Tsr.of(2)
+            Tsr b = Tsr.of(-1) + Tsr.of(-3).setRqsGradient(true)
             Binding binding = new Binding()
             binding.setVariable('a', a)
             binding.setVariable('b', b)
@@ -138,8 +138,8 @@ class Tensor_Version_Integration_Tests extends Specification
     ) {
         given :
             Neureka.get().settings().autograd().setIsPreventingInlineOperations( true )
-            Tsr a = new Tsr(4) + new Tsr(2).setRqsGradient(true)
-            Tsr b = new Tsr(-4)
+            Tsr a = Tsr.of(4) + Tsr.of(2).setRqsGradient(true)
+            Tsr b = Tsr.of(-4)
             Binding binding = new Binding()
             binding.setVariable('a', a)
             binding.setVariable('b', b)

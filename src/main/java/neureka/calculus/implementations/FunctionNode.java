@@ -342,8 +342,8 @@ public class FunctionNode extends AbstractBaseFunction
             if ( tensors[ i ] == null )
                     tensors[ i ] =
                         ( j < 0 )
-                                ? new Tsr<>(tempShape, ((FunctionConstant) _src[ i - offset ]).value())
-                                : new Tsr<>(tempShape, _src[ i - offset ].call(new double[]{}, j));
+                                ? Tsr.of(tempShape, ((FunctionConstant) _src[ i - offset ]).value())
+                                : Tsr.of(tempShape, _src[ i - offset ].call(new double[]{}, j));
         }
         return tensors;
     }

@@ -32,7 +32,7 @@ class OpenCLDevice_Integration_Tests extends Specification
         and : 'The first found OpenCLDevice instance.'
             Device device = Device.find('first')
         and : 'A tensor and a slice tensor of the prior.'
-            Tsr t = new Tsr([4, 3], 2)
+            Tsr t = Tsr.of([4, 3], 2)
             Tsr s = t[1..3, 1..2]
 
         expect : 'Both tensors share not only the same data but also the same data type.'
@@ -56,7 +56,7 @@ class OpenCLDevice_Integration_Tests extends Specification
         given : 'This system supports OpenCL'
             if (!Neureka.get().canAccessOpenCL()) return
         and : 'A new tensor.'
-            Tsr t = new Tsr([1, 2])
+            Tsr t = Tsr.of([1, 2])
 
         expect : 'This tensor is initially of type "Double", meaning it is backed by a "double[]" array internally...'
             t.dataType == DataType.of( Double.class )
@@ -85,7 +85,7 @@ class OpenCLDevice_Integration_Tests extends Specification
         given : 'This system supports OpenCL'
             if ( !Neureka.get().canAccessOpenCL() ) return
         and : 'A new tensor belonging to the first found OpenCLDevice instance.'
-            Tsr t = new Tsr([1, 2])
+            Tsr t = Tsr.of([1, 2])
 
         expect : 'The tensor start with having data stored within.'
             t.data != null
@@ -104,7 +104,7 @@ class OpenCLDevice_Integration_Tests extends Specification
         given : 'This system supports OpenCL'
             if ( !Neureka.get().canAccessOpenCL() ) return
             def device = OpenCLPlatform.PLATFORMS()[0].devices[0]
-            def someData = new Tsr( new float[]{ 2, -5, -3, 9, -1 } ).set( device )
+            def someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).set( device )
 
         expect :
             !device.hasAdHocKernel( 'dummy_kernel' )
@@ -171,11 +171,11 @@ class OpenCLDevice_Integration_Tests extends Specification
             long[] global = new long[]{ (M/WPTM), (N/WPTN) }
             //println('TSM:'+TSM+' - TSN:'+TSN+' - TSK:'+TSK+' - WPTM'+WPTM+' - WPTN:'+WPTN+' |'+local+'|'+global)
 
-            Tsr A = new Tsr( [M,K], 0 )
-            Tsr B = new Tsr( [K,N], 0 )
-            Tsr C = new Tsr( [M,N], 0 )
-            A[0..M-1,0..K-1] = new Tsr([M,K], 3..1)
-            B[0..K-1,0..N-1] = new Tsr([K,N], -5..0)
+            Tsr A = Tsr.of( [M,K], 0 )
+            Tsr B = Tsr.of( [K,N], 0 )
+            Tsr C = Tsr.of( [M,N], 0 )
+            A[0..M-1,0..K-1] = Tsr.of([M,K], 3..1)
+            B[0..K-1,0..N-1] = Tsr.of([K,N], -5..0)
             println(A)
             println(B)
             A.set( device )

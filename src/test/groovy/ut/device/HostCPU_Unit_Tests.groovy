@@ -31,8 +31,8 @@ class HostCPU_Unit_Tests extends Specification
     def "thread pool executes given workload in parallel"()
     {
         given :
-            Tsr a = new Tsr(new int[]{100, 60, 1, 2}, 4)
-            Tsr b = new Tsr(new int[]{100, 1, 60, 2}, -2)
+            Tsr a = Tsr.of(new int[]{100, 60, 1, 2}, 4)
+            Tsr b = Tsr.of(new int[]{100, 1, 60, 2}, -2)
             Device cpu = a.getDevice()
             assert cpu!=null
             HostCPU.NativeExecutor exec = ((HostCPU)cpu).getExecutor()

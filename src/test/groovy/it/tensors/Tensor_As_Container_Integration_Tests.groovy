@@ -23,8 +23,8 @@ class Tensor_As_Container_Integration_Tests extends Specification
     def 'Plus operator on String tensors works element-wise.'()
     {
         given : 'Two tensors filled with String objects containing various letters.'
-            Tsr a = new Tsr([2, 3], 'a'..'e')
-            Tsr b = new Tsr([2, 3], 'f'..'k')
+            Tsr a = Tsr.of([2, 3], 'a'..'e')
+            Tsr b = Tsr.of([2, 3], 'f'..'k')
 
         expect : 'These two tensors then look as expected.'
             a.toString() == '(2x3):[a, b, c, d, e, a]'
@@ -48,8 +48,8 @@ class Tensor_As_Container_Integration_Tests extends Specification
             def c1 = new ComplexNumber(2.3, -1.54)
             def c2 = new ComplexNumber(1.0, 0.5)
         and :
-            Tsr a = new Tsr([3, 2], c1)
-            Tsr b = new Tsr([3, 2], c2)
+            Tsr a = Tsr.of([3, 2], c1)
+            Tsr b = Tsr.of([3, 2], c2)
 
         expect:
             a.toString() == "(3x2):[2.3-1.54i, 2.3-1.54i, 2.3-1.54i, 2.3-1.54i, 2.3-1.54i, 2.3-1.54i]"
@@ -64,12 +64,12 @@ class Tensor_As_Container_Integration_Tests extends Specification
     def 'More tensor operations translate to custom data type "ComplexNumber".'()
     {
         given : ''
-            Tsr a = new Tsr(
+            Tsr a = Tsr.of(
                     [3, 2],
                     DataType.of(ComplexNumber.class),
                     ( int i, int[] indices ) -> new ComplexNumber(indices[0], indices[1])
             )
-            Tsr b = new Tsr(
+            Tsr b = Tsr.of(
                     [3, 2],
                     DataType.of(ComplexNumber.class),
                     ( int i, int[] indices ) -> new ComplexNumber(indices[1], indices[0])

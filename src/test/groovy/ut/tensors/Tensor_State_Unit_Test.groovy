@@ -29,7 +29,7 @@ class Tensor_State_Unit_Test extends Specification
     def 'Tensors as String can be formatted on an entry based level.'()
     {
         given : 'A new tensor of rank 2 storing Strings:'
-            Tsr t = new Tsr([2, 3], DataType.of(String.class), (i, indices) -> {
+            Tsr t = Tsr.of([2, 3], DataType.of(String.class), (i, indices) -> {
                 return ["sweet", "salty", "blue", "spinning", "confused", "shining"].get( (i + 17**i)%6 ) + ' ' +
                     ["Saitan", "Apple", "Tofu",  "Strawberry", "Almond", "Salad"].get( (i + 7**i)%6 )
             })
@@ -56,10 +56,10 @@ class Tensor_State_Unit_Test extends Specification
             String mode, List<Integer> shape, String expected
     ){
         given: 'Four tensors of various data types:'
-            Tsr t1 = new Tsr( shape, Float.class, -4..5 ).set( new Tsr( shape, -7..3 ) )
-            Tsr t2 = new Tsr( shape, -4..5 ).set( new Tsr( shape, -7..3 ) )
-            Tsr t3 = new Tsr( shape, Integer.class, -4..5 ).set( new Tsr( shape, -7..3 ) )
-            Tsr t4 = new Tsr( shape, Short.class, -4..5 ).set( new Tsr( shape, -7..3 ) )
+            Tsr t1 = Tsr.of( shape, Float.class, -4..5 ).set( Tsr.of( shape, -7..3 ) )
+            Tsr t2 = Tsr.of( shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
+            Tsr t3 = Tsr.of( shape, Integer.class, -4..5 ).set( Tsr.of( shape, -7..3 ) )
+            Tsr t4 = Tsr.of( shape, Short.class, -4..5 ).set( Tsr.of( shape, -7..3 ) )
 
         expect: 'The first tensor has the expected internals ans produces the correct String representation.'
             t1.toString(mode) == expected
@@ -95,7 +95,7 @@ class Tensor_State_Unit_Test extends Specification
     def 'Newly instantiated and unmodified scalar tensor has expected state.'()
     {
         given: 'A new instance of a scalar tensor.'
-            Tsr t = new Tsr( 6 )
+            Tsr t = Tsr.of( 6 )
         expect: 'The tensor is not stored on another device, meaning that it is not "outsourced".'
             !t.isOutsourced()
         and : 'The tensor contains the expected data.'
@@ -127,7 +127,7 @@ class Tensor_State_Unit_Test extends Specification
     def 'Newly instantiated and unmodified vector tensor has expected state.'()
     {
         given : 'A new vector tensor is being instantiated.'
-            Tsr t = new Tsr( new int[]{ 2 }, 5 )
+            Tsr t = Tsr.of( new int[]{ 2 }, 5 )
         expect : 'The tensor is not stored on another device, meaning that it is not "outsourced".'
             !t.isOutsourced()
         when : 'The flag "isOutsourced" is being set to false...'
@@ -154,7 +154,7 @@ class Tensor_State_Unit_Test extends Specification
     def 'Tensor created from shape and datatype has expected state.'()
     {
         given : 'A new vector tensor is being instantiated.'
-            Tsr t = new Tsr( new int[]{ 2 }, DataType.of(I8.class ) )
+            Tsr t = Tsr.of( new int[]{ 2 }, DataType.of(I8.class ) )
         expect : 'The tensor is not stored on another device, meaning that it is not "outsourced".'
             !t.isOutsourced()
             t.value64() == [0, 0] as double[]

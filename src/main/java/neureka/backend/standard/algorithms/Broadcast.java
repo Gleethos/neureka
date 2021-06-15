@@ -75,7 +75,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                         for ( int i = 0; i < newShape.length; i++ )
                             newShape[ i ] = ( s1[ i ] == 1 ) ? s2[ i ] : s1[ i ];
 
-                        Tsr output = new Tsr( newShape, 0.0 );
+                        Tsr output = Tsr.of( newShape, 0.0 );
                         output.setIsVirtual( false );
                         try {
                             device.store( output );

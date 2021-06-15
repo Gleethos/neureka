@@ -96,22 +96,22 @@ public class FunctionConstant extends AbstractBaseFunction
 
 	@Override
 	public Tsr<?> execute(Tsr<?>... inputs) {
-		return new Tsr<>( inputs[ 0 ].shape(), this._value );
+		return Tsr.of( inputs[ 0 ].shape(), this._value );
 	}
 
 	@Override
 	public Tsr<?> execute( Tsr<?>[] inputs, int j ) {
-		return new Tsr<>( inputs[ 0 ].shape(), this._value );
+		return Tsr.of( inputs[ 0 ].shape(), this._value );
 	}
 
 	@Override
 	public Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) {
-		return new Tsr<>( inputs[ 0 ].shape(), 0.0 );
+		return Tsr.of( inputs[ 0 ].shape(), 0.0 );
 	}
 
 	@Override
 	public Tsr<?> executeDerive( Tsr<?>[] inputs, int index ) {
-		return new Tsr<>( inputs[ 0 ].shape(), 0.0 );
+		return Tsr.of( inputs[ 0 ].shape(), 0.0 );
 	}
 
 	//------------------------------------------------------------------------------------------------------------------

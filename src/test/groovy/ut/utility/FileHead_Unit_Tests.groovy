@@ -56,8 +56,8 @@ class FileHead_Unit_Tests extends Specification
 
         where : 'The following paths and file names are being used for testing : '
             tensor                  | type      | filename          || expected
-            new Tsr([2, 4], -2..4)  | F64.class | "test.idx3-ubyte" || "(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]"
-            new Tsr([2, 4], 2)      | F64.class | "test2.idx"       || "(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]"
+            Tsr.of([2, 4], -2..4)  | F64.class | "test.idx3-ubyte" || "(2x4):[-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, -2.0]"
+            Tsr.of([2, 4], 2)      | F64.class | "test2.idx"       || "(2x4):[2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0]"
     }
 
 
@@ -200,7 +200,7 @@ class FileHead_Unit_Tests extends Specification
     def 'Fully labeled tenors will be stored with their labels included when saving them as CSV.'()
     {
         given:
-            Tsr t = new Tsr([2,3], DataType.of(String.class), [
+            Tsr t = Tsr.of([2,3], DataType.of(String.class), [
                     '1', 'hi', ':)',
                     '2', 'hey', ';)'
             ]).label([
@@ -240,7 +240,7 @@ class FileHead_Unit_Tests extends Specification
     def 'Partially labeled tenors will be stored with their labels included when saving them as CSV.'()
     {
         given:
-            Tsr t = new Tsr([2,3], DataType.of(String.class), [
+            Tsr t = Tsr.of([2,3], DataType.of(String.class), [
                     '1', 'hi', ':)',
                     '2', 'hey', ';)'
             ]).label([
