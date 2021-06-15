@@ -194,6 +194,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         --------------------------------------------
     */
 
+    public static Tsr<Object> of() { return new Tsr<>(); }
+
     /**
      *  This constructor creates a completely empty tensor which is void of any contents and meaning.
      *  The use case for this would be to use the produced {@link Tsr}
@@ -203,6 +205,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  second parameter into this {@link Tsr} instance.
      */
     public Tsr() {}
+
+    public static Tsr<Object> of( Object... args ) { return new Tsr<>( args ); }
 
     public Tsr( Object... args )
     {
@@ -295,9 +299,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         --------------------------------------------
     */
 
+    public static Tsr<?> of( List<Integer> arg1, Object arg2 ) { return new Tsr<>( arg1, arg2 ); }
+
     public Tsr( List<Integer> arg1, Object arg2 ) {
         _construct( new Object[]{ arg1, arg2 } );
     }
+
+    public static Tsr<?> of( List<?> arg1, String arg2 ) { return new Tsr<>( arg1, arg2 ); }
 
     public Tsr( List<?> arg1, String arg2 )
     {
@@ -319,6 +327,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         }
     }
 
+    public static <V> Tsr<V> of( List<Integer> shape, List<V> range ) {
+        return new Tsr<>( shape, range );
+    }
+
     public Tsr( List<Integer> shape, List<V> range )
     {
         // Nested Groovy list should be unpacked:
@@ -329,6 +341,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 (V[]) range.toArray()
         );
     }
+
+    public static <V> Tsr<V> of( int[] shape, List<V> range ) { return new Tsr<>( shape, range ); }
 
     public Tsr( int[] shape, List<V> range )
     {
@@ -379,6 +393,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         }
     }
 
+    public Tsr<Object> of( List<Object> conf ) {
+        return new Tsr<>( conf );
+    }
 
     public Tsr( List<Object> conf ) {
         boolean isMatrix = conf.stream().allMatch( e -> e instanceof List );
@@ -459,42 +476,41 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         --------------------------------------------
     */
 
-    public Tsr( double value )
-    {
-        _constructAllF64( new int[]{ 1 }, value );
-    }
+    public static <V> TensorBuilder<V> of( Class<V> typeClass ) { return new TensorBuilder( typeClass ); }
 
-    public Tsr( float[] value )
-    {
-        _constructForFloats( new int[]{ value.length }, value );
-    }
+    public static Tsr<Double> of( double value ) { return new Tsr<>(value); }
 
-    public Tsr( int[] shape, String seed )
-    {
-        _construct( shape, seed );
-    }
+    public Tsr( double value ) { _constructAllF64( new int[]{ 1 }, value ); }
 
-    public Tsr( int[] shape )
-    {
-        _construct( shape, true, true );
-    }
+    public static Tsr<Float> of( float[] value ) { return new Tsr<>( value ); }
 
-    public Tsr( int[] shape, double value )
-    {
-        _constructAllF64( shape, value );
-    }
+    public Tsr( float[] value ) { _constructForFloats( new int[]{ value.length }, value ); }
 
+    public static Tsr<Double> of( int[] shape, String seed ) { return new Tsr<>( shape, seed ); }
 
-    public Tsr( int[] shape, double[] value ) {
-        _constructForDoubles( shape, value );
-    }
+    public Tsr( int[] shape, String seed ) { _construct( shape, seed ); }
 
+    public static Tsr<Double> of( int[] shape ) { return new Tsr<>( shape ); }
+
+    public Tsr( int[] shape ) { _construct( shape, true, true ); }
+
+    public static Tsr<Double> of( int[] shape, double value ) { return new Tsr<>( shape, value ); }
+
+    public Tsr( int[] shape, double value ) { _constructAllF64( shape, value ); }
+
+    public static Tsr<Double> of( int[] shape, double[] value ) { return new Tsr<>( shape, value ); }
+
+    public Tsr( int[] shape, double[] value ) { _constructForDoubles( shape, value ); }
+
+    public static <V> Tsr<V> of( int[] shape, DataType<V> type ) { return new Tsr<>( shape, type ); }
 
     public Tsr( int[] shape, DataType<?> type )
     {
         setDataType( DataType.of( type.getTypeClass() ) );
         _construct( shape, true, true );
     }
+
+    public static <V> Tsr<V> of( int[] shape, Class<V> typeClass, Object data ) { return new Tsr<>( shape, typeClass, data ); }
 
     public Tsr( int[] shape, Class<?> typeClass, Object data )
     {
@@ -503,9 +519,16 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         setValue( data );
     }
 
-    public <T> Tsr( List<Integer> shape, Class<T> typeClass, List<T> data )
-    {
+    public static <V> Tsr<V> of( List<Integer> shape, Class<V> typeClass, List<V> data ) {
+        return new Tsr<>( shape, typeClass, data );
+    }
+
+    public <T> Tsr( List<Integer> shape, Class<T> typeClass, List<T> data ) {
         _constructForRange( shape.stream().mapToInt( e -> e ).toArray(), DataType.of( typeClass ), (V[]) data.toArray());
+    }
+
+    public static <V> Tsr<V> of( int[] shape, DataType<V> dataType, Object data ) {
+        return new Tsr<>( shape, dataType, data );
     }
 
     public Tsr( int[] shape, DataType<?> dataType, Object data )
@@ -518,6 +541,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         setDataType( dataType );
         _configureFromNewShape( shape, false, false );
         _setData( data );
+    }
+
+    public static <V> Tsr<V> of( List<Integer> shape, DataType<V> dataType, List<V> data ) {
+        return new Tsr<>( shape, dataType, data );
     }
 
     public <T> Tsr( List<Integer> shape, DataType<T> dataType, List<T> data )
@@ -2795,8 +2822,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    public static <V> TensorBuilder<V> of( Class<V> typeClass ) { return new TensorBuilder( typeClass ); }
 
     /**
      *  This is a nested static utility class which is used
