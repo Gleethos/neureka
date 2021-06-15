@@ -194,6 +194,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         --------------------------------------------
     */
 
+    /**
+     *  This static factory method creates a completely empty tensor which is void of any contents and meaning.
+     *  The use case for this would be to use the produced {@link Tsr}
+     *  instance as a target for an inline operations which fills this instance with an actual value. <br>
+     *  An example of this approach would be to call the {@link #putAt(List, Tsr)} method with an empty list as key.
+     *  This will be interpreted as an inline copy of the contents of the
+     *  second parameter into this {@link Tsr} instance.
+     */
     public static Tsr<Object> of() { return new Tsr<>(); }
 
     /**
@@ -206,12 +214,16 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     private Tsr() {}
 
+    /**
+     *  This static {@link Tsr} factory method tries to interpret the provided
+     *  arguments to create the instance the use might wants.
+     *
+     * @param args The arguments which ought to be interpreted.
+     * @return The result of the interpretation in the form of a {@link Tsr} instance of typ {@link Object}.
+     */
     public static Tsr<Object> of( Object... args ) { return new Tsr<>( args ); }
 
-    private Tsr( Object... args )
-    {
-        _construct( args );
-    }
+    private Tsr( Object... args ) { _construct( args ); }
 
     private void _construct( Object[] args )
     {
@@ -232,8 +244,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 throw new IllegalArgumentException( message );
             }
         }
-        args[ 0 ] = ( args[ 0 ] instanceof ArrayList ) ? ( (ArrayList) args[ 0 ] ).toArray() : args[ 0 ];
-        args[ 1 ] = ( args[ 1 ] instanceof ArrayList ) ? ( (ArrayList) args[ 1 ] ).toArray() : args[ 1 ];
+        args[ 0 ] = ( args[ 0 ] instanceof ArrayList ) ? ( (List) args[ 0 ] ).toArray() : args[ 0 ];
+        args[ 1 ] = ( args[ 1 ] instanceof ArrayList ) ? ( (List) args[ 1 ] ).toArray() : args[ 1 ];
         if ( args[ 0 ] instanceof Object[] ) {
             if ( ( (Object[]) args[ 0 ] )[ 0 ] instanceof Integer || ((Object[])args[ 0 ])[ 0 ] instanceof Double) {
                 args[ 0 ] = _intArray( (Object[]) args[ 0 ] );
@@ -278,12 +290,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             }
         }
         boolean doAD = true;
-        Tsr<?>[] tensors = new Tsr[ numberOfTensors ];
+        Tsr<V>[] tensors = new Tsr[ numberOfTensors ];
         StringBuilder f = new StringBuilder();
         int ti = 0;
         for ( Object o : args ) {
             if ( tsrList.contains( o ) ) {
-                tensors[ ti ] = ( (Tsr<?>) o );
+                tensors[ ti ] = ( (Tsr<V>) o );
                 f.append( "I[" ).append( ti ).append( "]" );
                 ti++;
             } else if ( o instanceof  String ) f.append( (String) o );
@@ -688,10 +700,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         --------------------------------------------
     */
 
-    public static <T> Tsr<T> of( List<Integer> shape, DataType<T> type, Initializer<T> initializer ) {
-        return new Tsr<>( shape, type, initializer );
-    }
-
     /**
      *  This constructor allows the creation of tensors with an additional initialization
      *  lambda for filling the underlying data array with desired values.
@@ -701,6 +709,18 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  Therefore the constructor requires not only a shape as argument but also
      *  the data type which ought to be allocated as well as the initialization
      *  lambda which will be called iteratively.
+     *
+     * @param shape The shape of this new tensor ought to have.
+     * @param type The data type this tensor ought to have.
+     * @param initializer The lambda Object which ought to fill this tensor with the appropriate data.
+     * @param <T> The type parameter for the actual data array items.
+     */
+    public static <T> Tsr<T> of( List<Integer> shape, DataType<T> type, Initializer<T> initializer ) {
+        return new Tsr<>( shape, type, initializer );
+    }
+
+    /**
+     *  see {@link #of(List, DataType, Initializer)}
      *
      * @param shape The shape of this new tensor ought to have.
      * @param type The data type this tensor ought to have.
@@ -732,7 +752,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     /**
-     * see {@link #of(int[], DataType, Initializer)}
+     *  see {@link #of(int[], DataType, Initializer)}
+     *
+     * @param shape The shape of this new tensor ought to have.
+     * @param type The data type this tensor ought to have.
+     * @param initializer The lambda Object which ought to fill this tensor with the appropriate data.
+     * @param <T> The type parameter for the actual data array items.
      */
     public <T> Tsr( int[] shape, DataType<T> type, Initializer<T> initializer )
     {
@@ -759,10 +784,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         --------------------------------------------
      */
 
-    public static <V> Tsr<V> of( String expression, List<Object> inputs ) {
-        return new Tsr<>( expression, inputs );
-    }
-
     /**
      *  This constructor allows for the creation and execution of Function instances
      *  without actually instantiating them manually,
@@ -778,6 +799,16 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * <ul>
      *      <li><i> 'Tsr a = Tsr.of( "sin( I[0] ) / I[1]", List.of(b, c) )'</i></li>
      * </ul>
+     *
+     * @param expression A String which will be used for parsing a Function AST.
+     * @param inputs A list of inputs which can be tensors or numeric types.
+     */
+    public static <V> Tsr<V> of( String expression, List<Object> inputs ) {
+        return new Tsr<>( expression, inputs );
+    }
+
+    /**
+     *  see {@link #of(String, List)}
      *
      * @param expression A String which will be used for parsing a Function AST.
      * @param inputs A list of inputs which can be tensors or numeric types.
@@ -798,10 +829,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             );
     }
 
-    public static <V> Tsr<V> of( Tsr<V> tensor, String expression ) {
-        return new Tsr<>( tensor, expression );
-    }
-
     /**
      *  This method takes a tensor and a String expression describing
      *  operations which ought to be applied to said tensor.
@@ -819,13 +846,19 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param tensor A tensor which serves as input to the Function instance parsed from the given expression.
      * @param expression The expression describing operations applied to the provided tensor.
      */
+    public static <V> Tsr<V> of( Tsr<V> tensor, String expression ) {
+        return new Tsr<>( tensor, expression );
+    }
+
+    /**
+     *  see {@link #of(Tsr, String)}
+     *
+     * @param tensor A tensor which serves as input to the Function instance parsed from the given expression.
+     * @param expression The expression describing operations applied to the provided tensor.
+     */
     private Tsr(Tsr<V> tensor, String expression ) {
         if ( tensor == null ) return;
         _construct( new Tsr[]{ tensor }, expression, true );
-    }
-
-    public static <V> Tsr<V> of( Tsr<V>[] tensors, String expression ) {
-        return new Tsr<>( tensors, expression );
     }
 
     /**
@@ -844,12 +877,18 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      * @param expression The expression describing operations applied to the provided tensors.
      */
-    private Tsr(Tsr<V>[] tensors, String expression ) {
-        _construct( tensors, expression, true );
+    public static <V> Tsr<V> of( Tsr<V>[] tensors, String expression ) {
+        return new Tsr<>( tensors, expression );
     }
 
-    public static <V> Tsr<V> of( Tsr<V>[] tensors, String expression, boolean doAD ) {
-        return new Tsr<>(tensors, expression, doAD);
+    /**
+     *  see {@link #of(Tsr[], String)}
+     *
+     * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
+     * @param expression The expression describing operations applied to the provided tensors.
+     */
+    private Tsr(Tsr<V>[] tensors, String expression ) {
+        _construct( tensors, expression, true );
     }
 
     /**
@@ -872,6 +911,17 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param expression The expression describing operations applied to the provided tensors.
      * @param doAD A flag which when set to true commands the creation of a computation graph during operation execution.
      */
+    public static <V> Tsr<V> of( Tsr<V>[] tensors, String expression, boolean doAD ) {
+        return new Tsr<>(tensors, expression, doAD);
+    }
+
+    /**
+     *  see {@link #of(Tsr[], String, boolean)}
+     *
+     * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
+     * @param expression The expression describing operations applied to the provided tensors.
+     * @param doAD A flag which when set to true commands the creation of a computation graph during operation execution.
+     */
     private Tsr(Tsr<V>[] tensors, String expression, boolean doAD )
     {
         _construct( tensors, expression, doAD );
@@ -879,7 +929,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     /**
      *  In essence tensors are merely fancy wrappers for some form of array of any type...
-     *  This wrapper usually stays the same of a given data array.
+     *  This wrapper usually stays the same for a given data array.
      *  However, sometimes a tensor changes its identity, or rather the underlying
      *  data changes the wrapping tensor instance. 
      *
@@ -897,7 +947,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param expression The expression defining a function.
      * @param doAD The flag which will enable or disable autograd for the instantiated Function.
      */
-    private void _construct( Tsr[] tensors, String expression, boolean doAD )
+    private void _construct( Tsr<V>[] tensors, String expression, boolean doAD )
     {
         if ( tensors == null || tensors.length == 0 || tensors[ 0 ] == null ) return; 
         _become( Function.Setup.commit( this, tensors, expression, doAD ) );
@@ -1551,6 +1601,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param tensor The tensor whose identity should be stolen.
      * @return This very tensor instance in order to enable method chaining.
      */
+    @Deprecated // This will be removed due to the fact that tensor instantiation is now factory method based.
     protected Tsr<V> _become(Tsr<V> tensor )
     {
         if ( tensor == null ) return this;
