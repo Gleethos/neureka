@@ -16,7 +16,6 @@ class Tensor_Indexing_Integration_Tests extends Specification
     void 'Test convolution with legacy indexing.'()
     {
         given : 'The following library configuration is being used.'
-            //Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(true)
             Neureka.get().settings().view().setIsUsingLegacyView(true)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
 
@@ -83,7 +82,6 @@ class Tensor_Indexing_Integration_Tests extends Specification
     {
         given :
             Neureka.get().settings().view().setIsUsingLegacyView(true)
-            //Neureka.instance().settings().indexing().setIsUsingLegacyIndexing(false)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
 
         when :
@@ -149,7 +147,8 @@ class Tensor_Indexing_Integration_Tests extends Specification
                     29  40  51
              */
         when : Tsr out0 = Tsr.of([t0, x0], "i0xi1")
-        then : out0.toString().equals("(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]")
+        then :
+            out0.toString() == "(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]"
     }
 
 }
