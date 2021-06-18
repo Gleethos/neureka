@@ -85,5 +85,47 @@ class Tensor_Building_Unit_Test extends Specification
 
 
 
+    def 'Value based tensors can be created fluently.'(
+            Class<Object> type, Object[] data, Object expected
+    ) {
+
+        given : 'We create a range based Tsr instance using the fluent builder API.'
+            Tsr<?> t = Tsr.of( type )
+                .withShape( 3, 2 )
+                .iterativelyFilledBy( data )
+
+        expect : 'This new instance will have the expected data type...'
+            t.dataType == DataType.of(type)
+
+        and : '...also it will contain the expected data.'
+            t.data == expected
+
+        and : 'The tensor will have the shape we passed to the builder.'
+            t.shape() == [3, 2]
+
+        and : 'The size of the tensor will be the product of all shape entries!'
+            t.size() == 6
+
+        and : """
+                Based on the fact that the tensor is not homogeneously filled it will be not be a "virtual tensor".
+                Virtual would mean that a tensor does not have allocated memory proportional to the size
+                of the tensor! 
+                In this case the tensor should be actual.
+            """
+            !t.isVirtual()
+
+        where : 'The following data is being used to populate the builder API:'
+            type          | data                             || expected
+            Integer.class | [2, 3, 4]           as Integer[] || [2, 3, 4, 2, 3, 4]                         as int[]
+            Double.class  | [-5, 6.5, 7]        as Double[]  || [-5, 6.5, 7, -5, 6.5, 7]                   as double[]
+            Short.class   | [6,  -1, -2]        as Short[]   || [6,  -1, -2, 6,  -1, -2]                   as short[]
+            Float.class   | [22.4, 26.4]        as Float[]   || [22.4, 26.4, 22.4, 26.4, 22.4, 26.4]       as float[]
+            //Byte.class    | [-20, 3, 4 -3]      as Byte[]    || [-20, 3, 4, -3, -20, 3]                    as byte[]
+            Long.class    | [23, 199]           as Long[]    || [23, 199, 23, 199, 23, 199]                as long[]
+
+    }
+
+
+
 
 }

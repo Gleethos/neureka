@@ -41,10 +41,8 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  *  This class is a singleton.
@@ -77,7 +75,7 @@ public class DataConverter
      *  represent "to types".
      *  This allows for fast Converter access for a given type pair!
      */
-    private static Map<Class, Map<Class, Conversion>> _converters = new HashMap<>();
+    private static Map<Class<?>, Map<Class, Conversion>> _converters = new HashMap<>();
 
     /**
      *  This class is a singleton.
@@ -149,6 +147,13 @@ public class DataConverter
         _set( BigInteger.class, Double.class, BigInteger::doubleValue );
         _set( BigDecimal.class, Double.class, BigDecimal::doubleValue );
         _set( Integer.class, Double.class, Integer::doubleValue );
+
+        _set( Float[].class, float[].class,   Utility::objFloatsToPrimFloats );
+        _set( Integer[].class, int[].class,   Utility::objIntsToPrimInts );
+        _set( Long[].class, long[].class,     Utility::objLongsToPrimLongs );
+        _set( Double[].class, double[].class, Utility::objDoublesToPrimDoubles );
+        _set( Short[].class, short[].class,   Utility::objShortsToPrimShorts );
+        _set( Byte[].class, byte[].class,     Utility::objBytesToPrimBytes );
     }
 
     /**
@@ -203,10 +208,47 @@ public class DataConverter
             _LOG.error( message );
             throw new IllegalArgumentException( message );
         }
-
         return (T) _converters.get(from.getClass()).get(to).go(from);
     }
 
+
+
+    public <F extends Number, T> T convert( F[] from, Class<T> to, int size ) {
+        if ( from.length == size )
+            return convert( from, to );
+        else {
+            Iterator<F> stream = IntStream.iterate(0, i -> i + 1).limit(size).mapToObj(i -> from[i % from.length] ).iterator();
+            int index = 0;
+            if ( from instanceof Integer[] ) {
+                Integer[] array = new Integer[size];
+                for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Integer) it.next(); index++; }
+                return convert( array, to );
+            } else if ( from instanceof Double[] ) {
+                Double[] array = new Double[size];
+                for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Double) it.next(); index++; }
+                return convert( array, to );
+            } else if ( from instanceof Float[] ) {
+                Float[] array = new Float[size];
+                for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Float) it.next(); index++; }
+                return convert( array, to );
+            } else if ( from instanceof Short[] ) {
+                Short[] array = new Short[size];
+                for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Short) it.next(); index++; }
+                return convert( array, to );
+            } else if ( from instanceof Long[] ) {
+                Long[] array = new Long[size];
+                for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Long) it.next(); index++; }
+                return convert( array, to );
+            } else if ( from instanceof Byte[] ) {
+                Byte[] array = new Byte[size];
+                for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = (Byte) it.next(); index++; }
+                return convert( array, to );
+            }
+            Object[] array = new Object[ size ];
+            for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = it.next(); index++; }
+            return convert( array, to );
+        }
+    }
 
     /**
      *  This is a static utility class containing the actual conversion logic
@@ -215,6 +257,53 @@ public class DataConverter
      */
     public static class Utility
     {
+        public static float[] objFloatsToPrimFloats( Float[] objects ) {
+            float[] array = new float[objects.length];
+            for ( int i = 0; i < array.length; i++ ) {
+                array[i] = objects[i];
+            }
+            return array;
+        }
+
+        public static double[] objDoublesToPrimDoubles( Double[] objects ) {
+            double[] array = new double[objects.length];
+            for ( int i = 0; i < array.length; i++ ) {
+                array[i] = objects[i];
+            }
+            return array;
+        }
+
+        public static int[] objIntsToPrimInts( Integer[] objects ) {
+            int[] array = new int[objects.length];
+            for ( int i = 0; i < array.length; i++ ) {
+                array[i] = objects[i];
+            }
+            return array;
+        }
+
+        public static long[] objLongsToPrimLongs( Long[] objects ) {
+            long[] array = new long[objects.length];
+            for ( int i = 0; i < array.length; i++ ) {
+                array[i] = objects[i];
+            }
+            return array;
+        }
+
+        public static short[] objShortsToPrimShorts( Short[] objects ) {
+            short[] array = new short[objects.length];
+            for ( int i = 0; i < array.length; i++ ) {
+                array[i] = objects[i];
+            }
+            return array;
+        }
+
+        public static byte[] objBytesToPrimBytes( Byte[] objects ) {
+            byte[] array = new byte[objects.length];
+            for ( int i = 0; i < array.length; i++ ) {
+                array[i] = objects[i];
+            }
+            return array;
+        }
 
         public static double[] newSeededDoubleArray(String seed, int size) {
             return newSeededDoubleArray(_longStringHash(seed), size);

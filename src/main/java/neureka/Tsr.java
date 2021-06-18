@@ -172,7 +172,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     /**
      *  The version of the data ( _data ) stored within this tensor.
      *  It gets incremented every time an inline operation occurs!
-     *  GraphNode instances tied to this tensor (as component) store
+     *  {@link GraphNode} instances tied to this tensor (as component) store
      *  a reference version which is a copy of this field.
      *  If this version changes, despite there being a GraphNode which might
      *  perform auto-differentiation at some point, then an exception will be thrown for debugging.
@@ -195,9 +195,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     */
 
     /**
-     *  This static factory method creates a completely empty tensor which is void of any contents and meaning.
+     *  This static factory method creates and return a completely empty tensor which is void of any contents and meaning.
      *  The use case for this would be to use the produced {@link Tsr}
-     *  instance as a target for an inline operations which fills this instance with an actual value. <br>
+     *  instance as a target for an inline operations which fills the instance with an actual value. <br>
      *  An example of this approach would be to call the {@link #putAt(List, Tsr)} method with an empty list as key.
      *  This will be interpreted as an inline copy of the contents of the
      *  second parameter into this {@link Tsr} instance.
@@ -545,11 +545,18 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     private Tsr( int[] shape, DataType<?> dataType, Object data )
     {
-        if ( dataType == DataType.of( data.getClass() ) ) {
+        int size = NDConfiguration.Utility.szeOfShp(shape);
+        if ( dataType == DataType.of( data.getClass() ) ) { // This means that "data" is a single value!
             if ( data instanceof Double  ) { _constructAllF64( shape, (Double) data );  return; }
             if ( data instanceof Float   ) { _constructAllF32( shape, (Float) data );   return; }
             if ( data instanceof Integer ) { _constructAllI32( shape, (Integer) data ); return; }
         }
+        else if ( data instanceof Integer[] ) data = DataConverter.instance().convert( (Integer[]) data, int[].class,    size );
+        else if ( data instanceof Double[]  ) data = DataConverter.instance().convert( (Double[])  data, double[].class, size );
+        else if ( data instanceof Float[]   ) data = DataConverter.instance().convert( (Float[])   data, float[].class,  size );
+        else if ( data instanceof Long[]    ) data = DataConverter.instance().convert( (Long[])    data, long[].class,   size );
+        else if ( data instanceof Short[]   ) data = DataConverter.instance().convert( (Short[])   data, short[].class,  size );
+        else if ( data instanceof Byte[]    ) data = DataConverter.instance().convert( (Byte[])    data, byte[].class,   size );
         setDataType( dataType );
         _configureFromNewShape( shape, false, false );
         _setData( data );
@@ -701,7 +708,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     */
 
     /**
-     *  This constructor allows the creation of tensors with an additional initialization
+     *  This factory method allows the creation of tensors with an additional initialization
      *  lambda for filling the underlying data array with desired values.
      *  Besides regular numeric types it is also possible to initialize the
      *  tensor with regular Objects like String instances or custom data types like complex
@@ -733,7 +740,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     /**
-     *  This constructor allows the creation of tensors with an additional initialization
+     *  This factory method allows the creation of tensors with an additional initialization
      *  lambda for filling the underlying data array with desired values.
      *  Besides regular numeric types it is also possible to initialize the
      *  tensor with regular objects like {@link String} instances or custom data types like complex
@@ -785,7 +792,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
 
     /**
-     *  This constructor allows for the creation and execution of Function instances
+     *  This factory method allows for the creation and execution of Function instances
      *  without actually instantiating them manually,
      *  where the result will then become this very tensor. <br><br>
      *  The passed {@link String} will be parsed into a {@link Function} AST which will be cached
