@@ -10,6 +10,7 @@ import neureka.utility.fluent.states.WithShapeOrScalarOrVector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  *  This class exposes a fluent builder API for creating {@link Tsr} instances.
@@ -99,34 +100,41 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
 
     @Override
     public Tsr<V> step( double size ) {
+        int tensorSize = _size();
         Object data = null;
         int itemLimit = _size();
         int itemIndex = 0;
         if ( _dataType == DataType.of( Integer.class ) ) {
             List<Integer> range = new ArrayList<>();
-            for ( int index = ((Integer) _from); index < ((Integer)_to) && itemIndex < itemLimit; index += size ) {
+            for ( int index = ((Integer) _from); index <= ((Integer)_to) && itemIndex < itemLimit; index += size ) {
                 range.add( index );
                 itemIndex++;
             }
-            data = range.stream().mapToInt( v -> v ).toArray();
+            data = IntStream.iterate( 0, i -> i + 1 )
+                            .limit( tensorSize )
+                            .map( i -> range.get( i % range.size() ) )
+                            .toArray();
         }
         else if ( _dataType == DataType.of( Double.class ) ) {
             List<Double> range = new ArrayList<>();
-            for ( double index = ((Double) _from); index < ((Double)_to) && itemIndex < itemLimit; index += size ) {
+            for ( double index = ((Double) _from); index <= ((Double)_to) && itemIndex < itemLimit; index += size ) {
                 range.add( index );
                 itemIndex++;
             }
-            data = range.stream().mapToDouble( v -> v ).toArray();
+            data = IntStream.iterate( 0, i -> i + 1 )
+                            .limit( tensorSize )
+                            .mapToDouble( i -> range.get( i % range.size() ) )
+                            .toArray();
         }
         else if ( _dataType == DataType.of( Float.class ) ) {
             List<Float> range = new ArrayList<>();
-            for ( double index = ((Float) _from); index < ((Float)_to) && itemIndex < itemLimit; index += size ) {
+            for ( double index = ((Float) _from); index <= ((Float)_to) && itemIndex < itemLimit; index += size ) {
                 range.add( (float) index );
                 itemIndex++;
             }
-            float[] primData = new float[range.size()];
-            for ( int ii = 0; ii < range.size(); ii ++) {
-                primData[ii] = range.get(ii);
+            float[] primData = new float[tensorSize];
+            for ( int ii = 0; ii < tensorSize; ii ++) {
+                primData[ii] = range.get(ii%range.size());
             }
             data = primData;
         }
