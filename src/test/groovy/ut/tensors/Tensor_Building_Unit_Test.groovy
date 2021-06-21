@@ -37,9 +37,9 @@ class Tensor_Building_Unit_Test extends Specification
 
         where : 'The following data is being used to populate the builder API:'
             type          | value            || data
-            Integer.class |   4   as int     || new int[]{4}
-            Double.class  |   4.0 as double  || new double[]{4.0}
-            Float.class   |   4f  as float   || new float[]{4f}
+            Integer.class |   4   as int     || new int[]   { 4   }
+            Double.class  |   4.0 as double  || new double[]{ 4.0 }
+            Float.class   |   4f  as float   || new float[] { 4f  }
 
     }
 
@@ -67,21 +67,21 @@ class Tensor_Building_Unit_Test extends Specification
             t.size() == 6
 
         and : """
-                Based on the fact that the tensor is not homogeneously filled it will be not be a "virtual tensor".
-                Virtual would mean that a tensor does not have allocated memory proportional to the size
-                of the tensor! 
-                In this case the tensor should be actual.
+                Based on the fact that the tensor is not homogeneously filled it will be an "actual tensor".
+                The opposite of that, a "virtual tensor", would mean that a tensor does not have allocated 
+                memory proportional to the size of the tensor! 
+                In this case however the tensor should be actual which means that it is not virtual.
             """
             !t.isVirtual()
 
         where : 'The following data is being used to populate the builder API:'
-        type          | from            | to                |  step  || data
-        Integer.class | -9  as int      | 18  as int        |   2    || [-9, -7, -5, -3, -1, 1] as int[]
-        Integer.class | -2  as int      | 4  as int         |   2    || [-2, 0, 2, 4, -2, 0] as int[]
-        Double.class  | 2.7 as double   | 45.0 as double    |   3    || [2.7, 5.7, 8.7, 11.7, 14.7, 17.7] as double[]
-        Double.class  | -3 as double    | 3 as double       |   0.5  || [-3.0, -2.5, -2.0, -1.5, -1.0, -0.5] as double[]
-        Float.class   | 6.4f as float   | 78.3f  as float   |   4    || [6.4, 10.4, 14.4, 18.4, 22.4, 26.4] as float[]
-        Float.class   | 0f as float     | 1f  as float      |   0.2f || [0.0, 0.2, 0.4, 0.6, 0.8, 1.0] as float[]
+            type          | from            | to                |  step  || data
+            Integer.class | -9   as int     | 18     as int     |   2    || [-9, -7, -5, -3, -1, 1]              as int[]
+            Integer.class | -2   as int     | 4      as int     |   2    || [-2, 0, 2, 4, -2, 0]                 as int[]
+            Double.class  | 2.7  as double  | 45.0   as double  |   3    || [2.7, 5.7, 8.7, 11.7, 14.7, 17.7]    as double[]
+            Double.class  | -3   as double  | 3      as double  |   0.5  || [-3.0, -2.5, -2.0, -1.5, -1.0, -0.5] as double[]
+            Float.class   | 6.4f as float   | 78.3f  as float   |   4    || [6.4, 10.4, 14.4, 18.4, 22.4, 26.4]  as float[]
+            Float.class   | 0f   as float   | 1f     as float   |   0.2f || [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]       as float[]
 
 
     }
@@ -110,10 +110,10 @@ class Tensor_Building_Unit_Test extends Specification
             t.size() == 6
 
         and : """
-                Based on the fact that the tensor is not homogeneously filled it will not be a "virtual tensor".
-                Virtual would mean that a tensor does not have allocated memory proportional to the size
-                of the tensor! 
-                In this case the tensor should be actual.
+                Based on the fact that the tensor is not homogeneously filled it will be an "actual tensor".
+                The opposite of that, a "virtual tensor", would mean that a tensor does not have allocated 
+                memory proportional to the size of the tensor! 
+                In this case however the tensor should be actual which means that it is not virtual.
             """
             !t.isVirtual()
 

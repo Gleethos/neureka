@@ -1609,7 +1609,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return This very tensor instance in order to enable method chaining.
      */
     @Deprecated // This will be removed due to the fact that tensor instantiation is now factory method based.
-    protected Tsr<V> _become(Tsr<V> tensor )
+    protected Tsr<V> _become( Tsr<V> tensor )
     {
         if ( tensor == null ) return this;
         this.setDataType( tensor.getDataType() );
@@ -1685,7 +1685,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param error A tensor which is back-propagated to gradients. Must match the size og this tensor.
      * @return The tensor on which this method was called. (factory pattern)
      */
-    public Tsr<V> backward(Tsr<V> error ) {
+    public Tsr<V> backward( Tsr<V> error ) {
         if ( !forComponent( GraphNode.class, node -> node.backward( error ) ) && this.rqsGradient() ) {
             addToGradient( error );
         }
@@ -1707,7 +1707,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param value A scalar which is back-propagated to gradients. Must match the size og this tensor.
      * @return The tensor on which this method was called. (factory pattern)
      */
-    public Tsr<V> backward(double value )
+    public Tsr<V> backward( double value )
     {
         backward( new Tsr<>( getNDConf().shape(), value ) );
         return this;
@@ -1740,14 +1740,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public void applyGradient()
     {
         /*
-           If the tensor has a JITProp component then it will triggers the continuation of the back-propagation which
+           If the tensor has a JITProp component then it will trigger the continuation of the back-propagation which
            has been put on hold by saving the pending graph nodes inside the component. <br>
            This is because the gradient most likely has not yet been fully calculated.
          */
         forComponent( JITProp.class, JITProp::execute );
         // Afterwards the JITProp component is not needed anymore! So we remove it.
         remove( JITProp.class );
-        // Now the gradient can be applied (Gradients are also tensors, which is why we provide its class).
+        // Now the gradient can be applied (Gradients are also tensors, which is why we provide its class as key).
         forComponent(
                 Tsr.class,
                 g -> {
@@ -1803,7 +1803,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param labels A nested String array containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    public Tsr<V> label(String[][] labels )
+    public Tsr<V> label( String[][] labels )
     {
         _label( null, labels );
         return this;
@@ -1828,7 +1828,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param labels A nested String array containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    public Tsr<V> label(String tensorName, String[][] labels )
+    public Tsr<V> label( String tensorName, String[][] labels )
     {
         _label( tensorName, labels );
         return this;
@@ -1900,7 +1900,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param labels A nested String list containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    public Tsr<V> label(String tensorName, List<List<Object>> labels )
+    public Tsr<V> label( String tensorName, List<List<Object>> labels )
     {
         NDFrame<V> frame = find( NDFrame.class );
         if ( frame == null ) set( new NDFrame( labels, tensorName ) );
@@ -1923,13 +1923,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param labels A map in which the keys are dimension labels and the values are lists of index labels for the dimension.
      * @return This tensor (method chaining).
      */
-    public Tsr<V> label(Map<Object, List<Object>> labels )
+    public Tsr<V> label( Map<Object, List<Object>> labels )
     {
         this.set( new NDFrame<>( labels, this, null ) );
         return this;
     }
 
-    public Tsr<V> label(String tensorName, Map<Object, List<Object>> labels )
+    public Tsr<V> label( String tensorName, Map<Object, List<Object>> labels )
     {
         this.set( new NDFrame<>( labels, this, tensorName ) );
         return this;
@@ -1947,23 +1947,23 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         -----------------------------
      */
 
-    public Tsr<V> plus(Tsr<V> other ) {
+    public Tsr<V> plus( Tsr<V> other ) {
         return Neureka.get().context().getAutogradFunction().plus().call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<V> plusAssign(Tsr<V> other ) {
+    public Tsr<V> plusAssign( Tsr<V> other ) {
         return Neureka.get().context().getFunction().plusAssign().call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<V> plus(Double value ) {
+    public Tsr<V> plus( Double value ) {
         return plus( new Tsr<>( this.shape(), value ) );
     }
 
-    public Tsr<V> minus(Tsr<V> other ) {
+    public Tsr<V> minus( Tsr<V> other ) {
         return Neureka.get().context().getAutogradFunction().minus().call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<V> minusAssign(Tsr<V> other ) {
+    public Tsr<V> minusAssign( Tsr<V> other ) {
         return Neureka.get().context().getFunction().minusAssign().call( new Tsr[]{ this, other } );
     }
 
@@ -1971,19 +1971,19 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return Neureka.get().context().getAutogradFunction().neg().call( new Tsr[]{ this } );
     }
 
-    public Tsr<V> multiply(Tsr<V> other ) {
+    public Tsr<V> multiply( Tsr<V> other ) {
         return Neureka.get().context().getAutogradFunction().mul().call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<V> timesAssign(Tsr<V> other ) {
+    public Tsr<V> timesAssign( Tsr<V> other ) {
         return Neureka.get().context().getFunction().mulAssign().call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<V> multiply(Double value ) {
+    public Tsr<V> multiply( Double value ) {
         return multiply( new Tsr<>( this.shape(), value ) );
     }
 
-    public Tsr<V> div(Tsr<V> other ) {
+    public Tsr<V> div( Tsr<V> other ) {
         return Neureka.get().context().getAutogradFunction().div().call( new Tsr[]{ this, other } );
     }
 
@@ -1991,31 +1991,31 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return div( new Tsr<>( this.shape(), value ) );
     }
 
-    public Tsr<V> divAssign(Tsr<V> other ) {
+    public Tsr<V> divAssign( Tsr<V> other ) {
         return Neureka.get().context().getFunction().divAssign().call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<V> mod(Tsr<V> other ) {
+    public Tsr<V> mod( Tsr<V> other ) {
         return Neureka.get().context().getAutogradFunction().mod().call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<V> modAssign(Tsr<V> other ) {
+    public Tsr<V> modAssign( Tsr<V> other ) {
         return Neureka.get().context().getFunction().modAssign().call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<V> power(Tsr<V> other ) {
+    public Tsr<V> power( Tsr<V> other ) {
         return Neureka.get().context().getAutogradFunction().pow().call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<V> power(Double value ) {
+    public Tsr<V> power( Double value ) {
         return power( new Tsr<>( this.shape(), value ) );
     }
 
-    public Tsr<V> xor(Tsr<V> other ) {
+    public Tsr<V> xor( Tsr<V> other ) {
         return Neureka.get().context().getAutogradFunction().pow().call( new Tsr[]{ this, other} );
     }
 
-    public Tsr<V> xor(Double value ) {
+    public Tsr<V> xor( Double value ) {
         return xor( new Tsr<>( this.shape(), value ) );
     }
 
@@ -2161,7 +2161,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param args An arbitrary number of arguments which can be used for slicing.
      * @return A slice tensor created based on the passed keys.
      */
-    public Tsr<V> getAt(Object... args ) {
+    public Tsr<V> getAt( Object... args ) {
         List<Object> argsList = Arrays.asList( args );
         return getAt( argsList );
     }
@@ -2174,7 +2174,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param i The index of the value item which should be returned as a tensor instance.
      * @return A tensor holding a single value element which is internally still residing in the original tensor.
      */
-    public Tsr<V> getAt(int i ) {
+    public Tsr<V> getAt( int i ) {
         return getAt( new Object[]{ i, i } );
     }
 
@@ -2185,7 +2185,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param i The scalar index of the value item which should be returned by the method.
      * @return The value item found at the targeted index.
      */
-    public V getValueAt(int i ) {
+    public V getValueAt( int i ) {
         return (V) getDataAt( getNDConf().indexOfIndex( i ) );
     }
 
@@ -2199,7 +2199,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param indices The index array which targets a single value item within this tensor.
      * @return The found raw value item targeted by the provided index array.
      */
-    public V getValueAt(int[] indices ) {
+    public V getValueAt( int[] indices ) {
         return (V) getDataAt( getNDConf().indexOfIndices( indices ) );
     }
 
@@ -2214,17 +2214,17 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param o The item which ought to be placed at the targeted position.
      * @return This very tensor in order to enable method chaining...
      */
-    public Tsr<V> setAt(int i, V o ) {
+    public Tsr<V> setAt( int i, V o ) {
         setDataAt( getNDConf().indexOfIndex( i ), o );
         return this;
     }
 
-    public Tsr<V> getAt(double i ) {
-        return getAt( Arrays.asList( getNDConf().indicesOfIndex( (int) Math.floor( i ) ) ).toArray() );
+    public Tsr<V> getAt( double i ) {
+        return getAt( Collections.singletonList( getNDConf().indicesOfIndex( (int) Math.floor(i) ) ).toArray() );
     }
 
     public Tsr<V> getAt(BigDecimal i ) {
-        return getAt( Arrays.asList( getNDConf().indicesOfIndex(( i ).intValue()) ).toArray() );
+        return getAt( Collections.singletonList( getNDConf().indicesOfIndex( (i).intValue() ) ).toArray() );
     }
 
     public Tsr<V> getAt(Map<?,Integer> rangToStrides )
@@ -2258,7 +2258,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param key This object might be a wide range of objects including maps, lists or arrays...
      * @return A slice tensor or scalar value.
      */
-    public Tsr<V> getAt(Object key ) {
+    public Tsr<V> getAt( Object key ) {
         if ( key == null ) return this;
         if ( key instanceof Object[] && ((Object[]) key).length == 0 ) key = new ArrayList<>();
         if ( key instanceof List && ( (List<?>) key ).isEmpty() ) {
@@ -2274,18 +2274,15 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         key = ( key instanceof List ) ? ((List<?>) key).toArray() : key;
 
         if ( key instanceof Object[] ) {
-            int[] newOffset = new int[ this.rank() ];
             boolean allInt = true;
             for ( Object o : (Object[]) key ) allInt = allInt && o instanceof Integer;
             if ( allInt && ( (Object[]) key ).length == rank() ) {
-                newOffset = _intArray((Object[]) key);
-                if ( newOffset != null ) {
-                    for ( int i = 0; i < this.rank(); i++ )
-                        newOffset[ i ] = ( newOffset[ i ] < 0 ) ? getNDConf().shape( i ) + newOffset[ i ] : newOffset[ i ];
-                    for ( int i = 0; i < this.rank(); i++ )
-                        ((Object[])key)[ i ] = newOffset[ i ];
-                    allInt = false;
-                }
+                int[] newOffset = _intArray((Object[]) key);
+                for ( int i = 0; i < this.rank(); i++ )
+                    newOffset[ i ] = ( newOffset[ i ] < 0 ) ? getNDConf().shape( i ) + newOffset[ i ] : newOffset[ i ];
+                for ( int i = 0; i < this.rank(); i++ )
+                    ((Object[])key)[ i ] = newOffset[ i ];
+                allInt = false;
             }
             boolean hasScale = false;
             for ( Object o : (Object[]) key ) hasScale = hasScale || o instanceof Map;
@@ -2357,6 +2354,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         if( parentTensor.rank() != newShape.length || rootTensor != parentTensor ) {
             // TODO! This requires some more thought about how to check this!
             // THIS CASE HAS NOT YET BEEN THOUGHT TROUGH!
+            _LOG.warn(
+                    "Exceptional slice request detected. " +
+                    "This type of tensor cannot yet be sliced. " +
+                    "Please copy this tensor before slicing."
+            );
         } else {
             /*
                 1. We know that inside this else branch 'this' tensor is a first order slice!
@@ -2372,7 +2374,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 This is simply the 'reshape array' which has been recorded inside the 'Relation' component
                 by the 'Reshape' operation! ( Hopefully! :) ... custom shape operations need to consider this as well! )
 
-                The following would occur when : "new Tsr<>(...).T().gatAt(...);"
+                The following would occur when : "new Tsr<>(...).T().getAt(...);"
                 Transposing a tensor performs an inline reshaping of an identical
                 slice of the original tensor! Then again slicing this tensor
                 via the 'getAt(...)' method leads us to a situation where
@@ -2660,7 +2662,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             device.store( this );
         }
         else newData = _convertedDataOfType( typeClass );
-        return (Tsr<T>) new Tsr<>( this.getNDConf().shape(), newDT, newData );
+        return new Tsr<>( this.getNDConf().shape(), newDT, newData );
     }
 
     /**
