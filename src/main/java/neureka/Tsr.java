@@ -446,7 +446,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             }
             _constructForDoubles( new int[]{ conf.size() }, value );
         }
-
     }
 
 
@@ -455,7 +454,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  It parses this matrix into a 2D shape array and a double array.<br>
      *  <br>
      *
-     * @param matrix A list of list which ought to resemble a matrix.
+     * @param matrix A list of lists which ought to resemble a matrix.
      */
     private void _construct( List<List<Object>> matrix ) {
         boolean isNumeric = matrix.stream().allMatch( e -> e.stream().allMatch( ie -> ie instanceof Number ) );
@@ -618,7 +617,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         ( (int[]) getData())[ 0 ] = value;
     }
 
-    private void _constructForDoubles(int[] shape, double[] value )
+    private void _constructForDoubles( int[] shape, double[] value )
     {
         int size = NDConfiguration.Utility.szeOfShp( shape );
         setDataType( DataType.of( F64.class ) );
@@ -629,7 +628,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         _configureFromNewShape( shape, false, true );
     }
 
-    private void _constructForFloats(int[] shape, float[] value )
+    private void _constructForFloats( int[] shape, float[] value )
     {
         int size = NDConfiguration.Utility.szeOfShp( shape );
         setDataType( DataType.of( F32.class ) );
@@ -863,7 +862,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param tensor A tensor which serves as input to the Function instance parsed from the given expression.
      * @param expression The expression describing operations applied to the provided tensor.
      */
-    private Tsr(Tsr<V> tensor, String expression ) {
+    private Tsr( Tsr<V> tensor, String expression ) {
         if ( tensor == null ) return;
         _construct( new Tsr[]{ tensor }, expression, true );
     }
@@ -894,7 +893,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      * @param expression The expression describing operations applied to the provided tensors.
      */
-    private Tsr(Tsr<V>[] tensors, String expression ) {
+    private Tsr( Tsr<V>[] tensors, String expression ) {
         _construct( tensors, expression, true );
     }
 
@@ -929,7 +928,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param expression The expression describing operations applied to the provided tensors.
      * @param doAD A flag which when set to true commands the creation of a computation graph during operation execution.
      */
-    private Tsr(Tsr<V>[] tensors, String expression, boolean doAD )
+    private Tsr( Tsr<V>[] tensors, String expression, boolean doAD )
     {
         _construct( tensors, expression, doAD );
     }
@@ -1027,7 +1026,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     protected void _setRqsGradient( boolean rqsGradient ) {
         if ( rqsGradient() != rqsGradient ) {
             if ( rqsGradient ) _flags += RQS_GRADIENT_MASK;
-            else _flags -= RQS_GRADIENT_MASK;
+            else               _flags -= RQS_GRADIENT_MASK;
         }
     }
 
@@ -1039,9 +1038,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public Tsr<V> setIsOutsourced(boolean isOutsourced ) {
         _setIsOutsourced( isOutsourced );
-        if ( isOutsourced ) {
+        if ( isOutsourced )
             _setData( null );
-        } else if (
+        else if (
                 !forComponent(
                         Device.class,
                         device -> {
@@ -1089,7 +1088,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     protected void _setIsOutsourced( boolean isOutsourced ) {
         if ( isOutsourced() != isOutsourced ) {
             if ( isOutsourced ) _flags += IS_OUTSOURCED_MASK;
-            else _flags -= IS_OUTSOURCED_MASK;
+            else                _flags -= IS_OUTSOURCED_MASK;
         }
     }
 
@@ -1121,8 +1120,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 if ( device != null ) device.restore( this );
             } catch ( Exception exception ) {
                 _LOG.error(
-                        "Tensor could not be restored from device component when changing flag 'isVirtual' to " + isVirtual + "."
-                        , exception
+                        "Tensor could not be restored from device component when changing flag 'isVirtual' to " + isVirtual + ".",
+                        exception
                 );
                 throw exception;
             }
@@ -1178,7 +1177,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     protected void _setIsVirtual( boolean isVirtual ) {
         if ( isVirtual() != isVirtual ) {
             if ( isVirtual ) _flags += IS_VIRTUAL_MASK;
-            else _flags -= IS_VIRTUAL_MASK;
+            else             _flags -= IS_VIRTUAL_MASK;
         }
     }
 
@@ -1210,9 +1209,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 if (
                         Neureka.get().settings().autograd().isApplyingGradientWhenRequested() &&
                                 !Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
-                ) {
+                )
                     this.applyGradient();
-                } else _flags += GRADIENT_APPLY_RQD_MASK;
+                else
+                    _flags += GRADIENT_APPLY_RQD_MASK;
             }
             else _flags -= GRADIENT_APPLY_RQD_MASK;
         }
@@ -1271,10 +1271,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     try {
                         ((Device)newComponent).store( root );
                     } catch ( Exception exception ) {
-                        _LOG.error( "Could not store tensor on device '" + newComponent.toString() +"'.", exception );
+                        _LOG.error( "Could not store tensor on device '" + newComponent +"'.", exception );
                         throw exception;
                     }
-                    root.find( Relation.class ).foreachChild( c -> ((Tsr)c).setIsOutsourced( true ) );
+                    root.find( Relation.class ).foreachChild( c -> ((Tsr)c ).setIsOutsourced( true ) );
                 } else { // This is root ! :
                     relation.foreachChild( c -> ((Tsr<?>)c).setIsOutsourced( true ) );
                     try {
@@ -1339,8 +1339,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     throw exception;
                 }
             }
-
-
         }
         return newComponent;
     }
@@ -1351,7 +1349,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     ----------------------------
     */
     /**
-     *  Important : Components of type Tsr are simply gradients!
+     *  Important : Components of type {@link Tsr} are simply gradients!
      *  This method does not need to have an implementation in this case.
      *  (A gradient tensor "does not mind" an owner change...)
      *
@@ -1378,8 +1376,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     */
 
     /**
-     *  A tensor is empty if their is neither data set within the tensor directly
-     *  or within a device to which the tensor might belong.
+     *  A tensor is empty if there is neither data referenced within the tensor directly
+     *  or within any given device to which the tensor might belong.
      *
      * @return The truth value determining if this tensor has data.
      */
@@ -1387,6 +1385,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return getData() == null && !this.isOutsourced(); // Outsourced means that the tensor is stored on a device.
     }
 
+    /**
+     *  A tensor is "undefined" if it has either no {@link NDConfiguration} implementation instance
+     *  or this instance does not have a shape set for this {@link Tsr} which is needed for
+     *  a tensor to also have a rank and dimensionality...
+     *
+     * @return The truth value determining if this tensor has an {@link NDConfiguration} stored internally.
+     */
     public boolean isUndefined() {
         return getNDConf() == null || getNDConf().shape() == null;
     }
