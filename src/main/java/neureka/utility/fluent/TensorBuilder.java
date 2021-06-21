@@ -134,7 +134,19 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
             }
             float[] primData = new float[tensorSize];
             for ( int ii = 0; ii < tensorSize; ii ++) {
-                primData[ii] = range.get(ii%range.size());
+                primData[ii] = range.get( ii % range.size() );
+            }
+            data = primData;
+        }
+        else if ( _dataType == DataType.of( Byte.class ) ) {
+            List<Byte> range = new ArrayList<>();
+            for ( byte index = ((Byte) _from); index <= ((Byte)_to) && itemIndex < itemLimit; index += size ) {
+                range.add( index );
+                itemIndex++;
+            }
+            byte[] primData = new byte[tensorSize];
+            for ( int ii = 0; ii < tensorSize; ii ++) {
+                primData[ii] = range.get( ii % range.size() );
             }
             data = primData;
         }

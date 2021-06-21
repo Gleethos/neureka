@@ -546,8 +546,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     {
         int size = NDConfiguration.Utility.szeOfShp(shape);
         if ( dataType == DataType.of( data.getClass() ) ) { // This means that "data" is a single value!
-            if ( data instanceof Double  ) { _constructAllF64( shape, (Double) data );  return; }
-            if ( data instanceof Float   ) { _constructAllF32( shape, (Float) data );   return; }
+            if ( data instanceof Double  ) { _constructAllF64( shape, (Double) data  ); return; }
+            if ( data instanceof Float   ) { _constructAllF32( shape, (Float) data   ); return; }
             if ( data instanceof Integer ) { _constructAllI32( shape, (Integer) data ); return; }
         }
         else if ( data instanceof Integer[] ) data = DataConverter.instance().convert( (Integer[]) data, int[].class,    size );
@@ -1113,7 +1113,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param isVirtual The truth value determining if this tensor ought to be virtualized.
      * @return This very tensor to enable method chaining.
      */
-    public Tsr<V> setIsVirtual(boolean isVirtual ) {
+    public Tsr<V> setIsVirtual( boolean isVirtual ) {
         if ( isVirtual() != isVirtual ) {
             Device device = this.find( Device.class );
             try {
@@ -2565,7 +2565,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             for ( int i = 0; i < value.length; i++ ) ( (double[]) getData())[ i ] = value[ i ];
     }
 
-    public Tsr<V> setValue(Object value )
+    public Tsr<V> setValue( Object value )
     {
         if ( value instanceof float[] ) this._setValue32( (float[]) value );
         else if ( value instanceof  double[] ) this._setValue64( (double[]) value );
@@ -2577,6 +2577,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             this.setIsVirtual( true );
             if ( this.is64() ) ( (double[]) getData())[ 0 ] = (Double) value;
             else ( (float[]) getData())[ 0 ] = ( (Double) value ).floatValue();
+        } else if ( value instanceof Integer ) {
+            this.setIsVirtual( true );
+            ( (int[]) getData())[ 0 ] = (Integer) value;
         } else if ( value instanceof int[] ) {
             setDataType( DataType.of(I32.class) );
             _setData( value );
