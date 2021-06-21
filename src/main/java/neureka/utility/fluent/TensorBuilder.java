@@ -47,7 +47,7 @@ import java.util.stream.IntStream;
  * }</pre>
  *
  *
- * @param <V> The type of the values which ought to be represent.
+ * @param <V> The type of the values which ought to be represent by the {@link Tsr} built by this {@link TensorBuilder}.
  */
 public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrIterFromOrAll<V>, To<V>, Step<V>
 {
