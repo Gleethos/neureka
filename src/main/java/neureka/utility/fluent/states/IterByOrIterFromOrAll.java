@@ -5,7 +5,7 @@ import neureka.Tsr;
 public interface IterByOrIterFromOrAll<V>
 {
 
-    Tsr<V> iterativelyFilledBy( V... values );
+    Tsr<V> andFill( V... values );
 
     To<V> iterativelyFilledFrom( V index );
 

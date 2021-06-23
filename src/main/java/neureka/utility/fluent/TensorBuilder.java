@@ -60,7 +60,7 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
 
     @SafeVarargs
     @Override
-    public final Tsr<V> iterativelyFilledBy( V... values ) {
+    public final Tsr<V> andFill(V... values ) {
         return Tsr.of( _shape, _dataType, values );
     }
 

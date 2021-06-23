@@ -190,7 +190,7 @@ public class BroadSystemTest
         );
         Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false);
         //=====================
-        tensor1 = Tsr.of(new int[]{2, 2}, new double[]{1, 2, 3, 4});//-2*4 = 8 | *3 = -24
+        tensor1 = Tsr.ofDoubles().withShape(2,2).andFill(1.0, 2.0, 3.0, 4.0);
         tensor1.setRqsGradient(true);
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1},

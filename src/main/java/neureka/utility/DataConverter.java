@@ -35,6 +35,7 @@ SOFTWARE.
 
 package neureka.utility;
 
+import neureka.dtype.DataType;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -175,6 +176,7 @@ public class DataConverter
         {
             fromMap = new HashMap<>();
             fromMap.put(to, conversion);
+            fromMap.put(DataType.of(to).getTypeClass(), conversion);
             _converters.put( from, fromMap );
         } else {
             Conversion found = fromMap.get(to);

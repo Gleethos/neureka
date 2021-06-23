@@ -79,14 +79,13 @@ class Autograd_Tensor_Integration_Tests extends Specification
         and: 'Tensor legacy view is set to true.'
             Neureka.get().settings().view().setIsUsingLegacyView(true)
         when :
-            def x = Tsr.of(
-                    new int[]{3, 3},
-                    new double[]{
-                            1, 2, 5,
-                            -1, 4, -2,
-                            -2, 3, 4,
-                    }
-            );
+            def x = Tsr.ofDoubles()
+                            .withShape(3, 3)
+                            .andFill(
+                                    1.0, 2.0, 5.0,
+                                    -1.0, 4.0, -2.0,
+                                    -2.0, 3.0, 4.0,
+                            )
             def y = Tsr.of(
                     new int[]{2, 2},
                     new double[]{

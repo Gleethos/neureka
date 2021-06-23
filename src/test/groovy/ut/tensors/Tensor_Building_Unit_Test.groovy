@@ -96,7 +96,7 @@ class Tensor_Building_Unit_Test extends Specification
         given : 'We create a Tsr instance by passing an array of arguments which ought to iteratively fill the instance.'
             Tsr<?> t = Tsr.of( type )
                 .withShape( 3, 2 )
-                .iterativelyFilledBy( data )
+                .andFill( data )
 
         expect : 'This new instance will have the expected data type...'
             t.dataType == DataType.of(type)

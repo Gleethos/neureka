@@ -122,6 +122,8 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 
 /**
@@ -489,6 +491,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public static <V> TensorBuilder<V> of( Class<V> typeClass ) { return new TensorBuilder( typeClass ); }
 
+    public static TensorBuilder<Double> ofDoubles() { return of(Double.class); }
+
     public static Tsr of( double value ) { return new Tsr(value); }
 
     private Tsr( double value ) { _constructAllF64( new int[]{ 1 }, value ); }
@@ -545,6 +549,26 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     private Tsr( int[] shape, DataType<?> dataType, Object data )
     {
         int size = NDConfiguration.Utility.szeOfShp(shape);
+        if ( data instanceof Object[] && DataType.of(((Object[])data)[0].getClass()) != dataType ) {
+            for ( int i = 0; i < ( (Object[]) data ).length; i++ ) {
+                ( (Object[]) data )[i] = DataConverter.instance().convert( ( (Object[]) data )[i], dataType.getTypeClass() );
+            }
+            Object[] values = ((Object[])data);
+            IntStream indices = IntStream.iterate( 0, i -> i + 1 ).limit(size).map( i -> i % values.length );
+            if      ( dataType == DataType.of(Double.class)  ) data = indices.mapToDouble( i -> (Double) values[i] ).toArray();
+            else if ( dataType == DataType.of(Integer.class) ) data = indices.map( i -> (Integer) values[i] ).toArray();
+            else if ( dataType == DataType.of(Long.class)    ) data = indices.mapToLong( i -> (Long) values[i] ).toArray();
+            else if ( dataType == DataType.of(Float.class)   ) {
+                float[] floats = new float[size];
+                indices.forEach( i -> floats[ i ] = (Float) values[ i % values.length ] );
+                data = floats;
+            }
+            else if ( dataType == DataType.of(Byte.class) ) {
+                byte[] bytes = new byte[size];
+                indices.forEach( i -> bytes[ i ] = (Byte) values[ i % values.length ] );
+                data = bytes;
+            }
+        }
         if ( dataType == DataType.of( data.getClass() ) ) { // This means that "data" is a single value!
             if ( data instanceof Double  ) { _constructAllF64( shape, (Double) data  ); return; }
             if ( data instanceof Float   ) { _constructAllF32( shape, (Float) data   ); return; }
