@@ -1,7 +1,6 @@
 package neureka.devices.file.heads;
 
 
-import lombok.Getter;
 import lombok.experimental.Accessors;
 import neureka.Neureka;
 import neureka.Tsr;
@@ -30,12 +29,9 @@ public class IDXHead extends AbstractFileHead<IDXHead, Number>
     static {
         _LOG = LoggerFactory.getLogger( IDXHead.class );
     }
-    @Getter
     private DataType<NumericType<?,?,?,?>> _dataType;
     private int _dataOffset;
-    @Getter
     private int _valueSize;
-    @Getter
     private int[] _shape;
 
     private static Map<Integer, Class<?>> TYPE_MAP;
@@ -204,4 +200,15 @@ public class IDXHead extends AbstractFileHead<IDXHead, Number>
     }
 
 
+    public DataType<NumericType<?, ?, ?, ?>> getDataType() {
+        return this._dataType;
+    }
+
+    public int getValueSize() {
+        return this._valueSize;
+    }
+
+    public int[] getShape() {
+        return this._shape;
+    }
 }

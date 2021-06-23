@@ -39,9 +39,9 @@ SOFTWARE.
 package neureka.backend.api;
 
 import neureka.Tsr;
+import neureka.autograd.ADAgent;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
-import neureka.autograd.ADAgent;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

@@ -1,6 +1,5 @@
 package neureka.ndim.config.types.complex;
 
-import neureka.Neureka;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.D3C;
 

@@ -1,10 +1,8 @@
 package neureka.backend.standard.implementations;
 
-import lombok.Getter;
 import lombok.experimental.Accessors;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.implementations.AbstractImplementationFor;
-import neureka.backend.api.operations.AbstractOperation;
 import neureka.devices.opencl.OpenCLDevice;
 
 import java.util.HashMap;
@@ -42,8 +40,8 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
                     .replace("//-=<ARGUMENT>=-//", "")
                     .replace("//-=<CONFIGURATION>=-//", "");
 
-    @Getter private String _source;
-    @Getter private String _name;
+    private String _source;
+    private String _name;
 
     private CLImplementation(
             ImplementationFor<OpenCLDevice> execution,
@@ -92,6 +90,14 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
 
     public static Compiler compiler() {
         return new Compiler();
+    }
+
+    public String getSource() {
+        return this._source;
+    }
+
+    public String getName() {
+        return this._name;
     }
 
     private interface Parser

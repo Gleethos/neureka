@@ -37,7 +37,6 @@ SOFTWARE.
 
 package neureka.backend.api;
 
-import lombok.*;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
@@ -57,13 +56,76 @@ import java.util.TreeMap;
  *
  * @param <DeviceType> The Device implementation targeted by an instance of this ExecutionCall!
  */
-@Builder
 @Accessors( prefix = {"_"} )
-@ToString
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExecutionCall<DeviceType extends Device<?>>
 {
-    public interface TensorCondition { boolean check( Tsr<?> tensor ); }
+    private ExecutionCall(DeviceType device, int derivativeIndex, Operation operation, Tsr<?>[] tensors, int j, Algorithm<?> algorithm, Map<String, Object> context) {
+        this._device = device;
+        this._derivativeIndex = derivativeIndex;
+        this._operation = operation;
+        this._tensors = tensors;
+        this._j = j;
+        this._algorithm = algorithm;
+        this._context = context;
+    }
+
+    private static int $default$derivativeIndex() {
+        return -1;
+    }
+
+    private static int $default$j() {
+        return -1;
+    }
+
+    private static Algorithm<?> $default$algorithm() {
+        return null;
+    }
+
+    private static Map<String, Object> $default$context() {
+        return null;
+    }
+
+    public static <DeviceType extends Device<?>> ExecutionCallBuilder<DeviceType> builder() {
+        return new ExecutionCallBuilder<DeviceType>();
+    }
+
+    public String toString() {
+        return "ExecutionCall(_device=" + this._device + ", _derivativeIndex=" + this._derivativeIndex + ", _operation=" + this._operation + ", _tensors=" + java.util.Arrays.deepToString(this._tensors) + ", _j=" + this._j + ", _algorithm=" + this.getAlgorithm() + ", _context=" + this._context + ")";
+    }
+
+    public DeviceType getDevice() {
+        return this._device;
+    }
+
+    public int getDerivativeIndex() {
+        return this._derivativeIndex;
+    }
+
+    public Operation getOperation() {
+        return this._operation;
+    }
+
+    public Tsr<?>[] getTensors() {
+        return this._tensors;
+    }
+
+    public int getJ() {
+        return this._j;
+    }
+
+    public Map<String, Object> getContext() {
+        return this._context;
+    }
+
+    public ExecutionCall<DeviceType> withTensors(Tsr<?>[] _tensors) {
+        return this._tensors == _tensors ? this : new ExecutionCall<DeviceType>(this._device, this._derivativeIndex, this._operation, _tensors, this._j, this._algorithm, this._context);
+    }
+
+    public ExecutionCall<DeviceType> withJ(int _j) {
+        return this._j == _j ? this : new ExecutionCall<DeviceType>(this._device, this._derivativeIndex, this._operation, this._tensors, _j, this._algorithm, this._context);
+    }
+
+    public interface TensorCondition { boolean check(Tsr<?> tensor ); }
     public interface TensorCompare { boolean check( Tsr<?> first, Tsr<?> second ); }
     public interface DeviceCondition { boolean check( Device<?> device ); }
     public interface OperationTypeCondition { boolean check( Operation type ); }
@@ -76,7 +138,6 @@ public class ExecutionCall<DeviceType extends Device<?>>
     /**
      *  This field references the device on which this ExecutionCall should be executed.
      */
-    @Getter
     private final DeviceType _device;
 
     // Constructs a copy of this call with the provided device!
@@ -102,15 +163,12 @@ public class ExecutionCall<DeviceType extends Device<?>>
      * This property is -1 when no derivative should be calculated,
      * however 0... when targeting an input to calculate the derivative of.
      */
-    @Getter
-    @Builder.Default
     private int _derivativeIndex = -1;
 
     /**
      *  This is the operation type which will be applied to this execution call.
      *  It contains multiple implementations, one of which might be applicable to this call...
      */
-    @Getter
     private final Operation _operation;
 
     /**
@@ -120,7 +178,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
      *  however this is not a necessity.
      *  Some operation algorithms might use multiple argument entries as output tensors.
      */
-    @Getter @With // Generates a method which constructs a copy of this call with the provided tensors!
+    // Generates a method which constructs a copy of this call with the provided tensors!
     private Tsr<?>[] _tensors;
 
     /**
@@ -129,7 +187,6 @@ public class ExecutionCall<DeviceType extends Device<?>>
      *  The (indexer) function will execute the sub functions (of the AST) for every input index.
      *  If a particular index is not targeted however this variable will simply default to -1.
      */
-    @Getter @With @Builder.Default
     private int _j = -1;
 
     /**
@@ -140,15 +197,12 @@ public class ExecutionCall<DeviceType extends Device<?>>
      *  Choosing an algorithm occurs through the {@link ExecutionCall#_operation} variable,
      *  which is of type {@link Operation} and contains multiple algorithms for different execution call scenarios...
      */
-    @Builder.Default
     private Algorithm<?> _algorithm = null;
 
     /**
      *  Certain operations might require additionally parameters then the ones
      *  defined in this class... <br>
      */
-    @Getter
-    @Builder.Default
     private Map<String, Object> _context = null;
 
     private ExecutionCall(
@@ -224,6 +278,86 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
     public Validator validate() { return new Validator(); }
 
+    public static class ExecutionCallBuilder<DeviceType extends Device<?>> {
+        private DeviceType device;
+        private int derivativeIndex$value;
+        private boolean derivativeIndex$set;
+        private Operation operation;
+        private Tsr<?>[] tensors;
+        private int j$value;
+        private boolean j$set;
+        private Algorithm<?> algorithm$value;
+        private boolean algorithm$set;
+        private Map<String, Object> context$value;
+        private boolean context$set;
+
+        ExecutionCallBuilder() {
+        }
+
+        public ExecutionCallBuilder<DeviceType> device(DeviceType device) {
+            this.device = device;
+            return this;
+        }
+
+        public ExecutionCallBuilder<DeviceType> derivativeIndex(int derivativeIndex) {
+            this.derivativeIndex$value = derivativeIndex;
+            this.derivativeIndex$set = true;
+            return this;
+        }
+
+        public ExecutionCallBuilder<DeviceType> operation(Operation operation) {
+            this.operation = operation;
+            return this;
+        }
+
+        public ExecutionCallBuilder<DeviceType> tensors(Tsr<?>[] tensors) {
+            this.tensors = tensors;
+            return this;
+        }
+
+        public ExecutionCallBuilder<DeviceType> j(int j) {
+            this.j$value = j;
+            this.j$set = true;
+            return this;
+        }
+
+        public ExecutionCallBuilder<DeviceType> algorithm(Algorithm<?> algorithm) {
+            this.algorithm$value = algorithm;
+            this.algorithm$set = true;
+            return this;
+        }
+
+        public ExecutionCallBuilder<DeviceType> context(Map<String, Object> context) {
+            this.context$value = context;
+            this.context$set = true;
+            return this;
+        }
+
+        public ExecutionCall<DeviceType> build() {
+            int derivativeIndex$value = this.derivativeIndex$value;
+            if (!this.derivativeIndex$set) {
+                derivativeIndex$value = ExecutionCall.$default$derivativeIndex();
+            }
+            int j$value = this.j$value;
+            if (!this.j$set) {
+                j$value = ExecutionCall.$default$j();
+            }
+            Algorithm<?> algorithm$value = this.algorithm$value;
+            if (!this.algorithm$set) {
+                algorithm$value = ExecutionCall.$default$algorithm();
+            }
+            Map<String, Object> context$value = this.context$value;
+            if (!this.context$set) {
+                context$value = ExecutionCall.$default$context();
+            }
+            return new ExecutionCall<DeviceType>(device, derivativeIndex$value, operation, tensors, j$value, algorithm$value, context$value);
+        }
+
+        public String toString() {
+            return "ExecutionCall.ExecutionCallBuilder(device=" + this.device + ", derivativeIndex$value=" + this.derivativeIndex$value + ", operation=" + this.operation + ", tensors=" + java.util.Arrays.deepToString(this.tensors) + ", j$value=" + this.j$value + ", algorithm$value=" + this.algorithm$value + ", context$value=" + this.context$value + ")";
+        }
+    }
+
     /**
      *  This is a simple nested class offering various lambda based methods
      *  for validating the tensor arguments stored inside this {@link ExecutionCall}.
@@ -234,7 +368,6 @@ public class ExecutionCall<DeviceType extends Device<?>>
     @Accessors( prefix = {"_"} )
     public class Validator
     {
-        @Getter
         private boolean _isValid = true;
 
         /**
@@ -306,6 +439,10 @@ public class ExecutionCall<DeviceType extends Device<?>>
         public Validator forOperation( OperationTypeCondition condition ) {
             if ( !condition.check(_operation) ) _isValid = false;
             return this;
+        }
+
+        public boolean isValid() {
+            return this._isValid;
         }
     }
 

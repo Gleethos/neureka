@@ -2,8 +2,8 @@ package neureka.backend.standard.algorithms;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.api.Operation;
+import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;

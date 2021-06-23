@@ -1,15 +1,10 @@
 package neureka.devices.file;
 
-import lombok.Getter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
-import neureka.devices.file.heads.CSVHead;
-import neureka.devices.file.heads.IDXHead;
-import neureka.devices.file.heads.JPEGHead;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,16 +31,15 @@ import java.util.stream.Collectors;
  *  storage device like your local SSD ord HDD...
  */
 @Accessors( prefix = {"_"} )
-@ToString
 public class FileDevice extends AbstractBaseDevice<Number>
 {
     private static final Map<String, FileDevice> _DEVICES = new WeakHashMap<>();
 
     private Map<Tsr<Number>, FileHead> _stored = new HashMap<>();
 
-    @Getter private String _directory;
-    @Getter private final List<String> _loadable = new ArrayList<>();
-    @Getter private final List<String> _loaded = new ArrayList<>();
+    private String _directory;
+    private final List<String> _loadable = new ArrayList<>();
+    private final List<String> _loaded = new ArrayList<>();
 
     public static FileDevice instance( String path ) {
         FileDevice device = _DEVICES.get( path );
@@ -243,4 +237,19 @@ public class FileDevice extends AbstractBaseDevice<Number>
     }
 
 
+    public String toString() {
+        return "FileDevice(_stored=" + this._stored + ", _directory=" + this._directory + ", _loadable=" + this._loadable + ", _loaded=" + this._loaded + ")";
+    }
+
+    public String getDirectory() {
+        return this._directory;
+    }
+
+    public List<String> getLoadable() {
+        return this._loadable;
+    }
+
+    public List<String> getLoaded() {
+        return this._loaded;
+    }
 }

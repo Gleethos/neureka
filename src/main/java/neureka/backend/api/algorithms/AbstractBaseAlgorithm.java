@@ -1,22 +1,26 @@
 package neureka.backend.api.algorithms;
 
-import lombok.Getter;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
 import neureka.backend.api.Algorithm;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
 import neureka.devices.Device;
-import neureka.backend.api.ExecutionCall;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-@Accessors( prefix = {"_"} )
 public abstract class AbstractBaseAlgorithm<FinalType extends Algorithm<FinalType>> implements Algorithm<FinalType>
 {
-    @Getter private final String _name;
+    /**
+     *  This is the name of this {@link Algorithm}
+     *  which may be used as variable names in OpenCL kernels or other backends.
+     *  Therefore this name is expected to be void of any spaces
+     *  or non numeric and alphabetic characters.
+     */
+    private final String _name;
 
     protected final Map< Class< Device<?> >, ImplementationFor< Device<?> >> _implementations = new HashMap<>();
 
@@ -99,4 +103,15 @@ public abstract class AbstractBaseAlgorithm<FinalType extends Algorithm<FinalTyp
         return (ImplementationFor<D>) _implementations.get( deviceClass );
     }
 
+    /**
+     *  This method returns the name of this {@link Algorithm}
+     *  which may be used as variable names in OpenCL kernels or other backends.
+     *  Therefore this name is expected to be void of any spaces
+     *  or non numeric and alphabetic characters.
+     *
+     * @return The name of this {@link Algorithm}.
+     */
+    public String getName() {
+        return this._name;
+    }
 }

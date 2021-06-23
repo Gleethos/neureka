@@ -14,7 +14,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  *  This class is one of many extensions of the {@link AbstractFileHead} which

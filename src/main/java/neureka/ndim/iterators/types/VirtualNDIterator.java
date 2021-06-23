@@ -1,7 +1,7 @@
 package neureka.ndim.iterators.types;
 
-import neureka.ndim.iterators.NDIterator;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
+import neureka.ndim.iterators.NDIterator;
 
 public final class VirtualNDIterator implements NDIterator
 {

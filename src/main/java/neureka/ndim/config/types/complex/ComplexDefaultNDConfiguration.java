@@ -1,7 +1,7 @@
 package neureka.ndim.config.types.complex;
 
-import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.config.NDConfiguration;
 
 public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
 {

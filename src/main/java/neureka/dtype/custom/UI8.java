@@ -3,8 +3,8 @@ package neureka.dtype.custom;
 import neureka.dtype.AbstractNumericType;
 import neureka.utility.DataConverter;
 
-import java.io.IOException;
 import java.io.DataInput;
+import java.io.IOException;
 import java.util.Iterator;
 
 public final class UI8 extends AbstractNumericType<Short, short[], Byte, byte[]>

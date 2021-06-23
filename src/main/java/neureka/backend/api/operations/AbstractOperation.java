@@ -1,11 +1,9 @@
 
 package neureka.backend.api.operations;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Algorithm;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.GenericAlgorithm;
 import org.slf4j.Logger;
@@ -23,7 +21,6 @@ import java.util.Map;
  *  Using the factory will make the property configuration as readable as possible. <br>
  *
  */
-@NoArgsConstructor
 @Accessors( prefix = {"_"}, chain = true )
 public abstract class AbstractOperation implements Operation
 {
@@ -39,7 +36,7 @@ public abstract class AbstractOperation implements Operation
      * </ul>
      * The following String is the latter way of representing the operation, namely: a functional way.
      */
-    @Getter protected String _function;
+    protected String _function;
 
     /**
      *  An operation may have two ways in which it can describe itself as String within a Function AST.
@@ -51,13 +48,13 @@ public abstract class AbstractOperation implements Operation
      * </ul>
      * The following String is the primer way of representing the operation, namely: as an operator.
      */
-    @Getter protected String _operator;
+    protected String _operator;
 
     /**
      * Arity is the number of arguments or operands
      * that this function or operation takes.
      */
-    @Getter protected int _arity = -1;
+    protected int _arity = -1;
 
     /**
      *  This flag determines if this operation is auto-indexing passed input arguments.
@@ -67,7 +64,7 @@ public abstract class AbstractOperation implements Operation
      *  The variable 'j' in a Functions expressions containing 'I[j]' will then be
      *  resolved to an actual input for a given indexer...
      */
-    @Getter protected boolean _isIndexer;
+    protected boolean _isIndexer;
 
     /**
      *  Certain operations are not differentiable, meaning they cannot participate
@@ -75,13 +72,13 @@ public abstract class AbstractOperation implements Operation
      *  In order to avoid error prone behaviour trying involve
      *  non- differentiable operations will yield proper exceptions.
      */
-    @Getter protected boolean _isDifferentiable;
+    protected boolean _isDifferentiable;
 
     /**
      *  Inline operations are operations which change the state of the arguments passed to them.
      *
      */
-    @Getter protected boolean _isInline;
+    protected boolean _isInline;
     protected boolean _isOperator;
 
     private final Map<Class<?>, Algorithm<?>> _algorithms = new LinkedHashMap<>();
@@ -100,7 +97,6 @@ public abstract class AbstractOperation implements Operation
      *  - A simple result tensor instantiation implementation.                                                          <br>
      *  - A basic threaded execution based on the AST of a given Function object.                                       <br>
      */
-    @Getter
     private final Algorithm<?> _defaultAlgorithm = new GenericAlgorithm( "default", _arity, this );
 
     public AbstractOperation( OperationBuilder builder )
@@ -114,6 +110,9 @@ public abstract class AbstractOperation implements Operation
         _isIndexer        = builder.getIsIndexer();
         _isDifferentiable = builder.getIsDifferentiable();
         _isInline         = builder.getIsInline();
+    }
+
+    public AbstractOperation() {
     }
 
     //==================================================================================================================
@@ -205,4 +204,31 @@ public abstract class AbstractOperation implements Operation
     }
 
 
+    public String getFunction() {
+        return this._function;
+    }
+
+    public String getOperator() {
+        return this._operator;
+    }
+
+    public int getArity() {
+        return this._arity;
+    }
+
+    public boolean isIndexer() {
+        return this._isIndexer;
+    }
+
+    public boolean isDifferentiable() {
+        return this._isDifferentiable;
+    }
+
+    public boolean isInline() {
+        return this._isInline;
+    }
+
+    public Algorithm<?> getDefaultAlgorithm() {
+        return this._defaultAlgorithm;
+    }
 }

@@ -36,8 +36,6 @@ SOFTWARE.
 
 package neureka.ndim;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.dtype.DataType;
@@ -62,23 +60,31 @@ import java.util.function.Consumer;
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
  */
-@Accessors( prefix = {"_"} )
 public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractComponentOwner<InstanceType> implements Iterable<ValType>
 {
-    public interface Initializer<T> {  T init( int i, int[] index );  }
+    public NDConfiguration getNDConf() {
+        return this._NDConf;
+    }
+
+    public DataType<?> getDataType() {
+        return this._dataType;
+    }
+
+    public Object getData() {
+        return this._data;
+    }
+
+    public interface Initializer<T> {  T init(int i, int[] index );  }
 
     /**
      *  An interface provided by sl4j which enables a modular logging backend!
      */
     public static Logger _LOG; // Why is this not final ? -> For unit testing!
 
-    @Getter
     private NDConfiguration _NDConf;
 
-    @Getter
     private DataType<?> _dataType = DataType.of( Neureka.get().settings().dtype().getDefaultDataTypeClass() );
 
-    @Getter
     private Object _data;
 
     public Class<?> getValueClass()

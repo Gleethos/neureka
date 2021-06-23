@@ -2,14 +2,14 @@ package neureka.backend.standard.operations.other;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.autograd.DefaultADAgent;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
-import neureka.devices.Device;
-import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
-import neureka.backend.api.ExecutionCall;
 import neureka.calculus.assembly.FunctionBuilder;
+import neureka.devices.Device;
 import neureka.ndim.config.AbstractNDC;
 
 import java.util.ArrayList;

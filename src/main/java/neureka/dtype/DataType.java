@@ -35,9 +35,6 @@ SOFTWARE.
 
 package neureka.dtype;
 
-import lombok.Getter;
-import lombok.ToString;
-import lombok.Value;
 import lombok.experimental.Accessors;
 import neureka.dtype.custom.*;
 import org.slf4j.Logger;
@@ -60,11 +57,9 @@ import java.util.function.Consumer;
  * @param <Type> The type parameter of the type class whose instances ought to be represented.
  */
 @Accessors( prefix = {"_"} )
-@ToString
-@Value
-public class DataType<Type>
+public final class DataType<Type>
 {
-    private static Map<Class<?>, DataType> _instances = new WeakHashMap<>();
+    private static final Map<Class<?>, DataType> _instances = new WeakHashMap<>();
 
     /**
      *  This method finds the corresponding NumericType implementation representing
@@ -110,9 +105,9 @@ public class DataType<Type>
         }
     }
 
-    Logger _log;
+    private final Logger _log;
 
-    @Getter Class<Type> _typeClass;
+    private final Class<Type> _typeClass;
 
     private DataType( Class<Type> type ) {
         _typeClass = type;
@@ -217,4 +212,39 @@ public class DataType<Type>
     }
 
 
+    public Logger getLog() {
+        return this._log;
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) return true;
+        if (!(o instanceof DataType)) return false;
+        final DataType<?> other = (DataType<?>) o;
+        final Object this$_log = this.getLog();
+        final Object other$_log = other.getLog();
+        if (this$_log == null ? other$_log != null : !this$_log.equals(other$_log)) return false;
+        final Object this$_typeClass = this.getTypeClass();
+        final Object other$_typeClass = other.getTypeClass();
+        if (this$_typeClass == null ? other$_typeClass != null : !this$_typeClass.equals(other$_typeClass))
+            return false;
+        return true;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $_log = this.getLog();
+        result = result * PRIME + ($_log == null ? 43 : $_log.hashCode());
+        final Object $_typeClass = this.getTypeClass();
+        result = result * PRIME + ($_typeClass == null ? 43 : $_typeClass.hashCode());
+        return result;
+    }
+
+    public String toString() {
+        return "DataType(_log=" + this.getLog() + ", _typeClass=" + this.getTypeClass() + ")";
+    }
+
+    public Class<Type> getTypeClass() {
+        return this._typeClass;
+    }
 }

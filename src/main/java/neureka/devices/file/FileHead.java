@@ -7,7 +7,6 @@ import neureka.devices.file.heads.util.HeadFactory;
 import neureka.dtype.DataType;
 
 import java.io.IOException;
-import java.util.Map;
 
 public interface FileHead<FinalType, ValType> extends Storage<ValType>
 {

@@ -38,8 +38,9 @@ SOFTWARE.
 
 package neureka.dtype;
 
-import java.io.*;
-import java.nio.ByteBuffer;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.util.Iterator;
 
 /**

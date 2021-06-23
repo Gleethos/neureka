@@ -35,7 +35,6 @@ SOFTWARE.
 package neureka.ndim.config;
 
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 public interface NDConfiguration
 {

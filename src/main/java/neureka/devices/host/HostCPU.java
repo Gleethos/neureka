@@ -2,13 +2,19 @@ package neureka.devices.host;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Operation;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
-import neureka.backend.api.Operation;
-import neureka.backend.api.ExecutionCall;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class HostCPU extends AbstractDevice<Number>
 {

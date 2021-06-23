@@ -1,12 +1,11 @@
 package neureka.backend.api;
 
-import lombok.ToString;
 import lombok.experimental.Accessors;
-import lombok.extern.slf4j.Slf4j;
 import neureka.Neureka;
 import neureka.calculus.Cache;
 import neureka.calculus.Function;
 import neureka.calculus.Functions;
+import org.slf4j.Logger;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -34,11 +33,10 @@ import java.util.function.Supplier;
  *    context during the execution of provided lambdas.
  *
  */
-@Slf4j
-@ToString
 @Accessors( prefix = {"_"}, fluent = true ) // Getters don't have a "get" prefix for better readability!
 public class OperationContext implements Cloneable
 {
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(OperationContext.class);
     /**
      *  A mapping between OperationType identifiers and their corresponding instances.
      */
@@ -209,6 +207,10 @@ public class OperationContext implements Cloneable
         clone._lookup.putAll( _lookup );
         clone._instances.addAll( _instances );
         return clone;
+    }
+
+    public String toString() {
+        return "OperationContext(_lookup=" + this.lookup() + ", _instances=" + this.instances() + ", _size=" + this.size() + ", _functionCache=" + this.functionCache() + ", _getAutogradFunction=" + this.getAutogradFunction() + ", _getFunction=" + this.getFunction() + ")";
     }
 
 

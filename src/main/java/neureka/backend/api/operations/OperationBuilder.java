@@ -1,8 +1,5 @@
 package neureka.backend.api.operations;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import neureka.backend.api.Operation;
 import neureka.calculus.Function;
 
@@ -17,9 +14,89 @@ import java.util.List;
  *  In order to ensure that all necessary properties have been set the builder keeps track
  *  of the passed parameters. If not all properties have been set, the builder will trow an exception.
  */
-@Accessors( prefix = {"_"}, chain = true )
 public class OperationBuilder
 {
+    public Stringifier getStringifier() {
+        return this._stringifier;
+    }
+
+    public Derivator getDerivator() {
+        return this._derivator;
+    }
+
+    public String getFunction() {
+        return this._function;
+    }
+
+    public String getOperator() {
+        return this._operator;
+    }
+
+    public Integer getArity() {
+        return this._arity;
+    }
+
+    public Boolean getIsOperator() {
+        return this._isOperator;
+    }
+
+    public Boolean getIsIndexer() {
+        return this._isIndexer;
+    }
+
+    public Boolean getIsDifferentiable() {
+        return this._isDifferentiable;
+    }
+
+    public Boolean getIsInline() {
+        return this._isInline;
+    }
+
+    public OperationBuilder setStringifier(Stringifier _stringifier) {
+        this._stringifier = _stringifier;
+        return this;
+    }
+
+    public OperationBuilder setDerivator(Derivator _derivator) {
+        this._derivator = _derivator;
+        return this;
+    }
+
+    public OperationBuilder setFunction(String _function) {
+        this._function = _function;
+        return this;
+    }
+
+    public OperationBuilder setOperator(String _operator) {
+        this._operator = _operator;
+        return this;
+    }
+
+    public OperationBuilder setArity(Integer _arity) {
+        this._arity = _arity;
+        return this;
+    }
+
+    public OperationBuilder setIsOperator(Boolean _isOperator) {
+        this._isOperator = _isOperator;
+        return this;
+    }
+
+    public OperationBuilder setIsIndexer(Boolean _isIndexer) {
+        this._isIndexer = _isIndexer;
+        return this;
+    }
+
+    public OperationBuilder setIsDifferentiable(Boolean _isDifferentiable) {
+        this._isDifferentiable = _isDifferentiable;
+        return this;
+    }
+
+    public OperationBuilder setIsInline(Boolean _isInline) {
+        this._isInline = _isInline;
+        return this;
+    }
+
     interface Stringifier
     {
         String stringify( String[] children );
@@ -30,27 +107,27 @@ public class OperationBuilder
         String asDerivative( Function[] children, int d );
     }
 
-    @Getter @Setter private Stringifier _stringifier = null;
-    @Getter @Setter private Derivator _derivator = null;
+    private Stringifier _stringifier = null;
+    private Derivator _derivator = null;
     /**
      *  Concrete {@link Operation} types ought to be representable by a function name.
      *  This property will correspond to the {@link Operation#getFunction()} method.
      */
-    @Getter @Setter private String _function = null;
+    private String _function = null;
 
-    @Getter @Setter private String _operator = null;
+    private String _operator = null;
     /**
      *  Arity is the number of arguments or operands that this function or operation takes.
      *  This property will correspond to the {@link Operation#getArity()} method.
      */
-    @Getter @Setter private Integer _arity = null;
+    private Integer _arity = null;
     /**
      *  An operator is an alternative to a function like "sum()" or "prod()". <br>
      *  Examples would be "+, -, * ..."!
      *
      *  This property will correspond to the {@link Operation#isOperator()} method.
      */
-    @Getter @Setter private Boolean _isOperator = null;
+    private Boolean _isOperator = null;
     /**
      *  This boolean property tell the {@link Function} implementations that this {@link Operation}
      *  ought to be viewed as something to be indexed.
@@ -62,9 +139,9 @@ public class OperationBuilder
      *  by the identifier 'j'!
      *
      */
-    @Getter @Setter private Boolean _isIndexer = null;
-    @Getter @Setter private Boolean _isDifferentiable = null;
-    @Getter @Setter private Boolean _isInline = null;
+    private Boolean _isIndexer = null;
+    private Boolean _isDifferentiable = null;
+    private Boolean _isInline = null;
     private boolean _disposed = false;
 
     public void dispose() {

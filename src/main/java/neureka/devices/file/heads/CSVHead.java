@@ -1,6 +1,5 @@
 package neureka.devices.file.heads;
 
-import lombok.Getter;
 import lombok.experimental.Accessors;
 import neureka.Tsr;
 import neureka.devices.Storage;
@@ -30,14 +29,14 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
     }
 
     private String _tensorName;
-    @Getter private final String _delimiter;
-    @Getter private final boolean _firstRowIsLabels;
-    @Getter private String[] _colLabels;
-    @Getter private final boolean _firstColIsIndex;
-    @Getter private String[] _rowLabels;
+    private final String _delimiter;
+    private final boolean _firstRowIsLabels;
+    private String[] _colLabels;
+    private final boolean _firstColIsIndex;
+    private String[] _rowLabels;
 
-    @Getter private Integer _numberOfRows = null;
-    @Getter private Integer _numberOfColumns = null;
+    private Integer _numberOfRows = null;
+    private Integer _numberOfColumns = null;
     private Integer _numberOfBytes = null;
     private WeakReference<String[]> _rawData = null;
 
@@ -267,5 +266,33 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
     @Override
     public String extension() {
         return "csv";
+    }
+
+    public String getDelimiter() {
+        return this._delimiter;
+    }
+
+    public boolean isFirstRowIsLabels() {
+        return this._firstRowIsLabels;
+    }
+
+    public String[] getColLabels() {
+        return this._colLabels;
+    }
+
+    public boolean isFirstColIsIndex() {
+        return this._firstColIsIndex;
+    }
+
+    public String[] getRowLabels() {
+        return this._rowLabels;
+    }
+
+    public Integer getNumberOfRows() {
+        return this._numberOfRows;
+    }
+
+    public Integer getNumberOfColumns() {
+        return this._numberOfColumns;
     }
 }

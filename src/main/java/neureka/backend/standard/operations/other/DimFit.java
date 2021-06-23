@@ -1,13 +1,13 @@
 package neureka.backend.standard.operations.other;
 
 import neureka.Tsr;
+import neureka.autograd.DefaultADAgent;
+import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
-import neureka.devices.Device;
-import neureka.autograd.DefaultADAgent;
 import neureka.calculus.Function;
-import neureka.backend.api.ExecutionCall;
+import neureka.devices.Device;
 import org.jetbrains.annotations.Contract;
 
 public class DimFit extends AbstractOperation
