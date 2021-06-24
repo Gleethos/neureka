@@ -170,17 +170,6 @@ dependencies {
     //*/
     //implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.29' // adds log4j backend
 
-    // Lombok :
-    compileOnly 'org.projectlombok:lombok:1.18.18'
-    annotationProcessor 'org.projectlombok:lombok:1.18.18'
-    ///*
-        // WIP - Multi-Release-Jar :
-        java11CompileOnly 'org.projectlombok:lombok:1.18.18'
-        java11AnnotationProcessor 'org.projectlombok:lombok:1.18.18'
-        java13CompileOnly 'org.projectlombok:lombok:1.18.18'
-        java13AnnotationProcessor 'org.projectlombok:lombok:1.18.18'
-    //*/
-
     // Test suite : Groovy, Spock (+ sl4j, + Spock-Reports)
     // mandatory dependencies for using Spock
     implementation "org.codehaus.groovy:groovy:3.0.7"
@@ -194,10 +183,6 @@ dependencies {
 
     testRuntimeOnly "net.bytebuddy:byte-buddy:1.10.10" // allows mocking of classes (in addition to interfaces)
     testRuntimeOnly "org.objenesis:objenesis:3.1"      // allows mocking of classes without default constructor (together with ByteBuddy or CGLIB)
-
-    // Lombok :
-    testCompileOnly 'org.projectlombok:lombok:1.18.18'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.18'
 
     // WIP - Multi-Release-Jar :
     //java11Implementation files(sourceSets.main.output.classesDirs) { builtBy compileJava8Java }
