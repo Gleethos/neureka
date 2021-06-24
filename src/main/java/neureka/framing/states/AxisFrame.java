@@ -1,6 +1,6 @@
 package neureka.framing.states;
 
-import lombok.experimental.Accessors;
+
 import neureka.framing.NDFrame;
 import neureka.utility.functional.Replace;
 import neureka.utility.functional.With;
@@ -15,7 +15,6 @@ import java.util.function.Supplier;
  * @param <G> The get type which represents the aliases for this axis.
  * @param <V> The value type which is the value type of the {@link neureka.Tsr} with this {@link AxisFrame}.
  */
-@Accessors( prefix = {"_"})
 public final class AxisFrame<G, V> {
 
     public interface Set<V> {

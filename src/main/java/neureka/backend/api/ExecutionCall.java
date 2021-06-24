@@ -37,7 +37,7 @@ SOFTWARE.
 
 package neureka.backend.api;
 
-import lombok.experimental.Accessors;
+
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
@@ -55,8 +55,7 @@ import java.util.TreeMap;
  *  operation specific variables.
  *
  * @param <DeviceType> The Device implementation targeted by an instance of this ExecutionCall!
- */
-@Accessors( prefix = {"_"} )
+*/
 public class ExecutionCall<DeviceType extends Device<?>>
 {
     private ExecutionCall(DeviceType device, int derivativeIndex, Operation operation, Tsr<?>[] tensors, int j, Algorithm<?> algorithm, Map<String, Object> context) {
@@ -365,7 +364,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
      *  request for execution, that is primarily used inside implementations of the middle
      *  layer of the backend-API architecture ({@link Algorithm#isSuitableFor(ExecutionCall)}).
      */
-    @Accessors( prefix = {"_"} )
+    
     public class Validator
     {
         private boolean _isValid = true;

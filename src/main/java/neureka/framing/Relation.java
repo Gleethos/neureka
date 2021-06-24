@@ -35,9 +35,6 @@ SOFTWARE.
 
 package neureka.framing;
 
-import lombok.Getter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
 import neureka.Component;
 import neureka.Tsr;
 
@@ -59,8 +56,6 @@ import java.util.function.Consumer;
  *
  * @param <ValType> The data type class of the elements of the tensor to which this can Relation belong to.
  */
-@Accessors( prefix = {"_"} )
-@ToString
 public class Relation<ValType> implements Component<Tsr<ValType>>
 {
     /**
@@ -73,7 +68,6 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
      *  The answer is simple: The parent tensor (as well as its slices)
      *  might be outsourced to a device which may store the data itself in various ways...
      */
-    @Getter
     private Tsr<ValType> _parent; // Children need their parents. They shall not be garbage collected.
 
     /**
@@ -257,4 +251,11 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
         return this;
     }
 
+    public String toString() {
+        return "Relation(_parent=" + this._parent + ", _children=" + java.util.Arrays.deepToString(this._children) + ", _shapeRelations=" + java.util.Arrays.deepToString(this._shapeRelations) + ")";
+    }
+
+    public Tsr<ValType> getParent() {
+        return this._parent;
+    }
 }

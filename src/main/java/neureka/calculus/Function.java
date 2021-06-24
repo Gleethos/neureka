@@ -36,7 +36,7 @@ SOFTWARE.
 
 package neureka.calculus;
 
-import lombok.experimental.Accessors;
+
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.GraphLock;
@@ -60,7 +60,6 @@ import java.util.function.Supplier;
  *  Functions accept arrays as their inputs,
  *  which is why variables must be targeted in such a way.
  */
-@Accessors( prefix = { "_" } )
 public interface Function
 {
     static Function create( String expression ) {

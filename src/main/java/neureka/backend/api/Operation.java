@@ -39,7 +39,6 @@ SOFTWARE.
 
 package neureka.backend.api;
 
-import lombok.NonNull;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.calculus.Function;
@@ -106,7 +105,6 @@ public interface Operation
      *
      * @return the function name which serves as identifier when parsing {@link Function} instances.
      */
-    @NonNull
     String getFunction();
 
     //==================================================================================================================

@@ -1,6 +1,6 @@
 package neureka.backend.api;
 
-import lombok.experimental.Accessors;
+
 import neureka.Neureka;
 import neureka.calculus.Cache;
 import neureka.calculus.Function;
@@ -33,7 +33,6 @@ import java.util.function.Supplier;
  *    context during the execution of provided lambdas.
  *
  */
-@Accessors( prefix = {"_"}, fluent = true ) // Getters don't have a "get" prefix for better readability!
 public class OperationContext implements Cloneable
 {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(OperationContext.class);

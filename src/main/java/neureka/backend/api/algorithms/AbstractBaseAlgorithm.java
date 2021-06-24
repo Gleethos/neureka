@@ -1,6 +1,5 @@
 package neureka.backend.api.algorithms;
 
-import lombok.experimental.Accessors;
 import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;

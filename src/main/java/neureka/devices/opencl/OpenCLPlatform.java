@@ -1,7 +1,5 @@
 package neureka.devices.opencl;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
 import neureka.Neureka;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
@@ -13,14 +11,10 @@ import java.util.*;
 
 import static org.jocl.CL.*;
 
-@Accessors( prefix = {"_"} )
 public class OpenCLPlatform {
 
-    @Getter
     private final cl_platform_id _pid;
-    @Getter
     private final cl_context _context;
-    @Getter
     private boolean _isDoingLegacyIndexing = false;
 
     private final Map<cl_device_id, OpenCLDevice> _id_device;
@@ -188,6 +182,18 @@ public class OpenCLPlatform {
 
     public static List<OpenCLPlatform> PLATFORMS() {
         return Setup.PLATFORMS;
+    }
+
+    public cl_platform_id getPid() {
+        return this._pid;
+    }
+
+    public cl_context getContext() {
+        return this._context;
+    }
+
+    public boolean isDoingLegacyIndexing() {
+        return this._isDoingLegacyIndexing;
     }
 
     private static class Setup

@@ -1,7 +1,7 @@
 
 package neureka.backend.api.operations;
 
-import lombok.experimental.Accessors;
+
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
@@ -21,7 +21,6 @@ import java.util.Map;
  *  Using the factory will make the property configuration as readable as possible. <br>
  *
  */
-@Accessors( prefix = {"_"}, chain = true )
 public abstract class AbstractOperation implements Operation
 {
     private static Logger _LOG = LoggerFactory.getLogger( AbstractOperation.class );

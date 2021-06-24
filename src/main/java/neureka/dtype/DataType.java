@@ -35,7 +35,7 @@ SOFTWARE.
 
 package neureka.dtype;
 
-import lombok.experimental.Accessors;
+
 import neureka.dtype.custom.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,8 +55,7 @@ import java.util.function.Consumer;
  *
  *
  * @param <Type> The type parameter of the type class whose instances ought to be represented.
- */
-@Accessors( prefix = {"_"} )
+*/
 public final class DataType<Type>
 {
     private static final Map<Class<?>, DataType> _instances = new WeakHashMap<>();

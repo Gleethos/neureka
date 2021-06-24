@@ -48,9 +48,6 @@ SOFTWARE.
 
 package neureka.devices.opencl;
 
-import lombok.Getter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
 import neureka.Component;
 import neureka.Neureka;
 import neureka.Tsr;
@@ -74,14 +71,24 @@ import static org.jocl.CL.*;
  *  Instances of this class internally utilize the OpenCL API in order to use supported
  *  accelerator hardware like GPUs or FPGAs for storing tensors and executing operations on them.
  */
-@Accessors( prefix = {"_"} )
-@ToString
 public class OpenCLDevice extends AbstractDevice<Number>
 {
     public static OpenCLDevice newInstanceOf( OpenCLPlatform platform, cl_device_id did )
     {
         if ( !platform.has( did ) ) platform.put( did,  new OpenCLDevice( platform, did ) );
         return platform.get( did );
+    }
+
+    public String toString() {
+        return "OpenCLDevice(_adhocKernels=" + this._adhocKernels + ", _adhocKernelRingBuffer=" + Arrays.deepToString(this._adhocKernelRingBuffer) + ", _ringIndex=" + this._ringIndex + ", _tensors=" + this.getTensors() + ", _deviceId=" + this._deviceId + ", _platform=" + this._platform + ", _queue=" + this._queue + ")";
+    }
+
+    public cl_device_id getDeviceId() {
+        return this._deviceId;
+    }
+
+    public OpenCLPlatform getPlatform() {
+        return this._platform;
     }
 
     /*==================================================================================================================
@@ -166,7 +173,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap( new WeakHashMap<Tsr<Number>, Boolean>() );
 
-    @Getter
     private final cl_device_id _deviceId;
 
     /**
@@ -176,7 +182,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
      *
      * @return The OpenCLPlatform instance representing the platform (amd, intel, nvidia) to which this device belongs.
      */
-    @Getter
     private final OpenCLPlatform _platform;
 
     /**

@@ -1,29 +1,25 @@
 package neureka.calculus;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
-
-@Accessors( fluent = true )
 public class Functions {
 
-    @Getter Function dimTrim;
-    @Getter Function idy;
-    @Getter Function conv;
-    @Getter Function plus;
-    @Getter Function plusAssign;
-    @Getter Function minus;
-    @Getter Function minusAssign;
-    @Getter Function div;
-    @Getter Function divAssign;
-    @Getter Function pow;
-    @Getter Function powAssign;
-    @Getter Function mul;
-    @Getter Function mulAssign;
-    @Getter Function add;
-    @Getter Function addAssign;
-    @Getter Function mod;
-    @Getter Function modAssign;
-    @Getter Function neg;
+    Function dimTrim;
+    Function idy;
+    Function conv;
+    Function plus;
+    Function plusAssign;
+    Function minus;
+    Function minusAssign;
+    Function div;
+    Function divAssign;
+    Function pow;
+    Function powAssign;
+    Function mul;
+    Function mulAssign;
+    Function add;
+    Function addAssign;
+    Function mod;
+    Function modAssign;
+    Function neg;
 
     public Functions( boolean doingAD ) {
         dimTrim = Function.create( "dimtrim(I[ 0 ])",             doingAD );
@@ -82,4 +78,76 @@ public class Functions {
     public Function getModAssign() { return this.modAssign; }
 
     public Function getNeg() { return this.neg; }
+
+    public Function dimTrim() {
+        return this.dimTrim;
+    }
+
+    public Function idy() {
+        return this.idy;
+    }
+
+    public Function conv() {
+        return this.conv;
+    }
+
+    public Function plus() {
+        return this.plus;
+    }
+
+    public Function plusAssign() {
+        return this.plusAssign;
+    }
+
+    public Function minus() {
+        return this.minus;
+    }
+
+    public Function minusAssign() {
+        return this.minusAssign;
+    }
+
+    public Function div() {
+        return this.div;
+    }
+
+    public Function divAssign() {
+        return this.divAssign;
+    }
+
+    public Function pow() {
+        return this.pow;
+    }
+
+    public Function powAssign() {
+        return this.powAssign;
+    }
+
+    public Function mul() {
+        return this.mul;
+    }
+
+    public Function mulAssign() {
+        return this.mulAssign;
+    }
+
+    public Function add() {
+        return this.add;
+    }
+
+    public Function addAssign() {
+        return this.addAssign;
+    }
+
+    public Function mod() {
+        return this.mod;
+    }
+
+    public Function modAssign() {
+        return this.modAssign;
+    }
+
+    public Function neg() {
+        return this.neg;
+    }
 }

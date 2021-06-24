@@ -39,19 +39,16 @@ SOFTWARE.
 
 package neureka.autograd;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
 import neureka.Component;
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.ExecutionCall;
+import neureka.calculus.Function;
 import neureka.devices.Device;
 import neureka.devices.opencl.utility.WeakTensorReference;
-import neureka.calculus.Function;
-import neureka.backend.api.ExecutionCall;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
-import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -66,7 +63,6 @@ import java.util.function.Supplier;
  *  graph branches (child nodes) can be garbage collected...
  *  ...whereas parents are strongly referenced in order to grant successful traversal.
  */
-@Accessors( prefix = {"_"} )
 public class GraphNode<ValType> implements Component<Tsr<ValType>>
 {
 
@@ -80,7 +76,6 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
      * _mode < 0  |  backward Auto-Differentiation   |
      * -----------+----------------------------------+-
      */
-    @Getter
     private int _mode;
 
     /**
@@ -158,7 +153,6 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
      * All nodes between a Pending-Error and those requiring gradients will
      * be marked with '_relies_on_JIPProp=true'!
      */
-    @Getter
     private boolean _reliesOnJustInTimeProp = false;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -179,7 +173,6 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
     /**
      * Used by the Just-In-Time back-prop component.
      */
-    @Getter
     private PendingError<ValType> _pendingError = null;
 
 
@@ -192,7 +185,6 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
      * f'(x) = (1*y) * (1*z) = z*y
      * The values z,y or z*y must not be deleted as they are needed for back-propagation!
      */
-    @Getter
     private boolean _isUsedAsDerivative = false;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -200,7 +192,6 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
     /**
      * Recorded Function which produced this GrphNode.
      */
-    @Getter
     private Function _function;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -210,7 +201,6 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
      * These are always the GraphNodes of the tensors from which the tensor payload of this
      * GraphNode has been formed.
      */
-    @Getter
     private GraphNode<ValType>[] _parents;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -274,7 +264,6 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
      *  However it can be read freely in order to
      *  check that the version of the payload hasn't changed.
      */
-    @Getter
     private int _payloadReferenceVersion = -1;
 
 
@@ -295,7 +284,6 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
      *
      * @return GraphLock
      */
-    @Getter
     private GraphLock _lock;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -304,7 +292,6 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
      *  The children are GraphNode instances which represent computations
      *  performed on at least the payload of this very node.
      */
-    @Getter
     private List<WeakReference<GraphNode<ValType>>> _children;
 
     /**
@@ -321,7 +308,6 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
     /**
      * @return long Node-ID (Used for caching to avoid redundant computation within one computation graph)
      */
-    @Getter
     private long _nodeID = -1;
 
     /**
@@ -955,4 +941,43 @@ public class GraphNode<ValType> implements Component<Tsr<ValType>>
     }
 
 
+    public int getMode() {
+        return this._mode;
+    }
+
+    public boolean isReliesOnJustInTimeProp() {
+        return this._reliesOnJustInTimeProp;
+    }
+
+    public PendingError<ValType> getPendingError() {
+        return this._pendingError;
+    }
+
+    public boolean isUsedAsDerivative() {
+        return this._isUsedAsDerivative;
+    }
+
+    public Function getFunction() {
+        return this._function;
+    }
+
+    public GraphNode<ValType>[] getParents() {
+        return this._parents;
+    }
+
+    public int getPayloadReferenceVersion() {
+        return this._payloadReferenceVersion;
+    }
+
+    public GraphLock getLock() {
+        return this._lock;
+    }
+
+    public List<WeakReference<GraphNode<ValType>>> getChildren() {
+        return this._children;
+    }
+
+    public long getNodeID() {
+        return this._nodeID;
+    }
 }

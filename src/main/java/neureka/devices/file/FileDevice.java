@@ -1,6 +1,6 @@
 package neureka.devices.file;
 
-import lombok.experimental.Accessors;
+
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.devices.AbstractBaseDevice;
@@ -29,8 +29,7 @@ import java.util.stream.Collectors;
  *  stores tensors and optionally also handles "ExecutionCall" instances.
  *  Therefore, an implementation might also represent a simple
  *  storage device like your local SSD ord HDD...
- */
-@Accessors( prefix = {"_"} )
+*/
 public class FileDevice extends AbstractBaseDevice<Number>
 {
     private static final Map<String, FileDevice> _DEVICES = new WeakHashMap<>();

@@ -1,6 +1,6 @@
 package neureka.devices.file.heads;
 
-import lombok.experimental.Accessors;
+
 import neureka.Tsr;
 import neureka.devices.Storage;
 import neureka.dtype.DataType;
@@ -20,8 +20,7 @@ import java.util.stream.Collectors;
  *  is therefore ultimately an implementation of the {@link neureka.devices.file.FileHead} interface.
  *  Like other {@link neureka.devices.file.FileHead} implementations this class represents a file
  *  of a given type, in this case it represents a CSV file.
- */
-@Accessors( prefix = {"_"} )
+*/
 public class CSVHead extends AbstractFileHead<CSVHead, String>
 {
     static {

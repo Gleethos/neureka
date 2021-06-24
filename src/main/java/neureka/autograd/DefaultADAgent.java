@@ -1,7 +1,6 @@
 package neureka.autograd;
 
-import lombok.Setter;
-import lombok.experimental.Accessors;
+
 import neureka.Tsr;
 
 import java.util.Map;
@@ -28,9 +27,18 @@ import java.util.stream.Collectors;
  * perform propagation. <br>
  *
  */
-@Accessors( prefix = {"_"}, chain = true )
 public final class DefaultADAgent implements ADAgent
 {
+    public DefaultADAgent setForward(ADAction _forward) {
+        this._forward = _forward;
+        return this;
+    }
+
+    public DefaultADAgent setBackward(ADAction _backward) {
+        this._backward = _backward;
+        return this;
+    }
+
     /**
      * This interface is the declaration for
      * lambda actions for both the "forward(...)"
@@ -45,12 +53,12 @@ public final class DefaultADAgent implements ADAgent
      *  This lambda ought to perform the forward propagation
      *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
      */
-    @Setter private ADAction _forward;
+    private ADAction _forward;
     /**
      *  This lambda ought to perform the backward propagation
      *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
      */
-    @Setter private ADAction _backward;
+    private ADAction _backward;
     private final Map<String, Object> _context = new TreeMap<>();
 
     public DefaultADAgent(  Tsr<?> derivative  ) {

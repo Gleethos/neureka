@@ -35,16 +35,13 @@ SOFTWARE.
 
 package neureka;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
-import lombok.extern.slf4j.Slf4j;
+
 import neureka.backend.api.Operation;
 import neureka.backend.api.OperationContext;
 import neureka.dtype.custom.F64;
 import neureka.utility.SettingsLoader;
 import neureka.utility.TsrAsString;
+import org.slf4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -65,12 +62,10 @@ import java.util.ServiceLoader;
  *    If one wishes to modify the default library settings it is possible to do so by editing
  *    the "library_settings.groovy" DSL file.
  */
-@Accessors( prefix = {"_"} )
-@ToString
-@Slf4j
 public final class Neureka
 {
     private static final ThreadLocal<Neureka> _INSTANCES;
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(Neureka.class);
 
     /**
      *  The current semantic version of this library build.
@@ -91,7 +86,6 @@ public final class Neureka
     private final Settings _settings;
     private final Utility _utility;
 
-    @Getter @Setter
     private OperationContext _context;
 
     public OperationContext context() {
@@ -212,8 +206,21 @@ public final class Neureka
         return !this.equals(_INSTANCES.get());
     }
 
-    @Accessors( prefix = {"_"} )
-    @ToString
+    public String toString() {
+        return "Neureka(_settings=" + this._settings + ", _utility=" + this._utility + ", _context=" + this._context + ")";
+    }
+
+    public OperationContext getContext() {
+        return this._context;
+    }
+
+    public void setContext(OperationContext _context) {
+        this._context = _context;
+    }
+
+    /**
+     *  This class hosts the settings of the {@link Neureka} instance which will be used throughout the library.
+     */
     public class Settings
     {
         private final Debug _debug;
@@ -296,8 +303,11 @@ public final class Neureka
             _isLocked = locked;
         }
 
-        @Accessors( prefix = {"_"} )
-        @ToString
+        public String toString() {
+            return "Neureka.Settings(_debug=" + this._debug + ", _autograd=" + this._autograd + ", _indexing=" + this._indexing + ", _view=" + this._view + ", _ndim=" + this._ndim + ", _dtype=" + this._dtype + ", _isLocked=" + this.isLocked() + ")";
+        }
+
+        
         public class Debug
         {
             private boolean _isKeepingDerivativeTargetPayloads = false;
@@ -341,10 +351,12 @@ public final class Neureka
                 _isKeepingDerivativeTargetPayloads = keep;
             }
 
+            public String toString() {
+                return "Neureka.Settings.Debug(_isKeepingDerivativeTargetPayloads=" + this.isKeepingDerivativeTargetPayloads() + ")";
+            }
         }
 
-        @Accessors( prefix = {"_"} )
-        @ToString
+        
         public class AutoGrad // Auto-Grad/Differentiation
         {
             private boolean _isPreventingInlineOperations = true;
@@ -456,10 +468,12 @@ public final class Neureka
                 _isApplyingGradientWhenRequested = apply;
             }
 
+            public String toString() {
+                return "Neureka.Settings.AutoGrad(_isPreventingInlineOperations=" + this.isPreventingInlineOperations() + ", _isRetainingPendingErrorForJITProp=" + this.isRetainingPendingErrorForJITProp() + ", _isApplyingGradientWhenTensorIsUsed=" + this.isApplyingGradientWhenTensorIsUsed() + ", _isApplyingGradientWhenRequested=" + this.isApplyingGradientWhenRequested() + ")";
+            }
         }
 
-        @Accessors( prefix = {"_"} )
-        @ToString
+        
         public class Indexing
         {
             private boolean _isUsingArrayBasedIndexing = true;
@@ -473,10 +487,12 @@ public final class Neureka
                 _isUsingArrayBasedIndexing = thorough;
             }
 
+            public String toString() {
+                return "Neureka.Settings.Indexing(_isUsingArrayBasedIndexing=" + this.isUsingArrayBasedIndexing() + ")";
+            }
         }
 
-        @Accessors( prefix = {"_"} )
-        @ToString
+        
         public class View
         {
             View(){
@@ -518,10 +534,12 @@ public final class Neureka
                 setAsString( TsrAsString.Util.configFromCode( modes ) );
             }
 
+            public String toString() {
+                return "Neureka.Settings.View(_isUsingLegacyView=" + this.isUsingLegacyView() + ", _asString=" + this.getAsString() + ")";
+            }
         }
 
-        @Accessors( prefix = {"_"} )
-        @ToString
+        
         public class NDim
         {
             /**
@@ -540,10 +558,12 @@ public final class Neureka
                 _isOnlyUsingDefaultNDConfiguration = enabled;
             }
 
+            public String toString() {
+                return "Neureka.Settings.NDim(_isOnlyUsingDefaultNDConfiguration=" + this.isOnlyUsingDefaultNDConfiguration() + ")";
+            }
         }
 
-        @Accessors( prefix = {"_"} )
-        @ToString
+        
         public class DType {
 
             private Class<?> _defaultDataTypeClass = F64.class;
@@ -568,6 +588,9 @@ public final class Neureka
                 _isAutoConvertingExternalDataToJVMTypes = autoConvert;
             }
 
+            public String toString() {
+                return "Neureka.Settings.DType(_defaultDataTypeClass=" + this.getDefaultDataTypeClass() + ", _isAutoConvertingExternalDataToJVMTypes=" + this._isAutoConvertingExternalDataToJVMTypes + ")";
+            }
         }
 
     }

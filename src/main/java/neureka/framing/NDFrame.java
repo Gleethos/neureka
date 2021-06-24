@@ -1,7 +1,5 @@
 package neureka.framing;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
 import neureka.Component;
 import neureka.Tsr;
 import neureka.framing.states.AxisFrame;
@@ -32,7 +30,6 @@ import java.util.function.Function;
  *
  * @param <ValType> The type parameter of the value type of the tensor type to whom this component should belong.
  */
-@Accessors( prefix = {"_"} )
 public final class NDFrame<ValType> implements Component<Tsr<ValType>>
 {
     private final List<Object> _hiddenKeys = new ArrayList<>();
@@ -40,13 +37,13 @@ public final class NDFrame<ValType> implements Component<Tsr<ValType>>
      *  This {@link Map} contains all the aliases for axis as well as individual
      *  positions for a given axis (in the form of yet another {@link Map}).
      */
-    @Getter private final Map<Object, Object> _mapping;
+    private final Map<Object, Object> _mapping;
     /**
      *  A frame can also carry a name.
      *  When loading a CSV file for example the label would be the first cell if
      *  both index as well as header labels are included in the file.
      */
-    @Getter private final String _tensorName;
+    private final String _tensorName;
 
     public NDFrame( List<List<Object>> labels, String tensorName ) {
         _tensorName = tensorName;
@@ -277,5 +274,13 @@ public final class NDFrame<ValType> implements Component<Tsr<ValType>>
     @Override
     public void update( Tsr<ValType> oldOwner, Tsr<ValType> newOwner ) {
         // This component does not have anything to do when switching owner...
+    }
+
+    public Map<Object, Object> getMapping() {
+        return this._mapping;
+    }
+
+    public String getTensorName() {
+        return this._tensorName;
     }
 }

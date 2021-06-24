@@ -83,9 +83,6 @@ SOFTWARE.
 package neureka;
 
 import groovy.lang.IntRange;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.backend.api.ExecutionCall;
@@ -123,7 +120,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 
 /**
@@ -141,7 +137,6 @@ import java.util.stream.Stream;
  *  <br>
  * @param <V> The type parameter for the individual value items within this tensor.
  */
-@Accessors( prefix = {"_"} )
 public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<V>>
 {
     static {
@@ -181,7 +176,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  <br>
      *  The getter returns the version of the data (_data) stored within this tensor.
      */
-    @Getter
     private int _version = 0;
 
 
@@ -2856,6 +2850,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     }
 
+    public int getVersion() {
+        return this._version;
+    }
+
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -2864,10 +2862,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  which is used to allow for fast access to
      *  tensors storing doubles.
      */
-    @NoArgsConstructor
     public static class IO
     {
-        public static double getFrom( Tsr<?> t, int i ) {
+        public IO() {
+        }
+
+        public static double getFrom(Tsr<?> t, int i ) {
             if ( t.isEmpty() || t.isUndefined() ) return 0;
             else if ( t.isVirtual() ) return t.value64()[ 0 ];
             return t.value64()[ t.indexOfIndex( i ) ];
@@ -2946,10 +2946,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  This is a nested static utility class which is used
      *  to create tensor instances.
      */
-    @NoArgsConstructor
     public static class Create
     {
-        public  static Tsr<?> E( List<Integer> shape ) {
+        public Create() { }
+
+        public  static Tsr<?> E(List<Integer> shape ) {
             return E( shape.stream().mapToInt( e -> e ).toArray() );
         }
 

@@ -36,8 +36,6 @@ SOFTWARE.
 
 package neureka.utility;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
@@ -58,9 +56,48 @@ import java.util.function.Function;
  *  configurations which are represented by the "Should" enum.
  *
  */
-@Accessors( prefix = {"_"} )
 public final class TsrAsString
 {
+    public int getPadding() {
+        return this._padding;
+    }
+
+    public int getShortage() {
+        return this._shortage;
+    }
+
+    public boolean isHasGradient() {
+        return this._hasGradient;
+    }
+
+    public boolean isCompact() {
+        return this._isCompact;
+    }
+
+    public boolean isFormatted() {
+        return this._isFormatted;
+    }
+
+    public boolean isHasValue() {
+        return this._hasValue;
+    }
+
+    public boolean isHasShape() {
+        return this._hasShape;
+    }
+
+    public boolean isHasRecursiveGraph() {
+        return this._hasRecursiveGraph;
+    }
+
+    public boolean isHasDerivatives() {
+        return this._hasDerivatives;
+    }
+
+    public boolean isCellBound() {
+        return this._isCellBound;
+    }
+
     public enum Should {
         BE_FORMATTED,
         HAVE_PADDING_OF,
@@ -78,16 +115,16 @@ public final class TsrAsString
         String stringify( int i );
     }
 
-    @Getter private int _padding = 6;
-    @Getter private int _shortage = 50;
-    @Getter private boolean _hasGradient = true;
-    @Getter private boolean _isCompact = true;
-    @Getter private boolean _isFormatted = true;
-    @Getter private boolean _hasValue = true;
-    @Getter private boolean _hasShape = true;
-    @Getter private boolean _hasRecursiveGraph = false;
-    @Getter private boolean _hasDerivatives = false;
-    @Getter private boolean _isCellBound = false;
+    private int _padding = 6;
+    private int _shortage = 50;
+    private boolean _hasGradient = true;
+    private boolean _isCompact = true;
+    private boolean _isFormatted = true;
+    private boolean _hasValue = true;
+    private boolean _hasShape = true;
+    private boolean _hasRecursiveGraph = false;
+    private boolean _hasDerivatives = false;
+    private boolean _isCellBound = false;
 
     private int[] _shape;
     private Tsr<?> _tensor;

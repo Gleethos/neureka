@@ -1,7 +1,5 @@
 package neureka.calculus.implementations;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
@@ -21,15 +19,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-@Accessors( prefix = {"_"} )
 public class FunctionNode extends AbstractBaseFunction
 {
 
-    @Getter
     private final Operation _operation;
-    @Getter
     private final boolean _isFlat;
-    @Getter
     private final boolean _isDoingAD;
 
     private final Function[] _src;
@@ -418,4 +412,15 @@ public class FunctionNode extends AbstractBaseFunction
         return this.getOperation().calculate( inputs, -1, d, _src );
     }
 
+    public Operation getOperation() {
+        return this._operation;
+    }
+
+    public boolean isFlat() {
+        return this._isFlat;
+    }
+
+    public boolean isDoingAD() {
+        return this._isDoingAD;
+    }
 }

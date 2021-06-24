@@ -1,12 +1,12 @@
 package neureka.utility.slicing;
 
-import lombok.experimental.Accessors;
-import neureka.Tsr;
-import neureka.utility.slicing.states.*;
-import neureka.utility.slicing.states.StepsOrAxisOrGet;
-import neureka.utility.slicing.states.AxisOrGet;
 
-@Accessors( fluent = true, prefix = {"_"}, chain = true )
+import neureka.Tsr;
+import neureka.utility.slicing.states.AxisOrGet;
+import neureka.utility.slicing.states.FromOrAt;
+import neureka.utility.slicing.states.StepsOrAxisOrGet;
+import neureka.utility.slicing.states.To;
+
 public class AxisSliceBuilder<ValType> implements FromOrAt<ValType>, To<ValType>, StepsOrAxisOrGet<ValType>, AxisOrGet<ValType>
 {
 

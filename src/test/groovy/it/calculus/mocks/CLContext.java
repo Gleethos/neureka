@@ -1,20 +1,17 @@
 package it.calculus.mocks;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
 import neureka.devices.opencl.utility.DispatchUtility;
 
-@Accessors( prefix = {"_"} )
 public class CLContext {
 
-    @Getter private final int[] _local;
+    private final int[] _local;
 
-    @Getter private int _counter;
+    private int _counter;
 
-    @Getter private final int[] _global;
-    @Getter private final int _lws;
-    @Getter private final int _gws;
-    @Getter private final int _wgs;
+    private final int[] _global;
+    private final int _lws;
+    private final int _gws;
+    private final int _wgs;
 
     private final int _max_ts_row;
     private final int _max_ts_col;
@@ -90,4 +87,27 @@ public class CLContext {
         assert ((num == Math.floor(num)) && !Double.isInfinite(num));
     }
 
+    public int[] getLocal() {
+        return this._local;
+    }
+
+    public int getCounter() {
+        return this._counter;
+    }
+
+    public int[] getGlobal() {
+        return this._global;
+    }
+
+    public int getLws() {
+        return this._lws;
+    }
+
+    public int getGws() {
+        return this._gws;
+    }
+
+    public int getWgs() {
+        return this._wgs;
+    }
 }

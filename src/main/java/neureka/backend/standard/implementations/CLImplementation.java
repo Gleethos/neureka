@@ -1,6 +1,6 @@
 package neureka.backend.standard.implementations;
 
-import lombok.experimental.Accessors;
+
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.implementations.AbstractImplementationFor;
 import neureka.devices.opencl.OpenCLDevice;
@@ -13,8 +13,7 @@ import java.util.Map;
  * used to properly call an OpenCLDevice instance via the
  * ExecutionOn &lt; OpenCLDevice &gt; lambda implementation
  * receiving an instance of the ExecutionCall class.
- */
-@Accessors( prefix = {"_"} )
+*/
 public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
 {
 

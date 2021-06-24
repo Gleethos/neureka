@@ -1,19 +1,12 @@
 package neureka.autograd;
 
-import lombok.Getter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.calculus.assembly.FunctionBuilder;
 
-@Accessors( prefix = {"_"} )
-@ToString
 public final class PendingError<ValType>
 {
-    @Getter
     private int _toBeReceived;
-    @Getter
     private final Tsr<ValType> _accumulatedError;
 
     public PendingError( Tsr<ValType> error, int toBeReceived ) {
@@ -32,4 +25,15 @@ public final class PendingError<ValType>
         return _toBeReceived == 0;
     }
 
+    public String toString() {
+        return "PendingError(_toBeReceived=" + this._toBeReceived + ", _accumulatedError=" + this._accumulatedError + ")";
+    }
+
+    public int getToBeReceived() {
+        return this._toBeReceived;
+    }
+
+    public Tsr<ValType> getAccumulatedError() {
+        return this._accumulatedError;
+    }
 }

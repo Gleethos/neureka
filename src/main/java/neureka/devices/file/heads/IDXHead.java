@@ -1,7 +1,7 @@
 package neureka.devices.file.heads;
 
 
-import lombok.experimental.Accessors;
+
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.devices.file.heads.util.NumberReader;
@@ -22,8 +22,7 @@ import java.util.stream.Collectors;
  *  is therefore ultimately an implementation of the {@link neureka.devices.file.FileHead} interface.
  *  Like other {@link neureka.devices.file.FileHead} implementations this class represents a file
  *  of a given type, in this case it represents a IDX file.
- */
-@Accessors( prefix = {"_"} )
+*/
 public class IDXHead extends AbstractFileHead<IDXHead, Number>
 {
     static {
