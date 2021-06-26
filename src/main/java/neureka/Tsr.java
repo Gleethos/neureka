@@ -341,8 +341,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     private Tsr( List<Integer> shape, List<V> range )
     {
-        // Nested Groovy list should be unpacked:
-        if ( range.size() == 1 && range.get( 0 ) instanceof IntRange ) range = (List<V>) range.get( 0 );
+        // Nested Groovy range should be unpacked: // TODO: try using "instance of List" instead of class name...
+        if ( range.size() == 1 && range.get( 0 ).getClass().getSimpleName().equals("IntRange") ) range = (List<V>) range.get( 0 );
         _constructForRange(
                 shape.stream().mapToInt( e -> e ).toArray(),
                 DataType.of( F64.class ),

@@ -1,6 +1,7 @@
 package ut.neureka
 
 import neureka.Neureka
+import neureka.utility.SettingsLoader
 import spock.lang.Specification
 
 class Neureka_Unit_Tests extends Specification
@@ -19,7 +20,8 @@ class Neureka_Unit_Tests extends Specification
     }
 
     def setup() {
-        Neureka.get().reset()
+        // The following is similar to Neureka.get().reset() however it uses a groovy script for library settings:
+        SettingsLoader.tryGroovyScriptsOn(Neureka.get(), script -> new GroovyShell(getClass().getClassLoader()).evaluate(script))
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().asString = "dgc"
     }

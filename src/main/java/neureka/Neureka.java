@@ -191,7 +191,9 @@ public final class Neureka
      */
     public void reset() {
         try {
-            SettingsLoader.tryGroovyScriptsOn(this);
+            SettingsLoader.loadProperties(this);
+            // The following can be used when one desires a Groovy DSL as settings source!:
+            //SettingsLoader.tryGroovyScriptsOn(this, script -> new GroovyShell(getClass().getClassLoader()).evaluate(script));
         } catch ( Exception e ) {
             settings().autograd().setIsRetainingPendingErrorForJITProp( true );
             settings().autograd().setIsApplyingGradientWhenTensorIsUsed( true );
@@ -207,7 +209,7 @@ public final class Neureka
     }
 
     public String toString() {
-        return "Neureka(_settings=" + this._settings + ", _utility=" + this._utility + ", _context=" + this._context + ")";
+        return "Neureka(settings=" + this._settings + ", utility=" + this._utility + ", context=" + this._context + ")";
     }
 
     public OperationContext getContext() {

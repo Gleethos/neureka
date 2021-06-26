@@ -5,13 +5,15 @@ import neureka.Tsr
 import neureka.calculus.assembly.FunctionBuilder
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
+import neureka.utility.SettingsLoader
 import spock.lang.Specification
 
 class Tensor_Operation_Integration_Tests extends Specification
 {
 
     def setup() {
-        Neureka.get().reset()
+        // The following is similar to Neureka.get().reset() however it uses a groovy script for library settings:
+        SettingsLoader.tryGroovyScriptsOn(Neureka.get(), script -> new GroovyShell(getClass().getClassLoader()).evaluate(script))
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().asString = "dgc"
     }

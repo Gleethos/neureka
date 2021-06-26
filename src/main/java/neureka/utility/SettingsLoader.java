@@ -40,6 +40,13 @@ import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
 import groovy.lang.GroovySystem;
 import neureka.Neureka;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+import java.util.function.Consumer;
 
 /**
  *  This class is a helper class for {@link Neureka} instances (Thread local singletons).
@@ -56,28 +63,110 @@ public class SettingsLoader
     private static String _settings_source;
     private static String _setup_source;
 
+    public static void loadProperties(Neureka instance) {
+        try (
+                final InputStream stream = instance.getClass()
+                                                    .getClassLoader()
+                                                    .getResourceAsStream( "library_settings.properties" )
+        ) {
+            Properties properties = new Properties();
+            properties.load(stream);
+            Neureka.Settings s = instance.settings();
+            new TypeChecker(properties)
+                    .checkAndAssign("debug.isKeepingDerivativeTargetPayloads"      , Boolean.class, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)                     )//~= false
+                    .checkAndAssign("autograd.isPreventingInlineOperations"        , Boolean.class, v -> s.autograd().setIsPreventingInlineOperations(v)                       )//~= true
+                    .checkAndAssign("autograd.isRetainingPendingErrorForJITProp"   , Boolean.class, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)                  )//~= true
+                    .checkAndAssign("autograd.isApplyingGradientWhenTensorIsUsed"  , Boolean.class, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)                 )//~= true
+                    .checkAndAssign("autograd.isApplyingGradientWhenRequested"     , Boolean.class, v -> s.autograd().setIsApplyingGradientWhenRequested(v)                    )//~= true
+                    .checkAndAssign("indexing.isUsingArrayBasedIndexing"           , Boolean.class, v -> s.indexing().setIsUsingArrayBasedIndexing(v)                          )//~= true
+                    .checkAndAssign("view.isUsingLegacyView"                       , Boolean.class, v -> s.view().setIsUsingLegacyView(v)                                      )//~= false
+                    .checkAndAssign("view.TsrAsString.Should.BE_SHORTENED_BY"      , Integer.class, v -> s.view().getAsString().put(TsrAsString.Should.BE_SHORTENED_BY     , v))//~= 50,
+                    .checkAndAssign("view.TsrAsString.Should.BE_COMPACT"           , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.BE_COMPACT          , v))//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.BE_FORMATTED"         , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.BE_FORMATTED        , v))//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_GRADIENT"        , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_GRADIENT       , v))//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_PADDING_OF"      , Integer.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_PADDING_OF     , v))//~= 6,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_VALUE"           , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_VALUE          , v))//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_RECURSIVE_GRAPH" , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_RECURSIVE_GRAPH, v))//~= false,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_DERIVATIVES"     , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_DERIVATIVES    , v))//~= false,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_SHAPE"           , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_SHAPE          , v))//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.BE_CELL_BOUND"        , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.BE_CELL_BOUND       , v))//~= false
+                    .checkAndAssign("ndim.isOnlyUsingDefaultNDConfiguration"       , Boolean.class, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)                      )//~= false
+                    .checkAndAssign("dtype.defaultDataTypeClass"                   , Class.class,   v -> s.dtype().setDefaultDataTypeClass(v)                                  )
+                    .checkAndAssign("dtype.isAutoConvertingExternalDataToJVMTypes", Boolean.class, v -> s.dtype().setIsAutoConvertingExternalDataToJVMTypes(v)                );
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static class TypeChecker {
+
+        private static Logger _LOG = LoggerFactory.getLogger(SettingsLoader.class);
+
+        private Properties _properties;
+
+        TypeChecker(Properties properties) { _properties = properties; }
+
+        public <T> TypeChecker checkAndAssign(String key, Class<T> typeClass, Consumer<T> assignment) {
+            Object value = _properties.get(key);
+            if ( value == null || value.getClass() != String.class ) {
+                _LOG.warn("Illegal value '"+value+"' found for property name '"+key+"' in library settings.");
+                return this;
+            }
+            String asString = (String) value;
+            T toBeAssigned = null;
+            if (typeClass == Class.class) {
+                try {
+                    try { getClass().getClassLoader().loadClass("neureka.dtype.custom."+asString); } catch (Exception e) {}
+                    toBeAssigned = (T) Class.forName("neureka.dtype.custom."+asString);
+                }
+                catch (ClassNotFoundException e) {
+                    _LOG.warn("Failed to find class '"+asString+"' for property name '"+key+"'.");
+                    return this;
+                }
+            }
+            else if (typeClass == Boolean.class) {
+                try { toBeAssigned = (T) Boolean.valueOf(Boolean.parseBoolean(asString)); }
+                catch (Exception e) {
+                    _LOG.warn("Failed to parse boolean from value '"+asString+"' for property name '"+key+"'.");
+                    return this;
+                }
+            }
+            else if (typeClass == Integer.class) {
+                try { toBeAssigned = (T) Integer.valueOf(Integer.parseInt(asString)); }
+                catch (Exception e) {
+                    _LOG.warn("Failed to parse integer from value '"+asString+"' for property name '"+key+"'.");
+                    return this;
+                }
+            }
+            else if (typeClass == String.class) {
+                toBeAssigned = (T) asString;
+            }
+            assignment.accept(toBeAssigned);
+            return this;
+        }
+    }
+
     public static Object tryGroovyClosureOn(Object closure, Object delegate) {
             ( (Closure) closure ).setDelegate(delegate);
             return ( (Closure) closure ).call(delegate);
     }
 
-    public static void tryGroovyScriptsOn(Neureka instance)
+    public static void tryGroovyScriptsOn(Neureka instance, Consumer<String> scriptConsumer)
     {
         if ( _settings_source == null || _setup_source == null) {
             _settings_source = instance.utility().readResource("library_settings.groovy");
             _setup_source = instance.utility().readResource("scripting_setup.groovy");
         }
         try {
-
             String version = GroovySystem.getVersion();
             if (Integer.parseInt(version.split("\\.")[ 0 ]) < 2) {
                 throw new IllegalStateException(
                         "Wrong groovy version "+version+" found! Version 2.0.0 or greater required."
                 );
             }
-            new GroovyShell(instance.getClass().getClassLoader()).evaluate(_settings_source);
-            new GroovyShell(instance.getClass().getClassLoader()).evaluate(_setup_source);
-
+            scriptConsumer.accept(_settings_source);
+            scriptConsumer.accept(_setup_source);
         } catch (Exception e) {
             e.printStackTrace();
         }

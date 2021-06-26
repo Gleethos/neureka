@@ -4,6 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
+import neureka.utility.SettingsLoader
 import org.slf4j.Logger
 import spock.lang.Specification
 import testutility.Utility
@@ -12,7 +13,8 @@ class Benchmark_System_Test extends Specification
 {
 
     def setup() {
-        Neureka.get().reset()
+        // The following is similar to Neureka.get().reset() however it uses a groovy script for library settings:
+        SettingsLoader.tryGroovyScriptsOn(Neureka.get(), script -> new GroovyShell(getClass().getClassLoader()).evaluate(script))
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().asString = "dgc"
     }
