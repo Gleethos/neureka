@@ -36,15 +36,14 @@ SOFTWARE.
 
 package neureka.utility;
 
-import groovy.lang.Closure;
-import groovy.lang.GroovyShell;
-import groovy.lang.GroovySystem;
 import neureka.Neureka;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Properties;
 import java.util.function.Consumer;
 
@@ -148,8 +147,19 @@ public class SettingsLoader
     }
 
     public static Object tryGroovyClosureOn(Object closure, Object delegate) {
-            ( (Closure) closure ).setDelegate(delegate);
-            return ( (Closure) closure ).call(delegate);
+        try {
+            Method setDelegate = closure.getClass().getMethod("setDelegate", Object.class);
+            Method call = closure.getClass().getMethod("call", Object.class);
+            setDelegate.invoke(closure, delegate);
+            return call.invoke(closure, delegate);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static void tryGroovyScriptsOn(Neureka instance, Consumer<String> scriptConsumer)
@@ -159,12 +169,14 @@ public class SettingsLoader
             _setup_source = instance.utility().readResource("scripting_setup.groovy");
         }
         try {
+            /*
             String version = GroovySystem.getVersion();
             if (Integer.parseInt(version.split("\\.")[ 0 ]) < 2) {
                 throw new IllegalStateException(
                         "Wrong groovy version "+version+" found! Version 2.0.0 or greater required."
                 );
             }
+            */
             scriptConsumer.accept(_settings_source);
             scriptConsumer.accept(_setup_source);
         } catch (Exception e) {

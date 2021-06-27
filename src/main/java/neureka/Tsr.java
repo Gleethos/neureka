@@ -82,7 +82,6 @@ SOFTWARE.
 
 package neureka;
 
-import groovy.lang.IntRange;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
 import neureka.backend.api.ExecutionCall;
@@ -355,7 +354,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     private Tsr( int[] shape, List<V> range )
     {
         // Nested Groovy list should be unpacked:
-        if ( range.size() == 1 && range.get( 0 ) instanceof IntRange ) range = (List<V>) range.get( 0 );
+        if ( range.size() == 1 && range.get( 0 ).getClass().getSimpleName().equals("IntRange") )
+            range = (List<V>) range.get( 0 );
         _constructForRange(
                 shape,
                 DataType.of( F64.class ),

@@ -1,12 +1,12 @@
 package neureka.utility.fluent;
 
-import groovy.lang.ObjectRange;
 import neureka.Tsr;
 import neureka.dtype.DataType;
 import neureka.utility.fluent.states.IterByOrIterFromOrAll;
 import neureka.utility.fluent.states.Step;
 import neureka.utility.fluent.states.To;
 import neureka.utility.fluent.states.WithShapeOrScalarOrVector;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -151,7 +151,8 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
             data = primData;
         }
         else if ( _from instanceof Comparable && _to instanceof Comparable ) {
-            data = new ObjectRange( (Comparable<V>) _from, (Comparable<V>) _to ).step( (int) size );
+            //data = new ObjectRange( (Comparable<V>) _from, (Comparable<V>) _to ).step( (int) size );
+            throw new NotImplementedException();
         }
         return Tsr.of( _shape, _dataType, data );
     }

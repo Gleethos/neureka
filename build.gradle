@@ -148,15 +148,12 @@ sourceSets {
 dependencies {
 
     // Core library dependencies :
-    implementation 'org.codehaus.groovy:groovy:3.0.7'
     implementation 'org.jocl:jocl:2.0.4' //-> Internal dependency!
     implementation 'org.jetbrains:annotations:16.0.2'
     ///*
         // WIP - Multi-Release-Jar :
-        java11Implementation 'org.codehaus.groovy:groovy:3.0.7'
         java11Implementation 'org.jocl:jocl:2.0.4' //-> Internal dependency!
         java11Implementation 'org.jetbrains:annotations:16.0.2'
-        java13Implementation 'org.codehaus.groovy:groovy:3.0.7'
         java13Implementation 'org.jocl:jocl:2.0.4' //-> Internal dependency!
         java13Implementation 'org.jetbrains:annotations:16.0.2'
     //*/
@@ -172,7 +169,7 @@ dependencies {
 
     // Test suite : Groovy, Spock (+ sl4j, + Spock-Reports)
     // mandatory dependencies for using Spock
-    implementation "org.codehaus.groovy:groovy:3.0.7"
+    testImplementation "org.codehaus.groovy:groovy:3.0.7"
     testImplementation platform("org.spockframework:spock-bom:2.0-groovy-3.0")
     testImplementation "org.spockframework:spock-core"
     testImplementation "org.spockframework:spock-junit4"  // you can remove this if your code does not rely on old JUnit 4 rules
