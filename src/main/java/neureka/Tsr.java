@@ -537,7 +537,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return new Tsr<>( shape, typeClass, data );
     }
 
-    public <T> Tsr( List<Integer> shape, Class<T> typeClass, List<T> data ) {
+    private <T> Tsr( List<Integer> shape, Class<T> typeClass, List<T> data ) {
         _constructForRange( shape.stream().mapToInt( e -> e ).toArray(), DataType.of( typeClass ), (V[]) data.toArray());
     }
 
@@ -588,7 +588,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return new Tsr<>( shape, dataType, data );
     }
 
-    public <T> Tsr( List<Integer> shape, DataType<T> dataType, List<T> data )
+    private <T> Tsr( List<Integer> shape, DataType<T> dataType, List<T> data )
     {
         setDataType( dataType );
         _configureFromNewShape( shape.stream().mapToInt( e -> e ).toArray(), false, false );
@@ -756,7 +756,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param initializer The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    public <T> Tsr( List<Integer> shape, DataType<T> type, Initializer<T> initializer )
+    private <T> Tsr( List<Integer> shape, DataType<T> type, Initializer<T> initializer )
     {
         _constructFromInitializer( shape.stream().mapToInt(e -> e ).toArray(), type, initializer );
     }
@@ -788,7 +788,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param initializer The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    public <T> Tsr( int[] shape, DataType<T> type, Initializer<T> initializer )
+    private <T> Tsr( int[] shape, DataType<T> type, Initializer<T> initializer )
     {
         _constructFromInitializer( shape, type, initializer );
     }
