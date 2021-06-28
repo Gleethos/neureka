@@ -177,7 +177,7 @@ public class IDXHead extends AbstractFileHead<IDXHead, Number>
         DataType<?> type = ( Neureka.get().settings().dtype().getIsAutoConvertingExternalDataToJVMTypes() )
                 ? DataType.of( _dataType.getTypeClassInstance().getNumericTypeTarget() )
                 : _dataType;
-        return Tsr.of( _shape, type, value );
+        return Tsr.of( type, _shape, value );
     }
 
     @Override

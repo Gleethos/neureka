@@ -56,10 +56,10 @@ class Tensor_State_Unit_Test extends Specification
             String mode, List<Integer> shape, String expected
     ){
         given: 'Four tensors of various data types:'
-            Tsr t1 = Tsr.of( shape, Float.class, -4..5 ).set( Tsr.of( shape, -7..3 ) )
+            Tsr t1 = Tsr.of( Float.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
             Tsr t2 = Tsr.of( shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
-            Tsr t3 = Tsr.of( shape, Integer.class, -4..5 ).set( Tsr.of( shape, -7..3 ) )
-            Tsr t4 = Tsr.of( shape, Short.class, -4..5 ).set( Tsr.of( shape, -7..3 ) )
+            Tsr t3 = Tsr.of( Integer.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
+            Tsr t4 = Tsr.of( Short.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
 
         expect: 'The first tensor has the expected internals ans produces the correct String representation.'
             t1.toString(mode) == expected
@@ -154,7 +154,7 @@ class Tensor_State_Unit_Test extends Specification
     def 'Tensor created from shape and datatype has expected state.'()
     {
         given : 'A new vector tensor is being instantiated.'
-            Tsr t = Tsr.of( new int[]{ 2 }, DataType.of(I8.class ) )
+            Tsr t = Tsr.of(  DataType.of(I8.class ), new int[]{ 2 } )
         expect : 'The tensor is not stored on another device, meaning that it is not "outsourced".'
             !t.isOutsourced()
             t.value64() == [0, 0] as double[]

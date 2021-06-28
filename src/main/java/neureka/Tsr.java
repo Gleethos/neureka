@@ -487,6 +487,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public static TensorBuilder<Double> ofDoubles() { return of(Double.class); }
 
+    public static TensorBuilder<Float> ofFloats() { return of(Float.class); }
+
+    public static TensorBuilder<Integer> ofInts() { return of(Integer.class); }
+
     public static Tsr of( double value ) { return new Tsr(value); }
 
     private Tsr( double value ) { _constructAllF64( new int[]{ 1 }, value ); }
@@ -511,7 +515,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     private Tsr( int[] shape, double[] value ) { _constructForDoubles( shape, value ); }
 
-    public static <V> Tsr<V> of( int[] shape, DataType<V> type ) { return new Tsr<>( shape, type ); }
+    public static <V> Tsr<V> of( DataType<V> type, int[] shape ) { return new Tsr<>( shape, type ); }
+
 
     private Tsr( int[] shape, DataType<?> type )
     {
@@ -519,7 +524,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         _construct( shape, true, true );
     }
 
-    public static <V> Tsr of( int[] shape, Class<V> typeClass, Object data ) { return new Tsr<>( shape, typeClass, data ); }
+    public static <V> Tsr of( Class<V> typeClass, int[] shape, Object data ) { return new Tsr<>( shape, typeClass, data ); }
 
     private Tsr( int[] shape, Class<?> typeClass, Object data )
     {
@@ -528,7 +533,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         setValue( data );
     }
 
-    public static <V> Tsr<V> of( List<Integer> shape, Class<V> typeClass, List<V> data ) {
+    public static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, List<V> data ) {
         return new Tsr<>( shape, typeClass, data );
     }
 
@@ -536,7 +541,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         _constructForRange( shape.stream().mapToInt( e -> e ).toArray(), DataType.of( typeClass ), (V[]) data.toArray());
     }
 
-    public static <V> Tsr of( int[] shape, DataType<V> dataType, Object data ) {
+    public static <V> Tsr of( DataType<V> dataType, int[] shape, Object data ) {
         return new Tsr<>( shape, dataType, data );
     }
 
@@ -579,7 +584,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         _setData( data );
     }
 
-    public static <V> Tsr<V> of( List<Integer> shape, DataType<V> dataType, List<V> data ) {
+    public static <V> Tsr<V> of( DataType<V> dataType, List<Integer> shape,  List<V> data ) {
         return new Tsr<>( shape, dataType, data );
     }
 

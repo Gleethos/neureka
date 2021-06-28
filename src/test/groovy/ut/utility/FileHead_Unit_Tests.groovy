@@ -200,7 +200,7 @@ class FileHead_Unit_Tests extends Specification
     def 'Fully labeled tenors will be stored with their labels included when saving them as CSV.'()
     {
         given:
-            Tsr t = Tsr.of([2,3], DataType.of(String.class), [
+            Tsr t = Tsr.of(DataType.of(String.class), [2,3], [
                     '1', 'hi', ':)',
                     '2', 'hey', ';)'
             ]).label([
@@ -240,7 +240,7 @@ class FileHead_Unit_Tests extends Specification
     def 'Partially labeled tenors will be stored with their labels included when saving them as CSV.'()
     {
         given:
-            Tsr t = Tsr.of([2,3], DataType.of(String.class), [
+            Tsr t = Tsr.of(DataType.of(String.class), [2,3], [
                     '1', 'hi', ':)',
                     '2', 'hey', ';)'
             ]).label([
