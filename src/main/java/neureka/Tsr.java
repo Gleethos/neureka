@@ -311,25 +311,22 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         --------------------------------------------
     */
 
-    public static Tsr<Double> of( List<Integer> shape, double value ) {
-        return new Tsr<>( shape.stream().mapToInt(i -> i).toArray(), value );
-    }
-
     /**
-     *  This factory method will create and return an un-parameterized {@link Tsr} instance
-     *  based on a list of integers which define its shape as well as any object which
-     *  will be interpreted to serve as a source of the data of this new {@link Tsr} instance.
+     *  This is a convenient factory method for creating {@link Tsr} instances for
+     *  values of type {@link T} based on a list of integers
+     *  defining a shape made up of axes sizes as well as a scalar value of type {@link T}
+     *  which will fill out the data array spanned by the provided shape information.
      *
      * @param shape A list of integers whose values ought to define the size of the axes of the shape of the new {@link Tsr}.
-     * @param data An object which ought to be interpreted to be the contents of the new instance.
-     * @return A new un-parameterized {@link Tsr} instance based on the provided arguments.
+     * @param value An object of type {@link T} which will populate the data array of the new instance.
+     * @return A new {@link Tsr} instance for the generic type {@link T}.
      */
-    public static <T> Tsr<T> of( List<Integer> shape, T data ) { return new Tsr<>( shape, data ); }
+    public static <T> Tsr<T> of( List<Integer> shape, T value ) { return new Tsr<>( shape, value ); }
 
     /**
      *  See documentation at {@link Tsr#of(List, Object)}
      */
-    private Tsr( List<Integer> arg1, Object arg2 ) { _construct( new Object[]{ arg1, arg2 } ); }
+    private Tsr( List<Integer> shape, Object value ) { _construct( new Object[]{ shape, value } ); }
 
     public static Tsr<?> of( List<?> arg1, String arg2 ) { return new Tsr<>( arg1, arg2 ); }
 
