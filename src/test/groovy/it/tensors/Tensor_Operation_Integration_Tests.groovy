@@ -369,8 +369,8 @@ class Tensor_Operation_Integration_Tests extends Specification
 
         when : y.backward(Tsr.of(1))
         then :
-            Tsr.of([y], "Ig[0]").toString().equals("empty")
-            Tsr.of([x], "Ig[0]").toString().equals("empty")
+            Tsr.of( "Ig[0]", [y] ).toString().equals("empty")
+            Tsr.of( "Ig[0]", [x] ).toString().equals("empty")
 
         and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
 

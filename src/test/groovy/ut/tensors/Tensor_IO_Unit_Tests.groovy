@@ -238,7 +238,7 @@ class Tensor_IO_Unit_Tests extends Specification
         and : 'A simple scalar tensor containing the number "4".'
             Tsr x = Tsr.of(4)
 
-        when: Tsr y = Tsr.of(x, "th(I[0])")
+        when: Tsr y = Tsr.of("th(I[0])", x)
 
         then:
             y.isBranch()

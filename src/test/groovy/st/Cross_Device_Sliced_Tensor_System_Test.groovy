@@ -111,7 +111,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
              *      ((3-4)*2)^2 = 4
              *  dx:   8*3 - 32  = -8
              * */
-            Tsr y = Tsr.of([x, b, w], "((i0+i1)*i2)^2")
+            Tsr y = Tsr.of("((i0+i1)*i2)^2", [x, b, w])
         then:
             y.indicesMap() != null
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")

@@ -89,7 +89,7 @@ class SimpleNNSystemTest
     }
 
     static Tsr sigmoid(Tsr x) {
-        return Tsr.of(x, "sig(I[0])")
+        return Tsr.of("sig(I[0])", x)
         //return Tsr.of(((Tsr.Create.E(x.shape())**(-x))+1), "1/I[0]")
         //return 1.0 / (1 + Tsr.Create.E(x.shape())**(-x))
     }
@@ -99,10 +99,10 @@ class SimpleNNSystemTest
     }
 
     static void feedforward(Tsr weights1, Tsr weights2, Tsr input, Tsr output, Tsr layer1) {
-        Tsr in0 = Tsr.of([input, weights1], "i0xi1")
+        Tsr in0 = Tsr.of("i0xi1", [input, weights1])
         layer1[] = sigmoid(in0)
         //println(layer1.toString("shp")+"=sig(  I"+input.toString("shp")+" X W"+weights1.toString("shp")+" )")
-        Tsr in1 = Tsr.of([layer1, weights2], "i0xi1")
+        Tsr in1 = Tsr.of("i0xi1", [layer1, weights2])
         output[] = sigmoid(in1)
         //println(output.toString("shp")+"=sig( L1"+layer1.toString("shp")+" X W"+weights2.toString("shp")+" )\n")
     }
@@ -112,12 +112,12 @@ class SimpleNNSystemTest
         Tsr delta = (y - output)*2
         Tsr derivative = delta*2*sigmoid_derivative(output)
         Tsr d_weights2 = Tsr.of(
-                [layer1, (derivative)],
-                "i0xi1"
+                "i0xi1",
+                [layer1, (derivative)]
         )
         Tsr d_weights1 = Tsr.of(
-                [input, (Tsr.of([derivative, weights2], "i0xi1") * sigmoid_derivative(layer1))],
-                "i0xi1"
+                "i0xi1",
+                [input, (Tsr.of("i0xi1", [derivative, weights2]) * sigmoid_derivative(layer1))]
         )
         // update the weights with the derivative (slope) of the loss function
         weights1[] = weights1 + d_weights1

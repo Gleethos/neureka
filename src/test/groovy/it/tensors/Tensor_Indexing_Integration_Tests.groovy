@@ -146,7 +146,7 @@ class Tensor_Indexing_Integration_Tests extends Specification
                     19  26  33
                     29  40  51
              */
-        when : Tsr out0 = Tsr.of([t0, x0], "i0xi1")
+        when : Tsr out0 = Tsr.of("i0xi1", [t0, x0] )
         then :
             out0.toString() == "(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]"
     }

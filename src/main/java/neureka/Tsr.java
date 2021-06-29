@@ -328,16 +328,16 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     private Tsr( List<Integer> shape, Object value ) { _construct( new Object[]{ shape, value } ); }
 
-    public static Tsr<?> of( List<?> arg1, String arg2 ) { return new Tsr<>( arg1, arg2 ); }
+    public static Tsr<?> of( List<? extends Number> arg1, String arg2 ) { return new Tsr<>( arg1, arg2 ); }
 
     private Tsr( List<?> arg1, String arg2 )
     {
-        Predicate<Class<?>> isType = c -> arg1.stream().allMatch( e -> e.getClass() == c );
+        Predicate<Class<?>> isType = c -> arg1.stream().allMatch( e -> c.isAssignableFrom(e.getClass()) );
 
-        if ( isType.test( Integer.class ) ) {
-            List<Integer> shape = (List<Integer>) arg1;
+        if ( isType.test( Number.class ) ) {
+            List<Number> shape = (List<Number>) arg1;
             int[] shp = new int[ shape.size() ];
-            for ( int i=0; i < shp.length; i++ ) shp[ i ] = shape.get( i );
+            for ( int i=0; i < shp.length; i++ ) shp[ i ] = shape.get( i ).intValue();
             _construct( shp, arg2 );
         } else if ( isType.test( Tsr.class ) ) {
             _construct( arg1.toArray( new Tsr[ 0 ] ), arg2, true );
@@ -848,7 +848,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param expression A String which will be used for parsing a Function AST.
      * @param inputs A list of inputs which can be tensors or numeric types.
      */
-    public static <V> Tsr<V> of( String expression, List<Object> inputs ) {
+    public static <V> Tsr<V> of( String expression, List<? extends Object> inputs ) {
+        if ( inputs.stream().allMatch( o -> o instanceof Tsr ) ) return new Tsr<>( inputs, expression );
         return new Tsr<>( expression, inputs );
     }
 
@@ -858,7 +859,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param expression A String which will be used for parsing a Function AST.
      * @param inputs A list of inputs which can be tensors or numeric types.
      */
-    private Tsr( String expression, List<Object> inputs )
+    private Tsr( String expression, List<? extends Object> inputs )
     {
         if ( inputs.stream().allMatch( e -> e instanceof Tsr ) )
             _construct(
@@ -891,12 +892,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param tensor A tensor which serves as input to the Function instance parsed from the given expression.
      * @param expression The expression describing operations applied to the provided tensor.
      */
-    public static <V> Tsr<V> of( Tsr<V> tensor, String expression ) {
+    public static <V> Tsr<V> of( String expression, Tsr<V> tensor ) {
         return new Tsr<>( tensor, expression );
     }
 
     /**
-     *  see {@link #of(Tsr, String)}
+     *  see {@link #of(String, Tsr)}
      *
      * @param tensor A tensor which serves as input to the Function instance parsed from the given expression.
      * @param expression The expression describing operations applied to the provided tensor.
