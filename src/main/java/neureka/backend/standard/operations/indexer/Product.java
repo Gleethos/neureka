@@ -206,7 +206,7 @@ public final class Product extends AbstractOperation {
                                 Tsr deriv = f.derive( inputs, d );
                                 return new DefaultADAgent( deriv )
                                         .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
-                                        .setBackward( (t, error) -> invX.call( error, deriv, Tsr.of(t.getPayload().shape(), 0) ) );
+                                        .setBackward( (t, error) -> invX.execute( error, deriv, Tsr.of(t.getPayload().shape(), 0) ) );
                             }
                             else
                             {
