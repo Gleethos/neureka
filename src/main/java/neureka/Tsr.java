@@ -328,26 +328,20 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     private Tsr( List<Integer> shape, Object value ) { _construct( new Object[]{ shape, value } ); }
 
-    public static Tsr<?> of( List<? extends Number> arg1, String arg2 ) { return new Tsr<>( arg1, arg2 ); }
-
-    private Tsr( List<?> arg1, String arg2 )
-    {
-        Predicate<Class<?>> isType = c -> arg1.stream().allMatch( e -> c.isAssignableFrom(e.getClass()) );
-
-        if ( isType.test( Number.class ) ) {
-            List<Number> shape = (List<Number>) arg1;
-            int[] shp = new int[ shape.size() ];
-            for ( int i=0; i < shp.length; i++ ) shp[ i ] = shape.get( i ).intValue();
-            _construct( shp, arg2 );
-        } else if ( isType.test( Tsr.class ) ) {
-            _construct( arg1.toArray( new Tsr[ 0 ] ), arg2, true );
-        } else if ( arg1 != null ) {
-            _construct(
-                    ( (List<Object>) arg1 ).stream().map( Tsr::new ).toArray( Tsr[]::new ),
-                    arg2,
-                    true
-            );
-        }
+    /**
+     *  This factory method will create and return a {@link Tsr} instances
+     *  based on a list of {@link Number} instances whose rounded values will be interpreted as
+     *  the shape of this new {@link Tsr} instance and a seed which will serve
+     *  as a source of pseudo randomness to generate the values for the new instance.
+     *
+     * @param shape A list of {@link Number} instances which will be interpreted as a shape array.
+     * @param seed A source of pseudo randomness for the {@link Tsr} instance created by this method.
+     * @return A new {@link Tsr} instance created based on a shape and a seed.
+     */
+    public static Tsr<Double> of( List<? extends Number> shape, String seed ) {
+        int[] shp = new int[ shape.size() ];
+        for ( int i = 0; i < shp.length; i++ ) shp[ i ] = shape.get( i ).intValue();
+        return new Tsr<>( shp, seed );
     }
 
     public static <V> Tsr<V> of( List<Integer> shape, List<V> range ) {
@@ -517,6 +511,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public static Tsr<Double> of( int[] shape, String seed ) { return new Tsr<>( shape, seed ); }
 
+    /**
+     *  See {@link #of(int[], String)}
+     *  ...and {@link #of(List, String)}
+     */
     private Tsr( int[] shape, String seed ) { _construct( shape, seed ); }
 
     public static Tsr<Double> of( int[] shape ) { return new Tsr<>( shape ); }
@@ -849,7 +847,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param inputs A list of inputs which can be tensors or numeric types.
      */
     public static <V> Tsr<V> of( String expression, List<? extends Object> inputs ) {
-        if ( inputs.stream().allMatch( o -> o instanceof Tsr ) ) return new Tsr<>( inputs, expression );
         return new Tsr<>( expression, inputs );
     }
 
