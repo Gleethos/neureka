@@ -329,7 +329,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     private Tsr( List<Integer> shape, Object value ) { _construct( new Object[]{ shape, value } ); }
 
     /**
-     *  This factory method will create and return a {@link Tsr} instances
+     *  This factory method will create and return a {@link Tsr} instance
      *  based on a list of {@link Number} instances whose rounded values will be interpreted as
      *  the shape of this new {@link Tsr} instance and a seed which will serve
      *  as a source of pseudo randomness to generate the values for the new instance.
@@ -344,19 +344,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return new Tsr<>( shp, seed );
     }
 
-    public static <V> Tsr<V> of( List<Integer> shape, List<V> range ) {
-        return new Tsr<>( shape, range );
-    }
-
-    private Tsr( List<Integer> shape, List<V> range )
-    {
-        // Nested Groovy range should be unpacked: // TODO: try using "instance of List" instead of class name...
-        if ( range.size() == 1 && range.get( 0 ).getClass().getSimpleName().equals("IntRange") ) range = (List<V>) range.get( 0 );
-        _constructForRange(
-                shape.stream().mapToInt( e -> e ).toArray(),
-                DataType.of( F64.class ),
-                (V[]) range.toArray()
-        );
+    public static <V> Tsr<V> of( List<? extends Number> shape, List<V> range ) {
+        return new Tsr<>( shape.stream().mapToInt(Number::intValue).toArray(), range );
     }
 
     public static <V> Tsr<V> of( int[] shape, List<V> range ) { return new Tsr<>( shape, range ); }
@@ -411,10 +400,21 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         }
     }
 
+    /**
+     *  This factory method will turn a list of either nested lists or values into a {@link Tsr}
+     *  instance with the corresponding.
+     *
+     *
+     * @param conf A list of either values or nested lists which are themselves either or.
+     * @return A new {@link Tsr} instance whose shape and data is based on the provided list structure.
+     */
     public static Tsr<Object> of( List<Object> conf ) {
         return new Tsr<>( conf );
     }
 
+    /**
+     *  See {@link #of(List)}.
+     */
     private Tsr( List<Object> conf ) {
         boolean isMatrix = conf.stream().allMatch( e -> e instanceof List );
         if ( isMatrix ) {
@@ -454,9 +454,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         }
     }
 
-
     /**
-     *  This method receives a list of lists which represents a matrix of objects.
+     *  This method receives a list of lists which represent a matrix of objects.
      *  It parses this matrix into a 2D shape array and a double array.<br>
      *  <br>
      *
