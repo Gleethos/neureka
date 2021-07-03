@@ -6,7 +6,7 @@ Simple scalar calculation:
     def b = Tsr.of(-4)
     def w = Tsr.of(2)
         
-    def y = Tsr.of('( (i0 + i1) * i2) ^ 2',[x, b, w])
+    def y = ((x + b) * w)**2
     
     /*
      *   f(x) = ((x-4)*2)^2; :=>  f(3) = 4
@@ -31,7 +31,8 @@ Matrix multiplication:
                     3,  2,  
                     3, -1
             ])
-    def z = Tsr.of('i0 x i1', [x, y])
+            
+    def z = Tsr.of('i0 x i1', x, y)
     
     /*
      *   z.toString(): "(2x1x2):[15.0, 2.0, 10.0, 2.0]"    
@@ -53,7 +54,8 @@ Convolution:
                        -1, 3,
                         2, 3,
                 ]);
-        z = Tsr.of('i0 x i1', [x, y]) 
+                
+        z = Tsr.of('i0 x i1', x, y) 
 
         // z.toString(): "(2x2):[15.0, 15.0, 18.0, 8.0)]"
 
@@ -80,8 +82,9 @@ GPU execution:
                         -1, 3,
                         2, 3,
                 ])
+                
         gpu.store(x).store(y)      
-        z = Tsr.of('i0 x i1', [x, y]); // <= executed on gpu!
+        z = Tsr.of('i0 x i1', x, y); // <= executed on gpu!
 
         // z.toString(): "(2x2):[15.0, 15.0, 18.0, 8.0], "
 
