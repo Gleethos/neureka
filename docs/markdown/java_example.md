@@ -51,7 +51,7 @@ Convolution:
                        -1, 3,
                         2, 3
                 );
-        z = Tsr.of("I0xi1", x, y);
+        z = Tsr.of("i0 x i1", x, y);
 
         // z.toString(): "(2x2):[15.0, 15.0, 18.0, 8.0)]"
 
