@@ -37,6 +37,8 @@ public class ListReader {
         }
     }
 
+    public Class<?> getType() { return _type; }
+
     private Class<?> _findType( List<ListReader> readers ) {
         Supplier<Stream<Class<?>>> types = () -> readers.stream().map(r -> r._type );
         Class<?> firstType = types.get().findFirst().get();

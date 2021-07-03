@@ -106,6 +106,7 @@ import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import neureka.optimization.Optimizer;
 import neureka.utility.DataConverter;
+import neureka.utility.ListReader;
 import neureka.utility.TsrAsString;
 import neureka.utility.fluent.TensorBuilder;
 import neureka.utility.slicing.SliceBuilder;
@@ -440,6 +441,16 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             _construct( conf.stream().map( e -> (List<Object>) e ).collect( Collectors.toList() ) );
             return;
         }
+        /*
+        List<Integer> growingShape = new ArrayList<>();
+        List<Object> growingData = new ArrayList<>();
+        ListReader reader = new ListReader( conf, 0, growingData, growingShape );
+        Tsr.of(
+                reader.getType(),
+                growingShape,
+                growingData.toArray()
+        );
+        */
         double[] value = new double[ conf.size() ];
         for ( int i = 0; i < value.length; i++ ) {
             value[ i ] = ( conf.get( i ) instanceof BigDecimal )
@@ -536,6 +547,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public static <V> Tsr of( Class<V> typeClass, int[] shape, Object data ) { return new Tsr<>( shape, typeClass, data ); }
+
+    public static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, Object data ) { return new Tsr<>( shape.stream().mapToInt(i -> i).toArray(), typeClass, data ); }
 
     private Tsr( int[] shape, Class<?> typeClass, Object data )
     {
