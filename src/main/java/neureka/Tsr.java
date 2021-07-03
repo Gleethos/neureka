@@ -412,46 +412,44 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return new Tsr<>( conf );
     }
 
+    public static Tsr<Object> ofShape( List<? extends Number> axesSizes ) {
+        return ofShape( axesSizes.toArray(new Number[0]) );
+    }
+
+    @SafeVarargs
+    public static <T extends Number> Tsr<Object> ofShape( T... axesSizes ) {
+        int[] shape = Arrays.stream( axesSizes ).mapToInt( Number::intValue ).toArray();
+        return Tsr.of(
+                    DataType.of( Neureka.get().settings().dtype().getDefaultDataTypeClass() ),
+                    shape,
+                    0.0
+                );
+    }
+
     /**
      *  See {@link #of(List)}.
      */
     private Tsr( List<Object> conf ) {
-        boolean isMatrix = conf.stream().allMatch( e -> e instanceof List );
+        boolean isMatrix = conf.stream()
+                                .allMatch( e ->
+                                            e instanceof List &&
+                                            ((List<Object>) e).stream().noneMatch( v -> v instanceof List)
+                                );
+        // TODO: ListReader
         if ( isMatrix ) {
             _construct( conf.stream().map( e -> (List<Object>) e ).collect( Collectors.toList() ) );
             return;
         }
-        boolean isNatural = ( conf.size() <= 64 );
-        for( Object e : conf ) {
-            if ( !isNatural ) break;
-            double asNum = ( e instanceof BigDecimal ) ?
-                    ( (BigDecimal) e ).doubleValue()
-                    : ( e instanceof Double )
-                        ? (Double) e
-                        : (Integer) e;
-            isNatural = asNum % 1 == 0;
+        double[] value = new double[ conf.size() ];
+        for ( int i = 0; i < value.length; i++ ) {
+            value[ i ] = ( conf.get( i ) instanceof BigDecimal )
+                    ? ( (BigDecimal) conf.get( i ) ).doubleValue() :
+                    ( conf.get( i ) instanceof Double )
+                            ? ( (Double) conf.get( i ) ).doubleValue()
+                            : ( (Integer) conf.get( i ) );
         }
-        if ( isNatural ) {
-            int[] shape = new int[ conf.size() ];
-            for ( int i = 0; i < shape.length; i++ ) {
-                shape[ i ] = ( conf.get( i ) instanceof BigDecimal )
-                        ? ( (BigDecimal) conf.get( i ) ).intValue() :
-                        ( conf.get( i ) instanceof Double )
-                                ? ( (Double) conf.get( i ) ).intValue()
-                                :( (Integer) conf.get( i ) );
-            }
-            _construct( shape, false, false );
-        } else {
-            double[] value = new double[ conf.size() ];
-            for ( int i = 0; i < value.length; i++ ) {
-                value[ i ] = ( conf.get( i ) instanceof BigDecimal )
-                        ? ( (BigDecimal) conf.get( i ) ).doubleValue() :
-                        ( conf.get( i ) instanceof Double )
-                                ? ( (Double) conf.get( i ) ).doubleValue()
-                                : ( (Integer) conf.get( i ) );
-            }
-            _constructForDoubles( new int[]{ conf.size() }, value );
-        }
+        _constructForDoubles( new int[]{ conf.size() }, value );
+
     }
 
     /**

@@ -79,8 +79,8 @@
             dim[0] = ((dim[0] == 0) ? 2 : dim[0])
             dim[1] = ((dim[1] == 0) ? 2 : dim[1])
             dim[2] = ((dim[2] == 0) ? 1 : dim[2])
-            Tsr t1 = Tsr.of(dim).set(device)
-            Tsr t2 = Tsr.of(dim).set(device)
+            Tsr t1 = Tsr.ofShape(dim).set(device)
+            Tsr t2 = Tsr.ofShape(dim).set(device)
             measure "tensor_math", {
                for ( int i; i < N; i++ ) {
                   Tsr v = t1 * 10

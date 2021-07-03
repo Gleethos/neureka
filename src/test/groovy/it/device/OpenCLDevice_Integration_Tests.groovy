@@ -56,7 +56,7 @@ class OpenCLDevice_Integration_Tests extends Specification
         given : 'This system supports OpenCL'
             if (!Neureka.get().canAccessOpenCL()) return
         and : 'A new tensor.'
-            Tsr t = Tsr.of([1, 2])
+            Tsr t = Tsr.ofShape( 1, 2 )
 
         expect : 'This tensor is initially of type "Double", meaning it is backed by a "double[]" array internally...'
             t.dataType == DataType.of( Double.class )
@@ -85,7 +85,7 @@ class OpenCLDevice_Integration_Tests extends Specification
         given : 'This system supports OpenCL'
             if ( !Neureka.get().canAccessOpenCL() ) return
         and : 'A new tensor belonging to the first found OpenCLDevice instance.'
-            Tsr t = Tsr.of([1, 2])
+            Tsr t = Tsr.ofShape( 1, 2 )
 
         expect : 'The tensor start with having data stored within.'
             t.data != null
