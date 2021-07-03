@@ -25,7 +25,7 @@ public class BroadSystemTest
                 }
         ).setRqsGradient(true);
         Tsr y = Tsr.of(new int[]{1, 1}, -3);
-        Tsr z = Tsr.of(new Tsr[]{x, y}, "I0xi1");
+        Tsr z = Tsr.of("I0xi1", x, y);
         tester.testTensor(z, new String[]{"[2x2]:(3.0, -6.0, 9.0, -9.0)"});
         z.backward(Tsr.of(new int[]{2, 2}, 1));
         tester.testTensor(x, new String[]{"[2x2]:(-1.0, 2.0, -3.0, 3.0):g:(-3.0, -3.0, -3.0, -3.0)"});
@@ -119,8 +119,8 @@ public class BroadSystemTest
         tensor2 = Tsr.of(new int[]{2, 1}, -1);
         tensor1.setRqsGradient(true);
         tensor2.setRqsGradient(true);
-        result = Tsr.of(new Tsr[]{tensor1, tensor2}, "I[0]xI[1]");
-        result = Tsr.of(new Tsr[]{result}, "lig(I[0]*-100)");
+        result = Tsr.of("I[0]xI[1]", tensor1, tensor2);
+        result = Tsr.of("lig(I[0]*-100)", result);
         tester.testContains(result.toString("rc"),
                 new String[]{
                         "[2x3]:(200.0, 200.0, 200.0, 200.0, 200.0, 200.0);",
@@ -200,8 +200,8 @@ public class BroadSystemTest
         //---
         tensor1 = Tsr.of(new int[]{2, 2}, new double[]{1, 2, 3, 4});//-2*4 = 8 | *3 = -24
         tensor1.setRqsGradient(true);
-        result = Tsr.of(new Tsr[]{tensor1}, "(i0+2)");
-        result = Tsr.of(new Tsr[]{result}, "I[0]^2");
+        result = Tsr.of("(i0+2)", tensor1);
+        result = Tsr.of("I[0]^2", result);
         tester.testContains(
                 result.toString("rc"),
                 new String[]{"d|[ [2x2]:(6.0, 8.0, 10.0, 12.0) ]|:t{ [2x2]:(1.0, 2.0, 3.0, 4.0) }"},
@@ -258,7 +258,7 @@ public class BroadSystemTest
                                 "},"
                 }
         );
-        result = Tsr.of(new Tsr[]{tensor1}, "(-3*(2*(i0*-1)))*(-1*i0)");
+        result = Tsr.of("(-3*(2*(i0*-1)))*(-1*i0)", tensor1);
         GraphNode node = (GraphNode) result.find( GraphNode.class );
         String asString = node.toString("gnv");
         tester.testContains(

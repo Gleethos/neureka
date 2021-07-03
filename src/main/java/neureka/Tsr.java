@@ -930,21 +930,22 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ... <br>
      *  An example would be the following :
      * <ul>
-     *      <li><i> 'Tsr a = Tsr.of( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'</i></li>
+     *      <li><i> 'Tsr a = Tsr.of( "sin( I[0] ) / I[1]", b, c )'</i></li>
      * </ul>
      *
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
      *  elementwise to produce a new tensor 'a'! <br>
      *
-     * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      * @param expression The expression describing operations applied to the provided tensors.
+     * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      */
-    public static <V> Tsr<V> of( Tsr<V>[] tensors, String expression ) {
+    @SafeVarargs
+    public static <V> Tsr<V> of(String expression, Tsr<V>... tensors ) {
         return new Tsr<>( tensors, expression );
     }
 
     /**
-     *  see {@link #of(Tsr[], String)}
+     *  see {@link #of(String, Tsr...)}
      *
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      * @param expression The expression describing operations applied to the provided tensors.

@@ -51,7 +51,7 @@ class Tensor_Operation_Integration_Tests extends Specification
                 10, 2
             */
         when : 'The x-mul result is being instantiated by passing a simple equation to the tensor constructor.'
-            def z = Tsr.of(new Tsr[]{x, y}, "I0xi1");
+            def z = Tsr.of("I0xi1", x, y);
         then: 'The result contains the expected String.'
             z.toString().contains(expected);
 

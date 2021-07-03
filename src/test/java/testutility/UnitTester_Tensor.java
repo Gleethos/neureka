@@ -66,7 +66,7 @@ public class UnitTester_Tensor extends UnitTester
         printSessionStart("Testing Tsr: autograd!");
         println(BAR +"  Function: "+operation);
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
-        Tsr product = Tsr.of(source, operation);
+        Tsr product = Tsr.of(operation, source);
         String result = product.toString("rc");
         for(String element : expected){
             this.assertStringContains("result", result, element);
@@ -79,7 +79,7 @@ public class UnitTester_Tensor extends UnitTester
         printSessionStart("Testing Tsr: autograd!");
         println(BAR +"  Function: "+operation);
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
-        Tsr product = Tsr.of(source, operation);
+        Tsr product = Tsr.of(operation, source);
         product.backward(error);
         String result = product.toString("rc");
         for(String element : expected){

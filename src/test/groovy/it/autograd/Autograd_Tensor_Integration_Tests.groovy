@@ -42,7 +42,7 @@ class Autograd_Tensor_Integration_Tests extends Specification
          *  dx:   8*3 - 32  = -8
          * */
         when: 'A new tensor is being calculated by the equation "((i0+i1)*i2)^2".'
-            Tsr y = Tsr.of(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
+            Tsr y = Tsr.of("((i0+i1)*i2)^2", x, b, w);
         then: 'The resulting tensor should contain "[1]:(4.0); ->d[1]:(-8.0), " where the last part is a derivative.'
             y.toString().contains("[1]:(4.0); ->d[1]:(-8.0), ");
 
@@ -94,7 +94,7 @@ class Autograd_Tensor_Integration_Tests extends Specification
                     }).setRqsGradient(true);
 
         then : y.toString().contains(":g:(null)");
-        when : def z = Tsr.of(new Tsr[]{x, y}, "I0xi1");
+        when : def z = Tsr.of("I0xi1", x, y);
         then : z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)");
 
         when : z = Tsr.of(new Object[]{x, "x", y});
@@ -121,10 +121,10 @@ class Autograd_Tensor_Integration_Tests extends Specification
                 }).setRqsGradient(true);
 
         then : y.toString().contains(":g:(null)");
-        when : z = Tsr.of(new Tsr[]{y, x}, "I0xi1");
+        when : z = Tsr.of("I0xi1", y, x);
         then : z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)");
 
-        when : z = Tsr.of(new Object[]{y, "x", x});
+        when : z = Tsr.of(y, "x", x);
         then : z.toString().contains("[2x2]:(15.0, 15.0, 18.0, 8.0)");
 
         when : z.backward(Tsr.of(new int[]{2, 2}, 1));
@@ -134,14 +134,14 @@ class Autograd_Tensor_Integration_Tests extends Specification
         x = Tsr.of(new int[]{1}, 3);
         Tsr b = Tsr.of(new int[]{1}, -5);
         Tsr w = Tsr.of(new int[]{1}, -2);
-        z = Tsr.of(new Tsr[]{x, b, w}, "I0*i1*i2");
+        z = Tsr.of("I0*i1*i2", x, b, w);
         then : z.toString().contains("[1]:(30.0)");
 
         when :
         x = Tsr.of(new int[]{1}, 4).setRqsGradient(true);
         b = Tsr.of(new int[]{1}, 0.5);
         w = Tsr.of(new int[]{1}, 0.5);
-        y = Tsr.of(new Tsr[]{x, b, w}, "(2^i0^i1^i2^2");
+        y = Tsr.of("(2^i0^i1^i2^2", x, b, w);
         then :
             y.toString().contains("[1]:(4.0);");
             y.toString().contains(" ->d[1]:(1.38629E0), ");
