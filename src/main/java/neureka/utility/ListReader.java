@@ -1,6 +1,7 @@
 package neureka.utility;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -11,10 +12,19 @@ public class ListReader {
     private final List<ListReader> _readers;
     private final int _size;
 
-    public ListReader( Object data, int depth, List<Object> growingData, List<Integer> growingShape ) {
+    public ListReader(
+            Object data,
+            int depth,
+            List<Object> growingData,
+            List<Integer> growingShape,
+            Function<Object, Object> valueFilter
+    ) {
 
         if ( data instanceof List ) {
-            List<Object> list = (List<Object>) data;
+            List<Object> list = ((List<Object>) data).stream()
+                                                    .map( valueFilter )
+                                                    .collect(Collectors.toList());
+
             long leaves = list.stream().filter( o -> _isLeave(o) ).count();
             if ( leaves != list.size() && leaves != 0 ) {
                 String message = "Inconsistent degree of list nesting encountered at depth " + depth + ".";
@@ -22,7 +32,7 @@ public class ListReader {
             }
             if ( growingShape.size() == depth ) growingShape.add(list.size());
             _readers = list.stream()
-                           .map( o -> new ListReader( o, depth + 1, growingData, growingShape ) )
+                           .map( o -> new ListReader( o, depth + 1, growingData, growingShape, valueFilter ) )
                            .collect(Collectors.toList());
 
             _type = _findType(_readers);

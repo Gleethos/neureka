@@ -19,7 +19,7 @@ class ListReader_Tests extends Specification
             def flattened = []
 
         when : 'We use the reader to fill the 2 lists defined above...'
-            new ListReader(data, 0, flattened, shape)
+            new ListReader(data, 0, flattened, shape, (o) -> o)
 
         then : 'The shape list will have the shape of the "matrix".'
             shape == [2, 3]
@@ -45,7 +45,7 @@ class ListReader_Tests extends Specification
             def flattened = []
 
         when : 'We use the reader to fill the 2 lists defined above...'
-            new ListReader(data, 0, flattened, shape)
+            new ListReader(data, 0, flattened, shape, (o) -> o)
 
         then : 'The shape list will have the shape of the "tensor".'
             shape == [2, 2, 4]
@@ -62,7 +62,7 @@ class ListReader_Tests extends Specification
             def flattened = []
 
         when : 'We use the reader to fill the 2 lists defined above...'
-            new ListReader(data, 0, flattened, shape)
+            new ListReader(data, 0, flattened, shape, (o) -> o)
 
         then : 'The shape list will have the shape of the "matrix".'
             shape == expectedShape

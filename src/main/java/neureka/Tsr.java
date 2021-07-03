@@ -410,7 +410,41 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return A new {@link Tsr} instance whose shape and data is based on the provided list structure.
      */
     public static Tsr<Object> of( List<Object> conf ) {
-        return new Tsr<>( conf );
+        boolean isMatrix = conf.stream()
+                .allMatch( e ->
+                        e instanceof List &&
+                                ((List<Object>) e).stream().noneMatch( v -> v instanceof List)
+                );
+        // TODO: ListReader
+        if ( isMatrix ) {
+            return new Tsr<>( conf );
+        }
+
+        List<Integer> growingShape = new ArrayList<>();
+        List<Object> growingData = new ArrayList<>();
+        ListReader reader = new ListReader(
+                                    conf,
+                                    0,
+                                    growingData,
+                                    growingShape,
+                                    o -> ( o instanceof Number ? ((Number)o).doubleValue() : o )
+                            );
+        return Tsr.of(
+                DataType.of(reader.getType()),
+                growingShape.stream().mapToInt(i -> i).toArray(),
+                growingData.toArray()
+        );
+        /*
+        double[] value = new double[ conf.size() ];
+        for ( int i = 0; i < value.length; i++ ) {
+            value[ i ] = ( conf.get( i ) instanceof BigDecimal )
+                    ? ( (BigDecimal) conf.get( i ) ).doubleValue() :
+                    ( conf.get( i ) instanceof Double )
+                            ? ( (Double) conf.get( i ) ).doubleValue()
+                            : ( (Integer) conf.get( i ) );
+        }
+        _constructForDoubles( new int[]{ conf.size() }, value );
+        */
     }
 
     public static Tsr<Object> ofShape( List<? extends Number> axesSizes ) {
@@ -431,36 +465,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  See {@link #of(List)}.
      */
     private Tsr( List<Object> conf ) {
-        boolean isMatrix = conf.stream()
-                                .allMatch( e ->
-                                            e instanceof List &&
-                                            ((List<Object>) e).stream().noneMatch( v -> v instanceof List)
-                                );
-        // TODO: ListReader
-        if ( isMatrix ) {
-            _construct( conf.stream().map( e -> (List<Object>) e ).collect( Collectors.toList() ) );
-            return;
-        }
-        /*
-        List<Integer> growingShape = new ArrayList<>();
-        List<Object> growingData = new ArrayList<>();
-        ListReader reader = new ListReader( conf, 0, growingData, growingShape );
-        Tsr.of(
-                reader.getType(),
-                growingShape,
-                growingData.toArray()
-        );
-        */
-        double[] value = new double[ conf.size() ];
-        for ( int i = 0; i < value.length; i++ ) {
-            value[ i ] = ( conf.get( i ) instanceof BigDecimal )
-                    ? ( (BigDecimal) conf.get( i ) ).doubleValue() :
-                    ( conf.get( i ) instanceof Double )
-                            ? ( (Double) conf.get( i ) ).doubleValue()
-                            : ( (Integer) conf.get( i ) );
-        }
-        _constructForDoubles( new int[]{ conf.size() }, value );
-
+        _construct( conf.stream().map( e -> (List<Object>) e ).collect( Collectors.toList() ) );
     }
 
     /**
@@ -603,6 +608,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         else if ( data instanceof Long[]    ) data = DataConverter.instance().convert( (Long[])    data, long[].class,   size );
         else if ( data instanceof Short[]   ) data = DataConverter.instance().convert( (Short[])   data, short[].class,  size );
         else if ( data instanceof Byte[]    ) data = DataConverter.instance().convert( (Byte[])    data, byte[].class,   size );
+        else if ( data instanceof Object[] ) {
+            if ( dataType == DataType.of(Double.class) )
+                data = Arrays.stream((Object[])data).mapToDouble( o -> ((Number)o).doubleValue()).toArray();
+        }
         setDataType( dataType );
         _configureFromNewShape( shape, false, false );
         _setData( data );

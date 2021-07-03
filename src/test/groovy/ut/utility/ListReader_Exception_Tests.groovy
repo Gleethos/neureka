@@ -19,7 +19,7 @@ class ListReader_Exception_Tests extends Specification
             def flattened = []
 
         when : 'We use the reader to fill the 2 lists defined above...'
-            new ListReader(data, 0, flattened, shape)
+            new ListReader(data, 0, flattened, shape, (o)->o)
 
         then :
             def exception = thrown(IllegalArgumentException)
@@ -40,7 +40,7 @@ class ListReader_Exception_Tests extends Specification
             def flattened = []
 
         when : 'We use the reader to fill the 2 lists defined above...'
-            new ListReader(data, 0, flattened, shape)
+            new ListReader(data, 0, flattened, shape, (o)->o)
 
         then :
             def exception = thrown(IllegalArgumentException)
