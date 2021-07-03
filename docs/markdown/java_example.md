@@ -2,11 +2,11 @@
 
 Simple scalar calculation:
 ```java
-    Tsr x = Tsr.of(3).setRqsGradient(true);
-    Tsr b = Tsr.of(-4);
-    Tsr w = Tsr.of(2);
+    Tsr<Double> x = Tsr.of(3).setRqsGradient(true);
+    Tsr<Double> b = Tsr.of(-4);
+    Tsr<Double> w = Tsr.of(2);
         
-    Tsr y = Tsr.of(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
+    Tsr<Double> y = Tsr.of("((i0 + i1) * i2) ^ 2", x, b, w);
     
     /*
      *   f(x) = ((x-4)*2)^2; :=>  f(3) = 4
@@ -17,21 +17,20 @@ Simple scalar calculation:
 ```
 Matrix multiplication:
 ```java
-    x = Tsr.of(
-                new int[]{2, 3, 1},
-                new double[]{
-                        3,   2, -1,
-                        -2,  2,  4
-                }
-    );
-    y = Tsr.of(
-            new int[]{1, 3, 2},
-            new double[]{
+    x = Tsr.of(Double.class)
+            .withShape(2, 3, 1)
+            .andFill(
+                  3,   2, -1,
+                  -2,  2,  4
+            );
+    y = Tsr.of(Double.class)
+            .withShape(1, 3, 2)
+            .andFill(
                     4, -1,  
                     3,  2,  
                     3, -1
-            });
-    Tsr z = Tsr.of(new Tsr[]{x, y}, "i[0] x i[1]");
+            );
+    Tsr z = Tsr.of("i0 x i1", x, y);
     
     /*
      *   z.toString(): "(2x1x2):[15.0, 2.0, 10.0, 2.0]"    
@@ -39,25 +38,24 @@ Matrix multiplication:
 ```
 Convolution:
 ```java
-        x = Tsr.of(
-                new int[]{3, 3},
-                new double[]{
+        x = Tsr.of(Double.class)
+                .withShape(3, 3)
+                .andFill(
                          1, 2, 5,
                         -1, 4,-2,
-                        -2, 3, 4,
-                }
-        );
-        y = Tsr.of(
-                new int[]{2, 2},
-                new double[]{
+                        -2, 3, 4
+                );
+        y = Tsr.of(Double.class)
+                .withShape(2, 2)
+                .andFill(
                        -1, 3,
-                        2, 3,
-                });
-        z = Tsr.of(new Tsr[]{x, y}, "I0xi1");
+                        2, 3
+                );
+        z = Tsr.of("i0 x i1", x, y);
 
         // z.toString(): "(2x2):[15.0, 15.0, 18.0, 8.0)]"
 
-        z.backward(Tsr.of(new int[]{2, 2}, 1));
+        z.backward(Tsr.of(Double.class).withShape(2, 2).all(1));
         /*
          *   y.toString(): "(2x2):[-1.0, 3.0, 2.0, 3.0]:g:[6.0, 9.0, 4.0, 9.0]"    
          */
@@ -66,26 +64,26 @@ Convolution:
 GPU execution:
 ```java
         Device gpu = Device.find("nvidia");
-        x = Tsr.of(
-                new int[]{3, 3},
-                new double[]{
+        x = Tsr.of(Double.class)
+                .withShape(3, 3)
+                .andFill(
                         1, 2, 5,
                         -1, 4, -2,
-                        -2, 3, 4,
-                }
+                        -2, 3, 4
+                )
         );
-        y = Tsr.of(
-                new int[]{2, 2},
-                new double[]{
+        y = Tsr.of(Double.class)
+                .withShape(2, 2)
+                .andFill(
                         -1, 3,
-                        2, 3,
-                });
+                        2, 3
+                );
         gpu.store(x).store(y);        
-        z = Tsr.of(new Tsr[]{x, y}, "I0xi1"); // <= executed on gpu!
+        z = Tsr.of("i0 x i1", x, y); // <= executed on gpu!
 
         // z.toString(): "(2x2):[15.0, 15.0, 18.0, 8.0], "
 
-        z.backward(Tsr.of(new int[]{2, 2}, 1));
+        z.backward(Tsr.of(Double.class).withShape(2, 2).all(1));
         /*
          *   y.toString(): "(2x2):[-1.0, 3.0, 2.0, 3.0]:g:[6.0, 9.0, 4.0, 9.0]"    
          */
