@@ -613,14 +613,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public static <V> Tsr<V> of( DataType<V> dataType, List<Integer> shape,  List<V> data ) {
-        return new Tsr<>( shape, dataType, data );
-    }
-
-    private <T> Tsr( List<Integer> shape, DataType<T> dataType, List<T> data )
-    {
-        setDataType( dataType );
-        _configureFromNewShape( shape.stream().mapToInt( e -> e ).toArray(), false, false );
-        _setData( data.toArray() );
+        return Tsr.of(
+                dataType,
+                shape.stream().mapToInt( i -> i ).toArray(),
+                data.toArray()
+        );
     }
 
     // Inner construction layer:
@@ -2854,7 +2851,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
 
-    public static void makeFit( Tsr[] tensors, boolean doesAD )
+    public static void makeFit( Tsr<?>[] tensors, boolean doesAD )
     {
         int largest = -1;
         int[] shape = null;
