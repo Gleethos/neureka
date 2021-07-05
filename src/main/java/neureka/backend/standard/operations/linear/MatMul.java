@@ -138,7 +138,7 @@ public class MatMul extends AbstractOperation
                                 Tsr[] inputs = call.getTensors();
                                 Tsr[] tsrs = new Tsr[]{null, inputs[ 0 ], inputs[ 1 ]};
                                 tsrs[ 0 ] = (call.getDerivativeIndex() < 0)
-                                        ? Tsr.of( Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape()) )
+                                        ? Tsr.ofShape( Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape()) )
                                         : null;
 
                                 for (Tsr t : tsrs) if (t != null) t.setIsVirtual( false );

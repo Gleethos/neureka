@@ -92,10 +92,7 @@ import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
-import neureka.dtype.custom.F32;
-import neureka.dtype.custom.F64;
-import neureka.dtype.custom.I16;
-import neureka.dtype.custom.I32;
+import neureka.dtype.custom.*;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.framing.states.AxisFrame;
@@ -117,7 +114,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -191,14 +187,15 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     */
 
     /**
-     *  This static factory method creates and return a completely empty tensor which is void of any contents and meaning.
+     *  This static factory method creates and return a completely empty and undefined tensor
+     *  which is void of any contents and meaning.
      *  The use case for this would be to use the produced {@link Tsr}
      *  instance as a target for an inline operations which fills the instance with an actual value. <br>
      *  An example of this approach would be to call the {@link #putAt(List, Tsr)} method with an empty list as key.
      *  This will be interpreted as an inline copy of the contents of the
      *  second parameter into this {@link Tsr} instance.
      */
-    public static Tsr<Object> of() { return new Tsr<>(); }
+    public static Tsr<Object> newInstance() { return new Tsr<>(); }
 
     /**
      *  This constructor creates a completely empty tensor which is void of any contents and meaning.
@@ -447,18 +444,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         */
     }
 
-    public static Tsr<Object> ofShape( List<? extends Number> axesSizes ) {
+    public static Tsr<Number> ofShape( List<? extends Number> axesSizes ) {
         return ofShape( axesSizes.toArray(new Number[0]) );
     }
 
     @SafeVarargs
-    public static <T extends Number> Tsr<Object> ofShape( T... axesSizes ) {
+    public static <T extends Number> Tsr<Number> ofShape( T... axesSizes ) {
         int[] shape = Arrays.stream( axesSizes ).mapToInt( Number::intValue ).toArray();
-        return Tsr.of(
-                    DataType.of( Neureka.get().settings().dtype().getDefaultDataTypeClass() ),
-                    shape,
-                    0.0
-                );
+        return Tsr.ofShape( shape );
     }
 
     /**
@@ -530,7 +523,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     private Tsr( int[] shape, String seed ) { _construct( shape, seed ); }
 
-    public static Tsr<Double> of( int[] shape ) { return new Tsr<>( shape ); }
+    public static Tsr<Number> ofShape( int[] shape ) { return new Tsr<>( shape ); }
 
     private Tsr( int[] shape ) { _construct( shape, true, true ); }
 
@@ -598,9 +591,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             }
         }
         if ( dataType == DataType.of( data.getClass() ) ) { // This means that "data" is a single value!
-            if ( data instanceof Double  ) { _constructAllF64( shape, (Double) data  ); return; }
-            if ( data instanceof Float   ) { _constructAllF32( shape, (Float) data   ); return; }
+            if ( data instanceof Double  ) { _constructAllF64( shape, (Double)  data ); return; }
+            if ( data instanceof Float   ) { _constructAllF32( shape, (Float)   data ); return; }
             if ( data instanceof Integer ) { _constructAllI32( shape, (Integer) data ); return; }
+            if ( data instanceof Short   ) { _constructAllI16( shape, (Short)   data ); return; }
+            if ( data instanceof Byte    ) { _constructAllI8(  shape, (Byte)    data ); return; }
         }
         else if ( data instanceof Integer[] ) data = DataConverter.instance().convert( (Integer[]) data, int[].class,    size );
         else if ( data instanceof Double[]  ) data = DataConverter.instance().convert( (Double[])  data, double[].class, size );
@@ -643,34 +638,37 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         _configureFromNewShape( shape, virtual, true );
     }
 
-    private void _constructAllF64( int[] shape, double value )
-    {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
-        setDataType( DataType.of( F64.class ) );
-        _allocate( 1 );
-        setIsVirtual( size > 1 );
-        _configureFromNewShape( shape, size > 1, true );
+    private void _constructAllF64( int[] shape, double value ) {
+        _constructAll( shape, F64.class );
         ( (double[]) getData())[ 0 ] = value;
     }
 
-    private void _constructAllF32( int[] shape, float value )
-    {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
-        setDataType( DataType.of( F32.class ) );
-        _allocate( 1 );
-        setIsVirtual( size > 1 );
-        _configureFromNewShape( shape, size > 1, true );
+    private void _constructAllF32( int[] shape, float value ) {
+        _constructAll( shape, F32.class );
         ( (float[]) getData())[ 0 ] = value;
     }
 
-    private void _constructAllI32( int[] shape, int value )
-    {
+    private void _constructAllI32( int[] shape, int value ) {
+        _constructAll( shape, I32.class );
+        ( (int[]) getData())[ 0 ] = value;
+    }
+
+    private void _constructAllI16( int[] shape, short value ) {
+        _constructAll( shape, I16.class );
+        ( (short[]) getData())[ 0 ] = value;
+    }
+
+    private void _constructAllI8( int[] shape, byte value ) {
+        _constructAll( shape, I8.class );
+        ( (byte[]) getData())[ 0 ] = value;
+    }
+
+    private void _constructAll( int[] shape, Class<?> typeClass ) {
         int size = NDConfiguration.Utility.szeOfShp( shape );
-        setDataType( DataType.of( I32.class ) );
+        setDataType( DataType.of( typeClass ) );
         _allocate( 1 );
         setIsVirtual( size > 1 );
         _configureFromNewShape( shape, size > 1, true );
-        ( (int[]) getData())[ 0 ] = value;
     }
 
     private void _constructForDoubles( int[] shape, double[] value )
@@ -3033,7 +3031,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         }
 
         private static Tsr<?> _newEmptyLike( Tsr<?> template ) {
-            Tsr<?> t = Tsr.of();
+            Tsr<?> t = Tsr.newInstance();
             t._configureFromNewShape( template.getNDConf().shape(), false, true );
             return t;
         }

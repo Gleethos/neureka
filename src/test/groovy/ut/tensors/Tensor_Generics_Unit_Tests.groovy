@@ -28,7 +28,7 @@ class Tensor_Generics_Unit_Tests extends Specification
     def 'Anonymous tensor instance has the default datatype class as defined in Neureka settings.'() {
 
         given :
-            Tsr<Double> t = Tsr.of()
+            Tsr<Double> t = Tsr.newInstance()
 
         expect :
             t.getValueClass() == Neureka.get().settings().dtype().defaultDataTypeClass

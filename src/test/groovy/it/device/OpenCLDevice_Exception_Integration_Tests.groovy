@@ -104,7 +104,7 @@ class OpenCLDevice_Exception_Integration_Tests extends Specification
             device._log = Mock( Logger )
 
         when : 'We pass a new tensor to the restore method of the device, even though the tensor is not stored on it...'
-            device.restore( Tsr.of() )
+            device.restore( Tsr.newInstance() )
 
         then : 'The previous attempt raises an illegal argument exception with an explanatory message.'
             def exception = thrown( IllegalArgumentException )

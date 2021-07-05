@@ -101,7 +101,7 @@ class Autograd_Explained extends Specification
             result.toString().contains("(1x1):[27.0]")
 
         when : 'Any new tensor is created...'
-            def someTensor = Tsr.of()
+            def someTensor = Tsr.newInstance()
 
         then : 'The autograd flag will always default to "false" :'
             someTensor.rqsGradient() == false

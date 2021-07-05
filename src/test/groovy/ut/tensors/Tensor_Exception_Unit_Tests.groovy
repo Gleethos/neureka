@@ -37,7 +37,7 @@ class Tensor_Exception_Unit_Tests extends Specification
             Tsr t = Tsr.of([6, 6], -1)
 
         when : 'We try to inject an empty tensor whose size does of course not match...'
-            t[[1..3], [1..3]] = Tsr.of()
+            t[[1..3], [1..3]] = Tsr.newInstance()
 
         then : 'The expected message is being thrown, which tells us that '
             def exception = thrown(IllegalArgumentException)

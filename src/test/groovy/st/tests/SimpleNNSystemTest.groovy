@@ -54,7 +54,7 @@ class SimpleNNSystemTest
              [0.0]
              [0.0]]
         */
-        Tsr layer1 = Tsr.of()
+        Tsr layer1 = Tsr.newInstance()
         /*
               inp (5, 3) :
               [[0, 0, 1]
