@@ -148,6 +148,8 @@ public class DataConverter
         _set( BigInteger.class, Double.class, BigInteger::doubleValue );
         _set( BigDecimal.class, Double.class, BigDecimal::doubleValue );
         _set( Integer.class, Double.class, Integer::doubleValue );
+        _set( Integer.class, Float.class, Integer::floatValue );
+        _set( Integer.class, Short.class, Integer::shortValue );
 
         _set( Float[].class, float[].class,   Utility::objFloatsToPrimFloats );
         _set( Integer[].class, int[].class,   Utility::objIntsToPrimInts );
@@ -210,7 +212,19 @@ public class DataConverter
             _LOG.error( message );
             throw new IllegalArgumentException( message );
         }
-        return (T) _converters.get(from.getClass()).get(to).go(from);
+        Map<Class, Conversion> tos = _converters.get(from.getClass());
+        if ( tos == null ) {
+            String message = "Conversion from type '"+from.getClass()+"' to '"+to+"' failed: No converters found for '"+from.getClass()+"'.";
+            _LOG.error(message);
+            throw new IllegalArgumentException(message);
+        }
+        Conversion<Object, Object> conversion = tos.get(to);
+        if ( conversion == null ) {
+            String message = "No converter found from type '"+from.getClass()+"' to '"+to+"'.";
+            _LOG.error(message);
+            throw new IllegalArgumentException(message);
+        }
+        return (T) conversion.go(from);
     }
 
 

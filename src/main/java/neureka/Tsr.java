@@ -556,15 +556,48 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, List<V> data ) {
-        return new Tsr<>( shape, typeClass, data );
+        return Tsr.of(
+                DataType.of( typeClass ),
+                shape.stream().mapToInt( e -> e ).toArray(),
+                data.toArray()
+        );
+        //return new Tsr<>( shape, typeClass, data );
     }
 
     private <T> Tsr( List<Integer> shape, Class<T> typeClass, List<T> data ) {
-        _constructForRange( shape.stream().mapToInt( e -> e ).toArray(), DataType.of( typeClass ), (V[]) data.toArray());
+        _constructForRange(
+                shape.stream().mapToInt( e -> e ).toArray(),
+                DataType.of( typeClass ),
+                (V[]) data.toArray()
+        );
     }
 
     public static <V> Tsr of( DataType<V> dataType, int[] shape, Object data ) {
         return new Tsr<>( shape, dataType, data );
+    }
+
+    private Object _optimizeObjectArray( DataType<?> dataType, Object[] values, int size ) {
+        Object data = values;
+        IntStream indices = IntStream.iterate( 0, i -> i + 1 ).limit(size).map( i -> i % values.length );
+        if      ( dataType == DataType.of(Double.class)  ) data = indices.mapToDouble( i -> (Double) values[i] ).toArray();
+        else if ( dataType == DataType.of(Integer.class) ) data = indices.map( i -> (Integer) values[i] ).toArray();
+        else if ( dataType == DataType.of(Long.class)    ) data = indices.mapToLong( i -> (Long) values[i] ).toArray();
+        else if ( dataType == DataType.of(Float.class)   ) {
+            float[] floats = new float[size];
+            for( int i = 0; i < size; i++ ) floats[ i ] = (Float) values[ i % values.length ];
+            data = floats;
+        }
+        else if ( dataType == DataType.of(Byte.class) ) {
+            byte[] bytes = new byte[size];
+            for( int i = 0; i < size; i++ ) bytes[ i ] = (Byte) values[ i % values.length ];
+            data = bytes;
+        }
+        else if ( dataType == DataType.of(Short.class) ) {
+            short[] shorts = new short[size];
+            for( int i = 0; i < size; i++ ) shorts[ i ] = (Short) values[ i % values.length ];
+            data = shorts;
+        }
+        return data;
     }
 
     private Tsr( int[] shape, DataType<?> dataType, Object data )
@@ -572,23 +605,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         int size = NDConfiguration.Utility.szeOfShp(shape);
         if ( data instanceof Object[] && DataType.of(((Object[])data)[0].getClass()) != dataType ) {
             for ( int i = 0; i < ( (Object[]) data ).length; i++ ) {
-                ( (Object[]) data )[i] = DataConverter.instance().convert( ( (Object[]) data )[i], dataType.getTypeClass() );
+                ( (Object[]) data )[i] = DataConverter.instance().convert( ( (Object[]) data )[i], dataType.getJVMTypeClass() );
             }
-            Object[] values = ((Object[])data);
-            IntStream indices = IntStream.iterate( 0, i -> i + 1 ).limit(size).map( i -> i % values.length );
-            if      ( dataType == DataType.of(Double.class)  ) data = indices.mapToDouble( i -> (Double) values[i] ).toArray();
-            else if ( dataType == DataType.of(Integer.class) ) data = indices.map( i -> (Integer) values[i] ).toArray();
-            else if ( dataType == DataType.of(Long.class)    ) data = indices.mapToLong( i -> (Long) values[i] ).toArray();
-            else if ( dataType == DataType.of(Float.class)   ) {
-                float[] floats = new float[size];
-                indices.forEach( i -> floats[ i ] = (Float) values[ i % values.length ] );
-                data = floats;
-            }
-            else if ( dataType == DataType.of(Byte.class) ) {
-                byte[] bytes = new byte[size];
-                indices.forEach( i -> bytes[ i ] = (Byte) values[ i % values.length ] );
-                data = bytes;
-            }
+            data = _optimizeObjectArray(dataType, (Object[]) data, size);
         }
         if ( dataType == DataType.of( data.getClass() ) ) { // This means that "data" is a single value!
             if ( data instanceof Double  ) { _constructAllF64( shape, (Double)  data ); return; }
@@ -604,8 +623,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         else if ( data instanceof Short[]   ) data = DataConverter.instance().convert( (Short[])   data, short[].class,  size );
         else if ( data instanceof Byte[]    ) data = DataConverter.instance().convert( (Byte[])    data, byte[].class,   size );
         else if ( data instanceof Object[] ) {
-            if ( dataType == DataType.of(Double.class) )
-                data = Arrays.stream((Object[])data).mapToDouble( o -> ((Number)o).doubleValue()).toArray();
+            data = _optimizeObjectArray(dataType, (Object[]) data, size);
         }
         setDataType( dataType );
         _configureFromNewShape( shape, false, false );

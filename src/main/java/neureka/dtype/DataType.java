@@ -240,10 +240,17 @@ public final class DataType<Type>
     }
 
     public String toString() {
-        return "DataType(_log=" + this.getLog() + ", _typeClass=" + this.getTypeClass() + ")";
+        return "DataType(" + this.getTypeClass() + ")";
     }
 
     public Class<Type> getTypeClass() {
         return this._typeClass;
+    }
+
+    public Class<?> getJVMTypeClass() {
+        if ( this.typeClassImplements(NumericType.class) ) {
+            return ((NumericType) this.getTypeClassInstance()).holderType();
+        }
+        return getTypeClass();
     }
 }
