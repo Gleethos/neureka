@@ -60,23 +60,28 @@ class Tensor_State_Unit_Test extends Specification
             Tsr t2 = Tsr.of( shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
             Tsr t3 = Tsr.of( Integer.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
             Tsr t4 = Tsr.of( Short.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
+            Tsr t5 = Tsr.of( Byte.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
 
-        expect: 'The first tensor has the expected internals ans produces the correct String representation.'
+        expect: 'The first tensor has the expected internals and produces the correct String representation.'
             t1.toString(mode) == expected
             t1.dataType == DataType.of( Float.class )
             t1.data instanceof float[]
-        and : 'The second tensor has the expected internals ans produces the correct String representation.'
+        and : 'The second tensor has the expected internals and produces the correct String representation.'
             t2.toString(mode) == expected
             t2.dataType == DataType.of( Double.class )
             t2.data instanceof double[]
-        and : 'The third tensor has the expected internals ans produces the correct String representation.'
+        and : 'The third tensor has the expected internals and produces the correct String representation.'
             t3.toString(mode).replace(' ','') == expected.replace('.0','  ').replace(' ','')
             t3.dataType == DataType.of( Integer.class )
             t3.data instanceof int[]
-        and : 'The fourth tensor has the expected internals ans produces the correct String representation.'
+        and : 'The fourth tensor has the expected internals and produces the correct String representation.'
             t4.toString(mode).replace(' ','') == expected.replace('.0','  ').replace(' ','')
             t4.dataType == DataType.of( Short.class )
             t4.data instanceof short[]
+        and : 'The fifth tensor has the expected internals and produces the correct String representation.'
+            t5.toString(mode).replace(' ','') == expected.replace('.0','  ').replace(' ','')
+            t5.dataType == DataType.of( Byte.class )
+            t5.data instanceof byte[]
 
         where : 'The print configurations codes "mode", a common shape and expected String representation will be supplied:'
            mode | shape     | expected

@@ -257,6 +257,10 @@ public final class TsrAsString
             function = i -> ( compact )
                     ? Util.formatFP( ( (int[]) data )[ i ] )
                     : String.valueOf( ( (int[]) data )[ i ] );
+        else if ( data instanceof byte[] )
+            function = i -> ( compact )
+                    ? Util.formatFP( ( (byte[]) data )[ i ] )
+                    : String.valueOf( ( (byte[]) data )[ i ] );
         else if ( data == null )
             function = i -> ( compact )
                     ? Util.formatFP( _tensor.value64( i ) )

@@ -150,6 +150,7 @@ public class DataConverter
         _set( Integer.class, Double.class, Integer::doubleValue );
         _set( Integer.class, Float.class, Integer::floatValue );
         _set( Integer.class, Short.class, Integer::shortValue );
+        _set( Integer.class, Byte.class, Integer::byteValue );
 
         _set( Float[].class, float[].class,   Utility::objFloatsToPrimFloats );
         _set( Integer[].class, int[].class,   Utility::objIntsToPrimInts );
