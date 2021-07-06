@@ -344,26 +344,20 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public static <V> Tsr<V> of( List<? extends Number> shape, List<V> range ) {
         return
-                //Tsr.of(
-                //        DataType.of( range.get(0).getClass() ),
-                //        shape.stream().mapToInt(Number::intValue).toArray(),
-                //        range
-                //);
-                new Tsr<>( shape.stream().mapToInt(Number::intValue).toArray(), range );
+                Tsr.of(
+                        DataType.of(Object.class),
+                        shape.stream().mapToInt(Number::intValue).toArray(),
+                        range
+                );
     }
 
-    public static <V> Tsr<V> of( int[] shape, List<V> range ) { return new Tsr<>( shape, range ); }
-
-    private Tsr( int[] shape, List<V> range )
-    {
-        // Nested Groovy list should be unpacked:
-        if ( range.size() == 1 && range.get( 0 ).getClass().getSimpleName().equals("IntRange") )
-            range = (List<V>) range.get( 0 );
-        _constructForRange(
-                shape,
-                DataType.of( F64.class ),
-                (V[]) range.toArray()
-        );
+    public static <V> Tsr<V> of( int[] shape, List<V> range ) {
+        return
+                Tsr.of(
+                        DataType.of(Object.class),
+                        shape,
+                        range
+                );
     }
 
     private void _constructForRange( int[] shape, DataType<?> dataType, V[] range )
@@ -605,9 +599,20 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     {
         int size = NDConfiguration.Utility.szeOfShp(shape);
         if ( data instanceof List<?> ) {
-            if ( ((List<?>)data).size() == 1 && ((List<?>)data).get( 0 ).getClass().getSimpleName().equals("IntRange") )
-                data = ((List<?>)data).get( 0 );
-            data = ((List<?>)data).toArray();
+            List<?> range = (List<?>) data;
+            if ( dataType == DataType.of(Object.class) ) {
+                // Nested Groovy list should be unpacked:
+                if ( range.size() == 1 && range.get( 0 ).getClass().getSimpleName().equals("IntRange") )
+                    range = (List<V>) range.get( 0 );
+                _constructForRange(
+                        shape,
+                        DataType.of( F64.class ),
+                        (V[]) range.toArray()
+                );
+                return;
+            }
+            else
+                data = range.toArray();
         }
         if ( data instanceof Object[] && DataType.of(((Object[])data)[0].getClass()) != dataType ) {
             for ( int i = 0; i < ( (Object[]) data ).length; i++ ) {
