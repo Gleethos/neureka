@@ -80,7 +80,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     public String toString() {
-        return "OpenCLDevice(_adhocKernels=" + this._adhocKernels + ", _adhocKernelRingBuffer=" + Arrays.deepToString(this._adhocKernelRingBuffer) + ", _ringIndex=" + this._ringIndex + ", _tensors=" + this.getTensors() + ", _deviceId=" + this._deviceId + ", _platform=" + this._platform + ", _queue=" + this._queue + ")";
+        return "OpenCLDevice(_deviceId=" + this._deviceId + ", _platform=" + this._platform + ")";
     }
 
     public cl_device_id getDeviceId() {

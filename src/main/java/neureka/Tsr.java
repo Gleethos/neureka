@@ -343,7 +343,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public static <V> Tsr<V> of( List<? extends Number> shape, List<V> range ) {
-        return new Tsr<>( shape.stream().mapToInt(Number::intValue).toArray(), range );
+        return
+                //Tsr.of(
+                //        DataType.of( range.get(0).getClass() ),
+                //        shape.stream().mapToInt(Number::intValue).toArray(),
+                //        range
+                //);
+                new Tsr<>( shape.stream().mapToInt(Number::intValue).toArray(), range );
     }
 
     public static <V> Tsr<V> of( int[] shape, List<V> range ) { return new Tsr<>( shape, range ); }
@@ -559,16 +565,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return Tsr.of(
                 DataType.of( typeClass ),
                 shape.stream().mapToInt( e -> e ).toArray(),
-                data.toArray()
-        );
-        //return new Tsr<>( shape, typeClass, data );
-    }
-
-    private <T> Tsr( List<Integer> shape, Class<T> typeClass, List<T> data ) {
-        _constructForRange(
-                shape.stream().mapToInt( e -> e ).toArray(),
-                DataType.of( typeClass ),
-                (V[]) data.toArray()
+                data
         );
     }
 
@@ -596,6 +593,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             short[] shorts = new short[size];
             for( int i = 0; i < size; i++ ) shorts[ i ] = (Short) values[ i % values.length ];
             data = shorts;
+        } else if ( values.length != size ) {
+            Object[] objects = new Object[size];
+            for( int i = 0; i < size; i++ ) objects[ i ] = values[ i % values.length ];
+            data = objects;
         }
         return data;
     }
@@ -603,6 +604,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     private Tsr( int[] shape, DataType<?> dataType, Object data )
     {
         int size = NDConfiguration.Utility.szeOfShp(shape);
+        if ( data instanceof List<?> ) {
+            if ( ((List<?>)data).size() == 1 && ((List<?>)data).get( 0 ).getClass().getSimpleName().equals("IntRange") )
+                data = ((List<?>)data).get( 0 );
+            data = ((List<?>)data).toArray();
+        }
         if ( data instanceof Object[] && DataType.of(((Object[])data)[0].getClass()) != dataType ) {
             for ( int i = 0; i < ( (Object[]) data ).length; i++ ) {
                 ( (Object[]) data )[i] = DataConverter.instance().convert( ( (Object[]) data )[i], dataType.getJVMTypeClass() );
