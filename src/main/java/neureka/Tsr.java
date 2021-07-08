@@ -426,7 +426,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                                     growingShape,
                                     o -> ( o instanceof Number ? ((Number)o).doubleValue() : o )
                             );
-        return Tsr.of(
+        return (Tsr<Object>) Tsr.of(
                 DataType.of(reader.getType()),
                 growingShape.stream().mapToInt(i -> i).toArray(),
                 growingData.toArray()
@@ -563,8 +563,61 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         );
     }
 
-    public static <V> Tsr of( DataType<V> dataType, int[] shape, Object data ) {
-        return new Tsr<>( shape, dataType, data );
+    /**
+     *  This factory method is among the most flexible and forgiving ways to create a {@link Tsr} instance.
+     *  It receives a {@link DataType} for type safety and to ensure that the produced {@link Tsr} instance
+     *  will contain elements of the correct type, a shape array which stores the sizes of the axes that the
+     *  instance ought to possess and finally it receives a data {@link Object} which can be anything ranging from
+     *  a {@link List} to an array or simply a single value which ought to fill out the entire {@link Tsr}.
+     *
+     * @param dataType The data type of the data represented by {@link Tsr} instance created by this method.
+     * @param shape An array of axis sizes describing the dimensionality of the {@link Tsr} created by this method.
+     * @param data The data for the {@link Tsr} that is about to be created, which can be a list, an array or scalar.
+     * @param <V>
+     * @return A new {@link Tsr} instance of the specified type, shape and containing the provided data.
+     */
+    public static <V> Tsr of( DataType<V> dataType, int[] shape, Object data ) { return new Tsr<>( shape, dataType, data ); }
+
+    private Tsr( int[] shape, DataType<?> dataType, Object data )
+    {
+        int size = NDConfiguration.Utility.szeOfShp(shape);
+        if ( data instanceof List<?> ) {
+            List<?> range = (List<?>) data;
+            if ( dataType == DataType.of(Object.class) ) {
+                // Nested Groovy list should be unpacked:
+                if ( range.size() == 1 && range.get( 0 ).getClass().getSimpleName().equals("IntRange") )
+                    range = (List<V>) range.get( 0 );
+                _constructForRange(
+                        shape,
+                        DataType.of( F64.class ),
+                        (V[]) range.toArray()
+                );
+                return;
+            }
+            else
+                data = range.toArray();
+        }
+        if ( data instanceof Object[] && DataType.of(((Object[])data)[0].getClass()) != dataType ) {
+            for ( int i = 0; i < ( (Object[]) data ).length; i++ ) {
+                ( (Object[]) data )[i] = DataConverter.instance().convert( ( (Object[]) data )[i], dataType.getJVMTypeClass() );
+            }
+            data = _optimizeObjectArray(dataType, (Object[]) data, size);
+        }
+        if ( dataType == DataType.of( data.getClass() ) ) { // This means that "data" is a single value!
+            if ( _constructAllFromOne( shape, data ) ) return;
+        }
+        else if ( data instanceof Integer[] ) data = DataConverter.instance().convert( (Integer[]) data, int[].class,    size );
+        else if ( data instanceof Double[]  ) data = DataConverter.instance().convert( (Double[])  data, double[].class, size );
+        else if ( data instanceof Float[]   ) data = DataConverter.instance().convert( (Float[])   data, float[].class,  size );
+        else if ( data instanceof Long[]    ) data = DataConverter.instance().convert( (Long[])    data, long[].class,   size );
+        else if ( data instanceof Short[]   ) data = DataConverter.instance().convert( (Short[])   data, short[].class,  size );
+        else if ( data instanceof Byte[]    ) data = DataConverter.instance().convert( (Byte[])    data, byte[].class,   size );
+        else if ( data instanceof Object[] ) {
+            data = _optimizeObjectArray(dataType, (Object[]) data, size);
+        }
+        setDataType( dataType );
+        _configureFromNewShape( shape, false, false );
+        _setData( data );
     }
 
     private Object _optimizeObjectArray( DataType<?> dataType, Object[] values, int size ) {
@@ -595,50 +648,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return data;
     }
 
-    private Tsr( int[] shape, DataType<?> dataType, Object data )
-    {
-        int size = NDConfiguration.Utility.szeOfShp(shape);
-        if ( data instanceof List<?> ) {
-            List<?> range = (List<?>) data;
-            if ( dataType == DataType.of(Object.class) ) {
-                // Nested Groovy list should be unpacked:
-                if ( range.size() == 1 && range.get( 0 ).getClass().getSimpleName().equals("IntRange") )
-                    range = (List<V>) range.get( 0 );
-                _constructForRange(
-                        shape,
-                        DataType.of( F64.class ),
-                        (V[]) range.toArray()
-                );
-                return;
-            }
-            else
-                data = range.toArray();
-        }
-        if ( data instanceof Object[] && DataType.of(((Object[])data)[0].getClass()) != dataType ) {
-            for ( int i = 0; i < ( (Object[]) data ).length; i++ ) {
-                ( (Object[]) data )[i] = DataConverter.instance().convert( ( (Object[]) data )[i], dataType.getJVMTypeClass() );
-            }
-            data = _optimizeObjectArray(dataType, (Object[]) data, size);
-        }
-        if ( dataType == DataType.of( data.getClass() ) ) { // This means that "data" is a single value!
-            if ( data instanceof Double  ) { _constructAllF64( shape, (Double)  data ); return; }
-            if ( data instanceof Float   ) { _constructAllF32( shape, (Float)   data ); return; }
-            if ( data instanceof Integer ) { _constructAllI32( shape, (Integer) data ); return; }
-            if ( data instanceof Short   ) { _constructAllI16( shape, (Short)   data ); return; }
-            if ( data instanceof Byte    ) { _constructAllI8(  shape, (Byte)    data ); return; }
-        }
-        else if ( data instanceof Integer[] ) data = DataConverter.instance().convert( (Integer[]) data, int[].class,    size );
-        else if ( data instanceof Double[]  ) data = DataConverter.instance().convert( (Double[])  data, double[].class, size );
-        else if ( data instanceof Float[]   ) data = DataConverter.instance().convert( (Float[])   data, float[].class,  size );
-        else if ( data instanceof Long[]    ) data = DataConverter.instance().convert( (Long[])    data, long[].class,   size );
-        else if ( data instanceof Short[]   ) data = DataConverter.instance().convert( (Short[])   data, short[].class,  size );
-        else if ( data instanceof Byte[]    ) data = DataConverter.instance().convert( (Byte[])    data, byte[].class,   size );
-        else if ( data instanceof Object[] ) {
-            data = _optimizeObjectArray(dataType, (Object[]) data, size);
-        }
-        setDataType( dataType );
-        _configureFromNewShape( shape, false, false );
-        _setData( data );
+    private boolean _constructAllFromOne( int[] shape, Object data ) {
+        if ( data instanceof Double  ) { _constructAllF64( shape, (Double)  data ); return true; }
+        if ( data instanceof Float   ) { _constructAllF32( shape, (Float)   data ); return true; }
+        if ( data instanceof Integer ) { _constructAllI32( shape, (Integer) data ); return true; }
+        if ( data instanceof Short   ) { _constructAllI16( shape, (Short)   data ); return true; }
+        if ( data instanceof Byte    ) { _constructAllI8(  shape, (Byte)    data ); return true; }
+        return false;
     }
 
     public static <V> Tsr<V> of( DataType<V> dataType, List<Integer> shape,  List<V> data ) {
