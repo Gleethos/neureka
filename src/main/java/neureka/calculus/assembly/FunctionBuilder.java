@@ -90,7 +90,6 @@ public class FunctionBuilder
                 .replace("<-", "<")
                 .replace("->", ">");
 
-        ArrayList<Function> sources = new ArrayList<>();
         if ( expression.equals("") ) {
             Function newCore = new FunctionConstant();
             newCore = newCore.newBuild("0");
@@ -197,46 +196,12 @@ public class FunctionBuilder
                 }
             }
         }
+
         // building sources and function:
-        if ( foundComponents.size() == 1 ) {
-            String possibleFunction = FunctionParser.parsedOperation(
-                    foundComponents.get( 0 ),
-                    0
-            );
-            if ( possibleFunction != null && possibleFunction.length() > 1 ) {
-
-                for ( int oi = 0; oi < _context.size(); oi++ ) {
-                    if (_context.instance(oi).getFunction().equalsIgnoreCase(possibleFunction)) {
-                        operationIndex = oi;
-                        List<String> parameters = FunctionParser.findParametersIn(
-                                                                            foundComponents.get( 0 ),
-                                                                            possibleFunction.length()
-                                                                    );
-                        assert parameters != null;
-                        for ( String p : parameters ) sources.add(build(p, doAD));
-                        return new FunctionNode( _context.instance( operationIndex ), sources, doAD );
-                    }
-                }
-            }
-            //---
-            String component = FunctionParser.unpackAndCorrect( foundComponents.get( 0 ) );
-
-            if ( constantPattern.matcher( component ).matches()   ) return new FunctionConstant().newBuild( component );
-            else if ( inputPattern.matcher( component ).find()    ) return new FunctionInput().newBuild( component );
-            else if ( variablePattern.matcher( component ).find() ) return new FunctionVariable().newBuild( component );
-            else if ( component.startsWith("-") ) {
-                component = "-1 * "+component.substring(1);
-                return _build(component, doAD);
-            }
-            // If the component did not trigger constant/input/variable creation: -> Cleaning!
-            String cleaned = FunctionParser.cleanedHeadAndTail(component);
-            String raw = component.replace( cleaned, "" );
-            String assumed = FunctionParser.assumptionBasedOn( raw );
-            if ( assumed.trim().equals("") ) component = cleaned;
-            else component = assumed + cleaned;
-            // Let's try again:
-            return build(component, doAD);
-        } else { // More than one component left:
+        if ( foundComponents.size() == 1 ) return _buildFunction( foundComponents.get(0), doAD );
+        else
+        { // More than one component left:
+            ArrayList<Function> sources = new ArrayList<>();
             if ( _context.instance( operationIndex ).getArity() > 1 ) {
                 foundComponents = _groupAccordingToArity(
                                             _context.instance( operationIndex ).getArity(),
@@ -281,6 +246,44 @@ public class FunctionBuilder
         }
     }
 
+    private Function _buildFunction( String foundComponent, boolean doAD ) {
+        ArrayList<Function> sources = new ArrayList<>();
+        String possibleFunction = FunctionParser.parsedOperation(
+                foundComponent,
+                0
+        );
+        if ( possibleFunction != null && possibleFunction.length() > 1 ) {
+            for ( int oi = 0; oi < _context.size(); oi++ ) {
+                if (_context.instance(oi).getFunction().equalsIgnoreCase(possibleFunction)) {
+                    List<String> parameters = FunctionParser.findParametersIn(
+                            foundComponent,
+                            possibleFunction.length()
+                    );
+                    assert parameters != null;
+                    for ( String p : parameters ) sources.add(build(p, doAD));
+                    return new FunctionNode( _context.instance( oi ), sources, doAD );
+                }
+            }
+        }
+        //---
+        String component = FunctionParser.unpackAndCorrect( foundComponent );
+
+        if ( constantPattern.matcher( component ).matches()   ) return new FunctionConstant().newBuild( component );
+        else if ( inputPattern.matcher( component ).find()    ) return new FunctionInput().newBuild( component );
+        else if ( variablePattern.matcher( component ).find() ) return new FunctionVariable().newBuild( component );
+        else if ( component.startsWith("-") ) {
+            component = "-1 * "+component.substring(1);
+            return _build(component, doAD);
+        }
+        // If the component did not trigger constant/input/variable creation: -> Cleaning!
+        String cleaned = FunctionParser.cleanedHeadAndTail(component);
+        String raw = component.replace( cleaned, "" );
+        String assumed = FunctionParser.assumptionBasedOn( raw );
+        if ( assumed.trim().equals("") ) component = cleaned;
+        else component = assumed + cleaned;
+        // Let's try again:
+        return build(component, doAD);
+    }
 
     private List<String> _groupAccordingToArity(int arity, List<String> components, int f_id) {
         if ( components.size() > arity && arity > 1 ) {
