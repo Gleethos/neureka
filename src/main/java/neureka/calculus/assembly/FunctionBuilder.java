@@ -205,7 +205,12 @@ public class FunctionBuilder
                     }
                 }
             }
-
+            String asString = foundComponents.stream()
+                                                .collect(
+                                                        Collectors.joining(
+                                                                _context.instance( operationIndex ).getOperator()
+                                                        )
+                                                );
             // More than one component left:
             ArrayList<Function> sources = new ArrayList<>();
             if ( _context.instance( operationIndex ).getArity() > 1 ) {
@@ -214,10 +219,7 @@ public class FunctionBuilder
                                             foundComponents,
                                             operationIndex
                                     );
-            } else if (
-                    _context.instance(operationIndex).getOperator().equals(",") &&
-                    foundComponents.get( 0 ).startsWith("[")
-            ) {
+            } else if ( reshapePattern.matcher(asString).matches() ) {
                 foundComponents.set(0, foundComponents.get( 0 ).substring(1));
                 String[] splitted;
                 if (foundComponents.get(foundComponents.size() - 1).contains("]")) {
