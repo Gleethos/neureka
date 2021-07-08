@@ -32,21 +32,21 @@ public class FunctionBuilder
     }
     
     /**
-     * @param type
-     * @param size
-     * @param doAD
-     * @return
+     * @param operation The {@link Operation} based on which the {@link Function} ought to be created.
+     * @param numberOfArgs The number of arguments the produced {@link Function} ought to have.
+     * @param doAD The flag determining if the {@link Function} built by this method should perform autograd or not.
+     * @return A {@link Function} implementation instance which satisfied the supplied parameters.
      */
-    public Function build( Operation type, int size, boolean doAD )
+    public Function build( Operation operation, int numberOfArgs, boolean doAD )
     {
-        if ( type.isIndexer() ) return build( type.getFunction() + "( I[j] )", doAD );
+        if ( operation.isIndexer() ) return build( operation.getFunction() + "( I[j] )", doAD );
 
         String args = IntStream.iterate( 0, n -> n + 1 )
-                                .limit( size )
+                                .limit( numberOfArgs )
                                 .mapToObj( i -> "I[" + i + "]" )
                                 .collect( Collectors.joining( ", " ) );
 
-        return build( type.getFunction() + "(" + args + ")", doAD );
+        return build( operation.getFunction() + "(" + args + ")", doAD );
     }
 
     /**
@@ -221,20 +221,20 @@ public class FunctionBuilder
             //---
             String component = FunctionParser.unpackAndCorrect( foundComponents.get( 0 ) );
 
-            if ( constantPattern.matcher( component ).matches() ) return new FunctionConstant().newBuild( component );
-            else if ( inputPattern.matcher( component ).find() ) return new FunctionInput().newBuild( component );
+            if ( constantPattern.matcher( component ).matches()   ) return new FunctionConstant().newBuild( component );
+            else if ( inputPattern.matcher( component ).find()    ) return new FunctionInput().newBuild( component );
             else if ( variablePattern.matcher( component ).find() ) return new FunctionVariable().newBuild( component );
             else if ( component.startsWith("-") ) {
                 component = "-1 * "+component.substring(1);
                 return _build(component, doAD);
             }
-
-            String cleaned = FunctionParser.cleanedHeadAndTail(component);//If the component did not trigger variable creation: =>Cleaning!
+            // If the component did not trigger constant/input/variable creation: -> Cleaning!
+            String cleaned = FunctionParser.cleanedHeadAndTail(component);
             String raw = component.replace( cleaned, "" );
             String assumed = FunctionParser.assumptionBasedOn( raw );
             if ( assumed.trim().equals("") ) component = cleaned;
             else component = assumed + cleaned;
-
+            // Let's try again:
             return build(component, doAD);
         } else { // More than one component left:
             if ( _context.instance( operationIndex ).getArity() > 1 ) {
@@ -264,16 +264,17 @@ public class FunctionBuilder
                     }
                 }
             }
-            for (String currentComponent2 : foundComponents) {
-                Function newCore2 = build(currentComponent2, doAD);//Dangerous recursion lives here!
-                sources.add(newCore2);
-            }
+            for ( String component : foundComponents )
+                sources.add(
+                        build(component, doAD) // a dangerous recursion lives here!
+                );
+
             sources.trimToSize();
-            if (sources.size() == 1) return sources.get( 0 );
-            if (sources.size() == 0) return null;
+            if ( sources.size() == 1 ) return sources.get( 0 );
+            if ( sources.size() == 0 ) return null;
             ArrayList<Function> newVariable = new ArrayList<>();
-            for (Function source : sources) {
-                if (source != null) newVariable.add(source);
+            for ( Function source : sources ) {
+                if ( source != null ) newVariable.add(source);
             }
             sources = newVariable;
             return new FunctionNode( _context.instance(operationIndex), sources, doAD );
