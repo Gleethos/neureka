@@ -7,6 +7,8 @@ import neureka.calculus.implementations.FunctionConstant;
 import neureka.calculus.implementations.FunctionInput;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.calculus.implementations.FunctionVariable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +19,8 @@ import java.util.stream.IntStream;
 
 public class FunctionBuilder
 {
+    private static Logger _LOG = LoggerFactory.getLogger(FunctionBuilder.class);
+
     private static final Pattern variablePattern = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[jJ]+[ ]*\\]?)");
     private static final Pattern inputPattern    = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[0-9]+[ ]*\\]?)");
     private static final Pattern constantPattern = Pattern.compile("^((-{1}[0-9]*|[0-9]*)[.]?[0-9]*(e[-]?[0-9]+)?)");
@@ -72,7 +76,8 @@ public class FunctionBuilder
                     ( ( (doAD) ? "d" : "" ) + "(" + built + ")" ).intern(), // Make the String unique!
                     built
             );
-
+        else
+            _LOG.error("Failed to parse function based on expression '"+expression+"' and autograd flag '"+doAD+"'.");
         return built;
     }
 
@@ -187,20 +192,21 @@ public class FunctionBuilder
             }
         }
 
-        // identifying function id:
-        int operationIndex = 0;
-        if ( foundJunctors.size() >= 1 ) {
-            for (int currentIndex = 0; currentIndex < _context.size(); ++currentIndex) {
-                if ( _context.instance(currentIndex).getOperator().equals(foundJunctors.get( 0 )) ) {
-                    operationIndex = currentIndex;
-                }
-            }
-        }
-
         // building sources and function:
         if ( foundComponents.size() == 1 ) return _buildFunction( foundComponents.get(0), doAD );
         else
-        { // More than one component left:
+        {
+            // identifying function id:
+            int operationIndex = 0;
+            if ( foundJunctors.size() >= 1 ) {
+                for (int currentIndex = 0; currentIndex < _context.size(); ++currentIndex) {
+                    if ( _context.instance(currentIndex).getOperator().equals(foundJunctors.get( 0 )) ) {
+                        operationIndex = currentIndex;
+                    }
+                }
+            }
+
+            // More than one component left:
             ArrayList<Function> sources = new ArrayList<>();
             if ( _context.instance( operationIndex ).getArity() > 1 ) {
                 foundComponents = _groupAccordingToArity(
