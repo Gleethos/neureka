@@ -44,7 +44,7 @@ import neureka.dtype.custom.*;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
-import neureka.utility.ArrayUtility;
+import neureka.utility.ArrayUtils;
 import neureka.utility.DataConverter;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
@@ -87,12 +87,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
 
     public Object getData() { return this._data; }
 
-    public Class<?> getValueClass()
-    {
-        DataType<?> dt = _dataType;
-        if ( dt != null ) return dt.getTypeClass();
-        else return null;
-    }
+    public Class<?> getValueClass() { return ( _dataType != null ? _dataType.getTypeClass() : null ); }
 
     /**
      *  This method enables modifying the data-type configuration of this NDArray.
@@ -391,20 +386,14 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
             for ( int i = 0; i < ( (Object[]) data ).length; i++ ) {
                 ( (Object[]) data )[i] = DataConverter.instance().convert( ( (Object[]) data )[i], dataType.getJVMTypeClass() );
             }
-            data = ArrayUtility.optimizeObjectArray(dataType, (Object[]) data, size);
+            data = ArrayUtils.optimizeObjectArray(dataType, (Object[]) data, size);
         }
         if ( dataType == DataType.of( data.getClass() ) ) { // This means that "data" is a single value!
             if ( _constructAllFromOne( shape, data ) ) return;
         }
-        else if ( data instanceof Integer[] ) data = DataConverter.instance().convert( (Integer[]) data, int[].class,    size );
-        else if ( data instanceof Double[]  ) data = DataConverter.instance().convert( (Double[])  data, double[].class, size );
-        else if ( data instanceof Float[]   ) data = DataConverter.instance().convert( (Float[])   data, float[].class,  size );
-        else if ( data instanceof Long[]    ) data = DataConverter.instance().convert( (Long[])    data, long[].class,   size );
-        else if ( data instanceof Short[]   ) data = DataConverter.instance().convert( (Short[])   data, short[].class,  size );
-        else if ( data instanceof Byte[]    ) data = DataConverter.instance().convert( (Byte[])    data, byte[].class,   size );
-        else if ( data instanceof Object[] ) {
-            data = ArrayUtility.optimizeObjectArray(dataType, (Object[]) data, size);
-        }
+        else
+            data = ArrayUtils.optimizeArray( dataType, data, size );
+
         setDataType( dataType );
         _configureFromNewShape( shape, false, false );
         _setData( data );

@@ -92,17 +92,18 @@ import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
-import neureka.dtype.custom.*;
+import neureka.dtype.custom.F32;
+import neureka.dtype.custom.F64;
+import neureka.dtype.custom.I16;
+import neureka.dtype.custom.I32;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.framing.states.AxisFrame;
 import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import neureka.optimization.Optimizer;
-import neureka.utility.ArrayUtility;
 import neureka.utility.DataConverter;
 import neureka.utility.ListReader;
 import neureka.utility.TsrAsString;
@@ -112,11 +113,9 @@ import neureka.utility.slicing.SmartSlicer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 
 /**

@@ -4,7 +4,20 @@ import neureka.dtype.DataType;
 
 import java.util.stream.IntStream;
 
-public class ArrayUtility {
+public class ArrayUtils {
+
+    public static Object optimizeArray( DataType<?> dataType, Object data, int size ) {
+        if      ( data instanceof Integer[] ) return DataConverter.instance().convert( (Integer[]) data, int[].class,    size );
+        else if ( data instanceof Double[]  ) return DataConverter.instance().convert( (Double[])  data, double[].class, size );
+        else if ( data instanceof Float[]   ) return DataConverter.instance().convert( (Float[])   data, float[].class,  size );
+        else if ( data instanceof Long[]    ) return DataConverter.instance().convert( (Long[])    data, long[].class,   size );
+        else if ( data instanceof Short[]   ) return DataConverter.instance().convert( (Short[])   data, short[].class,  size );
+        else if ( data instanceof Byte[]    ) return DataConverter.instance().convert( (Byte[])    data, byte[].class,   size );
+        else if ( data instanceof Object[] )
+            return ArrayUtils.optimizeObjectArray(dataType, (Object[]) data, size);
+        else
+            return data;
+    }
 
     public static Object optimizeObjectArray( DataType<?> dataType, Object[] values, int size ) {
         Object data = values;
