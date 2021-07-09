@@ -265,7 +265,7 @@ public class UnitTester_Tensor extends UnitTester
     {
         printSessionStart("Test injection: I[0] <- I[1], I[0] -> I[1] : "+f);
         Tsr[] result = new Tsr[tensors.length+1];
-        result[0] = Tsr.of(tensors, f, false);
+        result[0] = Tsr.of( f, false, tensors );
         assert result[0].find( GraphNode.class ) == null; // Because "doAD" is false!
         System.arraycopy(tensors, 0, result, 1, result.length - 1);
         for(int i=0; i<result.length; i++){

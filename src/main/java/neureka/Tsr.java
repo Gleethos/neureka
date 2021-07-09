@@ -648,15 +648,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return data;
     }
 
-    private boolean _constructAllFromOne( int[] shape, Object data ) {
-        if ( data instanceof Double  ) { _constructAllF64( shape, (Double)  data ); return true; }
-        if ( data instanceof Float   ) { _constructAllF32( shape, (Float)   data ); return true; }
-        if ( data instanceof Integer ) { _constructAllI32( shape, (Integer) data ); return true; }
-        if ( data instanceof Short   ) { _constructAllI16( shape, (Short)   data ); return true; }
-        if ( data instanceof Byte    ) { _constructAllI8(  shape, (Byte)    data ); return true; }
-        return false;
-    }
-
     public static <V> Tsr<V> of( DataType<V> dataType, List<Integer> shape,  List<V> data ) {
         return Tsr.of(
                 dataType,
@@ -678,39 +669,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         if ( allocate ) _allocate( ( virtual ) ? 1 : NDConfiguration.Utility.szeOfShp( shape ) );
         if ( virtual ) setIsVirtual( true );
         _configureFromNewShape( shape, virtual, true );
-    }
-
-    private void _constructAllF64( int[] shape, double value ) {
-        _constructAll( shape, F64.class );
-        ( (double[]) getData())[ 0 ] = value;
-    }
-
-    private void _constructAllF32( int[] shape, float value ) {
-        _constructAll( shape, F32.class );
-        ( (float[]) getData())[ 0 ] = value;
-    }
-
-    private void _constructAllI32( int[] shape, int value ) {
-        _constructAll( shape, I32.class );
-        ( (int[]) getData())[ 0 ] = value;
-    }
-
-    private void _constructAllI16( int[] shape, short value ) {
-        _constructAll( shape, I16.class );
-        ( (short[]) getData())[ 0 ] = value;
-    }
-
-    private void _constructAllI8( int[] shape, byte value ) {
-        _constructAll( shape, I8.class );
-        ( (byte[]) getData())[ 0 ] = value;
-    }
-
-    private void _constructAll( int[] shape, Class<?> typeClass ) {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
-        setDataType( DataType.of( typeClass ) );
-        _allocate( 1 );
-        setIsVirtual( size > 1 );
-        _configureFromNewShape( shape, size > 1, true );
     }
 
     private void _constructForDoubles( int[] shape, double[] value )
@@ -997,11 +955,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     /**
      *  This method takes an array of tensors and a String expression describing
      *  operations which ought to be applied to the tensors in said array.
-     *  This expression will be parsed to a Function instance expecting as many inputs
+     *  It also receives a boolean flag which determines if the defined function
+     *  should be executed with autograd enabled.
+     *  The provided expression will be parsed to a {@link Function} instance expecting as many inputs
      *  as there are array entries, namely : "I[0]", "I[1]", "I[2]", ...                    <br>
      *  An example would be the following :                                                 <br>
      * <ul>
-     *      <li><i> 'Tsr a = Tsr.of( new Tsr[]{ b, c }, "sin( I[0] ) / I[1]" )'</i></li>
+     *      <li><i> 'Tsr a = Tsr.of( "sin( I[0] ) / I[1]", true, b, c )'</i></li>
      * </ul>
      *  Which takes the tensor 'b' and 'c' and applies the function "f(x,y) = sin(x) / y"
      *  elementwise to produce a new tensor 'a'!
@@ -1010,16 +970,17 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  should also allow the tracking of computations via a computation graph ({@link GraphNode} instances).
      *  This history tracking then enables auto-differentiation. <br>
      *
-     * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      * @param expression The expression describing operations applied to the provided tensors.
      * @param doAD A flag which when set to true commands the creation of a computation graph during operation execution.
+     * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
+     *
      */
-    public static <V> Tsr<V> of( Tsr<V>[] tensors, String expression, boolean doAD ) {
+    public static <V> Tsr<V> of( String expression, boolean doAD,  Tsr<V>... tensors ) {
         return new Tsr<>(tensors, expression, doAD);
     }
 
     /**
-     *  see {@link #of(Tsr[], String, boolean)}
+     *  see {@link #of(String, boolean, Tsr[])}
      *
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      * @param expression The expression describing operations applied to the provided tensors.
@@ -1056,47 +1017,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         _become( Function.Setup.commit( this, tensors, expression, doAD ) );
     }
 
-    /**
-     *  This method is responsible for instantiating and setting the _conf variable.
-     *  The core requirement for instantiating {@link NDConfiguration} interface implementation s
-     *  is a shape array of integers which is being passed to the method... <br>
-     *  <br>
-     *
-     * @param newShape An array if integers which are all greater 0 and represent the tensor dimensions.
-     */
-    protected void _configureFromNewShape( int[] newShape, boolean makeVirtual, boolean autoAllocate )
-    {
-        int size = NDConfiguration.Utility.szeOfShp( newShape );
-        if ( size == 0 ) {
-            String shape = Arrays.stream( newShape ).mapToObj( String::valueOf ).collect( Collectors.joining( "x" ) );
-            String message = "The provided shape '"+shape+"' must not contain zeros. Dimensions lower than 1 are not possible.";
-            _LOG.error( message );
-            throw new IllegalArgumentException( message );
-        }
-        if ( getData() == null && autoAllocate ) _allocate( size );
-        int length = _dataLength();
-        if ( length >= 0 && size != length && ( !this.isVirtual() || !makeVirtual) ) {
-                String message = "Size of shape does not match stored value64!";
-                _LOG.error( message );
-                throw new IllegalArgumentException( message );
-        }
-        if ( makeVirtual ) setNDConf( VirtualNDConfiguration.construct( newShape ) );
-        else {
-            int[] newTranslation = NDConfiguration.Utility.newTlnOf( newShape );
-            int[] newSpread = new int[ newShape.length ];
-            Arrays.fill( newSpread, 1 );
-            int[] newOffset = new int[ newShape.length ];
-            setNDConf(
-                AbstractNDC.construct(
-                    newShape,
-                    newTranslation,
-                    newTranslation, // indicesMap
-                    newSpread,
-                    newOffset
-                )
-            );
-        }
-    }
 
 
     /*==================================================================================================================
@@ -1210,6 +1130,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param isVirtual The truth value determining if this tensor ought to be virtualized.
      * @return This very tensor to enable method chaining.
      */
+    @Override
     public Tsr<V> setIsVirtual( boolean isVirtual ) {
         if ( isVirtual() != isVirtual ) {
             Device device = this.find( Device.class );
@@ -1261,6 +1182,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  <br><br>
      * @return The truth value determining if this tensor is virtual (and therefore not "actual").
      */
+    @Override
     public boolean isVirtual() {
         return ( _flags & IS_VIRTUAL_MASK ) == IS_VIRTUAL_MASK;
     }
@@ -1622,15 +1544,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         ---------------------------------------
      */
 
-    private int _dataLength()
-    {
-        if ( !(getData() instanceof float[]) && !(getData() instanceof double[]) ) {
-            if ( getData() instanceof Object[] ) return ((Object[]) getData()).length;
-            else return -1;
-        } 
-        else if ( getData() instanceof double[] ) return ( (double[]) getData()).length;
-        else return ( (float[]) getData()).length;
-    }
 
     /*==================================================================================================================
     |
@@ -1647,7 +1560,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param call The context object containing all relevant information that defines a call for tensor execution.
      * @return This very tensor instance. (factory pattern)
      */
-    public Tsr<V> incrementVersionBecauseOf(ExecutionCall call ) {
+    public Tsr<V> incrementVersionBecauseOf( ExecutionCall call ) {
         if ( Neureka.get().settings().autograd().isPreventingInlineOperations() ) {
             _version++;
             GraphNode<?> node = find( GraphNode.class );
@@ -1688,7 +1601,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         _setData( null );
         setNDConf( null );
         forComponent( Tsr.class, Tsr::delete );
-        _delComps();
+        _deleteComponents();
         return this;
     }
 

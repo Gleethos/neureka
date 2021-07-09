@@ -89,7 +89,7 @@ public abstract class AbstractComponentOwner<InstanceType>
     /**
      *  A collection of components.
      */
-    protected Component<InstanceType>[] _components = null;
+    private Component<InstanceType>[] _components = null;
 
     private synchronized void _setComps( Component<InstanceType>[] components ) {
         _components = components;
@@ -155,7 +155,7 @@ public abstract class AbstractComponentOwner<InstanceType>
             if ( other._components != null ) {
             _setComps( other._components ); // Inform components about their new owner:
             for ( Component<InstanceType> c : _components ) c.update((InstanceType) other, (InstanceType) this);
-            other._delComps();
+            other._deleteComponents();
         }
     }
 
@@ -163,7 +163,7 @@ public abstract class AbstractComponentOwner<InstanceType>
      *  This method deletes the array of components of this component owner
      *  by nulling the array variable field.
      */
-    protected void _delComps() {
+    protected void _deleteComponents() {
         _components = null;
     }
 
