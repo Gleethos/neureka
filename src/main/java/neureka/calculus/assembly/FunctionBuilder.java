@@ -95,11 +95,9 @@ public class FunctionBuilder
                 .replace("<-", "<")
                 .replace("->", ">");
 
-        if ( expression.equals("") ) {
-            Function newCore = new FunctionConstant();
-            newCore = newCore.newBuild("0");
-            return newCore;
-        }
+        if ( expression.equals("") )
+            return new FunctionConstant().newBuild("0");
+
         expression = FunctionParser.unpackAndCorrect(expression);
         List<String> foundJunctors = new ArrayList<>();
         List<String> foundComponents = new ArrayList<>();
@@ -193,65 +191,11 @@ public class FunctionBuilder
         }
 
         // building sources and function:
-        if ( foundComponents.size() == 1 ) return _buildFunction( foundComponents.get(0), doAD );
+        if ( foundComponents.size() == 1 )
+            return _buildFunction( foundComponents.get(0), doAD );
         else
-        {
-            // identifying function id:
-            int operationIndex = 0;
-            if ( foundJunctors.size() >= 1 ) {
-                for (int currentIndex = 0; currentIndex < _context.size(); ++currentIndex) {
-                    if ( _context.instance(currentIndex).getOperator().equals(foundJunctors.get( 0 )) ) {
-                        operationIndex = currentIndex;
-                    }
-                }
-            }
-            String asString = foundComponents.stream()
-                                                .collect(
-                                                        Collectors.joining(
-                                                                _context.instance( operationIndex ).getOperator()
-                                                        )
-                                                );
-            // More than one component left:
-            ArrayList<Function> sources = new ArrayList<>();
-            if ( _context.instance( operationIndex ).getArity() > 1 ) {
-                foundComponents = _groupAccordingToArity(
-                                            _context.instance( operationIndex ).getArity(),
-                                            foundComponents,
-                                            operationIndex
-                                    );
-            } else if ( reshapePattern.matcher(asString).matches() ) {
-                foundComponents.set(0, foundComponents.get( 0 ).substring(1));
-                String[] splitted;
-                if (foundComponents.get(foundComponents.size() - 1).contains("]")) {
-                    int offset = 1;
-                    if (foundComponents.get(foundComponents.size() - 1).contains("]:")) {
-                        offset = 2;
-                        splitted = foundComponents.get(foundComponents.size() - 1).split("]:");
-                    } else {
-                        splitted = foundComponents.get(foundComponents.size() - 1).split("]");
-                    }
-                    if (splitted.length > 1) {
-                        splitted = new String[]{splitted[ 0 ], foundComponents.get(foundComponents.size() - 1).substring(splitted[ 0 ].length() + offset)};
-                        foundComponents.remove(foundComponents.size() - 1);
-                        foundComponents.addAll(Arrays.asList(splitted));
-                    }
-                }
-            }
-            for ( String component : foundComponents )
-                sources.add(
-                        build(component, doAD) // a dangerous recursion lives here!
-                );
+            return _buildOperators( foundComponents, foundJunctors, doAD );
 
-            sources.trimToSize();
-            if ( sources.size() == 1 ) return sources.get( 0 );
-            if ( sources.size() == 0 ) return null;
-            ArrayList<Function> newVariable = new ArrayList<>();
-            for ( Function source : sources ) {
-                if ( source != null ) newVariable.add(source);
-            }
-            sources = newVariable;
-            return new FunctionNode( _context.instance(operationIndex), sources, doAD );
-        }
     }
 
     private Function _buildFunction( String foundComponent, boolean doAD ) {
@@ -264,9 +208,9 @@ public class FunctionBuilder
             for ( int oi = 0; oi < _context.size(); oi++ ) {
                 if (_context.instance(oi).getFunction().equalsIgnoreCase(possibleFunction)) {
                     List<String> parameters = FunctionParser.findParametersIn(
-                            foundComponent,
-                            possibleFunction.length()
-                    );
+                                                                        foundComponent,
+                                                                        possibleFunction.length()
+                                                                );
                     assert parameters != null;
                     for ( String p : parameters ) sources.add(build(p, doAD));
                     return new FunctionNode( _context.instance( oi ), sources, doAD );
@@ -277,7 +221,7 @@ public class FunctionBuilder
         String component = FunctionParser.unpackAndCorrect( foundComponent );
 
         if ( constantPattern.matcher( component ).matches()   ) return new FunctionConstant().newBuild( component );
-        else if ( inputPattern.matcher( component ).find()    ) return new FunctionInput().newBuild( component );
+        else if ( inputPattern.matcher( component ).find()    ) return new FunctionInput()   .newBuild( component );
         else if ( variablePattern.matcher( component ).find() ) return new FunctionVariable().newBuild( component );
         else if ( component.startsWith("-") ) {
             component = "-1 * "+component.substring(1);
@@ -293,18 +237,80 @@ public class FunctionBuilder
         return build(component, doAD);
     }
 
-    private List<String> _groupAccordingToArity(int arity, List<String> components, int f_id) {
+    private Function _buildOperators(
+            List<String> foundComponents,
+            List<String> foundJunctors,
+            boolean doAD
+    ) {
+        // identifying operator id:
+        int operationIndex = 0;
+        if ( foundJunctors.size() >= 1 ) {
+            for (int currentIndex = 0; currentIndex < _context.size(); ++currentIndex) {
+                if ( _context.instance(currentIndex).getOperator().equals(foundJunctors.get( 0 )) ) {
+                    operationIndex = currentIndex;
+                }
+            }
+        }
+        String asString = foundComponents.stream()
+                .collect(
+                        Collectors.joining(
+                                _context.instance( operationIndex ).getOperator()
+                        )
+                );
+        // More than one component left:
+        ArrayList<Function> sources = new ArrayList<>();
+        if ( _context.instance( operationIndex ).getArity() > 1 ) {
+            foundComponents = _groupAccordingToArity(
+                                        _context.instance( operationIndex ).getArity(),
+                                        foundComponents,
+                                        _context.instance( operationIndex ).getOperator()
+                                );
+        } else if ( reshapePattern.matcher(asString).matches() ) {
+            foundComponents.set(0, foundComponents.get( 0 ).substring(1));
+            String[] splitted;
+            if (foundComponents.get(foundComponents.size() - 1).contains("]")) {
+                int offset = 1;
+                if (foundComponents.get(foundComponents.size() - 1).contains("]:")) {
+                    offset = 2;
+                    splitted = foundComponents.get(foundComponents.size() - 1).split("]:");
+                } else {
+                    splitted = foundComponents.get(foundComponents.size() - 1).split("]");
+                }
+                if (splitted.length > 1) {
+                    splitted = new String[]{splitted[ 0 ], foundComponents.get(foundComponents.size() - 1).substring(splitted[ 0 ].length() + offset)};
+                    foundComponents.remove(foundComponents.size() - 1);
+                    foundComponents.addAll(Arrays.asList(splitted));
+                }
+            }
+        }
+        for ( String component : foundComponents )
+            sources.add(
+                    build(component, doAD) // a dangerous recursion lives here!
+            );
+
+        sources.trimToSize();
+        if ( sources.size() == 1 ) return sources.get( 0 );
+        if ( sources.size() == 0 ) return null;
+        ArrayList<Function> newVariable = new ArrayList<>();
+        for ( Function source : sources ) {
+            if ( source != null ) newVariable.add(source);
+        }
+        sources = newVariable;
+        return new FunctionNode( _context.instance(operationIndex), sources, doAD );
+    }
+
+    private List<String> _groupAccordingToArity(int arity, List<String> components, String operator) {
         if ( components.size() > arity && arity > 1 ) {
             String newComponent =
                     "(" +
                             IntStream.iterate(0, n -> n + 1)
                              .limit(arity)
                              .mapToObj( components::get )
-                             .collect(Collectors.joining( _context.instance(f_id).getOperator() )) +
+                             .collect(Collectors.joining( operator )) +
                     ")";
             for ( int i = 0; i < arity; i++ )  components.remove(components.get( 0 ));
             components.add(0, newComponent);
-            return _groupAccordingToArity(arity, components, f_id);
+            return _groupAccordingToArity( arity, components, operator );
         }
         return components;
     }
