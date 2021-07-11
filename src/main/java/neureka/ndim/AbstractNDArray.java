@@ -41,21 +41,17 @@ import neureka.Tsr;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.dtype.custom.*;
-import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
-import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
-import neureka.utility.ArrayUtils;
+import neureka.utility.NDAConstructor;
 import neureka.utility.DataConverter;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 
 /**
@@ -221,11 +217,11 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
     }
 
 
-    protected ArrayUtils createConstructionAPI()
+    protected NDAConstructor createConstructionAPI()
     {
         AbstractNDArray<InstanceType, ?> nda = this;
-        return new ArrayUtils(
-                    new ArrayUtils.Construction() {
+        return new NDAConstructor(
+                    new NDAConstructor.API() {
                         @Override public void setType( DataType<?> type     ) { nda.setDataType( type ); }
                         @Override public void setConf( NDConfiguration conf ) { nda.setNDConf(   conf ); }
                         @Override public void setData( Object o             ) { nda._setData(      o  ); }
@@ -233,90 +229,6 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
                         @Override public Object getData()                     { return nda.getData();    }
                     }
                 );
-    }
-
-    protected void _constructForDoubles( int[] shape, double[] value )
-    {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
-        setDataType( DataType.of( F64.class ) );
-        if ( size != value.length ) {
-            _allocate( size );
-            for ( int i = 0; i < size; i++ ) ( (double[]) getData())[ i ]  = value[ i % value.length ];
-        }
-        else _setData( value );
-        createConstructionAPI().configureFromNewShape( shape, false, true );
-    }
-
-    protected void _constructForFloats( int[] shape, float[] value )
-    {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
-        setDataType( DataType.of( F32.class ) );
-        if ( size != value.length ) {
-            _allocate( size );
-            for ( int i = 0; i < size; i++ ) ( (float[]) getData())[ i ]  = value[ i % value.length ];
-        } else _setData( value );
-        createConstructionAPI().configureFromNewShape( shape, false, true );
-    }
-
-    private void _constructForInts( int[] shape, int[] value )
-    {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
-        setDataType( DataType.of( I32.class ) );
-        if ( size != value.length ) {
-            _allocate( size );
-            for ( int i = 0; i < size; i++ ) ( (int[]) getData())[ i ]  = value[ i % value.length ];
-        } else _setData( value );
-        createConstructionAPI().configureFromNewShape( shape, false, true );
-    }
-
-    private void _constructForShorts( int[] shape, short[] value )
-    {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
-        setDataType( DataType.of( I16.class ) );
-        if ( size != value.length ) {
-            _allocate( size );
-            for ( int i = 0; i < size; i++ ) ( (short[]) getData())[ i ]  = value[ i % value.length ];
-        } else _setData( value );
-        createConstructionAPI().configureFromNewShape( shape, false, true );
-    }
-
-    private <V> void _constructForRange( int[] shape, DataType<?> dataType, V[] range )
-    {
-        ArrayUtils constructor = createConstructionAPI();
-        if ( range.length != 0 && !( range[ 0 ] instanceof Number ) ) {
-            Class<?> givenClass = range[ 0 ].getClass();
-            @SuppressWarnings("unchecked")
-            final V[] value = (V[]) Array.newInstance(
-                    givenClass,
-                    NDConfiguration.Utility.szeOfShp( shape )
-            );
-            for ( int i = 0; i < value.length; i++ ) value[ i ] = range[ i % range.length ];
-            setDataType( DataType.of( givenClass ) );
-            _setData( value );
-            constructor.construct( shape, value );
-        } else {
-            setDataType( dataType );
-            if ( dataType.getTypeClass() == F64.class )
-                _constructForDoubles(
-                        shape,
-                        DataConverter.Utility.objectsToDoubles( range, NDConfiguration.Utility.szeOfShp( shape ) )
-                );
-            else if ( dataType.getTypeClass() == F32.class  )
-                _constructForFloats(
-                        shape,
-                        DataConverter.Utility.objectsToFloats( range, NDConfiguration.Utility.szeOfShp( shape ) )
-                );
-            else if ( dataType.getTypeClass() == I32.class )
-                _constructForInts(
-                        shape,
-                        DataConverter.Utility.objectsToInts( range, NDConfiguration.Utility.szeOfShp( shape ) )
-                );
-            else if ( dataType.getTypeClass() == I16.class )
-                _constructForShorts(
-                        shape,
-                        DataConverter.Utility.objectsToShorts( range, NDConfiguration.Utility.szeOfShp( shape ) )
-                );
-        }
     }
 
     protected void _tryConstructing( int[] shape, DataType<?> dataType, Object data ) {
@@ -327,7 +239,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
                 // Nested Groovy list should be unpacked:
                 if ( range.size() == 1 && range.get( 0 ).getClass().getSimpleName().equals("IntRange") )
                     range = (List<?>) range.get( 0 );
-                _constructForRange(
+                createConstructionAPI().constructForRange(
                         shape,
                         DataType.of( F64.class ),
                         range.toArray()
@@ -341,13 +253,13 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
             for ( int i = 0; i < ( (Object[]) data ).length; i++ ) {
                 ( (Object[]) data )[i] = DataConverter.instance().convert( ( (Object[]) data )[i], dataType.getJVMTypeClass() );
             }
-            data = ArrayUtils.optimizeObjectArray(dataType, (Object[]) data, size);
+            data = NDAConstructor.optimizeObjectArray(dataType, (Object[]) data, size);
         }
         if ( dataType == DataType.of( data.getClass() ) ) { // This means that "data" is a single value!
             if ( _constructAllFromOne( shape, data ) ) return;
         }
         else
-            data = ArrayUtils.optimizeArray( dataType, data, size );
+            data = NDAConstructor.optimizeArray( dataType, data, size );
 
         setDataType( dataType );
         createConstructionAPI().configureFromNewShape( shape, false, false );
