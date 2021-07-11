@@ -1,10 +1,7 @@
 package neureka.utility;
 
 import neureka.dtype.DataType;
-import neureka.dtype.custom.F32;
-import neureka.dtype.custom.F64;
-import neureka.dtype.custom.I16;
-import neureka.dtype.custom.I32;
+import neureka.dtype.custom.*;
 import neureka.ndim.config.AbstractNDC;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
@@ -27,6 +24,7 @@ public class NDAConstructor {
         void setData( Object o );
         void allocate( int size );
         Object getData();
+        void setIsVirtual(  boolean isVirtual );
     }
 
     private final API _API;
@@ -74,6 +72,95 @@ public class NDAConstructor {
             );
         }
     }
+
+
+    public void _tryConstructing(int[] shape, DataType<?> dataType, Object data) {
+        int size = NDConfiguration.Utility.szeOfShp(shape);
+        if ( data instanceof List<?> ) {
+            List<?> range = (List<?>) data;
+            if ( dataType == DataType.of(Object.class) ) {
+                // Nested Groovy list should be unpacked:
+                if ( range.size() == 1 && range.get( 0 ).getClass().getSimpleName().equals("IntRange") )
+                    range = (List<?>) range.get( 0 );
+                constructForRange(
+                        shape,
+                        DataType.of( F64.class ),
+                        range.toArray()
+                );
+                return;
+            }
+            else
+                data = range.toArray();
+        }
+        if ( data instanceof Object[] && DataType.of(((Object[])data)[0].getClass()) != dataType ) {
+            for ( int i = 0; i < ( (Object[]) data ).length; i++ ) {
+                ( (Object[]) data )[i] = DataConverter.instance().convert( ( (Object[]) data )[i], dataType.getJVMTypeClass() );
+            }
+            data = NDAConstructor.optimizeObjectArray(dataType, (Object[]) data, size);
+        }
+        if ( dataType == DataType.of( data.getClass() ) ) { // This means that "data" is a single value!
+            if ( _constructAllFromOne( shape, data ) ) return;
+        }
+        else
+            data = NDAConstructor.optimizeArray( dataType, data, size );
+
+        _API.setType( dataType );
+        configureFromNewShape( shape, false, false );
+        _API.setData( data );
+    }
+
+    public boolean _constructAllFromOne(int[] shape, Object data) {
+        if ( data instanceof Double  ) { _constructAllF64( shape, (Double)  data ); return true; }
+        if ( data instanceof Float   ) { _constructAllF32( shape, (Float)   data ); return true; }
+        if ( data instanceof Integer ) { _constructAllI32( shape, (Integer) data ); return true; }
+        if ( data instanceof Short   ) { _constructAllI16( shape, (Short)   data ); return true; }
+        if ( data instanceof Byte    ) { _constructAllI8(  shape, (Byte)    data ); return true; }
+        return false;
+    }
+
+    public void _constructAllF64( int[] shape, double value ) {
+        _constructAll( shape, F64.class );
+        ( (double[]) _API.getData())[ 0 ] = value;
+    }
+
+    private void _constructAllF32( int[] shape, float value ) {
+        _constructAll( shape, F32.class );
+        ( (float[]) _API.getData())[ 0 ] = value;
+    }
+
+    private void _constructAllI32( int[] shape, int value ) {
+        _constructAll( shape, I32.class );
+        ( (int[]) _API.getData())[ 0 ] = value;
+    }
+
+    private void _constructAllI16( int[] shape, short value ) {
+        _constructAll( shape, I16.class );
+        ( (short[]) _API.getData())[ 0 ] = value;
+    }
+
+    private void _constructAllI8( int[] shape, byte value ) {
+        _constructAll( shape, I8.class );
+        ( (byte[]) _API.getData())[ 0 ] = value;
+    }
+
+    private void _constructAll( int[] shape, Class<?> typeClass ) {
+        int size = NDConfiguration.Utility.szeOfShp( shape );
+        _API.setType( DataType.of( typeClass ) );
+        _API.allocate( 1 );
+        _API.setIsVirtual( size > 1 );
+        configureFromNewShape( shape, size > 1, true );
+    }
+
+    private int _dataLength()
+    {
+        if ( !(_API.getData() instanceof float[]) && !(_API.getData() instanceof double[]) ) {
+            if ( _API.getData() instanceof Object[] ) return ((Object[]) _API.getData()).length;
+            else return -1;
+        }
+        else if ( _API.getData() instanceof double[] ) return ( (double[]) _API.getData()).length;
+        else return ( (float[]) _API.getData()).length;
+    }
+
 
     /**
      *  This method receives a list of lists which represent a matrix of objects.
