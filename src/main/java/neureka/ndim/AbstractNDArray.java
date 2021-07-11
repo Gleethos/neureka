@@ -207,49 +207,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
         setDataType( DataType.of( typeClass ) );
         _allocate( 1 );
         setIsVirtual( size > 1 );
-        _configureFromNewShape( shape, size > 1, true );
-    }
-
-    /**
-     *  This method is responsible for instantiating and setting the _conf variable.
-     *  The core requirement for instantiating {@link NDConfiguration} interface implementation s
-     *  is a shape array of integers which is being passed to the method... <br>
-     *  <br>
-     *
-     * @param newShape An array if integers which are all greater 0 and represent the tensor dimensions.
-     */
-    protected void _configureFromNewShape( int[] newShape, boolean makeVirtual, boolean autoAllocate )
-    {
-        int size = NDConfiguration.Utility.szeOfShp( newShape );
-        if ( size == 0 ) {
-            String shape = Arrays.stream( newShape ).mapToObj( String::valueOf ).collect( Collectors.joining( "x" ) );
-            String message = "The provided shape '"+shape+"' must not contain zeros. Dimensions lower than 1 are not possible.";
-            _LOG.error( message );
-            throw new IllegalArgumentException( message );
-        }
-        if ( getData() == null && autoAllocate ) _allocate( size );
-        int length = _dataLength();
-        if ( length >= 0 && size != length && ( !this.isVirtual() || !makeVirtual) ) {
-            String message = "Size of shape does not match stored value64!";
-            _LOG.error( message );
-            throw new IllegalArgumentException( message );
-        }
-        if ( makeVirtual ) setNDConf( VirtualNDConfiguration.construct( newShape ) );
-        else {
-            int[] newTranslation = NDConfiguration.Utility.newTlnOf( newShape );
-            int[] newSpread = new int[ newShape.length ];
-            Arrays.fill( newSpread, 1 );
-            int[] newOffset = new int[ newShape.length ];
-            setNDConf(
-                    AbstractNDC.construct(
-                            newShape,
-                            newTranslation,
-                            newTranslation, // indicesMap
-                            newSpread,
-                            newOffset
-                    )
-            );
-        }
+        createConstructionAPI().configureFromNewShape( shape, size > 1, true );
     }
 
     private int _dataLength()
@@ -263,6 +221,20 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
     }
 
 
+    protected ArrayUtils createConstructionAPI()
+    {
+        AbstractNDArray<InstanceType, ?> nda = this;
+        return new ArrayUtils(
+                    new ArrayUtils.Construction() {
+                        @Override public void setType( DataType<?> type     ) { nda.setDataType( type ); }
+                        @Override public void setConf( NDConfiguration conf ) { nda.setNDConf(   conf ); }
+                        @Override public void setData( Object o             ) { nda._setData(      o  ); }
+                        @Override public void allocate( int size            ) { nda._allocate(   size ); }
+                        @Override public Object getData()                     { return nda.getData();    }
+                    }
+                );
+    }
+
     protected void _constructForDoubles( int[] shape, double[] value )
     {
         int size = NDConfiguration.Utility.szeOfShp( shape );
@@ -272,7 +244,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
             for ( int i = 0; i < size; i++ ) ( (double[]) getData())[ i ]  = value[ i % value.length ];
         }
         else _setData( value );
-        _configureFromNewShape( shape, false, true );
+        createConstructionAPI().configureFromNewShape( shape, false, true );
     }
 
     protected void _constructForFloats( int[] shape, float[] value )
@@ -283,7 +255,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
             _allocate( size );
             for ( int i = 0; i < size; i++ ) ( (float[]) getData())[ i ]  = value[ i % value.length ];
         } else _setData( value );
-        _configureFromNewShape( shape, false, true );
+        createConstructionAPI().configureFromNewShape( shape, false, true );
     }
 
     private void _constructForInts( int[] shape, int[] value )
@@ -294,7 +266,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
             _allocate( size );
             for ( int i = 0; i < size; i++ ) ( (int[]) getData())[ i ]  = value[ i % value.length ];
         } else _setData( value );
-        _configureFromNewShape( shape, false, true );
+        createConstructionAPI().configureFromNewShape( shape, false, true );
     }
 
     private void _constructForShorts( int[] shape, short[] value )
@@ -305,11 +277,12 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
             _allocate( size );
             for ( int i = 0; i < size; i++ ) ( (short[]) getData())[ i ]  = value[ i % value.length ];
         } else _setData( value );
-        _configureFromNewShape( shape, false, true );
+        createConstructionAPI().configureFromNewShape( shape, false, true );
     }
 
     private <V> void _constructForRange( int[] shape, DataType<?> dataType, V[] range )
     {
+        ArrayUtils constructor = createConstructionAPI();
         if ( range.length != 0 && !( range[ 0 ] instanceof Number ) ) {
             Class<?> givenClass = range[ 0 ].getClass();
             @SuppressWarnings("unchecked")
@@ -320,7 +293,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
             for ( int i = 0; i < value.length; i++ ) value[ i ] = range[ i % range.length ];
             setDataType( DataType.of( givenClass ) );
             _setData( value );
-            _construct( shape, value );
+            constructor.construct( shape, value );
         } else {
             setDataType( dataType );
             if ( dataType.getTypeClass() == F64.class )
@@ -345,24 +318,6 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
                 );
         }
     }
-
-    private <V> void _construct( int[] shape, V[] value ) {
-        int size = NDConfiguration.Utility.szeOfShp( shape );
-        if ( size != value.length ) {
-            Class<?> givenClass = value[ 0 ].getClass();
-            @SuppressWarnings("unchecked")
-            final V[] newValue = (V[]) Array.newInstance(
-                    givenClass,
-                    NDConfiguration.Utility.szeOfShp( shape )
-            );
-            for ( int i = 0; i < newValue.length; i++ ) newValue[ i ] = value[ i % value.length ];
-            setDataType( DataType.of( givenClass ) );
-            _setData( newValue );
-        }
-        else _setData( value );
-        _configureFromNewShape( shape, false, true );
-    }
-
 
     protected void _tryConstructing( int[] shape, DataType<?> dataType, Object data ) {
         int size = NDConfiguration.Utility.szeOfShp(shape);
@@ -395,7 +350,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
             data = ArrayUtils.optimizeArray( dataType, data, size );
 
         setDataType( dataType );
-        _configureFromNewShape( shape, false, false );
+        createConstructionAPI().configureFromNewShape( shape, false, false );
         _setData( data );
     }
 

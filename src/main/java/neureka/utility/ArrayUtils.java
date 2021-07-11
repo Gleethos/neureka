@@ -1,10 +1,95 @@
 package neureka.utility;
 
 import neureka.dtype.DataType;
+import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ArrayUtils {
+
+    private static Logger _LOG = LoggerFactory.getLogger(ArrayUtils.class);
+
+    public interface Construction {
+        void setType( DataType<?> type );
+        void setConf( NDConfiguration conf );
+        void setData( Object o );
+        void allocate( int size );
+        Object getData();
+    }
+
+    private final Construction _construction;
+
+    public ArrayUtils(Construction construction) { this._construction = construction; }
+
+    /**
+     *  This method is responsible for instantiating and setting the _conf variable.
+     *  The core requirement for instantiating {@link NDConfiguration} interface implementation s
+     *  is a shape array of integers which is being passed to the method... <br>
+     *  <br>
+     *
+     * @param newShape An array if integers which are all greater 0 and represent the tensor dimensions.
+     */
+    public void configureFromNewShape( int[] newShape, boolean makeVirtual, boolean autoAllocate )
+    {
+        int size = NDConfiguration.Utility.szeOfShp( newShape );
+        if ( size == 0 ) {
+            String shape = Arrays.stream( newShape ).mapToObj( String::valueOf ).collect( Collectors.joining( "x" ) );
+            String message = "The provided shape '"+shape+"' must not contain zeros. Dimensions lower than 1 are not possible.";
+            _LOG.error( message );
+            throw new IllegalArgumentException( message );
+        }
+        if ( _construction.getData() == null && autoAllocate ) _construction.allocate( size );
+        //int length = _dataLength();
+        //if ( length >= 0 && size != length && ( !this.isVirtual() || !makeVirtual) ) {
+        //    String message = "Size of shape does not match stored data array size!";
+        //    _LOG.error( message );
+        //    throw new IllegalArgumentException( message );
+        //}
+        if ( makeVirtual ) _construction.setConf( VirtualNDConfiguration.construct( newShape ) );
+        else {
+            int[] newTranslation = NDConfiguration.Utility.newTlnOf( newShape );
+            int[] newSpread = new int[ newShape.length ];
+            Arrays.fill( newSpread, 1 );
+            int[] newOffset = new int[ newShape.length ];
+            _construction.setConf(
+                    AbstractNDC.construct(
+                            newShape,
+                            newTranslation,
+                            newTranslation, // indicesMap
+                            newSpread,
+                            newOffset
+                    )
+            );
+        }
+    }
+
+    public  <V> void construct( int[] shape, V[] value ) {
+        int size = NDConfiguration.Utility.szeOfShp( shape );
+        if ( size != value.length ) {
+            _fromRange( shape, value );
+        }
+        else _construction.setData( value );
+        configureFromNewShape( shape, false, true );
+    }
+
+    private <V> void _fromRange(int[] shape, V[] value ) {
+        Class<?> givenClass = value[ 0 ].getClass();
+        @SuppressWarnings("unchecked")
+        final V[] newValue = (V[]) Array.newInstance(
+                givenClass,
+                NDConfiguration.Utility.szeOfShp( shape )
+        );
+        for ( int i = 0; i < newValue.length; i++ ) newValue[ i ] = value[ i % value.length ];
+        _construction.setType( DataType.of( givenClass ) );
+        _construction.setData( newValue );
+    }
 
     public static Object optimizeArray( DataType<?> dataType, Object data, int size ) {
         if      ( data instanceof Integer[] ) return DataConverter.instance().convert( (Integer[]) data, int[].class,    size );

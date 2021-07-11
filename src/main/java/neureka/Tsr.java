@@ -513,7 +513,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     private Tsr( int[] shape, Class<?> typeClass, Object data )
     {
         setDataType( DataType.of( typeClass ) );
-        _configureFromNewShape( shape, false, false );
+        createConstructionAPI().configureFromNewShape( shape, false, false );
         setValue( data );
     }
 
@@ -562,7 +562,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     {
         if ( allocate ) _allocate( ( virtual ) ? 1 : NDConfiguration.Utility.szeOfShp( shape ) );
         if ( virtual ) setIsVirtual( true );
-        _configureFromNewShape( shape, virtual, true );
+        createConstructionAPI().configureFromNewShape( shape, virtual, true );
     }
 
     private int[] _intArray( Object[] arg ) {
@@ -987,7 +987,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 _actualize();
             }
             _setIsVirtual( isVirtual ); //> Changing the flag now!
-            if ( getNDConf() != null ) _configureFromNewShape( getNDConf().shape(), isVirtual, true );
+            if ( getNDConf() != null ) createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, true );
             try {
                 if ( device != null ) device.store( this );
             } catch ( Exception exception ) {
@@ -2820,7 +2820,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
         private static Tsr<?> _newEmptyLike( Tsr<?> template ) {
             Tsr<?> t = Tsr.newInstance();
-            t._configureFromNewShape( template.getNDConf().shape(), false, true );
+            t.createConstructionAPI().configureFromNewShape( template.getNDConf().shape(), false, true );
             return t;
         }
 
