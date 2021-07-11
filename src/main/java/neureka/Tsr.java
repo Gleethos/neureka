@@ -741,6 +741,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     @SafeVarargs
     public static <V> Tsr<V> of(String expression, Tsr<V>... tensors ) {
         return new Tsr<>( tensors, expression );
+                // _constructFunctional( null, tensors, expression, true );
     }
 
     /**
@@ -777,7 +778,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      */
     public static <V> Tsr<V> of( String expression, boolean doAD,  Tsr<V>... tensors ) {
-        return new Tsr<>(tensors, expression, doAD);
+        return //new Tsr<>(tensors, expression, doAD);
+                _constructFunctional( null, tensors, expression, doAD );
     }
 
     /**
@@ -818,6 +820,31 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         _become( Function.Setup.commit( this, tensors, expression, doAD ) );
     }
 
+    /**
+     *  In essence tensors are merely fancy wrappers for some form of array of any type...
+     *  This wrapper usually stays the same for a given data array.
+     *  However, sometimes a tensor changes its identity, or rather the underlying
+     *  data changes the wrapping tensor instance.
+     *
+     *  This change currently only happens when tensors are being instantiated by
+     *  passing inputs and a math expression to its constructor.
+     *  This triggers the creation of a Function instance and execution on the provided
+     *  input tensors. In that case the output tensor will be created somewhere
+     *  along the execution call stack, however the result is expected to be
+     *  stored within the tensor whose constructor initialized all of this.
+     *  In that case this tensor will rip out the guts of the resulting output
+     *  tensor and stuff onto its own field variables. <br>
+     *  <br>
+     *
+     * @param tensors The tensors which will be passed to the function.
+     * @param expression The expression defining a function.
+     * @param doAD The flag which will enable or disable autograd for the instantiated Function.
+     */
+    private static <V> Tsr<V> _constructFunctional( Tsr<V> drain, Tsr<V>[] tensors, String expression, boolean doAD )
+    {
+        if ( tensors == null || tensors.length == 0 || tensors[ 0 ] == null ) return drain;
+        return Function.Setup.commit( drain, tensors, expression, doAD );
+    }
 
 
     /*==================================================================================================================
@@ -2292,7 +2319,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             valueIsDeviceVisitor = true;
         }
         if ( this.isEmpty() && slice.isEmpty() || slice.size() != value.size() ) _become( value ); // TODO: Rethink this a little
-        else new Tsr<>( new Tsr[]{ slice, value }, "I[ 0 ] <- I[ 1 ]", false );
+        else return
+                        new Tsr<>( new Tsr[]{ slice, value }, "I[ 0 ] <- I[ 1 ]", false );
+                //_constructFunctional( newInstance(), new Tsr[]{ slice, value }, "I[ 0 ] <- I[ 1 ]", false );
         try {
             if ( valueIsDeviceVisitor ) value.find( Device.class ).restore( value );
         } catch ( Exception exception ) {

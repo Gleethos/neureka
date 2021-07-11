@@ -48,12 +48,13 @@ public class CopyRight extends AbstractOperation {
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
+                    //tsrs[0] = tsrs[2];
                     return
                             ExecutionCall.builder()
                                 .device( call.getDevice() )
                                 .tensors( new Tsr[]{tsrs[1+offset], tsrs[offset]} )
                                 .derivativeIndex( -1 )
-                                .operation( Neureka.get().context().instance("idy") )
+                                .operation( Neureka.get().context().instance("idy") ) // This routes to another operation!
                                 .build();
                 }
         )
@@ -64,11 +65,12 @@ public class CopyRight extends AbstractOperation {
                         HostCPU.class,
                         new HostImplementation(
                                 call -> {
-                                    int offset = ( call.getTsrOfType( Number.class, 0 ) == null ) ? 1 : 0;
+                                    int offset = 1;
+                                    Tsr[] args = { call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)};
                                     ExecutionCall<HostCPU> newCall =
                                             ExecutionCall.builder()
                                                 .device( call.getDevice() )
-                                                .tensors( new Tsr[]{call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)} )
+                                                .tensors( args )
                                                 .derivativeIndex( -1 )
                                                 .operation( call.getOperation() )
                                                 .build()
@@ -76,17 +78,19 @@ public class CopyRight extends AbstractOperation {
                                     Neureka.get().context().instance("idy")
                                             .getAlgorithm(Activation.class)
                                             .getImplementationFor( HostCPU.class )
-                                            .run(call);
+                                            .run(newCall);
+                                    call.getTensors()[0] = args[1];
                                 },
                                 2
                         )
                 ).setImplementationFor(
                         OpenCLDevice.class,
                         call -> {
-                            int offset = ( call.getTsrOfType( Number.class, 0 ) == null ) ? 1 : 0;
+                            int offset = 1;
+                            Tsr[] args = { call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)};
                             ExecutionCall<OpenCLDevice> newCall = ExecutionCall.builder()
                                     .device( call.getDevice() )
-                                    .tensors( new Tsr[]{call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)} )
+                                    .tensors( args )
                                     .derivativeIndex( -1 )
                                     .operation( call.getOperation() )
                                     .build()
@@ -94,7 +98,8 @@ public class CopyRight extends AbstractOperation {
                             Neureka.get().context().instance("idy")
                                     .getAlgorithm(Activation.class)
                                     .getImplementationFor( OpenCLDevice.class )
-                                    .run(call);
+                                    .run(newCall);
+                            call.getTensors()[0] = args[1];
                         }
                 )
         );

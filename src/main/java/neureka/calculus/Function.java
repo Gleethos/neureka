@@ -120,7 +120,8 @@ public interface Function
                     }
                 }
             }
-            if ( resultIsUnique ) return result;
+            if ( resultIsUnique )
+                return result;
             else return null;
         }
     }

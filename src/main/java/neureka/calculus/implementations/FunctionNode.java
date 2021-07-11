@@ -11,6 +11,8 @@ import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.stream.IntStream;
 
 public class FunctionNode extends AbstractBaseFunction
 {
+    private static Logger _LOG = LoggerFactory.getLogger(FunctionNode.class);
 
     private final Operation _operation;
     private final boolean _isFlat;
@@ -172,7 +175,7 @@ public class FunctionNode extends AbstractBaseFunction
                         .operation( _operation )
                         .build()
         );
-
+        if ( tensors[ 0 ] == null ) _LOG.warn("Function '"+this+"' did not have a proper return value.");
         return ( tensors[ 0 ] == null ) ? tensors[ 1 ] : tensors[ 0 ];
     }
 

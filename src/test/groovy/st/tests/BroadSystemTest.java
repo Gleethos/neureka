@@ -59,7 +59,7 @@ public class BroadSystemTest
                 new Tsr[]{tensor1, tensor2, tensor3},//ERROR here
                 "(Ig[0]<-I[1])->I[2]",
                 new String[][]{
-                        {"empty"},//result ... Why? : Identity must not be lost ! (Tsr.of() cannot be member of inputs...)
+                        {"(-4.0)"},// == I[2]
                         {"(3.0)", "g:(-4.0)"},//tensor1
                         {"(-4.0)"},//tensor2
                         {"(-4.0)"},//tensor3
@@ -297,9 +297,18 @@ public class BroadSystemTest
                 4, -2,
                 -1, 5,
         });
-        tester.testTensorAutoGrad(new Tsr[]{tensor1, tensor2, tensor3},
+        tester.testTensorAutoGrad(
+                new Tsr[]{tensor1, tensor2, tensor3},
                 "i0<<xi1<<xi2",
-                new String[]{"empty"});
+                new String[]{
+                        "empty"//"[2x3]:(-26.0, 10.0, 32.0, 15.0, 34.0, 3.0)"
+                }
+        );
+
+        assert tensor1.getNDConf() != null;
+        assert tensor2.getNDConf() != null;
+        assert tensor3.getNDConf() != null;
+
         result = Function.Setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i0<<xi1<<xi2", true);
         tester.testContains(
                 result.toString(),
