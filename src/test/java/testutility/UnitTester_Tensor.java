@@ -88,7 +88,19 @@ public class UnitTester_Tensor extends UnitTester
             this.assertStringContains("result", result, element);
         }
         for(int i=0; i<source.length; i++){
-            this.assertIsEqual(stringified(source[ i ].gradient64()), stringified(expectedGradient[ i ]));
+            double[] gradient;
+            if ( source[ i ].hasGradient() && source[ i ].is(Float.class) ) {
+                float[] data = (float[]) source[i].getGradient().getValue();
+                gradient = new double[data.length];
+                for ( int ii = 0; ii < data.length; ii++ ) gradient[ii] = data[ii];
+            } else
+                gradient = source[ i ].hasGradient()
+                                ? (double[])source[ i ].getGradient().getValue()
+                                : null;
+            this.assertIsEqual(
+                    stringified(gradient),
+                    stringified(expectedGradient[ i ])
+            );
         }
         product.delete();
         return (printSessionEnd()>0)?1:0;

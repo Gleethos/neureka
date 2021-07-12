@@ -1478,10 +1478,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
             @Override
             public V next() {
-                Object o = getDataAt( _ndi.i() );
+                V value = getDataAt( _ndi.i() );
                 _ndi.increment();
                 _count ++;
-                return (V) o;
+                return value;
             }
         };
     }
@@ -2010,7 +2010,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return The value item found at the targeted index.
      */
     public V getValueAt( int i ) {
-        return (V) getDataAt( getNDConf().indexOfIndex( i ) );
+        return getDataAt( getNDConf().indexOfIndex( i ) );
     }
 
     /**
@@ -2024,7 +2024,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return The found raw value item targeted by the provided index array.
      */
     public V getValueAt( int[] indices ) {
-        return (V) getDataAt( getNDConf().indexOfIndices( indices ) );
+        return getDataAt( getNDConf().indexOfIndices( indices ) );
     }
 
     /**
@@ -2319,20 +2319,20 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return The found object sitting at the specified index position.
      */
     @Override
-    public Object getDataAt( int i )
+    public V getDataAt( int i )
     {
         if ( this.isOutsourced() ) {
             Device<V> device = this.find( Device.class );
             if ( device instanceof OpenCLDevice ) {
-                return ( (OpenCLDevice) device ).value64f( (Tsr<Number>) this, i );
+                return (V)(Double)( (OpenCLDevice) device ).value64f( (Tsr<Number>) this, i );
             }
         }
-        else if ( getData() instanceof float[] ) return ( (float[]) getData())[ i ];
-        else if ( getData() instanceof double[] ) return ( (double[]) getData())[ i ];
-        else if ( getData() instanceof short[] ) return ( (short[]) getData())[ i ];
-        else if ( getData() instanceof int[] ) return ( (int[]) getData())[ i ];
-        else if ( getData() instanceof byte[] ) return ( (byte[]) getData())[ i ];
-        else if ( getData() instanceof long[] ) return ( (long[]) getData())[ i ];
+        else if ( getData() instanceof float[] )  return (V)(Float)  ( (float[]) getData())[ i ];
+        else if ( getData() instanceof double[] ) return (V)(Double) ( (double[]) getData())[ i ];
+        else if ( getData() instanceof short[] )  return (V)(Short)  ( (short[]) getData())[ i ];
+        else if ( getData() instanceof int[] )    return (V)(Integer)( (int[]) getData())[ i ];
+        else if ( getData() instanceof byte[] )   return (V)(Byte)   ( (byte[]) getData())[ i ];
+        else if ( getData() instanceof long[] )   return (V)(Long)   ( (long[]) getData())[ i ];
         else return ( (V[]) getData())[ i ];
         return null;
     }
@@ -2419,20 +2419,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             Device<V> device = find( Device.class );
             if ( device != null )
                 return device.valueFor( this );
-
-            else return getData();
+            else
+                return getData();
         }
         else if ( !this.isVirtual() ) return getData();
         else return getDataType().actualize( getData(), this.size() );
-    }
-
-    @Deprecated
-    public double[] gradient64() {
-        Tsr<V> gradient = this.getGradient();
-        if ( gradient == null ) return new double[ 0 ];
-        return ( this.is32() )
-                ? DataConverter.Utility.floatToDouble( gradient.value32() )
-                : gradient.value64();
     }
 
     /**

@@ -131,7 +131,7 @@ public class CrossDeviceSystemTest
                                 "); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"
                 },
                 Tsr.of(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}),
-                new double[][]{new double[]{1.0, 3.0, 1.0, 3.0}, new double[0]}
+                new double[][]{new double[]{1.0, 3.0, 1.0, 3.0}, null}
         );
 
         // ---
