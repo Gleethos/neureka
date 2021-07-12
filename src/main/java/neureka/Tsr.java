@@ -52,6 +52,7 @@ SOFTWARE.
         §(2.1) : SOURCE LOCATION (DEVICE)
         §(2.2) : VIRTUAL / ACTUAL
         §(2.3) : GRADIENT APPLY REQUIREMENT
+        §(2.4) : DELETION
 
     §(3) : COMPONENT SYSTEM
         §(3.0) : SETTING / REJECTING
@@ -161,6 +162,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     private static final int IS_OUTSOURCED_MASK = 2;
     private static final int IS_VIRTUAL_MASK = 4;
     private static final int GRADIENT_APPLY_RQD_MASK = 8;
+    private static final int WAS_DELETED_MASK = 18;
 
     /**
      *  The version of the data ( _data ) stored within this tensor.
@@ -739,9 +741,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      */
     @SafeVarargs
-    public static <V> Tsr<V> of(String expression, Tsr<V>... tensors ) {
-        return new Tsr<>( tensors, expression );
-                // _constructFunctional( null, tensors, expression, true );
+    public static <V> Tsr<V> of( String expression, Tsr<V>... tensors ) {
+        return _constructFunctional( null, tensors, expression, true );
     }
 
     /**
@@ -1085,6 +1086,46 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return ( _flags & GRADIENT_APPLY_RQD_MASK ) == GRADIENT_APPLY_RQD_MASK;
     }
 
+    /*
+    --------------------------------------------
+        §(2.4) : DELETION  :
+    --------------------------------------------
+    */
+
+    public boolean isDeleted() {
+        return ( _flags & WAS_DELETED_MASK ) == WAS_DELETED_MASK;
+    }
+
+    /**
+     *  Although tensors will be garbage collected when they are not strongly referenced,
+     *  there is also the option to manually free up the tensor and its associated data.
+     *  This is especially useful when tensors are stored on a device like the OpenCLDevice.
+     *  In that case calling the "{@link Tsr#delete()}" method will free the memory reserved for this tensor.
+     *  This manual memory freeing through this method can be faster than waiting for
+     *  the garbage collector to kick in... <br>
+     *  <br>
+     *
+     * @return This very tensor instance to allow for method chaining.
+     */
+    public Tsr<V> delete()
+    {
+        forComponent( GraphNode.class, n -> {
+            if ( n.isUsedAsDerivative() ) {
+                String message = "Cannot delete a tensor which is used as derivative by the AD computation graph!";
+                _LOG.error( message );
+                throw new IllegalStateException( message );
+            }
+        });
+        forComponent( Device.class, device -> device.free( this ) );
+        _setData( null );
+        setNDConf( null );
+        _flags = -1;
+        forComponent( Tsr.class, Tsr::delete );
+        _deleteComponents();
+        if ( !isDeleted() ) _flags += IS_OUTSOURCED_MASK;
+        return this;
+    }
+
     /*==================================================================================================================
     |
     |       §(3) : COMPONENT SYSTEM
@@ -1401,35 +1442,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 }
             }
         }
-        return this;
-    }
-
-    /**
-     *  Although tensors will be garbage collected when they are not strongly referenced,
-     *  there is also the option to manually free up the tensor and its associated data.
-     *  This is especially useful when tensors are stored on a device like the OpenCLDevice.
-     *  In that case calling the "{@link Tsr#delete()}" method will free the memory reserved for this tensor.
-     *  This manual memory freeing through this method can be faster than waiting for
-     *  the garbage collector to kick in... <br>
-     *  <br>
-     *      
-     * @return This very tensor instance to allow for method chaining.
-     */
-    public Tsr<V> delete()
-    {
-        forComponent( GraphNode.class, n -> {
-            if ( n.isUsedAsDerivative() ) {
-                String message = "Cannot delete a tensor which is used as derivative by the AD computation graph!";
-                _LOG.error( message );
-                throw new IllegalStateException( message );
-            }
-        });
-        forComponent( Device.class, device -> device.free( this ) );
-        _flags = -1;
-        _setData( null );
-        setNDConf( null );
-        forComponent( Tsr.class, Tsr::delete );
-        _deleteComponents();
         return this;
     }
 
@@ -2365,6 +2377,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     @Override
     public Tsr<V> setDataAt(int i, V o ) {
+        _guardMod("data object");
         if ( getData() instanceof Object[] ) ( (Object[]) getData() )[ i ] = o;
         else if ( getData() instanceof float[]  ) ( (float[])  getData() )[ i ] = (float)  o;
         else if ( getData() instanceof double[] ) ( (double[]) getData() )[ i ] = (double) o;
@@ -2635,6 +2648,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     @Override
     public String toString()
     {
+        if ( this.isDeleted() ) return "deleted";
         return new TsrAsString( this ).toString();
     }
 

@@ -301,7 +301,7 @@ public class BroadSystemTest
                 new Tsr[]{tensor1, tensor2, tensor3},
                 "i0<<xi1<<xi2",
                 new String[]{
-                        "empty"//"[2x3]:(-26.0, 10.0, 32.0, 15.0, 34.0, 3.0)"
+                        "[2x3]:(-26.0, 10.0, 32.0, 15.0, 34.0, 3.0)"
                 }
         );
 
@@ -315,9 +315,12 @@ public class BroadSystemTest
                 new String[]{"[2x3]:(-26.0, 10.0, 32.0, 15.0, 34.0, 3.0)"},
                 "Testing if Function.setup.commit() returns non unique result!"
         );
-        tester.testTensorAutoGrad(new Tsr[]{tensor1, tensor2, tensor3},//TODO:REACTIVATE!
+        tester.testTensorAutoGrad(
+                new Tsr[]{tensor1, tensor2, tensor3},
                 "i2x>>i1x>>i0",
-                new String[]{"empty"});
+                new String[]{"[2x3]:(-26.0, 10.0, 32.0, 15.0, 34.0, 3.0)"}
+        );
+
         result = Function.Setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i2x>>i1x>>i0", true);
         tester.testContains(
                 result.toString(),

@@ -40,10 +40,9 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
-import neureka.dtype.custom.*;
 import neureka.ndim.config.NDConfiguration;
-import neureka.utility.NDAConstructor;
 import neureka.utility.DataConverter;
+import neureka.utility.NDAConstructor;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 
@@ -77,11 +76,24 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
 
     private Object _data;
 
-    public NDConfiguration getNDConf() { return this._NDConf; }
+    public abstract boolean isDeleted();
 
-    public DataType<?> getDataType() { return this._dataType; }
+    protected void _guardGet(String varName ) { _guard("Trying to access the "+varName+" of an already deleted tensor." ); }
+    protected void _guardSet(String varName ) { _guard("Trying to set the "+varName+" of an already deleted tensor." ); }
+    protected void _guardMod(String varName ) { _guard("Trying to modify the "+varName+" of an already deleted tensor." ); }
 
-    public Object getData() { return this._data; }
+    private void _guard(String message ) {
+        if ( this.isDeleted() ) {
+            _LOG.error( message );
+            throw new IllegalAccessError( message );
+        }
+    }
+
+    public NDConfiguration getNDConf() { _guardGet("ND-Configuration"); return this._NDConf; }
+
+    public DataType<?> getDataType() { _guardGet("data type"); return this._dataType; }
+
+    public Object getData() { _guardGet("data object"); return this._data; }
 
     public Class<?> getValueClass() { return ( _dataType != null ? _dataType.getTypeClass() : null ); }
 
@@ -97,6 +109,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
      */
     public InstanceType setDataType( DataType<?> dataType )
     {
+        _guardSet("data type");
         if ( _data != null ) {
             String message = "Data type of tensor can only be set when data attribute is null!\n" +
                     "This is due to construction-consistency reasons.\n";
@@ -108,6 +121,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
 
     protected void _setData( Object data )
     {
+        _guardSet("data object");
         if ( _dataType == null ) {
             String message = "Trying to set data in a tensor which does not have a DataTyp instance.";
             _LOG.error( message );
@@ -321,6 +335,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
      */
     public InstanceType setNDConf( NDConfiguration ndConfiguration )
     {
+        _guardSet("ND-Configuration");
         if ( _NDConf != null && ndConfiguration != null ) {
             int s1 = Arrays.stream( _NDConf.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -> a*b );
             int s2 = Arrays.stream( ndConfiguration.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -> a*b );

@@ -71,7 +71,9 @@ public class UnitTester_Tensor extends UnitTester
         for(String element : expected){
             this.assertStringContains("result", result, element);
         }
-        product.delete();
+        boolean productInInputs = false;
+        for ( Tsr t : source ) productInInputs = (t == product || productInInputs);
+        if ( !productInInputs ) product.delete();
         return (printSessionEnd()>0)?1:0;
     }
 
