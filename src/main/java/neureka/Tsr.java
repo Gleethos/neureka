@@ -667,7 +667,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param inputs A list of inputs which can be tensors or numeric types.
      */
     public static <V> Tsr<V> of( String expression, List<? extends Object> inputs ) {
-        //return new Tsr<>( expression, inputs );
         if ( inputs.stream().allMatch( e -> e instanceof Tsr ) )
             return _constructFunctional(
                     null,
@@ -678,28 +677,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         else
             return _constructFunctional(
                     null,
-                    inputs.stream().map( Tsr::new ).toArray( Tsr[]::new ),
-                    expression,
-                    true
-            );
-    }
-
-    /**
-     *  see {@link #of(String, List)}
-     *
-     * @param expression A String which will be used for parsing a Function AST.
-     * @param inputs A list of inputs which can be tensors or numeric types.
-     */
-    private Tsr( String expression, List<? extends Object> inputs )
-    {
-        if ( inputs.stream().allMatch( e -> e instanceof Tsr ) )
-            _construct(
-                    inputs.stream().toArray( Tsr[]::new ),
-                    expression,
-                    true
-            );
-        else
-            _construct(
                     inputs.stream().map( Tsr::new ).toArray( Tsr[]::new ),
                     expression,
                     true
@@ -724,7 +701,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param expression The expression describing operations applied to the provided tensor.
      */
     public static <V> Tsr<V> of( String expression, Tsr<V> tensor ) {
-        return new Tsr<>( tensor, expression );
+        return _constructFunctional(null, new Tsr[]{tensor}, expression, true);
     }
 
     /**
