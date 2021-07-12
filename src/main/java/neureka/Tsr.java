@@ -705,17 +705,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     /**
-     *  see {@link #of(String, Tsr)}
-     *
-     * @param tensor A tensor which serves as input to the Function instance parsed from the given expression.
-     * @param expression The expression describing operations applied to the provided tensor.
-     */
-    private Tsr( Tsr<V> tensor, String expression ) {
-        if ( tensor == null ) return;
-        _construct( new Tsr[]{ tensor }, expression, true );
-    }
-
-    /**
      *  This method takes an array of tensors and a String expression describing
      *  operations which ought to be applied to the tensors in said array.
      *  This expression will be parsed to a {@link Function} instance expecting as many inputs
@@ -1871,7 +1860,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         StringBuilder operation = new StringBuilder();
         for ( int i = rank() - 1; i >= 0; i-- ) operation.append( i ).append( ( i == 0 ) ? "" : ", " );
         operation = new StringBuilder( "[" + operation + "]:(I[ 0 ])" );
-        return new Tsr<>( this, operation.toString() );
+        return _constructFunctional(null, new Tsr[]{this}, operation.toString(), true);
     }
 
     /**
