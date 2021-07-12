@@ -363,22 +363,39 @@ class Tensor_Operation_Integration_Tests extends Specification
         then : y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
         when : y = ((x+b)*w)^2
-        then :  y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
+        then : y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
         and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true)
 
-        when : y.backward(Tsr.of(1))
+        when :
+            y.backward(Tsr.of(1))
+        and :
+            Tsr t1 = Tsr.of( "Ig[0]", [y] )
+            Tsr t2 = Tsr.of( "Ig[0]", [x] )
+
         then :
-            Tsr.of( "Ig[0]", [y] ).toString().equals("empty")
-            Tsr.of( "Ig[0]", [x] ).toString().equals("empty")
+            t1 == null
+        and :
+            t2.toString() == "[1]:(-8.0)"
+        and :
+            t2 == x.gradient
 
         and : Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
 
-        when : Tsr[] trs = new Tsr[]{x}
-        then : new FunctionBuilder(Neureka.get().context()).build("Ig[0]", false)(trs).toString().equals("[1]:(-8.0)")
+        when :
+            Tsr[] trs = new Tsr[]{x}
+        and :
+            def fun = new FunctionBuilder(Neureka.get().context()).build("Ig[0]", false)
+        then :
+            fun(trs).toString().equals("[1]:(-8.0)")
 
-        when : trs[0] = y
-        then : assert new FunctionBuilder(Neureka.get().context()).build("Ig[0]", false)(trs).toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
+        when :
+            trs[0] = y
+        and :
+            fun = new FunctionBuilder(Neureka.get().context()).build("Ig[0]", false)
+
+        then :
+            fun(trs) == null
     }
 
 

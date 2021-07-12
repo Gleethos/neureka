@@ -667,7 +667,21 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param inputs A list of inputs which can be tensors or numeric types.
      */
     public static <V> Tsr<V> of( String expression, List<? extends Object> inputs ) {
-        return new Tsr<>( expression, inputs );
+        //return new Tsr<>( expression, inputs );
+        if ( inputs.stream().allMatch( e -> e instanceof Tsr ) )
+            return _constructFunctional(
+                    null,
+                    inputs.stream().toArray( Tsr[]::new ),
+                    expression,
+                    true
+            );
+        else
+            return _constructFunctional(
+                    null,
+                    inputs.stream().map( Tsr::new ).toArray( Tsr[]::new ),
+                    expression,
+                    true
+            );
     }
 
     /**
@@ -746,16 +760,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     /**
-     *  see {@link #of(String, Tsr...)}
-     *
-     * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
-     * @param expression The expression describing operations applied to the provided tensors.
-     */
-    private Tsr( Tsr<V>[] tensors, String expression ) {
-        _construct( tensors, expression, true );
-    }
-
-    /**
      *  This method takes an array of tensors and a String expression describing
      *  operations which ought to be applied to the tensors in said array.
      *  It also receives a boolean flag which determines if the defined function
@@ -779,8 +783,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      */
     public static <V> Tsr<V> of( String expression, boolean doAD,  Tsr<V>... tensors ) {
-        return //new Tsr<>(tensors, expression, doAD);
-                _constructFunctional( null, tensors, expression, doAD );
+        return _constructFunctional( null, tensors, expression, doAD );
     }
 
     /**

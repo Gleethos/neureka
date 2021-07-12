@@ -86,7 +86,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
 
     private Tsr<?> _extract(Tsr<?> t)
     {
-        if (this.providesGradient() && t.rqsGradient()) {
+        if (this.providesGradient()) {
             Tsr<?> gradient = t.getGradient();
             if (t.rqsGradient()) {
                 if (gradient==null) {
@@ -95,6 +95,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
                 }
                 return gradient;
             }
+            return null;
         }
         return t;
     }
