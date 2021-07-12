@@ -58,46 +58,6 @@ import java.util.function.Function;
  */
 public final class TsrAsString
 {
-    public int getPadding() {
-        return this._padding;
-    }
-
-    public int getShortage() {
-        return this._shortage;
-    }
-
-    public boolean isHasGradient() {
-        return this._hasGradient;
-    }
-
-    public boolean isCompact() {
-        return this._isCompact;
-    }
-
-    public boolean isFormatted() {
-        return this._isFormatted;
-    }
-
-    public boolean isHasValue() {
-        return this._hasValue;
-    }
-
-    public boolean isHasShape() {
-        return this._hasShape;
-    }
-
-    public boolean isHasRecursiveGraph() {
-        return this._hasRecursiveGraph;
-    }
-
-    public boolean isHasDerivatives() {
-        return this._hasDerivatives;
-    }
-
-    public boolean isCellBound() {
-        return this._isCellBound;
-    }
-
     public enum Should {
         BE_FORMATTED,
         HAVE_PADDING_OF,
