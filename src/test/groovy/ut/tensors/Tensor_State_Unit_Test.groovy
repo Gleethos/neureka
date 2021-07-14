@@ -113,7 +113,7 @@ class Tensor_State_Unit_Test extends Specification
             t.setIsOutsourced( true )
         then: 'The tensor is now outsourced and its data is gone. (garbage collected)'
             t.isOutsourced()
-            !t.is64() && !t.is32()
+            !(t.data instanceof double[]) && !(t.data instanceof float[])
             t.value64() == null
             t.value32() == null
             t.data == null
@@ -139,7 +139,7 @@ class Tensor_State_Unit_Test extends Specification
             t.setIsOutsourced( true )
         then : 'The tensor is now outsourced and its data is gone. (garbage collected)'
             t.isOutsourced()
-            !t.is64() && !t.is32()
+            !(t.data instanceof double[]) && !(t.data instanceof float[])
             t.dataType.getTypeClass() == Neureka.get().settings().dtype().defaultDataTypeClass
             t.value64() == null
             t.value32() == null
@@ -171,7 +171,7 @@ class Tensor_State_Unit_Test extends Specification
             t.setIsOutsourced( true )
         then : 'The tensor is now outsourced and its data is gone. (garbage collected)'
             t.isOutsourced()
-            !t.is64() && !t.is32()
+            !(t.data instanceof double[]) && !(t.data instanceof float[])
             t.dataType.getTypeClass() == I8.class
             t.value64() == null
             t.value32() == null

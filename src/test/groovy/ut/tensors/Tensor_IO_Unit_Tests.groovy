@@ -166,7 +166,7 @@ class Tensor_IO_Unit_Tests extends Specification
 
         then : '...the tensor will change as expected.'
             !(x.getValue() instanceof float[])
-            !x.is32()
+            !(x.data instanceof float[])
             x.value32(0)==5.0f
             x.value64(0)==5.0d
 
@@ -177,7 +177,7 @@ class Tensor_IO_Unit_Tests extends Specification
 
         then : '...once again the tensor changes as expected.'
             x.getValue() instanceof double[]
-            x.is64()
+            x.data instanceof double[]
             x.value32(0)==4.0f
             x.value64(0)==4.0d
 
@@ -204,7 +204,7 @@ class Tensor_IO_Unit_Tests extends Specification
 
         then :
             !(x.getValue() instanceof double[])
-            !x.is64()
+            !(x.data instanceof double[])
             x.value32(0)==7.0f
             x.value64(0)==7.0d
 
@@ -220,13 +220,13 @@ class Tensor_IO_Unit_Tests extends Specification
         when : x.toType( Float.class )
         then :
             x.getValue() instanceof float[]
-            x.is32()
+            x.data instanceof float[]
             x.value32(0)==3.0f
 
         when : x.toType( Double.class )
         then :
             x.getValue() instanceof double[]
-            x.is64()
+            x.data instanceof double[]
             x.value32(0)==3.0f
     }
 

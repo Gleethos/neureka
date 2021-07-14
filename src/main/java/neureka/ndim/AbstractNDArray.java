@@ -93,6 +93,13 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
 
     public DataType<?> getDataType() { _guardGet("data type"); return this._dataType; }
 
+    /**
+     *  This returns the underlying raw data object of this tensor.
+     *  Contrary to the {@link Tsr#getValue()} ()} method, this one will
+     *  return an unbiased view on the data of this tensor.
+     *
+     * @return The raw data object underlying this tensor.
+     */
     public Object getData() { _guardGet("data object"); return this._data; }
 
     public Class<?> getValueClass() { return ( _dataType != null ? _dataType.getTypeClass() : null ); }
@@ -300,14 +307,6 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
     public boolean is( Class<?> typeClass ) {
         DataType<?> type = DataType.of( typeClass );
         return type == _dataType;
-    }
-
-    public boolean is64() {
-        return _data instanceof double[];
-    }
-
-    public boolean is32() {
-        return _data instanceof float[];
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

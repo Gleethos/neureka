@@ -63,13 +63,13 @@ public interface Storage<V>
      * @param tensor The tensor whose data ought to be stored.
      * @return A reference this object to allow for method chaining. (factory pattern)
      */
-    Storage store( Tsr<V> tensor );
+    Storage<V> store( Tsr<V> tensor );
 
     /**
      * @param tensor The tensor whose data ought to be restored (loaded to RAM).
      * @return A reference this object to allow for method chaining. (factory pattern)
      */
-    Storage restore( Tsr<V> tensor );
+    Storage<V> restore( Tsr<V> tensor );
 
 
     int size();

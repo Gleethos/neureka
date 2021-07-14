@@ -453,7 +453,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  See {@link #of(int[], String)}
      *  ...and {@link #of(List, String)}
      */
-    private Tsr( int[] shape, String seed ) { _construct( shape, seed ); }
+    private Tsr( int[] shape, String seed ) {
+        _construct( shape, false, false );
+        _setData( DataConverter.Utility.seededDoubleArray( (double[]) getData(), seed ) );
+    }
 
     public static Tsr<Number> ofShape( int[] shape ) { return new Tsr<>( shape ); }
 
@@ -522,15 +525,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     // Inner construction layer:
 
-    private void _construct( int[] shape, String seed )
-    {
-        _construct( shape, false, false );
-        _setData( DataConverter.Utility.seededDoubleArray( (double[]) getData(), seed ) );
-    }
-
     private void _construct( int[] shape, boolean allocate, boolean virtual )
     {
-        if ( allocate ) _allocate( ( virtual ) ? 1 : NDConfiguration.Utility.szeOfShp( shape ) );
+        if ( allocate ) _allocate( virtual ? 1 : NDConfiguration.Utility.szeOfShp( shape ) );
         if ( virtual ) setIsVirtual( true );
         createConstructionAPI().configureFromNewShape( shape, virtual, true );
     }
@@ -2393,11 +2390,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         else if ( value instanceof  double[] ) this._setValue64( (double[]) value );
         else if ( value instanceof Float ) {
             this.setIsVirtual( true );
-            if ( this.is32() ) ( (float[]) getData())[ 0 ] = (Float) value;
+            if ( getData() instanceof float[] ) ( (float[]) getData())[ 0 ] = (Float) value;
             else ( (double[]) getData())[ 0 ] = ( (Float) value ).doubleValue();
         } else if ( value instanceof Double ) {
             this.setIsVirtual( true );
-            if ( this.is64() ) ( (double[]) getData())[ 0 ] = (Double) value;
+            if ( getData() instanceof double[] ) ( (double[]) getData())[ 0 ] = (Double) value;
             else ( (float[]) getData())[ 0 ] = ( (Double) value ).floatValue();
         } else if ( value instanceof Integer ) {
             this.setIsVirtual( true );
@@ -2530,10 +2527,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             else return 0.0;
         }
         if ( this.isVirtual() ) {
-            if ( this.is64() ) return ( (double[]) getData() )[ 0 ];
+            if ( getData() instanceof double[] ) return ( (double[]) getData() )[ 0 ];
             else return ( (float[]) getData() )[ 0 ];
         } else {
-            if ( this.is64() ) return ( (double[]) getData() )[ i ];
+            if ( getData() instanceof double[] ) return ( (double[]) getData() )[ i ];
             else return ( (float[]) getData() )[ i ];
         }
     }
@@ -2563,10 +2560,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             else return 0.0f;
         }
         if ( this.isVirtual() ) {
-            if ( this.is64() ) return (float) ( (double[]) getData() )[ 0 ];
+            if ( getData() instanceof double[] ) return (float) ( (double[]) getData() )[ 0 ];
             else return ( (float[]) getData())[ 0 ];
         } else {
-            if ( this.is64() ) return (float) ( (double[]) getData() )[ i ];
+            if ( getData() instanceof double[] ) return (float) ( (double[]) getData() )[ i ];
             else return ( (float[]) getData() )[ i ];
         }
     }
@@ -2765,7 +2762,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
         public static Tsr<?> newTsrLike( Tsr<?> template, double value ) {
             Tsr<Object> t = (Tsr<Object>) _newEmptyLike( template );
-            if ( template.is32() ) t.setValue( (float) value );
+            if ( template.getData() instanceof float[] ) t.setValue( (float) value );
             else t.setValue( value );
             try {
                 if ( template.isOutsourced() ) ( (Device<Object>) template.find( Device.class ) ).store( t );
@@ -2778,7 +2775,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
         public static Tsr<?> newTsrLike( Tsr<?> template ) { // The output tensor will not have gradients!
             Tsr<Object> t = (Tsr<Object>) _newEmptyLike( template );
-            if ( template.is32() ) t._setValue32( new float[ template.size() ] );
+            if ( template.getData() instanceof float[] ) t._setValue32( new float[ template.size() ] );
             else t._setValue64( new double[ template.size() ] );
             try {
                 if ( template.isOutsourced() ) ( (Device<Object>) template.find( Device.class ) ).store( t );

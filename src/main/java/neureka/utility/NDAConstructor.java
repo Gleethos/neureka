@@ -241,7 +241,7 @@ public class NDAConstructor {
             for ( int i = 0; i < size; i++ ) ( (double[]) _API.getData())[ i ]  = value[ i % value.length ];
         }
         else _API.setData( value );
-        configureFromNewShape( shape, false, true );
+        configureFromNewShape( shape, false, false );
     }
 
     public void constructForFloats(int[] shape, float[] value)
@@ -252,7 +252,7 @@ public class NDAConstructor {
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (float[]) _API.getData())[ i ]  = value[ i % value.length ];
         } else _API.setData( value );
-        configureFromNewShape( shape, false, true );
+        configureFromNewShape( shape, false, false );
     }
 
     private void _constructForInts( int[] shape, int[] value )
@@ -263,7 +263,7 @@ public class NDAConstructor {
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (int[]) _API.getData())[ i ]  = value[ i % value.length ];
         } else _API.setData( value );
-        configureFromNewShape( shape, false, true );
+        configureFromNewShape( shape, false, false );
     }
 
     public void _constructForShorts( int[] shape, short[] value )
@@ -274,7 +274,7 @@ public class NDAConstructor {
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (short[]) _API.getData())[ i ]  = value[ i % value.length ];
         } else _API.setData( value );
-        configureFromNewShape( shape, false, true );
+        configureFromNewShape( shape, false, false );
     }
 
     public  <V> void construct( int[] shape, V[] value ) {
@@ -283,7 +283,7 @@ public class NDAConstructor {
             _fromRange( shape, value );
         }
         else _API.setData( value );
-        configureFromNewShape( shape, false, true );
+        configureFromNewShape( shape, false, false  );
     }
 
     private <V> void _fromRange(int[] shape, V[] value ) {
