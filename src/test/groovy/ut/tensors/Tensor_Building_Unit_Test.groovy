@@ -83,6 +83,7 @@ class Tensor_Building_Unit_Test extends Specification
             Float.class   | 6.4f as float   | 78.3f  as float   |   4    || [6.4, 10.4, 14.4, 18.4, 22.4, 26.4]  as float[]
             Float.class   | 0f   as float   | 1f     as float   |   0.2f || [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]       as float[]
             Byte.class    | -5   as byte    | 6      as byte    |   2    || [-5, -3, -1, 1, 3, 5]                as byte[]
+            Long.class    | -65  as long    | 45     as long    |   5    || [-65, -60, -55, -50, -45, -40]       as long[]
 
 
     }

@@ -662,6 +662,30 @@ public class DataConverter
         }
 
         @Contract( pure = true )
+        public static byte[] objectsToBytes( Object[] objects, int targetSize ) {
+            byte[] data = new byte[ targetSize ];
+            for ( int i = 0; i < data.length; i++ ) {
+                if ( objects[ i % objects.length ] instanceof BigDecimal )
+                    data[ i ] = ( (BigDecimal) objects[ i % objects.length ] ).byteValue();
+                else if ( objects[ i % objects.length ] instanceof Integer )
+                    data[ i ] = ( (Integer) objects[ i % objects.length ] ).byteValue();
+            }
+            return data;
+        }
+
+        @Contract( pure = true )
+        public static long[] objectsToLongs( Object[] objects, int targetSize ) {
+            long[] data = new long[ targetSize ];
+            for ( int i = 0; i < data.length; i++ ) {
+                if ( objects[ i % objects.length ] instanceof BigDecimal )
+                    data[ i ] = ( (BigDecimal) objects[ i % objects.length ] ).longValue();
+                else if ( objects[ i % objects.length ] instanceof Integer )
+                    data[ i ] = ( (Integer) objects[ i % objects.length ] ).longValue();
+            }
+            return data;
+        }
+
+        @Contract( pure = true )
         public static int[] objectsToInts( Object[] objects, int targetSize ) {
             int[] data = new int[ targetSize ];
             for ( int i = 0; i < data.length; i++ ) {

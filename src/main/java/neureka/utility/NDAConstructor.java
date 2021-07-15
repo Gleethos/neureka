@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
 
 public class NDAConstructor {
 
-    private static Logger _LOG = LoggerFactory.getLogger(NDAConstructor.class);
+    private static final Logger _LOG = LoggerFactory.getLogger(NDAConstructor.class);
 
     public interface API {
         void setType( DataType<?> type );
@@ -116,6 +116,7 @@ public class NDAConstructor {
         if ( data instanceof Integer ) { _constructAllI32( shape, (Integer) data ); return true; }
         if ( data instanceof Short   ) { _constructAllI16( shape, (Short)   data ); return true; }
         if ( data instanceof Byte    ) { _constructAllI8(  shape, (Byte)    data ); return true; }
+        if ( data instanceof Long    ) { _constructAllI64( shape, (Long)    data ); return true; }
         return false;
     }
 
@@ -142,6 +143,11 @@ public class NDAConstructor {
     private void _constructAllI8( int[] shape, byte value ) {
         _constructAll( shape, I8.class );
         ( (byte[]) _API.getData())[ 0 ] = value;
+    }
+
+    private void _constructAllI64( int[] shape, long value ) {
+        _constructAll( shape, I64.class );
+        ( (long[]) _API.getData())[ 0 ] = value;
     }
 
     private void _constructAll( int[] shape, Class<?> typeClass ) {
@@ -228,6 +234,16 @@ public class NDAConstructor {
                         shape,
                         DataConverter.Utility.objectsToShorts( range, NDConfiguration.Utility.szeOfShp( shape ) )
                 );
+            else if ( dataType.getTypeClass() == I8.class )
+                _constructForBytes(
+                        shape,
+                        DataConverter.Utility.objectsToBytes( range, NDConfiguration.Utility.szeOfShp( shape ) )
+                );
+            else if ( dataType.getTypeClass() == I64.class )
+                _constructForLongs(
+                        shape,
+                        DataConverter.Utility.objectsToLongs( range, NDConfiguration.Utility.szeOfShp( shape ) )
+                );
         }
     }
 
@@ -272,6 +288,28 @@ public class NDAConstructor {
         if ( size != value.length ) {
             _API.allocate( size );
             for ( int i = 0; i < size; i++ ) ( (short[]) _API.getData())[ i ]  = value[ i % value.length ];
+        } else _API.setData( value );
+        configureFromNewShape( shape, false, false );
+    }
+
+    public void _constructForBytes( int[] shape, byte[] value )
+    {
+        int size = NDConfiguration.Utility.szeOfShp( shape );
+        _API.setType( DataType.of( I8.class ) );
+        if ( size != value.length ) {
+            _API.allocate( size );
+            for ( int i = 0; i < size; i++ ) ( (byte[]) _API.getData())[ i ]  = value[ i % value.length ];
+        } else _API.setData( value );
+        configureFromNewShape( shape, false, false );
+    }
+
+    public void _constructForLongs( int[] shape, long[] value )
+    {
+        int size = NDConfiguration.Utility.szeOfShp( shape );
+        _API.setType( DataType.of( I64.class ) );
+        if ( size != value.length ) {
+            _API.allocate( size );
+            for ( int i = 0; i < size; i++ ) ( (long[]) _API.getData())[ i ]  = value[ i % value.length ];
         } else _API.setData( value );
         configureFromNewShape( shape, false, false );
     }

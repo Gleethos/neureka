@@ -930,6 +930,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         assert getNDConf() != null;
 
         if ( isVirtual() != isVirtual ) {
+            // Currently we avoid offloading the virtualization by restoring outsourced tensors into RAM...
             Device device = this.find( Device.class );
             try {
                 if ( device != null ) device.restore( this );

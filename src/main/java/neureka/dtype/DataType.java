@@ -162,7 +162,7 @@ public final class DataType<Type>
         return (T) newValue;
     }
 
-    public <TA> TA actualize( TA value, int size )
+    public <T> T actualize(T value, int size )
     {
         Object newValue = value;
         if ( getTypeClass() == F64.class ) {
@@ -185,13 +185,16 @@ public final class DataType<Type>
             if ( ( (byte[]) value ).length == size ) return value;
             newValue = new byte[ size ];
             Arrays.fill( (byte[]) newValue, ( (byte[]) value )[ 0 ] );
+        } else if ( getTypeClass() == I64.class ) {
+            if ( ( (long[]) value ).length == size ) return value;
+            newValue = new long[ size ];
+            Arrays.fill( (long[]) newValue, ( (long[]) value )[ 0 ] );
         } else {
             if ( ( (Object[]) value ).length == size ) return value;
             newValue = new Object[ size ];
             Arrays.fill( (Object[]) newValue, ( (Object[]) value )[ 0 ] );
         }
-          //  throw new IllegalStateException("Primitive array for type '"+getTypeClass().getSimpleName()+"' not supported.");
-        return (TA) newValue;
+        return (T) newValue;
     }
 
     public Object allocate( int size )
@@ -206,6 +209,8 @@ public final class DataType<Type>
             return new short[ size ];
         else if ( getTypeClass() == I8.class || getTypeClass() == UI8.class )
             return new byte[ size ];
+        else if ( getTypeClass() == I64.class || getTypeClass() == UI64.class )
+            return new long[ size ];
         else
             return new Object[ size ];
     }
@@ -248,9 +253,9 @@ public final class DataType<Type>
     }
 
     public Class<?> getJVMTypeClass() {
-        if ( this.typeClassImplements(NumericType.class) ) {
+        if ( this.typeClassImplements(NumericType.class) )
             return ((NumericType) this.getTypeClassInstance()).holderType();
-        }
+
         return getTypeClass();
     }
 }

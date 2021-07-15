@@ -126,6 +126,17 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
                             .mapToDouble( i -> range.get( i % range.size() ) )
                             .toArray();
         }
+        else if ( _dataType == DataType.of( Long.class ) ) {
+            List<Long> range = new ArrayList<>();
+            for ( long index = ((Long) _from); index <= ((Long)_to) && itemIndex < itemLimit; index += size ) {
+                range.add( index );
+                itemIndex++;
+            }
+            data = IntStream.iterate( 0, i -> i + 1 )
+                    .limit( tensorSize )
+                    .mapToLong( i -> range.get( i % range.size() ) )
+                    .toArray();
+        }
         else if ( _dataType == DataType.of( Float.class ) ) {
             List<Float> range = new ArrayList<>();
             for ( double index = ((Float) _from); index <= ((Float)_to) && itemIndex < itemLimit; index += size ) {
