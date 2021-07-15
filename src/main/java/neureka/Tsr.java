@@ -886,7 +886,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                         }
                 ) && getData() == null
         ) {
-            setIsVirtual( true );//Todo: replace with _setIsVirtual(true)
+            _setIsVirtual( true );
+            _allocate( 1 ); // Only a single value representing the rest.
         }
         return this;
     }
