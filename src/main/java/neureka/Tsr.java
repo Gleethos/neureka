@@ -926,7 +926,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     @Override
     public Tsr<V> setIsVirtual( boolean isVirtual ) {
-        //assert getData() != null || this.isOutsourced();
+
+        assert getNDConf() != null;
+
         if ( isVirtual() != isVirtual ) {
             Device device = this.find( Device.class );
             try {
@@ -939,17 +941,21 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 throw exception;
             }
             if ( isVirtual ) {
-                if ( getData() == null ) _allocate( 1 );
-                else _virtualize();
+                if ( getData() != null ) _virtualize();
+            }
+            else _actualize();
+
+            createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, getData() == null );
+            if( isVirtual ) {
                 Relation<V> relation = find( Relation.class );
-                if ( relation!=null ) relation.foreachChild( c -> c._setData( getData()) );
+                if ( relation!=null ) relation.foreachChild( c -> {
+                    c._setData( getData());
+                    c.setIsVirtual( true );
+                });
             } else {
                 Tsr<?> parentTensor = ( this.isSlice() ) ? find(Relation.class).getParent() : null;
                 if ( parentTensor != null ) parentTensor.find( Relation.class ).remove( this );
-                _actualize();
             }
-            assert getNDConf() != null;
-            createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, getData() == null );
 
             try {
                 if ( device != null ) device.store( this );
