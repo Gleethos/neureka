@@ -211,25 +211,19 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
      *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!
      *  <br>
      */
-    protected void _virtualize()
-    {
-        _data = _dataType.virtualize(_data);
-    }
+    protected void _virtualize() { _data = _dataType.virtualize(_data); }
 
     /**
      *  An actual NDArray (tensor) is the opposite to a virtual one. <br>
      *  Virtual means that the size of the underlying data does not match the real size of the NDArray.
      *  This is the case when the NDArray is filled with one element homogeneously.
      *  An example would be an all zeros array. The reasoning behind this feature is memory efficiency.
-     *  It would be unreasonable to allocate an arrays filled entirely with one and the same value item!<br>
+     *  It would be unreasonable to allocate an array filled entirely with one and the same value item!<br>
      *  <br>
      *  This method turns the data of a virtual NDArray into a newly allocated data array matching the
      *  size of the nd-array type... <br>
      */
-    protected void _actualize()
-    {
-        _data = _dataType.actualize(_data, this.size() );
-    }
+    protected void _actualize() { _data = _dataType.actualize(_data, this.size() ); }
 
     protected Object _convertedDataOfType( Class<?> typeClass )
     {

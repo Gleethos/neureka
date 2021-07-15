@@ -527,7 +527,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     private void _construct( int[] shape, boolean allocate, boolean virtual )
     {
-        if ( allocate ) _allocate( virtual ? 1 : NDConfiguration.Utility.szeOfShp( shape ) );
         createConstructionAPI().configureFromNewShape( shape, virtual, true );
     }
 
@@ -887,7 +886,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                         }
                 ) && getData() == null
         ) {
-            setIsVirtual( true );
+            setIsVirtual( true );//Todo: replace with _setIsVirtual(true)
         }
         return this;
     }
@@ -926,6 +925,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     @Override
     public Tsr<V> setIsVirtual( boolean isVirtual ) {
+        //assert getData() != null || this.isOutsourced();
         if ( isVirtual() != isVirtual ) {
             Device device = this.find( Device.class );
             try {
@@ -947,8 +947,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 if ( parentTensor != null ) parentTensor.find( Relation.class ).remove( this );
                 _actualize();
             }
-            if ( getNDConf() != null ) createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, true );
-            else _setIsVirtual( isVirtual ); // Changing the flag now!
+            assert getNDConf() != null;
+            createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, getData() == null );
+
             try {
                 if ( device != null ) device.store( this );
             } catch ( Exception exception ) {
