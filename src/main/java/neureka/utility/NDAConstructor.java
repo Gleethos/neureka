@@ -48,7 +48,7 @@ public class NDAConstructor {
             _LOG.error( message );
             throw new IllegalArgumentException( message );
         }
-        if ( _API.getData() == null && autoAllocate ) _API.allocate( size );
+        if ( _API.getData() == null && autoAllocate ) _API.allocate( makeVirtual ? 1 : size );
         //int length = _dataLength();
         //if ( length >= 0 && size != length && ( !this.isVirtual() || !makeVirtual) ) {
         //    String message = "Size of shape does not match stored data array size!";
@@ -146,7 +146,6 @@ public class NDAConstructor {
     private void _constructAll( int[] shape, Class<?> typeClass ) {
         int size = NDConfiguration.Utility.szeOfShp( shape );
         _API.setType( DataType.of( typeClass ) );
-        _API.allocate( 1 );
         _API.setIsVirtual( size > 1 );
         configureFromNewShape( shape, size > 1, true );
     }

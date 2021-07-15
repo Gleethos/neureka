@@ -46,7 +46,7 @@ public class ConvUtil {
                             assert deriv != null;
                             assert invX != null;
                             return new DefaultADAgent( deriv )
-                                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
+                                    .setForward( (node, forwardDerivative ) -> mul.call( forwardDerivative, deriv ) )
                                     .setBackward( (t, error) -> invX.execute( error, deriv, Tsr.of(t.getPayload().shape(), 0) ) ); // WARNING! This produced nullpointer!
                         }
                 )

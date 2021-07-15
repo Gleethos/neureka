@@ -143,7 +143,7 @@ public final class DataType<Type>
     }
 
 
-    public <TA> TA virtualize( TA value )
+    public <T> T virtualize(T value )
     {
         Object newValue;
         if ( getTypeClass() == F64.class )
@@ -159,7 +159,7 @@ public final class DataType<Type>
         else
             newValue = ( ( (Object[]) value ).length <= 1 ) ? value : new Object[]{ ( (Object[]) value )[ 0 ] };
 
-        return (TA) newValue;
+        return (T) newValue;
     }
 
     public <TA> TA actualize( TA value, int size )
