@@ -185,6 +185,8 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
 
     public abstract boolean isVirtual();
 
+    protected abstract void _setIsVirtual(boolean isVirtual);
+
     protected NDAConstructor createConstructionAPI()
     {
         AbstractNDArray<InstanceType, ?> nda = this;
@@ -195,7 +197,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
                         @Override public void setData( Object o             ) { nda._setData(      o  ); }
                         @Override public void allocate( int size            ) { nda._allocate(   size ); }
                         @Override public Object getData()                     { return nda.getData();    }
-                        @Override public void setIsVirtual(  boolean isVirtual ) { nda.setIsVirtual( isVirtual ); }
+                        @Override public void setIsVirtual(  boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }
                     }
                 );
     }

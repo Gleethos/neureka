@@ -528,7 +528,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     private void _construct( int[] shape, boolean allocate, boolean virtual )
     {
         if ( allocate ) _allocate( virtual ? 1 : NDConfiguration.Utility.szeOfShp( shape ) );
-        if ( virtual ) setIsVirtual( true );
+        if ( virtual ) _setIsVirtual( true );
         createConstructionAPI().configureFromNewShape( shape, virtual, true );
     }
 
@@ -988,6 +988,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  <br>
      * @param isVirtual The truth value which ought to be applied.
      */
+    @Override
     protected void _setIsVirtual( boolean isVirtual ) {
         if ( isVirtual() != isVirtual ) {
             if ( isVirtual ) _flags += IS_VIRTUAL_MASK;
