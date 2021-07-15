@@ -41,6 +41,7 @@ public class NDAConstructor {
      */
     public void configureFromNewShape( int[] newShape, boolean makeVirtual, boolean autoAllocate )
     {
+        _API.setIsVirtual( makeVirtual );
         int size = NDConfiguration.Utility.szeOfShp( newShape );
         if ( size == 0 ) {
             String shape = Arrays.stream( newShape ).mapToObj( String::valueOf ).collect( Collectors.joining( "x" ) );
@@ -146,7 +147,6 @@ public class NDAConstructor {
     private void _constructAll( int[] shape, Class<?> typeClass ) {
         int size = NDConfiguration.Utility.szeOfShp( shape );
         _API.setType( DataType.of( typeClass ) );
-        _API.setIsVirtual( size > 1 );
         configureFromNewShape( shape, size > 1, true );
     }
 

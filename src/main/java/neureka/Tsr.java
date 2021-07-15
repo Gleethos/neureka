@@ -528,7 +528,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     private void _construct( int[] shape, boolean allocate, boolean virtual )
     {
         if ( allocate ) _allocate( virtual ? 1 : NDConfiguration.Utility.szeOfShp( shape ) );
-        if ( virtual ) _setIsVirtual( true );
         createConstructionAPI().configureFromNewShape( shape, virtual, true );
     }
 
@@ -948,8 +947,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 if ( parentTensor != null ) parentTensor.find( Relation.class ).remove( this );
                 _actualize();
             }
-            _setIsVirtual( isVirtual ); //> Changing the flag now!
             if ( getNDConf() != null ) createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, true );
+            else _setIsVirtual( isVirtual ); // Changing the flag now!
             try {
                 if ( device != null ) device.store( this );
             } catch ( Exception exception ) {
