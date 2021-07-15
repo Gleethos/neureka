@@ -944,7 +944,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 if ( getData() != null ) _virtualize();
             }
             else _actualize();
-
+            // Virtual and actual tensors require a different mapping from a given index to the underlying data..
+            // Therefore we need to re-initialize the NDConfiguration object:
             createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, getData() == null );
             if( isVirtual ) {
                 Relation<V> relation = find( Relation.class );
