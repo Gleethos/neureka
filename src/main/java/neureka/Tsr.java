@@ -745,18 +745,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     /**
-     *  see {@link #of(String, boolean, Tsr[])}
-     *
-     * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
-     * @param expression The expression describing operations applied to the provided tensors.
-     * @param doAD A flag which when set to true commands the creation of a computation graph during operation execution.
-     */
-    private Tsr( Tsr<V>[] tensors, String expression, boolean doAD )
-    {
-        _construct( tensors, expression, doAD );
-    }
-
-    /**
      *  In essence tensors are merely fancy wrappers for some form of array of any type...
      *  This wrapper usually stays the same for a given data array.
      *  However, sometimes a tensor changes its identity, or rather the underlying
