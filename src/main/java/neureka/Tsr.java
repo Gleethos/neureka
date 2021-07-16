@@ -2391,6 +2391,16 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             for ( int i = 0; i < value.length; i++ ) ( (double[]) getData())[ i ] = value[ i ];
     }
 
+    /**
+     *  This method will receive an object an try to interpret
+     *  it or its contents to be set as value for this tensor.
+     *  It will not necessarily replace the underlying data array object of this
+     *  tensor itself, but also try to convert and copy the provided value
+     *  into the data array of this tensor.
+     *
+     * @param value The value which may be a scalar or array and will be used to populate this tensor.
+     * @return This very tensor to enable method chaining.
+     */
     public Tsr<V> setValue( Object value )
     {
         if ( value instanceof float[] ) this._setValue32( (float[]) value );
@@ -2485,10 +2495,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public <T> Tsr<T> asType( Class<T> typeClass )
     {
         if ( typeClass == Tsr.class ) return (Tsr<T>) this.slice().get();
-        DataType newDT = DataType.of( typeClass );
+        DataType<?> newDT = DataType.of( typeClass );
         Object newData;
         if ( this.isOutsourced() ) {
-            Device device = find( Device.class );
+            Device<V> device = find( Device.class );
             device.restore( this );
             newData = _convertedDataOfType( typeClass );
             device.store( this );
@@ -2757,11 +2767,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     {
         public Create() { }
 
-        public  static Tsr<?> E(List<Integer> shape ) {
+        public  static Tsr<?> E( List<Integer> shape ) {
             return E( shape.stream().mapToInt( e -> e ).toArray() );
         }
 
-        public  static Tsr<Double> E(int... shape ) {
+        public  static Tsr<Double> E( int... shape ) {
             return new Tsr<>( shape, 2.7182818284590452353602874713527 );
         }
 
