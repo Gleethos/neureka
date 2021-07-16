@@ -295,7 +295,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 tensors[ ti ] = ( (Tsr<V>) o );
                 f.append( "I[" ).append( ti ).append( "]" );
                 ti++;
-            } else if ( o instanceof  String ) f.append( (String) o );
+            }
+            else if ( o instanceof  String ) f.append( (String) o );
             else if ( o instanceof  Boolean ) doAD = (Boolean) o;
         }
         _construct( tensors, f.toString(), doAD );
@@ -342,8 +343,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public static <V> Tsr<V> of( List<? extends Number> shape, List<V> range ) {
-        return
-                Tsr.of(
+        return Tsr.of(
                         DataType.of(Object.class),
                         shape.stream().mapToInt(Number::intValue).toArray(),
                         range
@@ -351,8 +351,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public static <V> Tsr<V> of( int[] shape, List<V> range ) {
-        return
-                Tsr.of(
+        return Tsr.of(
                         DataType.of(Object.class),
                         shape,
                         range
@@ -363,20 +362,18 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  This factory method will turn a list of either nested lists or values into a {@link Tsr}
      *  instance with the corresponding.
      *
-     *
      * @param conf A list of either values or nested lists which are themselves either or.
      * @return A new {@link Tsr} instance whose shape and data is based on the provided list structure.
      */
     public static Tsr<Object> of( List<Object> conf ) {
         boolean isMatrix = conf.stream()
-                .allMatch( e ->
-                        e instanceof List &&
-                                ((List<Object>) e).stream().noneMatch( v -> v instanceof List)
-                );
-        // TODO: ListReader
-        if ( isMatrix ) {
+                                .allMatch( e ->
+                                        e instanceof List &&
+                                                ((List<Object>) e).stream().noneMatch( v -> v instanceof List)
+                                );
+
+        if ( isMatrix )
             return new Tsr<>( conf );
-        }
 
         List<Integer> growingShape = new ArrayList<>();
         List<Object> growingData = new ArrayList<>();
@@ -386,23 +383,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                                     growingData,
                                     growingShape,
                                     o -> ( o instanceof Number ? ((Number)o).doubleValue() : o )
-                            );
+                                );
         return (Tsr<Object>) Tsr.of(
-                DataType.of(reader.getType()),
-                growingShape.stream().mapToInt(i -> i).toArray(),
-                growingData.toArray()
-        );
-        /*
-        double[] value = new double[ conf.size() ];
-        for ( int i = 0; i < value.length; i++ ) {
-            value[ i ] = ( conf.get( i ) instanceof BigDecimal )
-                    ? ( (BigDecimal) conf.get( i ) ).doubleValue() :
-                    ( conf.get( i ) instanceof Double )
-                            ? ( (Double) conf.get( i ) ).doubleValue()
-                            : ( (Integer) conf.get( i ) );
-        }
-        _constructForDoubles( new int[]{ conf.size() }, value );
-        */
+                                DataType.of(reader.getType()),
+                                growingShape.stream().mapToInt(i -> i).toArray(),
+                                growingData.toArray()
+                            );
     }
 
     public static Tsr<Number> ofShape( List<? extends Number> axesSizes ) {
@@ -489,10 +475,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public static <V> Tsr<V> of( Class<V> typeClass, List<Integer> shape, List<V> data ) {
         return Tsr.of(
-                DataType.of( typeClass ),
-                shape.stream().mapToInt( e -> e ).toArray(),
-                data
-        );
+                    DataType.of( typeClass ),
+                    shape.stream().mapToInt( e -> e ).toArray(),
+                    data
+                );
     }
 
     /**

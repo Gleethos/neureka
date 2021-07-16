@@ -1,11 +1,14 @@
 package neureka.utility.fluent.states;
 
 import neureka.Tsr;
+import neureka.ndim.AbstractNDArray;
 
 public interface IterByOrIterFromOrAll<V>
 {
 
     Tsr<V> andFill( V... values );
+
+    Tsr<V> andWhere( AbstractNDArray.Initializer<V> initializer );
 
     To<V> iterativelyFilledFrom( V index );
 

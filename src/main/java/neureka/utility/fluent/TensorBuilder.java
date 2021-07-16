@@ -2,6 +2,7 @@ package neureka.utility.fluent;
 
 import neureka.Tsr;
 import neureka.dtype.DataType;
+import neureka.ndim.AbstractNDArray;
 import neureka.utility.fluent.states.IterByOrIterFromOrAll;
 import neureka.utility.fluent.states.Step;
 import neureka.utility.fluent.states.To;
@@ -45,7 +46,13 @@ import java.util.stream.IntStream;
  *     Tsr.of(Byte.class).vector( 2, 5, 6, 7, 8 )
  *
  * }</pre>
+ * For more fine grained control over the initialization one can
+ * pass an initialization lambda to the API:
+ * <pre>{@code
  *
+ *     Tsr.of(Byte.class).withShape(2, 3).andWhere( (i, indices) -> i * 5 - 30 )
+ *
+ * }</pre>
  *
  * @param <V> The type of the values which ought to be represent by the {@link Tsr} built by this {@link TensorBuilder}.
  */
@@ -60,43 +67,28 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
 
     @SafeVarargs
     @Override
-    public final Tsr<V> andFill(V... values ) {
-        return Tsr.of( _dataType, _shape, values );
-    }
+    public final Tsr<V> andFill( V... values ) { return Tsr.of( _dataType, _shape, values ); }
 
     @Override
-    public To<V> iterativelyFilledFrom( V index ) {
-        _from = index;
-        return this;
-    }
+    public Tsr<V> andWhere( AbstractNDArray.Initializer<V> initializer) { return Tsr.of( _dataType, _shape, initializer ); }
 
     @Override
-    public Tsr<V> all( V value ) {
-        return Tsr.of( _dataType, _shape, value );
-    }
+    public To<V> iterativelyFilledFrom( V index ) { _from = index; return this; }
 
     @Override
-    public IterByOrIterFromOrAll<V> withShape( int... shape ) {
-        _shape = shape;
-        return this;
-    }
+    public Tsr<V> all( V value ) { return Tsr.of( _dataType, _shape, value ); }
 
     @Override
-    public Tsr<V> vector( Object[] values ) {
-        return Tsr.of( _dataType, new int[]{ values.length }, values );
-    }
+    public IterByOrIterFromOrAll<V> withShape( int... shape ) { _shape = shape; return this; }
 
     @Override
-    public Tsr<V> scalar( V value ) {
-        return Tsr.of( value.getClass(), new int[]{1}, value );
-    }
+    public Tsr<V> vector( Object[] values ) { return Tsr.of( _dataType, new int[]{ values.length }, values ); }
 
     @Override
-    public Step<V> to( V index ) {
-        _to = index;
-        return this;
-    }
+    public Tsr<V> scalar( V value ) { return Tsr.of( value.getClass(), new int[]{1}, value ); }
 
+    @Override
+    public Step<V> to( V index ) { _to = index; return this; }
 
     @Override
     public Tsr<V> step( double size ) {

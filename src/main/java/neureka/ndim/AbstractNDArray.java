@@ -164,6 +164,9 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
         else if ( data instanceof byte[] )
             for ( int i = 0; i < ( (byte[]) data ).length; i++ )
                 ( (byte[]) data )[ i ] = (byte) initializer.init( i, _NDConf.indicesOfIndex( i )  );
+        else if ( data instanceof long[] )
+            for ( int i = 0; i < ( (long[]) data ).length; i++ )
+                ( (long[]) data )[ i ] = (long) initializer.init( i, _NDConf.indicesOfIndex( i )  );
         else
             for ( int i = 0; i < ( (Object[]) data ).length; i++ )
                 ( (Object[]) data )[ i ] = initializer.init( i, _NDConf.indicesOfIndex( i )  );

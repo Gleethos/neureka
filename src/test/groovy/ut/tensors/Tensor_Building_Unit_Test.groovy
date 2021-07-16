@@ -2,6 +2,7 @@ package ut.tensors
 
 import neureka.Tsr
 import neureka.dtype.DataType
+import neureka.ndim.AbstractNDArray
 import spock.lang.Specification
 
 class Tensor_Building_Unit_Test extends Specification
@@ -128,9 +129,46 @@ class Tensor_Building_Unit_Test extends Specification
             Float.class   | [22.4, 26.4]    as Float[]   || [22.4, 26.4, 22.4, 26.4, 22.4, 26.4] as float[]
             Byte.class    | [-20, 3, 4, -3] as Byte[]    || [-20, 3, 4, -3, -20, 3]              as byte[]
             Long.class    | [23, 199]       as Long[]    || [23, 199, 23, 199, 23, 199]          as long[]
-
     }
 
+
+    def 'Initialization lambda based tensors can be created fluently.'(
+            Class<Object> type, AbstractNDArray.Initializer initializer, Object expected
+    ) {
+        given : 'We create a Tsr instance by passing an initialization lambda which ought to iteratively fill the instance.'
+            Tsr<?> t = Tsr.of( type )
+                            .withShape( 3, 2 )
+                            .andWhere( initializer )
+
+        expect : 'This new instance will have the expected data type...'
+            t.dataType == DataType.of(type)
+
+        and : '...also it will contain the expected data.'
+            t.data == expected
+
+        and : 'The tensor will have the shape we passed to the builder.'
+            t.shape() == [3, 2]
+
+        and : 'The size of the tensor will be the product of all shape entries!'
+            t.size() == 6
+
+        and : """
+                Based on the fact that the tensor is not homogeneously filled it will be an "actual tensor".
+                The opposite of that, a "virtual tensor", would mean that a tensor does not have allocated 
+                memory proportional to the size of the tensor! 
+                In this case however the tensor should be actual which means that it is not virtual.
+            """
+            !t.isVirtual()
+
+        where : 'The following data is being used to populate the builder API:'
+            type          | initializer                                    || expected
+            Integer.class | { i, indices ->          (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as int[]
+            Double.class  | { i, indices -> (double) (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as double[]
+            Short.class   | { i, indices -> (short)  (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as short[]
+            Float.class   | { i, indices -> (float)  (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as float[]
+            Byte.class    | { i, indices -> (byte)   (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as byte[]
+            Long.class    | { i, indices -> (long)   (i + indices.sum()) } || [0, 2, 3, 5, 6, 8] as long[]
+    }
 
 
     def 'Vectors can be created fluently.'(
