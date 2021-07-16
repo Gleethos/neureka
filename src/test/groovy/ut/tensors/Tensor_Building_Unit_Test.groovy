@@ -40,6 +40,7 @@ class Tensor_Building_Unit_Test extends Specification
             Integer.class |  4   as int    || new int[]   { 4   }
             Double.class  |  4.0 as double || new double[]{ 4.0 }
             Float.class   |  4f  as float  || new float[] { 4f  }
+            Long.class    |  42L as Long   || new long[]  { 42L }
 
     }
 
@@ -164,6 +165,7 @@ class Tensor_Building_Unit_Test extends Specification
             Integer.class | [4, 5, -2]   as Integer[] || new int[]   { 4, 5, -2   }
             Double.class  | [-1, 7.5]    as Double[]  || new double[]{ -1, 7.5    }
             Float.class   | [0.6, -32.7] as Float[]   || new float[] { 0.6, -32.7 }
+            Long.class    | [1, 3, 2, 4] as Long[]    || new long[]  { 1, 3, 2, 4 }
     }
 
 
@@ -197,6 +199,7 @@ class Tensor_Building_Unit_Test extends Specification
             Integer.class | 3    as Integer || new int[]   { 3    }
             Double.class  | 5.7  as Double  || new double[]{ 5.7  }
             Float.class   | 9.4f as Float   || new float[] { 9.4f }
+            Long.class    | 42L  as Long    || new long[]  { 42L  }
     }
 
 

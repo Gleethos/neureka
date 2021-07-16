@@ -93,10 +93,7 @@ import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
-import neureka.dtype.custom.F32;
-import neureka.dtype.custom.F64;
-import neureka.dtype.custom.I16;
-import neureka.dtype.custom.I32;
+import neureka.dtype.custom.*;
 import neureka.framing.NDFrame;
 import neureka.framing.Relation;
 import neureka.framing.states.AxisFrame;
@@ -2409,12 +2406,19 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         } else if ( value instanceof Integer ) {
             this.setIsVirtual( true );
             ( (int[]) getData())[ 0 ] = (Integer) value;
+        } else if ( value instanceof Long ) {
+            this.setIsVirtual( true );
+            ( (long[]) getData())[ 0 ] = (Long) value;
         } else if ( value instanceof int[] ) {
             setDataType( DataType.of(I32.class) );
             _setData( value );
             setIsVirtual( false );
         } else if ( value instanceof short[] ) {
             setDataType( DataType.of(I16.class) );
+            _setData( value );
+            setIsVirtual( false );
+        } else if ( value instanceof long[] ) {
+            setDataType( DataType.of(I64.class) );
             _setData( value );
             setIsVirtual( false );
         }
