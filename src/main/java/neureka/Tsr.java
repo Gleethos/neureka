@@ -928,7 +928,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
         if ( isVirtual() != isVirtual ) {
             // Currently we avoid offloading the virtualization by restoring outsourced tensors into RAM...
-            Device device = this.find( Device.class );
+            Device<V> device = this.find( Device.class );
             try {
                 if ( device != null ) device.restore( this );
             } catch ( Exception exception ) {
@@ -947,10 +947,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, getData() == null );
             if( isVirtual ) {
                 Relation<V> relation = find( Relation.class );
-                if ( relation!=null ) relation.foreachChild( c -> {
-                    c._setData( getData());
-                    c.setIsVirtual( true );
-                });
+                if ( relation!=null )
+                    relation.foreachChild( c -> {
+                                c._setData( getData());
+                                c.setIsVirtual( true );
+                            });
             } else {
                 Tsr<?> parentTensor = ( this.isSlice() ) ? find(Relation.class).getParent() : null;
                 if ( parentTensor != null ) parentTensor.find( Relation.class ).remove( this );
@@ -1704,7 +1705,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param labels A nested String list containing labels for indexes of the tensor dimensions.
      * @return This tensor (method chaining).
      */
-    public Tsr<V> label(List<List<Object>> labels )
+    public Tsr<V> label( List<List<Object>> labels )
     {
         NDFrame<V> frame = find( NDFrame.class );
         if ( frame == null ) set( new NDFrame( labels, null ) );
@@ -1959,27 +1960,15 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
 
     /**
-     *  The following method enables access to specific elements within the tensor.
+     *  The following method enables access to specific scalar elements within the tensor.
      *  The method name also translates to the subscript operator in Groovy.
      *
      * @param indices The index array of the element which should be returned.
      * @return An element located at the provided index.
      */
-    public Object getAt( int[] indices ) {
+    public V getAt( int... indices ) {
         return getDataAt( getNDConf().indexOfIndices( indices ) );
     }
-
-    /**
-     *  The following method enables access to scalar values.
-     *  The method name also translates to the subscript operator in Groovy.
-     *
-     * @param idx The index of the element which should be returned.
-     * @return A scalar value located at the provided index.
-     */
-    public double getF64( int[] idx ) {
-        return value64( indexOfIndices( idx ) );
-    }
-
 
     /**
      *  The following method enables the creation of tensor slices which access
@@ -2304,9 +2293,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             valueIsDeviceVisitor = true;
         }
         if ( this.isEmpty() && slice.isEmpty() || slice.size() != value.size() ) _become( value ); // TODO: Rethink this a little
-        else return
-                        new Tsr<>( new Tsr[]{ slice, value }, "I[ 0 ] <- I[ 1 ]", false );
-                //_constructFunctional( newInstance(), new Tsr[]{ slice, value }, "I[ 0 ] <- I[ 1 ]", false );
+        else return _constructFunctional( newInstance(), new Tsr[]{ slice, value }, "I[ 0 ] <- I[ 1 ]", false );
         try {
             if ( valueIsDeviceVisitor ) value.find( Device.class ).restore( value );
         } catch ( Exception exception ) {
