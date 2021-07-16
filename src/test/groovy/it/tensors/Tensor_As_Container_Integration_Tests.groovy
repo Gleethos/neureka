@@ -65,15 +65,15 @@ class Tensor_As_Container_Integration_Tests extends Specification
     {
         given : ''
             Tsr a = Tsr.of(
-                    [3, 2],
-                    DataType.of(ComplexNumber.class),
-                    ( int i, int[] indices ) -> new ComplexNumber(indices[0], indices[1])
-            )
+                        DataType.of(ComplexNumber.class),
+                        [3, 2],
+                        ( int i, int[] indices ) -> new ComplexNumber(indices[0], indices[1])
+                    )
             Tsr b = Tsr.of(
-                    [3, 2],
-                    DataType.of(ComplexNumber.class),
-                    ( int i, int[] indices ) -> new ComplexNumber(indices[1], indices[0])
-            )
+                        DataType.of(ComplexNumber.class),
+                        [3, 2],
+                        ( int i, int[] indices ) -> new ComplexNumber(indices[1], indices[0])
+                    )
 
         expect:
             a.toString() == "(3x2):[0.0+0.0i, 0.0+1.0i, 1.0+0.0i, 1.0+1.0i, 2.0+0.0i, 2.0+1.0i]"

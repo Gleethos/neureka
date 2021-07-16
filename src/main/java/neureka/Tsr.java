@@ -565,26 +565,17 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  the data type which ought to be allocated as well as the initialization
      *  lambda which will be called iteratively.
      *
-     * @param shape The shape of this new tensor ought to have.
      * @param type The data type this tensor ought to have.
+     * @param shape The shape of this new tensor ought to have.
      * @param initializer The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    public static <T> Tsr<T> of( List<Integer> shape, DataType<T> type, Initializer<T> initializer ) {
-        return new Tsr<>( shape, type, initializer );
-    }
-
-    /**
-     *  see {@link #of(List, DataType, Initializer)}
-     *
-     * @param shape The shape of this new tensor ought to have.
-     * @param type The data type this tensor ought to have.
-     * @param initializer The lambda Object which ought to fill this tensor with the appropriate data.
-     * @param <T> The type parameter for the actual data array items.
-     */
-    private <T> Tsr( List<Integer> shape, DataType<T> type, Initializer<T> initializer )
-    {
-        _constructFromInitializer( shape.stream().mapToInt(e -> e ).toArray(), type, initializer );
+    public static <T> Tsr<T> of( DataType<T> type, List<Integer> shape, Initializer<T> initializer ) {
+        return Tsr.of(
+                    type,
+                    shape.stream().mapToInt( e -> e ).toArray(),
+                    initializer
+                );
     }
 
     /**
@@ -597,17 +588,17 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  the data type which ought to be allocated as well as the initialization
      *  lambda which will be called iteratively.
      *
-     * @param shape The shape of this new tensor ought to have.
      * @param type The data type this tensor ought to have.
+     * @param shape The shape of this new tensor ought to have.
      * @param initializer The lambda Object which ought to fill this tensor with the appropriate data.
      * @param <T> The type parameter for the actual data array items.
      */
-    public static <T> Tsr<T> of( int[] shape, DataType<T> type, Initializer<T> initializer ) {
+    public static <T> Tsr<T> of( DataType<T> type, int[] shape, Initializer<T> initializer ) {
         return new Tsr<>( shape, type, initializer );
     }
 
     /**
-     *  see {@link #of(int[], DataType, Initializer)}
+     *  see {@link #of(DataType, int[], Initializer)}
      *
      * @param shape The shape of this new tensor ought to have.
      * @param type The data type this tensor ought to have.

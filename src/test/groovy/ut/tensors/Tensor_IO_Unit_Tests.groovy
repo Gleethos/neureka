@@ -46,8 +46,8 @@ class Tensor_IO_Unit_Tests extends Specification
     {
         when : 'Instantiating a tensor using an initializer lambda...'
             Tsr t = Tsr.of(
-                    [ 2, 3 ],
                     DataType.of( Integer.class ),
+                    [ 2, 3 ],
                     ( int i, int[] indices ) -> { i - 2 }
             )
 
@@ -56,8 +56,8 @@ class Tensor_IO_Unit_Tests extends Specification
 
         when :
             t = Tsr.of(
-                    [ 2, 3 ],
                     DataType.of( String.class ),
+                    [ 2, 3 ],
                     ( int i, int[] indices ) -> { i + ':' + indices.toString() }
             )
 
