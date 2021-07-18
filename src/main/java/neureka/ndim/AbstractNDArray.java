@@ -54,17 +54,15 @@ import java.util.function.Consumer;
 
 
 /**
- *  This is the precursor class to the final Tsr class from which
+ *  This is the precursor class to the final {@link Tsr} class from which
  *  tensor instances can be created. <br>
  *  The inheritance model of a tensor is structured as follows: <br>
- *  Tsr inherits from AbstractNDArray which inherits from AbstractComponentOwner
+ *  {@link Tsr} inherits from {@link AbstractNDArray} which inherits from {@link AbstractComponentOwner}
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
  */
 public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractComponentOwner<InstanceType> implements Iterable<ValType>
 {
-    public interface Initializer<T> { T init(int i, int[] index );  }
-
     /**
      *  An interface provided by sl4j which enables a modular logging backend!
      */
@@ -76,21 +74,41 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
 
     private Object _data;
 
+    /**
+     * @return The truth value determining if the {@link Tsr#delete()} method has been called oin this instance.
+     */
     public abstract boolean isDeleted();
 
     protected void _guardGet(String varName ) { _guard("Trying to access the "+varName+" of an already deleted tensor." ); }
     protected void _guardSet(String varName ) { _guard("Trying to set the "+varName+" of an already deleted tensor." ); }
     protected void _guardMod(String varName ) { _guard("Trying to modify the "+varName+" of an already deleted tensor." ); }
 
-    private void _guard(String message ) {
+    /**
+     *  This method will guard the state of deleted tensors by throwing an {@link IllegalAccessError}
+     *  if this {@link Tsr} has already been deleted and whose state should no longer be exposed to
+     *  anything but the garbage collector...
+     *
+     * @param message The message explaining to the outside which kind of access violation just occurred.
+     */
+    private void _guard( String message ) {
         if ( this.isDeleted() ) {
             _LOG.error( message );
             throw new IllegalAccessError( message );
         }
     }
 
+    /**
+     * @return The {@link NDConfiguration} implementation instance of this {@link Tsr} storing dimensionality information.
+     */
     public NDConfiguration getNDConf() { _guardGet("ND-Configuration"); return this._NDConf; }
 
+    /**
+     *  This method returns the {@link DataType} instance of this {@link Tsr}, which is
+     *  a wrapper object for the actual type class representing the value items stored inside
+     *  the underlying data array of this tensor.
+     *
+     * @return The {@link DataType} instance of this {@link Tsr} storing important type information.
+     */
     public DataType<?> getDataType() { _guardGet("data type"); return this._dataType; }
 
     /**
@@ -102,7 +120,13 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
      */
     public Object getData() { _guardGet("data object"); return this._data; }
 
-    public Class<?> getValueClass() { return ( _dataType != null ? _dataType.getTypeClass() : null ); }
+    /**
+     *
+     * @return The type class of individual value items within this {@link Tsr} instance.
+     */
+    public Class<?> getValueClass() {
+        _guardGet("data type class"); return ( _dataType != null ? _dataType.getTypeClass() : null );
+    }
 
     /**
      *  This method enables modifying the data-type configuration of this NDArray.
@@ -146,7 +170,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
         _data = data;
     }
 
-    protected <T> void _initData( Tsr.Initializer<T> initializer )
+    protected <T> void _initData( Initializer<T> initializer )
     {
         Object data = getData();
         if ( data instanceof double[] )

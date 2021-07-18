@@ -2,7 +2,7 @@ package neureka.utility.fluent;
 
 import neureka.Tsr;
 import neureka.dtype.DataType;
-import neureka.ndim.AbstractNDArray;
+import neureka.ndim.Initializer;
 import neureka.utility.fluent.states.IterByOrIterFromOrAll;
 import neureka.utility.fluent.states.Step;
 import neureka.utility.fluent.states.To;
@@ -65,12 +65,23 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
 
     public TensorBuilder( Class<V> typeClass ) { _dataType = DataType.of( typeClass ); }
 
+    /**
+     * @param values The values which will recurrently populate the returned {@link Tsr} with values until it is filled.
+     * @return A new {@link Tsr} instance populated by the array of values supplied to this method.
+     */
     @SafeVarargs
     @Override
     public final Tsr<V> andFill( V... values ) { return Tsr.of( _dataType, _shape, values ); }
 
+    /**
+     *  This method receives an {@link neureka.ndim.Initializer} lambda which will be
+     *  used to populate the {@link Tsr} instance produced by this API with values.
+     *
+     * @param initializer The {@link neureka.ndim.Initializer} which ought to populate the returned {@link Tsr}.
+     * @return A new {@link Tsr} instance populated by the lambda supplied to this method.
+     */
     @Override
-    public Tsr<V> andWhere( AbstractNDArray.Initializer<V> initializer) { return Tsr.of( _dataType, _shape, initializer ); }
+    public Tsr<V> andWhere( Initializer<V> initializer) { return Tsr.of( _dataType, _shape, initializer ); }
 
     @Override
     public To<V> iterativelyFilledFrom( V index ) { _from = index; return this; }
@@ -155,7 +166,7 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
         }
         else if ( _from instanceof Comparable && _to instanceof Comparable ) {
             //data = new ObjectRange( (Comparable<V>) _from, (Comparable<V>) _to ).step( (int) size );
-            throw new NotImplementedException();
+            throw new NotImplementedException(); // TODO: make it possible to have ranges like 'a' to 'z'...
         }
         return Tsr.of( _dataType, _shape, data );
     }

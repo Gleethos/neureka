@@ -2,7 +2,7 @@ package ut.tensors
 
 import neureka.Tsr
 import neureka.dtype.DataType
-import neureka.ndim.AbstractNDArray
+import neureka.ndim.Initializer
 import spock.lang.Specification
 
 class Tensor_Building_Unit_Test extends Specification
@@ -133,7 +133,7 @@ class Tensor_Building_Unit_Test extends Specification
 
 
     def 'Initialization lambda based tensors can be created fluently.'(
-            Class<Object> type, AbstractNDArray.Initializer initializer, Object expected
+            Class<Object> type, Initializer initializer, Object expected
     ) {
         given : 'We create a Tsr instance by passing an initialization lambda which ought to iteratively fill the instance.'
             Tsr<?> t = Tsr.of( type )
