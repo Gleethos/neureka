@@ -35,14 +35,14 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    def device = FileDevice.instance('my/relative/path/to/a/directory');
+    def device = FileDevice.at('my/relative/path/to/a/directory');
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    Device device = FileDevice.instance("my/relative/path/to/a/directory");
+    Device device = FileDevice.at("my/relative/path/to/a/directory");
 
                 </code></pre>
             </div>
@@ -70,7 +70,7 @@
                 <pre><code class="hljs java">
 
     // Creating a device which manages the directory targeted by a given path :
-    def device = FileDevice.instance( 'my/relative/path/to/directory' )
+    def device = FileDevice.at( 'my/relative/path/to/directory' )
 
     // ... and a tensor which we want to persist :
     Tsr a = Tsr.of([2, 4, 3], 4)
@@ -99,10 +99,10 @@
                 <pre><code class="hljs java">
 
     // Creating a device which manages the directory targeted by a given path :
-    Device device = FileDevice.instance( "my/relative/path/to/directory" );
+    Device<?> device = FileDevice.at( "my/relative/path/to/directory" );
 
     // ... and a tensor which we want to persist :
-    Tsr a = Tsr.of([2, 4, 3], 4);
+    Tsr<Double> a = Tsr.of([2, 4, 3], 4);
 
     // Initially the device does not know about the tensor "a" :
     assert !device.contains(a);
@@ -114,7 +114,7 @@
     assert new File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists();
 
     // ... and the RAM will be freed ...
-    assert a.data == null;
+    assert a.getData() == null;
 
     // If we want to delete the tensor from the device then we call the following :
     device.free( a );

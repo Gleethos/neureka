@@ -92,11 +92,9 @@ public class FileDevice extends AbstractBaseDevice<Object>
         });
     }
 
-    public Tsr<?> load( String filename ) throws IOException {
-        return load( filename, null );
-    }
+    public <V> Tsr<V> load( String filename ) throws IOException { return load( filename, null ); }
 
-    public Tsr<?> load( String filename, Map<String, Object> conf ) throws IOException {
+    public <V> Tsr<V> load( String filename, Map<String, Object> conf ) throws IOException {
         _updateFolderView();
         if ( _loadable.contains( filename ) ) {
             String extension = filename.substring( filename.lastIndexOf( '.' ) + 1 );
@@ -106,7 +104,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
             _stored.put( tensor, head );
             _loadable.remove( filename );
             _loaded.add( filename );
-            return tensor;
+            return (Tsr<V>) tensor;
         }
         return null;
     }
