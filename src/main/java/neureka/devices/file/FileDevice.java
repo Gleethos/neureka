@@ -5,6 +5,8 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,17 +32,23 @@ import java.util.stream.Collectors;
  *  Therefore, an implementation might also represent a simple
  *  storage device like your local SSD ord HDD...
 */
-public class FileDevice extends AbstractBaseDevice<Number>
+public class FileDevice extends AbstractBaseDevice<Object>
 {
+    private static final Logger _LOG = LoggerFactory.getLogger(FileDevice.class);
+
     private static final Map<String, FileDevice> _DEVICES = new WeakHashMap<>();
 
-    private Map<Tsr<Number>, FileHead> _stored = new HashMap<>();
+    private Map<Tsr<Object>, FileHead<?, Object>> _stored = new HashMap<>();
 
     private String _directory;
     private final List<String> _loadable = new ArrayList<>();
     private final List<String> _loaded = new ArrayList<>();
 
-    public static FileDevice instance( String path ) {
+    /**
+     * @param path The directory path for which the responsible {@link FileDevice} instance ought to be returned.
+     * @return A {@link FileDevice} instance representing the provided directory path and all compatible files within it.
+     */
+    public static FileDevice at( String path ) {
         FileDevice device = _DEVICES.get( path );
         if ( device != null ) return device;
         device = new FileDevice( path );
@@ -58,6 +66,7 @@ public class FileDevice extends AbstractBaseDevice<Number>
      *  In order to have an up-to-date view of the folder this method updates the current view state.
      */
     private void _updateFolderView() {
+        _loadable.clear();
         File dir = new File( _directory );
         if ( ! dir.exists() ) dir.mkdirs();
         else {
@@ -74,6 +83,13 @@ public class FileDevice extends AbstractBaseDevice<Number>
                 _loadable.addAll( found ); // TODO! -> Update so that new files will be detected...
             }
         }
+        _loadable.removeAll(_loaded);
+        _loaded.forEach( fileName -> {
+              if ( !_loadable.contains(fileName) ) {
+                  String message = "Missing file detected! File with name '"+fileName+"' no longer present in directory '"+_directory+"'.";
+                  _LOG.warn(message);
+              }
+        });
     }
 
     public Tsr<?> load( String filename ) throws IOException {
@@ -81,11 +97,12 @@ public class FileDevice extends AbstractBaseDevice<Number>
     }
 
     public Tsr<?> load( String filename, Map<String, Object> conf ) throws IOException {
+        _updateFolderView();
         if ( _loadable.contains( filename ) ) {
             String extension = filename.substring( filename.lastIndexOf( '.' ) + 1 );
-            FileHead<?,?> head = FileHead.FACTORY.getLoader( extension ).load( _directory + "/" + filename, conf );
+            FileHead<?,Object> head = FileHead.FACTORY.getLoader( extension ).load( _directory + "/" + filename, conf );
             assert head != null;
-            Tsr tensor = head.load();
+            Tsr<Object> tensor = head.load();
             _stored.put( tensor, head );
             _loadable.remove( filename );
             _loaded.add( filename );
@@ -105,10 +122,10 @@ public class FileDevice extends AbstractBaseDevice<Number>
     }
 
     @Override
-    public Device restore( Tsr<Number> tensor ) {
+    public Device<Object> restore( Tsr<Object> tensor ) {
         if ( !this.has( tensor ) )
             throw new IllegalStateException( "The given tensor is not stored on this file device." );
-        FileHead head = _stored.get( tensor );
+        FileHead<?, Object> head = _stored.get( tensor );
         try {
             head.restore( tensor );
         } catch ( Exception e ) {
@@ -118,10 +135,10 @@ public class FileDevice extends AbstractBaseDevice<Number>
     }
 
     @Override
-    public Device store( Tsr<Number> tensor )
+    public Device<Object> store( Tsr<Object> tensor )
     {
         if ( this.has( tensor ) ) {
-            FileHead head = _stored.get( tensor );
+            FileHead<?, Object> head = _stored.get( tensor );
             try {
                 head.store( tensor );
             } catch ( Exception e ) {
@@ -138,12 +155,12 @@ public class FileDevice extends AbstractBaseDevice<Number>
         return this;
     }
 
-    public FileDevice store( Tsr<Number> tensor, String filename )
+    public FileDevice store( Tsr<Object> tensor, String filename )
     {
         return store( tensor, filename, null );
     }
 
-    public FileDevice store( Tsr<Number> tensor, String filename, Map<String, Object> configurations )
+    public FileDevice store( Tsr<Object> tensor, String filename, Map<String, Object> configurations )
     {
         int i = filename.lastIndexOf( '.' );
         if ( i < 1 ) {
@@ -162,21 +179,21 @@ public class FileDevice extends AbstractBaseDevice<Number>
     }
 
     @Override
-    public Device store( Tsr<Number> tensor, Tsr<Number> parent ) {
+    public Device<Object> store( Tsr<Object> tensor, Tsr<Object> parent ) {
         return null;
     }
 
     @Override
-    public boolean has( Tsr<Number> tensor ) {
+    public boolean has( Tsr<Object> tensor ) {
         return _stored.containsKey( tensor );
     }
 
     @Override
-    public Device free( Tsr<Number> tensor )
+    public Device<Object> free( Tsr<Object> tensor )
     {
         if ( !this.has( tensor ) )
             throw new IllegalStateException( "The given tensor is not stored on this file device." );
-        FileHead head = _stored.get( tensor );
+        FileHead<?,Object> head = _stored.get( tensor );
         try {
             head.free();
         } catch ( Exception e ) {
@@ -187,49 +204,49 @@ public class FileDevice extends AbstractBaseDevice<Number>
     }
 
     @Override
-    public Device cleaning( Tsr<Number> tensor, Runnable action ) {
+    public Device<Object> cleaning( Tsr<Object> tensor, Runnable action ) {
         return this;
     }
 
     @Override
-    public Device overwrite64( Tsr<Number> tensor, double[] value ) {
+    public Device<Object> overwrite64( Tsr<Object> tensor, double[] value ) {
         return null;
     }
 
     @Override
-    public Device overwrite32( Tsr<Number> tensor, float[] value ) {
+    public Device<Object> overwrite32( Tsr<Object> tensor, float[] value ) {
         return null;
     }
 
     @Override
-    public Device swap( Tsr<Number> former, Tsr<Number> replacement ) {
+    public Device<Object> swap( Tsr<Object> former, Tsr<Object> replacement ) {
         return null;
     }
 
     @Override
-    public Device execute( ExecutionCall call ) {
+    public Device<Object> execute( ExecutionCall<Device<?>> call ) {
         throw new IllegalAccessError("FileDevice instances do not support executions.");
     }
 
     @Override
-    public Object valueFor( Tsr<Number> tensor ) {
+    public Object valueFor( Tsr<Object> tensor ) {
         return tensor.getValue();
     }
 
     @Override
-    public Number valueFor( Tsr<Number> tensor, int index ) {
+    public Object valueFor( Tsr<Object> tensor, int index ) {
         return tensor.getValueAt( index );
     }
 
     @Override
-    public Collection<Tsr<Number>> getTensors() {
+    public Collection<Tsr<Object>> getTensors() {
         return _stored.keySet();
     }
 
     @Override
-    public void update( Tsr<Number> oldOwner, Tsr<Number> newOwner ) {
+    public void update( Tsr<Object> oldOwner, Tsr<Object> newOwner ) {
         if ( _stored.containsKey( oldOwner ) ) {
-            FileHead head = _stored.get( oldOwner );
+            FileHead<?, Object> head = _stored.get( oldOwner );
             _stored.remove( oldOwner );
             _stored.put( newOwner, head );
         }
@@ -237,7 +254,7 @@ public class FileDevice extends AbstractBaseDevice<Number>
 
 
     public String toString() {
-        return "FileDevice(_stored=" + this._stored + ", _directory=" + this._directory + ", _loadable=" + this._loadable + ", _loaded=" + this._loaded + ")";
+        return "FileDevice(directory=" + this._directory + ", stored=" + this._stored + ", loadable=" + this._loadable + ", loaded=" + this._loaded + ")";
     }
 
     public String getDirectory() {

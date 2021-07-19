@@ -200,7 +200,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             device << [
                     HostCPU.instance(),
                     Device.find( "openCL" ),
-                    FileDevice.instance( "build/test-can" )
+                    FileDevice.at( "build/test-can" )
             ]
 
     }

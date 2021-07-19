@@ -37,7 +37,7 @@ class FileDevice_Unit_Tests extends Specification
         given : 'A new tensor is being created for testing.'
             Tsr a = Tsr.of([2, 4], [ 5, 4, -7, 3, -2, 6, -4, 3 ])
         and : 'A file device instance is being accessed for a given path.'
-            def device = FileDevice.instance( path )
+            def device = FileDevice.at( path )
 
         expect : 'Initially the device does not store our newly created tensor.'
             !device.contains(a)
@@ -71,7 +71,7 @@ class FileDevice_Unit_Tests extends Specification
         and : 'A String representation of the shape.'
             def shapeStr = String.join('x',(shape as List<Integer>).collect {String.valueOf(it)})
         and : 'A file device instance is being accessed for a given path.'
-            def device = FileDevice.instance( path )
+            def device = FileDevice.at( path )
 
         expect : 'Initially the device does not store our newly created tensor.'
             !device.contains(a)
@@ -114,7 +114,7 @@ class FileDevice_Unit_Tests extends Specification
     def 'The file device can load known files in a directory.'()
     {
         given :
-            def device = FileDevice.instance( 'build/resources/test/csv' )
+            def device = FileDevice.at( 'build/resources/test/csv' )
         expect :
             device.loadable == ['biostats-without-head.csv', 'biostats.csv']
             device.loaded == []
