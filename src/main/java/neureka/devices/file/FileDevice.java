@@ -133,7 +133,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public Device<Object> store( Tsr<Object> tensor )
+    public <T extends Object> Device<Object> store( Tsr<T> tensor )
     {
         if ( this.has( tensor ) ) {
             FileHead<?, Object> head = _stored.get( tensor );
@@ -153,12 +153,12 @@ public class FileDevice extends AbstractBaseDevice<Object>
         return this;
     }
 
-    public FileDevice store( Tsr<Object> tensor, String filename )
+    public <T extends Object> FileDevice store( Tsr<T> tensor, String filename )
     {
         return store( tensor, filename, null );
     }
 
-    public FileDevice store( Tsr<Object> tensor, String filename, Map<String, Object> configurations )
+    public <T extends Object> FileDevice store( Tsr<T> tensor, String filename, Map<String, Object> configurations )
     {
         int i = filename.lastIndexOf( '.' );
         if ( i < 1 ) {
@@ -168,7 +168,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
         String extension = filename.substring( i + 1 );
         if ( FileHead.FACTORY.hasSaver( extension ) ) {
             _stored.put(
-                    tensor,
+                    (Tsr<Object>) tensor,
                     FileHead.FACTORY.getSaver(extension).save( _directory + "/" + filename, tensor, configurations )
             );
             tensor.setIsOutsourced(true);
@@ -177,17 +177,17 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public Device<Object> store( Tsr<Object> tensor, Tsr<Object> parent ) {
+    public <T extends Object> Device<Object> store( Tsr<T> tensor, Tsr<T> parent ) {
         return null;
     }
 
     @Override
-    public boolean has( Tsr<Object> tensor ) {
+    public <T extends Object> boolean has( Tsr<T> tensor ) {
         return _stored.containsKey( tensor );
     }
 
     @Override
-    public Device<Object> free( Tsr<Object> tensor )
+    public <T extends Object> Device<Object> free( Tsr<T> tensor )
     {
         if ( !this.has( tensor ) )
             throw new IllegalStateException( "The given tensor is not stored on this file device." );

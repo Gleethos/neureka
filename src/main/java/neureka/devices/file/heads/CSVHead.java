@@ -183,7 +183,7 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
     }
 
     @Override
-    public Storage<String> store( Tsr<String> tensor ) {
+    public <T extends String> Storage<String> store( Tsr<T> tensor ) {
         return null;
     }
 

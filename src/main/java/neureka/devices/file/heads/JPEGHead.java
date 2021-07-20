@@ -153,7 +153,7 @@ public class JPEGHead extends AbstractFileHead<JPEGHead, Number>
     }
 
     @Override
-    public Storage<Number> store( Tsr<Number> tensor )
+    public <T extends Number> Storage<Number> store( Tsr<T> tensor )
     {
         byte[] data = DataConverter.instance().convert( tensor.getData(), byte[].class );
 

@@ -28,16 +28,22 @@ class HostCPU_Unit_Tests extends Specification
     }
 
 
-    def "thread pool executes given workload in parallel"()
+    def 'thread pool executes given workload in parallel'()
     {
-        given :
+        given : 'Two 4 dimensional tensor instances.'
             Tsr a = Tsr.of(new int[]{100, 60, 1, 2}, 4)
             Tsr b = Tsr.of(new int[]{100, 1, 60, 2}, -2)
+
+        and : 'The default device returned by the first tensor:'
             Device cpu = a.getDevice()
-            assert cpu!=null
+        expect : 'This device should not be null but be an instance of the CPU representative device type.'
+            cpu!=null
+            cpu instanceof HostCPU
+        when : 'Accessing the executor of the cpu device...'
             HostCPU.NativeExecutor exec = ((HostCPU)cpu).getExecutor()
-            assert exec!=null
-            assert exec.getPool() != null
+        then : 'The executor is not null as well as its internal thread pool!'
+            exec!=null
+            exec.getPool() != null
 
         expect :
             if(exec.getPool().getCorePoolSize()<=2) true

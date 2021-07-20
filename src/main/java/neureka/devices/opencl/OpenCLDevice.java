@@ -361,20 +361,20 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public Device<Number> store( Tsr<Number> tensor ) {
+    public <T extends Number> Device<Number> store( Tsr<T> tensor ) {
         Tsr<Number> root = null;
         if ( tensor.has( Relation.class ) ) root = tensor.find( Relation.class ).findRootTensor();
-        if ( root != null ) store( tensor, root );
-        else _add( tensor, null );
+        if ( root != null ) store( tensor, (Tsr<T>) root );
+        else _add( (Tsr<Number>) tensor, null );
         return this;
     }
 
     @Override
-    public Device<Number> store( Tsr<Number> tensor, Tsr<Number> parent ) {
+    public <T extends Number> Device<Number> store( Tsr<T> tensor, Tsr<T> parent ) {
         if ( !parent.isOutsourced() ) throw new IllegalStateException( "Data parent is not outsourced!" );
-        _add( tensor, parent.find( cl_tsr.class ) );
-        _tensors.add( tensor );
-        tensor.set( this );
+        _add((Tsr<Number>) tensor, parent.find( cl_tsr.class ) );
+        _tensors.add((Tsr<Number>) tensor);
+        ( (Tsr<Number>) tensor ).set( this );
         return this;
     }
 
@@ -469,7 +469,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * @return The truth value of the fact that the provided tensor is on this device.
      */
     @Override
-    public boolean has( Tsr<Number> tensor ) { return _tensors.contains( tensor ); }
+    public <T extends Number> boolean has( Tsr<T> tensor ) { return _tensors.contains( tensor ); }
 
 
     private void _store( Tsr<Number> tensor, cl_tsr newClTsr, int fp ) {
@@ -515,12 +515,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
 
     @Override
-    public Device<Number> free( Tsr<Number> tensor ) {
+    public <T extends Number> Device<Number> free( Tsr<T> tensor ) {
         cl_tsr clt = tensor.find( cl_tsr.class );
         if ( clt == null ) return this;
         _tensors.remove( tensor );
         tensor.setIsOutsourced( false );
-        tensor.remove( cl_tsr.class );
+        ((Tsr<Number>)tensor).remove( cl_tsr.class );
         return this;
     }
 

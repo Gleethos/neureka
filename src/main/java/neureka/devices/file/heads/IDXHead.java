@@ -102,9 +102,9 @@ public class IDXHead extends AbstractFileHead<IDXHead, Number>
 
 
     @Override
-    public IDXHead store( Tsr<Number> tensor )
+    public <T extends Number> IDXHead store( Tsr<T> tensor )
     {
-        Iterator<Number> data = tensor.iterator();
+        Iterator<T> data = tensor.iterator();
         FileOutputStream fos;
         try
         {
@@ -144,7 +144,7 @@ public class IDXHead extends AbstractFileHead<IDXHead, Number>
             _valueSize = bodySize;
             NumericType<Number, Object, Number, Object> type = (NumericType<Number, Object, Number, Object>) _dataType.getTypeClassInstance();
 
-            type.writeDataTo( new DataOutputStream( f ), data );
+            type.writeDataTo( new DataOutputStream( f ), (Iterator<Number>) data );
             f.close();
         } catch ( Exception e ) {
             e.printStackTrace();

@@ -124,11 +124,11 @@ public interface Device<ValType> extends Component<Tsr<ValType>>, Storage<ValTyp
      * @param tensor The tensor whose data ought to be stored.
      * @return A reference this object to allow for method chaining. (factory pattern)
      */
-    Device<ValType> store( Tsr<ValType> tensor, Tsr<ValType> parent );
+    <T extends ValType> Device<ValType> store( Tsr<T> tensor, Tsr<T> parent );
 
-    boolean has( Tsr<ValType> tensor );
+    <T extends ValType> boolean has( Tsr<T> tensor );
 
-    Device<ValType> free( Tsr<ValType> tensor );
+    <T extends ValType> Device<ValType> free( Tsr<T> tensor );
 
     Device<ValType> cleaning( Tsr<ValType> tensor, Runnable action );
 
