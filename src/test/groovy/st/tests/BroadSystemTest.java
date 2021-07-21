@@ -51,9 +51,9 @@ public class BroadSystemTest
                 "test FP formatting"
         );
         //---
-        Tsr tensor1 = Tsr.of(3).setRqsGradient(true);
-        Tsr tensor2 = Tsr.of(-4);
-        Tsr tensor3 = Tsr.of(2);
+        Tsr<Double> tensor1 = Tsr.of(3).setRqsGradient(true);
+        Tsr<Double> tensor2 = Tsr.of(-4);
+        Tsr<Double> tensor3 = Tsr.of(2);
         tester.testInjection(
                 new Tsr[]{tensor1, tensor2, tensor3},//ERROR here
                 "(Ig[0]<-I[1])->I[2]",
@@ -75,7 +75,7 @@ public class BroadSystemTest
                     "Non-detached functions performing inline operations will throw exceptions on active autograd computation graphs!"
             );
         }
-        Tsr result = Function.Setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "(Ig[0]<-I[1])->I[2]", false);
+        Tsr<Double> result = Function.Setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "(Ig[0]<-I[1])->I[2]", false);
         tester.testContains(
                 result.toString(),
                 new String[]{"(-4.0)"},
@@ -258,7 +258,7 @@ public class BroadSystemTest
                 }
         );
         result = Tsr.of("(-3*(2*(i0*-1)))*(-1*i0)", tensor1);
-        GraphNode node = (GraphNode) result.find( GraphNode.class );
+        GraphNode<Double> node = (GraphNode) result.find( GraphNode.class );
         String asString = node.toString("gnv");
         tester.testContains(
                 asString,
@@ -290,12 +290,14 @@ public class BroadSystemTest
                 2, 4,
                 2, 1
         });
-        tensor3 = Tsr.of(Double.class).withShape(4, 2).andFill(
-                1.0, 2.0,
-                -3.0, 2.0,//<= drain data!
-                4.0, -2.0,
-                -1.0, 5.0
-        );
+        tensor3 = Tsr.of(Double.class)
+                        .withShape(4, 2)
+                        .andFill(
+                                1.0, 2.0,
+                                -3.0, 2.0,//<= drain data!
+                                4.0, -2.0,
+                                -1.0, 5.0
+                        );
         tester.testTensorAutoGrad(
                 new Tsr[]{tensor1, tensor2, tensor3},
                 "i0<<xi1<<xi2",
@@ -328,10 +330,12 @@ public class BroadSystemTest
         );
         //=====================
         //---
-        tensor1 = Tsr.of(new int[]{2, 2, 1}, new double[]{
-                1, 2, //3, 1,
-                2, -3, //-2, -1,
-        });
+        tensor1 = Tsr.ofDoubles()
+                        .withShape(2, 2, 1)
+                        .andFill(
+                                1.0, 2.0, //3, 1,
+                                2.0, -3.0 //-2, -1,
+                        );
         tensor1.setRqsGradient(true);
         //---
         tensor2 = Tsr.of(new int[]{1, 2, 2}, new double[]{

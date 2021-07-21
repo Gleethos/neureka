@@ -821,7 +821,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     }
 
     /**
-     * @param action
+     * @param action The lambda performing an action on all targeted nodes and their agents.
      */
     public void forEachDerivative( BiConsumer<GraphNode<V>, ADAgent> action ) {
         if ( _targets_derivatives == null ) return;
@@ -940,10 +940,35 @@ public class GraphNode<V> implements Component<Tsr<V>>
         return asString.toString();
     }
 
-
-    public int getMode() {
-        return this._mode;
-    }
+    /**
+     *  This is the getter for an important {@link GraphNode} property which
+     *  holds the auto-differentiation mode used by this instance to
+     *  decide if a given error should be forward propagated
+     *  backward propagated or not propagated at all.
+     *  If the mode is greater than 0, then this means this {@link GraphNode}
+     *  will perform forward propagation. In this case the mode number
+     *  is also the cumulative number of forward propagation steps
+     *  in the tree of source {@link GraphNode} instances.
+     *  If the mode is below 0, then this means this instance will
+     *  perform reverse mode differentiation (back-propagation).
+     *  The absolute of a negative mode represents the number of
+     *  referenced source nodes which have a mode state other than zero.
+     *  This means that they directly or indirectly reference
+     *  a {@link GraphNode} instance which represents a {@link Tsr} instance
+     *  having the {@link Tsr#rqsGradient()} flag set to true!
+     *                                                              <br>
+     *  Mode state meaning:                                         <br>
+     *  ----------------------------------------------------------- <br>
+     *  |  mode = 0  |  no Auto-Differentiation                     <br>
+     *  ----------------------------------------------------------- <br>
+     *  |  mode > 0  |  forward Auto-Differentiation                <br>
+     *  ----------------------------------------------------------- <br>
+     *  |  mode < 0  |  backward Auto-Differentiation               <br>
+     *  ----------------------------------------------------------- <br><br>
+     *
+     * @return The differentiation mode represented as an integer which encodes 3 distinct states.
+     */
+    public int getMode() { return this._mode; }
 
     public boolean isReliesOnJustInTimeProp() {
         return this._reliesOnJustInTimeProp;
