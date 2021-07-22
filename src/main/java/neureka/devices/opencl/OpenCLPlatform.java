@@ -1,8 +1,10 @@
 package neureka.devices.opencl;
 
+import neureka.Component;
 import neureka.Neureka;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
+import neureka.backend.api.OperationContext;
 import neureka.backend.standard.algorithms.*;
 import neureka.backend.standard.implementations.CLImplementation;
 import org.jocl.*;
@@ -103,17 +105,17 @@ public class OpenCLPlatform {
                     Map<String, String> code = new HashMap<>();
                     ImplementationFor<OpenCLDevice> impl = null;
                     for ( Operation type : Neureka.get().context().instances() ) {
-                        if ( preName.contains("activation") && type.supportsAlgorithm(Activation.class) ) {
+                        if ( preName.contains("activation") && type.supportsAlgorithm(Activation.class) )
                             impl = type.getAlgorithm(Activation.class).getImplementationFor( OpenCLDevice.class );
-                        } else if ( preName.contains("operator") && type.supportsAlgorithm(Operator.class) ) {
+                        else if ( preName.contains("operator") && type.supportsAlgorithm(Operator.class) )
                             impl = type.getAlgorithm(Operator.class).getImplementationFor( OpenCLDevice.class );
-                        } else if ( preName.contains("scalarization") && type.supportsAlgorithm(Scalarization.class) ) {
+                        else if ( preName.contains("scalarization") && type.supportsAlgorithm(Scalarization.class) )
                             impl = type.getAlgorithm(Scalarization.class).getImplementationFor( OpenCLDevice.class );
-                        } else if ( preName.contains("broadcast") && type.supportsAlgorithm(Broadcast.class) ) {//broadcast
+                        else if ( preName.contains("broadcast") && type.supportsAlgorithm(Broadcast.class) )
                             impl = type.getAlgorithm(Broadcast.class).getImplementationFor( OpenCLDevice.class );
-                        } else if ( preName.contains("convolution") && type.supportsAlgorithm(Convolution.class) ) {
+                        else if ( preName.contains("convolution") && type.supportsAlgorithm(Convolution.class) )
                             impl = type.getAlgorithm(Convolution.class).getImplementationFor( OpenCLDevice.class );
-                        } else if (
+                        else if (
                                 type.supportsAlgorithm(GenericAlgorithm.class)
                                 && preName.contains(type.getAlgorithm(GenericAlgorithm.class).getName())
                         ) { // TODO: cover!
@@ -188,7 +190,7 @@ public class OpenCLPlatform {
 
 
     public static List<OpenCLPlatform> PLATFORMS() {
-        return Setup.PLATFORMS;
+        return Neureka.get().context().find(ContextComponent.class).getPlatforms();
     }
 
     public cl_platform_id getPid() {
@@ -203,9 +205,17 @@ public class OpenCLPlatform {
         return this._isDoingLegacyIndexing;
     }
 
-    private static class Setup
+    public static class ContextComponent implements Component<OperationContext>
     {
-        public static List<OpenCLPlatform> PLATFORMS = findAllPlatforms();
+        private final List<OpenCLPlatform> _platforms = new ArrayList<>();
+
+        public List<OpenCLPlatform> getPlatforms() { return _platforms; }
+
+        @Override
+        public void update( OperationContext oldOwner, OperationContext newOwner ) {
+            this._platforms.clear();
+            this._platforms.addAll( findAllPlatforms() );
+        }
 
         public static List<OpenCLPlatform> findAllPlatforms()
         {
@@ -221,7 +231,6 @@ public class OpenCLPlatform {
             for ( cl_platform_id id : platforms ) list.add( new OpenCLPlatform( id ) );
             return list;
         }
-
     }
 
 

@@ -18,6 +18,6 @@ public interface Component<OwnerType>
      * @param oldOwner The previous owner type instance.
      * @param newOwner The new owner type instance.
      */
-    void update(OwnerType oldOwner, OwnerType newOwner);
+    void update( OwnerType oldOwner, OwnerType newOwner );
 
 }

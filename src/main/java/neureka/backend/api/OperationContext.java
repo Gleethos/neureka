@@ -1,10 +1,12 @@
 package neureka.backend.api;
 
 
+import neureka.Component;
 import neureka.Neureka;
 import neureka.calculus.Cache;
 import neureka.calculus.Function;
 import neureka.calculus.Functions;
+import neureka.ndim.AbstractComponentOwner;
 import org.slf4j.Logger;
 
 import java.util.*;
@@ -33,7 +35,7 @@ import java.util.function.Supplier;
  *    context during the execution of provided lambdas.
  *
  */
-public class OperationContext implements Cloneable
+public class OperationContext extends AbstractComponentOwner<OperationContext> implements Cloneable
 {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(OperationContext.class);
     /**
@@ -210,6 +212,16 @@ public class OperationContext implements Cloneable
 
     public String toString() {
         return "OperationContext(_lookup=" + this.lookup() + ", _instances=" + this.instances() + ", _size=" + this.size() + ", _functionCache=" + this.functionCache() + ", _getAutogradFunction=" + this.getAutogradFunction() + ", _getFunction=" + this.getFunction() + ")";
+    }
+
+    @Override
+    protected <T extends Component<OperationContext>> T _setOrReject(T newComponent) {
+        return newComponent;
+    }
+
+    @Override
+    protected <T extends Component<OperationContext>> T _removeOrReject(T newComponent) {
+        return newComponent;
     }
 
 

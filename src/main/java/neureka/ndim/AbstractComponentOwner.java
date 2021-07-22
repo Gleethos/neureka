@@ -58,9 +58,9 @@ import java.util.function.Consumer;
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
  *
- * @param <InstanceType> The class at the bottom end of the inheritance hierarchy. (Used for factory pattern)
+ * @param <C> The class at the bottom end of the inheritance hierarchy. (Used for factory pattern)
  */
-public abstract class AbstractComponentOwner<InstanceType>
+public abstract class AbstractComponentOwner<C>
 {
     /**
      *  The following static map enables fast access to properties which describe
@@ -89,13 +89,13 @@ public abstract class AbstractComponentOwner<InstanceType>
     /**
      *  A collection of components.
      */
-    private Component<InstanceType>[] _components = null;
+    private Component<C>[] _components = null;
 
-    private synchronized void _setComps( Component<InstanceType>[] components ) {
+    private synchronized void _setComps( Component<C>[] components ) {
         _components = components;
     }
 
-    private synchronized void _addOrRemoveComp( Component<InstanceType> component, boolean remove ) {
+    private synchronized void _addOrRemoveComp( Component<C> component, boolean remove ) {
         if ( remove ) {
             if ( _components != null && _components.length != 0 && component != null ) {
                 int count = 0;
@@ -103,7 +103,7 @@ public abstract class AbstractComponentOwner<InstanceType>
                     if ( _components[ i ] == component ) _components[ i ] = null;
                     else count++;
                 if ( count != _components.length ) {
-                    Component<InstanceType>[] newComponents = new Component[ count ];
+                    Component<C>[] newComponents = new Component[ count ];
                     count = 0;
                     for ( int i = 0; i < _components.length; i++ )
                         if ( _components[ i ] == null ) count++;
@@ -114,14 +114,14 @@ public abstract class AbstractComponentOwner<InstanceType>
         } else {
             if ( _components == null ) _setComps( new Component[]{ component } );
             else if ( component != null ) {
-                for ( Component<InstanceType> c : _components ) if ( c == component ) return;
-                Component<InstanceType>[] newComponents = new Component[ _components.length + 1 ];
+                for ( Component<C> c : _components ) if ( c == component ) return;
+                Component<C>[] newComponents = new Component[ _components.length + 1 ];
                 System.arraycopy( _components, 0, newComponents, 0, _components.length );
                 newComponents[ newComponents.length - 1 ] = component;
                 _setComps( newComponents );
                 for ( int i = 1; i < _components.length; i++ ) {
-                    Component<InstanceType> a = _components[ i-1 ];
-                    Component<InstanceType> b = _components[ i ];
+                    Component<C> a = _components[ i-1 ];
+                    Component<C> b = _components[ i ];
                     int orderA = _CLASS_ORDER.getOrDefault( a, 0 );
                     int orderB = _CLASS_ORDER.getOrDefault( b, 0 );
                     if ( orderB > orderA ) {
@@ -130,6 +130,8 @@ public abstract class AbstractComponentOwner<InstanceType>
                     }
                 }
             }
+            // The component receives an initial update call:
+            if ( component != null ) component.update( null, (C) this );
         }
     }
 
@@ -151,10 +153,10 @@ public abstract class AbstractComponentOwner<InstanceType>
      *
      * @param other The other owner which will be stripped of its components which are then incorporated into this owner.
      */
-    protected void _transferFrom( AbstractComponentOwner<InstanceType> other ) {
+    protected void _transferFrom( AbstractComponentOwner<C> other ) {
             if ( other._components != null ) {
             _setComps( other._components ); // Inform components about their new owner:
-            for ( Component<InstanceType> c : _components ) c.update((InstanceType) other, (InstanceType) this);
+            for ( Component<C> c : _components ) c.update((C) other, (C) this);
             other._deleteComponents();
         }
     }
@@ -195,12 +197,12 @@ public abstract class AbstractComponentOwner<InstanceType>
      * @param <T> The type parameter of the component which will be removed by this method.
      * @return This very class.
      */
-    public <T extends Component<InstanceType>> InstanceType remove( Class<T> componentClass )
+    public <T extends Component<C>> C remove( Class<T> componentClass )
     {
         T oldComponent = find( componentClass );
         if ( oldComponent != null ) _addOrRemoveComp( _removeOrReject( oldComponent ), true );
         if ( _components != null && _components.length == 0 ) _components = null;
-        return (InstanceType) this;
+        return (C) this;
     }
 
     /**
@@ -210,7 +212,7 @@ public abstract class AbstractComponentOwner<InstanceType>
      * @param componentClass The class/type of a component that might exist in components.
      * @return True if the component of the given type/class has been found.
      */
-    public <T extends Component<InstanceType>> boolean has( Class<T> componentClass ) {
+    public <T extends Component<C>> boolean has( Class<T> componentClass ) {
         return find( componentClass ) != null;
     }
 
@@ -224,18 +226,18 @@ public abstract class AbstractComponentOwner<InstanceType>
      * @param newComponent The new component which should be added to the components list.
      * @return This very class.
      */
-    public InstanceType set( Component<InstanceType> newComponent)
+    public C set( Component<C> newComponent )
     {
-        if ( newComponent == null ) return (InstanceType) this;
-        Component<InstanceType> oldCompartment;
+        if ( newComponent == null ) return (C) this;
+        Component<C> oldCompartment;
         if ( _components != null ) {
-            oldCompartment = (Component<InstanceType>) find( newComponent.getClass() );
+            oldCompartment = (Component<C>) find( newComponent.getClass() );
             if ( oldCompartment != null ) {
                 _addOrRemoveComp( oldCompartment, true );
             }
         }
         _addOrRemoveComp( _setOrReject( newComponent ), false );
-        return (InstanceType) this;
+        return (C) this;
     }
 
     /**
@@ -251,7 +253,7 @@ public abstract class AbstractComponentOwner<InstanceType>
      * @param newComponent The component which should be added to the components list.
      * @return The same component or null if it has been rejected.
      */
-    protected abstract <T extends Component<InstanceType>> T _setOrReject( T newComponent );
+    protected abstract <T extends Component<C>> T _setOrReject(T newComponent );
 
 
     /**
@@ -267,7 +269,7 @@ public abstract class AbstractComponentOwner<InstanceType>
      * @param newComponent The component which should be removed from the components list.
      * @return The same component or null if its removal has been rejected.
      */
-    protected abstract <T extends Component<InstanceType>> T _removeOrReject(T newComponent);
+    protected abstract <T extends Component<C>> T _removeOrReject(T newComponent);
 
     /**
      * This method tries to find a stored component by identifying it
@@ -279,12 +281,13 @@ public abstract class AbstractComponentOwner<InstanceType>
      * @param action An action applied on the requested component if found.
      * @return True if a component could be found, false otherwise.
      */
-    public <T extends Component<InstanceType>> boolean forComponent( Class<T> cc, Consumer<T> action ) {
+    public <T extends Component<C>> boolean forComponent( Class<T> cc, Consumer<T> action ) {
         T component = this.find( cc );
         if ( component != null ) {
             action.accept( component );
             return true;
-        } else return false;
+        }
+        else return false;
     }
 
 

@@ -38,6 +38,7 @@ package neureka;
 
 import neureka.backend.api.Operation;
 import neureka.backend.api.OperationContext;
+import neureka.devices.opencl.OpenCLPlatform;
 import neureka.dtype.custom.F64;
 import neureka.utility.SettingsLoader;
 import neureka.utility.TsrAsString;
@@ -101,6 +102,12 @@ public final class Neureka
                 assert operation.getOperator() != null;
                 _context.addOperation(operation);
                 log.debug( "Operation: '" + operation.getFunction() + "' loaded!" );
+            }
+            try {
+                _context.set( new OpenCLPlatform.ContextComponent() );
+            }
+            catch ( Exception e ) {
+                e.printStackTrace();
             }
         }
         return _context;
