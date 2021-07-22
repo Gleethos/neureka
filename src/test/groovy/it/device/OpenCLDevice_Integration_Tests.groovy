@@ -3,7 +3,7 @@ package it.device
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
-import neureka.devices.opencl.OpenCLPlatform
+import neureka.devices.opencl.CLContext
 import neureka.devices.opencl.utility.DispatchUtility
 import neureka.dtype.DataType
 import spock.lang.Specification
@@ -103,7 +103,7 @@ class OpenCLDevice_Integration_Tests extends Specification
 
         given : 'This system supports OpenCL'
             if ( !Neureka.get().canAccessOpenCL() ) return
-            def device = Neureka.get().context().find(OpenCLPlatform.ContextComponent.class).getPlatforms()[0].devices[0]
+            def device = Neureka.get().context().find(CLContext.class).getPlatforms()[0].devices[0]
             def someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).set( device )
 
         expect : 'The OpenCL device initially does not have the "dummy_kernel" we are going to create.'
@@ -156,7 +156,7 @@ class OpenCLDevice_Integration_Tests extends Specification
 
         given : 'This system supports OpenCL'
             if ( !Neureka.get().canAccessOpenCL() ) return
-            def device = Neureka.get().context().find(OpenCLPlatform.ContextComponent.class).getPlatforms()[0].devices[0]
+            def device = Neureka.get().context().find(CLContext.class).getPlatforms()[0].devices[0]
             def kernelName = "dummy_mm_${M}x${K}x${N}"
             def params = DispatchUtility.findBestParams(locSize, regSize, K, M, N)
 

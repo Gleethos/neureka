@@ -38,7 +38,7 @@ package neureka;
 
 import neureka.backend.api.Operation;
 import neureka.backend.api.OperationContext;
-import neureka.devices.opencl.OpenCLPlatform;
+import neureka.devices.opencl.CLContext;
 import neureka.dtype.custom.F64;
 import neureka.utility.SettingsLoader;
 import neureka.utility.TsrAsString;
@@ -104,7 +104,7 @@ public final class Neureka
                 log.debug( "Operation: '" + operation.getFunction() + "' loaded!" );
             }
             if ( _OPENCL_AVAILABLE )
-                _context.set( new OpenCLPlatform.ContextComponent() );
+                _context.set( new CLContext() );
         }
         return _context;
     }

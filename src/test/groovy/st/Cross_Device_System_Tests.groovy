@@ -1,13 +1,13 @@
 package st
 
 import groovy.transform.CompileDynamic
-import st.tests.CrossDeviceSystemTest
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
-import neureka.devices.opencl.OpenCLPlatform
+import neureka.devices.opencl.CLContext
 import spock.lang.Specification
+import st.tests.CrossDeviceSystemTest
 import st.tests.SimpleNNSystemTest
 import testutility.mock.DummyDevice
 
@@ -110,7 +110,7 @@ class Cross_Device_System_Tests extends Specification
         and :
         if ( !Neureka.get().canAccessOpenCL() ) return
 
-        when : Device gpu = Neureka.get().context().find(OpenCLPlatform.ContextComponent.class).getPlatforms().get(0).getDevices().get(0)
+        when : Device gpu = Neureka.get().context().find(CLContext.class).getPlatforms().get(0).getDevices().get(0)
         then : SimpleNNSystemTest.on(gpu)
 
         // Some more asserts:

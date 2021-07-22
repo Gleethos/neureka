@@ -2,7 +2,7 @@ package it.device
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.devices.opencl.OpenCLPlatform
+import neureka.devices.opencl.CLContext
 import org.slf4j.Logger
 import spock.lang.Specification
 
@@ -25,7 +25,7 @@ class OpenCLDevice_Exception_Integration_Tests extends Specification
     {
         given : 'This system supports OpenCL'
             if ( !Neureka.get().canAccessOpenCL() ) return
-            def device = Neureka.get().context().find(OpenCLPlatform.ContextComponent.class).getPlatforms()[0].devices[0]
+            def device = Neureka.get().context().find(CLContext.class).getPlatforms()[0].devices[0]
 
         expect : 'Initially there is no ad hoc kernel with the following name.'
             !device.hasAdHocKernel( 'right_dummy_kernel_name' )
@@ -57,7 +57,7 @@ class OpenCLDevice_Exception_Integration_Tests extends Specification
     {
         given : 'This system supports OpenCL'
             if ( !Neureka.get().canAccessOpenCL() ) return
-            def device = Neureka.get().context().find(OpenCLPlatform.ContextComponent.class).getPlatforms()[0].devices[0]
+            def device = Neureka.get().context().find(CLContext.class).getPlatforms()[0].devices[0]
             def code = """
                         __kernel void right_dummy_kernel_name (
                                 __global float* output,
@@ -98,7 +98,7 @@ class OpenCLDevice_Exception_Integration_Tests extends Specification
     {
         given : 'This system supports OpenCL'
             if ( !Neureka.get().canAccessOpenCL() ) return
-            def device = Neureka.get().context().find(OpenCLPlatform.ContextComponent.class).getPlatforms()[0].devices[0]
+            def device = Neureka.get().context().find(CLContext.class).getPlatforms()[0].devices[0]
         and : 'We create a new mock logger for the OpenCL device.'
             def oldLogger = device._log
             device._log = Mock( Logger )

@@ -42,6 +42,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.devices.host.HostCPU;
+import neureka.devices.opencl.CLContext;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.devices.opencl.OpenCLPlatform;
 
@@ -90,7 +91,7 @@ public interface Device<ValType> extends Component<Tsr<ValType>>, Storage<ValTyp
         double score = FunctionParser.similarity( "jvm native host cpu threaded", search );
         if ( probablyWantsGPU ) score /= 10; // HostCPU instance is most likely not meant!
 
-        for ( OpenCLPlatform p : Neureka.get().context().find(OpenCLPlatform.ContextComponent.class).getPlatforms() ) {
+        for ( OpenCLPlatform p : Neureka.get().context().find(CLContext.class).getPlatforms() ) {
             for ( OpenCLDevice d : p.getDevices() ) {
                 String str = ("opencl | "+d.type()+" | "+d.name()+" | "+d.vendor()).toLowerCase();
                 double similarity = FunctionParser.similarity( str, search );
@@ -103,7 +104,7 @@ public interface Device<ValType> extends Component<Tsr<ValType>>, Storage<ValTyp
         if ( result == HostCPU.instance() && name.equals("first") ) {
             Device<Number> first = Neureka.get()
                                             .context()
-                                            .find(OpenCLPlatform.ContextComponent.class)
+                                            .find(CLContext.class)
                                             .getPlatforms()
                                             .get( 0 )
                                             .getDevices()
