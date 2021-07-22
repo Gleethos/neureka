@@ -60,8 +60,11 @@ import java.util.function.Consumer;
  *  {@link Tsr} inherits from {@link AbstractNDArray} which inherits from {@link AbstractComponentOwner}
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
+ *
+ * @param <C> The type of the concrete class extending this abstract class (currently the {@link Tsr} class).
+ * @param <V> The value type of the individual items stored within this nd-array.
  */
-public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractComponentOwner<InstanceType> implements Iterable<ValType>
+public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> implements Iterable<V>
 {
     /**
      *  An interface provided by sl4j which enables a modular logging backend!
@@ -138,7 +141,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
      * @param dataType The new dataType which ought to be set.
      * @return The final instance type of this class which enables method chaining.
      */
-    public InstanceType setDataType( DataType<?> dataType )
+    public C setDataType(DataType<?> dataType )
     {
         _guardSet("data type");
         if ( _data != null ) {
@@ -147,7 +150,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
             throw new IllegalStateException( message );
         }
         _dataType = dataType;
-        return (InstanceType) this;
+        return (C) this;
     }
 
     protected void _setData( Object data )
@@ -208,7 +211,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
      */
     protected void _allocate( int size ) { _data = _dataType.allocate( size ); }
 
-    public abstract InstanceType setIsVirtual( boolean isVirtual );
+    public abstract C setIsVirtual(boolean isVirtual );
 
     public abstract boolean isVirtual();
 
@@ -216,7 +219,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
 
     protected NDAConstructor createConstructionAPI()
     {
-        AbstractNDArray<InstanceType, ?> nda = this;
+        AbstractNDArray<C, ?> nda = this;
         return new NDAConstructor(
                     new NDAConstructor.API() {
                         @Override public void setType( DataType<?> type     ) { nda.setDataType( type ); }
@@ -269,22 +272,22 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public void forEach( Consumer<? super ValType> action ) {
-        for ( ValType v : this ) action.accept( v );
+    public void forEach( Consumer<? super V> action ) {
+        for ( V v : this ) action.accept( v );
     }
 
     @Override
-    public Spliterator<ValType> spliterator()
+    public Spliterator<V> spliterator()
     {
-        return new Spliterator<ValType>()
+        return new Spliterator<V>()
         {
             @Override
-            public boolean tryAdvance( Consumer<? super ValType> action ) {
+            public boolean tryAdvance( Consumer<? super V> action ) {
                 return false;
             }
 
             @Override
-            public Spliterator<ValType> trySplit() {
+            public Spliterator<V> trySplit() {
                 return null;
             }
 
@@ -315,7 +318,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
      * @param o The object which ought to be placed at the requested position.
      * @return This very tensor in order to enable method chaining.
      */
-    public abstract InstanceType setDataAt( int i, ValType o );
+    public abstract C setDataAt(int i, V o );
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -355,7 +358,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
      * @param ndConfiguration The new NDConfiguration instance which ought to be set.
      * @return The final instance type of this class which enables method chaining.
      */
-    public InstanceType setNDConf( NDConfiguration ndConfiguration )
+    public C setNDConf(NDConfiguration ndConfiguration )
     {
         _guardSet("ND-Configuration");
         if ( _NDConf != null && ndConfiguration != null ) {
@@ -364,7 +367,7 @@ public abstract class AbstractNDArray<InstanceType, ValType> extends AbstractCom
             assert s1 == s2;
         }
         _NDConf = ndConfiguration;
-        return (InstanceType) this;
+        return (C) this;
     }
 
     //---

@@ -6,12 +6,16 @@ import neureka.backend.api.Operation;
 import neureka.backend.standard.algorithms.*;
 import neureka.backend.standard.implementations.CLImplementation;
 import org.jocl.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 import static org.jocl.CL.*;
 
 public class OpenCLPlatform {
+
+    private final static Logger _LOG = LoggerFactory.getLogger( OpenCLPlatform.class );
 
     private final cl_platform_id _pid;
     private final cl_context _context;
@@ -32,7 +36,7 @@ public class OpenCLPlatform {
         clGetDeviceIDs(pid, CL_DEVICE_TYPE_ALL, numDevices[ 0 ], devicesArray, null);
 
         // Enable exceptions and subsequently omit error checks in this sample
-        CL.setExceptionsEnabled( true );
+        setExceptionsEnabled( true );
 
         // Initialize the context properties
         cl_context_properties contextProperties = new cl_context_properties();
@@ -149,6 +153,9 @@ public class OpenCLPlatform {
                 null,
                 null
         );
+        if ( err != CL_SUCCESS )
+            _LOG.error("Failed to compile the OpenCL code of the current context. Error code: '"+err+"'.");
+
         //TODO: check compilation errors!
 
         // Create the kernels
