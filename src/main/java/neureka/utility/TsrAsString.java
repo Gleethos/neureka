@@ -58,23 +58,6 @@ import java.util.function.Function;
  */
 public final class TsrAsString
 {
-    public enum Should {
-        BE_FORMATTED,
-        HAVE_PADDING_OF,
-        BE_COMPACT,
-        HAVE_GRADIENT,
-        BE_SHORTENED_BY,
-        HAVE_VALUE,
-        HAVE_SHAPE,
-        HAVE_DERIVATIVES,
-        HAVE_RECURSIVE_GRAPH,
-        BE_CELL_BOUND
-    }
-
-    private interface ValStringifier {
-        String stringify( int i );
-    }
-
     private int _padding = 6;
     private int _shortage = 50;
     private boolean _hasGradient = true;
@@ -92,6 +75,23 @@ public final class TsrAsString
     private final boolean _legacy = Neureka.get().settings().view().isUsingLegacyView();
 
     private Map<Should, Object> _config;
+
+    public enum Should {
+        BE_FORMATTED,
+        HAVE_PADDING_OF,
+        BE_COMPACT,
+        HAVE_GRADIENT,
+        BE_SHORTENED_BY,
+        HAVE_VALUE,
+        HAVE_SHAPE,
+        HAVE_DERIVATIVES,
+        HAVE_RECURSIVE_GRAPH,
+        BE_CELL_BOUND
+    }
+
+    private interface ValStringifier {
+        String stringify( int i );
+    }
 
     public TsrAsString( Tsr<?> tensor, Map< Should, Object > settings )
     {
@@ -194,40 +194,10 @@ public final class TsrAsString
      * @param data The data which should be used as a basis for creating an entry stringification lambda.
      * @return A lambda which can convert an array entry targeted by its index to a properly formatted String.
      */
-    private ValStringifier _createValStringifier( Object data )
+    private ValStringifier _createValStringifierAndFormatter( Object data )
     {
-        boolean compact = _isCompact;
-        int pad = ( _tensor.getDataType().getTypeClass() == String.class )
-                ? (int)(_padding * 2.5)
-                : _padding;
-        final ValStringifier function;
-        if ( data instanceof double[] )
-            function = i -> ( compact )
-                    ? Util.formatFP( ( (double[]) data )[ i ])
-                    : String.valueOf( ( (double[] ) data )[ i ] );
-        else if ( data instanceof float[] )
-            function = i -> ( compact )
-                    ? Util.formatFP( ( (float[]) data )[ i ] )
-                    : String.valueOf( ( (float[]) data )[ i ] );
-        else if ( data instanceof short[] )
-            function = i -> ( compact )
-                    ? Util.formatFP( ( (short[]) data )[ i ] )
-                    : String.valueOf( ( (short[]) data )[ i ] );
-        else if ( data instanceof int[] )
-            function = i -> ( compact )
-                    ? Util.formatFP( ( (int[]) data )[ i ] )
-                    : String.valueOf( ( (int[]) data )[ i ] );
-        else if ( data instanceof byte[] )
-            function = i -> ( compact )
-                    ? Util.formatFP( ( (byte[]) data )[ i ] )
-                    : String.valueOf( ( (byte[]) data )[ i ] );
-        else if ( data == null )
-            function = i -> ( compact )
-                    ? Util.formatFP( _tensor.value64( i ) )
-                    : String.valueOf( _tensor.value64( i ) );
-        else
-            function = i -> String.valueOf( ( (Object[]) data )[ i ] );
-
+        final ValStringifier function = _createBasicStringifierFor( data, _isCompact );
+        int pad = _typeAdjustedPadding();
         final ValStringifier postProcessing;
         if ( pad >= 3 ) postProcessing = i -> {
             String s = function.stringify( i );
@@ -248,6 +218,51 @@ public final class TsrAsString
         else finalProcessing = postProcessing;
 
         return finalProcessing;
+    }
+
+    /**
+     *  @param data The data array which may be an array of primitives or reference objects.
+     *  @param isCompact A flag determining if the array items should be formatted compactly or not.
+     *  @return An {@link ValStringifier} which can return {@link String} representations of array items targeted via their index.
+     */
+    private ValStringifier _createBasicStringifierFor( Object data, boolean isCompact )
+    {
+        if ( data instanceof double[] )
+            return i -> ( isCompact )
+                    ? Util.formatFP( ( (double[]) data )[ i ])
+                    : String.valueOf( ( (double[] ) data )[ i ] );
+        else if ( data instanceof float[] )
+            return i -> ( isCompact )
+                    ? Util.formatFP( ( (float[]) data )[ i ] )
+                    : String.valueOf( ( (float[]) data )[ i ] );
+        else if ( data instanceof short[] )
+            return i -> ( isCompact )
+                    ? Util.formatFP( ( (short[]) data )[ i ] )
+                    : String.valueOf( ( (short[]) data )[ i ] );
+        else if ( data instanceof int[] )
+            return i -> ( isCompact )
+                    ? Util.formatFP( ( (int[]) data )[ i ] )
+                    : String.valueOf( ( (int[]) data )[ i ] );
+        else if ( data instanceof byte[] )
+            return i -> ( isCompact )
+                    ? Util.formatFP( ( (byte[]) data )[ i ] )
+                    : String.valueOf( ( (byte[]) data )[ i ] );
+        else if ( data == null )
+            return i -> ( isCompact )
+                    ? Util.formatFP( _tensor.value64( i ) )
+                    : String.valueOf( _tensor.value64( i ) );
+        else
+            return i -> String.valueOf( ( (Object[]) data )[ i ] );
+    }
+
+    /**
+     * @return A potentially modified version of the configured padding to better suite certain types.
+     */
+    private int _typeAdjustedPadding() {
+        if ( _tensor.getDataType().getTypeClass() == String.class )
+            return  (int)(_padding * 2.5);
+        else
+            return  _padding;
     }
 
     public String toString()
@@ -315,7 +330,7 @@ public final class TsrAsString
     private void _stringifyAllValues()
     {
         int max = _shortage;
-        ValStringifier getter = _createValStringifier( _tensor.getData() );
+        ValStringifier getter = _createValStringifierAndFormatter( _tensor.getData() );
         int size = _tensor.size();
         int trim = ( size - max );
         size = ( trim > 0 ) ? max : size;
@@ -329,14 +344,14 @@ public final class TsrAsString
 
     /**
      *  This method builds a single row of stringified and formatted tensor entries.
-     *  It will builds this row based on incrementing the last tensor dimension. <br>
+     *  It will build this row based on incrementing the last tensor dimension. <br>
      *  <br>
      * @param trimStart The row index where the trimming should start (no entries).
      * @param trimEnd The row index where the trimming should end.
      * @param trimSize The size of the row chunk which ought to be skipped.
      * @param indices The current index array defining the current position inside the tensor.
      * @param stringifier A lambda responsible for stringifying a tensor entry ba passing the current index array.
-     * @param delimiter The String which ought to separate of stringified entries.
+     * @param delimiter The String which ought to separate stringified entries.
      */
     private void _buildRow(
             int trimStart, int trimEnd, int trimSize, int[] indices, Function<int[],String> stringifier, String delimiter
@@ -367,7 +382,7 @@ public final class TsrAsString
     private void _recursiveFormatting( int[] indices, int dim )
     {
         int max = ( _shortage * 32 / 50 );
-        dim = ( dim < 0 ) ? 0 : dim;
+        dim = Math.max( dim, 0 );
         int trimSize = ( _shape[ dim ] - max );
         trimSize = Math.max( trimSize, 0 );
         int trimStart = ( _shape[ dim ] / 2 - trimSize / 2 );
@@ -385,7 +400,7 @@ public final class TsrAsString
                     _$( Util.indent( dim ) );
                     _$( (_legacy) ? "[ " : "( " ); // The following assert has prevented many String miscarriages!
                     assert aliases.size() - _shape[ indices.length - 1 ] == 0; // This is a basic requirement for the label size...
-                    ValStringifier getter = _createValStringifier( aliases.toArray() );
+                    ValStringifier getter = _createValStringifierAndFormatter( aliases.toArray() );
                     _buildRow(
                             trimStart, trimEnd, trimSize,
                             new int[ indices.length ],
@@ -400,7 +415,7 @@ public final class TsrAsString
             }
             _$( Util.indent( dim ) );
             _$( (_legacy) ? "( " : "[ " );
-            ValStringifier getter = _createValStringifier( _tensor.getData() );
+            ValStringifier getter = _createValStringifierAndFormatter( _tensor.getData() );
             Function<int[], String> fun = ( _tensor.isVirtual() )
                     ? iarr -> getter.stringify( 0 )
                     : iarr -> getter.stringify( _tensor.indexOfIndices( iarr ) );

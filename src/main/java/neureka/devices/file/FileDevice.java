@@ -160,16 +160,21 @@ public class FileDevice extends AbstractBaseDevice<Object>
 
     public <T extends Object> FileDevice store( Tsr<T> tensor, String filename, Map<String, Object> configurations )
     {
+        String fullFileName;
+        String extension;
         int i = filename.lastIndexOf( '.' );
         if ( i < 1 ) {
-            filename = filename + ".idx";
-            i = filename.lastIndexOf( '.' );
+            fullFileName = filename + ".idx";
+            extension = "idx";
         }
-        String extension = filename.substring( i + 1 );
+        else {
+            extension = filename.substring( i + 1 );
+            fullFileName = filename;
+        }
         if ( FileHead.FACTORY.hasSaver( extension ) ) {
             _stored.put(
                     (Tsr<Object>) tensor,
-                    FileHead.FACTORY.getSaver(extension).save( _directory + "/" + filename, tensor, configurations )
+                    FileHead.FACTORY.getSaver(extension).save( _directory + "/" + fullFileName, tensor, configurations )
             );
             tensor.setIsOutsourced(true);
         }
