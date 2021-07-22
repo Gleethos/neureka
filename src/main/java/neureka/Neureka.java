@@ -103,12 +103,8 @@ public final class Neureka
                 _context.addOperation(operation);
                 log.debug( "Operation: '" + operation.getFunction() + "' loaded!" );
             }
-            try {
+            if ( _OPENCL_AVAILABLE )
                 _context.set( new OpenCLPlatform.ContextComponent() );
-            }
-            catch ( Exception e ) {
-                e.printStackTrace();
-            }
         }
         return _context;
     }
