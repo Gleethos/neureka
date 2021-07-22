@@ -306,7 +306,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
-     * @return long Node-ID (Used for caching to avoid redundant computation within one computation graph)
+     * long Node-ID (Used for caching to avoid redundant computation within one computation graph)
      */
     private long _nodeID = -1;
 
@@ -334,9 +334,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @return boolean
      */
-    public boolean isLeave() {
-        return ( _parents == null && _function == null );
-    }
+    public boolean isLeave() { return _parents == null && _function == null; }
 
     public boolean isGraphLeave() {
         if ( this.isLeave() ) return true;
@@ -417,10 +415,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @param output The container for the result of the execution, in a sense, its the output of this node / its payload!
      * @param function The function which produced this {@link GraphNode} instance.
-     * @param call
-     * @param lock
+     * @param call The {@link ExecutionCall} instance containing context information for the current execution.
+     * @param lock An object whose identity will be used to reserve the {@link Tsr} instances of the current {@link ExecutionCall}.
      */
-    private void _construct(Tsr<V> output, Function function, ExecutionCall<? extends Device<?>> call, GraphLock lock )
+    private void _construct( Tsr<V> output, Function function, ExecutionCall<? extends Device<?>> call, GraphLock lock )
     {
         Tsr<Object>[] inputs = ( call == null ) ? null : (Tsr<Object>[]) call.getTensors();
         if ( output == null ) throw new NullPointerException( "The supplied payload Tsr must no be null!" );
@@ -577,7 +575,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             }
         } // Reverse mode auto-differentiation :
         else if ( _allows_backward ) resultMode = -inputMode;
-       // if ( !function.getOperation().isDifferentiable() ) resultMode = 0;
+
         return resultMode;
     }
 
@@ -604,7 +602,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             } else exception.printStackTrace();
         }
         if ( payload.rqsGradient() ) payload.addToGradient( e );
-        if ( also!=null ) also.accept( payload );
+        if ( also != null ) also.accept( payload );
     }
 
 
@@ -655,7 +653,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 int numOfADPaths = _numberOfReverseModeADChildren();// Multiple children triggers creation of a pending error
                 if ( numOfADPaths > 1 ) {
                     if ( _pendingError == null ) {
-                        _pendingError = new PendingError( error, numOfADPaths - 1 );
+                        _pendingError = new PendingError<>( error, numOfADPaths - 1 );
                         pendingNodes.add( this );
                     } else _pendingError.accumulate( error );
                     return;
@@ -728,7 +726,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
               be continued to be propagated.
               Otherwise it makes sense to accumulate errors further and wait for JIT-Prop traversing!
              */
-            return;// This node will continue its propagation via a JIT-Prop component later!
+            return; // This node will continue its propagation via a JIT-Prop component later!
         }
         if ( this.usesAD() ) {
             // The following call ADAgents for reverse-mode AutoDiff!
@@ -764,7 +762,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             for ( WeakReference<GraphNode<V>> weak : _children ) {
                 if ( weak != null && weak.get() != null ) {
                     GraphNode<V> child = weak.get(); // TODO: make test which asserts that Detached Function does not trigger this!
-                    if ( child!=null && child.usesReverseAD() ) count++;
+                    if ( child != null && child.usesReverseAD() ) count++;
                 }
             }
         }
@@ -779,9 +777,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
     public void put(GraphNode<V> target, ADAgent agent) {
         if ( _targets_derivatives == null ) _targets_derivatives = new TreeMap<>((a, b) -> a.hashCode() - b.hashCode());
 
-        if ( _targets_derivatives.containsKey( target ) ) {
+        if ( _targets_derivatives.containsKey( target ) )
             _targets_derivatives.get( target ).add( agent );
-        } else _targets_derivatives.put( target, new ArrayList<>( Arrays.asList( agent ) ) );
+        else
+            _targets_derivatives.put( target, new ArrayList<>( Arrays.asList( agent ) ) );
 
         Tsr<?> d = agent.derivative();
         if ( d != null && d.has( GraphNode.class ) ) d.find( GraphNode.class )._isUsedAsDerivative = true;
@@ -816,9 +815,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @return int
      */
-    public int size() {
-        return ( _targets_derivatives != null ) ? this._targets_derivatives.size() : 0;
-    }
+    public int size() { return _targets_derivatives != null ? this._targets_derivatives.size() : 0; }
 
     /**
      * @param action The lambda performing an action on all targeted nodes and their agents.
@@ -866,9 +863,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     /**
      * @return Checks if this node stores target / AD-action (usually derivatives) pairs.
      */
-    public boolean hasDerivatives() {
-        return ( _targets_derivatives != null ) && _targets_derivatives.size() > 0;
-    }
+    public boolean hasDerivatives() { return _targets_derivatives != null && _targets_derivatives.size() > 0; }
 
     /**
      * @return Returns the type of the node as descriptive String in capital letters.
@@ -883,9 +878,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     }
 
     @Override
-    public String toString() {
-        return toString( "" );
-    }
+    public String toString() { return toString( "" ); }
 
     /**
      * @param m Stands for 'mode' and is expected to contain certain letters which are used as settings.
@@ -896,7 +889,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             String flags = m.replace( "g", "" );
             return "]> LOCK: " + getLock() + " |> GRAPH:\n]\n" + _toString( "]    0", true, flags ) + "\n]\n]|END|>";
         }
-        String nid = ( m.contains( "n" ) ) ? "NID:" + Long.toHexString( getNodeID() ) : "NODE";
+        String nid = ( m.contains( "n" ) ? "NID:" + Long.toHexString( getNodeID() ) : "NODE" );
         if ( m.contains( "v" ) ) {
             return "(" + this.type() + "): [" + nid + "]:<(  "
                     + "f" +
@@ -924,15 +917,15 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @return A indented multi-line tree-like String representation of the computation graph.
      */
     private String _toString( String deep, boolean isLast, String flags ) {
-        String delimiter = ( (isLast) ? ("    ") : ("|   ") );
-        String arrow = ( (char) 187 ) + "" + ( (_parents != null) ? ( String.valueOf( _parents.length ) ) : "0" ) + ( (char) 187 );
+        String delimiter = ( isLast ? ("    ") : ("|   ") );
+        String arrow = ( (char) 187 ) + "" + ( _parents != null ? String.valueOf( _parents.length ) : "0" ) + ( (char) 187 );
         StringBuilder asString = new StringBuilder( deep + arrow + toString( flags ) );
         deep = deep.substring( 0, deep.length() - 1 );
         if ( _parents != null ) {
-            asString.append( "\n" ).append( deep ).append( ( isLast ) ? "   \\\n" : "|  \\\n" );
+            asString.append( "\n" ).append( deep ).append( isLast ? "   \\\n" : "|  \\\n" );
             for ( int i = 0; i < _parents.length; i++ ) {
                 boolean last = ( i == _parents.length - 1 );
-                asString.append( ( i != 0 ) ? deep + delimiter + "|\n" : "" );
+                asString.append( i != 0 ? deep + delimiter + "|\n" : "" );
                 asString.append( _parents[ i ]._toString(deep + delimiter + i, last, flags) ).append( "\n" );
             }
             asString = new StringBuilder( asString.substring( 0, asString.length() - 1 ) );
@@ -970,39 +963,24 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public int getMode() { return this._mode; }
 
-    public boolean isReliesOnJustInTimeProp() {
-        return this._reliesOnJustInTimeProp;
-    }
+    public boolean isReliesOnJustInTimeProp() { return this._reliesOnJustInTimeProp; }
 
-    public PendingError<V> getPendingError() {
-        return this._pendingError;
-    }
+    public PendingError<V> getPendingError() { return this._pendingError; }
 
-    public boolean isUsedAsDerivative() {
-        return this._isUsedAsDerivative;
-    }
+    public boolean isUsedAsDerivative() { return this._isUsedAsDerivative; }
 
-    public Function getFunction() {
-        return this._function;
-    }
+    public Function getFunction() { return this._function; }
 
-    public GraphNode<V>[] getParents() {
-        return this._parents;
-    }
+    public GraphNode<V>[] getParents() { return this._parents; }
 
-    public int getPayloadReferenceVersion() {
-        return this._payloadReferenceVersion;
-    }
+    public int getPayloadReferenceVersion() { return this._payloadReferenceVersion; }
 
-    public GraphLock getLock() {
-        return this._lock;
-    }
+    public GraphLock getLock() { return this._lock; }
 
-    public List<WeakReference<GraphNode<V>>> getChildren() {
-        return this._children;
-    }
+    public List<WeakReference<GraphNode<V>>> getChildren() { return this._children; }
 
-    public long getNodeID() {
-        return this._nodeID;
-    }
+    /**
+     * @return The long Node-ID (Used for caching to avoid redundant computation within one computation graph)
+     */
+    public long getNodeID() { return this._nodeID; }
 }
