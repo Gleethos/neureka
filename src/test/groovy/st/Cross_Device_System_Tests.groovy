@@ -36,7 +36,7 @@ class Cross_Device_System_Tests extends Specification
 
         and : 'The indexing mode set to "legacy"!'
             Neureka.instance().settings().indexing().isUsingLegacyIndexing = legacyIndexing
-            if ( device instanceof OpenCLDevice ) OpenCLPlatform.PLATFORMS().get(0).recompile()
+            if ( device instanceof OpenCLDevice ) Neureka.get().context().find(ContextComponent.class).getPlatforms().get(0).recompile()
 
         and : 'Two tensors, one requiring gradients and the other one does not.'
             def tensor1 = Tsr.of(new int[]{2, 2, 1}, new double[]{
@@ -110,7 +110,7 @@ class Cross_Device_System_Tests extends Specification
         and :
         if ( !Neureka.get().canAccessOpenCL() ) return
 
-        when : Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0)
+        when : Device gpu = Neureka.get().context().find(OpenCLPlatform.ContextComponent.class).getPlatforms().get(0).getDevices().get(0)
         then : SimpleNNSystemTest.on(gpu)
 
         // Some more asserts:

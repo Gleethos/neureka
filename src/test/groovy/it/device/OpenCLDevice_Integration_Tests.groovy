@@ -103,13 +103,13 @@ class OpenCLDevice_Integration_Tests extends Specification
 
         given : 'This system supports OpenCL'
             if ( !Neureka.get().canAccessOpenCL() ) return
-            def device = OpenCLPlatform.PLATFORMS()[0].devices[0]
+            def device = Neureka.get().context().find(OpenCLPlatform.ContextComponent.class).getPlatforms()[0].devices[0]
             def someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).set( device )
 
-        expect :
+        expect : 'The OpenCL device initially does not have the "dummy_kernel" we are going to create.'
             !device.hasAdHocKernel( 'dummy_kernel' )
 
-        when :
+        when : 'Compiling a kernel called "dummy_kernel"...'
             device.compileAdHocKernel( 'dummy_kernel', """
                 __kernel void dummy_kernel (
                         __global float* output,
@@ -122,10 +122,10 @@ class OpenCLDevice_Integration_Tests extends Specification
                 """
             )
 
-        then :
+        then : 'The OpenCL device contrary to before now has a kernel by this name.'
             device.hasAdHocKernel( 'dummy_kernel' )
 
-        and :
+        and : 'The device still references the source code od that kernel.'
             device._adhocKernels['dummy_kernel'].source == """
                 __kernel void dummy_kernel (
                         __global float* output,
@@ -137,14 +137,14 @@ class OpenCLDevice_Integration_Tests extends Specification
                     }
                 """
 
-        when :
+        when : 'Executing the kernel by passing the previously defined tensor...'
             device.getAdHocKernel( 'dummy_kernel' )
                     .passRaw( someData )
                     .passRaw( someData )
                     .pass( -4f )
                     .call( someData.size() )
 
-        then :
+        then : 'Each value within the tensor will all have the number 4 subtracted from it.'
             someData.toString() == "(5):[-2.0, -9.0, -7.0, 5.0, -5.0]"
 
     }
@@ -156,7 +156,7 @@ class OpenCLDevice_Integration_Tests extends Specification
 
         given : 'This system supports OpenCL'
             if ( !Neureka.get().canAccessOpenCL() ) return
-            def device = OpenCLPlatform.PLATFORMS()[0].devices[0]
+            def device = Neureka.get().context().find(OpenCLPlatform.ContextComponent.class).getPlatforms()[0].devices[0]
             def kernelName = "dummy_mm_${M}x${K}x${N}"
             def params = DispatchUtility.findBestParams(locSize, regSize, K, M, N)
 

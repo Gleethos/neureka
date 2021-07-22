@@ -188,11 +188,6 @@ public class OpenCLPlatform {
         return _kernels;
     }
 
-
-    public static List<OpenCLPlatform> PLATFORMS() {
-        return Neureka.get().context().find(ContextComponent.class).getPlatforms();
-    }
-
     public cl_platform_id getPid() {
         return this._pid;
     }
