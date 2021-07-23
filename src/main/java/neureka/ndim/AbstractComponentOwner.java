@@ -51,20 +51,33 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- *  This is the root precursor class to the final {@link Tsr} class from which
- *  tensor instances can be created, but also the precursor class of the {@link neureka.backend.api.OperationContext}.
+ *  Together with the {@link Component} interface, this class defines a simple
+ *  component system in which implementations of the {@link Component} interface
+ *  are managed by extensions of this {@link AbstractComponentOwner}.
+ *  An {@link AbstractComponentOwner} can have multiple {@link Component} instances which
+ *  are being accessed via the {@link Class} objects of these implementations.
+ *  This means that the {@link AbstractComponentOwner} can only reference a single
+ *  instance of a specific {@link Component} implementation class.                                   <br>
+ *                                                                                                   <br>
+ *  This class is used as the root precursor class of the concrete {@link Tsr} class
+ *  from which tensor instances can be created, but also the precursor class of
+ *  the {@link neureka.backend.api.OperationContext} which is a thread local execution context
+ *  hosting {@link neureka.backend.api.Operation}, {@link java.util.function.Function}
+ *  and of course {@link Component} implementations.
+ *  Tensors use this component system to enable autograd via the {@link GraphNode} class
+ *  and to reference gradients ({@link Tsr} is itself a {@link Component}).
  *  The inheritance model of a tensor is structured as follows:
  *  {@link Tsr} inherits from {@link AbstractNDArray} which inherits from {@link AbstractComponentOwner}
  *  The inheritance model is linear, meaning that all classes involved
  *  are not extended more than once.
  *
- * @param <C> The class at the bottom end of the inheritance hierarchy. (Used for factory pattern)
+ * @param <C> The concrete class at the bottom end of the inheritance hierarchy. (Used to allow for method chaining)
  */
 public abstract class AbstractComponentOwner<C>
 {
     /**
      *  The following static map enables fast access to properties which describe
-     *  the "importance" of an implementation of the Component interface.
+     *  the "importance" of an implementation of the {@link Component} interface.
      *  This is relevant only for performance reasons because
      *  the component owner referencing this component among
      *  others can store them according to their order to
@@ -73,7 +86,6 @@ public abstract class AbstractComponentOwner<C>
      *  New component implementations will default to a class order of 0
      *  and otherwise one should consider profiling the access patterns
      *  of the component system and update this mapping...
-     *
      */
     private static final Map<Class<? extends Component>, Integer> _CLASS_ORDER = new HashMap<>();
     static {
@@ -87,7 +99,7 @@ public abstract class AbstractComponentOwner<C>
     }
 
     /**
-     *  A collection of components.
+     *  An array of (type) unique components.
      */
     private Component<C>[] _components = null;
 
@@ -136,27 +148,20 @@ public abstract class AbstractComponentOwner<C>
     }
 
     /**
-     *  A component owner might need to "changes its identity". <br>
-     *  Meaning that the components of another owner will be stripped of its components
-     *  which will be adopted by the current one.
+     *  A component owners might need to exchange components. <br>
+     *  Meaning that the components of another owner will be transferred and adopted by the current one.
      *  During this process the transferred components will be notified of their new owner.
      *  This is important because some components might reference their owners... <br>
      *  <br>
-     *  This change currently only happens in the 'Tsr' sub-class when tensors are being instantiated by
-     *  certain constructors to which input tensors and a math expression is passed.
-     *  This triggers the creation of a Function instance and execution on the provided
-     *  input tensors. In that case the output tensor will be created somewhere
-     *  along the execution call stack, however the result is expected to be
-     *  stored within the tensor whose constructor initialized all of this.
-     *  In that case this tensor will rip out the guts of the resulting output
-     *  tensor and stuff onto its own field variables.
+     *  This change happens for example in the {@link Tsr} class when tensors are being instantiated by
+     *  certain constructors which require the injection of the contents of another tensor into a new one.
      *
      * @param other The other owner which will be stripped of its components which are then incorporated into this owner.
      */
     protected void _transferFrom( AbstractComponentOwner<C> other ) {
             if ( other._components != null ) {
             _setComps( other._components ); // Inform components about their new owner:
-            for ( Component<C> c : _components ) c.update((C) other, (C) this);
+            for ( Component<C> c : _components ) c.update( (C) other, (C) this );
             other._deleteComponents();
         }
     }
@@ -165,9 +170,7 @@ public abstract class AbstractComponentOwner<C>
      *  This method deletes the array of components of this component owner
      *  by nulling the array variable field.
      */
-    protected void _deleteComponents() {
-        _components = null;
-    }
+    protected void _deleteComponents() { _components = null; }
 
     /**
      *  This method tries to find a component inside the stored
@@ -206,7 +209,7 @@ public abstract class AbstractComponentOwner<C>
     }
 
     /**
-     * This method checks if a component identified by the passed Class
+     * This method checks if a component identified by the passed {@link Class}
      * instance is present inside the stored component collection.
      *
      * @param componentClass The class/type of a component that might exist in components.
