@@ -1,23 +1,28 @@
 package neureka;
 
 /**
- *  This interface defines the functionality of the component of a simple component system used by Neureka.
- *  Currently the only implemented component system using this interface is that of the Tsr class.
- *  Meaning that said class is the "owner" of components as is defined by the type parameter below.
+ *  This interface alongside the {@link neureka.ndim.AbstractComponentOwner} class define a simple component system.
+ *  The component type defined by this interface is used to create components for the {@link Tsr} class
+ *  as well as the {@link neureka.backend.api.OperationContext} class which both directly or indirectly
+ *  extend the {@link neureka.ndim.AbstractComponentOwner} class.
+ *  The type parameter of this interface represents the "owner" of the {@link Component}.
  *
- * @param <OwnerType> The type of which an implementation of this interface is a component.
+ * @param <O> The owner type of which an implementation of this interface is a component.
  */
-public interface Component<OwnerType>
+public interface Component<O>
 {
     /**
      *  This method informs the component about an owner switch.
      *  If components hold references of their owner then this
      *  method gives them the ability to update said reference
      *  when a new owner takes over the components of an old one.
+     *  The method is also called when the component is initially
+     *  added to the owner, in which case the "oldOwner"
+     *  is going to be null.
      *
-     * @param oldOwner The previous owner type instance.
+     * @param oldOwner The previous owner type instance or null if the component is being added to the owner.
      * @param newOwner The new owner type instance.
      */
-    void update( OwnerType oldOwner, OwnerType newOwner );
+    void update( O oldOwner, O newOwner );
 
 }

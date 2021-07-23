@@ -1,10 +1,8 @@
 package neureka.devices.opencl;
 
-import neureka.Component;
 import neureka.Neureka;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
-import neureka.backend.api.OperationContext;
 import neureka.backend.standard.algorithms.*;
 import neureka.backend.standard.implementations.CLImplementation;
 import org.jocl.*;
@@ -21,7 +19,6 @@ public class OpenCLPlatform {
 
     private final cl_platform_id _pid;
     private final cl_context _context;
-    private boolean _isDoingLegacyIndexing = false;
 
     private final Map<cl_device_id, OpenCLDevice> _id_device;
     private final Map<String, cl_kernel> _kernels = new HashMap<>();
@@ -172,9 +169,11 @@ public class OpenCLPlatform {
         return devices;
     }
 
-    public boolean has( cl_device_id did ) {
-        return _id_device.containsKey( did );
-    }
+    /**
+     * @param did The {@link cl_device_id} representing an OpenCL supporting device.
+     * @return The truth value determining if this platform hosts the device represented by the provided id.
+     */
+    public boolean has( cl_device_id did ) { return _id_device.containsKey( did ); }
 
     public OpenCLDevice get( cl_device_id did ) {
         return _id_device.get( did );
@@ -194,10 +193,6 @@ public class OpenCLPlatform {
 
     public cl_context getContext() {
         return this._context;
-    }
-
-    public boolean isDoingLegacyIndexing() {
-        return this._isDoingLegacyIndexing;
     }
 
 }

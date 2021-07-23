@@ -9,6 +9,17 @@ import java.util.List;
 
 import static org.jocl.CL.clGetPlatformIDs;
 
+/**
+ *  This is an OpenCL context component for any given {@link OperationContext}.
+ *  {@link OperationContext}s are thread local states
+ *  used for managing {@link neureka.backend.api.Operation}, {@link neureka.calculus.Function}
+ *  as well as {@link Component<OperationContext>} implementation instances like this one.
+ *  This component system exist so that a given context can be extended for more functionality
+ *  and also to attach relevant states like for example kernels, memory objects and other concepts
+ *  exposed by OpenCL.
+ *  This state might not be compatible with the concepts introduced in other contexts
+ *  which is why it makes sense to have separate "worlds".
+ */
 public class CLContext  implements Component<OperationContext>
 {
     private final List<OpenCLPlatform> _platforms = new ArrayList<>();
@@ -18,10 +29,10 @@ public class CLContext  implements Component<OperationContext>
     @Override
     public void update( OperationContext oldOwner, OperationContext newOwner ) {
         this._platforms.clear();
-        this._platforms.addAll( findAllPlatforms() );
+        this._platforms.addAll( _findLoadAndCompileForAllPlatforms() );
     }
 
-    public static List<OpenCLPlatform> findAllPlatforms()
+    private static List<OpenCLPlatform> _findLoadAndCompileForAllPlatforms()
     {
         // Obtain the number of platforms
         int[] numPlatforms = new int[ 1 ];
