@@ -17,21 +17,43 @@ import static org.jocl.CL.clGetPlatformIDs;
  *  This component system exist so that a given context can be extended for more functionality
  *  and also to attach relevant states like for example kernels, memory objects and other concepts
  *  exposed by OpenCL.
- *  This state might not be compatible with the concepts introduced in other contexts
+ *  A given state might not be compatible with the concepts introduced in other contexts
  *  which is why it makes sense to have separate "worlds".
  */
 public class CLContext  implements Component<OperationContext>
 {
     private final List<OpenCLPlatform> _platforms = new ArrayList<>();
 
+    /**
+     *  Use this constructor if you want to create a new OpenCL world in which there
+     *  are unique {@link OpenCLPlatform} and {@link OpenCLDevice} instances.
+     */
+    public CLContext() {}
+
+    /**
+     * @return A list of context specific {@link OpenCLPlatform} instances possible containing {@link OpenCLDevice}s.
+     */
     public List<OpenCLPlatform> getPlatforms() { return _platforms; }
 
+    /**
+     *  Updating the CLContext will cause the list of existing {@link OpenCLPlatform} instances to be
+     *  cleared and refilled with completely new {@link OpenCLPlatform} instances.
+     *  This will in effect also cause the recreation of any {@link {@link OpenCLDevice} instances
+     *  as part of these {@link OpenCLPlatform}s.
+     *  This will subsequently cause the recompilation of many OpenCL kernels.
+     *
+     * @param oldOwner The previous {@link OperationContext} instance or null if the component is being added to the owner.
+     * @param newOwner The new {@link OperationContext} instance.
+     */
     @Override
     public void update( OperationContext oldOwner, OperationContext newOwner ) {
         this._platforms.clear();
         this._platforms.addAll( _findLoadAndCompileForAllPlatforms() );
     }
 
+    /**
+     * @return A new list of freshly created {@link OpenCLPlatform} instances containing freshly instantiated {@link OpenCLDevice}s and kernels.
+     */
     private static List<OpenCLPlatform> _findLoadAndCompileForAllPlatforms()
     {
         // Obtain the number of platforms

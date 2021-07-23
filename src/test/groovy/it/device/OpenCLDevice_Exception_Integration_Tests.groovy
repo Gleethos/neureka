@@ -25,7 +25,7 @@ class OpenCLDevice_Exception_Integration_Tests extends Specification
     {
         given : 'This system supports OpenCL'
             if ( !Neureka.get().canAccessOpenCL() ) return
-            def device = Neureka.get().context().find(CLContext.class).getPlatforms()[0].devices[0]
+            def device = Neureka.get().context().find(CLContext.class).platforms[0].devices[0]
 
         expect : 'Initially there is no ad hoc kernel with the following name.'
             !device.hasAdHocKernel( 'right_dummy_kernel_name' )

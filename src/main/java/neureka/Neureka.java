@@ -40,6 +40,7 @@ import neureka.backend.api.Operation;
 import neureka.backend.api.OperationContext;
 import neureka.devices.opencl.CLContext;
 import neureka.dtype.custom.F64;
+import neureka.utility.Messages;
 import neureka.utility.SettingsLoader;
 import neureka.utility.TsrAsString;
 import org.slf4j.Logger;
@@ -87,6 +88,14 @@ public final class Neureka
     private final Settings _settings;
     private final Utility _utility;
 
+    /**
+     *  This is a lazy reference to the so called {@link OperationContext}
+     *  which will instantiated and populated as soon as the {@link #context()}
+     *  method is being called for the first time.
+     *  This context contains anything needed to perform operations
+     *  on tensors on using different {@link neureka.calculus.Function}
+     *  or {@link neureka.devices.Device} implementation instances.
+     */
     private OperationContext _context;
 
     public OperationContext context() {
@@ -94,17 +103,20 @@ public final class Neureka
             _context = new OperationContext();
             // loading operations!
             ServiceLoader<Operation> serviceLoader = ServiceLoader.load( Operation.class );
-            //serviceLoader.reload();
 
             //checking if load was successful
             for ( Operation operation : serviceLoader ) {
                 assert operation.getFunction() != null;
                 assert operation.getOperator() != null;
+                if ( operation.getFunction() == null ) log.error(Messages.ILLEGAL_OPERATION_STATE_ERROR, "function" );
+                if ( operation.getOperator() == null ) log.error(Messages.ILLEGAL_OPERATION_STATE_ERROR, "operator" );
                 _context.addOperation(operation);
-                log.debug( "Operation: '" + operation.getFunction() + "' loaded!" );
+                log.debug(Messages.OPERATION_LOADED_DEBUG, operation.getFunction() );
             }
             if ( _OPENCL_AVAILABLE )
                 _context.set( new CLContext() );
+            else
+                log.warn(Messages.CL_CONTEXT_NOT_CREATED_WARNING);
         }
         return _context;
     }
