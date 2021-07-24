@@ -149,8 +149,8 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
     @Override
     public ExecutionCall<? extends Device<?>> instantiateNewTensorsForExecutionIn( ExecutionCall<? extends Device<?>> call )
     {
-        Tsr[] tensors = call.getTensors();
-        Device device = call.getDevice();
+        Tsr<?>[] tensors = call.getTensors();
+        Device<?> device = call.getDevice();
         if ( tensors[ 0 ] == null ) // Creating a new tensor:
         {
             int[] shp = tensors[ 1 ].getNDConf().shape();
@@ -169,12 +169,16 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
     private void tryExecute( ExecutionCall<HostCPU> call, Class<?> typeClass ) {
         Method m = findMethod( call.getOperation().getFunction(), typeClass );
         if ( m == null ) {
-            if ( call.getOperation().getOperator().equals("+") ) m = findMethod( "plus", typeClass );
-            else if ( call.getOperation().getOperator().equals("-") ) m = findMethod( "minus", typeClass );
-            else if ( call.getOperation().getOperator().equals("*") ) m = findMethod( "times", typeClass );
-            else if ( call.getOperation().getOperator().equals("*") ) m = findMethod( "multiply", typeClass );
-            else if ( call.getOperation().getOperator().equals("*") ) m = findMethod( "mul", typeClass );
-            else if ( call.getOperation().getOperator().equals("%") ) m = findMethod( "mod", typeClass );
+            switch (call.getOperation().getOperator()) {
+                case "+": m = findMethod("plus", typeClass);break;
+                case "-": m = findMethod("minus", typeClass);break;
+                case "*":
+                    m = findMethod("times", typeClass);
+                    if ( m == null) m = findMethod("multiply", typeClass);
+                    if ( m == null) m = findMethod("mul", typeClass);
+                    break;
+                case "%": m = findMethod("mod", typeClass);break;
+            }
         }
         Method finalMethod = m;
         call
