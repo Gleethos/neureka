@@ -12,17 +12,17 @@
     contains everything that is needed for iterating and translating an array of indexed axis
     to a single true index targeting an actual element within the data array of a given nd-array (tensor).
 */
-void _cfg_of_cfg(__global int* cfg, int* new_cfg, int rank)
-{
-    for( int i = 0; i < rank * 5; i++ )
+    void _cfg_of_cfg( __global int* cfg, int* new_cfg, int rank )
     {
-        if( i >= rank * 3 && i < rank * 4 ){
-            new_cfg[ i + 2 * rank ] = cfg[ i ];
-        } else {
-            new_cfg[ i ] = cfg[ i ];
+        for ( int i = 0; i < rank * 5; i++ )
+        {
+            if ( i >= rank * 3 && i < rank * 4 ) {
+                new_cfg[ i + 2 * rank ] = cfg[ i ];
+            } else {
+                new_cfg[ i ] = cfg[ i ];
+            }
         }
     }
-}
 
 //======================================================================================================================
 
@@ -37,17 +37,17 @@ void _cfg_of_cfg(__global int* cfg, int* new_cfg, int rank)
     which has the size (6 * rank * sizeof(int)) and contains everything
     needed to treat a given block of data as an nd-array!
 */
-int _i_of_i( int i, int* cfg, int rank )// cfg:   <[ shape | translation | indicesMap | indices | indicesScale | idxBase ]>
-{
-    int* idx    = (cfg+rank*3);
-    int* idxMap = (cfg+rank*2);
-    for( int ii = 0; ii < rank; ii++ ) {
-        idx[ ii ] = ( i / idxMap[ ii ] ); // is derived from the shape of a tensor. Translates scalar index to dim-Index
-        i %= idxMap[ ii ];
+    int _i_of_i( int i, int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]
+    {
+        int* indices    = ( cfg + rank * 3 );
+        int* indicesMap = ( cfg + rank * 2 );
+        for( int ii = 0; ii < rank; ii++ ) {
+            indices[ ii ] = ( i / indicesMap[ ii ] ); // is derived from the shape of a tensor. Translates scalar index to dim-Index
+            i %= indicesMap[ ii ];
+        }
+        return _i_of_idx_on_tln( cfg, rank );
     }
-    return _i_of_idx_on_tln( cfg, rank );
-}
-
+// _i_of_i end!
 //======================================================================================================================
 
 /*
@@ -56,17 +56,17 @@ int _i_of_i( int i, int* cfg, int rank )// cfg:   <[ shape | translation | indic
     All of this is contained within the "cfg" array, which has the size (6 * rank * sizeof(int)) and
     contains everything needed to treat a given block of data as an nd-array!
 */
-int _i_of_idx_on_tln( int* cfg, int rank ) // cfg:   <[ 0:shape | 1:translation | 2:idxMap | 3:idx | 4:idxScale | 5:idxBase ]>
-{
-    int* idxBase     = ( cfg + rank * 5 );
-    int* idxScale    = ( cfg + rank * 4 );
-    int* idx         = ( cfg + rank * 3 );
-    int* translation = ( cfg + rank     );
-    int i = 0;
-    for ( int ii = 0; ii < rank; ii++ ) {
-        i += ( idx[ ii ] * idxScale[ ii ] + idxBase[ ii ] ) * translation[ ii ];
+    int _i_of_idx_on_tln( int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]
+    {
+        int* offset      = ( cfg + rank * 5 );
+        int* strides     = ( cfg + rank * 4 );
+        int* indices     = ( cfg + rank * 3 );
+        int* translation = ( cfg + rank     );
+        int i = 0;
+        for ( int ii = 0; ii < rank; ii++ ) {
+            i += ( indices[ ii ] * strides[ ii ] + offset[ ii ] ) * translation[ ii ];
+        }
+        return i;
     }
-    return i;
-}
 
 //======================================================================================================================

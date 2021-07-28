@@ -133,6 +133,36 @@ class CLFunctionCompiler_Tests extends Specification {
         and :
             1 * mockDevice.getAdHocKernel(_) >> mockCaller
         and :
+            1 * mockDevice.compileAdHocKernel(
+                    "test_fun_double\$1_double\$1_double\$1_double\$1",
+                    """
+
+    __kernel void test_fun_double\$1_double\$1_double\$1_double\$1(
+        __global double* arg0, __global double* arg1, __global double* arg2, __global double* arg3
+    ) {                                                                                     
+        int* cfg0 = {1,1,1,0,1};
+        int* cfg1 = {1,1,1,0,1};
+        int* cfg2 = {1,1,1,0,1};
+        int* cfg3 = {1,1,1,0,1};                                                                                          
+        double v1 = arg1[_i_of_i(i, cfg1, 1)];
+        double v2 = arg2[_i_of_i(i, cfg2, 1)];
+        double v3 = arg3[_i_of_i(i, cfg3, 1)];                                                                                          
+        unsigned int i = get_global_id( 0 );                                              
+        arg0[_i_of_i(i, cfg0, 1)] = (v01 - (v11 / v21));                         
+    }                                                                                     
+
+    int _i_of_i( int i, int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]
+    {
+        int* indices    = ( cfg + rank * 3 );
+        int* indicesMap = ( cfg + rank * 2 );
+        for( int ii = 0; ii < rank; ii++ ) {
+            indices[ ii ] = ( i / indicesMap[ ii ] ); // is derived from the shape of a tensor. Translates scalar index to dim-Index
+            i %= indicesMap[ ii ];
+        }
+        return _i_of_idx_on_tln( cfg, rank );
+    }
+""")
+        and :
             4 * mockCaller.pass(_)
         and :
             1 * mockCaller.call(1)

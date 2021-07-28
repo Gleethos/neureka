@@ -168,28 +168,28 @@ public class CLFunctionCompiler {
                                         );
 
         String kernelCode =
-                "                                                                                          \n" +
-                "    __kernel void " + kernelSignature + "( " + argString + " )                            \n" +
-                "    {                                                                                     \n" +
+                "\n\n" +
+                "    __kernel void " + kernelSignature + "(\n" +
+                "        " + argString + "\n" +
+                "    ) {                                                                                     \n" +
                 "        " + IntStream
                                 .range(0, configs.size())
                                 .mapToObj(
-                                    i -> "int* cfg"+i+" = {" + String.join( ",", configs.get(i) ) + "};\n"
+                                    i -> "int* cfg"+i+" = {" + String.join( ",", configs.get(i) ) + "};"
                                 )
-                                .collect(Collectors.joining("        \n        ")) +
+                                .collect(Collectors.joining("\n        ")) +
                 "                                                                                          \n" +
                 "        " + IntStream
                                 .range(1, args.size()) // We start at 1 because 0 is the output!
                                 .mapToObj(
-                                        i -> types.get(i) + " v" + i + " = arg" + i + "[_i_of_i(i, cfg"+i+", rank)];\n"
+                                        i -> types.get(i) + " v" + i + " = arg" + i + "[_i_of_i(i, cfg"+i+", "+rank+")];"
                                 )
-                                .collect(Collectors.joining("        \n        ")) +
+                                .collect(Collectors.joining("\n        ")) +
                 "                                                                                          \n" +
-                "         unsigned int i = get_global_id( 0 );                                             \n" +
-                "                                                                                          \n" +
-                "         arg0[_i_of_i(i, cfg0, "+rank+")] = " + compilableFun + ";                        \n" +
-                "                                                                                          \n" +
-                "    }                                                                                     \n";
+                "        unsigned int i = get_global_id( 0 );                                              \n" +
+                "        arg0[_i_of_i(i, cfg0, "+rank+")] = " + compilableFun + ";                         \n" +
+                "    }                                                                                     \n\n" +
+                "    " + _readIndexMapper();
 
         _device.compileAdHocKernel( kernelSignature, kernelCode );
         KernelCaller caller = _device.getAdHocKernel( kernelSignature );
@@ -210,6 +210,15 @@ public class CLFunctionCompiler {
                 return "u" + formatter.apply(instance.holderType());
         }
         return formatter.apply(dtype.getTypeClass());
+    }
+
+    private static String _readIndexMapper() {
+        return "int _i_of_i" +
+               Neureka.get()
+                        .utility()
+                        .readResource("kernels/utility.cl")
+                        .split("int _i_of_i")[1]
+                        .split("// _i_of_i end!")[0];
     }
 
 }
