@@ -43,7 +43,9 @@ import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.Operation;
 import neureka.calculus.assembly.FunctionBuilder;
+import neureka.calculus.implementations.FunctionInput;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -62,9 +64,7 @@ import java.util.function.Supplier;
  */
 public interface Function
 {
-    static Function create( String expression ) {
-        return create( expression, true );
-    }
+    static Function create( String expression ) { return create( expression, true ); }
 
     static Function create( String expression, boolean doAD ) {
         return new FunctionBuilder(Neureka.get().context()).build(expression, doAD);
@@ -139,6 +139,34 @@ public interface Function
     boolean dependsOn( int index );
 
     Function getDerivative( int index );
+
+    List<Function> getNodes();
+
+    default List<Function> getAllNodes() {
+        return _unpack( this.getNodes() );
+    }
+
+    default int numberOfArgs() {
+        return (int) getAllNodes()
+                        .stream()
+                        .filter( fun -> fun instanceof FunctionInput )
+                        .map( fun -> (FunctionInput) fun )
+                        .mapToInt( FunctionInput::index )
+                        .distinct()
+                        .count();
+    }
+
+    static List<Function> _unpack( List<Function> functions ) {
+        List<Function> collected = new ArrayList<>();
+        __unpack(functions, collected);
+        return collected;
+    }
+
+    static void __unpack( List<Function> functions, List<Function> target ) {
+        target.addAll(functions);
+        for ( Function fun : functions ) __unpack(fun.getNodes(), target);
+    }
+
 
     //------------------------------------------------------------------------------------------------------------------
 

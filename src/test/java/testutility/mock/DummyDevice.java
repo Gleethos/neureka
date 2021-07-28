@@ -1,6 +1,8 @@
 package testutility.mock;
 
 import neureka.Tsr;
+import neureka.backend.api.Operation;
+import neureka.calculus.Function;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
 import neureka.backend.api.ExecutionCall;
@@ -54,6 +56,11 @@ public class DummyDevice extends AbstractBaseDevice<Object>
 
     @Override
     public Collection<Tsr<Object>> getTensors() { return null; }
+
+    @Override
+    public Operation optimizedOperationOf(Function function, String name) {
+        return null;
+    }
 
     @Override
     public void update(Tsr oldOwner, Tsr newOwner) { }

@@ -7,6 +7,9 @@ import neureka.calculus.AbstractBaseFunction;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *  Instances of this implementation of the {@link Function} interface
  *  are leave nodes within the abstract syntax tree of a function, representing indexed inputs to a function.
@@ -52,6 +55,9 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     public Function getDerivative( int index ) {
         return Function.create( "1" );
     }
+
+    @Override
+    public List<Function> getNodes() { return new ArrayList<>(); }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

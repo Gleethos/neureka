@@ -70,7 +70,7 @@ class Calculus_Extension_Integration_Tests extends Specification
                                                 .setCanPerformBackwardADFor(call -> true)
                                                 .setCanPerformForwardADFor(call -> false)
                                                 .setSupplyADAgentFor(
-                                                        (Function f, ExecutionCall<Device> call, boolean forward) -> {
+                                                        (Function f, ExecutionCall<? extends Device<?>> call, boolean forward) -> {
                                                             if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                                                             return new DefaultADAgent(null)
                                                                     .setForward((t, derivative) -> new FunctionBuilder(Neureka.get().context()).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
@@ -81,8 +81,8 @@ class Calculus_Extension_Integration_Tests extends Specification
                                                 .setHandleRecursivelyAccordingToArity((call, goDeeperWith) -> null)
                                                 .setInstantiateNewTensorsForExecutionIn(
                                                         call -> {
-                                                            Tsr[] tsrs = call.getTensors();
-                                                            Device device = call.getDevice();
+                                                            Tsr<?>[] tsrs = call.getTensors();
+                                                            Device<?> device = call.getDevice();
                                                             if (tsrs[0] == null) // Creating a new tensor:
                                                             {
                                                                 int[] shp = new int[]{tsrs[1].getNDConf().shape()[0], tsrs[2].getNDConf().shape()[1]}

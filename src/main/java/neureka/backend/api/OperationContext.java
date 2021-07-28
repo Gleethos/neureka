@@ -147,8 +147,9 @@ public class OperationContext extends AbstractComponentOwner<OperationContext> i
      *  which is the thread local execution context receiving and processing {@link neureka.Tsr} instances...         <br><br>
      *
      * @param operation The {@link Operation} instance which ought to be registered as part of this execution context.
+     * @return This very context instance to allow for method chaining.
      */
-    public void addOperation( Operation operation )
+    public OperationContext addOperation( Operation operation )
     {
         _instances.add( operation );
         String function = operation.getFunction();
@@ -171,6 +172,15 @@ public class OperationContext extends AbstractComponentOwner<OperationContext> i
                 this._lookup.put(operator.replace((""+((char)187)),">>"), operation);
         }
         _size++;
+        return this;
+    }
+
+    /**
+     * @param operation The {@link Operation} which may or may not be part of this {@link OperationContext}.
+     * @return The truth value determining if the provided {@link Operation} is part of this {@link OperationContext}.
+     */
+    public boolean hasOperation( Operation operation ) {
+        return this._lookup.containsKey( operation.getFunction() );
     }
 
 

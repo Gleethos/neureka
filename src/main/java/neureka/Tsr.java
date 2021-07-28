@@ -1121,6 +1121,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 }
             }
             if ( ((Device)newComponent).has( this ) ) setIsOutsourced( true );
+            else _LOG.error("Device received tensor without throwing an exception but now does not report the tensor as being a member.");
         } else if ( newComponent instanceof Tsr ) {
             if (
                     ((Tsr)newComponent).shape().hashCode() != this.shape().hashCode() ||

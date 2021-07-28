@@ -16,6 +16,53 @@ import java.util.List;
  */
 public class OperationBuilder
 {
+    public interface Stringifier
+    {
+        String stringify( String[] children );
+    }
+
+    public interface Derivator
+    {
+        String asDerivative( Function[] children, int d );
+    }
+
+    private Stringifier _stringifier = null;
+    private Derivator _derivator = null;
+    /**
+     *  Concrete {@link Operation} types ought to be representable by a function name.
+     *  This property will correspond to the {@link Operation#getFunction()} method.
+     */
+    private String _function = null;
+
+    private String _operator = null;
+    /**
+     *  Arity is the number of arguments or operands that this function or operation takes.
+     *  This property will correspond to the {@link Operation#getArity()} method.
+     */
+    private Integer _arity = null;
+    /**
+     *  An operator is an alternative to a function like "sum()" or "prod()". <br>
+     *  Examples would be "+, -, * ..."!
+     *
+     *  This property will correspond to the {@link Operation#isOperator()} method.
+     */
+    private Boolean _isOperator = null;
+    /**
+     *  This boolean property tell the {@link Function} implementations that this {@link Operation}
+     *  ought to be viewed as something to be indexed.
+     *  The {@link Function} will use this information to iterate over all the provided inputs and
+     *  then execute the function wile also passing the index to the function AST.
+     *  The resulting array will then be available to this {@link Operation} as argument list.
+     *  This feature works alongside the {@link Function} implementation found in
+     *  {@link neureka.calculus.implementations.FunctionVariable}, which represents an input indexed
+     *  by the identifier 'j'!
+     *
+     */
+    private Boolean _isIndexer = null;
+    private Boolean _isDifferentiable = null;
+    private Boolean _isInline = null;
+    private boolean _disposed = false;
+
     public Stringifier getStringifier() {
         return this._stringifier;
     }
@@ -96,53 +143,6 @@ public class OperationBuilder
         this._isInline = _isInline;
         return this;
     }
-
-    interface Stringifier
-    {
-        String stringify( String[] children );
-    }
-
-    interface Derivator
-    {
-        String asDerivative( Function[] children, int d );
-    }
-
-    private Stringifier _stringifier = null;
-    private Derivator _derivator = null;
-    /**
-     *  Concrete {@link Operation} types ought to be representable by a function name.
-     *  This property will correspond to the {@link Operation#getFunction()} method.
-     */
-    private String _function = null;
-
-    private String _operator = null;
-    /**
-     *  Arity is the number of arguments or operands that this function or operation takes.
-     *  This property will correspond to the {@link Operation#getArity()} method.
-     */
-    private Integer _arity = null;
-    /**
-     *  An operator is an alternative to a function like "sum()" or "prod()". <br>
-     *  Examples would be "+, -, * ..."!
-     *
-     *  This property will correspond to the {@link Operation#isOperator()} method.
-     */
-    private Boolean _isOperator = null;
-    /**
-     *  This boolean property tell the {@link Function} implementations that this {@link Operation}
-     *  ought to be viewed as something to be indexed.
-     *  The {@link Function} will use this information to iterate over all the provided inputs and
-     *  then execute the function wile also passing the index to the function AST.
-     *  The resulting array will then be available to this {@link Operation} as argument list.
-     *  This feature works alongside the {@link Function} implementation found in
-     *  {@link neureka.calculus.implementations.FunctionVariable}, which represents an input indexed
-     *  by the identifier 'j'!
-     *
-     */
-    private Boolean _isIndexer = null;
-    private Boolean _isDifferentiable = null;
-    private Boolean _isInline = null;
-    private boolean _disposed = false;
 
     public void dispose() {
         _disposed = true;

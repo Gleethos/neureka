@@ -80,10 +80,7 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
                                         );
                             }
                             else
-                            {
-
                                 tryExecute(call, typeClass);
-                            }
                         },
                         arity
                 )
@@ -131,8 +128,8 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
         }
         Tsr<?> localDerivative = f.executeDerive( call.getTensors(), call.getDerivativeIndex() );
         return new DefaultADAgent( localDerivative )
-                .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
-                .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
+                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
+                    .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
     }
 
     @Override

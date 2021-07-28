@@ -53,8 +53,10 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.calculus.Function;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
+import neureka.devices.opencl.utility.CLFunctionCompiler;
 import neureka.dtype.custom.F32;
 import neureka.framing.Relation;
 import neureka.utility.DataConverter;
@@ -322,6 +324,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
         Collection<Tsr<Number>> extracted = new ArrayList<>();
         collection.forEach( c -> c.forEach( t -> { if ( t != null ) extracted.add( t ); }));
         return extracted;
+    }
+
+    @Override
+    public Operation optimizedOperationOf( Function function, String name ) {
+        return new CLFunctionCompiler(this, function, name ).optimize();
     }
 
     /**

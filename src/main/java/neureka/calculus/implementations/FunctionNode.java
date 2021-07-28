@@ -14,6 +14,7 @@ import neureka.devices.host.HostCPU;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
@@ -92,6 +93,9 @@ public class FunctionNode extends AbstractBaseFunction
     public Function getDerivative( int index ) {
         return Function.create( _operation.asDerivative( _src, index ) );
     }
+
+    @Override
+    public List<Function> getNodes() { return Arrays.asList(this._src); }
 
     //------------------------------------------------------------------------------------------------------------------
 

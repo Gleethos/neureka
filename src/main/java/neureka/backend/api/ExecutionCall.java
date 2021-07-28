@@ -96,6 +96,11 @@ public class ExecutionCall<DeviceType extends Device<?>>
         return this._device;
     }
 
+    public <T> Device<T> getDeviceFor(Class<T> supportCheck ) {
+        // TODO: Make it possible to query device for type support!
+        return (Device<T>) this._device;
+    }
+
     public int getDerivativeIndex() {
         return this._derivativeIndex;
     }
@@ -290,8 +295,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
         private Map<String, Object> context$value;
         private boolean context$set;
 
-        ExecutionCallBuilder() {
-        }
+        ExecutionCallBuilder() { }
 
         public ExecutionCallBuilder<DeviceType> device(DeviceType device) {
             this.device = device;

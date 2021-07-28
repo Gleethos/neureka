@@ -30,7 +30,7 @@ public class FunctionBuilder
 
     private final OperationContext _context;
     
-    public FunctionBuilder(OperationContext context)
+    public FunctionBuilder( OperationContext context )
     {
         _context = context;
     }

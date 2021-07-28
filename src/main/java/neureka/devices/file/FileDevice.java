@@ -3,10 +3,13 @@ package neureka.devices.file;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Operation;
+import neureka.calculus.Function;
 import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -244,6 +247,11 @@ public class FileDevice extends AbstractBaseDevice<Object>
     @Override
     public Collection<Tsr<Object>> getTensors() {
         return _stored.keySet();
+    }
+
+    @Override
+    public Operation optimizedOperationOf( Function function, String name ) {
+        throw new NotImplementedException();
     }
 
     @Override

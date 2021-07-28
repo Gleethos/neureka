@@ -5,6 +5,9 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.calculus.Function;
 import neureka.calculus.AbstractBaseFunction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *  Instances of this implementation of the {@link Function} interface
  *  are leave nodes within the abstract syntax tree of a function, representing constant numeric values to a function.
@@ -50,6 +53,9 @@ public class FunctionConstant extends AbstractBaseFunction
 	public Function getDerivative( int index ) {
 		return Function.create( "0" );
 	}
+
+	@Override
+	public List<Function> getNodes() { return new ArrayList<>(); }
 
 	@Override
 	public Function newBuild( String expression )

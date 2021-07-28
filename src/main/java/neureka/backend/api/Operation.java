@@ -122,6 +122,9 @@ public interface Operation
      */
     <T extends Algorithm<T>> Operation setAlgorithm( Class<T> type, T instance );
 
+    default <T extends Algorithm<T>> Operation setAlgorithm( T instance ) {
+        return setAlgorithm( (Class<T>) instance.getClass(), instance );
+    }
 
     /**
      *  {@link Operation} implementations embody a component system hosting unique {@link Algorithm} instances.

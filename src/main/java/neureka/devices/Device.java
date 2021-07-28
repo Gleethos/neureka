@@ -40,15 +40,19 @@ import neureka.Component;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Operation;
+import neureka.backend.api.OperationContext;
+import neureka.calculus.Function;
+import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.CLContext;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.devices.opencl.OpenCLPlatform;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.IntFunction;
+import java.util.stream.Stream;
 
 /**
  * This is the interface for implementations representing
@@ -75,11 +79,8 @@ public interface Device<ValType> extends Component<Tsr<ValType>>, Storage<ValTyp
     static Device<?> find( String name )
     {
         String search = name.toLowerCase();
-        boolean probablyWantsGPU = Arrays.stream(
-                new String[]{
-                        "gpu", "nvidia", "amd", "intel", "opencl", "fpga"
-                }
-        ).anyMatch(search::contains);
+        boolean probablyWantsGPU = Stream.of("gpu", "nvidia", "amd", "intel", "opencl", "fpga", "radeon")
+                                            .anyMatch(search::contains);
 
         if ( !Neureka.get().canAccessOpenCL() ) {
             if ( probablyWantsGPU ) {
@@ -164,5 +165,21 @@ public interface Device<ValType> extends Component<Tsr<ValType>>, Storage<ValTyp
      * @return
      */
     <T> T[] toArray( IntFunction<T[]> generator );
+
+    Operation optimizedOperationOf( Function function, String name );
+
+    default Function optimizedFunctionOf( Function function, String name ) {
+        Operation optimizedOperation = optimizedOperationOf( function, name );
+        OperationContext currentContext = Neureka.get().context();
+        if ( !currentContext.hasOperation( optimizedOperation ) )
+            currentContext.addOperation( optimizedOperation );
+
+        return new FunctionBuilder( currentContext )
+                            .build(
+                                    optimizedOperation,
+                                    function.numberOfArgs(),
+                                    function.isDoingAD()
+                            );
+    }
 
 }

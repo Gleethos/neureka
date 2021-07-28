@@ -111,8 +111,7 @@ public abstract class AbstractOperation implements Operation
         _isInline         = builder.getIsInline();
     }
 
-    public AbstractOperation() {
-    }
+    public AbstractOperation() { }
 
     //==================================================================================================================
 

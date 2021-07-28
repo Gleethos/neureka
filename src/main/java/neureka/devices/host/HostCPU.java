@@ -2,10 +2,17 @@ package neureka.devices.host;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
+import neureka.calculus.Function;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
+import neureka.utility.Messages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -18,6 +25,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class HostCPU extends AbstractDevice<Number>
 {
+    private static final Logger _LOG = LoggerFactory.getLogger( HostCPU.class );
     private static final HostCPU _INSTANCE;
 
     static {  _INSTANCE = new HostCPU();  }
@@ -42,14 +50,28 @@ public class HostCPU extends AbstractDevice<Number>
     protected void _execute( Tsr[] tensors, int d, Operation type )
     {
         ExecutionCall<HostCPU> call = ExecutionCall.builder()
-                .device(this)
-                .tensors(tensors)
-                .derivativeIndex(d)
-                .operation(type)
-                .build()
-                .forDeviceType(HostCPU.class);
+                                                    .device(this)
+                                                    .tensors(tensors)
+                                                    .derivativeIndex(d)
+                                                    .operation(type)
+                                                    .build()
+                                                    .forDeviceType(HostCPU.class);
 
-        call.getAlgorithm().getImplementationFor( HostCPU.class ).run( call );
+        Algorithm<?> algorithm = call.getAlgorithm();
+        if ( algorithm == null ) {
+            String message = Messages.Device.couldNotFindSuitableAlgorithmFor( this.getClass() );
+            _LOG.error( message );
+            throw new IllegalStateException( message );
+        } else {
+            ImplementationFor<HostCPU> implementation = algorithm.getImplementationFor( HostCPU.class );
+            if ( implementation == null ) {
+                String message = Messages.Device.couldNotFindSuitableImplementationFor( algorithm, this.getClass() );
+                _LOG.error( message );
+                throw new IllegalStateException( message );
+            } else {
+                implementation.run( call );
+            }
+        }
     }
 
     @Override
@@ -115,6 +137,9 @@ public class HostCPU extends AbstractDevice<Number>
     public Collection<Tsr<Number>> getTensors() {
         return _tensors;
     }
+
+    @Override
+    public Operation optimizedOperationOf( Function function, String name ) { throw new NotImplementedException(); }
 
     public interface Range {
         void execute(int start, int end);
