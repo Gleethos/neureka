@@ -38,7 +38,7 @@ BigDecimal.metaClass.multiply = { Tsr t -> Tsr.of(delegate.toString(),"*", t ) }
 
 // String to Function
 
-String.metaClass.asFunction = { boolean doAD -> Function.create(delegate, doAD) }
+String.metaClass.asFunction = { boolean doAD -> Function.of(delegate, doAD) }
 String.metaClass.asFunction = { delegate.asFunction( true ) }
 
 String.metaClass.getAt = { List<Tsr> inputs -> delegate.asFunction()(inputs.toArray(new Tsr[ 0 ])) }

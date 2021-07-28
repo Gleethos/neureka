@@ -19,7 +19,7 @@ import java.util.List;
  *  of the argument within the list/array of arguments passed to a concrete {@link Function} instance. <br>
  *  So for example, when creating a function by calling the following factory method...     <br>
  *                                                                                          <br>
- *  {@link Function#create}( "I[1] + (4 * I[0]) / 2" )                                      <br>
+ *  {@link Function#of}( "I[1] + (4 * I[0]) / 2" )                                      <br>
  *                                                                                          <br>
  *  ...then the substrings "I[1]" and "I[0]" will be parsed into instances of this class!   <br>
  *  When calling this function by passing two arguments, let's say (first, second) then
@@ -61,7 +61,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
 
     @Override
     public Function getDerivative( int index ) {
-        return ( index == _index ) ? Function.create( "1" ) : Function.create( "0" );
+        return ( index == _index ) ? Function.of( "1" ) : Function.of( "0" );
     }
 
     @Override

@@ -15,7 +15,7 @@ import java.util.List;
  *  optionally separated by '.' to represent decimal digits. <br>
  *  So for example, when creating a function by calling the following factory method...     	<br>
  *                                                                                          	<br>
- *  {@link Function#create}( "I[1] + (4 * I[0]) / 2.1" )                                      	<br>
+ *  {@link Function#of}( "I[1] + (4 * I[0]) / 2.1" )                                      	<br>
  *                                                                                          	<br>
  *  ...then the substrings "4" and "2.1" will be parsed into instances of this class!   		<br>
  *
@@ -51,7 +51,7 @@ public class FunctionConstant extends AbstractBaseFunction
 
 	@Override
 	public Function getDerivative( int index ) {
-		return Function.create( "0" );
+		return Function.of( "0" );
 	}
 
 	@Override

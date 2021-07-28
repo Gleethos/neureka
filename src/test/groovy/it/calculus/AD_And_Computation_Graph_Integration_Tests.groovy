@@ -22,7 +22,7 @@ class AD_And_Computation_Graph_Integration_Tests extends Specification{
                     1, 2, 3,
                     4, 5, 6
             ]).setRqsGradient(true)
-            Function rs = Function.create("[1, 0]:(I[0])")
+            Function rs = Function.of("[1, 0]:(I[0])")
 
         when :
             Tsr b = rs(a)

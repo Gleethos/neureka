@@ -128,7 +128,7 @@ class Calculus_Extension_Integration_Tests extends Specification
                                 )
                 )
             }
-            Function matMul = run { Function.create("test_function(I[0],I[1])") }
+            Function matMul = run { Function.of("test_function(I[0],I[1])") }
 
 
         then :

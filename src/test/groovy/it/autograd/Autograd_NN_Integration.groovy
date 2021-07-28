@@ -45,7 +45,7 @@ class Autograd_NN_Integration extends Specification
                      [1.0000],
                      [0.8900]]
             )
-            def sig = Function.create("sig(I[0])")
+            def sig = Function.of("sig(I[0])")
             def W1 = Tsr.of(
                     [[-1.1843,  0.0146, -1.4647],
                      [-1.4020, -1.0129,  0.6256]]

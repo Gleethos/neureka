@@ -56,7 +56,7 @@ class Optimizer_Tests extends Specification
             w3.toString() == "(1x7):[-0.68675E0, 1.09107E0, 0.20312E0, -1.18979E0, 0.53206E0, 2.11926E0, 1.15821E0]:g:[null]"
 
         when:
-            def f = Function.create("softplus(I[0])")
+            def f = Function.of("softplus(I[0])")
             //def abs = Function.create("abs(I[0])")
             //def dox = Function.create("I[0]xI[1]")
         then :

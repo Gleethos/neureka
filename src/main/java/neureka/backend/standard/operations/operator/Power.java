@@ -499,7 +499,7 @@ public class Power extends AbstractOperation
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
         Function a = children[0];
-        Function b = Function.create(
+        Function b = Function.of(
                 IntStream.range( 1, children.length )
                 .mapToObj(i -> children[ i ].toString() )
                 .collect(Collectors.joining(" * "))

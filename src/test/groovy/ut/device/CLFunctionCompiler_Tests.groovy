@@ -23,7 +23,7 @@ class CLFunctionCompiler_Tests extends Specification {
             Tsr<Number> t2 = Tsr.of(-2)
             Tsr<Number> t3 = Tsr.of(5)
         and :
-            def funToBeOptimized = Function.create("i2 - (i0 / i1)")
+            def funToBeOptimized = Function.of("i2 - (i0 / i1)")
         and :
             def compiler = new CLFunctionCompiler(
                                             mockDevice,
@@ -96,7 +96,7 @@ class CLFunctionCompiler_Tests extends Specification {
         and :
             def mockCaller = Mock(KernelCaller)
         and :
-            def funToBeOptimized = Function.create("i2 - (i0 / i1)")
+            def funToBeOptimized = Function.of("i2 - (i0 / i1)")
         and :
             def compiler = new CLFunctionCompiler(
                                     mockDevice,

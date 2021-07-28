@@ -22,24 +22,24 @@ public class Functions {
     Function neg;
 
     public Functions( boolean doingAD ) {
-        dimTrim = Function.create( "dimtrim(I[ 0 ])",             doingAD );
-        idy = Function.create( "I[ 0 ]<-I[ 1 ]",                  doingAD );
-        conv = Function.create( "I[ 0 ]xI[ 1 ]",                  doingAD );
-        plus = Function.create( "(I[ 0 ]+I[ 1 ])",                doingAD );
-        plusAssign = Function.create( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])",  doingAD );
-        minus = Function.create( "(I[ 0 ]-I[ 1 ])",               doingAD );
-        minusAssign = Function.create( "I[ 0 ]<-(I[ 0 ]-I[ 1 ])", doingAD );
-        div = Function.create( "(I[ 0 ]/I[ 1 ])",                 doingAD );
-        divAssign = Function.create( "I[ 0 ]<-(I[ 0 ]/I[ 1 ])",   doingAD );
-        pow = Function.create( "(I[ 0 ]^I[ 1 ])",                 doingAD );
-        powAssign = Function.create( "I[ 0 ]<-(I[ 0 ]^I[ 1 ])",   doingAD );
-        mul = Function.create( "I[ 0 ]*I[ 1 ]",                   doingAD );
-        mulAssign = Function.create( "I[ 0 ]<-(I[ 0 ]*I[ 1 ])",   doingAD );
-        add = Function.create( "I[ 0 ]+I[ 1 ]",                   doingAD );
-        addAssign = Function.create( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])",   doingAD );
-        mod = Function.create( "(I[ 0 ]%I[ 1 ])",                 doingAD );
-        modAssign = Function.create( "I[ 0 ]<-(I[ 0 ]%I[ 1 ])",   doingAD );
-        neg = Function.create( "(-1*I[ 0 ])",                     doingAD );
+        dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
+        idy = Function.of( "I[ 0 ]<-I[ 1 ]",                  doingAD );
+        conv = Function.of( "I[ 0 ]xI[ 1 ]",                  doingAD );
+        plus = Function.of( "(I[ 0 ]+I[ 1 ])",                doingAD );
+        plusAssign = Function.of( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])",  doingAD );
+        minus = Function.of( "(I[ 0 ]-I[ 1 ])",               doingAD );
+        minusAssign = Function.of( "I[ 0 ]<-(I[ 0 ]-I[ 1 ])", doingAD );
+        div = Function.of( "(I[ 0 ]/I[ 1 ])",                 doingAD );
+        divAssign = Function.of( "I[ 0 ]<-(I[ 0 ]/I[ 1 ])",   doingAD );
+        pow = Function.of( "(I[ 0 ]^I[ 1 ])",                 doingAD );
+        powAssign = Function.of( "I[ 0 ]<-(I[ 0 ]^I[ 1 ])",   doingAD );
+        mul = Function.of( "I[ 0 ]*I[ 1 ]",                   doingAD );
+        mulAssign = Function.of( "I[ 0 ]<-(I[ 0 ]*I[ 1 ])",   doingAD );
+        add = Function.of( "I[ 0 ]+I[ 1 ]",                   doingAD );
+        addAssign = Function.of( "I[ 0 ]<-(I[ 0 ]+I[ 1 ])",   doingAD );
+        mod = Function.of( "(I[ 0 ]%I[ 1 ])",                 doingAD );
+        modAssign = Function.of( "I[ 0 ]<-(I[ 0 ]%I[ 1 ])",   doingAD );
+        neg = Function.of( "(-1*I[ 0 ])",                     doingAD );
     }
 
 

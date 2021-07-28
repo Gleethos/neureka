@@ -110,7 +110,7 @@ class Tensor_Slice_Reshape_Integration_Tests extends Specification
                     "]"
 
         when :
-            Tsr b = Function.create("[-1, 0, 1]:(I[0])")(a)
+            Tsr b = Function.of("[-1, 0, 1]:(I[0])")(a)
 
         then :
             a.toString() == "(2x3):[" +

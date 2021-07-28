@@ -19,7 +19,7 @@ class Calculus_Parsing_Unit_Tests extends Specification
             String equation, String expected
     ) {
         expect : 'A Function created from a given expression will be parsed as expected.'
-            Function.create(equation).toString() == expected
+            Function.of(equation).toString() == expected
 
         where : 'The following expressions and expected exception messages are being used :'
             equation                                    || expected
@@ -58,7 +58,7 @@ class Calculus_Parsing_Unit_Tests extends Specification
             String equation, String expected
     ) {
         when : 'We try to instantiate a Function by passing an expression String...'
-            Function.create(equation)
+            Function.of(equation)
 
         then : 'An exception is being thrown that contains the expected message!'
             def error = thrown(IllegalArgumentException)
@@ -78,7 +78,7 @@ class Calculus_Parsing_Unit_Tests extends Specification
     ) {
 
         expect : 'A Function created from a given expression will produce the expected derivative String.'
-            Function.create(equation).getDerivative( index ).toString() == expected
+            Function.of(equation).getDerivative( index ).toString() == expected
 
         where : 'The following expressions and derivation indices are being used :'
         equation                     | index || expected

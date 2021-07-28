@@ -94,7 +94,7 @@ class ADAM_Tests extends Specification
     def 'Equations "I[0]*I[1]+(1-I[2])*I[3]" and "(1-I[0])*I[1]" used within ADAM return expected results.' (
             String expression, double[] input, double output
     ) {
-        given : Function f = Function.create(expression)
+        given : Function f = Function.of(expression)
         expect : output == f(input)
         where : 'The following expressions, inputs and expected String results are being used :'
             expression                | input                             || output

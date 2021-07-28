@@ -18,7 +18,7 @@ import java.util.List;
  *  of the argument within the list/array of arguments passed to a concrete {@link Function} instance. <br>
  *  So for example, when creating a function by calling the following factory method...     <br>
  *                                                                                          <br>
- *  {@link Function#create}( "3 * sum( (I[j] + 4) * I[0] )" )                               <br>
+ *  {@link Function#of}( "3 * sum( (I[j] + 4) * I[0] )" )                               <br>
  *                                                                                          <br>
  *  ...then the substrings "I[j]" will be parsed into instances of this class!              <br>
  *  The substring "I[0]" on the other hand will not be parsed into an instance of this class!
@@ -53,7 +53,7 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
 
     @Override
     public Function getDerivative( int index ) {
-        return Function.create( "1" );
+        return Function.of( "1" );
     }
 
     @Override

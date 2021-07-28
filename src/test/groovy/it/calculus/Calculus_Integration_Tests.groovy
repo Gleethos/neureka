@@ -86,7 +86,7 @@ class Calculus_Integration_Tests extends Specification
     {
         given :
             Neureka.get().settings().view().setIsUsingLegacyView(true)
-            Function f = Function.create("[2, 0, 1]:(I[0])")
+            Function f = Function.of("[2, 0, 1]:(I[0])")
 
         when : Tsr t = Tsr.of([3, 4, 2], 1..5)
         then : t.toString().contains("[3x4x2]:(1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0)")
@@ -104,7 +104,7 @@ class Calculus_Integration_Tests extends Specification
             Tsr t = Tsr.of([1, 1, 3, 2, 1], 8).setRqsGradient(true)
 
         when :
-            Tsr trimmed = Function.create("dimtrim(I[0])")(t)
+            Tsr trimmed = Function.of("dimtrim(I[0])")(t)
 
         then :
             trimmed.toString().contains("(3x2):[8.0, 8.0, 8.0, 8.0, 8.0, 8.0]; ->d({ends=")

@@ -64,9 +64,9 @@ import java.util.function.Supplier;
  */
 public interface Function
 {
-    static Function create( String expression ) { return create( expression, true ); }
+    static Function of( String expression ) { return of( expression, true ); }
 
-    static Function create( String expression, boolean doAD ) {
+    static Function of( String expression, boolean doAD ) {
         return new FunctionBuilder(Neureka.get().context()).build(expression, doAD);
     }
 

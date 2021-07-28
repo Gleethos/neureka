@@ -119,7 +119,7 @@ class Tensor_IO_Unit_Tests extends Specification
             def t1_ioi_2 = t1.indexOfIndices(new int[]{1, 2})
             def t1_indices = t1.IndicesOfIndex(5)
 
-            Tsr t2 = Function.create(" [ 1, 0 ]:( I[0] ) ")(t1)
+            Tsr t2 = Function.of(" [ 1, 0 ]:( I[0] ) ")(t1)
             def t2_ioi_1 = t2.indexOfIndices(new int[]{1, 2})
             def t2_idx = t2.IndicesOfIndex(7)
 
