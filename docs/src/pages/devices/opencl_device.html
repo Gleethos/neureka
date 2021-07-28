@@ -37,7 +37,7 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    def device = OpenCLPlatform.PLATFORMS()[0].devices[0]
+    def device = Neureka.get().context().find(ContextComponent.class).getPlatforms()[0].devices[0]
     def someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).set( device )
 
     assert !device.hasAdHocKernel( 'dummy_kernel' )
@@ -69,7 +69,7 @@
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    OpenCLDevice device = OpenCLPlatform.PLATFORMS().getAt( 0 ).getDevices.getAt( 0 );
+    OpenCLDevice device = Neureka.get().context().find(ContextComponent.class).getPlatforms().getAt( 0 ).getDevices.getAt( 0 );
     Tsr someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).set( device );
 
     assert !device.hasAdHocKernel( 'dummy_kernel' );
