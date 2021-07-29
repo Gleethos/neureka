@@ -168,13 +168,12 @@ Min-jar file:
 
 ## :seedling: Development - [![Commit activity 1 year](https://img.shields.io/github/commit-activity/y/Gleethos/neureka.svg?style=flat)]() - [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Gleethos/neureka/graphs/commit-activity) - [![GitHub commits](https://img.shields.io/github/commits-since/Gleethos/neureka/v0.0.0.svg)](https://GitHub.com/Gleethos/neurka/commit/) ##
 
-Want to contribute? Great!
+Want to contribute? Don't worry:
 
-Although present, the documentation on this project still needs to mature.
-So if you have questions simply contact me or read through the test suite 
-of this project to understand what Neureka is supposed to be!
+> **There is plenty of developer friendly highly readable [living documentation](https://gleethos.github.io/neureka/spock/reports/index.html) 
+> to go through which explains the inner and outer workings of this project very well!**
 
-Feedback is greatly appreciated!
+And feedback is always greatly appreciated!
 
 ---
 
