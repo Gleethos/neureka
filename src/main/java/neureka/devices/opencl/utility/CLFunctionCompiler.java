@@ -47,8 +47,8 @@ public class CLFunctionCompiler {
         if ( _functionToBeOptimized.getNodes().stream().anyMatch(fun -> fun instanceof FunctionVariable ) )
             numberOfArgs = -1; // The function is an indexer which means that it can have any number of arguments...
         return new OperationBuilder()
-                .setFunction(_functionName)
-                .setOperator(_functionName)
+                .setFunction( _functionName )
+                .setOperator( _functionName )
                 .setArity( numberOfArgs )
                 .setIsIndexer( numberOfArgs < 0 )
                 .setIsOperator( false )
@@ -56,7 +56,7 @@ public class CLFunctionCompiler {
                 .setIsInline( false )
                 .setStringifier(
                         children -> {
-                            String expression = String.join(", ", children);
+                            String expression = String.join( ", ", children );
                             if (expression.charAt(0) == '(' && expression.charAt(expression.length() - 1) == ')') {
                                 return _functionName + expression;
                             }
@@ -115,16 +115,16 @@ public class CLFunctionCompiler {
         String kernelSignature =
                                 _functionName + ( call.getDerivativeIndex() >= 0 ? "_derivative" : "" ) +
                                 "_" +
-                                IntStream
-                                    .range(0, args.size())
-                                    .mapToObj(
-                                            i -> types.get(i) + "$" +
-                                                    args.get(i)
-                                                        .shape()
-                                                        .stream()
-                                                        .map( String::valueOf )
-                                                        .collect(Collectors.joining("x"))
-                                    )
+                                        args.stream()
+                                                .map( numbers ->
+                                                        numbers.getDataType().getTypeClass().getSimpleName() +
+                                                        "$" +
+                                                        numbers
+                                                                .shape()
+                                                                .stream()
+                                                                .map(String::valueOf)
+                                                                .collect(Collectors.joining("x"))
+                                                )
                                     .collect(Collectors.joining("_"));
 
         if ( this._device.hasAdHocKernel( kernelSignature ) ) {
@@ -163,7 +163,7 @@ public class CLFunctionCompiler {
                                              (source, index) ->
                                                      source.replace(
                                                              "I["+_argPointer[Integer.parseInt(index)]+"]",
-                                                             "v" + (index + 1)
+                                                             "v" + (Integer.parseInt(index) + 1)
                                                      )
                                         );
 
@@ -189,7 +189,7 @@ public class CLFunctionCompiler {
                 "        unsigned int i = get_global_id( 0 );                                              \n" +
                 "        arg0[_i_of_i(i, cfg0, "+rank+")] = " + compilableFun + ";                         \n" +
                 "    }                                                                                     \n\n" +
-                "    " + _readIndexMapper();
+                "    " + _readAndGetIndexMapper();
 
         _device.compileAdHocKernel( kernelSignature, kernelCode );
         KernelCaller caller = _device.getAdHocKernel( kernelSignature );
@@ -203,7 +203,7 @@ public class CLFunctionCompiler {
                                                                                  .toLowerCase()
                                                                                  .replace("integer", "int");
         if (dtype.typeClassImplements(NumericType.class) ) {
-            NumericType<?,?,?,?> instance = (NumericType) dtype.getTypeClassInstance();
+            NumericType<?,?,?,?> instance = (NumericType<?,?,?,?>) dtype.getTypeClassInstance();
             if ( instance.holderType() == instance.targetType() )
                 return formatter.apply(instance.holderType()); // Float, Double, Long, Short...
             else // Unsigned types:
@@ -212,7 +212,13 @@ public class CLFunctionCompiler {
         return formatter.apply(dtype.getTypeClass());
     }
 
-    private static String _readIndexMapper() {
+    /**
+     *  This method simply reads the "utility.cl" resource to extract and
+     *  return the "_i_of_i" method in the form of a simple {@link String}.
+     *
+     * @return The "_i_of_i" method from the "utility.cl" file.
+     */
+    private static String _readAndGetIndexMapper() {
         return "int _i_of_i" +
                Neureka.get()
                         .utility()

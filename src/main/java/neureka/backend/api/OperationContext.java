@@ -75,7 +75,7 @@ public class OperationContext extends AbstractComponentOwner<OperationContext> i
      *
      * @return A lambda {@link Runner} which performs temporary context switching between the caller's context and this context.
      */
-    public Runner runner() { return new Runner( this, Neureka.get().context()); }
+    public Runner runner() { return new Runner( this, Neureka.get().context() ); }
 
     /**
      * This method returns an unmodifiable view of the mapping between the {@link Operation#getFunction()} / {@link Operation#getOperator()} properties
