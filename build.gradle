@@ -169,7 +169,7 @@ dependencies {
 
     // Test suite : Groovy, Spock (+ sl4j, + Spock-Reports)
     // mandatory dependencies for using Spock
-    testImplementation "org.codehaus.groovy:groovy:3.0.7"
+    testImplementation "org.codehaus.groovy:groovy:3.0.8"
     testImplementation platform("org.spockframework:spock-bom:2.0-groovy-3.0")
     testImplementation "org.spockframework:spock-core"
     testImplementation "org.spockframework:spock-junit4"  // you can remove this if your code does not rely on old JUnit 4 rules
