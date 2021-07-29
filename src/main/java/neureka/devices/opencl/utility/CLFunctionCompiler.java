@@ -168,17 +168,20 @@ public class CLFunctionCompiler {
                                         );
 
         String kernelCode =
-                "\n\n" +
+                "\n" +
+                    _readAndGetIndexMapper() +
+                "\n" +
                 "    __kernel void " + kernelSignature + "(\n" +
                 "        " + argString + "\n" +
                 "    ) {                                                                                     \n" +
                 "        " + IntStream
                                 .range(0, configs.size())
                                 .mapToObj(
-                                    i -> "int* cfg"+i+" = {" + String.join( ",", configs.get(i) ) + "};"
+                                    i -> "int cfg"+i+"[] = {" + String.join( ",", configs.get(i) ) + "};"
                                 )
                                 .collect(Collectors.joining("\n        ")) +
                 "                                                                                          \n" +
+                "        unsigned int i = get_global_id( 0 );                                              \n" +
                 "        " + IntStream
                                 .range(1, args.size()) // We start at 1 because 0 is the output!
                                 .mapToObj(
@@ -186,14 +189,12 @@ public class CLFunctionCompiler {
                                 )
                                 .collect(Collectors.joining("\n        ")) +
                 "                                                                                          \n" +
-                "        unsigned int i = get_global_id( 0 );                                              \n" +
                 "        arg0[_i_of_i(i, cfg0, "+rank+")] = " + compilableFun + ";                         \n" +
-                "    }                                                                                     \n\n" +
-                "    " + _readAndGetIndexMapper();
+                "    }                                                                                     \n\n";
 
         _device.compileAdHocKernel( kernelSignature, kernelCode );
         KernelCaller caller = _device.getAdHocKernel( kernelSignature );
-        args.forEach( caller::pass );
+        args.forEach( caller::passRaw );
         caller.call( args.get(0).size() );
     }
 
@@ -219,12 +220,19 @@ public class CLFunctionCompiler {
      * @return The "_i_of_i" method from the "utility.cl" file.
      */
     private static String _readAndGetIndexMapper() {
-        return "int _i_of_i" +
-               Neureka.get()
-                        .utility()
-                        .readResource("kernels/utility.cl")
-                        .split("int _i_of_i")[1]
-                        .split("// _i_of_i end!")[0];
+        String resource = Neureka.get()
+                                    .utility()
+                                    .readResource("kernels/utility.cl");
+        return
+                "    int _i_of_idx_on_tln" +
+                        resource
+                                .split("int _i_of_idx_on_tln")[1]
+                                .split("// _i_of_idx_on_tln end!")[0] +
+               "\n" +
+               "    int _i_of_i" +
+                        resource
+                                .split("int _i_of_i")[1]
+                                .split("// _i_of_i end!")[0];
     }
 
 }

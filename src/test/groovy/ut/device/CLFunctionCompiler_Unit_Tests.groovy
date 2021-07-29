@@ -12,7 +12,7 @@ import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.utility.CLFunctionCompiler
 import spock.lang.Specification
 
-class CLFunctionCompiler_Tests extends Specification {
+class CLFunctionCompiler_Unit_Tests extends Specification {
 
     def 'The CLFunctionCompiler produces an operation which properly integrates to the backend.'() {
 
@@ -142,20 +142,18 @@ class CLFunctionCompiler_Tests extends Specification {
             1 * mockDevice.compileAdHocKernel(
                     "test_fun_F64\$1_F64\$1_F64\$1_F64\$1",
                     """
-
-    __kernel void test_fun_F64\$1_F64\$1_F64\$1_F64\$1(
-        __global double* arg0, __global double* arg1, __global double* arg2, __global double* arg3
-    ) {                                                                                     
-        int* cfg0 = {1,1,1,0,1};
-        int* cfg1 = {1,1,1,0,1};
-        int* cfg2 = {1,1,1,0,1};
-        int* cfg3 = {1,1,1,0,1};                                                                                          
-        double v1 = arg1[_i_of_i(i, cfg1, 1)];
-        double v2 = arg2[_i_of_i(i, cfg2, 1)];
-        double v3 = arg3[_i_of_i(i, cfg3, 1)];                                                                                          
-        unsigned int i = get_global_id( 0 );                                              
-        arg0[_i_of_i(i, cfg0, 1)] = (v1 + (v2 / v3));                         
-    }                                                                                     
+    int _i_of_idx_on_tln( int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]
+    {
+        int* offset      = ( cfg + rank * 5 );
+        int* strides     = ( cfg + rank * 4 );
+        int* indices     = ( cfg + rank * 3 );
+        int* translation = ( cfg + rank     );
+        int i = 0;
+        for ( int ii = 0; ii < rank; ii++ ) {
+            i += ( indices[ ii ] * strides[ ii ] + offset[ ii ] ) * translation[ ii ];
+        }
+        return i;
+    }
 
     int _i_of_i( int i, int* cfg, int rank ) // cfg: [ 0:shape | 1:translation | 2:mapping | 3:indices | 4:strides | 5:offset ]
     {
@@ -167,11 +165,26 @@ class CLFunctionCompiler_Tests extends Specification {
         }
         return _i_of_idx_on_tln( cfg, rank );
     }
+
+    __kernel void test_fun_F64\$1_F64\$1_F64\$1_F64\$1(
+        __global double* arg0, __global double* arg1, __global double* arg2, __global double* arg3
+    ) {                                                                                     
+        int cfg0[] = {1,1,1,0,1};
+        int cfg1[] = {1,1,1,0,1};
+        int cfg2[] = {1,1,1,0,1};
+        int cfg3[] = {1,1,1,0,1};                                                                                          
+        unsigned int i = get_global_id( 0 );                                              
+        double v1 = arg1[_i_of_i(i, cfg1, 1)];
+        double v2 = arg2[_i_of_i(i, cfg2, 1)];
+        double v3 = arg3[_i_of_i(i, cfg3, 1)];                                                                                          
+        arg0[_i_of_i(i, cfg0, 1)] = (v1 + (v2 / v3));                         
+    }                                                                                     
+
 """)
         and : 'After the kernel has been compiled we expect the implementation to '
             1 * mockDevice.getAdHocKernel("test_fun_F64\$1_F64\$1_F64\$1_F64\$1") >> mockCaller
         and : 'We expect that the caller receives 4 inputs, 1 output tensor and the 3 function arguments.'
-            4 * mockCaller.pass(_)
+            4 * mockCaller.passRaw(_)
         and : 'Finally the caller will receive a dispatch call with a work size of 1 (because the tensors are scalars). '
             1 * mockCaller.call(1)
 
