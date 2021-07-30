@@ -1095,7 +1095,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             if ( this.has( Relation.class ) ) {
                 Relation relation = find( Relation.class );
                 if ( relation.hasParent() ) { // Root needs to be found ! :
+                    Device<V> device = (Device<V>) newComponent;
                     Tsr<V> root = relation.findRootTensor();
+                    if ( !device.has( root ) || !root.isOutsourced() )
+                        throw new IllegalStateException( "Data parent is not outsourced!" );
                     try {
                         ((Device)newComponent).store( root );
                     } catch ( Exception exception ) {
@@ -1108,7 +1111,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     try {
                         ((Device)newComponent).store( this );
                     } catch ( Exception exception ) {
-                        _LOG.error( "Could not store tensor on device '" + newComponent.toString() +"'.", exception );
+                        _LOG.error( "Could not store tensor on device '" + newComponent +"'.", exception );
                         throw exception;
                     }
                 }

@@ -143,7 +143,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
         @Override
         public void update( Tsr<Number> oldOwner, Tsr<Number> newOwner ) {
-            // Update not needed....
+            // Update not needed...
         }
     }
 
@@ -369,6 +369,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     public <T extends Number> Device<Number> store( Tsr<T> tensor ) {
+        //( (Tsr<Number>) tensor ).set( this ); // TODO: REPLACE
         Tsr<Number> root = null;
         if ( tensor.has( Relation.class ) ) root = tensor.find( Relation.class ).findRootTensor();
         if ( root != null ) store( tensor, (Tsr<T>) root );
@@ -588,6 +589,19 @@ public class OpenCLDevice extends AbstractDevice<Number>
         _tensors.remove( former );
         _tensors.add( replacement );
         return this;
+    }
+
+    @Override
+    public void update( Tsr oldOwner, Tsr newOwner ) {
+        super.update(oldOwner, newOwner);
+        /* // TODO: ACTIVATE
+        if ( oldOwner == null && false ) {
+            if ( newOwner.has( Relation.class ) )
+                store( newOwner, ( (Relation<Number>) newOwner.find( Relation.class )).findRootTensor() );
+            else
+                _add( (Tsr<Number>) newOwner, null );
+        }
+         */
     }
 
     public double[] value64f( Tsr<Number> tensor ) {

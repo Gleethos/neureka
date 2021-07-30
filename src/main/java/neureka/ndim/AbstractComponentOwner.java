@@ -123,6 +123,7 @@ public abstract class AbstractComponentOwner<C>
                     _components = newComponents;
                 }
             }
+            component.update( (C) this, null );
         } else {
             if ( _components == null ) _setComps( new Component[]{ component } );
             else if ( component != null ) {

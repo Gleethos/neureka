@@ -83,7 +83,7 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
 
     @Override
     public void update( Tsr oldOwner, Tsr newOwner ) {
-        if ( oldOwner != null ) swap( oldOwner, newOwner );
+        if ( oldOwner != null && newOwner != null ) swap( oldOwner, newOwner );
     }
 
     @Override
