@@ -109,6 +109,7 @@ public abstract class AbstractComponentOwner<C>
 
     private synchronized void _addOrRemoveComp( Component<C> component, boolean remove ) {
         if ( remove ) {
+            component.update( (C) this, null );
             if ( _components != null && _components.length != 0 && component != null ) {
                 int count = 0;
                 for ( int i = 0; i < _components.length; i++ )
@@ -123,8 +124,9 @@ public abstract class AbstractComponentOwner<C>
                     _components = newComponents;
                 }
             }
-            component.update( (C) this, null );
         } else {
+            // The component receives an initial update call:
+            if ( component != null ) component.update( null, (C) this );
             if ( _components == null ) _setComps( new Component[]{ component } );
             else if ( component != null ) {
                 for ( Component<C> c : _components ) if ( c == component ) return;
@@ -143,8 +145,6 @@ public abstract class AbstractComponentOwner<C>
                     }
                 }
             }
-            // The component receives an initial update call:
-            if ( component != null ) component.update( null, (C) this );
         }
     }
 

@@ -176,13 +176,9 @@ class OpenCLDevice_Integration_Tests extends Specification
             Tsr C = Tsr.of( [M,N], 0 )
             A[0..M-1,0..K-1] = Tsr.of([M,K], 3..1)
             B[0..K-1,0..N-1] = Tsr.of([K,N], -5..0)
-            //println(A)
-            println(A)
-            println(B)
             A.set( device )
             B.set( device )
             C.set( device )
-            //println(C)
 
         expect :
             !device.hasAdHocKernel( kernelName )

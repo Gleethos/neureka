@@ -8,7 +8,10 @@ import neureka.devices.Device
 import neureka.devices.file.FileDevice
 import neureka.devices.host.HostCPU
 import neureka.devices.opencl.OpenCLDevice
+import spock.lang.Ignore
 import spock.lang.Specification
+
+import java.util.function.BiConsumer
 
 class Cross_Device_Type_Unit_Tests extends Specification
 {
@@ -205,99 +208,100 @@ class Cross_Device_Type_Unit_Tests extends Specification
     }
 
 
-    //@Ignore
-    //def 'Devices store slices which can also be restored.'(
-    //        Device device
-    //) {
-    //    given : 'The given device is available and Neureka is being reset.'
-    //        if ( device == null ) return
-    //    and : 'Two tensors which will be transferred later on...'
-    //        int initialNumber = device.size()
-    //        Tsr a = Tsr.of([2, 3], ";)")
-    //        Tsr b = a[1, 0..2]
-//
-    //    expect : 'The given device is initially empty.'
-    //        device.isEmpty() == ( device.size() == 0 )
-    //        !device.has( a )
-    //        !device.has( b )
-//
-    //    when : 'The the first tensor is being passed to the device...'
-    //        device.store( b )
-//
-    //    then : '...tensor "a" is now on the device.'
-    //        !device.isEmpty()
-    //        device.size() == initialNumber + 2
-    //        device.has( b )
-    //    and : ''
-    //        device.has( a )
-//
-    //    when : 'They are being removed again...'
-    //        device.free( b )
-//
-    //    then : '...the device is empty again.'
-    //        device.isEmpty() == ( initialNumber == 0 )
-    //        device.size() == initialNumber
-    //        !device.has( a )
-    //        !device.has( b )
-//
-    //    where : 'The following Device instances are being tested :'
-    //    device << [
-    //            //HostCPU.instance(),
-    //            Device.find( "openCL" ),
-    //            //FileDevice.at( "build/test-can" )
-    //    ]
-//
-    //}
+    @Ignore
+    def 'Devices store slices which can also be restored.'(
+            Device device
+    ) {
+        given : 'The given device is available and Neureka is being reset.'
+            if ( device == null ) return
+        and : 'Two tensors which will be transferred later on...'
+            int initialNumber = device.size()
+            Tsr a = Tsr.of([2, 3], ";)")
+            Tsr b = a[1, 0..2]
 
-    //def 'Devices cannot store slices which whose parents are not already stored.'(
-    //        Device device, BiConsumer<Device, Tsr> storageMethod
-    //) {
-    //    given : 'The given device is available and Neureka is being reset.'
-    //        if ( device == null ) return
-    //    and : 'Two tensors which will be transferred later on...'
-    //        Tsr a = Tsr.of([2, 3], ";)")
-    //        Tsr b = a[1, 0..2]
-    //    and :
-    //        def initialSize = device.size()
-//
-    //    expect : 'The given device is initially empty.'
-    //        device.isEmpty() == ( device.size() == 0 )
-    //        !device.has( a )
-    //        !device.has( b )
-//
-    //    when : 'The the first tensor is being passed to the device...'
-    //        device.store( b )
-//
-    //    then : '...tensor "a" is now on the device.'
-    //        def exception = thrown(IllegalStateException)
-    //        exception.message.contains("Data parent is not outsourced!")
-//
-    //    expect : 'The given device is initially empty.'
-    //        device.isEmpty() == ( device.size() == 0 )
-    //        !device.has( a )
-    //        !device.has( b )
-//
-    //    when :
-    //        storageMethod(device, a)
-//
-    //    then :
-    //        !device.isEmpty()
-    //        a.isOutsourced()
-    //        b.isOutsourced()
-    //    and :
-    //        device.has( a )
-    //        b.data == null
-    //        device.has( b )
-    //        device.size() == initialSize
-//
-    //    where : 'The following Device instances are being tested :'
-    //        device                                  | storageMethod
-    //        Device.find( "openCL" )                 | { d, t -> d.store(t) }
-    //        Device.find( "openCL" )                 | { d, t -> t.set(d)   }
-    //        //FileDevice.at( "build/test-can" )     | { d, t -> d.store(t) }
-    //        //HostCPU.instance()                    | { d, t -> t.set(d)   }
-    //        //FileDevice.at( "build/test-can" )     | { d, t -> t.set(d)   }
-    //        //HostCPU.instance()                    | { d, t -> d.store(t) }
-    //}
+        expect : 'The given device is initially empty.'
+            device.isEmpty() == ( device.size() == 0 )
+            !device.has( a )
+            !device.has( b )
+
+        when : 'The the first tensor is being passed to the device...'
+            device.store( b )
+
+        then : '...tensor "a" is now on the device.'
+            !device.isEmpty()
+            device.size() == initialNumber + 2
+            device.has( b )
+        and : ''
+            device.has( a )
+
+        when : 'They are being removed again...'
+            device.free( b )
+
+        then : '...the device is empty again.'
+            device.isEmpty() == ( initialNumber == 0 )
+            device.size() == initialNumber
+            !device.has( a )
+            !device.has( b )
+
+        where : 'The following Device instances are being tested :'
+        device << [
+                //HostCPU.instance(),
+                Device.find( "openCL" ),
+                //FileDevice.at( "build/test-can" )
+        ]
+
+    }
+
+    @Ignore
+    def 'Devices cannot store slices which whose parents are not already stored.'(
+            Device device, BiConsumer<Device, Tsr> storageMethod
+    ) {
+        given : 'The given device is available and Neureka is being reset.'
+            if ( device == null ) return
+        and : 'Two tensors which will be transferred later on...'
+            Tsr a = Tsr.of([2, 3], ";)")
+            Tsr b = a[1, 0..2]
+        and :
+            def initialSize = device.size()
+
+        expect : 'The given device is initially empty.'
+            device.isEmpty() == ( device.size() == 0 )
+            !device.has( a )
+            !device.has( b )
+
+        when : 'The the first tensor is being passed to the device...'
+            device.store( b )
+
+        then : '...tensor "a" is now on the device.'
+            def exception = thrown(IllegalStateException)
+            exception.message.contains("Data parent is not outsourced!")
+
+        expect : 'The given device is initially empty.'
+            device.isEmpty() == ( device.size() == 0 )
+            !device.has( a )
+            !device.has( b )
+
+        when :
+            storageMethod(device, a)
+
+        then :
+            !device.isEmpty()
+            a.isOutsourced()
+            b.isOutsourced()
+        and :
+            device.has( a )
+            b.data == null
+            device.has( b )
+            device.size() == initialSize
+
+        where : 'The following Device instances are being tested :'
+            device                                  | storageMethod
+            Device.find( "openCL" )                 | { d, t -> d.store(t) }
+            Device.find( "openCL" )                 | { d, t -> t.set(d)   }
+            //FileDevice.at( "build/test-can" )     | { d, t -> d.store(t) }
+            //HostCPU.instance()                    | { d, t -> t.set(d)   }
+            //FileDevice.at( "build/test-can" )     | { d, t -> t.set(d)   }
+            //HostCPU.instance()                    | { d, t -> d.store(t) }
+    }
 
 }
