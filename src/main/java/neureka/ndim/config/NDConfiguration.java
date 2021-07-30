@@ -36,6 +36,9 @@ package neureka.ndim.config;
 
 import org.jetbrains.annotations.Contract;
 
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
 public interface NDConfiguration
 {
     /**
@@ -149,6 +152,27 @@ public interface NDConfiguration
      * @return A new {@link NDConfiguration} which carries the needed information for the reshaped view.
      */
     NDConfiguration newReshaped( int[] newForm );
+
+    /**
+     *  The boolean returned by this method simply reports
+     *  if this configuration is the most basic form of configuration
+     *  possible for the given shape represented by this instance.
+     *  This type of configuration is the typical for freshly created
+     *  tensors which are neither slices or reshaped variants of an
+     *  original tensor...
+     *
+     * @return The truth value determining if this configuration is not modeling more complex indices like reshaped views or slices...
+     */
+    default boolean isSimple() {
+        int[] simpleTranslation = NDConfiguration.Utility.newTlnOf( this.shape() );
+        return Arrays.equals(this.translation(), simpleTranslation)
+                &&
+               IntStream.range(0, this.rank()).allMatch( i -> this.spread(i) == 1 )
+                &&
+               Arrays.equals(this.indicesMap(), simpleTranslation )
+                &&
+               IntStream.range(0, this.rank()).allMatch( i -> this.offset(i) == 0 );
+    }
 
     /**
      *  This utility class provides static methods which are helpful

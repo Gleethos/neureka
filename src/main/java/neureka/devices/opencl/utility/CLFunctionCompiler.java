@@ -116,14 +116,16 @@ public class CLFunctionCompiler {
                                 _functionName + ( call.getDerivativeIndex() >= 0 ? "_derivative" : "" ) +
                                 "_" +
                                         args.stream()
-                                                .map( numbers ->
-                                                        numbers.getDataType().getTypeClass().getSimpleName() +
+                                                .map( arg ->
+                                                        arg.getDataType().getTypeClass().getSimpleName() +
                                                         "$" +
-                                                        numbers
-                                                                .shape()
-                                                                .stream()
-                                                                .map(String::valueOf)
-                                                                .collect(Collectors.joining("x"))
+                                                        (
+                                                            arg.getNDConf().isSimple()
+                                                            ? Arrays.stream( arg.getNDConf().shape() )
+                                                            : Arrays.stream( arg.getNDConf().asInlineArray() )
+                                                        )
+                                                        .mapToObj( String::valueOf )
+                                                        .collect( Collectors.joining("x") )
                                                 )
                                     .collect(Collectors.joining("_"));
 

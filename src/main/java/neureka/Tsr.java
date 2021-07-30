@@ -2114,7 +2114,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param newSpread The spread / steps / strides of the slice within this tensor.
      * @return The newly created slice.
      */
-    private Tsr<V> _sliceOf(int[] newShape, int[] newOffset, int[] newSpread )
+    private Tsr<V> _sliceOf( int[] newShape, int[] newOffset, int[] newSpread )
     {
         this.setIsVirtual( false );
         Tsr<V> subset = new Tsr<>();
