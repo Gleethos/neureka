@@ -95,8 +95,9 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
 
 
     @Override
-    public void update( Tsr<ValType> oldOwner, Tsr<ValType> newOwner )
-    {
+    public void update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
+        Tsr<ValType> oldOwner = changeRequest.getOldOwner();
+        Tsr<ValType> newOwner = changeRequest.getNewOwner();
         if ( oldOwner == null || newOwner == null ) return; // Initial/last update call: No action needed!
         if ( _parent != null) {
             Relation<ValType> pr = _parent.find( Relation.class );
@@ -115,6 +116,7 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
                 }
             }
         }
+        changeRequest.executeChange();
     }
 
 

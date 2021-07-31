@@ -142,8 +142,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
         public cl_value value;
 
         @Override
-        public void update( Tsr<Number> oldOwner, Tsr<Number> newOwner ) {
+        public void update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {
             // Update not needed...
+            changeRequest.executeChange();
         }
     }
 
@@ -592,8 +593,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public void update( Tsr oldOwner, Tsr newOwner ) {
-        super.update( oldOwner, newOwner );
+    public void update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {
+        super.update( changeRequest );
+        Tsr<Number> oldOwner = changeRequest.getOldOwner();
+        Tsr<Number> newOwner = changeRequest.getNewOwner();
         if ( oldOwner == null && newOwner != null && false ) {
             if ( newOwner.has( Relation.class ) ) {
                 Relation relation = (Relation) newOwner.find( Relation.class );

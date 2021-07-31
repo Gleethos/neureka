@@ -1189,7 +1189,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param newOwner The new owner type instance.
      */
     @Override
-    public void update(Tsr<V> oldOwner, Tsr<V> newOwner ) {
+    public void update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
+        changeRequest.executeChange();
         // This is means that this tensor is a gradient that is being
         // transferred to another tensor to serve as gradient...
         // No update task needs to occur. (This might change in the future...)

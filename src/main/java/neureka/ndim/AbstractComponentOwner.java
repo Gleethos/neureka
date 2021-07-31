@@ -111,12 +111,24 @@ public abstract class AbstractComponentOwner<C>
 
     private synchronized void _addOrRemoveComp( Component<C> component, boolean remove ) {
         if ( remove ) {
-            component.update( _this(), null );
+            component.update(
+                new Component.OwnerChangeRequest<C>() {
+                    @Override public C getOldOwner() { return _this(); }
+                    @Override public C getNewOwner() { return null; }
+                    @Override public boolean executeChange() { return false; }
+                }
+            );
             _remove( component );
         } else {
             // The component receives an initial update call:
             if ( component != null ) { 
-                component.update( null, _this() );
+                component.update(
+                    new Component.OwnerChangeRequest<C>() {
+                        @Override public C getOldOwner() { return null; }
+                        @Override public C getNewOwner() { return _this(); }
+                        @Override public boolean executeChange() { return false; }
+                    }
+                );
                 _add( component );
             }
         }
@@ -174,7 +186,12 @@ public abstract class AbstractComponentOwner<C>
     protected void _transferFrom( AbstractComponentOwner<C> other ) {
             if ( other._components != null ) {
             _setComps( other._components ); // Inform components about their new owner:
-            for ( Component<C> c : _components ) c.update( (C) other, _this() );
+            for ( Component<C> c : _components ) c.update(
+                    new Component.OwnerChangeRequest<C>() {
+                        @Override public C getOldOwner() { return (C) other; }
+                        @Override public C getNewOwner() { return _this(); }
+                        @Override public boolean executeChange() { return false; }
+                    });
             other._deleteComponents();
         }
     }

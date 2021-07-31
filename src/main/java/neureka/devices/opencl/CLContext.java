@@ -1,6 +1,7 @@
 package neureka.devices.opencl;
 
 import neureka.Component;
+import neureka.Tsr;
 import neureka.backend.api.OperationContext;
 import org.jocl.cl_platform_id;
 
@@ -50,9 +51,10 @@ public class CLContext  implements Component<OperationContext>
      * @param newOwner The new {@link OperationContext} instance.
      */
     @Override
-    public void update( OperationContext oldOwner, OperationContext newOwner ) {
+    public void update( OwnerChangeRequest<OperationContext> changeRequest ) {
         this._platforms.clear();
         this._platforms.addAll( _findLoadAndCompileForAllPlatforms() );
+        changeRequest.executeChange();
     }
 
     /**

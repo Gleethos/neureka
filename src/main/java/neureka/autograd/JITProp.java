@@ -94,7 +94,7 @@ public final class JITProp<ValType> implements Component<Tsr<ValType>>
 
 
     @Override
-    public void update( Tsr<ValType> oldOwner, Tsr<ValType> newOwner ) {
-
+    public void update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
+        changeRequest.executeChange();
     }
 }

@@ -82,8 +82,11 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
     protected abstract void _execute( Tsr[] tensors, int d, Operation type );
 
     @Override
-    public void update( Tsr oldOwner, Tsr newOwner ) {
+    public void update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
+        Tsr<ValType> oldOwner = changeRequest.getOldOwner();
+        Tsr<ValType> newOwner = changeRequest.getNewOwner();
         if ( oldOwner != null && newOwner != null ) swap( oldOwner, newOwner );
+        // ?: changeRequest.executeChange();
     }
 
     @Override

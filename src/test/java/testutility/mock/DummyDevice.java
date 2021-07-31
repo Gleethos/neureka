@@ -63,5 +63,7 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public void update(Tsr oldOwner, Tsr newOwner) { }
+    public void update(OwnerChangeRequest<Tsr<Object>> changeRequest) {
+
+    }
 }

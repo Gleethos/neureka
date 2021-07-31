@@ -62,7 +62,7 @@ public class SGD<ValType> implements Optimizer<ValType>
     }
 
     @Override
-    public void update( Tsr<ValType> oldOwner, Tsr<ValType> newOwner ) {
-
+    public void update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
+        changeRequest.executeChange();
     }
 }

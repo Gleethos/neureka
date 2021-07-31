@@ -255,12 +255,15 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public void update( Tsr<Object> oldOwner, Tsr<Object> newOwner ) {
+    public void update( OwnerChangeRequest<Tsr<Object>> changeRequest ) {
+        Tsr<Object> oldOwner = changeRequest.getOldOwner();
+        Tsr<Object> newOwner = changeRequest.getNewOwner();
         if ( _stored.containsKey( oldOwner ) ) {
             FileHead<?, Object> head = _stored.get( oldOwner );
             _stored.remove( oldOwner );
             _stored.put( newOwner, head );
         }
+        changeRequest.executeChange();
     }
 
 
