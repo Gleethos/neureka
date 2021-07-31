@@ -110,15 +110,16 @@ public abstract class AbstractComponentOwner<C>
     }
 
     private synchronized void _addOrRemoveComp( Component<C> component, boolean remove ) {
+        boolean[] changeExecuted = { false };
         if ( remove ) {
             component.update(
                 new Component.OwnerChangeRequest<C>() {
                     @Override public C getOldOwner() { return _this(); }
                     @Override public C getNewOwner() { return null; }
-                    @Override public boolean executeChange() { return false; }
+                    @Override public boolean executeChange() { _remove( component ); changeExecuted[0] = true; return true; }
                 }
             );
-            _remove( component );
+            if ( !changeExecuted[0] ) _remove( component );
         } else {
             // The component receives an initial update call:
             if ( component != null ) { 
@@ -126,10 +127,10 @@ public abstract class AbstractComponentOwner<C>
                     new Component.OwnerChangeRequest<C>() {
                         @Override public C getOldOwner() { return null; }
                         @Override public C getNewOwner() { return _this(); }
-                        @Override public boolean executeChange() { return false; }
+                        @Override public boolean executeChange() { _add( component ); changeExecuted[0] = true; return true; }
                     }
                 );
-                _add( component );
+                if ( !changeExecuted[0] ) _add( component );
             }
         }
     }

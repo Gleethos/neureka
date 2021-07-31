@@ -616,6 +616,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 if ( this.has( newOwner ) ) newOwner.setIsOutsourced( true );
                 //else _LOG.error("Device received tensor without throwing an exception but now does not report the tensor as being a member.");
         }
+        changeRequest.executeChange();
     }
 
     private void _updateInternal( Tsr newOwner ) {
