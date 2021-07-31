@@ -374,20 +374,25 @@ public class OpenCLDevice extends AbstractDevice<Number>
         Tsr<Number> root = null;
         if ( tensor.has( Relation.class ) ) root = tensor.find( Relation.class ).findRootTensor();
         if ( root != null ) store( tensor, (Tsr<T>) root );
-        else _add( (Tsr<Number>) tensor, null );
+        else _add( (Tsr<Number>) tensor, null, () -> tensor.set( (Component) this ) );
         return this;
     }
 
     @Override
     public <T extends Number> Device<Number> store( Tsr<T> tensor, Tsr<T> parent ) {
+        _store( tensor, parent, () -> tensor.set( (Component) this ) );
+        return this;
+    }
+
+    private <T extends Number> Device<Number> _store( Tsr<T> tensor, Tsr<T> parent, Runnable migration ) {
         if ( !parent.isOutsourced() ) throw new IllegalStateException( "Data parent is not outsourced!" );
-        _add((Tsr<Number>) tensor, parent.find( cl_tsr.class ) );
+        _add( (Tsr<Number>) tensor, parent.find( cl_tsr.class ), migration );
         _tensors.add((Tsr<Number>) tensor);
         ( (Tsr<Number>) tensor ).set( this );
         return this;
     }
 
-    private void _add( Tsr<Number> tensor, cl_tsr parent )
+    private void _add( Tsr<Number> tensor, cl_tsr parent, Runnable migration  )
     {
         cl_tsr newClt = new cl_tsr();
 
@@ -449,7 +454,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         _tensors.add( tensor );
 
         tensor.set( newClt );
-        tensor.set( this ); // TODO: REMOVE
+        migration.run(); // TODO: REMOVE
 
         if ( tensor.isVirtual() ) {
             double value = tensor.value64( 0 );
@@ -597,33 +602,14 @@ public class OpenCLDevice extends AbstractDevice<Number>
         super.update( changeRequest );
         Tsr<Number> oldOwner = changeRequest.getOldOwner();
         Tsr<Number> newOwner = changeRequest.getNewOwner();
-        if ( oldOwner == null && newOwner != null && false ) {
-            if ( newOwner.has( Relation.class ) ) {
-                Relation relation = (Relation) newOwner.find( Relation.class );
-                if ( relation.hasParent() ) { // Root needs to be found ! :
-                    Tsr root = relation.findRootTensor();
-                    if ( !this.has( root ) || !root.isOutsourced() )
-                        throw new IllegalStateException( "Data parent is not outsourced!" );
-                        _updateInternal( root );
-                    //root.find( Relation.class ).foreachChild( c -> ((Tsr)c ).setIsOutsourced( true ) );
-                } else { // This is root ! :
-                    relation.foreachChild( c -> ((Tsr<?>)c).setIsOutsourced( true ) ); // This is a requirement
-                    _updateInternal( newOwner );
-                }
-            } else
-                _updateInternal( newOwner );
-
-                if ( this.has( newOwner ) ) newOwner.setIsOutsourced( true );
-                //else _LOG.error("Device received tensor without throwing an exception but now does not report the tensor as being a member.");
-        }
         changeRequest.executeChange();
     }
 
-    private void _updateInternal( Tsr newOwner ) {
+    private void _updateInternal( Tsr newOwner, Runnable migration ) {
         Tsr<Number> root = null;
         if ( newOwner.has( Relation.class ) ) root = ((Relation<Number>)newOwner.find( Relation.class )).findRootTensor();
         if ( root != null ) store( newOwner, root );
-        else _add( (Tsr<Number>) newOwner, null );
+        else _add( (Tsr<Number>) newOwner, null, migration );
     }
 
     public double[] value64f( Tsr<Number> tensor ) {

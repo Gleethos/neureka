@@ -116,7 +116,9 @@ public abstract class AbstractComponentOwner<C>
                 new Component.OwnerChangeRequest<C>() {
                     @Override public C getOldOwner() { return _this(); }
                     @Override public C getNewOwner() { return null; }
-                    @Override public boolean executeChange() { _remove( component ); changeExecuted[0] = true; return true; }
+                    @Override public boolean executeChange() {
+                        _remove( component ); changeExecuted[0] = true; return true;
+                    }
                 }
             );
             if ( !changeExecuted[0] ) _remove( component );
@@ -127,7 +129,9 @@ public abstract class AbstractComponentOwner<C>
                     new Component.OwnerChangeRequest<C>() {
                         @Override public C getOldOwner() { return null; }
                         @Override public C getNewOwner() { return _this(); }
-                        @Override public boolean executeChange() { _add( component ); changeExecuted[0] = true; return true; }
+                        @Override public boolean executeChange() {
+                            _add( component ); changeExecuted[0] = true; return true;
+                        }
                     }
                 );
                 if ( !changeExecuted[0] ) _add( component );

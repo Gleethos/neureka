@@ -1185,8 +1185,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  This method does not need to have an implementation in this case.
      *  (A gradient tensor "does not mind" an owner change...)
      *
-     * @param oldOwner The previous owner type instance.
-     * @param newOwner The new owner type instance.
      */
     @Override
     public void update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
