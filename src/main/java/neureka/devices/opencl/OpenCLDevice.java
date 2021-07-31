@@ -61,6 +61,8 @@ import neureka.dtype.custom.F32;
 import neureka.framing.Relation;
 import neureka.utility.DataConverter;
 import org.jocl.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -75,6 +77,8 @@ import static org.jocl.CL.*;
  */
 public class OpenCLDevice extends AbstractDevice<Number>
 {
+    private static Logger _LOG = LoggerFactory.getLogger(OpenCLDevice.class);
+
     public static OpenCLDevice newInstanceOf( OpenCLPlatform platform, cl_device_id did )
     {
         if ( !platform.has( did ) ) platform.put( did,  new OpenCLDevice( platform, did ) );
@@ -394,6 +398,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     private void _add( Tsr<Number> tensor, cl_tsr parent, Runnable migration  )
     {
+        if ( this.has( tensor ) ) {
+            _LOG.debug("Trying to add a tensor to a device which already reports hosting it.");
+            return;
+        }
         cl_tsr newClt = new cl_tsr();
 
         //VALUE TRANSFER:
