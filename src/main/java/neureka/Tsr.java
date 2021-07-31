@@ -809,7 +809,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     ---------------------------------------------
     */
 
-    public Tsr<V> setIsOutsourced(boolean isOutsourced ) {
+    public Tsr<V> setIsOutsourced( boolean isOutsourced ) {
         _setIsOutsourced( isOutsourced );
         if ( isOutsourced )
             _setData( null );
@@ -1105,7 +1105,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                         _LOG.error( "Could not store tensor on device '" + newComponent +"'.", exception );
                         throw exception;
                     }
-                    root.find( Relation.class ).foreachChild( c -> ((Tsr)c ).setIsOutsourced( true ) );
+                    //root.find( Relation.class ).foreachChild( c -> ((Tsr)c ).setIsOutsourced( true ) );
                 } else { // This is root ! :
                     relation.foreachChild( c -> ((Tsr<?>)c).setIsOutsourced( true ) );
                     try {
