@@ -130,11 +130,11 @@ public abstract class AbstractComponentOwner<C>
                         @Override public C getOldOwner() { return null; }
                         @Override public C getNewOwner() { return _this(); }
                         @Override public boolean executeChange() {
-                            _add( component ); changeExecuted[0] = true; return true;
+                            _add( _setOrReject( component ) ); changeExecuted[0] = true; return true;
                         }
                     }
                 );
-                if ( !changeExecuted[0] ) _add( component );
+                if ( !changeExecuted[0] ) _add( _setOrReject( component ) );
             }
         }
     }
@@ -157,6 +157,7 @@ public abstract class AbstractComponentOwner<C>
     }
 
     private void _add( Component<C> component ) {
+        if ( component == null ) return;
         if ( _components == null ) _setComps( new Component[]{ component } );
         else {
             for ( Component<C> c : _components ) if ( c == component ) return;
@@ -274,7 +275,7 @@ public abstract class AbstractComponentOwner<C>
                 _addOrRemoveComp( oldCompartment, true );
             }
         }
-        _addOrRemoveComp( _setOrReject( newComponent ), false );
+        _addOrRemoveComp( newComponent, false );
         return _this();
     }
 
