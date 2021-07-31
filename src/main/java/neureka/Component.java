@@ -11,6 +11,20 @@ package neureka;
  */
 public interface Component<O>
 {
+    interface OwnerChangeRequest<O>
+    {
+        /**
+         * @return The previous owner type instance or null if the component is being added to the owner.
+         */
+        O getOldOwner();
+
+        /**
+         * @return The new owner type instance.
+         */
+        O getNewOwner();
+        boolean executeChange();
+    }
+
     /**
      *  This method informs the component about an owner switch.
      *  If components hold references of their owner then this
@@ -19,9 +33,6 @@ public interface Component<O>
      *  The method is also called when the component is initially
      *  added to the owner, in which case the "oldOwner"
      *  is going to be null.
-     *
-     * @param oldOwner The previous owner type instance or null if the component is being added to the owner.
-     * @param newOwner The new owner type instance.
      */
     void update( O oldOwner, O newOwner );
 

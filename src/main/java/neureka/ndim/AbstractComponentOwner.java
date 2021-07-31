@@ -103,46 +103,58 @@ public abstract class AbstractComponentOwner<C>
      */
     private Component<C>[] _components = null;
 
+    protected C _this() { return (C) this; }
+
     private synchronized void _setComps( Component<C>[] components ) {
         _components = components;
     }
 
     private synchronized void _addOrRemoveComp( Component<C> component, boolean remove ) {
         if ( remove ) {
-            component.update( (C) this, null );
-            if ( _components != null && _components.length != 0 && component != null ) {
-                int count = 0;
-                for ( int i = 0; i < _components.length; i++ )
-                    if ( _components[ i ] == component ) _components[ i ] = null;
-                    else count++;
-                if ( count != _components.length ) {
-                    Component<C>[] newComponents = new Component[ count ];
-                    count = 0;
-                    for ( int i = 0; i < _components.length; i++ )
-                        if ( _components[ i ] == null ) count++;
-                        else newComponents[ i - count ] = _components[ i ];
-                    _components = newComponents;
-                }
-            }
+            component.update( _this(), null );
+            _remove( component );
         } else {
             // The component receives an initial update call:
-            if ( component != null ) component.update( null, (C) this );
-            if ( _components == null ) _setComps( new Component[]{ component } );
-            else if ( component != null ) {
-                for ( Component<C> c : _components ) if ( c == component ) return;
-                Component<C>[] newComponents = new Component[ _components.length + 1 ];
-                System.arraycopy( _components, 0, newComponents, 0, _components.length );
-                newComponents[ newComponents.length - 1 ] = component;
-                _setComps( newComponents );
-                for ( int i = 1; i < _components.length; i++ ) {
-                    Component<C> a = _components[ i-1 ];
-                    Component<C> b = _components[ i ];
-                    int orderA = _CLASS_ORDER.getOrDefault( a, 0 );
-                    int orderB = _CLASS_ORDER.getOrDefault( b, 0 );
-                    if ( orderB > orderA ) {
-                        _components[ i - 1 ] = b;
-                        _components[ i ] = a;
-                    }
+            if ( component != null ) { 
+                component.update( null, _this() );
+                _add( component );
+            }
+        }
+    }
+
+    private void _remove( Component<C> component ) {
+        if ( _components != null && _components.length != 0 ) {
+            int count = 0;
+            for ( int i = 0; i < _components.length; i++ )
+                if ( _components[ i ] == component ) _components[ i ] = null;
+                else count++;
+            if ( count != _components.length ) {
+                Component<C>[] newComponents = new Component[ count ];
+                count = 0;
+                for ( int i = 0; i < _components.length; i++ )
+                    if ( _components[ i ] == null ) count++;
+                    else newComponents[ i - count ] = _components[ i ];
+                _components = newComponents;
+            }
+        }
+    }
+
+    private void _add( Component<C> component ) {
+        if ( _components == null ) _setComps( new Component[]{ component } );
+        else {
+            for ( Component<C> c : _components ) if ( c == component ) return;
+            Component<C>[] newComponents = new Component[ _components.length + 1 ];
+            System.arraycopy( _components, 0, newComponents, 0, _components.length );
+            newComponents[ newComponents.length - 1 ] = component;
+            _setComps( newComponents );
+            for ( int i = 1; i < _components.length; i++ ) {
+                Component<C> a = _components[ i-1 ];
+                Component<C> b = _components[ i ];
+                int orderA = _CLASS_ORDER.getOrDefault( a, 0 );
+                int orderB = _CLASS_ORDER.getOrDefault( b, 0 );
+                if ( orderB > orderA ) {
+                    _components[ i - 1 ] = b;
+                    _components[ i ] = a;
                 }
             }
         }
@@ -162,7 +174,7 @@ public abstract class AbstractComponentOwner<C>
     protected void _transferFrom( AbstractComponentOwner<C> other ) {
             if ( other._components != null ) {
             _setComps( other._components ); // Inform components about their new owner:
-            for ( Component<C> c : _components ) c.update( (C) other, (C) this );
+            for ( Component<C> c : _components ) c.update( (C) other, _this() );
             other._deleteComponents();
         }
     }
@@ -206,7 +218,7 @@ public abstract class AbstractComponentOwner<C>
         T oldComponent = find( componentClass );
         if ( oldComponent != null ) _addOrRemoveComp( _removeOrReject( oldComponent ), true );
         if ( _components != null && _components.length == 0 ) _components = null;
-        return (C) this;
+        return _this();
     }
 
     /**
@@ -232,7 +244,7 @@ public abstract class AbstractComponentOwner<C>
      */
     public C set( Component<C> newComponent )
     {
-        if ( newComponent == null ) return (C) this;
+        if ( newComponent == null ) return _this();
         Component<C> oldCompartment;
         if ( _components != null ) {
             oldCompartment = (Component<C>) find( newComponent.getClass() );
@@ -241,7 +253,7 @@ public abstract class AbstractComponentOwner<C>
             }
         }
         _addOrRemoveComp( _setOrReject( newComponent ), false );
-        return (C) this;
+        return _this();
     }
 
     /**
