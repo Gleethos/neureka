@@ -37,6 +37,7 @@ package neureka.framing;
 
 import neureka.Component;
 import neureka.Tsr;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
@@ -98,7 +99,7 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
     public void update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
         Tsr<ValType> oldOwner = changeRequest.getOldOwner();
         Tsr<ValType> newOwner = changeRequest.getNewOwner();
-        if ( oldOwner == null || newOwner == null ) {
+        if ( changeRequest.type() == IsBeing.ADDED || changeRequest.type() == IsBeing.REMOVED ) {
             changeRequest.executeChange();
             return; // Initial/last update call: No action needed!
         }
@@ -133,7 +134,7 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
     public Relation<ValType> addChild( Tsr<ValType> child )
     {
         if ( _children == null ) {
-            _children = new WeakReference[]{ new WeakReference( child ) };
+            _children = new WeakReference[]{ new WeakReference<>( child ) };
             _shapeRelations = new int[ 1 ][];
         } else {
             WeakReference<Tsr<ValType>>[] newChildren = new WeakReference[ _children.length + 1 ];
@@ -168,7 +169,7 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
      * @return This very Relation instance in order to enable method chaining on this component.
      */
     public Relation<ValType> addReshapeRelationFor( Tsr<ValType> child, int[] reshape ) {
-        for ( int i=0; i<_shapeRelations.length; i++ ) {
+        for ( int i = 0; i < _shapeRelations.length; i++ ) {
             Tsr<ValType> c = _children[ i ].get();
             if ( c != null && c == child ) {
                 _shapeRelations[ i ] = reshape;
@@ -197,7 +198,7 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
      */
     public int[] getReshapeRelationFor( Tsr<ValType> child )
     {
-        for ( int i=0; i<_shapeRelations.length; i++ ) {
+        for ( int i = 0; i < _shapeRelations.length; i++ ) {
             Tsr<ValType> c = _children[ i ].get();
             if ( c != null && c == child ) {
                 return _shapeRelations[ i ];
@@ -253,12 +254,11 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
 
     public Relation<ValType> remove( Tsr<ValType> child )
     {
-        //TODO!!
-        return this;
+        throw new NotImplementedException();
     }
 
     public String toString() {
-        return "Relation(_parent=" + this._parent + ", _children=" + java.util.Arrays.deepToString(this._children) + ", _shapeRelations=" + java.util.Arrays.deepToString(this._shapeRelations) + ")";
+        return "Relation(parent=" + this._parent + ", children=" + java.util.Arrays.deepToString(this._children) + ", shapeRelations=" + java.util.Arrays.deepToString(this._shapeRelations) + ")";
     }
 
     public Tsr<ValType> getParent() {

@@ -11,6 +11,8 @@ package neureka;
  */
 public interface Component<O>
 {
+
+    enum IsBeing { REMOVED, ADDED, REPLACED, UPDATED }
     interface OwnerChangeRequest<O>
     {
         /**
@@ -22,7 +24,15 @@ public interface Component<O>
          * @return The new owner type instance.
          */
         O getNewOwner();
+
         boolean executeChange();
+
+        default IsBeing type() {
+            if ( getOldOwner() != null && getNewOwner() != null ) return IsBeing.REPLACED;
+            if ( getOldOwner() != null && getNewOwner() == null ) return IsBeing.REMOVED;
+            if ( getOldOwner() == null && getNewOwner() != null ) return IsBeing.ADDED;
+            return IsBeing.UPDATED;
+        }
     }
 
     /**

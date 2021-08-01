@@ -597,8 +597,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     public void update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {
         super.update( changeRequest );
-        if ( changeRequest.getNewOwner() != null && changeRequest.getOldOwner() == null ) {
-            //Tsr<Number> oldOwner = changeRequest.getOldOwner();
+        if ( changeRequest.type() == IsBeing.ADDED ) {
             Tsr<Number> newOwner = changeRequest.getNewOwner();
             _updateInternal(newOwner, changeRequest::executeChange);
         }

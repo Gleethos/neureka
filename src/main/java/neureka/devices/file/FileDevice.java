@@ -185,9 +185,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <T extends Object> Device<Object> store( Tsr<T> tensor, Tsr<T> parent ) {
-        return null;
-    }
+    public <T extends Object> Device<Object> store( Tsr<T> tensor, Tsr<T> parent ) { throw new NotImplementedException(); }
 
     @Override
     public <T extends Object> boolean has( Tsr<T> tensor ) {
