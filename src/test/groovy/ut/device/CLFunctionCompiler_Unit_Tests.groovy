@@ -76,9 +76,9 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
                 This will cause the tensor to add themselves to the device after which
                 the tensors will ask the device again if they are now their members!
         """
-            (1.._) * mockDevice.has(t1) >>> [false, true] // doesn't have it, then storing it, then has it!
-            (1.._) * mockDevice.has(t2) >>> [false, true]
-            (1.._) * mockDevice.has(t3) >>> [false, true]
+            (0.._) * mockDevice.has(t1) >>> [false, true] // doesn't have it, then storing it, then has it!
+            (0.._) * mockDevice.has(t2) >>> [false, true]
+            (0.._) * mockDevice.has(t3) >>> [false, true]
 
         and : 'Finally the tensors are outsourced members of our mocked OpenCLDevice (Even though they are technically still in RAM).'
             t1.isOutsourced()

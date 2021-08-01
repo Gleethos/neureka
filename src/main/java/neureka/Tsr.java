@@ -1090,12 +1090,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     protected < T extends Component<Tsr<V>> > T _setOrReject( T newComponent )
     {
         if ( newComponent.getClass() == HostCPU.class ) return null;
-        if ( newComponent instanceof Tsr ) {
-            if (
-                    ((Tsr)newComponent).shape().hashCode() != this.shape().hashCode() ||
-                            Arrays.hashCode(((Tsr)newComponent).getNDConf().shape()) != Arrays.hashCode( getNDConf().shape() )
-            ) newComponent = null;
-        }
         return newComponent;
     }
 
@@ -1147,14 +1141,23 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     */
     /**
      *  Important : Components of type {@link Tsr} are simply gradients!
-     *  This method does not need to have an implementation in this case.
-     *  (A gradient tensor "does not mind" an owner change...)
-     *
+     *  Currently this method is used only to catch illegal arguments which
+     *  is for example the case when trying to attach a gradient with a different shape...
+     *  (Otherwise the gradient tensor "does not mind" an owner change...)
      */
     @Override
     public void update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
+        if ( changeRequest.type() == IsBeing.ADDED ) {
+            if (
+                    changeRequest.getNewOwner().shape().hashCode() != this.shape().hashCode() ||
+                            Arrays.hashCode(changeRequest.getNewOwner().getNDConf().shape()) != Arrays.hashCode( getNDConf().shape() )
+            ) {
+                throw new IllegalArgumentException("Trying to attach a tensor as gradient component to a tensor with different shape.");
+            }
+        }
         changeRequest.executeChange();
-        // This is means that this tensor is a gradient that is being
+        // If the change request type is set to "REPLACED" then
+        // this is means that this tensor is a gradient that is being
         // transferred to another tensor to serve as gradient...
         // No update task needs to occur. (This might change in the future...)
     }

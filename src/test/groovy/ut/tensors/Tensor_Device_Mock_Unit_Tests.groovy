@@ -110,8 +110,8 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
         and : 'Instead the "update" method should be called...'
             1 * device.update(_)
 
-        and: 'Internally the Tsr "asked" if it belongs to the Device twice. (before and after migration attempt)'
-            (1.._) * device.has(t)
+        and: 'Internally the Tsr may "asks" if it belongs to the Device. (before and after migration attempt)'
+            (0.._) * device.has(t)
     }
 
 
