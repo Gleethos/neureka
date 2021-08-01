@@ -141,6 +141,12 @@ public class HostCPU extends AbstractDevice<Number>
     @Override
     public Operation optimizedOperationOf( Function function, String name ) { throw new NotImplementedException(); }
 
+    @Override
+    public boolean update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {
+        return false; // This type of device can not be a component simply because it is the default device
+        //super.update( changeRequest );
+    }
+
     public interface Range {
         void execute(int start, int end);
     }

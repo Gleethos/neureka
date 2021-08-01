@@ -1089,7 +1089,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     @Override
     protected < T extends Component<Tsr<V>> > T _setOrReject( T newComponent )
     {
-        if ( newComponent.getClass() == HostCPU.class ) return null;
         return newComponent;
     }
 
