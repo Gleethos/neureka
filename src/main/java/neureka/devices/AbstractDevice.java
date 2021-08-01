@@ -34,10 +34,11 @@ SOFTWARE.
 
 package neureka.devices;
 
+import neureka.Component;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.Algorithm;
 import neureka.backend.api.Operation;
+import neureka.framing.Relation;
 import neureka.utility.CustomCleaner;
 import neureka.utility.NeurekaCleaner;
 import org.slf4j.Logger;
@@ -81,12 +82,23 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
      */
     protected abstract void _execute( Tsr[] tensors, int d, Operation type );
 
+
+
     @Override
     public void update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
         Tsr<ValType> oldOwner = changeRequest.getOldOwner();
         Tsr<ValType> newOwner = changeRequest.getNewOwner();
         if ( oldOwner != null && newOwner != null ) swap( oldOwner, newOwner );
-        // ?: changeRequest.executeChange();
+        else if ( oldOwner == null && newOwner != null ) {
+            if ( newOwner.has( Relation.class ) ) {
+                Relation relation = newOwner.find(Relation.class);
+                if (relation.hasParent()) { // Root needs to be found ! :
+                    Tsr root = relation.findRootTensor();
+                    if (!this.has(root) || !root.isOutsourced())
+                        throw new IllegalStateException("Data parent is not outsourced!");
+                }
+            }
+        }
     }
 
     @Override
@@ -125,4 +137,9 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
         return this;
     }
 
+    @Override
+    public <T extends ValType> Storage<ValType> store( Tsr<T> tensor ) {
+        tensor.set( (Component) this ); // This way we move the storing procedure to the update function!
+        return this;
+    }
 }

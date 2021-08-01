@@ -1,5 +1,6 @@
 package ut.device
 
+import neureka.Component
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
@@ -82,11 +83,11 @@ class OpenCL_Unit_Test extends Specification
             Device device = Device.find('first')
 
         and : 'A mocked tensor that is not outsourced.'
-            Tsr t = Mock(Tsr) // Could be : Tsr.of([4, 3], 2)
+            Tsr<?> t = Mock(Tsr) // Could be : Tsr.of([4, 3], 2)
             t.isOutsourced() >> false
 
         and : 'Another mocked tensor that represents a slice of the prior one.'
-            Tsr s = Mock(Tsr) // Could be : t[1..3, 1..2]
+            Tsr<?> s = Mock(Tsr) // Could be : t[1..3, 1..2]
 
         and : 'A mocked relation between both tensors returned by the slice as component.'
             Relation r = Mock(Relation)
@@ -97,7 +98,17 @@ class OpenCL_Unit_Test extends Specification
         when : 'We try to add the slice to the device.'
             device.store(s)
 
-        then : 'An exception is being thrown.'
+        then : 'This will simple trigger the attempt of the device to register itself as component.'
+            1 * s.set({ it == device })
+
+        when : 'If the tensor was not a mock it would then cause the following change request to be dispatched:'
+            device.update(new Component.OwnerChangeRequest() {
+                @Override Tsr<?> getOldOwner() { return null }
+                @Override Tsr<?> getNewOwner() { return s }
+                @Override boolean executeChange() { return true }
+            })
+
+        then : 'The device will now try to store the tensor throw an exception because the tensor has an illegal state...'
             def exception = thrown(IllegalStateException)
 
         and : 'It explains what went wrong.'

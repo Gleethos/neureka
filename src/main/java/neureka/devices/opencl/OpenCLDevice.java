@@ -373,16 +373,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public <T extends Number> Device<Number> store( Tsr<T> tensor ) {
-        //( (Tsr<Number>) tensor ).set( this ); // TODO: REPLACE
-        Tsr<Number> root = null;
-        if ( tensor.has( Relation.class ) ) root = tensor.find( Relation.class ).findRootTensor();
-        if ( root != null ) store( tensor, (Tsr<T>) root );
-        else _add( (Tsr<Number>) tensor, null, () -> tensor.set( (Component) this ) );
-        return this;
-    }
-
-    @Override
     public <T extends Number> Device<Number> store( Tsr<T> tensor, Tsr<T> parent ) {
         _store( tensor, parent, () -> tensor.set( (Component) this ) );
         return this;
@@ -392,7 +382,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
         if ( !parent.isOutsourced() ) throw new IllegalStateException( "Data parent is not outsourced!" );
         _add( (Tsr<Number>) tensor, parent.find( cl_tsr.class ), migration );
         _tensors.add((Tsr<Number>) tensor);
-        ( (Tsr<Number>) tensor ).set( this );
         return this;
     }
 
@@ -608,9 +597,13 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     public void update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {
         super.update( changeRequest );
-        Tsr<Number> oldOwner = changeRequest.getOldOwner();
-        Tsr<Number> newOwner = changeRequest.getNewOwner();
-        changeRequest.executeChange();
+        if ( changeRequest.getNewOwner() != null && changeRequest.getOldOwner() == null ) {
+            //Tsr<Number> oldOwner = changeRequest.getOldOwner();
+            Tsr<Number> newOwner = changeRequest.getNewOwner();
+            _updateInternal(newOwner, changeRequest::executeChange);
+        }
+        else
+            changeRequest.executeChange();
     }
 
     private void _updateInternal( Tsr newOwner, Runnable migration ) {
