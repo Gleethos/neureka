@@ -1,5 +1,6 @@
 package ut.tensors
 
+import neureka.Component
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
@@ -34,11 +35,11 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
         when : 'The mock device is being added to the tensor...'
             t.set(device)
 
-        then : '...the tensor should try to add itself to the given device.'
-            1 * device.store(t)
+        then : '...the tensor should not try to add itself to the given device via the "store" method.'
+            0 * device.store(t)
 
-        and : 'It "views itself" as outsourced.'
-            t.isOutsourced()
+        and : 'Instead it should use the "update" method, which is a formal callback from the internal component system...'
+            1 * device.update({ it.type().name() == "ADDED" })
 
         and : 'It stores the device as a component.'
             t.has(Device.class)
@@ -55,7 +56,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
             t.isOutsourced = false
 
         then : '...the tensor should try to remove itself from the given device.'
-            1 * device.restore( t )
+            (1.._) * device.restore( t )
 
         and : 'The device should not be a tensor component anymore.'
             !t.has(Device.class)
@@ -65,17 +66,32 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
     {
         given : 'A simple tensor having a device as component'
             def device = Mock(Device)
-            device.has(_) >>> [false, true, true]
-            Tsr t = Tsr.of(1).set(device)
+            device.has(_) >>> [false, true, true] // Some realistic return values to simulate tensor reception!
+            Tsr t = Tsr.of(1)
+
+        when :
+            t.set(device)
+            t.setIsOutsourced(true)
+
+        then :
+            1 * device.update({
+                Component.OwnerChangeRequest request -> request.executeChange()
+            })
 
         when : 'The device is being accessed via the "device()" method...'
-            Device found = t.getDevice()
+            Device found = t.find(Device.class)
 
         then : 'This found device should be the one that was set originally.'
             found == device
+
+        and :
+            found == t.getDevice()
+
+        and :
+            t.isOutsourced()
     }
 
-    def 'When creating slices of tensors then this should trigger a "parent - child" relation noticable to the device!'()
+    def 'When creating slices of tensors then this should trigger a "parent - child" relation noticeable to the device!'()
     {
         given : 'A 2D tensor having a device as component'
             def device = Mock(Device)
@@ -88,14 +104,14 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
         and : 'The "parent tensor" is being migrated to the device...'
             t.set(device)
 
-        then : '...this tensor should try to add itself to the given device.'
-            1 * device.store(t)
+        then : '...this tensor should not try to add itself to the given device via the "store" method.'
+            0 * device.store(t)
 
-        and : 'The child should become outsourced.'
-            s.isOutsourced()
+        and : 'Instead the "update" method should be called...'
+            1 * device.update(_)
 
         and: 'Internally the Tsr "asked" if it belongs to the Device twice. (before and after migration attempt)'
-            2 * device.has(t)
+            (1.._) * device.has(t)
     }
 
 

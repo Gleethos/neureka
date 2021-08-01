@@ -67,15 +67,18 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
             t1.set(mockDevice)
             t2.set(mockDevice)
             t3.set(mockDevice)
+            t1.setIsOutsourced(true)
+            t2.setIsOutsourced(true)
+            t3.setIsOutsourced(true)
 
         then : """
                 This will require the mocked OpenCLDevice to notify the tensors that they are not already members.
                 This will cause the tensor to add themselves to the device after which
                 the tensors will ask the device again if they are now their members!
         """
-            (2.._) * mockDevice.has(t1) >>> [false, true] // doesn't have it, then storing it, then has it!
-            (2.._) * mockDevice.has(t2) >>> [false, true]
-            (2.._) * mockDevice.has(t3) >>> [false, true]
+            (1.._) * mockDevice.has(t1) >>> [false, true] // doesn't have it, then storing it, then has it!
+            (1.._) * mockDevice.has(t2) >>> [false, true]
+            (1.._) * mockDevice.has(t3) >>> [false, true]
 
         and : 'Finally the tensors are outsourced members of our mocked OpenCLDevice (Even though they are technically still in RAM).'
             t1.isOutsourced()

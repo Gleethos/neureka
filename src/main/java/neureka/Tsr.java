@@ -1087,44 +1087,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return The unchanged object or maybe in future versions: null (component rejected)
      */
     @Override
-    protected < T extends Component<Tsr<V>> > T _setOrReject(T newComponent )
+    protected < T extends Component<Tsr<V>> > T _setOrReject( T newComponent )
     {
         if ( newComponent.getClass() == HostCPU.class ) return null;
-        if ( newComponent instanceof Device && !( (Device) newComponent ).has( this ) )
-        {
-            if ( this.has( Relation.class ) ) {
-                Relation relation = find( Relation.class );
-                if ( relation.hasParent() ) { // Root needs to be found ! :
-                    Device<V> device = (Device<V>) newComponent;
-                    Tsr<V> root = relation.findRootTensor();
-                    if ( !device.has( root ) || !root.isOutsourced() )
-                        throw new IllegalStateException( "Data parent is not outsourced!" );
-                    try {
-                        ((Device)newComponent).store( root );
-                    } catch ( Exception exception ) {
-                        _LOG.error( "Could not store tensor on device '" + newComponent +"'.", exception );
-                        throw exception;
-                    }
-                } else { // This is root ! :
-                    relation.foreachChild( c -> ((Tsr<?>)c).setIsOutsourced( true ) );
-                    try {
-                        ((Device)newComponent).store( this );
-                    } catch ( Exception exception ) {
-                        _LOG.error( "Could not store tensor on device '" + newComponent +"'.", exception );
-                        throw exception;
-                    }
-                }
-            } else {
-                try {
-                    ((Device)newComponent).store( this );
-                } catch ( Exception exception ) {
-                    _LOG.error( "Could not store tensor on device '" + newComponent.toString() +"'.", exception );
-                    throw exception;
-                }
-            }
-            if ( ((Device)newComponent).has( this ) ) setIsOutsourced( true );
-            else _LOG.error("Device received tensor without throwing an exception but now does not report the tensor as being a member.");
-        } else if ( newComponent instanceof Tsr ) {
+        if ( newComponent instanceof Tsr ) {
             if (
                     ((Tsr)newComponent).shape().hashCode() != this.shape().hashCode() ||
                             Arrays.hashCode(((Tsr)newComponent).getNDConf().shape()) != Arrays.hashCode( getNDConf().shape() )

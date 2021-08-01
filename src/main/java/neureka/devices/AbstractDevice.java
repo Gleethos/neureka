@@ -88,7 +88,7 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
     public void update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
         Tsr<ValType> oldOwner = changeRequest.getOldOwner();
         Tsr<ValType> newOwner = changeRequest.getNewOwner();
-        if ( oldOwner != null && newOwner != null ) swap( oldOwner, newOwner );
+        if ( changeRequest.type() == IsBeing.REPLACED ) swap( oldOwner, newOwner );
         else if ( oldOwner == null && newOwner != null ) {
             if ( newOwner.has( Relation.class ) ) {
                 Relation relation = newOwner.find(Relation.class);
