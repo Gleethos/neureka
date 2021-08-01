@@ -112,29 +112,31 @@ public abstract class AbstractComponentOwner<C>
     private synchronized void _addOrRemoveComp( Component<C> component, boolean remove ) {
         boolean[] changeExecuted = { false };
         if ( remove ) {
-            component.update(
-                new Component.OwnerChangeRequest<C>() {
-                    @Override public C getOldOwner() { return _this(); }
-                    @Override public C getNewOwner() { return null; }
-                    @Override public boolean executeChange() {
-                        _remove( component ); changeExecuted[0] = true; return true;
-                    }
-                }
-            );
-            if ( !changeExecuted[0] ) _remove( component );
+            boolean removalAccepted =
+                    component.update(
+                        new Component.OwnerChangeRequest<C>() {
+                            @Override public C getOldOwner() { return _this(); }
+                            @Override public C getNewOwner() { return null; }
+                            @Override public boolean executeChange() {
+                                _remove( component ); changeExecuted[0] = true; return true;
+                            }
+                        }
+                    );
+            if ( removalAccepted && !changeExecuted[0] ) _remove( component );
         } else {
             // The component receives an initial update call:
             if ( component != null ) { 
-                component.update(
-                    new Component.OwnerChangeRequest<C>() {
-                        @Override public C getOldOwner() { return null; }
-                        @Override public C getNewOwner() { return _this(); }
-                        @Override public boolean executeChange() {
-                            _add( _setOrReject( component ) ); changeExecuted[0] = true; return true;
-                        }
-                    }
-                );
-                if ( !changeExecuted[0] ) _add( _setOrReject( component ) );
+                boolean additionAccepted =
+                        component.update(
+                            new Component.OwnerChangeRequest<C>() {
+                                @Override public C getOldOwner() { return null; }
+                                @Override public C getNewOwner() { return _this(); }
+                                @Override public boolean executeChange() {
+                                    _add( _setOrReject( component ) ); changeExecuted[0] = true; return true;
+                                }
+                            }
+                        );
+                if ( additionAccepted && !changeExecuted[0] ) _add( _setOrReject( component ) );
             }
         }
     }

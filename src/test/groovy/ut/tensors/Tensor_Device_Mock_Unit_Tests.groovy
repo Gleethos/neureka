@@ -39,7 +39,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
             0 * device.store(t)
 
         and : 'Instead it should use the "update" method, which is a formal callback from the internal component system...'
-            1 * device.update({ it.type().name() == "ADDED" })
+            1 * device.update({ it.type().name() == "ADDED" }) >> true
 
         and : 'It stores the device as a component.'
             t.has(Device.class)
@@ -50,6 +50,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
         given : 'A simple tensor instance with a mock device as component.'
             def device = Mock(Device)
             device.has(_) >>> [false, true, true, false]
+            device.update(_) >> true
             Tsr t = Tsr.of(2).set(device)
 
         when : 'The "isOutsourced" property is being set to false...'

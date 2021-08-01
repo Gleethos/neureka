@@ -79,6 +79,8 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
             (0.._) * mockDevice.has(t1) >>> [false, true] // doesn't have it, then storing it, then has it!
             (0.._) * mockDevice.has(t2) >>> [false, true]
             (0.._) * mockDevice.has(t3) >>> [false, true]
+        and :
+            (1.._) * mockDevice.update(_) >> true
 
         and : 'Finally the tensors are outsourced members of our mocked OpenCLDevice (Even though they are technically still in RAM).'
             t1.isOutsourced()
