@@ -251,9 +251,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
     }
 
     @Override
-    public void update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
+    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
         _setPayload( changeRequest.getNewOwner() );
         changeRequest.executeChange();
+        return true;
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

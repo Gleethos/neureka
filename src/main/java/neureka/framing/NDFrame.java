@@ -272,9 +272,10 @@ public final class NDFrame<ValType> implements Component<Tsr<ValType>>
 
 
     @Override
-    public void update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
+    public boolean update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
         changeRequest.executeChange();
         // This component does not have anything to do when switching owner...
+        return true;
     }
 
     public Map<Object, Object> getMapping() {

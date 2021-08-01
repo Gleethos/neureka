@@ -75,7 +75,8 @@ public class ADAM<ValType> implements Optimizer<ValType> {
     }
 
     @Override
-    public void update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
+    public boolean update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
         changeRequest.executeChange();
+        return true;
     }
 }

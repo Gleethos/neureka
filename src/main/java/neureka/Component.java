@@ -44,6 +44,6 @@ public interface Component<O>
      *  added to the owner, in which case the "oldOwner"
      *  is going to be null.
      */
-    void update( OwnerChangeRequest<O> changeRequest );
+    boolean update( OwnerChangeRequest<O> changeRequest );
 
 }

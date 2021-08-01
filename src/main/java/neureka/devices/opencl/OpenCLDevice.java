@@ -146,9 +146,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
         public cl_value value;
 
         @Override
-        public void update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {
+        public boolean update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {
             // Update not needed...
             changeRequest.executeChange();
+            return true;
         }
     }
 
@@ -595,7 +596,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public void update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {
+    public boolean update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {
         super.update( changeRequest );
         if ( changeRequest.type() == IsBeing.ADDED ) {
             Tsr<Number> newOwner = changeRequest.getNewOwner();
@@ -603,6 +604,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         }
         else
             changeRequest.executeChange();
+        return true;
     }
 
     private void _updateInternal( Tsr newOwner, Runnable migration ) {

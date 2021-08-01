@@ -1146,7 +1146,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  (Otherwise the gradient tensor "does not mind" an owner change...)
      */
     @Override
-    public void update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
+    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
         if ( changeRequest.type() == IsBeing.ADDED ) {
             if (
                     changeRequest.getNewOwner().shape().hashCode() != this.shape().hashCode() ||
@@ -1160,6 +1160,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         // this is means that this tensor is a gradient that is being
         // transferred to another tensor to serve as gradient...
         // No update task needs to occur. (This might change in the future...)
+        return true;
     }
 
 

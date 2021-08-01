@@ -51,10 +51,11 @@ public class CLContext  implements Component<OperationContext>
      * @param newOwner The new {@link OperationContext} instance.
      */
     @Override
-    public void update( OwnerChangeRequest<OperationContext> changeRequest ) {
+    public boolean update( OwnerChangeRequest<OperationContext> changeRequest ) {
         this._platforms.clear();
         this._platforms.addAll( _findLoadAndCompileForAllPlatforms() );
         changeRequest.executeChange();
+        return true;
     }
 
     /**

@@ -85,7 +85,7 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
 
 
     @Override
-    public void update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
+    public boolean update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
         Tsr<ValType> oldOwner = changeRequest.getOldOwner();
         Tsr<ValType> newOwner = changeRequest.getNewOwner();
         if ( changeRequest.type() == IsBeing.REPLACED ) swap( oldOwner, newOwner );
@@ -99,6 +99,7 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
                 }
             }
         }
+        return true;
     }
 
     @Override

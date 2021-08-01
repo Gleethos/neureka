@@ -96,12 +96,12 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
 
 
     @Override
-    public void update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
+    public boolean update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
         Tsr<ValType> oldOwner = changeRequest.getOldOwner();
         Tsr<ValType> newOwner = changeRequest.getNewOwner();
         if ( changeRequest.type() == IsBeing.ADDED || changeRequest.type() == IsBeing.REMOVED ) {
             changeRequest.executeChange();
-            return; // Initial/last update call: No action needed!
+            return true; // Initial/last update call: No action needed!
         }
         if ( _parent != null) {
             Relation<ValType> pr = _parent.find( Relation.class );
@@ -121,6 +121,7 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
             }
         }
         changeRequest.executeChange();
+        return true;
     }
 
 
