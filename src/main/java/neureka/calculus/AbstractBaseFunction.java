@@ -27,7 +27,7 @@ SOFTWARE.
 package neureka.calculus;
 
 import neureka.Tsr;
-import neureka.calculus.Function;
+
 import java.util.List;
 
 /**

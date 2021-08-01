@@ -34,7 +34,6 @@ SOFTWARE.
 
 package neureka.devices;
 
-import neureka.Component;
 import neureka.Tsr;
 
 import java.util.Collection;
@@ -42,9 +41,8 @@ import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.IntFunction;
 
-public abstract class AbstractBaseDevice<ValType> implements Device<ValType>, Component<Tsr<ValType>>
+public abstract class AbstractBaseDevice<ValType> implements Device<ValType>
 {
-
     @Override
     public int size() {
         Collection<Tsr<ValType>> tensors = this.getTensors();
