@@ -64,8 +64,32 @@ import java.util.function.Supplier;
  */
 public interface Function
 {
+    /**
+     *  This static factory method will return {@link Function} instances
+     *  based on a provided mathematical {@link String} expression describing the function
+     *  using 'I[0]', 'I[1]', 'I[2]'... as input variables or 'I[j]' to enable input dependent indexing
+     *  like for example "sum( I[j] / 2 )".
+     *  The {@link Function} instances returned by this method will
+     *  by default perform autograd if any involved input {@link Tsr} requires gradients (see {@link Tsr#rqsGradient()}).
+     *  If one wishes to disable this behavior one might consider the use of the {@link Function#of(String, boolean)}
+     *  factory method.
+     *
+     * @param expression The right part of a function equation where inputs are denoted by 'I[0]', 'I[1]', 'I[2]'...
+     * @return A {@link Function} instance created based on the provided {@link String}, ready to receive inputs and execute on them.
+     */
     static Function of( String expression ) { return of( expression, true ); }
 
+    /**
+     *  This static factory method will return {@link Function} instances
+     *  based on a provided mathematical {@link String} expression describing the function
+     *  using 'I[0]', 'I[1]', 'I[2]'... as input variables or 'I[j]' to enable input dependent indexing
+     *  like for example "sum( I[j] / 2 )" as well as a flag determining if the resulting {@link Function}
+     *  ought to be able to perform autograd or not.
+     *
+     * @param expression The right part of a function equation where inputs are denoted by 'I[0]', 'I[1]', 'I[2]'...
+     * @param doAD A flag determining if the produced {@link Function} should be able to perform autograd (aka. auto-differentiation)
+     * @return A {@link Function} instance created based on the provided {@link String}, ready to receive inputs and execute on them.
+     */
     static Function of( String expression, boolean doAD ) {
         return new FunctionBuilder(Neureka.get().context()).build(expression, doAD);
     }
@@ -130,24 +154,36 @@ public interface Function
 
     Function newBuild( String expression );
 
-    boolean isDoingAD(); // Note: only branch nodes can 'do Auto-Differentiation'
+    /**
+     *  Only branch {@link Function}s can do autograd / 'Auto-Differentiation', meaning functions
+     *  whose {@link #isFlat()} flag is set to false!
+     *
+     * @return The truth value determining if this {@link Function} can perform autograd/auto-differentiation on the input tensors it receives.
+     */
+    boolean isDoingAD();
 
+    /**
+     * @return The truth value determining if the sub-functions of this {@link Function} do not themselves reference {@link Function}s.
+     */
     boolean isFlat();
 
+    /**
+     * @return The {@link Operation} implementation instance responsible for executing any inputs received by this {@link Function} or null if this {@link #isFlat()}.
+     */
     Operation getOperation();
 
     boolean dependsOn( int index );
 
     Function getDerivative( int index );
 
-    List<Function> getNodes();
+    List<Function> getSubFunctions();
 
-    default List<Function> getAllNodes() {
-        return _unpack( this.getNodes() );
+    default List<Function> getAllFunctions() {
+        return _unpack( this.getSubFunctions() );
     }
 
     default int numberOfArgs() {
-        return (int) getAllNodes()
+        return (int) getAllFunctions()
                         .stream()
                         .filter( fun -> fun instanceof FunctionInput )
                         .map( fun -> (FunctionInput) fun )
@@ -164,7 +200,7 @@ public interface Function
 
     static void __unpack( List<Function> functions, List<Function> target ) {
         target.addAll(functions);
-        for ( Function fun : functions ) __unpack(fun.getNodes(), target);
+        for ( Function fun : functions ) __unpack(fun.getSubFunctions(), target);
     }
 
 

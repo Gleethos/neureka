@@ -65,7 +65,7 @@ public class FunctionInput extends AbstractBaseFunction implements GradientProvi
     }
 
     @Override
-    public List<Function> getNodes() { return new ArrayList<>(); }
+    public List<Function> getSubFunctions() { return new ArrayList<>(); }
 
     //------------------------------------------------------------------------------------------------------------------
 

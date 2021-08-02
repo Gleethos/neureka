@@ -57,7 +57,7 @@ public class FunctionVariable extends AbstractBaseFunction implements GradientPr
     }
 
     @Override
-    public List<Function> getNodes() { return new ArrayList<>(); }
+    public List<Function> getSubFunctions() { return new ArrayList<>(); }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

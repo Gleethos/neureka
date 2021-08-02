@@ -33,7 +33,7 @@ public class CLFunctionCompiler {
         _device = device;
         _functionToBeOptimized = toBeOptimized;
         _functionName = functionName;
-        _argPointer = toBeOptimized.getAllNodes()
+        _argPointer = toBeOptimized.getAllFunctions()
                                     .stream()
                                     .filter( fun -> fun instanceof FunctionInput )
                                     .mapToInt( fun -> ( (FunctionInput) fun ).index() )
@@ -44,7 +44,7 @@ public class CLFunctionCompiler {
 
     public Operation optimize() {
         int numberOfArgs = _functionToBeOptimized.numberOfArgs();
-        if ( _functionToBeOptimized.getNodes().stream().anyMatch(fun -> fun instanceof FunctionVariable ) )
+        if ( _functionToBeOptimized.getSubFunctions().stream().anyMatch(fun -> fun instanceof FunctionVariable ) )
             numberOfArgs = -1; // The function is an indexer which means that it can have any number of arguments...
         return new OperationBuilder()
                 .setFunction( _functionName )

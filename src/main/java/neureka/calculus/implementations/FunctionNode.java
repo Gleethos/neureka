@@ -94,7 +94,7 @@ public class FunctionNode extends AbstractBaseFunction
     }
 
     @Override
-    public List<Function> getNodes() { return Arrays.asList(this._src); }
+    public List<Function> getSubFunctions() { return Arrays.asList(this._src); }
 
     //------------------------------------------------------------------------------------------------------------------
 

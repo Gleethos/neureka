@@ -55,7 +55,7 @@ public class FunctionConstant extends AbstractBaseFunction
 	}
 
 	@Override
-	public List<Function> getNodes() { return new ArrayList<>(); }
+	public List<Function> getSubFunctions() { return new ArrayList<>(); }
 
 	@Override
 	public Function newBuild( String expression )
