@@ -57,19 +57,18 @@ import java.util.function.Consumer;
  *  An {@link AbstractComponentOwner} can have multiple {@link Component} instances which
  *  are being accessed via the {@link Class} objects of these implementations.
  *  This means that the {@link AbstractComponentOwner} can only reference a single
- *  instance of a specific {@link Component} implementation class.                                   <br>
+ *  instance of a concrete {@link Component} implementation class.                                   <br>
  *                                                                                                   <br>
  *  This class is used as the root precursor class of the concrete {@link Tsr} class
  *  from which tensor instances can be created, but also the precursor class of
- *  the {@link neureka.backend.api.OperationContext} which is a thread local execution context
- *  hosting {@link neureka.backend.api.Operation}, {@link java.util.function.Function}
+ *  the {@link neureka.backend.api.OperationContext} which is managed by thread local
+ *  {@link neureka.Neureka} library context instances.
+ *  An {@link neureka.backend.api.OperationContext} directly or indirectly
+ *  hosts {@link neureka.backend.api.Operation}, {@link java.util.function.Function}
  *  and of course {@link Component} implementations.
- *  Tensors use this component system to enable autograd via the {@link GraphNode} class
- *  and to reference gradients ({@link Tsr} is itself a {@link Component}).
- *  The inheritance model of a tensor is structured as follows:
- *  {@link Tsr} inherits from {@link AbstractNDArray} which inherits from {@link AbstractComponentOwner}
- *  The inheritance model is linear, meaning that all classes involved
- *  are not extended more than once.
+ *  Tensors on the other hand use this component system to enable autograd
+ *  via the {@link GraphNode} class and to reference gradients ({@link Tsr} is itself a {@link Component})
+ *  among other type of components...
  *
  * @param <C> The concrete class at the bottom end of the inheritance hierarchy. (Used to allow for method chaining)
  */
@@ -89,13 +88,13 @@ public abstract class AbstractComponentOwner<C>
      */
     private static final Map<Class<? extends Component>, Integer> _CLASS_ORDER = new HashMap<>();
     static {
-            _CLASS_ORDER.put(Optimizer.class,	    1   );
-            _CLASS_ORDER.put(JITProp.class,	        2   );
-            _CLASS_ORDER.put(OpenCLDevice.class,	3   );
-            _CLASS_ORDER.put(Tsr.class,	            4   );
-            _CLASS_ORDER.put(Relation.class,	    5   );
-            _CLASS_ORDER.put(Device.class,	        6   );
-            _CLASS_ORDER.put(GraphNode.class,	    7   );
+            _CLASS_ORDER.put( Optimizer.class,	    1   );
+            _CLASS_ORDER.put( JITProp.class,	    2   );
+            _CLASS_ORDER.put( OpenCLDevice.class,	3   );
+            _CLASS_ORDER.put( Tsr.class,	        4   );
+            _CLASS_ORDER.put( Relation.class,	    5   );
+            _CLASS_ORDER.put( Device.class,	        6   );
+            _CLASS_ORDER.put( GraphNode.class,	    7   );
     }
 
     /**
@@ -181,7 +180,7 @@ public abstract class AbstractComponentOwner<C>
     }
 
     /**
-     *  A component owners might need to exchange components. <br>
+     *  A component owner might need to exchange components. <br>
      *  Meaning that the components of another owner will be transferred and adopted by the current one.
      *  During this process the transferred components will be notified of their new owner.
      *  This is important because some components might reference their owners... <br>
@@ -196,7 +195,7 @@ public abstract class AbstractComponentOwner<C>
             _setComps( other._components ); // Inform components about their new owner:
             for ( Component<C> c : _components ) c.update(
                     new Component.OwnerChangeRequest<C>() {
-                        @Override public C getOldOwner() { return (C) other; }
+                        @Override public C getOldOwner() { return other._this(); }
                         @Override public C getNewOwner() { return _this(); }
                         @Override public boolean executeChange() { return false; }
                     });
@@ -211,7 +210,7 @@ public abstract class AbstractComponentOwner<C>
     protected void _deleteComponents() { _components = null; }
 
     /**
-     *  This method tries to find a component inside the stored
+     *  This method tries to find a component inside the internal
      *  component array whose class matches the one provided.
      *  If no such component could be found then
      *  the return value will simply be null.
