@@ -41,11 +41,14 @@ import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.IntFunction;
 
-public abstract class AbstractBaseDevice<ValType> implements Device<ValType>
+/**
+ * @param <V> The value type parameter representing a common super type for all values supported by the device.
+ */
+public abstract class AbstractBaseDevice<V> implements Device<V>
 {
     @Override
     public int size() {
-        Collection<Tsr<ValType>> tensors = this.getTensors();
+        Collection<Tsr<V>> tensors = this.getTensors();
         if ( tensors == null ) return 0;
         return tensors.size();
     }
@@ -56,12 +59,12 @@ public abstract class AbstractBaseDevice<ValType> implements Device<ValType>
     }
 
     @Override
-    public boolean contains( Tsr<ValType> o ) {
+    public boolean contains( Tsr<V> o ) {
         return this.getTensors().contains( o );
     }
 
     @Override
-    public Iterator<Tsr<ValType>> iterator() {
+    public Iterator<Tsr<V>> iterator() {
         return this.getTensors().iterator();
     }
 
@@ -71,7 +74,7 @@ public abstract class AbstractBaseDevice<ValType> implements Device<ValType>
     }
 
     @Override
-    public Spliterator<Tsr<ValType>> spliterator() {
+    public Spliterator<Tsr<V>> spliterator() {
         return getTensors().spliterator();
     }
 

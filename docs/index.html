@@ -192,7 +192,7 @@
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-sm-12 col-md-12">
-                                    <h2>Java for ML?</h2>
+                                    <h2>Why Neureka?</h2>
                                 </div>
                                 <div class="col-sm-12 col-md-3">
                                     <img style="width:100%;" src="src/img/archimedes.jpg">
@@ -200,52 +200,112 @@
                                 <div class="col-sm-12 col-md-9">
                                     <div class="ContentBox">
                                         <p>
-                                            Popular machine learning and tensor / deep learning libraries
-                                            use python due to it's concise and simplistic syntax. </br>
-                                            Java on the other hand is often times considered
-                                            as verbose and cumbersome... So why would anybody ever build
-                                            a deep learning library for Java?</br>
-                                            The answer is simple:</br></br>
-                                            <div style="text-align: center;">
-                                            Nobody did!
-                                            </div>
-                                            </br>
-                                            This library was written for all JVM-languages, namely:
-                                            Groovy, Kotlin, Scala, and Jython just to name a few.
-                                            Neureka can be integrated by any language which compiles to, or understands
-                                            JVM bytecode!</br>
-                                            Take a look at some Groovy and Java side by side:
+                                            Neureka trains your neural network using a computation graph recorder.
+
+                                            This is contrary to the approaches found in other frameworks such as TensorFlow, Theano, Caffe, and CNTK
+                                            which require the definition of a computation graph ahead of time.
+                                            This means a developer has to build a neural network structure which
+                                            cannot change during runtime.
+
+                                            Neureka, uses the recorded computation graph in order to apply a technique called reverse-mode auto-differentiation,
+                                            which allows your network structure to change during runtime arbitrarily with zero lag or overhead.<br>
+                                            This powerful feature has been inspired by PyTorch.
+
+
+                                            - [Motivation](docs/markdown/motivation.md) :fire:
+
                                         </p>
                                     </div>
                                 </div>
-                                <div class="col-sm-0 col-md-2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="MainContentWrapper">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                    <h2>Why Java?</h2>
                                 </div>
-                                <div class="col-sm-12 col-md-8">
+                                <div class="col-sm-12 col-md-12 col-lg-12">
                                     <div class="ContentBox">
-                                        <p style="text-align: center; width:100%">
-                                            Both code snippets below express the following equations:</br>
-                                            f(x) = ((x-4)*2)^2; :=> f(3) = 4</br>
-                                            f(x)' = 8*x - 32 ; :=> f(3)' = -8</br>
+                                        <p>
+                                            Although Java is a robust and safe language, it
+                                            is often times considered to be too verbose and explicit for
+                                            simple prototyping or more explorative workloads...
+                                            Therefore popular machine learning and tensor / deep learning libraries
+                                            rely on python, which offers a very concise and simplistic syntax. <br>
+                                            So one might come to wonder, why would anybody ever build
+                                            a deep learning library for Java?<br>
+                                            The answer is simple!
                                         </p>
                                     </div>
                                 </div>
-                                <div class="col-sm-0 col-md-2">
+                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                    <div class="ContentBox">
+                                        <p>
+                                        <div style="text-align: center;">
+                                            Nobody did!
+                                        </div>
+                                        <br>
+                                        This library was written for all JVM-languages, namely:
+                                        Groovy, Kotlin, Scala, and Jython just to name a few.<br>
+                                        Take a look at the following examples side by side! <br><br>
+                                        Neureka can be integrated by any language which compiles to, or understands
+                                        JVM bytecode!
+                                        </p>
+                                    </div>
                                 </div>
-                                <div class="col-sm-12 col-md-6">
-                                                       <pre><code class="hljs java">
-    //Groovy:
+                                <div class="col-sm-12 col-md-12 col-lg-6">
+                                    <div class="TabWrapper">
+                                        <div class="TabHead">
+                                            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+                                            <button onclick="switchTab(event, '.javaTab')">Java</button>
+                                        </div>
+                                        <div class="TabBody">
+                                            <div class="groovyTab">
+                <pre><code class="hljs java">
+
     Tsr x = Tsr.of(3).setRqsGradient(true)
     Tsr b = Tsr.of(-4)
     Tsr w = Tsr.of(2)
 
     Tsr y = ((x+b)*w)**2
     // y: "[1]:(4.0); ->d[1]:(-8.0), "
-                                                        </code></pre>
+
+                </code></pre>
+                                            </div>
+                                            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    Tsr x = Tsr.of(3).setRqsGradient(true);
+    Tsr b = Tsr.of(-4);
+    Tsr w = Tsr.of(2);
+    Tsr y = Tsr.of(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
+
+    // y: "(1):[4.0]; ->d(1):[-8.0], "
+
+                </code></pre>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-sm-12 col-md-6">
+                                <div class="col-sm-0 col-md-2 col-lg-3">
+                                </div>
+                                <div class="col-sm-12 col-md-8 col-lg-6">
+                                    <div class="ContentBox MarkdownMe">
+Both code snippets express the following equations
+
+- `f(x) = ((x-4)*2)^2 | f(3) = 4`
+- `f(x)' = 8 * x - 32 | f(3)' = -8`
+                                    </div>
+                                </div>
+                                <div class="col-sm-0 col-md-2 col-lg-3">
+                                </div>
+                                <div class="col-sm-12 col-md-7 col-lg-8">
                                     <div class="ContentBox">
                                         <p>
-                                            Groovy supports operator overloading.
+                                            Some languages like Groovy for example
+                                            supports operator overloading.
                                             Certain methods will be called when
                                             corresponding operators are used ( + : plus(...), - : minus(...), ... ).
                                             Such language features allow for elegant and short implementations.
@@ -254,18 +314,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="col-sm-12 col-md-8">
-                                                       <pre><code class="hljs java">
-    //Java:
-    Tsr x = Tsr.of(3).setRqsGradient(true);
-    Tsr b = Tsr.of(-4);
-    Tsr w = Tsr.of(2);
-    Tsr y = Tsr.of(new Tsr[]{x, b, w}, "((i0+i1)*i2)^2");
-
-    // y: "(1):[4.0]; ->d(1):[-8.0], "
-                                                        </code></pre>
-                                </div>
-                                <div class="col-sm-12 col-md-4">
+                                <div class="col-sm-12 col-md-5 col-lg-4">
                                     <div class="ContentBox">
                                         <p>
                                             ...if however performance is of concern for
@@ -279,7 +328,7 @@
                                     <div class="ContentBox">
                                         <p>
                                             If you prefer fast prototyping
-                                            with Jupyter, then Neureka can be used there too.
+                                            with Jupyter, then Neureka can be used there too. <br>
                                             <a href="http://beakerx.com/">BeakerX</a>
                                             is a jupyter extension that supports many JVM
                                             languages like Groovy, Scala, Clojure, Kotlin and Java.
@@ -302,23 +351,9 @@
                                 <div class="col-sm-12 col-md-12">
                                     <div class="ContentBox">
                                         <p>
-                                            Python currently provides the most diverse
-                                            environments and ecosystems for deep learning and
-                                            data science. This is despite the fact that it is
-                                            an interpreted language and thereby substantially slower than
-                                            statically compiled languages and also allot
-                                            slower than dynamically compiled and optimized bytecode
-                                            executed during JVM runtime (JIT - compilation).
-                                            <img src="https://img.icons8.com/metro/50/000000/speed.png">
-                                            Therefore, popular frameworks like PyTorch and Tensorflow
-                                            compensate this deficit by utilizing C++ and Cuda internally.</br>
-                                            Neureka seeks to achieve similar performance with a more balanced
-                                            approach, where number crunching is offloaded to OpenCl whenever
-                                            possible or otherwise JVM's advanced concurrency and JIT
-                                            runtime optimizations come into play.
-                                            (Which should not be underestimated)</br></br>
-                                            However currently, Neureka is held as lightweight
-                                            as possible! Operations are therefore implemented as
+                                            Neureka is a lightweight and highly modular library
+                                            designed to allow for the support of any backend, if required.
+                                            The operations within the default backend are implemented as
                                             generalized, modular and concise as possible, meaning that
                                             performance wise Neureka still needs to mature
                                             and would greatly appreciate improvement
@@ -368,11 +403,27 @@
         </footer>
     </div>
 </div>
-
+<script src="src/js/marked.min.js"></script>
+<script>
+    function switchTab(src, target) {
+        var TabBody = $(src.target).parent().parent().find('.TabBody');
+        TabBody.children().css("display", "none");
+        $(src.target).siblings().removeClass("selected");
+        $(src.target).parent().parent().find(target).css("display", "");
+        $(src.target).addClass("selected");
+        console.log($(src.target).html());
+    }
+    $(document).ready(function() {
+        for (let item of document.getElementsByClassName("MarkdownMe")) {
+            item.innerHTML = marked(item.innerHTML)
+            item.classList.remove("MarkdownMe");
+            console.log("Markdowned: "+item)
+        }
+    })
+</script>
 <!-----------------------------------VANTA JS------------------------------------------>
 <script src="src/js/three.min.js"></script>
 <script src="src/js/vanta.birds.min.js"></script>
-
 <script>
     //VANTA.BIRDS({
     //    el: "#BirdBox",
