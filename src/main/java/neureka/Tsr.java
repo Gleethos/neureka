@@ -107,6 +107,7 @@ import neureka.utility.DataConverter;
 import neureka.utility.ListReader;
 import neureka.utility.TsrAsString;
 import neureka.utility.fluent.TensorBuilder;
+import neureka.utility.fluent.states.WithShapeOrScalarOrVector;
 import neureka.utility.slicing.SliceBuilder;
 import neureka.utility.slicing.SmartSlicer;
 import org.jetbrains.annotations.NotNull;
@@ -415,13 +416,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         --------------------------------------------
     */
 
-    public static <V> TensorBuilder<V> of( Class<V> typeClass ) { return new TensorBuilder( typeClass ); }
+    public static <V> WithShapeOrScalarOrVector<V> of(Class<V> typeClass ) { return new TensorBuilder( typeClass ); }
 
-    public static TensorBuilder<Double> ofDoubles() { return of(Double.class); }
+    public static WithShapeOrScalarOrVector<Double> ofDoubles() { return of(Double.class); }
 
-    public static TensorBuilder<Float> ofFloats() { return of(Float.class); }
+    public static WithShapeOrScalarOrVector<Float> ofFloats() { return of(Float.class); }
 
-    public static TensorBuilder<Integer> ofInts() { return of(Integer.class); }
+    public static WithShapeOrScalarOrVector<Integer> ofInts() { return of(Integer.class); }
 
     public static Tsr of( double value ) { return new Tsr(value); }
 
