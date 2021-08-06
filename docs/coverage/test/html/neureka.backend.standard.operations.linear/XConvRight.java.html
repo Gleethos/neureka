@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XConvRight.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.standard.operations.linear</a> &gt; <span class="el_source">XConvRight.java</span></div><h1>XConvRight.java</h1><pre class="source lang-java linenums">package neureka.backend.standard.operations.linear;
+
+import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.operations.OperationBuilder;
+import neureka.backend.standard.algorithms.Convolution;
+import neureka.backend.standard.operations.ConvUtil;
+import neureka.calculus.Function;
+
+public class XConvRight extends AbstractOperation {
+
+    public XConvRight() {
+<span class="fc" id="L12">        super(</span>
+                new OperationBuilder()
+<span class="fc" id="L14">                        .setFunction(         &quot;inv_convolve_mul_right&quot;    )</span>
+<span class="fc" id="L15">                        .setOperator(         &quot;x&quot; + ((char) 187)         )</span>
+<span class="fc" id="L16">                        .setArity(            3                         )</span>
+<span class="fc" id="L17">                        .setIsOperator(       true        )</span>
+<span class="fc" id="L18">                        .setIsIndexer(        false       )</span>
+<span class="fc" id="L19">                        .setIsDifferentiable( false       )</span>
+<span class="fc" id="L20">                        .setIsInline(         false       )</span>
+        );
+<span class="fc" id="L22">        setAlgorithm( Convolution.class, ConvUtil.getConv() );</span>
+<span class="fc" id="L23">    }</span>
+
+    @Override
+    public String stringify(String[] children) {
+<span class="fc" id="L27">        StringBuilder reconstructed = new StringBuilder();</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
+<span class="fc" id="L29">            reconstructed.append( children[ i ] );</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">            if ( i &lt; children.length - 1 ) {</span>
+<span class="fc" id="L31">                reconstructed.append(&quot; x&quot; + ((char) 187)+&quot; &quot;);</span>
+            }
+        }
+<span class="fc" id="L34">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
+    }
+
+    @Override
+    public String asDerivative(Function[] children, int derivationIndex) {
+<span class="nc" id="L39">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+    }
+
+    @Override
+    public double calculate( double[] inputs, int j, int d, Function[] src ) {
+<span class="nc" id="L44">        return 0;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:56 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:55 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>2</td>
 <td>2</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>7.032 seconds</td>
+<td>6.592 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -366,7 +370,7 @@ div.footer {
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr([1, 3, 6])</pre>
+<pre class='block-source'>Tsr t = Tsr.ofShape(1, 3, 6 )</pre>
 </td>
 </tr>
 <tr>
@@ -383,7 +387,7 @@ assert t.toString().contains("(1x3x6)")</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t = new Tsr([1, 3.0, 6])</pre>
+<pre class='block-source'>t = Tsr.ofShape([1, 3.0, 6])</pre>
 </td>
 </tr>
 <tr>
@@ -400,7 +404,7 @@ assert t.toString().contains("(1x3x6):[0.0, 0.0, 0.0")</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t = new Tsr([1, 3.3, 6])</pre>
+<pre class='block-source'>t = Tsr.of([1, 3.3, 6])</pre>
 </td>
 </tr>
 <tr>
@@ -441,8 +445,8 @@ assert t.toString().contains("(3):[1.0, 3.3, 6.0]")</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Logger oldLogger = Function.CACHE._log
-Function.CACHE._log = Mock( Logger )</pre>
+<pre class='block-source'>Logger oldLogger = Neureka.get().context().functionCache()._log
+Neureka.get().context().functionCache()._log = Mock( Logger )</pre>
 </td>
 </tr>
 <tr>
@@ -519,7 +523,7 @@ String expected = "56b2eb74955e49cd777469c7dad0536e"</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>0 * Function.CACHE._log.debug(_)</pre>
+<pre class='block-source'>0 * Neureka.get().context().functionCache()._log.debug(_)</pre>
 </td>
 </tr>
 <tr>
@@ -533,7 +537,7 @@ String expected = "56b2eb74955e49cd777469c7dad0536e"</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Function.CACHE._log = oldLogger</pre>
+<pre class='block-source'>Neureka.get().context().functionCache()._log = oldLogger</pre>
 </td>
 </tr>
 <tr>
@@ -547,7 +551,7 @@ String expected = "56b2eb74955e49cd777469c7dad0536e"</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>if ( !Neureka.instance().canAccessOpenCL() ) return</pre>
+<pre class='block-source'>if ( !Neureka.get().canAccessOpenCL() ) return</pre>
 </td>
 </tr>
 <tr>

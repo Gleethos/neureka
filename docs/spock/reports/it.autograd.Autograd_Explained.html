@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:32 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:42 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>1</td>
 <td>1</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>4.192 seconds</td>
+<td>6.070 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -421,9 +425,9 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
-Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
-Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(false)</pre>
+<pre class='block-source'>Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
+Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)</pre>
 </td>
 </tr>
 <tr>
@@ -437,7 +441,7 @@ Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(fa
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def x = new Tsr([2, 2], 1).setRqsGradient(true)</pre>
+<pre class='block-source'>def x = Tsr.of([2, 2], 1).setRqsGradient(true)</pre>
 </td>
 </tr>
 <tr>
@@ -567,7 +571,7 @@ Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(fa
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def someTensor = new Tsr()</pre>
+<pre class='block-source'>def someTensor = Tsr.newInstance()</pre>
 </td>
 </tr>
 <tr>
@@ -624,7 +628,7 @@ Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(fa
 <td>
 <div class='block-text'>
                 We now try to backpropagate! Because "result" contains a single scalar,
-                result.backward() is equivalent to out.backward(new Tsr(1)).
+                result.backward() is equivalent to out.backward(Tsr.of(1)).
             </div>
 </td>
 </tr>

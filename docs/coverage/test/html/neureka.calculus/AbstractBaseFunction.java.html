@@ -27,19 +27,19 @@ SOFTWARE.
 package neureka.calculus;
 
 import neureka.Tsr;
-import neureka.calculus.Function;
+
 import java.util.List;
 
 /**
  * This class implements certain methods by simply calling
  * other methods which are responsible for executing
- * the important logic implemented in sub classes.
+ * the important logic implemented in sub classes.    &lt;br&gt;&lt;br&gt;
  *
  * The reason for this is simply that otherwise there
  * would be many redundantly implemented methods.
  * The 'call' and 'invoke' methods with the same arguments
  * are supposed to do the same thing, however
- * they are both part of the Function interface in order to
+ * they are both part of the {@link Function} interface in order to
  * allow for overloading the '()' operator in different
  * JVM languages...
  */
@@ -81,7 +81,7 @@ import java.util.List;
     }
 
     @Override
-    public double invoke( double[] inputs ) {
+    public double invoke( double... inputs ) {
 <span class="nc" id="L85">        return call( inputs );</span>
     }
 
@@ -98,7 +98,7 @@ import java.util.List;
     }
 
     @Override
-    public &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;[] inputs ) {
+    public &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;... inputs ) {
 <span class="nc" id="L102">        return call( inputs );</span>
     }
 
@@ -112,6 +112,28 @@ import java.util.List;
     @Override
     public &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index ) {
 <span class="fc" id="L114">        return derive( inputs.toArray( new Tsr[ 0 ] ), index );</span>
+    }
+
+    // ---
+
+    @Override
+    public &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;[] inputs, int j ) {
+<span class="fc" id="L121">        return (Tsr&lt;T&gt;) execute(inputs, j);</span>
+    }
+
+    @Override
+    public &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;... inputs ) {
+<span class="fc" id="L126">        return (Tsr&lt;T&gt;) execute(inputs);</span>
+    }
+
+    @Override
+    public &lt;T&gt; Tsr&lt;T&gt; derive( Tsr&lt;T&gt;[] inputs, int d, int j ) {
+<span class="fc" id="L131">        return (Tsr&lt;T&gt;) executeDerive( inputs, d, j );</span>
+    }
+
+    @Override
+    public &lt;T&gt; Tsr&lt;T&gt; derive( Tsr&lt;T&gt;[] inputs, int d ) {
+<span class="fc" id="L136">        return (Tsr&lt;T&gt;) executeDerive( inputs, d );</span>
     }
 
 

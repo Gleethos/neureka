@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractFunctionalAlgorithm.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api.algorithms</a> &gt; <span class="el_source">AbstractFunctionalAlgorithm.java</span></div><h1>AbstractFunctionalAlgorithm.java</h1><pre class="source lang-java linenums">package neureka.backend.api.algorithms;
+
+
+import neureka.Tsr;
+import neureka.autograd.ADAgent;
+import neureka.backend.api.Algorithm;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.Operation;
+import neureka.calculus.Function;
+import neureka.calculus.implementations.FunctionNode;
+import neureka.devices.Device;
+
+/**
+ *  This is the base class for implementations of the {@link Algorithm} interface.
+ *  The class implements a basic component system, as is implicitly expected by said interface.
+ *  Additionally it contains useful methods used to process passed arguments of {@link ExecutionCall}
+ *  as well as an implementation of the {@link Algorithm} interface which allows its methods to
+ *  be implemented in a functional programming style, meaning that instances of concrete implementations
+ *  extending this abstract class have setters for lambdas representing the {@link Algorithm} methods.
+ *  It is being used by the standard backend of Neureka as abstract base class for various algorithms.
+ *
+ *  Conceptually an implementation of the {@link Algorithm} interface represents &quot;a sub-kind of operation&quot; for
+ *  an instance of an implementation of the {@link Operation} interface. &lt;br&gt;
+ *  The &quot;+&quot; operator for example has different {@link Algorithm} instances tailored to specific requirements
+ *  originating from different {@link ExecutionCall} instances with unique arguments.
+ *  {@link Tsr} instances within an execution call having the same shape would
+ *  cause the {@link Operation} instance to chose an {@link Algorithm} instance which is responsible
+ *  for performing elementwise operations, whereas otherwise the {@link neureka.backend.standard.algorithms.Broadcast}
+ *  algorithm might be called to perform the operation.
+ *
+ * @param &lt;FinalType&gt; The final type extending this class.
+ */
+public abstract class AbstractFunctionalAlgorithm&lt; FinalType extends Algorithm&lt;FinalType&gt; &gt; extends AbstractBaseAlgorithm&lt; FinalType &gt;
+{
+    private Algorithm.SuitabilityChecker _isSuitableFor;
+    private Algorithm.DeviceFinder _findDeviceFor;
+    private Algorithm.ForwardADAnalyzer _canPerformForwardADFor;
+    private Algorithm.BackwardADAnalyzer _canPerformBackwardADFor;
+    private Algorithm.ADAgentSupplier _supplyADAgentFor;
+    private Algorithm.InitialCallHook _handleInsteadOfDevice;
+    private RecursiveJunctor _handleRecursivelyAccordingToArity;
+    private Algorithm.DrainInstantiation _instantiateNewTensorsForExecutionIn;
+
+    public AbstractFunctionalAlgorithm(String name ) {
+<span class="fc" id="L45">        super(name);</span>
+<span class="fc" id="L46">    }</span>
+
+    //---
+
+    @Override
+    public float isSuitableFor( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
+<span class="fc" id="L52">        return _isSuitableFor.canHandle(call);</span>
+    }
+
+    ///---
+
+    @Override
+    public Device findDeviceFor( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        return ( _findDeviceFor == null ) ? null : _findDeviceFor.findFor(call);</span>
+    }
+
+    //---
+
+    @Override
+    public boolean canPerformForwardADFor( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
+<span class="fc" id="L66">        return _canPerformForwardADFor.allowsForward(call);</span>
+    }
+
+    //---
+
+    @Override
+    public boolean canPerformBackwardADFor( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
+<span class="fc" id="L73">        return _canPerformBackwardADFor.allowsBackward( call );</span>
+    }
+
+    //---
+
+    @Override
+    public ADAgent supplyADAgentFor( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) {
+<span class="fc" id="L80">        return _supplyADAgentFor.getADAgentOf( f, call, forward );</span>
+    }
+
+    //---
+
+    @Override
+    public Tsr handleInsteadOfDevice( FunctionNode caller, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
+<span class="fc" id="L87">        return _handleInsteadOfDevice.handle( caller, call );</span>
+    }
+
+    //---
+
+    @Override
+    public Tsr&lt;?&gt; handleRecursivelyAccordingToArity( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, java.util.function.Function&lt;ExecutionCall&lt;? extends Device&lt;?&gt;&gt;, Tsr&lt;?&gt;&gt; goDeeperWith ) {
+<span class="fc" id="L94">        return _handleRecursivelyAccordingToArity.handle( call, goDeeperWith );</span>
+    }
+
+    //---
+
+    @Override
+    public ExecutionCall instantiateNewTensorsForExecutionIn( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
+<span class="fc" id="L101">        return _instantiateNewTensorsForExecutionIn.handle( call );</span>
+    }
+
+    //---
+
+    public FinalType build() {
+<span class="fc" id="L107">        return (FinalType) this;</span>
+    }
+
+    /**
+     *  The {@link neureka.backend.api.Algorithm.SuitabilityChecker}
+     *  checks if a given instance of an {@link ExecutionCall} is
+     *  suitable to be executed in {@link neureka.backend.api.ImplementationFor}
+     *  residing in this {@link Algorithm} as components.
+     *
+     * @return A lambda which checks if a given {@link ExecutionCall} instance is suitable to be executed by this {@link Algorithm}.
+     */
+    public SuitabilityChecker getIsSuitableFor() {
+<span class="nc" id="L119">        return this._isSuitableFor;</span>
+    }
+
+    /**
+     *  The {@link neureka.backend.api.Algorithm.DeviceFinder} finds
+     *  a {@link Device} instance which fits the contents of a given {@link ExecutionCall} instance.
+     *  The finder is supposed to find a {@link Device} which can be most easily shared
+     *  by the {@link Tsr} instances within the {@link ExecutionCall} that is being received by the finder.
+     *
+     * @return A finder lambda for finding a suitable {@link Device} implementation instance for a given {@link ExecutionCall} passed to the finder.
+     */
+    public DeviceFinder getFindDeviceFor() {
+<span class="nc" id="L131">        return this._findDeviceFor;</span>
+    }
+
+    /**
+     *  A {@link neureka.backend.api.Algorithm.ForwardADAnalyzer} lambda checks if this
+     *  {@link Algorithm} can perform forward AD for a given {@link ExecutionCall}.
+     *
+     * @return An analyzer which return a truth value determining if this {@link Algorithm} can perform forward AD on a given {@link ExecutionCall}
+     */
+    public ForwardADAnalyzer getCanPerformForwardADFor() {
+<span class="nc" id="L141">        return this._canPerformForwardADFor;</span>
+    }
+
+    /**
+     *  A {@link neureka.backend.api.Algorithm.BackwardADAnalyzer} lambda checks if this
+     *  {@link Algorithm} can perform backward AD for a given {@link ExecutionCall}.
+     *
+     * @return An analyzer which return a truth value determining if this {@link Algorithm} can perform backward AD on a given {@link ExecutionCall}
+     */
+    public BackwardADAnalyzer getCanPerformBackwardADFor() {
+<span class="nc" id="L151">        return this._canPerformBackwardADFor;</span>
+    }
+
+    /**
+     *  This {@link neureka.backend.api.Algorithm.ADAgentSupplier} will supply
+     *  {@link ADAgent} instances which can perform backward and forward auto differentiation.
+     *
+     * @return An {@link neureka.backend.api.Algorithm.ADAgentSupplier} for creting suitable {@link ADAgent} instances.
+     */
+    public ADAgentSupplier getSupplyADAgentFor() {
+<span class="nc" id="L161">        return this._supplyADAgentFor;</span>
+    }
+
+    /**
+     *  The {@link neureka.backend.api.Algorithm.InitialCallHook} lambda
+     *  is simply a bypass procedure which if provided will simply occupy
+     *  the rest of the execution without any other steps being taken.
+     *  For example the {@link neureka.backend.api.Algorithm.RecursiveJunctor}
+     *  would not be used in that case.
+     *  This bypassing is useful for unorthodox types of operations
+     *  like the {@link neureka.backend.standard.operations.other.Reshape} opertion.
+     *
+     * @return A lambda which bypasses the default execution procedure.
+     */
+    public InitialCallHook getHandleInsteadOfDevice() {
+<span class="nc" id="L176">        return this._handleInsteadOfDevice;</span>
+    }
+
+    /**
+     *  This returns an instance of the {@link neureka.backend.api.Algorithm.RecursiveJunctor}
+     *  which enables the pairwise execution of a chain of an abitrary number of
+     *  {@link ExecutionCall} arguments.
+     *  This is useful for simple operators like '+' or '*' which
+     *  might have any number of arguments...
+     *
+     * @return A lambda which will be executed recursively to executes multiple arguments pairwise.
+     */
+    public RecursiveJunctor getHandleRecursivelyAccordingToArity() {
+<span class="nc" id="L189">        return this._handleRecursivelyAccordingToArity;</span>
+    }
+
+    /**
+     *  An {@link Algorithm} will typically produce a result when executing an {@link ExecutionCall}.
+     *  This result must be created somehow.
+     *  The {@link neureka.backend.api.Algorithm.DrainInstantiation} lambda instance
+     *  returned by this method will do just that...
+     *
+     * @return A result instantiation lambda called before execution...
+     */
+    public DrainInstantiation getInstantiateNewTensorsForExecutionIn() {
+<span class="nc" id="L201">        return this._instantiateNewTensorsForExecutionIn;</span>
+    }
+
+    /**
+     *  The {@link neureka.backend.api.Algorithm.SuitabilityChecker}
+     *  checks if a given instance of an {@link ExecutionCall} is
+     *  suitable to be executed in {@link neureka.backend.api.ImplementationFor} instances
+     *  residing in this {@link Algorithm} as components.
+     *
+     * @return This very instance to enable method chaining.
+     */
+    public AbstractFunctionalAlgorithm&lt;FinalType&gt; setIsSuitableFor(SuitabilityChecker _isSuitableFor) {
+<span class="fc" id="L213">        this._isSuitableFor = _isSuitableFor;</span>
+<span class="fc" id="L214">        return this;</span>
+    }
+
+    /**
+     *  The {@link neureka.backend.api.Algorithm.DeviceFinder} finds
+     *  a {@link Device} instance which fits the contents of a given {@link ExecutionCall} instance.
+     *  The finder is supposed to find a {@link Device} which can be most easily shared
+     *  by the {@link Tsr} instances within the {@link ExecutionCall} that is being received by the finder.
+     *
+     * @param _findDeviceFor The finder lambda which ought to find a suitable device for a given {@link ExecutionCall}.
+     * @return This very instance to enable method chaining.
+     */
+    public AbstractFunctionalAlgorithm&lt;FinalType&gt; setFindDeviceFor(DeviceFinder _findDeviceFor) {
+<span class="nc" id="L227">        this._findDeviceFor = _findDeviceFor;</span>
+<span class="nc" id="L228">        return this;</span>
+    }
+
+    /**
+     *  A {@link neureka.backend.api.Algorithm.ForwardADAnalyzer} lambda checks if this
+     *  {@link Algorithm} can perform forward AD for a given {@link ExecutionCall}.
+     *
+     * @param _canPerformForwardADFor
+     * @return This very instance to enable method chaining.
+     */
+    public AbstractFunctionalAlgorithm&lt;FinalType&gt; setCanPerformForwardADFor(ForwardADAnalyzer _canPerformForwardADFor) {
+<span class="fc" id="L239">        this._canPerformForwardADFor = _canPerformForwardADFor;</span>
+<span class="fc" id="L240">        return this;</span>
+    }
+
+    /**
+     *  A {@link neureka.backend.api.Algorithm.BackwardADAnalyzer} lambda checks if this
+     *  {@link Algorithm} can perform backward AD for a given {@link ExecutionCall}.
+     *
+     * @param _canPerformBackwardADFor
+     * @return This very instance to enable method chaining.
+     */
+    public AbstractFunctionalAlgorithm&lt;FinalType&gt; setCanPerformBackwardADFor(BackwardADAnalyzer _canPerformBackwardADFor) {
+<span class="fc" id="L251">        this._canPerformBackwardADFor = _canPerformBackwardADFor;</span>
+<span class="fc" id="L252">        return this;</span>
+    }
+
+    /**
+     *  This method receives a {@link neureka.backend.api.Algorithm.ADAgentSupplier} which will supply
+     *  {@link ADAgent} instances which can perform backward and forward auto differentiation.
+     *
+     * @param _supplyADAgentFor
+     * @return This very instance to enable method chaining.
+     */
+    public AbstractFunctionalAlgorithm&lt;FinalType&gt; setSupplyADAgentFor(ADAgentSupplier _supplyADAgentFor) {
+<span class="fc" id="L263">        this._supplyADAgentFor = _supplyADAgentFor;</span>
+<span class="fc" id="L264">        return this;</span>
+    }
+
+    public AbstractFunctionalAlgorithm&lt;FinalType&gt; setHandleInsteadOfDevice(InitialCallHook _handleInsteadOfDevice) {
+<span class="fc" id="L268">        this._handleInsteadOfDevice = _handleInsteadOfDevice;</span>
+<span class="fc" id="L269">        return this;</span>
+    }
+
+    public AbstractFunctionalAlgorithm&lt;FinalType&gt; setHandleRecursivelyAccordingToArity(RecursiveJunctor _handleRecursivelyAccordingToArity) {
+<span class="fc" id="L273">        this._handleRecursivelyAccordingToArity = _handleRecursivelyAccordingToArity;</span>
+<span class="fc" id="L274">        return this;</span>
+    }
+
+    public AbstractFunctionalAlgorithm&lt;FinalType&gt; setInstantiateNewTensorsForExecutionIn(DrainInstantiation _instantiateNewTensorsForExecutionIn) {
+<span class="fc" id="L278">        this._instantiateNewTensorsForExecutionIn = _instantiateNewTensorsForExecutionIn;</span>
+<span class="fc" id="L279">        return this;</span>
+    }
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:35 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:45 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>1</td>
 <td>1</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.844 seconds</td>
+<td>0.416 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -376,25 +380,25 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested( false )
-Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
-Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp( false )
-def X = new Tsr(
+<pre class='block-source'>Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false )
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
+Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false )
+def X = Tsr.of(
     [[0.6667, 1.0000],
      [0.3333, 0.5556],
      [1.0000, 0.6667]]
 )
-def y = new Tsr(
+def y = Tsr.of(
         [[0.9200],
          [1.0000],
          [0.8900]]
 )
-def sig = Function.create("sig(I[0])")
-def W1 = new Tsr(
+def sig = Function.of("sig(I[0])")
+def W1 = Tsr.of(
         [[-1.1843,  0.0146, -1.4647],
          [-1.4020, -1.0129,  0.6256]]
 ).setRqsGradient(true)
-def W2 = new Tsr(
+def W2 = Tsr.of(
         [[ 1.8095],
          [-0.4269],
          [-1.1110]]

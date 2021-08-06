@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:35 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:42 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>8</td>
 <td>8</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>6.946 seconds</td>
+<td>6.487 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -401,7 +405,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().isUsingLegacyView = true</pre>
+<pre class='block-source'>Neureka.get().settings().view().isUsingLegacyView = true</pre>
 </td>
 </tr>
 <tr>
@@ -415,9 +419,9 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr a = new Tsr(2).setRqsGradient(true)
-Tsr b = new Tsr(-4)
-Tsr c = new Tsr(3).setRqsGradient(true)</pre>
+<pre class='block-source'>Tsr a = Tsr.of(2).setRqsGradient(true)
+Tsr b = Tsr.of(-4)
+Tsr c = Tsr.of(3).setRqsGradient(true)</pre>
 </td>
 </tr>
 <tr>
@@ -433,9 +437,9 @@ Tsr c = new Tsr(3).setRqsGradient(true)</pre>
 <td>
 <pre class='block-source'>Tsr s =  (a*b) + 2
 Tsr x = s * (s+c)
-Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(false)
-x.backward(new Tsr(1))
-Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(true)</pre>
+Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)
+x.backward(Tsr.of(1))
+Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)</pre>
 </td>
 </tr>
 <tr>
@@ -452,9 +456,9 @@ a.toString().contains("(2.0):g:(36.0)")</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(false)
+<pre class='block-source'>Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)
 x.backward(4)
-Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(true)</pre>
+Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)</pre>
 </td>
 </tr>
 <tr>
@@ -481,10 +485,10 @@ a.toString().contains("(2.0):g:(36.0)")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Tsr a = new Tsr(2).setRqsGradient(true)
-Tsr b = new Tsr(-4)
-Tsr c = new Tsr(3).setRqsGradient(true)
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+Tsr a = Tsr.of(2).setRqsGradient(true)
+Tsr b = Tsr.of(-4)
+Tsr c = Tsr.of(3).setRqsGradient(true)
 Tsr s =  (a*b) + 2
 Tsr x = s * (s+c)</pre>
 </td>
@@ -494,7 +498,7 @@ Tsr x = s * (s+c)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>x.backward(new Tsr(1))</pre>
+<pre class='block-source'>x.backward(Tsr.of(1))</pre>
 </td>
 </tr>
 <tr>
@@ -538,11 +542,11 @@ a.toString().contains("(38.0):g:(null)")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
-Tsr a = new Tsr(2).setRqsGradient(true)
-Tsr b = new Tsr(-4)
-Tsr c = new Tsr(3).setRqsGradient(true)
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
+Tsr a = Tsr.of(2).setRqsGradient(true)
+Tsr b = Tsr.of(-4)
+Tsr c = Tsr.of(3).setRqsGradient(true)
 Tsr s =  (a*b) + 2
 Tsr x = s * (s+c)</pre>
 </td>
@@ -552,7 +556,7 @@ Tsr x = s * (s+c)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>x.backward(new Tsr(1))</pre>
+<pre class='block-source'>x.backward(Tsr.of(1))</pre>
 </td>
 </tr>
 <tr>
@@ -569,9 +573,9 @@ a.toString().contains("g:(null)")</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+<pre class='block-source'>Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
 Tsr y = a+3
-Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)</pre>
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)</pre>
 </td>
 </tr>
 <tr>
@@ -599,14 +603,14 @@ a.toString().contains("(38.0):g:(null)")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
-Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
-Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
-Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)
-Tsr a = new Tsr(2).setRqsGradient(true)
-Tsr b = new Tsr(-3)
-Tsr c = new Tsr(3).setRqsGradient(true)</pre>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
+Tsr a = Tsr.of(2).setRqsGradient(true)
+Tsr b = Tsr.of(-3)
+Tsr c = Tsr.of(3).setRqsGradient(true)</pre>
 </td>
 </tr>
 <tr>
@@ -662,7 +666,7 @@ x.toString().contains("(-4.5)")</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>def f = FunctionBuilder.build("I[0]*I[1]", false)
+<pre class='block-source'>def f = new FunctionBuilder(Neureka.get().context()).build("I[0]*I[1]", false)
 Tsr[] inputs = new Tsr[]{c, a}
 Tsr result = f(inputs)</pre>
 </td>
@@ -688,7 +692,7 @@ x.toString().contains("(-4.5)")</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>f = FunctionBuilder.build("I[0]*I[1]", true)
+<pre class='block-source'>f = new FunctionBuilder(Neureka.get().context()).build("I[0]*I[1]", true)
 result = f(inputs)</pre>
 </td>
 </tr>
@@ -725,14 +729,14 @@ x.toString().contains("(-4.5)")
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
-Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
-Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
-Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(true)
-Tsr a = new Tsr(2).setRqsGradient(true)
-Tsr b = new Tsr(-3)
-Tsr c = new Tsr(3).setRqsGradient(true)</pre>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(true)
+Tsr a = Tsr.of(2).setRqsGradient(true)
+Tsr b = Tsr.of(-3)
+Tsr c = Tsr.of(3).setRqsGradient(true)</pre>
 </td>
 </tr>
 <tr>
@@ -791,7 +795,7 @@ x.toString().contains("(-4.5)")</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>def f = FunctionBuilder.build("I[0]*I[1]", false)
+<pre class='block-source'>def f = new FunctionBuilder(Neureka.get().context()).build("I[0]*I[1]", false)
 Tsr[] inputs = new Tsr[]{c, a}
 Tsr result = f(inputs)</pre>
 </td>
@@ -813,7 +817,7 @@ x.toString().contains("(-4.5)")</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>f = FunctionBuilder.build("I[0]*I[1]", true)
+<pre class='block-source'>f = new FunctionBuilder(Neureka.get().context()).build("I[0]*I[1]", true)
 result = f(inputs)</pre>
 </td>
 </tr>
@@ -886,13 +890,13 @@ x.toString().contains("(-4.5)")
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(false)
-Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
-Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
-Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Tsr a = new Tsr(2).setRqsGradient(true)
-Tsr b = new Tsr(-3)
-Tsr c = new Tsr(3).setRqsGradient(true)</pre>
+<pre class='block-source'>Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(false)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
+Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
+Neureka.get().settings().view().setIsUsingLegacyView(true)
+Tsr a = Tsr.of(2).setRqsGradient(true)
+Tsr b = Tsr.of(-3)
+Tsr c = Tsr.of(3).setRqsGradient(true)</pre>
 </td>
 </tr>
 <tr>
@@ -968,13 +972,13 @@ c.toString().contains("(1.5):g:(null)")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
-Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
-Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
-Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Tsr a = new Tsr(2).setRqsGradient(true)
-Tsr b = new Tsr(-3)
-Tsr c = new Tsr(3).setRqsGradient(true)</pre>
+<pre class='block-source'>Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
+Neureka.get().settings().view().setIsUsingLegacyView(true)
+Tsr a = Tsr.of(2).setRqsGradient(true)
+Tsr b = Tsr.of(-3)
+Tsr c = Tsr.of(3).setRqsGradient(true)</pre>
 </td>
 </tr>
 <tr>
@@ -1031,13 +1035,13 @@ c.toString().contains("g:(null)")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
-Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
-Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
-Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Tsr a = new Tsr(2).setRqsGradient(true)
-Tsr b = new Tsr(-4)
-Tsr c = new Tsr(3).setRqsGradient(true)</pre>
+<pre class='block-source'>Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp(true)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)
+Neureka.get().settings().view().setIsUsingLegacyView(true)
+Tsr a = Tsr.of(2).setRqsGradient(true)
+Tsr b = Tsr.of(-4)
+Tsr c = Tsr.of(3).setRqsGradient(true)</pre>
 </td>
 </tr>
 <tr>

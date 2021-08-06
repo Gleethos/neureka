@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:49 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:45 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>3</td>
 <td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.107 seconds</td>
+<td>0.192 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -380,8 +384,8 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr a = new Tsr([2, 3], 'a'..'e')
-Tsr b = new Tsr([2, 3], 'f'..'k')</pre>
+<pre class='block-source'>Tsr a = Tsr.of([2, 3], 'a'..'e')
+Tsr b = Tsr.of([2, 3], 'f'..'k')</pre>
 </td>
 </tr>
 <tr>
@@ -467,8 +471,8 @@ def c2 = new ComplexNumber(1.0, 0.5)</pre>
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr a = new Tsr([3, 2], c1)
-Tsr b = new Tsr([3, 2], c2)</pre>
+<pre class='block-source'>Tsr a = Tsr.of([3, 2], c1)
+Tsr b = Tsr.of([3, 2], c2)</pre>
 </td>
 </tr>
 <tr>
@@ -501,15 +505,15 @@ b.isVirtual()
 </td>
 <td>
 <pre class='block-source'>''
-Tsr a = new Tsr(
-        [3, 2],
-        DataType.of(ComplexNumber.class),
-        ( int i, int[] indices ) -&gt; new ComplexNumber(indices[0], indices[1])
+Tsr a = Tsr.of(
+    DataType.of(ComplexNumber.class),
+    [3, 2],
+    ( int i, int[] indices ) -&gt; new ComplexNumber(indices[0], indices[1])
 )
-Tsr b = new Tsr(
-        [3, 2],
-        DataType.of(ComplexNumber.class),
-        ( int i, int[] indices ) -&gt; new ComplexNumber(indices[1], indices[0])
+Tsr b = Tsr.of(
+    DataType.of(ComplexNumber.class),
+    [3, 2],
+    ( int i, int[] indices ) -&gt; new ComplexNumber(indices[1], indices[0])
 )</pre>
 </td>
 </tr>

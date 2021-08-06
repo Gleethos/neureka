@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:49 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:46 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>5</td>
 <td>5</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>5.149 seconds</td>
+<td>0.334 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -391,7 +395,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>if (!Neureka.instance().canAccessOpenCL()) return</pre>
+<pre class='block-source'>if (!Neureka.get().canAccessOpenCL()) return</pre>
 </td>
 </tr>
 <tr>
@@ -419,7 +423,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr([4, 3], 2)
+<pre class='block-source'>Tsr t = Tsr.of([4, 3], 2)
 Tsr s = t[1..3, 1..2]</pre>
 </td>
 </tr>
@@ -502,7 +506,7 @@ s.dataType == DataType.of( Double.class )</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>if (!Neureka.instance().canAccessOpenCL()) return</pre>
+<pre class='block-source'>if (!Neureka.get().canAccessOpenCL()) return</pre>
 </td>
 </tr>
 <tr>
@@ -516,7 +520,7 @@ s.dataType == DataType.of( Double.class )</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr([1, 2])</pre>
+<pre class='block-source'>Tsr t = Tsr.ofShape( 1, 2 )</pre>
 </td>
 </tr>
 <tr>
@@ -610,7 +614,7 @@ s.dataType == DataType.of( Double.class )</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>if ( !Neureka.instance().canAccessOpenCL() ) return</pre>
+<pre class='block-source'>if ( !Neureka.get().canAccessOpenCL() ) return</pre>
 </td>
 </tr>
 <tr>
@@ -624,7 +628,7 @@ s.dataType == DataType.of( Double.class )</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr([1, 2])</pre>
+<pre class='block-source'>Tsr t = Tsr.ofShape( 1, 2 )</pre>
 </td>
 </tr>
 <tr>
@@ -704,15 +708,21 @@ s.dataType == DataType.of( Double.class )</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>if ( !Neureka.instance().canAccessOpenCL() ) return
-def device = OpenCLPlatform.PLATFORMS()[0].devices[0]
-def someData = new Tsr( new float[]{ 2, -5, -3, 9, -1 } ).set( device )</pre>
+<pre class='block-source'>if ( !Neureka.get().canAccessOpenCL() ) return
+def device = Neureka.get().context().find(CLContext.class).getPlatforms()[0].devices[0]
+def someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).set( device )</pre>
 </td>
 </tr>
 <tr>
 <td>
 <div class='block-kind'>Expect:</div>
 </td>
+<td>
+<div class='block-text'>The OpenCL device initially does not have the "dummy_kernel" we are going to create.</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>!device.hasAdHocKernel( 'dummy_kernel' )</pre>
 </td>
@@ -721,6 +731,12 @@ def someData = new Tsr( new float[]{ 2, -5, -3, 9, -1 } ).set( device )</pre>
 <td>
 <div class='block-kind'>When:</div>
 </td>
+<td>
+<div class='block-text'>Compiling a kernel called "dummy_kernel"...</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>device.compileAdHocKernel( 'dummy_kernel', """
     __kernel void dummy_kernel (
@@ -740,6 +756,12 @@ def someData = new Tsr( new float[]{ 2, -5, -3, 9, -1 } ).set( device )</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
+<div class='block-text'>The OpenCL device contrary to before now has a kernel by this name.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
 <pre class='block-source'>device.hasAdHocKernel( 'dummy_kernel' )</pre>
 </td>
 </tr>
@@ -747,6 +769,12 @@ def someData = new Tsr( new float[]{ 2, -5, -3, 9, -1 } ).set( device )</pre>
 <td>
 <div class='block-kind'>And:</div>
 </td>
+<td>
+<div class='block-text'>The device still references the source code od that kernel.</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>device._adhocKernels['dummy_kernel'].source == """
 __kernel void dummy_kernel (
@@ -765,6 +793,12 @@ __kernel void dummy_kernel (
 <div class='block-kind'>When:</div>
 </td>
 <td>
+<div class='block-text'>Executing the kernel by passing the previously defined tensor...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
 <pre class='block-source'>device.getAdHocKernel( 'dummy_kernel' )
 .passRaw( someData )
 .passRaw( someData )
@@ -776,6 +810,12 @@ __kernel void dummy_kernel (
 <td>
 <div class='block-kind'>Then:</div>
 </td>
+<td>
+<div class='block-text'>Each value within the tensor will all have the number 4 subtracted from it.</div>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>
 <pre class='block-source'>someData.toString() == "(5):[-2.0, -9.0, -7.0, 5.0, -5.0]"</pre>
 </td>
@@ -801,8 +841,8 @@ __kernel void dummy_kernel (
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>if ( !Neureka.instance().canAccessOpenCL() ) return
-def device = OpenCLPlatform.PLATFORMS()[0].devices[0]
+<pre class='block-source'>if ( !Neureka.get().canAccessOpenCL() ) return
+def device = Neureka.get().context().find(CLContext.class).getPlatforms()[0].devices[0]
 def kernelName = "dummy_mm_${M}x${K}x${N}"
 def params = DispatchUtility.findBestParams(locSize, regSize, K, M, N)
 def TSM  = params[0]
@@ -812,14 +852,11 @@ def WPTM = params[3]
 def WPTN = params[4]
 long[] local=   new long[]{ TSM/WPTM, TSN/WPTN }
 long[] global = new long[]{ (M/WPTM), (N/WPTN) }
-println('TSM:'+TSM+' - TSN:'+TSN+' - TSK:'+TSK+' - WPTM'+WPTM+' - WPTN:'+WPTN+' |'+local+'|'+global)
-Tsr A = new Tsr( [M,K], 0 )
-Tsr B = new Tsr( [K,N], 0 )
-Tsr C = new Tsr( [M,N], 0 )
-A[0..M-1,0..K-1] = new Tsr([M,K], 3..1)
-B[0..K-1,0..N-1] = new Tsr([K,N], -5..0)
-println(A)
-println(B)
+Tsr A = Tsr.of( [M,K], 0 )
+Tsr B = Tsr.of( [K,N], 0 )
+Tsr C = Tsr.of( [M,N], 0 )
+A[0..M-1,0..K-1] = Tsr.of([M,K], 3..1)
+B[0..K-1,0..N-1] = Tsr.of([K,N], -5..0)
 A.set( device )
 B.set( device )
 C.set( device )</pre>
@@ -950,8 +987,7 @@ C.set( device )</pre>
 <pre class='block-source'>device.getAdHocKernel( kernelName )
 .pass( M ).pass( N ).pass( K )
 .passRaw( A ).passRaw( B ).passRaw( C )
-.call( global, local )
-println(C)</pre>
+.call( global, local )</pre>
 </td>
 </tr>
 <tr>
@@ -970,12 +1006,14 @@ println(C)</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>regSize</th>
 <th class='ex-header'>locSize</th>
 <th class='ex-header'>M</th>
 <th class='ex-header'>K</th>
 <th class='ex-header'>N</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>

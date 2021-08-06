@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CLContext.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.opencl</a> &gt; <span class="el_source">CLContext.java</span></div><h1>CLContext.java</h1><pre class="source lang-java linenums">package neureka.devices.opencl;
+
+import neureka.Component;
+import neureka.Tsr;
+import neureka.backend.api.OperationContext;
+import org.jocl.cl_platform_id;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.jocl.CL.clGetPlatformIDs;
+
+/**
+ *  This is an OpenCL context component for any given {@link OperationContext} which
+ *  extends a given operation context instance for additional functionality, which in
+ *  this case is the OpenCL backend storing platform and device information.
+ *  {@link OperationContext}s are thread local states
+ *  used for managing {@link neureka.backend.api.Operation}, {@link neureka.calculus.Function}
+ *  as well as {@link Component} implementation instances like this one.
+ *  A given state might not be compatible with the concepts introduced in other contexts
+ *  which is why it makes sense to have separate &quot;worlds&quot; with potential different operations...
+ *  The component system of the {@link OperationContext} exist so that a given context
+ *  can be extended for more functionality
+ *  and also to attach relevant states like for example in this case the {@link CLContext}
+ *  instance will directly or indirectly reference kernels, memory objects and other concepts
+ *  exposed by OpenCL...
+ */
+public class CLContext  implements Component&lt;OperationContext&gt;
+{
+<span class="fc" id="L30">    private final List&lt;OpenCLPlatform&gt; _platforms = new ArrayList&lt;&gt;();</span>
+
+    /**
+     *  Use this constructor if you want to create a new OpenCL world in which there
+     *  are unique {@link OpenCLPlatform} and {@link OpenCLDevice} instances.
+     */
+<span class="fc" id="L36">    public CLContext() {}</span>
+
+    /**
+     * @return A list of context specific {@link OpenCLPlatform} instances possible containing {@link OpenCLDevice}s.
+     */
+<span class="fc" id="L41">    public List&lt;OpenCLPlatform&gt; getPlatforms() { return _platforms; }</span>
+
+    /**
+     *  Updating the CLContext will cause the list of existing {@link OpenCLPlatform} instances to be
+     *  cleared and refilled with completely new {@link OpenCLPlatform} instances.
+     *  This will in effect also cause the recreation of any {@link OpenCLDevice} instances
+     *  as part of these {@link OpenCLPlatform}s.
+     *  This will subsequently cause the recompilation of many OpenCL kernels.
+     *
+     */
+    @Override
+    public boolean update( OwnerChangeRequest&lt;OperationContext&gt; changeRequest ) {
+<span class="fc" id="L53">        this._platforms.clear();</span>
+<span class="fc" id="L54">        this._platforms.addAll( _findLoadAndCompileForAllPlatforms() );</span>
+<span class="fc" id="L55">        changeRequest.executeChange();</span>
+<span class="fc" id="L56">        return true;</span>
+    }
+
+    /**
+     * @return A new list of freshly created {@link OpenCLPlatform} instances containing freshly instantiated {@link OpenCLDevice}s and kernels.
+     */
+    private static List&lt;OpenCLPlatform&gt; _findLoadAndCompileForAllPlatforms()
+    {
+        // Obtain the number of platforms
+<span class="fc" id="L65">        int[] numPlatforms = new int[ 1 ];</span>
+<span class="fc" id="L66">        clGetPlatformIDs(0, null, numPlatforms);</span>
+
+        // Obtain the platform IDs
+<span class="fc" id="L69">        cl_platform_id[] platforms = new cl_platform_id[ numPlatforms[ 0 ] ];</span>
+<span class="fc" id="L70">        clGetPlatformIDs( platforms.length, platforms, null );</span>
+
+<span class="fc" id="L72">        List&lt;OpenCLPlatform&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        for ( cl_platform_id id : platforms ) list.add( new OpenCLPlatform( id ) );</span>
+<span class="fc" id="L74">        return list;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

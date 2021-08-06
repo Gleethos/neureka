@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:38:11 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:56 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>6</td>
 <td>6</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>2.680 seconds</td>
+<td>2.747 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -389,7 +393,7 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().asString = "dgc"</pre>
+<pre class='block-source'>Neureka.get().settings().view().asString = "dgc"</pre>
 </td>
 </tr>
 <tr>
@@ -466,10 +470,12 @@ loaded.getDataType().getTypeClass() == type</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>tensor</th>
 <th class='ex-header'>type</th>
 <th class='ex-header'>filename</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -634,8 +640,10 @@ idx.dataType == DataType.of( UI8.class )</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>filename</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -730,9 +738,11 @@ loaded.dataType == DataType.of( I16.class )</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>filename</th>
 <th class='ex-header'>shape</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -823,11 +833,13 @@ loaded.dataType == DataType.of( String.class )</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>filename</th>
 <th class='ex-header'>params</th>
 <th class='ex-header'>byteSize</th>
 <th class='ex-header'>shape</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -885,7 +897,7 @@ loaded.dataType == DataType.of( String.class )</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr([2,3], DataType.of(String.class), [
+<pre class='block-source'>Tsr t = Tsr.of(DataType.of(String.class), [2,3], [
         '1', 'hi', ':)',
         '2', 'hey', ';)'
 ]).label([
@@ -961,7 +973,7 @@ new File("build/resources/test/csv/test.csv").text == ",A,B,C\nr1,1,hi,:)\nr2,2,
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr([2,3], DataType.of(String.class), [
+<pre class='block-source'>Tsr t = Tsr.of(DataType.of(String.class), [2,3], [
         '1', 'hi', ':)',
         '2', 'hey', ';)'
 ]).label([

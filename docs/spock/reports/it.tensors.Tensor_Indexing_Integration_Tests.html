@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:50 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:46 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>3</td>
 <td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.589 seconds</td>
+<td>0.083 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -375,8 +379,8 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)</pre>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)</pre>
 </td>
 </tr>
 <tr>
@@ -390,25 +394,25 @@ Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(fals
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr i_a = new Tsr([2, 1], [
+<pre class='block-source'>Tsr i_a = Tsr.of([2, 1], [
         1,
         2
 ])
-Tsr w_a = new Tsr([2, 2], [
+Tsr w_a = Tsr.of([2, 2], [
         1, 3,
         4, -1
 ]).setRqsGradient(true)
-Tsr o_a = new Tsr(i_a, "x", w_a)
-Tsr w_b = new Tsr([2, 2], [
+Tsr o_a = Tsr.of(i_a, "x", w_a)
+Tsr w_b = Tsr.of([2, 2], [
         -2, 1,  // 9, 1 -&gt; -17
         2, -1   // ... -&gt; 17
 ]).setRqsGradient(true)
-Tsr o_b = new Tsr(o_a, "x", w_b)
-Tsr w_c = new Tsr([2, 2], [
+Tsr o_b = Tsr.of(o_a, "x", w_b)
+Tsr w_c = Tsr.of([2, 2], [
         0.5, 3,
         -2, -0.5
 ]).setRqsGradient(true)
-Tsr o_c = new Tsr(o_a, "x", w_c)
+Tsr o_c = Tsr.of(o_a, "x", w_c)
 Tsr out = o_b * o_c</pre>
 </td>
 </tr>
@@ -442,7 +446,7 @@ assert w_b.toString().contains("g:(null)")</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>out.backward(new Tsr([2, 1], 1))</pre>
+<pre class='block-source'>out.backward(Tsr.of([2, 1], 1))</pre>
 </td>
 </tr>
 <tr>
@@ -471,9 +475,9 @@ assert !w_b.toString().contains("g:(null)")</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+<pre class='block-source'>Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
 w_a * 3
-Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)</pre>
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)</pre>
 </td>
 </tr>
 <tr>
@@ -508,8 +512,8 @@ assert w_b.toString().contains("g:(67.5, 7.5, -166.5, -18.5)")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(false)</pre>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)</pre>
 </td>
 </tr>
 <tr>
@@ -517,13 +521,13 @@ Neureka.instance().settings().autograd().setIsApplyingGradientWhenRequested(fals
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr i_a = new Tsr([2, 1], [1, 2])
-Tsr w_a = new Tsr([2, 2], [1, 3, 4, -1]).setRqsGradient(true)
-Tsr o_a = new Tsr(i_a,"x", w_a)
-Tsr w_b = new Tsr([2, 2], [-2, 1, 2, -1]).setRqsGradient(true)
-Tsr o_b = new Tsr(o_a,"x", w_b)
-Tsr w_c = new Tsr([2, 2], [0.5, 3, -2, -0.5]).setRqsGradient(true)
-Tsr o_c = new Tsr(o_a, "x", w_c)
+<pre class='block-source'>Tsr i_a = Tsr.of([2, 1], [1, 2])
+Tsr w_a = Tsr.of([2, 2], [1, 3, 4, -1]).setRqsGradient(true)
+Tsr o_a = Tsr.of(i_a,"x", w_a)
+Tsr w_b = Tsr.of([2, 2], [-2, 1, 2, -1]).setRqsGradient(true)
+Tsr o_b = Tsr.of(o_a,"x", w_b)
+Tsr w_c = Tsr.of([2, 2], [0.5, 3, -2, -0.5]).setRqsGradient(true)
+Tsr o_c = Tsr.of(o_a, "x", w_c)
 Tsr out = o_b*o_c</pre>
 </td>
 </tr>
@@ -545,7 +549,7 @@ assert w_b.toString().contains("g:(null)")</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>out.backward(new Tsr([2, 1], 1))</pre>
+<pre class='block-source'>out.backward(Tsr.of([2, 1], 1))</pre>
 </td>
 </tr>
 <tr>
@@ -562,9 +566,9 @@ assert !w_b.toString().contains("g:(null)")</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
+<pre class='block-source'>Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(true)
 w_a * 3
-Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)</pre>
+Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)</pre>
 </td>
 </tr>
 <tr>
@@ -592,12 +596,12 @@ assert !w_b.toString().contains("g:(null)")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t0 = new Tsr([3, 2, 1], [
+<pre class='block-source'>Tsr t0 = Tsr.of([3, 2, 1], [
         1, 2,
         3, 4,
         5, 6
 ])
-Tsr x0 = new Tsr([1, 2, 3], [
+Tsr x0 = Tsr.of([1, 2, 3], [
         1, 2, 3,
         4, 5, 6
 ])</pre>
@@ -608,7 +612,7 @@ Tsr x0 = new Tsr([1, 2, 3], [
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr out0 = new Tsr([t0, x0], "i0xi1")</pre>
+<pre class='block-source'>Tsr out0 = Tsr.of("i0xi1", [t0, x0] )</pre>
 </td>
 </tr>
 <tr>
@@ -616,7 +620,7 @@ Tsr x0 = new Tsr([1, 2, 3], [
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>out0.toString().equals("(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]")</pre>
+<pre class='block-source'>out0.toString() == "(3x1x3):[9.0, 12.0, 15.0, 19.0, 26.0, 33.0, 29.0, 40.0, 51.0]"</pre>
 </td>
 </tr>
 </tbody>

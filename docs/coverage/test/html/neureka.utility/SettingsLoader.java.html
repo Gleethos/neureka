@@ -36,54 +36,154 @@ SOFTWARE.
 
 package neureka.utility;
 
-import groovy.lang.Closure;
-import groovy.lang.GroovyShell;
-import groovy.lang.GroovySystem;
 import neureka.Neureka;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Properties;
+import java.util.function.Consumer;
 
 /**
- *  This class is a helper class for Neureka instances.
+ *  This class is a helper class for {@link Neureka} instances (Thread local singletons).
  *  It tries to execute groovy scripts used as settings for said instances.
  *
- *  This logic is not included inside the Neureka class
- *  itself because otherwise there would be an obligate dependency
- *  on groovy.
- *  If groovy lang dependencies are however not found, then
- *  this very class will not be used, initialized and therefore
- *  neureka will continue to work without groovy.
+ *  This logic is not included inside the {@link Neureka} class
+ *  itself in order to encapsulate the dependency on the Groovy runtime.
+ *  If we decide to remove the dependencies on groovy or make it optionally, then
+ *  this very class will simply not be used or failed to be used, initialized and therefore
+ *  neureka will continue to work without Groovy.
  */
-<span class="nc" id="L55">public class SettingsLoader</span>
+<span class="nc" id="L60">public class SettingsLoader</span>
 {
     private static String _settings_source;
     private static String _setup_source;
 
-    public static Object tryGroovyClosureOn(Object closure, Object delegate) {
-<span class="fc" id="L61">            ( (Closure) closure ).setDelegate(delegate);</span>
-<span class="fc" id="L62">            return ( (Closure) closure ).call(delegate);</span>
+    public static void loadProperties(Neureka instance) {
+        try (
+<span class="fc" id="L67">                final InputStream stream = instance.getClass()</span>
+<span class="fc" id="L68">                                                    .getClassLoader()</span>
+<span class="fc" id="L69">                                                    .getResourceAsStream( &quot;library_settings.properties&quot; )</span>
+        ) {
+<span class="fc" id="L71">            Properties properties = new Properties();</span>
+<span class="fc" id="L72">            properties.load(stream);</span>
+<span class="fc" id="L73">            Neureka.Settings s = instance.settings();</span>
+<span class="fc" id="L74">            new TypeChecker(properties)</span>
+<span class="fc" id="L75">                    .checkAndAssign(&quot;debug.isKeepingDerivativeTargetPayloads&quot;      , Boolean.class, v -&gt; s.debug().setIsKeepingDerivativeTargetPayloads(v)                     )//~= false</span>
+<span class="fc" id="L76">                    .checkAndAssign(&quot;autograd.isPreventingInlineOperations&quot;        , Boolean.class, v -&gt; s.autograd().setIsPreventingInlineOperations(v)                       )//~= true</span>
+<span class="fc" id="L77">                    .checkAndAssign(&quot;autograd.isRetainingPendingErrorForJITProp&quot;   , Boolean.class, v -&gt; s.autograd().setIsRetainingPendingErrorForJITProp(v)                  )//~= true</span>
+<span class="fc" id="L78">                    .checkAndAssign(&quot;autograd.isApplyingGradientWhenTensorIsUsed&quot;  , Boolean.class, v -&gt; s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)                 )//~= true</span>
+<span class="fc" id="L79">                    .checkAndAssign(&quot;autograd.isApplyingGradientWhenRequested&quot;     , Boolean.class, v -&gt; s.autograd().setIsApplyingGradientWhenRequested(v)                    )//~= true</span>
+<span class="fc" id="L80">                    .checkAndAssign(&quot;indexing.isUsingArrayBasedIndexing&quot;           , Boolean.class, v -&gt; s.indexing().setIsUsingArrayBasedIndexing(v)                          )//~= true</span>
+<span class="fc" id="L81">                    .checkAndAssign(&quot;view.isUsingLegacyView&quot;                       , Boolean.class, v -&gt; s.view().setIsUsingLegacyView(v)                                      )//~= false</span>
+<span class="fc" id="L82">                    .checkAndAssign(&quot;view.TsrAsString.Should.BE_SHORTENED_BY&quot;      , Integer.class, v -&gt; s.view().getAsString().put(TsrAsString.Should.BE_SHORTENED_BY     , v))//~= 50,</span>
+<span class="fc" id="L83">                    .checkAndAssign(&quot;view.TsrAsString.Should.BE_COMPACT&quot;           , Boolean.class, v -&gt; s.view().getAsString().put(TsrAsString.Should.BE_COMPACT          , v))//~= true,</span>
+<span class="fc" id="L84">                    .checkAndAssign(&quot;view.TsrAsString.Should.BE_FORMATTED&quot;         , Boolean.class, v -&gt; s.view().getAsString().put(TsrAsString.Should.BE_FORMATTED        , v))//~= true,</span>
+<span class="fc" id="L85">                    .checkAndAssign(&quot;view.TsrAsString.Should.HAVE_GRADIENT&quot;        , Boolean.class, v -&gt; s.view().getAsString().put(TsrAsString.Should.HAVE_GRADIENT       , v))//~= true,</span>
+<span class="fc" id="L86">                    .checkAndAssign(&quot;view.TsrAsString.Should.HAVE_PADDING_OF&quot;      , Integer.class, v -&gt; s.view().getAsString().put(TsrAsString.Should.HAVE_PADDING_OF     , v))//~= 6,</span>
+<span class="fc" id="L87">                    .checkAndAssign(&quot;view.TsrAsString.Should.HAVE_VALUE&quot;           , Boolean.class, v -&gt; s.view().getAsString().put(TsrAsString.Should.HAVE_VALUE          , v))//~= true,</span>
+<span class="fc" id="L88">                    .checkAndAssign(&quot;view.TsrAsString.Should.HAVE_RECURSIVE_GRAPH&quot; , Boolean.class, v -&gt; s.view().getAsString().put(TsrAsString.Should.HAVE_RECURSIVE_GRAPH, v))//~= false,</span>
+<span class="fc" id="L89">                    .checkAndAssign(&quot;view.TsrAsString.Should.HAVE_DERIVATIVES&quot;     , Boolean.class, v -&gt; s.view().getAsString().put(TsrAsString.Should.HAVE_DERIVATIVES    , v))//~= false,</span>
+<span class="fc" id="L90">                    .checkAndAssign(&quot;view.TsrAsString.Should.HAVE_SHAPE&quot;           , Boolean.class, v -&gt; s.view().getAsString().put(TsrAsString.Should.HAVE_SHAPE          , v))//~= true,</span>
+<span class="fc" id="L91">                    .checkAndAssign(&quot;view.TsrAsString.Should.BE_CELL_BOUND&quot;        , Boolean.class, v -&gt; s.view().getAsString().put(TsrAsString.Should.BE_CELL_BOUND       , v))//~= false</span>
+<span class="fc" id="L92">                    .checkAndAssign(&quot;ndim.isOnlyUsingDefaultNDConfiguration&quot;       , Boolean.class, v -&gt; s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)                      )//~= false</span>
+<span class="fc" id="L93">                    .checkAndAssign(&quot;dtype.defaultDataTypeClass&quot;                   , Class.class,   v -&gt; s.dtype().setDefaultDataTypeClass(v)                                  )</span>
+<span class="fc" id="L94">                    .checkAndAssign(&quot;dtype.isAutoConvertingExternalDataToJVMTypes&quot;, Boolean.class, v -&gt; s.dtype().setIsAutoConvertingExternalDataToJVMTypes(v)                );</span>
+
+<span class="nc" id="L96">        } catch (IOException e) {</span>
+<span class="nc" id="L97">            e.printStackTrace();</span>
+<span class="fc" id="L98">        }</span>
+<span class="fc" id="L99">    }</span>
+
+    private static class TypeChecker {
+
+<span class="fc" id="L103">        private static Logger _LOG = LoggerFactory.getLogger(SettingsLoader.class);</span>
+
+        private Properties _properties;
+
+<span class="fc" id="L107">        TypeChecker(Properties properties) { _properties = properties; }</span>
+
+        public &lt;T&gt; TypeChecker checkAndAssign(String key, Class&lt;T&gt; typeClass, Consumer&lt;T&gt; assignment) {
+<span class="fc" id="L110">            Object value = _properties.get(key);</span>
+<span class="pc bpc" id="L111" title="2 of 4 branches missed.">            if ( value == null || value.getClass() != String.class ) {</span>
+<span class="nc" id="L112">                _LOG.warn(&quot;Illegal value '&quot;+value+&quot;' found for property name '&quot;+key+&quot;' in library settings.&quot;);</span>
+<span class="nc" id="L113">                return this;</span>
+            }
+<span class="fc" id="L115">            String asString = (String) value;</span>
+<span class="fc" id="L116">            T toBeAssigned = null;</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">            if (typeClass == Class.class) {</span>
+                try {
+<span class="pc" id="L119">                    try { getClass().getClassLoader().loadClass(&quot;neureka.dtype.custom.&quot;+asString); } catch (Exception e) {}</span>
+<span class="fc" id="L120">                    toBeAssigned = (T) Class.forName(&quot;neureka.dtype.custom.&quot;+asString);</span>
+                }
+<span class="nc" id="L122">                catch (ClassNotFoundException e) {</span>
+<span class="nc" id="L123">                    _LOG.warn(&quot;Failed to find class '&quot;+asString+&quot;' for property name '&quot;+key+&quot;'.&quot;);</span>
+<span class="nc" id="L124">                    return this;</span>
+<span class="fc" id="L125">                }</span>
+            }
+<span class="fc bfc" id="L127" title="All 2 branches covered.">            else if (typeClass == Boolean.class) {</span>
+<span class="fc" id="L128">                try { toBeAssigned = (T) Boolean.valueOf(Boolean.parseBoolean(asString)); }</span>
+<span class="nc" id="L129">                catch (Exception e) {</span>
+<span class="nc" id="L130">                    _LOG.warn(&quot;Failed to parse boolean from value '&quot;+asString+&quot;' for property name '&quot;+key+&quot;'.&quot;);</span>
+<span class="nc" id="L131">                    return this;</span>
+<span class="fc" id="L132">                }</span>
+            }
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">            else if (typeClass == Integer.class) {</span>
+<span class="fc" id="L135">                try { toBeAssigned = (T) Integer.valueOf(Integer.parseInt(asString)); }</span>
+<span class="nc" id="L136">                catch (Exception e) {</span>
+<span class="nc" id="L137">                    _LOG.warn(&quot;Failed to parse integer from value '&quot;+asString+&quot;' for property name '&quot;+key+&quot;'.&quot;);</span>
+<span class="nc" id="L138">                    return this;</span>
+<span class="fc" id="L139">                }</span>
+            }
+<span class="nc bnc" id="L141" title="All 2 branches missed.">            else if (typeClass == String.class) {</span>
+<span class="nc" id="L142">                toBeAssigned = (T) asString;</span>
+            }
+<span class="fc" id="L144">            assignment.accept(toBeAssigned);</span>
+<span class="fc" id="L145">            return this;</span>
+        }
     }
 
-    public static void tryGroovyScriptsOn(Neureka instance)
+    public static Object tryGroovyClosureOn(Object closure, Object delegate) {
+        try {
+<span class="fc" id="L151">            Method setDelegate = closure.getClass().getMethod(&quot;setDelegate&quot;, Object.class);</span>
+<span class="fc" id="L152">            Method call = closure.getClass().getMethod(&quot;call&quot;, Object.class);</span>
+<span class="fc" id="L153">            setDelegate.invoke(closure, delegate);</span>
+<span class="fc" id="L154">            return call.invoke(closure, delegate);</span>
+<span class="nc" id="L155">        } catch (NoSuchMethodException e) {</span>
+<span class="nc" id="L156">            e.printStackTrace();</span>
+<span class="nc" id="L157">        } catch (InvocationTargetException e) {</span>
+<span class="nc" id="L158">            e.printStackTrace();</span>
+<span class="nc" id="L159">        } catch (IllegalAccessException e) {</span>
+<span class="nc" id="L160">            e.printStackTrace();</span>
+<span class="nc" id="L161">        }</span>
+<span class="nc" id="L162">        return null;</span>
+    }
+
+    public static void tryGroovyScriptsOn(Neureka instance, Consumer&lt;String&gt; scriptConsumer)
     {
-<span class="pc bpc" id="L67" title="1 of 4 branches missed.">        if ( _settings_source == null || _setup_source == null) {</span>
-<span class="fc" id="L68">            _settings_source = instance.utility().readResource(&quot;library_settings.groovy&quot;);</span>
-<span class="fc" id="L69">            _setup_source = instance.utility().readResource(&quot;scripting_setup.groovy&quot;);</span>
+<span class="pc bpc" id="L167" title="1 of 4 branches missed.">        if ( _settings_source == null || _setup_source == null) {</span>
+<span class="fc" id="L168">            _settings_source = instance.utility().readResource(&quot;library_settings.groovy&quot;);</span>
+<span class="fc" id="L169">            _setup_source = instance.utility().readResource(&quot;scripting_setup.groovy&quot;);</span>
         }
         try {
-
-<span class="fc" id="L73">            String version = GroovySystem.getVersion();</span>
-<span class="pc bpc" id="L74" title="1 of 2 branches missed.">            if (Integer.parseInt(version.split(&quot;\\.&quot;)[ 0 ]) &lt; 2) {</span>
-<span class="nc" id="L75">                throw new IllegalStateException(</span>
+            /*
+            String version = GroovySystem.getVersion();
+            if (Integer.parseInt(version.split(&quot;\\.&quot;)[ 0 ]) &lt; 2) {
+                throw new IllegalStateException(
                         &quot;Wrong groovy version &quot;+version+&quot; found! Version 2.0.0 or greater required.&quot;
                 );
             }
-<span class="fc" id="L79">            new GroovyShell(instance.getClass().getClassLoader()).evaluate(_settings_source);</span>
-<span class="fc" id="L80">            new GroovyShell(instance.getClass().getClassLoader()).evaluate(_setup_source);</span>
+            */
+<span class="fc" id="L180">            scriptConsumer.accept(_settings_source);</span>
+<span class="fc" id="L181">            scriptConsumer.accept(_setup_source);</span>
+<span class="nc" id="L182">        } catch (Exception e) {</span>
+<span class="nc" id="L183">            e.printStackTrace();</span>
+<span class="fc" id="L184">        }</span>
 
-<span class="nc" id="L82">        } catch (Exception e) {</span>
-<span class="nc" id="L83">            e.printStackTrace();</span>
-<span class="fc" id="L84">        }</span>
-
-<span class="fc" id="L86">    }</span>
+<span class="fc" id="L186">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

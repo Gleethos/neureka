@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:38:02 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:09:05 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>11</td>
 <td>11</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>2.317 seconds</td>
+<td>0.060 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -410,9 +414,9 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t1 = new Tsr([2, 3], "I am a seed! :)")
-Tsr t2 = new Tsr(new int[]{2, 3}, "I am a seed! :)")
-Tsr t3 = new Tsr(new int[]{2, 3}, "I am also a seed! But different. :)")</pre>
+<pre class='block-source'>Tsr t1 = Tsr.of([2, 3], "I am a seed! :)")
+Tsr t2 = Tsr.of(new int[]{2, 3}, "I am a seed! :)")
+Tsr t3 = Tsr.of(new int[]{2, 3}, "I am also a seed! But different. :)")</pre>
 </td>
 </tr>
 <tr>
@@ -451,9 +455,9 @@ t1.toString() != t3.toString()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr(
-        [ 2, 3 ],
+<pre class='block-source'>Tsr t = Tsr.of(
         DataType.of( Integer.class ),
+        [ 2, 3 ],
         ( int i, int[] indices ) -&gt; { i - 2 }
 )</pre>
 </td>
@@ -477,9 +481,9 @@ t1.toString() != t3.toString()</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t = new Tsr(
-        [ 2, 3 ],
+<pre class='block-source'>t = Tsr.of(
         DataType.of( String.class ),
+        [ 2, 3 ],
         ( int i, int[] indices ) -&gt; { i + ':' + indices.toString() }
 )</pre>
 </td>
@@ -513,9 +517,9 @@ t1.toString() != t3.toString()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr a = new Tsr(3)
-Tsr b = new Tsr(2)
-Tsr c = new Tsr(-1)</pre>
+<pre class='block-source'>Tsr a = Tsr.of(3)
+Tsr b = Tsr.of(2)
+Tsr c = Tsr.of(-1)</pre>
 </td>
 </tr>
 <tr>
@@ -523,7 +527,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr("1+", a, "*", b)</pre>
+<pre class='block-source'>Tsr t = Tsr.of("1+", a, "*", b)</pre>
 </td>
 </tr>
 <tr>
@@ -539,7 +543,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t = new Tsr("1", "+", a, "*", b)</pre>
+<pre class='block-source'>t = Tsr.of("1", "+", a, "*", b)</pre>
 </td>
 </tr>
 <tr>
@@ -555,7 +559,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t = new Tsr("(","1+", a,")", "*", b)</pre>
+<pre class='block-source'>t = Tsr.of("(","1+", a,")", "*", b)</pre>
 </td>
 </tr>
 <tr>
@@ -571,7 +575,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t = new Tsr("(","1", "+", a,")", "*", b)</pre>
+<pre class='block-source'>t = Tsr.of("(","1", "+", a,")", "*", b)</pre>
 </td>
 </tr>
 <tr>
@@ -587,7 +591,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t = new Tsr("(", c, "*3)+", "(","1+", a,")", "*", b)</pre>
+<pre class='block-source'>t = Tsr.of("(", c, "*3)+", "(","1+", a,")", "*", b)</pre>
 </td>
 </tr>
 <tr>
@@ -603,7 +607,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t = new Tsr("(", c, "*","3)+", "(","1+", a,")", "*", b)</pre>
+<pre class='block-source'>t = Tsr.of("(", c, "*","3)+", "(","1+", a,")", "*", b)</pre>
 </td>
 </tr>
 <tr>
@@ -619,7 +623,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t = new Tsr("(", c, "*","3", ")+", "(","1+", a,")", "*", b)</pre>
+<pre class='block-source'>t = Tsr.of("(", c, "*","3", ")+", "(","1+", a,")", "*", b)</pre>
 </td>
 </tr>
 <tr>
@@ -635,7 +639,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t = new Tsr([2, 2], [2, 4, 4])</pre>
+<pre class='block-source'>t = Tsr.of([2, 2], [2, 4, 4])</pre>
 </td>
 </tr>
 <tr>
@@ -651,7 +655,7 @@ Tsr c = new Tsr(-1)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t = new Tsr([2], [3, 5, 7])</pre>
+<pre class='block-source'>t = Tsr.of([2], [3, 5, 7])</pre>
 </td>
 </tr>
 <tr>
@@ -668,7 +672,7 @@ t.value64().length==2</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t = new Tsr(new int[]{2, 2}, new double[]{2, 4, 4})</pre>
+<pre class='block-source'>t = Tsr.of(new int[]{2, 2}, new double[]{2, 4, 4})</pre>
 </td>
 </tr>
 <tr>
@@ -684,7 +688,7 @@ t.value64().length==2</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t = new Tsr(new int[]{2}, new double[]{3, 5, 7})</pre>
+<pre class='block-source'>t = Tsr.of(new int[]{2}, new double[]{3, 5, 7})</pre>
 </td>
 </tr>
 <tr>
@@ -717,7 +721,7 @@ t.value64().length==2</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().isUsingLegacyView = true</pre>
+<pre class='block-source'>Neureka.get().settings().view().isUsingLegacyView = true</pre>
 </td>
 </tr>
 <tr>
@@ -731,7 +735,7 @@ t.value64().length==2</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t1 = new Tsr([4, 3], 1..12)</pre>
+<pre class='block-source'>Tsr t1 = Tsr.of([4, 3], 1..12)</pre>
 </td>
 </tr>
 <tr>
@@ -748,7 +752,7 @@ t.value64().length==2</pre>
 <pre class='block-source'>def t1_ioi_1 = t1.indexOfIndices(new int[]{2, 1})
 def t1_ioi_2 = t1.indexOfIndices(new int[]{1, 2})
 def t1_indices = t1.IndicesOfIndex(5)
-Tsr t2 = Function.create(" [ 1, 0 ]:( I[0] ) ")(t1)
+Tsr t2 = Function.of(" [ 1, 0 ]:( I[0] ) ")(t1)
 def t2_ioi_1 = t2.indexOfIndices(new int[]{1, 2})
 def t2_idx = t2.IndicesOfIndex(7)
 def t1_ioi_3 = t1.indexOfIndices(t1.IndicesOfIndex(7))
@@ -794,7 +798,7 @@ t2.toString().contains("[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr r = new Tsr([2, 2], "jnrejn")</pre>
+<pre class='block-source'>Tsr r = Tsr.of([2, 2], "jnrejn")</pre>
 </td>
 </tr>
 <tr>
@@ -810,7 +814,7 @@ t2.toString().contains("[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>r = new Tsr([2, 2], "jnrejn2")</pre>
+<pre class='block-source'>r = Tsr.of([2, 2], "jnrejn2")</pre>
 </td>
 </tr>
 <tr>
@@ -842,7 +846,7 @@ t2.toString().contains("[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)</pre>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)</pre>
 </td>
 </tr>
 <tr>
@@ -856,7 +860,7 @@ t2.toString().contains("[3x4]:(1.0, 4.0, 7.0, 10.0, 2.0, 5.0, 8.0, 11.0, 3.0, 6.
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr x = new Tsr(3)</pre>
+<pre class='block-source'>Tsr x = Tsr.of(3)</pre>
 </td>
 </tr>
 <tr>
@@ -887,7 +891,7 @@ x.setValue(value32)</pre>
 <td></td>
 <td>
 <pre class='block-source'>!(x.getValue() instanceof float[])
-!x.is32()
+!(x.data instanceof float[])
 x.value32(0)==5.0f
 x.value64(0)==5.0d</pre>
 </td>
@@ -920,7 +924,7 @@ x.setValue(value64)</pre>
 <td></td>
 <td>
 <pre class='block-source'>x.getValue() instanceof double[]
-x.is64()
+x.data instanceof double[]
 x.value32(0)==4.0f
 x.value64(0)==4.0d
 x.isLeave()
@@ -969,7 +973,7 @@ x.setValue(value64)</pre>
 </td>
 <td>
 <pre class='block-source'>!(x.getValue() instanceof double[])
-!x.is64()
+!(x.data instanceof double[])
 x.value32(0)==7.0f
 x.value64(0)==7.0d</pre>
 </td>
@@ -995,8 +999,8 @@ x.value64(0)==7.0d</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Tsr x = new Tsr(3)</pre>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+Tsr x = Tsr.of(3)</pre>
 </td>
 </tr>
 <tr>
@@ -1013,7 +1017,7 @@ Tsr x = new Tsr(3)</pre>
 </td>
 <td>
 <pre class='block-source'>x.getValue() instanceof float[]
-x.is32()
+x.data instanceof float[]
 x.value32(0)==3.0f</pre>
 </td>
 </tr>
@@ -1031,7 +1035,7 @@ x.value32(0)==3.0f</pre>
 </td>
 <td>
 <pre class='block-source'>x.getValue() instanceof double[]
-x.is64()
+x.data instanceof double[]
 x.value32(0)==3.0f</pre>
 </td>
 </tr>
@@ -1056,7 +1060,7 @@ x.value32(0)==3.0f</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)</pre>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)</pre>
 </td>
 </tr>
 <tr>
@@ -1070,7 +1074,7 @@ x.value32(0)==3.0f</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr x = new Tsr(4)</pre>
+<pre class='block-source'>Tsr x = Tsr.of(4)</pre>
 </td>
 </tr>
 <tr>
@@ -1078,7 +1082,7 @@ x.value32(0)==3.0f</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr y = new Tsr(x, "th(I[0])")</pre>
+<pre class='block-source'>Tsr y = Tsr.of("th(I[0])", x)</pre>
 </td>
 </tr>
 <tr>
@@ -1114,7 +1118,7 @@ y.toString().contains("[1]:(0.97014E0)")</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().isUsingLegacyView = true</pre>
+<pre class='block-source'>Neureka.get().settings().view().isUsingLegacyView = true</pre>
 </td>
 </tr>
 <tr>
@@ -1209,7 +1213,7 @@ shape[0] = 4</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)</pre>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)</pre>
 </td>
 </tr>
 <tr>
@@ -1223,11 +1227,11 @@ shape[0] = 4</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr([2, 2], [
+<pre class='block-source'>Tsr t = Tsr.of([2, 2], [
         1.0, 4.0,
         2.0, 7.0,
 ])
-Tsr v = new Tsr([2, 2], [
+Tsr v = Tsr.of([2, 2], [
         1.0, -1.0,
         1.0, -1.0
 ])</pre>
@@ -1412,7 +1416,7 @@ Tsr.IO.mulInto(t, indices, -1)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr.IO.subInto(t, new Tsr([2, 2], [1, 2, 3, 4]))</pre>
+<pre class='block-source'>Tsr.IO.subInto(t, Tsr.of([2, 2], [1, 2, 3, 4]))</pre>
 </td>
 </tr>
 <tr>
@@ -1444,9 +1448,9 @@ Tsr.IO.mulInto(t, indices, -1)</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>if ( !Neureka.instance().canAccessOpenCL() ) return
+<pre class='block-source'>if ( !Neureka.get().canAccessOpenCL() ) return
 Device gpu = Device.find("nvidia")
-Tsr t = new Tsr([3, 4, 1], 3)</pre>
+Tsr t = Tsr.of([3, 4, 1], 3)</pre>
 </td>
 </tr>
 <tr>

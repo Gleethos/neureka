@@ -37,47 +37,128 @@ SOFTWARE.
 
 package neureka.backend.api;
 
-import lombok.Getter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
+
 import neureka.Tsr;
-import neureka.backend.api.algorithms.Algorithm;
-import neureka.backend.api.operations.Operation;
-import neureka.devices.Device;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
+import neureka.devices.Device;
 
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
  *  This class is a simple container holding relevant
- *  arguments needed to execute on a targeted Device which
+ *  arguments needed to execute on a targeted {@link Device} which
  *  is specified by the type parameter below. &lt;br&gt;
  *  &lt;br&gt;
  *  It also holds a context map responsible for storing
  *  operation specific variables.
  *
  * @param &lt;DeviceType&gt; The Device implementation targeted by an instance of this ExecutionCall!
- */
-@Accessors( prefix = {&quot;_&quot;} )
-<span class="nc" id="L64">@ToString</span>
-public class ExecutionCall&lt;DeviceType extends Device&gt;
+*/
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">public class ExecutionCall&lt;DeviceType extends Device&lt;?&gt;&gt;</span>
 {
-    public interface TensorCondition { boolean check( Tsr&lt;?&gt; tensor ); }
+<span class="fc" id="L61">    private ExecutionCall(DeviceType device, int derivativeIndex, Operation operation, Tsr&lt;?&gt;[] tensors, int j, Algorithm&lt;?&gt; algorithm, Map&lt;String, Object&gt; context) {</span>
+<span class="fc" id="L62">        this._device = device;</span>
+<span class="fc" id="L63">        this._derivativeIndex = derivativeIndex;</span>
+<span class="fc" id="L64">        this._operation = operation;</span>
+<span class="fc" id="L65">        this._tensors = tensors;</span>
+<span class="fc" id="L66">        this._j = j;</span>
+<span class="fc" id="L67">        this._algorithm = algorithm;</span>
+<span class="fc" id="L68">        this._context = context;</span>
+<span class="fc" id="L69">    }</span>
+
+    private static int $default$derivativeIndex() {
+<span class="fc" id="L72">        return -1;</span>
+    }
+
+    private static int $default$j() {
+<span class="fc" id="L76">        return -1;</span>
+    }
+
+    private static Algorithm&lt;?&gt; $default$algorithm() {
+<span class="fc" id="L80">        return null;</span>
+    }
+
+    private static Map&lt;String, Object&gt; $default$context() {
+<span class="fc" id="L84">        return null;</span>
+    }
+
+    public static &lt;DeviceType extends Device&lt;?&gt;&gt; ExecutionCallBuilder&lt;DeviceType&gt; builder() {
+<span class="fc" id="L88">        return new ExecutionCallBuilder&lt;DeviceType&gt;();</span>
+    }
+
+    public String toString() {
+<span class="nc" id="L92">        return &quot;ExecutionCall(_device=&quot; + this._device + &quot;, _derivativeIndex=&quot; + this._derivativeIndex + &quot;, _operation=&quot; + this._operation + &quot;, _tensors=&quot; + java.util.Arrays.deepToString(this._tensors) + &quot;, _j=&quot; + this._j + &quot;, _algorithm=&quot; + this.getAlgorithm() + &quot;, _context=&quot; + this._context + &quot;)&quot;;</span>
+    }
+
+    public DeviceType getDevice() {
+<span class="fc" id="L96">        return this._device;</span>
+    }
+
+    public &lt;T&gt; Device&lt;T&gt; getDeviceFor(Class&lt;T&gt; supportCheck ) {
+        // TODO: Make it possible to query device for type support!
+<span class="fc" id="L101">        return (Device&lt;T&gt;) this._device;</span>
+    }
+
+    public int getDerivativeIndex() {
+<span class="fc" id="L105">        return this._derivativeIndex;</span>
+    }
+
+    public Operation getOperation() {
+<span class="fc" id="L109">        return this._operation;</span>
+    }
+
+    public Tsr&lt;?&gt;[] getTensors() {
+<span class="fc" id="L113">        return this._tensors;</span>
+    }
+
+    public int getJ() {
+<span class="fc" id="L117">        return this._j;</span>
+    }
+
+    public Map&lt;String, Object&gt; getContext() {
+<span class="fc" id="L121">        return this._context;</span>
+    }
+
+    public ExecutionCall&lt;DeviceType&gt; withTensors(Tsr&lt;?&gt;[] _tensors) {
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        return this._tensors == _tensors ? this : new ExecutionCall&lt;DeviceType&gt;(this._device, this._derivativeIndex, this._operation, _tensors, this._j, this._algorithm, this._context);</span>
+    }
+
+    public ExecutionCall&lt;DeviceType&gt; withJ(int _j) {
+<span class="nc bnc" id="L129" title="All 2 branches missed.">        return this._j == _j ? this : new ExecutionCall&lt;DeviceType&gt;(this._device, this._derivativeIndex, this._operation, this._tensors, _j, this._algorithm, this._context);</span>
+    }
+
+    public interface TensorCondition { boolean check(Tsr&lt;?&gt; tensor ); }
     public interface TensorCompare { boolean check( Tsr&lt;?&gt; first, Tsr&lt;?&gt; second ); }
     public interface DeviceCondition { boolean check( Device&lt;?&gt; device ); }
     public interface OperationTypeCondition { boolean check( Operation type ); }
     public interface Mutator { Tsr&lt;?&gt;[] mutate( Tsr&lt;?&gt;[] tensors ); }
 
+<span class="nc" id="L138">    public enum Argument {</span>
+<span class="nc" id="L139">        DERIVATIVE</span>
+    }
+
     /**
      *  This field references the device on which this ExecutionCall should be executed.
      */
-<span class="fc" id="L76">    @Getter</span>
     private final DeviceType _device;
 
+    // Constructs a copy of this call with the provided device!
+    public ExecutionCall&lt;? extends Device&lt;?&gt;&gt; withDevice(Device&lt;?&gt; newDevice) {
+<span class="nc" id="L149">        return ExecutionCall.builder()</span>
+<span class="nc" id="L150">                .device(newDevice)</span>
+<span class="nc" id="L151">                .tensors( _tensors )</span>
+<span class="nc" id="L152">                .derivativeIndex( _derivativeIndex )</span>
+<span class="nc" id="L153">                .j( _j )</span>
+<span class="nc" id="L154">                .operation( _operation )</span>
+<span class="nc" id="L155">                .context(_context)</span>
+<span class="nc" id="L156">                .algorithm(_algorithm)</span>
+<span class="nc" id="L157">                .build();</span>
+    }
+
     /**
-     * This method returns an import property whose
+     * This is an import property whose
      * role might not be clear at first :
      * An operation can have multiple inputs, however
      * when calculating the derivative for a forward or backward pass
@@ -85,17 +166,13 @@ public class ExecutionCall&lt;DeviceType extends Device&gt;
      * So the &quot;derivative index&quot; targets said input.
      * This property is -1 when no derivative should be calculated,
      * however 0... when targeting an input to calculate the derivative of.
-     *
-     * @return The index of the input whose derivative ought to be calculated.
      */
-<span class="fc" id="L91">    @Getter</span>
-    private final int _derivativeIndex;
+<span class="pc" id="L170">    private int _derivativeIndex = -1;</span>
 
     /**
      *  This is the operation type which will be applied to this execution call.
      *  It contains multiple implementations, one of which might be applicable to this call...
      */
-<span class="fc" id="L98">    @Getter</span>
     private final Operation _operation;
 
     /**
@@ -105,8 +182,8 @@ public class ExecutionCall&lt;DeviceType extends Device&gt;
      *  however this is not a necessity.
      *  Some operation algorithms might use multiple argument entries as output tensors.
      */
-<span class="fc" id="L108">    @Getter</span>
-    private Tsr[] _tensors;
+    // Generates a method which constructs a copy of this call with the provided tensors!
+    private Tsr&lt;?&gt;[] _tensors;
 
     /**
      *  The following parameter is relevant for a particular type of operation, namely: an &quot;indexer&quot;. &lt;br&gt;
@@ -114,31 +191,187 @@ public class ExecutionCall&lt;DeviceType extends Device&gt;
      *  The (indexer) function will execute the sub functions (of the AST) for every input index.
      *  If a particular index is not targeted however this variable will simply default to -1.
      */
-<span class="fc" id="L117">    @Getter</span>
-    private int _j = -1;
+<span class="pc" id="L194">    private int _j = -1;</span>
 
-    private Algorithm&lt;?&gt; _implementation;
+    /**
+     *  This Algorithm variable is the chosen algorithm for a given execution call instance.
+     *  The variable is initially null and will be chosen dynamically based on an access request
+     *  to the corresponding getter method for this variable.
+     *  So it is in essence a lazy load variable.
+     *  Choosing an algorithm occurs through the {@link ExecutionCall#_operation} variable,
+     *  which is of type {@link Operation} and contains multiple algorithms for different execution call scenarios...
+     */
+<span class="pc" id="L204">    private Algorithm&lt;?&gt; _algorithm = null;</span>
 
     /**
      *  Certain operations might require additionally parameters then the ones
      *  defined in this class... &lt;br&gt;
-     *
      */
-<span class="fc" id="L127">    @Getter</span>
-    private Map&lt;String, Object&gt; _context;
+<span class="pc" id="L210">    private Map&lt;String, Object&gt; _context = null;</span>
+
+    private ExecutionCall(
+            DeviceType device,
+            Tsr&lt;?&gt;[] tensors,
+            int d,
+            Operation type,
+            Algorithm&lt;?&gt; algorithm,
+            Map&lt;String, Object&gt; context
+<span class="nc" id="L219">    ) {</span>
+<span class="nc" id="L220">        _device = device;</span>
+<span class="nc" id="L221">        _tensors = tensors;</span>
+<span class="nc" id="L222">        _derivativeIndex = d;</span>
+<span class="nc" id="L223">        _operation = type;</span>
+<span class="nc" id="L224">        _algorithm = algorithm;</span>
+<span class="nc" id="L225">        _context = context;</span>
+<span class="nc" id="L226">    }</span>
+
+    public &lt;T extends Device&lt;?&gt;&gt; ExecutionCall&lt;T&gt; forDeviceType(Class&lt;T&gt; type) {
+<span class="pc bpc" id="L229" title="2 of 4 branches missed.">        assert _device.getClass() == type;</span>
+<span class="fc" id="L230">        return (ExecutionCall&lt;T&gt;) this;</span>
+    }
+
+
+    public &lt;V&gt; Tsr&lt;V&gt; getTsrOfType( Class&lt;V&gt; valueTypeClass, int i ) {
+        // TODO: perform type checking!
+<span class="fc" id="L236">        return (Tsr&lt;V&gt;) _tensors[ i ];</span>
+    }
+
+
+    public Algorithm&lt;?&gt; getAlgorithm() {
+<span class="fc bfc" id="L241" title="All 2 branches covered.">        if ( _algorithm != null ) return _algorithm;</span>
+<span class="fc" id="L242">        else _algorithm = _operation.getAlgorithmFor( this );</span>
+<span class="fc" id="L243">        return _algorithm;</span>
+    }
+
+    public boolean allowsForward() {
+<span class="fc" id="L247">        return getAlgorithm().canPerformForwardADFor( this );</span>
+    }
+
+    public boolean allowsBackward() {
+<span class="fc" id="L251">        return getAlgorithm().canPerformBackwardADFor( this );</span>
+    }
+
+    public ADAgent getADAgentFrom( Function function, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward )
+    {
+<span class="fc bfc" id="L256" title="All 2 branches covered.">        if ( this._context != null ) {</span>
+<span class="pc bpc" id="L257" title="1 of 2 branches missed.">            if ( call._context == null ) call._context = new TreeMap&lt;&gt;();</span>
+<span class="fc" id="L258">            call._context.putAll( this._context );</span>
+        }
+<span class="fc" id="L260">        return getAlgorithm().supplyADAgentFor( function, call, forward );</span>
+    }
+
+    public void mutateArguments( Mutator mutation ) {
+<span class="fc" id="L264">        _tensors = mutation.mutate( _tensors );</span>
+<span class="fc" id="L265">    }</span>
+
+    public &lt;T&gt; T getAt( Class&lt;T&gt; type ) {
+<span class="nc bnc" id="L268" title="All 2 branches missed.">        if ( _context == null ) return null;</span>
+<span class="nc" id="L269">        return (T) _context.get( type.getName() );</span>
+    }
+
+    public Object getAt( String varName ) {
+<span class="fc bfc" id="L273" title="All 2 branches covered.">        if ( _context == null ) return null;</span>
+<span class="fc" id="L274">        return _context.get( varName );</span>
+    }
+
+    public &lt;T&gt; ExecutionCall&lt;DeviceType&gt; putAt( String s, T o ) {
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">        if ( _context == null ) _context = new TreeMap&lt;&gt;();</span>
+<span class="fc" id="L279">        _context.put( s, o );</span>
+<span class="fc" id="L280">        return this;</span>
+    }
+
+<span class="fc" id="L283">    public Validator validate() { return new Validator(); }</span>
+
+    public static class ExecutionCallBuilder&lt;DeviceType extends Device&lt;?&gt;&gt; {
+        private DeviceType device;
+        private int derivativeIndex$value;
+        private boolean derivativeIndex$set;
+        private Operation operation;
+        private Tsr&lt;?&gt;[] tensors;
+        private int j$value;
+        private boolean j$set;
+        private Algorithm&lt;?&gt; algorithm$value;
+        private boolean algorithm$set;
+        private Map&lt;String, Object&gt; context$value;
+        private boolean context$set;
+
+<span class="fc" id="L298">        ExecutionCallBuilder() { }</span>
+
+        public ExecutionCallBuilder&lt;DeviceType&gt; device(DeviceType device) {
+<span class="fc" id="L301">            this.device = device;</span>
+<span class="fc" id="L302">            return this;</span>
+        }
+
+        public ExecutionCallBuilder&lt;DeviceType&gt; derivativeIndex(int derivativeIndex) {
+<span class="fc" id="L306">            this.derivativeIndex$value = derivativeIndex;</span>
+<span class="fc" id="L307">            this.derivativeIndex$set = true;</span>
+<span class="fc" id="L308">            return this;</span>
+        }
+
+        public ExecutionCallBuilder&lt;DeviceType&gt; operation(Operation operation) {
+<span class="fc" id="L312">            this.operation = operation;</span>
+<span class="fc" id="L313">            return this;</span>
+        }
+
+        public ExecutionCallBuilder&lt;DeviceType&gt; tensors(Tsr&lt;?&gt;[] tensors) {
+<span class="fc" id="L317">            this.tensors = tensors;</span>
+<span class="fc" id="L318">            return this;</span>
+        }
+
+        public ExecutionCallBuilder&lt;DeviceType&gt; j(int j) {
+<span class="fc" id="L322">            this.j$value = j;</span>
+<span class="fc" id="L323">            this.j$set = true;</span>
+<span class="fc" id="L324">            return this;</span>
+        }
+
+        public ExecutionCallBuilder&lt;DeviceType&gt; algorithm(Algorithm&lt;?&gt; algorithm) {
+<span class="fc" id="L328">            this.algorithm$value = algorithm;</span>
+<span class="fc" id="L329">            this.algorithm$set = true;</span>
+<span class="fc" id="L330">            return this;</span>
+        }
+
+        public ExecutionCallBuilder&lt;DeviceType&gt; context(Map&lt;String, Object&gt; context) {
+<span class="nc" id="L334">            this.context$value = context;</span>
+<span class="nc" id="L335">            this.context$set = true;</span>
+<span class="nc" id="L336">            return this;</span>
+        }
+
+        public ExecutionCall&lt;DeviceType&gt; build() {
+<span class="fc" id="L340">            int derivativeIndex$value = this.derivativeIndex$value;</span>
+<span class="fc bfc" id="L341" title="All 2 branches covered.">            if (!this.derivativeIndex$set) {</span>
+<span class="fc" id="L342">                derivativeIndex$value = ExecutionCall.$default$derivativeIndex();</span>
+            }
+<span class="fc" id="L344">            int j$value = this.j$value;</span>
+<span class="fc bfc" id="L345" title="All 2 branches covered.">            if (!this.j$set) {</span>
+<span class="fc" id="L346">                j$value = ExecutionCall.$default$j();</span>
+            }
+<span class="fc" id="L348">            Algorithm&lt;?&gt; algorithm$value = this.algorithm$value;</span>
+<span class="fc bfc" id="L349" title="All 2 branches covered.">            if (!this.algorithm$set) {</span>
+<span class="fc" id="L350">                algorithm$value = ExecutionCall.$default$algorithm();</span>
+            }
+<span class="fc" id="L352">            Map&lt;String, Object&gt; context$value = this.context$value;</span>
+<span class="pc bpc" id="L353" title="1 of 2 branches missed.">            if (!this.context$set) {</span>
+<span class="fc" id="L354">                context$value = ExecutionCall.$default$context();</span>
+            }
+<span class="fc" id="L356">            return new ExecutionCall&lt;DeviceType&gt;(device, derivativeIndex$value, operation, tensors, j$value, algorithm$value, context$value);</span>
+        }
+
+        public String toString() {
+<span class="nc" id="L360">            return &quot;ExecutionCall.ExecutionCallBuilder(device=&quot; + this.device + &quot;, derivativeIndex$value=&quot; + this.derivativeIndex$value + &quot;, operation=&quot; + this.operation + &quot;, tensors=&quot; + java.util.Arrays.deepToString(this.tensors) + &quot;, j$value=&quot; + this.j$value + &quot;, algorithm$value=&quot; + this.algorithm$value + &quot;, context$value=&quot; + this.context$value + &quot;)&quot;;</span>
+        }
+    }
 
     /**
      *  This is a simple nested class offering various lambda based methods
-     *  for validating the tensor arguments stored inside this ExecutionCall.
+     *  for validating the tensor arguments stored inside this {@link ExecutionCall}.
      *  It is a useful tool readable as well as concise validation of a given
      *  request for execution, that is primarily used inside implementations of the middle
-     *  layer of the backend-API architecture (Algorithm::isAlgorithmSuitableFor).
+     *  layer of the backend-API architecture ({@link Algorithm#isSuitableFor(ExecutionCall)}).
      */
-    @Accessors( prefix = {&quot;_&quot;} )
-<span class="fc" id="L138">    public class Validator</span>
+    
+<span class="fc" id="L372">    public class Validator</span>
     {
-<span class="fc" id="L140">        @Getter</span>
-        private boolean _isValid = true;
+<span class="fc" id="L374">        private boolean _isValid = true;</span>
 
         /**
          *  The validity as float being 1.0/true and 0.0/false.
@@ -146,162 +379,75 @@ public class ExecutionCall&lt;DeviceType extends Device&gt;
          * @return The current validity of this Validator as float value.
          */
         public float estimation() {
-<span class="fc bfc" id="L149" title="All 2 branches covered.">            return ( _isValid ) ? 1.0f : 0.0f;</span>
+<span class="fc bfc" id="L382" title="All 2 branches covered.">            return ( _isValid ) ? 1.0f : 0.0f;</span>
         }
 
         public Validator first( TensorCondition condition ) {
-<span class="fc bfc" id="L153" title="All 2 branches covered.">            if ( !condition.check( _tensors[ 0 ] ) ) _isValid = false;</span>
-<span class="fc" id="L154">            return this;</span>
+<span class="fc bfc" id="L386" title="All 2 branches covered.">            if ( !condition.check( _tensors[ 0 ] ) ) _isValid = false;</span>
+<span class="fc" id="L387">            return this;</span>
         }
 
         public Validator any( TensorCondition condition )
         {
-<span class="nc" id="L159">            boolean any = false;</span>
-<span class="nc bnc" id="L160" title="All 6 branches missed.">            for ( Tsr&lt;?&gt; t : _tensors ) any = condition.check( t ) || any;</span>
-<span class="nc bnc" id="L161" title="All 2 branches missed.">            if ( !any ) _isValid = false;</span>
-<span class="nc" id="L162">            return this;</span>
+<span class="nc" id="L392">            boolean any = false;</span>
+<span class="nc bnc" id="L393" title="All 6 branches missed.">            for ( Tsr&lt;?&gt; t : _tensors ) any = condition.check( t ) || any;</span>
+<span class="nc bnc" id="L394" title="All 2 branches missed.">            if ( !any ) _isValid = false;</span>
+<span class="nc" id="L395">            return this;</span>
         }
 
         public Validator anyNotNull( TensorCondition condition )
         {
-<span class="nc" id="L167">            boolean any = false;</span>
-<span class="nc bnc" id="L168" title="All 2 branches missed.">            for ( Tsr&lt;?&gt; t : _tensors )</span>
-<span class="nc bnc" id="L169" title="All 6 branches missed.">                if ( t != null ) any = condition.check( t ) || any;</span>
-<span class="nc bnc" id="L170" title="All 2 branches missed.">            if ( !any ) _isValid = false;</span>
-<span class="nc" id="L171">            return this;</span>
+<span class="nc" id="L400">            boolean any = false;</span>
+<span class="nc bnc" id="L401" title="All 2 branches missed.">            for ( Tsr&lt;?&gt; t : _tensors )</span>
+<span class="nc bnc" id="L402" title="All 6 branches missed.">                if ( t != null ) any = condition.check( t ) || any;</span>
+<span class="nc bnc" id="L403" title="All 2 branches missed.">            if ( !any ) _isValid = false;</span>
+<span class="nc" id="L404">            return this;</span>
         }
 
         public Validator all( TensorCondition condition )
         {
-<span class="fc" id="L176">            boolean all = true;</span>
-<span class="pc bpc" id="L177" title="3 of 6 branches missed.">            for ( Tsr&lt;?&gt; t : _tensors ) all = condition.check( t ) &amp;&amp; all;</span>
-<span class="pc bpc" id="L178" title="1 of 2 branches missed.">            if ( !all ) _isValid = false;</span>
-<span class="fc" id="L179">            return this;</span>
+<span class="fc" id="L409">            boolean all = true;</span>
+<span class="pc bpc" id="L410" title="3 of 6 branches missed.">            for ( Tsr&lt;?&gt; t : _tensors ) all = condition.check( t ) &amp;&amp; all;</span>
+<span class="pc bpc" id="L411" title="1 of 2 branches missed.">            if ( !all ) _isValid = false;</span>
+<span class="fc" id="L412">            return this;</span>
         }
 
         public Validator allNotNull( TensorCondition condition )
         {
-<span class="fc" id="L184">            boolean all = true;</span>
-<span class="fc bfc" id="L185" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; t : _tensors )</span>
-<span class="fc bfc" id="L186" title="All 6 branches covered.">                if ( t != null ) all = condition.check( t ) &amp;&amp; all;</span>
-<span class="fc bfc" id="L187" title="All 2 branches covered.">            if ( !all ) _isValid = false;</span>
-<span class="fc" id="L188">            return this;</span>
+<span class="fc" id="L417">            boolean all = true;</span>
+<span class="fc bfc" id="L418" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; t : _tensors )</span>
+<span class="fc bfc" id="L419" title="All 6 branches covered.">                if ( t != null ) all = condition.check( t ) &amp;&amp; all;</span>
+<span class="fc bfc" id="L420" title="All 2 branches covered.">            if ( !all ) _isValid = false;</span>
+<span class="fc" id="L421">            return this;</span>
         }
 
         public Validator all( TensorCompare compare )
         {
-<span class="fc" id="L193">            boolean all = true;</span>
-<span class="fc" id="L194">            Tsr&lt;?&gt; last = null;</span>
-<span class="fc bfc" id="L195" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; current : _tensors ) {</span>
-<span class="pc bpc" id="L196" title="3 of 4 branches missed.">                if ( last != null &amp;&amp; !compare.check( last, current ) ) all = false;</span>
-<span class="fc" id="L197">                last = current; // Note: shapes are cached!</span>
+<span class="fc" id="L426">            boolean all = true;</span>
+<span class="fc" id="L427">            Tsr&lt;?&gt; last = null;</span>
+<span class="fc bfc" id="L428" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; current : _tensors ) {</span>
+<span class="pc bpc" id="L429" title="3 of 4 branches missed.">                if ( last != null &amp;&amp; !compare.check( last, current ) ) all = false;</span>
+<span class="fc" id="L430">                last = current; // Note: shapes are cached!</span>
             }
-<span class="pc bpc" id="L199" title="1 of 2 branches missed.">            if ( !all ) _isValid = false;</span>
-<span class="fc" id="L200">            return this;</span>
+<span class="pc bpc" id="L432" title="1 of 2 branches missed.">            if ( !all ) _isValid = false;</span>
+<span class="fc" id="L433">            return this;</span>
         }
 
         public Validator forDevice( DeviceCondition condition )
         {
-<span class="nc bnc" id="L205" title="All 2 branches missed.">            if ( !condition.check( _device ) ) _isValid = false;</span>
-<span class="nc" id="L206">            return this;</span>
+<span class="nc bnc" id="L438" title="All 2 branches missed.">            if ( !condition.check( _device ) ) _isValid = false;</span>
+<span class="nc" id="L439">            return this;</span>
         }
 
         public Validator forOperation( OperationTypeCondition condition ) {
-<span class="nc bnc" id="L210" title="All 2 branches missed.">            if ( !condition.check(_operation) ) _isValid = false;</span>
-<span class="nc" id="L211">            return this;</span>
+<span class="nc bnc" id="L443" title="All 2 branches missed.">            if ( !condition.check(_operation) ) _isValid = false;</span>
+<span class="nc" id="L444">            return this;</span>
+        }
+
+        public boolean isValid() {
+<span class="fc" id="L448">            return this._isValid;</span>
         }
     }
-
-<span class="fc" id="L215">    public Validator validate() { return new Validator(); }</span>
-
-    public ExecutionCall(
-            DeviceType device,
-            Tsr&lt;?&gt;[] tensors,
-            int d,
-            Operation type
-<span class="fc" id="L222">    ) {</span>
-<span class="fc" id="L223">        _device = device;</span>
-<span class="fc" id="L224">        _tensors = tensors;</span>
-<span class="fc" id="L225">        _derivativeIndex = d;</span>
-<span class="fc" id="L226">        _operation = type;</span>
-<span class="fc" id="L227">        _implementation = null;</span>
-<span class="fc" id="L228">        _context = null;</span>
-<span class="fc" id="L229">    }</span>
-    
-    public ExecutionCall(
-            DeviceType device,
-            Tsr&lt;?&gt;[] tensors,
-            int d,
-            int j,
-            Operation type
-<span class="fc" id="L237">    ) {</span>
-<span class="fc" id="L238">        _device = device;</span>
-<span class="fc" id="L239">        _tensors = tensors;</span>
-<span class="fc" id="L240">        _derivativeIndex = d;</span>
-<span class="fc" id="L241">        _j = j;</span>
-<span class="fc" id="L242">        _operation = type;</span>
-<span class="fc" id="L243">        _implementation = null;</span>
-<span class="fc" id="L244">    }</span>
-
-<span class="fc" id="L246">    public Tsr getTensor( int i ) { return _tensors[ i ];}</span>
-
-
-    public Algorithm&lt;?&gt; getImplementation() {
-<span class="fc bfc" id="L250" title="All 2 branches covered.">        if ( _implementation != null ) return _implementation;</span>
-<span class="fc" id="L251">        else _implementation = _operation.getAlgorithmFor( this );</span>
-<span class="fc" id="L252">        return _implementation;</span>
-    }
-    
-    public boolean allowsForward() {
-<span class="fc" id="L256">        return getImplementation().canAlgorithmPerformForwardADFor( this );</span>
-    }
-
-    public boolean allowsBackward() {
-<span class="fc" id="L260">        return getImplementation().canAlgorithmPerformBackwardADFor( this );</span>
-    }
-
-    public ADAgent getADAgentFrom( Function function, ExecutionCall&lt;Device&gt; call, boolean forward )
-    {
-<span class="fc bfc" id="L265" title="All 2 branches covered.">        if ( this._context != null ) {</span>
-<span class="pc bpc" id="L266" title="1 of 2 branches missed.">            if ( call._context == null ) call._context = new TreeMap&lt;&gt;();</span>
-<span class="fc" id="L267">            call._context.putAll( this._context );</span>
-        }
-<span class="fc" id="L269">        return getImplementation().supplyADAgentFor( function, call, forward );</span>
-    }
-    
-    public void mutateArguments( Mutator mutation ) {
-<span class="fc" id="L273">        _tensors = mutation.mutate( _tensors );</span>
-<span class="fc" id="L274">    }</span>
-    
-    public ExecutionCall&lt;DeviceType&gt; withNew( Tsr&lt;?&gt;[] tensors ) {
-<span class="fc" id="L277">        return new ExecutionCall&lt;&gt;( _device, tensors, _derivativeIndex, _j, _operation );</span>
-    }
-
-    public ExecutionCall&lt;DeviceType&gt; withNew( DeviceType device ) {
-<span class="nc" id="L281">        return new ExecutionCall&lt;&gt;( device, _tensors, _derivativeIndex, _j, _operation );</span>
-    }
-
-    public &lt;T&gt; T getAt( Class&lt;T&gt; type ) {
-<span class="nc bnc" id="L285" title="All 2 branches missed.">        if ( _context == null ) return null;</span>
-<span class="nc" id="L286">        return (T) _context.get( type.getName() );</span>
-    }
-
-    public Object getAt( String varName ) {
-<span class="fc bfc" id="L290" title="All 2 branches covered.">        if ( _context == null ) return null;</span>
-<span class="fc" id="L291">        return _context.get( varName );</span>
-    }
-
-    public &lt;T&gt; ExecutionCall&lt;DeviceType&gt; putAt( String s, T o ) {
-<span class="pc bpc" id="L295" title="1 of 2 branches missed.">        if ( _context == null ) _context = new TreeMap&lt;&gt;();</span>
-<span class="fc" id="L296">        _context.put( s, o );</span>
-<span class="fc" id="L297">        return this;</span>
-    }
-
-    public void takeContext( Map&lt;String, Object&gt;  context ) {
-<span class="nc bnc" id="L301" title="All 4 branches missed.">        if ( _context == null &amp;&amp; context != null ) _context = new TreeMap&lt;&gt;();</span>
-<span class="nc bnc" id="L302" title="All 2 branches missed.">        if ( context != null ) _context.putAll( _context );</span>
-<span class="nc" id="L303">    }</span>
-
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

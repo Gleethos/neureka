@@ -314,27 +314,43 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:57 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:55 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
-<td>1</td>
+<td>2</td>
+<td>2</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.616 seconds</td>
+<td>0.445 seconds</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class='spec-headers'>
+<div class='spec-header'>
+                <h2> Cross Device Tensor Slicing </h2>
+                <br> 
+                <p>
+                    This specification covers the behavior of tensors when being sliced
+                    on multiple different device types in conjunction with 
+                    the autograd system.
+                    Autograd should work on slices as well.          
+                </p>
+            </div>
 </div>
 <h3>Features:</h3>
 <table class='features-table'>
@@ -345,9 +361,112 @@ div.footer {
 <tbody>
 <ul id='toc'>
 <li>
+<a href='#1080498804' class='feature-toc-pass'>Slices can be created using the SliceBuilder.</a>
+</li>
+<li>
 <a href='#-1008503182' class='feature-toc-pass'>Cross device sliced tensor integration test runs without errors.</a>
 </li>
 </ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1080498804'>
+<span>Slices can be created using the SliceBuilder.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>if ( device == null ) return
+Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
+Neureka.get().settings().view().setIsUsingLegacyView(false)
+if ( device instanceof OpenCLDevice &amp;&amp; !Neureka.get().canAccessOpenCL() ) return</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A tensor which ought to be sliced:</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr a = Tsr.of([4, 6], [
+        1, 2, 3, 4, 5, 6,
+        7, 8, 9, 1, 2, 3,
+        4, 5, 6, 7, 8, 9,
+        1, 2, 3, 4, 5, 6
+])
+device.store(a)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr b = a.slice() // [[-1..-3, -6..-3]]
+.axis(0).from(-1).to(-3)
+.axis(1).from(-6).to(-3)
+.get()
+Tsr s = a.slice() // [[1, -2]]
+.axis(0).at(1)
+.axis(1).at(-2)
+.get()
+s.rqsGradient = true</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>s.toString() == "(1x1):[2.0]:g:[null]"
+s.getValueAt(0) == 2.0
+s.rqsGradient()
+b.toString().contains(
+        "7.0, 8.0, 9.0, 1.0, 4.0, 5.0, 6.0, 7.0, 1.0, 2.0, 3.0, 4.0"
+)
+b.spread() != null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>device</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x2b9f6776f70], platform=neureka.devices.opencl.OpenCLPlatform@4169533d)</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.devices.host.HostCPU@179628d6</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
 <tr>
 <td colspan='10'>
 <div class='feature-description' id='-1008503182'>
@@ -364,9 +483,9 @@ div.footer {
 </td>
 <td>
 <pre class='block-source'>if ( device == null ) return
-Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
-Neureka.instance().settings().view().setIsUsingLegacyView(true)
-if ( device instanceof OpenCLDevice &amp;&amp; !Neureka.instance().canAccessOpenCL() ) return</pre>
+Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
+Neureka.get().settings().view().setIsUsingLegacyView(true)
+if ( device instanceof OpenCLDevice &amp;&amp; !Neureka.get().canAccessOpenCL() ) return</pre>
 </td>
 </tr>
 <tr>
@@ -374,11 +493,11 @@ if ( device instanceof OpenCLDevice &amp;&amp; !Neureka.instance().canAccessOpen
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr x = new Tsr([1], 3).setRqsGradient(true)
-Tsr b = new Tsr([1], -4)
-Tsr w = new Tsr([1], 2)
+<pre class='block-source'>Tsr x = Tsr.of([1], 3).setRqsGradient(true)
+Tsr b = Tsr.of([1], -4)
+Tsr w = Tsr.of([1], 2)
 device.store(x).store(b).store(w)
-Tsr y = new Tsr([x, b, w], "((i0+i1)*i2)^2")</pre>
+Tsr y = Tsr.of("((i0+i1)*i2)^2", [x, b, w])</pre>
 </td>
 </tr>
 <tr>
@@ -395,7 +514,7 @@ y.toString().contains("[1]:(4.0); -&gt;d[1]:(-8.0)")</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>y.backward(new Tsr(2))
+<pre class='block-source'>y.backward(Tsr.of(2))
 y = ((x+b)*w)**2</pre>
 </td>
 </tr>
@@ -412,10 +531,10 @@ y = ((x+b)*w)**2</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>y.backward(new Tsr(2))
+<pre class='block-source'>y.backward(Tsr.of(2))
 x.toString().contains("-32.0")
 y = b + w * x
-Tsr a = new Tsr([4, 6], [
+Tsr a = Tsr.of([4, 6], [
         1, 2, 3, 4, 5, 6,
         7, 8, 9, 1, 2, 3,
         4, 5, 6, 7, 8, 9,
@@ -472,7 +591,7 @@ b.spread() != null</pre>
     a.value64()[1] = a.value64()[1] * 6
     a.value64()[7] = a.value64()[7] * 2
 } else {
-    Tsr k = new Tsr([4, 6], [
+    Tsr k = Tsr.of([4, 6], [
             1, 6, 1, 1,
             1, 1, 1, 2,
             1, 1, 1, 1,
@@ -500,7 +619,7 @@ b.spread() != null</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr c = new Tsr([3, 4], [
+<pre class='block-source'>Tsr c = Tsr.of([3, 4], [
         -3, 2, 3,
         5, 6, 2,
         -1, 1, 2,
@@ -565,8 +684,8 @@ b.spread() != null</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr p = new Tsr([2,2], [2, 55, 4, 7]).set((device instanceof DummyDevice)?null:device)
-Tsr u = new Tsr([2,2], [5, 2, 7, 34]).set((device instanceof DummyDevice)?null:device)
+<pre class='block-source'>Tsr p = Tsr.of([2,2], [2, 55, 4, 7]).set((device instanceof DummyDevice)?null:device)
+Tsr u = Tsr.of([2,2], [5, 2, 7, 34]).set((device instanceof DummyDevice)?null:device)
 p[] = u</pre>
 </td>
 </tr>
@@ -583,7 +702,7 @@ p[] = u</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>a[[[0..3]:2, [1..4]:2]] = new Tsr([2, 2], [1, 2, 3, 4])</pre>
+<pre class='block-source'>a[[[0..3]:2, [1..4]:2]] = Tsr.of([2, 2], [1, 2, 3, 4])</pre>
 </td>
 </tr>
 <tr>
@@ -605,7 +724,7 @@ a.toString().contains(
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>a[1..2, 1..2] = new Tsr([2, 2], [8, 8, 8, 8])</pre>
+<pre class='block-source'>a[1..2, 1..2] = Tsr.of([2, 2], [8, 8, 8, 8])</pre>
 </td>
 </tr>
 <tr>
@@ -631,12 +750,12 @@ a.toString().contains(
 </td>
 <td>
 <pre class='block-source'>b.setRqsGradient(true)
-c = new Tsr([2, 2], [
+c = Tsr.of([2, 2], [
         -2, 3,//-2 + 24 + 3 + 8
         1, 2,
 ])
 device.store(b).store(c)
-x = new Tsr(b, "x", c)</pre>
+x = Tsr.of(b, "x", c)</pre>
 </td>
 </tr>
 <tr>
@@ -657,15 +776,17 @@ x = new Tsr(b, "x", c)</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>device</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[[2x2]:(-2.0, 3.0, 1.0, 2.0), [1]:(2.0), [1]:(2.0), [1]:(1.0), [1]:(2.0), [1]:(1.0), [1]:(2.0)], _deviceId=cl_device_id[0x27264c405c0], _platform=neureka.devices.opencl.OpenCLPlatform@1ce3334, _queue=cl_command_queue[0x27267e10620])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x2b9f6776f70], platform=neureka.devices.opencl.OpenCLPlatform@4169533d)</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@9a6b873</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@179628d6</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>

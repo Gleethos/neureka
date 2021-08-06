@@ -1,0 +1,824 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 300;
+}
+
+h2 {
+    font-weight: 400;
+}
+
+hr {
+    margin-bottom: 1.5em;
+}
+
+h3 {
+    font-weight: 200;
+}
+
+table {
+    margin: 7px;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+}
+
+.ignored {
+    color: gray;
+}
+
+div.project-header {
+    margin-bottom: 10px;
+    font-size: large;
+}
+
+div.project-header &gt; span.project-name {
+
+                        }
+
+div.project-header &gt; span.project-version {
+                            padding-left: 20px;
+                        }
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+div.spec-title {
+    padding: 10px 0px 5px 0px;
+}
+
+tr.error td, td.error {
+    background-color: #F89A4F !important;
+}
+
+tr.failure td, td.failure {
+    color: red;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}
+
+
+
+
+
+
+.back-link {
+    font-size: small;
+    font-weight: bold;
+}
+
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+table.features-table {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table {
+    width: 99%;
+
+    font-weight: bold;
+    font-size: small;
+}
+
+table.summary-table tbody {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table th {
+    background: lightblue;
+    padding: 6px;
+}
+
+table.summary-table td {
+    background: #E0E0E0;
+    padding: 6px;
+}
+
+pre.title {
+    font-family: inherit;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+pre.narrative {
+    font-family: inherit;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 23px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+.feature-description {
+    font-size: large;
+    background: lightblue;
+    padding: 12px;
+}
+
+.feature-toc-error {
+    color: #F89A4F;
+}
+
+.feature-toc-failure {
+    color: #FF8080;
+}
+
+.feature-toc-ignored {
+    color: lightgray;
+}
+
+.feature-toc-pass {
+    color: green;
+}
+
+.feature-description.error {
+    background: #F89A4F;
+}
+
+.feature-description.failure {
+    background: #FF8080;
+}
+
+.feature-description.ignored {
+    background: lightgray;
+}
+
+.feature-description.ignored .reason {
+    color: black;
+    font-style: italic;
+    font-size: small;
+}
+
+div.extra-info {
+    font-size: small;
+}
+
+div.spec-headers {
+    margin: 4px;
+    font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+    margin-top: 6px;
+    padding: 10px 5px 5px 5px;
+    background-color: lemonchiffon;
+    color: black;
+    font-weight: 500;
+    font-size: small;
+    max-width: 50%;
+}
+
+div.pending-feature {
+    background-color: dodgerblue;
+    color: white;
+    margin-top: 6px;
+    padding: 5px;
+    text-align: center;
+    font-size: small;
+    max-width: 120px;
+}
+
+div.problem-description {
+    padding: 10px;
+    background: pink;
+    border-radius: 10px;
+}
+
+div.problem-header {
+    font-weight: bold;
+    color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table{
+    width: 98%;
+}
+
+table.ex-table th {
+    background: lightblue;
+    padding: 5px;
+}
+
+table.ex-table td {
+    background: #E0E0E0;
+    padding: 2px 5px 2px 5px;
+}
+
+table td {
+    min-width: 50px;
+}
+
+col.block-kind-col {
+    width: 70px;
+}
+
+span.spec-header {
+    font-weight: bold;
+}
+
+div.spec-text {
+    /*color: green;*/
+}
+
+div.spec-status {
+    font-style: italic;
+}
+
+.ignored {
+    color: gray;
+}
+
+td.ex-result {
+    text-align: center;
+    background: white !important;
+}
+
+.ex-pass {
+    color: darkgreen;
+}
+
+.ex-fail {
+    color: red;
+    font-weight: bold;
+}
+
+div.block-kind {
+    margin: 2px;
+    font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+    background-color: whitesmoke;
+    padding: 10px;
+}
+
+pre.block-source.error {
+    background-color: pink;
+    color: red;
+    font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+    margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+    color: gray;
+    margin-top: -14px;
+}
+
+pre.block-source.post-error {
+    color: gray;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}</style>
+</head>
+<body>
+<h2>Report for ut.backend.Backend_Algorithm_Implementation_Tests</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:51 CEST 2021 by Daglemino</div>
+<table class='summary-table'>
+<thead>
+<tr>
+<th>Executed features</th>
+<th>Passed</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>2.711 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class='spec-headers'>
+<div class='spec-header'>
+                   This specification defines the behavior of implementations of the 
+                   Algorithm interface! <br> 
+        </div>
+</div>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#-200778926' class='feature-toc-pass'>Operator implementations have expected Executor instances.</a>
+</li>
+<li>
+<a href='#1860135748' class='feature-toc-pass'>Activation implementations have expected Executor instances.</a>
+</li>
+<li>
+<a href='#1104138115' class='feature-toc-pass'>HostExecutors of Operator implementations behave as expected.</a>
+</li>
+<li>
+<a href='#234060802' class='feature-toc-pass'>CLExecutors of Operator implementations behave as expected.</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-200778926'>
+<span>Operator implementations have expected Executor instances.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>Host- and CL- executor instance are being fetched...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def hostExecutor = imp.getImplementationFor( HostCPU.class )
+def clExecutor = imp.getImplementationFor( OpenCLDevice.class )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The variables containing the executor instances are not null.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>hostExecutor != null
+clExecutor != null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The variable "imp" is from a List of OperationType implementations of type "Operator".</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>imp</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@6045ca55</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@776815a5</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@5f864cce</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@1acb663d</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@7b15bb3f</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@28afc1c3</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>6/6 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1860135748'>
+<span>Activation implementations have expected Executor instances.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>Host- and CL- executor instance are being fetched...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def hostExecutor = imp.getImplementationFor( HostCPU.class )
+def clExecutor = imp.getImplementationFor( OpenCLDevice.class )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The variables containing the executor instances are not null.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>hostExecutor != null
+clExecutor != null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The variable "imp" is from a List of OperationType implementations of type "Operator".</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>imp</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Activation@31d0fdfc</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Activation@1d0f13cb</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Activation@271219dd</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Activation@68fc9ae9</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Activation@5017c964</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Activation@5717d3d</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Activation@524d3f5b</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Activation@7b239aac</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Activation@49d0fa68</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Activation@2327e6df</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Activation@3c889f56</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Activation@3badeec9</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Activation@49da613f</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Activation@65f1d6f8</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Activation@75087f1a</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>15/15 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1104138115'>
+<span>HostExecutors of Operator implementations behave as expected.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Mock instances to simulate an ExecutionCall instance.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def call = Mock( ExecutionCall )
+def device = Mock( HostCPU )
+def tensor = Mock( Tsr )
+def hostExecutor = imp.getImplementationFor( HostCPU.class )
+def nativeExecutor = Mock( HostCPU.NativeExecutor )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>Host-executor instance is being called...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>hostExecutor.run( call )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The mock objects are being called as expected.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>(1.._) * call.getDevice() &gt;&gt; device
+1 * device.getExecutor() &gt;&gt; nativeExecutor
+1 * nativeExecutor.threaded( _, _ )
+(1.._) * call.getTsrOfType( Number.class, 0) &gt;&gt; tensor
+(1.._) * tensor.size() &gt;&gt; 0</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The variable "imp" is from a List of OperationType implementations of type "Operator".</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>imp</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@6045ca55</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@776815a5</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@5f864cce</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@1acb663d</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@7b15bb3f</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@28afc1c3</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>6/6 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='234060802'>
+<span>CLExecutors of Operator implementations behave as expected.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Mock instances to simulate an ExecutionCall instance.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def call = Mock( ExecutionCall )
+def device = Mock( OpenCLDevice )
+def tensor = Mock( Tsr )
+def clExecutor = imp.getImplementationFor( OpenCLDevice.class )
+def kernel = Mock( KernelCaller )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>CL-executor instance is being called...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>clExecutor.run( call )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The mock objects are being called as expected.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>(1.._) * call.getTsrOfType( Number.class, 0) &gt;&gt; tensor
+(1.._) * tensor.size() &gt;&gt; 0
+(1.._) * call.getDevice() &gt;&gt; device
+1 * device.getKernel(call) &gt;&gt; kernel
+(1.._) * kernel.pass(_) &gt;&gt; kernel
+(1.._) * kernel.call(_)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The variable "imp" is from a List of OperationType implementations of type "Operator".</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>imp</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@6045ca55</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@776815a5</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@5f864cce</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@1acb663d</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@7b15bb3f</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.backend.standard.algorithms.Operator@28afc1c3</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>6/6 passed</div>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>

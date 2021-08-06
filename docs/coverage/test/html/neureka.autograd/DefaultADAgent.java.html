@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultADAgent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.autograd</a> &gt; <span class="el_source">DefaultADAgent.java</span></div><h1>DefaultADAgent.java</h1><pre class="source lang-java linenums">package neureka.autograd;
 
-import lombok.Setter;
-import lombok.experimental.Accessors;
+
 import neureka.Tsr;
 
 import java.util.Map;
@@ -28,9 +27,18 @@ import java.util.stream.Collectors;
  * perform propagation. &lt;br&gt;
  *
  */
-@Accessors( prefix = {&quot;_&quot;}, chain = true )
 public final class DefaultADAgent implements ADAgent
 {
+    public DefaultADAgent setForward(ADAction _forward) {
+<span class="fc" id="L33">        this._forward = _forward;</span>
+<span class="fc" id="L34">        return this;</span>
+    }
+
+    public DefaultADAgent setBackward(ADAction _backward) {
+<span class="fc" id="L38">        this._backward = _backward;</span>
+<span class="fc" id="L39">        return this;</span>
+    }
+
     /**
      * This interface is the declaration for
      * lambda actions for both the &quot;forward(...)&quot;
@@ -41,52 +49,69 @@ public final class DefaultADAgent implements ADAgent
          Tsr&lt;?&gt; execute(GraphNode&lt;?&gt; t, Tsr&lt;?&gt; error);
     }
 
-<span class="fc" id="L44">    @Setter private ADAction _forward;</span>
-<span class="fc" id="L45">    @Setter private ADAction _backward;</span>
-<span class="fc" id="L46">    private final Map&lt;String, Object&gt; _context = new TreeMap&lt;&gt;();</span>
+    /**
+     *  This lambda ought to perform the forward propagation
+     *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
+     */
+    private ADAction _forward;
+    /**
+     *  This lambda ought to perform the backward propagation
+     *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
+     */
+    private ADAction _backward;
+<span class="fc" id="L62">    private final Map&lt;String, Object&gt; _context = new TreeMap&lt;&gt;();</span>
 
-<span class="fc" id="L48">    public DefaultADAgent(  Tsr&lt;?&gt; derivative  ) {</span>
-<span class="fc" id="L49">        _context.put( &quot;derivative&quot;, derivative );</span>
-<span class="fc" id="L50">    }</span>
+<span class="fc" id="L64">    public DefaultADAgent(  Tsr&lt;?&gt; derivative  ) {</span>
+<span class="fc" id="L65">        _context.put( &quot;derivative&quot;, derivative );</span>
+<span class="fc" id="L66">    }</span>
 
-<span class="fc" id="L52">    public DefaultADAgent() { }</span>
+<span class="fc" id="L68">    public DefaultADAgent() { }</span>
 
     public DefaultADAgent withContext( Map&lt;String, Object&gt; context  ) {
-<span class="fc" id="L55">        _context.putAll( context );</span>
-<span class="fc" id="L56">        return this;</span>
+<span class="fc" id="L71">        _context.putAll( context );</span>
+<span class="fc" id="L72">        return this;</span>
     }
 
     @Override
     public &lt;T&gt; Tsr&lt;T&gt; forward( GraphNode&lt;T&gt; target, Tsr&lt;T&gt; derivative) {
-<span class="fc" id="L61">        return (Tsr&lt;T&gt;) _forward.execute( target, derivative);</span>
+<span class="fc" id="L77">        return (Tsr&lt;T&gt;) _forward.execute( target, derivative);</span>
     }
 
     @Override
     public &lt;T&gt; Tsr&lt;T&gt; backward( GraphNode&lt;T&gt; target, Tsr&lt;T&gt; error ) {
-<span class="fc" id="L66">        return (Tsr&lt;T&gt;) _backward.execute( target, error );</span>
+<span class="fc" id="L82">        return (Tsr&lt;T&gt;) _backward.execute( target, error );</span>
     }
 
     @Override
     public Tsr&lt;?&gt; derivative() {
-<span class="fc" id="L71">        return (Tsr&lt;?&gt;) _context.get( &quot;derivative&quot; );</span>
+<span class="fc" id="L87">        return (Tsr&lt;?&gt;) _context.get( &quot;derivative&quot; );</span>
     }
 
     @Override
     public boolean hasForward() {
-<span class="fc" id="L76">        return _context.containsKey( &quot;derivative&quot; );</span>
+<span class="fc" id="L92">        return _context.containsKey( &quot;derivative&quot; );</span>
     }
 
     @Override
     public boolean hasBackward() {
-<span class="nc bnc" id="L81" title="All 2 branches missed.">        return _backward != null;</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        return _backward != null;</span>
     }
 
+    /**
+     *  An {@link ADAgent} also contains a context of variables which have been
+     *  passed to it by an {@link neureka.backend.api.ExecutionCall}.
+     *  These variables specify how an implementation of an operation ought to execute.
+     *  This method let's us view the current state of these variables for this agent in the form of
+     *  a nice {@link String}...
+     *
+     * @return A String view of this {@link ADAgent}.
+     */
     @Override
     public String toString() {
-<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        if ( this.derivative() != null ) return derivative().toString();</span>
-<span class="fc" id="L87">        return _context.keySet().stream()</span>
-<span class="fc" id="L88">                .map( key -&gt; key + &quot;=&quot; + _context.get( key ) )</span>
-<span class="fc" id="L89">                .collect( Collectors.joining( &quot;, &quot;, &quot;{&quot;, &quot;}&quot; ) );</span>
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">        if ( this.derivative() != null ) return derivative().toString();</span>
+<span class="fc" id="L112">        return _context.keySet().stream()</span>
+<span class="fc" id="L113">                .map( key -&gt; key + &quot;=&quot; + _context.get( key ) )</span>
+<span class="fc" id="L114">                .collect( Collectors.joining( &quot;, &quot;, &quot;{&quot;, &quot;}&quot; ) );</span>
     }
 
 

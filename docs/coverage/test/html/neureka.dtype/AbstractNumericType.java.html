@@ -8,38 +8,51 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-<span class="fc" id="L11">public abstract class AbstractNumericType&lt;TargetType, TargetArrayType, HolderType, HolderArrayType&gt;</span>
+/**
+ *  This class is a common precursor class for the concrete implementation of the &quot;NumericType&quot; interface (see documentation).
+ *  It implements shared logic which will be used by these concrete classes.
+ *  This is especially true for the target/holder type relationship between the numeric types.
+ *
+ * @param &lt;TargetType&gt; The target type is the targeted JVM data-type which can represent the holder type.
+ * @param &lt;TargetArrayType&gt; The target array type is the targeted JVM array data-type which can represent the holder array type.
+ * @param &lt;HolderType&gt; The holder type is the JVM type which can hold the data but not necessarily represent it (int cant hold uint).
+ * @param &lt;HolderArrayType&gt; The holder array type is the JVM array type which can hold the data but not necessarily represent it (int[] cant hold uint[]).
+ */
+<span class="fc" id="L21">public abstract class AbstractNumericType&lt;TargetType, TargetArrayType, HolderType, HolderArrayType&gt;</span>
 implements NumericType&lt;TargetType, TargetArrayType, HolderType, HolderArrayType&gt;
 {
     private static final Map&lt;Object,Object&gt; _NUMERIC_TYPE_RELATIONS;
     static {
-<span class="fc" id="L16">        _NUMERIC_TYPE_RELATIONS = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L17">        _NUMERIC_TYPE_RELATIONS.put( I8.class, I8.class    );</span>
-<span class="fc" id="L18">        _NUMERIC_TYPE_RELATIONS.put( I16.class, I16.class  );</span>
-<span class="fc" id="L19">        _NUMERIC_TYPE_RELATIONS.put( I32.class, I32.class  );</span>
-<span class="fc" id="L20">        _NUMERIC_TYPE_RELATIONS.put( I64.class, I64.class  );</span>
-<span class="fc" id="L21">        _NUMERIC_TYPE_RELATIONS.put( F32.class, F32.class  );</span>
-<span class="fc" id="L22">        _NUMERIC_TYPE_RELATIONS.put( F64.class, F64.class  );</span>
-<span class="fc" id="L23">        _NUMERIC_TYPE_RELATIONS.put( UI8.class, I16.class  );</span>
-<span class="fc" id="L24">        _NUMERIC_TYPE_RELATIONS.put( UI16.class, I32.class );</span>
-<span class="fc" id="L25">        _NUMERIC_TYPE_RELATIONS.put( UI64.class, UI64.class); // think about this</span>
-<span class="fc" id="L26">    }</span>
-
-    public interface Conversion&lt;FromType, ToType&gt; { ToType go( FromType thing ); }
+        /*
+         *  The following map stores the representative relationships between concrete numeric type implementations.
+         *  For example, the unsigned integer type can be represented by the JVM without information loss
+         *  by the signed long type...
+         */
+<span class="fc" id="L31">        _NUMERIC_TYPE_RELATIONS = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L32">        _NUMERIC_TYPE_RELATIONS.put( I8.class, I8.class    );</span>
+<span class="fc" id="L33">        _NUMERIC_TYPE_RELATIONS.put( I16.class, I16.class  );</span>
+<span class="fc" id="L34">        _NUMERIC_TYPE_RELATIONS.put( I32.class, I32.class  );</span>
+<span class="fc" id="L35">        _NUMERIC_TYPE_RELATIONS.put( I64.class, I64.class  );</span>
+<span class="fc" id="L36">        _NUMERIC_TYPE_RELATIONS.put( F32.class, F32.class  );</span>
+<span class="fc" id="L37">        _NUMERIC_TYPE_RELATIONS.put( F64.class, F64.class  );</span>
+<span class="fc" id="L38">        _NUMERIC_TYPE_RELATIONS.put( UI8.class, I16.class  );</span>
+<span class="fc" id="L39">        _NUMERIC_TYPE_RELATIONS.put( UI16.class, I32.class );</span>
+<span class="fc" id="L40">        _NUMERIC_TYPE_RELATIONS.put( UI64.class, UI64.class); // think about this</span>
+<span class="fc" id="L41">    }</span>
 
     @Override
     public Class&lt;NumericType&lt;TargetType, TargetArrayType, TargetType, TargetArrayType&gt;&gt; getNumericTypeTarget() {
-<span class="fc" id="L32">        return (Class&lt;NumericType&lt;TargetType, TargetArrayType, TargetType, TargetArrayType&gt;&gt;) _NUMERIC_TYPE_RELATIONS.get( this.getClass() );</span>
+<span class="fc" id="L45">        return (Class&lt;NumericType&lt;TargetType, TargetArrayType, TargetType, TargetArrayType&gt;&gt;) _NUMERIC_TYPE_RELATIONS.get( this.getClass() );</span>
     }
 
     @Override
     public void writeDataTo( DataOutput stream, Iterator&lt;TargetType&gt; iterator ) throws IOException {
         byte[] data;
-<span class="fc bfc" id="L38" title="All 2 branches covered.">        while( iterator.hasNext() ) {</span>
-<span class="fc" id="L39">            data = targetToForeignHolderBytes( iterator.next() );</span>
-<span class="fc" id="L40">            stream.write( data );</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        while( iterator.hasNext() ) {</span>
+<span class="fc" id="L52">            data = targetToForeignHolderBytes( iterator.next() );</span>
+<span class="fc" id="L53">            stream.write( data );</span>
         }
-<span class="fc" id="L42">    }</span>
+<span class="fc" id="L55">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

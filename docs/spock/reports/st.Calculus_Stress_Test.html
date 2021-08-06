@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:59 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:48 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>3</td>
 <td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>8.292 seconds</td>
+<td>0.574 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -369,7 +373,7 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing</pre>
+<pre class='block-source'>Neureka.get().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing</pre>
 </td>
 </tr>
 <tr>
@@ -378,11 +382,11 @@ div.footer {
 </td>
 <td>
 <pre class='block-source'>def stress = ( Tsr t ) -&gt; {
-    t = t + new Tsr( t.shape(), -3..12 )
-    t = t * new Tsr( t.shape(),  2..3 )
-    t = t / new Tsr( t.shape(),  1..2 )
-    t = t ^ new Tsr( t.shape(),  2..1 )
-    t = t - new Tsr( t.shape(), -2..2 )
+    t = t + Tsr.of( t.shape(), -3..12 )
+    t = t * Tsr.of( t.shape(),  2..3 )
+    t = t / Tsr.of( t.shape(),  1..2 )
+    t = t ^ Tsr.of( t.shape(),  2..1 )
+    t = t - Tsr.of( t.shape(), -2..2 )
     return t
 }</pre>
 </td>
@@ -392,7 +396,7 @@ div.footer {
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr( [3, 3, 3, 3], 0 ).set( device )</pre>
+<pre class='block-source'>Tsr t = Tsr.of( [3, 3, 3, 3], 0 ).set( device )</pre>
 </td>
 </tr>
 <tr>
@@ -400,7 +404,7 @@ div.footer {
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t[1..2, 0..2, 1..1, 0..2] = new Tsr( [2, 3, 1, 3], -4..2 )
+<pre class='block-source'>t[1..2, 0..2, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4..2 )
 t = t[1..2, 0..2, 1..1, 0..2]</pre>
 </td>
 </tr>
@@ -409,7 +413,7 @@ t = t[1..2, 0..2, 1..1, 0..2]</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>t.toString() == new Tsr( [2, 3, 1, 3], -4..2 ).toString()</pre>
+<pre class='block-source'>t.toString() == Tsr.of( [2, 3, 1, 3], -4..2 ).toString()</pre>
 </td>
 </tr>
 <tr>
@@ -448,22 +452,24 @@ t = t[1..2, 0..2, 1..1, 0..2]</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>device</th>
 <th class='ex-header'>arrayIndexing</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>true</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>false</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x1):[-4.0, -3.0], (2x1):[-4.0, -3.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
 <td class='ex-value'>true</td>
 <td class='ex-result'>OK</td>
 </tr>
@@ -490,7 +496,7 @@ t = t[1..2, 0..2, 1..1, 0..2]</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing</pre>
+<pre class='block-source'>Neureka.get().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing</pre>
 </td>
 </tr>
 <tr>
@@ -498,7 +504,7 @@ t = t[1..2, 0..2, 1..1, 0..2]</pre>
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr( shape, -4..2 )</pre>
+<pre class='block-source'>Tsr t = Tsr.of( shape, -4..2 )</pre>
 </td>
 </tr>
 <tr>
@@ -525,9 +531,11 @@ t = t[1..2, 0..2, 1..1, 0..2]</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>arrayIndexing</th>
 <th class='ex-header'>shape</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -577,7 +585,7 @@ t = t[1..2, 0..2, 1..1, 0..2]</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing</pre>
+<pre class='block-source'>Neureka.get().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing</pre>
 </td>
 </tr>
 <tr>
@@ -585,8 +593,8 @@ t = t[1..2, 0..2, 1..1, 0..2]</pre>
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t1 = new Tsr( shape1, -4..2 ).set( device )
-Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
+<pre class='block-source'>Tsr t1 = Tsr.of( shape1, -4..2 ).set( device )
+Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 </td>
 </tr>
 <tr>
@@ -594,7 +602,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr( operation, [t1,t2] )</pre>
+<pre class='block-source'>Tsr t = Tsr.of( operation, [t1,t2] )</pre>
 </td>
 </tr>
 <tr>
@@ -613,16 +621,18 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>device</th>
 <th class='ex-header'>arrayIndexing</th>
 <th class='ex-header'>shape1</th>
 <th class='ex-header'>shape2</th>
 <th class='ex-header'>operation</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -631,7 +641,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -640,7 +650,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -649,7 +659,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -658,7 +668,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x1):[-4.0, -3.0], (2x1):[-4.0, -3.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -667,7 +677,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x1):[-4.0, -3.0], (2x1):[-4.0, -3.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -676,7 +686,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x1):[-4.0, -3.0], (2x1):[-4.0, -3.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -685,7 +695,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x1):[-4.0, -3.0], (2x1):[-4.0, -3.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -694,7 +704,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -703,7 +713,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -712,7 +722,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -721,7 +731,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -730,7 +740,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x1):[-4.0, -3.0], (2x1):[-4.0, -3.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -739,7 +749,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x1):[-4.0, -3.0], (2x1):[-4.0, -3.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -748,7 +758,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x1):[-4.0, -3.0], (2x1):[-4.0, -3.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -757,7 +767,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x1):[-4.0, -3.0], (2x1):[-4.0, -3.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -766,7 +776,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -775,7 +785,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -784,7 +794,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -793,7 +803,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -802,7 +812,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x1):[-4.0, -3.0], (2x1):[-4.0, -3.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -811,7 +821,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x1):[-4.0, -3.0], (2x1):[-4.0, -3.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -820,7 +830,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x1):[-4.0, -3.0], (2x1):[-4.0, -3.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -829,7 +839,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x1):[-4.0, -3.0], (2x1):[-4.0, -3.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x3x2):[-7.0, -6.0, -4.0, -3.0, -1.0, 0.0, -4.0, -3.0, -1.0, 0.0, 2.0, 3.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (2x2):[-1.0, -2.0, -2.0, -3.0], (2x3x2):[-1.0, -2.0, -2.0, -3.0, -3.0, -4.0, 2.0, 1.0, 1.0, 0.0, 0.0, -1.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x3x1):[-4.0, -3.0, -2.0, -1.0, 0.0, 1.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x2):[-7.0, -6.0, -4.0, -3.0], (1x3x2):[-3.0, -2.0, -1.0, 0.0, 1.0, 2.0], (2x2):[-3.0, -2.0, -1.0, 0.0], (2x1):[-4.0, -3.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -838,7 +848,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -847,7 +857,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -856,7 +866,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -865,7 +875,7 @@ Tsr t2 = new Tsr( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>

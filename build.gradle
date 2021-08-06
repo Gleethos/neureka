@@ -58,7 +58,7 @@ plugins {
 compileJava { options.encoding = "UTF-8" } // Allows for '"' characters in comments for example...
 
 String PROJECT = "neureka"
-String VERSION = "0.6.0"
+String VERSION = "0.7.0"
 String GROUPID = "com.github.gleethos"
 String BASENAME = "neureka"
 
@@ -201,7 +201,6 @@ compileJava11Java {
     options.compilerArgs.addAll(['--release', '11'])
 }
 
-
 //----------------------------------------------------------------------------------------------------------------------
 // 7. CONFIGURING TEST EXECUTION :
 
@@ -295,8 +294,6 @@ task deploy() {
     dependsOn 'releaseJDocs'
     dependsOn 'releaseSpockReports'
 
-    // Expected after : dependsOn 'releaseJDocs'
-    // Expected after : dependsOn 'releaseSpockReports'
     // Expected after : dependsOn 'injectSpockStyles'
 }
 

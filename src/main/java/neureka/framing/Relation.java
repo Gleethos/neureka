@@ -37,7 +37,6 @@ package neureka.framing;
 
 import neureka.Component;
 import neureka.Tsr;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
@@ -255,7 +254,7 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
 
     public Relation<ValType> remove( Tsr<ValType> child )
     {
-        throw new NotImplementedException();
+        throw new IllegalStateException();
     }
 
     public String toString() {

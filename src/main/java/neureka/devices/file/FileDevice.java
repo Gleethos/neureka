@@ -9,7 +9,6 @@ import neureka.devices.AbstractBaseDevice;
 import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -185,7 +184,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public <T extends Object> Device<Object> store( Tsr<T> tensor, Tsr<T> parent ) { throw new NotImplementedException(); }
+    public <T extends Object> Device<Object> store( Tsr<T> tensor, Tsr<T> parent ) { throw new IllegalStateException(); }
 
     @Override
     public <T extends Object> boolean has( Tsr<T> tensor ) {
@@ -249,7 +248,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
 
     @Override
     public Operation optimizedOperationOf( Function function, String name ) {
-        throw new NotImplementedException();
+        throw new IllegalStateException();
     }
 
     @Override

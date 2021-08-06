@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:48 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:55 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>11</td>
 <td>11</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>14.062 seconds</td>
+<td>9.266 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -399,7 +403,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)</pre>
+<pre class='block-source'>Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)</pre>
 </td>
 </tr>
 <tr>
@@ -413,7 +417,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)</pre>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)</pre>
 </td>
 </tr>
 <tr>
@@ -427,7 +431,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def x = new Tsr(
+<pre class='block-source'>def x = Tsr.of(
     new int[]{2, 3, 1},
     new double[]{
             3,  2, -1, //&lt;=- Format of legacy : false
@@ -439,7 +443,7 @@ div.footer {
              */
     }
 )
-def y = new Tsr(
+def y = Tsr.of(
 new int[]{1, 3, 2},
 new double[]{
         4, -1,
@@ -459,7 +463,7 @@ new double[]{
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def z = new Tsr(new Tsr[]{x, y}, "I0xi1")</pre>
+<pre class='block-source'>def z = Tsr.of("I0xi1", x, y)</pre>
 </td>
 </tr>
 <tr>
@@ -487,7 +491,7 @@ new double[]{
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>z = new Tsr(new Object[]{x, "x", y})</pre>
+<pre class='block-source'>z = Tsr.of(new Object[]{x, "x", y})</pre>
 </td>
 </tr>
 <tr>
@@ -512,7 +516,9 @@ new double[]{
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -548,8 +554,8 @@ new double[]{
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr a = new Tsr([1, 4, 4, 1], [4..12])
-Tsr b = new Tsr([1, 3, 5, 2, 1], [-5..3])</pre>
+<pre class='block-source'>Tsr a = Tsr.of([1, 4, 4, 1], [4..12])
+Tsr b = Tsr.of([1, 3, 5, 2, 1], [-5..3])</pre>
 </td>
 </tr>
 <tr>
@@ -595,8 +601,8 @@ Tsr b = new Tsr([1, 3, 5, 2, 1], [-5..3])</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr a = new Tsr([1,2], [3, 2])
-Tsr b = new Tsr([2,1], [-1, 4])
+<pre class='block-source'>Tsr a = Tsr.of([1,2], [3, 2])
+Tsr b = Tsr.of([2,1], [-1, 4])
 Binding binding = new Binding()
 binding.setVariable('a', a)
 binding.setVariable('b', b)</pre>
@@ -638,8 +644,10 @@ binding.setVariable('b', b)</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>code</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -685,9 +693,9 @@ binding.setVariable('b', b)</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView true
-Tsr a = new Tsr(5)
-Tsr b = new Tsr(3)
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView true
+Tsr a = Tsr.of(5)
+Tsr b = Tsr.of(3)
 Binding binding = new Binding()
 binding.setVariable('a', a)
 binding.setVariable('b', b)</pre>
@@ -729,8 +737,10 @@ binding.setVariable('b', b)</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>code</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -816,10 +826,10 @@ binding.setVariable('b', b)</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView true
-Tsr a = new Tsr(2).setRqsGradient(true)
-Tsr b = new Tsr(-4)
-Tsr c = new Tsr(3).setRqsGradient(true)</pre>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView true
+Tsr a = Tsr.of(2).setRqsGradient(true)
+Tsr b = Tsr.of(-4)
+Tsr c = Tsr.of(3).setRqsGradient(true)</pre>
 </td>
 </tr>
 <tr>
@@ -833,7 +843,7 @@ Tsr c = new Tsr(3).setRqsGradient(true)</pre>
 (a *= b).toString().contains("(-8.0)")
 (a += -c).toString().contains("(-11.0)")
 (a -= c).toString().contains("(-14.0)")
-(a /= new Tsr(2)).toString().contains("(-7.0)")
+(a /= Tsr.of(2)).toString().contains("(-7.0)")
 (a %= c).toString().contains("(-1.0)")</pre>
 </td>
 </tr>
@@ -852,8 +862,8 @@ Tsr c = new Tsr(3).setRqsGradient(true)</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(false)
-Tsr a = new Tsr([100, 100], 3..19)
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(false)
+Tsr a = Tsr.of([100, 100], 3..19)
 Tsr x = a[1..-2,0..-1]
 Tsr y = a[0..-3,0..-1]
 Tsr z = a[2..-1,0..-1]</pre>
@@ -923,8 +933,8 @@ ccAsStr.contains("(98x98):[-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(false)
-Tsr a = new Tsr([4, 4], 0..16).set( device )
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(false)
+Tsr a = Tsr.of([4, 4], 0..16).set( device )
 Tsr x = a[1..-2,0..-1]
 Tsr y = a[0..-3,0..-1]
 Tsr z = a[2..-1,0..-1]</pre>
@@ -984,15 +994,17 @@ assert ccAsStr.contains("(2x2):[0.0, 0.0, 0.0, 0.0]")</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>device</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@9a6b873</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@9f6ca8a</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[[1]:(9.0), [2x2]:(15.0, 18.0, 27.0, 30.0), [9x11]:(14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, ... + 49 more), [2x4]:(12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0), [9x11]:(17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0, ... + 49 more), [2x2]:(45.0, 54.0, 81.0, 90.0), [4x4]:(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0), [2x4]:(4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0), [2x4]:(8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0), [2x2]:(45.0, 54.0, 81.0, 90.0), [2x4]:(4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 18.0), [2x2]:(5.0, 6.0, 9.0, 10.0), [9x11]:(3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, ... + 49 more), [2x2]:(27.0, 33.0, 51.0, 57.0), [2x4]:(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0), [2x2]:(12.0, 15.0, 24.0, 27.0), [2x2]:(0.0, 0.0, 0.0, 0.0), [11x11]:(3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, ... + 71 more), [2x2]:(18.0, 21.0, 30.0, 33.0)], _deviceId=cl_device_id[0x27264c405c0], _platform=neureka.devices.opencl.OpenCLPlatform@1ce3334, _queue=cl_command_queue[0x27267e10620])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x204417635e0], platform=neureka.devices.opencl.OpenCLPlatform@40b90b0c)</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -1018,8 +1030,8 @@ assert ccAsStr.contains("(2x2):[0.0, 0.0, 0.0, 0.0]")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(false)
-Tsr a = new Tsr([11, 11], 3..19).set( device )
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(false)
+Tsr a = Tsr.of([11, 11], 3..19).set( device )
 Tsr x = a[1..-2,0..-1]
 Tsr y = a[0..-3,0..-1]</pre>
 </td>
@@ -1059,15 +1071,17 @@ String rcAsStr = rowconvol.toString()</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>device</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@9a6b873</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@9f6ca8a</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[[1]:(9.0), [2x2]:(15.0, 18.0, 27.0, 30.0), [9x11]:(14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, ... + 49 more), [2x4]:(12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0), [9x11]:(17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0, ... + 49 more), [2x2]:(45.0, 54.0, 81.0, 90.0), [4x4]:(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0), [2x4]:(4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0), [2x4]:(8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0), [2x2]:(45.0, 54.0, 81.0, 90.0), [2x4]:(4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 18.0), [2x2]:(5.0, 6.0, 9.0, 10.0), [9x11]:(3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, ... + 49 more), [2x2]:(27.0, 33.0, 51.0, 57.0), [2x4]:(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0), [2x2]:(12.0, 15.0, 24.0, 27.0), [2x2]:(0.0, 0.0, 0.0, 0.0), [11x11]:(3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, ... + 71 more), [2x2]:(18.0, 21.0, 30.0, 33.0)], _deviceId=cl_device_id[0x27264c405c0], _platform=neureka.devices.opencl.OpenCLPlatform@1ce3334, _queue=cl_command_queue[0x27267e10620])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x204417635e0], platform=neureka.devices.opencl.OpenCLPlatform@40b90b0c)</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -1093,10 +1107,10 @@ String rcAsStr = rowconvol.toString()</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Tsr a = new Tsr([2,2], 1..5)
-Tsr b = new Tsr([2,1], 3..4)
-Tsr c = new Tsr([2], 8..9).setRqsGradient(true)</pre>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+Tsr a = Tsr.of([2,2], 1..5)
+Tsr b = Tsr.of([2,1], 3..4)
+Tsr c = Tsr.of([2], 8..9).setRqsGradient(true)</pre>
 </td>
 </tr>
 <tr>
@@ -1116,7 +1130,7 @@ Tsr t2 = (a+b)</pre>
 <pre class='block-source'>assert t2.toString().contains("(4.0, 5.0, 7.0, 8.0)")
 assert t1.toString().contains("(9.0, 11.0, 11.0, 13.0)")
 assert c.toString().contains("")
-Neureka.instance().settings().view().setIsUsingLegacyView(false)
+Neureka.get().settings().view().setIsUsingLegacyView(false)
 assert t1.toString().contains("):[9.0, 11.0, 11.0, 13.0]")</pre>
 </td>
 </tr>
@@ -1135,7 +1149,7 @@ assert t1.toString().contains("):[9.0, 11.0, 11.0, 13.0]")</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().isUsingLegacyView = true</pre>
+<pre class='block-source'>Neureka.get().settings().view().isUsingLegacyView = true</pre>
 </td>
 </tr>
 <tr>
@@ -1149,7 +1163,7 @@ assert t1.toString().contains("):[9.0, 11.0, 11.0, 13.0]")</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr([2, 3], [
+<pre class='block-source'>Tsr t = Tsr.of([2, 3], [
         1, 2, 3,
         4, 5, 6
 ]).T()</pre>
@@ -1184,10 +1198,10 @@ assert t1.toString().contains("):[9.0, 11.0, 11.0, 13.0]")</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Tsr x = new Tsr(3).setRqsGradient(true)
-Tsr b = new Tsr(-4)
-Tsr w = new Tsr(2)</pre>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+Tsr x = Tsr.of(3).setRqsGradient(true)
+Tsr b = Tsr.of(-4)
+Tsr w = Tsr.of(2)</pre>
 </td>
 </tr>
 <tr>
@@ -1227,7 +1241,7 @@ Tsr w = new Tsr(2)</pre>
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(true)</pre>
+<pre class='block-source'>Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true)</pre>
 </td>
 </tr>
 <tr>
@@ -1235,16 +1249,7 @@ Tsr w = new Tsr(2)</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>y.backward(new Tsr(1))</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>Then:</div>
-</td>
-<td>
-<pre class='block-source'>new Tsr([y], "Ig[0]").toString().equals("empty")
-new Tsr([x], "Ig[0]").toString().equals("empty")</pre>
+<pre class='block-source'>y.backward(Tsr.of(1))</pre>
 </td>
 </tr>
 <tr>
@@ -1252,7 +1257,40 @@ new Tsr([x], "Ig[0]").toString().equals("empty")</pre>
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().debug().setIsKeepingDerivativeTargetPayloads(false)</pre>
+<pre class='block-source'>Tsr t1 = Tsr.of( "Ig[0]", [y] )
+Tsr t2 = Tsr.of( "Ig[0]", [x] )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t1 == null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>t2.toString() == "[1]:(-8.0)"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>t2 == x.gradient</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)</pre>
 </td>
 </tr>
 <tr>
@@ -1265,10 +1303,18 @@ new Tsr([x], "Ig[0]").toString().equals("empty")</pre>
 </tr>
 <tr>
 <td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>def fun = new FunctionBuilder(Neureka.get().context()).build("Ig[0]", false)</pre>
+</td>
+</tr>
+<tr>
+<td>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>FunctionBuilder.build("Ig[0]", false)(trs).toString().equals("[1]:(-8.0)")</pre>
+<pre class='block-source'>fun(trs).toString().equals("[1]:(-8.0)")</pre>
 </td>
 </tr>
 <tr>
@@ -1281,10 +1327,18 @@ new Tsr([x], "Ig[0]").toString().equals("empty")</pre>
 </tr>
 <tr>
 <td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>fun = new FunctionBuilder(Neureka.get().context()).build("Ig[0]", false)</pre>
+</td>
+</tr>
+<tr>
+<td>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>assert FunctionBuilder.build("Ig[0]", false)(trs).toString().contains("[1]:(4.0); -&gt;d[1]:(-8.0)")</pre>
+<pre class='block-source'>fun(trs) == null</pre>
 </td>
 </tr>
 </tbody>

@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:37 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:44 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>2</td>
 <td>2</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.243 seconds</td>
+<td>0.528 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -366,12 +370,12 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Tsr a = new Tsr([2, 3], [
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+Tsr a = Tsr.of([2, 3], [
         1, 2, 3,
         4, 5, 6
 ]).setRqsGradient(true)
-Function rs = Function.create("[1, 0]:(I[0])")</pre>
+Function rs = Function.of("[1, 0]:(I[0])")</pre>
 </td>
 </tr>
 <tr>
@@ -391,7 +395,7 @@ GraphNode nb = b.find( GraphNode.class )</pre>
 <td>
 <pre class='block-source'>assert na.getChildren().size()==1
 assert b.toString().contains("")
-b.backward(new Tsr([3, 2],[
+b.backward(Tsr.of([3, 2],[
         -1, 2,
         4, 7,
         -9, 8
@@ -427,9 +431,9 @@ assert !nb.getLock().isLocked()</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr a = new Tsr(2).setRqsGradient(true)
+<pre class='block-source'>Tsr a = Tsr.of(2).setRqsGradient(true)
 Tsr b = a * 3 / 5
-Tsr c = new Tsr(3)
+Tsr c = Tsr.of(3)
 Tsr d = b ^ c
 Tsr e = d * c
 GraphNode n = e.find( GraphNode.class )</pre>

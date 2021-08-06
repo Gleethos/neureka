@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:46 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:44 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>3</td>
 <td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>6.876 seconds</td>
+<td>1.000 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -385,8 +389,8 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>if ( !Neureka.instance().canAccessOpenCL() ) return
-def device = OpenCLPlatform.PLATFORMS()[0].devices[0]</pre>
+<pre class='block-source'>if ( !Neureka.get().canAccessOpenCL() ) return
+def device = Neureka.get().context().find(CLContext.class).platforms[0].devices[0]</pre>
 </td>
 </tr>
 <tr>
@@ -478,8 +482,8 @@ exception.message == "Method 'clCreateKernel' failed! The name of the '__kernel'
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>if ( !Neureka.instance().canAccessOpenCL() ) return
-def device = OpenCLPlatform.PLATFORMS()[0].devices[0]
+<pre class='block-source'>if ( !Neureka.get().canAccessOpenCL() ) return
+def device = Neureka.get().context().find(CLContext.class).getPlatforms()[0].devices[0]
 def code = """
 __kernel void right_dummy_kernel_name (
         __global float* output,
@@ -600,8 +604,8 @@ exception.message == "Cannot compile kernel source for name 'right_dummy_kernel_
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>if ( !Neureka.instance().canAccessOpenCL() ) return
-def device = OpenCLPlatform.PLATFORMS()[0].devices[0]</pre>
+<pre class='block-source'>if ( !Neureka.get().canAccessOpenCL() ) return
+def device = Neureka.get().context().find(CLContext.class).getPlatforms()[0].devices[0]</pre>
 </td>
 </tr>
 <tr>
@@ -630,7 +634,7 @@ device._log = Mock( Logger )</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>device.restore( new Tsr&lt;Number&gt;() )</pre>
+<pre class='block-source'>device.restore( Tsr.newInstance() )</pre>
 </td>
 </tr>
 <tr>
@@ -677,7 +681,7 @@ exception.message == "The passed tensor cannot be restored from " +
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>if ( Neureka.instance().canAccessOpenCL() ) device._log = oldLogger</pre>
+<pre class='block-source'>if ( Neureka.get().canAccessOpenCL() ) device._log = oldLogger</pre>
 </td>
 </tr>
 </tbody>

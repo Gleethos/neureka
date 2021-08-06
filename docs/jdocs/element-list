@@ -6,6 +6,7 @@ neureka.backend.api.implementations
 neureka.backend.api.operations
 neureka.backend.standard.algorithms
 neureka.backend.standard.implementations
+neureka.backend.standard.operations
 neureka.backend.standard.operations.function
 neureka.backend.standard.operations.indexer
 neureka.backend.standard.operations.linear
@@ -24,6 +25,7 @@ neureka.devices.opencl.utility
 neureka.dtype
 neureka.dtype.custom
 neureka.framing
+neureka.framing.states
 neureka.ndim
 neureka.ndim.config
 neureka.ndim.config.types
@@ -40,3 +42,8 @@ neureka.ndim.iterators.types.simple.main
 neureka.optimization
 neureka.optimization.implementations
 neureka.utility
+neureka.utility.fluent
+neureka.utility.fluent.states
+neureka.utility.functional
+neureka.utility.slicing
+neureka.utility.slicing.states

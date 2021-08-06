@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Messages.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.utility</a> &gt; <span class="el_source">Messages.java</span></div><h1>Messages.java</h1><pre class="source lang-java linenums">package neureka.utility;
+
+import neureka.backend.api.Algorithm;
+import neureka.backend.api.Operation;
+import neureka.backend.api.OperationContext;
+import neureka.devices.opencl.CLContext;
+import org.slf4j.helpers.MessageFormatter;
+
+/**
+ *  A simple collection of prepared
+ *  String messages which provide helpful messages for the logging
+ *  backend and ultimately the user of this library.
+ */
+<span class="nc" id="L14">public class Messages</span>
+{
+<span class="fc" id="L16">    public static final String ILLEGAL_OPERATION_STATE_ERROR =</span>
+<span class="fc" id="L17">                    &quot;Unexpected '&quot;+ Operation.class.getSimpleName()+&quot;' state encountered:\n&quot; +</span>
+                    &quot;The operation '{}' String should not be null but was null!&quot;;
+
+    public static final String OPERATION_LOADED_DEBUG =
+                    &quot;Operation: '{}' loaded!&quot;;
+
+<span class="fc" id="L23">    public static final String CL_CONTEXT_NOT_CREATED_WARNING =</span>
+                    &quot;OpenCL not available!\n&quot; +
+<span class="fc" id="L25">                    &quot;Skipped creating and adding a new '&quot;+ CLContext.class.getSimpleName()+&quot;' &quot; +</span>
+<span class="fc" id="L26">                    &quot;to the current '&quot;+ OperationContext.class.getSimpleName()+&quot;'...&quot;;</span>
+
+<span class="nc" id="L28">    public static class Device {</span>
+
+        public static String couldNotFindSuitableAlgorithmFor( Class&lt;?&gt; type ) {
+<span class="nc" id="L31">            return _format(</span>
+<span class="nc" id="L32">                        &quot;No suitable '&quot;+ Algorithm.class.getSimpleName()+&quot;' found for device of type '{}'.&quot;,</span>
+<span class="nc" id="L33">                        type.getSimpleName()</span>
+                    );
+        }
+
+        public static String couldNotFindSuitableImplementationFor(
+                Algorithm&lt;?&gt; algorithm,
+                Class&lt;?&gt; type
+        ) {
+<span class="fc" id="L41">           return _format(</span>
+                   &quot;No suitable implementation found for algorithm '{}' and device type '{}'.&quot;,
+<span class="fc" id="L43">                   algorithm.getName(),</span>
+<span class="fc" id="L44">                   type.getSimpleName()</span>
+               );
+        }
+
+    }
+
+    private static String _format( String withPlaceholders, Object... toBePutAtPlaceholders ) {
+<span class="fc" id="L51">        return MessageFormatter.arrayFormat(withPlaceholders, toBePutAtPlaceholders).getMessage();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

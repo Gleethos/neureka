@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:38:14 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:09:00 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>2</td>
 <td>2</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.366 seconds</td>
+<td>0.263 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -383,9 +387,9 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>assert !Neureka.instance().settings().isLocked()
-assert !Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads()
-assert Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed()</pre>
+<pre class='block-source'>assert !Neureka.get().settings().isLocked()
+assert !Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads()
+assert Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()</pre>
 </td>
 </tr>
 <tr>
@@ -399,7 +403,7 @@ assert Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUs
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = false</pre>
+<pre class='block-source'>Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false</pre>
 </td>
 </tr>
 <tr>
@@ -413,8 +417,8 @@ assert Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUs
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>assert !Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed()
-assert Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp()</pre>
+<pre class='block-source'>assert !Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
+assert Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()</pre>
 </td>
 </tr>
 <tr>
@@ -428,7 +432,7 @@ assert Neureka.instance().settings().autograd().isRetainingPendingErrorForJITPro
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>assert Neureka.version()=="0.6.0"</pre>
+<pre class='block-source'>assert Neureka.version()=="0.7.0"</pre>
 </td>
 </tr>
 <tr>
@@ -466,8 +470,8 @@ assert Neureka.instance().settings().autograd().isRetainingPendingErrorForJITPro
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def t1 = new Thread({ map['instance 1'] = Neureka.instance() })
-def t2 = new Thread({ map['instance 2'] = Neureka.instance() })</pre>
+<pre class='block-source'>def t1 = new Thread({ map['instance 1'] = Neureka.get() })
+def t2 = new Thread({ map['instance 2'] = Neureka.get() })</pre>
 </td>
 </tr>
 <tr>

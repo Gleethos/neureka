@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:38:13 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:52 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
-<td>1</td>
+<td>3</td>
+<td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.043 seconds</td>
+<td>0.076 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -346,6 +350,12 @@ div.footer {
 <ul id='toc'>
 <li>
 <a href='#909402194' class='feature-toc-pass'>OperationContext instances can be created by cloning from Singleton instance.</a>
+</li>
+<li>
+<a href='#1215779916' class='feature-toc-pass'>OperationContext instances return Runner instances for easy visiting.</a>
+</li>
+<li>
+<a href='#-152241672' class='feature-toc-pass'>OperationContext instances return Runner instances for easy visiting with return values.</a>
 </li>
 </ul>
 <tr>
@@ -369,8 +379,8 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def mockOperation = Mock(AbstractOperation)
-def context = OperationContext.get()</pre>
+<pre class='block-source'>def mockOperation = Mock(Operation)
+def context = Neureka.get().context()</pre>
 </td>
 </tr>
 <tr>
@@ -412,8 +422,8 @@ def context = OperationContext.get()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>clone.id() == context.id()
-clone.lookup() == context.lookup()
+<pre class='block-source'>clone.size()      == context.size()
+clone.lookup()    == context.lookup()
 clone.instances() == context.instances()</pre>
 </td>
 </tr>
@@ -422,15 +432,22 @@ clone.instances() == context.instances()</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
+<pre class='block-source'>1 * mockOperation.getOperator() &gt;&gt; ""
+1 * mockOperation.getFunction() &gt;&gt; ""</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
 <div class='block-text'>The clone is changes its state.</div>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>clone.incrementID()
-clone.lookup().put("TEST KEY", null)
-clone.instances().add( mockOperation )</pre>
+<pre class='block-source'>clone.addOperation( mockOperation )</pre>
 </td>
 </tr>
 <tr>
@@ -444,7 +461,7 @@ clone.instances().add( mockOperation )</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>clone.id() != context.id()
+<pre class='block-source'>clone.size() != context.size()
 clone.lookup() != context.lookup()
 clone.instances() != context.instances()</pre>
 </td>
@@ -460,10 +477,281 @@ clone.instances() != context.instances()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>clone.id() == context.id() + 1
+<pre class='block-source'>clone.size() == context.size() + 1
 clone.lookup().size() == context.lookup().size() + 1
-clone.lookup().containsKey("TEST KEY")
+clone.lookup().containsKey("")
 clone.instances().size() == context.instances().size() + 1</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1215779916'>
+<span>OperationContext instances return Runner instances for easy visiting.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>The current thread local OperationContext instance.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def current = Neureka.get().context()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A clone is being created by calling "clone()" on the given context...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def clone = current.clone()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>We ger a Runner instance via the following method:</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def run = clone.runner()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Also, we create a mocked lambda function as a "spy"!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def spy = Mock(Function)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We pass a lambda to the "useFor" method to the runner, containing a closure with the spy...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>run.run({spy.apply(Neureka.get().context())})</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The spy will tell us that the passed lambda has been executed by the runner in the clone context!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>1 * spy.apply(clone)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The context accessible through the static "get" method will indeed be the current context!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>current == Neureka.get().context()</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-152241672'>
+<span>OperationContext instances return Runner instances for easy visiting with return values.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>The current thread local OperationContext instance.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def current = Neureka.get().context()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A clone is being created by calling "clone()" on the given context...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def clone = current.clone()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>We wrap a Runner instance around a wrapper which will test its methods!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def run = runWrapper( clone.runner() )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>Querying the thread local context inside the Runner...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def innerContext = run { Neureka.get().context() }</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>...also outside the Runner lambda...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def outerContext = Neureka.get().context()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>These two context instances will be different objects!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>innerContext != outerContext</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The inner context will in fact be the clone which provided the Runner!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>innerContext == clone</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The outer context is as expected simply the current context.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>outerContext == current</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following conceptually identical Runner methods can be used:</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>runWrapper</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>3/3 passed</div>
 </td>
 </tr>
 </tbody>

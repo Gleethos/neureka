@@ -51,20 +51,32 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- *  This is the root precursor class to the final Tsr class from which
- *  tensor instances can be created.
- *  The inheritance model of a tensor is structured as follows:
- *  Tsr inherits from AbstractNDArray which inherits from AbstractComponentOwner
- *  The inheritance model is linear, meaning that all classes involved
- *  are not extended more than once.
+ *  Together with the {@link Component} interface, this class defines a simple
+ *  component system in which implementations of the {@link Component} interface
+ *  are managed by extensions of this {@link AbstractComponentOwner}.
+ *  An {@link AbstractComponentOwner} can have multiple {@link Component} instances which
+ *  are being accessed via the {@link Class} objects of these implementations.
+ *  This means that the {@link AbstractComponentOwner} can only reference a single
+ *  instance of a concrete {@link Component} implementation class.                                   &lt;br&gt;
+ *                                                                                                   &lt;br&gt;
+ *  This class is used as the root precursor class of the concrete {@link Tsr} class
+ *  from which tensor instances can be created, but also the precursor class of
+ *  the {@link neureka.backend.api.OperationContext} which is managed by thread local
+ *  {@link neureka.Neureka} library context instances.
+ *  An {@link neureka.backend.api.OperationContext} directly or indirectly
+ *  hosts {@link neureka.backend.api.Operation}, {@link java.util.function.Function}
+ *  and of course {@link Component} implementations.
+ *  Tensors on the other hand use this component system to enable autograd
+ *  via the {@link GraphNode} class and to reference gradients ({@link Tsr} is itself a {@link Component})
+ *  among other type of components...
  *
- * @param &lt;InstanceType&gt; The class at the bottom end of the inheritance hierarchy. (Used for factory pattern)
+ * @param &lt;C&gt; The concrete class at the bottom end of the inheritance hierarchy. (Used to allow for method chaining)
  */
-<span class="fc" id="L63">public abstract class AbstractComponentOwner&lt;InstanceType&gt;</span>
+<span class="fc" id="L75">public abstract class AbstractComponentOwner&lt;C&gt;</span>
 {
     /**
      *  The following static map enables fast access to properties which describe
-     *  the &quot;importance&quot; of an implementation of the Component interface.
+     *  the &quot;importance&quot; of an implementation of the {@link Component} interface.
      *  This is relevant only for performance reasons because
      *  the component owner referencing this component among
      *  others can store them according to their order to
@@ -73,102 +85,136 @@ import java.util.function.Consumer;
      *  New component implementations will default to a class order of 0
      *  and otherwise one should consider profiling the access patterns
      *  of the component system and update this mapping...
-     *
      */
-<span class="fc" id="L78">    private static final Map&lt;Class&lt;? extends Component&gt;, Integer&gt; _CLASS_ORDER = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L89">    private static final Map&lt;Class&lt;? extends Component&gt;, Integer&gt; _CLASS_ORDER = new HashMap&lt;&gt;();</span>
     static {
-<span class="fc" id="L80">            _CLASS_ORDER.put(Optimizer.class,	    1   );</span>
-<span class="fc" id="L81">            _CLASS_ORDER.put(JITProp.class,	        2   );</span>
-<span class="fc" id="L82">            _CLASS_ORDER.put(OpenCLDevice.class,	3   );</span>
-<span class="fc" id="L83">            _CLASS_ORDER.put(Tsr.class,	            4   );</span>
-<span class="fc" id="L84">            _CLASS_ORDER.put(Relation.class,	    5   );</span>
-<span class="fc" id="L85">            _CLASS_ORDER.put(Device.class,	        6   );</span>
-<span class="fc" id="L86">            _CLASS_ORDER.put(GraphNode.class,	    7   );</span>
-<span class="fc" id="L87">    }</span>
+<span class="fc" id="L91">            _CLASS_ORDER.put( Optimizer.class,	    1   );</span>
+<span class="fc" id="L92">            _CLASS_ORDER.put( JITProp.class,	    2   );</span>
+<span class="fc" id="L93">            _CLASS_ORDER.put( OpenCLDevice.class,	3   );</span>
+<span class="fc" id="L94">            _CLASS_ORDER.put( Tsr.class,	        4   );</span>
+<span class="fc" id="L95">            _CLASS_ORDER.put( Relation.class,	    5   );</span>
+<span class="fc" id="L96">            _CLASS_ORDER.put( Device.class,	        6   );</span>
+<span class="fc" id="L97">            _CLASS_ORDER.put( GraphNode.class,	    7   );</span>
+<span class="fc" id="L98">    }</span>
 
     /**
-     *  A collection of components.
+     *  An array of (type) unique components.
      */
-<span class="fc" id="L92">    protected Component&lt;InstanceType&gt;[] _components = null;</span>
+<span class="fc" id="L103">    private Component&lt;C&gt;[] _components = null;</span>
 
-    private synchronized void _setComps( Component&lt;InstanceType&gt;[] components ) {
-<span class="fc" id="L95">        _components = components;</span>
-<span class="fc" id="L96">    }</span>
+<span class="fc" id="L105">    protected C _this() { return (C) this; }</span>
 
-    private synchronized void _addOrRemoveComp( Component&lt;InstanceType&gt; component, boolean remove ) {
-<span class="fc bfc" id="L99" title="All 2 branches covered.">        if ( remove ) {</span>
-<span class="pc bpc" id="L100" title="3 of 6 branches missed.">            if ( _components != null &amp;&amp; _components.length != 0 &amp;&amp; component != null ) {</span>
-<span class="fc" id="L101">                int count = 0;</span>
-<span class="fc bfc" id="L102" title="All 2 branches covered.">                for ( int i = 0; i &lt; _components.length; i++ )</span>
-<span class="fc bfc" id="L103" title="All 2 branches covered.">                    if ( _components[ i ] == component ) _components[ i ] = null;</span>
-<span class="fc" id="L104">                    else count++;</span>
-<span class="pc bpc" id="L105" title="1 of 2 branches missed.">                if ( count != _components.length ) {</span>
-<span class="fc" id="L106">                    Component&lt;InstanceType&gt;[] newComponents = new Component[ count ];</span>
-<span class="fc" id="L107">                    count = 0;</span>
-<span class="fc bfc" id="L108" title="All 2 branches covered.">                    for ( int i = 0; i &lt; _components.length; i++ )</span>
-<span class="fc bfc" id="L109" title="All 2 branches covered.">                        if ( _components[ i ] == null ) count++;</span>
-<span class="fc" id="L110">                        else newComponents[ i - count ] = _components[ i ];</span>
-<span class="fc" id="L111">                    _components = newComponents;</span>
-                }
-<span class="fc" id="L113">            }</span>
-        } else {
-<span class="fc bfc" id="L115" title="All 2 branches covered.">            if ( _components == null ) _setComps( new Component[]{ component } );</span>
-<span class="pc bpc" id="L116" title="1 of 2 branches missed.">            else if ( component != null ) {</span>
-<span class="fc bfc" id="L117" title="All 4 branches covered.">                for ( Component&lt;InstanceType&gt; c : _components ) if ( c == component ) return;</span>
-<span class="fc" id="L118">                Component&lt;InstanceType&gt;[] newComponents = new Component[ _components.length + 1 ];</span>
-<span class="fc" id="L119">                System.arraycopy( _components, 0, newComponents, 0, _components.length );</span>
-<span class="fc" id="L120">                newComponents[ newComponents.length - 1 ] = component;</span>
-<span class="fc" id="L121">                _setComps( newComponents );</span>
-<span class="fc bfc" id="L122" title="All 2 branches covered.">                for ( int i = 1; i &lt; _components.length; i++ ) {</span>
-<span class="fc" id="L123">                    Component&lt;InstanceType&gt; a = _components[ i-1 ];</span>
-<span class="fc" id="L124">                    Component&lt;InstanceType&gt; b = _components[ i ];</span>
-<span class="fc" id="L125">                    int orderA = _CLASS_ORDER.getOrDefault( a, 0 );</span>
-<span class="fc" id="L126">                    int orderB = _CLASS_ORDER.getOrDefault( b, 0 );</span>
-<span class="pc bpc" id="L127" title="1 of 2 branches missed.">                    if ( orderB &gt; orderA ) {</span>
-<span class="nc" id="L128">                        _components[ i - 1 ] = b;</span>
-<span class="nc" id="L129">                        _components[ i ] = a;</span>
-                    }
+    private synchronized void _setComps( Component&lt;C&gt;[] components ) {
+<span class="fc" id="L108">        _components = components;</span>
+<span class="fc" id="L109">    }</span>
+
+    private synchronized void _addOrRemoveComp( Component&lt;C&gt; component, boolean remove ) {
+<span class="fc" id="L112">        boolean[] changeExecuted = { false };</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        if ( remove ) {</span>
+<span class="fc" id="L114">            boolean removalAccepted =</span>
+<span class="fc" id="L115">                    component.update(</span>
+<span class="fc" id="L116">                        new Component.OwnerChangeRequest&lt;C&gt;() {</span>
+<span class="fc" id="L117">                            @Override public C getOldOwner() { return _this(); }</span>
+<span class="fc" id="L118">                            @Override public C getNewOwner() { return null; }</span>
+                            @Override public boolean executeChange() {
+<span class="fc" id="L120">                                _remove( component );</span>
+<span class="fc" id="L121">                                changeExecuted[0] = true;</span>
+<span class="fc" id="L122">                                return true; // We inform the component that the change was executed successfully!</span>
+                            }
+                        }
+                    );
+<span class="pc bpc" id="L126" title="1 of 4 branches missed.">            if ( removalAccepted &amp;&amp; !changeExecuted[0] ) _remove( component );</span>
+<span class="fc" id="L127">        } else {</span>
+            // The component receives an initial update call:
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">            if ( component != null ) { </span>
+<span class="fc" id="L130">                boolean additionAccepted =</span>
+<span class="fc" id="L131">                        component.update(</span>
+<span class="fc" id="L132">                            new Component.OwnerChangeRequest&lt;C&gt;() {</span>
+<span class="fc" id="L133">                                @Override public C getOldOwner() { return null; }</span>
+<span class="fc" id="L134">                                @Override public C getNewOwner() { return _this(); }</span>
+                                @Override public boolean executeChange() {
+<span class="fc" id="L136">                                    _add( _setOrReject( component ) );</span>
+<span class="fc" id="L137">                                    changeExecuted[0] = true;</span>
+<span class="fc" id="L138">                                    return true; // We inform the component that the change was executed successfully!</span>
+                                }
+                            }
+                        );
+<span class="fc bfc" id="L142" title="All 4 branches covered.">                if ( additionAccepted &amp;&amp; !changeExecuted[0] ) _add( _setOrReject( component ) );</span>
+            }
+        }
+<span class="fc" id="L145">    }</span>
+
+    private void _remove( Component&lt;C&gt; component ) {
+<span class="pc bpc" id="L148" title="2 of 4 branches missed.">        if ( _components != null &amp;&amp; _components.length != 0 ) {</span>
+<span class="fc" id="L149">            int count = 0;</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">            for ( int i = 0; i &lt; _components.length; i++ )</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">                if ( _components[ i ] == component ) _components[ i ] = null;</span>
+<span class="fc" id="L152">                else count++;</span>
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">            if ( count != _components.length ) {</span>
+<span class="fc" id="L154">                Component&lt;C&gt;[] newComponents = new Component[ count ];</span>
+<span class="fc" id="L155">                count = 0;</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">                for ( int i = 0; i &lt; _components.length; i++ )</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">                    if ( _components[ i ] == null ) count++;</span>
+<span class="fc" id="L158">                    else newComponents[ i - count ] = _components[ i ];</span>
+<span class="fc" id="L159">                _components = newComponents;</span>
+            }
+        }
+<span class="fc" id="L162">    }</span>
+
+    private void _add( Component&lt;C&gt; component ) {
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">        if ( component == null ) return;</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        if ( _components == null ) _setComps( new Component[]{ component } );</span>
+        else {
+<span class="pc bpc" id="L168" title="1 of 4 branches missed.">            for ( Component&lt;C&gt; c : _components ) if ( c == component ) return;</span>
+<span class="fc" id="L169">            Component&lt;C&gt;[] newComponents = new Component[ _components.length + 1 ];</span>
+<span class="fc" id="L170">            System.arraycopy( _components, 0, newComponents, 0, _components.length );</span>
+<span class="fc" id="L171">            newComponents[ newComponents.length - 1 ] = component;</span>
+<span class="fc" id="L172">            _setComps( newComponents );</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">            for ( int i = 1; i &lt; _components.length; i++ ) {</span>
+<span class="fc" id="L174">                Component&lt;C&gt; a = _components[ i-1 ];</span>
+<span class="fc" id="L175">                Component&lt;C&gt; b = _components[ i ];</span>
+<span class="fc" id="L176">                int orderA = _CLASS_ORDER.getOrDefault( a, 0 );</span>
+<span class="fc" id="L177">                int orderB = _CLASS_ORDER.getOrDefault( b, 0 );</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">                if ( orderB &gt; orderA ) {</span>
+<span class="nc" id="L179">                    _components[ i - 1 ] = b;</span>
+<span class="nc" id="L180">                    _components[ i ] = a;</span>
                 }
             }
         }
-<span class="fc" id="L134">    }</span>
+<span class="fc" id="L184">    }</span>
 
     /**
-     *  A component owner might need to &quot;changes its identity&quot;. &lt;br&gt;
-     *  Meaning that the components of another owner will be stripped of its components
-     *  which will be adopted by the current one.
+     *  A component owner might need to exchange components. &lt;br&gt;
+     *  Meaning that the components of another owner will be transferred and adopted by the current one.
      *  During this process the transferred components will be notified of their new owner.
      *  This is important because some components might reference their owners... &lt;br&gt;
      *  &lt;br&gt;
-     *  This change currently only happens in the 'Tsr' sub-class when tensors are being instantiated by
-     *  certain constructors to which input tensors and a math expression is passed.
-     *  This triggers the creation of a Function instance and execution on the provided
-     *  input tensors. In that case the output tensor will be created somewhere
-     *  along the execution call stack, however the result is expected to be
-     *  stored within the tensor whose constructor initialized all of this.
-     *  In that case this tensor will rip out the guts of the resulting output
-     *  tensor and stuff onto its own field variables.
+     *  This change happens for example in the {@link Tsr} class when tensors are being instantiated by
+     *  certain constructors which require the injection of the contents of another tensor into a new one.
      *
      * @param other The other owner which will be stripped of its components which are then incorporated into this owner.
      */
-    protected void _transferFrom( AbstractComponentOwner&lt;InstanceType&gt; other ) {
-<span class="pc bpc" id="L155" title="1 of 2 branches missed.">            if ( other._components != null ) {</span>
-<span class="fc" id="L156">            _setComps( other._components ); // Inform components about their new owner:</span>
-<span class="fc bfc" id="L157" title="All 2 branches covered.">            for ( Component&lt;InstanceType&gt; c : _components ) c.update((InstanceType) other, (InstanceType) this);</span>
-<span class="fc" id="L158">            other._delComps();</span>
+    protected void _transferFrom( AbstractComponentOwner&lt;C&gt; other ) {
+<span class="pc bpc" id="L198" title="1 of 2 branches missed.">            if ( other._components != null ) {</span>
+<span class="fc" id="L199">            _setComps( other._components ); // Inform components about their new owner:</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">            for ( Component&lt;C&gt; c : _components ) c.update(</span>
+<span class="fc" id="L201">                    new Component.OwnerChangeRequest&lt;C&gt;() {</span>
+<span class="fc" id="L202">                        @Override public C getOldOwner() { return other._this(); }</span>
+<span class="fc" id="L203">                        @Override public C getNewOwner() { return _this(); }</span>
+<span class="fc" id="L204">                        @Override public boolean executeChange() { return false; }</span>
+                    });
+<span class="fc" id="L206">            other._deleteComponents();</span>
         }
-<span class="fc" id="L160">    }</span>
+<span class="fc" id="L208">    }</span>
 
     /**
      *  This method deletes the array of components of this component owner
      *  by nulling the array variable field.
      */
-    protected void _delComps() {
-<span class="fc" id="L167">        _components = null;</span>
-<span class="fc" id="L168">    }</span>
+<span class="fc" id="L214">    protected void _deleteComponents() { _components = null; }</span>
 
     /**
-     *  This method tries to find a component inside the stored
+     *  This method tries to find a component inside the internal
      *  component array whose class matches the one provided.
      *  If no such component could be found then
      *  the return value will simply be null.
@@ -179,12 +225,12 @@ import java.util.function.Consumer;
      */
     public &lt;T extends Component&lt;?&gt;&gt; T find( Class&lt;T&gt; componentClass )
     {
-<span class="fc bfc" id="L182" title="All 2 branches covered.">        if ( _components != null) {</span>
-<span class="fc bfc" id="L183" title="All 2 branches covered.">            for ( Component&lt;?&gt; component : _components ) {</span>
-<span class="fc bfc" id="L184" title="All 2 branches covered.">                if ( componentClass.isInstance( component ) ) return (T) component;</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">        if ( _components != null) {</span>
+<span class="fc bfc" id="L229" title="All 2 branches covered.">            for ( Component&lt;?&gt; component : _components ) {</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">                if ( componentClass.isInstance( component ) ) return (T) component;</span>
             }
         }
-<span class="fc" id="L187">        return null;</span>
+<span class="fc" id="L233">        return null;</span>
     }
 
     /**
@@ -195,23 +241,23 @@ import java.util.function.Consumer;
      * @param &lt;T&gt; The type parameter of the component which will be removed by this method.
      * @return This very class.
      */
-    public &lt;T extends Component&lt;InstanceType&gt;&gt; InstanceType remove( Class&lt;T&gt; componentClass )
+    public &lt;T extends Component&lt;C&gt;&gt; C remove( Class&lt;T&gt; componentClass )
     {
-<span class="fc" id="L200">        T oldComponent = find( componentClass );</span>
-<span class="fc bfc" id="L201" title="All 2 branches covered.">        if ( oldComponent != null ) _addOrRemoveComp( _removeOrReject( oldComponent ), true );</span>
-<span class="pc bpc" id="L202" title="1 of 4 branches missed.">        if ( _components != null &amp;&amp; _components.length == 0 ) _components = null;</span>
-<span class="fc" id="L203">        return (InstanceType) this;</span>
+<span class="fc" id="L246">        T oldComponent = find( componentClass );</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">        if ( oldComponent != null ) _addOrRemoveComp( _removeOrReject( oldComponent ), true );</span>
+<span class="pc bpc" id="L248" title="1 of 4 branches missed.">        if ( _components != null &amp;&amp; _components.length == 0 ) _components = null;</span>
+<span class="fc" id="L249">        return _this();</span>
     }
 
     /**
-     * This method checks if a component identified by the passed Class
+     * This method checks if a component identified by the passed {@link Class}
      * instance is present inside the stored component collection.
      *
      * @param componentClass The class/type of a component that might exist in components.
      * @return True if the component of the given type/class has been found.
      */
-    public &lt;T extends Component&lt;InstanceType&gt;&gt; boolean has( Class&lt;T&gt; componentClass ) {
-<span class="fc bfc" id="L214" title="All 2 branches covered.">        return find( componentClass ) != null;</span>
+    public &lt;T extends Component&lt;C&gt;&gt; boolean has( Class&lt;T&gt; componentClass ) {
+<span class="fc bfc" id="L260" title="All 2 branches covered.">        return find( componentClass ) != null;</span>
     }
 
     /**
@@ -224,18 +270,18 @@ import java.util.function.Consumer;
      * @param newComponent The new component which should be added to the components list.
      * @return This very class.
      */
-    public InstanceType set( Component&lt;InstanceType&gt; newComponent)
+    public C set( Component&lt;C&gt; newComponent )
     {
-<span class="pc bpc" id="L229" title="1 of 2 branches missed.">        if ( newComponent == null ) return (InstanceType) this;</span>
-        Component&lt;InstanceType&gt; oldCompartment;
-<span class="fc bfc" id="L231" title="All 2 branches covered.">        if ( _components != null ) {</span>
-<span class="fc" id="L232">            oldCompartment = (Component&lt;InstanceType&gt;) find( newComponent.getClass() );</span>
-<span class="fc bfc" id="L233" title="All 2 branches covered.">            if ( oldCompartment != null ) {</span>
-<span class="fc" id="L234">                _addOrRemoveComp( oldCompartment, true );</span>
+<span class="pc bpc" id="L275" title="1 of 2 branches missed.">        if ( newComponent == null ) return _this();</span>
+        Component&lt;C&gt; oldCompartment;
+<span class="fc bfc" id="L277" title="All 2 branches covered.">        if ( _components != null ) {</span>
+<span class="fc" id="L278">            oldCompartment = (Component&lt;C&gt;) find( newComponent.getClass() );</span>
+<span class="fc bfc" id="L279" title="All 2 branches covered.">            if ( oldCompartment != null ) {</span>
+<span class="fc" id="L280">                _addOrRemoveComp( oldCompartment, true );</span>
             }
         }
-<span class="fc" id="L237">        _addOrRemoveComp( _setOrReject( newComponent ), false );</span>
-<span class="fc" id="L238">        return (InstanceType) this;</span>
+<span class="fc" id="L283">        _addOrRemoveComp( newComponent, false );</span>
+<span class="fc" id="L284">        return _this();</span>
     }
 
     /**
@@ -251,7 +297,7 @@ import java.util.function.Consumer;
      * @param newComponent The component which should be added to the components list.
      * @return The same component or null if it has been rejected.
      */
-    protected abstract &lt;T extends Component&lt;InstanceType&gt;&gt; T _setOrReject( T newComponent );
+    protected abstract &lt;T extends Component&lt;C&gt;&gt; T _setOrReject(T newComponent );
 
 
     /**
@@ -267,7 +313,7 @@ import java.util.function.Consumer;
      * @param newComponent The component which should be removed from the components list.
      * @return The same component or null if its removal has been rejected.
      */
-    protected abstract &lt;T extends Component&lt;InstanceType&gt;&gt; T _removeOrReject(T newComponent);
+    protected abstract &lt;T extends Component&lt;C&gt;&gt; T _removeOrReject(T newComponent);
 
     /**
      * This method tries to find a stored component by identifying it
@@ -279,12 +325,13 @@ import java.util.function.Consumer;
      * @param action An action applied on the requested component if found.
      * @return True if a component could be found, false otherwise.
      */
-    public &lt;T extends Component&lt;InstanceType&gt;&gt; boolean forComponent( Class&lt;T&gt; cc, Consumer&lt;T&gt; action ) {
-<span class="fc" id="L283">        T component = this.find( cc );</span>
-<span class="fc bfc" id="L284" title="All 2 branches covered.">        if ( component != null ) {</span>
-<span class="fc" id="L285">            action.accept( component );</span>
-<span class="fc" id="L286">            return true;</span>
-<span class="fc" id="L287">        } else return false;</span>
+    public &lt;T extends Component&lt;C&gt;&gt; boolean forComponent( Class&lt;T&gt; cc, Consumer&lt;T&gt; action ) {
+<span class="fc" id="L329">        T component = this.find( cc );</span>
+<span class="fc bfc" id="L330" title="All 2 branches covered.">        if ( component != null ) {</span>
+<span class="fc" id="L331">            action.accept( component );</span>
+<span class="fc" id="L332">            return true;</span>
+        }
+<span class="fc" id="L334">        else return false;</span>
     }
 
 

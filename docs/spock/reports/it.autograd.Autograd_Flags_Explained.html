@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:34 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:42 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>8</td>
 <td>8</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>7.074 seconds</td>
+<td>6.929 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -358,34 +362,34 @@ div.footer {
 <tbody>
 <ul id='toc'>
 <li>
-<a href='#-1896827333' class='feature-toc-pass'>Advanced backpropagation on all AD-Modes  [0]</a>
+<a href='#1041041227' class='feature-toc-pass'>Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: false, whenUse: false, doJIT: false, afterBack: .*1.*4\.5.*, afterUse: .*1.*4\.5.*, afterRqd: .*1.*4\.5.*, afterAll: .*1.*4\.5.*, #0]</a>
 </li>
 <li>
-<a href='#-1896827302' class='feature-toc-pass'>Advanced backpropagation on all AD-Modes  [1]</a>
+<a href='#1701006427' class='feature-toc-pass'>Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: true, whenUse: false, doJIT: false, afterBack: .*1.*4\.5.*, afterUse: .*1.*4\.5.*, afterRqd: .*5\.5.*null.*, afterAll: .*5\.5.*null.*, #1]</a>
 </li>
 <li>
-<a href='#-1896827271' class='feature-toc-pass'>Advanced backpropagation on all AD-Modes  [2]</a>
+<a href='#-1072517419' class='feature-toc-pass'>Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: false, whenUse: true, doJIT: false, afterBack: .*1.*4\.5.*, afterUse: .*5\.5.*null.*, afterRqd: .*5\.5.*null.*, afterAll: .*5\.5.*null.*, #2]</a>
 </li>
 <li>
-<a href='#-1896827240' class='feature-toc-pass'>Advanced backpropagation on all AD-Modes  [3]</a>
+<a href='#1992288653' class='feature-toc-pass'>Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: true, whenUse: true, doJIT: false, afterBack: .*1.*4\.5.*, afterUse: .*1.*4\.5.*, afterRqd: .*1.*4\.5.*, afterAll: .*5\.5.*null.*, #3]</a>
 </li>
 <li>
-<a href='#-1896827209' class='feature-toc-pass'>Advanced backpropagation on all AD-Modes  [4]</a>
+<a href='#516755762' class='feature-toc-pass'>Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: false, whenUse: false, doJIT: true, afterBack: .*1.*null.*, afterUse: .*1.*null.*, afterRqd: .*1.*null.*, afterAll: .*1.*null.*, #4]</a>
 </li>
 <li>
-<a href='#-1896827178' class='feature-toc-pass'>Advanced backpropagation on all AD-Modes  [5]</a>
+<a href='#-1152714464' class='feature-toc-pass'>Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: true, whenUse: false, doJIT: true, afterBack: .*1.*null.*, afterUse: .*1.*null.*, afterRqd: .*5\.5.*null.*, afterAll: .*5\.5.*null.*, #5]</a>
 </li>
 <li>
-<a href='#-1896827147' class='feature-toc-pass'>Advanced backpropagation on all AD-Modes  [6]</a>
+<a href='#865054400' class='feature-toc-pass'>Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: false, whenUse: true, doJIT: true, afterBack: .*1.*null.*, afterUse: .*5\.5.*null.*, afterRqd: .*5\.5.*null.*, afterAll: .*5\.5.*null.*, #6]</a>
 </li>
 <li>
-<a href='#-1896827116' class='feature-toc-pass'>Advanced backpropagation on all AD-Modes  [7]</a>
+<a href='#-42533674' class='feature-toc-pass'>Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: true, whenUse: true, doJIT: true, afterBack: .*1.*null.*, afterUse: .*1.*null.*, afterRqd: .*1.*null.*, afterAll: .*5\.5.*null.*, #7]</a>
 </li>
 </ul>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='-1896827333'>
-<span>Advanced backpropagation on all AD-Modes  [0]</span>
+<div class='feature-description' id='1041041227'>
+<span>Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: false, whenUse: false, doJIT: false, afterBack: .*1.*4\.5.*, afterUse: .*1.*4\.5.*, afterRqd: .*1.*4\.5.*, afterAll: .*1.*4\.5.*, #0]</span>
 <span style='float: right; font-size: 60%;'>
 <a href='#toc'>Return</a>
 </span>
@@ -449,9 +453,9 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().isApplyingGradientWhenRequested = whenRsd
-Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
-Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJIT</pre>
+<pre class='block-source'>Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd
+Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
+Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT</pre>
 </td>
 </tr>
 <tr>
@@ -459,7 +463,7 @@ Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJ
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>def x = new Tsr([2, 2], 1).setRqsGradient(true)
+<pre class='block-source'>def x = Tsr.of([2, 2], 1).setRqsGradient(true)
 def y = x + 2
 Binding binding = new Binding()
 binding.setVariable('x', x)
@@ -533,7 +537,7 @@ binding.setVariable('y', y)</pre>
 <td>
 <div class='block-text'>
                 We now try to backpropagate! Because "result" contains a single scalar,
-                result.backward() is equivalent to out.backward(new Tsr(1)).
+                result.backward() is equivalent to out.backward(Tsr.of(1)).
             </div>
 </td>
 </tr>
@@ -663,6 +667,7 @@ xAsStr = x.toString()</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>code</th>
 <th class='ex-header'>whenRsd</th>
 <th class='ex-header'>whenUse</th>
@@ -671,6 +676,7 @@ xAsStr = x.toString()</pre>
 <th class='ex-header'>afterUse</th>
 <th class='ex-header'>afterRqd</th>
 <th class='ex-header'>afterAll</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -691,8 +697,8 @@ xAsStr = x.toString()</pre>
 </tr>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='-1896827302'>
-<span>Advanced backpropagation on all AD-Modes  [1]</span>
+<div class='feature-description' id='1701006427'>
+<span>Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: true, whenUse: false, doJIT: false, afterBack: .*1.*4\.5.*, afterUse: .*1.*4\.5.*, afterRqd: .*5\.5.*null.*, afterAll: .*5\.5.*null.*, #1]</span>
 <span style='float: right; font-size: 60%;'>
 <a href='#toc'>Return</a>
 </span>
@@ -756,9 +762,9 @@ xAsStr = x.toString()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().isApplyingGradientWhenRequested = whenRsd
-Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
-Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJIT</pre>
+<pre class='block-source'>Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd
+Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
+Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT</pre>
 </td>
 </tr>
 <tr>
@@ -766,7 +772,7 @@ Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJ
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>def x = new Tsr([2, 2], 1).setRqsGradient(true)
+<pre class='block-source'>def x = Tsr.of([2, 2], 1).setRqsGradient(true)
 def y = x + 2
 Binding binding = new Binding()
 binding.setVariable('x', x)
@@ -840,7 +846,7 @@ binding.setVariable('y', y)</pre>
 <td>
 <div class='block-text'>
                 We now try to backpropagate! Because "result" contains a single scalar,
-                result.backward() is equivalent to out.backward(new Tsr(1)).
+                result.backward() is equivalent to out.backward(Tsr.of(1)).
             </div>
 </td>
 </tr>
@@ -970,6 +976,7 @@ xAsStr = x.toString()</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>code</th>
 <th class='ex-header'>whenRsd</th>
 <th class='ex-header'>whenUse</th>
@@ -978,6 +985,7 @@ xAsStr = x.toString()</pre>
 <th class='ex-header'>afterUse</th>
 <th class='ex-header'>afterRqd</th>
 <th class='ex-header'>afterAll</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -998,8 +1006,8 @@ xAsStr = x.toString()</pre>
 </tr>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='-1896827271'>
-<span>Advanced backpropagation on all AD-Modes  [2]</span>
+<div class='feature-description' id='-1072517419'>
+<span>Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: false, whenUse: true, doJIT: false, afterBack: .*1.*4\.5.*, afterUse: .*5\.5.*null.*, afterRqd: .*5\.5.*null.*, afterAll: .*5\.5.*null.*, #2]</span>
 <span style='float: right; font-size: 60%;'>
 <a href='#toc'>Return</a>
 </span>
@@ -1063,9 +1071,9 @@ xAsStr = x.toString()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().isApplyingGradientWhenRequested = whenRsd
-Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
-Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJIT</pre>
+<pre class='block-source'>Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd
+Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
+Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT</pre>
 </td>
 </tr>
 <tr>
@@ -1073,7 +1081,7 @@ Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJ
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>def x = new Tsr([2, 2], 1).setRqsGradient(true)
+<pre class='block-source'>def x = Tsr.of([2, 2], 1).setRqsGradient(true)
 def y = x + 2
 Binding binding = new Binding()
 binding.setVariable('x', x)
@@ -1147,7 +1155,7 @@ binding.setVariable('y', y)</pre>
 <td>
 <div class='block-text'>
                 We now try to backpropagate! Because "result" contains a single scalar,
-                result.backward() is equivalent to out.backward(new Tsr(1)).
+                result.backward() is equivalent to out.backward(Tsr.of(1)).
             </div>
 </td>
 </tr>
@@ -1277,6 +1285,7 @@ xAsStr = x.toString()</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>code</th>
 <th class='ex-header'>whenRsd</th>
 <th class='ex-header'>whenUse</th>
@@ -1285,6 +1294,7 @@ xAsStr = x.toString()</pre>
 <th class='ex-header'>afterUse</th>
 <th class='ex-header'>afterRqd</th>
 <th class='ex-header'>afterAll</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -1305,8 +1315,8 @@ xAsStr = x.toString()</pre>
 </tr>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='-1896827240'>
-<span>Advanced backpropagation on all AD-Modes  [3]</span>
+<div class='feature-description' id='1992288653'>
+<span>Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: true, whenUse: true, doJIT: false, afterBack: .*1.*4\.5.*, afterUse: .*1.*4\.5.*, afterRqd: .*1.*4\.5.*, afterAll: .*5\.5.*null.*, #3]</span>
 <span style='float: right; font-size: 60%;'>
 <a href='#toc'>Return</a>
 </span>
@@ -1370,9 +1380,9 @@ xAsStr = x.toString()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().isApplyingGradientWhenRequested = whenRsd
-Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
-Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJIT</pre>
+<pre class='block-source'>Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd
+Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
+Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT</pre>
 </td>
 </tr>
 <tr>
@@ -1380,7 +1390,7 @@ Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJ
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>def x = new Tsr([2, 2], 1).setRqsGradient(true)
+<pre class='block-source'>def x = Tsr.of([2, 2], 1).setRqsGradient(true)
 def y = x + 2
 Binding binding = new Binding()
 binding.setVariable('x', x)
@@ -1454,7 +1464,7 @@ binding.setVariable('y', y)</pre>
 <td>
 <div class='block-text'>
                 We now try to backpropagate! Because "result" contains a single scalar,
-                result.backward() is equivalent to out.backward(new Tsr(1)).
+                result.backward() is equivalent to out.backward(Tsr.of(1)).
             </div>
 </td>
 </tr>
@@ -1584,6 +1594,7 @@ xAsStr = x.toString()</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>code</th>
 <th class='ex-header'>whenRsd</th>
 <th class='ex-header'>whenUse</th>
@@ -1592,6 +1603,7 @@ xAsStr = x.toString()</pre>
 <th class='ex-header'>afterUse</th>
 <th class='ex-header'>afterRqd</th>
 <th class='ex-header'>afterAll</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -1612,8 +1624,8 @@ xAsStr = x.toString()</pre>
 </tr>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='-1896827209'>
-<span>Advanced backpropagation on all AD-Modes  [4]</span>
+<div class='feature-description' id='516755762'>
+<span>Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: false, whenUse: false, doJIT: true, afterBack: .*1.*null.*, afterUse: .*1.*null.*, afterRqd: .*1.*null.*, afterAll: .*1.*null.*, #4]</span>
 <span style='float: right; font-size: 60%;'>
 <a href='#toc'>Return</a>
 </span>
@@ -1677,9 +1689,9 @@ xAsStr = x.toString()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().isApplyingGradientWhenRequested = whenRsd
-Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
-Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJIT</pre>
+<pre class='block-source'>Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd
+Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
+Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT</pre>
 </td>
 </tr>
 <tr>
@@ -1687,7 +1699,7 @@ Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJ
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>def x = new Tsr([2, 2], 1).setRqsGradient(true)
+<pre class='block-source'>def x = Tsr.of([2, 2], 1).setRqsGradient(true)
 def y = x + 2
 Binding binding = new Binding()
 binding.setVariable('x', x)
@@ -1761,7 +1773,7 @@ binding.setVariable('y', y)</pre>
 <td>
 <div class='block-text'>
                 We now try to backpropagate! Because "result" contains a single scalar,
-                result.backward() is equivalent to out.backward(new Tsr(1)).
+                result.backward() is equivalent to out.backward(Tsr.of(1)).
             </div>
 </td>
 </tr>
@@ -1891,6 +1903,7 @@ xAsStr = x.toString()</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>code</th>
 <th class='ex-header'>whenRsd</th>
 <th class='ex-header'>whenUse</th>
@@ -1899,6 +1912,7 @@ xAsStr = x.toString()</pre>
 <th class='ex-header'>afterUse</th>
 <th class='ex-header'>afterRqd</th>
 <th class='ex-header'>afterAll</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -1919,8 +1933,8 @@ xAsStr = x.toString()</pre>
 </tr>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='-1896827178'>
-<span>Advanced backpropagation on all AD-Modes  [5]</span>
+<div class='feature-description' id='-1152714464'>
+<span>Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: true, whenUse: false, doJIT: true, afterBack: .*1.*null.*, afterUse: .*1.*null.*, afterRqd: .*5\.5.*null.*, afterAll: .*5\.5.*null.*, #5]</span>
 <span style='float: right; font-size: 60%;'>
 <a href='#toc'>Return</a>
 </span>
@@ -1984,9 +1998,9 @@ xAsStr = x.toString()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().isApplyingGradientWhenRequested = whenRsd
-Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
-Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJIT</pre>
+<pre class='block-source'>Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd
+Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
+Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT</pre>
 </td>
 </tr>
 <tr>
@@ -1994,7 +2008,7 @@ Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJ
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>def x = new Tsr([2, 2], 1).setRqsGradient(true)
+<pre class='block-source'>def x = Tsr.of([2, 2], 1).setRqsGradient(true)
 def y = x + 2
 Binding binding = new Binding()
 binding.setVariable('x', x)
@@ -2068,7 +2082,7 @@ binding.setVariable('y', y)</pre>
 <td>
 <div class='block-text'>
                 We now try to backpropagate! Because "result" contains a single scalar,
-                result.backward() is equivalent to out.backward(new Tsr(1)).
+                result.backward() is equivalent to out.backward(Tsr.of(1)).
             </div>
 </td>
 </tr>
@@ -2198,6 +2212,7 @@ xAsStr = x.toString()</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>code</th>
 <th class='ex-header'>whenRsd</th>
 <th class='ex-header'>whenUse</th>
@@ -2206,6 +2221,7 @@ xAsStr = x.toString()</pre>
 <th class='ex-header'>afterUse</th>
 <th class='ex-header'>afterRqd</th>
 <th class='ex-header'>afterAll</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -2226,8 +2242,8 @@ xAsStr = x.toString()</pre>
 </tr>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='-1896827147'>
-<span>Advanced backpropagation on all AD-Modes  [6]</span>
+<div class='feature-description' id='865054400'>
+<span>Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: false, whenUse: true, doJIT: true, afterBack: .*1.*null.*, afterUse: .*5\.5.*null.*, afterRqd: .*5\.5.*null.*, afterAll: .*5\.5.*null.*, #6]</span>
 <span style='float: right; font-size: 60%;'>
 <a href='#toc'>Return</a>
 </span>
@@ -2291,9 +2307,9 @@ xAsStr = x.toString()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().isApplyingGradientWhenRequested = whenRsd
-Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
-Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJIT</pre>
+<pre class='block-source'>Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd
+Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
+Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT</pre>
 </td>
 </tr>
 <tr>
@@ -2301,7 +2317,7 @@ Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJ
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>def x = new Tsr([2, 2], 1).setRqsGradient(true)
+<pre class='block-source'>def x = Tsr.of([2, 2], 1).setRqsGradient(true)
 def y = x + 2
 Binding binding = new Binding()
 binding.setVariable('x', x)
@@ -2375,7 +2391,7 @@ binding.setVariable('y', y)</pre>
 <td>
 <div class='block-text'>
                 We now try to backpropagate! Because "result" contains a single scalar,
-                result.backward() is equivalent to out.backward(new Tsr(1)).
+                result.backward() is equivalent to out.backward(Tsr.of(1)).
             </div>
 </td>
 </tr>
@@ -2505,6 +2521,7 @@ xAsStr = x.toString()</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>code</th>
 <th class='ex-header'>whenRsd</th>
 <th class='ex-header'>whenUse</th>
@@ -2513,6 +2530,7 @@ xAsStr = x.toString()</pre>
 <th class='ex-header'>afterUse</th>
 <th class='ex-header'>afterRqd</th>
 <th class='ex-header'>afterAll</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -2533,8 +2551,8 @@ xAsStr = x.toString()</pre>
 </tr>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='-1896827116'>
-<span>Advanced backpropagation on all AD-Modes  [7]</span>
+<div class='feature-description' id='-42533674'>
+<span>Advanced backpropagation on all AD-Modes  [code: y*y*3, whenRsd: true, whenUse: true, doJIT: true, afterBack: .*1.*null.*, afterUse: .*1.*null.*, afterRqd: .*1.*null.*, afterAll: .*5\.5.*null.*, #7]</span>
 <span style='float: right; font-size: 60%;'>
 <a href='#toc'>Return</a>
 </span>
@@ -2598,9 +2616,9 @@ xAsStr = x.toString()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().isApplyingGradientWhenRequested = whenRsd
-Neureka.instance().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
-Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJIT</pre>
+<pre class='block-source'>Neureka.get().settings().autograd().isApplyingGradientWhenRequested = whenRsd
+Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = whenUse
+Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp = doJIT</pre>
 </td>
 </tr>
 <tr>
@@ -2608,7 +2626,7 @@ Neureka.instance().settings().autograd().isRetainingPendingErrorForJITProp = doJ
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>def x = new Tsr([2, 2], 1).setRqsGradient(true)
+<pre class='block-source'>def x = Tsr.of([2, 2], 1).setRqsGradient(true)
 def y = x + 2
 Binding binding = new Binding()
 binding.setVariable('x', x)
@@ -2682,7 +2700,7 @@ binding.setVariable('y', y)</pre>
 <td>
 <div class='block-text'>
                 We now try to backpropagate! Because "result" contains a single scalar,
-                result.backward() is equivalent to out.backward(new Tsr(1)).
+                result.backward() is equivalent to out.backward(Tsr.of(1)).
             </div>
 </td>
 </tr>
@@ -2812,6 +2830,7 @@ xAsStr = x.toString()</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>code</th>
 <th class='ex-header'>whenRsd</th>
 <th class='ex-header'>whenUse</th>
@@ -2820,6 +2839,7 @@ xAsStr = x.toString()</pre>
 <th class='ex-header'>afterUse</th>
 <th class='ex-header'>afterRqd</th>
 <th class='ex-header'>afterAll</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>

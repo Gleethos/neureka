@@ -5,108 +5,126 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.calculus.Function;
 import neureka.calculus.AbstractBaseFunction;
 
-<span class="fc" id="L8">public class FunctionConstant extends AbstractBaseFunction</span>
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *  Instances of this implementation of the {@link Function} interface
+ *  are leave nodes within the abstract syntax tree of a function, representing constant numeric values to a function.
+ *  When parsing an expression into a function then these constants are recognized by a series of digit characters
+ *  optionally separated by '.' to represent decimal digits. &lt;br&gt;
+ *  So for example, when creating a function by calling the following factory method...     	&lt;br&gt;
+ *                                                                                          	&lt;br&gt;
+ *  {@link Function#of}( &quot;I[1] + (4 * I[0]) / 2.1&quot; )                                      	&lt;br&gt;
+ *                                                                                          	&lt;br&gt;
+ *  ...then the substrings &quot;4&quot; and &quot;2.1&quot; will be parsed into instances of this class!   		&lt;br&gt;
+ *
+ */
+<span class="fc" id="L23">public class FunctionConstant extends AbstractBaseFunction</span>
 {
 	private double _value;
 	public double value() {
-<span class="fc" id="L12">		return this._value;</span>
+<span class="fc" id="L27">		return this._value;</span>
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
 	public boolean isFlat() {
-<span class="nc" id="L19">		return  false;</span>
+<span class="nc" id="L34">		return  false;</span>
 	}
 
 	@Override
 	public boolean isDoingAD() {
-<span class="nc" id="L24">		return false;</span>
+<span class="nc" id="L39">		return false;</span>
 	}
 
 	@Override
 	public AbstractOperation getOperation() {
-<span class="nc" id="L29">		return null;</span>
+<span class="nc" id="L44">		return null;</span>
 	}
 
 	@Override
-	public boolean dependsOn(int index) {
-<span class="fc" id="L34">		return false;</span>
+	public boolean dependsOn( int index ) {
+<span class="fc" id="L49">		return false;</span>
 	}
 
 	@Override
 	public Function getDerivative( int index ) {
-<span class="nc" id="L39">		return Function.create( &quot;0&quot; );</span>
+<span class="nc" id="L54">		return Function.of( &quot;0&quot; );</span>
 	}
 
 	@Override
-	public Function newBuild(String expression)
+<span class="nc" id="L58">	public List&lt;Function&gt; getSubFunctions() { return new ArrayList&lt;&gt;(); }</span>
+
+	@Override
+	public Function newBuild( String expression )
 	{	
-<span class="fc" id="L45">		String number = &quot;&quot;;</span>
-<span class="fc bfc" id="L46" title="All 2 branches covered.">		for(int i=0; i&lt;expression.length(); i++) </span>
+<span class="fc" id="L63">		StringBuilder number = new StringBuilder();</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">		for ( int i = 0; i &lt; expression.length(); i++ )</span>
 		{
-<span class="fc bfc" id="L48" title="All 2 branches covered.">			if (expression.charAt( i )&gt;='0'</span>
-<span class="pc bpc" id="L49" title="1 of 2 branches missed.">			|| expression.charAt( i )&lt;='9'</span>
-<span class="nc bnc" id="L50" title="All 2 branches missed.">			|| expression.charAt( i )=='.'</span>
-<span class="nc bnc" id="L51" title="All 2 branches missed.">			|| expression.charAt( i )=='-'</span>
-<span class="nc bnc" id="L52" title="All 2 branches missed.">			|| expression.charAt( i )=='+')</span>
-			{
-<span class="fc" id="L54">				number += expression.charAt( i );</span>
+<span class="fc" id="L66">			if (</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">					Character.isDigit(expression.charAt( i ))</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">					|| expression.charAt( i ) == '.'</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">					|| expression.charAt( i ) == '-'</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">					|| expression.charAt( i ) == '+'</span>
+			) {
+<span class="fc" id="L72">				number.append( expression.charAt( i ) );</span>
 			}
 		}
-<span class="fc" id="L57">		_value = Double.parseDouble(number);</span>
-<span class="fc" id="L58">		return this;</span>
+<span class="fc" id="L75">		_value = Double.parseDouble( number.toString() );</span>
+<span class="fc" id="L76">		return this;</span>
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-    public double call(final double[] inputs, int j) {
-<span class="fc" id="L65">    	return _value;</span>
+    public double call( final double[] inputs, int j ) {
+<span class="fc" id="L83">    	return _value;</span>
     }
 
 	@Override
-	public double call(double[] inputs) {
-<span class="fc" id="L70">		return _value;</span>
+	public double call( double... inputs ) {
+<span class="fc" id="L88">		return _value;</span>
 	}
 
 	@Override
-	public double derive(double[] inputs, int index) {
-<span class="fc" id="L75">		return 0;</span>
+	public double derive( double[] inputs, int index ) {
+<span class="fc" id="L93">		return 0;</span>
 	}
 
 	@Override
-	public double derive(double[] inputs, int index, int j) {
-<span class="fc" id="L80">		return 0;</span>
+	public double derive( double[] inputs, int index, int j ) {
+<span class="fc" id="L98">		return 0;</span>
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public Tsr call(Tsr[] inputs, int j) {
-<span class="fc" id="L87">		return new Tsr(inputs[ 0 ].shape(), this._value);</span>
+	public Tsr&lt;?&gt; execute(Tsr&lt;?&gt;... inputs) {
+<span class="fc" id="L105">		return Tsr.of( inputs[ 0 ].shape(), this._value );</span>
 	}
 
 	@Override
-	public Tsr call(Tsr[] inputs) {
-<span class="fc" id="L92">		return new Tsr(inputs[ 0 ].shape(), this._value);</span>
+	public Tsr&lt;?&gt; execute( Tsr&lt;?&gt;[] inputs, int j ) {
+<span class="fc" id="L110">		return Tsr.of( inputs[ 0 ].shape(), this._value );</span>
 	}
 
 	@Override
-	public Tsr derive(Tsr[] inputs, int index, int j) {
-<span class="fc" id="L97">		return new Tsr(inputs[ 0 ].shape(), 0.0);</span>
+	public Tsr&lt;?&gt; executeDerive( Tsr&lt;?&gt;[] inputs, int index, int j ) {
+<span class="fc" id="L115">		return Tsr.of( inputs[ 0 ].shape(), 0.0 );</span>
 	}
 
 	@Override
-	public Tsr derive(Tsr[] inputs, int index) {
-<span class="fc" id="L102">		return new Tsr(inputs[ 0 ].shape(), 0.0);</span>
+	public Tsr&lt;?&gt; executeDerive( Tsr&lt;?&gt;[] inputs, int index ) {
+<span class="fc" id="L120">		return Tsr.of( inputs[ 0 ].shape(), 0.0 );</span>
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
 	public String toString() {
-<span class="fc" id="L109">		return _value +&quot;&quot;;</span>
+<span class="fc" id="L127">		return _value +&quot;&quot;;</span>
 	}
 
 

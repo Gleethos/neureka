@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NDAConstructor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.utility</a> &gt; <span class="el_source">NDAConstructor.java</span></div><h1>NDAConstructor.java</h1><pre class="source lang-java linenums">package neureka.utility;
+
+import neureka.dtype.DataType;
+import neureka.dtype.custom.*;
+import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.config.NDConfiguration;
+import neureka.ndim.config.types.virtual.VirtualNDConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class NDAConstructor {
+
+<span class="fc" id="L19">    private static final Logger _LOG = LoggerFactory.getLogger(NDAConstructor.class);</span>
+
+    public interface API {
+        void setType( DataType&lt;?&gt; type );
+        void setConf( NDConfiguration conf );
+        void setData( Object o );
+        void allocate( int size );
+        Object getData();
+        void setIsVirtual(  boolean isVirtual );
+    }
+
+    private final API _API;
+
+<span class="fc" id="L32">    public NDAConstructor( API API ) { this._API = API; }</span>
+
+    /**
+     *  This method is responsible for instantiating and setting the _conf variable.
+     *  The core requirement for instantiating {@link NDConfiguration} interface implementation s
+     *  is a shape array of integers which is being passed to the method... &lt;br&gt;
+     *  &lt;br&gt;
+     *
+     * @param newShape An array if integers which are all greater 0 and represent the tensor dimensions.
+     */
+    public void configureFromNewShape( int[] newShape, boolean makeVirtual, boolean autoAllocate )
+    {
+<span class="fc" id="L44">        _API.setIsVirtual( makeVirtual );</span>
+<span class="fc" id="L45">        int size = NDConfiguration.Utility.szeOfShp( newShape );</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if ( size == 0 ) {</span>
+<span class="nc" id="L47">            String shape = Arrays.stream( newShape ).mapToObj( String::valueOf ).collect( Collectors.joining( &quot;x&quot; ) );</span>
+<span class="nc" id="L48">            String message = &quot;The provided shape '&quot;+shape+&quot;' must not contain zeros. Dimensions lower than 1 are not possible.&quot;;</span>
+<span class="nc" id="L49">            _LOG.error( message );</span>
+<span class="nc" id="L50">            throw new IllegalArgumentException( message );</span>
+        }
+<span class="fc bfc" id="L52" title="All 6 branches covered.">        if ( _API.getData() == null &amp;&amp; autoAllocate ) _API.allocate( makeVirtual ? 1 : size );</span>
+        //int length = _dataLength();
+        //if ( length &gt;= 0 &amp;&amp; size != length &amp;&amp; ( !this.isVirtual() || !makeVirtual) ) {
+        //    String message = &quot;Size of shape does not match stored data array size!&quot;;
+        //    _LOG.error( message );
+        //    throw new IllegalArgumentException( message );
+        //}
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if ( makeVirtual ) _API.setConf( VirtualNDConfiguration.construct( newShape ) );</span>
+        else {
+<span class="fc" id="L61">            int[] newTranslation = NDConfiguration.Utility.newTlnOf( newShape );</span>
+<span class="fc" id="L62">            int[] newSpread = new int[ newShape.length ];</span>
+<span class="fc" id="L63">            Arrays.fill( newSpread, 1 );</span>
+<span class="fc" id="L64">            int[] newOffset = new int[ newShape.length ];</span>
+<span class="fc" id="L65">            _API.setConf(</span>
+<span class="fc" id="L66">                    AbstractNDC.construct(</span>
+                            newShape,
+                            newTranslation,
+                            newTranslation, // indicesMap
+                            newSpread,
+                            newOffset
+                    )
+            );
+        }
+<span class="fc" id="L75">    }</span>
+
+
+    public void _tryConstructing(int[] shape, DataType&lt;?&gt; dataType, Object data) {
+<span class="fc" id="L79">        int size = NDConfiguration.Utility.szeOfShp(shape);</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        if ( data instanceof List&lt;?&gt; ) {</span>
+<span class="fc" id="L81">            List&lt;?&gt; range = (List&lt;?&gt;) data;</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">            if ( dataType == DataType.of(Object.class) ) {</span>
+                // Nested Groovy list should be unpacked:
+<span class="pc bpc" id="L84" title="1 of 4 branches missed.">                if ( range.size() == 1 &amp;&amp; range.get( 0 ).getClass().getSimpleName().equals(&quot;IntRange&quot;) )</span>
+<span class="fc" id="L85">                    range = (List&lt;?&gt;) range.get( 0 );</span>
+<span class="fc" id="L86">                constructForRange(</span>
+                        shape,
+<span class="fc" id="L88">                        DataType.of( F64.class ),</span>
+<span class="fc" id="L89">                        range.toArray()</span>
+                );
+<span class="fc" id="L91">                return;</span>
+            }
+            else
+<span class="fc" id="L94">                data = range.toArray();</span>
+        }
+<span class="fc bfc" id="L96" title="All 4 branches covered.">        if ( data instanceof Object[] &amp;&amp; DataType.of(((Object[])data)[0].getClass()) != dataType ) {</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">            for ( int i = 0; i &lt; ( (Object[]) data ).length; i++ ) {</span>
+<span class="fc" id="L98">                ( (Object[]) data )[i] = DataConverter.instance().convert( ( (Object[]) data )[i], dataType.getJVMTypeClass() );</span>
+            }
+<span class="fc" id="L100">            data = NDAConstructor.optimizeObjectArray(dataType, (Object[]) data, size);</span>
+        }
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        if ( dataType == DataType.of( data.getClass() ) ) { // This means that &quot;data&quot; is a single value!</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">            if ( _constructAllFromOne( shape, data ) ) return;</span>
+        }
+        else
+<span class="fc" id="L106">            data = NDAConstructor.optimizeArray( dataType, data, size );</span>
+
+<span class="fc" id="L108">        _API.setType( dataType );</span>
+<span class="fc" id="L109">        configureFromNewShape( shape, false, false );</span>
+<span class="fc" id="L110">        _API.setData( data );</span>
+<span class="fc" id="L111">    }</span>
+
+    public boolean _constructAllFromOne(int[] shape, Object data) {
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        if ( data instanceof Double  ) { _constructAllF64( shape, (Double)  data ); return true; }</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        if ( data instanceof Float   ) { _constructAllF32( shape, (Float)   data ); return true; }</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        if ( data instanceof Integer ) { _constructAllI32( shape, (Integer) data ); return true; }</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        if ( data instanceof Short   ) { _constructAllI16( shape, (Short)   data ); return true; }</span>
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        if ( data instanceof Byte    ) { _constructAllI8(  shape, (Byte)    data ); return true; }</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        if ( data instanceof Long    ) { _constructAllI64( shape, (Long)    data ); return true; }</span>
+<span class="fc" id="L120">        return false;</span>
+    }
+
+    public void _constructAllF64( int[] shape, double value ) {
+<span class="fc" id="L124">        _constructAll( shape, F64.class );</span>
+<span class="fc" id="L125">        ( (double[]) _API.getData())[ 0 ] = value;</span>
+<span class="fc" id="L126">    }</span>
+
+    private void _constructAllF32( int[] shape, float value ) {
+<span class="fc" id="L129">        _constructAll( shape, F32.class );</span>
+<span class="fc" id="L130">        ( (float[]) _API.getData())[ 0 ] = value;</span>
+<span class="fc" id="L131">    }</span>
+
+    private void _constructAllI32( int[] shape, int value ) {
+<span class="fc" id="L134">        _constructAll( shape, I32.class );</span>
+<span class="fc" id="L135">        ( (int[]) _API.getData())[ 0 ] = value;</span>
+<span class="fc" id="L136">    }</span>
+
+    private void _constructAllI16( int[] shape, short value ) {
+<span class="nc" id="L139">        _constructAll( shape, I16.class );</span>
+<span class="nc" id="L140">        ( (short[]) _API.getData())[ 0 ] = value;</span>
+<span class="nc" id="L141">    }</span>
+
+    private void _constructAllI8( int[] shape, byte value ) {
+<span class="nc" id="L144">        _constructAll( shape, I8.class );</span>
+<span class="nc" id="L145">        ( (byte[]) _API.getData())[ 0 ] = value;</span>
+<span class="nc" id="L146">    }</span>
+
+    private void _constructAllI64( int[] shape, long value ) {
+<span class="fc" id="L149">        _constructAll( shape, I64.class );</span>
+<span class="fc" id="L150">        ( (long[]) _API.getData())[ 0 ] = value;</span>
+<span class="fc" id="L151">    }</span>
+
+    private void _constructAll( int[] shape, Class&lt;?&gt; typeClass ) {
+<span class="fc" id="L154">        int size = NDConfiguration.Utility.szeOfShp( shape );</span>
+<span class="fc" id="L155">        _API.setType( DataType.of( typeClass ) );</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        configureFromNewShape( shape, size &gt; 1, true );</span>
+<span class="fc" id="L157">    }</span>
+
+    private int _dataLength()
+    {
+<span class="nc bnc" id="L161" title="All 4 branches missed.">        if ( !(_API.getData() instanceof float[]) &amp;&amp; !(_API.getData() instanceof double[]) ) {</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">            if ( _API.getData() instanceof Object[] ) return ((Object[]) _API.getData()).length;</span>
+<span class="nc" id="L163">            else return -1;</span>
+        }
+<span class="nc bnc" id="L165" title="All 2 branches missed.">        else if ( _API.getData() instanceof double[] ) return ( (double[]) _API.getData()).length;</span>
+<span class="nc" id="L166">        else return ( (float[]) _API.getData()).length;</span>
+    }
+
+
+    /**
+     *  This method receives a list of lists which represent a matrix of objects.
+     *  It parses this matrix into a 2D shape array and a double array.&lt;br&gt;
+     *  &lt;br&gt;
+     *
+     * @param matrix A list of lists which ought to resemble a matrix.
+     */
+    public void construct( List&lt;List&lt;Object&gt;&gt; matrix ) {
+<span class="fc" id="L178">        boolean isNumeric = matrix.stream().allMatch( e -&gt; e.stream().allMatch( ie -&gt; ie instanceof Number ) );</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">        if ( isNumeric ) {</span>
+<span class="fc" id="L180">            int n = matrix.get( 0 ).size();</span>
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">            boolean isHomogenous = matrix.stream().allMatch( e -&gt; e.size() == n );</span>
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">            if ( isHomogenous ) {</span>
+<span class="fc" id="L183">                int m = matrix.size();</span>
+<span class="fc" id="L184">                double[] value = new double[ m * n ];</span>
+<span class="fc" id="L185">                int[] shape = new int[]{ m, n };</span>
+
+<span class="fc bfc" id="L187" title="All 2 branches covered.">                for ( int mi = 0; mi &lt; m; mi++ ) {</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">                    for ( int ni = 0; ni &lt; n; ni++ ) {</span>
+<span class="fc" id="L189">                        int i = n * mi + ni;</span>
+<span class="fc" id="L190">                        value[ i ] = DataConverter.instance().convert( matrix.get( mi ).get( ni ), Double.class );</span>
+                    }
+                }
+<span class="fc" id="L193">                constructForDoubles( shape, value );</span>
+<span class="fc" id="L194">            } else {</span>
+<span class="nc" id="L195">                String message = &quot;Provided nested list(s) do not form a regular matrix.&quot;;</span>
+<span class="nc" id="L196">                _LOG.error( message );</span>
+<span class="nc" id="L197">                throw new IllegalArgumentException( message );</span>
+            }
+        }
+<span class="fc" id="L200">    }</span>
+
+    public &lt;V&gt; void constructForRange( int[] shape, DataType&lt;?&gt; dataType, V[] range )
+    {
+<span class="pc bpc" id="L204" title="1 of 4 branches missed.">        if ( range.length != 0 &amp;&amp; !( range[ 0 ] instanceof Number ) ) {</span>
+<span class="fc" id="L205">            Class&lt;?&gt; givenClass = range[ 0 ].getClass();</span>
+            @SuppressWarnings(&quot;unchecked&quot;)
+<span class="fc" id="L207">            final V[] value = (V[]) Array.newInstance(</span>
+                    givenClass,
+<span class="fc" id="L209">                    NDConfiguration.Utility.szeOfShp( shape )</span>
+            );
+<span class="fc bfc" id="L211" title="All 2 branches covered.">            for ( int i = 0; i &lt; value.length; i++ ) value[ i ] = range[ i % range.length ];</span>
+<span class="fc" id="L212">            _API.setType( DataType.of( givenClass ) );</span>
+<span class="fc" id="L213">            _API.setData( value );</span>
+<span class="fc" id="L214">            construct( shape, value );</span>
+<span class="fc" id="L215">        } else {</span>
+<span class="fc" id="L216">            _API.setType( dataType );</span>
+<span class="pc bpc" id="L217" title="1 of 2 branches missed.">            if ( dataType.getTypeClass() == F64.class )</span>
+<span class="fc" id="L218">                constructForDoubles(</span>
+                        shape,
+<span class="fc" id="L220">                        DataConverter.Utility.objectsToDoubles( range, NDConfiguration.Utility.szeOfShp( shape ) )</span>
+                );
+<span class="nc bnc" id="L222" title="All 2 branches missed.">            else if ( dataType.getTypeClass() == F32.class  )</span>
+<span class="nc" id="L223">                constructForFloats(</span>
+                        shape,
+<span class="nc" id="L225">                        DataConverter.Utility.objectsToFloats( range, NDConfiguration.Utility.szeOfShp( shape ) )</span>
+                );
+<span class="nc bnc" id="L227" title="All 2 branches missed.">            else if ( dataType.getTypeClass() == I32.class )</span>
+<span class="nc" id="L228">                _constructForInts(</span>
+                        shape,
+<span class="nc" id="L230">                        DataConverter.Utility.objectsToInts( range, NDConfiguration.Utility.szeOfShp( shape ) )</span>
+                );
+<span class="nc bnc" id="L232" title="All 2 branches missed.">            else if ( dataType.getTypeClass() == I16.class )</span>
+<span class="nc" id="L233">                _constructForShorts(</span>
+                        shape,
+<span class="nc" id="L235">                        DataConverter.Utility.objectsToShorts( range, NDConfiguration.Utility.szeOfShp( shape ) )</span>
+                );
+<span class="nc bnc" id="L237" title="All 2 branches missed.">            else if ( dataType.getTypeClass() == I8.class )</span>
+<span class="nc" id="L238">                _constructForBytes(</span>
+                        shape,
+<span class="nc" id="L240">                        DataConverter.Utility.objectsToBytes( range, NDConfiguration.Utility.szeOfShp( shape ) )</span>
+                );
+<span class="nc bnc" id="L242" title="All 2 branches missed.">            else if ( dataType.getTypeClass() == I64.class )</span>
+<span class="nc" id="L243">                _constructForLongs(</span>
+                        shape,
+<span class="nc" id="L245">                        DataConverter.Utility.objectsToLongs( range, NDConfiguration.Utility.szeOfShp( shape ) )</span>
+                );
+        }
+<span class="fc" id="L248">    }</span>
+
+    public void constructForDoubles( int[] shape, double[] value )
+    {
+<span class="fc" id="L252">        int size = NDConfiguration.Utility.szeOfShp( shape );</span>
+<span class="fc" id="L253">        _API.setType( DataType.of( F64.class ) );</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">        if ( size != value.length ) {</span>
+<span class="fc" id="L255">            _API.allocate( size );</span>
+<span class="fc bfc" id="L256" title="All 2 branches covered.">            for ( int i = 0; i &lt; size; i++ ) ( (double[]) _API.getData())[ i ]  = value[ i % value.length ];</span>
+        }
+<span class="fc" id="L258">        else _API.setData( value );</span>
+<span class="fc" id="L259">        configureFromNewShape( shape, false, false );</span>
+<span class="fc" id="L260">    }</span>
+
+    public void constructForFloats(int[] shape, float[] value)
+    {
+<span class="fc" id="L264">        int size = NDConfiguration.Utility.szeOfShp( shape );</span>
+<span class="fc" id="L265">        _API.setType( DataType.of( F32.class ) );</span>
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">        if ( size != value.length ) {</span>
+<span class="nc" id="L267">            _API.allocate( size );</span>
+<span class="nc bnc" id="L268" title="All 2 branches missed.">            for ( int i = 0; i &lt; size; i++ ) ( (float[]) _API.getData())[ i ]  = value[ i % value.length ];</span>
+<span class="fc" id="L269">        } else _API.setData( value );</span>
+<span class="fc" id="L270">        configureFromNewShape( shape, false, false );</span>
+<span class="fc" id="L271">    }</span>
+
+    private void _constructForInts( int[] shape, int[] value )
+    {
+<span class="nc" id="L275">        int size = NDConfiguration.Utility.szeOfShp( shape );</span>
+<span class="nc" id="L276">        _API.setType( DataType.of( I32.class ) );</span>
+<span class="nc bnc" id="L277" title="All 2 branches missed.">        if ( size != value.length ) {</span>
+<span class="nc" id="L278">            _API.allocate( size );</span>
+<span class="nc bnc" id="L279" title="All 2 branches missed.">            for ( int i = 0; i &lt; size; i++ ) ( (int[]) _API.getData())[ i ]  = value[ i % value.length ];</span>
+<span class="nc" id="L280">        } else _API.setData( value );</span>
+<span class="nc" id="L281">        configureFromNewShape( shape, false, false );</span>
+<span class="nc" id="L282">    }</span>
+
+    public void _constructForShorts( int[] shape, short[] value )
+    {
+<span class="nc" id="L286">        int size = NDConfiguration.Utility.szeOfShp( shape );</span>
+<span class="nc" id="L287">        _API.setType( DataType.of( I16.class ) );</span>
+<span class="nc bnc" id="L288" title="All 2 branches missed.">        if ( size != value.length ) {</span>
+<span class="nc" id="L289">            _API.allocate( size );</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">            for ( int i = 0; i &lt; size; i++ ) ( (short[]) _API.getData())[ i ]  = value[ i % value.length ];</span>
+<span class="nc" id="L291">        } else _API.setData( value );</span>
+<span class="nc" id="L292">        configureFromNewShape( shape, false, false );</span>
+<span class="nc" id="L293">    }</span>
+
+    public void _constructForBytes( int[] shape, byte[] value )
+    {
+<span class="nc" id="L297">        int size = NDConfiguration.Utility.szeOfShp( shape );</span>
+<span class="nc" id="L298">        _API.setType( DataType.of( I8.class ) );</span>
+<span class="nc bnc" id="L299" title="All 2 branches missed.">        if ( size != value.length ) {</span>
+<span class="nc" id="L300">            _API.allocate( size );</span>
+<span class="nc bnc" id="L301" title="All 2 branches missed.">            for ( int i = 0; i &lt; size; i++ ) ( (byte[]) _API.getData())[ i ]  = value[ i % value.length ];</span>
+<span class="nc" id="L302">        } else _API.setData( value );</span>
+<span class="nc" id="L303">        configureFromNewShape( shape, false, false );</span>
+<span class="nc" id="L304">    }</span>
+
+    public void _constructForLongs( int[] shape, long[] value )
+    {
+<span class="nc" id="L308">        int size = NDConfiguration.Utility.szeOfShp( shape );</span>
+<span class="nc" id="L309">        _API.setType( DataType.of( I64.class ) );</span>
+<span class="nc bnc" id="L310" title="All 2 branches missed.">        if ( size != value.length ) {</span>
+<span class="nc" id="L311">            _API.allocate( size );</span>
+<span class="nc bnc" id="L312" title="All 2 branches missed.">            for ( int i = 0; i &lt; size; i++ ) ( (long[]) _API.getData())[ i ]  = value[ i % value.length ];</span>
+<span class="nc" id="L313">        } else _API.setData( value );</span>
+<span class="nc" id="L314">        configureFromNewShape( shape, false, false );</span>
+<span class="nc" id="L315">    }</span>
+
+    public  &lt;V&gt; void construct( int[] shape, V[] value ) {
+<span class="fc" id="L318">        int size = NDConfiguration.Utility.szeOfShp( shape );</span>
+<span class="pc bpc" id="L319" title="1 of 2 branches missed.">        if ( size != value.length ) {</span>
+<span class="nc" id="L320">            _fromRange( shape, value );</span>
+        }
+<span class="fc" id="L322">        else _API.setData( value );</span>
+<span class="fc" id="L323">        configureFromNewShape( shape, false, false  );</span>
+<span class="fc" id="L324">    }</span>
+
+    private &lt;V&gt; void _fromRange(int[] shape, V[] value ) {
+<span class="nc" id="L327">        Class&lt;?&gt; givenClass = value[ 0 ].getClass();</span>
+        @SuppressWarnings(&quot;unchecked&quot;)
+<span class="nc" id="L329">        final V[] newValue = (V[]) Array.newInstance(</span>
+                givenClass,
+<span class="nc" id="L331">                NDConfiguration.Utility.szeOfShp( shape )</span>
+        );
+<span class="nc bnc" id="L333" title="All 2 branches missed.">        for ( int i = 0; i &lt; newValue.length; i++ ) newValue[ i ] = value[ i % value.length ];</span>
+<span class="nc" id="L334">        _API.setType( DataType.of( givenClass ) );</span>
+<span class="nc" id="L335">        _API.setData( newValue );</span>
+<span class="nc" id="L336">    }</span>
+
+    public static Object optimizeArray( DataType&lt;?&gt; dataType, Object data, int size ) {
+<span class="fc bfc" id="L339" title="All 2 branches covered.">        if      ( data instanceof Integer[] ) return DataConverter.instance().convert( (Integer[]) data, int[].class,    size );</span>
+<span class="fc bfc" id="L340" title="All 2 branches covered.">        else if ( data instanceof Double[]  ) return DataConverter.instance().convert( (Double[])  data, double[].class, size );</span>
+<span class="fc bfc" id="L341" title="All 2 branches covered.">        else if ( data instanceof Float[]   ) return DataConverter.instance().convert( (Float[])   data, float[].class,  size );</span>
+<span class="fc bfc" id="L342" title="All 2 branches covered.">        else if ( data instanceof Long[]    ) return DataConverter.instance().convert( (Long[])    data, long[].class,   size );</span>
+<span class="fc bfc" id="L343" title="All 2 branches covered.">        else if ( data instanceof Short[]   ) return DataConverter.instance().convert( (Short[])   data, short[].class,  size );</span>
+<span class="fc bfc" id="L344" title="All 2 branches covered.">        else if ( data instanceof Byte[]    ) return DataConverter.instance().convert( (Byte[])    data, byte[].class,   size );</span>
+<span class="fc bfc" id="L345" title="All 2 branches covered.">        else if ( data instanceof Object[] )</span>
+<span class="fc" id="L346">            return NDAConstructor.optimizeObjectArray(dataType, (Object[]) data, size);</span>
+        else
+<span class="fc" id="L348">            return data;</span>
+    }
+
+    public static Object optimizeObjectArray( DataType&lt;?&gt; dataType, Object[] values, int size ) {
+<span class="fc" id="L352">        Object data = values;</span>
+<span class="fc" id="L353">        IntStream indices = IntStream.iterate( 0, i -&gt; i + 1 ).limit(size).map(i -&gt; i % values.length );</span>
+<span class="fc bfc" id="L354" title="All 2 branches covered.">        if      ( dataType == DataType.of(Double.class)  ) data = indices.mapToDouble( i -&gt; (Double) values[i] ).toArray();</span>
+<span class="fc bfc" id="L355" title="All 2 branches covered.">        else if ( dataType == DataType.of(Integer.class) ) data = indices.map( i -&gt; (Integer) values[i] ).toArray();</span>
+<span class="pc bpc" id="L356" title="1 of 2 branches missed.">        else if ( dataType == DataType.of(Long.class)    ) data = indices.mapToLong( i -&gt; (Long) values[i] ).toArray();</span>
+<span class="fc bfc" id="L357" title="All 2 branches covered.">        else if ( dataType == DataType.of(Float.class)   ) {</span>
+<span class="fc" id="L358">            float[] floats = new float[size];</span>
+<span class="fc bfc" id="L359" title="All 2 branches covered.">            for( int i = 0; i &lt; size; i++ ) floats[ i ] = (Float) values[ i % values.length ];</span>
+<span class="fc" id="L360">            data = floats;</span>
+<span class="fc" id="L361">        }</span>
+<span class="fc bfc" id="L362" title="All 2 branches covered.">        else if ( dataType == DataType.of(Byte.class) ) {</span>
+<span class="fc" id="L363">            byte[] bytes = new byte[size];</span>
+<span class="fc bfc" id="L364" title="All 2 branches covered.">            for( int i = 0; i &lt; size; i++ ) bytes[ i ] = (Byte) values[ i % values.length ];</span>
+<span class="fc" id="L365">            data = bytes;</span>
+<span class="fc" id="L366">        }</span>
+<span class="fc bfc" id="L367" title="All 2 branches covered.">        else if ( dataType == DataType.of(Short.class) ) {</span>
+<span class="fc" id="L368">            short[] shorts = new short[size];</span>
+<span class="fc bfc" id="L369" title="All 2 branches covered.">            for( int i = 0; i &lt; size; i++ ) shorts[ i ] = (Short) values[ i % values.length ];</span>
+<span class="fc" id="L370">            data = shorts;</span>
+<span class="pc bpc" id="L371" title="1 of 2 branches missed.">        } else if ( values.length != size ) {</span>
+<span class="nc" id="L372">            Object[] objects = new Object[size];</span>
+<span class="nc bnc" id="L373" title="All 2 branches missed.">            for( int i = 0; i &lt; size; i++ ) objects[ i ] = values[ i % values.length ];</span>
+<span class="nc" id="L374">            data = objects;</span>
+        }
+<span class="fc" id="L376">        return data;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

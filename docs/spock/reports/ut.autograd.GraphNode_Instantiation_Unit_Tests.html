@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:52 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:58 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>2</td>
 <td>2</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>3.140 seconds</td>
+<td>2.385 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -512,8 +516,9 @@ result.usesReverseAD()</pre>
 1 * inputs[2].rqsGradient() &gt;&gt; true
 1 * context.allowsForward() &gt;&gt; true
 1 * context.allowsBackward() &gt;&gt; true
-4 * function.getOperation() &gt;&gt; type
-4 * type.isDifferentiable() &gt;&gt; true
+3 * function.getOperation() &gt;&gt; type
+0 * type.isDifferentiable() &gt;&gt; true
+3 * type.isInline() &gt;&gt; false
 0 * type.getOperator() &gt;&gt; "*"
 3 * inputsNodeMock.getPayload() &gt;&gt; payload
 3 * payload.hashCode() &gt;&gt; 3</pre>

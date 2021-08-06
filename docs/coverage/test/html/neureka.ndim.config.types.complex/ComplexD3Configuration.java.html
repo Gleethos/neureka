@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ComplexD3Configuration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config.types.complex</a> &gt; <span class="el_source">ComplexD3Configuration.java</span></div><h1>ComplexD3Configuration.java</h1><pre class="source lang-java linenums">package neureka.ndim.config.types.complex;
 
-import neureka.Neureka;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.types.D3C;
 
@@ -44,23 +43,23 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
             int[] indicesMap,
             int[] spread,
             int[] offset
-<span class="fc" id="L47">    ) {</span>
-<span class="fc" id="L48">        _shape1 = shape[ 0 ];</span>
-<span class="fc" id="L49">        _shape2 = shape[ 1 ];</span>
-<span class="fc" id="L50">        _shape3 = shape[ 2 ];</span>
-<span class="fc" id="L51">        _translation1 = translation[ 0 ];</span>
-<span class="fc" id="L52">        _translation2 = translation[ 1 ];</span>
-<span class="fc" id="L53">        _translation3 = translation[ 2 ];</span>
-<span class="fc" id="L54">        _indicesMap1 = indicesMap[ 0 ];</span>
-<span class="fc" id="L55">        _indicesMap2 = indicesMap[ 1 ];</span>
-<span class="fc" id="L56">        _indicesMap3 = indicesMap[ 2 ];</span>
-<span class="fc" id="L57">        _spread1 = spread[ 0 ];</span>
-<span class="fc" id="L58">        _spread2 = spread[ 1 ];</span>
-<span class="fc" id="L59">        _spread3 = spread[ 2 ];</span>
-<span class="fc" id="L60">        _offset1 = offset[ 0 ];</span>
-<span class="fc" id="L61">        _offset2 = offset[ 1 ];</span>
-<span class="fc" id="L62">        _offset3 = offset[ 2 ];</span>
-<span class="fc" id="L63">    }</span>
+<span class="fc" id="L46">    ) {</span>
+<span class="fc" id="L47">        _shape1 = shape[ 0 ];</span>
+<span class="fc" id="L48">        _shape2 = shape[ 1 ];</span>
+<span class="fc" id="L49">        _shape3 = shape[ 2 ];</span>
+<span class="fc" id="L50">        _translation1 = translation[ 0 ];</span>
+<span class="fc" id="L51">        _translation2 = translation[ 1 ];</span>
+<span class="fc" id="L52">        _translation3 = translation[ 2 ];</span>
+<span class="fc" id="L53">        _indicesMap1 = indicesMap[ 0 ];</span>
+<span class="fc" id="L54">        _indicesMap2 = indicesMap[ 1 ];</span>
+<span class="fc" id="L55">        _indicesMap3 = indicesMap[ 2 ];</span>
+<span class="fc" id="L56">        _spread1 = spread[ 0 ];</span>
+<span class="fc" id="L57">        _spread2 = spread[ 1 ];</span>
+<span class="fc" id="L58">        _spread3 = spread[ 2 ];</span>
+<span class="fc" id="L59">        _offset1 = offset[ 0 ];</span>
+<span class="fc" id="L60">        _offset2 = offset[ 1 ];</span>
+<span class="fc" id="L61">        _offset3 = offset[ 2 ];</span>
+<span class="fc" id="L62">    }</span>
 
     public static NDConfiguration construct(
             int[] shape,
@@ -69,62 +68,62 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
             int[] spread,
             int[] offset
     ) {
-<span class="fc" id="L72">        return _cached(new ComplexD3Configuration(shape, translation, indicesMap, spread, offset));</span>
+<span class="fc" id="L71">        return _cached(new ComplexD3Configuration(shape, translation, indicesMap, spread, offset));</span>
     }
 
     @Override
     public int rank() {
-<span class="nc" id="L77">        return 3;</span>
+<span class="fc" id="L76">        return 3;</span>
     }
 
     @Override
     public int[] shape() {
-<span class="fc" id="L82">        return new int[]{_shape1, _shape2, _shape3};</span>
+<span class="fc" id="L81">        return new int[]{_shape1, _shape2, _shape3};</span>
     }
 
     @Override
     public int shape( int i ) {
-<span class="nc bnc" id="L87" title="All 4 branches missed.">        return (i==0)?_shape1:(i==1)?_shape2:_shape3;</span>
+<span class="nc bnc" id="L86" title="All 4 branches missed.">        return (i==0)?_shape1:(i==1)?_shape2:_shape3;</span>
     }
 
     @Override
     public int[] indicesMap() {
-<span class="fc" id="L92">        return new int[]{_indicesMap1, _indicesMap2, _indicesMap3};</span>
+<span class="fc" id="L91">        return new int[]{_indicesMap1, _indicesMap2, _indicesMap3};</span>
     }
 
     @Override
     public int indicesMap(int i ) {
-<span class="nc bnc" id="L97" title="All 4 branches missed.">        return (i==0)?_indicesMap1:(i==1)?_indicesMap2:_indicesMap3;</span>
+<span class="nc bnc" id="L96" title="All 4 branches missed.">        return (i==0)?_indicesMap1:(i==1)?_indicesMap2:_indicesMap3;</span>
     }
 
     @Override
     public int[] translation() {
-<span class="fc" id="L102">        return new int[]{_translation1, _translation2, _translation3};</span>
+<span class="fc" id="L101">        return new int[]{_translation1, _translation2, _translation3};</span>
     }
 
     @Override
     public int translation( int i ) {
-<span class="nc bnc" id="L107" title="All 4 branches missed.">        return (i==0)?_translation1:(i==1)?_translation2:_translation3;</span>
+<span class="nc bnc" id="L106" title="All 4 branches missed.">        return (i==0)?_translation1:(i==1)?_translation2:_translation3;</span>
     }
 
     @Override
     public int[] spread() {
-<span class="fc" id="L112">        return new int[]{_spread1, _spread2, _spread3};</span>
+<span class="fc" id="L111">        return new int[]{_spread1, _spread2, _spread3};</span>
     }
 
     @Override
     public int spread( int i ) {
-<span class="fc bfc" id="L117" title="All 4 branches covered.">        return (i==0)?_spread1:(i==1)?_spread2:_spread3;</span>
+<span class="fc bfc" id="L116" title="All 4 branches covered.">        return (i==0)?_spread1:(i==1)?_spread2:_spread3;</span>
     }
 
     @Override
     public int[] offset() {
-<span class="fc" id="L122">        return new int[]{_offset1, _offset2, _offset3};</span>
+<span class="fc" id="L121">        return new int[]{_offset1, _offset2, _offset3};</span>
     }
 
     @Override
     public int offset( int i ) {
-<span class="fc bfc" id="L127" title="All 4 branches covered.">        return (i==0)?_offset1:(i==1)?_offset2:_offset3;</span>
+<span class="fc bfc" id="L126" title="All 4 branches covered.">        return (i==0)?_offset1:(i==1)?_offset2:_offset3;</span>
     }
 
 
@@ -133,12 +132,12 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     @Override
     public int indexOfIndex(int index) {
         int indices1, indices2, indices3;
-<span class="fc" id="L136">        indices1 = index / _indicesMap1;</span>
-<span class="fc" id="L137">        index %= _indicesMap1;</span>
-<span class="fc" id="L138">        indices2 = index / _indicesMap2;</span>
-<span class="fc" id="L139">        index %= _indicesMap2;</span>
-<span class="fc" id="L140">        indices3 = index / _indicesMap3;</span>
-<span class="fc" id="L141">        return (indices1 * _spread1 + _offset1) * _translation1 +</span>
+<span class="fc" id="L135">        indices1 = index / _indicesMap1;</span>
+<span class="fc" id="L136">        index %= _indicesMap1;</span>
+<span class="fc" id="L137">        indices2 = index / _indicesMap2;</span>
+<span class="fc" id="L138">        index %= _indicesMap2;</span>
+<span class="fc" id="L139">        indices3 = index / _indicesMap3;</span>
+<span class="fc" id="L140">        return (indices1 * _spread1 + _offset1) * _translation1 +</span>
                 (indices2 * _spread2 + _offset2) * _translation2 +
                 (indices3 * _spread3 + _offset3) * _translation3;
     }
@@ -146,24 +145,24 @@ public class ComplexD3Configuration extends D3C //:= IMMUTABLE
     @Override
     public int[] indicesOfIndex(int index) {
         int indices1, indices2, indices3;
-<span class="nc" id="L149">        indices1 = index / _indicesMap1;</span>
-<span class="nc" id="L150">        index %= _indicesMap1;</span>
-<span class="nc" id="L151">        indices2 = index / _indicesMap2;</span>
-<span class="nc" id="L152">        index %= _indicesMap2;</span>
-<span class="nc" id="L153">        indices3 = index / _indicesMap3;</span>
-<span class="nc" id="L154">        return new int[]{indices1, indices2, indices3};</span>
+<span class="nc" id="L148">        indices1 = index / _indicesMap1;</span>
+<span class="nc" id="L149">        index %= _indicesMap1;</span>
+<span class="nc" id="L150">        indices2 = index / _indicesMap2;</span>
+<span class="nc" id="L151">        index %= _indicesMap2;</span>
+<span class="nc" id="L152">        indices3 = index / _indicesMap3;</span>
+<span class="nc" id="L153">        return new int[]{indices1, indices2, indices3};</span>
     }
 
     @Override
     public int indexOfIndices(int[] indices) {
-<span class="fc" id="L159">        return (indices[ 0 ] * _spread1 + _offset1) * _translation1 +</span>
+<span class="fc" id="L158">        return (indices[ 0 ] * _spread1 + _offset1) * _translation1 +</span>
                     (indices[ 1 ] * _spread2 + _offset2) * _translation2 +
                         (indices[ 2 ] * _spread3 + _offset3) * _translation3;
     }
 
     @Override
     public int indexOfIndices(int d1, int d2, int d3 ) {
-<span class="nc" id="L166">        return (d1 * _spread1 + _offset1) * _translation1 +</span>
+<span class="nc" id="L165">        return (d1 * _spread1 + _offset1) * _translation1 +</span>
                 (d2 * _spread2 + _offset2) * _translation2 +
                 (d3 * _spread3 + _offset3) * _translation3;
     }

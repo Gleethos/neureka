@@ -102,7 +102,7 @@ public final class DefaultADAgent implements ADAgent
      *  passed to it by an {@link neureka.backend.api.ExecutionCall}.
      *  These variables specify how an implementation of an operation ought to execute.
      *  This method let's us view the current state of these variables for this agent in the form of
-     *  a nice {@ink String}...
+     *  a nice {@link String}...
      *
      * @return A String view of this {@link ADAgent}.
      */

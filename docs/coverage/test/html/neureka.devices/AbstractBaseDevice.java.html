@@ -34,51 +34,48 @@ SOFTWARE.
 
 package neureka.devices;
 
-import neureka.Component;
 import neureka.Tsr;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.IntFunction;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
-<span class="fc" id="L48">public abstract class AbstractBaseDevice&lt;ValType&gt; implements Device&lt;ValType&gt;, Component&lt;Tsr&lt;ValType&gt;&gt;</span>
+/**
+ * @param &lt;V&gt; The value type parameter representing a common super type for all values supported by the device.
+ */
+<span class="fc" id="L47">public abstract class AbstractBaseDevice&lt;V&gt; implements Device&lt;V&gt;</span>
 {
-
     @Override
     public int size() {
-<span class="fc" id="L53">        Collection&lt;Tsr&lt;ValType&gt;&gt; tensors = this.getTensors();</span>
-<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        if ( tensors == null ) return 0;</span>
-<span class="fc" id="L55">        return tensors.size();</span>
+<span class="fc" id="L51">        Collection&lt;Tsr&lt;V&gt;&gt; tensors = this.getTensors();</span>
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">        if ( tensors == null ) return 0;</span>
+<span class="fc" id="L53">        return tensors.size();</span>
     }
 
     @Override
     public boolean isEmpty() {
-<span class="fc bfc" id="L60" title="All 2 branches covered.">        return this.size() == 0;</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        return this.size() == 0;</span>
     }
 
     @Override
-    public boolean contains( Tsr&lt;ValType&gt; o ) {
-<span class="fc" id="L65">        return this.getTensors().contains( o );</span>
+    public boolean contains( Tsr&lt;V&gt; o ) {
+<span class="fc" id="L63">        return this.getTensors().contains( o );</span>
     }
 
-    @NotNull
     @Override
-    public Iterator&lt;Tsr&lt;ValType&gt;&gt; iterator() {
-<span class="nc" id="L71">        return this.getTensors().iterator();</span>
+    public Iterator&lt;Tsr&lt;V&gt;&gt; iterator() {
+<span class="nc" id="L68">        return this.getTensors().iterator();</span>
     }
 
     @Override
     public &lt;T&gt; T[] toArray( IntFunction&lt;T[]&gt; generator ) {
-<span class="nc" id="L76">        return null; // this.getTensors().toArray( generator );</span>
+<span class="nc" id="L73">        return null; // this.getTensors().toArray( generator );</span>
     }
 
     @Override
-    public Spliterator&lt;Tsr&lt;ValType&gt;&gt; spliterator() {
-<span class="nc" id="L81">        return getTensors().spliterator();</span>
+    public Spliterator&lt;Tsr&lt;V&gt;&gt; spliterator() {
+<span class="nc" id="L78">        return getTensors().spliterator();</span>
     }
 
 }

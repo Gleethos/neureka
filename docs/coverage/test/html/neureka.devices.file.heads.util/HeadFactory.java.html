@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HeadFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.file.heads.util</a> &gt; <span class="el_source">HeadFactory.java</span></div><h1>HeadFactory.java</h1><pre class="source lang-java linenums">package neureka.devices.file.heads.util;
+
+import neureka.Tsr;
+import neureka.devices.file.FileHead;
+import neureka.devices.file.heads.CSVHead;
+import neureka.devices.file.heads.IDXHead;
+import neureka.devices.file.heads.JPEGHead;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ *  This class is a simple wrapper around &quot;Loader&quot; and &quot;Saver&quot; lambdas
+ *  which instantiate FileHead classes.
+ */
+public class HeadFactory
+{
+    public interface Loader
+    {
+        FileHead load(String name, Map&lt;String, Object&gt; config);
+    }
+
+    public interface Saver
+    {
+        FileHead save(String name, Tsr tensor, Map&lt;String, Object&gt; config);
+    }
+
+<span class="fc" id="L28">    private final Map&lt;String, Loader&gt; _LOADERS = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L29">    private final Map&lt;String, Saver&gt; _SAVERS = new HashMap&lt;&gt;();</span>
+
+<span class="fc" id="L31">    public HeadFactory() {</span>
+<span class="pc" id="L32">        _LOADERS.put(&quot;idx&quot;, (name, conf) -&gt; new IDXHead(name));</span>
+<span class="pc" id="L33">        _LOADERS.put(&quot;jpg&quot;, (name, conf) -&gt; new JPEGHead(name));</span>
+<span class="pc" id="L34">        _LOADERS.put(&quot;png&quot;, (name, conf) -&gt; null); // TODO!</span>
+<span class="fc" id="L35">        _LOADERS.put(&quot;csv&quot;, (name, conf) -&gt; new CSVHead(name, conf));</span>
+
+<span class="fc" id="L37">        _SAVERS.put(&quot;idx&quot;, (name, tensor, conf) -&gt; new IDXHead(tensor, name));</span>
+<span class="fc" id="L38">        _SAVERS.put(&quot;jpg&quot;, (name, tensor, conf) -&gt; new JPEGHead(tensor, name));</span>
+<span class="pc" id="L39">        _SAVERS.put(&quot;png&quot;, (name, tensor, conf) -&gt; null); // TODO!</span>
+<span class="fc" id="L40">        _SAVERS.put(&quot;csv&quot;, (name, tensor, conf) -&gt; new CSVHead(tensor, name));</span>
+<span class="fc" id="L41">    }</span>
+
+    public boolean hasLoader(String name){
+<span class="fc" id="L44">        return _LOADERS.containsKey(name);</span>
+    }
+
+    public boolean hasSaver(String name){
+<span class="fc" id="L48">        return _SAVERS.containsKey(name);</span>
+    }
+
+    public Loader getLoader(String name) {
+<span class="fc" id="L52">        return _LOADERS.get(name);</span>
+    }
+
+    public Saver getSaver(String name) {
+<span class="fc" id="L56">        return _SAVERS.get(name);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

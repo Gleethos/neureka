@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TensorBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.utility.fluent</a> &gt; <span class="el_source">TensorBuilder.java</span></div><h1>TensorBuilder.java</h1><pre class="source lang-java linenums">package neureka.utility.fluent;
+
+import neureka.Tsr;
+import neureka.dtype.DataType;
+import neureka.ndim.Initializer;
+import neureka.utility.fluent.states.IterByOrIterFromOrAll;
+import neureka.utility.fluent.states.Step;
+import neureka.utility.fluent.states.To;
+import neureka.utility.fluent.states.WithShapeOrScalarOrVector;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+
+/**
+ *  This class exposes a fluent builder API for creating {@link Tsr} instances.
+ *  An simple example would be:
+ * &lt;pre&gt;{@code
+ *
+ *    Tsr.of(Double.class)
+ *          .withShape( 2, 3, 4 )
+ *          .iterativelyFilledBy( 5, 3, 5 )
+ *
+ * }&lt;/pre&gt;
+ *
+ * It is also possible to define a range using the API to populate the tensor with values:
+ * &lt;pre&gt;{@code
+ *
+ *    Tsr.of(Double.class)
+ *          .withShape( 2, 3, 4 )
+ *          .iterativelyFilledFrom( 2 ).to( 9 ).step( 2 )
+ *
+ * }&lt;/pre&gt;
+ *
+ * If one needs a simple scalar then the following shortcut is possible:
+ * &lt;pre&gt;{@code
+ *
+ *    Tsr.of(Float.class).scalar( 3f )
+ *
+ * }&lt;/pre&gt;
+ *
+ * This principle works for vectors as well:
+ * &lt;pre&gt;{@code
+ *
+ *     Tsr.of(Byte.class).vector( 2, 5, 6, 7, 8 )
+ *
+ * }&lt;/pre&gt;
+ * For more fine grained control over the initialization one can
+ * pass an initialization lambda to the API:
+ * &lt;pre&gt;{@code
+ *
+ *     Tsr.of(Byte.class).withShape(2, 3).andWhere( (i, indices) -&gt; i * 5 - 30 )
+ *
+ * }&lt;/pre&gt;
+ *
+ * @param &lt;V&gt; The type of the values which ought to be represent by the {@link Tsr} built by this {@link TensorBuilder}.
+ */
+public class TensorBuilder&lt;V&gt; implements WithShapeOrScalarOrVector&lt;V&gt;, IterByOrIterFromOrAll&lt;V&gt;, To&lt;V&gt;, Step&lt;V&gt;
+{
+    private final DataType&lt;V&gt; _dataType;
+    private int[] _shape;
+    private V _from;
+    private V _to;
+
+<span class="fc" id="L65">    public TensorBuilder( Class&lt;V&gt; typeClass ) { _dataType = DataType.of( typeClass ); }</span>
+
+    /**
+     * @param values The values which will recurrently populate the returned {@link Tsr} with values until it is filled.
+     * @return A new {@link Tsr} instance populated by the array of values supplied to this method.
+     */
+    @SafeVarargs
+    @Override
+<span class="fc" id="L73">    public final Tsr&lt;V&gt; andFill( V... values ) { return Tsr.of( _dataType, _shape, values ); }</span>
+
+    /**
+     *  This method receives an {@link neureka.ndim.Initializer} lambda which will be
+     *  used to populate the {@link Tsr} instance produced by this API with values.
+     *
+     * @param initializer The {@link neureka.ndim.Initializer} which ought to populate the returned {@link Tsr}.
+     * @return A new {@link Tsr} instance populated by the lambda supplied to this method.
+     */
+    @Override
+<span class="fc" id="L83">    public Tsr&lt;V&gt; andWhere( Initializer&lt;V&gt; initializer) { return Tsr.of( _dataType, _shape, initializer ); }</span>
+
+    @Override
+<span class="fc" id="L86">    public To&lt;V&gt; iterativelyFilledFrom( V index ) { _from = index; return this; }</span>
+
+    @Override
+<span class="fc" id="L89">    public Tsr&lt;V&gt; all( V value ) { return Tsr.of( _dataType, _shape, value ); }</span>
+
+    @Override
+<span class="fc" id="L92">    public IterByOrIterFromOrAll&lt;V&gt; withShape( int... shape ) { _shape = shape; return this; }</span>
+
+    @Override
+<span class="fc" id="L95">    public Tsr&lt;V&gt; vector( Object[] values ) { return Tsr.of( _dataType, new int[]{ values.length }, values ); }</span>
+
+    @Override
+<span class="fc" id="L98">    public Tsr&lt;V&gt; scalar( V value ) { return Tsr.of( value.getClass(), new int[]{1}, value ); }</span>
+
+    @Override
+<span class="fc" id="L101">    public Step&lt;V&gt; to( V index ) { _to = index; return this; }</span>
+
+    @Override
+    public Tsr&lt;V&gt; step( double size ) {
+<span class="fc" id="L105">        int tensorSize = _size();</span>
+<span class="fc" id="L106">        Object data = null;</span>
+<span class="fc" id="L107">        int itemLimit = _size();</span>
+<span class="fc" id="L108">        int itemIndex = 0;</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        if ( _dataType == DataType.of( Integer.class ) ) {</span>
+<span class="fc" id="L110">            List&lt;Integer&gt; range = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L111" title="All 4 branches covered.">            for ( int index = ((Integer) _from); index &lt;= ((Integer)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
+<span class="fc" id="L112">                range.add( index );</span>
+<span class="fc" id="L113">                itemIndex++;</span>
+            }
+<span class="fc" id="L115">            data = IntStream.iterate( 0, i -&gt; i + 1 )</span>
+<span class="fc" id="L116">                            .limit( tensorSize )</span>
+<span class="fc" id="L117">                            .map( i -&gt; range.get( i % range.size() ) )</span>
+<span class="fc" id="L118">                            .toArray();</span>
+<span class="fc" id="L119">        }</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        else if ( _dataType == DataType.of( Double.class ) ) {</span>
+<span class="fc" id="L121">            List&lt;Double&gt; range = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L122" title="1 of 4 branches missed.">            for ( double index = ((Double) _from); index &lt;= ((Double)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
+<span class="fc" id="L123">                range.add( index );</span>
+<span class="fc" id="L124">                itemIndex++;</span>
+            }
+<span class="fc" id="L126">            data = IntStream.iterate( 0, i -&gt; i + 1 )</span>
+<span class="fc" id="L127">                            .limit( tensorSize )</span>
+<span class="fc" id="L128">                            .mapToDouble( i -&gt; range.get( i % range.size() ) )</span>
+<span class="fc" id="L129">                            .toArray();</span>
+<span class="fc" id="L130">        }</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        else if ( _dataType == DataType.of( Long.class ) ) {</span>
+<span class="fc" id="L132">            List&lt;Long&gt; range = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L133" title="1 of 4 branches missed.">            for ( long index = ((Long) _from); index &lt;= ((Long)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
+<span class="fc" id="L134">                range.add( index );</span>
+<span class="fc" id="L135">                itemIndex++;</span>
+            }
+<span class="fc" id="L137">            data = IntStream.iterate( 0, i -&gt; i + 1 )</span>
+<span class="fc" id="L138">                    .limit( tensorSize )</span>
+<span class="fc" id="L139">                    .mapToLong( i -&gt; range.get( i % range.size() ) )</span>
+<span class="fc" id="L140">                    .toArray();</span>
+<span class="fc" id="L141">        }</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        else if ( _dataType == DataType.of( Float.class ) ) {</span>
+<span class="fc" id="L143">            List&lt;Float&gt; range = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L144" title="All 4 branches covered.">            for ( double index = ((Float) _from); index &lt;= ((Float)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
+<span class="fc" id="L145">                range.add( (float) index );</span>
+<span class="fc" id="L146">                itemIndex++;</span>
+            }
+<span class="fc" id="L148">            float[] primData = new float[tensorSize];</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">            for ( int ii = 0; ii &lt; tensorSize; ii ++) {</span>
+<span class="fc" id="L150">                primData[ii] = range.get( ii % range.size() );</span>
+            }
+<span class="fc" id="L152">            data = primData;</span>
+<span class="fc" id="L153">        }</span>
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        else if ( _dataType == DataType.of( Byte.class ) ) {</span>
+<span class="fc" id="L155">            List&lt;Byte&gt; range = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L156" title="1 of 4 branches missed.">            for ( byte index = ((Byte) _from); index &lt;= ((Byte)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
+<span class="fc" id="L157">                range.add( index );</span>
+<span class="fc" id="L158">                itemIndex++;</span>
+            }
+<span class="fc" id="L160">            byte[] primData = new byte[tensorSize];</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">            for ( int ii = 0; ii &lt; tensorSize; ii ++) {</span>
+<span class="fc" id="L162">                primData[ii] = range.get( ii % range.size() );</span>
+            }
+<span class="fc" id="L164">            data = primData;</span>
+<span class="fc" id="L165">        }</span>
+<span class="nc bnc" id="L166" title="All 4 branches missed.">        else if ( _from instanceof Comparable &amp;&amp; _to instanceof Comparable ) {</span>
+            //data = new ObjectRange( (Comparable&lt;V&gt;) _from, (Comparable&lt;V&gt;) _to ).step( (int) size );
+<span class="nc" id="L168">            throw new IllegalStateException(); // TODO: make it possible to have ranges like 'a' to 'z'...</span>
+        }
+<span class="fc" id="L170">        return Tsr.of( _dataType, _shape, data );</span>
+    }
+
+    private int _size() {
+<span class="fc" id="L174">        int size = 1;</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">        for ( int axis : _shape ) size *= axis;</span>
+<span class="fc" id="L176">        return size;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

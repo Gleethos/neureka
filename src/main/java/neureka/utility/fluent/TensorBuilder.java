@@ -7,7 +7,6 @@ import neureka.utility.fluent.states.IterByOrIterFromOrAll;
 import neureka.utility.fluent.states.Step;
 import neureka.utility.fluent.states.To;
 import neureka.utility.fluent.states.WithShapeOrScalarOrVector;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,7 +165,7 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
         }
         else if ( _from instanceof Comparable && _to instanceof Comparable ) {
             //data = new ObjectRange( (Comparable<V>) _from, (Comparable<V>) _to ).step( (int) size );
-            throw new NotImplementedException(); // TODO: make it possible to have ranges like 'a' to 'z'...
+            throw new IllegalStateException(); // TODO: make it possible to have ranges like 'a' to 'z'...
         }
         return Tsr.of( _dataType, _shape, data );
     }

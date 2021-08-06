@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:34 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:47 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>3</td>
 <td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>4.953 seconds</td>
+<td>2.118 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -381,13 +385,13 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr([2, 3, 2], 1..100)
+<pre class='block-source'>Tsr t = Tsr.of([2, 3, 2], 1..100)
 t.label([
         ["1", "2"],
         ["a", "b", "c"],
         [1, 2]
 ])
-String asString = t.index().toString()</pre>
+String asString = t.frame().toString()</pre>
 </td>
 </tr>
 <tr>
@@ -414,7 +418,7 @@ asString.contains("1")
         "Axis Two" : ["a", "b", "c"],
         "Axis Three" : [1, 2]
 ])
-asString = t.index().toString()</pre>
+asString = t.frame().toString()</pre>
 </td>
 </tr>
 <tr>
@@ -442,7 +446,7 @@ asString.contains("|     Axis One     |     Axis Two     |    Axis Three    |")<
         "Axis Two" : null,
         "Axis Three" : ["tim", "tina"]
 ])
-asString = t.index().toString()</pre>
+asString = t.frame().toString()</pre>
 </td>
 </tr>
 <tr>
@@ -450,10 +454,10 @@ asString = t.index().toString()</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>t.index().keysOf("Axis Three", 0).contains("tim")
-t.index().keysOf("Axis Three", 1).contains("tina")
-t.index().keysOf("Axis One").contains("x")
-t.index().keysOf("Axis One").contains("y")
+<pre class='block-source'>t.frame().atAxis("Axis Three").getAllAliasesForIndex(0)
+t.frame().atAxis("Axis Three").getAllAliasesForIndex(1)
+t.frame().atAxis("Axis One").getAllAliases().contains("x")
+t.frame().atAxis("Axis One").getAllAliases().contains("y")
 !asString.contains(" a ")
 !asString.contains(" b ")
 !asString.contains(" c ")
@@ -474,8 +478,8 @@ asString.contains("|     Axis One     |     Axis Two     |    Axis Three    |")<
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t.index().replace("Axis Two", 1, "Hello")
-asString = t.index().toString()</pre>
+<pre class='block-source'>t.frame().atAxis("Axis Two").replace(1).with("Hello")
+asString = t.frame().toString()</pre>
 </td>
 </tr>
 <tr>
@@ -516,7 +520,7 @@ asString.contains("2")</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)</pre>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)</pre>
 </td>
 </tr>
 <tr>
@@ -530,7 +534,7 @@ asString.contains("2")</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr([3, 4], [
+<pre class='block-source'>Tsr t = Tsr.of([3, 4], [
         1, 2, 3, 4,
         9, 8, 6, 5,
         4, 5, 6, 7
@@ -755,7 +759,7 @@ t.isSliceParent()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)</pre>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)</pre>
 </td>
 </tr>
 <tr>
@@ -769,7 +773,7 @@ t.isSliceParent()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr([2, 3, 4], -7..7)
+<pre class='block-source'>Tsr t = Tsr.of([2, 3, 4], -7..7)
 t.label( 'My Tensor', [
     ["1", "2"],
     ["a", "b", "y"],

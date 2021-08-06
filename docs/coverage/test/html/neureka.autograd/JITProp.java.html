@@ -94,8 +94,9 @@ public final class JITProp&lt;ValType&gt; implements Component&lt;Tsr&lt;ValType
 
 
     @Override
-    public void update( Tsr&lt;ValType&gt; oldOwner, Tsr&lt;ValType&gt; newOwner ) {
-
-<span class="nc" id="L99">    }</span>
+    public boolean update( OwnerChangeRequest&lt;Tsr&lt;ValType&gt;&gt; changeRequest ) {
+<span class="fc" id="L98">        changeRequest.executeChange();</span>
+<span class="fc" id="L99">        return true;</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

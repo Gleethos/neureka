@@ -35,8 +35,8 @@ SOFTWARE.
 
 package neureka.optimization.implementations;
 
+import neureka.Neureka;
 import neureka.Tsr;
-import neureka.calculus.Function;
 import neureka.optimization.Optimizer;
 
 public class ADAM&lt;ValType&gt; implements Optimizer&lt;ValType&gt; {
@@ -51,22 +51,22 @@ public class ADAM&lt;ValType&gt; implements Optimizer&lt;ValType&gt; {
 
 <span class="fc" id="L52">    ADAM(Tsr&lt;ValType&gt; target) {</span>
 <span class="fc" id="L53">        int[] shape = target.getNDConf().shape();</span>
-<span class="fc" id="L54">        m  = new Tsr&lt;&gt;(shape, 0);</span>
-<span class="fc" id="L55">        v  = new Tsr&lt;&gt;(shape, 0);</span>
-<span class="fc" id="L56">        a  = new Tsr&lt;&gt;(shape, 0.01); // Step size!</span>
-<span class="fc" id="L57">        b1 = new Tsr&lt;&gt;(shape, 0.9);</span>
-<span class="fc" id="L58">        b2 = new Tsr&lt;&gt;(shape, 0.999);</span>
-<span class="fc" id="L59">        e  = new Tsr&lt;&gt;(shape, 1e-7);</span>
+<span class="fc" id="L54">        m  = (Tsr&lt;ValType&gt;) Tsr.of(shape, 0);</span>
+<span class="fc" id="L55">        v  = (Tsr&lt;ValType&gt;) Tsr.of(shape, 0);</span>
+<span class="fc" id="L56">        a  = (Tsr&lt;ValType&gt;) Tsr.of(shape, 0.01); // Step size!</span>
+<span class="fc" id="L57">        b1 = (Tsr&lt;ValType&gt;) Tsr.of(shape, 0.9);</span>
+<span class="fc" id="L58">        b2 = (Tsr&lt;ValType&gt;) Tsr.of(shape, 0.999);</span>
+<span class="fc" id="L59">        e  = (Tsr&lt;ValType&gt;) Tsr.of(shape, 1e-7);</span>
 <span class="fc" id="L60">    }</span>
 
     private void _optimize(Tsr&lt;ValType&gt; w) {
 <span class="fc" id="L63">        Tsr&lt;ValType&gt; g = w.getGradient();</span>
-<span class="fc" id="L64">        m = new Tsr&lt;&gt;(b1, &quot;*&quot;, m, &quot; + ( 1-&quot;, b1, &quot;) *&quot;, g);</span>
-<span class="fc" id="L65">        v = new Tsr&lt;&gt;(b2, &quot;*&quot;, v, &quot; + ( 1-&quot;, b2, &quot;) * (&quot;, g,&quot;^2 )&quot;);</span>
-<span class="fc" id="L66">        Tsr&lt;ValType&gt; mh = new Tsr&lt;&gt;(m, &quot;/(1-&quot;, b1, &quot;)&quot;);</span>
-<span class="fc" id="L67">        Tsr&lt;ValType&gt; vh = new Tsr&lt;&gt;(v, &quot;/(1-&quot;, b2, &quot;)&quot;);</span>
-<span class="fc" id="L68">        Tsr&lt;ValType&gt; newg = new Tsr&lt;&gt;(&quot;-&quot;,a,&quot;*&quot;,mh,&quot;/(&quot;,vh,&quot;^0.5+&quot;,e,&quot;)&quot;);</span>
-<span class="fc" id="L69">        Function.Detached.IDY.call(new Tsr[]{g, newg});</span>
+<span class="fc" id="L64">        m = (Tsr&lt;ValType&gt;) Tsr.of(b1, &quot;*&quot;, m, &quot; + ( 1-&quot;, b1, &quot;) *&quot;, g);</span>
+<span class="fc" id="L65">        v = (Tsr&lt;ValType&gt;) Tsr.of(b2, &quot;*&quot;, v, &quot; + ( 1-&quot;, b2, &quot;) * (&quot;, g,&quot;^2 )&quot;);</span>
+<span class="fc" id="L66">        Tsr&lt;ValType&gt; mh = (Tsr&lt;ValType&gt;) Tsr.of(m, &quot;/(1-&quot;, b1, &quot;)&quot;);</span>
+<span class="fc" id="L67">        Tsr&lt;ValType&gt; vh = (Tsr&lt;ValType&gt;) Tsr.of(v, &quot;/(1-&quot;, b2, &quot;)&quot;);</span>
+<span class="fc" id="L68">        Tsr&lt;ValType&gt; newg = (Tsr&lt;ValType&gt;) Tsr.of(&quot;-&quot;,a,&quot;*&quot;,mh,&quot;/(&quot;,vh,&quot;^0.5+&quot;,e,&quot;)&quot;);</span>
+<span class="fc" id="L69">        Neureka.get().context().getFunction().idy().call(new Tsr[]{g, newg});</span>
 <span class="fc" id="L70">    }</span>
 
     @Override
@@ -75,8 +75,9 @@ public class ADAM&lt;ValType&gt; implements Optimizer&lt;ValType&gt; {
 <span class="fc" id="L75">    }</span>
 
     @Override
-    public void update(Tsr&lt;ValType&gt; oldOwner, Tsr&lt;ValType&gt; newOwner) {
-        
-<span class="nc" id="L80">    }</span>
+    public boolean update( OwnerChangeRequest&lt;Tsr&lt;ValType&gt;&gt; changeRequest ) {
+<span class="fc" id="L79">        changeRequest.executeChange();</span>
+<span class="fc" id="L80">        return true;</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

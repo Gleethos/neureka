@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:58 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:52 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>3</td>
 <td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>5.299 seconds</td>
+<td>0.266 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -384,7 +388,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr g = new Tsr(gradient)</pre>
+<pre class='block-source'>Tsr g = Tsr.of(gradient)</pre>
 </td>
 </tr>
 <tr>
@@ -398,7 +402,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>w.set( new Tsr( input ) )
+<pre class='block-source'>w.set( Tsr.of( input ) )
 w.applyGradient()</pre>
 </td>
 </tr>
@@ -429,8 +433,10 @@ w.offset().hashCode()==g.offset().hashCode()</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>input</th>
 <th class='ex-header'>gradient</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -512,7 +518,7 @@ w.offset().hashCode()==g.offset().hashCode()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def t = new Tsr( expression, inputs )</pre>
+<pre class='block-source'>def t = Tsr.of( expression, inputs )</pre>
 </td>
 </tr>
 <tr>
@@ -545,9 +551,11 @@ w.offset().hashCode()==g.offset().hashCode()</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>expression</th>
 <th class='ex-header'>inputs</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -603,7 +611,7 @@ w.offset().hashCode()==g.offset().hashCode()</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Function f = Function.create(expression)</pre>
+<pre class='block-source'>Function f = Function.of(expression)</pre>
 </td>
 </tr>
 <tr>
@@ -630,9 +638,11 @@ w.offset().hashCode()==g.offset().hashCode()</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>expression</th>
 <th class='ex-header'>input</th>
 <th class='ex-header'>output</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>

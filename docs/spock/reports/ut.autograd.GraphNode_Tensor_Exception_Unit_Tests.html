@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:38:04 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:09:05 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>1</td>
 <td>1</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.153 seconds</td>
+<td>0.016 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -378,7 +382,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr( 1 )</pre>
+<pre class='block-source'>Tsr t = Tsr.of( 1 )</pre>
 </td>
 </tr>
 <tr>
@@ -392,8 +396,23 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def node = Mock( GraphNode )
-t.set( node )</pre>
+<pre class='block-source'>def node = Mock( GraphNode )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>t.set( node )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>1 * node.update(_) &gt;&gt; true</pre>
 </td>
 </tr>
 <tr>

@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:35 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:45 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>2</td>
 <td>2</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.342 seconds</td>
+<td>0.080 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -384,8 +388,8 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr a = new Tsr(1)
-Tsr b = new Tsr(2)</pre>
+<pre class='block-source'>Tsr a = Tsr.of(1)
+Tsr b = Tsr.of(2)</pre>
 </td>
 </tr>
 <tr>
@@ -455,9 +459,9 @@ a.NDConf.spread(0) == 1</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr x = new Tsr([1.0, 2.0, 3.1])
-Tsr y = new Tsr([3, 4.5, 2])
-Tsr z = new Tsr([1.4, 2, 4])</pre>
+<pre class='block-source'>Tsr x = Tsr.of([1.0, 2.0, 3.1])
+Tsr y = Tsr.of([3, 4.5, 2])
+Tsr z = Tsr.of([1.4, 2, 4])</pre>
 </td>
 </tr>
 <tr>

@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:39 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:45 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>3</td>
 <td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.599 seconds</td>
+<td>0.388 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -351,7 +355,7 @@ div.footer {
 <a href='#1899090721' class='feature-toc-pass'>Test context mock for opencl reference implementations.</a>
 </li>
 <li>
-<a href='#-1985108917' class='feature-toc-pass'>Tile parsing for kernel parameter claculation yields expected tile dimensions.</a>
+<a href='#20392533' class='feature-toc-pass'>Tile parsing for kernel parameter calculation yields expected tile dimensions.</a>
 </li>
 </ul>
 <tr>
@@ -369,95 +373,8 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t1 = new Tsr([row_sze, com_sze], -3..8)
-Tsr t2 = new Tsr([com_sze, col_sze], -7..4)
-OperationContext oldContext = OperationContext.get()
-OperationContext testContext = oldContext.clone()
-OperationContext.setInstance(testContext)
-Operation type = new OperationFactory()
-                    .setFunction('test_function')
-                    .setOperator('test_function')
-                    .setArity(-1)
-                    .setIsIndexer(false)
-                    .setIsOperator(false)
-                    .setIsDifferentiable(true)
-                    .setIsInline(false)
-                    .setStringifier(
-                            children -&gt; {
-                                String expression = String.join( ", ", children );
-                                if (expression.charAt(0) === '(' &amp;&amp; expression.charAt(expression.length() - 1) === ')') {
-                                    return "test_function" + expression;
-                                }
-                                return "test_function" + "(" + expression + ")";
-                            }
-                    )
-                    .build()
-                    .setAlgorithm(
-                            GenericAlgorithm.class,
-                            new GenericAlgorithm()
-                                    .setSuitabilityChecker( call -&gt; 1.0f )
-                                    .setBackwardADAnalyzer( call -&gt; true )
-                                    .setForwardADAnalyzer(call -&gt; false )
-                                    .setADAgentSupplier(
-                                            (Function f, ExecutionCall&lt;Device&gt; call, boolean forward ) -&gt;
-                                            {
-                                                if(forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
-                                                return new DefaultADAgent(null)
-                                                        .setForward((t, derivative) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{derivative},0))
-                                                        .setBackward((t, error) -&gt; FunctionBuilder.build(f.toString(), false).derive(new Tsr[]{error},0));
-                                            }
-                                    )
-                                    .setCallHook( (caller, call ) -&gt; null )
-                                    .setRJAgent( ( call, goDeeperWith ) -&gt; null )
-                                    .setDrainInstantiation(
-                                            call -&gt;
-                                            {
-                                                Tsr[] tsrs = call.getTensors();
-                                                Device device = call.getDevice();
-                                                if ( tsrs[0] == null ) // Creating a new tensor:
-                                                {
-                                                    int[] shp = new int[]{tsrs[1].getNDConf().shape()[0],tsrs[2].getNDConf().shape()[1]}
-                                                    Tsr output = new Tsr( shp, 0.0 );
-                                                    output.setIsVirtual( false );
-                                                    device.store(output);
-                                                    tsrs[0] = output;
-                                                }
-                                                return call;
-                                            }
-                                    )
-                                    .setImplementationFor(
-                                            HostCPU.class,
-                                            new HostImplementation(
-                                                    (call) -&gt;
-                                                    {
-                                                        Tsr drn = call.getTensor(0)
-                                                        Tsr src1 = call.getTensor(1)
-                                                        Tsr src2 = call.getTensor(2)
-                                                        assert src1.shape(1) == src2.shape(0)
-
-                                                        //for ( int i=0; i&lt;clContext.getGws(); i++ ) {
-                                                        //    kernel.gemm_template(
-                                                        //            drn.value32(),                     //__global float[] drain,
-                                                        //            drn.getNDConf().asInlineArray(),   //__global int[] drn_conf,
-                                                        //            src1.value32(),                    //const __global float[] src1,
-                                                        //            src1.getNDConf().asInlineArray(),  //__global int[] src1_conf,
-                                                        //            src2.value32(),                    //const __global float[] src2,
-                                                        //            src2.getNDConf().asInlineArray(),  //__global int[] src2_conf,
-                                                        //            //call.getTensor(0).rank(),//int rank, == 2
-                                                        //            //-1, //const int d,
-                                                        //            clContext.getMaxTSRow(),//128, //const u int max_ts_row,//  = 128, // ts := tile size
-                                                        //            clContext.getMaxTSCol(),//128, //const u int max_ts_col,//  = 128,
-                                                        //            clContext.getMaxTSCom(),//16, //const u int max_ts_com,//  = 16,
-                                                        //            clContext.getMaxWPTRow(),//8, //const u int max_wpt_row,// = 8,   // wpt := work per thread
-                                                        //            clContext.getMaxWPTCol()//8  //const u int max_wpt_col // = 8,
-                                                        //    )
-                                                        //    clContext.increment()
-                                                        //}
-                                                    },
-                                                    3
-                                            )
-                                    )
-                    )</pre>
+<pre class='block-source'>OperationContext oldContext = Neureka.get().context()
+OperationContext testContext = oldContext.clone()</pre>
 </td>
 </tr>
 <tr>
@@ -465,7 +382,111 @@ Operation type = new OperationFactory()
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Function matMul = Function.create("test_function(I[0],I[1])")</pre>
+<pre class='block-source'>def run = testContext.runner()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>run { testContext == Neureka.get().context() }</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr t1 = Tsr.of([row_sze, com_sze], -3..8)
+Tsr t2 = Tsr.of([com_sze, col_sze], -7..4)
+run {
+                Neureka.get().context()
+                    .addOperation(
+                        new OperationBuilder()
+                                .setFunction('test_function')
+                                .setOperator('test_function')
+                                .setArity(-1)
+                                .setIsIndexer(false)
+                                .setIsOperator(false)
+                                .setIsDifferentiable(true)
+                                .setIsInline(false)
+                                .setStringifier(
+                                        children -&gt; {
+                                            String expression = String.join(", ", children);
+                                            if (expression.charAt(0) === '(' &amp;&amp; expression.charAt(expression.length() - 1) === ')') {
+                                                return "test_function" + expression;
+                                            }
+                                            return "test_function" + "(" + expression + ")";
+                                        }
+                                )
+                                .build()
+                                .setAlgorithm(
+                                        GenericAlgorithm.class,
+                                        new GenericAlgorithm(null)
+                                                .setIsSuitableFor(call -&gt; 1.0f)
+                                                .setCanPerformBackwardADFor(call -&gt; true)
+                                                .setCanPerformForwardADFor(call -&gt; false)
+                                                .setSupplyADAgentFor(
+                                                        (Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward) -&gt; {
+                                                            if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
+                                                            return new DefaultADAgent(null)
+                                                                    .setForward((t, derivative) -&gt; new FunctionBuilder(Neureka.get().context()).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
+                                                                    .setBackward((t, error) -&gt; new FunctionBuilder(Neureka.get().context()).build(f.toString(), false).derive(new Tsr[]{error}, 0));
+                                                        }
+                                                )
+                                                .setHandleInsteadOfDevice((caller, call) -&gt; null)
+                                                .setHandleRecursivelyAccordingToArity((call, goDeeperWith) -&gt; null)
+                                                .setInstantiateNewTensorsForExecutionIn(
+                                                        call -&gt; {
+                                                            Tsr&lt;?&gt;[] tsrs = call.getTensors();
+                                                            Device&lt;?&gt; device = call.getDevice();
+                                                            if (tsrs[0] == null) // Creating a new tensor:
+                                                            {
+                                                                int[] shp = new int[]{tsrs[1].getNDConf().shape()[0], tsrs[2].getNDConf().shape()[1]}
+                                                                Tsr output = Tsr.of(shp, 0.0);
+                                                                output.setIsVirtual(false);
+                                                                device.store(output);
+                                                                tsrs[0] = output;
+                                                            }
+                                                            return call;
+                                                        }
+                                                )
+                                                .setImplementationFor(
+                                                        HostCPU.class,
+                                                        new HostImplementation(
+                                                                (call) -&gt; {
+                                                                    Tsr drn = call.getTsrOfType(Number.class, 0)
+                                                                    Tsr src1 = call.getTsrOfType(Number.class, 1)
+                                                                    Tsr src2 = call.getTsrOfType(Number.class, 2)
+                                                                    assert src1.shape(1) == src2.shape(0)
+
+                                                                    //for ( int i=0; i&lt;clContext.getGws(); i++ ) {
+                                                                    //    kernel.gemm_template(
+                                                                    //            drn.value32(),                     //__global float[] drain,
+                                                                    //            drn.getNDConf().asInlineArray(),   //__global int[] drn_conf,
+                                                                    //            src1.value32(),                    //const __global float[] src1,
+                                                                    //            src1.getNDConf().asInlineArray(),  //__global int[] src1_conf,
+                                                                    //            src2.value32(),                    //const __global float[] src2,
+                                                                    //            src2.getNDConf().asInlineArray(),  //__global int[] src2_conf,
+                                                                    //            //call.getTsrOfType( Number.class, 0).rank(),//int rank, == 2
+                                                                    //            //-1, //const int d,
+                                                                    //            clContext.getMaxTSRow(),//128, //const u int max_ts_row,//  = 128, // ts := tile size
+                                                                    //            clContext.getMaxTSCol(),//128, //const u int max_ts_col,//  = 128,
+                                                                    //            clContext.getMaxTSCom(),//16, //const u int max_ts_com,//  = 16,
+                                                                    //            clContext.getMaxWPTRow(),//8, //const u int max_wpt_row,// = 8,   // wpt := work per thread
+                                                                    //            clContext.getMaxWPTCol()//8  //const u int max_wpt_col // = 8,
+                                                                    //    )
+                                                                    //    clContext.increment()
+                                                                    //}
+                                                                },
+                                                                3
+                                                        )
+                                                )
+                                )
+                )
+            }
+Function matMul = run { Function.of("test_function(I[0],I[1])") }</pre>
 </td>
 </tr>
 <tr>
@@ -481,7 +502,7 @@ Operation type = new OperationFactory()
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t3 = matMul([t1, t2])</pre>
+<pre class='block-source'>Tsr t3 = run { matMul([t1, t2]) }</pre>
 </td>
 </tr>
 <tr>
@@ -494,16 +515,10 @@ Operation type = new OperationFactory()
 </tr>
 <tr>
 <td>
-<div class='block-kind'>Cleanup:</div>
+<div class='block-kind'>And:</div>
 </td>
 <td>
-<div class='block-text'>The original OperationContext instance must be set!</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>OperationContext.setInstance(oldContext)</pre>
+<pre class='block-source'>Neureka.get().context() == oldContext</pre>
 </td>
 </tr>
 <tr>
@@ -514,11 +529,13 @@ Operation type = new OperationFactory()
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>lws</th>
 <th class='ex-header'>rws</th>
 <th class='ex-header'>com_sze</th>
 <th class='ex-header'>row_sze</th>
 <th class='ex-header'>col_sze</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -583,6 +600,7 @@ clContext.getMaxTSRow()==ts_row</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>lws</th>
 <th class='ex-header'>rws</th>
 <th class='ex-header'>com_sze</th>
@@ -593,6 +611,7 @@ clContext.getMaxTSRow()==ts_row</pre>
 <th class='ex-header'>ts_col</th>
 <th class='ex-header'>wpt_row</th>
 <th class='ex-header'>wpt_col</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -644,8 +663,8 @@ clContext.getMaxTSRow()==ts_row</pre>
 </tr>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='-1985108917'>
-<span>Tile parsing for kernel parameter claculation yields expected tile dimensions.</span>
+<div class='feature-description' id='20392533'>
+<span>Tile parsing for kernel parameter calculation yields expected tile dimensions.</span>
 <span style='float: right; font-size: 60%;'>
 <a href='#toc'>Return</a>
 </span>
@@ -665,7 +684,8 @@ clContext.getMaxTSRow()==ts_row</pre>
 <div class='block-kind'>Then:</div>
 </td>
 <td>
-<pre class='block-source'>result == expected as int[]</pre>
+<pre class='block-source'>result == expected as int[]
+println( size - expected.inject(1, {a,b -&gt; a*b}) )</pre>
 </td>
 </tr>
 <tr>
@@ -676,9 +696,11 @@ clContext.getMaxTSRow()==ts_row</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>size</th>
 <th class='ex-header'>shape</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>

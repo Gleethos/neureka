@@ -954,11 +954,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *                                                              <br>
      *  Mode state meaning:                                         <br>
      *  ----------------------------------------------------------- <br>
-     *  |  mode = 0  |  no Auto-Differentiation                     <br>
+     *  |  mode equals 0  |  no Auto-Differentiation                <br>
      *  ----------------------------------------------------------- <br>
-     *  |  mode > 0  |  forward Auto-Differentiation                <br>
+     *  |  mode greater 0  |  forward Auto-Differentiation          <br>
      *  ----------------------------------------------------------- <br>
-     *  |  mode < 0  |  backward Auto-Differentiation               <br>
+     *  |  mode lesser 0  |  backward Auto-Differentiation          <br>
      *  ----------------------------------------------------------- <br><br>
      *
      * @return The differentiation mode represented as an integer which encodes 3 distinct states.

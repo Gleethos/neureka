@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Operation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api</a> &gt; <span class="el_source">Operation.java</span></div><h1>Operation.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    ____                       _   _
+   / __ \                     | | (_)
+  | |  | |_ __   ___ _ __ __ _| |_ _  ___  _ __
+  | |  | | '_ \ / _ \ '__/ _` | __| |/ _ \| '_ \
+  | |__| | |_) |  __/ | | (_| | |_| | (_) | | | |
+   \____/| .__/ \___|_|  \__,_|\__|_|\___/|_| |_|
+         | |
+         |_|
+
+    The representation for operations on tensors.
+
+------------------------------------------------------------------------------------------------------------------------
+*/
+
+
+package neureka.backend.api;
+
+import neureka.Tsr;
+import neureka.autograd.GraphNode;
+import neureka.calculus.Function;
+import neureka.ndim.iterators.NDIterator;
+
+/**
+ *  This interface is part of the backend API and it embodies the top layer of the 3 tier backend architecture.
+ *  It represents broad and high level requests for execution which might be executed differently depending
+ *  on the provided {@link ExecutionCall} arguments.
+ *  An {@link Operation} implementation ought to consist of a component system
+ *  containing multiple {@link Algorithm} instances, which themselves ought to contain device specific implementations
+ *  capable of processing {@link ExecutionCall} instances, or rather their state. &lt;br&gt;&lt;br&gt;
+ *
+ *  Besides the component system, there is also the definition for how its supposed to integrate into
+ *  the {@link neureka.calculus} package in order to serve as part of an {@link Function} AST.
+ *  This means that the operation should have a function name
+ *  and optionally also an operator in the form of {@link String} instances.
+ *  Alongside there must be an implementation of the {@link Operation#stringify(String[])} method,
+ *  which ought to generate a String view as part of a {@link Function}-AST.
+ */
+public interface Operation
+{
+
+    @FunctionalInterface
+    interface TertiaryNDIConsumer { double execute( NDIterator t0Idx, NDIterator t1Idx, NDIterator t2Idx ); }
+    @FunctionalInterface
+    interface TertiaryNDAConsumer { double execute( int[] t0Idx, int[] t1Idx, int[] t2Idx ); }
+    @FunctionalInterface
+    interface SecondaryNDIConsumer { double execute( NDIterator t0Idx, NDIterator t1Idx ); }
+    @FunctionalInterface
+    interface SecondaryNDAConsumer { double execute( int[] t0Idx, int[] t1Idx ); }
+    @FunctionalInterface
+    interface PrimaryNDIConsumer { double execute( NDIterator t0Idx ); }
+    @FunctionalInterface
+    interface PrimaryNDAConsumer { double execute( int[] t0Idx ); }
+
+    //---
+
+    @FunctionalInterface
+    interface DefaultOperatorCreator&lt;T&gt; {  T create( Tsr&lt;?&gt;[] inputs, int d ); }
+    @FunctionalInterface
+    interface ScalarOperatorCreator&lt;T&gt;
+    {  T create( Tsr&lt;?&gt;[] inputs, double scalar, int d ); }
+
+    //==================================================================================================================
+
+    /**
+     *  Alongside a component system made up of {@link Algorithm} instances, implementations
+     *  of this interface also ought to express a routing mechanism which finds the best {@link Algorithm}
+     *  for a given {@link ExecutionCall} instance.
+     *  This method signature describes this requirement.
+     *
+     * @param call The {@link ExecutionCall} instance which needs the best {@link Algorithm} for execution.
+     * @param &lt;T&gt; The type parameter describing the concrete type of the {@link Algorithm} implementation.
+     * @return The chosen {@link Algorithm} which ought to be fir for execution the provided call.
+     */
+    &lt;T extends Algorithm&lt;T&gt;&gt; Algorithm&lt;T&gt; getAlgorithmFor( ExecutionCall&lt;?&gt; call );
+
+    //==================================================================================================================
+
+    /**
+     *  Concrete {@link Operation} types ought to be representable by a function name.
+     *  The following ensures that this contract is met when overriding the method.
+     *
+     * @return the function name which serves as identifier when parsing {@link Function} instances.
+     */
+    String getFunction();
+
+    //==================================================================================================================
+
+    /**
+     *  {@link Operation} implementations embody a component system hosting unique {@link Algorithm} instances.
+     *  For a given class implementing the {@link Algorithm} class, there can only be a single
+     *  instance of it referenced (aka supported) by a given {@link Operation} instance.
+     *  This method enables the registration of {@link Algorithm} types in the component system of this {@link Operation}.
+     *
+     * @param type The class of the type which implements {@link Algorithm} as key for the provided instance.
+     * @param instance The instance of the provided type class which ought to be referenced (supported) by this {@link Operation}.
+     * @param &lt;T&gt; The type parameter of the {@link Algorithm} type class.
+     * @return This very {@link Operation} instance to enable method chaining on it.
+     */
+    &lt;T extends Algorithm&lt;T&gt;&gt; Operation setAlgorithm( Class&lt;T&gt; type, T instance );
+
+    default &lt;T extends Algorithm&lt;T&gt;&gt; Operation setAlgorithm( T instance ) {
+<span class="fc" id="L126">        return setAlgorithm( (Class&lt;T&gt;) instance.getClass(), instance );</span>
+    }
+
+    /**
+     *  {@link Operation} implementations embody a component system hosting unique {@link Algorithm} instances.
+     *  For a given class implementing the {@link Algorithm} class, there can only be a single
+     *  instance of it referenced (aka supported) by a given {@link Operation} instance.
+     *  This method ensures this in terms of read access by returning only a single instance or null
+     *  based on the provided class instance whose type extends the {@link Algorithm} interface.
+     *
+     * @param type The class of the type which implements {@link Algorithm} as a key to get an existing instance.
+     * @param &lt;T&gt; The type parameter of the {@link Algorithm} type class.
+     * @return The instance of the specified type if any exists within this {@link Operation}.
+     */
+    &lt;T extends Algorithm&lt;T&gt;&gt; T getAlgorithm( Class&lt;T&gt; type );
+
+    /**
+     *  This method checks if this {@link Operation} contains an instance of the
+     *  {@link Algorithm} implementation specified via its type class.
+     *
+     * @param type The class of the type which implements {@link Algorithm}.
+     * @param &lt;T&gt; The type parameter of the {@link Algorithm} type class.
+     * @return The truth value determining if this {@link Operation} contains an instance of the specified {@link Algorithm} type.
+     */
+    &lt;T extends Algorithm&lt;T&gt;&gt; boolean supportsAlgorithm( Class&lt;T&gt; type );
+
+    //==================================================================================================================
+
+    String stringify( String[] children );
+
+    //==================================================================================================================
+
+    /**
+     *  {@link Operation} implementations and {@link Function} implementations are in a tight relationship
+     *  where the {@link Function} describes an abstract syntax tree based on the syntactic information provided
+     *  by the {@link Operation} (through methods like {@link Operation#getOperator()} or {@link Operation#getFunction()}).
+     *  One important feature of the {@link Function} is the ability to create
+     *  derivatives by calling the {@link Function#getDerivative(int)} method.
+     *  Implementations of this {@link Function} method ought to call the method defined below in order to
+     *  form the derivation based on the child nodes of the abstract syntax tree of the given {@link Function} node.
+     *
+     * @param children The child nodes of a AST node referencing this operation.
+     * @param derivationIndex The index of the input node which ought to be derived.
+     * @return The derivative as a {@link String} which should be parsable into yet another AST.
+     */
+    String asDerivative( Function[] children, int derivationIndex );
+
+    //==================================================================================================================
+
+    String getOperator();
+
+    /**
+     * Arity is the number of arguments or operands
+     * that this function or operation takes.
+     */
+    int getArity();
+
+    /**
+     *  An operator is an alternative to a function like &quot;sum()&quot; or &quot;prod()&quot;. &lt;br&gt;
+     *  Examples would be &quot;+, -, * ...&quot;!
+     *
+     * @return If this operation can be represented as operator like &quot;+, -, * ...&quot;!
+     */
+    boolean isOperator();
+
+    /**
+     *  This boolean property tell the {@link Function} implementations that this {@link Operation}
+     *  ought to be viewed as something to be indexed.
+     *  The {@link Function} will use this information to iterate over all the provided inputs and
+     *  then execute the function wile also passing the index to the function AST.
+     *  The resulting array will then be available to this {@link Operation} as argument list.
+     *  This feature works alongside the {@link Function} implementation found in
+     *  {@link neureka.calculus.implementations.FunctionVariable}, which represents an input indexed
+     *  by the identifier 'j'!
+     *
+     * @return If this operation is an indexer.
+     */
+    boolean isIndexer();
+
+    /**
+     *  This has currently no use!
+     */
+    @Deprecated
+    boolean isDifferentiable();
+
+    /**
+     *  This flag indicates that the implementation of this {@link Operation}
+     *  performs an operation which modifies the inputs to that operation.
+     *  An example of this would be an assignment operation which copies the contents of one nd-array / tensor
+     *  into another tensor. This second tensor will then have changed its state.
+     *  This can be dangerous when auto-differentiation is involved.
+     *
+     * @return The truth value determining if this {@link Operation} changes the contents of inputs.
+     */
+    boolean isInline();
+
+    &lt;T extends Algorithm&lt;T&gt;&gt; boolean supports( Class&lt;T&gt; implementation );
+
+    /**
+     * This method mainly ought to serve as a reference- and fallback- implementation for tensor backends and also
+     * as the backend for handling the calculation of scalar inputs passed to a given abstract syntax tree of
+     * {@link Function} instances... &lt;br&gt;
+     * ( (almost) every Function instance contains an OperationType reference to which it passes scalar executions... )
+     * &lt;br&gt;&lt;br&gt;
+     * This is also the reason why the last parameter of this method is a list of Function objects :
+     * The list stores the child nodes of the Function node that is currently being processed.
+     * Therefore when implementing this method one should first call the child nodes in
+     * order to get the &quot;real inputs&quot; of this current node.
+     * &lt;br&gt;&lt;br&gt;
+     * One might ask : Why does that not happen automatically?
+     * The answer is to that question lies in the other parameters of this method.
+     * Specifically the parameter &quot;d&quot; !
+     * This argument determines if the derivative ought to be calculated and
+     * also which value is being targeted within the input array.
+     * Depending on this variable and also the nature of the operation,
+     * the execution calls to the child nodes of this node change considerably!
+     * &lt;br&gt;&lt;br&gt;
+     *
+     * @param inputs An array of scalar input variables.
+     * @param j The index variable for indexed execution on the input array. (-1 if no indexing should occur)
+     * @param d The index of the variable of which a derivative ought to be calculated.
+     * @param src The child nodes of the Function node to which this very OperationType belongs.
+     * @return The result of the calculation.
+     */
+    double calculate( double[] inputs, int j, int d, Function[] src );
+
+
+    /**
+     *  This static utility class contains simple methods used for creating slices of plain old
+     *  arrays of tensor objects...
+     *  These slices may be used for many reasons, however mainly when iterating over
+     *  inputs to a Function recursively in order to execute them pairwise for example...
+     */
+<span class="nc" id="L259">    class Utility</span>
+    {
+        public static Tsr&lt;?&gt;[] subset( Tsr&lt;?&gt;[] tsrs, int padding, int index, int offset ) {
+<span class="pc bpc" id="L262" title="1 of 2 branches missed.">            if ( offset &lt; 0 ) {</span>
+<span class="nc" id="L263">                index += offset;</span>
+<span class="nc" id="L264">                offset *= -1;</span>
+            }
+<span class="fc" id="L266">            Tsr&lt;?&gt;[] newTsrs = new Tsr[ offset + padding ];</span>
+<span class="fc" id="L267">            System.arraycopy( tsrs, index, newTsrs, padding, offset );</span>
+<span class="fc" id="L268">            return newTsrs;</span>
+        }
+
+        public static Tsr&lt;?&gt;[] without( Tsr&lt;?&gt;[] tsrs, int index ) {
+<span class="fc" id="L272">            Tsr&lt;?&gt;[] newTsrs = new Tsr[ tsrs.length - 1 ];</span>
+<span class="fc bfc" id="L273" title="All 4 branches covered.">            for ( int i = 0; i &lt; newTsrs.length; i++ ) newTsrs[ i ] = tsrs[ i + ( ( i &lt; index ) ? 0 : 1 ) ];</span>
+<span class="fc" id="L274">            return newTsrs;</span>
+        }
+
+        public static Tsr&lt;?&gt;[] offsetted( Tsr&lt;?&gt;[] tsrs, int offset ) {
+<span class="fc" id="L278">            Tsr&lt;?&gt;[] newTsrs = new Tsr[ tsrs.length - offset ];</span>
+<span class="fc" id="L279">            newTsrs[ 0 ] = Tsr.Create.newTsrLike( tsrs[ 1 ] );</span>
+<span class="fc bfc" id="L280" title="All 4 branches covered.">            if ( !tsrs[ 1 ].has( GraphNode.class ) &amp;&amp; tsrs[ 1 ] != tsrs[ 0 ] ) {//Deleting intermediate results!</span>
+<span class="fc" id="L281">                tsrs[ 1 ].delete();</span>
+<span class="fc" id="L282">                tsrs[ 1 ] = null;</span>
+            }
+<span class="pc bpc" id="L284" title="1 of 4 branches missed.">            if (!tsrs[ 2 ].has( GraphNode.class ) &amp;&amp; tsrs[ 2 ] != tsrs[ 0 ]) {//Deleting intermediate results!</span>
+<span class="fc" id="L285">                tsrs[ 2 ].delete();</span>
+<span class="fc" id="L286">                tsrs[ 2 ] = null;</span>
+            }
+<span class="fc" id="L288">            System.arraycopy( tsrs, 1 + offset, newTsrs, 1, tsrs.length - 1 - offset );</span>
+<span class="fc" id="L289">            newTsrs[ 1 ] = tsrs[ 0 ];</span>
+<span class="fc" id="L290">            return newTsrs;</span>
+        }
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

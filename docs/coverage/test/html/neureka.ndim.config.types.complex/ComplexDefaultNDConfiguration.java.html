@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ComplexDefaultNDConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.ndim.config.types.complex</a> &gt; <span class="el_source">ComplexDefaultNDConfiguration.java</span></div><h1>ComplexDefaultNDConfiguration.java</h1><pre class="source lang-java linenums">package neureka.ndim.config.types.complex;
 
-import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.config.AbstractNDC;
+import neureka.ndim.config.NDConfiguration;
 
 public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTABLE
 {
@@ -132,8 +132,9 @@ public final class ComplexDefaultNDConfiguration extends AbstractNDC //:= IMMUTA
     @Override
     public int indexOfIndices( int[] indices ) {
 <span class="fc" id="L134">        int i = 0;</span>
-<span class="fc bfc" id="L135" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; _shape.length; ii++ ) i += (indices[ ii ] * _spread[ ii ] + _offset[ ii ]) * _translation[ ii ];</span>
-<span class="fc" id="L136">        return i;</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        for ( int ii = 0; ii &lt; _shape.length; ii++ )</span>
+<span class="fc" id="L136">            i += ( indices[ ii ] * _spread[ ii ] + _offset[ ii ] ) * _translation[ ii ];</span>
+<span class="fc" id="L137">        return i;</span>
     }
 
     

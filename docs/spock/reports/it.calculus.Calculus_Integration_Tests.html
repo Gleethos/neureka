@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:44 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:42 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>3</td>
 <td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>7.714 seconds</td>
+<td>5.939 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -379,7 +383,7 @@ div.footer {
 </td>
 <td>
 <pre class='block-source'>"A new Function instance created from ${equation}."
-Function f = FunctionBuilder.build(equation, true)</pre>
+Function f = new FunctionBuilder(Neureka.get().context()).build(equation, true)</pre>
 </td>
 </tr>
 <tr>
@@ -432,10 +436,12 @@ value == expected.values().first()</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>equation</th>
 <th class='ex-header'>inputs</th>
 <th class='ex-header'>index</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -641,12 +647,26 @@ value == expected.values().first()</pre>
 <td class='ex-value'>[[3]:[-4, 2, 5]]</td>
 <td class='ex-result'>OK</td>
 </tr>
+<tr class='ex-pass'>
+<td class='ex-value'>ln(i0)</td>
+<td class='ex-value'>[(1):[3.0]]</td>
+<td class='ex-value'>&lt;null&gt;</td>
+<td class='ex-value'>[[1]:[1.0986122886681098]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>ln(i0)</td>
+<td class='ex-value'>[(1):[3.0]]</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>[[1]:[0.3333333333333333]]</td>
+<td class='ex-result'>OK</td>
+</tr>
 </tbody>
 </table>
 </div>
 </td>
 <td>
-<div class='spec-status'>29/29 passed</div>
+<div class='spec-status'>31/31 passed</div>
 </td>
 </tr>
 <tr>
@@ -664,8 +684,8 @@ value == expected.values().first()</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)
-Function f = Function.create("[2, 0, 1]:(I[0])")</pre>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+Function f = Function.of("[2, 0, 1]:(I[0])")</pre>
 </td>
 </tr>
 <tr>
@@ -673,7 +693,7 @@ Function f = Function.create("[2, 0, 1]:(I[0])")</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr([3, 4, 2], 1..5)</pre>
+<pre class='block-source'>Tsr t = Tsr.of([3, 4, 2], 1..5)</pre>
 </td>
 </tr>
 <tr>
@@ -716,7 +736,7 @@ r.toString().contains("[2x3x4]:(1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr([1, 1, 3, 2, 1], 8).setRqsGradient(true)</pre>
+<pre class='block-source'>Tsr t = Tsr.of([1, 1, 3, 2, 1], 8).setRqsGradient(true)</pre>
 </td>
 </tr>
 <tr>
@@ -724,7 +744,7 @@ r.toString().contains("[2x3x4]:(1.0, 3.0, 5.0, 2.0, 4.0, 1.0, 3.0, 5.0, 2.0, 4.0
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr trimmed = Function.create("dimtrim(I[0])")(t)</pre>
+<pre class='block-source'>Tsr trimmed = Function.of("dimtrim(I[0])")(t)</pre>
 </td>
 </tr>
 <tr>

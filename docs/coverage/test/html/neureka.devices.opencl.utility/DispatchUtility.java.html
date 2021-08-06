@@ -2,196 +2,207 @@
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-<span class="pc bpc" id="L8" title="1 of 2 branches missed.">public class DispatchUtility {</span>
+<span class="pc bpc" id="L7" title="1 of 2 branches missed.">public class DispatchUtility {</span>
 
 
-    public static int[] parseTile(int size, int[] shape)
+
+    private static void _revert( int[] array ) {
+<span class="fc bfc" id="L12" title="All 2 branches covered.">        for( int i = 0; i &lt; array.length / 2; i++ )</span>
+        {
+<span class="fc" id="L14">            int temp = array[ i ];</span>
+<span class="fc" id="L15">            array[ i ] = array[ array.length - i - 1 ];</span>
+<span class="fc" id="L16">            array[ array.length - i - 1 ] = temp;</span>
+        }
+<span class="fc" id="L18">    }</span>
+
+    private static int _productOf( int[] array ) {
+<span class="fc" id="L21">        int product = 1;</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">        for ( int i : array ) product *= i;</span>
+<span class="fc" id="L23">        return product;</span>
+    }
+
+    public static int[] parseTile( int size, int[] shape )
     {
-<span class="fc" id="L13">        double root = Math.pow(size, 1/(double)shape.length);</span>
-<span class="fc" id="L14">        int center = (int) root;</span>
-<span class="fc" id="L15">        int[] current = new int[ shape.length ];</span>
-<span class="fc" id="L16">        Arrays.fill(current, center);</span>
-<span class="pc bpc" id="L17" title="1 of 4 branches missed.">        for ( int i=0; i &lt; shape.length; i++ ) if ( current[ i ] &gt; shape[ i ] ) current[ i ] = shape[ i ];</span>
-<span class="fc" id="L18">        List&lt;List&lt;Integer&gt;&gt; factors = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L19" title="All 2 branches covered.">        for ( int s : shape ) factors.add( primeFactors(s) );</span>
-<span class="fc" id="L20">        int[] indices = new int[ shape.length ];</span>
-<span class="fc bfc" id="L21" title="All 2 branches covered.">        for ( int i=0; i&lt;shape.length; i++ ) {</span>
-<span class="fc" id="L22">            int index = -1;</span>
-<span class="fc" id="L23">            int product = 1;</span>
+<span class="fc" id="L28">        double root = Math.pow(size, 1/(double)shape.length);</span>
+<span class="fc" id="L29">        int center = (int) root;</span>
+<span class="fc" id="L30">        int[] current = new int[ shape.length ];</span>
+<span class="fc" id="L31">        Arrays.fill( current, center );</span>
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        for ( int i = 0; i &lt; shape.length; i++ )</span>
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">            if ( current[ i ] &gt; shape[ i ] ) current[ i ] = shape[ i ];</span>
+<span class="fc" id="L34">        int[][] factors = new int[shape.length][];</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        for ( int si = 0; si &lt; shape.length; si++ ) factors[si] = _primeFactors(shape[si]);</span>
+<span class="fc" id="L36">        int[] indices = new int[ shape.length ];</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        for ( int si = 0; si &lt; shape.length; si++ ) {</span>
+<span class="fc" id="L38">            int fi = -1;</span>
+<span class="fc" id="L39">            int product = 1;</span>
             do {
-<span class="fc" id="L25">                index++;</span>
-<span class="fc" id="L26">                int previousDelta = Math.abs(current[ i ]-product);</span>
-<span class="fc" id="L27">                product *= factors.get( i ).get(index);</span>
-<span class="fc" id="L28">                int newDelta = Math.abs(current[ i ]-product);</span>
-<span class="pc bpc" id="L29" title="1 of 4 branches missed.">                if ( product &gt; shape[ i ] || previousDelta &lt;= newDelta ) {</span>
-<span class="fc" id="L30">                    product /= factors.get( i ).get(index);</span>
-<span class="fc" id="L31">                    break;</span>
+<span class="fc" id="L41">                fi++;</span>
+<span class="fc" id="L42">                int previousDelta = Math.abs( current[ si ] - product );</span>
+<span class="fc" id="L43">                product *= factors[ si ][ fi ];</span>
+<span class="fc" id="L44">                int newDelta = Math.abs( current[ si ] - product );</span>
+<span class="pc bpc" id="L45" title="1 of 4 branches missed.">                if ( product &gt; shape[ si ] || previousDelta &lt;= newDelta ) {</span>
+<span class="fc" id="L46">                    product /= factors[ si ][ fi ];</span>
+<span class="fc" id="L47">                    break;</span>
                 }
-<span class="fc bfc" id="L33" title="All 2 branches covered.">            } while( product &lt; current[ i ] );</span>
+            }
+<span class="fc bfc" id="L50" title="All 2 branches covered.">            while( product &lt; current[ si ] );</span>
 
-<span class="fc" id="L35">            int intermediateProduct = product;</span>
-<span class="fc" id="L36">            int intermediateIndex = index;</span>
+<span class="fc" id="L52">            int intermediateProduct = product;</span>
+<span class="fc" id="L53">            int intermediateIndex = fi;</span>
 
             // Now the same in reverse :
 
-<span class="fc" id="L40">            index = factors.get( i ).size();</span>
-<span class="fc" id="L41">            product = 1;</span>
+<span class="fc" id="L57">            fi = factors[ si ].length;</span>
+<span class="fc" id="L58">            product = 1;</span>
             do {
-<span class="fc" id="L43">                index--;</span>
-<span class="fc" id="L44">                int previousDelta = Math.abs(current[ i ]-product);</span>
-<span class="fc" id="L45">                product *= factors.get( i ).get(index);</span>
-<span class="fc" id="L46">                int newDelta = Math.abs(current[ i ]-product);</span>
-<span class="pc bpc" id="L47" title="1 of 4 branches missed.">                if ( product &gt; shape[ i ] || previousDelta &lt;= newDelta ) {</span>
-<span class="fc" id="L48">                    product /= factors.get( i ).get(index);</span>
-<span class="fc" id="L49">                    Collections.reverse(factors.get( i ));</span>
-<span class="fc" id="L50">                    index = factors.get( i ).size() - 1 - index;</span>
-<span class="fc" id="L51">                    break;</span>
-                }
-<span class="fc bfc" id="L53" title="All 2 branches covered.">            } while( product &lt; current[ i ] );</span>
-
-<span class="fc bfc" id="L55" title="All 2 branches covered.">            boolean firstWasBetter = (Math.abs(current[ i ]-intermediateProduct)&lt;Math.abs(Math.abs(current[ i ]-product)));</span>
-
-<span class="fc bfc" id="L57" title="All 2 branches covered.">            current[ i ] = (firstWasBetter) ? intermediateProduct : product;</span>
-<span class="fc bfc" id="L58" title="All 2 branches covered.">            indices[ i ] = (firstWasBetter) ? intermediateIndex : index;</span>
-        }
-
-        // Setup done, we've got a basic set of tile dimensions!
-        // Now let's try to find a product that fits out desired size better :
-
-<span class="fc" id="L64">        int totalProduct = 1;</span>
-        int productDelta;
-<span class="fc bfc" id="L66" title="All 2 branches covered.">        for ( int c : current ) totalProduct *= c;</span>
-<span class="fc" id="L67">        productDelta = Math.abs(size-totalProduct);</span>
-        do {
-<span class="fc" id="L69">            int bestIndex = -1;</span>
-<span class="fc" id="L70">            int lowest = Integer.MAX_VALUE;</span>
-<span class="fc" id="L71">            double bestRatio = 1.0;</span>
-<span class="fc bfc" id="L72" title="All 2 branches covered.">            for ( int i=0; i&lt;shape.length; i++)</span>
-            {
-<span class="fc bfc" id="L74" title="All 2 branches covered.">                int found = ( factors.get( i ).size() &gt; indices[ i ] + 1 )</span>
-<span class="fc" id="L75">                        ? factors.get( i ).get(indices[ i ]+1)</span>
-<span class="fc" id="L76">                        : Integer.MAX_VALUE ;</span>
-<span class="fc bfc" id="L77" title="All 2 branches covered.">                double ratio = (found == Integer.MAX_VALUE)</span>
-<span class="fc" id="L78">                        ? 1.0</span>
-<span class="fc" id="L79">                        : (double)current[ i ] / (double)shape[ i ];</span>
-<span class="pc bpc" id="L80" title="1 of 8 branches missed.">                if (</span>
-                        lowest == -1 ||
-                                found &lt; lowest ||
-                                found &lt;= lowest &amp;&amp; ratio &lt; bestRatio
-                ) {
-<span class="fc" id="L85">                    lowest = found;</span>
-<span class="fc" id="L86">                    bestIndex = i;</span>
-<span class="fc" id="L87">                    bestRatio = ratio;</span>
-<span class="pc bpc" id="L88" title="2 of 4 branches missed.">                    assert indices[bestIndex]&gt;-1;</span>
+<span class="fc" id="L60">                fi--;</span>
+<span class="fc" id="L61">                int previousDelta = Math.abs(current[ si ]-product);</span>
+<span class="fc" id="L62">                product *= factors[ si ][ fi ];</span>
+<span class="fc" id="L63">                int newDelta = Math.abs(current[ si ]-product);</span>
+<span class="pc bpc" id="L64" title="1 of 4 branches missed.">                if ( product &gt; shape[ si ] || previousDelta &lt;= newDelta ) {</span>
+<span class="fc" id="L65">                    product /= factors[ si ][ fi ];</span>
+<span class="fc" id="L66">                    _revert( factors[ si ] );</span>
+<span class="fc" id="L67">                    fi = factors[ si ].length - 1 - fi;</span>
+<span class="fc" id="L68">                    break;</span>
                 }
             }
-<span class="fc bfc" id="L91" title="All 2 branches covered.">            if ( bestIndex == -1 ) break; // nothing found :/</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">            while( product &lt; current[ si ] );</span>
 
-<span class="fc" id="L93">            int newTotalProduct = productOfNewDimension(</span>
+<span class="fc" id="L73">            boolean firstWasBetter = (</span>
+<span class="fc" id="L74">                    Math.abs(current[ si ]-intermediateProduct)</span>
+                            &lt;
+<span class="fc bfc" id="L76" title="All 2 branches covered.">                    Math.abs(Math.abs(current[ si ]-product))</span>
+            );
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            current[ si ] = (firstWasBetter) ? intermediateProduct : product;</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">            indices[ si ] = (firstWasBetter) ? intermediateIndex : fi;</span>
+        }
+
+        /*
+           Setup done, we've got a basic set of tile dimensions
+           which is close to a quadratic / cubic / ... dimensionality !
+           Now let's try to find a product that fits our desired size better :
+        */
+<span class="fc" id="L87">        int totalProduct = _productOf( current );</span>
+<span class="fc" id="L88">        int productDelta = Math.abs( size - totalProduct );</span>
+        do {
+<span class="fc" id="L90">            int bestIndex = -1;</span>
+<span class="fc" id="L91">            int lowest = Integer.MAX_VALUE;</span>
+<span class="fc" id="L92">            double bestRatio = 1.0;</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">            for ( int i = 0; i &lt; shape.length; i++ )</span>
+            {
+<span class="fc bfc" id="L95" title="All 2 branches covered.">                int found = ( factors[ i ].length &gt; indices[ i ] + 1 )</span>
+<span class="fc" id="L96">                                ? factors[ i ][ indices[ i ]+1 ]</span>
+<span class="fc" id="L97">                                : Integer.MAX_VALUE ;</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">                double ratio = (found == Integer.MAX_VALUE)</span>
+<span class="fc" id="L99">                                    ? 1.0</span>
+<span class="fc" id="L100">                                    : (double)current[ i ] / (double)shape[ i ];</span>
+<span class="pc bpc" id="L101" title="1 of 8 branches missed.">                if (</span>
+                        lowest == -1 ||
+                        found &lt; lowest ||
+                        found &lt;= lowest &amp;&amp; ratio &lt; bestRatio
+                ) {
+<span class="fc" id="L106">                    lowest = found;</span>
+<span class="fc" id="L107">                    bestIndex = i;</span>
+<span class="fc" id="L108">                    bestRatio = ratio;</span>
+<span class="pc bpc" id="L109" title="2 of 4 branches missed.">                    assert indices[bestIndex] &gt; -1;</span>
+                }
+            }
+<span class="fc bfc" id="L112" title="All 2 branches covered.">            if ( bestIndex == -1 ) break; // nothing found :/</span>
+
+<span class="fc" id="L114">            int newTotalProduct = _productOfNewDimension(</span>
                     current,
                     bestIndex,
                     lowest,
                     size
             );
-<span class="fc" id="L99">            int newProductDelta = Math.abs(size-newTotalProduct);</span>
-<span class="fc bfc" id="L100" title="All 2 branches covered.">            if ( productDelta &gt; newProductDelta ) {</span>
-<span class="fc" id="L101">                productDelta = newProductDelta;</span>
-<span class="fc" id="L102">                current[bestIndex] *= factors.get(bestIndex).get(indices[bestIndex]+1);</span>
+<span class="fc" id="L120">            int newProductDelta = Math.abs(size-newTotalProduct);</span>
+<span class="fc bfc" id="L121" title="All 2 branches covered.">            if ( productDelta &gt; newProductDelta ) {</span>
+<span class="fc" id="L122">                productDelta = newProductDelta;</span>
+<span class="fc" id="L123">                current[bestIndex] *= factors[ bestIndex ][ indices[bestIndex]+1 ];</span>
             }
             else break;
 
-<span class="fc" id="L106">        } while ( true );</span>
+<span class="fc" id="L127">        } while ( true );</span>
 
         // Maybe we went about some dimensions the wrong way...
         // Let's check if maybe could reverse product relations and get better configurations :
 
-<span class="fc" id="L111">        totalProduct = 1;</span>
-<span class="fc bfc" id="L112" title="All 2 branches covered.">        for ( int c : current ) totalProduct *= c;</span>
-<span class="fc" id="L113">        productDelta = Math.abs(size-totalProduct);</span>
+<span class="fc" id="L132">        totalProduct = _productOf( current );</span>
+<span class="fc" id="L133">        productDelta = Math.abs(size-totalProduct);</span>
         do {
-<span class="fc" id="L115">            int bestIndex = -1;</span>
-<span class="fc" id="L116">            int bestInversionDelta = Integer.MAX_VALUE;</span>
-<span class="fc bfc" id="L117" title="All 2 branches covered.">            for ( int i=0; i&lt;shape.length; i++)</span>
+<span class="fc" id="L135">            int bestIndex = -1;</span>
+<span class="fc" id="L136">            int bestInversionDelta = Integer.MAX_VALUE;</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">            for ( int i=0; i&lt;shape.length; i++)</span>
             {
-<span class="fc" id="L119">                int inversionDelta = inversionProductOfNewDimension(</span>
+<span class="fc" id="L139">                int inversionDelta = _inversionProductOfNewDimension(</span>
                         shape, current, i, size
                 );
-<span class="fc bfc" id="L122" title="All 2 branches covered.">                if ( inversionDelta &lt; productDelta ) {</span>
-<span class="fc" id="L123">                    bestIndex = i;</span>
-<span class="fc" id="L124">                    bestInversionDelta = inversionDelta;</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">                if ( inversionDelta &lt; productDelta ) {</span>
+<span class="fc" id="L143">                    bestIndex = i;</span>
+<span class="fc" id="L144">                    bestInversionDelta = inversionDelta;</span>
                 }
             }
-<span class="fc bfc" id="L127" title="All 2 branches covered.">            if (bestIndex == -1 ) break; // nothing found :/</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">            if (bestIndex == -1 ) break; // nothing found :/</span>
 
-<span class="pc bpc" id="L129" title="1 of 2 branches missed.">            if ( productDelta &gt; bestInversionDelta ) {</span>
-<span class="fc" id="L130">                productDelta = bestInversionDelta;</span>
-<span class="fc" id="L131">                current[bestIndex] = shape[bestIndex]/current[bestIndex];</span>
-            }
-            else break;
+<span class="fc" id="L149">            productDelta = bestInversionDelta;</span>
+<span class="fc" id="L150">            current[bestIndex] = shape[bestIndex] / current[bestIndex];</span>
 
-<span class="fc" id="L135">        } while ( true );</span>
+<span class="fc" id="L152">        } while ( true );</span>
 
-<span class="fc" id="L137">        return current;</span>
+<span class="fc" id="L154">        return current;</span>
     }
 
-    private static boolean contains(int[] array, int number) {
-<span class="nc bnc" id="L141" title="All 4 branches missed.">        for ( int i : array ) if ( i == number ) return true;</span>
-<span class="nc" id="L142">        return false;</span>
-    }
 
-    private static int productOfNewDimension(
+    private static int _productOfNewDimension(
             int[] current,
             int index,
             int alteration,
             int size
     ) {
-<span class="fc" id="L151">        int[] copy = Arrays.copyOf(current, current.length);</span>
-<span class="fc" id="L152">        copy[index] *= alteration;</span>
-<span class="fc" id="L153">        int product = 1;</span>
-<span class="fc bfc" id="L154" title="All 2 branches covered.">        for ( int d : copy ) product *= d;</span>
-<span class="fc" id="L155">        return Math.abs(size-product);</span>
+<span class="fc" id="L164">        int[] copy = Arrays.copyOf(current, current.length);</span>
+<span class="fc" id="L165">        copy[index] *= alteration;</span>
+<span class="fc" id="L166">        int product = _productOf( copy );</span>
+<span class="fc" id="L167">        return Math.abs(size-product);</span>
     }
 
-    private static int inversionProductOfNewDimension(
+    private static int _inversionProductOfNewDimension(
             int[] shape,
             int[] current,
             int index,
             int size
     ) {
-<span class="fc" id="L164">        int[] copy = Arrays.copyOf(current, current.length);</span>
-<span class="fc" id="L165">        copy[index] = shape[index]/copy[index];</span>
-<span class="fc" id="L166">        int product = 1;</span>
-<span class="fc bfc" id="L167" title="All 2 branches covered.">        for ( int d : copy ) product *= d;</span>
-<span class="fc" id="L168">        return Math.abs(size-product);</span>
+<span class="fc" id="L176">        int[] copy = Arrays.copyOf(current, current.length);</span>
+<span class="fc" id="L177">        copy[index] = shape[index] / copy[index];</span>
+<span class="fc" id="L178">        int product = _productOf( copy );</span>
+<span class="fc" id="L179">        return Math.abs(size-product);</span>
     }
 
-    public static List&lt;Integer&gt; primeFactors(int n)
+    private static int[] _primeFactors(int n )
     {
-<span class="fc" id="L173">        List&lt;Integer&gt; factors = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L184">        List&lt;Integer&gt; factors = new ArrayList&lt;&gt;();</span>
 
         // Print the number of 2s that divide n
-<span class="fc bfc" id="L176" title="All 2 branches covered.">        while (n % 2 == 0) {</span>
-<span class="fc" id="L177">            factors.add(2);</span>
-<span class="fc" id="L178">            n /= 2;</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">        while ( n % 2 == 0 ) {</span>
+<span class="fc" id="L188">            factors.add( 2 );</span>
+<span class="fc" id="L189">            n /= 2;</span>
         }
 
         // n must be odd at this point.  So we can
         // skip one element (Note i = i +2)
-<span class="fc bfc" id="L183" title="All 2 branches covered.">        for ( int i = 3; i &lt;= Math.sqrt(n); i += 2) {</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        for ( int i = 3; i &lt;= Math.sqrt(n); i += 2 ) {</span>
             // While i divides n, print i and divide n
-<span class="fc bfc" id="L185" title="All 2 branches covered.">            while (n % i == 0) {</span>
-<span class="fc" id="L186">                factors.add( i );</span>
-<span class="fc" id="L187">                n /= i;</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">            while ( n % i == 0 ) {</span>
+<span class="fc" id="L197">                factors.add( i );</span>
+<span class="fc" id="L198">                n /= i;</span>
             }
         }
 
         // This condition is to handle the case when
         // n is a prime number greater than 2
-<span class="fc bfc" id="L193" title="All 2 branches covered.">        if (n &gt; 2) factors.add(n);</span>
-<span class="fc" id="L194">        return factors;</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">        if ( n &gt; 2 ) factors.add( n );</span>
+<span class="fc" id="L205">        return factors.stream().mapToInt( p -&gt; p ).toArray();</span>
     }
 
 
@@ -205,30 +216,30 @@ import java.util.List;
         //[] global = new long[]{com, col};
         //=================
         // GOALS :
-<span class="fc" id="L208">        int[] row_com_col = bestMatMulMatch(local_size, row, col, com);</span>
-<span class="fc" id="L209">        int max_ts_row = row_com_col[ 0 ];//   = 128, // ts := tile size</span>
-<span class="fc" id="L210">        int max_ts_col = row_com_col[ 2 ];//   = 128,</span>
-<span class="fc" id="L211">        int max_ts_com = row_com_col[ 1 ];//   = 16,</span>
+<span class="fc" id="L219">        int[] row_com_col = bestMatMulMatch(local_size, row, col, com);</span>
+<span class="fc" id="L220">        int max_ts_row = row_com_col[ 0 ];//   = 128, // ts := tile size</span>
+<span class="fc" id="L221">        int max_ts_col = row_com_col[ 2 ];//   = 128,</span>
+<span class="fc" id="L222">        int max_ts_com = row_com_col[ 1 ];//   = 16,</span>
 
-<span class="fc" id="L213">        int[] wpt_row_col = parseTile(reg_size, new int[]{max_ts_row, max_ts_col});</span>
-<span class="fc" id="L214">        int max_wpt_row = wpt_row_col[ 0 ];//  = 8,   // wpt := work per thread</span>
-<span class="fc" id="L215">        int max_wpt_col = wpt_row_col[ 1 ]; // = 8,</span>
+<span class="fc" id="L224">        int[] wpt_row_col = parseTile(reg_size, new int[]{max_ts_row, max_ts_col});</span>
+<span class="fc" id="L225">        int max_wpt_row = wpt_row_col[ 0 ];//  = 8,   // wpt := work per thread</span>
+<span class="fc" id="L226">        int max_wpt_col = wpt_row_col[ 1 ]; // = 8,</span>
         //---
 
-<span class="fc" id="L218">        return new int[]{max_ts_row, max_ts_col, max_ts_com, max_wpt_row, max_wpt_col};</span>
+<span class="fc" id="L229">        return new int[]{max_ts_row, max_ts_col, max_ts_com, max_wpt_row, max_wpt_col};</span>
     }
 
 
     public static int[] bestMatMulMatch(int size, int row, int col, int com)
     {
-<span class="fc" id="L224">        int[] row_com = DispatchUtility.parseTile(size, new int[]{row, com});</span>
-<span class="fc" id="L225">        int[] col_com = DispatchUtility.parseTile(size, new int[]{col, com});</span>
+<span class="fc" id="L235">        int[] row_com = DispatchUtility.parseTile(size, new int[]{row, com});</span>
+<span class="fc" id="L236">        int[] col_com = DispatchUtility.parseTile(size, new int[]{col, com});</span>
 
-<span class="fc" id="L227">        int delta1 = Math.abs((row_com[ 0 ] * row_com[ 1 ] + row_com[ 0 ] * col_com[ 0 ])-size);</span>
-<span class="fc" id="L228">        int delta2 = Math.abs((col_com[ 0 ] * col_com[ 1 ] + col_com[ 0 ] * row_com[ 0 ])-size);</span>
+<span class="fc" id="L238">        int delta1 = Math.abs((row_com[ 0 ] * row_com[ 1 ] + row_com[ 0 ] * col_com[ 0 ])-size);</span>
+<span class="fc" id="L239">        int delta2 = Math.abs((col_com[ 0 ] * col_com[ 1 ] + col_com[ 0 ] * row_com[ 0 ])-size);</span>
 
-<span class="pc bpc" id="L230" title="1 of 2 branches missed.">        if ( delta1 &gt; delta2 ) return new int[]{ row_com[ 0 ], col_com[ 1 ], col_com[ 0 ] };</span>
-<span class="fc" id="L231">        else return new int[]{ row_com[ 0 ], row_com[ 1 ], col_com[ 0 ] };</span>
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">        if ( delta1 &gt; delta2 ) return new int[]{ row_com[ 0 ], col_com[ 1 ], col_com[ 0 ] };</span>
+<span class="fc" id="L242">        else return new int[]{ row_com[ 0 ], row_com[ 1 ], col_com[ 0 ] };</span>
     }
 
 

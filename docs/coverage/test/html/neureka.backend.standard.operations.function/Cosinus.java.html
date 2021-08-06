@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Cosinus.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.standard.operations.function</a> &gt; <span class="el_source">Cosinus.java</span></div><h1>Cosinus.java</h1><pre class="source lang-java linenums">package neureka.backend.standard.operations.function;
 
 import neureka.Neureka;
-import neureka.backend.api.operations.AbstractOperation;
-import neureka.backend.api.operations.OperationFactory;
-import neureka.devices.Device;
-import neureka.backend.standard.implementations.HostImplementation;
-import neureka.backend.standard.implementations.CLImplementation;
-import neureka.calculus.Function;
-import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.operations.AbstractOperation;
+import neureka.backend.api.operations.OperationBuilder;
+import neureka.backend.standard.algorithms.Activation;
+import neureka.backend.standard.implementations.CLImplementation;
+import neureka.backend.standard.implementations.HostImplementation;
+import neureka.calculus.Function;
+import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
-public class Cosinus extends AbstractOperation
+public final class Cosinus extends AbstractOperation
 {
 
 <span class="fc" id="L19">    private DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; _creator =</span>
@@ -22,7 +22,7 @@ public class Cosinus extends AbstractOperation
 <span class="nc bnc" id="L22" title="All 2 branches missed.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.cos(t1_val[ t1Idx.i() ]);</span>
 <span class="nc" id="L23">                else return ( t0Idx, t1Idx, t2Idx ) -&gt; -Math.sin(t1_val[ t1Idx.i() ]);</span>
             };
-<span class="fc" id="L25">    private DefaultOperatorCreator&lt;TertiaryNDXConsumer&gt; _creatorX =</span>
+<span class="fc" id="L25">    private DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; _creatorX =</span>
             ( inputs, d ) -&gt; {
 <span class="fc" id="L27">                double[] t1_val = inputs[ 1 ].value64();</span>
 <span class="fc bfc" id="L28" title="All 2 branches covered.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; Math.cos(t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]);</span>
@@ -32,7 +32,7 @@ public class Cosinus extends AbstractOperation
     public Cosinus()
     {
 <span class="fc" id="L34">        super (</span>
-                new OperationFactory()
+                new OperationBuilder()
 <span class="fc" id="L36">                        .setFunction(         &quot;cos&quot;  )</span>
 <span class="fc" id="L37">                        .setOperator(         &quot;cos&quot;  )</span>
 <span class="fc" id="L38">                        .setArity(            1      )</span>
@@ -43,8 +43,8 @@ public class Cosinus extends AbstractOperation
         );
 
 <span class="fc" id="L45">        Activation operationAlgorithm = new Activation()</span>
-<span class="fc" id="L46">            .setADAgentSupplier(</span>
-                ( Function f, ExecutionCall&lt;Device&gt; call, boolean forward ) -&gt;
+<span class="fc" id="L46">            .setSupplyADAgentFor(</span>
+                ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt;
 <span class="fc" id="L48">                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )</span>
             )
 <span class="fc" id="L50">            .build();</span>
@@ -57,17 +57,17 @@ public class Cosinus extends AbstractOperation
                             call  -&gt;
 <span class="fc" id="L58">                                        call.getDevice().getExecutor()</span>
 <span class="fc" id="L59">                                    .threaded (</span>
-<span class="fc" id="L60">                                        call.getTensor( 0 ).size(),</span>
-<span class="pc bpc" id="L61" title="1 of 2 branches missed.">                                            (Neureka.instance().settings().indexing().isUsingArrayBasedIndexing())</span>
+<span class="fc" id="L60">                                        call.getTsrOfType( Number.class, 0 ).size(),</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">                                            (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())</span>
 <span class="fc" id="L62">                                                ? ( start, end ) -&gt;</span>
 <span class="fc" id="L63">                                                    Activation.activate (</span>
-<span class="fc" id="L64">                                                            call.getTensor( 0 ),</span>
+<span class="fc" id="L64">                                                            call.getTsrOfType( Number.class, 0 ),</span>
                                                             start, end,
 <span class="fc" id="L66">                                                            _creatorX.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                     )
 <span class="nc" id="L68">                                                : ( start, end ) -&gt;</span>
 <span class="nc" id="L69">                                                        Activation.activate (</span>
-<span class="nc" id="L70">                                                                call.getTensor( 0 ), call.getTensor( 1 ),</span>
+<span class="nc" id="L70">                                                                call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),</span>
                                                                 start, end,
 <span class="nc" id="L72">                                                                _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
                                                         )
@@ -76,52 +76,54 @@ public class Cosinus extends AbstractOperation
                         )
 <span class="fc" id="L77">                ).setImplementationFor(</span>
                         OpenCLDevice.class,
-                        new CLImplementation(
-                                call -&gt; {
-<span class="nc bnc" id="L81" title="All 2 branches missed.">                                    int offset = (call.getTensor( 0 ) != null) ? 0 : 1;</span>
-<span class="nc bnc" id="L82" title="All 2 branches missed.">                                    int gwz = (call.getTensor( 0 ) != null) ? call.getTensor( 0 ).size() : call.getTensor( 1 ).size();</span>
-<span class="nc" id="L83">                                    call.getDevice().getKernel(call)</span>
-<span class="nc" id="L84">                                            .pass( call.getTensor( offset ) )</span>
-<span class="nc" id="L85">                                            .pass( call.getTensor( offset + 1 ) )</span>
-<span class="nc" id="L86">                                            .pass( call.getTensor( 0 ).rank() )</span>
-<span class="nc" id="L87">                                            .pass( call.getDerivativeIndex() )</span>
-<span class="nc" id="L88">                                            .call( gwz );</span>
-<span class="nc" id="L89">                                },</span>
-                                3,
-<span class="fc" id="L91">                                operationAlgorithm.getKernelSource(), // kernelSource</span>
-                                &quot;output = cos( input );\n&quot;, // activationSource
-                                &quot;output = -sin( input );\n&quot;, //differentiationSource
-                                this // OperationType
-                        )
+<span class="fc" id="L79">                        CLImplementation.compiler()</span>
+<span class="fc" id="L80">                                .arity( 3 )</span>
+<span class="fc" id="L81">                                .kernelSource( operationAlgorithm.getKernelSource() )</span>
+<span class="fc" id="L82">                                .activationSource( &quot;output = cos( input );\n&quot; )</span>
+<span class="fc" id="L83">                                .differentiationSource( &quot;output = -sin( input );\n&quot; )</span>
+<span class="fc" id="L84">                                .kernelPostfix( this.getFunction() )</span>
+<span class="fc" id="L85">                                .execution(</span>
+                                        call -&gt; {
+<span class="nc bnc" id="L87" title="All 2 branches missed.">                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();</span>
+<span class="nc" id="L89">                                            call.getDevice().getKernel(call)</span>
+<span class="nc" id="L90">                                                    .pass( call.getTsrOfType( Number.class, offset ) )</span>
+<span class="nc" id="L91">                                                    .pass( call.getTsrOfType( Number.class, offset + 1 ) )</span>
+<span class="nc" id="L92">                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )</span>
+<span class="nc" id="L93">                                                    .pass( call.getDerivativeIndex() )</span>
+<span class="nc" id="L94">                                                    .call( gwz );</span>
+<span class="nc" id="L95">                                        }</span>
+                                )
+<span class="fc" id="L97">                                .build()</span>
                 )
         );
 
-<span class="fc" id="L99">    }</span>
+<span class="fc" id="L101">    }</span>
 
     @Override
     public String stringify( String[] children ) {
-<span class="fc" id="L103">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="pc bpc" id="L104" title="1 of 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return &quot;cos&quot; + expression;</span>
-<span class="fc" id="L105">        return &quot;cos&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+<span class="fc" id="L105">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="pc bpc" id="L106" title="1 of 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return &quot;cos&quot; + expression;</span>
+<span class="fc" id="L107">        return &quot;cos&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
     }
 
     @Override
-    public String asDerivative( Function[] children, int d ) {
-<span class="nc" id="L110">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+    public String asDerivative( Function[] children, int derivationIndex) {
+<span class="nc" id="L112">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="fc" id="L115">        return calculate(</span>
-<span class="fc bfc" id="L116" title="All 2 branches covered.">                src[ 0 ].call( inputs, j ),</span>
+<span class="fc" id="L117">        return calculate(</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">                src[ 0 ].call( inputs, j ),</span>
                 d &gt;= 0
-<span class="fc bfc" id="L118" title="All 2 branches covered.">        ) * ( ( d &lt; 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        ) * ( ( d &lt; 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
     }
 
     @Contract(pure = true)
     public static double calculate( double input, boolean derive ) {
-<span class="fc bfc" id="L123" title="All 2 branches covered.">        if ( !derive ) return Math.cos( input );</span>
-<span class="fc" id="L124">        else return -Math.sin( input );</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        if ( !derive ) return Math.cos( input );</span>
+<span class="fc" id="L126">        else return -Math.sin( input );</span>
     }
 
 

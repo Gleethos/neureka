@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:37:42 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:48 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>3</td>
 <td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>6.701 seconds</td>
+<td>1.415 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -402,8 +406,8 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr a = new Tsr(6).setRqsGradient(true)
-Tsr b = new Tsr(-4)</pre>
+<pre class='block-source'>Tsr a = Tsr.of(6).setRqsGradient(true)
+Tsr b = Tsr.of(-4)</pre>
 </td>
 </tr>
 <tr>
@@ -498,12 +502,14 @@ c.getVersion() == version_of_c</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>code</th>
 <th class='ex-header'>no_inline</th>
 <th class='ex-header'>version_of_c</th>
 <th class='ex-header'>version_of_a</th>
 <th class='ex-header'>version_of_b</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -601,9 +607,9 @@ c.getVersion() == version_of_c</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().setIsPreventingInlineOperations( save_inline )
-Tsr a = new Tsr(4) + new Tsr(2)
-Tsr b = new Tsr(-1) + new Tsr(-3).setRqsGradient(true)
+<pre class='block-source'>Neureka.get().settings().autograd().setIsPreventingInlineOperations( save_inline )
+Tsr a = Tsr.of(4) + Tsr.of(2)
+Tsr b = Tsr.of(-1) + Tsr.of(-3).setRqsGradient(true)
 Binding binding = new Binding()
 binding.setVariable('a', a)
 binding.setVariable('b', b)</pre>
@@ -671,12 +677,14 @@ c.getVersion() == version_of_c</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>code</th>
 <th class='ex-header'>save_inline</th>
 <th class='ex-header'>version_of_c</th>
 <th class='ex-header'>version_of_a</th>
 <th class='ex-header'>version_of_b</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -774,9 +782,9 @@ c.getVersion() == version_of_c</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().autograd().setIsPreventingInlineOperations( true )
-Tsr a = new Tsr(4) + new Tsr(2).setRqsGradient(true)
-Tsr b = new Tsr(-4)
+<pre class='block-source'>Neureka.get().settings().autograd().setIsPreventingInlineOperations( true )
+Tsr a = Tsr.of(4) + Tsr.of(2).setRqsGradient(true)
+Tsr b = Tsr.of(-4)
 Binding binding = new Binding()
 binding.setVariable('a', a)
 binding.setVariable('b', b)</pre>
@@ -842,8 +850,10 @@ exception.message == message</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>code</th>
 <th class='ex-header'>message</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>

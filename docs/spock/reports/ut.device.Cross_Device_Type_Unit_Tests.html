@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:38:07 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:59 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
 <td>5</td>
+<td>5</td>
 <td>0</td>
 <td>0</td>
-<td>0</td>
+<td>2</td>
 <td>100.0%</td>
-<td>3.276 seconds</td>
+<td>0.139 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -369,6 +373,12 @@ div.footer {
 <li>
 <a href='#733456921' class='feature-toc-pass'>Devices store tensors which can also be restored.</a>
 </li>
+<li>
+<a href='#-501728636' class='feature-toc-ignored'>Devices store slices which can also be restored.</a>
+</li>
+<li>
+<a href='#-2145895206' class='feature-toc-ignored'>Devices cannot store slices which whose parents are not already stored.</a>
+</li>
 </ul>
 <tr>
 <td colspan='10'>
@@ -391,7 +401,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>if ( !Neureka.instance().canAccessOpenCL() ) return</pre>
+<pre class='block-source'>if ( !Neureka.get().canAccessOpenCL() ) return</pre>
 </td>
 </tr>
 <tr>
@@ -430,8 +440,10 @@ div.footer {
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>query</th>
 <th class='ex-header'>type</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -498,7 +510,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr&lt;&gt;(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).set(device)</pre>
+<pre class='block-source'>Tsr t = Tsr.of(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).set(device)</pre>
 </td>
 </tr>
 <tr>
@@ -512,10 +524,8 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>if( data1 instanceof float[] ) t.setValue32(data1)
-else t.setValue64(data1 as double[])
-if( data2 instanceof float[] ) t.setValue32(data2)
-else t.setValue64(data2 as double[])</pre>
+<pre class='block-source'>t.setValue(data1)
+t.setValue(data2)</pre>
 </td>
 </tr>
 <tr>
@@ -548,77 +558,79 @@ else t.setValue64(data2 as double[])</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>device</th>
 <th class='ex-header'>data1</th>
 <th class='ex-header'>data2</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@9f6ca8a</td>
 <td class='ex-value'>[]</td>
 <td class='ex-value'>[]</td>
 <td class='ex-value'>(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@9f6ca8a</td>
 <td class='ex-value'>[2.0, 3.0, 4.0, 5.0, 6.0]</td>
 <td class='ex-value'>[1.0, 1.0, 1.0, 1.0, 1.0]</td>
 <td class='ex-value'>(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@9f6ca8a</td>
 <td class='ex-value'>[3.0, 5.0, 6.0]</td>
 <td class='ex-value'>[4.0, 2.0, 3.0]</td>
 <td class='ex-value'>(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@9f6ca8a</td>
 <td class='ex-value'>[9.0, 4.0, 7.0, -12.0]</td>
 <td class='ex-value'>[-5.0, -2.0, 1.0]</td>
 <td class='ex-value'>(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@9f6ca8a</td>
 <td class='ex-value'>[22.0, 24.0, 35.0, 80.0]</td>
 <td class='ex-value'>[-1.0, -1.0, -1.0]</td>
 <td class='ex-value'>(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x204417635e0], platform=neureka.devices.opencl.OpenCLPlatform@40b90b0c)</td>
 <td class='ex-value'>[]</td>
 <td class='ex-value'>[]</td>
 <td class='ex-value'>(3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x204417635e0], platform=neureka.devices.opencl.OpenCLPlatform@40b90b0c)</td>
 <td class='ex-value'>[2.0, 3.0, 4.0, 5.0, 6.0]</td>
 <td class='ex-value'>[1.0, 1.0, 1.0, 1.0, 1.0]</td>
 <td class='ex-value'>(3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x204417635e0], platform=neureka.devices.opencl.OpenCLPlatform@40b90b0c)</td>
 <td class='ex-value'>[3.0, 5.0, 6.0]</td>
 <td class='ex-value'>[4.0, 2.0, 3.0]</td>
 <td class='ex-value'>(3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x204417635e0], platform=neureka.devices.opencl.OpenCLPlatform@40b90b0c)</td>
 <td class='ex-value'>[9.0, 4.0, 7.0, -12.0]</td>
 <td class='ex-value'>[-5.0, -2.0, 1.0]</td>
 <td class='ex-value'>(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x204417635e0], platform=neureka.devices.opencl.OpenCLPlatform@40b90b0c)</td>
 <td class='ex-value'>[22.0, 24.0, 35.0, 80.0]</td>
 <td class='ex-value'>[-1.0, -1.0, -1.0]</td>
 <td class='ex-value'>(3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
@@ -667,7 +679,7 @@ else t.setValue64(data2 as double[])</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr&lt;&gt;(shape, data).set(device)</pre>
+<pre class='block-source'>Tsr t = Tsr.of(shape, data).set(device)</pre>
 </td>
 </tr>
 <tr>
@@ -728,35 +740,37 @@ else t.setValue64(data2 as double[])</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>device</th>
 <th class='ex-header'>shape</th>
 <th class='ex-header'>data</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@9f6ca8a</td>
 <td class='ex-value'>[3, 2]</td>
 <td class='ex-value'>[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
 <td class='ex-value'>[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@9f6ca8a</td>
 <td class='ex-value'>[3, 2]</td>
 <td class='ex-value'>[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
 <td class='ex-value'>[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x204417635e0], platform=neureka.devices.opencl.OpenCLPlatform@40b90b0c)</td>
 <td class='ex-value'>[3, 2]</td>
 <td class='ex-value'>[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
 <td class='ex-value'>[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0]</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x204417635e0], platform=neureka.devices.opencl.OpenCLPlatform@40b90b0c)</td>
 <td class='ex-value'>[3, 2]</td>
 <td class='ex-value'>[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
 <td class='ex-value'>[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0]</td>
@@ -834,7 +848,7 @@ def implementation = Mock(Algorithm)</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>1 * call.getImplementation() &gt;&gt; implementation
+<pre class='block-source'>1 * call.getAlgorithm() &gt;&gt; implementation
 1 * implementation.instantiateNewTensorsForExecutionIn(call) &gt;&gt; call</pre>
 </td>
 </tr>
@@ -884,15 +898,17 @@ exception.message == "Device arguments may not be null!\n" +
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>device</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@9f6ca8a</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x204417635e0], platform=neureka.devices.opencl.OpenCLPlatform@40b90b0c)</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -939,8 +955,8 @@ exception.message == "Device arguments may not be null!\n" +
 <td></td>
 <td>
 <pre class='block-source'>int initialNumber = device.size()
-Tsr a = new Tsr([2, 3], ";)")
-Tsr b = new Tsr([3, 4], ":P")</pre>
+Tsr a = Tsr.of([2, 3], ";)")
+Tsr b = Tsr.of([3, 4], ":P")</pre>
 </td>
 </tr>
 <tr>
@@ -1068,19 +1084,21 @@ device.size() == initialNumber
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>device</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@1639922</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@9f6ca8a</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(_adhocKernels={}, _adhocKernelRingBuffer=[null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], _ringIndex=0, _tensors=[(3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[2.0, 4.0, -5.0, 8.0, 3.0, -2.0], (3x2):[-1.0, -1.0, -1.0, 80.0, 3.0, -2.0], (3x2):[1.0, 1.0, 1.0, 1.0, 1.0, -2.0], (3x2):[-5.0, -2.0, 1.0, -12.0, 3.0, -2.0], (3x2):[4.0, 2.0, 3.0, 8.0, 3.0, -2.0]], _deviceId=cl_device_id[0x25a35ffcf30], _platform=neureka.devices.opencl.OpenCLPlatform@292888da, _queue=cl_command_queue[0x25a37863bd0])</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x204417635e0], platform=neureka.devices.opencl.OpenCLPlatform@40b90b0c)</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>FileDevice(_stored={}, _directory=build/test-can, _loadable=[], _loaded=[])</td>
+<td class='ex-value'>FileDevice(directory=build/test-can, stored={}, loadable=[test2.idx], loaded=[])</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -1089,6 +1107,285 @@ device.size() == initialNumber
 </td>
 <td>
 <div class='spec-status'>3/3 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description ignored' id='-501728636'>
+<span>Devices store slices which can also be restored.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>The given device is available and Neureka is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>if ( device == null ) return</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Two tensors which will be transferred later on...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>int initialNumber = device.size()
+Tsr a = Tsr.of([2, 3], ";)")
+Tsr b = a[1, 0..2]</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>The given device is initially empty.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>device.isEmpty() == ( device.size() == 0 )
+!device.has( a )
+!device.has( b )</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The the first tensor is being passed to the device...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>device.store( b )</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>...tensor "a" is now on the device.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>!device.isEmpty()
+device.size() == initialNumber + 2
+device.has( b )</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>''
+device.has( a )</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>They are being removed again...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>device.free( b )</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>...the device is empty again.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>device.isEmpty() == ( initialNumber == 0 )
+device.size() == initialNumber
+!device.has( a )
+!device.has( b )</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following Device instances are being tested :</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description ignored' id='-2145895206'>
+<span>Devices cannot store slices which whose parents are not already stored.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>The given device is available and Neureka is being reset.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>if ( device == null ) return</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Two tensors which will be transferred later on...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr a = Tsr.of([2, 3], ";)")
+Tsr b = a[1, 0..2]</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>def initialSize = device.size()</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>The given device is initially empty.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>device.isEmpty() == ( device.size() == 0 )
+!device.has( a )
+!device.has( b )</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The the first tensor is being passed to the device...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>device.store( b )</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>...tensor "a" is now on the device.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def exception = thrown(IllegalStateException)
+exception.message.contains("Data parent is not outsourced!")</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>The given device is initially empty.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>device.isEmpty() == ( device.size() == 0 )
+!device.has( a )
+!device.has( b )</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>storageMethod(device, a)</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>!device.isEmpty()
+a.isOutsourced()
+b.isOutsourced()</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>device.has( a )
+b.data == null
+device.has( b )
+device.size() == initialSize</pre>
+</td>
+</tr>
+<tr class='ignored'>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following Device instances are being tested :</div>
 </td>
 </tr>
 </tbody>

@@ -12,7 +12,6 @@ import neureka.devices.Device;
 import neureka.utility.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -139,7 +138,7 @@ public class HostCPU extends AbstractDevice<Number>
     }
 
     @Override
-    public Operation optimizedOperationOf( Function function, String name ) { throw new NotImplementedException(); }
+    public Operation optimizedOperationOf( Function function, String name ) { throw new IllegalStateException(); }
 
     @Override
     public boolean update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {

@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:38:14 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:59 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>4</td>
 <td>4</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.358 seconds</td>
+<td>0.024 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -382,13 +386,13 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<div class='block-text'>A new tensor instance used fo rexception testing.</div>
+<div class='block-text'>A new tensor instance used for exception testing.</div>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr([6, 6], -1)</pre>
+<pre class='block-source'>Tsr t = Tsr.of([6, 6], -1)</pre>
 </td>
 </tr>
 <tr>
@@ -402,7 +406,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>t[[1..3], [1..3]] = new Tsr()</pre>
+<pre class='block-source'>t[[1..3], [1..3]] = Tsr.newInstance()</pre>
 </td>
 </tr>
 <tr>
@@ -418,20 +422,6 @@ div.footer {
 <td>
 <pre class='block-source'>def exception = thrown(IllegalArgumentException)
 assert exception.message.contains("Provided tensor is empty! Empty tensors cannot be injected.")</pre>
-</td>
-</tr>
-<tr>
-<td>
-<div class='block-kind'>And:</div>
-</td>
-<td>
-<div class='block-text'>The exception has also been logged.</div>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>
-<pre class='block-source'>1 * Tsr._LOG.error( "Provided tensor is empty! Empty tensors cannot be injected." )</pre>
 </td>
 </tr>
 <tr>
@@ -455,7 +445,7 @@ assert exception.message.contains("Provided tensor is empty! Empty tensors canno
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>new Tsr( new Scanner( System.in ) )</pre>
+<pre class='block-source'>Tsr.of( new Scanner( System.in ) )</pre>
 </td>
 </tr>
 <tr>
@@ -510,7 +500,7 @@ exception.message.contains(
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr( [2, 3], -1..6 )</pre>
+<pre class='block-source'>Tsr t = Tsr.of( [2, 3], -1..6 )</pre>
 </td>
 </tr>
 <tr>
@@ -579,8 +569,8 @@ exception.message.contains(
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr( [3, 3, 3, 3], 0 )
-t[1..2, 1..3, 1..1, 0..2] = new Tsr( [2, 3, 1, 3], -4..2 )</pre>
+<pre class='block-source'>Tsr t = Tsr.of( [3, 3, 3, 3], 0 )
+t[1..2, 1..3, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4..2 )</pre>
 </td>
 </tr>
 <tr>

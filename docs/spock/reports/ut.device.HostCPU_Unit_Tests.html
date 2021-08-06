@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:38:13 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:08:59 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>1</td>
 <td>1</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.450 seconds</td>
+<td>0.314 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -374,13 +378,72 @@ div.footer {
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr a = new Tsr(new int[]{100, 60, 1, 2}, 4)
-Tsr b = new Tsr(new int[]{100, 1, 60, 2}, -2)
-Device cpu = a.getDevice()
-assert cpu!=null
-HostCPU.NativeExecutor exec = ((HostCPU)cpu).getExecutor()
-assert exec!=null
-assert exec.getPool() != null</pre>
+<div class='block-text'>Two 4 dimensional tensor instances.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr a = Tsr.of(new int[]{100, 60, 1, 2}, 4)
+Tsr b = Tsr.of(new int[]{100, 1, 60, 2}, -2)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The default device returned by the first tensor:</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Device cpu = a.getDevice()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>This device should not be null but be an instance of the CPU representative device type.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>cpu!=null
+cpu instanceof HostCPU</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>Accessing the executor of the cpu device...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>HostCPU.NativeExecutor exec = ((HostCPU)cpu).getExecutor()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The executor is not null as well as its internal thread pool!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>exec!=null
+exec.getPool() != null</pre>
 </td>
 </tr>
 <tr>

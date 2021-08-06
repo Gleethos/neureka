@@ -314,24 +314,28 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:38:11 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:09:03 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>2</td>
 <td>2</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>29.042 seconds</td>
+<td>15.843 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -374,11 +378,11 @@ div.footer {
 <td>
 <pre class='block-source'>if (
     deviceType == "GPU" &amp;&amp; // OpenCL cannot run inside TravisCI ! :/
-    !Neureka.instance().canAccessOpenCL()
+    !Neureka.get().canAccessOpenCL()
 ) return
 Device device = ( deviceType == "CPU" ) ? HostCPU.instance() : Device.find('first')
-Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads = true
-Neureka.instance().settings().view().isUsingLegacyView = true</pre>
+Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true
+Neureka.get().settings().view().isUsingLegacyView = true</pre>
 </td>
 </tr>
 <tr>
@@ -411,7 +415,9 @@ Neureka.instance().settings().view().isUsingLegacyView = true</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>deviceType</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -445,7 +451,7 @@ Neureka.instance().settings().view().isUsingLegacyView = true</pre>
 <div class='block-kind'>Given:</div>
 </td>
 <td>
-<pre class='block-source'>Neureka.instance().settings().view().setIsUsingLegacyView(true)</pre>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)</pre>
 </td>
 </tr>
 <tr>
@@ -469,7 +475,7 @@ Neureka.instance().settings().view().isUsingLegacyView = true</pre>
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>if ( !Neureka.instance().canAccessOpenCL() ) return</pre>
+<pre class='block-source'>if ( !Neureka.get().canAccessOpenCL() ) return</pre>
 </td>
 </tr>
 <tr>
@@ -477,7 +483,7 @@ Neureka.instance().settings().view().isUsingLegacyView = true</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Device gpu = OpenCLPlatform.PLATFORMS().get(0).getDevices().get(0)</pre>
+<pre class='block-source'>Device gpu = Neureka.get().context().find(CLContext.class).getPlatforms().get(0).getDevices().get(0)</pre>
 </td>
 </tr>
 <tr>
@@ -493,7 +499,7 @@ Neureka.instance().settings().view().isUsingLegacyView = true</pre>
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t = new Tsr([2, 2], 4).setRqsGradient(true).set(gpu)</pre>
+<pre class='block-source'>Tsr t = Tsr.of([2, 2], 4).setRqsGradient(true).set(gpu)</pre>
 </td>
 </tr>
 <tr>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomCleaner.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.utility</a> &gt; <span class="el_source">CustomCleaner.java</span></div><h1>CustomCleaner.java</h1><pre class="source lang-java linenums">package neureka.utility;
+
+import java.lang.ref.PhantomReference;
+import java.lang.ref.ReferenceQueue;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *  This class stores actions which are being executed when an associated object is being garbage collected.
+ *  This class is similar to the cleaner class introduced in JDK 11, however the minimal version compatibility target
+ *  for Neureka is Java 8, which means that this cleaner class introduced in Java 11 is not available here!
+ *  That is why a custom cleaner implementation is being defined below.&lt;br&gt;
+ */
+<span class="fc" id="L14">public class CustomCleaner implements NeurekaCleaner, Runnable</span>
+{
+<span class="fc" id="L16">    private final ReferenceQueue&lt;Object&gt; _referenceQueue = new ReferenceQueue&lt;&gt;();</span>
+<span class="fc" id="L17">    private final long _timeout = 60*1000;</span>
+<span class="fc" id="L18">    private int _registered = 0;</span>
+
+<span class="fc" id="L20">    List&lt;Object&gt; list = new ArrayList&lt;&gt;();</span>
+
+    static class ReferenceWithCleanup&lt;T&gt; extends PhantomReference&lt;T&gt;
+    {
+        private Runnable _action;
+
+        ReferenceWithCleanup(T o, Runnable action, ReferenceQueue&lt;T&gt; queue) {
+<span class="fc" id="L27">            super( o, queue );</span>
+<span class="fc" id="L28">            _action = action;</span>
+<span class="fc" id="L29">        }</span>
+        public void cleanup() {
+<span class="fc" id="L31">            _action.run();</span>
+<span class="fc" id="L32">        }</span>
+    }
+
+    @Override
+    public void register(Object o, Runnable action) {
+<span class="fc" id="L37">        synchronized ( _referenceQueue ) {</span>
+<span class="fc" id="L38">            list.add(new ReferenceWithCleanup&lt;Object&gt;(o, action, _referenceQueue));</span>
+<span class="fc" id="L39">            _registered++;</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">            if ( _registered == 1 ) new Thread( this::run ).start();</span>
+<span class="fc" id="L41">        }</span>
+<span class="fc" id="L42">    }</span>
+
+    @Override
+    public void run() {
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        while ( _registered &gt; 0 ) {</span>
+            try {
+<span class="fc" id="L48">                ReferenceWithCleanup ref = (ReferenceWithCleanup) _referenceQueue.remove( _timeout );</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">                if ( ref != null ) {</span>
+<span class="fc" id="L50">                    ref.cleanup();</span>
+<span class="fc" id="L51">                    _registered--;</span>
+                }
+<span class="nc" id="L53">            } catch ( Throwable e ) {</span>
+<span class="nc" id="L54">                e.printStackTrace();</span>
+                // ignore exceptions from the cleanup action
+                // (including interruption of cleanup thread)
+<span class="pc" id="L57">            }</span>
+        }
+<span class="nc" id="L59">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

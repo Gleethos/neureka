@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractBaseAlgorithm.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api.algorithms</a> &gt; <span class="el_source">AbstractBaseAlgorithm.java</span></div><h1>AbstractBaseAlgorithm.java</h1><pre class="source lang-java linenums">package neureka.backend.api.algorithms;
+
+import neureka.Tsr;
+import neureka.backend.api.Algorithm;
+import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.ImplementationFor;
+import neureka.backend.api.Operation;
+import neureka.devices.Device;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+
+public abstract class AbstractBaseAlgorithm&lt;FinalType extends Algorithm&lt;FinalType&gt;&gt; implements Algorithm&lt;FinalType&gt;
+{
+    /**
+     *  This is the name of this {@link Algorithm}
+     *  which may be used as variable names in OpenCL kernels or other backends.
+     *  Therefore this name is expected to be void of any spaces
+     *  or non numeric and alphabetic characters.
+     */
+    private final String _name;
+
+<span class="fc" id="L24">    protected final Map&lt; Class&lt; Device&lt;?&gt; &gt;, ImplementationFor&lt; Device&lt;?&gt; &gt;&gt; _implementations = new HashMap&lt;&gt;();</span>
+
+<span class="fc" id="L26">    public AbstractBaseAlgorithm(String name) { _name = name; }</span>
+
+    @Override
+    public Tsr recursiveReductionOf(
+            ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
+            Consumer&lt;ExecutionCall&lt;? extends Device&lt;?&gt;&gt;&gt; finalExecution
+    ) {
+<span class="fc" id="L33">        Device device = call.getDevice();</span>
+<span class="fc" id="L34">        Tsr[] tsrs = call.getTensors();</span>
+<span class="fc" id="L35">        int d = call.getDerivativeIndex();</span>
+<span class="fc" id="L36">        Operation type = call.getOperation();</span>
+
+<span class="fc" id="L38">        Consumer&lt;Tsr&gt;[] rollbacks = new Consumer[tsrs.length];</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        for ( int i=0; i&lt;tsrs.length; i++ ) {</span>
+<span class="pc bpc" id="L40" title="1 of 4 branches missed.">            if ( tsrs[ i ] != null &amp;&amp; !tsrs[ i ].isOutsourced() ) {</span>
+                try {
+<span class="fc" id="L42">                    device.store(tsrs[i]);</span>
+<span class="nc" id="L43">                } catch ( Exception e ) {</span>
+<span class="nc" id="L44">                    e.printStackTrace();</span>
+<span class="fc" id="L45">                }</span>
+
+<span class="fc" id="L47">                rollbacks[ i ] = tensor -&gt; {</span>
+                    try {
+<span class="fc" id="L49">                    device.restore( tensor );</span>
+<span class="nc" id="L50">                    } catch ( Exception e ) {</span>
+<span class="nc" id="L51">                        e.printStackTrace();</span>
+<span class="fc" id="L52">                    }</span>
+<span class="fc" id="L53">                };</span>
+
+            }
+<span class="fc" id="L56">            else rollbacks[ i ] = t -&gt; {};</span>
+        }
+        /* For the following operations with the correct arity RJAgent should do: ...
+            case (&quot;s&quot; + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
+            case (&quot;d&quot; + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
+            case (&quot;p&quot; + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
+            case (&quot;m&quot; + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
+            case &quot;&gt;&quot;: tsrs = new Tsr[]{tsrs[ 1 ], tsrs[ 0 ]};
+         */
+        /*
+            Below is the core lambda of recursive preprocessing
+            which is defined for each OperationImplementation individually :
+         */
+<span class="fc" id="L69">        Tsr result = handleRecursivelyAccordingToArity( call, c -&gt; recursiveReductionOf( c, finalExecution ) );</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if ( result == null ) {</span>
+<span class="fc" id="L71">            finalExecution.accept(</span>
+<span class="fc" id="L72">                    ExecutionCall.builder()</span>
+<span class="fc" id="L73">                            .device(device)</span>
+<span class="fc" id="L74">                            .tensors(call.getTensors())</span>
+<span class="fc" id="L75">                            .derivativeIndex(d)</span>
+<span class="fc" id="L76">                            .operation(type)</span>
+<span class="fc" id="L77">                            .build()</span>
+            );
+        }
+<span class="fc" id="L80">        else return result;</span>
+
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        for ( int i = 0; i &lt; tsrs.length; i++ ) {</span>
+<span class="pc bpc" id="L83" title="2 of 4 branches missed.">            if ( tsrs[ i ] != null &amp;&amp; !tsrs[ i ].isUndefined() ) rollbacks[ i ].accept(tsrs[ i ]);</span>
+        }
+<span class="fc" id="L85">        return tsrs[ 0 ];</span>
+    }
+
+
+    //---
+
+    @Override
+    public &lt;D extends Device&lt;?&gt;, E extends ImplementationFor&lt;D&gt;&gt; FinalType setImplementationFor( Class&lt;D&gt; deviceClass, E implementation ) {
+<span class="fc" id="L93">        _implementations.put(</span>
+                (Class&lt;Device&lt;?&gt;&gt;) deviceClass,
+                (ImplementationFor&lt;Device&lt;?&gt;&gt;) implementation
+        );
+<span class="fc" id="L97">        return (FinalType) this;</span>
+    }
+
+    @Override
+    public &lt;D extends Device&lt;?&gt;&gt; ImplementationFor&lt;D&gt; getImplementationFor( Class&lt;D&gt; deviceClass ) {
+<span class="fc" id="L102">        return (ImplementationFor&lt;D&gt;) _implementations.get( deviceClass );</span>
+    }
+
+    /**
+     *  This method returns the name of this {@link Algorithm}
+     *  which may be used as variable names in OpenCL kernels or other backends.
+     *  Therefore this name is expected to be void of any spaces
+     *  or non numeric and alphabetic characters.
+     *
+     * @return The name of this {@link Algorithm}.
+     */
+    public String getName() {
+<span class="fc" id="L114">        return this._name;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

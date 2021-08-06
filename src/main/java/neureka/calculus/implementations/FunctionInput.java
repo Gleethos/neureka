@@ -15,7 +15,7 @@ import java.util.List;
  *  Instances of this implementation of the {@link Function} interface
  *  are leave nodes within the abstract syntax tree of a function, representing inputs to a function.
  *  When parsing an expression into a function then these inputs are recognized by the character 'i' or 'I',
- *  followed by a whole number starting at zero (optionally wrapped by '[' & ']'), which is the index
+ *  followed by a whole number starting at zero (optionally wrapped by '[' and ']'), which is the index
  *  of the argument within the list/array of arguments passed to a concrete {@link Function} instance. <br>
  *  So for example, when creating a function by calling the following factory method...     <br>
  *                                                                                          <br>

@@ -314,30 +314,38 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Sun Feb 14 00:38:04 CET 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Fri Aug 06 13:09:05 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
+<tr>
 <th>Executed features</th>
+<th>Passed</th>
 <th>Failures</th>
 <th>Errors</th>
 <th>Skipped</th>
 <th>Success rate</th>
 <th>Time</th>
+</tr>
 </thead>
 <tbody>
 <tr>
+<td>3</td>
 <td>3</td>
 <td>0</td>
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.109 seconds</td>
+<td>0.068 seconds</td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class='spec-headers'>
 <div class='spec-header'>
+            In essence, this specification assures that functions can be created from String expressions.
+            Internally this conversion occurs through a parser, which builds an abstract syntax tree.
+            This parsing procedure is rather complex, having many classes involved in it in order to produce
+            the final Function instance.   
         </div>
 </div>
 <h3>Features:</h3>
@@ -355,7 +363,7 @@ div.footer {
 <a href='#1166750340' class='feature-toc-pass'>Parsed equations throw expected error messages.</a>
 </li>
 <li>
-<a href='#1652353001' class='feature-toc-pass'>Functions can derive themselves according to a provided index.</a>
+<a href='#1924033378' class='feature-toc-pass'>Functions can derive themselves according to the provided index of the input which ought to be derived.</a>
 </li>
 </ul>
 <tr>
@@ -379,7 +387,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Function.create(equation).toString() == expected</pre>
+<pre class='block-source'>Function.of(equation).toString() == expected</pre>
 </td>
 </tr>
 <tr>
@@ -398,8 +406,10 @@ div.footer {
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>equation</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -517,12 +527,27 @@ div.footer {
 <td class='ex-value'>dimtrim(I[0])</td>
 <td class='ex-result'>OK</td>
 </tr>
+<tr class='ex-pass'>
+<td class='ex-value'>add(I[0], 3, 3/I[1])</td>
+<td class='ex-value'>(I[0] + 3.0 + (3.0 / I[1]))</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>multiply(1, 4, -2, I[1])</td>
+<td class='ex-value'>(1.0 * 4.0 * -2.0 * I[1])</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>divide(I[0], 3*I[1], I[3]-6)</td>
+<td class='ex-value'>(I[0] / (3.0 * I[1]) / (I[3] - 6.0))</td>
+<td class='ex-result'>OK</td>
+</tr>
 </tbody>
 </table>
 </div>
 </td>
 <td>
-<div class='spec-status'>23/23 passed</div>
+<div class='spec-status'>26/26 passed</div>
 </td>
 </tr>
 <tr>
@@ -546,7 +571,7 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Function.create(equation)</pre>
+<pre class='block-source'>Function.of(equation)</pre>
 </td>
 </tr>
 <tr>
@@ -580,8 +605,10 @@ assert error.message==expected</pre>
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>equation</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
 <tr class='ex-pass'>
@@ -621,8 +648,8 @@ Note: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]'
 </tr>
 <tr>
 <td colspan='10'>
-<div class='feature-description' id='1652353001'>
-<span>Functions can derive themselves according to a provided index.</span>
+<div class='feature-description' id='1924033378'>
+<span>Functions can derive themselves according to the provided index of the input which ought to be derived.</span>
 <span style='float: right; font-size: 60%;'>
 <a href='#toc'>Return</a>
 </span>
@@ -640,7 +667,7 @@ Note: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]'
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Function.create(equation).getDerivative( index ).toString() == expected</pre>
+<pre class='block-source'>Function.of(equation).getDerivative( index ).toString() == expected</pre>
 </td>
 </tr>
 <tr>
@@ -659,11 +686,43 @@ Note: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]'
 <div class='spec-examples'>
 <table class='ex-table'>
 <thead>
+<tr>
 <th class='ex-header'>equation</th>
 <th class='ex-header'>index</th>
 <th class='ex-header'>expected</th>
+</tr>
 </thead>
 <tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>1 - I[0] * 3</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>-3.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>i0 / 6</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1.0 / 6.0)</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>ln( 4 * i0 )</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(4.0 / (4.0 * I[0]))</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>4^I[0]</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(ln(4.0) * (4.0 ^ I[0]))</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>i0 ^ 3</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(3.0 * (I[0] ^ (3.0 - 1.0)))</td>
+<td class='ex-result'>OK</td>
+</tr>
 <tr class='ex-pass'>
 <td class='ex-value'>(I[0] * I[1] * I[0]) + 3</td>
 <td class='ex-value'>0</td>
@@ -671,9 +730,9 @@ Note: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]'
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>1 - I[0] * 3</td>
+<td class='ex-value'>3 ^ (i0 / 2)</td>
 <td class='ex-value'>0</td>
-<td class='ex-value'>-3.0</td>
+<td class='ex-value'>((1.0 / 2.0) * (ln(3.0) * (3.0 ^ (I[0] / 2.0))))</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
@@ -687,7 +746,7 @@ Note: This function is an 'indexer'. Therefore it expects to sum variable 'I[j]'
 </div>
 </td>
 <td>
-<div class='spec-status'>3/3 passed</div>
+<div class='spec-status'>8/8 passed</div>
 </td>
 </tr>
 </tbody>

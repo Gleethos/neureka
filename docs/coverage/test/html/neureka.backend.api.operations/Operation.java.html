@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Operation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api.operations</a> &gt; <span class="el_source">Operation.java</span></div><h1>Operation.java</h1><pre class="source lang-java linenums">/*
+MIT License
+
+Copyright (c) 2019 Gleethos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    ____                       _   _          _______
+   / __ \                     | | (_)        |__   __|
+  | |  | |_ __   ___ _ __ __ _| |_ _  ___  _ __ | |_   _ _ __   ___
+  | |  | | '_ \ / _ \ '__/ _` | __| |/ _ \| '_ \| | | | | '_ \ / _ \
+  | |__| | |_) |  __/ | | (_| | |_| | (_) | | | | | |_| | |_) |  __/
+   \____/| .__/ \___|_|  \__,_|\__|_|\___/|_| |_|_|\__, | .__/ \___|
+         | |                                        __/ | |
+         |_|                                       |___/|_|
+
+         The representation class for tensor operations.
+
+------------------------------------------------------------------------------------------------------------------------
+
+*/
+
+
+package neureka.backend.api.operations;
+
+import neureka.Tsr;
+import neureka.autograd.GraphNode;
+import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.Algorithm;
+import neureka.calculus.Function;
+import neureka.backend.api.ExecutionCall;
+import neureka.ndim.iterators.NDIterator;
+
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.function.Consumer;
+
+/**
+ *  This interface describes an operation which ought to consist of a compositional system
+ *  containing multiple algorithms which themselves ought to contain device specific implementations
+ *  capable of processing {@link ExecutionCall} instances, or rather their state.
+ *
+ *  Besides the definition of the compositional system
+ *  there is also the requirement for its integration into
+ *  the calculus package.
+ *  This means that the operation should have a function name
+ *  and optionally also an operator.
+ *  Alongside there must be a stringifier which ought to generate
+ *  a String view as part of a {@link Function}-AST.
+ */
+public interface Operation
+{
+
+    @FunctionalInterface
+    interface TertiaryNDIConsumer
+    {
+        double execute( NDIterator t0Idx, NDIterator t1Idx, NDIterator t2Idx );
+    }
+    @FunctionalInterface
+    interface TertiaryNDXConsumer
+    {
+        double execute( int[] t0Idx, int[] t1Idx, int[] t2Idx );
+    }
+    @FunctionalInterface
+    interface SecondaryNDIConsumer
+    {
+        double execute( NDIterator t0Idx, NDIterator t1Idx );
+    }
+    @FunctionalInterface
+    interface SecondaryNDXConsumer
+    {
+        double execute( int[] t0Idx, int[] t1Idx );
+    }
+    @FunctionalInterface
+    interface PrimaryNDIConsumer
+    {
+        double execute( NDIterator t0Idx );
+    }
+    @FunctionalInterface
+    interface PrimaryNDXConsumer
+    {
+        double execute( int[] t0Idx );
+    }
+
+    //---
+
+    @FunctionalInterface
+    interface DefaultOperatorCreator&lt;T&gt;
+    {
+        T create( Tsr&lt;?&gt;[] inputs, int d );
+    }
+    @FunctionalInterface
+    interface ScalarOperatorCreator&lt;T&gt;
+    {
+        T create( Tsr&lt;?&gt;[] inputs, double scalar, int d );
+    }
+
+    //==================================================================================================================
+
+    &lt;T extends Algorithm&lt;T&gt;&gt; Algorithm&lt;T&gt; getAlgorithmFor( ExecutionCall&lt;?&gt; call );
+
+    //==================================================================================================================
+
+    String getFunction();
+
+    //==================================================================================================================
+
+    &lt;T extends Algorithm&lt;T&gt;&gt; T getAlgorithm( Class&lt;T&gt; type );
+
+    &lt;T extends Algorithm&lt;T&gt;&gt; boolean supportsAlgorithm( Class&lt;T&gt; type );
+
+    &lt;T extends Algorithm&lt;T&gt;&gt; Operation setAlgorithm( Class&lt;T&gt; type, T instance );
+
+    //==================================================================================================================
+
+    String stringify( String[] children );
+
+    //==================================================================================================================
+
+    String asDerivative( Function[] children, int d );
+
+    //==================================================================================================================
+
+    int getId();
+
+    String getOperator();
+
+    /**
+     * Arity is the number of arguments or operands
+     * that this function or operation takes.
+     */
+    int getArity();
+
+    /**
+     *  An operator is an alternative to a function like &quot;sum()&quot; or &quot;prod()&quot;. &lt;br&gt;
+     *  Examples would be &quot;+, -, * ...&quot;!
+     *
+     * @return If this operation can be represented as operator like &quot;+, -, * ...&quot;!
+     */
+    boolean isOperator();
+
+    boolean isIndexer();
+
+    boolean isDifferentiable();
+
+    boolean isInline();
+
+    &lt;T extends Algorithm&lt;T&gt;&gt; boolean supports( Class&lt;T&gt; implementation );
+
+    /**
+     * This method mainly ought to serve as a reference- and fallback- implementation for tensor backends and also
+     * as the backend for handling the calculation of scalar inputs passed to a given abstract syntax tree of
+     * Function instances... &lt;br&gt;
+     * ( (almost) every Function instance contains an OperationType reference to which it passes scalar executions... )
+     * &lt;br&gt;&lt;br&gt;
+     * This is also the reason why the last parameter of this method is a list of Function objects :
+     * The list stores the child nodes of the Function node that is currently being processed.
+     * Therefore when implementing this method one should first call the child nodes in
+     * order to get the &quot;real inputs&quot; of this current node.
+     * &lt;br&gt;&lt;br&gt;
+     * One might ask : Why does that not happen automatically?
+     * The answer is to that question lies in the other parameters of this method.
+     * Specifically the parameter &quot;d&quot; !
+     * This argument determines if the derivative ought to be calculated and
+     * also which value is being targeted within the input array.
+     * Depending on this variable and also the nature of the operation,
+     * the execution calls to the child nodes of this node change considerably!
+     * &lt;br&gt;&lt;br&gt;
+     *
+     * @param inputs An array of scalar input variables.
+     * @param j The index variable for indexed execution on the input array. (-1 if no indexing should occur)
+     * @param d The index of the variable of which a derivative ought to be calculated.
+     * @param src The child nodes of the Function node to which this very OperationType belongs.
+     * @return The result of the calculation.
+     */
+    double calculate( double[] inputs, int j, int d, Function[] src );
+
+
+    /**
+     *  This static utility class contains simple methods used for creating slices of plain old
+     *  arrays of tensor objects...
+     *  These slices may be used for many reasons, however mainly when iterating over
+     *  inputs to a Function recursively in order to execute them pairwise for example...
+     */
+<span class="nc" id="L202">    class Utility</span>
+    {
+        public static Tsr&lt;?&gt;[] subset( Tsr&lt;?&gt;[] tsrs, int padding, int index, int offset ) {
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">            if ( offset &lt; 0 ) {</span>
+<span class="nc" id="L206">                index += offset;</span>
+<span class="nc" id="L207">                offset *= -1;</span>
+            }
+<span class="fc" id="L209">            Tsr&lt;?&gt;[] newTsrs = new Tsr[ offset + padding ];</span>
+<span class="fc" id="L210">            System.arraycopy( tsrs, index, newTsrs, padding, offset );</span>
+<span class="fc" id="L211">            return newTsrs;</span>
+        }
+
+        public static Tsr&lt;?&gt;[] without( Tsr&lt;?&gt;[] tsrs, int index ) {
+<span class="fc" id="L215">            Tsr&lt;?&gt;[] newTsrs = new Tsr[ tsrs.length - 1 ];</span>
+<span class="fc bfc" id="L216" title="All 4 branches covered.">            for ( int i = 0; i &lt; newTsrs.length; i++ ) newTsrs[ i ] = tsrs[ i + ( ( i &lt; index ) ? 0 : 1 ) ];</span>
+<span class="fc" id="L217">            return newTsrs;</span>
+        }
+
+        public static Tsr&lt;?&gt;[] offsetted( Tsr&lt;?&gt;[] tsrs, int offset ) {
+<span class="fc" id="L221">            Tsr&lt;?&gt;[] newTsrs = new Tsr[ tsrs.length - offset ];</span>
+<span class="fc" id="L222">            newTsrs[ 0 ] = Tsr.Create.newTsrLike( tsrs[ 1 ] );</span>
+<span class="fc bfc" id="L223" title="All 4 branches covered.">            if ( !tsrs[ 1 ].has( GraphNode.class ) &amp;&amp; tsrs[ 1 ] != tsrs[ 0 ] ) {//Deleting intermediate results!</span>
+<span class="fc" id="L224">                tsrs[ 1 ].delete();</span>
+<span class="fc" id="L225">                tsrs[ 1 ] = null;</span>
+            }
+<span class="pc bpc" id="L227" title="1 of 4 branches missed.">            if (!tsrs[ 2 ].has( GraphNode.class ) &amp;&amp; tsrs[ 2 ] != tsrs[ 0 ]) {//Deleting intermediate results!</span>
+<span class="fc" id="L228">                tsrs[ 2 ].delete();</span>
+<span class="fc" id="L229">                tsrs[ 2 ] = null;</span>
+            }
+<span class="fc" id="L231">            System.arraycopy( tsrs, 1 + offset, newTsrs, 1, tsrs.length - 1 - offset );</span>
+<span class="fc" id="L232">            newTsrs[ 1 ] = tsrs[ 0 ];</span>
+<span class="fc" id="L233">            return newTsrs;</span>
+        }
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

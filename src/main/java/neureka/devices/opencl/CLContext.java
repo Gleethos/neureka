@@ -16,7 +16,7 @@ import static org.jocl.CL.clGetPlatformIDs;
  *  this case is the OpenCL backend storing platform and device information.
  *  {@link OperationContext}s are thread local states
  *  used for managing {@link neureka.backend.api.Operation}, {@link neureka.calculus.Function}
- *  as well as {@link Component<OperationContext>} implementation instances like this one.
+ *  as well as {@link Component} implementation instances like this one.
  *  A given state might not be compatible with the concepts introduced in other contexts
  *  which is why it makes sense to have separate "worlds" with potential different operations...
  *  The component system of the {@link OperationContext} exist so that a given context
@@ -43,12 +43,10 @@ public class CLContext  implements Component<OperationContext>
     /**
      *  Updating the CLContext will cause the list of existing {@link OpenCLPlatform} instances to be
      *  cleared and refilled with completely new {@link OpenCLPlatform} instances.
-     *  This will in effect also cause the recreation of any {@link {@link OpenCLDevice} instances
+     *  This will in effect also cause the recreation of any {@link OpenCLDevice} instances
      *  as part of these {@link OpenCLPlatform}s.
      *  This will subsequently cause the recompilation of many OpenCL kernels.
      *
-     * @param oldOwner The previous {@link OperationContext} instance or null if the component is being added to the owner.
-     * @param newOwner The new {@link OperationContext} instance.
      */
     @Override
     public boolean update( OwnerChangeRequest<OperationContext> changeRequest ) {

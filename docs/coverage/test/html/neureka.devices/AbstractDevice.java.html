@@ -34,10 +34,11 @@ SOFTWARE.
 
 package neureka.devices;
 
+import neureka.Component;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.algorithms.Algorithm;
-import neureka.backend.api.operations.Operation;
+import neureka.backend.api.Operation;
+import neureka.framing.Relation;
 import neureka.utility.CustomCleaner;
 import neureka.utility.NeurekaCleaner;
 import org.slf4j.Logger;
@@ -59,13 +60,13 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractDevice&lt;ValType&gt; extends AbstractBaseDevice&lt;ValType&gt;
 {
-<span class="fc" id="L62">    private static final NeurekaCleaner _CLEANER = new CustomCleaner();//Cleaner.create();</span>
+<span class="fc" id="L63">    private static final NeurekaCleaner _CLEANER = new CustomCleaner();//Cleaner.create();</span>
 
     protected Logger _log;
 
-<span class="fc" id="L66">    protected AbstractDevice() {</span>
-<span class="fc" id="L67">        _log = LoggerFactory.getLogger( getClass() );</span>
-<span class="fc" id="L68">    }</span>
+<span class="fc" id="L67">    protected AbstractDevice() {</span>
+<span class="fc" id="L68">        _log = LoggerFactory.getLogger( getClass() );</span>
+<span class="fc" id="L69">    }</span>
 
     /**
      *  This method is the internal execution routine called by it's public counterpart
@@ -81,38 +82,66 @@ public abstract class AbstractDevice&lt;ValType&gt; extends AbstractBaseDevice&l
      */
     protected abstract void _execute( Tsr[] tensors, int d, Operation type );
 
+
+
     @Override
-    public void update( Tsr oldOwner, Tsr newOwner ) {
-<span class="fc" id="L86">        swap( oldOwner, newOwner );</span>
-<span class="fc" id="L87">    }</span>
+    public boolean update( OwnerChangeRequest&lt;Tsr&lt;ValType&gt;&gt; changeRequest ) {
+<span class="fc" id="L89">        Tsr&lt;ValType&gt; oldOwner = changeRequest.getOldOwner();</span>
+<span class="fc" id="L90">        Tsr&lt;ValType&gt; newOwner = changeRequest.getNewOwner();</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if ( changeRequest.type() == IsBeing.REPLACED ) swap( oldOwner, newOwner );</span>
+<span class="pc bpc" id="L92" title="1 of 4 branches missed.">        else if ( oldOwner == null &amp;&amp; newOwner != null ) {</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">            if ( newOwner.has( Relation.class ) ) {</span>
+<span class="fc" id="L94">                Relation relation = newOwner.find(Relation.class);</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">                if (relation.hasParent()) { // Root needs to be found ! :</span>
+<span class="fc" id="L96">                    Tsr root = relation.findRootTensor();</span>
+<span class="pc bpc" id="L97" title="1 of 4 branches missed.">                    if (!this.has(root) || !root.isOutsourced())</span>
+<span class="fc" id="L98">                        throw new IllegalStateException(&quot;Data parent is not outsourced!&quot;);</span>
+                }
+            }
+        }
+<span class="fc" id="L102">        return true;</span>
+    }
 
     @Override
     public Device cleaning( Tsr tensor, Runnable action ) {
-<span class="fc" id="L91">        _cleaning( tensor, action );</span>
-<span class="fc" id="L92">        return this;</span>
+<span class="fc" id="L107">        _cleaning( tensor, action );</span>
+<span class="fc" id="L108">        return this;</span>
     }
 
     protected void _cleaning( Object o, Runnable action ) {
-<span class="fc" id="L96">        _CLEANER.register( o, action );</span>
-<span class="fc" id="L97">    }</span>
+<span class="fc" id="L112">        _CLEANER.register( o, action );</span>
+<span class="fc" id="L113">    }</span>
 
+    /**
+     *  &lt;b&gt;This method plays an important role in connecting two main conceptional components of this library.&lt;/b&gt;
+     *  It dispatches the execution call object to the backends of Neureka.
+     *  This is the single connection points where these two parts of the library come together.
+     *
+     * @param call The execution call object containing tensor arguments and settings for the device to execute on.
+     * @return This very device instance in order to enable method chaining.
+     */
     @Override
-    public Device&lt;ValType&gt; execute( ExecutionCall call )
+    public Device&lt;ValType&gt; execute( ExecutionCall&lt;Device&lt;?&gt;&gt; call )
     {
-<span class="fc" id="L102">        call = call.getImplementation().instantiateNewTensorsForExecutionIn( call );</span>
-<span class="fc bfc" id="L103" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : call.getTensors() ) {</span>
-<span class="fc bfc" id="L104" title="All 2 branches covered.">            if ( t == null ) throw new IllegalArgumentException(</span>
+<span class="fc" id="L126">        call = (ExecutionCall&lt;Device&lt;?&gt;&gt;) call.getAlgorithm().instantiateNewTensorsForExecutionIn( call );</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">        for ( Tsr&lt;?&gt; t : call.getTensors() ) {</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">            if ( t == null ) throw new IllegalArgumentException(</span>
                     &quot;Device arguments may not be null!\n&quot; +
                             &quot;One or more tensor arguments within the given ExecutionCall instance is null.&quot;
             );
         }
-<span class="fc" id="L109">        ( (Algorithm&lt;Object&gt;) call.getImplementation() )</span>
-<span class="fc" id="L110">                .recursiveReductionOf(</span>
+<span class="fc" id="L133">        call.getAlgorithm()</span>
+<span class="fc" id="L134">                .recursiveReductionOf(</span>
                     call,
-<span class="fc" id="L112">                    c -&gt; _execute( c.getTensors(), c.getDerivativeIndex(), c.getOperation() )</span>
+<span class="fc" id="L136">                    c -&gt; _execute( c.getTensors(), c.getDerivativeIndex(), c.getOperation() )</span>
                 );
-<span class="fc" id="L114">        return this;</span>
+<span class="fc" id="L138">        return this;</span>
     }
 
+    @Override
+    public &lt;T extends ValType&gt; Storage&lt;ValType&gt; store( Tsr&lt;T&gt; tensor ) {
+<span class="fc" id="L143">        tensor.set( (Component) this ); // This way we move the storing procedure to the update function!</span>
+<span class="fc" id="L144">        return this;</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
