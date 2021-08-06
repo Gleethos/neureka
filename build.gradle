@@ -460,7 +460,7 @@ signing {
 }
 
 
-uploadArchives {
+uploadArchives { // For deployment visit: "https://oss.sonatype.org/#stagingRepositories" and login...
     repositories {
         mavenDeployer {
             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
