@@ -145,7 +145,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * This flag is used for a performance optimization feature namely 'Just In Time Propagation'.
      * This feature accumulates errors and continues propagation
      * as soon as they are needed. (At the end of 'backward()' or when the tensor is used again).
-     * If the flag Neureka.instance().settings().AutoDiff()._retainPendingErrorForJITProp is set to true
+     * If the flag  {@link Neureka.Settings.AutoGrad#isRetainingPendingErrorForJITProp()}  is set to true
      * then error values will accumulate whenever it makes sense.
      * This technique however uses more memory but will
      * improve performance for some networks substantially.
@@ -588,7 +588,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @param e This is an error value passed to this method ba a backward traversal.
      */
-    private void _migrateAndOrApplyError(Tsr<V> e, Consumer<Tsr<V>> also ) {
+    private void _migrateAndOrApplyError( Tsr<V> e, Consumer<Tsr<V>> also ) {
         Tsr<V> payload = getPayload();
         if ( payload == null ) return; // Garbage collected!
         try {
@@ -965,6 +965,18 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     public int getMode() { return this._mode; }
 
+    /**
+     * This flag is used for a performance optimization feature namely 'Just In Time Propagation'.
+     * This feature accumulates errors and continues propagation
+     * as soon as they are needed. (At the end of 'backward()' or when the tensor is used again).
+     * If the flag {@link Neureka.Settings.AutoGrad#isRetainingPendingErrorForJITProp()} is set to true
+     * then error values will accumulate whenever it makes sense.
+     * This technique however uses more memory but will
+     * improve performance for some networks substantially.
+     * <p>
+     * All nodes between a Pending-Error and those requiring gradients will
+     * be marked with '_relies_on_JIPProp=true'!
+     */
     public boolean isReliesOnJustInTimeProp() { return this._reliesOnJustInTimeProp; }
 
     public PendingError<V> getPendingError() { return this._pendingError; }

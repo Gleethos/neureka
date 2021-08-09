@@ -47,7 +47,7 @@ public class ConvUtil {
                             assert invX != null;
                             return new DefaultADAgent( deriv )
                                     .setForward( (node, forwardDerivative ) -> mul.call( forwardDerivative, deriv ) )
-                                    .setBackward( (t, error) -> invX.execute( error, deriv, Tsr.of(t.getPayload().shape(), 0) ) ); // WARNING! This produced nullpointer!
+                                    .setBackward( (node, error) -> invX.execute( error, deriv, Tsr.of(node.getPayload().shape(), 0) ) ); // WARNING! This produced nullpointer!
                         }
                 )
                 .setHandleInsteadOfDevice(
