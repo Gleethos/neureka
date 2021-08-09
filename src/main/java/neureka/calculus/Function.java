@@ -172,8 +172,17 @@ public interface Function
      */
     Operation getOperation();
 
+    /**
+     * @param index The index which ought to match the input index of a potentially referenced {@link FunctionInput}.
+     * @return The truth value determining if this {@link Function} (or any sub-functions) reference an {@link FunctionInput} with the provided index.
+     */
     boolean dependsOn( int index );
 
+    /**
+     *  This method builds a new {@link Function} which is the derivative of this {@link Function} with respect to the provided input index.
+     * @param index The index of the input which ought to serve as the variable which ought to be derived.
+     * @return The derivative of this {@link Function}.
+     */
     Function getDerivative( int index );
 
     List<Function> getSubFunctions();

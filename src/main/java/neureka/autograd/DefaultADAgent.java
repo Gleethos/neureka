@@ -9,22 +9,27 @@ import java.util.stream.Collectors;
 
 
 /**
- * This class implements the ADAgent interface.
- * {@link ADAgent} stands for "Auto-Differentiation-Agent", meaning
- * that implementations of this class are responsible for managing
- * forward- and reverse- mode differentiation actions.
- * These actions are accessible through the {@link #forward(GraphNode, Tsr)}
- * and {@link #backward(GraphNode, Tsr)} method which are being triggered
- * by instances of the GraphNode class during propagation. <br>
- * <br>
- * This class stores implementations for these methods
- * inside the agent as lambda instances. <br>
+ *  This class implements the ADAgent interface.
+ *  {@link ADAgent} stands for "Auto-Differentiation-Agent", meaning
+ *  that implementations of this class are responsible for managing
+ *  forward- and reverse- mode differentiation actions.
+ *  These actions are accessible through the {@link #forward(GraphNode, Tsr)}
+ *  and {@link #backward(GraphNode, Tsr)} method which are being triggered
+ *  by instances of the GraphNode class during propagation. <br>
+ *  <br>
+ *  This class stores implementations for these methods
+ *  inside the agent as lambda instances. <br>
  *
- * So in essence this class is a container for lambda actions
- * allowing for easy instantiation of {@link ADAgent}s.
- * Additionally this class the class manages a variable context
- * for storing useful data used by a particular operation to
- * perform propagation. <br>
+ *  So in essence this class is a container for lambda actions
+ *  allowing for easy instantiation of {@link ADAgent}s.
+ *  Additionally this class the class manages a variable context
+ *  for storing useful data used by a particular {@link neureka.backend.api.Operation} to
+ *  perform propagation. <br>
+ *  This context will be populated by a given {@link neureka.backend.api.ExecutionCall},
+ *  which will itself have gathered the context
+ *  variables within a given backend implementation, more specifically an {@link neureka.backend.api.Operation}.
+ *  These variables are used by an implementation of the {@link neureka.backend.api.Operation} to perform auto differentiation
+ *  or to facilitate further configuration of an {@link neureka.backend.api.ExecutionCall}.
  */
 public final class DefaultADAgent implements ADAgent
 {
@@ -103,9 +108,12 @@ public final class DefaultADAgent implements ADAgent
     }
 
     /**
-     *  An {@link ADAgent} also contains a context of variables which may have been
+     *  An {@link ADAgent} also contains a context of variables which have been
      *  passed to it by an {@link neureka.backend.api.ExecutionCall}.
-     *  These variables specify how an implementation of an operation ought to execute.
+     *  A given {@link neureka.backend.api.ExecutionCall} will itself have gathered the context
+     *  variables within a given backend implementation, more specifically an {@link neureka.backend.api.Operation}.
+     *  These variables are used by an implementation of the {@link neureka.backend.api.Operation} to perform auto differentiation
+     *  or to facilitate further configuration of an {@link neureka.backend.api.ExecutionCall}.
      *  This method let's us view the current state of these variables for this agent in the form of
      *  a nice {@link String}...
      *
