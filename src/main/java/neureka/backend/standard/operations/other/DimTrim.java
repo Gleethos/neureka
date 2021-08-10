@@ -3,6 +3,7 @@ package neureka.backend.standard.operations.other;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
+import neureka.backend.api.Argument;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -38,13 +39,13 @@ public class DimTrim extends AbstractOperation
                 .setSupplyADAgentFor(
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
-                            int prefix = ((int[]) call.getAt("ends"))[ 0 ];
-                            int postfix = ((int[]) call.getAt("ends"))[ 1 ];
+                            int prefix = call.find(Argument.Ends.class).get()[ 0 ];
+                            int postfix = call.find(Argument.Ends.class).get()[ 1 ];
                             if ( forward ) {
                                 throw new IllegalArgumentException("Dim-Trim operation does not support forward-AD!");
                             }
                             return new DefaultADAgent()
-                                    .withContext(call.getContext())
+                                    .withContext(call.findAll(Argument.class))
                                     .setForward((t, derivative) -> new FunctionBuilder(Neureka.get().context()).build(f.toString(), false).derive(new Tsr[]{derivative},0))
                                     .setBackward( (t, error) -> pad(error, new int[]{prefix, postfix}, true) );
                         }
@@ -56,12 +57,12 @@ public class DimTrim extends AbstractOperation
                             assert inputs.length == 1;
                             Tsr<?> t = inputs[ 0 ];
                             if ( call.getDerivativeIndex() == 0 ) {
-                                int prefix = ((int[]) call.getAt("ends"))[ 0 ];
-                                int postfix = ((int[]) call.getAt("ends"))[ 0 ];
+                                int prefix = call.find(Argument.Ends.class).get()[ 0 ];
+                                int postfix = call.find(Argument.Ends.class).get()[ 0 ];
                                 return pad(t, new int[]{prefix, postfix}, true);
                             } else {
                                 int[] ends = new int[ 2 ];
-                                call.putAt("ends", ends);
+                                call.set(new Argument.Ends(ends));
                                 return trim(t, ends, true);
                             }
                         }

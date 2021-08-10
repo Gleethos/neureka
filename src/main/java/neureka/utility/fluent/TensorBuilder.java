@@ -83,7 +83,7 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
     public Tsr<V> andWhere( Initializer<V> initializer) { return Tsr.of( _dataType, _shape, initializer ); }
 
     @Override
-    public To<V> iterativelyFilledFrom( V index ) { _from = index; return this; }
+    public To<V> iterativelyFilledFrom( V index ) { _from = _checked(index); return this; }
 
     @Override
     public Tsr<V> all( V value ) { return Tsr.of( _dataType, _shape, value ); }
@@ -98,7 +98,7 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
     public Tsr<V> scalar( V value ) { return Tsr.of( value.getClass(), new int[]{1}, value ); }
 
     @Override
-    public Step<V> to( V index ) { _to = index; return this; }
+    public Step<V> to( V index ) { _to = _checked(index); return this; }
 
     @Override
     public Tsr<V> step( double size ) {
@@ -174,6 +174,22 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
         int size = 1;
         for ( int axis : _shape ) size *= axis;
         return size;
+    }
+
+    private V _checked( V o ) {
+        Class<?> jvmTypeClass = this._dataType.getJVMTypeClass();
+        if ( Number.class.isAssignableFrom(jvmTypeClass) ) {
+            if ( o instanceof Number && o.getClass() != jvmTypeClass ) {
+                Number n = (Number) o;
+                if ( jvmTypeClass == Integer.class ) return (V) ((Integer) n.intValue());
+                if ( jvmTypeClass == Double.class ) return (V) ((Double) n.doubleValue());
+                if ( jvmTypeClass == Short.class ) return (V) ((Short) n.shortValue());
+                if ( jvmTypeClass == Byte.class ) return (V) ((Byte) n.byteValue());
+                if ( jvmTypeClass == Long.class ) return (V) ((Long) n.longValue());
+                if ( jvmTypeClass == Float.class ) return (V) ((Float) n.floatValue());
+            }
+        }
+        return o;
     }
 
 }

@@ -1827,7 +1827,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param b The tensor which is the right part of the dot product operation.
      * @return A new tensor which is the dot product of this tensor and the passed one.
      */
-    public Tsr<V> dot(Tsr<V> b ) {
+    public Tsr<V> dot( Tsr<V> b ) {
         Tsr<V> a = this;
         int[][] fitter = AbstractNDArray.Utility.Indexing.makeFit( a.getNDConf().shape(), b.getNDConf().shape() );
         boolean doReshape = false;
@@ -1837,7 +1837,22 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             a = Function.of( AbstractNDArray.Utility.Stringify.strConf( fitter[ 0 ] ) + ":(I[ 0 ])" ).call( a );
             b = Function.of( AbstractNDArray.Utility.Stringify.strConf( fitter[ 1 ] ) + ":(I[ 0 ])" ).call( b );
         }
-        return Neureka.get().context().getAutogradFunction().conv().call( new Tsr[]{ a, b } ).dimtrim();
+        return Neureka.get()
+                        .context()
+                        .getAutogradFunction()
+                        .conv()
+                        .call( new Tsr[]{ a, b } )
+                        .dimtrim();
+    }
+
+    public Tsr<V> matmul( Tsr<V> b ) {
+        if ( this.rank() != 2 || b.rank() != 2 ) {
+            String message = "Cannot perform matrix multiplication for tensors whose ranks are not both 2!\n" +
+                             "Encountered ranks: "+this.rank()+", "+b.rank()+";";
+            _LOG.error(message);
+            throw new IllegalArgumentException(message);
+        }
+        return this.dot( b );
     }
 
     /**

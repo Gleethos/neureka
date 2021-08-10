@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.autograd.DefaultADAgent;
+import neureka.backend.api.Argument;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.standard.implementations.HostImplementation;
@@ -119,7 +120,8 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
     @Override
     public ADAgent supplyADAgentFor( Function f, ExecutionCall<? extends Device<?>> call, boolean forward)
     {
-        Tsr<Object> ctxDerivative = (Tsr<Object>) call.getAt("derivative");
+        Object o = call.findAndGet(Argument.Derivative.class);
+        Tsr ctxDerivative = (Tsr) o;
         Function mul = Neureka.get().context().getFunction().mul();
         if ( ctxDerivative != null ) {
             return new DefaultADAgent( ctxDerivative )

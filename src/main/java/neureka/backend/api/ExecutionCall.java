@@ -43,6 +43,8 @@ import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.devices.Device;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -51,21 +53,22 @@ import java.util.TreeMap;
  *  arguments needed to execute on a targeted {@link Device} which
  *  is specified by the type parameter below. <br>
  *  <br>
- *  It also holds a context map responsible for storing
- *  operation specific variables.
+ *  It also holds a context components responsible for storing operation specific variables.
+ *  This is Certain operations might require additionally parameters then the ones
+ *  defined in this class... <br>
  *
  * @param <DeviceType> The Device implementation targeted by an instance of this ExecutionCall!
 */
-public class ExecutionCall<DeviceType extends Device<?>>
+public class ExecutionCall<DeviceType extends Device<?>> extends Args
 {
-    private ExecutionCall(DeviceType device, int derivativeIndex, Operation operation, Tsr<?>[] tensors, int j, Algorithm<?> algorithm, Map<String, Object> context) {
+    private ExecutionCall(DeviceType device, int derivativeIndex, Operation operation, Tsr<?>[] tensors, int j, Algorithm<?> algorithm, List<Argument> context) {
         this._device = device;
         this._derivativeIndex = derivativeIndex;
         this._operation = operation;
         this._tensors = tensors;
         this._j = j;
         this._algorithm = algorithm;
-        this._context = context;
+        for ( Argument<?> arg : context ) this.set(arg);
     }
 
     private static int $default$derivativeIndex() {
@@ -80,23 +83,19 @@ public class ExecutionCall<DeviceType extends Device<?>>
         return null;
     }
 
-    private static Map<String, Object> $default$context() {
-        return null;
-    }
-
     public static <DeviceType extends Device<?>> ExecutionCallBuilder<DeviceType> builder() {
-        return new ExecutionCallBuilder<DeviceType>();
+        return new ExecutionCallBuilder<>();
     }
 
     public String toString() {
-        return "ExecutionCall(_device=" + this._device + ", _derivativeIndex=" + this._derivativeIndex + ", _operation=" + this._operation + ", _tensors=" + java.util.Arrays.deepToString(this._tensors) + ", _j=" + this._j + ", _algorithm=" + this.getAlgorithm() + ", _context=" + this._context + ")";
+        return "ExecutionCall(_device=" + this._device + ", _derivativeIndex=" + this._derivativeIndex + ", _operation=" + this._operation + ", _tensors=" + java.util.Arrays.deepToString(this._tensors) + ", _j=" + this._j + ", _algorithm=" + this.getAlgorithm() + ", _context=" + this.findAll(Argument.class) + ")";
     }
 
     public DeviceType getDevice() {
         return this._device;
     }
 
-    public <T> Device<T> getDeviceFor(Class<T> supportCheck ) {
+    public <T> Device<T> getDeviceFor( Class<T> supportCheck ) {
         // TODO: Make it possible to query device for type support!
         return (Device<T>) this._device;
     }
@@ -117,16 +116,12 @@ public class ExecutionCall<DeviceType extends Device<?>>
         return this._j;
     }
 
-    public Map<String, Object> getContext() {
-        return this._context;
-    }
-
     public ExecutionCall<DeviceType> withTensors(Tsr<?>[] _tensors) {
-        return this._tensors == _tensors ? this : new ExecutionCall<DeviceType>(this._device, this._derivativeIndex, this._operation, _tensors, this._j, this._algorithm, this._context);
+        return this._tensors == _tensors ? this : new ExecutionCall<DeviceType>(this._device, this._derivativeIndex, this._operation, _tensors, this._j, this._algorithm, this.findAll(Argument.class));
     }
 
     public ExecutionCall<DeviceType> withJ(int _j) {
-        return this._j == _j ? this : new ExecutionCall<DeviceType>(this._device, this._derivativeIndex, this._operation, this._tensors, _j, this._algorithm, this._context);
+        return this._j == _j ? this : new ExecutionCall<DeviceType>(this._device, this._derivativeIndex, this._operation, this._tensors, _j, this._algorithm, this.findAll(Argument.class));
     }
 
     public interface TensorCondition { boolean check(Tsr<?> tensor ); }
@@ -135,9 +130,6 @@ public class ExecutionCall<DeviceType extends Device<?>>
     public interface OperationTypeCondition { boolean check( Operation type ); }
     public interface Mutator { Tsr<?>[] mutate( Tsr<?>[] tensors ); }
 
-    public enum Argument {
-        DERIVATIVE
-    }
 
     /**
      *  This field references the device on which this ExecutionCall should be executed.
@@ -152,7 +144,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
                 .derivativeIndex( _derivativeIndex )
                 .j( _j )
                 .operation( _operation )
-                .context(_context)
+                .context(findAll(Argument.class))
                 .algorithm(_algorithm)
                 .build();
     }
@@ -203,28 +195,6 @@ public class ExecutionCall<DeviceType extends Device<?>>
      */
     private Algorithm<?> _algorithm = null;
 
-    /**
-     *  Certain operations might require additionally parameters then the ones
-     *  defined in this class... <br>
-     */
-    private Map<String, Object> _context = null;
-
-    private ExecutionCall(
-            DeviceType device,
-            Tsr<?>[] tensors,
-            int d,
-            Operation type,
-            Algorithm<?> algorithm,
-            Map<String, Object> context
-    ) {
-        _device = device;
-        _tensors = tensors;
-        _derivativeIndex = d;
-        _operation = type;
-        _algorithm = algorithm;
-        _context = context;
-    }
-
     public <T extends Device<?>> ExecutionCall<T> forDeviceType(Class<T> type) {
         assert _device.getClass() == type;
         return (ExecutionCall<T>) this;
@@ -253,31 +223,16 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
     public ADAgent getADAgentFrom( Function function, ExecutionCall<? extends Device<?>> call, boolean forward )
     {
-        if ( this._context != null ) {
-            if ( call._context == null ) call._context = new TreeMap<>();
-            call._context.putAll( this._context );
-        }
+        //if ( this._context != null ) {
+        //    if ( call._context == null ) call._context = new TreeMap<>();
+        //    call._context.putAll( this._context );
+        //}
+        for ( Argument<?> arg : this.findAll(Argument.class) ) call.set(arg);
         return getAlgorithm().supplyADAgentFor( function, call, forward );
     }
 
     public void mutateArguments( Mutator mutation ) {
         _tensors = mutation.mutate( _tensors );
-    }
-
-    public <T> T getAt( Class<T> type ) {
-        if ( _context == null ) return null;
-        return (T) _context.get( type.getName() );
-    }
-
-    public Object getAt( String varName ) {
-        if ( _context == null ) return null;
-        return _context.get( varName );
-    }
-
-    public <T> ExecutionCall<DeviceType> putAt( String s, T o ) {
-        if ( _context == null ) _context = new TreeMap<>();
-        _context.put( s, o );
-        return this;
     }
 
     public Validator validate() { return new Validator(); }
@@ -292,7 +247,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
         private boolean j$set;
         private Algorithm<?> algorithm$value;
         private boolean algorithm$set;
-        private Map<String, Object> context$value;
+        private List<Argument> context$value;
         private boolean context$set;
 
         ExecutionCallBuilder() { }
@@ -330,7 +285,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
             return this;
         }
 
-        public ExecutionCallBuilder<DeviceType> context(Map<String, Object> context) {
+        public ExecutionCallBuilder<DeviceType> context(List<Argument> context) {
             this.context$value = context;
             this.context$set = true;
             return this;
@@ -349,9 +304,9 @@ public class ExecutionCall<DeviceType extends Device<?>>
             if (!this.algorithm$set) {
                 algorithm$value = ExecutionCall.$default$algorithm();
             }
-            Map<String, Object> context$value = this.context$value;
+            List<Argument> context$value = this.context$value;
             if (!this.context$set) {
-                context$value = ExecutionCall.$default$context();
+                context$value = new ArrayList<>();
             }
             return new ExecutionCall<DeviceType>(device, derivativeIndex$value, operation, tensors, j$value, algorithm$value, context$value);
         }

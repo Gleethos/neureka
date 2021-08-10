@@ -2,9 +2,10 @@ package neureka.autograd;
 
 
 import neureka.Tsr;
+import neureka.backend.api.Args;
+import neureka.backend.api.Argument;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -31,13 +32,13 @@ import java.util.stream.Collectors;
  *  These variables are used by an implementation of the {@link neureka.backend.api.Operation} to perform auto differentiation
  *  or to facilitate further configuration of an {@link neureka.backend.api.ExecutionCall}.
  */
-public final class DefaultADAgent implements ADAgent
-{
+public final class DefaultADAgent extends Args implements ADAgent {
+
     public DefaultADAgent setForward( ADAction _forward ) { this._forward = _forward; return this; }
 
     public DefaultADAgent setBackward( ADAction _backward ) { this._backward = _backward; return this; }
 
-    /**
+     /**
      * This interface is the declaration for
      * lambda actions for both the {@link #forward(GraphNode, Tsr)}
      * and {@link #backward(GraphNode, Tsr)} method of the {@link ADAgent} interface.
@@ -62,28 +63,28 @@ public final class DefaultADAgent implements ADAgent
      *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
      */
     private ADAction _backward;
-    /**
-     *  A map of named context variables which can be used by any backend implementation to
-     *  save variables useful to perform differentiation.
-     */
-    private final Map<String, Object> _context = new TreeMap<>();
 
     /**
      * @param derivative The current derivative which will be stored with the name "derivative" in the agents context.
      */
-    public DefaultADAgent(  Tsr<?> derivative  ) {
-        _context.put( "derivative", derivative );
+    public DefaultADAgent( Tsr<?> derivative ) {
+        set( new Argument.Derivative<>(derivative) );
     }
 
     public DefaultADAgent() { }
 
-    public DefaultADAgent withContext( Map<String, Object> context  ) {
-        _context.putAll( context );
+    /**
+     *  The {@link DefaultADAgent} will adopt the argument context of the {@link neureka.backend.api.ExecutionCall}
+     *  from which it was born. This is so that they can be used by any backend implementation to
+     *  save variables useful to perform differentiation.
+     */
+    public DefaultADAgent withContext( List<Argument> context  ) {
+        for ( Argument<?> arg : context ) this.set(arg);
         return this;
     }
 
     @Override
-    public <T> Tsr<T> forward( GraphNode<T> target, Tsr<T> derivative) {
+    public <T> Tsr<T> forward( GraphNode<T> target, Tsr<T> derivative ) {
         return (Tsr<T>) _forward.execute( target, derivative);
     }
 
@@ -94,18 +95,17 @@ public final class DefaultADAgent implements ADAgent
 
     @Override
     public Tsr<?> derivative() {
-        return (Tsr<?>) _context.get( "derivative" );
+        Argument.Derivative arg = find(Argument.Derivative.class);
+        if ( arg != null ) return (Tsr<?>) arg.get(); else return null;
     }
 
     @Override
     public boolean hasForward() {
-        return _context.containsKey( "derivative" );
+        return has(Argument.Derivative.class);
     }
 
     @Override
-    public boolean hasBackward() {
-        return _backward != null;
-    }
+    public boolean hasBackward() { return _backward != null; }
 
     /**
      *  An {@link ADAgent} also contains a context of variables which have been
@@ -122,8 +122,8 @@ public final class DefaultADAgent implements ADAgent
     @Override
     public String toString() {
         if ( this.derivative() != null ) return derivative().toString();
-        return _context.keySet().stream()
-                .map( key -> key + "=" + _context.get( key ) )
+        return findAll(Argument.class).stream()
+                .map( key -> key.getClass().getSimpleName() + "=" + find(key.getClass()) )
                 .collect( Collectors.joining( ", ", "{", "}" ) );
     }
 

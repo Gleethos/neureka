@@ -3,6 +3,7 @@ package neureka.backend.standard.operations.operator;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
+import neureka.backend.api.Argument;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -37,29 +38,30 @@ public class PowerConv extends AbstractOperation {
                                     }
                                     return true;
                                 }
-                        ).setSupplyADAgentFor(
-                        (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                        {
-                            Tsr<?> ctxDerivative = (Tsr<?>) call.getAt("derivative");
-                            Function mul = Neureka.get().context().getFunction().mul();
-                            if ( ctxDerivative != null ) {
-                                return new DefaultADAgent( ctxDerivative )
-                                        .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
-                                        .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
-                            }
-                            Tsr[] inputs = call.getTensors();
-                            int d = call.getDerivativeIndex();
-                            if ( forward )
-                                throw new IllegalArgumentException("Convolution of does not support forward-AD!");
-                            else
+                        )
+                        .setSupplyADAgentFor(
+                            (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                             {
-                                Tsr<?> localDerivative = f.derive( inputs, d );
-                                return new DefaultADAgent( localDerivative )
-                                        .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
-                                        .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
+                                Tsr<?> ctxDerivative = (Tsr<?>) call.findAndGet(Argument.Derivative.class);
+                                Function mul = Neureka.get().context().getFunction().mul();
+                                if ( ctxDerivative != null ) {
+                                    return new DefaultADAgent( ctxDerivative )
+                                            .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
+                                            .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
+                                }
+                                Tsr[] inputs = call.getTensors();
+                                int d = call.getDerivativeIndex();
+                                if ( forward )
+                                    throw new IllegalArgumentException("Convolution of does not support forward-AD!");
+                                else
+                                {
+                                    Tsr<?> localDerivative = f.derive( inputs, d );
+                                    return new DefaultADAgent( localDerivative )
+                                            .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
+                                            .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
+                                }
                             }
-                        }
-                )
+                        )
                         .setHandleInsteadOfDevice( (caller, call ) -> null )
                         .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
                         .setInstantiateNewTensorsForExecutionIn(

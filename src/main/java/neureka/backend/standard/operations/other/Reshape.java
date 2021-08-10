@@ -39,7 +39,7 @@ public class Reshape extends AbstractOperation
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
-                        //Tsr ctxDerivative = (Tsr)call.getAt("derivative");
+                        //Tsr ctxDerivative = (Tsr)call.findAndGet(Argument.Derivative.class);
                         if ( forward ) {
                             throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                         }

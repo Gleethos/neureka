@@ -46,7 +46,9 @@ import neureka.devices.opencl.OpenCLDevice;
 import neureka.framing.Relation;
 import neureka.optimization.Optimizer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -231,6 +233,30 @@ public abstract class AbstractComponentOwner<C>
             }
         }
         return null;
+    }
+
+    /**
+     *  This method tries to find all components inside the internal
+     *  component array whose classes are sub types of the one provided.
+     *  If no such components could be found then
+     *  the return value will simply be an empty list.
+     *
+     * @param componentClass The type/class of the components which shall be found and returned as list.
+     * @param <T> The type parameter defining the component class.
+     * @return The correct component or null if nothing has been found.
+     */
+    public <T extends Component<?>> List<T> findAll( Class<T> componentClass ) {
+        List<T> found = new ArrayList<>();
+        if ( _components != null && componentClass != null ) {
+            for ( Component<?> component : _components ) {
+                if (
+                        component != null &&
+                        componentClass.isAssignableFrom( component.getClass() )
+                )
+                    found.add((T) component);
+            }
+        }
+        return found;
     }
 
     /**

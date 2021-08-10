@@ -118,16 +118,19 @@ public class MatMul extends AbstractOperation
                 .setSupplyADAgentFor(
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
-                            //Tsr ctxDerivative = (Tsr) call.getAt("derivative");
+                            //Tsr ctxDerivative = (Tsr) call.findAndGet(Argument.Derivative.class);
                             if ( forward ) throw new IllegalArgumentException("Matrix multiplication of does not support forward-AD!");
 
                             Function invX = new FunctionBuilder(Neureka.get().context()).build( "I[ 0 ] @ I[ 1 ]", false );
                             Tsr[] inputs = call.getTensors();
-                            int d = call.getDerivativeIndex();
-                            Tsr deriv = inputs[1+d].T();//f.derive( inputs, d );
-                            return new DefaultADAgent( deriv )
-                                    .setForward( (node, forwardDerivative ) -> null )
-                                    .setBackward( (t, error) -> invX.call(new Tsr[]{ error, deriv }) );
+                            int d = (1 + call.getDerivativeIndex()) % 2;
+                            Tsr deriv = inputs[ d ].T();
+                            if ( d == 0 )
+                                return new DefaultADAgent( deriv )
+                                            .setBackward( (node, error) -> invX.call( error, deriv ) );
+                            else
+                                return new DefaultADAgent( deriv )
+                                        .setBackward( (node, error) -> invX.call( error, deriv ) );
                         }
                 )
                 .setHandleInsteadOfDevice(

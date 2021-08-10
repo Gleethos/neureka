@@ -6,6 +6,7 @@ import neureka.calculus.assembly.FunctionBuilder
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.utility.SettingsLoader
+import spock.lang.Ignore
 import spock.lang.Specification
 
 class Tensor_Operation_Integration_Tests extends Specification
@@ -76,6 +77,20 @@ class Tensor_Operation_Integration_Tests extends Specification
 
         then : 'The result tensor contains the expected shape.'
             c.toString().contains("(4x2x5x2)")
+    }
+
+    @Ignore
+    def 'The "matmul" operation produces the expected result.'()
+    {
+        given : 'Two 2-dimensional tensors.'
+            Tsr a = Tsr.of(Double.class).withShape(2, 3).iterativelyFilledFrom(-2).to(5).step(1)
+            Tsr b = Tsr.of(Double.class).withShape(3, 4).iterativelyFilledFrom(3).to(9).step(1)
+
+        when : 'The "matmul" method is being called on "a" receiving "b"...'
+            Tsr c = a.matmul(b)
+
+        then : 'The result tensor contains the expected shape.'
+            c.toString().contains("(2x4)")
     }
 
     def 'New method "asFunction" of String added at runtime is callable by groovy and also works.'(
