@@ -8,6 +8,8 @@ import neureka.backend.api.Operation;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.calculus.AbstractBaseFunction;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
+import neureka.calculus.args.Args;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
@@ -102,23 +104,23 @@ public class FunctionNode extends AbstractBaseFunction
      * Responsible for handling functions with multiple inputs!
      *
      * @param inputs
-     * @param j
-     * @param d
      * @return The result of the execution.
      */
-    protected Tsr _tensor_activation( Tsr[] inputs, int j, int d )
+    protected Tsr _tensor_activation( Tsr[] inputs, Args arguments )
     {
         ExecutionCall<? extends Device<?>> call = ExecutionCall.builder()
                                             .device(_deviceFor( inputs ))
                                             .tensors( inputs )
-                                            .derivativeIndex( d )
-                                            .j( j )
+                                            .derivativeIndex( arguments.findAndGet(Arg.DerivIdx.class) )
+                                            .j( arguments.findAndGet(Arg.VarIdx.class) )
                                             .operation( _operation )
                                             .build();
         ExecutionCall<? extends Device<?>> finalCall;
         Device<?> possiblyNewDevice = call.getAlgorithm().findDeviceFor( call );
         if ( possiblyNewDevice != null ) finalCall = call.withDevice( possiblyNewDevice );
         else finalCall = call;
+
+        int d = arguments.findAndGet(Arg.DerivIdx.class);
 
         if ( _isFlat )
         {
@@ -379,57 +381,57 @@ public class FunctionNode extends AbstractBaseFunction
 
     @Override
     public Tsr<?> execute(Tsr<?>... inputs) {
+        Args arguments = Args.of(Arg.VarIdx.of(-1), Arg.DerivIdx.of(-1));
         return Neureka.get()
                         .context()
                         .functionCache()
                         .preprocess(
                                 (Tsr<Object>[]) inputs,
                                 this,
-                                ()-> _tensor_activation( inputs, -1, -1 ),
-                                -1,
-                                -1
+                                ()-> _tensor_activation( inputs, arguments ),
+                                arguments
                         );
     }
 
     @Override
     public Tsr<?> execute(Tsr<?>[] inputs, int j) {
+        Args arguments = Args.of(Arg.VarIdx.of(j), Arg.DerivIdx.of(-1));
         return Neureka.get()
                         .context()
                         .functionCache()
                         .preprocess(
                                 (Tsr<Object>[]) inputs,
                                 this,
-                                ()-> _tensor_activation( inputs, j, -1 ),
-                                -1,
-                                j
+                                ()-> _tensor_activation( inputs, arguments ),
+                                arguments
                         );
     }
 
     @Override
     public Tsr<?> executeDerive(Tsr<?>[] inputs, int d, int j) {
+        Args arguments = Args.of(Arg.DerivIdx.of(d), Arg.VarIdx.of(j));
         return Neureka.get()
                         .context()
                         .functionCache()
                         .preprocess(
                                 (Tsr<Object>[]) inputs,
                                 this,
-                                ()-> _tensor_activation( inputs, j, d ),
-                                d,
-                                j
+                                ()-> _tensor_activation( inputs, arguments ),
+                                arguments
                         );
     }
 
     @Override
     public Tsr<?> executeDerive(Tsr<?>[] inputs, int d) {
+        Args arguments = Args.of( Arg.VarIdx.of(-1), Arg.DerivIdx.of(d) );
         return Neureka.get()
                         .context()
                         .functionCache()
                         .preprocess(
                                 (Tsr<Object>[]) inputs,
                                 this,
-                                ()-> _tensor_activation( inputs, -1, d ),
-                                d,
-                                -1
+                                ()-> _tensor_activation( inputs, arguments ),
+                                arguments
                         );
     }
 

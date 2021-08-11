@@ -68,7 +68,7 @@ public final class DefaultADAgent extends Args implements ADAgent {
      * @param derivative The current derivative which will be stored with the name "derivative" in the agents context.
      */
     public DefaultADAgent( Tsr<?> derivative ) {
-        set( new Arg.Derivative<>(derivative) );
+        set( Arg.Derivative.of(derivative) );
     }
 
     public DefaultADAgent() { }

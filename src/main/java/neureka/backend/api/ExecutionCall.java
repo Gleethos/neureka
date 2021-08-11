@@ -66,7 +66,7 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
         this._derivativeIndex = derivativeIndex;
         this._operation = operation;
         this._tensors = tensors;
-        set(new Arg.VarIdx(j));
+        set(Arg.VarIdx.of(j));
         this._algorithm = algorithm;
         for ( Arg<?> arg : context ) this.set(arg);
     }

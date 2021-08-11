@@ -508,7 +508,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                                             .j(call.getJ())
                                                             .operation(call.getOperation())
                                                             .build()
-                                                            .set( new Arg.Derivative<>(targetDerivative) ),
+                                                            .set( Arg.Derivative.of(targetDerivative) ),
                                                     true
                                             )
                                     );

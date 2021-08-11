@@ -18,15 +18,23 @@ public abstract class Arg<T> implements Component<Args> {
 
 
     public static class Derivative<V> extends Arg<Tsr<V>> {
-        public Derivative(Tsr<V> arg) { super(arg); }
+        public static <V> Derivative<V> of(Tsr<V> arg) { return new Derivative<>(arg); }
+        private Derivative(Tsr<V> arg) { super(arg); }
+    }
+
+    public static class DerivIdx extends Arg<Integer> {
+        public static DerivIdx of( int index ) { return new DerivIdx(index); }
+        private DerivIdx(int arg) { super(arg); }
     }
 
     public static class Ends extends Arg<int[]> {
-        public Ends(int[] arg) { super(arg); }
+        public static Ends of( int[] arg ) { return new Ends(arg); }
+        private Ends(int[] arg) { super(arg); }
     }
 
     public static class VarIdx extends Arg<Integer> {
-        public VarIdx(int arg) { super(arg); }
+        public static VarIdx of( int arg ) { return new VarIdx( arg ); }
+        private VarIdx(int arg) { super(arg); }
     }
 
     @Override

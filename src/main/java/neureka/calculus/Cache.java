@@ -30,6 +30,8 @@ import neureka.Tsr;
 import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.OperationContext;
+import neureka.calculus.args.Arg;
+import neureka.calculus.args.Args;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,8 +78,10 @@ public final class Cache
             Tsr<Object>[] inputs,
             Function function,
             Supplier<Tsr<Object>> activation,
-            int d, int j
+            Args arguments
     ) {
+        int d = arguments.findAndGet(Arg.DerivIdx.class);
+        int j = arguments.findAndGet(Arg.VarIdx.class);
         if ( !function.isDoingAD() ) {
             return activation.get(); // TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD => NO GRAPH NODES
         }
