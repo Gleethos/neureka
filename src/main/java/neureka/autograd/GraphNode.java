@@ -42,7 +42,7 @@ package neureka.autograd;
 import neureka.Component;
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.Argument;
+import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
 import neureka.calculus.Function;
 import neureka.devices.Device;
@@ -508,7 +508,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                                             .j(call.getJ())
                                                             .operation(call.getOperation())
                                                             .build()
-                                                            .set( new Argument.Derivative<>(targetDerivative) ),
+                                                            .set( new Arg.Derivative<>(targetDerivative) ),
                                                     true
                                             )
                                     );

@@ -40,13 +40,13 @@ package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
+import neureka.calculus.args.Arg;
+import neureka.calculus.args.Args;
 import neureka.calculus.Function;
 import neureka.devices.Device;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  *  This class is a simple container holding relevant
@@ -61,34 +61,22 @@ import java.util.TreeMap;
 */
 public class ExecutionCall<DeviceType extends Device<?>> extends Args
 {
-    private ExecutionCall(DeviceType device, int derivativeIndex, Operation operation, Tsr<?>[] tensors, int j, Algorithm<?> algorithm, List<Argument> context) {
+    private ExecutionCall(DeviceType device, int derivativeIndex, Operation operation, Tsr<?>[] tensors, int j, Algorithm<?> algorithm, List<Arg> context) {
         this._device = device;
         this._derivativeIndex = derivativeIndex;
         this._operation = operation;
         this._tensors = tensors;
-        this._j = j;
+        set(new Arg.VarIdx(j));
         this._algorithm = algorithm;
-        for ( Argument<?> arg : context ) this.set(arg);
+        for ( Arg<?> arg : context ) this.set(arg);
     }
 
-    private static int $default$derivativeIndex() {
-        return -1;
-    }
-
-    private static int $default$j() {
-        return -1;
-    }
-
-    private static Algorithm<?> $default$algorithm() {
-        return null;
-    }
-
-    public static <DeviceType extends Device<?>> ExecutionCallBuilder<DeviceType> builder() {
-        return new ExecutionCallBuilder<>();
+    public static <DeviceType extends Device<?>> Builder<DeviceType> builder() {
+        return new Builder<>();
     }
 
     public String toString() {
-        return "ExecutionCall(_device=" + this._device + ", _derivativeIndex=" + this._derivativeIndex + ", _operation=" + this._operation + ", _tensors=" + java.util.Arrays.deepToString(this._tensors) + ", _j=" + this._j + ", _algorithm=" + this.getAlgorithm() + ", _context=" + this.findAll(Argument.class) + ")";
+        return "ExecutionCall(_device=" + this._device + ", _derivativeIndex=" + this._derivativeIndex + ", _operation=" + this._operation + ", _tensors=" + java.util.Arrays.deepToString(this._tensors) + ", j=" + this.getJ() + ", _algorithm=" + this.getAlgorithm() + ", _context=" + this.findAll(Arg.class) + ")";
     }
 
     public DeviceType getDevice() {
@@ -113,15 +101,15 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
     }
 
     public int getJ() {
-        return this._j;
+        return this.findAndGet(Arg.VarIdx.class);
     }
 
     public ExecutionCall<DeviceType> withTensors(Tsr<?>[] _tensors) {
-        return this._tensors == _tensors ? this : new ExecutionCall<DeviceType>(this._device, this._derivativeIndex, this._operation, _tensors, this._j, this._algorithm, this.findAll(Argument.class));
+        return this._tensors == _tensors ? this : new ExecutionCall<DeviceType>(this._device, this._derivativeIndex, this._operation, _tensors, this.getJ(), this._algorithm, this.findAll(Arg.class));
     }
 
-    public ExecutionCall<DeviceType> withJ(int _j) {
-        return this._j == _j ? this : new ExecutionCall<DeviceType>(this._device, this._derivativeIndex, this._operation, this._tensors, _j, this._algorithm, this.findAll(Argument.class));
+    public ExecutionCall<DeviceType> withJ(int j) {
+        return this.getJ() == j ? this : new ExecutionCall<DeviceType>(this._device, this._derivativeIndex, this._operation, this._tensors, j, this._algorithm, this.findAll(Arg.class));
     }
 
     public interface TensorCondition { boolean check(Tsr<?> tensor ); }
@@ -142,9 +130,9 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
                 .device(newDevice)
                 .tensors( _tensors )
                 .derivativeIndex( _derivativeIndex )
-                .j( _j )
+                .j( findAndGet(Arg.VarIdx.class) )
                 .operation( _operation )
-                .context(findAll(Argument.class))
+                .args(findAll(Arg.class))
                 .algorithm(_algorithm)
                 .build();
     }
@@ -183,7 +171,7 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
      *  The (indexer) function will execute the sub functions (of the AST) for every input index.
      *  If a particular index is not targeted however this variable will simply default to -1.
      */
-    private int _j = -1;
+    //private int _j = -1;
 
     /**
      *  This Algorithm variable is the chosen algorithm for a given execution call instance.
@@ -223,11 +211,7 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
 
     public ADAgent getADAgentFrom( Function function, ExecutionCall<? extends Device<?>> call, boolean forward )
     {
-        //if ( this._context != null ) {
-        //    if ( call._context == null ) call._context = new TreeMap<>();
-        //    call._context.putAll( this._context );
-        //}
-        for ( Argument<?> arg : this.findAll(Argument.class) ) call.set(arg);
+        for ( Arg<?> arg : this.findAll(Arg.class) ) call.set(arg);
         return getAlgorithm().supplyADAgentFor( function, call, forward );
     }
 
@@ -237,7 +221,7 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
 
     public Validator validate() { return new Validator(); }
 
-    public static class ExecutionCallBuilder<DeviceType extends Device<?>> {
+    public static class Builder<DeviceType extends Device<?>> {
         private DeviceType device;
         private int derivativeIndex$value;
         private boolean derivativeIndex$set;
@@ -247,45 +231,45 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
         private boolean j$set;
         private Algorithm<?> algorithm$value;
         private boolean algorithm$set;
-        private List<Argument> context$value;
+        private List<Arg> context$value;
         private boolean context$set;
 
-        ExecutionCallBuilder() { }
+        Builder() { }
 
-        public ExecutionCallBuilder<DeviceType> device(DeviceType device) {
+        public Builder<DeviceType> device(DeviceType device) {
             this.device = device;
             return this;
         }
 
-        public ExecutionCallBuilder<DeviceType> derivativeIndex(int derivativeIndex) {
+        public Builder<DeviceType> derivativeIndex(int derivativeIndex) {
             this.derivativeIndex$value = derivativeIndex;
             this.derivativeIndex$set = true;
             return this;
         }
 
-        public ExecutionCallBuilder<DeviceType> operation(Operation operation) {
+        public Builder<DeviceType> operation(Operation operation) {
             this.operation = operation;
             return this;
         }
 
-        public ExecutionCallBuilder<DeviceType> tensors(Tsr<?>[] tensors) {
+        public Builder<DeviceType> tensors(Tsr<?>[] tensors) {
             this.tensors = tensors;
             return this;
         }
 
-        public ExecutionCallBuilder<DeviceType> j(int j) {
+        public Builder<DeviceType> j(int j) {
             this.j$value = j;
             this.j$set = true;
             return this;
         }
 
-        public ExecutionCallBuilder<DeviceType> algorithm(Algorithm<?> algorithm) {
+        public Builder<DeviceType> algorithm(Algorithm<?> algorithm) {
             this.algorithm$value = algorithm;
             this.algorithm$set = true;
             return this;
         }
 
-        public ExecutionCallBuilder<DeviceType> context(List<Argument> context) {
+        public Builder<DeviceType> args(List<Arg> context) {
             this.context$value = context;
             this.context$set = true;
             return this;
@@ -294,25 +278,21 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
         public ExecutionCall<DeviceType> build() {
             int derivativeIndex$value = this.derivativeIndex$value;
             if (!this.derivativeIndex$set) {
-                derivativeIndex$value = ExecutionCall.$default$derivativeIndex();
+                derivativeIndex$value = -1;
             }
             int j$value = this.j$value;
             if (!this.j$set) {
-                j$value = ExecutionCall.$default$j();
+                j$value = -1;
             }
             Algorithm<?> algorithm$value = this.algorithm$value;
             if (!this.algorithm$set) {
-                algorithm$value = ExecutionCall.$default$algorithm();
+                algorithm$value = null;
             }
-            List<Argument> context$value = this.context$value;
+            List<Arg> context$value = this.context$value;
             if (!this.context$set) {
                 context$value = new ArrayList<>();
             }
-            return new ExecutionCall<DeviceType>(device, derivativeIndex$value, operation, tensors, j$value, algorithm$value, context$value);
-        }
-
-        public String toString() {
-            return "ExecutionCall.ExecutionCallBuilder(device=" + this.device + ", derivativeIndex$value=" + this.derivativeIndex$value + ", operation=" + this.operation + ", tensors=" + java.util.Arrays.deepToString(this.tensors) + ", j$value=" + this.j$value + ", algorithm$value=" + this.algorithm$value + ", context$value=" + this.context$value + ")";
+            return new ExecutionCall<>(device, derivativeIndex$value, operation, tensors, j$value, algorithm$value, context$value);
         }
     }
 

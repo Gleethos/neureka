@@ -2,8 +2,8 @@ package neureka.autograd;
 
 
 import neureka.Tsr;
-import neureka.backend.api.Args;
-import neureka.backend.api.Argument;
+import neureka.calculus.args.Args;
+import neureka.calculus.args.Arg;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,7 +68,7 @@ public final class DefaultADAgent extends Args implements ADAgent {
      * @param derivative The current derivative which will be stored with the name "derivative" in the agents context.
      */
     public DefaultADAgent( Tsr<?> derivative ) {
-        set( new Argument.Derivative<>(derivative) );
+        set( new Arg.Derivative<>(derivative) );
     }
 
     public DefaultADAgent() { }
@@ -78,8 +78,8 @@ public final class DefaultADAgent extends Args implements ADAgent {
      *  from which it was born. This is so that they can be used by any backend implementation to
      *  save variables useful to perform differentiation.
      */
-    public DefaultADAgent withContext( List<Argument> context  ) {
-        for ( Argument<?> arg : context ) this.set(arg);
+    public DefaultADAgent withContext( List<Arg> context  ) {
+        for ( Arg<?> arg : context ) this.set(arg);
         return this;
     }
 
@@ -95,13 +95,13 @@ public final class DefaultADAgent extends Args implements ADAgent {
 
     @Override
     public Tsr<?> derivative() {
-        Argument.Derivative arg = find(Argument.Derivative.class);
+        Arg.Derivative arg = find(Arg.Derivative.class);
         if ( arg != null ) return (Tsr<?>) arg.get(); else return null;
     }
 
     @Override
     public boolean hasForward() {
-        return has(Argument.Derivative.class);
+        return has(Arg.Derivative.class);
     }
 
     @Override
@@ -122,7 +122,7 @@ public final class DefaultADAgent extends Args implements ADAgent {
     @Override
     public String toString() {
         if ( this.derivative() != null ) return derivative().toString();
-        return findAll(Argument.class).stream()
+        return findAll(Arg.class).stream()
                 .map( key -> key.getClass().getSimpleName() + "=" + find(key.getClass()) )
                 .collect( Collectors.joining( ", ", "{", "}" ) );
     }

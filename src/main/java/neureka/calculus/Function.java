@@ -120,8 +120,9 @@ public interface Function
             return commit( drain, inputs, function, null );
         }
 
-        public static <T> Tsr<T> commit( Tsr<?> drain, Tsr<?>[] inputs, Function function, Supplier<Tsr<Object>> activation )
-        {
+        public static <T> Tsr<T> commit(
+                Tsr<?> drain, Tsr<?>[] inputs, Function function, Supplier<Tsr<Object>> activation
+        ) {
             Tsr.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
 
             GraphLock newLock = new GraphLock( function );

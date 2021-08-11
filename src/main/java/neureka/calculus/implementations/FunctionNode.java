@@ -126,7 +126,7 @@ public class FunctionNode extends AbstractBaseFunction
                Autograd-Graph will be generated below for the new GraphNode: 
                only flat functions can be executed directly */
             if ( d < 0 && _isDoingAD )
-                return new GraphNode( this, finalCall, () -> __flat_execution( finalCall ) ).getPayload();
+                return new GraphNode<>( this, finalCall, () -> __flat_execution( finalCall ) ).getPayload();
             else
                 return __flat_execution( finalCall );
         }/* The code below deals with deep functions (non flat) :  */
@@ -318,8 +318,9 @@ public class FunctionNode extends AbstractBaseFunction
         return out;
     }
 
-    public Tsr<?>[] srcActivation( Tsr<?>[] inputs, int j, int d, int offset )
-    {
+    public Tsr<?>[] srcActivation(
+            Tsr<?>[] inputs, int j, int d, int offset
+    ) {
         int[] tempShape = null;
         Tsr<?>[] tensors = new Tsr[ _src.length + offset ];
         for ( int i = offset; i < tensors.length; i++ ) {//constants need to be figured out!
@@ -378,22 +379,58 @@ public class FunctionNode extends AbstractBaseFunction
 
     @Override
     public Tsr<?> execute(Tsr<?>... inputs) {
-        return Neureka.get().context().functionCache().preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, -1, -1 ), -1, -1 );
+        return Neureka.get()
+                        .context()
+                        .functionCache()
+                        .preprocess(
+                                (Tsr<Object>[]) inputs,
+                                this,
+                                ()-> _tensor_activation( inputs, -1, -1 ),
+                                -1,
+                                -1
+                        );
     }
 
     @Override
     public Tsr<?> execute(Tsr<?>[] inputs, int j) {
-        return Neureka.get().context().functionCache().preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, j, -1 ), -1, j );
+        return Neureka.get()
+                        .context()
+                        .functionCache()
+                        .preprocess(
+                                (Tsr<Object>[]) inputs,
+                                this,
+                                ()-> _tensor_activation( inputs, j, -1 ),
+                                -1,
+                                j
+                        );
     }
 
     @Override
     public Tsr<?> executeDerive(Tsr<?>[] inputs, int d, int j) {
-        return Neureka.get().context().functionCache().preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, j, d ), d, j );
+        return Neureka.get()
+                        .context()
+                        .functionCache()
+                        .preprocess(
+                                (Tsr<Object>[]) inputs,
+                                this,
+                                ()-> _tensor_activation( inputs, j, d ),
+                                d,
+                                j
+                        );
     }
 
     @Override
     public Tsr<?> executeDerive(Tsr<?>[] inputs, int d) {
-        return Neureka.get().context().functionCache().preprocess((Tsr<Object>[]) inputs, this, ()-> _tensor_activation( inputs, -1, d ), d, -1 );
+        return Neureka.get()
+                        .context()
+                        .functionCache()
+                        .preprocess(
+                                (Tsr<Object>[]) inputs,
+                                this,
+                                ()-> _tensor_activation( inputs, -1, d ),
+                                d,
+                                -1
+                        );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

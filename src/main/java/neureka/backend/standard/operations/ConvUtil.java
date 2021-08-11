@@ -3,7 +3,7 @@ package neureka.backend.standard.operations;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
-import neureka.backend.api.Argument;
+import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.calculus.Function;
@@ -32,7 +32,7 @@ public class ConvUtil {
                 .setSupplyADAgentFor(
                         (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
-                            Tsr ctxDerivative = (Tsr)call.findAndGet(Argument.Derivative.class);
+                            Tsr ctxDerivative = (Tsr)call.findAndGet(Arg.Derivative.class);
                             if ( forward ) throw new IllegalArgumentException("Convolution of does not support forward-AD!");
 
                             Function mul = Neureka.get().context().getFunction().mul();

@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.Algorithm;
-import neureka.backend.api.Argument;
+import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -201,7 +201,7 @@ public class Division extends AbstractOperation
                                         .setSupplyADAgentFor(
                                             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                             {
-                                                Tsr ctxDerivative = (Tsr)call.findAndGet(Argument.Derivative.class);
+                                                Tsr ctxDerivative = (Tsr)call.findAndGet(Arg.Derivative.class);
                                                 Function mul = Neureka.get().context().getFunction().mul();
                                                 if ( ctxDerivative != null ) {
                                                     return new DefaultADAgent( ctxDerivative )

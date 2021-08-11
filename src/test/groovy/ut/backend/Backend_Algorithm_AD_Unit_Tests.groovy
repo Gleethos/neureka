@@ -3,7 +3,7 @@ package ut.backend
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.ADAgent
-import neureka.backend.api.Argument
+import neureka.calculus.args.Arg
 import neureka.calculus.Function
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Algorithm
@@ -179,8 +179,8 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
 
         and : 'A mock ExecutionCall.'
             def call = Mock( ExecutionCall )
-            def arg = Mock(Argument.Derivative)
-            call.find(Argument.Derivative.class) >> arg
+            def arg = Mock(Arg.Derivative)
+            call.find(Arg.Derivative.class) >> arg
 
 
         when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'
