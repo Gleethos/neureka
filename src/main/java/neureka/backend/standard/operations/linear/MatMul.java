@@ -46,13 +46,13 @@ public class MatMul extends AbstractOperation
                 if ( d < 0 ) {
                     Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.apply(
-                            ExecutionCall.builder()
-                                    .device(device)
-                                    .tensors(reduction)
-                                    .derivativeIndex(d)
-                                    .operation(type)
-                                    .build()
-                    );
+                                            ExecutionCall.builder()
+                                                    .device(device)
+                                                    .tensors(reduction)
+                                                    .derivativeIndex(d)
+                                                    .operation(type)
+                                                    .build()
+                                    );
                     tsrs[ 0 ] = reduction[ 0 ];
 
                     reduction = Utility.offsetted(tsrs, 1);

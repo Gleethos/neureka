@@ -63,6 +63,60 @@ import java.util.stream.Collectors;
 */
 public class ExecutionCall<DeviceType extends Device<?>> extends Args
 {
+
+    /**
+     *  This field references the device on which this ExecutionCall should be executed.
+     */
+    private final DeviceType _device;
+
+
+    /**
+     * This is an import property whose
+     * role might not be clear at first :
+     * An operation can have multiple inputs, however
+     * when calculating the derivative for a forward or backward pass
+     * then one must know which derivative ought to be calculated.
+     * So the "derivative index" targets said input.
+     * This property is -1 when no derivative should be calculated,
+     * however 0... when targeting an input to calculate the derivative of.
+     */
+    private int _derivativeIndex = -1;
+
+    /**
+     *  This is the operation type which will be applied to this execution call.
+     *  It contains multiple implementations, one of which might be applicable to this call...
+     */
+    private final Operation _operation;
+
+    /**
+     *  The tensor arguments from which an operation will either
+     *  read or to which it will write. <br>
+     *  The first entry of this array is usually containing the output tensor,
+     *  however this is not a necessity.
+     *  Some operation algorithms might use multiple argument entries as output tensors.
+     */
+    // Generates a method which constructs a copy of this call with the provided tensors!
+    private Tsr<?>[] _tensors;
+
+    /**
+     *  The following parameter is relevant for a particular type of operation, namely: an "indexer". <br>
+     *  An indexer automatically applies an operation on all inputs for a given function.
+     *  The (indexer) function will execute the sub functions (of the AST) for every input index.
+     *  If a particular index is not targeted however this variable will simply default to -1.
+     */
+    //private int _j = -1;
+
+    /**
+     *  This Algorithm variable is the chosen algorithm for a given execution call instance.
+     *  The variable is initially null and will be chosen dynamically based on an access request
+     *  to the corresponding getter method for this variable.
+     *  So it is in essence a lazy load variable.
+     *  Choosing an algorithm occurs through the {@link ExecutionCall#_operation} variable,
+     *  which is of type {@link Operation} and contains multiple algorithms for different execution call scenarios...
+     */
+    private Algorithm<?> _algorithm = null;
+
+
     private ExecutionCall(DeviceType device, int derivativeIndex, Operation operation, Tsr<?>[] tensors, int j, Algorithm<?> algorithm, List<Arg> context) {
         this._device = device;
         this._derivativeIndex = derivativeIndex;
@@ -120,12 +174,6 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
     public interface OperationTypeCondition { boolean check( Operation type ); }
     public interface Mutator { Tsr<?>[] mutate( Tsr<?>[] tensors ); }
 
-
-    /**
-     *  This field references the device on which this ExecutionCall should be executed.
-     */
-    private final DeviceType _device;
-
     // Constructs a copy of this call with the provided device!
     public ExecutionCall<? extends Device<?>> withDevice(Device<?> newDevice) {
         return ExecutionCall.builder()
@@ -138,52 +186,6 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
                 .algorithm(_algorithm)
                 .build();
     }
-
-    /**
-     * This is an import property whose
-     * role might not be clear at first :
-     * An operation can have multiple inputs, however
-     * when calculating the derivative for a forward or backward pass
-     * then one must know which derivative ought to be calculated.
-     * So the "derivative index" targets said input.
-     * This property is -1 when no derivative should be calculated,
-     * however 0... when targeting an input to calculate the derivative of.
-     */
-    private int _derivativeIndex = -1;
-
-    /**
-     *  This is the operation type which will be applied to this execution call.
-     *  It contains multiple implementations, one of which might be applicable to this call...
-     */
-    private final Operation _operation;
-
-    /**
-     *  The tensor arguments from which an operation will either
-     *  read or to which it will write. <br>
-     *  The first entry of this array is usually containing the output tensor,
-     *  however this is not a necessity.
-     *  Some operation algorithms might use multiple argument entries as output tensors.
-     */
-    // Generates a method which constructs a copy of this call with the provided tensors!
-    private Tsr<?>[] _tensors;
-
-    /**
-     *  The following parameter is relevant for a particular type of operation, namely: an "indexer". <br>
-     *  An indexer automatically applies an operation on all inputs for a given function.
-     *  The (indexer) function will execute the sub functions (of the AST) for every input index.
-     *  If a particular index is not targeted however this variable will simply default to -1.
-     */
-    //private int _j = -1;
-
-    /**
-     *  This Algorithm variable is the chosen algorithm for a given execution call instance.
-     *  The variable is initially null and will be chosen dynamically based on an access request
-     *  to the corresponding getter method for this variable.
-     *  So it is in essence a lazy load variable.
-     *  Choosing an algorithm occurs through the {@link ExecutionCall#_operation} variable,
-     *  which is of type {@link Operation} and contains multiple algorithms for different execution call scenarios...
-     */
-    private Algorithm<?> _algorithm = null;
 
     public <T extends Device<?>> ExecutionCall<T> forDeviceType(Class<T> type) {
         assert _device.getClass() == type;
@@ -223,18 +225,15 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
 
     public Validator validate() { return new Validator(); }
 
-    public static class Builder<DeviceType extends Device<?>> {
+    public static class Builder<DeviceType extends Device<?>>
+    {
         private DeviceType device;
-        private int derivativeIndex$value;
-        private boolean derivativeIndex$set;
+        private int derivativeIndex = -1;
         private Operation operation;
         private Tsr<?>[] tensors;
-        private int j$value;
-        private boolean j$set;
-        private Algorithm<?> algorithm$value;
-        private boolean algorithm$set;
-        private List<Arg> context$value;
-        private boolean context$set;
+        private int varIdx = -1;
+        private Algorithm<?> algorithm;
+        private final List<Arg> context = new ArrayList<>();
 
         Builder() { }
 
@@ -244,8 +243,7 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
         }
 
         public Builder<DeviceType> derivativeIndex(int derivativeIndex) {
-            this.derivativeIndex$value = derivativeIndex;
-            this.derivativeIndex$set = true;
+            this.derivativeIndex = derivativeIndex;
             return this;
         }
 
@@ -260,20 +258,17 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
         }
 
         public Builder<DeviceType> j(int j) {
-            this.j$value = j;
-            this.j$set = true;
+            this.varIdx = j;
             return this;
         }
 
         public Builder<DeviceType> algorithm(Algorithm<?> algorithm) {
-            this.algorithm$value = algorithm;
-            this.algorithm$set = true;
+            this.algorithm = algorithm;
             return this;
         }
 
         public Builder<DeviceType> args(List<Arg> context) {
-            this.context$value = context;
-            this.context$set = true;
+            this.context.addAll(context);
             return this;
         }
 
@@ -282,30 +277,14 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
         }
 
         public ExecutionCall<DeviceType> build() {
-            int derivativeIndex$value = this.derivativeIndex$value;
-            if (!this.derivativeIndex$set) {
-                derivativeIndex$value = -1;
-            }
-            int j$value = this.j$value;
-            if (!this.j$set) {
-                j$value = -1;
-            }
-            Algorithm<?> algorithm$value = this.algorithm$value;
-            if (!this.algorithm$set) {
-                algorithm$value = null;
-            }
-            List<Arg> context$value = this.context$value;
-            if (!this.context$set) {
-                context$value = new ArrayList<>();
-            }
             return new ExecutionCall<>(
                             device,
-                            derivativeIndex$value,
+                    derivativeIndex,
                             operation,
                             tensors,
-                            j$value,
-                            algorithm$value,
-                            context$value
+                            this.varIdx,
+                    algorithm,
+                            this.context
                         );
         }
     }
