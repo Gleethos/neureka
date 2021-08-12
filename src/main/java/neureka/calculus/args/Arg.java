@@ -32,6 +32,12 @@ public abstract class Arg<T> implements Component<Args> {
         private Ends(int[] arg) { super(arg); }
     }
 
+    /**
+     *  The following argument is relevant for a particular type of operation, namely: an "indexer". <br>
+     *  An indexer automatically applies an operation on all inputs for a given function.
+     *  The (indexer) function will execute the sub functions (of the AST) for every input index.
+     *  If a particular index is not targeted however this variable will simply default to -1.
+     */
     public static class VarIdx extends Arg<Integer> {
         public static VarIdx of( int arg ) { return new VarIdx( arg ); }
         private VarIdx(int arg) { super(arg); }

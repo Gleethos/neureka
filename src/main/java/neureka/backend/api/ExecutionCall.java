@@ -63,7 +63,6 @@ import java.util.stream.Collectors;
 */
 public class ExecutionCall<DeviceType extends Device<?>> extends Args
 {
-
     /**
      *  This field references the device on which this ExecutionCall should be executed.
      */
@@ -95,16 +94,7 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
      *  however this is not a necessity.
      *  Some operation algorithms might use multiple argument entries as output tensors.
      */
-    // Generates a method which constructs a copy of this call with the provided tensors!
     private Tsr<?>[] _tensors;
-
-    /**
-     *  The following parameter is relevant for a particular type of operation, namely: an "indexer". <br>
-     *  An indexer automatically applies an operation on all inputs for a given function.
-     *  The (indexer) function will execute the sub functions (of the AST) for every input index.
-     *  If a particular index is not targeted however this variable will simply default to -1.
-     */
-    //private int _j = -1;
 
     /**
      *  This Algorithm variable is the chosen algorithm for a given execution call instance.
@@ -122,6 +112,12 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
         this._derivativeIndex = derivativeIndex;
         this._operation = operation;
         this._tensors = tensors;
+        /*
+            The following argument is relevant for a particular type of operation, namely: an "indexer". <br>
+            An indexer automatically applies an operation on all inputs for a given function.
+            The (indexer) function will execute the sub functions (of the AST) for every input index.
+            If a particular index is not targeted however this variable will simply default to -1.
+         */
         set(Arg.VarIdx.of(j));
         this._algorithm = algorithm;
         for ( Arg<?> arg : context ) this.set(arg);
@@ -177,14 +173,13 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
     // Constructs a copy of this call with the provided device!
     public ExecutionCall<? extends Device<?>> withDevice(Device<?> newDevice) {
         return ExecutionCall.builder()
-                .device(newDevice)
-                .tensors( _tensors )
-                .derivativeIndex( _derivativeIndex )
-                .j( findAndGet(Arg.VarIdx.class) )
-                .operation( _operation )
-                .args(findAll(Arg.class))
-                .algorithm(_algorithm)
-                .build();
+                                .device( newDevice )
+                                .tensors( _tensors )
+                                .operation( _operation )
+                                .algorithm( _algorithm )
+                                .args( findAll(Arg.class) )
+                                .args( Arg.DerivIdx.of( _derivativeIndex ) )
+                                .build();
     }
 
     public <T extends Device<?>> ExecutionCall<T> forDeviceType(Class<T> type) {

@@ -112,7 +112,7 @@ public class FunctionNode extends AbstractBaseFunction
                                             .device(_deviceFor( inputs ))
                                             .tensors( inputs )
                                             .derivativeIndex( arguments.findAndGet(Arg.DerivIdx.class) )
-                                            .j( arguments.findAndGet(Arg.VarIdx.class) )
+                                            .args( arguments.find(Arg.VarIdx.class) )
                                             //.args(call.findAll(Arg.class))
                                             .operation( _operation )
                                             .build();
