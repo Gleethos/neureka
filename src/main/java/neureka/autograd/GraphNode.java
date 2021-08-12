@@ -500,15 +500,16 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                             targetNode,
                                             call.getADAgentFrom(
                                                     function,
-                                                    (ExecutionCall<? extends Device<?>>)
                                                         ExecutionCall.builder()
                                                             .device(call.getDevice())
                                                             .tensors(call.getTensors())
-                                                            .derivativeIndex(finalI)
-                                                            .j(call.getJ())
                                                             .operation(call.getOperation())
-                                                            .build()
-                                                            .set( Arg.Derivative.of(targetDerivative) ),
+                                                            .args(
+                                                                Arg.VarIdx.of(call.getJ()),
+                                                                Arg.DerivIdx.of(finalI),
+                                                                Arg.Derivative.of(targetDerivative)
+                                                            )
+                                                            .build(),
                                                     true
                                             )
                                     );

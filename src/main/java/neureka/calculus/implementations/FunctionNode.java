@@ -113,8 +113,10 @@ public class FunctionNode extends AbstractBaseFunction
                                             .tensors( inputs )
                                             .derivativeIndex( arguments.findAndGet(Arg.DerivIdx.class) )
                                             .j( arguments.findAndGet(Arg.VarIdx.class) )
+                                            //.args(call.findAll(Arg.class))
                                             .operation( _operation )
                                             .build();
+
         ExecutionCall<? extends Device<?>> finalCall;
         Device<?> possiblyNewDevice = call.getAlgorithm().findDeviceFor( call );
         if ( possiblyNewDevice != null ) finalCall = call.withDevice( possiblyNewDevice );
@@ -146,7 +148,7 @@ public class FunctionNode extends AbstractBaseFunction
         else return _deep_derivative( call  );
     }
  
-    private Tsr __deep_activation(ExecutionCall<? extends Device<?>> call )
+    private Tsr __deep_activation( ExecutionCall<? extends Device<?>> call )
     {
         Tsr[] inputs = call.getTensors();
         Device device = call.getDevice();
@@ -178,6 +180,7 @@ public class FunctionNode extends AbstractBaseFunction
                         .tensors( tensors )
                         .derivativeIndex( d )
                         .operation( _operation )
+                        //.args(call.findAll(Arg.class))
                         .build()
         );
         if ( tensors[ 0 ] == null ) _LOG.warn("Function '"+this+"' did not have a proper return value.");
@@ -215,9 +218,7 @@ public class FunctionNode extends AbstractBaseFunction
 
     private Tsr _deep_derivative( ExecutionCall<? extends Device<?>> call )
     {
-        Supplier<Tsr<?>> actor =
-                () ->
-                {
+        Supplier<Tsr<?>> actor = () -> {
                     Tsr[] inputs = call.getTensors();
                     Device device = call.getDevice();
                     int d = call.getDerivativeIndex();
@@ -282,18 +283,25 @@ public class FunctionNode extends AbstractBaseFunction
                         }
                     }
                     // Use those tensors for the outer derivative:
-                    device.execute( ExecutionCall.builder().device( device ).tensors( tensors ).derivativeIndex( d ).operation( _operation ).build() );
+                    device.execute(
+                            ExecutionCall.builder()
+                                            .device( device )
+                                            .tensors( tensors )
+                                            .derivativeIndex( d )
+                                            .operation( _operation )
+                                            .build()
+                    );
                     // At the end:
                     //...multiply inner times outer: ( if inner is not 1 entirely... )
                     if ( !( ( inner.isVirtual() || inner.size()==1 ) && inner.value64( 0 )==1.0) ) {
                         tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
                         device.execute(
                                 ExecutionCall.builder()
-                                    .device( device )
-                                    .tensors( tensors )
-                                    .derivativeIndex( -1 )
-                                    .operation( Neureka.get().context().instance("*") )
-                                    .build()
+                                                .device( device )
+                                                .tensors( tensors )
+                                                .derivativeIndex( -1 )
+                                                .operation( Neureka.get().context().instance("*") )
+                                                .build()
                         );
                     } // done!
                     return tensors[ 0 ];

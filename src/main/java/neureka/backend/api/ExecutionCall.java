@@ -46,7 +46,9 @@ import neureka.calculus.Function;
 import neureka.devices.Device;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *  This class is a simple container holding relevant
@@ -252,7 +254,7 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
             return this;
         }
 
-        public Builder<DeviceType> tensors(Tsr<?>[] tensors) {
+        public Builder<DeviceType> tensors(Tsr<?>... tensors) {
             this.tensors = tensors;
             return this;
         }
@@ -275,6 +277,10 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
             return this;
         }
 
+        public Builder<DeviceType> args(Arg<?>... context) {
+            return args(Arrays.stream(context).collect(Collectors.toList()));
+        }
+
         public ExecutionCall<DeviceType> build() {
             int derivativeIndex$value = this.derivativeIndex$value;
             if (!this.derivativeIndex$set) {
@@ -292,7 +298,15 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
             if (!this.context$set) {
                 context$value = new ArrayList<>();
             }
-            return new ExecutionCall<>(device, derivativeIndex$value, operation, tensors, j$value, algorithm$value, context$value);
+            return new ExecutionCall<>(
+                            device,
+                            derivativeIndex$value,
+                            operation,
+                            tensors,
+                            j$value,
+                            algorithm$value,
+                            context$value
+                        );
         }
     }
 
