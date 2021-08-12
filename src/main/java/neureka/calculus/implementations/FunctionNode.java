@@ -109,14 +109,14 @@ public class FunctionNode extends AbstractBaseFunction
     protected Tsr _tensor_activation( Tsr[] inputs, Args arguments )
     {
         ExecutionCall<? extends Device<?>> call = ExecutionCall.builder()
-                                            .device(_deviceFor( inputs ))
-                                            .tensors( inputs )
-                                            .derivativeIndex( arguments.findAndGet(Arg.DerivIdx.class) )
-                                            .args( arguments.find(Arg.VarIdx.class) )
-                                            //.args(call.findAll(Arg.class))
-                                            .operation( _operation )
-                                            .build();
-
+                                                                .device(_deviceFor( inputs ))
+                                                                .tensors( inputs )
+                                                                .operation( _operation )
+                                                                .derivativeIndex( arguments.findAndGet(Arg.DerivIdx.class) )
+                                                                .args(
+                                                                    arguments.find(Arg.VarIdx.class)
+                                                                )
+                                                                .build();
         ExecutionCall<? extends Device<?>> finalCall;
         Device<?> possiblyNewDevice = call.getAlgorithm().findDeviceFor( call );
         if ( possiblyNewDevice != null ) finalCall = call.withDevice( possiblyNewDevice );
