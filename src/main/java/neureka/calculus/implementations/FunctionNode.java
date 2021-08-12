@@ -255,7 +255,7 @@ public class FunctionNode extends AbstractBaseFunction
                                     ExecutionCall.builder()
                                         .device( device )
                                         .tensors( tensors )
-                                        .derivativeIndex( -1 )
+                                        .args( Arg.DerivIdx.of( -1 ) )
                                         .operation( Neureka.get().context().instance("+") )
                                         .build()
                             );
@@ -299,7 +299,7 @@ public class FunctionNode extends AbstractBaseFunction
                                 ExecutionCall.builder()
                                                 .device( device )
                                                 .tensors( tensors )
-                                                .derivativeIndex( -1 )
+                                                .args( Arg.DerivIdx.of( -1 ) )
                                                 .operation( Neureka.get().context().instance("*") )
                                                 .build()
                         );
@@ -319,7 +319,7 @@ public class FunctionNode extends AbstractBaseFunction
                             ExecutionCall.builder()
                                 .device( device )
                                 .tensors( new Tsr[]{ null, actor.get(), out } )
-                                .derivativeIndex( -1 )
+                                .args( Arg.DerivIdx.of( -1 ) )
                                 .operation( Neureka.get().context().instance("+") )
                                 .build()
                 );

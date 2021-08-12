@@ -10,6 +10,7 @@ import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -56,8 +57,8 @@ public class CopyLeft extends AbstractOperation {
                                     ExecutionCall.builder()
                                         .device( call.getDevice() )
                                         .tensors( new Tsr[]{tsrs[offset], tsrs[1+offset]} )
-                                        .derivativeIndex( -1 )
                                         .operation( this )
+                                        .args( Arg.DerivIdx.of(-1) )
                                         .build();
                         }
                 )

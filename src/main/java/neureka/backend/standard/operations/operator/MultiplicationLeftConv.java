@@ -71,7 +71,7 @@ public class MultiplicationLeftConv extends AbstractOperation {
                             return ExecutionCall.builder()
                                     .device( call.getDevice() )
                                     .tensors( new Tsr[]{tsrs[offset], tsrs[1+offset]} )
-                                    .derivativeIndex( -1 )
+                                    .args( Arg.DerivIdx.of( -1 ) )
                                     .operation( Neureka.get().context().instance("idy") )
                                     .build();
                         }

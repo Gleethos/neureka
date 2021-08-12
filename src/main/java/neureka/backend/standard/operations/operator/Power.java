@@ -160,7 +160,7 @@ public class Power extends AbstractOperation
                                             ExecutionCall.builder()
                                                     .device( device )
                                                     .tensors( reduction )
-                                                    .derivativeIndex( -1 )
+                                                    .args( Arg.DerivIdx.of( -1 ) )
                                                     .operation( Neureka.get().context().instance("*") )
                                                     .build()
                                         );

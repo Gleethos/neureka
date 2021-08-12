@@ -8,6 +8,7 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -53,7 +54,7 @@ public class CopyRight extends AbstractOperation {
                             ExecutionCall.builder()
                                 .device( call.getDevice() )
                                 .tensors( new Tsr[]{tsrs[1+offset], tsrs[offset]} )
-                                .derivativeIndex( -1 )
+                                .args( Arg.DerivIdx.of( -1 ) )
                                 .operation( Neureka.get().context().instance("idy") ) // This routes to another operation!
                                 .build();
                 }
@@ -71,8 +72,8 @@ public class CopyRight extends AbstractOperation {
                                             ExecutionCall.builder()
                                                 .device( call.getDevice() )
                                                 .tensors( args )
-                                                .derivativeIndex( -1 )
                                                 .operation( call.getOperation() )
+                                                .args( Arg.DerivIdx.of(-1) )
                                                 .build()
                                                 .forDeviceType(HostCPU.class);
                                     Neureka.get().context().instance("idy")
@@ -91,7 +92,7 @@ public class CopyRight extends AbstractOperation {
                             ExecutionCall<OpenCLDevice> newCall = ExecutionCall.builder()
                                     .device( call.getDevice() )
                                     .tensors( args )
-                                    .derivativeIndex( -1 )
+                                    .args( Arg.DerivIdx.of( -1 ) )
                                     .operation( call.getOperation() )
                                     .build()
                                     .forDeviceType(OpenCLDevice.class);

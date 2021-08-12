@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 
 import java.util.function.Function;
@@ -102,7 +103,7 @@ public class JunctionUtil
                             ExecutionCall.builder()
                                     .device( device )
                                     .tensors( reduction )
-                                    .derivativeIndex( -1 )
+                                    .args( Arg.DerivIdx.of( -1 ) )
                                     .operation( Neureka.get().context().instance("*") )
                                     .build()
                     );
@@ -177,7 +178,7 @@ public class JunctionUtil
                         ExecutionCall.builder()
                                 .device(device)
                                 .tensors( new Tsr[]{tsrs[ 0 ], a, b} )
-                                .derivativeIndex( -1 )
+                                .args( Arg.DerivIdx.of( -1 ) )
                                 .operation( Neureka.get().context().instance("*") )
                                 .build()
                 );
