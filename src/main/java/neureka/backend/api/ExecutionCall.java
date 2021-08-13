@@ -110,6 +110,17 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
     private ExecutionCall(DeviceType device, int derivativeIndex, Operation operation, Tsr<?>[] tensors, int j, Algorithm<?> algorithm, List<Arg> context) {
         this._device = device;
         this._derivativeIndex = derivativeIndex;
+        /*
+            This is an import property whose
+            role might not be clear at first :
+            An operation can have multiple inputs, however
+            when calculating the derivative for a forward or backward pass
+            then one must know which derivative ought to be calculated.
+            So the "derivative index" targets said input.
+            This property is -1 when no derivative should be calculated,
+            however 0... when targeting an input to calculate the derivative of.
+         */
+        set(Arg.DerivIdx.of(derivativeIndex));
         this._operation = operation;
         this._tensors = tensors;
         /*
@@ -128,7 +139,15 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
     }
 
     public String toString() {
-        return "ExecutionCall(_device=" + this._device + ", _derivativeIndex=" + this._derivativeIndex + ", _operation=" + this._operation + ", _tensors=" + java.util.Arrays.deepToString(this._tensors) + ", j=" + this.getJ() + ", _algorithm=" + this.getAlgorithm() + ", _context=" + this.findAll(Arg.class) + ")";
+        return "ExecutionCall(" +
+                    "device=" + this._device + ", " +
+                    "derivativeIndex=" + this.getDerivativeIndex() + ", " +
+                    "operation=" + this._operation + ", " +
+                    "tensors=" + java.util.Arrays.deepToString(this._tensors) + ", " +
+                    "j=" + this.getJ() + ", " +
+                    "algorithm=" + this.getAlgorithm() + ", " +
+                    "context=" + this.findAll(Arg.class) +
+                ")";
     }
 
     public DeviceType getDevice() {
@@ -141,7 +160,7 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
     }
 
     public int getDerivativeIndex() {
-        return this._derivativeIndex;
+        return this._derivativeIndex; // this.findAndGet(Arg.DerivIdx.class);
     }
 
     public Operation getOperation() {
@@ -157,11 +176,11 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
     }
 
     public ExecutionCall<DeviceType> withTensors(Tsr<?>[] _tensors) {
-        return this._tensors == _tensors ? this : new ExecutionCall<DeviceType>(this._device, this._derivativeIndex, this._operation, _tensors, this.getJ(), this._algorithm, this.findAll(Arg.class));
+        return this._tensors == _tensors ? this : new ExecutionCall<DeviceType>(this._device, this.getDerivativeIndex(), this._operation, _tensors, this.getJ(), this._algorithm, this.findAll(Arg.class));
     }
 
     public ExecutionCall<DeviceType> withJ(int j) {
-        return this.getJ() == j ? this : new ExecutionCall<DeviceType>(this._device, this._derivativeIndex, this._operation, this._tensors, j, this._algorithm, this.findAll(Arg.class));
+        return this.getJ() == j ? this : new ExecutionCall<DeviceType>(this._device, this.getDerivativeIndex(), this._operation, this._tensors, j, this._algorithm, this.findAll(Arg.class));
     }
 
     public interface TensorCondition { boolean check(Tsr<?> tensor ); }
@@ -178,7 +197,7 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
                                 .operation( _operation )
                                 .algorithm( _algorithm )
                                 .args( findAll(Arg.class) )
-                                .args( Arg.DerivIdx.of( _derivativeIndex ) )
+                                .args( Arg.DerivIdx.of( getDerivativeIndex() ) )
                                 .build();
     }
 
@@ -274,12 +293,12 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
         public ExecutionCall<DeviceType> build() {
             return new ExecutionCall<>(
                             device,
-                    derivativeIndex,
+                            derivativeIndex,
                             operation,
                             tensors,
-                            this.varIdx,
-                    algorithm,
-                            this.context
+                            varIdx,
+                            algorithm,
+                            context
                         );
         }
     }
