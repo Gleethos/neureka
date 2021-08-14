@@ -61,7 +61,7 @@ import java.util.stream.Collectors;
  *
  * @param <DeviceType> The Device implementation targeted by an instance of this ExecutionCall!
 */
-public class ExecutionCall<DeviceType extends Device<?>> extends Args
+public class ExecutionCall<DeviceType extends Device<?>> // extends Args
 {
     /**
      *  This field references the device on which this ExecutionCall should be executed.
@@ -106,7 +106,7 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
      */
     private Algorithm<?> _algorithm = null;
 
-    //private final Args _arguments = new Args();
+    private final Args _arguments = new Args();
 
     private ExecutionCall(
             DeviceType device,
@@ -160,7 +160,7 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
                     "tensors=" + java.util.Arrays.deepToString(this._tensors) + ", " +
                     "j=" + this.getJ() + ", " +
                     "algorithm=" + this.getAlgorithm() + ", " +
-                    "context=" + this.findAll(Arg.class) +
+                    "context=" + this.getAll(Arg.class) +
                 ")";
     }
 
@@ -209,15 +209,16 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
 
 
     public <V, T extends Arg<V>> V getValOf(Class<T> argumentClass ) {
-        return findAndGet(argumentClass);
+        return _arguments.findAndGet(argumentClass);
     }
 
     public <V, T extends Arg<V>> ExecutionCall<DeviceType> setArg(T argTypeClass) {
-        return (ExecutionCall<DeviceType>) set(argTypeClass);
+        _arguments.set(argTypeClass);
+        return this;
     }
 
     public <T extends Arg> List<T> getAll(Class<T> componentClass ) {
-        return this.findAll(componentClass);
+        return _arguments.findAll(componentClass);
     }
 
     public interface TensorCondition { boolean check(Tsr<?> tensor ); }
