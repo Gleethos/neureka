@@ -146,9 +146,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
     public static <DeviceType extends Device<?>> Builder<DeviceType> builder() { return new Builder<>(); }
 
     public Args getMetaArgs() { return _arguments; }
-
-    //public <V, T extends Arg<V>> ExecutionCall<DeviceType> set( T arg ) { _arguments.set(arg); return this; }
-
+    
     public String toString() {
         return "ExecutionCall(" +
                     "device=" + this._device + ", " +
@@ -157,7 +155,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
                     "tensors=" + java.util.Arrays.deepToString(this._tensors) + ", " +
                     "j=" + this.getJ() + ", " +
                     "algorithm=" + this.getAlgorithm() + ", " +
-                    "context=" + this.getAll(Arg.class) +
+                    "context=" + _arguments.findAll(Arg.class) +
                 ")";
     }
 
@@ -191,7 +189,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
                 ? this
                 : new ExecutionCall<>(
                         this._device, this.getDerivativeIndex(), this._operation,
-                        _tensors, this.getJ(), this._algorithm, this.getAll(Arg.class)//this.getMetaArgs().findAll(Arg.class)
+                        _tensors, this.getJ(), this._algorithm, _arguments.findAll(Arg.class)//this.getMetaArgs().findAll(Arg.class)
                     );
     }
 
@@ -200,17 +198,13 @@ public class ExecutionCall<DeviceType extends Device<?>>
                 ? this
                 : new ExecutionCall<>(
                         this._device, this.getDerivativeIndex(), this._operation,
-                        this._tensors, j, this._algorithm, this.getAll(Arg.class) //this.getMetaArgs().findAll(Arg.class)
+                        this._tensors, j, this._algorithm, _arguments.findAll(Arg.class) //this.getMetaArgs().findAll(Arg.class)
                     );
     }
 
 
     public <V, T extends Arg<V>> V getValOf(Class<T> argumentClass ) {
         return _arguments.findAndGet(argumentClass);
-    }
-
-    public <T extends Arg> List<T> getAll(Class<T> componentClass ) {
-        return _arguments.findAll(componentClass);
     }
 
     public interface TensorCondition { boolean check(Tsr<?> tensor ); }
@@ -226,7 +220,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
                                 .tensors( _tensors )
                                 .operation( _operation )
                                 .algorithm( _algorithm )
-                                .args( this.getAll(Arg.class) )//getMetaArgs().findAll(Arg.class) )
+                                .args( _arguments.findAll(Arg.class) )//getMetaArgs().findAll(Arg.class) )
                                 .args( Arg.DerivIdx.of( getDerivativeIndex() ) )
                                 .build();
     }
@@ -259,7 +253,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
     public ADAgent getADAgentFrom( Function function, ExecutionCall<? extends Device<?>> call, boolean forward )
     {
-        for ( Arg<?> arg : this.getAll(Arg.class) ) call.getMetaArgs().set(arg);
+        for ( Arg<?> arg : _arguments.findAll(Arg.class) ) call.getMetaArgs().set(arg);
         return getAlgorithm().supplyADAgentFor( function, call, forward );
     }
 
