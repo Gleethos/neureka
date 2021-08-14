@@ -32,7 +32,7 @@ public class ConvUtil {
                 .setSupplyADAgentFor(
                         (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
-                            Tsr ctxDerivative = (Tsr)call.findAndGet(Arg.Derivative.class);
+                            Tsr ctxDerivative = (Tsr)call.getValOf(Arg.Derivative.class);
                             if ( forward ) throw new IllegalArgumentException("Convolution of does not support forward-AD!");
 
                             Function mul = Neureka.get().context().getFunction().mul();

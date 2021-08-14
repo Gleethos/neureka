@@ -39,13 +39,13 @@ public class DimTrim extends AbstractOperation
                 .setSupplyADAgentFor(
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
-                            int prefix = call.find(Arg.Ends.class).get()[ 0 ];
-                            int postfix = call.find(Arg.Ends.class).get()[ 1 ];
+                            int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
+                            int postfix = call.getValOf(Arg.Ends.class)[ 1 ];
                             if ( forward ) {
                                 throw new IllegalArgumentException("Dim-Trim operation does not support forward-AD!");
                             }
                             return new DefaultADAgent()
-                                    .withContext(call.findAll(Arg.class))
+                                    .withContext(call.getAll(Arg.class))
                                     .setForward((t, derivative) -> new FunctionBuilder(Neureka.get().context()).build(f.toString(), false).derive(new Tsr[]{derivative},0))
                                     .setBackward( (t, error) -> pad(error, new int[]{prefix, postfix}, true) );
                         }
@@ -57,12 +57,12 @@ public class DimTrim extends AbstractOperation
                             assert inputs.length == 1;
                             Tsr<?> t = inputs[ 0 ];
                             if ( call.getDerivativeIndex() == 0 ) {
-                                int prefix = call.find(Arg.Ends.class).get()[ 0 ];
-                                int postfix = call.find(Arg.Ends.class).get()[ 0 ];
+                                int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
+                                int postfix = call.getValOf(Arg.Ends.class)[ 0 ];
                                 return pad(t, new int[]{prefix, postfix}, true);
                             } else {
                                 int[] ends = new int[ 2 ];
-                                call.set(Arg.Ends.of(ends));
+                                call.setArg(Arg.Ends.of(ends));
                                 return trim(t, ends, true);
                             }
                         }

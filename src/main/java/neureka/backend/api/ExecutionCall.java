@@ -106,8 +106,17 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
      */
     private Algorithm<?> _algorithm = null;
 
+    //private final Args _arguments = new Args();
 
-    private ExecutionCall(DeviceType device, int derivativeIndex, Operation operation, Tsr<?>[] tensors, int j, Algorithm<?> algorithm, List<Arg> context) {
+    private ExecutionCall(
+            DeviceType device,
+            int derivativeIndex,
+            Operation operation,
+            Tsr<?>[] tensors,
+            int j,
+            Algorithm<?> algorithm,
+            List<Arg> context
+    ) {
         this._device = device;
         this._derivativeIndex = derivativeIndex;
         /*
@@ -120,7 +129,8 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
             This property is -1 when no derivative should be calculated,
             however 0... when targeting an input to calculate the derivative of.
          */
-        set(Arg.DerivIdx.of(derivativeIndex));
+        //_arguments.set(Arg.DerivIdx.of(derivativeIndex));
+        setArg(Arg.DerivIdx.of(derivativeIndex));
         this._operation = operation;
         this._tensors = tensors;
         /*
@@ -129,14 +139,18 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
             The (indexer) function will execute the sub functions (of the AST) for every input index.
             If a particular index is not targeted however this variable will simply default to -1.
          */
-        set(Arg.VarIdx.of(j));
+        //_arguments.set(Arg.VarIdx.of(j));
+        setArg(Arg.VarIdx.of(j));
         this._algorithm = algorithm;
-        for ( Arg<?> arg : context ) this.set(arg);
+        //for ( Arg<?> arg : context ) this._arguments.set(arg);
+        for ( Arg<?> arg : context ) this.setArg(arg);
     }
 
-    public static <DeviceType extends Device<?>> Builder<DeviceType> builder() {
-        return new Builder<>();
-    }
+    public static <DeviceType extends Device<?>> Builder<DeviceType> builder() { return new Builder<>(); }
+
+    //public Args getMetaArgs() { return _arguments; }
+
+    //public <V, T extends Arg<V>> ExecutionCall<DeviceType> set( T arg ) { _arguments.set(arg); return this; }
 
     public String toString() {
         return "ExecutionCall(" +
@@ -172,15 +186,38 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
     }
 
     public int getJ() {
-        return this.findAndGet(Arg.VarIdx.class);
+        return this.getValOf(Arg.VarIdx.class);
     }
 
     public ExecutionCall<DeviceType> withTensors(Tsr<?>[] _tensors) {
-        return this._tensors == _tensors ? this : new ExecutionCall<DeviceType>(this._device, this.getDerivativeIndex(), this._operation, _tensors, this.getJ(), this._algorithm, this.findAll(Arg.class));
+        return this._tensors == _tensors
+                ? this
+                : new ExecutionCall<>(
+                        this._device, this.getDerivativeIndex(), this._operation,
+                        _tensors, this.getJ(), this._algorithm, this.getAll(Arg.class)//this.getMetaArgs().findAll(Arg.class)
+                    );
     }
 
     public ExecutionCall<DeviceType> withJ(int j) {
-        return this.getJ() == j ? this : new ExecutionCall<DeviceType>(this._device, this.getDerivativeIndex(), this._operation, this._tensors, j, this._algorithm, this.findAll(Arg.class));
+        return this.getJ() == j
+                ? this
+                : new ExecutionCall<>(
+                        this._device, this.getDerivativeIndex(), this._operation,
+                        this._tensors, j, this._algorithm, this.getAll(Arg.class) //this.getMetaArgs().findAll(Arg.class)
+                    );
+    }
+
+
+    public <V, T extends Arg<V>> V getValOf(Class<T> argumentClass ) {
+        return findAndGet(argumentClass);
+    }
+
+    public <V, T extends Arg<V>> ExecutionCall<DeviceType> setArg(T argTypeClass) {
+        return (ExecutionCall<DeviceType>) set(argTypeClass);
+    }
+
+    public <T extends Arg> List<T> getAll(Class<T> componentClass ) {
+        return this.findAll(componentClass);
     }
 
     public interface TensorCondition { boolean check(Tsr<?> tensor ); }
@@ -196,7 +233,7 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
                                 .tensors( _tensors )
                                 .operation( _operation )
                                 .algorithm( _algorithm )
-                                .args( findAll(Arg.class) )
+                                .args(this.getAll(Arg.class) )//getMetaArgs().findAll(Arg.class) )
                                 .args( Arg.DerivIdx.of( getDerivativeIndex() ) )
                                 .build();
     }
@@ -229,7 +266,8 @@ public class ExecutionCall<DeviceType extends Device<?>> extends Args
 
     public ADAgent getADAgentFrom( Function function, ExecutionCall<? extends Device<?>> call, boolean forward )
     {
-        for ( Arg<?> arg : this.findAll(Arg.class) ) call.set(arg);
+        //for ( Arg<?> arg : this._arguments.findAll(Arg.class) ) call._arguments.set(arg);
+        for ( Arg<?> arg : this.getAll(Arg.class) ) call.setArg(arg);
         return getAlgorithm().supplyADAgentFor( function, call, forward );
     }
 

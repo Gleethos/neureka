@@ -120,7 +120,7 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
     @Override
     public ADAgent supplyADAgentFor( Function f, ExecutionCall<? extends Device<?>> call, boolean forward)
     {
-        Object o = call.findAndGet(Arg.Derivative.class);
+        Object o = call.getValOf(Arg.Derivative.class);
         Tsr ctxDerivative = (Tsr) o;
         Function mul = Neureka.get().context().getFunction().mul();
         if ( ctxDerivative != null ) {

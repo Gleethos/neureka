@@ -202,7 +202,7 @@ public class Modulo extends AbstractOperation {
             .setSupplyADAgentFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                 {
-                    Tsr ctxDerivative = (Tsr)call.findAndGet(Arg.Derivative.class);
+                    Tsr ctxDerivative = (Tsr)call.getValOf(Arg.Derivative.class);
                     Function mul = Neureka.get().context().getFunction().mul();
                     if ( ctxDerivative != null ) {
                         return new DefaultADAgent( ctxDerivative )
