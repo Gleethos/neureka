@@ -129,7 +129,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
             This property is -1 when no derivative should be calculated,
             however 0... when targeting an input to calculate the derivative of.
          */
-        setArg(Arg.DerivIdx.of(derivativeIndex));
+        _arguments.set(Arg.DerivIdx.of(derivativeIndex));
         this._operation = operation;
         this._tensors = tensors;
         /*
@@ -138,9 +138,9 @@ public class ExecutionCall<DeviceType extends Device<?>>
             The (indexer) function will execute the sub functions (of the AST) for every input index.
             If a particular index is not targeted however this variable will simply default to -1.
          */
-        setArg(Arg.VarIdx.of(j));
+        _arguments.set(Arg.VarIdx.of(j));
         this._algorithm = algorithm;
-        for ( Arg<?> arg : context ) this.setArg(arg);
+        for ( Arg<?> arg : context ) this.getMetaArgs().set(arg);
     }
 
     public static <DeviceType extends Device<?>> Builder<DeviceType> builder() { return new Builder<>(); }
@@ -209,11 +209,6 @@ public class ExecutionCall<DeviceType extends Device<?>>
         return _arguments.findAndGet(argumentClass);
     }
 
-    public <V, T extends Arg<V>> ExecutionCall<DeviceType> setArg(T argTypeClass) {
-        _arguments.set(argTypeClass);
-        return this;
-    }
-
     public <T extends Arg> List<T> getAll(Class<T> componentClass ) {
         return _arguments.findAll(componentClass);
     }
@@ -264,7 +259,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
     public ADAgent getADAgentFrom( Function function, ExecutionCall<? extends Device<?>> call, boolean forward )
     {
-        for ( Arg<?> arg : this.getAll(Arg.class) ) call.setArg(arg);
+        for ( Arg<?> arg : this.getAll(Arg.class) ) call.getMetaArgs().set(arg);
         return getAlgorithm().supplyADAgentFor( function, call, forward );
     }
 

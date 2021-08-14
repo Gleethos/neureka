@@ -297,7 +297,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
         where : 'The following Device instances are being tested :'
             device                                  | storageMethod
             Device.find( "openCL" )                 | { d, t -> d.store(t) }
-            Device.find( "openCL" )                 | { d, t -> t.setArg(d)   }
+            Device.find( "openCL" )                 | { d, t -> t.getMetaArgs().set(d)   }
             //FileDevice.at( "build/test-can" )     | { d, t -> d.store(t) }
             //HostCPU.instance()                    | { d, t -> t.set(d)   }
             //FileDevice.at( "build/test-can" )     | { d, t -> t.set(d)   }

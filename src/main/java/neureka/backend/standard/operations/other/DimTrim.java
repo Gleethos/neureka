@@ -62,7 +62,7 @@ public class DimTrim extends AbstractOperation
                                 return pad(t, new int[]{prefix, postfix}, true);
                             } else {
                                 int[] ends = new int[ 2 ];
-                                call.setArg(Arg.Ends.of(ends));
+                                call.getMetaArgs().set(Arg.Ends.of(ends));
                                 return trim(t, ends, true);
                             }
                         }
