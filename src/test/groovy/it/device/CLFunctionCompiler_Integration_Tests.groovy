@@ -31,7 +31,7 @@ class CLFunctionCompiler_Integration_Tests extends Specification {
         given : 'This system supports OpenCL'
             if ( !Neureka.get().canAccessOpenCL() ) return
         and : 'We get the first available OpenCLDevice we can find in the CLContext!'
-            def device = Neureka.get().context().find(CLContext.class).platforms[0].devices[0]
+            def device = Neureka.get().context().get(CLContext.class).platforms[0].devices[0]
         and : 'Three scalar test tensors which will be used as inputs to the optimized function.'
             Tsr<Double> t1 = Tsr.of(-2).set(device)
             Tsr<Double> t2 = Tsr.of(5).set(device)
@@ -64,7 +64,7 @@ class CLFunctionCompiler_Integration_Tests extends Specification {
         given : 'This system supports OpenCL'
         if ( !Neureka.get().canAccessOpenCL() ) return
         and : 'We get the first available OpenCLDevice we can find in the CLContext!'
-        def device = Neureka.get().context().find(CLContext.class).platforms[0].devices[0]
+        def device = Neureka.get().context().get(CLContext.class).platforms[0].devices[0]
         and : 'Three scalar test tensors which will be used as inputs to the optimized function.'
         Tsr<Double> t1 = Tsr.of([[1, 3, 2],[4, -2, 5]])[0..1, 1..2]
         t1.set(device)

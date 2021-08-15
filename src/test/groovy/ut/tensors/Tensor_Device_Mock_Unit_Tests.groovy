@@ -80,7 +80,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
             })
 
         when : 'The device is being accessed via the "device()" method...'
-            Device found = t.find(Device.class)
+            Device found = t.get(Device.class)
 
         then : 'This found device should be the one that was set originally.'
             found == device

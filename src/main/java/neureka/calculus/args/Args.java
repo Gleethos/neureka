@@ -13,8 +13,8 @@ public class Args extends AbstractComponentOwner<Args> {
         return args;
     }
 
-    public <V, T extends Arg<V>> V findAndGet( Class<T> argumentClass ) {
-        Arg<V> argument = find(argumentClass);
+    public <V, T extends Arg<V>> V getValOf(Class<T> argumentClass ) {
+        Arg<V> argument = get(argumentClass);
         if ( argument == null ) return null; else return argument.get();
     }
 

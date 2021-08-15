@@ -895,7 +895,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
         if ( isVirtual() != isVirtual ) {
             // Currently we avoid offloading the virtualization by restoring outsourced tensors into RAM...
-            Device<V> device = this.find( Device.class );
+            Device<V> device = this.get( Device.class );
             try {
                 if ( device != null ) device.restore( this );
             } catch ( Exception exception ) {
@@ -913,15 +913,15 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             // Therefore we need to re-initialize the NDConfiguration object:
             createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, getData() == null );
             if( isVirtual ) {
-                Relation<V> relation = find( Relation.class );
+                Relation<V> relation = get( Relation.class );
                 if ( relation!=null )
                     relation.foreachChild( c -> {
                                 c._setData( getData());
                                 c.setIsVirtual( true );
                             });
             } else {
-                Tsr<?> parentTensor = ( this.isSlice() ) ? find(Relation.class).getParent() : null;
-                if ( parentTensor != null ) parentTensor.find( Relation.class ).remove( this );
+                Tsr<?> parentTensor = ( this.isSlice() ) ? get(Relation.class).getParent() : null;
+                if ( parentTensor != null ) parentTensor.get( Relation.class ).remove( this );
             }
 
             try {
@@ -1203,7 +1203,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return The truth value determining if this tensor is a slice of another tensor.
      */
     public boolean isSlice() {
-        Relation<V> child = find( Relation.class );
+        Relation<V> child = get( Relation.class );
         return ( child != null && child.hasParent() );
     }
 
@@ -1216,7 +1216,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return The number of slices derived from this tensor.
      */
     public int sliceCount() {
-        Relation<V> child = find( Relation.class );
+        Relation<V> child = get( Relation.class );
         return ( child != null ) ? child.childCount() : 0;
     }
 
@@ -1227,7 +1227,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return The truth value determining if slices have been derived from this tensor.
      */
     public boolean isSliceParent() {
-        Relation<V> parent = find( Relation.class );
+        Relation<V> parent = get( Relation.class );
         return ( parent != null && parent.hasChildren() );
     }
 
@@ -1256,7 +1256,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return The truth value determining if this tensor is attached to a computation graph as leave node.
      */
     public boolean isLeave() {
-        return (!this.has( GraphNode.class )) || this.find( GraphNode.class ).isLeave();
+        return (!this.has( GraphNode.class )) || this.get( GraphNode.class ).isLeave();
     }
 
     /**
@@ -1293,14 +1293,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return The gradient of this tensor which is internally stored as component.
      */
     public Tsr<V> getGradient() {
-        return this.find( Tsr.class );
+        return this.get( Tsr.class );
     }
 
     /**
      * @return The device on which this tensor is stored or 'CPU' if it is not outsourced.
      */
     public Device<V> getDevice() {
-        if ( this.isOutsourced() ) return this.find( Device.class );
+        if ( this.isOutsourced() ) return this.get( Device.class );
         return (Device<V>) _CPU;
     }
 
@@ -1308,14 +1308,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
      */
     public GraphNode<V> getGraphNode() {
-        return find( GraphNode.class );
+        return get( GraphNode.class );
     }
 
     /**
      * @return An instance of the {@link NDFrame} component if present.
      */
     public NDFrame<V> frame() {
-        return find( NDFrame.class );
+        return get( NDFrame.class );
     }
 
 
@@ -1344,7 +1344,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public Tsr<V> incrementVersionBecauseOf( ExecutionCall call ) {
         if ( Neureka.get().settings().autograd().isPreventingInlineOperations() ) {
             _version++;
-            GraphNode<?> node = find( GraphNode.class );
+            GraphNode<?> node = get( GraphNode.class );
             if ( node != null && node.getPayloadReferenceVersion() != _version ) {
                 if ( node.usesAD() || node.isUsedAsDerivative() ) {
                     String error = "Inline operation occurred on tensor which is part of a computation graph node with autograd support!\n" +
@@ -1610,7 +1610,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     private void _label( String tensorName, String[][] labels )
     {
-        NDFrame<V> frame = find( NDFrame.class );
+        NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) {
             frame = new NDFrame( this.rank(), tensorName );
             set(frame);
@@ -1645,7 +1645,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public Tsr<V> label( List<List<Object>> labels )
     {
-        NDFrame<V> frame = find( NDFrame.class );
+        NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) set( new NDFrame( labels, null ) );
         return this;
     }
@@ -1669,7 +1669,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public Tsr<V> label( String tensorName, List<List<Object>> labels )
     {
-        NDFrame<V> frame = find( NDFrame.class );
+        NDFrame<V> frame = get( NDFrame.class );
         if ( frame == null ) set( new NDFrame( labels, tensorName ) );
         return this;
     }
@@ -2115,8 +2115,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         for ( int i = 0; i < newOffset.length; i++ )
             newOffset[ i ] = newOffset[ i ] + getNDConf().offset( i ); // Offset is being inherited!
 
-        Tsr<?> rootTensor = ( this.isSlice() ) ? find( Relation.class ).findRootTensor() : this;
-        Tsr<?> parentTensor = ( this.isSlice() ) ? find( Relation.class ).getParent() : this;
+        Tsr<?> rootTensor = ( this.isSlice() ) ? get( Relation.class ).findRootTensor() : this;
+        Tsr<?> parentTensor = ( this.isSlice() ) ? get( Relation.class ).getParent() : this;
         /*
             The following code check the validity of the slice shape ranges with
             respect to the 'parentTensor' of this new slice.
@@ -2150,7 +2150,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 via the 'getAt(...)' method leads us to a situation where
                 the following variable is NOT NULL! :
              */
-            int[] reshaped = ( this.isSlice() ) ? parentTensor.find( Relation.class ).getReshapeRelationFor( this ) : null;
+            int[] reshaped = ( this.isSlice() ) ? parentTensor.get( Relation.class ).getReshapeRelationFor( this ) : null;
             reshaped = ( reshaped != null ) ? Reshape.invert( reshaped ) : null;
             for ( int i = 0; i < parentTensor.rank(); i++ ) {
                 int ii = ( reshaped != null ) ? reshaped[ i ] : i;
@@ -2170,13 +2170,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         subset.setNDConf( AbstractNDC.construct( newShape, newTranslation, newIdxmap, newSpread, newOffset ) );
 
         if ( this.isOutsourced() ) {
-            Device<V> device = this.find( Device.class );
+            Device<V> device = this.get( Device.class );
             device.store( subset, this );
             subset.setIsOutsourced( true );
         }
         if ( this.isVirtual() ) subset.setIsVirtual( true );
         subset.set( new Relation().addParent( this ) );
-        Relation<V> parent = find( Relation.class );
+        Relation<V> parent = get( Relation.class );
         parent = ( parent != null ) ? parent : new Relation<>();
         parent.addChild( subset );
         this.set( parent );
@@ -2236,7 +2236,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     {
         boolean valueIsDeviceVisitor = false;
         if ( slice.isOutsourced() && !value.isOutsourced() ) {
-            Device<V> device = slice.find( Device.class );
+            Device<V> device = slice.get( Device.class );
             try {
                 device.store( value );
             } catch ( Exception e ) {
@@ -2248,7 +2248,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         if ( this.isEmpty() && slice.isEmpty() || slice.size() != value.size() ) _become( value ); // TODO: Rethink this a little
         else return _constructFunctional( newInstance(), new Tsr[]{ slice, value }, "I[ 0 ] <- I[ 1 ]", false );
         try {
-            if ( valueIsDeviceVisitor ) value.find( Device.class ).restore( value );
+            if ( valueIsDeviceVisitor ) value.get( Device.class ).restore( value );
         } catch ( Exception exception ) {
             _LOG.error( "Trying to migrate source tensor back to original location failed.", exception );
             throw exception;
@@ -2266,7 +2266,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public V getDataAt( int i )
     {
         if ( this.isOutsourced() ) {
-            Device<V> device = this.find( Device.class );
+            Device<V> device = this.get( Device.class );
             if ( device instanceof OpenCLDevice ) {
                 return (V)(Double)( (OpenCLDevice) device ).value64f( (Tsr<Number>) this, i );
             }
@@ -2305,7 +2305,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param value The primitive double array whose value ought to be used to populate this tensor.
      */
     private void _setValue64( double[] value ) {
-        if ( this.isOutsourced() ) this.find( Device.class ).overwrite64( this, value );
+        if ( this.isOutsourced() ) this.get( Device.class ).overwrite64( this, value );
         else if ( getData() == null ) {
             setDataType( DataType.of( F64.class ) );
             _setData( value );
@@ -2320,7 +2320,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param value The primitive float array whose value ought to be used to populate this tensor.
      */
     private void _setValue32( float[] value ) {
-        if ( this.isOutsourced() ) this.find( Device.class ).overwrite32( this, value );
+        if ( this.isOutsourced() ) this.get( Device.class ).overwrite32( this, value );
         else if ( getData() == null ) {
             setDataType( DataType.of( F32.class ) );
             _setData( value );
@@ -2377,7 +2377,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public Object getValue() { // TODO : Make this what it is supposed to be!!! (returning a copy of the targeted data)
         if ( this.isOutsourced() ) {
-            Device<V> device = find( Device.class );
+            Device<V> device = get( Device.class );
             if ( device != null )
                 return device.valueFor( this );
             else
@@ -2438,7 +2438,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         DataType<?> newDT = DataType.of( typeClass );
         Object newData;
         if ( this.isOutsourced() ) {
-            Device<V> device = find( Device.class );
+            Device<V> device = get( Device.class );
             device.restore( this );
             newData = _convertedDataOfType( typeClass );
             device.store( this );
@@ -2486,8 +2486,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public double value64( int i ) {
         if ( this.isOutsourced() ) {
-            if ( find( Device.class ) instanceof OpenCLDevice )
-                return find( OpenCLDevice.class ).value64f( (Tsr<Number>) this, i );
+            if ( get( Device.class ) instanceof OpenCLDevice )
+                return get( OpenCLDevice.class ).value64f( (Tsr<Number>) this, i );
             else return 0.0;
         }
         if ( this.isVirtual() ) {
@@ -2500,7 +2500,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public double[] value64() {
-        Device<V> found = this.find( Device.class );
+        Device<V> found = this.get( Device.class );
         if ( getData() == null && this.isOutsourced() && found != null ) {
             if ( found instanceof OpenCLDevice )
                 return ( (OpenCLDevice) found).value64f( (Tsr<Number>) this );
@@ -2519,8 +2519,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public float value32( int i ) {
         if ( this.isOutsourced() ) {
-            if ( find( Device.class ) instanceof OpenCLDevice )
-                return find( OpenCLDevice.class ).value32f( (Tsr<Number>) this, i );
+            if ( get( Device.class ) instanceof OpenCLDevice )
+                return get( OpenCLDevice.class ).value32f( (Tsr<Number>) this, i );
             else return 0.0f;
         }
         if ( this.isVirtual() ) {
@@ -2533,7 +2533,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public float[] value32() {
-        Device<V> found = this.find( Device.class );
+        Device<V> found = this.get( Device.class );
         if ( getData() == null && this.isOutsourced() && found != null ) {
             if ( found instanceof OpenCLDevice )
                 return ( (OpenCLDevice) found ).value32f( (Tsr<Number>) this);
@@ -2729,7 +2729,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             if ( template.getData() instanceof float[] ) t.setValue( (float) value );
             else t.setValue( value );
             try {
-                if ( template.isOutsourced() ) ( (Device<Object>) template.find( Device.class ) ).store( t );
+                if ( template.isOutsourced() ) ( (Device<Object>) template.get( Device.class ) ).store( t );
             } catch ( Exception exception ) {
                 _LOG.error( "Failed storing a newly created tensor from a template tensor to its host device.", exception );
                 throw exception;
@@ -2742,7 +2742,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             if ( template.getData() instanceof float[] ) t._setValue32( new float[ template.size() ] );
             else t._setValue64( new double[ template.size() ] );
             try {
-                if ( template.isOutsourced() ) ( (Device<Object>) template.find( Device.class ) ).store( t );
+                if ( template.isOutsourced() ) ( (Device<Object>) template.get( Device.class ) ).store( t );
             } catch ( Exception exception ) {
                 _LOG.error( "Failed storing a newly created tensor from a template tensor to its host device.", exception );
                 throw exception;

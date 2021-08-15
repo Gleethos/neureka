@@ -112,9 +112,9 @@ public class FunctionNode extends AbstractBaseFunction
                                                                 .device(_deviceFor( inputs ))
                                                                 .tensors( inputs )
                                                                 .operation( _operation )
-                                                                .derivativeIndex( arguments.findAndGet(Arg.DerivIdx.class) )
+                                                                .derivativeIndex( arguments.getValOf(Arg.DerivIdx.class) )
                                                                 .args(
-                                                                    arguments.find(Arg.VarIdx.class)
+                                                                    arguments.get(Arg.VarIdx.class)
                                                                 )
                                                                 .build();
         ExecutionCall<? extends Device<?>> finalCall;
@@ -122,7 +122,7 @@ public class FunctionNode extends AbstractBaseFunction
         if ( possiblyNewDevice != null ) finalCall = call.withDevice( possiblyNewDevice );
         else finalCall = call;
 
-        int d = arguments.findAndGet(Arg.DerivIdx.class);
+        int d = arguments.getValOf(Arg.DerivIdx.class);
 
         if ( _isFlat )
         {
@@ -362,7 +362,7 @@ public class FunctionNode extends AbstractBaseFunction
     private Device<?> _deviceFor( Tsr<Object>[] inputs )
     {
         if ( inputs.length == 0 ) return HostCPU.instance();
-        Device<?> device = inputs[ 0 ].find( Device.class );
+        Device<?> device = inputs[ 0 ].get( Device.class );
         boolean onSameDevice = _shareGuestDevice( inputs );
         boolean doAccel = !_operation.getOperator().equals(",") && onSameDevice;
         return ( doAccel && device != null ) ? device : inputs[ 0 ].getDevice();
@@ -372,11 +372,11 @@ public class FunctionNode extends AbstractBaseFunction
     {
         boolean onSameGuestDevice = true;
         Device<?> device = null;
-        for ( Tsr<?> tensor : tensors ) device = ( tensor.isOutsourced() ) ? tensor.find( Device.class ) : device;
+        for ( Tsr<?> tensor : tensors ) device = ( tensor.isOutsourced() ) ? tensor.get( Device.class ) : device;
 
         if ( device != null ) {
             for ( Tsr<?> tsr : tensors ) {
-                onSameGuestDevice = ( !tsr.isVirtual() && device == tsr.find(Device.class) ) && onSameGuestDevice;
+                onSameGuestDevice = ( !tsr.isVirtual() && device == tsr.get(Device.class) ) && onSameGuestDevice;
             }
         }
         else onSameGuestDevice = false;

@@ -384,7 +384,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             }
             GraphLock foundLock = null;
             for ( int i = 0; i < inputs.length; i++ ) {
-                GraphNode<V> child = inputs[ i ].find( GraphNode.class );
+                GraphNode<V> child = inputs[ i ].get( GraphNode.class );
                 if ( child == null ) throw new IllegalStateException(
                         "Input tensor at index '" + i + "' did not return a GraphNode instance." +
                                 "Input tensors of a new GraphNode must be part of the computation graph!"
@@ -404,7 +404,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     );
                 }
             }
-            _construct( payloadSupplier.get(), function, call, inputs[ 0 ].find( GraphNode.class ).getLock() );
+            _construct( payloadSupplier.get(), function, call, inputs[ 0 ].get( GraphNode.class ).getLock() );
         }
         else
             throw new IllegalArgumentException(
@@ -439,7 +439,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             _function = function;
             _parents = new GraphNode[ inputs.length ];
             for ( int i = 0; i < inputs.length; i++ ) {
-                _parents[ i ] = inputs[ i ].find( GraphNode.class );
+                _parents[ i ] = inputs[ i ].get( GraphNode.class );
                 if ( _parents[ i ] == null ) {
                     throw new IllegalStateException(
                             "Input tensors of a new graph-node must contain leave graph-nodes!"
@@ -465,7 +465,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             if ( this.usesForwardAD() )
             {
                 for ( int i = 0; i < inputs.length; i++ ) {
-                    GraphNode<V> srcNode = inputs[ i ].find( GraphNode.class );
+                    GraphNode<V> srcNode = inputs[ i ].get( GraphNode.class );
                     if ( srcNode.usesAD() ) {
                         if (
                                 srcNode.size() == 0 && this.size() == 0
@@ -522,7 +522,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                 }
             } else if ( this.usesReverseAD() ) {
                 for ( int i = 0; i < inputs.length; i++ ) {
-                    GraphNode<V> srcNode = inputs[ i ].find( GraphNode.class );
+                    GraphNode<V> srcNode = inputs[ i ].get( GraphNode.class );
                     if ( srcNode.usesAD() || inputs[ i ].rqsGradient() ) {
                         this.put(
                                 srcNode,
@@ -565,7 +565,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         int[] modes = new int[ inputs.length ];
         int inputMode = 0;
         for ( int i = 0; i < inputs.length; i++ ) {
-            GraphNode<V> node = inputs[ i ].find( GraphNode.class ); // Not null checked in constructor!
+            GraphNode<V> node = inputs[ i ].get( GraphNode.class ); // Not null checked in constructor!
             modes[ i ] = ( inputs[ i ].rqsGradient() ) ? 1 : node.getMode();
             inputMode += ( modes[ i ] != 0) ? 1 : 0;
         }
@@ -687,7 +687,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
         _reliesOnJustInTimeProp = true; //:=> Shall be traversed at a later point in time...
         this.forEachTarget( t -> t._carryPendingBackPropToGradients( pendingBackProp ) );
         if ( this.isLeave() && getPayload().rqsGradient() ) {
-            JITProp<V> jit = getPayload().find( JITProp.class );
+            JITProp<V> jit = getPayload().get( JITProp.class );
             if ( jit == null ) jit = new JITProp<>( pendingBackProp );
             else jit.addPending( pendingBackProp );
             getPayload().set( jit );
@@ -715,7 +715,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     private void _backwardJIT(Tsr<V> error, GraphNode<V> source ) {
         _reliesOnJustInTimeProp = false; // JITProp is currently being handled in this method. Afterwards it is not relying on it anymore!
         _migrateAndOrApplyError( error, payload -> {
-            JITProp<V> jit = payload.find( JITProp.class );//Get JIT-Prop node.
+            JITProp<V> jit = payload.get( JITProp.class );//Get JIT-Prop node.
             if ( jit != null ) {
                 jit.noteFinished( source );//note pending errors and store them as 'done'
                 if ( jit.isDone() ) payload.remove( JITProp.class );
@@ -788,7 +788,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             _targets_derivatives.put( target, new ArrayList<>( Arrays.asList( agent ) ) );
 
         Tsr<?> d = agent.derivative();
-        if ( d != null && d.has( GraphNode.class ) ) d.find( GraphNode.class )._isUsedAsDerivative = true;
+        if ( d != null && d.has( GraphNode.class ) ) d.get( GraphNode.class )._isUsedAsDerivative = true;
     }
 
     /**

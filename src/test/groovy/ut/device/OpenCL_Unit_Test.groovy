@@ -92,7 +92,7 @@ class OpenCL_Unit_Test extends Specification
         and : 'A mocked relation between both tensors returned by the slice as component.'
             Relation r = Mock(Relation)
             s.has(Relation.class) >> true
-            s.find(Relation.class) >> r
+            s.get(Relation.class) >> r
             r.findRootTensor() >> t
 
         when : 'We try to add the slice to the device.'

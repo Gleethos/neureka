@@ -225,7 +225,7 @@ public abstract class AbstractComponentOwner<C>
      * @param <T> The type parameter defining the component class.
      * @return The correct component or null if nothing has been found.
      */
-    public <T extends Component<?>> T find( Class<T> componentClass )
+    public <T extends Component<?>> T get( Class<T> componentClass )
     {
         if ( _components != null) {
             for ( Component<?> component : _components ) {
@@ -245,7 +245,7 @@ public abstract class AbstractComponentOwner<C>
      * @param <T> The type parameter defining the component class.
      * @return The correct component or null if nothing has been found.
      */
-    public <T extends Component<?>> List<T> findAll( Class<T> componentClass ) {
+    public <T extends Component<?>> List<T> getAll(Class<T> componentClass ) {
         List<T> found = new ArrayList<>();
         if ( _components != null && componentClass != null ) {
             for ( Component<?> component : _components ) {
@@ -269,7 +269,7 @@ public abstract class AbstractComponentOwner<C>
      */
     public <T extends Component<C>> C remove( Class<T> componentClass )
     {
-        T oldComponent = find( componentClass );
+        T oldComponent = get( componentClass );
         if ( oldComponent != null ) _addOrRemoveComp( _removeOrReject( oldComponent ), true );
         if ( _components != null && _components.length == 0 ) _components = null;
         return _this();
@@ -283,7 +283,7 @@ public abstract class AbstractComponentOwner<C>
      * @return True if the component of the given type/class has been found.
      */
     public <T extends Component<C>> boolean has( Class<T> componentClass ) {
-        return find( componentClass ) != null;
+        return get( componentClass ) != null;
     }
 
     /**
@@ -301,7 +301,7 @@ public abstract class AbstractComponentOwner<C>
         if ( newComponent == null ) return _this();
         Component<C> oldCompartment;
         if ( _components != null ) {
-            oldCompartment = (Component<C>) find( newComponent.getClass() );
+            oldCompartment = (Component<C>) get( newComponent.getClass() );
             if ( oldCompartment != null ) {
                 _addOrRemoveComp( oldCompartment, true );
             }
@@ -352,7 +352,7 @@ public abstract class AbstractComponentOwner<C>
      * @return True if a component could be found, false otherwise.
      */
     public <T extends Component<C>> boolean forComponent( Class<T> cc, Consumer<T> action ) {
-        T component = this.find( cc );
+        T component = this.get( cc );
         if ( component != null ) {
             action.accept( component );
             return true;

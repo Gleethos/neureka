@@ -103,7 +103,7 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
             return true; // Initial/last update call: No action needed!
         }
         if ( _parent != null) {
-            Relation<ValType> pr = _parent.find( Relation.class );
+            Relation<ValType> pr = _parent.get( Relation.class );
             for ( int i = 0; i < pr._children.length; i++ ) {
                 if ( pr._children[ i ].get() == oldOwner ) {
                     pr._children[ i ] = new WeakReference<>(newOwner);
@@ -114,7 +114,7 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
             for ( WeakReference<Tsr<ValType>> c : _children ) {
                 Tsr<ValType> t = c.get();
                 if ( t != null ) {
-                    Relation<ValType> cr = (Relation<ValType>) t.find( Relation.class );
+                    Relation<ValType> cr = (Relation<ValType>) t.get( Relation.class );
                     if ( cr != null ) cr._parent = newOwner;
                 }
             }
@@ -214,7 +214,7 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
                 Tsr<ValType> c = r.get();
                 if ( c != null ) {
                     action.accept( c );
-                    Relation<ValType> relation = (Relation<ValType>) c.find( Relation.class );
+                    Relation<ValType> relation = (Relation<ValType>) c.get( Relation.class );
                     if ( relation != null ) relation.foreachChild( action );
                 }
             }
@@ -233,8 +233,8 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
     {
         if ( _parent == null ) return null;
         else if ( !_parent.has( Relation.class ) ) return null;
-        else if ( !_parent.find( Relation.class ).hasParent() ) return _parent;
-        else return _parent.find( Relation.class ).findRootTensor();
+        else if ( !_parent.get( Relation.class ).hasParent() ) return _parent;
+        else return _parent.get( Relation.class ).findRootTensor();
     }
 
     public boolean hasParent()

@@ -26,7 +26,7 @@ public class UnitTester_Tensor extends UnitTester
         println(BAR +"  Device: "+device.toString());
         println(BAR +"-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+");
         for(Tsr t : tsrs){
-            Device found = t.getDevice();//((Device)t.find(Device.class));
+            Device found = t.getDevice();//((Device)t.get(Device.class));
             this.assertStringContains("result", (found==null)?"null":found.toString(), device.toString());
         }
         return (printSessionEnd()>0)?1:0;
@@ -280,7 +280,7 @@ public class UnitTester_Tensor extends UnitTester
         printSessionStart("Test injection: I[0] <- I[1], I[0] -> I[1] : "+f);
         Tsr[] result = new Tsr[tensors.length+1];
         result[0] = Tsr.of( f, false, tensors );
-        assert result[0] == null || result[0].find( GraphNode.class ) == null; // Because "doAD" is false!
+        assert result[0] == null || result[0].get( GraphNode.class ) == null; // Because "doAD" is false!
         System.arraycopy(tensors, 0, result, 1, result.length - 1);
         for(int i=0; i<result.length; i++){
             if(expected[ i ]!=null && expected[ i ].length!=0){

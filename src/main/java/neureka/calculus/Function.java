@@ -127,7 +127,7 @@ public interface Function
 
             GraphLock newLock = new GraphLock( function );
             for ( Tsr<?> t : inputs ) {
-                if ( t.has( GraphNode.class ) ) t.find( GraphNode.class ).obtainLocking( newLock );
+                if ( t.has( GraphNode.class ) ) t.get( GraphNode.class ).obtainLocking( newLock );
                 else new GraphNode( function, newLock, () -> t );
             }
             Tsr<T> result;

@@ -155,7 +155,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
                     "tensors=" + java.util.Arrays.deepToString(this._tensors) + ", " +
                     "j=" + this.getJ() + ", " +
                     "algorithm=" + this.getAlgorithm() + ", " +
-                    "context=" + _arguments.findAll(Arg.class) +
+                    "context=" + _arguments.getAll(Arg.class) +
                 ")";
     }
 
@@ -181,7 +181,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
     }
 
     public int getJ() {
-        return this.getMetaArgs().findAndGet(Arg.VarIdx.class);
+        return this.getMetaArgs().getValOf(Arg.VarIdx.class);
     }
 
     public ExecutionCall<DeviceType> withTensors(Tsr<?>[] _tensors) {
@@ -189,7 +189,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
                 ? this
                 : new ExecutionCall<>(
                         this._device, this.getDerivativeIndex(), this._operation,
-                        _tensors, this.getJ(), this._algorithm, _arguments.findAll(Arg.class)//this.getMetaArgs().findAll(Arg.class)
+                        _tensors, this.getJ(), this._algorithm, _arguments.getAll(Arg.class)//this.getMetaArgs().findAll(Arg.class)
                     );
     }
 
@@ -198,29 +198,32 @@ public class ExecutionCall<DeviceType extends Device<?>>
                 ? this
                 : new ExecutionCall<>(
                         this._device, this.getDerivativeIndex(), this._operation,
-                        this._tensors, j, this._algorithm, _arguments.findAll(Arg.class) //this.getMetaArgs().findAll(Arg.class)
+                        this._tensors, j, this._algorithm, _arguments.getAll(Arg.class) //this.getMetaArgs().findAll(Arg.class)
                     );
     }
 
 
     public <V, T extends Arg<V>> V getValOf(Class<T> argumentClass ) {
-        return _arguments.findAndGet(argumentClass);
+        return _arguments.getValOf(argumentClass);
     }
 
-    public interface TensorCondition { boolean check(Tsr<?> tensor ); }
-    public interface TensorCompare { boolean check( Tsr<?> first, Tsr<?> second ); }
-    public interface DeviceCondition { boolean check( Device<?> device ); }
-    public interface OperationTypeCondition { boolean check( Operation type ); }
+    public interface TensorCondition    { boolean check( Tsr<?> tensor ); }
+    public interface TensorCompare      { boolean check( Tsr<?> first, Tsr<?> second ); }
+    public interface DeviceCondition    { boolean check( Device<?> device ); }
+    public interface OperationCondition { boolean check( Operation type ); }
+
     public interface Mutator { Tsr<?>[] mutate( Tsr<?>[] tensors ); }
 
-    // Constructs a copy of this call with the provided device!
-    public ExecutionCall<? extends Device<?>> withDevice(Device<?> newDevice) {
+    /**
+     * Constructs a copy of this call with the provided device!
+     */
+    public ExecutionCall<? extends Device<?>> withDevice( Device<?> newDevice ) {
         return ExecutionCall.builder()
                                 .device( newDevice )
                                 .tensors( _tensors )
                                 .operation( _operation )
                                 .algorithm( _algorithm )
-                                .args( _arguments.findAll(Arg.class) )//getMetaArgs().findAll(Arg.class) )
+                                .args( _arguments.getAll(Arg.class) )//getMetaArgs().findAll(Arg.class) )
                                 .args( Arg.DerivIdx.of( getDerivativeIndex() ) )
                                 .build();
     }
@@ -253,7 +256,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
     public ADAgent getADAgentFrom( Function function, ExecutionCall<? extends Device<?>> call, boolean forward )
     {
-        for ( Arg<?> arg : _arguments.findAll(Arg.class) ) call.getMetaArgs().set(arg);
+        for ( Arg<?> arg : _arguments.getAll(Arg.class) ) call.getMetaArgs().set(arg);
         return getAlgorithm().supplyADAgentFor( function, call, forward );
     }
 
@@ -405,7 +408,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
             return this;
         }
 
-        public Validator forOperation( OperationTypeCondition condition ) {
+        public Validator forOperation( OperationCondition condition ) {
             if ( !condition.check(_operation) ) _isValid = false;
             return this;
         }

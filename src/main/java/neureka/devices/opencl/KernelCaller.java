@@ -42,9 +42,9 @@ public class KernelCaller
      */
     public KernelCaller pass( @NotNull Tsr<Number> tensor ) {
         _inputs.add( tensor );
-        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.find( OpenCLDevice.cl_tsr.class ).value.data ) );
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.get( OpenCLDevice.cl_tsr.class ).value.data ) );
         _argId++;
-        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.find( OpenCLDevice.cl_tsr.class ).config.data ) );
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.get( OpenCLDevice.cl_tsr.class ).config.data ) );
         _argId++;
         return this;
     }
@@ -57,7 +57,7 @@ public class KernelCaller
      */
     public KernelCaller passRaw( @NotNull Tsr<Number> tensor ) {
         _inputs.add( tensor );
-        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.find( OpenCLDevice.cl_tsr.class ).value.data ) );
+        clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.get( OpenCLDevice.cl_tsr.class ).value.data ) );
         _argId++;
         return this;
     }
@@ -130,9 +130,9 @@ public class KernelCaller
     @Contract( pure = true )
     private void _releaseEvents( @NotNull Tsr<Number>[] tensors ) {
         for ( Tsr<Number> t : tensors ) {
-            if ( t.find( OpenCLDevice.cl_tsr.class ).value.event != null ) {
-                clReleaseEvent(t.find( OpenCLDevice.cl_tsr.class ).value.event);
-                t.find( OpenCLDevice.cl_tsr.class ).value.event = null;
+            if ( t.get( OpenCLDevice.cl_tsr.class ).value.event != null ) {
+                clReleaseEvent(t.get( OpenCLDevice.cl_tsr.class ).value.event);
+                t.get( OpenCLDevice.cl_tsr.class ).value.event = null;
             }
         }
     }
@@ -141,7 +141,7 @@ public class KernelCaller
     private cl_event[] _getWaitList( @NotNull Tsr<Number>[] tensors ) {
         List<cl_event> list = new ArrayList<>();
         for ( Tsr<Number> t : tensors ) {
-            cl_event event = t.find( OpenCLDevice.cl_tsr.class ).value.event;
+            cl_event event = t.get( OpenCLDevice.cl_tsr.class ).value.event;
             if ( event != null && !list.contains(event) ) {
                 list.add( event );
             }

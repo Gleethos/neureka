@@ -63,7 +63,7 @@ public class SmartSlicer {
                     first = (Integer) ranges[ i ];
                     last = (Integer) ranges[ i ];
                 } else {
-                    NDFrame<?> frame = source.find( NDFrame.class );
+                    NDFrame<?> frame = source.get( NDFrame.class );
                     if ( frame != null ) {
                         int position = frame.atAxis( i ).getIndexAtAlias( ranges[i] );
                                     //frame.get( ranges[ i ], i );
@@ -84,7 +84,7 @@ public class SmartSlicer {
                         !( ( (Object[]) ( ranges[ i ] ) )[ 0 ] instanceof Integer )
                                 || !( ( (Object[]) ranges[ i ] )[ ( (Object[]) ( ranges[ i ] ) ).length - 1 ] instanceof Integer )
                 ) {
-                    NDFrame<?> frame = source.find( NDFrame.class );
+                    NDFrame<?> frame = source.get( NDFrame.class );
                     if ( !( ( (Object[]) (ranges[ i ]) )[ 0 ] instanceof Integer ) ) {
                         if ( frame != null ) {
                             first =

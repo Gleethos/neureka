@@ -365,7 +365,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             throw new IllegalArgumentException( message );
         }
         double[] value = ( tensor.isVirtual() )
-                ? _value64f( tensor.find( cl_tsr.class ), 1, 0 )
+                ? _value64f( tensor.get( cl_tsr.class ), 1, 0 )
                 : value64f( tensor );
         free( tensor );
         tensor.forComponent( Tsr.class, this::restore);
@@ -381,7 +381,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     private <T extends Number> Device<Number> _store( Tsr<T> tensor, Tsr<T> parent, Runnable migration ) {
         if ( !parent.isOutsourced() ) throw new IllegalStateException( "Data parent is not outsourced!" );
-        _add( (Tsr<Number>) tensor, parent.find( cl_tsr.class ), migration );
+        _add( (Tsr<Number>) tensor, parent.get( cl_tsr.class ), migration );
         _tensors.add((Tsr<Number>) tensor);
         return this;
     }
@@ -528,7 +528,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     public <T extends Number> Device<Number> free( Tsr<T> tensor ) {
-        cl_tsr clt = tensor.find( cl_tsr.class );
+        cl_tsr clt = tensor.get( cl_tsr.class );
         if ( clt == null ) return this;
         _tensors.remove( tensor );
         tensor.setIsOutsourced( false );
@@ -540,7 +540,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     public Device<Number> overwrite64( Tsr<Number> tensor, double[] value )
     {
-        cl_tsr clt = tensor.find(cl_tsr.class);
+        cl_tsr clt = tensor.get(cl_tsr.class);
         if ( clt.fp == 1 ) overwrite32( tensor, DataConverter.Utility.doubleToFloat( value ) );
         else {
             if ( clt.value.event != null ) clWaitForEvents( 1, new cl_event[]{ clt.value.event } );
@@ -563,7 +563,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     public Device<Number> overwrite32( Tsr<Number> tensor, float[] value) {
-        cl_tsr clt = tensor.find( cl_tsr.class );
+        cl_tsr clt = tensor.get( cl_tsr.class );
         if ( clt.fp == 1 ) {
             if ( clt.value.event != null ) clWaitForEvents( 1, new cl_event[]{ clt.value.event } );
             clt.value.event = new cl_event();
@@ -587,7 +587,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     public Device<Number> swap(Tsr<Number> former, Tsr<Number> replacement)
     {
-        cl_tsr clTsr = former.find( cl_tsr.class );
+        cl_tsr clTsr = former.get( cl_tsr.class );
         former.remove( cl_tsr.class );
         replacement.set( clTsr );
         _tensors.remove( former );
@@ -609,13 +609,13 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     private void _updateInternal( Tsr newOwner, Runnable migration ) {
         Tsr<Number> root = null;
-        if ( newOwner.has( Relation.class ) ) root = ((Relation<Number>)newOwner.find( Relation.class )).findRootTensor();
+        if ( newOwner.has( Relation.class ) ) root = ((Relation<Number>)newOwner.get( Relation.class )).findRootTensor();
         if ( root != null ) store( newOwner, root );
         else _add( (Tsr<Number>) newOwner, null, migration );
     }
 
     public double[] value64f( Tsr<Number> tensor ) {
-        cl_tsr clt = tensor.find( cl_tsr.class );
+        cl_tsr clt = tensor.get( cl_tsr.class );
         return _value64f( clt, clt.value.size, 0 );
     }
 
@@ -640,7 +640,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     public float[] value32f( Tsr<Number> tensor ) {
-        cl_tsr clt = tensor.find( cl_tsr.class );
+        cl_tsr clt = tensor.get( cl_tsr.class );
         return _value32f( clt, clt.value.size, 0 );
     }
 
@@ -674,12 +674,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     public double value64f( Tsr<Number> tensor, int index ) {
-        cl_tsr clt = tensor.find( cl_tsr.class );
+        cl_tsr clt = tensor.get( cl_tsr.class );
         return _value64f( clt, 1, index )[ 0 ];
     }
 
     public float value32f( Tsr<Number> tensor, int index ) {
-        cl_tsr clt = tensor.find( cl_tsr.class );
+        cl_tsr clt = tensor.get( cl_tsr.class );
         return _value32f( clt, 1, index )[ 0 ];
     }
 
@@ -709,9 +709,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     private void _releaseEvents(Tsr[] tsrs) {
         for(Tsr<Number> t : tsrs) {
-            if ( t.find(cl_tsr.class).value.event != null ) {
-                clReleaseEvent(t.find(cl_tsr.class).value.event);
-                t.find(cl_tsr.class).value.event = null;
+            if ( t.get(cl_tsr.class).value.event != null ) {
+                clReleaseEvent(t.get(cl_tsr.class).value.event);
+                t.get(cl_tsr.class).value.event = null;
             }
         }
     }
@@ -719,7 +719,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     private cl_event[] _getWaitList(Tsr[] tsrs) {
         List<cl_event> list = new ArrayList<>();
         for (Tsr<Number> t : tsrs) {
-            cl_event event = t.find(cl_tsr.class).value.event;
+            cl_event event = t.get(cl_tsr.class).value.event;
             if (event != null && !list.contains(event)) {
                 list.add(event);
             }

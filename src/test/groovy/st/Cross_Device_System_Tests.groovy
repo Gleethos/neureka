@@ -110,7 +110,7 @@ class Cross_Device_System_Tests extends Specification
         and :
         if ( !Neureka.get().canAccessOpenCL() ) return
 
-        when : Device gpu = Neureka.get().context().find(CLContext.class).getPlatforms().get(0).getDevices().get(0)
+        when : Device gpu = Neureka.get().context().get(CLContext.class).getPlatforms().get(0).getDevices().get(0)
         then : SimpleNNSystemTest.on(gpu)
 
         // Some more asserts:

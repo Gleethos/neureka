@@ -91,7 +91,7 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
         if ( changeRequest.type() == IsBeing.REPLACED ) swap( oldOwner, newOwner );
         else if ( oldOwner == null && newOwner != null ) {
             if ( newOwner.has( Relation.class ) ) {
-                Relation relation = newOwner.find(Relation.class);
+                Relation relation = newOwner.get(Relation.class);
                 if (relation.hasParent()) { // Root needs to be found ! :
                     Tsr root = relation.findRootTensor();
                     if (!this.has(root) || !root.isOutsourced())

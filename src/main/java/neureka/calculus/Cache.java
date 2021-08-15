@@ -80,8 +80,8 @@ public final class Cache
             Supplier<Tsr<Object>> activation,
             Args arguments
     ) {
-        int d = arguments.findAndGet(Arg.DerivIdx.class);
-        int j = arguments.findAndGet(Arg.VarIdx.class);
+        int d = arguments.getValOf(Arg.DerivIdx.class);
+        int j = arguments.getValOf(Arg.VarIdx.class);
         if ( !function.isDoingAD() ) {
             return activation.get(); // TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD => NO GRAPH NODES
         }
@@ -89,7 +89,7 @@ public final class Cache
         // ( => needs to be locked again! )
         Tsr<?> untracked = null;
         for ( Tsr<?> t : inputs ) {
-            GraphNode<Object> node = t.find( GraphNode.class );
+            GraphNode<Object> node = t.get( GraphNode.class );
             if ( node != null ) {
                 untracked = t;
                 allLocked = node.getLock().isLocked() && allLocked;
@@ -98,12 +98,12 @@ public final class Cache
         if ( untracked == null || !allLocked ) { // If graph tracking (nodes) has not yet been initialized!
             return Function.Setup.commit( null, inputs, function, activation );
         }
-        GraphLock lock =  untracked.find( GraphNode.class ).getLock();
+        GraphLock lock =  untracked.get( GraphNode.class ).getLock();
         for ( Tsr<Object> t : inputs ) {
-            if ( t.has( GraphNode.class ) ) t.find( GraphNode.class ).obtainLocking( lock );
+            if ( t.has( GraphNode.class ) ) t.get( GraphNode.class ).obtainLocking( lock );
             else new GraphNode( function, lock, () -> t );
         }
-        GraphNode<Object> node = inputs[ 0 ].find( GraphNode.class );
+        GraphNode<Object> node = inputs[ 0 ].get( GraphNode.class );
         Tsr<Object> result = null;
 
         if ( !function.getOperation().isInline() ) result = _get( inputs, d, j );
@@ -118,7 +118,7 @@ public final class Cache
 
     private synchronized Tsr<Object> _get( Tsr<Object>[] tsrs, int d, int j )
     {
-        GraphLock lock = tsrs[ 0 ].find( GraphNode.class ).getLock();
+        GraphLock lock = tsrs[ 0 ].get( GraphNode.class ).getLock();
         long key = _keyOf( tsrs, d, j );
         if ( key != 0 && functionResultCache.containsKey( lock ) && functionResultCache.get( lock ).containsKey( key ) ) {
                 _log.debug(

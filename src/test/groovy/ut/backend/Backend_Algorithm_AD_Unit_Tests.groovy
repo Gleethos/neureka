@@ -180,7 +180,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
         and : 'A mock ExecutionCall.'
             def call = Mock( ExecutionCall )
             def arg = Mock(Arg.Derivative)
-            call.find(Arg.Derivative.class) >> arg
+            call.metaArgs.get(Arg.Derivative.class) >> arg
 
 
         when : 'A new ADAgent is being instantiated by calling the given implementation with these arguments...'

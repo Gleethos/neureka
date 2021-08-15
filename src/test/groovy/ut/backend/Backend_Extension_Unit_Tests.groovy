@@ -107,7 +107,7 @@ class Backend_Extension_Unit_Tests extends Specification
             (1.._) * implementation.handleInsteadOfDevice(_,_) >> output
 
         and : 'The GraphNode instance which will be created as tensor component interacts as follows.'
-            (1.._) * input.find( GraphNode.class ) >> node
+            (1.._) * input.get( GraphNode.class ) >> node
             (1.._) * node.getLock() >> Mock(GraphLock)
             (1.._) * input.getDevice() >> Mock(Device) // Device is being queried for execution...
             _ * type.getOperator() >> 'test_identifier'

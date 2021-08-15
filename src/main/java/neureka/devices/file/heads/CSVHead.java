@@ -44,7 +44,7 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
         super( filename );
         assert tensor.rank() == 2;
         _delimiter = ",";
-        NDFrame<?> alias = tensor.find( NDFrame.class );
+        NDFrame<?> alias = tensor.get( NDFrame.class );
         List<Object> index = (alias != null) ? alias.atAxis( 0 ).getAllAliases() : null;
         List<Object> labels = (alias != null ) ? alias.atAxis( 1 ).getAllAliases() : null;
         _tensorName = (alias != null) ? alias.getTensorName() : null;

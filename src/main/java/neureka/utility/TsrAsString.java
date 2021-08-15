@@ -297,8 +297,8 @@ public final class TsrAsString
             else
                 _$( ( ( _legacy ) ? ":(null)" : ":[null]" ) );
         }
-        if ( _hasRecursiveGraph && _tensor.has( GraphNode.class ) && _tensor.find( GraphNode.class ).size() > 0 ) {
-            GraphNode<?> node = _tensor.find( GraphNode.class );
+        if ( _hasRecursiveGraph && _tensor.has( GraphNode.class ) && _tensor.get( GraphNode.class ).size() > 0 ) {
+            GraphNode<?> node = _tensor.get( GraphNode.class );
             _$( "; " );
             node.forEachDerivative( ( t, agent ) -> {
                 if ( agent.derivative() == null ) _$( "->d(null), " );
@@ -314,8 +314,8 @@ public final class TsrAsString
                 }
             });
         }
-        if ( _hasDerivatives && _tensor.has( GraphNode.class ) && _tensor.find( GraphNode.class ).size() > 0 ) {
-            GraphNode<?> node = _tensor.find( GraphNode.class );
+        if ( _hasDerivatives && _tensor.has( GraphNode.class ) && _tensor.get( GraphNode.class ).size() > 0 ) {
+            GraphNode<?> node = _tensor.get( GraphNode.class );
             if ( node.getMode() != 0 ) {
                 _$( "; " );
                 node.forEachDerivative( ( t, agent ) -> {
@@ -388,7 +388,7 @@ public final class TsrAsString
         int trimStart = ( _shape[ dim ] / 2 - trimSize / 2 );
         int trimEnd = ( _shape[ dim ] / 2 + trimSize / 2 );
         assert trimEnd - trimStart == trimSize;
-        NDFrame<?> alias = _tensor.find( NDFrame.class );
+        NDFrame<?> alias = _tensor.get( NDFrame.class );
         if ( dim == indices.length - 1 ) {
             if (
                     alias != null &&

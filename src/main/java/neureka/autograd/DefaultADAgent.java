@@ -95,7 +95,7 @@ public final class DefaultADAgent extends Args implements ADAgent {
 
     @Override
     public Tsr<?> derivative() {
-        Arg.Derivative arg = find(Arg.Derivative.class);
+        Arg.Derivative arg = get(Arg.Derivative.class);
         if ( arg != null ) return (Tsr<?>) arg.get(); else return null;
     }
 
@@ -122,8 +122,8 @@ public final class DefaultADAgent extends Args implements ADAgent {
     @Override
     public String toString() {
         if ( this.derivative() != null ) return derivative().toString();
-        return findAll(Arg.class).stream()
-                .map( key -> key.getClass().getSimpleName() + "=" + find(key.getClass()) )
+        return getAll(Arg.class).stream()
+                .map( key -> key.getClass().getSimpleName() + "=" + get(key.getClass()) )
                 .collect( Collectors.joining( ", ", "{", "}" ) );
     }
 

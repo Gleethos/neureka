@@ -82,7 +82,7 @@ public class Reshape extends AbstractOperation
         AbstractNDArray.Utility.Indexing.shpCheck( newNDC.shape(), tensor );
         tensor.setNDConf( newNDC );
         if ( newTsr ) {
-            Relation r = parent.find( Relation.class );
+            Relation r = parent.get( Relation.class );
             r.addReshapeRelationFor( tensor, newForm );
         }
         return tensor;
