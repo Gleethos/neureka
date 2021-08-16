@@ -19,6 +19,7 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
@@ -29,6 +30,11 @@
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
     AutoGrad ag = Neureka.get().settings().autograd();
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+    ag : AutoGrad = Neureka.get().settings().autograd()
                 </code></pre>
             </div>
         </div>
@@ -44,17 +50,42 @@
         </p>
     </div>
 </div>
-
-
-<div class="col-sm-12 col-md-5">
-    <pre><code class="hljs java">
+<div class="col-sm-12 col-md-6 col-lg-6">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
     // getter :
     ag.isRetainingPendingErrorForJITProp()
     // setter :
     ag.setIsRetainingPendingErrorForJITProp(true)
-    </code></pre>
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+    // getter :
+    ag.isRetainingPendingErrorForJITProp();
+    // setter :
+    ag.setIsRetainingPendingErrorForJITProp(true);
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+    // getter :
+    ag.isRetainingPendingErrorForJITProp()
+    // setter :
+    ag.setIsRetainingPendingErrorForJITProp(true)
+                </code></pre>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="col-sm 12 col-md-7">
+<div class="col-sm 12 col-md-6 col-lg-6">
     <div class="ContentBox">
         <p>
             This flag enables an optimization technique which only propagates error values to
@@ -69,16 +100,42 @@
     </div>
 </div>
 
-
-<div class="col-sm-12 col-md-5">
-    <pre><code class="hljs java">
+<div class="col-sm-12 col-md-6 col-lg-6">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
     // getter :
     ag.isApplyingGradientWhenTensorIsUsed()
     // setter :
     ag.setIsApplyingGradientWhenTensorIsUsed(true)
-    </code></pre>
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+    // getter :
+    ag.isApplyingGradientWhenTensorIsUsed();
+    // setter :
+    ag.setIsApplyingGradientWhenTensorIsUsed(true);
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+    // getter :
+    ag.isApplyingGradientWhenTensorIsUsed()
+    // setter :
+    ag.setIsApplyingGradientWhenTensorIsUsed(true)
+                </code></pre>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="col-sm 12 col-md-7">
+<div class="col-sm 12 col-md-6">
     <div class="ContentBox">
         <p>
             Gradients will automatically be applied to tensors as soon as
@@ -89,15 +146,42 @@
 </div>
 
 
-<div class="col-sm-12 col-md-5">
-    <pre><code class="hljs java">
+<div class="col-sm-12 col-md-6 col-lg-6">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
     // getter :
     ag.isApplyingGradientWhenRequested()
     // setter :
     ag.setIsApplyingGradientWhenRequested(true)
-    </code></pre>
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+    // getter :
+    ag.isApplyingGradientWhenRequested();
+    // setter :
+    ag.setIsApplyingGradientWhenRequested(true);
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+    // getter :
+    ag.isApplyingGradientWhenRequested()
+    // setter :
+    ag.setIsApplyingGradientWhenRequested(true)
+                </code></pre>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="col-sm 12 col-md-7">
+<div class="col-sm 12 col-md-6">
     <div class="ContentBox">
         <p>
             Gradients will only be applied if requested.
