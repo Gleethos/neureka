@@ -424,7 +424,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public static WithShapeOrScalarOrVector<Integer> ofInts() { return of(Integer.class); }
 
-    public static Tsr of( double value ) { return new Tsr(value); }
+    public static Tsr<Double> of( double value ) { return new Tsr(value); }
 
     private Tsr( double value ) { createConstructionAPI()._constructAllF64( new int[]{ 1 }, value ); }
 
@@ -1741,6 +1741,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public Tsr<V> multiply( Tsr<V> other ) {
         return Neureka.get().context().getAutogradFunction().mul().call( new Tsr[]{ this, other } );
     }
+
+    public Tsr<V> times( Tsr<V> other ) { return multiply( other ); }
 
     public Tsr<V> timesAssign( Tsr<V> other ) {
         return Neureka.get().context().getFunction().mulAssign().call( new Tsr[]{ this, other } );
