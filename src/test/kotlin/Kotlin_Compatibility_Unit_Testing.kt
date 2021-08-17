@@ -1,10 +1,22 @@
 
+import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
+import neureka.dtype.DataType
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 
 internal class Kotlin_Compatibility_Unit_Testing {
+
+    @BeforeEach
+    fun setupSpec()
+    {
+        Neureka.get().reset()
+
+        // Configure printing of tensors to be more compact:
+        Neureka.get().settings().view().setAsString("dgc")
+    }
 
     @Test
     fun operator_overloading_works_for_scalars_in_kotlin() {
@@ -42,5 +54,29 @@ internal class Kotlin_Compatibility_Unit_Testing {
         }
     }
 
+    @Test
+    fun tensor_operations_translate_to_custom_ComplexNumber_type_written_in_kotlin()
+    {
+        // Given :
+        val a : Tsr<ComplexNumber> = Tsr.of(
+                                        DataType.of(ComplexNumber::class.java),
+                                        intArrayOf(3, 2),
+                                        { i : Int, indices : IntArray -> ComplexNumber( indices[0].toDouble(), indices[1].toDouble() ) }
+                                    )
+        val b : Tsr<ComplexNumber> = Tsr.of(
+                                        DataType.of(ComplexNumber::class.java),
+                                        intArrayOf(3, 2),
+                                        { i : Int, indices : IntArray -> ComplexNumber( indices[1].toDouble(), indices[0].toDouble() ) }
+                                    )
+
+        // Expect:
+        assert( a.toString().equals( "(3x2):[0.0+0.0i, 0.0+1.0i, 1.0+0.0i, 1.0+1.0i, 2.0+0.0i, 2.0+1.0i]" ) )
+        assert( b.toString().equals( "(3x2):[0.0+0.0i, 1.0+0.0i, 0.0+1.0i, 1.0+1.0i, 0.0+2.0i, 1.0+2.0i]" ) )
+        assert( !a.isVirtual() )
+        assert( !b.isVirtual() )
+        assert( (a+b).toString().equals( "(3x2):[0.0+0.0i, 1.0+1.0i, 1.0+1.0i, 2.0+2.0i, 2.0+2.0i, 3.0+3.0i]" ) )
+        assert( (a-b).toString().equals( "(3x2):[0.0+0.0i, -1.0+1.0i, 1.0-1.0i, 0.0+0.0i, 2.0-2.0i, 1.0-1.0i]" ) )
+        assert( (a*b).toString().equals( "(3x2):[0.0+0.0i, 0.0+1.0i, 0.0+1.0i, 0.0+2.0i, 0.0+4.0i, 0.0+5.0i]" ) )
+    }
 
 }

@@ -18,12 +18,13 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    def f = Function.of("I[0] * (I[1] + I[2])")
+    def f = Function.of('I[0] * (I[1] + I[2])')
 
                 </code></pre>
             </div>
@@ -31,6 +32,13 @@
                 <pre><code class="hljs java">
 
     Function f = Function.of("I[0] * (I[1] + I[2])");
+
+                </code></pre>
+            </div>
+            <div class="KotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+    val f : Function = Function.of("I[0] * (I[1] + I[2])")
 
                 </code></pre>
             </div>
@@ -53,12 +61,13 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    Neureka.get().context().getAutogradFunction().sig(4)
+    Neureka.get().context.autogradFunction.sig(4)
 
                 </code></pre>
             </div>
@@ -66,6 +75,13 @@
                 <pre><code class="hljs java">
 
     Neureka.get().context().getAutogradFunction().sig().call(4);
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+    Neureka.get().context.autogradFunction.sig(4)
 
                 </code></pre>
             </div>
@@ -87,6 +103,7 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
@@ -100,6 +117,13 @@
                 <pre><code class="hljs java">
 
     Neureka.get().context().getFunction().sig().call(4);
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+    Neureka.get().context.function.sig(4)
 
                 </code></pre>
             </div>

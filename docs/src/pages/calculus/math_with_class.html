@@ -30,10 +30,12 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs java">
+
 class ComplexNumber
 {
     private double real = 0.0
@@ -54,15 +56,15 @@ class ComplexNumber
     }
 
     ComplexNumber multiply(ComplexNumber z2) {
-        double _real = this.real*z2.real - this.imaginary*z2.imaginary
-        double _imaginary = this.real*z2.imaginary + this.imaginary*z2.real
-        return new ComplexNumber(_real,_imaginary)
+        double real = this.real * z2.real - this.imaginary * z2.imaginary
+        double imaginary = this.real * z2.imaginary + this.imaginary * z2.real
+        return new ComplexNumber(real,imaginary)
     }
 
     ComplexNumber divide(ComplexNumber z2) {
         ComplexNumber output = multiply(z2.conjugate())
-        double div = Math.pow(z2.mod(),2)
-        return new ComplexNumber(output.real/div,output.imaginary/div)
+        double div = Math.pow(z2.mod(), 2)
+        return new ComplexNumber( output.real / div, output.imaginary / div )
     }
 
     double mod() {
@@ -73,19 +75,21 @@ class ComplexNumber
     String toString() {
         String re = this.real + ""
         String im
-        if (this.imaginary < 0) im = this.imaginary+"i"
-        else im = "+"+this.imaginary+"i"
+        if ( this.imaginary < 0 ) im = this.imaginary + "i"
+        else im = "+" + this.imaginary + "i"
         return re + im
     }
 }
+
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
+
 public class ComplexNumber
 {
-    private double real = 0.0
-    private double imaginary = 0.0
+    private double real = 0.0;
+    private double imaginary = 0.0;
 
     public ComplexNumber(double real, double imaginary){
         this.real = real; this.imaginary = imaginary;
@@ -100,32 +104,119 @@ public class ComplexNumber
     }
 
     public ComplexNumber multiply(ComplexNumber z2) {
-        double _real = this.real*z2.real - this.imaginary*z2.imaginary;
-        double _imaginary = this.real*z2.imaginary + this.imaginary*z2.real;
-        return new ComplexNumber(_real,_imaginary);
+        double real = this.real * z2.real - this.imaginary * z2.imaginary;
+        double imaginary = this.real * z2.imaginary + this.imaginary * z2.real;
+        return new ComplexNumber(real, imaginary);
     }
 
     public ComplexNumber divide(ComplexNumber z2) {
         ComplexNumber output = multiply(z2.conjugate());
-        double div = Math.pow(z2.mod(),2);
-        return new ComplexNumber(output.real/div,output.imaginary/div);
+        double div = Math.pow(z2.mod(), 2);
+        return new ComplexNumber( output.real / div, output.imaginary / div );
     }
 
     public double mod() {
-        return Math.sqrt(Math.pow(this.real,2) + Math.pow(this.imaginary,2));
+        return Math.sqrt(Math.pow(this.real, 2) + Math.pow(this.imaginary, 2));
     }
 
     @Override
     public String toString() {
         String re = this.real + "";
         String im;
-        if (this.imaginary < 0) im = this.imaginary+"i";
-        else im = "+"+this.imaginary+"i";
+        if ( this.imaginary < 0 ) im = this.imaginary + "i";
+        else im = "+" + this.imaginary + "i";
         return re + im;
     }
 }
+
                 </code></pre>
             </div>
+        </div>
+        <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+class ComplexNumber(
+        private val real: Double, private val imaginary: Double
+) {
+
+    fun plus( z2 : ComplexNumber ) : ComplexNumber
+    {
+        return ComplexNumber(this.real + z2.real, this.imaginary + z2.imaginary)
+    }
+
+    fun minus( z2 : ComplexNumber ) : ComplexNumber
+    {
+        return ComplexNumber(this.real - z2.real, this.imaginary - z2.imaginary)
+    }
+
+    fun multiply( z2 : ComplexNumber ) : ComplexNumber
+    {
+        val _real : Double = this.real * z2.real - this.imaginary * z2.imaginary
+        val _imaginary : Double = this.real * z2.imaginary + this.imaginary * z2.real
+        return ComplexNumber(_real,_imaginary)
+    }
+
+    fun divide(z2 : ComplexNumber) : ComplexNumber
+    {
+        val output : ComplexNumber = multiply(z2.conjugate())
+        val div : Double = Math.pow(z2.mod(),2.0)
+        return ComplexNumber(output.real/div,output.imaginary/div)
+    }
+
+    fun mod() : Double
+    {
+        return Math.sqrt(Math.pow(this.real,2.0) + Math.pow(this.imaginary,2.0))
+    }
+
+    fun pow( power : Int ) : ComplexNumber
+    {
+        var output = ComplexNumber(this.real,this.imaginary)
+        for ( i in 0..power )
+        {
+            val _real : Double = output.real * this.real - output.imaginary * this.imaginary
+            val _imaginary : Double = output.real * this.imaginary + output.imaginary * this.real
+            output = ComplexNumber(_real,_imaginary)
+        }
+        return output
+    }
+
+    fun inverse() : ComplexNumber
+    {
+        return ComplexNumber(1.0,0.0).divide(this)
+    }
+
+    fun conjugate() : ComplexNumber
+    {
+        return ComplexNumber(this.real,-this.imaginary)
+    }
+
+    fun square() : ComplexNumber
+    {
+        val real : Double = this.real * this.real - this.imaginary * this.imaginary
+        val imaginary : Double = 2 * this.real * this.imaginary
+        return ComplexNumber(real, imaginary)
+    }
+
+    override fun toString() : String
+    {
+        val re = "" + this.real + ""
+        val im : String
+        if ( this.imaginary < 0 ) im = "" + this.imaginary + "i"
+        else im = "+" + this.imaginary + "i"
+        return re + im
+    }
+
+
+    override fun equals( z: Any? ): Boolean
+    {
+        if ( z !is ComplexNumber ) return false
+        val a : ComplexNumber =  z
+        return ( real == a.real ) && ( imaginary == a.imaginary )
+    }
+
+}
+
+                </code></pre>
         </div>
     </div>
 </div>
@@ -144,35 +235,54 @@ public class ComplexNumber
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs java">
+
 Tsr a = Tsr.of(
-        [ 3, 2 ],
-        DataType.of( ComplexNumber.class ),
-        ( int i, int[] idx ) -> new ComplexNumber( idx[0], idx[1] )
-    )
+            DataType.of( ComplexNumber.class ),
+            [ 3, 2 ],
+            ( int i, int[] idx ) -> new ComplexNumber( idx[0], idx[1] )
+        )
 Tsr b = Tsr.of(
-        [ 3, 2 ],
-        DataType.of( ComplexNumber.class ),
-        ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )
-    )
+            DataType.of( ComplexNumber.class ),
+            [ 3, 2 ],
+            ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )
+        )
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
+
 Tsr&#60;ComplexNumber&#62; a = new Tsr&#60;&#62;(
-        new int[]{ 3, 2 },
-        DataType.of( ComplexNumber.class ),
-        ( int i, int[] idx ) -> new ComplexNumber( idx[0], idx[1] )
-    );
+                                        DataType.of( ComplexNumber.class ),
+                                        new int[]{ 3, 2 },
+                                        ( int i, int[] idx ) -> new ComplexNumber( idx[0], idx[1] )
+                                    );
 Tsr&#60;ComplexNumber&#62; b = new Tsr&#60;&#62;(
-        new int[]{ 3, 2 },
-        DataType.of( ComplexNumber.class ),
-        ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )
-    );
+                                        DataType.of( ComplexNumber.class ),
+                                        new int[]{ 3, 2 },
+                                        ( int i, int[] idx ) -> new ComplexNumber( idx[1], idx[0] )
+                                    );
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+val a : Tsr&#60;ComplexNumber&#62; = Tsr&#60;&#62;.of(
+                                 DataType.of( ComplexNumber::class.java ),
+                                 intArrayOf( 3, 2 ),
+                                 { i Int, idx : IntArray -> new ComplexNumber( idx[0], idx[1] ) }
+                             )
+val b : Tsr&#60;ComplexNumber&#62; = Tsr&#60;&#62;.of(
+                                 DataType.of( ComplexNumber::class.java ),
+                                 intArrayOf( 3, 2 ),
+                                 { i Int, idx : IntArray -> new ComplexNumber( idx[1], idx[0] ) }
+                             )
 
                 </code></pre>
             </div>
@@ -195,6 +305,7 @@ Tsr&#60;ComplexNumber&#62; b = new Tsr&#60;&#62;(
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
@@ -216,6 +327,17 @@ assert b.toString().equals("(3x2):[0.0+0.0i, 1.0+0.0i, 0.0+1.0i, 1.0+1.0i, 0.0+2
 assert a.plus(b).toString().equals("(3x2):[0.0+0.0i, 1.0+1.0i, 1.0+1.0i, 2.0+2.0i, 2.0+2.0i, 3.0+3.0i]");
 assert a.minus(b).toString().equals( "(3x2):[0.0+0.0i, -1.0+1.0i, 1.0-1.0i, 0.0+0.0i, 2.0-2.0i, 1.0-1.0i]");
 assert a.multiply(b).toString().equals("(3x2):[0.0+0.0i, 0.0+1.0i, 0.0+1.0i, 0.0+2.0i, 0.0+4.0i, 0.0+5.0i]");
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+assert( a.toString().equals("(3x2):[0.0+0.0i, 0.0+1.0i, 1.0+0.0i, 1.0+1.0i, 2.0+0.0i, 2.0+1.0i]") )
+assert( b.toString().equals("(3x2):[0.0+0.0i, 1.0+0.0i, 0.0+1.0i, 1.0+1.0i, 0.0+2.0i, 1.0+2.0i]") )
+assert( a.plus(b).toString().equals("(3x2):[0.0+0.0i, 1.0+1.0i, 1.0+1.0i, 2.0+2.0i, 2.0+2.0i, 3.0+3.0i]") )
+assert( a.minus(b).toString().equals( "(3x2):[0.0+0.0i, -1.0+1.0i, 1.0-1.0i, 0.0+0.0i, 2.0-2.0i, 1.0-1.0i]") )
+assert( a.multiply(b).toString().equals("(3x2):[0.0+0.0i, 0.0+1.0i, 0.0+1.0i, 0.0+2.0i, 0.0+4.0i, 0.0+5.0i]") )
 
                 </code></pre>
             </div>
