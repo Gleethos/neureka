@@ -199,6 +199,10 @@ dependencies {
 
 }
 
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
 ///*
 // WIP - Multi-Release-Jar :
 

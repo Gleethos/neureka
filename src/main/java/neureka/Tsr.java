@@ -1167,10 +1167,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * This method taked a {@link Device} and tries to migrate the contents of this {@link Tsr}
      * instance to that {@link Device}!
      *
-     * @param newComponent The {@link Device} which should host this {@link Tsr} as well as be added to its components list.
+     * @param device The {@link Device} which should host this {@link Tsr} as well as be added to its components list.
      * @return This very class to enable method chaining.
      */
-    public Tsr<V> set( Device<?> newComponent ){ super._set(newComponent); return this; }
+    public Tsr<V> set( Device<?> device ){ super._set(device); return this; }
+
+    public Tsr<V> set( Optimizer<V> optimizer ){ super._set(optimizer); return this; }
 
     /*==================================================================================================================
     |
@@ -1527,7 +1529,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 Tsr.class,
                 g -> {
                     // If an optimizer is present then we also optimize the gradient first!
-                    forComponent( Optimizer.class, o -> o.optimize( this ) );
+                    if ( this.has( Optimizer.class ) )
+                        g = this.get(Optimizer.class).optimize(g);
                     // And then we remove the gradient because it is no longer needed.
                     remove( Tsr.class );
                     // We are now ready to apply the gradient to the tensor. This is an inline operation!
@@ -1535,7 +1538,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     boolean inlineSafety = Neureka.get().settings().autograd().isPreventingInlineOperations();
                     if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( false );
                     // INLINE OPERATION :
-                    Neureka.get().context().getFunction().plusAssign().call( new Tsr[]{ this, g } ); //-> Finally applying the gradient!
+                    Neureka.get().context().getFunction().plusAssign().call(this, g); //-> Finally applying the gradient!
                     // INLINE END ! -> We can now revert to the previous setting:
                     if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( true );
                 }
@@ -1736,6 +1739,18 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     public Tsr<V> minus( Tsr<V> other ) {
         return Neureka.get().context().getAutogradFunction().minus().call( new Tsr[]{ this, other } );
+    }
+
+    public Tsr<V> minus( V other ) {
+        return Neureka.get()
+                        .context()
+                        .getAutogradFunction()
+                        .minus().call(
+                                this,
+                                Tsr.of((Class<V>)this.getDataType().getTypeClass())
+                                            .withShape(this.getNDConf().shape())
+                                            .all(other)
+                        );
     }
 
     public Tsr<V> minusAssign( Tsr<V> other ) {
@@ -2410,7 +2425,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     Tsr.class,
                         gradient ->
                         this.set(
-                                Neureka.get().context().getFunction().plusAssign().call( new Tsr[]{ gradient, error } )
+                                Neureka.get().context().getFunction().plusAssign().call(gradient, error)
                         )
                 )
         ) set( error ).forComponent( Device.class, device -> {

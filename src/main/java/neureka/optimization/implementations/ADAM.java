@@ -70,8 +70,8 @@ public class ADAM<ValType> implements Optimizer<ValType> {
     }
 
     @Override
-    public void optimize(Tsr<ValType> t) {
-        _optimize(t);
+    public Tsr<ValType> optimize(Tsr<ValType> t) {
+        _optimize(t); return t;
     }
 
     @Override

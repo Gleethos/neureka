@@ -3,6 +3,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
 import neureka.dtype.DataType
+import neureka.optimization.Optimizer
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -77,6 +78,25 @@ internal class Kotlin_Compatibility_Unit_Testing {
         assert( (a+b).toString().equals( "(3x2):[0.0+0.0i, 1.0+1.0i, 1.0+1.0i, 2.0+2.0i, 2.0+2.0i, 3.0+3.0i]" ) )
         assert( (a-b).toString().equals( "(3x2):[0.0+0.0i, -1.0+1.0i, 1.0-1.0i, 0.0+0.0i, 2.0-2.0i, 1.0-1.0i]" ) )
         assert( (a*b).toString().equals( "(3x2):[0.0+0.0i, 0.0+1.0i, 0.0+1.0i, 0.0+2.0i, 0.0+4.0i, 0.0+5.0i]" ) )
+    }
+
+    @Test
+    fun optimization_is_being_called() {
+
+        val t : Tsr<Double> = Tsr.of(2.0).setRqsGradient(true)
+
+        t.set(
+            Optimizer.of({ w -> w - 4.0 })
+        )
+
+        t.backward()
+
+        assert(t.toString().equals("(1):[2.0]:g:[1.0]"))
+
+        t.applyGradient()
+
+        assert(t.toString().equals("(1):[-1.0]:g:[null]"))
+
     }
 
 }

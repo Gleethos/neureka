@@ -38,9 +38,12 @@ package neureka.optimization;
 import neureka.Component;
 import neureka.Tsr;
 
-public interface Optimizer<ValType> extends Component<Tsr<ValType>>
+public interface Optimizer<V> extends Component<Tsr<V>>, Optimization<V>
 {
-
-    void optimize(Tsr<ValType> t);
-
+    static <T> Optimizer<T> of( Optimization<T> o ) {
+        return new Optimizer<T>() {
+            @Override public boolean update(OwnerChangeRequest<Tsr<T>> changeRequest) { return true; }
+            @Override public Tsr<T> optimize(Tsr<T> t) { return o.optimize(t); }
+        };
+    }
 }
