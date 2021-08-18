@@ -30,6 +30,7 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
@@ -42,7 +43,14 @@
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    Device device = FileDevice.at("my/relative/path/to/a/directory");
+    Device&#60;Object&#62; device = FileDevice.at("my/relative/path/to/a/directory");
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+    val device : Device&#60;Object&#62; = FileDevice.at("my/relative/path/to/a/directory")
 
                 </code></pre>
             </div>
@@ -64,6 +72,7 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
@@ -99,10 +108,10 @@
                 <pre><code class="hljs java">
 
     // Creating a device which manages the directory targeted by a given path :
-    Device<?> device = FileDevice.at( "my/relative/path/to/directory" );
+    Device&#60;Object&#62; device = FileDevice.at( "my/relative/path/to/directory" );
 
     // ... and a tensor which we want to persist :
-    Tsr<Double> a = Tsr.of([2, 4, 3], 4);
+    Tsr&#60;Double&#62; a = Tsr.of(Double.class).withShape(2, 4, 3).all(4.0);
 
     // Initially the device does not know about the tensor "a" :
     assert !device.contains(a);
@@ -121,6 +130,35 @@
 
     // ... and the file is gone :
     assert !new File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists();
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+    // Creating a device which manages the directory targeted by a given path :
+    val device : Device&#60;Object&#62; = FileDevice.at( "my/relative/path/to/directory" )
+
+    // ... and a tensor which we want to persist :
+    val a : Tsr&#60;Double&#62; = Tsr.of(Double.class).withShape(2, 4, 3).all(4.0)
+
+    // Initially the device does not know about the tensor "a" :
+    assert(!device.contains(a))
+
+    // But when we store it on the file device...
+    device.store( a, "tensor-name.idx" ) // 'device.store( a )' if the name should be generated...
+
+    // ... then the tensor exists as a "idx" file :
+    assert( File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists() )
+
+    // ... and the RAM will be freed ...
+    assert( a.getData() == null )
+
+    // If we want to delete the tensor from the device then we call the following :
+    device.free( a )
+
+    // ... and the file is gone :
+    assert !new File( "my/relative/path/to/directory/" + "tensor-name.idx" ).exists()
 
                 </code></pre>
             </div>

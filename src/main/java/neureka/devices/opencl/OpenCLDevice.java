@@ -460,7 +460,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             execute(
                 ExecutionCall.builder()
                     .device(this)
-                    .tensors(tensor, (Tsr<?>) ( (Tsr) Tsr.of( value ) ).set( this ))
+                    .tensors(tensor, Tsr.of( value ).set( this ))
                     .derivativeIndex(-1)
                     .operation(Neureka.get().context().instance( "<" ))
                     .build()

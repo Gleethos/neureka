@@ -1163,6 +1163,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return true;
     }
 
+    /**
+     * This method taked a {@link Device} and tries to migrate the contents of this {@link Tsr}
+     * instance to that {@link Device}!
+     *
+     * @param newComponent The {@link Device} which should host this {@link Tsr} as well as be added to its components list.
+     * @return This very class to enable method chaining.
+     */
+    public Tsr<V> set( Device<?> newComponent ){ super._set(newComponent); return this; }
 
     /*==================================================================================================================
     |

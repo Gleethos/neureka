@@ -296,7 +296,7 @@ public abstract class AbstractComponentOwner<C>
      * @param newComponent The new component which should be added to the components list.
      * @return This very class.
      */
-    public C set( Component<C> newComponent )
+    public <T extends Component<C>> C set( T newComponent )
     {
         if ( newComponent == null ) return _this();
         Component<C> oldCompartment;
@@ -306,8 +306,12 @@ public abstract class AbstractComponentOwner<C>
                 _addOrRemoveComp( oldCompartment, true );
             }
         }
-        _addOrRemoveComp( newComponent, false );
+        _addOrRemoveComp(newComponent, false );
         return _this();
+    }
+
+    protected <T> void _set(Component<T> anyComponent) {
+        this.set( (Component<C>) anyComponent);
     }
 
     /**
