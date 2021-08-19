@@ -111,7 +111,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             2 * inputsNodeMock.getLock() >> Mock( GraphLock )
             0 * function.isDoingAD() >> true
             0 * payload.getDevice() >> device
-            0 * payload.set( _ )
+            0 * payload.to( _ )
             0 * device.cleaning( payload, _ )
             (1..2) * function.getOperation() >> type
             (0.._) * type.isDifferentiable() >> true
@@ -151,7 +151,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             1 * otherInputsNodeMock.getLock() >> Mock( GraphLock )
             0 * function.isDoingAD() >> true
             0 * payload.getDevice() >> device
-            0 * payload.set( _ )
+            0 * payload.to( _ )
             0 * device.cleaning( payload, _ )
             (1.._) * function.getOperation() >> type
             (0.._) * type.isDifferentiable() >> true
@@ -191,7 +191,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
             0 * function.isDoingAD() >> true
             1 * type.isInline() >> true
             0 * payload.getDevice() >> device
-            0 * payload.set( _ )
+            0 * payload.to( _ )
             0 * device.cleaning( payload, _ )
             1 * inputs[0].get( GraphNode.class ) >> inputsNodeMock
             0 * inputs[1].get( GraphNode.class ) >> inputsNodeMock

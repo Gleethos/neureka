@@ -265,8 +265,8 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
              */
             //---
         when:
-            Tsr p = Tsr.of([2,2], [2, 55, 4, 7]).set((device instanceof DummyDevice)?null:device)
-            Tsr u = Tsr.of([2,2], [5, 2, 7, 34]).set((device instanceof DummyDevice)?null:device)
+            Tsr p = Tsr.of([2,2], [2, 55, 4, 7]).to((device instanceof DummyDevice)?null:device)
+            Tsr u = Tsr.of([2,2], [5, 2, 7, 34]).to((device instanceof DummyDevice)?null:device)
 
             p[] = u
             //tester.testContains(p.toString(), ["5.0, 2.0, 7.0, 34.0"], "Testing slicing")

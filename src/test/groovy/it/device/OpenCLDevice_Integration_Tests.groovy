@@ -91,7 +91,7 @@ class OpenCLDevice_Integration_Tests extends Specification
             t.data != null
 
         when : 'The tensor is being stored on the device...'
-            t.set(Device.find('first'))
+            t.to(Device.find('first'))
         and : 'The tensor value is being fetched...'
             def data = t.getData()
 
@@ -104,7 +104,7 @@ class OpenCLDevice_Integration_Tests extends Specification
         given : 'This system supports OpenCL'
             if ( !Neureka.get().canAccessOpenCL() ) return
             def device = Neureka.get().context().get(CLContext.class).getPlatforms()[0].devices[0]
-            def someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).set( device )
+            def someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).to( device )
 
         expect : 'The OpenCL device initially does not have the "dummy_kernel" we are going to create.'
             !device.hasAdHocKernel( 'dummy_kernel' )
@@ -176,9 +176,9 @@ class OpenCLDevice_Integration_Tests extends Specification
             Tsr C = Tsr.of( [M,N], 0 )
             A[0..M-1,0..K-1] = Tsr.of([M,K], 3..1)
             B[0..K-1,0..N-1] = Tsr.of([K,N], -5..0)
-            A.set( device )
-            B.set( device )
-            C.set( device )
+            A.to( device )
+            B.to( device )
+            C.to( device )
 
         expect :
             !device.hasAdHocKernel( kernelName )

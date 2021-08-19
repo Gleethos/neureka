@@ -1170,7 +1170,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param device The {@link Device} which should host this {@link Tsr} as well as be added to its components list.
      * @return This very class to enable method chaining.
      */
-    public Tsr<V> set( Device<?> device ){ super._set(device); return this; }
+    public Tsr<V> to(Device<?> device ){ super._set(device); return this; }
 
     /*==================================================================================================================
     |

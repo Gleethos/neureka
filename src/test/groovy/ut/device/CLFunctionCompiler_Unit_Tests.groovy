@@ -64,9 +64,9 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
             exception.message == "No suitable implementation found for algorithm 'generic_algorithm_for_test_fun' and device type 'HostCPU'."
 
         when : 'We set the mocked device as components of our three scalar tensors...'
-            t1.set(mockDevice)
-            t2.set(mockDevice)
-            t3.set(mockDevice)
+            t1.to(mockDevice)
+            t2.to(mockDevice)
+            t3.to(mockDevice)
             t1.setIsOutsourced(true)
             t2.setIsOutsourced(true)
             t3.setIsOutsourced(true)

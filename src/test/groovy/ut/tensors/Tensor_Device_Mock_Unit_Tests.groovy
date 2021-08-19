@@ -33,7 +33,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
             device.has(t) >>> [false, true, true]
 
         when : 'The mock device is being added to the tensor...'
-            t.set(device)
+            t.to(device)
 
         then : '...the tensor should not try to add itself to the given device via the "store" method.'
             0 * device.store(t)
@@ -51,7 +51,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
             def device = Mock(Device)
             device.has(_) >>> [false, true, true, false]
             device.update(_) >> true
-            Tsr t = Tsr.of(2).set(device)
+            Tsr t = Tsr.of(2).to(device)
 
         when : 'The "isOutsourced" property is being set to false...'
             t.isOutsourced = false
@@ -71,7 +71,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
             Tsr t = Tsr.of(1)
 
         when :
-            t.set(device)
+            t.to(device)
             t.setIsOutsourced(true)
 
         then :
@@ -103,7 +103,7 @@ class Tensor_Device_Mock_Unit_Tests extends Specification
             Tsr s = t[1..2, 0..2]
 
         and : 'The "parent tensor" is being migrated to the device...'
-            t.set(device)
+            t.to(device)
 
         then : '...this tensor should not try to add itself to the given device via the "store" method.'
             0 * device.store(t)

@@ -65,7 +65,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             Device device, Object data1, Object data2, String expected
     ) {
         given : 'A 2D tensor is being instantiated..'
-            Tsr t = Tsr.of(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).set(device)
+            Tsr t = Tsr.of(new int[]{3, 2}, new double[]{2, 4, -5, 8, 3, -2}).to(device)
 
         when : 'A numeric array is passed to said tensor...'
             t.setValue(data1)
@@ -96,7 +96,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             if ( device == null ) return
 
         when : 'A 2D tensor is being instantiated by passing the given shape and data...'
-            Tsr t = Tsr.of(shape, data).set(device)
+            Tsr t = Tsr.of(shape, data).to(device)
 
         then : 'The tensor values (as List) are as expected.'
             (t.value64() as List<Float>) == expected
@@ -297,7 +297,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
         where : 'The following Device instances are being tested :'
             device                                  | storageMethod
             Device.find( "openCL" )                 | { d, t -> d.store(t) }
-            Device.find( "openCL" )                 | { d, t -> t.getMetaArgs().set(d)   }
+            Device.find( "openCL" )                 | { d, t -> t.getMetaArgs().to(d)   }
             //FileDevice.at( "build/test-can" )     | { d, t -> d.store(t) }
             //HostCPU.instance()                    | { d, t -> t.set(d)   }
             //FileDevice.at( "build/test-can" )     | { d, t -> t.set(d)   }

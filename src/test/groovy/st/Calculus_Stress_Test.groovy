@@ -30,7 +30,7 @@ class Calculus_Stress_Test extends Specification
                 return t
             }
         and :
-            Tsr t = Tsr.of( [3, 3, 3, 3], 0 ).set( device )
+            Tsr t = Tsr.of( [3, 3, 3, 3], 0 ).to( device )
 
         when :
             t[1..2, 0..2, 1..1, 0..2] = Tsr.of( [2, 3, 1, 3], -4..2 )
@@ -99,8 +99,8 @@ class Calculus_Stress_Test extends Specification
             Neureka.get().settings().indexing().isUsingArrayBasedIndexing = arrayIndexing
 
         and :
-            Tsr t1 = Tsr.of( shape1, -4..2 ).set( device )
-            Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )
+            Tsr t1 = Tsr.of( shape1, -4..2 ).to( device )
+            Tsr t2 = Tsr.of( shape2, -3..5 ).to( device )
 
         when :
             Tsr t = Tsr.of( operation, [t1,t2] )

@@ -34,8 +34,8 @@
          size = 1 * difficulty
          //-------------
          execute {
-            Tsr A = Tsr.of([size, size, 1], "apple").set(device)
-            Tsr B = Tsr.of([1, size, size], "banana").set(device)
+            Tsr A = Tsr.of([size, size, 1], "apple").to(device)
+            Tsr B = Tsr.of([1, size, size], "banana").to(device)
             measure "matrix_multiplication", {
                for (int i=0; i < N; i++) tester("I[0]xI[1]" % [A, B])
             }
@@ -46,8 +46,8 @@
          size = 1 * difficulty**2
          //-------------
          execute {
-            Tsr C = Tsr.of([size], "blueberry").set(device)
-            Tsr D = Tsr.of([size], "grapefruit").set(device)
+            Tsr C = Tsr.of([size], "blueberry").to(device)
+            Tsr D = Tsr.of([size], "grapefruit").to(device)
             time = System.nanoTime()
             measure "vector_multiplication", {
                for ( int i=0; i < N; i++) tester("I[0]xI[1]" % [C, D])
@@ -59,7 +59,7 @@
          size = 1 * difficulty
          //-------------
          execute {
-            Tsr a = Tsr.of([size, size], 3..19).set(device)
+            Tsr a = Tsr.of([size, size], 3..19).to(device)
             measure "manual_convolution", {
                for ( int i; i < N; i++ ) {
                   Tsr rowconvol = a[1..-2, 0..-1] + a[0..-3, 0..-1] + a[2..-1, 0..-1]//(98, 100) (98, 100) (98, 100)
@@ -79,8 +79,8 @@
             dim[0] = ((dim[0] == 0) ? 2 : dim[0])
             dim[1] = ((dim[1] == 0) ? 2 : dim[1])
             dim[2] = ((dim[2] == 0) ? 1 : dim[2])
-            Tsr t1 = Tsr.ofShape(dim).set(device)
-            Tsr t2 = Tsr.ofShape(dim).set(device)
+            Tsr t1 = Tsr.ofShape(dim).to(device)
+            Tsr t2 = Tsr.ofShape(dim).to(device)
             measure "tensor_math", {
                for ( int i; i < N; i++ ) {
                   Tsr v = t1 * 10
