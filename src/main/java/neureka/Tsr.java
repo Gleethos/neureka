@@ -1731,7 +1731,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return Neureka.get().context().getFunction().plusAssign().call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<V> plus( Double value ) {
+    public Tsr<V> plus( double value ) {
         return plus( new Tsr<>( this.shape(), value ) );
     }
 
@@ -1740,39 +1740,30 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> minus( V other ) {
-        return Neureka.get()
-                        .context()
-                        .getAutogradFunction()
-                        .minus().call(
-                                this,
-                                Tsr.of((Class<V>)this.getDataType().getTypeClass())
-                                            .withShape(this.getNDConf().shape())
-                                            .all(other)
-                        );
+        return minus(
+                 Tsr.of((Class<V>)this.getDataType().getTypeClass())
+                             .withShape(this.getNDConf().shape())
+                             .all(other)
+        );
     }
 
     public Tsr<V> minusAssign( Tsr<V> other ) {
-        return Neureka.get().context().getFunction().minusAssign().call( new Tsr[]{ this, other } );
+        return Neureka.get().context().getFunction().minusAssign().call( this, other );
     }
 
     public Tsr<V> negative() {
-        return Neureka.get().context().getAutogradFunction().neg().call( new Tsr[]{ this } );
+        return Neureka.get().context().getAutogradFunction().neg().call( this );
     }
 
     public Tsr<V> multiply( Tsr<V> other ) {
-        return Neureka.get().context().getAutogradFunction().mul().call( new Tsr[]{ this, other } );
+        return Neureka.get().context().getAutogradFunction().mul().call( this, other );
     }
 
     public Tsr<V> multiply( V other ) {
-        return Neureka.get()
-                        .context()
-                        .getAutogradFunction()
-                        .mul()
-                        .call(
-                                this,
-                                Tsr.of( (Class<V>) this.getDataType().getTypeClass() )
-                                    .withShape( this.getNDConf().shape() )
-                                    .all( other )
+        return multiply(
+                           Tsr.of( (Class<V>) this.getDataType().getTypeClass() )
+                               .withShape( this.getNDConf().shape() )
+                               .all( other )
                         );
     }
 
@@ -1784,7 +1775,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return Neureka.get().context().getFunction().mulAssign().call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<V> multiply( Double value ) {
+    public Tsr<V> multiply( double value ) {
         return multiply( new Tsr<>( this.shape(), value ) );
     }
 
@@ -1792,7 +1783,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return Neureka.get().context().getAutogradFunction().div().call( new Tsr[]{ this, other } );
     }
 
-    public Tsr<V> div(Double value ) {
+    public Tsr<V> div( double value ) {
         return div( new Tsr<>( this.shape(), value ) );
     }
 
@@ -1804,23 +1795,31 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return Neureka.get().context().getAutogradFunction().mod().call( new Tsr[]{ this, other } );
     }
 
+    public Tsr<V> mod( int other ) {
+        return mod((Tsr<V>) Tsr.of(this.getNDConf().shape(), other));
+    }
+
+    public Tsr<V> rem( int other ) {
+        return mod((Tsr<V>) Tsr.of(this.getNDConf().shape(), other));
+    }
+
     public Tsr<V> modAssign( Tsr<V> other ) {
         return Neureka.get().context().getFunction().modAssign().call( new Tsr[]{ this, other } );
     }
 
     public Tsr<V> power( Tsr<V> other ) {
-        return Neureka.get().context().getAutogradFunction().pow().call( new Tsr[]{ this, other } );
+        return Neureka.get().context().getAutogradFunction().pow().call( this, other );
     }
 
-    public Tsr<V> power( Double value ) {
+    public Tsr<V> power( double value ) {
         return power( new Tsr<>( this.shape(), value ) );
     }
 
     public Tsr<V> xor( Tsr<V> other ) {
-        return Neureka.get().context().getAutogradFunction().pow().call( new Tsr[]{ this, other} );
+        return Neureka.get().context().getAutogradFunction().pow().call( this, other );
     }
 
-    public Tsr<V> xor( Double value ) {
+    public Tsr<V> xor( double value ) {
         return xor( new Tsr<>( this.shape(), value ) );
     }
 

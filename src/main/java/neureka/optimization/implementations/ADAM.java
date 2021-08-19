@@ -49,7 +49,7 @@ public class ADAM<V> implements Optimizer<V> {
     Tsr<V> m;
     Tsr<V> v;
 
-    ADAM(Tsr<V> target) {
+    public ADAM(Tsr<V> target) {
         int[] shape = target.getNDConf().shape();
         m  = (Tsr<V>) Tsr.of(shape, 0);
         v  = (Tsr<V>) Tsr.of(shape, 0);

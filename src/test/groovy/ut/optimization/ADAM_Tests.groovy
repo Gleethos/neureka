@@ -11,7 +11,7 @@ import spock.lang.Specification
 class ADAM_Tests extends Specification
 {
     @Shared Tsr w = Tsr.of(0)
-    @Shared Optimizer o = new ADAM(w)
+    @Shared Optimizer<?> o = new ADAM<>(w)
 
     def setupSpec()
     {
