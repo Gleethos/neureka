@@ -215,7 +215,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param args The arguments which ought to be interpreted.
      * @return The result of the interpretation in the form of a {@link Tsr} instance of typ {@link Object}.
      */
-    public static Tsr<Object> of( Object... args ) { return new Tsr<>( args ); }
+    public static <T> Tsr<T> of( Object... args ) { return new Tsr<>( args ); }
 
     /**
      *  See {@link Tsr#of(Object...)} for more information.

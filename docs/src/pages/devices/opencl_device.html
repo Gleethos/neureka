@@ -32,12 +32,13 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    def device = Neureka.get().context().find(ContextComponent.class).getPlatforms()[0].devices[0]
+    def device = Neureka.get().context().get(ContextComponent.class).getPlatforms()[0].devices[0]
     def someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).set( device )
 
     assert !device.hasAdHocKernel( 'dummy_kernel' )
@@ -69,10 +70,10 @@
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    OpenCLDevice device = Neureka.get().context().find(ContextComponent.class).getPlatforms().getAt( 0 ).getDevices.getAt( 0 );
-    Tsr someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).set( device );
+    OpenCLDevice device = Neureka.get().context().get(ContextComponent.class).getPlatforms().getAt( 0 ).getDevices.getAt( 0 );
+    Tsr&#60;Float&#62; someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).set( device );
 
-    assert !device.hasAdHocKernel( 'dummy_kernel' );
+    assert !device.hasAdHocKernel( "dummy_kernel" );
 
     device.compileAdHocKernel( "dummy_kernel",
         "__kernel void dummy_kernel (                      \n" +
@@ -94,6 +95,37 @@
             .call( someData.size() );
 
     assert someData.toString().equals( "(5):[-2.0, -9.0, -7.0, 5.0, -5.0]" );
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+    val device : OpenCLDevice = Neureka.get().context.get(ContextComponent::class.java).platforms[0].devices[0]
+    val someData : Tsr&#60;Float&#62; = Tsr.of( floatArrayOf( 2f, -5f, -3f, 9f, -1f ) ).set( device )
+
+    assert( !device.hasAdHocKernel( "dummy_kernel" ) )
+
+    device.compileAdHocKernel( "dummy_kernel",
+        "__kernel void dummy_kernel (                      \n" +
+        "        __global float* output,                           \n" +
+        "        __global float* input,                             \n" +
+        "        float value                                             \n" +
+        "    ) {                                                              \n" +
+        "        unsigned int i = get_global_id( 0 );       \n" +
+        "        output[i] = input[i] + value;                    \n" +
+        "    }                                                                \n"
+    )
+
+    assert( device.hasAdHocKernel( "dummy_kernel" ) )
+
+    device.getAdHocKernel( "dummy_kernel" )
+            .passRaw( someData )
+            .passRaw( someData )
+            .pass( -4f )
+            .call( someData.size() )
+
+    assert( someData.toString().equals( "(5):[-2.0, -9.0, -7.0, 5.0, -5.0]" ) )
 
                 </code></pre>
             </div>

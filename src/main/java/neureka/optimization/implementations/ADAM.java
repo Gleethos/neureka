@@ -61,11 +61,11 @@ public class ADAM<V> implements Optimizer<V> {
 
     private Tsr<V> _optimize(Tsr<V> w) {
         Tsr<V> g = w.getGradient();
-        m = (Tsr<V>) Tsr.of(b1, "*", m, " + ( 1-", b1, ") *", g);
-        v = (Tsr<V>) Tsr.of(b2, "*", v, " + ( 1-", b2, ") * (", g,"^2 )");
-        Tsr<V> mh = (Tsr<V>) Tsr.of(m, "/(1-", b1, ")");
-        Tsr<V> vh = (Tsr<V>) Tsr.of(v, "/(1-", b2, ")");
-        Tsr<V> newg = (Tsr<V>) Tsr.of("-",a,"*",mh,"/(",vh,"^0.5+",e,")");
+        m = Tsr.of(b1, "*", m, " + ( 1-", b1, ") *", g);
+        v = Tsr.of(b2, "*", v, " + ( 1-", b2, ") * (", g,"^2 )");
+        Tsr<V> mh = Tsr.of(m, "/(1-", b1, ")");
+        Tsr<V> vh = Tsr.of(v, "/(1-", b2, ")");
+        Tsr<V> newg = Tsr.of("-",a,"*",mh,"/(",vh,"^0.5+",e,")");
         Neureka.get().context().getFunction().idy().call(g, newg);
         return g;
     }
