@@ -1530,7 +1530,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 g -> {
                     // If an optimizer is present then we also optimize the gradient first!
                     if ( this.has( Optimizer.class ) )
-                        g = this.get(Optimizer.class).optimize(g);
+                        g = this.get(Optimizer.class).optimize(this);
                     // And then we remove the gradient because it is no longer needed.
                     remove( Tsr.class );
                     // We are now ready to apply the gradient to the tensor. This is an inline operation!
@@ -1765,7 +1765,22 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return Neureka.get().context().getAutogradFunction().mul().call( new Tsr[]{ this, other } );
     }
 
+    public Tsr<V> multiply( V other ) {
+        return Neureka.get()
+                        .context()
+                        .getAutogradFunction()
+                        .mul()
+                        .call(
+                                this,
+                                Tsr.of( (Class<V>) this.getDataType().getTypeClass() )
+                                    .withShape( this.getNDConf().shape() )
+                                    .all( other )
+                        );
+    }
+
     public Tsr<V> times( Tsr<V> other ) { return multiply( other ); }
+
+    public Tsr<V> times( V other ) { return multiply( other ); }
 
     public Tsr<V> timesAssign( Tsr<V> other ) {
         return Neureka.get().context().getFunction().mulAssign().call( new Tsr[]{ this, other } );

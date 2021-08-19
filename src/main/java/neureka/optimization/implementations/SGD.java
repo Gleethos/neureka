@@ -40,7 +40,7 @@ import neureka.Tsr;
 import neureka.calculus.Function;
 import neureka.optimization.Optimizer;
 
-public class SGD<ValType> implements Optimizer<ValType>
+public class SGD<V> implements Optimizer<V>
 {
     private final double _learningRate;
     private final Function _function;
@@ -52,10 +52,9 @@ public class SGD<ValType> implements Optimizer<ValType>
     }
 
     @Override
-    public Tsr<ValType> optimize( Tsr<ValType> w ) {
-        Tsr<ValType> g = w.getGradient();
-        Neureka.get().context().getFunction().idy().call( _function.call( g ) );
-        return w;
+    public Tsr<V> optimize(Tsr<V> w ) {
+        Tsr<V> g = w.getGradient();
+        return Neureka.get().context().getFunction().idy().call( _function.call( g ) );
     }
 
     public double learningRate() {
@@ -63,7 +62,7 @@ public class SGD<ValType> implements Optimizer<ValType>
     }
 
     @Override
-    public boolean update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
+    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
         changeRequest.executeChange();
         return true;
     }

@@ -38,12 +38,22 @@ package neureka.optimization;
 import neureka.Component;
 import neureka.Tsr;
 
+import java.util.function.Function;
+
 public interface Optimizer<V> extends Component<Tsr<V>>, Optimization<V>
 {
     static <T> Optimizer<T> of( Optimization<T> o ) {
         return new Optimizer<T>() {
             @Override public boolean update(OwnerChangeRequest<Tsr<T>> changeRequest) { return true; }
-            @Override public Tsr<T> optimize(Tsr<T> t) { return o.optimize(t); }
+            @Override public Tsr<T> optimize(Tsr<T> w) { return o.optimize(w); }
         };
     }
+
+    static <T> Optimizer<T> ofGradient( Optimization<T> o ) {
+        return new Optimizer<T>() {
+            @Override public boolean update(OwnerChangeRequest<Tsr<T>> changeRequest) { return true; }
+            @Override public Tsr<T> optimize(Tsr<T> w) { return o.optimize(w.getGradient()); }
+        };
+    }
+
 }

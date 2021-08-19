@@ -58,6 +58,7 @@ internal class Kotlin_Compatibility_Unit_Testing {
     @Test
     fun tensor_operations_translate_to_custom_ComplexNumber_type_written_in_kotlin()
     {
+
         // Given :
         val a : Tsr<ComplexNumber> = Tsr.of(
                                         DataType.of(ComplexNumber::class.java),
@@ -83,20 +84,32 @@ internal class Kotlin_Compatibility_Unit_Testing {
     @Test
     fun optimization_is_being_called() {
 
-        val t : Tsr<Double> = Tsr.of(2.0).setRqsGradient(true)
-
-        t.set(
-            Optimizer.of({ w -> w - 4.0 })
+        listOf(
+            Pair( -3.0, { g : Tsr<Double> -> g - 4.0 } ), // 'g' will always be 1
+            Pair(  5.0, { g : Tsr<Double> -> g + 4.0 } ),
+            Pair( 0.25, { g : Tsr<Double> -> g / 4.0 } ),
+            Pair(  4.0, { g : Tsr<Double> -> g * 4.0 } )
         )
+        .forEach { pair ->
 
-        t.backward()
+            // Given :
+            val expected = pair.first
+            val exec = pair.second
+            val weightVal = 2.0
+            val w: Tsr<Double> = Tsr.of(weightVal).setRqsGradient(true)
 
-        assert(t.toString().equals("(1):[2.0]:g:[1.0]"))
+            // When :
+            w.set( Optimizer.ofGradient( { g -> exec(g) } ) ).backward()
 
-        t.applyGradient()
+            // Then :
+            assert(w.toString().equals("(1):["+weightVal+"]:g:[1.0]"))
 
-        assert(t.toString().equals("(1):[-1.0]:g:[null]"))
+            // When :
+            w.applyGradient()
 
+            // Then :
+            assert(w.toString().equals("(1):["+(expected+weightVal)+"]:g:[null]"))
+        }
     }
 
 }

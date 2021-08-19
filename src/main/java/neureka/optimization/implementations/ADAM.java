@@ -39,43 +39,44 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.optimization.Optimizer;
 
-public class ADAM<ValType> implements Optimizer<ValType> {
+public class ADAM<V> implements Optimizer<V> {
 
     // VARIABLES...
-    private final Tsr<ValType> a;
-    private final Tsr<ValType> b1;
-    private final Tsr<ValType> b2;
-    private final Tsr<ValType> e;
-    Tsr<ValType> m;
-    Tsr<ValType> v;
+    private final Tsr<V> a;
+    private final Tsr<V> b1;
+    private final Tsr<V> b2;
+    private final Tsr<V> e;
+    Tsr<V> m;
+    Tsr<V> v;
 
-    ADAM(Tsr<ValType> target) {
+    ADAM(Tsr<V> target) {
         int[] shape = target.getNDConf().shape();
-        m  = (Tsr<ValType>) Tsr.of(shape, 0);
-        v  = (Tsr<ValType>) Tsr.of(shape, 0);
-        a  = (Tsr<ValType>) Tsr.of(shape, 0.01); // Step size!
-        b1 = (Tsr<ValType>) Tsr.of(shape, 0.9);
-        b2 = (Tsr<ValType>) Tsr.of(shape, 0.999);
-        e  = (Tsr<ValType>) Tsr.of(shape, 1e-7);
+        m  = (Tsr<V>) Tsr.of(shape, 0);
+        v  = (Tsr<V>) Tsr.of(shape, 0);
+        a  = (Tsr<V>) Tsr.of(shape, 0.01); // Step size!
+        b1 = (Tsr<V>) Tsr.of(shape, 0.9);
+        b2 = (Tsr<V>) Tsr.of(shape, 0.999);
+        e  = (Tsr<V>) Tsr.of(shape, 1e-7);
     }
 
-    private void _optimize(Tsr<ValType> w) {
-        Tsr<ValType> g = w.getGradient();
-        m = (Tsr<ValType>) Tsr.of(b1, "*", m, " + ( 1-", b1, ") *", g);
-        v = (Tsr<ValType>) Tsr.of(b2, "*", v, " + ( 1-", b2, ") * (", g,"^2 )");
-        Tsr<ValType> mh = (Tsr<ValType>) Tsr.of(m, "/(1-", b1, ")");
-        Tsr<ValType> vh = (Tsr<ValType>) Tsr.of(v, "/(1-", b2, ")");
-        Tsr<ValType> newg = (Tsr<ValType>) Tsr.of("-",a,"*",mh,"/(",vh,"^0.5+",e,")");
-        Neureka.get().context().getFunction().idy().call(new Tsr[]{g, newg});
-    }
-
-    @Override
-    public Tsr<ValType> optimize(Tsr<ValType> t) {
-        _optimize(t); return t;
+    private Tsr<V> _optimize(Tsr<V> w) {
+        Tsr<V> g = w.getGradient();
+        m = (Tsr<V>) Tsr.of(b1, "*", m, " + ( 1-", b1, ") *", g);
+        v = (Tsr<V>) Tsr.of(b2, "*", v, " + ( 1-", b2, ") * (", g,"^2 )");
+        Tsr<V> mh = (Tsr<V>) Tsr.of(m, "/(1-", b1, ")");
+        Tsr<V> vh = (Tsr<V>) Tsr.of(v, "/(1-", b2, ")");
+        Tsr<V> newg = (Tsr<V>) Tsr.of("-",a,"*",mh,"/(",vh,"^0.5+",e,")");
+        Neureka.get().context().getFunction().idy().call(g, newg);
+        return g;
     }
 
     @Override
-    public boolean update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
+    public Tsr<V> optimize(Tsr<V> w) {
+        return _optimize(w);
+    }
+
+    @Override
+    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
         changeRequest.executeChange();
         return true;
     }
