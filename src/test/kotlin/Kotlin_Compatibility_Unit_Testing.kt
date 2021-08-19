@@ -89,7 +89,7 @@ internal class Kotlin_Compatibility_Unit_Testing {
             Pair(  5.0, { g : Tsr<Double> -> g + 4.0 } ),
             Pair( 0.25, { g : Tsr<Double> -> g / 4.0 } ),
             Pair(  4.0, { g : Tsr<Double> -> g * 4.0 } ),
-            Pair(  0.0, { g : Tsr<Double> -> g % 1.0 } )
+            Pair(  0.0, { g : Tsr<Double> -> g % 1 } )
         )
         .forEach { pair ->
 

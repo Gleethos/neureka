@@ -787,15 +787,33 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         --------------------------------------------
     */
 
+    /**
+     *  Settings this flag via this setter will indirectly trigger the activation of
+     *  the autograd / auto-differentiation system of this library!
+     *  If the flag is set to 'true' and the tensor is used for computation then
+     *  it will also receive gradients when the {@link #backward()} method is being called
+     *  on any descendant tensor within the computation graph.
+     *
+     * @@param rqsGradient The truth value determining if this tensor ought to receive gradients via
+     *                     the built in automatic backpropagation system.
+     * @return This very {@link Tsr} instance in order to enable method chaining.
+     */
     public Tsr<V> setRqsGradient(boolean rqsGradient ) {
         if ( rqsGradient() != rqsGradient && !rqsGradient ) this.remove( Tsr.class );
         _setRqsGradient( rqsGradient );
         return this;
     }
 
-    public boolean rqsGradient() {
-        return ( _flags & RQS_GRADIENT_MASK ) == RQS_GRADIENT_MASK;
-    }
+    /**
+     *  This flag will indirectly trigger the activation of the autograd / auto-differentiation system of this library!
+     *  If the flag is set to 'true' and the tensor is used for computation then
+     *  it will also receive gradients when the {@link #backward()} method is being called
+     *  on any descendant tensor within the computation graph.
+     *
+     * @return The truth value determining if this tensor ought to receive gradients via
+     *         the built in automatic backpropagation system.
+     */
+    public boolean rqsGradient() { return ( _flags & RQS_GRADIENT_MASK ) == RQS_GRADIENT_MASK; }
 
     protected void _setRqsGradient( boolean rqsGradient ) {
         if ( rqsGradient() != rqsGradient ) {
@@ -856,9 +874,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return this;
     }
 
-    public boolean isOutsourced() {
-        return ( _flags & IS_OUTSOURCED_MASK ) == IS_OUTSOURCED_MASK;
-    }
+    /**
+     * Outsourced means that the tensor is stored on a {@link Device} implementation instance.
+     *
+     * @return The truth value determining if the data of this tensor is not actually stored inside of it
+     *         in the form of of a traditional primitive JVM array!
+     */
+    public boolean isOutsourced() { return ( _flags & IS_OUTSOURCED_MASK ) == IS_OUTSOURCED_MASK; }
 
     protected void _setIsOutsourced( boolean isOutsourced ) {
         if ( isOutsourced() != isOutsourced ) {
@@ -1189,9 +1211,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      * @return The truth value determining if this tensor has data.
      */
-    public boolean isEmpty() {
-        return getData() == null && !this.isOutsourced(); // Outsourced means that the tensor is stored on a device.
-    }
+    public boolean isEmpty() { return getData() == null && !this.isOutsourced(); }
 
     /**
      *  A tensor is "undefined" if it has either no {@link NDConfiguration} implementation instance
@@ -1200,9 +1220,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      * @return The truth value determining if this tensor has an {@link NDConfiguration} stored internally.
      */
-    public boolean isUndefined() {
-        return getNDConf() == null || getNDConf().shape() == null;
-    }
+    public boolean isUndefined() { return getNDConf() == null || getNDConf().shape() == null; }
 
     /**
      *  If this tensor is a slice of a parent tensor then this method will yield true.
@@ -1249,9 +1267,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      * @return The truth value determining if this tensor belongs to a recorded computation graph.
      */
-    public boolean belongsToGraph() {
-        return this.has( GraphNode.class );
-    }
+    public boolean belongsToGraph() { return this.has( GraphNode.class ); }
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -1263,9 +1279,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      * @return The truth value determining if this tensor is attached to a computation graph as leave node.
      */
-    public boolean isLeave() {
-        return (!this.has( GraphNode.class )) || this.get( GraphNode.class ).isLeave();
-    }
+    public boolean isLeave() { return (!this.has( GraphNode.class )) || this.get( GraphNode.class ).isLeave(); }
 
     /**
      *  Tensors which are used or produced by the autograd system will have a {@link GraphNode} component attached to them.
@@ -1277,9 +1291,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      * @return The truth value determining if this tensor is attached to a computation graph as branch node.
      */
-    public boolean isBranch() {
-        return !this.isLeave();
-    }
+    public boolean isBranch() { return !this.isLeave(); }
 
     /**
      *  Tensors can be components of other tensors which makes the
@@ -1287,9 +1299,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      * @return The truth value determining if this tensor has another tensor attached to it (which is its gradient).
      */
-    public boolean hasGradient() {
-        return this.has( Tsr.class );
-    }
+    public boolean hasGradient() { return this.has( Tsr.class ); }
 
     /*
         ----------------------------------------------
@@ -1349,7 +1359,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param call The context object containing all relevant information that defines a call for tensor execution.
      * @return This very tensor instance. (factory pattern)
      */
-    public Tsr<V> incrementVersionBecauseOf( ExecutionCall call ) {
+    public Tsr<V> incrementVersionBecauseOf( ExecutionCall<?> call ) {
         if ( Neureka.get().settings().autograd().isPreventingInlineOperations() ) {
             _version++;
             GraphNode<?> node = get( GraphNode.class );
@@ -1383,7 +1393,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param tensor The tensor whose identity should be stolen.
      * @return This very tensor instance in order to enable method chaining.
      */
-    @Deprecated // This will be removed due to the fact that tensor instantiation is now factory method based.
+    @Deprecated( since = "0.7" ) // This ought to be removed due to the fact that tensor instantiation is now factory method based.
     protected Tsr<V> _become( Tsr<V> tensor )
     {
         if ( tensor == null ) return this;
@@ -1482,8 +1492,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param value A scalar which is back-propagated to gradients. Must match the size og this tensor.
      * @return The tensor on which this method was called. (factory pattern)
      */
-    public Tsr<V> backward( double value )
-    {
+    public Tsr<V> backward( double value ) {
         backward( new Tsr<>( getNDConf().shape(), value ) );
         return this;
     }
@@ -1550,10 +1559,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  simple components of the tensors they represent in the graph. <br>
      *  Therefore, "detaching" this tensor from the graph simply means removing its {@link GraphNode} component.
      */
-    public void detach()
-    {
-        this.remove( GraphNode.class );
-    }
+    public void detach() { this.remove( GraphNode.class ); }
 
     /*
         ----------------------------
@@ -1679,7 +1685,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public Tsr<V> label( String tensorName, List<List<Object>> labels )
     {
         NDFrame<V> frame = get( NDFrame.class );
-        if ( frame == null ) set( new NDFrame( labels, tensorName ) );
+        if ( frame == null ) set( new NDFrame<>( labels, tensorName ) );
         return this;
     }
 
@@ -1724,11 +1730,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
 
     public Tsr<V> plus( Tsr<V> other ) {
-        return Neureka.get().context().getAutogradFunction().plus().call( new Tsr[]{ this, other } );
+        return Neureka.get().context().getAutogradFunction().plus().call( this, other );
     }
 
     public Tsr<V> plusAssign( Tsr<V> other ) {
-        return Neureka.get().context().getFunction().plusAssign().call( new Tsr[]{ this, other } );
+        return Neureka.get().context().getFunction().plusAssign().call( this, other );
     }
 
     public Tsr<V> plus( double value ) {
@@ -1736,7 +1742,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> minus( Tsr<V> other ) {
-        return Neureka.get().context().getAutogradFunction().minus().call( new Tsr[]{ this, other } );
+        return Neureka.get().context().getAutogradFunction().minus().call( this, other );
     }
 
     public Tsr<V> minus( V other ) {
@@ -1772,7 +1778,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public Tsr<V> times( V other ) { return multiply( other ); }
 
     public Tsr<V> timesAssign( Tsr<V> other ) {
-        return Neureka.get().context().getFunction().mulAssign().call( new Tsr[]{ this, other } );
+        return Neureka.get().context().getFunction().mulAssign().call( this, other );
     }
 
     public Tsr<V> multiply( double value ) {
@@ -1780,7 +1786,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> div( Tsr<V> other ) {
-        return Neureka.get().context().getAutogradFunction().div().call( new Tsr[]{ this, other } );
+        return Neureka.get().context().getAutogradFunction().div().call( this, other );
     }
 
     public Tsr<V> div( double value ) {
@@ -1788,11 +1794,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> divAssign( Tsr<V> other ) {
-        return Neureka.get().context().getFunction().divAssign().call( new Tsr[]{ this, other } );
+        return Neureka.get().context().getFunction().divAssign().call( this, other );
     }
 
     public Tsr<V> mod( Tsr<V> other ) {
-        return Neureka.get().context().getAutogradFunction().mod().call( new Tsr[]{ this, other } );
+        return Neureka.get().context().getAutogradFunction().mod().call( this, other );
     }
 
     public Tsr<V> mod( int other ) {
@@ -1804,7 +1810,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> modAssign( Tsr<V> other ) {
-        return Neureka.get().context().getFunction().modAssign().call( new Tsr[]{ this, other } );
+        return Neureka.get().context().getFunction().modAssign().call( this, other );
     }
 
     public Tsr<V> power( Tsr<V> other ) {
@@ -1878,7 +1884,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                         .context()
                         .getAutogradFunction()
                         .conv()
-                        .call( new Tsr[]{ a, b } )
+                        .call( a, b )
                         .dimtrim();
     }
 
@@ -2006,7 +2012,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param indices The index array which targets a single value item within this tensor.
      * @return The found raw value item targeted by the provided index array.
      */
-    public V getValueAt( int[] indices ) {
+    public V getValueAt( int... indices ) {
         return getDataAt( getNDConf().indexOfIndices( indices ) );
     }
 
