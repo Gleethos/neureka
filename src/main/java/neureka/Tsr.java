@@ -1172,8 +1172,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public Tsr<V> set( Device<?> device ){ super._set(device); return this; }
 
-    public Tsr<V> set( Optimizer<V> optimizer ){ super._set(optimizer); return this; }
-
     /*==================================================================================================================
     |
     |       §(4) : PROPERTIES :
