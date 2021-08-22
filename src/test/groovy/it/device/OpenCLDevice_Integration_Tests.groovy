@@ -139,8 +139,8 @@ class OpenCLDevice_Integration_Tests extends Specification
 
         when : 'Executing the kernel by passing the previously defined tensor...'
             device.getAdHocKernel( 'dummy_kernel' )
-                    .passRaw( someData )
-                    .passRaw( someData )
+                    .pass( someData )
+                    .pass( someData )
                     .pass( -4f )
                     .call( someData.size() )
 
@@ -286,7 +286,7 @@ class OpenCLDevice_Integration_Tests extends Specification
         when :
             device.getAdHocKernel( kernelName )
                     .pass( M ).pass( N ).pass( K )
-                    .passRaw( A ).passRaw( B ).passRaw( C )
+                    .pass( A ).pass( B ).pass( C )
                     .call( global, local )
 
         then :
@@ -298,6 +298,7 @@ class OpenCLDevice_Integration_Tests extends Specification
                 16   |  32     | 16 | 16 | 16 || '(16x16):[-115.0, -82.0, -109.0, -76.0, -73.0, -40.0, -115.0, -82.0, -109.0, -76.0, -73.0, -40.0, -115.0, -82.0, -109.0, -76.0, -110.0, -78.0, -76.0, -44.0, -102.0, -70.0, -110.0, -78.0, -76.0, -44.0, -102.0, -70.0, -110.0, -78.0, -76.0, -44.0, -75.0, -44.0, -103.0, -72.0, -101.0, -70.0, -75.0, -44.0, -103.0, -72.0, -101.0, -70.0, -75.0, -44.0, -103.0, -72.0, -115.0, -82.0, ... + 206 more]'
                // 16   |  32     | 8  | 8  | 8  || '?'
                //2**2  |  4**2   | 4  | 6  | 5  || '?'// BROKEN
+               2**2  |  4**2   | 4  | 6  | 8  || '(4x8):[-44.0, -32.0, -32.0, -20.0, -32.0, -20.0, -44.0, -32.0, -32.0, -20.0, -44.0, -32.0, -32.0, -20.0, -32.0, -20.0, -32.0, -20.0, -32.0, -20.0, -44.0, -32.0, -32.0, -20.0, -44.0, -32.0, -32.0, -20.0, -32.0, -20.0, -44.0, -32.0]'
 
     }
 
@@ -372,12 +373,9 @@ class OpenCLDevice_Integration_Tests extends Specification
 
         when :
             device.getAdHocKernel( kernelName )
-                    .passRaw( C ).passRaw( A ).passRaw( B )
+                    .pass( C ).pass( A ).pass( B )
                     .pass( M ).pass( N ).pass( K )
                     .call( global, local )
-            println(A.toString('fp'))
-            println(B.toString('fp'))
-            println(C.toString('fp'))
 
         then :
             C.toString() == expected
@@ -387,6 +385,7 @@ class OpenCLDevice_Integration_Tests extends Specification
             7    | 2   | 2   | 2  || '(2x2):[8.0, 1.0, 4.0, 1.0]'
             7    | 4   | 4   | 4  || '(4x4):[13.0, 3.0, -7.0, -17.0, -11.0, -5.0, 1.0, 7.0, 31.0, 31.0, 31.0, 31.0, 7.0, 1.0, -5.0, -11.0]'
             7    | 16  | 16  | 16 || '(16x16):[-8.0, -62.0, -17.0, 39.0, 51.0, 30.0, -13.0, -78.0, 0.0, 34.0, 24.0, -8.0, -62.0, -17.0, 39.0, 51.0, -28.0, 9.0, 24.0, -5.0, -78.0, -8.0, 40.0, 66.0, 59.0, 8.0, -87.0, -28.0, 9.0, 24.0, -5.0, -78.0, 40.0, -8.0, -78.0, -5.0, 24.0, 9.0, -28.0, -87.0, 8.0, 59.0, 66.0, 40.0, -8.0, -78.0, -5.0, 24.0, -13.0, 30.0, ... + 206 more]'
+            //7    | 2   | 4   | 2  || '(2x2):[0.0, -10.0, 16.0, 22.0]' // BROKEN! Why?
             //7    | 2   | 3   | 2  || '(2x2):[4.0, -5.0, 4.0, 4.0]' // BROKEN! Why?
             //7    | 17  | 18  | 16 || '?' // Seems to only work for quadratic matrices?
 

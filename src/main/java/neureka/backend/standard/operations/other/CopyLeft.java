@@ -119,8 +119,8 @@ public class CopyLeft extends AbstractOperation {
                                             Tsr t = call.getTsrOfType( Number.class, 0 );
                                             int gwz = t.size();
                                             call.getDevice().getKernel(call)
-                                                    .pass( t )
-                                                    .pass( t )
+                                                    .passAllOf( t )
+                                                    .passAllOf( t )
                                                     .pass( call.getTsrOfType( Number.class, 1 ).value32( 0 ) )
                                                     .pass( t.rank() )
                                                     .pass( call.getDerivativeIndex() )

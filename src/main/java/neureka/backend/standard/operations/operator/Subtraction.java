@@ -152,9 +152,9 @@ public class Subtraction extends AbstractOperation
                                             int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
                                             int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
                                             call.getDevice().getKernel(call)
-                                                    .pass( call.getTsrOfType( Number.class, offset ) )
-                                                    .pass( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                    .pass( call.getTsrOfType( Number.class, offset + 2 ) )
+                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
                                                     .pass( call.getTsrOfType( Number.class, 0 ).rank() )
                                                     .pass( call.getDerivativeIndex() )
                                                     .call( gwz );
@@ -240,8 +240,8 @@ public class Subtraction extends AbstractOperation
                                             int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1)?1:0;
                                             int gwz = call.getTsrOfType( Number.class, 0 ).size();
                                             call.getDevice().getKernel(call)
-                                                    .pass(call.getTsrOfType( Number.class, 0 ))
-                                                    .pass(call.getTsrOfType( Number.class, 0 ))
+                                                    .passAllOf(call.getTsrOfType( Number.class, 0 ))
+                                                    .passAllOf(call.getTsrOfType( Number.class, 0 ))
                                                     .pass((float)call.getTsrOfType( Number.class, 1+offset).value64( 0 ))
                                                     .pass( call.getTsrOfType( Number.class, 0 ).rank() )
                                                     .pass( call.getDerivativeIndex() )
@@ -322,9 +322,9 @@ public class Subtraction extends AbstractOperation
                                             int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
                                             int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
                                             call.getDevice().getKernel(call)
-                                                    .pass( call.getTsrOfType( Number.class, offset ) )
-                                                    .pass( call.getTsrOfType( Number.class, offset + 1 ) )
-                                                    .pass( call.getTsrOfType( Number.class, offset + 2 ) )
+                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
                                                     .pass( call.getTsrOfType( Number.class, 0 ).rank() )
                                                     .pass( call.getDerivativeIndex() )
                                                     .call( gwz );

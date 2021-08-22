@@ -11,8 +11,8 @@ import java.util.List;
 import static org.jocl.CL.*;
 
 /**
- *  Instances of this class are utility factories provided by OpenCLDevice instances.
- *  When building new operations for tensors then this KernelBuilder class is essential
+ *  Instances of this class are utility factories provided by {@link OpenCLDevice} instances.
+ *  When building new operations for tensors then this {@link KernelCaller} class is essential
  *  for calling compiled kernels residing within the gpu.
  */
 public class KernelCaller
@@ -40,10 +40,23 @@ public class KernelCaller
      * @param tensor The tensor whose data and configuration ought to be passed to the kernel.
      * @return This very KernelCaller instance (factory patter).
      */
-    public KernelCaller pass( @NotNull Tsr<Number> tensor ) {
+    public KernelCaller passAllOf( @NotNull Tsr<Number> tensor ) {
         _inputs.add( tensor );
         clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.get( OpenCLDevice.cl_tsr.class ).value.data ) );
         _argId++;
+        return passConfOf( tensor );
+    }
+
+    /**
+     *  This method passes the ND-Configuration in the form of a flattened int array to the kernel.
+     *  Kernels can use this information for more complex indexing mechanisms as one would
+     *  expect them to be present in tensor which have been reshaped or are simply
+     *  slices of other tensors.
+     *
+     *  @param tensor The tensor whose ND configuration ought to be passed to the kernel.
+     *  @return This very KernelCaller instance (factory patter).
+     */
+    public KernelCaller passConfOf( @NotNull Tsr<Number> tensor ) {
         clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.get( OpenCLDevice.cl_tsr.class ).config.data ) );
         _argId++;
         return this;
@@ -55,7 +68,7 @@ public class KernelCaller
      * @param tensor The tensor whose data ought to be passed to the kernel.
      * @return This very KernelCaller instance (factory patter).
      */
-    public KernelCaller passRaw( @NotNull Tsr<Number> tensor ) {
+    public KernelCaller pass( @NotNull Tsr<Number> tensor ) {
         _inputs.add( tensor );
         clSetKernelArg( _kernel, _argId, Sizeof.cl_mem, Pointer.to( tensor.get( OpenCLDevice.cl_tsr.class ).value.data ) );
         _argId++;

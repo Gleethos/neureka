@@ -116,8 +116,8 @@ public final class Identity extends AbstractOperation
                                             // Drain tensor needs to be 'actual'! :
                                             if (!call.getTsrOfType( Number.class, offset + 1).isVirtual()) call.getTsrOfType( Number.class, offset).setIsVirtual( false );
                                             call.getDevice().getKernel(call)
-                                                    .pass( call.getTsrOfType( Number.class, offset ) )
-                                                    .pass( call.getTsrOfType( Number.class, offset + 1 ) )
+                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
                                                     .pass( call.getTsrOfType( Number.class, 0 ).rank() )
                                                     .pass( call.getDerivativeIndex() )
                                                     .call( gwz );
@@ -205,8 +205,8 @@ public final class Identity extends AbstractOperation
                                             Tsr t = call.getTsrOfType( Number.class, 0 );
                                             int gwz = t.size();
                                             call.getDevice().getKernel(call)
-                                                    .pass(t)
-                                                    .pass(t)
+                                                    .passAllOf(t)
+                                                    .passAllOf(t)
                                                     .pass((float)call.getTsrOfType( Number.class, 1 ).value64( 0 ))
                                                     .pass(t.rank())
                                                     .pass( call.getDerivativeIndex() )

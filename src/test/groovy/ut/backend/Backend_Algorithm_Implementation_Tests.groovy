@@ -97,14 +97,15 @@ class Backend_Algorithm_Implementation_Tests extends Specification
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
             imp << Neureka.get().context()
-                .instances()
-                .stream()
-                .filter(
-                        e ->
-                                e.isOperator() &&
-                                        e.getOperator().length() == 1 &&
-                                        e.supports( Operator.class )
-                ).map( e -> e.getAlgorithm( Operator.class ) )
+                            .instances()
+                            .stream()
+                            .filter(
+                                    e ->
+                                            e.isOperator() &&
+                                                    e.getOperator().length() == 1 &&
+                                                    e.supports( Operator.class )
+                            )
+                            .map( e -> e.getAlgorithm( Operator.class ) )
 
     }
 
@@ -129,19 +130,20 @@ class Backend_Algorithm_Implementation_Tests extends Specification
             (1.._) * tensor.size() >> 0
             (1.._) * call.getDevice() >> device
              1 * device.getKernel(call) >> kernel
+            (1.._) * kernel.passAllOf(_) >> kernel
             (1.._) * kernel.pass(_) >> kernel
             (1.._) * kernel.call(_)
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
             imp << Neureka.get().context()
-                .instances()
-                .stream()
-                .filter(
-                        e ->
-                                e.isOperator() &&
-                                        e.getOperator().length() == 1 &&
-                                        e.supports( Operator.class )
-                ).map( e -> e.getAlgorithm( Operator.class ) )
+                            .instances()
+                            .stream()
+                            .filter(
+                                    e ->
+                                            e.isOperator() &&
+                                            e.getOperator().length() == 1 &&
+                                            e.supports( Operator.class )
+                            ).map( e -> e.getAlgorithm( Operator.class ) )
 
     }
 

@@ -189,7 +189,7 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
         and : 'After the kernel has been compiled we expect the implementation to '
             1 * mockDevice.getAdHocKernel("test_fun_F64\$1_F64\$1_F64\$1_F64\$1") >> mockCaller
         and : 'We expect that the caller receives 4 inputs, 1 output tensor and the 3 function arguments.'
-            4 * mockCaller.passRaw(_)
+            4 * mockCaller.pass(_)
         and : 'Finally the caller will receive a dispatch call with a work size of 1 (because the tensors are scalars). '
             1 * mockCaller.call(1)
 
