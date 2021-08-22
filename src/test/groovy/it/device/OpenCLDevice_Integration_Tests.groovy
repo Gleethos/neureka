@@ -151,7 +151,7 @@ class OpenCLDevice_Integration_Tests extends Specification
 
 
     def 'Ad hoc compilation works for matrix multiplication.'(
-           int regSize, int locSize, def M, def K, def N, String expected
+           int regSize, int locSize, int M, int K, int N, String expected
     ) {
 
         given : 'This system supports OpenCL'
@@ -302,5 +302,94 @@ class OpenCLDevice_Integration_Tests extends Specification
     }
 
 
+    def 'Ad hoc compilation works for OpenCL backends matrix multiplication.'(
+            int seed, int M, int K, int N, String expected
+    ) {
+
+        given : 'This system supports OpenCL'
+            if ( !Neureka.get().canAccessOpenCL() ) return
+            def device = Neureka.get().context().get(CLContext.class).platforms[0].devices[0]
+            def kernelName = "backend_mm_${M}x${K}x${N}"
+
+            long[] local=   new long[]{ Math.min(16, M), Math.min(16, K) }
+            long[] global = new long[]{ M, K }
+
+            def data = (0..(M*K-1)).collect( v-> v + seed )
+            def data1 = data.collect( v -> ((v+5)%11)-5  as int )
+            def data2 = data.collect( v -> ((v+7)%11)-5 as int )
+
+            Tsr A = Tsr.of( [M,K], data1  )
+            Tsr B = Tsr.of( [K,N], data2 )
+            Tsr C = Tsr.of( [M,N], 0 )
+
+            A.to( device )
+            B.to( device )
+            C.to( device )
+
+        expect :
+            !device.hasAdHocKernel( kernelName )
+
+        when :
+            device.compileAdHocKernel( kernelName, """
+    kernel void backend_mm_${M}x${K}x${N}(
+        global float* pC,
+        global const float* pA,
+        global const float* pB,
+        int M, int N, int P
+    ){
+        local float shA[16][16];
+        local float shB[16][16];
+
+        int m = get_global_id(0);
+        int p = get_global_id(1);
+
+        int pc = ( get_group_id(1) << 4 ) + get_local_id(0);
+
+        float result = 0.0;
+
+        for ( int n = get_local_id(1); n < N; n += 16 )
+        {
+            shA[ get_local_id(0) ][ get_local_id(1) ] = pA[ ( N * m ) + n ];
+            shB[ get_local_id(0) ][ get_local_id(1) ] = pB[ ( P * n ) + pc ];
+
+            barrier(CLK_LOCAL_MEM_FENCE);
+
+            for ( int i = 0; i < 16; i++ )
+            {
+                result += ( shA[ get_local_id(0) ][i] * shB[ get_local_id(1) ][i] );
+            }
+
+            barrier(CLK_LOCAL_MEM_FENCE);
+        }
+
+        pC[ ( P * m ) + p ] = result;
+    }
+                    """
+        )
+
+        then :
+            device.hasAdHocKernel( kernelName )
+
+        when :
+            device.getAdHocKernel( kernelName )
+                    .passRaw( C ).passRaw( A ).passRaw( B )
+                    .pass( M ).pass( N ).pass( K )
+                    .call( global, local )
+            println(A.toString('fp'))
+            println(B.toString('fp'))
+            println(C.toString('fp'))
+
+        then :
+            C.toString() == expected
+
+        where :
+            seed | M   | K   | N  || expected
+            7    | 2   | 2   | 2  || '(2x2):[8.0, 1.0, 4.0, 1.0]'
+            7    | 4   | 4   | 4  || '(4x4):[13.0, 3.0, -7.0, -17.0, -11.0, -5.0, 1.0, 7.0, 31.0, 31.0, 31.0, 31.0, 7.0, 1.0, -5.0, -11.0]'
+            7    | 16  | 16  | 16 || '(16x16):[-8.0, -62.0, -17.0, 39.0, 51.0, 30.0, -13.0, -78.0, 0.0, 34.0, 24.0, -8.0, -62.0, -17.0, 39.0, 51.0, -28.0, 9.0, 24.0, -5.0, -78.0, -8.0, 40.0, 66.0, 59.0, 8.0, -87.0, -28.0, 9.0, 24.0, -5.0, -78.0, 40.0, -8.0, -78.0, -5.0, 24.0, 9.0, -28.0, -87.0, 8.0, 59.0, 66.0, 40.0, -8.0, -78.0, -5.0, 24.0, -13.0, 30.0, ... + 206 more]'
+            //7    | 2   | 3   | 2  || '(2x2):[4.0, -5.0, 4.0, 4.0]' // BROKEN! Why?
+            //7    | 17  | 18  | 16 || '?' // Seems to only work for quadratic matrices?
+
+    }
 
 }
