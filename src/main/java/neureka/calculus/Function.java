@@ -110,11 +110,6 @@ public interface Function
             return commit( drain, tensors, new FunctionBuilder(Neureka.get().context()).build( operation, doAD ) );
         }
 
-        public static <T> Tsr<T> commit( Tsr<T>[] inputs, Function function )
-        {
-            return commit( null, inputs, function );
-        }
-
         public static <T> Tsr<T> commit( Tsr<T> drain, Tsr<T>[] inputs, Function function )
         {
             return commit( drain, inputs, function, null );
@@ -134,19 +129,18 @@ public interface Function
             if ( activation == null ) result = (Tsr<T>) function.execute( inputs );
             else result = (Tsr<T>) activation.get();
 
-            Neureka.get().context().functionCache().free( newLock );
+            newLock.release();
             boolean resultIsUnique = true;
             if ( drain != null ) {
                 for( Tsr<?> t : inputs ) {
                     Tsr<?> g = t.getGradient();
-                    if (t == result || ( g != null && g == result ) ) {
+                    if ( t == result || ( g != null && g == result ) ) {
                         resultIsUnique = false;
                         break;
                     }
                 }
             }
-            if ( resultIsUnique )
-                return result;
+            if ( resultIsUnique ) return result;
             else return null;
         }
     }

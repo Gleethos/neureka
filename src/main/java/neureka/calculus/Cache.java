@@ -49,10 +49,6 @@ public final class Cache
     private static Cache _cache = new Cache();
     private Logger _log = LoggerFactory.getLogger( Cache.class );
 
-    public Cache() {
-        _log.debug("New instance of class 'Cache' created for function result caching.");
-    }
-
     public static Cache instance()
     {
         Cache c = _cache;
@@ -66,22 +62,12 @@ public final class Cache
         return this.functionCache;
     }
 
-    private final Map<GraphLock, TreeMap<Long, Tsr<Object>>> functionResultCache = Collections.synchronizedMap( new TreeMap<>( (a, b )-> a.hashCode() - b.hashCode() ) );
-
-    public synchronized void free( GraphLock lock )
-    {
-        functionResultCache.remove( lock );
-        lock.release();
-    }
-
     public synchronized Tsr<Object> preprocess(
             Tsr<Object>[] inputs,
             Function function,
             Supplier<Tsr<Object>> activation,
             Args arguments
     ) {
-        int d = arguments.getValOf(Arg.DerivIdx.class);
-        int j = arguments.getValOf(Arg.VarIdx.class);
         if ( !function.isDoingAD() ) {
             return activation.get(); // TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD => NO GRAPH NODES
         }
@@ -103,65 +89,9 @@ public final class Cache
             if ( t.has( GraphNode.class ) ) t.get( GraphNode.class ).obtainLocking( lock );
             else new GraphNode( function, lock, () -> t );
         }
-        GraphNode<Object> node = inputs[ 0 ].get( GraphNode.class );
-        Tsr<Object> result = null;
-
-        if ( !function.getOperation().isInline() ) result = _get( inputs, d, j );
-
-        if ( result == null ) {
-            result = activation.get();
-            _put( result, node, d, j );
-        }
-        // add references / child to graph node?
+        Tsr<Object> result = activation.get();
         return result;
     }
 
-    private synchronized Tsr<Object> _get( Tsr<Object>[] tsrs, int d, int j )
-    {
-        GraphLock lock = tsrs[ 0 ].get( GraphNode.class ).getLock();
-        long key = _keyOf( tsrs, d, j );
-        if ( key != 0 && functionResultCache.containsKey( lock ) && functionResultCache.get( lock ).containsKey( key ) ) {
-                _log.debug(
-                        "Result cache hit occurred! Function lock : '{}'; Key : '{}';", lock, key
-                );
-                return functionResultCache.get( lock ).get( key );
-        }
-        return null;
-    }
-
-    private synchronized void _put( Tsr<Object> t, GraphNode<Object> node, int d, int j )
-    {
-        GraphNode[] nodes = node.getParents();
-        Tsr[] tsrs = null;
-        if ( nodes != null ) {
-            tsrs = new Tsr[ nodes.length ];
-            for ( int i=0; i<nodes.length; i++ ) tsrs[i] = nodes[i].getPayload();
-        }
-        long key = _keyOf( tsrs, d, j );
-        if ( node.isCacheable() && key != 0 ) {
-            TreeMap<Long, Tsr<Object>> variables;
-            if ( functionResultCache.containsKey( node.getLock() ) ) variables = functionResultCache.get( node.getLock() );
-            else {
-                variables = new TreeMap<>((a, b) -> (a.hashCode() - b.hashCode()));
-                functionResultCache.put( node.getLock(), variables );
-            }
-            variables.put( key, t );
-        }
-    }
-
-    private long _keyOf( Tsr[] tsrs, int d, int j )
-    {
-        long key = 0;
-        if ( tsrs == null ) return 0;
-        for( int i = 0; i < tsrs.length; i++ ) {
-            if ( tsrs[ i ] == null ) return 0; // Tensor has probably been garbage collected!
-            key += ( ( i + 1 ) * tsrs[ i ].hashCode() ) + _keyed( d ) * 31 + _keyed( j );
-        }
-        return key;
-    }
-
-    private int _keyed( int number ) {
-        return ( number>=0 ) ? number + 1 : number;
-    }
 
 }

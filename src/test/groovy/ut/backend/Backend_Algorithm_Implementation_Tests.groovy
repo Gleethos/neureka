@@ -143,7 +143,8 @@ class Backend_Algorithm_Implementation_Tests extends Specification
                                             e.isOperator() &&
                                             e.getOperator().length() == 1 &&
                                             e.supports( Operator.class )
-                            ).map( e -> e.getAlgorithm( Operator.class ) )
+                            )
+                            .map( e -> e.getAlgorithm( Operator.class ) )
 
     }
 
