@@ -19,7 +19,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         setIsSuitableFor(
                 call -> {
                     List<Integer> shape = ( call.getTensors()[ 0 ] == null ) ? call.getTensors()[ 1 ].shape() : call.getTensors()[ 0 ].shape();
-                    int size = shape.stream().reduce(1,( x, y )-> x * y );
+                    int size = shape.stream().reduce(1, ( x, y ) -> x * y );
                     return call.validate()
                             .allNotNull( t -> t.size() == size && shape.equals( t.shape() ) )
                             .allNotNull( t -> t.getDataType().typeClassImplements( NumericType.class ) )
@@ -99,7 +99,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
             int[] t0Shp = ndc0.shape(); // Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
             int[] t0Idx = ndc0.indicesOfIndex( i );
             double[] t0_value = (double[]) t0_drn.getData();
-            while (i < end) {//increment on drain accordingly:
+            while ( i < end ) {//increment on drain accordingly:
                 //setInto _value in drn:
                 t0_value[ndc0.indexOfIndices(t0Idx)] = operation.execute( t0Idx );
                 //increment on drain:

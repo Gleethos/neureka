@@ -215,28 +215,22 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param args The arguments which ought to be interpreted.
      * @return The result of the interpretation in the form of a {@link Tsr} instance of typ {@link Object}.
      */
-    public static <T> Tsr<T> of( Object... args ) { return new Tsr<>( args ); }
+    public static <T> Tsr<T> of( Object... args ) { return _construct( args ); }
 
-    /**
-     *  See {@link Tsr#of(Object...)} for more information.
-     *
-     * @param args The arguments which ought to be interpreted.
-     */
-    private Tsr( Object... args ) { _construct( args ); }
-
-    private void _construct( Object[] args )
+    private static <T> Tsr<T> _construct( Object... args )
     {
-        if ( args == null || args.length == 0 ) return;
+        if ( args == null || args.length == 0 ) return new Tsr<>();
         if ( args.length == 1 ) {
             if ( args[ 0 ] instanceof Object[] ) {
-                _construct( (Object[]) args[ 0 ] );
-                return;
+                return _construct( (Object[]) args[ 0 ] );
             } else if ( args[ 0 ] instanceof BigDecimal ) {
-                createConstructionAPI()._constructAllF64( new int[]{ 1 }, ( (BigDecimal) args[ 0 ] ).doubleValue());
-                return;
+                Tsr<T> t = new Tsr<>();
+                t.createConstructionAPI()._constructAllF64( new int[]{ 1 }, ( (BigDecimal) args[ 0 ] ).doubleValue());
+                return t;
             } else if ( args[ 0 ] instanceof Integer ) {
-                createConstructionAPI()._constructAllF64( new int[]{ 1 }, ( (Integer) args[ 0 ] ).doubleValue() );
-                return;
+                Tsr<T> t = new Tsr<>();
+                t.createConstructionAPI()._constructAllF64( new int[]{ 1 }, ( (Integer) args[ 0 ] ).doubleValue() );
+                return t;
             } else {
                 String message = "Cannot create tensor from argument of type '" + args[ 0 ].getClass().getName() + "'!";
                 _LOG.error( message );
@@ -257,17 +251,20 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         //CASES:
         if ( args[ 0 ] instanceof int[] ) {
             if ( args[ 1 ] instanceof Double || args[ 1 ] instanceof Integer ) {
+                Tsr<T> t = new Tsr<>();
                 args[ 1 ] = ( args[ 1 ] instanceof Integer ) ? ( (Integer) args[ 1 ] ).doubleValue() : args[ 1 ];
-                createConstructionAPI()._constructAllF64( (int[]) args[ 0 ], (Double) args[ 1 ] );
-                return;
+                t.createConstructionAPI()._constructAllF64( (int[]) args[ 0 ], (Double) args[ 1 ] );
+                return t;
             } else if ( args[ 1 ] instanceof double[] ) {
-                createConstructionAPI().constructForDoubles( (int[]) args[ 0 ], (double[]) args[ 1 ] );
-                return;
+                Tsr<T> t = new Tsr<>();
+                t.createConstructionAPI().constructForDoubles( (int[]) args[ 0 ], (double[]) args[ 1 ] );
+                return t;
             } else {
-                this.setDataType( DataType.of( args[1].getClass() ) );
-                _construct( (int[]) args[0], true, true );
-                ((Object[])getData())[0] = args[1];
-                return;
+                Tsr<T> t = new Tsr<>();
+                t.setDataType( DataType.of( args[1].getClass() ) );
+                t._construct( (int[]) args[0], true, true );
+                ((Object[])t.getData())[0] = args[1];
+                return t;
             }
         }
  
@@ -280,28 +277,30 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         */
         boolean containsString = false;
         int numberOfTensors = 0;
-        ArrayList<Tsr<V>> tsrList = new ArrayList<>();
+        ArrayList<Tsr<T>> tsrList = new ArrayList<>();
         for ( Object o : args ) {
             containsString = ( o instanceof String ) || containsString;
             if ( o instanceof Tsr ) {
-                tsrList.add( (Tsr<V>) o );
+                tsrList.add( (Tsr<T>) o );
                 numberOfTensors++;
             }
         }
         boolean doAD = true;
-        Tsr<V>[] tensors = new Tsr[ numberOfTensors ];
+        Tsr<T>[] tensors = new Tsr[ numberOfTensors ];
         StringBuilder f = new StringBuilder();
         int ti = 0;
         for ( Object o : args ) {
             if ( tsrList.contains( o ) ) {
-                tensors[ ti ] = ( (Tsr<V>) o );
+                tensors[ ti ] = ( (Tsr<T>) o );
                 f.append( "I[" ).append( ti ).append( "]" );
                 ti++;
             }
             else if ( o instanceof  String ) f.append( (String) o );
             else if ( o instanceof  Boolean ) doAD = (Boolean) o;
         }
-        _construct( tensors, f.toString(), doAD );
+        Tsr<T> t = new Tsr<>();
+        t._construct( tensors, f.toString(), doAD );
+        return t;
     }
 
 
@@ -321,12 +320,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param value An object of type {@link T} which will populate the data array of the new instance.
      * @return A new {@link Tsr} instance for the generic type {@link T}.
      */
-    public static <T> Tsr<T> of( List<Integer> shape, T value ) { return new Tsr<>( shape, value ); }
-
-    /**
-     *  See documentation at {@link Tsr#of(List, Object)}
-     */
-    private Tsr( List<Integer> shape, Object value ) { _construct( new Object[]{ shape, value } ); }
+    public static <T> Tsr<T> of( List<Integer> shape, T value ) { return _construct( shape, value ); }
 
     /**
      *  This factory method will create and return a {@link Tsr} instance
@@ -515,7 +509,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         createConstructionAPI().configureFromNewShape( shape, virtual, true );
     }
 
-    private int[] _intArray( Object[] arg ) {
+    private static int[] _intArray( Object[] arg ) {
         int length = arg.length;
         int[] array = new int[ length ];
         for ( int i = 0; i < length; i++ ) {
@@ -525,7 +519,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return array;
     }
 
-    private double[] _doubleArray( Object[] arg )
+    private static double[] _doubleArray( Object[] arg )
     {
         int length = arg.length;
         double[] array = new double[ length ];
@@ -648,7 +642,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         else
             return _constructFunctional(
                     null,
-                    inputs.stream().map( Tsr::new ).toArray( Tsr[]::new ),
+                    inputs.stream().map( args -> _construct(args) ).toArray( Tsr[]::new ),
                     expression,
                     true
             );
@@ -1738,7 +1732,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> plus( double value ) {
-        return plus( new Tsr<>( this.shape(), value ) );
+        return plus( _construct( this.shape(), value ) );
     }
 
     public Tsr<V> minus( Tsr<V> other ) {
@@ -1782,7 +1776,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> multiply( double value ) {
-        return multiply( new Tsr<>( this.shape(), value ) );
+        return multiply( _construct( this.shape(), value ) );
     }
 
     public Tsr<V> div( Tsr<V> other ) {
@@ -1790,7 +1784,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> div( double value ) {
-        return div( new Tsr<>( this.shape(), value ) );
+        return div( _construct( this.shape(), value ) );
     }
 
     public Tsr<V> divAssign( Tsr<V> other ) {
@@ -1818,7 +1812,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> power( double value ) {
-        return power( new Tsr<>( this.shape(), value ) );
+        return power( _construct( this.shape(), value ) );
     }
 
     public Tsr<V> xor( Tsr<V> other ) {
@@ -1826,7 +1820,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> xor( double value ) {
-        return xor( new Tsr<>( this.shape(), value ) );
+        return xor( _construct( this.shape(), value ) );
     }
 
     /*
