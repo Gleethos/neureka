@@ -215,14 +215,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param args The arguments which ought to be interpreted.
      * @return The result of the interpretation in the form of a {@link Tsr} instance of typ {@link Object}.
      */
-    public static <T> Tsr<T> of( Object... args ) { return _construct( args ); }
+    public static <T> Tsr<T> of( Object... args ) { return _of( args ); }
 
-    private static <T> Tsr<T> _construct( Object... args )
+    private static <T> Tsr<T> _of( Object... args )
     {
         if ( args == null || args.length == 0 ) return new Tsr<>();
         if ( args.length == 1 ) {
             if ( args[ 0 ] instanceof Object[] ) {
-                return _construct( (Object[]) args[ 0 ] );
+                return _of( (Object[]) args[ 0 ] );
             } else if ( args[ 0 ] instanceof BigDecimal ) {
                 Tsr<T> t = new Tsr<>();
                 t.createConstructionAPI()._constructAllF64( new int[]{ 1 }, ( (BigDecimal) args[ 0 ] ).doubleValue());
@@ -299,8 +299,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             else if ( o instanceof  Boolean ) doAD = (Boolean) o;
         }
         Tsr<T> t = new Tsr<>();
-        t._construct( tensors, f.toString(), doAD );
-        return t;
+        if ( tensors == null || tensors.length == 0 || tensors[ 0 ] == null ) return t;
+        return Function.Setup.commit( t, tensors, f.toString(), doAD );
     }
 
 
@@ -320,7 +320,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param value An object of type {@link T} which will populate the data array of the new instance.
      * @return A new {@link Tsr} instance for the generic type {@link T}.
      */
-    public static <T> Tsr<T> of( List<Integer> shape, T value ) { return _construct( shape, value ); }
+    public static <T> Tsr<T> of( List<Integer> shape, T value ) { return _of( shape, value ); }
 
     /**
      *  This factory method will create and return a {@link Tsr} instance
@@ -642,7 +642,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         else
             return _constructFunctional(
                     null,
-                    inputs.stream().map( args -> _construct(args) ).toArray( Tsr[]::new ),
+                    inputs.stream().map( args -> _of(args) ).toArray( Tsr[]::new ),
                     expression,
                     true
             );
@@ -715,32 +715,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public static <V> Tsr<V> of( String expression, boolean doAD,  Tsr<V>... tensors ) {
         return _constructFunctional( null, tensors, expression, doAD );
-    }
-
-    /**
-     *  In essence tensors are merely fancy wrappers for some form of array of any type...
-     *  This wrapper usually stays the same for a given data array.
-     *  However, sometimes a tensor changes its identity, or rather the underlying
-     *  data changes the wrapping tensor instance. 
-     *
-     *  This change currently only happens when tensors are being instantiated by
-     *  passing inputs and a math expression to its constructor.
-     *  This triggers the creation of a Function instance and execution on the provided
-     *  input tensors. In that case the output tensor will be created somewhere
-     *  along the execution call stack, however the result is expected to be
-     *  stored within the tensor whose constructor initialized all of this.
-     *  In that case this tensor will rip out the guts of the resulting output
-     *  tensor and stuff onto its own field variables. <br>
-     *  <br>
-     *  
-     * @param tensors The tensors which will be passed to the function.
-     * @param expression The expression defining a function.
-     * @param doAD The flag which will enable or disable autograd for the instantiated Function.
-     */
-    private void _construct( Tsr<V>[] tensors, String expression, boolean doAD )
-    {
-        if ( tensors == null || tensors.length == 0 || tensors[ 0 ] == null ) return; 
-        _become( Function.Setup.commit( this, tensors, expression, doAD ) );
     }
 
     /**
@@ -1732,7 +1706,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> plus( double value ) {
-        return plus( _construct( this.shape(), value ) );
+        return plus( _of( this.shape(), value ) );
     }
 
     public Tsr<V> minus( Tsr<V> other ) {
@@ -1776,7 +1750,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> multiply( double value ) {
-        return multiply( _construct( this.shape(), value ) );
+        return multiply( _of( this.shape(), value ) );
     }
 
     public Tsr<V> div( Tsr<V> other ) {
@@ -1784,7 +1758,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> div( double value ) {
-        return div( _construct( this.shape(), value ) );
+        return div( _of( this.shape(), value ) );
     }
 
     public Tsr<V> divAssign( Tsr<V> other ) {
@@ -1812,7 +1786,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> power( double value ) {
-        return power( _construct( this.shape(), value ) );
+        return power( _of( this.shape(), value ) );
     }
 
     public Tsr<V> xor( Tsr<V> other ) {
@@ -1820,7 +1794,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public Tsr<V> xor( double value ) {
-        return xor( _construct( this.shape(), value ) );
+        return xor( _of( this.shape(), value ) );
     }
 
     /*
