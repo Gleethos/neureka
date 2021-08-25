@@ -94,36 +94,6 @@ public interface Function
         return new FunctionBuilder(Neureka.get().context()).build(expression, doAD);
     }
 
-    /**
-     *  This static nested class acts as namespace for a set of useful
-     *  entry points to executing the provided parameters.
-     */
-    class Setup
-    {
-        public static <T> Tsr<T> commit( Tsr<T>[] inputs, Function function )
-        {
-            return commit( inputs, function, null );
-        }
-
-        public static <T> Tsr<T> commit(
-                Tsr<?>[] inputs, Function function, Supplier<Tsr<Object>> activation
-        ) {
-            Tsr.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
-
-            GraphLock newLock = new GraphLock( function );
-            for ( Tsr<?> t : inputs ) {
-                if ( t.has( GraphNode.class ) ) t.get( GraphNode.class ).obtainLocking( newLock );
-                else new GraphNode( function, newLock, () -> t );
-            }
-            Tsr<T> result;
-            if ( activation == null ) result = (Tsr<T>) function.execute( inputs );
-            else result = (Tsr<T>) activation.get();
-
-            newLock.release();
-            return result;
-        }
-    }
-
     //------------------------------------------------------------------------------------------------------------------
 
     Function newBuild( String expression );

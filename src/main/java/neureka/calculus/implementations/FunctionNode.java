@@ -2,6 +2,7 @@ package neureka.calculus.implementations;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
@@ -390,57 +391,41 @@ public class FunctionNode extends AbstractBaseFunction
     @Override
     public Tsr<?> execute(Tsr<?>... inputs) {
         Args arguments = Args.of(Arg.VarIdx.of(-1), Arg.DerivIdx.of(-1));
-        return Neureka.get()
-                        .context()
-                        .functionCache()
-                        .preprocess(
-                                (Tsr<Object>[]) inputs,
-                                this,
-                                ()-> _tensor_activation( inputs, arguments ),
-                                arguments
-                        );
+        return preprocess(
+                    (Tsr<Object>[]) inputs,
+                    this,
+                    ()-> _tensor_activation( inputs, arguments )
+                );
     }
 
     @Override
     public Tsr<?> execute(Tsr<?>[] inputs, int j) {
         Args arguments = Args.of(Arg.VarIdx.of(j), Arg.DerivIdx.of(-1));
-        return Neureka.get()
-                        .context()
-                        .functionCache()
-                        .preprocess(
-                                (Tsr<Object>[]) inputs,
-                                this,
-                                ()-> _tensor_activation( inputs, arguments ),
-                                arguments
-                        );
+        return preprocess(
+                    (Tsr<Object>[]) inputs,
+                    this,
+                    ()-> _tensor_activation( inputs, arguments )
+                );
     }
 
     @Override
     public Tsr<?> executeDerive(Tsr<?>[] inputs, int d, int j) {
         Args arguments = Args.of(Arg.DerivIdx.of(d), Arg.VarIdx.of(j));
-        return Neureka.get()
-                        .context()
-                        .functionCache()
-                        .preprocess(
-                                (Tsr<Object>[]) inputs,
-                                this,
-                                ()-> _tensor_activation( inputs, arguments ),
-                                arguments
-                        );
+        return preprocess(
+                   (Tsr<Object>[]) inputs,
+                   this,
+                   ()-> _tensor_activation( inputs, arguments )
+                );
     }
 
     @Override
     public Tsr<?> executeDerive(Tsr<?>[] inputs, int d) {
         Args arguments = Args.of( Arg.VarIdx.of(-1), Arg.DerivIdx.of(d) );
-        return Neureka.get()
-                        .context()
-                        .functionCache()
-                        .preprocess(
-                                (Tsr<Object>[]) inputs,
-                                this,
-                                ()-> _tensor_activation( inputs, arguments ),
-                                arguments
-                        );
+        return preprocess(
+                    (Tsr<Object>[]) inputs,
+                    this,
+                    ()-> _tensor_activation( inputs, arguments )
+                );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -476,4 +461,54 @@ public class FunctionNode extends AbstractBaseFunction
     public boolean isDoingAD() {
         return this._isDoingAD;
     }
+
+
+    private Tsr<Object> preprocess(
+            Tsr<Object>[] inputs,
+            Function function,
+            Supplier<Tsr<Object>> activation
+    ) {
+        if ( !function.isDoingAD() ) {
+            return activation.get(); // TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD => NO GRAPH NODES
+        }
+        boolean allLocked = true; // Input tensors might all have graph nodes which are left from previous computation.
+        // ( => needs to be locked again! )
+        Tsr<?> untracked = null;
+        for ( Tsr<?> t : inputs ) {
+            GraphNode<Object> node = t.get( GraphNode.class );
+            if ( node != null ) {
+                untracked = t;
+                allLocked = node.getLock().isLocked() && allLocked;
+            }
+        }
+        if ( untracked == null || !allLocked ) { // If graph tracking (nodes) has not yet been initialized!
+            return commit( inputs, function, activation );
+        }
+        GraphLock lock =  untracked.get( GraphNode.class ).getLock();
+        for ( Tsr<Object> t : inputs ) {
+            if ( t.has( GraphNode.class ) ) t.get( GraphNode.class ).obtainLocking( lock );
+            else new GraphNode( function, lock, () -> t );
+        }
+        Tsr<Object> result = activation.get();
+        return result;
+    }
+
+    private static <T> Tsr<T> commit(
+            Tsr<?>[] inputs, Function function, Supplier<Tsr<Object>> activation
+    ) {
+        Tsr.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
+
+        GraphLock newLock = new GraphLock( function );
+        for ( Tsr<?> t : inputs ) {
+            if ( t.has( GraphNode.class ) ) t.get( GraphNode.class ).obtainLocking( newLock );
+            else new GraphNode( function, newLock, () -> t );
+        }
+        Tsr<T> result;
+        if ( activation == null ) result = (Tsr<T>) function.execute( inputs );
+        else result = (Tsr<T>) activation.get();
+
+        newLock.release();
+        return result;
+    }
+
 }

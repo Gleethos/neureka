@@ -62,36 +62,4 @@ public final class Cache
         return this.functionCache;
     }
 
-    public synchronized Tsr<Object> preprocess(
-            Tsr<Object>[] inputs,
-            Function function,
-            Supplier<Tsr<Object>> activation,
-            Args arguments
-    ) {
-        if ( !function.isDoingAD() ) {
-            return activation.get(); // TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD => NO GRAPH NODES
-        }
-        boolean allLocked = true; // Input tensors might all have graph nodes which are left from previous computation.
-        // ( => needs to be locked again! )
-        Tsr<?> untracked = null;
-        for ( Tsr<?> t : inputs ) {
-            GraphNode<Object> node = t.get( GraphNode.class );
-            if ( node != null ) {
-                untracked = t;
-                allLocked = node.getLock().isLocked() && allLocked;
-            }
-        }
-        if ( untracked == null || !allLocked ) { // If graph tracking (nodes) has not yet been initialized!
-            return Function.Setup.commit( inputs, function, activation );
-        }
-        GraphLock lock =  untracked.get( GraphNode.class ).getLock();
-        for ( Tsr<Object> t : inputs ) {
-            if ( t.has( GraphNode.class ) ) t.get( GraphNode.class ).obtainLocking( lock );
-            else new GraphNode( function, lock, () -> t );
-        }
-        Tsr<Object> result = activation.get();
-        return result;
-    }
-
-
 }

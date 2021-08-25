@@ -299,7 +299,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             else if ( o instanceof  Boolean ) doAD = (Boolean) o;
         }
         if ( tensors == null || tensors.length == 0 || tensors[ 0 ] == null ) return new Tsr<>();
-        return Function.Setup.commit( tensors, Function.of( f.toString(), doAD ) );
+        return Function.of( f.toString(), doAD ).call( tensors );
     }
 
 
@@ -739,7 +739,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     private static <V> Tsr<V> _constructFunctional( Tsr<V> drain, Tsr<V>[] tensors, String expression, boolean doAD )
     {
         if ( tensors == null || tensors.length == 0 || tensors[ 0 ] == null ) return drain;
-        return Function.Setup.commit( tensors, Function.of(expression, doAD) );
+        return Function.of(expression, doAD).call( tensors );
     }
 
 
