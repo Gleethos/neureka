@@ -192,22 +192,22 @@ public interface Function
 
     //------------------------------------------------------------------------------------------------------------------
 
-    <T> Tsr<T> call( Tsr<T>[] inputs, int j );
+    default <T> Tsr<T> call( Tsr<T>[] inputs, int j ) { return (Tsr<T>) execute(inputs, j); }
     default <T> Tsr<T> invoke( Tsr<T>[] inputs, int j ) { return call( inputs, j ); }
 
-    <T> Tsr<T> call( Tsr<T>... inputs );
+    default <T> Tsr<T> call( Tsr<T>... inputs ) { return (Tsr<T>) execute(inputs); }
     default <T> Tsr<T> invoke( Tsr<T>... inputs ) { return call( inputs ); }
 
     //------------------------------------------------------------------------------------------------------------------
 
 
-    <T> Tsr<T> derive( Tsr<T>[] inputs, int index, int j );
-    <T> Tsr<T> derive( Tsr<T>[] inputs, int index );
+    default <T> Tsr<T> derive( Tsr<T>[] inputs, int d, int j ) { return (Tsr<T>) executeDerive( inputs, d, j ); }
+    default <T> Tsr<T> derive( Tsr<T>[] inputs, int d ) { return (Tsr<T>) executeDerive( inputs, d ); }
 
     //---
 
-    <T> Tsr<T> derive( List<Tsr<T>> inputs, int index, int j );
-    <T> Tsr<T> derive( List<Tsr<T>> inputs, int index );
+    default <T> Tsr<T> derive( List<Tsr<T>> inputs, int index, int j ) { return derive( inputs.toArray( new Tsr[ 0 ] ), index, j ); }
+    default <T> Tsr<T> derive( List<Tsr<T>> inputs, int index ) { return derive( inputs.toArray( new Tsr[ 0 ] ), index ); }
 
     //---
 
