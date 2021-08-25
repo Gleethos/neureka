@@ -4,7 +4,6 @@ package neureka.calculus.implementations;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.operations.AbstractOperation;
-import neureka.calculus.AbstractBaseFunction;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 
@@ -27,7 +26,7 @@ import java.util.List;
  *  will pick the second argument when evaluating the array of arguments.
  *
  */
-public class FunctionInput extends AbstractBaseFunction implements GradientProvider
+public class FunctionInput implements Function, GradientProvider
 {
     private int _index;
 

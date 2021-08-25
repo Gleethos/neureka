@@ -132,7 +132,12 @@ public interface Function
     List<Function> getSubFunctions();
 
     default List<Function> getAllFunctions() {
-        return _unpack( this.getSubFunctions() );
+        List<Function> allFuns = new ArrayList<>();
+        allFuns.add(this);
+        for ( Function fun : this.getSubFunctions() ) {
+            allFuns.addAll(fun.getAllFunctions());
+        }
+        return allFuns;
     }
 
     default int numberOfArgs() {
@@ -144,18 +149,6 @@ public interface Function
                         .distinct()
                         .count();
     }
-
-    static List<Function> _unpack( List<Function> functions ) {
-        List<Function> collected = new ArrayList<>();
-        __unpack(functions, collected);
-        return collected;
-    }
-
-    static void __unpack( List<Function> functions, List<Function> target ) {
-        target.addAll(functions);
-        for ( Function fun : functions ) __unpack(fun.getSubFunctions(), target);
-    }
-
 
     //------------------------------------------------------------------------------------------------------------------
 

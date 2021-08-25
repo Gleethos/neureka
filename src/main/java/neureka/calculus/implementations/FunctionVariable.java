@@ -3,7 +3,6 @@ package neureka.calculus.implementations;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.operations.AbstractOperation;
-import neureka.calculus.AbstractBaseFunction;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 
@@ -23,7 +22,7 @@ import java.util.List;
  *  ...then the substrings "I[j]" will be parsed into instances of this class!              <br>
  *  The substring "I[0]" on the other hand will not be parsed into an instance of this class!
  */
-public class FunctionVariable extends AbstractBaseFunction implements GradientProvider {
+public class FunctionVariable implements Function, GradientProvider {
 
     private boolean _providesGradient = false;
 

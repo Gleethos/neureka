@@ -7,7 +7,6 @@ import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.standard.algorithms.Activation;
-import neureka.calculus.AbstractBaseFunction;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-public class FunctionNode extends AbstractBaseFunction
+public class FunctionNode implements Function
 {
     private static Logger _LOG = LoggerFactory.getLogger(FunctionNode.class);
 

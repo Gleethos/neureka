@@ -3,7 +3,6 @@ package neureka.calculus.implementations;
 import neureka.Tsr;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.calculus.Function;
-import neureka.calculus.AbstractBaseFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.List;
  *  ...then the substrings "4" and "2.1" will be parsed into instances of this class!   		<br>
  *
  */
-public class FunctionConstant extends AbstractBaseFunction
+public class FunctionConstant implements Function
 {
 	private double _value;
 	public double value() {
