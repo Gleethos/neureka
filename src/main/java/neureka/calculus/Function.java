@@ -100,18 +100,13 @@ public interface Function
      */
     class Setup
     {
-        public static <T> Tsr<T> commit( Tsr<T> drain, Tsr<T>[] tensors, String operation, boolean doAD )
+        public static <T> Tsr<T> commit( Tsr<T>[] inputs, Function function )
         {
-            return commit( drain, tensors, new FunctionBuilder(Neureka.get().context()).build( operation, doAD ) );
-        }
-
-        public static <T> Tsr<T> commit( Tsr<T> drain, Tsr<T>[] inputs, Function function )
-        {
-            return commit( drain, inputs, function, null );
+            return commit( inputs, function, null );
         }
 
         public static <T> Tsr<T> commit(
-                Tsr<?> drain, Tsr<?>[] inputs, Function function, Supplier<Tsr<Object>> activation
+                Tsr<?>[] inputs, Function function, Supplier<Tsr<Object>> activation
         ) {
             Tsr.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
 
@@ -125,18 +120,7 @@ public interface Function
             else result = (Tsr<T>) activation.get();
 
             newLock.release();
-            boolean resultIsUnique = true;
-            if ( drain != null ) {
-                for( Tsr<?> t : inputs ) {
-                    Tsr<?> g = t.getGradient();
-                    if ( t == result || ( g != null && g == result ) ) {
-                        resultIsUnique = false;
-                        break;
-                    }
-                }
-            }
-            if ( resultIsUnique ) return result;
-            else return null;
+            return result;
         }
     }
 

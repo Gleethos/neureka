@@ -82,7 +82,7 @@ public final class Cache
             }
         }
         if ( untracked == null || !allLocked ) { // If graph tracking (nodes) has not yet been initialized!
-            return Function.Setup.commit( null, inputs, function, activation );
+            return Function.Setup.commit( inputs, function, activation );
         }
         GraphLock lock =  untracked.get( GraphNode.class ).getLock();
         for ( Tsr<Object> t : inputs ) {
