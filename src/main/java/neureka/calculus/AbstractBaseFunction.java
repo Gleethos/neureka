@@ -46,23 +46,6 @@ import java.util.List;
 public abstract class AbstractBaseFunction implements Function
 {
 
-    @Override
-    public double call( double input ) {
-        return call(new double[]{input});
-    }
-
-    @Override
-    public <T> Tsr<T> call( Tsr<T> input ) {
-        return call(new Tsr[]{input});
-    }
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    @Override
-    public <T> Tsr<T> call( List<Tsr<T>> inputs ) {
-        return call(inputs.toArray(new Tsr[ 0 ]));
-    }
-
     //------------------------------------------------------------------------------------------------------------------
 
     @Override

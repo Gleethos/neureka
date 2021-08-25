@@ -159,7 +159,7 @@ public interface Function
 
     //------------------------------------------------------------------------------------------------------------------
 
-    double call( double input );
+    default double call( double input ) { return call( new double[]{input} ); }
     default double invoke( double input ) { return call( input ); }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -184,10 +184,10 @@ public interface Function
 
     //------------------------------------------------------------------------------------------------------------------
 
-    <T> Tsr<T> call( Tsr<T> input );
+    default <T> Tsr<T> call( Tsr<T> input ) { return call( new Tsr[]{input} ); }
     default <T> Tsr<T> invoke( Tsr<T> input ) { return call(input); }
 
-    <T> Tsr<T> call( List<Tsr<T>> input );
+    default <T> Tsr<T> call( List<Tsr<T>> input ) { return call(input.toArray(new Tsr[ 0 ])); }
     default <T> Tsr<T> invoke( List<Tsr<T>> input ) { return call( input ); }
 
     //------------------------------------------------------------------------------------------------------------------
