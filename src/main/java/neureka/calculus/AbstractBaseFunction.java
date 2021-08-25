@@ -63,45 +63,6 @@ public abstract class AbstractBaseFunction implements Function
         return call(inputs.toArray(new Tsr[ 0 ]));
     }
 
-    @Override
-    public <T> Tsr<T> invoke( List<Tsr<T>> inputs ) {
-        return call( inputs );
-    }
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    @Override
-    public double invoke( double input ) {
-        return call( input );
-    }
-
-    @Override
-    public double invoke( double[] inputs, int j ) {
-        return call( inputs, j );
-    }
-
-    @Override
-    public double invoke( double... inputs ) {
-        return call( inputs );
-    }
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    @Override
-    public <T> Tsr<T> invoke( Tsr<T> input ) {
-        return call( input );
-    }
-
-    @Override
-    public <T> Tsr<T> invoke( Tsr<T>[] inputs, int j ) {
-        return call( inputs, j );
-    }
-
-    @Override
-    public <T> Tsr<T> invoke( Tsr<T>... inputs ) {
-        return call( inputs );
-    }
-
     //------------------------------------------------------------------------------------------------------------------
 
     @Override

@@ -160,16 +160,16 @@ public interface Function
     //------------------------------------------------------------------------------------------------------------------
 
     double call( double input );
-    double invoke( double input );
+    default double invoke( double input ) { return call( input ); }
 
     //------------------------------------------------------------------------------------------------------------------
 
     double call( double[] inputs, int j );
-    double invoke( double[] inputs, int j );
+    default double invoke( double[] inputs, int j ) { return call( inputs, j ); }
 
 
     double call( double... inputs );
-    double invoke( double... inputs );
+    default double invoke( double... inputs ) { return call( inputs ); }
 
 
     double derive( double[] inputs, int index, int j );
@@ -185,18 +185,18 @@ public interface Function
     //------------------------------------------------------------------------------------------------------------------
 
     <T> Tsr<T> call( Tsr<T> input );
-    <T> Tsr<T> invoke( Tsr<T> input );
+    default <T> Tsr<T> invoke( Tsr<T> input ) { return call(input); }
 
     <T> Tsr<T> call( List<Tsr<T>> input );
-    <T> Tsr<T> invoke( List<Tsr<T>> input );
+    default <T> Tsr<T> invoke( List<Tsr<T>> input ) { return call( input ); }
 
     //------------------------------------------------------------------------------------------------------------------
 
     <T> Tsr<T> call( Tsr<T>[] inputs, int j );
-    <T> Tsr<T> invoke( Tsr<T>[] inputs, int j );
+    default <T> Tsr<T> invoke( Tsr<T>[] inputs, int j ) { return call( inputs, j ); }
 
     <T> Tsr<T> call( Tsr<T>... inputs );
-    <T> Tsr<T> invoke( Tsr<T>... inputs );
+    default <T> Tsr<T> invoke( Tsr<T>... inputs ) { return call( inputs ); }
 
     //------------------------------------------------------------------------------------------------------------------
 
