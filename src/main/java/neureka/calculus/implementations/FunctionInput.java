@@ -32,36 +32,24 @@ public class FunctionInput implements Function, GradientProvider
 
     //------------------------------------------------------------------------------------------------------------------
 
-    public boolean providesGradient() {
-        return (_index<0);
-    }
+    public boolean providesGradient() { return ( _index < 0 ); }
 
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public boolean isFlat() {
-        return true;
-    }
+    public boolean isFlat() { return true; }
 
     @Override
-    public boolean isDoingAD() {
-        return false;
-    }
+    public boolean isDoingAD() { return false; }
 
     @Override
-    public AbstractOperation getOperation() {
-        return null;
-    }
+    public AbstractOperation getOperation() { return null; }
 
     @Override
-    public boolean dependsOn( int index ) {
-        return index() == index;
-    }
+    public boolean dependsOn( int index ) { return index() == index; }
 
     @Override
-    public Function getDerivative( int index ) {
-        return ( index == _index ) ? Function.of( "1" ) : Function.of( "0" );
-    }
+    public Function getDerivative( int index ) { return ( index == _index ) ? Function.of( "1" ) : Function.of( "0" ); }
 
     @Override
     public List<Function> getSubFunctions() { return new ArrayList<>(); }
@@ -71,32 +59,31 @@ public class FunctionInput implements Function, GradientProvider
     @Override
     public Function newBuild(final String equation) {
 
-        if (equation.charAt( 0 )=='-') {
+        if ( equation.charAt( 0 ) == '-' ) {
             return new FunctionBuilder(Neureka.get().context()).build(equation.substring(1)+"*-1", true); // TODO: This might be false!
         }
         int number = 0;
         for ( int i = 0; i < equation.length(); ++i) {
-            if (equation.charAt( i ) <= '9' && equation.charAt( i ) >= '0') {
+            if ( equation.charAt( i ) <= '9' && equation.charAt( i ) >= '0' ) {
                 number *= 10;
                 number += Integer.parseInt(equation.charAt( i ) + "");
             }
         }
         _index = number;
-        if (equation.contains("g")) {
-            _index = -(_index + 1 );
+        if ( equation.contains("g") ) {
+            _index = -( _index + 1 );
         }
-
         return this;
     }
 
-    private Tsr<?> _extract(Tsr<?> t)
+    private Tsr<?> _extract( Tsr<?> t )
     {
-        if (this.providesGradient()) {
+        if ( this.providesGradient() ) {
             Tsr<?> gradient = t.getGradient();
-            if (t.rqsGradient()) {
-                if (gradient==null) {
-                    gradient = Tsr.of(t.shape(), 0);
-                    t.set((Tsr)gradient);
+            if ( t.rqsGradient() ) {
+                if ( gradient == null ) {
+                    gradient = Tsr.of( t.shape(), 0 );
+                    t.set( (Tsr) gradient );
                 }
                 return gradient;
             }
@@ -108,58 +95,42 @@ public class FunctionInput implements Function, GradientProvider
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public double call(final double[] inputs, int j) {
+    public double call( final double[] inputs, int j ) {
+        if ( j < 0 ) {
+            return inputs[ ( _index >= 0 ) ? _index : ( Math.abs( _index ) - 1 ) ];
+        }
         return inputs[index()];
     }
 
     @Override
-    public double call(final double... inputs) {
-        return inputs[(_index>=0)?_index:(Math.abs(_index)-1)];
-    }
+    public double derive( final double[] inputs, final int index ) { return ( index == index() ) ? 1 : 0; }
 
     @Override
-    public double derive(final double[] inputs, final int index) {
-        return (index == index()) ? 1 : 0;
-    }
-
-    @Override
-    public double derive(double[] inputs, int index, int j) {
-        return derive(inputs, index);
-    }
+    public double derive( double[] inputs, int index, int j ) { return derive( inputs, index ); }
 
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public Tsr<?> execute(Tsr<?>[] inputs, int j) {
-        return _extract(inputs[index()]);
-    }
+    public Tsr<?> execute( Tsr<?>[] inputs, int j ) { return _extract( inputs[ index() ] ); }
 
     @Override
-    public Tsr<?> execute(Tsr<?>... inputs) {
-        return _extract(inputs[index()]);
-    }
+    public Tsr<?> execute( Tsr<?>... inputs ) { return _extract( inputs[ index() ] ); }
 
     @Override
-    public Tsr<?> executeDerive(Tsr<?>[] inputs, int index, int j) {
-        return executeDerive(inputs, index);
-    }
+    public Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) { return executeDerive( inputs, index ); }
 
     @Override
-    public Tsr<?> executeDerive(Tsr<?>[] inputs, int index) {
+    public Tsr<?> executeDerive( Tsr<?>[] inputs, int index ) {
         return ( index == index() )
-                ? Tsr.of(inputs[ 0 ].shape(), 1.0)
-                : Tsr.of(inputs[ 0 ].shape(), 0.0);
+                ? Tsr.of( inputs[ 0 ].shape(), 1.0 )
+                : Tsr.of( inputs[ 0 ].shape(), 0.0 );
     }
 
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public String toString() {
-        return "I"+((this.providesGradient())?"g":"")+"[" + index() + "]";
-    }
+    public String toString() { return "I" + ( this.providesGradient() ? "g" : "" ) + "[" + index() + "]"; }
 
-    public int index() {
-        return ((this.providesGradient())?(Math.abs(_index)-1):_index);
-    }
+    public int index() { return ( this.providesGradient() ? ( Math.abs(_index) - 1 ) : _index ); }
 
 }

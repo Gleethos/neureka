@@ -435,11 +435,6 @@ public class FunctionNode implements Function
     }
 
     @Override
-    public double call( final double... inputs ) {
-        return this.getOperation().calculate( inputs, -1, -1, _src );
-    }
-
-    @Override
     public double derive( final double[] inputs, final int d, final int j ) {
         return this.getOperation().calculate( inputs, j, d, _src );
     }

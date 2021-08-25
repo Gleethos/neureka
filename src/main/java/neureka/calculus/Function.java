@@ -161,7 +161,7 @@ public interface Function
     default double invoke( double[] inputs, int j ) { return call( inputs, j ); }
 
 
-    double call( double... inputs );
+    default double call( double... inputs ) { return call( inputs, -1 ); }
     default double invoke( double... inputs ) { return call( inputs ); }
 
 

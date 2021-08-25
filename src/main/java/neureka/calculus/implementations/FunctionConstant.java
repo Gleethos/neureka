@@ -22,36 +22,25 @@ import java.util.List;
 public class FunctionConstant implements Function
 {
 	private double _value;
-	public double value() {
-		return this._value;
-	}
+
+	public double value() { return this._value; }
 
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public boolean isFlat() {
-		return  false;
-	}
+	public boolean isFlat() { return  false; }
 
 	@Override
-	public boolean isDoingAD() {
-		return false;
-	}
+	public boolean isDoingAD() { return false; }
 
 	@Override
-	public AbstractOperation getOperation() {
-		return null;
-	}
+	public AbstractOperation getOperation() { return null; }
 
 	@Override
-	public boolean dependsOn( int index ) {
-		return false;
-	}
+	public boolean dependsOn( int index ) { return false; }
 
 	@Override
-	public Function getDerivative( int index ) {
-		return Function.of( "0" );
-	}
+	public Function getDerivative( int index ) { return Function.of( "0" ); }
 
 	@Override
 	public List<Function> getSubFunctions() { return new ArrayList<>(); }
@@ -78,53 +67,32 @@ public class FunctionConstant implements Function
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-    public double call( final double[] inputs, int j ) {
-    	return _value;
-    }
+    public double call( final double[] inputs, int j ) { return _value; }
 
 	@Override
-	public double call( double... inputs ) {
-		return _value;
-	}
+	public double derive( double[] inputs, int index ) { return 0; }
 
 	@Override
-	public double derive( double[] inputs, int index ) {
-		return 0;
-	}
-
-	@Override
-	public double derive( double[] inputs, int index, int j ) {
-		return 0;
-	}
+	public double derive( double[] inputs, int index, int j ) { return 0; }
 
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public Tsr<?> execute(Tsr<?>... inputs) {
-		return Tsr.of( inputs[ 0 ].shape(), this._value );
-	}
+	public Tsr<?> execute( Tsr<?>... inputs ) { return Tsr.of( inputs[ 0 ].shape(), this._value ); }
 
 	@Override
-	public Tsr<?> execute( Tsr<?>[] inputs, int j ) {
-		return Tsr.of( inputs[ 0 ].shape(), this._value );
-	}
+	public Tsr<?> execute( Tsr<?>[] inputs, int j ) { return Tsr.of( inputs[ 0 ].shape(), this._value ); }
 
 	@Override
-	public Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) {
-		return Tsr.of( inputs[ 0 ].shape(), 0.0 );
-	}
+	public Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) { return Tsr.of( inputs[ 0 ].shape(), 0.0 ); }
 
 	@Override
-	public Tsr<?> executeDerive( Tsr<?>[] inputs, int index ) {
-		return Tsr.of( inputs[ 0 ].shape(), 0.0 );
-	}
+	public Tsr<?> executeDerive( Tsr<?>[] inputs, int index ) { return Tsr.of( inputs[ 0 ].shape(), 0.0 ); }
 
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public String toString() {
-		return _value +"";
-	}
+	public String toString() { return String.valueOf( _value ); }
 
 
 }

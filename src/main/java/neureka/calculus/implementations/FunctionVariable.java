@@ -66,19 +66,14 @@ public class FunctionVariable implements Function, GradientProvider {
         return this;
     }
 
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     @Override
     public double call( final double[] inputs, int j ) {
+        if ( j < 0 ) {
+            double sum = 0;
+            for ( int i = 0; i < inputs.length; i++ ) sum += call(inputs, i);
+            return sum;
+        }
         return inputs[j];
-    }
-
-    @Override
-    public double call( final double... inputs ) {
-        double sum = 0;
-        for ( int i = 0; i < inputs.length; i++ ) sum += call(inputs, i);
-        return sum;
     }
 
     @Override
