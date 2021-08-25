@@ -67,7 +67,7 @@ public class BroadSystemTest
         tensor2 = Tsr.of(-4);
         tensor3 = Tsr.of(2);
         try {
-            Function.Setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "(Ig[0]<-I[1])->I[2]", true);
+            Function.Setup.commit(null, new Tsr[]{tensor1, tensor2, tensor3}, Function.of("(Ig[0]<-I[1])->I[2]", true));
         } catch ( Exception e ) {
             tester.testContains(
                     e.getClass().getName()+" : "+e.getMessage(),
@@ -75,7 +75,7 @@ public class BroadSystemTest
                     "Non-detached functions performing inline operations will throw exceptions on active autograd computation graphs!"
             );
         }
-        Tsr<Double> result = Function.Setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "(Ig[0]<-I[1])->I[2]", false);
+        Tsr<Double> result = Function.Setup.commit(null, new Tsr[]{tensor1, tensor2, tensor3}, Function.of("(Ig[0]<-I[1])->I[2]", false));
         tester.testContains(
                 result.toString(),
                 new String[]{"(-4.0)"},
@@ -310,7 +310,7 @@ public class BroadSystemTest
         assert tensor2.getNDConf() != null;
         assert tensor3.getNDConf() != null;
 
-        result = Function.Setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i0<<xi1<<xi2", true);
+        result = Function.Setup.commit(null, new Tsr[]{tensor1, tensor2, tensor3}, Function.of("i0<<xi1<<xi2", true));
         tester.testContains(
                 result.toString(),
                 new String[]{"[2x3]:(-26.0, 10.0, 32.0, 15.0, 34.0, 3.0)"},
@@ -322,7 +322,7 @@ public class BroadSystemTest
                 new String[]{"[2x3]:(-26.0, 10.0, 32.0, 15.0, 34.0, 3.0)"}
         );
 
-        result = Function.Setup.commit(new Tsr[]{tensor1, tensor2, tensor3}, "i2x>>i1x>>i0", true);
+        result = Function.Setup.commit(null, new Tsr[]{tensor1, tensor2, tensor3}, Function.of("i2x>>i1x>>i0", true));
         tester.testContains(
                 result.toString(),
                 new String[]{"[2x3]:(-26.0, 10.0, 32.0, 15.0, 34.0, 3.0)"},

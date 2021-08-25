@@ -2257,7 +2257,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             valueIsDeviceVisitor = true;
         }
         if ( this.isEmpty() && slice.isEmpty() || slice.size() != value.size() ) _become( value ); // TODO: Rethink this a little
-        else return _constructFunctional( newInstance(), new Tsr[]{ slice, value }, "I[ 0 ] <- I[ 1 ]", false );
+        else return _constructFunctional( null, new Tsr[]{ slice, value }, "I[ 0 ] <- I[ 1 ]", false );
         try {
             if ( valueIsDeviceVisitor ) value.get( Device.class ).restore( value );
         } catch ( Exception exception ) {

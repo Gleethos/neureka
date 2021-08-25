@@ -100,11 +100,6 @@ public interface Function
      */
     class Setup
     {
-        public static <T> Tsr<T> commit( Tsr<T>[] tensors, String operation, boolean doAD )
-        {
-            return commit( null, tensors, new FunctionBuilder(Neureka.get().context()).build( operation, doAD ) );
-        }
-
         public static <T> Tsr<T> commit( Tsr<T> drain, Tsr<T>[] tensors, String operation, boolean doAD )
         {
             return commit( drain, tensors, new FunctionBuilder(Neureka.get().context()).build( operation, doAD ) );
