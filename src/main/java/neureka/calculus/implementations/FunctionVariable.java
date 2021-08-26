@@ -90,14 +90,12 @@ public class FunctionVariable implements Function, GradientProvider {
 
     @Override
     public Tsr<?> execute( Tsr<?>[] inputs, int j ) {
+        if ( j < 0 ) {
+            StringBuilder exp = new StringBuilder("I[ 0 ]");
+            for(int i=1; i<inputs.length; i++) exp.append("+I[").append(i).append("]");
+            return new FunctionBuilder(Neureka.get().context()).build(exp.toString(), false).execute( inputs );
+        }
         return inputs[j];
-    }
-
-    @Override
-    public Tsr<?> execute( Tsr<?>... inputs ) {
-        StringBuilder exp = new StringBuilder("I[ 0 ]");
-        for(int i=1; i<inputs.length; i++) exp.append("+I[").append(i).append("]");
-        return new FunctionBuilder(Neureka.get().context()).build(exp.toString(), false).execute( inputs );
     }
 
     @Override

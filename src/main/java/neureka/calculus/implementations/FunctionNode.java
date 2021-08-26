@@ -385,17 +385,6 @@ public class FunctionNode implements Function
         return onSameGuestDevice;
     }
 
-   //###
-
-    @Override
-    public Tsr<?> execute(Tsr<?>... inputs) {
-        Args arguments = Args.of(Arg.VarIdx.of(-1), Arg.DerivIdx.of(-1));
-        return preprocess(
-                    (Tsr<Object>[]) inputs,
-                    this,
-                    ()-> _tensor_activation( inputs, arguments )
-                );
-    }
 
     @Override
     public Tsr<?> execute(Tsr<?>[] inputs, int j) {
@@ -403,7 +392,7 @@ public class FunctionNode implements Function
         return preprocess(
                     (Tsr<Object>[]) inputs,
                     this,
-                    ()-> _tensor_activation( inputs, arguments )
+                    () -> _tensor_activation( inputs, arguments )
                 );
     }
 
@@ -413,7 +402,7 @@ public class FunctionNode implements Function
         return preprocess(
                    (Tsr<Object>[]) inputs,
                    this,
-                   ()-> _tensor_activation( inputs, arguments )
+                   () -> _tensor_activation( inputs, arguments )
                 );
     }
 

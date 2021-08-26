@@ -78,9 +78,6 @@ public class FunctionConstant implements Function
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public Tsr<?> execute( Tsr<?>... inputs ) { return Tsr.of( inputs[ 0 ].shape(), this._value ); }
-
-	@Override
 	public Tsr<?> execute( Tsr<?>[] inputs, int j ) { return Tsr.of( inputs[ 0 ].shape(), this._value ); }
 
 	@Override

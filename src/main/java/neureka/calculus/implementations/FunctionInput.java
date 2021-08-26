@@ -114,9 +114,6 @@ public class FunctionInput implements Function, GradientProvider
     public Tsr<?> execute( Tsr<?>[] inputs, int j ) { return _extract( inputs[ index() ] ); }
 
     @Override
-    public Tsr<?> execute( Tsr<?>... inputs ) { return _extract( inputs[ index() ] ); }
-
-    @Override
     public Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) { return executeDerive( inputs, index ); }
 
     @Override
