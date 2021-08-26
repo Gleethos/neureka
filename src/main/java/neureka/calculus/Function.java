@@ -152,7 +152,7 @@ public interface Function
 
     //------------------------------------------------------------------------------------------------------------------
 
-    default double call( double input ) { return call( new double[]{input} ); }
+    default double call( double input )   { return call( new double[]{input} ); }
     default double invoke( double input ) { return call( input ); }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -173,7 +173,7 @@ public interface Function
     default Tsr<?> execute( Tsr<?>... inputs ) { return execute( inputs, -1 ); }
     Tsr<?> execute( Tsr<?>[] inputs, int j );
     Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j );
-    Tsr<?> executeDerive( Tsr<?>[] inputs, int index );
+    default Tsr<?> executeDerive( Tsr<?>[] inputs, int index ) { return executeDerive( inputs, index, -1 ); }
 
     //------------------------------------------------------------------------------------------------------------------
 

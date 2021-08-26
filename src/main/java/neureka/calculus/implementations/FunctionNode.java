@@ -406,16 +406,6 @@ public class FunctionNode implements Function
                 );
     }
 
-    @Override
-    public Tsr<?> executeDerive(Tsr<?>[] inputs, int d) {
-        Args arguments = Args.of( Arg.VarIdx.of(-1), Arg.DerivIdx.of(d) );
-        return preprocess(
-                    (Tsr<Object>[]) inputs,
-                    this,
-                    ()-> _tensor_activation( inputs, arguments )
-                );
-    }
-
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override

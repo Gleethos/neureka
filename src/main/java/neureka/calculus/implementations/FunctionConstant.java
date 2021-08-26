@@ -83,9 +83,6 @@ public class FunctionConstant implements Function
 	@Override
 	public Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) { return Tsr.of( inputs[ 0 ].shape(), 0.0 ); }
 
-	@Override
-	public Tsr<?> executeDerive( Tsr<?>[] inputs, int index ) { return Tsr.of( inputs[ 0 ].shape(), 0.0 ); }
-
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
