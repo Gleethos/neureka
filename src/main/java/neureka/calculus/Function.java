@@ -188,8 +188,8 @@ public interface Function
     Tsr<?> execute( Args arguments, Tsr<?>... tensors );
 
     default Tsr<?> execute( Tsr<?>... inputs ) { return execute( inputs, -1 ); }
-    Tsr<?> execute( Tsr<?>[] inputs, int j );
-    Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j );
+    default Tsr<?> execute( Tsr<?>[] inputs, int j ) { return execute(Args.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(j)), inputs); }
+    default Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) { return execute(Args.of(Arg.DerivIdx.of(index), Arg.VarIdx.of(j)), inputs); }
     default Tsr<?> executeDerive( Tsr<?>[] inputs, int index ) { return executeDerive( inputs, index, -1 ); }
 
     //------------------------------------------------------------------------------------------------------------------
