@@ -39,15 +39,14 @@ package neureka.calculus;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.GraphLock;
-import neureka.autograd.GraphNode;
 import neureka.backend.api.Operation;
+import neureka.calculus.args.Arg;
+import neureka.calculus.args.Args;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.implementations.FunctionInput;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  *  Besides the {@link Tsr} class, which is the core class of Neureka, this interface and its implementations
@@ -170,6 +169,24 @@ public interface Function
 
     //------------------------------------------------------------------------------------------------------------------
 
+    interface Call {
+        <T> Tsr<T> call( Tsr<T>... tensors );
+        <T> Tsr<T> invoke( Tsr<T>... tensors );
+    }
+
+    default Call with( Arg<?>... arguments ) { return with( Args.of( arguments ) ); }
+
+    default Call with( Args arguments ) {
+       return new Call() {
+           @Override public <T> Tsr<T> call( Tsr<T>... tensors )   { return Function.this.call( arguments, tensors ); }
+           @Override public <T> Tsr<T> invoke( Tsr<T>... tensors ) { return Function.this.invoke( arguments, tensors ); }
+       };
+    }
+
+    default <T> Tsr<T> call( Args arguments, Tsr<T>... tensors )   { return (Tsr<T>) execute( arguments, tensors ); }
+    default <T> Tsr<T> invoke( Args arguments, Tsr<T>... tensors ) { return (Tsr<T>) execute( arguments, tensors ); }
+    Tsr<?> execute( Args arguments, Tsr<?>... tensors );
+
     default Tsr<?> execute( Tsr<?>... inputs ) { return execute( inputs, -1 ); }
     Tsr<?> execute( Tsr<?>[] inputs, int j );
     Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j );
@@ -177,7 +194,7 @@ public interface Function
 
     //------------------------------------------------------------------------------------------------------------------
 
-    default <T> Tsr<T> call( Tsr<T> input )   { return call( new Tsr[]{input} ); }
+    default <T> Tsr<T> call( Tsr<T> input )   { return call( new Tsr[]{ input } ); }
     default <T> Tsr<T> invoke( Tsr<T> input ) { return call( input );            }
 
     default <T> Tsr<T> call( List<Tsr<T>> input )   { return call( input.toArray(new Tsr[ 0 ]) ); }

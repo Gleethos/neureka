@@ -4,6 +4,8 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
+import neureka.calculus.args.Args;
 import neureka.calculus.assembly.FunctionBuilder;
 
 import java.util.ArrayList;
@@ -104,6 +106,24 @@ public class FunctionVariable implements Function, GradientProvider {
             return Tsr.of( inputs[ 0 ].shape(), 1.0 );
         }
         return (j != index) ? Tsr.of( inputs[ 0 ].shape(), 0.0 ) : executeDerive( inputs, index );
+    }
+
+    @Override
+    public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
+        int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.getValOf(Arg.DerivIdx.class) : -1 );
+        int j = ( arguments.has(Arg.VarIdx.class) ? arguments.getValOf(Arg.VarIdx.class) : -1 );
+        if ( d >= 0 ) {
+            if ( j < 0 ) {
+                return Tsr.of( tensors[ 0 ].shape(), 1.0 );
+            }
+            return (j != d) ? Tsr.of( tensors[ 0 ].shape(), 0.0 ) : executeDerive( tensors, d );
+        }
+        if ( j < 0 ) {
+            StringBuilder exp = new StringBuilder("I[ 0 ]");
+            for(int i=1; i<tensors.length; i++) exp.append("+I[").append(i).append("]");
+            return new FunctionBuilder(Neureka.get().context()).build(exp.toString(), false).execute( tensors );
+        }
+        return tensors[j];
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

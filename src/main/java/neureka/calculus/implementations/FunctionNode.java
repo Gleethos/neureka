@@ -387,7 +387,7 @@ public class FunctionNode implements Function
 
 
     @Override
-    public Tsr<?> execute(Tsr<?>[] inputs, int j) {
+    public Tsr<?> execute( Tsr<?>[] inputs, int j ) {
         Args arguments = Args.of(Arg.VarIdx.of(j), Arg.DerivIdx.of(-1));
         return preprocess(
                     (Tsr<Object>[]) inputs,
@@ -397,13 +397,22 @@ public class FunctionNode implements Function
     }
 
     @Override
-    public Tsr<?> executeDerive(Tsr<?>[] inputs, int d, int j) {
+    public Tsr<?> executeDerive( Tsr<?>[] inputs, int d, int j ) {
         Args arguments = Args.of(Arg.DerivIdx.of(d), Arg.VarIdx.of(j));
         return preprocess(
                    (Tsr<Object>[]) inputs,
                    this,
                    () -> _tensor_activation( inputs, arguments )
                 );
+    }
+
+    @Override
+    public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
+        return preprocess(
+                (Tsr<Object>[]) tensors,
+                this,
+                () -> _tensor_activation( tensors, arguments )
+        );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

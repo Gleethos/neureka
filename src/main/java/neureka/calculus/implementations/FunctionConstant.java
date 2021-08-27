@@ -3,6 +3,8 @@ package neureka.calculus.implementations;
 import neureka.Tsr;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
+import neureka.calculus.args.Args;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +84,14 @@ public class FunctionConstant implements Function
 
 	@Override
 	public Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) { return Tsr.of( inputs[ 0 ].shape(), 0.0 ); }
+
+	@Override
+	public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
+		if ( arguments.has(Arg.DerivIdx.class) && arguments.getValOf(Arg.DerivIdx.class) > 0 ) {
+			return Tsr.of( tensors[ 0 ].shape(), 0.0 );
+		}
+		return Tsr.of( tensors[ 0 ].shape(), this._value );
+	}
 
 	//------------------------------------------------------------------------------------------------------------------
 

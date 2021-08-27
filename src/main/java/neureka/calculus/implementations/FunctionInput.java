@@ -5,6 +5,8 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
+import neureka.calculus.args.Args;
 import neureka.calculus.assembly.FunctionBuilder;
 
 import java.util.ArrayList;
@@ -119,6 +121,18 @@ public class FunctionInput implements Function, GradientProvider
                 ? Tsr.of( inputs[ 0 ].shape(), 1.0 )
                 : Tsr.of( inputs[ 0 ].shape(), 0.0 );
     }
+
+
+    @Override
+    public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
+        int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.getValOf(Arg.DerivIdx.class) : -1 );
+        if ( d >= 0 )
+            return ( d == index() )
+                ? Tsr.of( tensors[ 0 ].shape(), 1.0 )
+                : Tsr.of( tensors[ 0 ].shape(), 0.0 );
+        return _extract( tensors[ index() ] );
+    }
+
 
     //------------------------------------------------------------------------------------------------------------------
 
