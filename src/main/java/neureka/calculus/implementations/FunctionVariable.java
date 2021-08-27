@@ -85,43 +85,30 @@ public class FunctionVariable implements Function, GradientProvider {
 
     @Override
     public double derive( double[] inputs, int index, int j ) {
-        if (j != index) return 0;
-        return derive(inputs, index);
+        if ( j != index ) return 0;
+        return derive( inputs, index );
     }
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     @Override
-    public Tsr<?> execute( Tsr<?>[] inputs, int j ) {
-        if ( j < 0 ) {
-            StringBuilder exp = new StringBuilder("I[ 0 ]");
-            for(int i=1; i<inputs.length; i++) exp.append("+I[").append(i).append("]");
-            return new FunctionBuilder(Neureka.get().context()).build(exp.toString(), false).execute( inputs );
-        }
-        return inputs[j];
-    }
-
-    @Override
-    public Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) {
-        if ( j < 0 ) {
-            return Tsr.of( inputs[ 0 ].shape(), 1.0 );
-        }
-        return (j != index) ? Tsr.of( inputs[ 0 ].shape(), 0.0 ) : executeDerive( inputs, index );
-    }
-
-    @Override
     public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
         int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.getValOf(Arg.DerivIdx.class) : -1 );
-        int j = ( arguments.has(Arg.VarIdx.class) ? arguments.getValOf(Arg.VarIdx.class) : -1 );
+        int j = ( arguments.has(Arg.VarIdx.class)   ? arguments.getValOf(Arg.VarIdx.class)   : -1 );
         if ( d >= 0 ) {
             if ( j < 0 ) {
                 return Tsr.of( tensors[ 0 ].shape(), 1.0 );
             }
-            return (j != d) ? Tsr.of( tensors[ 0 ].shape(), 0.0 ) : executeDerive( tensors, d );
+            return ( j != d ) ? Tsr.of( tensors[ 0 ].shape(), 0.0 ) : executeDerive( tensors, d );
         }
         if ( j < 0 ) {
             StringBuilder exp = new StringBuilder("I[ 0 ]");
-            for(int i=1; i<tensors.length; i++) exp.append("+I[").append(i).append("]");
-            return new FunctionBuilder(Neureka.get().context()).build(exp.toString(), false).execute( tensors );
+
+            for( int i = 1; i < tensors.length; i++ )
+                exp.append("+I[").append(i).append("]");
+
+            return new FunctionBuilder(Neureka.get().context())
+                                        .build(exp.toString(), false)
+                                        .execute( tensors );
         }
         return tensors[j];
     }
