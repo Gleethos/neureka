@@ -113,17 +113,6 @@ public class FunctionInput implements Function, GradientProvider
     //------------------------------------------------------------------------------------------------------------------
 
     @Override
-    public Tsr<?> execute( Tsr<?>[] inputs, int j ) { return _extract( inputs[ index() ] ); }
-
-    @Override
-    public Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) {
-        return ( index == index() )
-                ? Tsr.of( inputs[ 0 ].shape(), 1.0 )
-                : Tsr.of( inputs[ 0 ].shape(), 0.0 );
-    }
-
-
-    @Override
     public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
         int d = ( arguments.has(Arg.DerivIdx.class) ? arguments.getValOf(Arg.DerivIdx.class) : -1 );
         if ( d >= 0 )
@@ -132,7 +121,6 @@ public class FunctionInput implements Function, GradientProvider
                 : Tsr.of( tensors[ 0 ].shape(), 0.0 );
         return _extract( tensors[ index() ] );
     }
-
 
     //------------------------------------------------------------------------------------------------------------------
 
