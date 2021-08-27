@@ -2,6 +2,8 @@
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
+import neureka.calculus.Function
+import neureka.calculus.args.Arg
 import neureka.dtype.DataType
 import neureka.optimization.Optimizer
 import org.junit.jupiter.api.BeforeEach
@@ -89,7 +91,7 @@ internal class Kotlin_Compatibility_Unit_Testing {
             Pair(  5.0, { g : Tsr<Double> -> g + 4.0 } ),
             Pair( 0.25, { g : Tsr<Double> -> g / 4.0 } ),
             Pair(  4.0, { g : Tsr<Double> -> g * 4.0 } ),
-            Pair(  0.0, { g : Tsr<Double> -> g % 1 } )
+            Pair(  0.0, { g : Tsr<Double> -> g % 1   } )
         )
         .forEach { pair ->
 
@@ -113,4 +115,15 @@ internal class Kotlin_Compatibility_Unit_Testing {
         }
     }
 
-}
+    @Test
+    fun function_is_being_called() {
+
+        val f : Function = Function.of("i0 * 4 - 3")
+
+        val t : Tsr<Double> = f.with(Arg.DerivIdx.of(0))(Tsr.of(5.0))
+
+        assert(t.toString() == "(1):[4.0]")
+
+    }
+
+    }
