@@ -80,14 +80,8 @@ public class FunctionConstant implements Function
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public Tsr<?> execute( Tsr<?>[] inputs, int j ) { return Tsr.of( inputs[ 0 ].shape(), this._value ); }
-
-	@Override
-	public Tsr<?> executeDerive( Tsr<?>[] inputs, int index, int j ) { return Tsr.of( inputs[ 0 ].shape(), 0.0 ); }
-
-	@Override
 	public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
-		if ( arguments.has(Arg.DerivIdx.class) && arguments.getValOf(Arg.DerivIdx.class) > 0 ) {
+		if ( arguments.has(Arg.DerivIdx.class) && arguments.getValOf(Arg.DerivIdx.class) >= 0 ) {
 			return Tsr.of( tensors[ 0 ].shape(), 0.0 );
 		}
 		return Tsr.of( tensors[ 0 ].shape(), this._value );
