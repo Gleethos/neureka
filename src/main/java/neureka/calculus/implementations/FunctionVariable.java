@@ -28,34 +28,22 @@ public class FunctionVariable implements Function, GradientProvider {
 
     private boolean _providesGradient = false;
 
-    public boolean providesGradient() {
-        return _providesGradient;
-    }
+    public boolean providesGradient() { return _providesGradient; }
 
     @Override
-    public boolean isFlat() {
-        return false;
-    }
+    public boolean isFlat() { return false; }
 
     @Override
-    public boolean isDoingAD() {
-        return false;
-    }
+    public boolean isDoingAD() { return false; }
 
     @Override
-    public AbstractOperation getOperation() {
-        return null;
-    }
+    public AbstractOperation getOperation() { return null; }
 
     @Override
-    public boolean dependsOn( int index ) {
-        return true;
-    }
+    public boolean dependsOn( int index ) { return true; }
 
     @Override
-    public Function getDerivative( int index ) {
-        return Function.of( "1" );
-    }
+    public Function getDerivative( int index ) { return Function.of( "1" ); }
 
     @Override
     public List<Function> getSubFunctions() { return new ArrayList<>(); }
@@ -79,9 +67,7 @@ public class FunctionVariable implements Function, GradientProvider {
     }
 
     @Override
-    public double derive( final double[] inputs, final int index ) {
-        return 1.0;
-    }
+    public double derive( final double[] inputs, final int index ) { return 1.0; }
 
     @Override
     public double derive( double[] inputs, int index, int j ) {

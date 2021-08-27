@@ -26,17 +26,13 @@ SOFTWARE.
 
 package neureka.calculus;
 
-import neureka.Tsr;
-import neureka.autograd.GraphLock;
-import neureka.autograd.GraphNode;
 import neureka.backend.api.OperationContext;
-import neureka.calculus.args.Arg;
-import neureka.calculus.args.Args;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.function.Supplier;
+import java.util.Collections;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  *  This class is part of a given {@link OperationContext} instance
@@ -46,15 +42,7 @@ import java.util.function.Supplier;
  */
 public final class Cache
 {
-    private static Cache _cache = new Cache();
     private Logger _log = LoggerFactory.getLogger( Cache.class );
-
-    public static Cache instance()
-    {
-        Cache c = _cache;
-        _cache = null;
-        return c;
-    }
 
     private final Map<String, Function> functionCache = Collections.synchronizedMap( new WeakHashMap<>() );
 
