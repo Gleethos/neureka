@@ -99,7 +99,7 @@ public class FunctionBuilder
             return new FunctionConstant().newBuild("0");
 
         expression = FunctionParser.unpackAndCorrect(expression);
-        List<String> foundJunctors = new ArrayList<>();
+        List<String> foundOperations = new ArrayList<>();
         List<String> foundComponents = new ArrayList<>();
 
         for ( int ei = 0; ei < expression.length(); ) {
@@ -109,7 +109,7 @@ public class FunctionBuilder
                 if ( newComponent.trim().isEmpty()) ei += newComponent.length();
                 else // String has content so lets add it to the lists:
                 {
-                    if ( foundComponents.size() <= foundJunctors.size() ) {
+                    if ( foundComponents.size() <= foundOperations.size() ) {
                         foundComponents.add(newComponent);
                     }
                     ei += newComponent.length(); // And now we continue parsing where the string ends...
@@ -118,7 +118,7 @@ public class FunctionBuilder
                     if ( newOperation != null ) {
                         ei += newOperation.length();
                         if ( newOperation.length() <= 0 ) continue;
-                        foundJunctors.add( newOperation );
+                        foundOperations.add( newOperation );
                     }
                 }
             }
@@ -129,7 +129,7 @@ public class FunctionBuilder
 
         int counter = _context.size();
         for ( int j = _context.size(); j > 0; --j ) {
-            if ( !foundJunctors.contains( _context.instance(j - 1).getOperator() ) )
+            if ( !foundOperations.contains( _context.instance(j - 1).getOperator() ) )
                 --counter;
             else
                 j = 0;
@@ -137,19 +137,19 @@ public class FunctionBuilder
         for ( int operationID = 0; operationID < counter; operationID++ ) {
             final List<String> newJunctors = new ArrayList<>();
             final List<String> newComponents = new ArrayList<>();
-            if ( foundJunctors.contains( _context.instance( operationID ).getOperator() ) ) {
+            if ( foundOperations.contains( _context.instance( operationID ).getOperator() ) ) {
                 String currentChain = null;
                 boolean groupingOccurred = false;
-                boolean enoughPresent = FunctionParser.numberOfOperationsWithin( foundJunctors ) > 1;// Otherwise: I[j]^4 goes nuts!
+                boolean enoughPresent = FunctionParser.numberOfOperationsWithin( foundOperations ) > 1;// Otherwise: I[j]^4 goes nuts!
                 if ( enoughPresent ) {
-                    String[] ComponentsArray = foundComponents.toArray( new String[ 0 ] );
-                    int length = ComponentsArray.length;
+                    String[] foundCompArray = foundComponents.toArray( new String[ 0 ] );
+                    int length = foundCompArray.length;
                     for ( int ci = 0; ci < length; ci++ ) {
                         String currentComponent;
-                        currentComponent = ComponentsArray[ci];
+                        currentComponent = foundCompArray[ci];
                         String currentOperation = null;
-                        if ( foundJunctors.size() > ci ) {
-                            currentOperation = foundJunctors.get(ci);
+                        if ( foundOperations.size() > ci ) {
+                            currentOperation = foundOperations.get(ci);
                         }
                         if ( currentOperation != null ) {
                             if (
@@ -184,7 +184,7 @@ public class FunctionBuilder
                     }
                 }
                 if ( groupingOccurred ) {
-                    foundJunctors = newJunctors;
+                    foundOperations = newJunctors;
                     foundComponents = newComponents;
                 }
             }
@@ -194,7 +194,8 @@ public class FunctionBuilder
         if ( foundComponents.size() == 1 )
             return _buildFunction( foundComponents.get(0), doAD );
         else
-            return _buildOperators( foundComponents, foundJunctors, doAD );
+            // It's not a function but operators:
+            return _buildOperators( foundComponents, foundOperations, doAD );
 
     }
 
@@ -239,14 +240,14 @@ public class FunctionBuilder
 
     private Function _buildOperators(
             List<String> foundComponents,
-            List<String> foundJunctors,
+            List<String> foundOperators,
             boolean doAD
     ) {
         // identifying operator id:
         int operationIndex = 0;
-        if ( foundJunctors.size() >= 1 ) {
+        if ( foundOperators.size() >= 1 ) {
             for (int currentIndex = 0; currentIndex < _context.size(); ++currentIndex) {
-                if ( _context.instance(currentIndex).getOperator().equals(foundJunctors.get( 0 )) ) {
+                if ( _context.instance(currentIndex).getOperator().equals(foundOperators.get( 0 )) ) {
                     operationIndex = currentIndex;
                 }
             }
