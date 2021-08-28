@@ -172,6 +172,7 @@ public interface Function
     interface Call {
         <T> Tsr<T> call( Tsr<T>... tensors );
         <T> Tsr<T> invoke( Tsr<T>... tensors );
+        Tsr<?> execute( Tsr<?>... tensors );
     }
 
     default Call with( Arg<?>... arguments ) { return with( Args.of( arguments ) ); }
@@ -180,6 +181,7 @@ public interface Function
        return new Call() {
            @Override public <T> Tsr<T> call( Tsr<T>... tensors )   { return Function.this.call( arguments, tensors ); }
            @Override public <T> Tsr<T> invoke( Tsr<T>... tensors ) { return Function.this.invoke( arguments, tensors ); }
+           @Override public Tsr<?> execute( Tsr<?>... tensors )    { return Function.this.execute( arguments, tensors ); }
        };
     }
 

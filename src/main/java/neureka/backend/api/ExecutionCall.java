@@ -68,19 +68,6 @@ public class ExecutionCall<DeviceType extends Device<?>>
      */
     private final DeviceType _device;
 
-
-    /**
-     * This is an import property whose
-     * role might not be clear at first :
-     * An operation can have multiple inputs, however
-     * when calculating the derivative for a forward or backward pass
-     * then one must know which derivative ought to be calculated.
-     * So the "derivative index" targets said input.
-     * This property is -1 when no derivative should be calculated,
-     * however 0... when targeting an input to calculate the derivative of.
-     */
-    private int _derivativeIndex = -1;
-
     /**
      *  This is the operation type which will be applied to this execution call.
      *  It contains multiple implementations, one of which might be applicable to this call...
@@ -118,7 +105,6 @@ public class ExecutionCall<DeviceType extends Device<?>>
             List<Arg> context
     ) {
         this._device = device;
-        this._derivativeIndex = derivativeIndex;
         /*
             This is an import property whose
             role might not be clear at first :
@@ -169,41 +155,35 @@ public class ExecutionCall<DeviceType extends Device<?>>
     }
 
     public int getDerivativeIndex() {
-        return this._derivativeIndex; // this.findAndGet(Arg.DerivIdx.class);
+        return this.getMetaArgs().getValOf( Arg.DerivIdx.class );
     }
 
-    public Operation getOperation() {
-        return this._operation;
-    }
+    public Operation getOperation() { return this._operation; }
 
-    public Tsr<?>[] getTensors() {
-        return this._tensors;
-    }
+    public Tsr<?>[] getTensors() { return this._tensors; }
 
-    public int getJ() {
-        return this.getMetaArgs().getValOf(Arg.VarIdx.class);
-    }
+    public int getJ() { return this.getMetaArgs().getValOf( Arg.VarIdx.class ); }
 
-    public ExecutionCall<DeviceType> withTensors(Tsr<?>[] _tensors) {
+    public ExecutionCall<DeviceType> withTensors( Tsr<?>[] _tensors ) {
         return this._tensors == _tensors
                 ? this
                 : new ExecutionCall<>(
                         this._device, this.getDerivativeIndex(), this._operation,
-                        _tensors, this.getJ(), this._algorithm, _arguments.getAll(Arg.class)//this.getMetaArgs().findAll(Arg.class)
+                        _tensors, this.getJ(), this._algorithm, _arguments.getAll(Arg.class)
                     );
     }
 
-    public ExecutionCall<DeviceType> withJ(int j) {
+    public ExecutionCall<DeviceType> withJ( int j ) {
         return this.getJ() == j
                 ? this
                 : new ExecutionCall<>(
                         this._device, this.getDerivativeIndex(), this._operation,
-                        this._tensors, j, this._algorithm, _arguments.getAll(Arg.class) //this.getMetaArgs().findAll(Arg.class)
+                        this._tensors, j, this._algorithm, _arguments.getAll(Arg.class)
                     );
     }
 
 
-    public <V, T extends Arg<V>> V getValOf(Class<T> argumentClass ) {
+    public <V, T extends Arg<V>> V getValOf( Class<T> argumentClass ) {
         return _arguments.getValOf(argumentClass);
     }
 
@@ -228,7 +208,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
                                 .build();
     }
 
-    public <T extends Device<?>> ExecutionCall<T> forDeviceType(Class<T> type) {
+    public <T extends Device<?>> ExecutionCall<T> forDeviceType( Class<T> type ) {
         assert _device.getClass() == type;
         return (ExecutionCall<T>) this;
     }
@@ -256,7 +236,10 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
     public ADAgent getADAgentFrom( Function function, ExecutionCall<? extends Device<?>> call, boolean forward )
     {
-        for ( Arg<?> arg : _arguments.getAll(Arg.class) ) call.getMetaArgs().set(arg);
+        for ( Arg<?> arg : _arguments.getAll(Arg.class) ) {
+            if ( !call.getMetaArgs().has(arg.getClass()) )
+                call.getMetaArgs().set(arg);
+        }
         return getAlgorithm().supplyADAgentFor( function, call, forward );
     }
 
@@ -285,6 +268,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
         public Builder<DeviceType> derivativeIndex(int derivativeIndex) {
             this.derivativeIndex = derivativeIndex;
+            context.add(Arg.DerivIdx.of(derivativeIndex));
             return this;
         }
 

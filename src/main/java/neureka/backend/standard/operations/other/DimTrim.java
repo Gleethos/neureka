@@ -32,7 +32,7 @@ public class DimTrim extends AbstractOperation
                         .setIsInline(         false       )
         );
 
-        GenericAlgorithm implementation = new GenericAlgorithm("reshape")
+        GenericAlgorithm implementation = new GenericAlgorithm("dimTrim")
                 .setIsSuitableFor( call -> 1.0f )
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> false )
@@ -47,7 +47,7 @@ public class DimTrim extends AbstractOperation
                             return new DefaultADAgent()
                                     .withContext(call.getMetaArgs().getAll(Arg.class))
                                     .setForward((t, derivative) -> new FunctionBuilder(Neureka.get().context()).build(f.toString(), false).derive(new Tsr[]{derivative},0))
-                                    .setBackward( (t, error) -> pad(error, new int[]{prefix, postfix}, true) );
+                                    .setBackward( (t, error) -> _pad(error, new int[]{prefix, postfix}, true) );
                         }
                 )
                 .setHandleInsteadOfDevice(
@@ -59,11 +59,11 @@ public class DimTrim extends AbstractOperation
                             if ( call.getDerivativeIndex() == 0 ) {
                                 int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
                                 int postfix = call.getValOf(Arg.Ends.class)[ 0 ];
-                                return pad(t, new int[]{prefix, postfix}, true);
+                                return _pad(t, new int[]{prefix, postfix}, true);
                             } else {
                                 int[] ends = new int[ 2 ];
                                 call.getMetaArgs().set(Arg.Ends.of(ends));
-                                return trim(t, ends, true);
+                                return _trim(t, ends, true);
                             }
                         }
                 )
@@ -78,8 +78,8 @@ public class DimTrim extends AbstractOperation
 
     }
 
-    public static Tsr pad(Tsr tensor, int[] ends, boolean newTsr) {
-        tensor = (newTsr) ? (Tsr)tensor.getAt(new ArrayList<>()) : tensor;
+    private static Tsr _pad( Tsr tensor, int[] ends, boolean newTsr ) {
+        tensor = ( newTsr ? tensor.getAt(new ArrayList<>()) : tensor );
         List<Integer> newShape = new ArrayList<>();
         List<Integer> newTranslation = new ArrayList<>();
         List<Integer> newIdxmap = new ArrayList<>();
@@ -111,19 +111,19 @@ public class DimTrim extends AbstractOperation
         }
         tensor.setNDConf(
                 AbstractNDC.construct(
-                        newShape.stream().mapToInt(i->i).toArray(),
-                        newTranslation.stream().mapToInt(i->i).toArray(),
-                        newIdxmap.stream().mapToInt(i->i).toArray(),
-                        newSpread.stream().mapToInt(i->i).toArray(),
-                        newOffset.stream().mapToInt(i->i).toArray()
+                        newShape.stream().mapToInt( i -> i ).toArray(),
+                        newTranslation.stream().mapToInt( i -> i ).toArray(),
+                        newIdxmap.stream().mapToInt( i -> i ).toArray(),
+                        newSpread.stream().mapToInt( i -> i ).toArray(),
+                        newOffset.stream().mapToInt( i -> i ).toArray()
                 )
         );
         return tensor;
     }
 
-    public static Tsr<?> trim(Tsr<?> tensor, int[] ends, boolean newTsr)
+    private static Tsr<?> _trim( Tsr<?> tensor, int[] ends, boolean newTsr )
     {
-        tensor = (newTsr) ? (Tsr<?>)tensor.getAt(new ArrayList<>()) : tensor;
+        tensor = ( newTsr ? tensor.getAt( new ArrayList<>() ) : tensor );
         List<Integer> newShape = new ArrayList<>();
         List<Integer> newTranslation = new ArrayList<>();
         List<Integer> newIdxmap = new ArrayList<>();
@@ -131,23 +131,23 @@ public class DimTrim extends AbstractOperation
         List<Integer> newOffset = new ArrayList<>();
         int[] shape = tensor.getNDConf().shape();
         int prefix = 0;
-        for ( int s : shape) if (s == 1) prefix++; else break;
+        for ( int s : shape ) if ( s == 1 ) prefix++; else break;
         int postfix = 0;
-        for ( int i=shape.length-1; i>=0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;
+        for ( int i = shape.length-1; i >= 0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;
         for ( int i = prefix; i < shape.length-postfix; i++ ) {
-            newShape.add(shape[ i ]);
-            newTranslation.add(tensor.getNDConf().translation( i ));
-            newIdxmap.add(tensor.getNDConf().indicesMap( i ));
-            newSpread.add(tensor.getNDConf().spread( i ));
-            newOffset.add(tensor.getNDConf().offset( i ));
+            newShape.add( shape[ i ] );
+            newTranslation.add( tensor.getNDConf().translation( i ) );
+            newIdxmap.add( tensor.getNDConf().indicesMap( i ) );
+            newSpread.add( tensor.getNDConf().spread( i ) );
+            newOffset.add( tensor.getNDConf().offset( i ) );
         }
         tensor.setNDConf(
                 AbstractNDC.construct(
-                        newShape.stream().mapToInt(i->i).toArray(),
-                        newTranslation.stream().mapToInt(i->i).toArray(),
-                        newIdxmap.stream().mapToInt(i->i).toArray(),
-                        newSpread.stream().mapToInt(i->i).toArray(),
-                        newOffset.stream().mapToInt(i->i).toArray()
+                        newShape.stream().mapToInt( i -> i ).toArray(),
+                        newTranslation.stream().mapToInt( i -> i ).toArray(),
+                        newIdxmap.stream().mapToInt( i -> i ).toArray(),
+                        newSpread.stream().mapToInt( i -> i ).toArray(),
+                        newOffset.stream().mapToInt( i -> i ).toArray()
                 )
         );
         ends[ 0 ] = prefix;
@@ -159,7 +159,7 @@ public class DimTrim extends AbstractOperation
     @Override
     public String stringify( String[] children ) {
         String expression = String.join( ", ", children );
-        if (expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')') {
+        if ( expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')' ) {
             return "dimtrim" + expression;
         }
         return "dimtrim" + "(" + expression + ")";

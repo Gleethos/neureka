@@ -4,6 +4,7 @@ import neureka.Tsr
 import neureka.autograd.GraphNode
 import neureka.calculus.Function
 import neureka.calculus.args.Arg
+import neureka.calculus.args.Args
 import neureka.dtype.DataType
 import neureka.optimization.Optimizer
 import org.junit.jupiter.api.BeforeEach
@@ -74,13 +75,13 @@ internal class Kotlin_Compatibility_Unit_Testing {
                                     )
 
         // Expect:
-        assert( a.toString().equals( "(3x2):[0.0+0.0i, 0.0+1.0i, 1.0+0.0i, 1.0+1.0i, 2.0+0.0i, 2.0+1.0i]" ) )
-        assert( b.toString().equals( "(3x2):[0.0+0.0i, 1.0+0.0i, 0.0+1.0i, 1.0+1.0i, 0.0+2.0i, 1.0+2.0i]" ) )
+        assert(a.toString() == "(3x2):[0.0+0.0i, 0.0+1.0i, 1.0+0.0i, 1.0+1.0i, 2.0+0.0i, 2.0+1.0i]")
+        assert(b.toString() == "(3x2):[0.0+0.0i, 1.0+0.0i, 0.0+1.0i, 1.0+1.0i, 0.0+2.0i, 1.0+2.0i]")
         assert( !a.isVirtual() )
         assert( !b.isVirtual() )
-        assert( (a+b).toString().equals( "(3x2):[0.0+0.0i, 1.0+1.0i, 1.0+1.0i, 2.0+2.0i, 2.0+2.0i, 3.0+3.0i]" ) )
-        assert( (a-b).toString().equals( "(3x2):[0.0+0.0i, -1.0+1.0i, 1.0-1.0i, 0.0+0.0i, 2.0-2.0i, 1.0-1.0i]" ) )
-        assert( (a*b).toString().equals( "(3x2):[0.0+0.0i, 0.0+1.0i, 0.0+1.0i, 0.0+2.0i, 0.0+4.0i, 0.0+5.0i]" ) )
+        assert((a+b).toString() == "(3x2):[0.0+0.0i, 1.0+1.0i, 1.0+1.0i, 2.0+2.0i, 2.0+2.0i, 3.0+3.0i]")
+        assert((a-b).toString() == "(3x2):[0.0+0.0i, -1.0+1.0i, 1.0-1.0i, 0.0+0.0i, 2.0-2.0i, 1.0-1.0i]")
+        assert((a*b).toString() == "(3x2):[0.0+0.0i, 0.0+1.0i, 0.0+1.0i, 0.0+2.0i, 0.0+4.0i, 0.0+5.0i]")
     }
 
     @Test
@@ -105,25 +106,34 @@ internal class Kotlin_Compatibility_Unit_Testing {
             w.set( Optimizer.ofGradient( { g -> exec(g) } ) ).backward()
 
             // Then :
-            assert(w.toString().equals("(1):["+weightVal+"]:g:[1.0]"))
+            assert(w.toString() == "(1):["+weightVal+"]:g:[1.0]")
 
             // When :
             w.applyGradient()
 
             // Then :
-            assert(w.toString().equals("(1):["+(expected+weightVal)+"]:g:[null]"))
+            assert(w.toString() == "(1):["+(expected+weightVal)+"]:g:[null]")
         }
     }
 
     @Test
-    fun function_is_being_called() {
+    fun convenience_methods_in_function_API_are_consistent() {
 
-        val f : Function = Function.of("i0 * 4 - 3")
+        listOf(
+            Pair( "(1):[4.0]", { Function.of("i0 * 4 - 3").with(Arg.DerivIdx.of(0))(Tsr.of(5.0)) } ),
+            Pair( "(1):[6.0]", { Function.of("i0 * i0").execute(Args.of(Arg.DerivIdx.of(0)), Tsr.of(3.0)) } )
+        )
+        .forEach { pair ->
+            // Given :
+            val expected = pair.first
+            val exec = pair.second
 
-        val t : Tsr<Double> = f.with(Arg.DerivIdx.of(0))(Tsr.of(5.0))
+            // When :
+            val t = exec()
 
-        assert(t.toString() == "(1):[4.0]")
-
+            // Then :
+            assert(t.toString() == expected)
+        }
     }
 
-    }
+}

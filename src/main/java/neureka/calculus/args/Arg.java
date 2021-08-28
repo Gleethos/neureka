@@ -22,6 +22,16 @@ public abstract class Arg<T> implements Component<Args> {
         private Derivative(Tsr<V> arg) { super(arg); }
     }
 
+    /**
+     * This is an import argument whose
+     * role might not be clear at first :
+     * An operation can have multiple inputs, however
+     * when calculating the derivative for a forward or backward pass
+     * then one must know which derivative ought to be calculated.
+     * So the "derivative index" targets said input.
+     * This property is -1 when no derivative should be calculated,
+     * however 0... when targeting an input to calculate the derivative of.
+     */
     public static class DerivIdx extends Arg<Integer> {
         public static DerivIdx of( int index ) { return new DerivIdx(index); }
         private DerivIdx(int arg) { super(arg); }
@@ -41,6 +51,11 @@ public abstract class Arg<T> implements Component<Args> {
     public static class VarIdx extends Arg<Integer> {
         public static VarIdx of( int arg ) { return new VarIdx( arg ); }
         private VarIdx(int arg) { super(arg); }
+    }
+
+    public static class MinRank extends Arg<Integer> {
+        public static MinRank of( int arg ) { return new MinRank( arg ); }
+        private MinRank(int arg) { super(arg); }
     }
 
     @Override
