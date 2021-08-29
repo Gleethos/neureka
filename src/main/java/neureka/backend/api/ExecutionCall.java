@@ -252,10 +252,8 @@ public class ExecutionCall<DeviceType extends Device<?>>
     public static class Builder<DeviceType extends Device<?>>
     {
         private DeviceType device;
-        private int derivativeIndex = -1;
         private Operation operation;
         private Tsr<?>[] tensors;
-        private int varIdx = -1;
         private Algorithm<?> algorithm;
         private final List<Arg> context = new ArrayList<>();
 
@@ -266,12 +264,6 @@ public class ExecutionCall<DeviceType extends Device<?>>
             return this;
         }
 
-        public Builder<DeviceType> derivativeIndex(int derivativeIndex) {
-            this.derivativeIndex = derivativeIndex;
-            context.add(Arg.DerivIdx.of(derivativeIndex));
-            return this;
-        }
-
         public Builder<DeviceType> operation(Operation operation) {
             this.operation = operation;
             return this;
@@ -279,11 +271,6 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
         public Builder<DeviceType> tensors(Tsr<?>... tensors) {
             this.tensors = tensors;
-            return this;
-        }
-
-        public Builder<DeviceType> j(int j) {
-            this.varIdx = j;
             return this;
         }
 
@@ -302,12 +289,14 @@ public class ExecutionCall<DeviceType extends Device<?>>
         }
 
         public ExecutionCall<DeviceType> build() {
+            int derivativeIndex = -1;
+            int varIdx = -1;
             return new ExecutionCall<>(
                             device,
-                            derivativeIndex,
+                    derivativeIndex,
                             operation,
                             tensors,
-                            varIdx,
+                    varIdx,
                             algorithm,
                             context
                         );

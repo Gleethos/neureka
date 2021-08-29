@@ -28,8 +28,10 @@ public class JunctionUtil
                         ExecutionCall.builder()
                                 .device(device)
                                 .tensors(reduction)
-                                .derivativeIndex(d)
                                 .operation(type)
+                                .args(
+                                        Arg.DerivIdx.of(d)
+                                )
                                 .build()
                 );
                 tsrs[ 0 ] = reduction[ 0 ];
@@ -39,8 +41,10 @@ public class JunctionUtil
                         ExecutionCall.builder()
                                 .device(device)
                                 .tensors(reduction)
-                                .derivativeIndex(d)
                                 .operation(type)
+                                .args(
+                                        Arg.DerivIdx.of(d)
+                                )
                                 .build()
                 );
                 tsrs[ 0 ] = reduction[ 0 ];
@@ -79,8 +83,10 @@ public class JunctionUtil
                         ExecutionCall.builder()
                                 .device(device)
                                 .tensors(reduction)
-                                .derivativeIndex(d)
                                 .operation(type)
+                                .args(
+                                        Arg.DerivIdx.of(d)
+                                )
                                 .build()
                 );
                 tsrs[ 0 ] = reduction[ 0 ];
@@ -90,8 +96,10 @@ public class JunctionUtil
                         ExecutionCall.builder()
                                 .device(device)
                                 .tensors(reduction)
-                                .derivativeIndex(d)
                                 .operation(type)
+                                .args(
+                                        Arg.DerivIdx.of(d)
+                                )
                                 .build()
                 );
                 tsrs[ 0 ] = reduction[ 0 ];
@@ -150,8 +158,10 @@ public class JunctionUtil
                                         ExecutionCall.builder()
                                                 .device(device)
                                                 .tensors(reduction)
-                                                .derivativeIndex(-1)
                                                 .operation(Neureka.get().context().instance("/"))
+                                                .args(
+                                                        Arg.DerivIdx.of(-1)
+                                                )
                                                 .build()
                     );
                     a = reduction[ 0 ];
@@ -167,8 +177,10 @@ public class JunctionUtil
                             ExecutionCall.builder()
                                     .device(device)
                                     .tensors(reduction)
-                                    .derivativeIndex(-1)
                                     .operation(Neureka.get().context().instance("/"))
+                                    .args(
+                                            Arg.DerivIdx.of(-1)
+                                    )
                                     .build()
                     );
                     b = reduction[ 0 ];

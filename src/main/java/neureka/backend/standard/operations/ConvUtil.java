@@ -73,8 +73,10 @@ public class ConvUtil {
                                     call.getDevice().execute( ExecutionCall.builder()
                                             .device(call.getDevice())
                                             .tensors( tsrs )
-                                            .derivativeIndex( 0 )
                                             .operation( call.getOperation() )
+                                            .args(
+                                                    Arg.DerivIdx.of(0)
+                                            )
                                             .build() );
                                     if ( call.getOperation() == Neureka.get().context().instance("x>>") )
                                         return tsrs[ 2 ];
