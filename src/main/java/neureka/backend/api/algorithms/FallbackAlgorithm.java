@@ -15,14 +15,18 @@ import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.dtype.NumericType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
+public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgorithm> {
 
-    public GenericAlgorithm( String name, int arity, Operation type )
+    private static final Logger _LOG = LoggerFactory.getLogger(FallbackAlgorithm.class);
+
+    public FallbackAlgorithm( String name, int arity, Operation type )
     {
         super( name );
         setImplementationFor(
@@ -81,7 +85,7 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
                                         );
                             }
                             else
-                                tryExecute(call, typeClass);
+                                _tryExecute(call, typeClass);
                         },
                         arity
                 )
@@ -92,8 +96,10 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
     public float isSuitableFor( ExecutionCall<? extends Device<?>> call ) {
         int[] shape = null;
         for ( Tsr<?> t : call.getTensors() ) {
-            if ( shape == null ) if ( t != null ) shape = t.getNDConf().shape();
-            else if ( t != null && !Arrays.equals( shape, t.getNDConf().shape() ) ) return 0.0f;
+            if ( t != null ) {
+                if ( shape == null ) shape = t.getNDConf().shape();
+                else if ( !Arrays.equals(shape, t.getNDConf().shape())) return 0.0f;
+            }
         }
         return 1.0f;
     }
@@ -121,27 +127,28 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
     public ADAgent supplyADAgentFor( Function f, ExecutionCall<? extends Device<?>> call, boolean forward)
     {
         Object o = call.getValOf(Arg.Derivative.class);
-        Tsr ctxDerivative = (Tsr) o;
+        Tsr<?> ctxDerivative = (Tsr<?>) o;
         Function mul = Neureka.get().context().getFunction().mul();
         if ( ctxDerivative != null ) {
             return new DefaultADAgent( ctxDerivative )
-                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
-                    .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, ctxDerivative } ) );
+                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
+                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, ctxDerivative ) );
         }
         Tsr<?> localDerivative = f.executeDerive( call.getTensors(), call.getDerivativeIndex() );
         return new DefaultADAgent( localDerivative )
-                    .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
-                    .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
+                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, localDerivative ) )
+                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, localDerivative ) );
     }
 
     @Override
-    public Tsr handleInsteadOfDevice( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
+    public Tsr<?> handleInsteadOfDevice( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
         return null;
     }
 
     @Override
-    public Tsr<?> handleRecursivelyAccordingToArity( ExecutionCall<? extends Device<?>> call, java.util.function.Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith )
-    {
+    public Tsr<?> handleRecursivelyAccordingToArity(
+            ExecutionCall<? extends Device<?>> call, java.util.function.Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith
+    ) {
         return null;
     }
 
@@ -149,11 +156,11 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
     public ExecutionCall<? extends Device<?>> instantiateNewTensorsForExecutionIn( ExecutionCall<? extends Device<?>> call )
     {
         Tsr<?>[] tensors = call.getTensors();
-        Device<?> device = call.getDevice();
+        Device<Object> device = call.getDeviceFor(Object.class);
         if ( tensors[ 0 ] == null ) // Creating a new tensor:
         {
             int[] shp = tensors[ 1 ].getNDConf().shape();
-            Tsr output = Tsr.of( tensors[ 1 ].getDataType(), shp );
+            Tsr<Object> output = (Tsr<Object>) Tsr.of( tensors[ 1 ].getDataType(), shp );
             output.setIsVirtual( false );
             try {
                 device.store( output );
@@ -165,39 +172,39 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
         return call;
     }
 
-    private void tryExecute( ExecutionCall<HostCPU> call, Class<?> typeClass ) {
-        Method m = findMethod( call.getOperation().getFunction(), typeClass );
+    private void _tryExecute(ExecutionCall<HostCPU> call, Class<?> typeClass ) {
+        Method m = _findMethod( call.getOperation().getFunction(), typeClass );
         if ( m == null ) {
             switch (call.getOperation().getOperator()) {
-                case "+": m = findMethod("plus", typeClass);break;
-                case "-": m = findMethod("minus", typeClass);break;
+                case "+": m = _findMethod("plus", typeClass);break;
+                case "-": m = _findMethod("minus", typeClass);break;
                 case "*":
-                    m = findMethod("times", typeClass);
-                    if ( m == null) m = findMethod("multiply", typeClass);
-                    if ( m == null) m = findMethod("mul", typeClass);
+                    m = _findMethod("times", typeClass);
+                    if ( m == null) m = _findMethod("multiply", typeClass);
+                    if ( m == null) m = _findMethod("mul", typeClass);
                     break;
-                case "%": m = findMethod("mod", typeClass);break;
+                case "%": m = _findMethod("mod", typeClass);break;
             }
         }
         Method finalMethod = m;
         call
-                .getDevice()
-                .getExecutor()
-                .threaded (
-                        call.getTsrOfType( Object.class, 0 ).size(),
-                        ( start, end ) -> {
-                            Object[] inputs = new Object[ call.getTensors().length - 1 ];
-                            for ( int i = start; i < end; i++ ) {
-                                for ( int ii = 0; ii < inputs.length; ii++ ) {
-                                    inputs[ ii ] = call.getTsrOfType( Object.class, 1 + ii ).getValueAt(i);
-                                }
-                                call.getTsrOfType( Object.class, 0 ).setAt(i, tryExecute(finalMethod, inputs, 0));
+            .getDevice()
+            .getExecutor()
+            .threaded (
+                    call.getTsrOfType( Object.class, 0 ).size(),
+                    ( start, end ) -> {
+                        Object[] inputs = new Object[ call.getTensors().length - 1 ];
+                        for ( int i = start; i < end; i++ ) {
+                            for ( int ii = 0; ii < inputs.length; ii++ ) {
+                                inputs[ ii ] = call.getTsrOfType( Object.class, 1 + ii ).getValueAt(i);
                             }
+                            call.getTsrOfType( Object.class, 0 ).setAt(i, _tryExecute(finalMethod, inputs, 0));
                         }
-                );
+                    }
+            );
     }
 
-    private static Object tryExecute( Method m, Object[] args, int offset ) {
+    private static Object _tryExecute( Method m, Object[] args, int offset ) {
         if ( offset == args.length - 1 ) return args[offset];
         else {
             try {
@@ -206,19 +213,21 @@ public class GenericAlgorithm extends AbstractBaseAlgorithm<GenericAlgorithm> {
                 e.printStackTrace();
                 return null;
             }
-            return tryExecute( m, args, offset + 1 );
+            return _tryExecute( m, args, offset + 1 );
         }
     }
 
-    private static Method findMethod(String name, Class<?> typeClass) {
+    private static Method _findMethod( String name, Class<?> typeClass ) {
         try {
             Method m = typeClass.getMethod(name, typeClass);
             return m;
         } catch ( SecurityException e ) {
             e.printStackTrace();
-        }
-        catch ( NoSuchMethodException e ) {
-            e.printStackTrace();
+        } catch ( NoSuchMethodException e ) {
+            String message =
+                    "Failed finding method named '"+name+"' on instance of type '"+typeClass.getSimpleName()+"'.\n" +
+                    "Cause: "+e.getMessage();
+            _LOG.debug(message);
         } finally {
             Method[] methods = typeClass.getDeclaredMethods();
             Method currentBest = null;

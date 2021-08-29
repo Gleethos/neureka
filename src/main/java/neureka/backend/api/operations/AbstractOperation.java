@@ -5,7 +5,7 @@ package neureka.backend.api.operations;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.algorithms.GenericAlgorithm;
+import neureka.backend.api.algorithms.FallbackAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +96,7 @@ public abstract class AbstractOperation implements Operation
      *  - A simple result tensor instantiation implementation.                                                          <br>
      *  - A basic threaded execution based on the AST of a given Function object.                                       <br>
      */
-    private final Algorithm<?> _defaultAlgorithm = new GenericAlgorithm( "default", _arity, this );
+    private final Algorithm<?> _defaultAlgorithm = new FallbackAlgorithm( "default", _arity, this );
 
     public AbstractOperation( OperationBuilder builder )
     {
