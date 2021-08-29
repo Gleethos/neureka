@@ -6,6 +6,7 @@ import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Convolution;
+import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -149,14 +150,14 @@ public class UnitTester_Tensor extends UnitTester
                         ExecutionCall.builder()
                                 .device(HostCPU.instance())
                                 .tensors(
-                                        new Tsr[] {
-                                                Tsr.of(drnMxd, rsltData),
-                                                Tsr.of(frstShp, frstData),
-                                                Tsr.of(scndShp, scondData)
-                                        }
+                                    Tsr.of(drnMxd, rsltData),
+                                    Tsr.of(frstShp, frstData),
+                                    Tsr.of(scndShp, scondData)
                                 )
-                                .derivativeIndex(-1)
                                 .operation(Neureka.get().context().instance("x"))
+                                .args(
+                                        Arg.DerivIdx.of(-1)
+                                )
                                 .build()
                                 .forDeviceType(HostCPU.class)
         );
@@ -178,14 +179,14 @@ public class UnitTester_Tensor extends UnitTester
                         ExecutionCall.builder()
                             .device(HostCPU.instance())
                             .tensors(
-                                    new Tsr[]{
-                                        Tsr.of(frstShp, frstData),
-                                        (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
-                                        (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
-                                    }
+                                Tsr.of(frstShp, frstData),
+                                (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
+                                (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
                             )
-                            .derivativeIndex(0)
                             .operation(Neureka.get().context().instance(((char) 171)+"x"))
+                            .args(
+                                    Arg.DerivIdx.of(0)
+                            )
                             .build()
                             .forDeviceType(HostCPU.class)
                 );
@@ -205,14 +206,14 @@ public class UnitTester_Tensor extends UnitTester
                         ExecutionCall.builder()
                             .device(HostCPU.instance())
                             .tensors(
-                                    new Tsr[]{
-                                            Tsr.of(drnMxd, rsltData),
-                                            Tsr.of(frstShp, frstData),
-                                            Tsr.of(scndShp, scondData)
-                                    }
+                                Tsr.of(drnMxd, rsltData),
+                                Tsr.of(frstShp, frstData),
+                                Tsr.of(scndShp, scondData)
                             )
-                            .derivativeIndex(-1)
                             .operation(Neureka.get().context().instance("*"))
+                            .args(
+                                    Arg.DerivIdx.of(-1)
+                            )
                             .build()
                             .forDeviceType(HostCPU.class)
         );
@@ -234,14 +235,14 @@ public class UnitTester_Tensor extends UnitTester
                         ExecutionCall.builder()
                             .device(HostCPU.instance())
                             .tensors(
-                                    new Tsr[]{
-                                            Tsr.of(frstShp, frstData),
-                                            (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
-                                            (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
-                                    }
+                                Tsr.of(frstShp, frstData),
+                                (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
+                                (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
                             )
-                            .derivativeIndex(0)
                             .operation(Neureka.get().context().instance(((char) 171) + "*"))
+                            .args(
+                                    Arg.DerivIdx.of(0)
+                            )
                             .build()
                             .forDeviceType(HostCPU.class)
         );
@@ -253,14 +254,12 @@ public class UnitTester_Tensor extends UnitTester
                         ExecutionCall.builder()
                             .device(HostCPU.instance())
                             .tensors(
-                                    new Tsr[]{
-                                            Tsr.of(frstShp, frstData),
-                                            (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
-                                            (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData),
-                                    }
+                                Tsr.of(frstShp, frstData),
+                                (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
+                                (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
                             )
-                            .derivativeIndex(0)
                             .operation(Neureka.get().context().instance("*" + ((char) 187)))
+                            .args(Arg.DerivIdx.of(0))
                             .build()
                             .forDeviceType(HostCPU.class)
         );

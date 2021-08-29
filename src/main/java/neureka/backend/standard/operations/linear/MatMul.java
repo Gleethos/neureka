@@ -13,6 +13,7 @@ import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
@@ -49,8 +50,10 @@ public class MatMul extends AbstractOperation
                                             ExecutionCall.builder()
                                                     .device(device)
                                                     .tensors(reduction)
-                                                    .derivativeIndex(d)
                                                     .operation(type)
+                                                    .args(
+                                                            Arg.DerivIdx.of(d)
+                                                    )
                                                     .build()
                                     );
                     tsrs[ 0 ] = reduction[ 0 ];
@@ -60,8 +63,10 @@ public class MatMul extends AbstractOperation
                             ExecutionCall.builder()
                                     .device(device)
                                     .tensors(reduction)
-                                    .derivativeIndex(d)
                                     .operation(type)
+                                    .args(
+                                            Arg.DerivIdx.of(d)
+                                    )
                                     .build()
                     );
                     tsrs[ 0 ] = reduction[ 0 ];
@@ -156,8 +161,10 @@ public class MatMul extends AbstractOperation
                                             ExecutionCall.builder()
                                                     .device(call.getDevice())
                                                     .tensors( tsrs )
-                                                    .derivativeIndex( 0 )
                                                     .operation( call.getOperation() )
+                                                    .args(
+                                                            Arg.DerivIdx.of(0)
+                                                    )
                                                     .build()
                                     );
                                     if ( call.getOperation() == Neureka.get().context().instance("x>>") )

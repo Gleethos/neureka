@@ -185,9 +185,11 @@ public class JunctionUtil
                 alternative = goDeeperWith.apply(
                         ExecutionCall.builder()
                                 .device(device)
-                                .tensors( new Tsr[]{tsrs[ 0 ], tsrs[ 0 ], tsrs[d+1]} )
-                                .derivativeIndex( 1 )
+                                .tensors( tsrs[ 0 ], tsrs[ 0 ], tsrs[d+1] )
                                 .operation( Neureka.get().context().instance("/") )
+                                .args(
+                                        Arg.DerivIdx.of(1)
+                                )
                                 .build()
                 );
                 if ( d == 0 ) a.delete();
@@ -230,8 +232,10 @@ public class JunctionUtil
                         ExecutionCall.builder()
                                 .device(device)
                                 .tensors(reduction)
-                                .derivativeIndex(d)
                                 .operation(type)
+                                .args(
+                                        Arg.DerivIdx.of(d)
+                                )
                                 .build()
                 );
                 tsrs[ 0 ] = reduction[ 0 ];
@@ -241,8 +245,10 @@ public class JunctionUtil
                         ExecutionCall.builder()
                                 .device(device)
                                 .tensors(reduction)
-                                .derivativeIndex(d)
                                 .operation(type)
+                                .args(
+                                        Arg.DerivIdx.of(d)
+                                )
                                 .build()
                 );
                 tsrs[ 0 ] = reduction[ 0 ];

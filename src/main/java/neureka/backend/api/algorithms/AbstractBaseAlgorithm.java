@@ -5,6 +5,7 @@ import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
+import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 
 import java.util.HashMap;
@@ -72,8 +73,10 @@ public abstract class AbstractBaseAlgorithm<FinalType extends Algorithm<FinalTyp
                     ExecutionCall.builder()
                             .device(device)
                             .tensors(call.getTensors())
-                            .derivativeIndex(d)
                             .operation(type)
+                            .args(
+                                    Arg.DerivIdx.of(d)
+                            )
                             .build()
             );
         }
