@@ -122,7 +122,7 @@ public class FunctionNode implements Function
         if ( possiblyNewDevice != null ) finalCall = call.withDevice( possiblyNewDevice );
         else finalCall = call;
 
-        int d = arguments.getValOf(Arg.DerivIdx.class);
+        int d = arguments.valOf(Arg.DerivIdx.class);
 
         if ( _isFlat )
         {

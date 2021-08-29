@@ -155,14 +155,14 @@ public class ExecutionCall<DeviceType extends Device<?>>
     }
 
     public int getDerivativeIndex() {
-        return this.getMetaArgs().getValOf( Arg.DerivIdx.class );
+        return this.getMetaArgs().valOf( Arg.DerivIdx.class );
     }
 
     public Operation getOperation() { return this._operation; }
 
     public Tsr<?>[] getTensors() { return this._tensors; }
 
-    public int getJ() { return this.getMetaArgs().getValOf( Arg.VarIdx.class ); }
+    public int getJ() { return this.getMetaArgs().valOf( Arg.VarIdx.class ); }
 
     public ExecutionCall<DeviceType> withTensors( Tsr<?>[] _tensors ) {
         return this._tensors == _tensors
@@ -184,7 +184,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
 
     public <V, T extends Arg<V>> V getValOf( Class<T> argumentClass ) {
-        return _arguments.getValOf(argumentClass);
+        return _arguments.valOf(argumentClass);
     }
 
     public interface TensorCondition    { boolean check( Tsr<?> tensor ); }

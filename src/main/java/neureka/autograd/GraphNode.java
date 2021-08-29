@@ -479,9 +479,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                             ExecutionCall.builder()
                                                     .device(call.getDevice())
                                                     .tensors(call.getTensors())
-                                                    .derivativeIndex(i)
-                                                    .j(call.getJ())
                                                     .operation(call.getOperation())
+                                                    .args(
+                                                            Arg.DerivIdx.of(i),
+                                                            Arg.VarIdx.of(call.getMetaArgs().valOf(Arg.VarIdx.class))
+                                                    )
                                                     .build(),
                                             true
                                     )
@@ -505,7 +507,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                                             .tensors(call.getTensors())
                                                             .operation(call.getOperation())
                                                             .args(
-                                                                Arg.VarIdx.of(call.getJ()),
+                                                                Arg.VarIdx.of(call.getMetaArgs().valOf(Arg.VarIdx.class)),
                                                                 Arg.DerivIdx.of(finalI),
                                                                 Arg.Derivative.of(targetDerivative)
                                                             )
@@ -531,9 +533,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                         ExecutionCall.builder()
                                                 .device(call.getDevice())
                                                 .tensors(call.getTensors())
-                                                .derivativeIndex(i)
-                                                .j(call.getJ())
                                                 .operation(call.getOperation())
+                                                .args(
+                                                        Arg.DerivIdx.of(i),
+                                                        Arg.VarIdx.of(call.getMetaArgs().valOf(Arg.VarIdx.class))
+                                                )
                                                 .build(),
                                         false
                                 )

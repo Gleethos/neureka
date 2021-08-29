@@ -81,7 +81,7 @@ public class FunctionConstant implements Function
 
 	@Override
 	public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
-		if ( arguments.has(Arg.DerivIdx.class) && arguments.getValOf(Arg.DerivIdx.class) >= 0 ) {
+		if ( arguments.has(Arg.DerivIdx.class) && arguments.valOf(Arg.DerivIdx.class) >= 0 ) {
 			return Tsr.of( tensors[ 0 ].shape(), 0.0 );
 		}
 		return Tsr.of( tensors[ 0 ].shape(), this._value );
