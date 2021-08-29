@@ -112,8 +112,8 @@ public class FunctionNode implements Function
                                                                 .device(_deviceFor( inputs ))
                                                                 .tensors( inputs )
                                                                 .operation( _operation )
-                                                                .derivativeIndex( arguments.getValOf(Arg.DerivIdx.class) )
                                                                 .args(
+                                                                    arguments.get(Arg.DerivIdx.class),
                                                                     arguments.get(Arg.VarIdx.class)
                                                                 )
                                                                 .build();
@@ -446,10 +446,7 @@ public class FunctionNode implements Function
             return commit( inputs, function, activation );
         }
         GraphLock lock =  untracked.get( GraphNode.class ).getLock();
-        for ( Tsr<Object> t : inputs ) {
-            if ( t.has( GraphNode.class ) ) t.get( GraphNode.class ).obtainLocking( lock );
-            else new GraphNode( function, lock, () -> t );
-        }
+        attachGraph(inputs, function, lock);
         Tsr<Object> result = activation.get();
         return result;
     }
@@ -460,10 +457,7 @@ public class FunctionNode implements Function
         Tsr.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
 
         GraphLock newLock = new GraphLock( function );
-        for ( Tsr<?> t : inputs ) {
-            if ( t.has( GraphNode.class ) ) t.get( GraphNode.class ).obtainLocking( newLock );
-            else new GraphNode( function, newLock, () -> t );
-        }
+        attachGraph( inputs, function, newLock );
         Tsr<T> result;
         if ( activation == null ) result = (Tsr<T>) function.execute( inputs );
         else result = (Tsr<T>) activation.get();
@@ -471,5 +465,17 @@ public class FunctionNode implements Function
         newLock.release();
         return result;
     }
+
+    private static void attachGraph(
+            Tsr<?>[] inputs,
+            Function function,
+            GraphLock newLock
+    ) {
+        for ( Tsr<?> t : inputs ) {
+            if ( t.has( GraphNode.class ) ) t.get( GraphNode.class ).obtainLocking( newLock );
+            else new GraphNode( function, newLock, () -> t );
+        }
+    }
+
 
 }
