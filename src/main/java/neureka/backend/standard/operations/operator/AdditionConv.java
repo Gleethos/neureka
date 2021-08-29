@@ -69,9 +69,11 @@ public class AdditionConv extends AbstractOperation {
                                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                                     return ExecutionCall.builder()
                                             .device(call.getDevice())
-                                            .tensors(new Tsr[]{tsrs[offset], tsrs[1+offset]})
-                                            .derivativeIndex(-1)
+                                            .tensors( tsrs[offset], tsrs[1+offset] )
                                             .operation(Neureka.get().context().instance("idy") )
+                                            .args(
+                                                    Arg.DerivIdx.of(-1)
+                                            )
                                             .build();
                                 }
                         )

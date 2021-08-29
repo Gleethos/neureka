@@ -7,6 +7,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
 import neureka.utility.Messages;
@@ -51,8 +52,10 @@ public class HostCPU extends AbstractDevice<Number>
         ExecutionCall<HostCPU> call = ExecutionCall.builder()
                                                     .device(this)
                                                     .tensors(tensors)
-                                                    .derivativeIndex(d)
                                                     .operation(type)
+                                                    .args(
+                                                            Arg.DerivIdx.of(d)
+                                                    )
                                                     .build()
                                                     .forDeviceType(HostCPU.class);
 

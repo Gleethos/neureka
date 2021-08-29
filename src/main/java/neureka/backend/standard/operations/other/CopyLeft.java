@@ -148,9 +148,11 @@ public class CopyLeft extends AbstractOperation {
                         call.getTsrOfType( Number.class, offset).incrementVersionBecauseOf(call);
                         return ExecutionCall.builder()
                                     .device(call.getDevice())
-                                    .tensors(new Tsr[]{tsrs[offset], tsrs[1+offset]})
-                                    .derivativeIndex(-1)
+                                    .tensors( tsrs[offset], tsrs[1+offset] )
                                     .operation(Neureka.get().context().instance("idy"))
+                                    .args(
+                                            Arg.DerivIdx.of(-1)
+                                    )
                                     .build();
                     }
             )

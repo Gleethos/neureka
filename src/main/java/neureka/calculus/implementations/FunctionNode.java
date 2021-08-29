@@ -178,9 +178,10 @@ public class FunctionNode implements Function
                 ExecutionCall.builder()
                         .device( device )
                         .tensors( tensors )
-                        .derivativeIndex( d )
                         .operation( _operation )
-                        //.args(call.findAll(Arg.class))
+                        .args(
+                                Arg.DerivIdx.of(d)
+                        )
                         .build()
         );
         if ( tensors[ 0 ] == null ) _LOG.warn("Function '"+this+"' did not have a proper return value.");
@@ -287,8 +288,10 @@ public class FunctionNode implements Function
                             ExecutionCall.builder()
                                             .device( device )
                                             .tensors( tensors )
-                                            .derivativeIndex( d )
                                             .operation( _operation )
+                                            .args(
+                                                    Arg.DerivIdx.of(d)
+                                            )
                                             .build()
                     );
                     // At the end:

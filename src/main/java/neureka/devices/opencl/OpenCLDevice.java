@@ -54,6 +54,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
 import neureka.devices.opencl.utility.CLFunctionCompiler;
@@ -461,8 +462,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 ExecutionCall.builder()
                     .device(this)
                     .tensors(tensor, Tsr.of( value ).to( this ))
-                    .derivativeIndex(-1)
                     .operation(Neureka.get().context().instance( "<" ))
+                    .args(
+                            Arg.DerivIdx.of(-1)
+                    )
                     .build()
             );
         }
@@ -696,8 +699,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
         ExecutionCall<OpenCLDevice> call = ExecutionCall.builder()
                                                 .device(this)
                                                 .tensors(tensors)
-                                                .derivativeIndex(d)
                                                 .operation(type)
+                                                .args(
+                                                        Arg.DerivIdx.of(d)
+                                                )
                                                 .build()
                                                 .forDeviceType(OpenCLDevice.class);
         tensors[ 0 ].setIsVirtual( false );

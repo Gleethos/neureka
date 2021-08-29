@@ -170,8 +170,10 @@ public class Power extends AbstractOperation
                                             ExecutionCall.builder()
                                                 .device( device )
                                                 .tensors( reduction )
-                                                .derivativeIndex( 0 )
                                                 .operation( type )
+                                                .args(
+                                                        Arg.DerivIdx.of(0)
+                                                )
                                                 .build()
                                         );
                         tsrs[ 0 ] = reduction[ 0 ];
@@ -184,8 +186,10 @@ public class Power extends AbstractOperation
                                 ExecutionCall.builder()
                                         .device(device)
                                         .tensors(reduction)
-                                        .derivativeIndex(d-1)
                                         .operation(Neureka.get().context().instance("*"))
+                                        .args(
+                                                Arg.DerivIdx.of(d-1)
+                                        )
                                         .build()
                         );
                         Tsr inner = reduction[ 0 ];
@@ -195,8 +199,10 @@ public class Power extends AbstractOperation
                                 ExecutionCall.builder()
                                     .device(device)
                                     .tensors(reduction)
-                                    .derivativeIndex(-1)
                                     .operation(Neureka.get().context().instance("*"))
+                                    .args(
+                                            Arg.DerivIdx.of(-1)
+                                    )
                                     .build()
                         );
                         Tsr exp = reduction[ 0 ];
@@ -206,8 +212,10 @@ public class Power extends AbstractOperation
                                 ExecutionCall.builder()
                                     .device(device)
                                     .tensors(reduction)
-                                    .derivativeIndex( 1 )
                                     .operation(type)
+                                    .args(
+                                            Arg.DerivIdx.of(1)
+                                    )
                                     .build()
 
                         );
