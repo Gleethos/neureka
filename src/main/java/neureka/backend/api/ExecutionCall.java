@@ -40,15 +40,15 @@ package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
+import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
-import neureka.calculus.Function;
 import neureka.devices.Device;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *  This class is a simple container holding relevant
@@ -97,34 +97,14 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
     private ExecutionCall(
             DeviceType device,
-            int derivativeIndex,
             Operation operation,
             Tsr<?>[] tensors,
-            int j,
             Algorithm<?> algorithm,
             List<Arg> context
     ) {
         this._device = device;
-        /*
-            This is an import property whose
-            role might not be clear at first :
-            An operation can have multiple inputs, however
-            when calculating the derivative for a forward or backward pass
-            then one must know which derivative ought to be calculated.
-            So the "derivative index" targets said input.
-            This property is -1 when no derivative should be calculated,
-            however 0... when targeting an input to calculate the derivative of.
-         */
-        _arguments.set(Arg.DerivIdx.of(derivativeIndex));
         this._operation = operation;
         this._tensors = tensors;
-        /*
-            The following argument is relevant for a particular type of operation, namely: an "indexer". <br>
-            An indexer automatically applies an operation on all inputs for a given function.
-            The (indexer) function will execute the sub functions (of the AST) for every input index.
-            If a particular index is not targeted however this variable will simply default to -1.
-         */
-        _arguments.set(Arg.VarIdx.of(j));
         this._algorithm = algorithm;
         for ( Arg<?> arg : context ) this.getMetaArgs().set(arg);
     }
@@ -168,18 +148,17 @@ public class ExecutionCall<DeviceType extends Device<?>>
         return this._tensors == _tensors
                 ? this
                 : new ExecutionCall<>(
-                        this._device, this.getDerivativeIndex(), this._operation,
-                        _tensors, this.getJ(), this._algorithm, _arguments.getAll(Arg.class)
+                        this._device, this._operation,
+                        _tensors, _algorithm, _arguments.getAll(Arg.class)
                     );
     }
 
     public ExecutionCall<DeviceType> withJ( int j ) {
+        List<Arg> args = _arguments.getAll(Arg.class);
+        args.add(Arg.VarIdx.of(j));
         return this.getJ() == j
                 ? this
-                : new ExecutionCall<>(
-                        this._device, this.getDerivativeIndex(), this._operation,
-                        this._tensors, j, this._algorithm, _arguments.getAll(Arg.class)
-                    );
+                : new ExecutionCall<>( _device, _operation, _tensors, _algorithm, args );
     }
 
 
@@ -215,7 +194,22 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
 
     public <V> Tsr<V> getTsrOfType( Class<V> valueTypeClass, int i ) {
-        // TODO: perform type checking!
+        if ( valueTypeClass == null ) {
+            throw new IllegalArgumentException(
+                    "The provided tensor type class is null!\n" +
+                    "Type safe access to the tensor parameter at index '"+i+"' failed."
+            );
+        }
+        if ( _tensors[ i ] != null ) {
+            Class<?> tensorTypeClass = _tensors[ i ].getValueClass();
+            if ( !valueTypeClass.isAssignableFrom(tensorTypeClass) ) {
+                throw new IllegalArgumentException(
+                        "The item value type of the tensor stored at parameter position '"+i+"' is " +
+                        "'"+tensorTypeClass.getSimpleName()+"' and is not a sub-type of the provided " +
+                        "type '"+valueTypeClass.getSimpleName()+"'."
+                );
+            }
+        }
         return (Tsr<V>) _tensors[ i ];
     }
 
@@ -239,6 +233,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
         for ( Arg<?> arg : _arguments.getAll(Arg.class) ) {
             if ( !call.getMetaArgs().has(arg.getClass()) )
                 call.getMetaArgs().set(arg);
+            // else: This should not happen.
         }
         return getAlgorithm().supplyADAgentFor( function, call, forward );
     }
@@ -249,57 +244,57 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
     public Validator validate() { return new Validator(); }
 
-    public static class Builder<DeviceType extends Device<?>>
+    public static class Builder<D extends Device<?>>
     {
-        private DeviceType device;
+        private D device;
         private Operation operation;
         private Tsr<?>[] tensors;
         private Algorithm<?> algorithm;
-        private final List<Arg> context = new ArrayList<>();
+        private final List<Arg> context = Stream.of(
+                                                Arg.DerivIdx.of(-1),
+                                                Arg.VarIdx.of(-1)
+                                            )
+                                            .collect(Collectors.toList());
 
         Builder() { }
 
-        public Builder<DeviceType> device(DeviceType device) {
+        public Builder<D> device(D device) {
             this.device = device;
             return this;
         }
 
-        public Builder<DeviceType> operation(Operation operation) {
+        public Builder<D> operation(Operation operation) {
             this.operation = operation;
             return this;
         }
 
-        public Builder<DeviceType> tensors(Tsr<?>... tensors) {
+        public Builder<D> tensors(Tsr<?>... tensors) {
             this.tensors = tensors;
             return this;
         }
 
-        public Builder<DeviceType> algorithm(Algorithm<?> algorithm) {
+        public Builder<D> algorithm(Algorithm<?> algorithm) {
             this.algorithm = algorithm;
             return this;
         }
 
-        public Builder<DeviceType> args(List<Arg> context) {
+        public Builder<D> args(List<Arg> context) {
             this.context.addAll(context);
             return this;
         }
 
-        public Builder<DeviceType> args(Arg<?>... context) {
+        public Builder<D> args( Arg<?>... context ) {
             return args(Arrays.stream(context).collect(Collectors.toList()));
         }
 
-        public ExecutionCall<DeviceType> build() {
-            int derivativeIndex = -1;
-            int varIdx = -1;
+        public ExecutionCall<D> build() {
             return new ExecutionCall<>(
-                            device,
-                    derivativeIndex,
-                            operation,
-                            tensors,
-                    varIdx,
-                            algorithm,
-                            context
-                        );
+                                device,
+                                operation,
+                                tensors,
+                                algorithm,
+                                context
+                            );
         }
     }
 
@@ -321,11 +316,11 @@ public class ExecutionCall<DeviceType extends Device<?>>
          * @return The current validity of this Validator as float value.
          */
         public float estimation() {
-            return ( _isValid ) ? 1.0f : 0.0f;
+            return ( this._isValid ) ? 1.0f : 0.0f;
         }
 
         public Validator first( TensorCondition condition ) {
-            if ( !condition.check( _tensors[ 0 ] ) ) _isValid = false;
+            if ( !condition.check( _tensors[ 0 ] ) ) this._isValid = false;
             return this;
         }
 
@@ -333,7 +328,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
         {
             boolean any = false;
             for ( Tsr<?> t : _tensors ) any = condition.check( t ) || any;
-            if ( !any ) _isValid = false;
+            if ( !any ) this._isValid = false;
             return this;
         }
 
@@ -342,7 +337,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
             boolean any = false;
             for ( Tsr<?> t : _tensors )
                 if ( t != null ) any = condition.check( t ) || any;
-            if ( !any ) _isValid = false;
+            if ( !any ) this._isValid = false;
             return this;
         }
 
@@ -350,7 +345,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
         {
             boolean all = true;
             for ( Tsr<?> t : _tensors ) all = condition.check( t ) && all;
-            if ( !all ) _isValid = false;
+            if ( !all ) this._isValid = false;
             return this;
         }
 
@@ -359,7 +354,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
             boolean all = true;
             for ( Tsr<?> t : _tensors )
                 if ( t != null ) all = condition.check( t ) && all;
-            if ( !all ) _isValid = false;
+            if ( !all ) this._isValid = false;
             return this;
         }
 
@@ -371,18 +366,18 @@ public class ExecutionCall<DeviceType extends Device<?>>
                 if ( last != null && !compare.check( last, current ) ) all = false;
                 last = current; // Note: shapes are cached!
             }
-            if ( !all ) _isValid = false;
+            if ( !all ) this._isValid = false;
             return this;
         }
 
         public Validator forDevice( DeviceCondition condition )
         {
-            if ( !condition.check( _device ) ) _isValid = false;
+            if ( !condition.check( _device ) ) this._isValid = false;
             return this;
         }
 
         public Validator forOperation( OperationCondition condition ) {
-            if ( !condition.check(_operation) ) _isValid = false;
+            if ( !condition.check(_operation) ) this._isValid = false;
             return this;
         }
 

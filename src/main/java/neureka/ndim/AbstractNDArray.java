@@ -82,9 +82,9 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      */
     public abstract boolean isDeleted();
 
-    protected void _guardGet(String varName ) { _guard("Trying to access the "+varName+" of an already deleted tensor." ); }
-    protected void _guardSet(String varName ) { _guard("Trying to set the "+varName+" of an already deleted tensor." ); }
-    protected void _guardMod(String varName ) { _guard("Trying to modify the "+varName+" of an already deleted tensor." ); }
+    protected void _guardGet( String varName ) { _guard("Trying to access the "+varName+" of an already deleted tensor." ); }
+    protected void _guardSet( String varName ) { _guard("Trying to set the "+varName+" of an already deleted tensor." ); }
+    protected void _guardMod( String varName ) { _guard("Trying to modify the "+varName+" of an already deleted tensor." ); }
 
     /**
      *  This method will guard the state of deleted tensors by throwing an {@link IllegalAccessError}
@@ -124,11 +124,28 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
     public Object getData() { _guardGet("data object"); return this._data; }
 
     /**
-     *
      * @return The type class of individual value items within this {@link Tsr} instance.
      */
     public Class<?> getValueClass() {
-        _guardGet("data type class"); return ( _dataType != null ? _dataType.getTypeClass() : null );
+        _guardGet("data type class"); return ( _dataType != null ? _dataType.getJVMTypeClass() : null );
+    }
+
+    /**
+     *  The {@link Class} returned by this method is the representative {@link Class} of the
+     *  value items of this {@link Tsr} but not necessarily the actual {@link Class} of
+     *  a given value item, this is especially true for numeric types, which are represented by
+     *  implementations of the {@link NumericType} interface.                                        <br>
+     *  For example in the case of a tensor of type {@link Double}, this method would
+     *  return {@link neureka.dtype.custom.F64} which is the representative class of {@link Double}. <br>
+     *  Calling the {@link #getValueClass()} method instead of this method would return the actual value
+     *  type class, namely: {@link Double}.
+     *
+     * @return The representative type class of individual value items within this {@link Tsr} instance
+     *         which might also be sub-classes of the {@link NumericType} interface to model unsigned types
+     *         or other JVM foreign numeric concepts.
+     */
+    public Class<?> getRepresentativeValueClass() {
+        _guardGet("representative data type class"); return ( _dataType != null ? _dataType.getTypeClass() : null );
     }
 
     /**
@@ -146,7 +163,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
         _guardSet("data type");
         if ( _data != null ) {
             String message = "Data type of tensor can only be set when data attribute is null!\n" +
-                    "This is due to construction-consistency reasons.\n";
+                             "This is due to construction-consistency reasons.\n";
             throw new IllegalStateException( message );
         }
         _dataType = dataType;

@@ -2,6 +2,7 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.dtype.DataType
 import spock.lang.Specification
 
 class Tensor_Generics_Unit_Tests extends Specification
@@ -31,7 +32,10 @@ class Tensor_Generics_Unit_Tests extends Specification
             Tsr<Double> t = Tsr.newInstance()
 
         expect :
-            t.getValueClass() == Neureka.get().settings().dtype().defaultDataTypeClass
+            t.getRepresentativeValueClass() == Neureka.get().settings().dtype().defaultDataTypeClass
+        and :
+            t.getValueClass() == DataType.of(Neureka.get().settings().dtype().defaultDataTypeClass).getJVMTypeClass()
+
 
     }
 
