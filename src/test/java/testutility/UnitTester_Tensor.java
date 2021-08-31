@@ -203,18 +203,14 @@ public class UnitTester_Tensor extends UnitTester
                 .getAlgorithm(Broadcast.class)
                 .getImplementationFor( HostCPU.class )
                 .run(
-                        ExecutionCall.builder()
-                            .device(HostCPU.instance())
-                            .tensors(
+                        ExecutionCall.of(
                                 Tsr.of(drnMxd, rsltData),
                                 Tsr.of(frstShp, frstData),
                                 Tsr.of(scndShp, scondData)
                             )
-                            .operation(Neureka.get().context().instance("*"))
-                            .args(
-                                    Arg.DerivIdx.of(-1)
-                            )
-                            .build()
+                            .andArgs(Arg.DerivIdx.of(-1))
+                            .running(Neureka.get().context().instance("*"))
+                            .on(HostCPU.instance())
                             .forDeviceType(HostCPU.class)
         );
         assertIsEqual(stringified(rsltData), stringified(expctd));
@@ -232,35 +228,29 @@ public class UnitTester_Tensor extends UnitTester
                 .getAlgorithm(Broadcast.class)
                 .getImplementationFor( HostCPU.class )
                 .run(
-                        ExecutionCall.builder()
-                            .device(HostCPU.instance())
-                            .tensors(
-                                Tsr.of(frstShp, frstData),
-                                (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
-                                (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
+                        ExecutionCall.of(
+                                    Tsr.of(frstShp, frstData),
+                                    (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
+                                    (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
                             )
-                            .operation(Neureka.get().context().instance(((char) 171) + "*"))
-                            .args(
-                                    Arg.DerivIdx.of(0)
-                            )
-                            .build()
+                            .andArgs(Arg.DerivIdx.of(0))
+                            .running(Neureka.get().context().instance(((char) 171) + "*"))
+                            .on(HostCPU.instance())
                             .forDeviceType(HostCPU.class)
-        );
+                );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));
         Neureka.get().context().instance("*" + ((char) 187))
                 .getAlgorithm(Broadcast.class)
                 .getImplementationFor( HostCPU.class )
                 .run(
-                        ExecutionCall.builder()
-                            .device(HostCPU.instance())
-                            .tensors(
-                                Tsr.of(frstShp, frstData),
-                                (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
-                                (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
+                        ExecutionCall.of(
+                                    Tsr.of(frstShp, frstData),
+                                    (first)?Tsr.of(scndShp, scondData):Tsr.of(drnMxd, drnData),
+                                    (first)?Tsr.of(drnMxd, drnData):Tsr.of(scndShp, scondData)
                             )
-                            .operation(Neureka.get().context().instance("*" + ((char) 187)))
-                            .args(Arg.DerivIdx.of(0))
-                            .build()
+                            .andArgs(Arg.DerivIdx.of(0))
+                            .running(Neureka.get().context().instance("*" + ((char) 187)))
+                            .on(HostCPU.instance())
                             .forDeviceType(HostCPU.class)
         );
         assertIsEqual(stringified((first)?frstData:scondData), stringified(expctd));

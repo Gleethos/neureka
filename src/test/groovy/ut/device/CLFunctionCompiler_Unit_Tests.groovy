@@ -133,12 +133,10 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
             algorithm
                 .getImplementationFor(OpenCLDevice.class)
                 .run(
-                        ExecutionCall.builder()
-                                        .tensors(Tsr.of(0), Tsr.of(1), Tsr.of(2), Tsr.of(3))
-                                        .operation(resultOperation)
+                        ExecutionCall.of(Tsr.of(0), Tsr.of(1), Tsr.of(2), Tsr.of(3))
+                                        .running(resultOperation)
                                         .algorithm(algorithm)
-                                        .device(mockDevice)
-                                        .build() as ExecutionCall<OpenCLDevice>
+                                        .on(mockDevice) as ExecutionCall<OpenCLDevice>
                 )
 
         then : 'We expect that the implementation first checks with an optimized kernel already exists...'

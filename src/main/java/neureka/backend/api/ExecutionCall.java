@@ -181,14 +181,12 @@ public class ExecutionCall<DeviceType extends Device<?>>
      * Constructs a copy of this call with the provided device!
      */
     public ExecutionCall<? extends Device<?>> withDevice( Device<?> newDevice ) {
-        return ExecutionCall.builder()
-                                .device( newDevice )
-                                .tensors( _tensors )
-                                .operation( _operation )
+        return ExecutionCall.of( _tensors )
+                                .andArgs( Arg.DerivIdx.of( getDerivativeIndex() ) )
+                                .andArgs( _arguments.getAll(Arg.class) )
+                                .running( _operation )
                                 .algorithm( _algorithm )
-                                .args( _arguments.getAll(Arg.class) )//getMetaArgs().findAll(Arg.class) )
-                                .args( Arg.DerivIdx.of( getDerivativeIndex() ) )
-                                .build();
+                                .on( newDevice );
     }
 
     public <T extends Device<?>> ExecutionCall<T> forDeviceType( Class<T> type ) {
@@ -304,7 +302,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
             return args(Arrays.stream(context).collect(Collectors.toList()));
         }
 
-        public Builder<D> andArgs(List<Arg> context) {
+        public Builder<D> andArgs( List<Arg> context ) {
             this.context.addAll(context);
             return this;
         }
