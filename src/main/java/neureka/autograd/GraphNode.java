@@ -476,15 +476,13 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                     srcNode,
                                     call.getADAgentFrom(
                                             function,
-                                            ExecutionCall.builder()
-                                                    .device(call.getDevice())
-                                                    .tensors(call.getTensors())
-                                                    .operation(call.getOperation())
-                                                    .args(
-                                                            Arg.DerivIdx.of(i),
-                                                            Arg.VarIdx.of(call.getMetaArgs().valOf(Arg.VarIdx.class))
-                                                    )
-                                                    .build(),
+                                            ExecutionCall.of(call.getTensors())
+                                                            .andArgs(
+                                                                    Arg.DerivIdx.of(i),
+                                                                    Arg.VarIdx.of(call.getMetaArgs().valOf(Arg.VarIdx.class))
+                                                            )
+                                                            .running(call.getOperation())
+                                                            .on(call.getDevice()),
                                             true
                                     )
                             );

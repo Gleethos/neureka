@@ -163,13 +163,11 @@ public class JunctionUtil
                 } else b = Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);
 
                 alternative = goDeeperWith.apply(
-                        ExecutionCall.builder()
-                                .device(device)
-                                .tensors( new Tsr[]{tsrs[ 0 ], a, b} )
-                                .args( Arg.DerivIdx.of( -1 ) )
-                                .operation( Neureka.get().context().instance("*") )
-                                .build()
-                );
+                                        ExecutionCall.of( tsrs[ 0 ], a, b )
+                                                        .andArgs( Arg.DerivIdx.of( -1 ) )
+                                                        .running( Neureka.get().context().instance("*") )
+                                                        .on( device )
+                                );
                 alternative = goDeeperWith.apply(
                                         ExecutionCall.of( tsrs[ 0 ], tsrs[ 0 ], tsrs[d+1] )
                                                         .andArgs(Arg.DerivIdx.of(1))

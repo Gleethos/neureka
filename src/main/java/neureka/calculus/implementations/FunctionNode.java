@@ -108,15 +108,13 @@ public class FunctionNode implements Function
      */
     protected Tsr _tensor_activation( Tsr[] inputs, Args arguments )
     {
-        ExecutionCall<? extends Device<?>> call = ExecutionCall.builder()
-                                                                .device(_deviceFor( inputs ))
-                                                                .tensors( inputs )
-                                                                .operation( _operation )
-                                                                .args(
-                                                                    arguments.get(Arg.DerivIdx.class),
-                                                                    arguments.get(Arg.VarIdx.class)
+        ExecutionCall<? extends Device<?>> call = ExecutionCall.of( inputs )
+                                                                .andArgs(
+                                                                        arguments.get(Arg.DerivIdx.class),
+                                                                        arguments.get(Arg.VarIdx.class)
                                                                 )
-                                                                .build();
+                                                                .running(_operation)
+                                                                .on( _deviceFor( inputs ) );
         ExecutionCall<? extends Device<?>> finalCall;
         Device<?> possiblyNewDevice = call.getAlgorithm().findDeviceFor( call );
         if ( possiblyNewDevice != null ) finalCall = call.withDevice( possiblyNewDevice );
@@ -249,12 +247,10 @@ public class FunctionNode implements Function
                         else {
                             // Optimization above did not apply, so we accumulate all the derivatives!
                             device.execute(
-                                    ExecutionCall.builder()
-                                        .device( device )
-                                        .tensors( tensors )
-                                        .args( Arg.DerivIdx.of( -1 ) )
-                                        .operation( Neureka.get().context().instance("+") )
-                                        .build()
+                                    ExecutionCall.of(tensors)
+                                                    .andArgs(Arg.DerivIdx.of( -1 ))
+                                                    .running(Neureka.get().context().instance("+"))
+                                                    .on(device)
                             );
                             inner = tensors[ 0 ];//-> this is now the inner derivative!
                         }
@@ -315,13 +311,11 @@ public class FunctionNode implements Function
                 if ( out == null ) out = actor.get();
                 else
                     device.execute(
-                            ExecutionCall.builder()
-                                .device( device )
-                                .tensors( new Tsr[]{ null, actor.get(), out } )
-                                .args( Arg.DerivIdx.of( -1 ) )
-                                .operation( Neureka.get().context().instance("+") )
-                                .build()
-                );
+                            ExecutionCall.of( null, actor.get(), out )
+                                            .andArgs( Arg.DerivIdx.of( -1 ) )
+                                            .running( Neureka.get().context().instance("+") )
+                                            .on( device )
+                    );
             }
         }
         return out;
