@@ -175,14 +175,10 @@ public class FunctionNode implements Function
             tensors = srcActivation(inputs, j, d, 1);
         }
         device.execute(
-                ExecutionCall.builder()
-                        .device( device )
-                        .tensors( tensors )
-                        .operation( _operation )
-                        .args(
-                                Arg.DerivIdx.of(d)
-                        )
-                        .build()
+                ExecutionCall.of(tensors)
+                                .andArgs(Arg.DerivIdx.of(d))
+                                .running(_operation)
+                                .on(device)
         );
         if ( tensors[ 0 ] == null ) _LOG.warn("Function '"+this+"' did not have a proper return value.");
         return ( tensors[ 0 ] == null ) ? tensors[ 1 ] : tensors[ 0 ];

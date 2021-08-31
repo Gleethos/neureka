@@ -157,12 +157,10 @@ public class Power extends AbstractOperation
                         Tsr[] reduction = Utility.subset(tsrs, 1,  2, tsrs.length-2);
                         reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);
                         alternative = goDeeperWith.apply(
-                                            ExecutionCall.builder()
-                                                    .device( device )
-                                                    .tensors( reduction )
-                                                    .args( Arg.DerivIdx.of( -1 ) )
-                                                    .operation( Neureka.get().context().instance("*") )
-                                                    .build()
+                                            ExecutionCall.of(reduction)
+                                                            .andArgs(Arg.DerivIdx.of( -1 ))
+                                                            .running(Neureka.get().context().instance("*"))
+                                                            .on(device)
                                         );
                         Tsr exp = reduction[ 0 ];
                         reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], exp};
@@ -179,33 +177,25 @@ public class Power extends AbstractOperation
                         tsrs[ 0 ] = reduction[ 0 ];
                         exp.delete();
                     } else {
-                        Tsr[] reduction = Utility.subset(tsrs, 1,  2, tsrs.length-2);
+                        Tsr<?>[] reduction = Utility.subset(tsrs, 1,  2, tsrs.length-2);
 
                         reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);
                         alternative = goDeeperWith.apply(
-                                ExecutionCall.builder()
-                                        .device(device)
-                                        .tensors(reduction)
-                                        .operation(Neureka.get().context().instance("*"))
-                                        .args(
-                                                Arg.DerivIdx.of(d-1)
-                                        )
-                                        .build()
-                        );
-                        Tsr inner = reduction[ 0 ];
+                                                ExecutionCall.of(reduction)
+                                                                .andArgs(Arg.DerivIdx.of(d-1))
+                                                                .running(Neureka.get().context().instance("*"))
+                                                                .on(device)
+                                        );
+                        Tsr<?> inner = reduction[ 0 ];
 
                         reduction = new Tsr[]{Tsr.Create.newTsrLike(tsrs[ 1 ]), inner, tsrs[d]};
                         alternative = goDeeperWith.apply(
-                                ExecutionCall.builder()
-                                    .device(device)
-                                    .tensors(reduction)
-                                    .operation(Neureka.get().context().instance("*"))
-                                    .args(
-                                            Arg.DerivIdx.of(-1)
-                                    )
-                                    .build()
-                        );
-                        Tsr exp = reduction[ 0 ];
+                                                ExecutionCall.of(reduction)
+                                                                .andArgs(Arg.DerivIdx.of(-1))
+                                                                .running(Neureka.get().context().instance("*"))
+                                                                .on(device)
+                                        );
+                        Tsr<?> exp = reduction[ 0 ];
 
                         reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], exp};
                         alternative = goDeeperWith.apply(

@@ -171,15 +171,11 @@ public class JunctionUtil
                                 .build()
                 );
                 alternative = goDeeperWith.apply(
-                        ExecutionCall.builder()
-                                .device(device)
-                                .tensors( tsrs[ 0 ], tsrs[ 0 ], tsrs[d+1] )
-                                .operation( Neureka.get().context().instance("/") )
-                                .args(
-                                        Arg.DerivIdx.of(1)
-                                )
-                                .build()
-                );
+                                        ExecutionCall.of( tsrs[ 0 ], tsrs[ 0 ], tsrs[d+1] )
+                                                        .andArgs(Arg.DerivIdx.of(1))
+                                                        .running(Neureka.get().context().instance("/"))
+                                                        .on(device)
+                                );
                 if ( d == 0 ) a.delete();
                 b.delete();
             }
