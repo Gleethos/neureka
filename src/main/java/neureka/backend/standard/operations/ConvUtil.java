@@ -70,14 +70,12 @@ public class ConvUtil {
                                     Tsr[] tsrs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
                                     Tsr.makeFit(tsrs, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                     for ( Tsr t : tsrs ) t.setIsVirtual( false );
-                                    call.getDevice().execute( ExecutionCall.builder()
-                                            .device(call.getDevice())
-                                            .tensors( tsrs )
-                                            .operation( call.getOperation() )
-                                            .args(
-                                                    Arg.DerivIdx.of(0)
-                                            )
-                                            .build() );
+                                    call.getDevice().execute(
+                                            ExecutionCall.of(tsrs)
+                                                            .andArgs(Arg.DerivIdx.of(0))
+                                                            .running(call.getOperation())
+                                                            .on(call.getDevice())
+                                    );
                                     if ( call.getOperation() == Neureka.get().context().instance("x>>") )
                                         return tsrs[ 2 ];
                                     else

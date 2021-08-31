@@ -459,14 +459,10 @@ public class OpenCLDevice extends AbstractDevice<Number>
             double value = tensor.value64( 0 );
             tensor.setIsOutsourced( true );
             execute(
-                ExecutionCall.builder()
-                    .device(this)
-                    .tensors(tensor, Tsr.of( value ).to( this ))
-                    .operation(Neureka.get().context().instance( "<" ))
-                    .args(
-                            Arg.DerivIdx.of(-1)
-                    )
-                    .build()
+                ExecutionCall.of(tensor, Tsr.of( value ).to( this ))
+                                .andArgs(Arg.DerivIdx.of(-1))
+                                .running(Neureka.get().context().instance( "<" ))
+                                .on(this)
             );
         }
         else tensor.setIsOutsourced( true );
@@ -696,15 +692,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     protected void _execute( Tsr[] tensors, int d, Operation type )
     {
-        ExecutionCall<OpenCLDevice> call = ExecutionCall.builder()
-                                                .device(this)
-                                                .tensors(tensors)
-                                                .operation(type)
-                                                .args(
-                                                        Arg.DerivIdx.of(d)
-                                                )
-                                                .build()
-                                                .forDeviceType(OpenCLDevice.class);
+        ExecutionCall<OpenCLDevice> call = ExecutionCall.of(tensors)
+                                                        .andArgs(Arg.DerivIdx.of(d))
+                                                        .running(type)
+                                                        .on(this)
+                                                        .forDeviceType(OpenCLDevice.class);
         tensors[ 0 ].setIsVirtual( false );
         call.getAlgorithm().getImplementationFor( OpenCLDevice.class ).run( call );
     }

@@ -131,14 +131,10 @@ public class JunctionUtil
                     Tsr[] reduction = Operation.Utility.subset(tsrs, 1, 1, d+1);
                     reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);
                     alternative = goDeeperWith.apply(
-                                        ExecutionCall.builder()
-                                                .device(device)
-                                                .tensors(reduction)
-                                                .operation(Neureka.get().context().instance("/"))
-                                                .args(
-                                                        Arg.DerivIdx.of(-1)
-                                                )
-                                                .build()
+                                        ExecutionCall.of(reduction)
+                                                        .andArgs(Arg.DerivIdx.of(-1))
+                                                        .running(Neureka.get().context().instance("/"))
+                                                        .on(device)
                     );
                     a = reduction[ 0 ];
                 }
@@ -150,15 +146,11 @@ public class JunctionUtil
                     reduction[ 1 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);
                     reduction[ 0 ] = reduction[ 1 ];
                     alternative = goDeeperWith.apply(
-                            ExecutionCall.builder()
-                                    .device(device)
-                                    .tensors(reduction)
-                                    .operation(Neureka.get().context().instance("/"))
-                                    .args(
-                                            Arg.DerivIdx.of(-1)
-                                    )
-                                    .build()
-                    );
+                                        ExecutionCall.of(reduction)
+                                                        .andArgs(Arg.DerivIdx.of(-1))
+                                                        .running(Neureka.get().context().instance("/"))
+                                                        .on(device)
+                                );
                     b = reduction[ 0 ];
                 } else b = Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);
 
@@ -211,15 +203,11 @@ public class JunctionUtil
             if ( d < 0 ) {
                 Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                 alternative = goDeeperWith.apply(
-                        ExecutionCall.builder()
-                                .device(device)
-                                .tensors(reduction)
-                                .operation(operation)
-                                .args(
-                                        Arg.DerivIdx.of(d)
-                                )
-                                .build()
-                );
+                                    ExecutionCall.of(reduction)
+                                                    .andArgs(Arg.DerivIdx.of(d))
+                                                    .running(operation)
+                                                    .on(device)
+                            );
                 tsrs[ 0 ] = reduction[ 0 ];
 
                 reduction = Operation.Utility.offsetted(tsrs, 1);
