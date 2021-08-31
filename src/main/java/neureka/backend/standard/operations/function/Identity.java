@@ -67,14 +67,10 @@ public final class Identity extends AbstractOperation
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                    return ExecutionCall.builder()
-                                .device(call.getDevice())
-                                .tensors( tsrs[offset], tsrs[1+offset] )
-                                .operation(Neureka.get().context().instance("idy"))
-                                .args(
-                                        Arg.DerivIdx.of(-1)
-                                )
-                                .build();
+                    return ExecutionCall.of(tsrs[offset], tsrs[1+offset])
+                                        .andArgs(Arg.DerivIdx.of(-1))
+                                        .running(Neureka.get().context().instance("idy"))
+                                        .on(call.getDevice());
                 }
         )
         .build();

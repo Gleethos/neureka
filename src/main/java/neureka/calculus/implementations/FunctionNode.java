@@ -277,26 +277,20 @@ public class FunctionNode implements Function
                     }
                     // Use those tensors for the outer derivative:
                     device.execute(
-                            ExecutionCall.builder()
-                                            .device( device )
-                                            .tensors( tensors )
-                                            .operation( _operation )
-                                            .args(
-                                                    Arg.DerivIdx.of(d)
-                                            )
-                                            .build()
+                            ExecutionCall.of(tensors)
+                                            .andArgs(Arg.DerivIdx.of(d))
+                                            .running( _operation )
+                                            .on( device )
                     );
                     // At the end:
                     //...multiply inner times outer: ( if inner is not 1 entirely... )
                     if ( !( ( inner.isVirtual() || inner.size()==1 ) && inner.value64( 0 )==1.0) ) {
                         tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
                         device.execute(
-                                ExecutionCall.builder()
-                                                .device( device )
-                                                .tensors( tensors )
-                                                .args( Arg.DerivIdx.of( -1 ) )
-                                                .operation( Neureka.get().context().instance("*") )
-                                                .build()
+                                ExecutionCall.of(tensors)
+                                                .andArgs(Arg.DerivIdx.of( -1 ))
+                                                .running(Neureka.get().context().instance("*"))
+                                                .on( device )
                         );
                     } // done!
                     return tensors[ 0 ];

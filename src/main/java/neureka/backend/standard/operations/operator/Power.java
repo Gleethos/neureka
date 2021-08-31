@@ -4,7 +4,6 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.Algorithm;
-import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.operations.AbstractOperation;
@@ -15,6 +14,7 @@ import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -165,14 +165,10 @@ public class Power extends AbstractOperation
                         Tsr exp = reduction[ 0 ];
                         reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], exp};
                         alternative = goDeeperWith.apply(
-                                            ExecutionCall.builder()
-                                                .device( device )
-                                                .tensors( reduction )
-                                                .operation( type )
-                                                .args(
-                                                        Arg.DerivIdx.of(0)
-                                                )
-                                                .build()
+                                            ExecutionCall.of(reduction)
+                                                            .andArgs(Arg.DerivIdx.of(0))
+                                                            .running(type)
+                                                            .on( device )
                                         );
                         tsrs[ 0 ] = reduction[ 0 ];
                         exp.delete();
@@ -199,16 +195,11 @@ public class Power extends AbstractOperation
 
                         reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], exp};
                         alternative = goDeeperWith.apply(
-                                ExecutionCall.builder()
-                                    .device(device)
-                                    .tensors(reduction)
-                                    .operation(type)
-                                    .args(
-                                            Arg.DerivIdx.of(1)
-                                    )
-                                    .build()
-
-                        );
+                                ExecutionCall.of(reduction)
+                                                .andArgs(Arg.DerivIdx.of(1))
+                                                .running(type)
+                                                .on(device)
+                            );
                         tsrs[ 0 ] = reduction[ 0 ];
 
                         inner.delete();

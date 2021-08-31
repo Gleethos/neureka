@@ -54,12 +54,10 @@ public class CopyLeft extends AbstractOperation {
                             call.getTsrOfType( Number.class, offset).incrementVersionBecauseOf(call);
                             call.getTsrOfType( Number.class, offset).setIsVirtual( false );
                             return
-                                    ExecutionCall.builder()
-                                        .device( call.getDevice() )
-                                        .tensors( new Tsr[]{tsrs[offset], tsrs[1+offset]} )
-                                        .operation( this )
-                                        .args( Arg.DerivIdx.of(-1) )
-                                        .build();
+                                    ExecutionCall.of(tsrs[offset], tsrs[1+offset])
+                                                    .andArgs(Arg.DerivIdx.of(-1))
+                                                    .running(this)
+                                                    .on( call.getDevice() );
                         }
                 )
                 .build();
@@ -146,14 +144,10 @@ public class CopyLeft extends AbstractOperation {
                         Tsr[] tsrs = call.getTensors();
                         int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                         call.getTsrOfType( Number.class, offset).incrementVersionBecauseOf(call);
-                        return ExecutionCall.builder()
-                                    .device(call.getDevice())
-                                    .tensors( tsrs[offset], tsrs[1+offset] )
-                                    .operation(Neureka.get().context().instance("idy"))
-                                    .args(
-                                            Arg.DerivIdx.of(-1)
-                                    )
-                                    .build();
+                        return ExecutionCall.of(tsrs[offset], tsrs[1+offset])
+                                            .andArgs(Arg.DerivIdx.of(-1))
+                                            .running(Neureka.get().context().instance("idy"))
+                                            .on(call.getDevice());
                     }
             )
             .build();

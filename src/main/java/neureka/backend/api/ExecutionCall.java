@@ -109,10 +109,8 @@ public class ExecutionCall<DeviceType extends Device<?>>
         for ( Arg<?> arg : context ) this.getMetaArgs().set(arg);
     }
 
-    public static <DeviceType extends Device<?>> Builder<DeviceType> builder() { return new Builder<>(); }
-
     public static <D extends Device<?>> Builder<D> of( Tsr<?>... tensors ) {
-        return new Builder<D>().tensors(tensors);
+        return new Builder<D>(tensors);
     }
 
     public Args getMetaArgs() { return _arguments; }
@@ -258,33 +256,20 @@ public class ExecutionCall<DeviceType extends Device<?>>
                                             )
                                             .collect(Collectors.toList());
 
-        Builder() { }
-
-
-        // ExecutionCall.of(t1, t2).andArgs().running(operation).on(device);
-
-        public Builder<D> device(D device) {
-            this.device = device;
-            return this;
-        }
+        Builder(Tsr<?>[] tensors) { this.tensors = tensors; }
 
         public ExecutionCall<D> on(D device) {
-            this.device = device;
-            return build();
-        }
-
-        public Builder<D> operation(Operation operation) {
-            this.operation = operation;
-            return this;
+            return new ExecutionCall<>(
+                                    device,
+                                    operation,
+                                    tensors,
+                                    algorithm,
+                                    context
+                            );
         }
 
         public Builder<D> running(Operation operation) {
             this.operation = operation;
-            return this;
-        }
-
-        public Builder<D> tensors(Tsr<?>... tensors) {
-            this.tensors = tensors;
             return this;
         }
 
@@ -293,33 +278,15 @@ public class ExecutionCall<DeviceType extends Device<?>>
             return this;
         }
 
-        public Builder<D> args(List<Arg> context) {
-            this.context.addAll(context);
-            return this;
-        }
-
-        public Builder<D> args( Arg<?>... context ) {
-            return args(Arrays.stream(context).collect(Collectors.toList()));
-        }
-
         public Builder<D> andArgs( List<Arg> context ) {
             this.context.addAll(context);
             return this;
         }
 
         public Builder<D> andArgs( Arg<?>... context ) {
-            return args(Arrays.stream(context).collect(Collectors.toList()));
+            return andArgs(Arrays.stream(context).collect(Collectors.toList()));
         }
 
-        public ExecutionCall<D> build() {
-            return new ExecutionCall<>(
-                                device,
-                                operation,
-                                tensors,
-                                algorithm,
-                                context
-                            );
-        }
     }
 
     /**

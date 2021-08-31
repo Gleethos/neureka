@@ -47,16 +47,12 @@ public class HostCPU extends AbstractDevice<Number>
     }
 
     @Override
-    protected void _execute( Tsr[] tensors, int d, Operation type )
+    protected void _execute( Tsr[] tensors, int d, Operation operation )
     {
-        ExecutionCall<HostCPU> call = ExecutionCall.builder()
-                                                    .device(this)
-                                                    .tensors(tensors)
-                                                    .operation(type)
-                                                    .args(
-                                                            Arg.DerivIdx.of(d)
-                                                    )
-                                                    .build()
+        ExecutionCall<HostCPU> call = ExecutionCall.of(tensors)
+                                                    .andArgs(Arg.DerivIdx.of(d))
+                                                    .running(operation)
+                                                    .on(this)
                                                     .forDeviceType(HostCPU.class);
 
         Algorithm<?> algorithm = call.getAlgorithm();
