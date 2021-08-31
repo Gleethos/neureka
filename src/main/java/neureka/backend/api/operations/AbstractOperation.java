@@ -35,7 +35,7 @@ public abstract class AbstractOperation implements Operation
      * </ul>
      * The following String is the latter way of representing the operation, namely: a functional way.
      */
-    protected String _function;
+    protected final String _function;
 
     /**
      *  An operation may have two ways in which it can describe itself as String within a Function AST.
@@ -47,13 +47,13 @@ public abstract class AbstractOperation implements Operation
      * </ul>
      * The following String is the primer way of representing the operation, namely: as an operator.
      */
-    protected String _operator;
+    protected final String _operator;
 
     /**
      * Arity is the number of arguments or operands
      * that this function or operation takes.
      */
-    protected int _arity = -1;
+    protected final int _arity;
 
     /**
      *  This flag determines if this operation is auto-indexing passed input arguments.
@@ -63,7 +63,7 @@ public abstract class AbstractOperation implements Operation
      *  The variable 'j' in a Functions expressions containing 'I[j]' will then be
      *  resolved to an actual input for a given indexer...
      */
-    protected boolean _isIndexer;
+    protected final boolean _isIndexer;
 
     /**
      *  Certain operations are not differentiable, meaning they cannot participate
@@ -71,14 +71,14 @@ public abstract class AbstractOperation implements Operation
      *  In order to avoid error prone behaviour trying involve
      *  non- differentiable operations will yield proper exceptions.
      */
-    protected boolean _isDifferentiable;
+    protected final boolean _isDifferentiable;
 
     /**
      *  Inline operations are operations which change the state of the arguments passed to them.
      *
      */
-    protected boolean _isInline;
-    protected boolean _isOperator;
+    protected final boolean _isInline;
+    protected final boolean _isOperator;
 
     private final Map<Class<?>, Algorithm<?>> _algorithms = new LinkedHashMap<>();
 
@@ -96,7 +96,7 @@ public abstract class AbstractOperation implements Operation
      *  - A simple result tensor instantiation implementation.                                                          <br>
      *  - A basic threaded execution based on the AST of a given Function object.                                       <br>
      */
-    private final Algorithm<?> _defaultAlgorithm = new FallbackAlgorithm( "default", _arity, this );
+    private final Algorithm<?> _defaultAlgorithm;
 
     public AbstractOperation( OperationBuilder builder )
     {
@@ -109,9 +109,8 @@ public abstract class AbstractOperation implements Operation
         _isIndexer        = builder.getIsIndexer();
         _isDifferentiable = builder.getIsDifferentiable();
         _isInline         = builder.getIsInline();
+        _defaultAlgorithm = new FallbackAlgorithm( "default", _arity, this );
     }
-
-    public AbstractOperation() { }
 
     //==================================================================================================================
 

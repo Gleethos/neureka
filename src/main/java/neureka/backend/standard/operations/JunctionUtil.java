@@ -15,45 +15,37 @@ public class JunctionUtil
             ExecutionCall<? extends Device<?>> call,
             Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith
     ) {
-        Tsr[] tsrs = call.getTensors();
-        Device device = call.getDevice();
+        Tsr<?>[] tsrs = call.getTensors();
+        Device<?> device = call.getDevice();
         int d = call.getDerivativeIndex();
-        Operation type = call.getOperation();
+        Operation operation = call.getOperation();
 
-        Tsr alternative = null;
+        Tsr<?> alternative = null;
         if (tsrs.length > 3) {
             if ( d < 0 ) {
-                Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
+                Tsr<?>[] reduction = new Tsr[]{ tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ] };
                 alternative = goDeeperWith.apply(
-                        ExecutionCall.builder()
-                                .device(device)
-                                .tensors(reduction)
-                                .operation(type)
-                                .args(
-                                        Arg.DerivIdx.of(d)
-                                )
-                                .build()
-                );
+                                    ExecutionCall.of( reduction )
+                                                    .andArgs( Arg.DerivIdx.of(d) )
+                                                    .running( operation )
+                                                    .on(device)
+                                );
                 tsrs[ 0 ] = reduction[ 0 ];
 
                 reduction = Operation.Utility.offsetted(tsrs, 1);
                 alternative = goDeeperWith.apply(
-                        ExecutionCall.builder()
-                                .device(device)
-                                .tensors(reduction)
-                                .operation(type)
-                                .args(
-                                        Arg.DerivIdx.of(d)
-                                )
-                                .build()
+                        ExecutionCall.of(reduction)
+                                        .andArgs(Arg.DerivIdx.of(d))
+                                        .running(operation)
+                                        .on(device)
                 );
                 tsrs[ 0 ] = reduction[ 0 ];
             }
             return alternative;
         } else {
             if ( call.getOperation().getOperator().equals("x") ) {
-                if (d >= 0) {
-                    if (d == 0) tsrs[ 0 ] = tsrs[ 2 ];
+                if ( d >= 0 ) {
+                    if ( d == 0 ) tsrs[ 0 ] = tsrs[ 2 ];
                     else tsrs[ 0 ] = tsrs[ 1 ];
                     return tsrs[ 0 ];
                 } else {
@@ -70,37 +62,23 @@ public class JunctionUtil
             ExecutionCall<? extends Device<?>> call,
             Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith
     ) {
-        Tsr[] tsrs = call.getTensors();
-        Device device = call.getDevice();
+        Tsr<?>[] tsrs = call.getTensors();
+        Device<?> device = call.getDevice();
         int d = call.getDerivativeIndex();
         Operation type = call.getOperation();
 
-        Tsr alternative = null;
+        Tsr<?> alternative = null;
         if (tsrs.length > 3) {
             if ( d < 0 ) {
-                Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
+                Tsr<?>[] reduction = new Tsr[]{ tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ] };
                 alternative = goDeeperWith.apply(
-                        ExecutionCall.builder()
-                                .device(device)
-                                .tensors(reduction)
-                                .operation(type)
-                                .args(
-                                        Arg.DerivIdx.of(d)
-                                )
-                                .build()
+                        ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
                 );
                 tsrs[ 0 ] = reduction[ 0 ];
 
                 reduction = Operation.Utility.offsetted(tsrs, 1);
                 alternative = goDeeperWith.apply(
-                        ExecutionCall.builder()
-                                .device(device)
-                                .tensors(reduction)
-                                .operation(type)
-                                .args(
-                                        Arg.DerivIdx.of(d)
-                                )
-                                .build()
+                        ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
                 );
                 tsrs[ 0 ] = reduction[ 0 ];
             } else {
@@ -108,12 +86,10 @@ public class JunctionUtil
                 if ( reduction.length > 2 ) {
                     reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tsrs[ 1 ]) : reduction[ 0 ];
                     alternative = goDeeperWith.apply(
-                            ExecutionCall.builder()
-                                    .device( device )
-                                    .tensors( reduction )
-                                    .args( Arg.DerivIdx.of( -1 ) )
-                                    .operation( Neureka.get().context().instance("*") )
-                                    .build()
+                            ExecutionCall.of(reduction)
+                                            .andArgs( Arg.DerivIdx.of( -1 ) )
+                                            .running( Neureka.get().context().instance("*") )
+                                            .on( device )
                     );
                     tsrs[ 0 ] = reduction[ 0 ];
                 } else tsrs[ 0 ] = reduction[ 1 ];
@@ -234,7 +210,7 @@ public class JunctionUtil
         Tsr[] tsrs = call.getTensors();
         Device device = call.getDevice();
         int d = call.getDerivativeIndex();
-        Operation type = call.getOperation();
+        Operation operation = call.getOperation();
 
         Tsr alternative = null;
         if (tsrs.length > 3) {
@@ -244,7 +220,7 @@ public class JunctionUtil
                         ExecutionCall.builder()
                                 .device(device)
                                 .tensors(reduction)
-                                .operation(type)
+                                .operation(operation)
                                 .args(
                                         Arg.DerivIdx.of(d)
                                 )
@@ -254,15 +230,11 @@ public class JunctionUtil
 
                 reduction = Operation.Utility.offsetted(tsrs, 1);
                 alternative = goDeeperWith.apply(
-                        ExecutionCall.builder()
-                                .device(device)
-                                .tensors(reduction)
-                                .operation(type)
-                                .args(
-                                        Arg.DerivIdx.of(d)
-                                )
-                                .build()
-                );
+                                        ExecutionCall.of(reduction)
+                                                        .andArgs(Arg.DerivIdx.of(d))
+                                                        .running(operation)
+                                                        .on(device)
+                                );
                 tsrs[ 0 ] = reduction[ 0 ];
             } else {
                 tsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[ 1 ]).setValue((d==0||thisIsForAddition)?1.0f:-1.0f);

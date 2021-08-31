@@ -111,6 +111,10 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
     public static <DeviceType extends Device<?>> Builder<DeviceType> builder() { return new Builder<>(); }
 
+    public static <D extends Device<?>> Builder<D> of( Tsr<?>... tensors ) {
+        return new Builder<D>().tensors(tensors);
+    }
+
     public Args getMetaArgs() { return _arguments; }
     
     public String toString() {
@@ -258,12 +262,25 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
         Builder() { }
 
+
+        // ExecutionCall.of(t1, t2).andArgs().running(operation).on(device);
+
         public Builder<D> device(D device) {
             this.device = device;
             return this;
         }
 
+        public ExecutionCall<D> on(D device) {
+            this.device = device;
+            return build();
+        }
+
         public Builder<D> operation(Operation operation) {
+            this.operation = operation;
+            return this;
+        }
+
+        public Builder<D> running(Operation operation) {
             this.operation = operation;
             return this;
         }
@@ -284,6 +301,15 @@ public class ExecutionCall<DeviceType extends Device<?>>
         }
 
         public Builder<D> args( Arg<?>... context ) {
+            return args(Arrays.stream(context).collect(Collectors.toList()));
+        }
+
+        public Builder<D> andArgs(List<Arg> context) {
+            this.context.addAll(context);
+            return this;
+        }
+
+        public Builder<D> andArgs( Arg<?>... context ) {
             return args(Arrays.stream(context).collect(Collectors.toList()));
         }
 

@@ -71,6 +71,11 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      */
     public static Logger _LOG; // Why is this not final ? -> For unit testing!
 
+    /**
+     *  An instance of an implementation of the {@link NDConfiguration} interface defining
+     *  the dimensionality of this {@link AbstractNDArray} in terms of certain index properties
+     *  which imply individual access patterns for the underlying {@link #_data}.
+     */
     private NDConfiguration _NDConf;
 
     private DataType<?> _dataType = DataType.of( Neureka.get().settings().dtype().getDefaultDataTypeClass() );
@@ -132,7 +137,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
 
     /**
      *  The {@link Class} returned by this method is the representative {@link Class} of the
-     *  value items of this {@link Tsr} but not necessarily the actual {@link Class} of
+     *  value items of a concrete {@link AbstractNDArray} but not necessarily the actual {@link Class} of
      *  a given value item, this is especially true for numeric types, which are represented by
      *  implementations of the {@link NumericType} interface.                                        <br>
      *  For example in the case of a tensor of type {@link Double}, this method would
@@ -140,25 +145,25 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      *  Calling the {@link #getValueClass()} method instead of this method would return the actual value
      *  type class, namely: {@link Double}.
      *
-     * @return The representative type class of individual value items within this {@link Tsr} instance
-     *         which might also be sub-classes of the {@link NumericType} interface to model unsigned types
-     *         or other JVM foreign numeric concepts.
+     * @return The representative type class of individual value items within this concrete {@link AbstractNDArray}
+     *         extension instance which might also be sub-classes of the {@link NumericType} interface
+     *         to model unsigned types or other JVM foreign numeric concepts.
      */
     public Class<?> getRepresentativeValueClass() {
         _guardGet("representative data type class"); return ( _dataType != null ? _dataType.getTypeClass() : null );
     }
 
     /**
-     *  This method enables modifying the data-type configuration of this NDArray.
+     *  This method enables modifying the data-type configuration of this {@link AbstractNDArray}.
      *  Warning! The method should not be used unless absolutely necessary.
      *  This is because it can cause unpredictable inconsistencies between the
-     *  underlying DataType instance of this NDArray and the actual type of the actual
-     *  data it is wrapping (or it is referencing on a Device).<br>
+     *  underlying {@link DataType} instance of this {@link AbstractNDArray} and the actual type of the actual
+     *  data it is wrapping (or it is referencing on a {@link neureka.devices.Device}).<br>
      *  <br>
-     * @param dataType The new dataType which ought to be set.
+     * @param dataType The new {@link DataType} which ought to be set.
      * @return The final instance type of this class which enables method chaining.
      */
-    public C setDataType(DataType<?> dataType )
+    public C setDataType( DataType<?> dataType )
     {
         _guardSet("data type");
         if ( _data != null ) {
@@ -239,11 +244,11 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
         AbstractNDArray<C, ?> nda = this;
         return new NDAConstructor(
                     new NDAConstructor.API() {
-                        @Override public void setType( DataType<?> type     ) { nda.setDataType( type ); }
-                        @Override public void setConf( NDConfiguration conf ) { nda.setNDConf(   conf ); }
-                        @Override public void setData( Object o             ) { nda._setData(      o  ); }
-                        @Override public void allocate( int size            ) { nda._allocate(   size ); }
-                        @Override public Object getData()                     { return nda.getData();    }
+                        @Override public void setType( DataType<?> type        ) { nda.setDataType( type ); }
+                        @Override public void setConf( NDConfiguration conf    ) { nda.setNDConf(   conf ); }
+                        @Override public void setData( Object o                ) { nda._setData(      o  ); }
+                        @Override public void allocate( int size               ) { nda._allocate(   size ); }
+                        @Override public Object getData()                        { return nda.getData();    }
                         @Override public void setIsVirtual(  boolean isVirtual ) { nda._setIsVirtual( isVirtual ); }
                     }
                 );
@@ -298,25 +303,10 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
     {
         return new Spliterator<V>()
         {
-            @Override
-            public boolean tryAdvance( Consumer<? super V> action ) {
-                return false;
-            }
-
-            @Override
-            public Spliterator<V> trySplit() {
-                return null;
-            }
-
-            @Override
-            public long estimateSize() {
-                return 0;
-            }
-
-            @Override
-            public int characteristics() {
-                return 0;
-            }
+            @Override public boolean tryAdvance( Consumer<? super V> action ) { return false; }
+            @Override public Spliterator<V> trySplit() { return null; }
+            @Override public long estimateSize() { return 0; }
+            @Override public int characteristics() { return 0; }
         };
     }
 
@@ -335,7 +325,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      * @param o The object which ought to be placed at the requested position.
      * @return This very tensor in order to enable method chaining.
      */
-    public abstract C setDataAt(int i, V o );
+    public abstract C setDataAt( int i, V o );
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -354,17 +344,11 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    public int indexOfIndex( int i ) {
-        return _NDConf.indexOfIndex( i );
-    }
+    public int indexOfIndex( int i ) { return _NDConf.indexOfIndex( i ); }
 
-    public int[] IndicesOfIndex( int index ) {
-        return _NDConf.indicesOfIndex( index );
-    }
+    public int[] IndicesOfIndex( int index ) { return _NDConf.indicesOfIndex( index ); }
 
-    public int indexOfIndices( int[] indices ) {
-        return _NDConf.indexOfIndices(indices);
-    }
+    public int indexOfIndices( int[] indices ) { return _NDConf.indexOfIndices(indices); }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -375,9 +359,9 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      * @param ndConfiguration The new NDConfiguration instance which ought to be set.
      * @return The final instance type of this class which enables method chaining.
      */
-    public C setNDConf(NDConfiguration ndConfiguration )
+    public C setNDConf( NDConfiguration ndConfiguration )
     {
-        _guardSet("ND-Configuration");
+        _guardSet( "ND-Configuration" );
         if ( _NDConf != null && ndConfiguration != null ) {
             int s1 = Arrays.stream( _NDConf.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -> a*b );
             int s2 = Arrays.stream( ndConfiguration.shape() ).map( Math::abs ).reduce( 1, ( a, b ) -> a*b );
@@ -389,48 +373,27 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
 
     //---
 
-    public int rank() {
-        return _NDConf.shape().length;
-    }
+    public int rank() { return _NDConf.rank(); }
 
-    public List<Integer> shape() {
-        return _asList(_NDConf.shape());
-    }
+    public List<Integer> shape() { return _asList(_NDConf.shape()); }
 
-    public int shape( int i ) {
-        return _NDConf.shape()[ i ];
-    }
+    public int shape( int i ) { return _NDConf.shape()[ i ]; }
 
-    public List<Integer> indicesMap() {
-        return _asList(_NDConf.indicesMap());
-    }
+    public List<Integer> indicesMap() { return _asList(_NDConf.indicesMap()); }
 
-    public List<Integer> translation() {
-        return _asList(_NDConf.translation());
-    }
+    public List<Integer> translation() { return _asList(_NDConf.translation()); }
 
-    public List<Integer> spread() {
-        return _asList(_NDConf.spread());
-    }
+    public List<Integer> spread() { return _asList(_NDConf.spread()); }
 
-    public List<Integer> offset() {
-        return _asList(_NDConf.offset());
-    }
+    public List<Integer> offset() { return _asList(_NDConf.offset()); }
 
-    public int size() {
-        return NDConfiguration.Utility.szeOfShp(_NDConf.shape());
-    }
+    public int size() { return NDConfiguration.Utility.szeOfShp(_NDConf.shape()); }
 
-    protected static List<Integer> _asList( int[] array ) {
+    private static List<Integer> _asList( int[] array ) {
         List<Integer> intList = new ArrayList<>( array.length );
         for ( int i : array ) intList.add( i );
         return intList;
     }
-
-
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
     /**
      *  Static utility methods for the NDArray.
@@ -471,37 +434,37 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
             public static int[][] makeFit( int[] sA, int[] sB ) {
                 int lastIndexOfA = 0;
                 for ( int i = sA.length-1; i >= 0; i-- ) {
-                    if (sA[ i ]!=1) {
+                    if ( sA[ i ] != 1 ) {
                         lastIndexOfA = i;
                         break;
                     }
                 }
                 int firstIndexOfB = 0;
-                for ( int i=0; i<sB.length; i++ ) {
-                    if (sB[ i ]!=1) {
+                for ( int i = 0; i < sB.length; i++ ) {
+                    if ( sB[ i ] != 1 ) {
                         firstIndexOfB = i;
                         break;
                     }
                 }
                 int newSize = lastIndexOfA + sB.length - firstIndexOfB;
-                int[] rsA = new int[newSize];
-                int[] rsB = new int[newSize];
+                int[] rsA = new int[ newSize ];
+                int[] rsB = new int[ newSize ];
                 for(int i=0; i<newSize; i++ ) {
                     if (i<=lastIndexOfA) rsA[ i ] = i; else rsA[ i ] = -1;
                     if (i>=lastIndexOfA) rsB[ i ] = i-lastIndexOfA+firstIndexOfB; else rsB[ i ] = -1;
                 }
-                return new int[][]{rsA, rsB};
+                return new int[][]{ rsA, rsB };
             }
 
             @Contract(pure = true)
-            public static int[] shpOfCon(int[] shp1, int[] shp2) {
+            public static int[] shpOfCon( int[] shp1, int[] shp2 ) {
                 int[] shape = new int[(shp1.length + shp2.length) / 2];
                 for ( int i = 0; i < shp1.length && i < shp2.length; i++) shape[ i ] = Math.abs(shp1[ i ] - shp2[ i ]) + 1;
                 return shape;
             }
 
             @Contract(pure = true)
-            public static int[] shpOfBrc(int[] shp1, int[] shp2) {
+            public static int[] shpOfBrc( int[] shp1, int[] shp2 ) {
                 int[] shape = new int[(shp1.length + shp2.length) / 2];
                 for ( int i = 0; i < shp1.length && i < shp2.length; i++ ) {
                     shape[ i ] = Math.max(shp1[ i ], shp2[ i ]);
@@ -511,8 +474,6 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
                 }
                 return shape;
             }
-
-
         }
 
     }

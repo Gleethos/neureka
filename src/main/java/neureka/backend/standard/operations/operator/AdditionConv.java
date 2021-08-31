@@ -3,12 +3,12 @@ package neureka.backend.standard.operations.operator;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
-import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 
 public class AdditionConv extends AbstractOperation {

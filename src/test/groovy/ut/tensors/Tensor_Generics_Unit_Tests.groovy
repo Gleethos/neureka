@@ -48,6 +48,9 @@ class Tensor_Generics_Unit_Tests extends Specification
             t.getValueClass() == String.class
 
         and :
+            t.getRepresentativeValueClass() == String.class
+
+        and :
             t.toString() == "(2x4):[Hi, I'm, a, String, list, Hi, I'm, a]"
 
     }
