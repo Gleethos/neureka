@@ -16,15 +16,6 @@ import java.util.List;
  */
 public class OperationBuilder
 {
-    public interface Stringifier
-    {
-        String stringify( String[] children );
-    }
-
-    public interface Derivator
-    {
-        String asDerivative( Function[] children, int d );
-    }
 
     private Stringifier _stringifier = null;
     private Derivator _derivator = null;
@@ -62,6 +53,16 @@ public class OperationBuilder
     private Boolean _isDifferentiable = null;
     private Boolean _isInline = null;
     private boolean _disposed = false;
+
+    public interface Stringifier
+    {
+        String stringify( String[] children );
+    }
+
+    public interface Derivator
+    {
+        String asDerivative( Function[] children, int d );
+    }
 
     public Stringifier getStringifier() {
         return this._stringifier;
@@ -148,9 +149,7 @@ public class OperationBuilder
         _disposed = true;
     }
 
-    public Operation build()
-    {
-        if ( _disposed ) return null;
+    private List<String> _listOfMissingProperties() {
         List<String> missing = new ArrayList<>();
         if ( _function == null ) missing.add( "function" );
         if ( _operator == null ) missing.add( "operator" );
@@ -159,7 +158,13 @@ public class OperationBuilder
         if ( _isIndexer == null ) missing.add( "isIndexer" );
         if ( _isDifferentiable == null ) missing.add( "isDifferentiable" );
         if ( _isInline == null ) missing.add( "isInline" );
+        return missing;
+    }
 
+    public Operation build()
+    {
+        if ( _disposed ) return null;
+        List<String> missing = _listOfMissingProperties();
         if ( !missing.isEmpty() )
             throw new IllegalStateException("Factory not satisfied! The following properties are missing: '"+ String.join(", ", missing) +"'");
         else

@@ -15,39 +15,39 @@ public class JunctionUtil
             ExecutionCall<? extends Device<?>> call,
             Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith
     ) {
-        Tsr<?>[] tsrs = call.getTensors();
+        Tsr<?>[] tensors = call.getTensors();
         Device<?> device = call.getDevice();
         int d = call.getDerivativeIndex();
         Operation operation = call.getOperation();
 
         Tsr<?> alternative = null;
-        if (tsrs.length > 3) {
+        if ( tensors.length > 3 ) {
             if ( d < 0 ) {
-                Tsr<?>[] reduction = new Tsr[]{ tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ] };
+                Tsr<?>[] reduction = new Tsr[]{ tensors[ 0 ], tensors[ 1 ], tensors[ 2 ] };
                 alternative = goDeeperWith.apply(
                                     ExecutionCall.of( reduction )
                                                     .andArgs( Arg.DerivIdx.of(d) )
                                                     .running( operation )
                                                     .on(device)
                                 );
-                tsrs[ 0 ] = reduction[ 0 ];
+                tensors[ 0 ] = reduction[ 0 ];
 
-                reduction = Operation.Utility.offsetted(tsrs, 1);
+                reduction = Operation.Utility.offsetted(tensors, 1);
                 alternative = goDeeperWith.apply(
-                        ExecutionCall.of(reduction)
-                                        .andArgs(Arg.DerivIdx.of(d))
-                                        .running(operation)
-                                        .on(device)
-                );
-                tsrs[ 0 ] = reduction[ 0 ];
+                                    ExecutionCall.of(reduction)
+                                                    .andArgs(Arg.DerivIdx.of(d))
+                                                    .running(operation)
+                                                    .on(device)
+                                );
+                tensors[ 0 ] = reduction[ 0 ];
             }
             return alternative;
         } else {
             if ( call.getOperation().getOperator().equals("x") ) {
                 if ( d >= 0 ) {
-                    if ( d == 0 ) tsrs[ 0 ] = tsrs[ 2 ];
-                    else tsrs[ 0 ] = tsrs[ 1 ];
-                    return tsrs[ 0 ];
+                    if ( d == 0 ) tensors[ 0 ] = tensors[ 2 ];
+                    else tensors[ 0 ] = tensors[ 1 ];
+                    return tensors[ 0 ];
                 } else {
                     call.mutateArguments( t -> new Tsr[]{t[ 0 ], t[ 1 ], t[ 2 ]} );
                 }

@@ -127,9 +127,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
                 ")";
     }
 
-    public DeviceType getDevice() {
-        return this._device;
-    }
+    public DeviceType getDevice() { return this._device; }
 
     public <T> Device<T> getDeviceFor( Class<T> supportCheck ) {
         // TODO: Make it possible to query device for type support!
@@ -246,7 +244,6 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
     public static class Builder<D extends Device<?>>
     {
-        private D device;
         private Operation operation;
         private Tsr<?>[] tensors;
         private Algorithm<?> algorithm;
@@ -256,7 +253,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
                                             )
                                             .collect(Collectors.toList());
 
-        Builder(Tsr<?>[] tensors) { this.tensors = tensors; }
+        private Builder(Tsr<?>[] tensors) { this.tensors = tensors; }
 
         public ExecutionCall<D> on(D device) {
             return new ExecutionCall<>(
