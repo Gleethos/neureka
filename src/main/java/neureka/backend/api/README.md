@@ -1,4 +1,3 @@
-
 # The backend API #
 
 ## Introduction ##
@@ -7,9 +6,7 @@ Generally speaking there are three core
 components which make up a minimal tensor library:
 
 1. A densely packed and fancily indexed nd-array data structure marketed as "tensor".
-
 2. A collection of algorithms which read and write to these tensors.
-
 3. ...and some glue code which marries these two concepts cleanly together. 
 
 The first point is a single implementation which is fairly simple.
@@ -34,15 +31,13 @@ hardware, tensor dimensions or merely performance requirements.
 Therefore, the API in this package is rather verbose,
 nonetheless extremely powerful.
 
-## Architecture ## 
+## Architecture ##
 
 The package hosts a 3 tier layered API
 made up of core concepts, namely: <br>
 
 - `operations` : A collection of species of algorithms.
-
 - `algorithms` : Representations of algorithms hosting multiple device specific implementations.
-
 - `implementations` : Implementations of an algorithm tailored to a specific `Device`.
 
 This package models this architecture by exposing 3 interfaces which govern these concepts, 
@@ -50,9 +45,7 @@ and their relationship.
 The interfaces are the following :
 
 - `ImplementationFor< TargetDeice extends Device >`
-
 - `Algorithm< FinalType >`
-
 - `Operation`
 
 
@@ -80,7 +73,6 @@ Instances of this class are being routed through this three tier <br>
 architecture for final execution on instances of the 
 `ImplementationFor< TargetDeice extends Device >` interface! <br>
 
-
 ## Algorithm ##
 
 **Lets look into the interface methods and their meaning :** <br>
@@ -92,7 +84,7 @@ This property is not always used, however when it comes to <br>
 for example native code or dynamic kernel compilation the name is <br>
 used to dynamically parse OpenCL code and identify it by said name. <br>
 
-```
+```java
     String getName();
 ```
 
@@ -135,7 +127,6 @@ the given `ExecutionCall` instance.
     boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call );
 ```
 ---
-
 
 The following method ought to check if this
 algorithm can perform backward mode AD on
@@ -223,7 +214,6 @@ Implementations of the `Algorithm` interface ought to express a compositional de
 This means that concrete implementations of an algorithm for a device are not extending
 an `Algorithm`, they are components of it instead. <br>
 
-
 ```java
     <D extends Device<?>, E extends ImplementationFor<D>> FinalType setImplementationFor(Class<D> deviceClass, E execution);
 ```
@@ -238,7 +228,6 @@ implementations...
     <D extends Device<?>> ImplementationFor<D> getImplementationFor(Class<D> deviceClass );
 ```
 
-
 ## ImplementationFor<Device> ##
 
 This interface represents the bottom most layer of
@@ -251,7 +240,6 @@ The `implementationFor<Device>` interface exposes only the following method:
 ```java
     void run( ExecutionCall<TargetDevice> call );
 ```
-
 
 **What is this interface supposed to represent?**
 
