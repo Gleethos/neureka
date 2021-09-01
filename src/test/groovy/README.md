@@ -6,9 +6,9 @@
 
 Neureka's testsuite is divided into the following 3 packages : <br>
 
-  - `st` : System-Tests : *high level system stress tests/scenarios*
-  - `it` : Integration-Tests : *cross component tests/scenarios*
-  - `ut` : Unit-Tests : *single feature tests/scenarios*
+- `st` : System-Tests : *high level system stress tests/scenarios*
+- `it` : Integration-Tests : *cross component tests/scenarios*
+- `ut` : Unit-Tests : *single feature tests/scenarios*
 
 Package divisions within those test packages mirror those found in the <br>
 main code base, namely : <br>
@@ -19,7 +19,7 @@ or simply does not make sense for a given reason. <br>
 
 ---
 
-## Tests are living / executable documentation. ##
+## Tests are living / executable documentation ##
 
 This testsuite ought to be viewed as documentation first and foremost!<br>
 If specifications and tests shall be added or changed then one should <br>
