@@ -101,7 +101,7 @@ public class OpenCLPlatform {
                     //===========================================================================
                     Map<String, String> code = new HashMap<>();
                     ImplementationFor<OpenCLDevice> impl = null;
-                    for ( Operation type : Neureka.get().context().instances() ) {
+                    for ( Operation type : Neureka.get().context().getOperations() ) {
                         if ( preName.contains("activation") && type.supportsAlgorithm(Activation.class) )
                             impl = type.getAlgorithm(Activation.class).getImplementationFor( OpenCLDevice.class );
                         else if ( preName.contains("operator") && type.supportsAlgorithm(Operator.class) )

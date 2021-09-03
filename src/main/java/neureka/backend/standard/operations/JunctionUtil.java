@@ -88,7 +88,7 @@ public class JunctionUtil
                     alternative = goDeeperWith.apply(
                             ExecutionCall.of(reduction)
                                             .andArgs( Arg.DerivIdx.of( -1 ) )
-                                            .running( Neureka.get().context().instance("*") )
+                                            .running( Neureka.get().context().getOperation("*") )
                                             .on( device )
                     );
                     tsrs[ 0 ] = reduction[ 0 ];
@@ -133,7 +133,7 @@ public class JunctionUtil
                     alternative = goDeeperWith.apply(
                                         ExecutionCall.of(reduction)
                                                         .andArgs(Arg.DerivIdx.of(-1))
-                                                        .running(Neureka.get().context().instance("/"))
+                                                        .running(Neureka.get().context().getOperation("/"))
                                                         .on(device)
                     );
                     a = reduction[ 0 ];
@@ -148,7 +148,7 @@ public class JunctionUtil
                     alternative = goDeeperWith.apply(
                                         ExecutionCall.of(reduction)
                                                         .andArgs(Arg.DerivIdx.of(-1))
-                                                        .running(Neureka.get().context().instance("/"))
+                                                        .running(Neureka.get().context().getOperation("/"))
                                                         .on(device)
                                 );
                     b = reduction[ 0 ];
@@ -157,13 +157,13 @@ public class JunctionUtil
                 alternative = goDeeperWith.apply(
                                         ExecutionCall.of( tsrs[ 0 ], a, b )
                                                         .andArgs( Arg.DerivIdx.of( -1 ) )
-                                                        .running( Neureka.get().context().instance("*") )
+                                                        .running( Neureka.get().context().getOperation("*") )
                                                         .on( device )
                                 );
                 alternative = goDeeperWith.apply(
                                         ExecutionCall.of( tsrs[ 0 ], tsrs[ 0 ], tsrs[d+1] )
                                                         .andArgs(Arg.DerivIdx.of(1))
-                                                        .running(Neureka.get().context().instance("/"))
+                                                        .running(Neureka.get().context().getOperation("/"))
                                                         .on(device)
                                 );
                 if ( d == 0 ) a.delete();

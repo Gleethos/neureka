@@ -23,8 +23,8 @@ class OperationContext_Unit_Tests extends Specification
 
         and : 'They contain the same entries.'
             clone.size()      == context.size()
-            clone.lookup()    == context.lookup()
-            clone.instances() == context.instances()
+            clone.getOperationLookupMap()    == context.getOperationLookupMap()
+            clone.getOperations() == context.getOperations()
 
         when :
             1 * mockOperation.getOperator() >> ""
@@ -35,14 +35,14 @@ class OperationContext_Unit_Tests extends Specification
 
         then : 'Their properties will no longer be the same.'
             clone.size() != context.size()
-            clone.lookup() != context.lookup()
-            clone.instances() != context.instances()
+            clone.getOperationLookupMap() != context.getOperationLookupMap()
+            clone.getOperations() != context.getOperations()
 
         and : 'The change will be as expected.'
             clone.size() == context.size() + 1
-            clone.lookup().size() == context.lookup().size() + 1
-            clone.lookup().containsKey("")
-            clone.instances().size() == context.instances().size() + 1
+            clone.getOperationLookupMap().size() == context.getOperationLookupMap().size() + 1
+            clone.getOperationLookupMap().containsKey("")
+            clone.getOperations().size() == context.getOperations().size() + 1
 
     }
 

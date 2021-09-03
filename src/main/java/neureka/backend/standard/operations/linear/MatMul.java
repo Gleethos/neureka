@@ -149,7 +149,7 @@ public class MatMul extends AbstractOperation
                                                                         .running(call.getOperation())
                                                                         .on(call.getDevice())
                                                 );
-                                    if ( call.getOperation() == Neureka.get().context().instance("x>>") )
+                                    if ( call.getOperation() == Neureka.get().context().getOperation("x>>") )
                                         return tsrs[ 2 ];
                                     else
                                         return tsrs[ 0 ];

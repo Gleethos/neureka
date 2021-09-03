@@ -46,7 +46,7 @@ public class OperationContext extends AbstractComponentOwner<OperationContext> i
     /**
      *  A list of all OperationType instances.
      */
-    private final List<Operation> _instances;
+    private final List<Operation> _operations;
 
     /**
      *  The number of operation instances stored in this context.
@@ -86,7 +86,7 @@ public class OperationContext extends AbstractComponentOwner<OperationContext> i
      *
      * @return An unmodifiable mapping of {@link Operation} properties to the {@link Operation} instances to which they belong.
      */
-    public Map<String, Operation> lookup() { return Collections.unmodifiableMap( this._lookup ); }
+    public Map<String, Operation> getOperationLookupMap() { return Collections.unmodifiableMap( this._lookup ); }
 
     /**
      * This method returns an unmodifiable view of the
@@ -97,7 +97,7 @@ public class OperationContext extends AbstractComponentOwner<OperationContext> i
      *
      * @return An unmodifiable view of the list of {@link Operation} implementation instances managed by this context
      */
-    public List<Operation> instances() { return Collections.unmodifiableList( this._instances ); }
+    public List<Operation> getOperations() { return Collections.unmodifiableList( this._operations); }
 
     /**
      * @return The number of {@link Operation} instances stored on this {@link OperationContext}.
@@ -107,7 +107,7 @@ public class OperationContext extends AbstractComponentOwner<OperationContext> i
     /**
      * @return The {@link Function} and {@link neureka.Tsr} cache of this {@link OperationContext}
      */
-    public Cache functionCache() { return this._functionCache; }
+    public Cache getFunctionCache() { return this._functionCache; }
 
     /**
      *  This method returns a {@link Functions} instance which wraps pre-instantiated
@@ -138,7 +138,7 @@ public class OperationContext extends AbstractComponentOwner<OperationContext> i
     public OperationContext()
     {
         _lookup = new HashMap<>();
-        _instances = new ArrayList<>();
+        _operations = new ArrayList<>();
         _size = 0;
     }
 
@@ -151,7 +151,7 @@ public class OperationContext extends AbstractComponentOwner<OperationContext> i
      */
     public OperationContext addOperation( Operation operation )
     {
-        _instances.add( operation );
+        _operations.add( operation );
         String function = operation.getFunction();
         String operator = operation.getOperator();
         assert !_lookup.containsKey( operator );
@@ -192,7 +192,7 @@ public class OperationContext extends AbstractComponentOwner<OperationContext> i
      * @param index The index of the operation.
      * @return The found Operation instance or null.
      */
-    public Operation instance( int index ) { return _instances.get( index ); }
+    public Operation getOperation( int index ) { return _operations.get( index ); }
 
     /**
      *  This method queries the operations in this OperationContext
@@ -202,7 +202,7 @@ public class OperationContext extends AbstractComponentOwner<OperationContext> i
      * @param identifier The operation identifier, aka: its name.
      * @return The requested Operation or null.
      */
-    public Operation instance( String identifier ) { return _lookup.getOrDefault( identifier, null ); }
+    public Operation getOperation(String identifier ) { return _lookup.getOrDefault( identifier, null ); }
 
     /**
      *  This method produces a shallow copy of this {@link OperationContext}.
@@ -216,12 +216,12 @@ public class OperationContext extends AbstractComponentOwner<OperationContext> i
         OperationContext clone = new OperationContext();
         clone._size = _size;
         clone._lookup.putAll( _lookup );
-        clone._instances.addAll( _instances );
+        clone._operations.addAll(_operations);
         return clone;
     }
 
     public String toString() {
-        return "OperationContext(_lookup=" + this.lookup() + ", _instances=" + this.instances() + ", _size=" + this.size() + ", _functionCache=" + this.functionCache() + ", _getAutogradFunction=" + this.getAutogradFunction() + ", _getFunction=" + this.getFunction() + ")";
+        return "OperationContext(size=" + this.size() + ")";
     }
 
     @Override

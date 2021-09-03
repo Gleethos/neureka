@@ -159,7 +159,7 @@ public class Power extends AbstractOperation
                         alternative = goDeeperWith.apply(
                                             ExecutionCall.of(reduction)
                                                             .andArgs(Arg.DerivIdx.of( -1 ))
-                                                            .running(Neureka.get().context().instance("*"))
+                                                            .running(Neureka.get().context().getOperation("*"))
                                                             .on(device)
                                         );
                         Tsr exp = reduction[ 0 ];
@@ -179,7 +179,7 @@ public class Power extends AbstractOperation
                         alternative = goDeeperWith.apply(
                                                 ExecutionCall.of(reduction)
                                                                 .andArgs(Arg.DerivIdx.of(d-1))
-                                                                .running(Neureka.get().context().instance("*"))
+                                                                .running(Neureka.get().context().getOperation("*"))
                                                                 .on(device)
                                         );
                         Tsr<?> inner = reduction[ 0 ];
@@ -188,7 +188,7 @@ public class Power extends AbstractOperation
                         alternative = goDeeperWith.apply(
                                                 ExecutionCall.of(reduction)
                                                                 .andArgs(Arg.DerivIdx.of(-1))
-                                                                .running(Neureka.get().context().instance("*"))
+                                                                .running(Neureka.get().context().getOperation("*"))
                                                                 .on(device)
                                         );
                         Tsr<?> exp = reduction[ 0 ];

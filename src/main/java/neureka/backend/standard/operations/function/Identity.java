@@ -69,7 +69,7 @@ public final class Identity extends AbstractOperation
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                     return ExecutionCall.of(tsrs[offset], tsrs[1+offset])
                                         .andArgs(Arg.DerivIdx.of(-1))
-                                        .running(Neureka.get().context().instance("idy"))
+                                        .running(Neureka.get().context().getOperation("idy"))
                                         .on(call.getDevice());
                 }
         )

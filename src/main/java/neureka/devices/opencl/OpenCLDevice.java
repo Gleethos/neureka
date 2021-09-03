@@ -461,7 +461,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
             execute(
                 ExecutionCall.of(tensor, Tsr.of( value ).to( this ))
                                 .andArgs(Arg.DerivIdx.of(-1))
-                                .running(Neureka.get().context().instance( "<" ))
+                                .running(Neureka.get().context().getOperation( "<" ))
                                 .on(this)
             );
         }

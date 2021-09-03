@@ -23,17 +23,18 @@ public class FunctionBuilder
 
     private static final Pattern variablePattern = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[jJ]+[ ]*\\]?)");
     private static final Pattern inputPattern    = Pattern.compile("^(-?[iI]{1}[g]?\\[?[ ]*[g]?[0-9]+[ ]*\\]?)");
-    private static final Pattern constantPattern = Pattern.compile("^((-{1}[0-9]*|[0-9]*)[.]?[0-9]*(e[-]?[0-9]+)?)");
+    private static final Pattern constantPattern = Pattern.compile("^((-?[0-9]*|[0-9]*)[.]?[0-9]*(e[-]?[0-9]+)?)");
 
     private static final Pattern reshapePattern = Pattern.compile("^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))");
     private static final Pattern nodePattern = Pattern.compile("^([\\(]{1}.+[\\)]{1})");
 
     private final OperationContext _context;
-    
-    public FunctionBuilder( OperationContext context )
-    {
-        _context = context;
-    }
+
+    /**
+     * @param context The {@link OperationContext} which will be used as a basis to parse new {@link Function}
+     *                implementation instance from provided {@link String} expressions.
+     */
+    public FunctionBuilder( OperationContext context ) { _context = context; }
     
     /**
      * @param operation The {@link Operation} based on which the {@link Function} ought to be created.
@@ -66,13 +67,13 @@ public class FunctionBuilder
                         : expression;
         String k = ( doAD ) ? "d" + expression : expression;
 
-        if ( _context.functionCache().functions().containsKey( k ) )
-            return _context.functionCache().functions().get( k );
+        if ( _context.getFunctionCache().functions().containsKey( k ) )
+            return _context.getFunctionCache().functions().get( k );
 
         expression = FunctionParser.unpackAndCorrect( expression );
         Function built = _build( expression, doAD );
         if ( built != null )
-            _context.functionCache().functions().put(
+            _context.getFunctionCache().functions().put(
                     ( ( (doAD) ? "d" : "" ) + "(" + built + ")" ).intern(), // Make the String unique!
                     built
             );
@@ -129,7 +130,7 @@ public class FunctionBuilder
 
         int counter = _context.size();
         for ( int j = _context.size(); j > 0; --j ) {
-            if ( !foundOperations.contains( _context.instance(j - 1).getOperator() ) )
+            if ( !foundOperations.contains( _context.getOperation(j - 1).getOperator() ) )
                 --counter;
             else
                 j = 0;
@@ -137,7 +138,7 @@ public class FunctionBuilder
         for ( int operationID = 0; operationID < counter; operationID++ ) {
             final List<String> newJunctors = new ArrayList<>();
             final List<String> newComponents = new ArrayList<>();
-            if ( foundOperations.contains( _context.instance( operationID ).getOperator() ) ) {
+            if ( foundOperations.contains( _context.getOperation( operationID ).getOperator() ) ) {
                 String currentChain = null;
                 boolean groupingOccurred = false;
                 boolean enoughPresent = FunctionParser.numberOfOperationsWithin( foundOperations ) > 1;// Otherwise: I[j]^4 goes nuts!
@@ -153,11 +154,11 @@ public class FunctionBuilder
                         }
                         if ( currentOperation != null ) {
                             if (
-                                    currentOperation.equals(_context.instance(operationID).getOperator())
+                                    currentOperation.equals(_context.getOperation(operationID).getOperator())
                             ) {
                                 final String newChain =
                                         FunctionParser.groupBy(
-                                                _context.instance(operationID).getOperator(),
+                                                _context.getOperation(operationID).getOperator(),
                                                 currentChain,
                                                 currentComponent,
                                                 currentOperation
@@ -207,14 +208,14 @@ public class FunctionBuilder
         );
         if ( possibleFunction != null && possibleFunction.length() > 1 ) {
             for ( int oi = 0; oi < _context.size(); oi++ ) {
-                if (_context.instance(oi).getFunction().equalsIgnoreCase(possibleFunction)) {
+                if (_context.getOperation(oi).getFunction().equalsIgnoreCase(possibleFunction)) {
                     List<String> parameters = FunctionParser.findParametersIn(
                                                                         foundComponent,
                                                                         possibleFunction.length()
                                                                 );
                     assert parameters != null;
                     for ( String p : parameters ) sources.add(build(p, doAD));
-                    return new FunctionNode( _context.instance( oi ), sources, doAD );
+                    return new FunctionNode( _context.getOperation( oi ), sources, doAD );
                 }
             }
         }
@@ -247,7 +248,7 @@ public class FunctionBuilder
         int operationIndex = 0;
         if ( foundOperators.size() >= 1 ) {
             for (int currentIndex = 0; currentIndex < _context.size(); ++currentIndex) {
-                if ( _context.instance(currentIndex).getOperator().equals(foundOperators.get( 0 )) ) {
+                if ( _context.getOperation(currentIndex).getOperator().equals(foundOperators.get( 0 )) ) {
                     operationIndex = currentIndex;
                 }
             }
@@ -255,16 +256,16 @@ public class FunctionBuilder
         String asString = foundComponents.stream()
                 .collect(
                         Collectors.joining(
-                                _context.instance( operationIndex ).getOperator()
+                                _context.getOperation( operationIndex ).getOperator()
                         )
                 );
         // More than one component left:
         ArrayList<Function> sources = new ArrayList<>();
-        if ( _context.instance( operationIndex ).getArity() > 1 ) {
+        if ( _context.getOperation( operationIndex ).getArity() > 1 ) {
             foundComponents = _groupAccordingToArity(
-                                        _context.instance( operationIndex ).getArity(),
+                                        _context.getOperation( operationIndex ).getArity(),
                                         foundComponents,
-                                        _context.instance( operationIndex ).getOperator()
+                                        _context.getOperation( operationIndex ).getOperator()
                                 );
         } else if ( reshapePattern.matcher(asString).matches() ) {
             foundComponents.set(0, foundComponents.get( 0 ).substring(1));
@@ -297,7 +298,7 @@ public class FunctionBuilder
             if ( source != null ) newVariable.add(source);
         }
         sources = newVariable;
-        return new FunctionNode( _context.instance(operationIndex), sources, doAD );
+        return new FunctionNode( _context.getOperation(operationIndex), sources, doAD );
     }
 
     private List<String> _groupAccordingToArity(int arity, List<String> components, String operator) {

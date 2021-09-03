@@ -44,6 +44,7 @@ public class ConvUtil {
                                     false
                             );
                             Tsr deriv = f.derive( inputs, d );
+                            assert mul != null;
                             assert deriv != null;
                             assert invX != null;
                             return new DefaultADAgent( deriv )
@@ -76,7 +77,7 @@ public class ConvUtil {
                                                             .running(call.getOperation())
                                                             .on(call.getDevice())
                                     );
-                                    if ( call.getOperation() == Neureka.get().context().instance("x>>") )
+                                    if ( call.getOperation() == Neureka.get().context().getOperation("x>>") )
                                         return tsrs[ 2 ];
                                     else
                                         return tsrs[ 0 ];

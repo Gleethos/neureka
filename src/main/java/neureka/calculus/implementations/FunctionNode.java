@@ -249,7 +249,7 @@ public class FunctionNode implements Function
                             device.execute(
                                     ExecutionCall.of(tensors)
                                                     .andArgs(Arg.DerivIdx.of( -1 ))
-                                                    .running(Neureka.get().context().instance("+"))
+                                                    .running(Neureka.get().context().getOperation("+"))
                                                     .on(device)
                             );
                             inner = tensors[ 0 ];//-> this is now the inner derivative!
@@ -289,7 +289,7 @@ public class FunctionNode implements Function
                         device.execute(
                                 ExecutionCall.of(tensors)
                                                 .andArgs(Arg.DerivIdx.of( -1 ))
-                                                .running(Neureka.get().context().instance("*"))
+                                                .running(Neureka.get().context().getOperation("*"))
                                                 .on( device )
                         );
                     } // done!
@@ -307,7 +307,7 @@ public class FunctionNode implements Function
                     device.execute(
                             ExecutionCall.of( null, actor.get(), out )
                                             .andArgs( Arg.DerivIdx.of( -1 ) )
-                                            .running( Neureka.get().context().instance("+") )
+                                            .running( Neureka.get().context().getOperation("+") )
                                             .on( device )
                     );
             }
