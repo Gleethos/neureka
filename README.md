@@ -27,7 +27,7 @@
 -   labeling
 -   loading and saving as jpg/idx files
 
-### Take a quick look: ###
+### Take a quick look ###
 
 - [Neureka with Java](docs/markdown/java_example.md) :coffee:
 - [Neureka with Groovy](docs/markdown/groovy_example.md) :star:
@@ -67,7 +67,7 @@ This powerful feature has been inspired by PyTorch:
  
  
 ---
-## Getting started with Apache Maven: ##
+## Getting started with Apache Maven ##
 
 ```
 <dependency>
@@ -78,7 +78,7 @@ This powerful feature has been inspired by PyTorch:
 ```
 ---
 
-## Getting started with Gradle: ##
+## Getting started with Gradle ##
 Groovy DSL:
 ```
 implementation 'com.github.gleethos:neureka:0.7.0'
@@ -107,7 +107,7 @@ dependencies {
 
 ---
 
-## Getting started with Groovy Grape: ##
+## Getting started with Groovy Grape ##
 
 ```
 @GrabResolver(name = 'jitpack.io', root = 'https://jitpack.io')

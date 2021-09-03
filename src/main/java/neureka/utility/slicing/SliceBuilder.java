@@ -17,14 +17,14 @@ import java.util.function.Supplier;
  *  A user of the API can only call methods exposed by the current "view" of the builder, namely a interface.
  *  This ensures a controlled order of calls to the API...
  *
- * @param <ValType> The type of the value(s) held by the tensor which ought to be sliced with the help of this builder.
+ * @param <V> The type of the value(s) held by the tensor which ought to be sliced with the help of this builder.
  */
-public class SliceBuilder<ValType> implements AxisOrGet<ValType>
+public class SliceBuilder<V> implements AxisOrGet<V>
 {
     public interface CreationCallback<V> { Tsr<V> sliceOf(int[] newShape, int[] newOffset, int[] newSpread ); }
 
-    private final Supplier<Tsr<ValType>> _create;
-    private final AxisSliceBuilder<ValType>[]  _axisSliceBuilders;
+    private final Supplier<Tsr<V>> _create;
+    private final AxisSliceBuilder<V>[]  _axisSliceBuilders;
 
     /**
      *  An instance of a slice builder does not perform the actual slicing itself!
@@ -35,7 +35,7 @@ public class SliceBuilder<ValType> implements AxisOrGet<ValType>
      * @param toBeSliced The {@link Tsr} instance which ought to be sliced.
      * @param sliceCreator A callback lambda which receives the final slice configuration to perform the actual slicing.
      */
-    public SliceBuilder( Tsr<ValType> toBeSliced, CreationCallback<ValType> sliceCreator )
+    public SliceBuilder(Tsr<V> toBeSliced, CreationCallback<V> sliceCreator )
     {
         int[] shape = toBeSliced.getNDConf().shape();
         _axisSliceBuilders = new AxisSliceBuilder[ shape.length ];
@@ -64,7 +64,7 @@ public class SliceBuilder<ValType> implements AxisOrGet<ValType>
                                                 });
         }
         _create = () -> {
-            for ( AxisSliceBuilder<ValType> axis : _axisSliceBuilders ) {
+            for ( AxisSliceBuilder<V> axis : _axisSliceBuilders ) {
                 if ( axis != null ) axis.resolve();
             }
             return sliceCreator.sliceOf( newShape, newOffset, newSpread );
@@ -80,7 +80,7 @@ public class SliceBuilder<ValType> implements AxisOrGet<ValType>
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link FromOrAt} interface.
      */
     @Override
-    public FromOrAt<ValType> axis(int axis ) {
+    public FromOrAt<V> axis(int axis ) {
         if ( axis >= _axisSliceBuilders.length ) throw new IllegalArgumentException("");
         return _axisSliceBuilders[ axis ];
     }
@@ -93,7 +93,7 @@ public class SliceBuilder<ValType> implements AxisOrGet<ValType>
      * @return The slice of the tensor supplied to the constructor of this {@link SliceBuilder} instance.
      */
     @Override
-    public Tsr<ValType> get() {
+    public Tsr<V> get() {
         return _create.get();
     }
 
