@@ -106,13 +106,10 @@ public class FunctionNode implements Function
      * @param inputs
      * @return The result of the execution.
      */
-    protected Tsr _tensor_activation( Tsr[] inputs, Args arguments )
+    protected Tsr<?> _tensor_activation( Tsr<?>[] inputs, Args arguments )
     {
         ExecutionCall<? extends Device<?>> call = ExecutionCall.of( inputs )
-                                                                .andArgs(
-                                                                        arguments.get(Arg.DerivIdx.class),
-                                                                        arguments.get(Arg.VarIdx.class)
-                                                                )
+                                                                .andArgs(arguments.getAll(Arg.class))
                                                                 .running(_operation)
                                                                 .on( _deviceFor( inputs ) );
         ExecutionCall<? extends Device<?>> finalCall;
@@ -137,28 +134,28 @@ public class FunctionNode implements Function
 
     }
 
-    private Tsr __flat_execution( ExecutionCall<? extends Device<?>> call )
+    private Tsr<?> __flat_execution( ExecutionCall<? extends Device<?>> call )
     {
-        Tsr alternative = call.getAlgorithm().handleInsteadOfDevice( this, call );
+        Tsr<?> alternative = call.getAlgorithm().handleInsteadOfDevice( this, call );
         if ( alternative != null ) return alternative;
 
         if ( call.getDerivativeIndex() < 0 ) return __deep_activation( call );
         else return _deep_derivative( call  );
     }
  
-    private Tsr __deep_activation( ExecutionCall<? extends Device<?>> call )
+    private Tsr<?> __deep_activation( ExecutionCall<? extends Device<?>> call )
     {
-        Tsr[] inputs = call.getTensors();
-        Device device = call.getDevice();
+        Tsr<?>[] inputs = call.getTensors();
+        Device<?> device = call.getDevice();
         int d = call.getDerivativeIndex();
         int j = call.getJ();
 
-        Tsr[] tensors;
+        Tsr<?>[] tensors;
         if ( _operation.isIndexer() ) tensors = new Tsr[ 1 + inputs.length ];
         else tensors = new Tsr[ 1 + _src.length ];
 
         if ( _operation.isIndexer() ) {
-            for ( int i = 1; i < tensors.length; i++ ) tensors[ i ] = _src[ 0 ].call( inputs, i - 1 );
+            for ( int i = 1; i < tensors.length; i++ ) tensors[ i ] = _src[ 0 ].execute( inputs, i - 1 );
         } else if (
                 !_isFlat && j < 0 && (
                         _operation.isOperator() || _operation.supportsAlgorithm(Activation.class)
@@ -168,7 +165,7 @@ public class FunctionNode implements Function
             String asStr = _operation.stringify(
                     IntStream.range(0, _src.length).mapToObj(i -> "I[" + i + "]").toArray(String[]::new)
             );
-            return new FunctionBuilder(Neureka.get().context()).build( asStr, _isDoingAD ).call( tensors );
+            return new FunctionBuilder(Neureka.get().context()).build( asStr, _isDoingAD ).execute( tensors );
         } else {
             tensors = srcActivation(inputs, j, d, 1);
         }
@@ -211,15 +208,15 @@ public class FunctionNode implements Function
         return -1;
     }
 
-    private Tsr _deep_derivative( ExecutionCall<? extends Device<?>> call )
+    private Tsr<?> _deep_derivative( ExecutionCall<? extends Device<?>> call )
     {
         Supplier<Tsr<?>> actor = () -> {
-                    Tsr[] inputs = call.getTensors();
-                    Device device = call.getDevice();
+                    Tsr<?>[] inputs = call.getTensors();
+                    Device<?> device = call.getDevice();
                     int d = call.getDerivativeIndex();
                     int j = call.getJ();
 
-                    Tsr[] tensors;
+                    Tsr<?>[] tensors;
                     if ( _operation.isIndexer() ) tensors = new Tsr[ 1 + inputs.length ];
                     else tensors = new Tsr[ 1 + _src.length ];
 
@@ -229,18 +226,18 @@ public class FunctionNode implements Function
                     // like so:
                     if ( _operation.isIndexer() ) {
                         for ( int i = 1; i < tensors.length; i++ ) {
-                            tensors[ i ] = _src[ 0 ].derive( inputs, d, i - 1 );
+                            tensors[ i ] = _src[ 0 ].executeDerive( inputs, d, i - 1 );
                         }
                     } else {
                         for ( int i = 1; i < tensors.length; i++ ) {
                             tensors[ i ] =
                                     ( j >= 0 )
-                                            ? _src[ i - 1 ].derive( inputs, d, j )
-                                            : _src[ i - 1 ].derive( inputs, d );
+                                            ? _src[ i - 1 ].executeDerive( inputs, d, j )
+                                            : _src[ i - 1 ].executeDerive( inputs, d );
                         }
                     }
                     //...then add them all together! (is possible because of linearity...)
-                    Tsr inner;
+                    Tsr<?> inner;
                     if ( tensors.length > 2 ) {// Optimization: Finds index of "1.0" among otherwise all "0.0" virtual tensors!
                         int index = ___indexOfFoundDerivative( tensors );
                         if ( index >= 0 ) inner = tensors[ index ];
@@ -261,11 +258,11 @@ public class FunctionNode implements Function
                     //...then activate (No differentiation!) the source like so:
                     if ( _operation.isIndexer() ) { // Indexer pass an index j of course!
                         for ( int i = 1; i < tensors.length; i++ ) {
-                            tensors[ i ] = _src[ 0 ].call( inputs, i - 1 ); // i - 1 := j
+                            tensors[ i ] = _src[ 0 ].execute( inputs, i - 1 ); // i - 1 := j
                         }
                     } else {
                         for ( int i = 1; i < tensors.length; i++ ) {
-                            tensors[ i ] = ( j >= 0 ) ? _src[ i - 1 ].call( inputs, j ) : _src[ i - 1 ].call( inputs );
+                            tensors[ i ] = ( j >= 0 ) ? _src[ i - 1 ].execute( inputs, j ) : _src[ i - 1 ].execute( inputs );
                         }
                     }
                     //...get derivative index within src list:
@@ -296,9 +293,9 @@ public class FunctionNode implements Function
                     return tensors[ 0 ];
 
                 };
-        Device device = call.getDevice();
+        Device<?> device = call.getDevice();
         int d = call.getDerivativeIndex();
-        Tsr out = null;
+        Tsr<?> out = null;
         for ( int i = 0; i < _src.length; i++ ) { // constants need to be figured out!
             int di = ( _src[ i ].dependsOn(d) ) ? i : -1;
             if ( di >= 0 ) {
@@ -346,7 +343,7 @@ public class FunctionNode implements Function
         return tensors;
     }
 
-    private Device<?> _deviceFor( Tsr<Object>[] inputs )
+    private Device<?> _deviceFor( Tsr<?>[] inputs )
     {
         if ( inputs.length == 0 ) return HostCPU.instance();
         Device<?> device = inputs[ 0 ].get( Device.class );
@@ -355,7 +352,7 @@ public class FunctionNode implements Function
         return ( doAccel && device != null ) ? device : inputs[ 0 ].getDevice();
     }
 
-    private static boolean _shareGuestDevice( Tsr[] tensors )
+    private static boolean _shareGuestDevice( Tsr<?>[] tensors )
     {
         boolean onSameGuestDevice = true;
         Device<?> device = null;
@@ -375,7 +372,7 @@ public class FunctionNode implements Function
     @Override
     public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
         return preprocess(
-                (Tsr<Object>[]) tensors,
+                tensors,
                 this,
                 () -> _tensor_activation( tensors, arguments )
         );
@@ -411,10 +408,10 @@ public class FunctionNode implements Function
     }
 
 
-    private Tsr<Object> preprocess(
-            Tsr<Object>[] inputs,
+    private Tsr<?> preprocess(
+            Tsr<?>[] inputs,
             Function function,
-            Supplier<Tsr<Object>> activation
+            Supplier<Tsr<?>> activation
     ) {
         if ( !function.isDoingAD() ) {
             return activation.get(); // TODO make caching possible!!, (without graph nodes!) REMEMBER: !doAD => NO GRAPH NODES
@@ -423,7 +420,7 @@ public class FunctionNode implements Function
         // ( => needs to be locked again! )
         Tsr<?> untracked = null;
         for ( Tsr<?> t : inputs ) {
-            GraphNode<Object> node = t.get( GraphNode.class );
+            GraphNode<?> node = t.get( GraphNode.class );
             if ( node != null ) {
                 untracked = t;
                 allLocked = node.getLock().isLocked() && allLocked;
@@ -434,20 +431,20 @@ public class FunctionNode implements Function
         }
         GraphLock lock =  untracked.get( GraphNode.class ).getLock();
         attachGraph(inputs, function, lock);
-        Tsr<Object> result = activation.get();
+        Tsr<?> result = activation.get();
         return result;
     }
 
-    private static <T> Tsr<T> commit(
-            Tsr<?>[] inputs, Function function, Supplier<Tsr<Object>> activation
+    private static Tsr<?> commit(
+            Tsr<?>[] inputs, Function function, Supplier<Tsr<?>> activation
     ) {
         Tsr.makeFit( inputs, function.isDoingAD() ); // reshaping if needed
 
         GraphLock newLock = new GraphLock( function );
         attachGraph( inputs, function, newLock );
-        Tsr<T> result;
-        if ( activation == null ) result = (Tsr<T>) function.execute( inputs );
-        else result = (Tsr<T>) activation.get();
+        Tsr<?> result;
+        if ( activation == null ) result = function.execute( inputs );
+        else result = activation.get();
 
         newLock.release();
         return result;
