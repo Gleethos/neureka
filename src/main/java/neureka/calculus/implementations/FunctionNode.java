@@ -125,16 +125,13 @@ public class FunctionNode implements Function
                Autograd-Graph will be generated below for the new GraphNode: 
                only flat functions can be executed directly */
             if ( d < 0 && _isDoingAD )
-                return new GraphNode<>( this, finalCall, () -> __flat_execution( finalCall ) ).getPayload();
-            else
-                return __flat_execution( finalCall );
-        }/* The code below deals with deep functions (non flat) :  */
-        else if ( d < 0 ) return __deep_activation( finalCall );
-        else return _deep_derivative( finalCall );
+                return new GraphNode<>( this, finalCall, () -> __execute( finalCall ) ).getPayload();
+        }
+        return __execute( finalCall );
 
     }
 
-    private Tsr<?> __flat_execution( ExecutionCall<? extends Device<?>> call )
+    private Tsr<?> __execute(ExecutionCall<? extends Device<?>> call )
     {
         Tsr<?> alternative = call.getAlgorithm().handleInsteadOfDevice( this, call );
         if ( alternative != null ) return alternative;
@@ -395,17 +392,13 @@ public class FunctionNode implements Function
         return this.getOperation().calculate( inputs, -1, d, _src );
     }
 
-    public Operation getOperation() {
-        return this._operation;
-    }
+    public Operation getOperation() { return this._operation; }
 
     public boolean isFlat() {
         return this._isFlat;
     }
 
-    public boolean isDoingAD() {
-        return this._isDoingAD;
-    }
+    public boolean isDoingAD() { return this._isDoingAD; }
 
 
     private Tsr<?> preprocess(
@@ -457,7 +450,7 @@ public class FunctionNode implements Function
     ) {
         for ( Tsr<?> t : inputs ) {
             if ( t.has( GraphNode.class ) ) t.get( GraphNode.class ).obtainLocking( newLock );
-            else new GraphNode( function, newLock, () -> t );
+            else new GraphNode<>( function, newLock, () -> t );
         }
     }
 

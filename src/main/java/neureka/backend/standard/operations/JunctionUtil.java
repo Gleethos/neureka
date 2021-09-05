@@ -114,7 +114,7 @@ public class JunctionUtil
         if ( tsrs.length > 3 )
         {
             if ( d < 0 ) {
-                Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
+                Tsr<?>[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                 alternative = goDeeperWith.apply(
                         call.withTensors( reduction )
                             );
