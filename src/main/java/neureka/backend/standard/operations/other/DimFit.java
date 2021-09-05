@@ -51,7 +51,7 @@ public class DimFit extends AbstractOperation
                 .setHandleInsteadOfDevice(
                         ( caller, call ) ->
                         {
-                            Tsr<?>[] inputs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
+                            Tsr<?>[] inputs = AbstractOperation.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
                             assert call.getDerivativeIndex() < 0;
 
                             int largest = -1;

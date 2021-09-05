@@ -141,7 +141,7 @@ public class MatMul extends AbstractOperation
                                 return tsrs[ 0 ];
                             } else {
                                 if (call.getDerivativeIndex() < 0) {
-                                    Tsr<?>[] tsrs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
+                                    Tsr<?>[] tsrs = AbstractOperation.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
                                     Tsr.makeFit(tsrs, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                     for ( Tsr<?> t : tsrs ) t.setIsVirtual( false );
                                     call.getDevice().execute(
