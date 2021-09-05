@@ -219,7 +219,7 @@ public final class Product extends AbstractOperation {
                         }
                     }
         )
-        .setHandleInsteadOfDevice( (caller, call ) -> null )
+        .setHandleInsteadOfDevice( AbstractOperation::executeMe )
         .setHandleRecursivelyAccordingToArity( rja )
         .setInstantiateNewTensorsForExecutionIn(
                 call -> {

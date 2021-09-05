@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.autograd.DefaultADAgent;
+import neureka.backend.api.operations.AbstractOperation;
 import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
@@ -142,7 +143,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
 
     @Override
     public Tsr<?> handleInsteadOfDevice( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
-        return null;
+        return AbstractOperation.executeMe(caller, call);
     }
 
     @Override

@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.operations.AbstractOperation;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
@@ -54,7 +55,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                         call.getDevice().execute( (ExecutionCall<Device<?>>) call.withTensors( tsrs ) );
                         return tsrs[0];
                     }
-                    return null;
+                    return AbstractOperation.executeMe(caller, call);
                 }
         );
         setInstantiateNewTensorsForExecutionIn(

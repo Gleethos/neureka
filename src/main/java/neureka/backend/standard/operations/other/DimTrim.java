@@ -53,7 +53,7 @@ public class DimTrim extends AbstractOperation
                 .setHandleInsteadOfDevice(
                         ( caller, call ) ->
                         {
-                            Tsr<?>[] inputs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
+                            Tsr<?>[] inputs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
                             assert inputs.length == 1;
                             Tsr<?> t = inputs[ 0 ];
                             if ( call.getDerivativeIndex() == 0 ) {

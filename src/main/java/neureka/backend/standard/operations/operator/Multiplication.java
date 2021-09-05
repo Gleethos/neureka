@@ -328,7 +328,7 @@ public class Multiplication extends AbstractOperation
                         }
                     }
                 )
-                .setHandleInsteadOfDevice( (caller, call ) -> null )
+                .setHandleInsteadOfDevice( AbstractOperation::executeMe )
                 .setHandleRecursivelyAccordingToArity( rja )
                 .build();
 

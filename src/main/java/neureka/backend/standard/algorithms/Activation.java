@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.operations.AbstractOperation;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
@@ -27,7 +28,7 @@ public class Activation extends AbstractFunctionalAlgorithm< Activation >
                                 .all( ( first, second ) -> first.shape().equals(second.shape()) )
                                 .isValid()
                 );
-        setHandleInsteadOfDevice( (caller, call ) -> null );
+        setHandleInsteadOfDevice( AbstractOperation::executeMe );
         setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null );
         setInstantiateNewTensorsForExecutionIn(
                         call -> {

@@ -209,7 +209,7 @@ public final class Summation extends AbstractOperation
                 }
             }
         )
-        .setHandleInsteadOfDevice( (caller, call ) -> null )
+        .setHandleInsteadOfDevice( AbstractOperation::executeMe )
         .setHandleRecursivelyAccordingToArity( rja )
         .setInstantiateNewTensorsForExecutionIn(
                 call -> {

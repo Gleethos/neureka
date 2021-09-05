@@ -50,7 +50,7 @@ public class Reshape extends AbstractOperation
                 ).setHandleInsteadOfDevice(
                     ( caller, call ) ->
                     {
-                        Tsr<?>[] inputs = caller.srcActivation( call.getTensors(), call.getJ(), -1, 0 );
+                        Tsr<?>[] inputs = caller.srcActivation( call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]) );
                         int[] newForm = new int[ inputs.length - 1 ];
                         for ( int i = 0; i < inputs.length - 1; i++ ) {
                             newForm[ i ] = (int) Tsr.IO.getFrom( inputs[ i ], 0 );

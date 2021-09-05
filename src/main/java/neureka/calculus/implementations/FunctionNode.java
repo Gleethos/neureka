@@ -121,7 +121,7 @@ public class FunctionNode implements Function
 
         if ( _isFlat )
         {
-            /* The following code is reached in flat functions only: 
+            /* The following code is reached in flat functions only:
                Autograd-Graph will be generated below for the new GraphNode: 
                only flat functions can be executed directly */
             if ( d < 0 && _isDoingAD )
@@ -135,13 +135,27 @@ public class FunctionNode implements Function
     {
         Tsr<?> alternative = call.getAlgorithm().handleInsteadOfDevice( this, call );
         if ( alternative != null ) return alternative;
-
-        if ( call.getDerivativeIndex() < 0 ) return __deep_activation( call );
-        else return _deep_derivative( call  );
+        throw new IllegalStateException("Missing return value for initial call hook for operation '"+call.getOperation().getFunction()+"'");
     }
- 
-    private Tsr<?> __deep_activation( ExecutionCall<? extends Device<?>> call )
-    {
+
+    public static Tsr<?> exec(
+            ExecutionCall<? extends Device<?>> call,
+            Function[] _src,
+            Operation _operation,
+            boolean _isFlat,
+            boolean _isDoingAD
+    ) {
+        if ( call.getDerivativeIndex() < 0 ) return __deep_activation( call, _src, _operation, _isFlat, _isDoingAD );
+        else return _deep_derivative( call, _src, _operation );
+    }
+
+    private static Tsr<?> __deep_activation(
+            ExecutionCall<? extends Device<?>> call,
+            Function[] _src,
+            Operation _operation,
+            boolean _isFlat,
+            boolean _isDoingAD
+    ) {
         Tsr<?>[] inputs = call.getTensors();
         Device<?> device = call.getDevice();
         int d = call.getDerivativeIndex();
@@ -158,13 +172,13 @@ public class FunctionNode implements Function
                         _operation.isOperator() || _operation.supportsAlgorithm(Activation.class)
                 )
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
-            tensors = srcActivation(inputs, j, d, 0);
+            tensors = srcActivation(inputs, j, d, 0, _src);
             String asStr = _operation.stringify(
                     IntStream.range(0, _src.length).mapToObj(i -> "I[" + i + "]").toArray(String[]::new)
             );
             return new FunctionBuilder(Neureka.get().context()).build( asStr, _isDoingAD ).execute( tensors );
         } else {
-            tensors = srcActivation(inputs, j, d, 1);
+            tensors = srcActivation(inputs, j, d, 1, _src);
         }
         device.execute(
                 ExecutionCall.of(tensors)
@@ -172,7 +186,7 @@ public class FunctionNode implements Function
                                 .running(_operation)
                                 .on(device)
         );
-        if ( tensors[ 0 ] == null ) _LOG.warn("Function '"+this+"' did not have a proper return value.");
+        if ( tensors[ 0 ] == null ) _LOG.warn("Function did not have a proper return value.");
         return ( tensors[ 0 ] == null ) ? tensors[ 1 ] : tensors[ 0 ];
     }
 
@@ -186,7 +200,7 @@ public class FunctionNode implements Function
      * @param tensors An array of tensors which ought to be analyzed.
      * @return The index of the tensor whose value is "1.0" (if all other are "0.0"), otherwise : -1
      */
-    private int ___indexOfFoundDerivative( Tsr<?>[] tensors )
+    private static int ___indexOfFoundDerivative( Tsr<?>[] tensors )
     {
         boolean allVirtual = true;
         for ( Tsr<?> t : tensors ) if ( t != null && !t.isVirtual() ) allVirtual = false;
@@ -205,8 +219,11 @@ public class FunctionNode implements Function
         return -1;
     }
 
-    private Tsr<?> _deep_derivative( ExecutionCall<? extends Device<?>> call )
-    {
+    private static Tsr<?> _deep_derivative(
+            ExecutionCall<? extends Device<?>> call,
+            Function[] _src,
+            Operation _operation
+    ) {
         Supplier<Tsr<?>> actor = () -> {
                     Tsr<?>[] inputs = call.getTensors();
                     Device<?> device = call.getDevice();
@@ -288,8 +305,8 @@ public class FunctionNode implements Function
                         );
                     } // done!
                     return tensors[ 0 ];
-
                 };
+
         Device<?> device = call.getDevice();
         int d = call.getDerivativeIndex();
         Tsr<?> out = null;
@@ -309,23 +326,23 @@ public class FunctionNode implements Function
         return out;
     }
 
-    public Tsr<?>[] srcActivation(
-            Tsr<?>[] inputs, int j, int d, int offset
+    public static Tsr<?>[] srcActivation(
+            Tsr<?>[] inputs, int j, int d, int offset, Function[] src
     ) {
         int[] tempShape = null;
-        Tsr<?>[] tensors = new Tsr[ _src.length + offset ];
+        Tsr<?>[] tensors = new Tsr[ src.length + offset ];
         for ( int i = offset; i < tensors.length; i++ ) {//constants need to be figured out!
-            if ( !(_src[ i - offset ] instanceof FunctionConstant) ) {
+            if ( !(src[ i - offset ] instanceof FunctionConstant) ) {
                 if ( d < 0 ) // Not deriving this!
                     tensors[ i ] =
                             ( j >= 0 )
-                                    ? _src[ i - offset ].execute( inputs, j )
-                                    : _src[ i - offset ].execute( inputs );
+                                    ? src[ i - offset ].execute( inputs, j )
+                                    : src[ i - offset ].execute( inputs );
                 else // ...deriving at specified index...
                     tensors[ i ] =
                             ( j >= 0 )
-                                    ? _src[ i - offset ].executeDerive( inputs, d, j )
-                                    : _src[ i - offset ].executeDerive( inputs, d );
+                                    ? src[ i - offset ].executeDerive( inputs, d, j )
+                                    : src[ i - offset ].executeDerive( inputs, d );
 
                 tempShape = ( tempShape == null ) ? tensors[ i ].getNDConf().shape() : tempShape;
             }
@@ -334,8 +351,8 @@ public class FunctionNode implements Function
             if ( tensors[ i ] == null )
                     tensors[ i ] =
                         ( j < 0 )
-                                ? Tsr.of(tempShape, ((FunctionConstant) _src[ i - offset ]).value())
-                                : Tsr.of(tempShape, _src[ i - offset ].call(new double[]{}, j));
+                                ? Tsr.of(tempShape, ((FunctionConstant) src[ i - offset ]).value())
+                                : Tsr.of(tempShape, src[ i - offset ].call(new double[]{}, j));
         }
         return tensors;
     }

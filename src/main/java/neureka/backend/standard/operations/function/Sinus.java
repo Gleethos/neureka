@@ -58,7 +58,7 @@ public final class Sinus extends AbstractOperation
         ).setSupplyADAgentFor(
             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
             getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-        ).setHandleInsteadOfDevice(  (caller, call ) -> null )
+        ).setHandleInsteadOfDevice( AbstractOperation::executeMe )
          .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
          .setInstantiateNewTensorsForExecutionIn(
              call -> {

@@ -18,6 +18,7 @@ import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
+import neureka.ndim.AbstractNDArray;
 
 public class MatMul extends AbstractOperation
 {
@@ -126,7 +127,7 @@ public class MatMul extends AbstractOperation
                 )
                 .setHandleInsteadOfDevice(
                         ( caller, call ) -> {
-                            if ( !caller.isFlat() ) return null;
+                            if ( !caller.isFlat() ) return AbstractOperation.executeMe(caller, call);
                             if ( call.getOperation().getOperator().equals("x") ) {
 
                                 Tsr[] inputs = call.getTensors();
@@ -140,7 +141,7 @@ public class MatMul extends AbstractOperation
                                 return tsrs[ 0 ];
                             } else {
                                 if (call.getDerivativeIndex() < 0) {
-                                    Tsr<?>[] tsrs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0);
+                                    Tsr<?>[] tsrs = caller.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
                                     Tsr.makeFit(tsrs, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                     for ( Tsr<?> t : tsrs ) t.setIsVirtual( false );
                                     call.getDevice().execute(

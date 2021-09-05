@@ -64,7 +64,7 @@ public class MultiplicationRightConv extends AbstractOperation {
                             }
                         }
                 )
-                .setHandleInsteadOfDevice( (caller, call ) -> null )
+                .setHandleInsteadOfDevice( AbstractOperation::executeMe )
                 .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
                 .setInstantiateNewTensorsForExecutionIn(
                         call -> {

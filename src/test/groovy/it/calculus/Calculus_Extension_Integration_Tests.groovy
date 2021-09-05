@@ -5,6 +5,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.DefaultADAgent
 import neureka.backend.api.ExecutionCall
+import neureka.backend.api.operations.AbstractOperation
 import neureka.backend.api.operations.OperationBuilder
 import neureka.backend.api.OperationContext
 import neureka.backend.standard.algorithms.GenericAlgorithm
@@ -77,7 +78,7 @@ class Calculus_Extension_Integration_Tests extends Specification
                                                                     .setBackward((t, error) -> new FunctionBuilder(Neureka.get().context()).build(f.toString(), false).derive(new Tsr[]{error}, 0));
                                                         }
                                                 )
-                                                .setHandleInsteadOfDevice((caller, call) -> null)
+                                                .setHandleInsteadOfDevice((caller, call) -> AbstractOperation.executeMe(caller,call))
                                                 .setHandleRecursivelyAccordingToArity((call, goDeeperWith) -> null)
                                                 .setInstantiateNewTensorsForExecutionIn(
                                                         call -> {

@@ -2,10 +2,14 @@
 package neureka.backend.api.operations;
 
 
+import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.FallbackAlgorithm;
+import neureka.calculus.Function;
+import neureka.calculus.implementations.FunctionNode;
+import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,6 +114,17 @@ public abstract class AbstractOperation implements Operation
         _isDifferentiable = builder.getIsDifferentiable();
         _isInline         = builder.getIsInline();
         _defaultAlgorithm = new FallbackAlgorithm( "default", _arity, this );
+    }
+
+    public static Tsr<?> executeMe(
+        Function caller,
+        ExecutionCall<? extends Device<?>> call
+    ) {
+        Function[] _src = caller.getSubFunctions().toArray(new Function[0]);
+        Operation _operation = caller.getOperation();
+        boolean _isFlat = caller.isFlat();
+        boolean _isDoingAD = caller.isDoingAD();
+        return FunctionNode.exec(call, _src, _operation, _isFlat, _isDoingAD);
     }
 
     //==================================================================================================================

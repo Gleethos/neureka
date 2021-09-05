@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.calculus.Function;
@@ -77,7 +78,7 @@ public class CLFunctionCompiler {
                                                     .setBackward((t, error) -> new FunctionBuilder(Neureka.get().context()).build(f.toString(), false).derive(new Tsr[]{error}, 0));
                                         }
                                 )
-                                .setHandleInsteadOfDevice( (caller, call) -> null )
+                                .setHandleInsteadOfDevice( (caller, call) -> AbstractOperation.executeMe(caller, call) )
                                 .setHandleRecursivelyAccordingToArity( (call, goDeeperWith) -> null )
                                 .setInstantiateNewTensorsForExecutionIn(
                                         call -> {

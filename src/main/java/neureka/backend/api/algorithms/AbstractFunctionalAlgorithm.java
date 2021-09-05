@@ -45,6 +45,19 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
         super(name);
     }
 
+
+    protected Tsr<?> executeMe(
+            Function caller,
+            ExecutionCall<? extends Device<?>> call
+    ) {
+        Function[] _src = caller.getSubFunctions().toArray(new Function[0]);
+        Operation _operation = caller.getOperation();
+        boolean _isFlat = caller.isFlat();
+        boolean _isDoingAD = caller.isDoingAD();
+        Operation operation = call.getOperation();
+        return FunctionNode.exec(call, _src, _operation, _isFlat, _isDoingAD);
+    }
+
     //---
 
     @Override
