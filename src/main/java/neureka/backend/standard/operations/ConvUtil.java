@@ -4,8 +4,8 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.standard.algorithms.Convolution;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
@@ -55,7 +55,7 @@ public class ConvUtil {
                 )
                 .setHandleInsteadOfDevice(
                         ( caller, call ) -> {
-                            if ( !caller.isFlat() ) return AbstractOperation.executeMe(caller, call);
+                            if ( !caller.isFlat() ) return CalcUtil.executeFor(caller, call);
                             if ( call.getOperation().getOperator().equals("x") ) {
 
                                 Tsr[] inputs = call.getTensors();
@@ -69,7 +69,7 @@ public class ConvUtil {
                                 return tsrs[ 0 ];
                             } else {
                                 if (call.getDerivativeIndex() < 0) {
-                                    Tsr[] tsrs = AbstractOperation.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
+                                    Tsr[] tsrs = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
                                     Tsr.makeFit(tsrs, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                     for ( Tsr t : tsrs ) t.setIsVirtual( false );
                                     call.getDevice().execute(
@@ -84,7 +84,7 @@ public class ConvUtil {
                                         return tsrs[ 0 ];
                                 }
                             }
-                            return AbstractOperation.executeMe(caller, call);
+                            return CalcUtil.executeFor(caller, call);
                         }
                 )
                 .setHandleRecursivelyAccordingToArity( JunctionUtil::forConvolution )

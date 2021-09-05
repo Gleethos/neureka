@@ -13,6 +13,7 @@ import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -405,7 +406,7 @@ public class Power extends AbstractOperation
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
-                .setHandleInsteadOfDevice( AbstractOperation::executeMe )
+                .setHandleInsteadOfDevice( CalcUtil::executeFor)
                 .setHandleRecursivelyAccordingToArity( rja )
                 .build();
 

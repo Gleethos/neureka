@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
-import neureka.backend.api.operations.AbstractOperation;
+import neureka.calculus.CalcUtil;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
@@ -29,7 +29,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         );
         setCanPerformBackwardADFor( call -> true );
         setCanPerformForwardADFor( call -> true );
-        setHandleInsteadOfDevice( AbstractOperation::executeMe );
+        setHandleInsteadOfDevice( CalcUtil::executeFor);
         setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr<?>[] tsrs = call.getTensors();

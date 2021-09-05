@@ -7,6 +7,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Convolution;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -61,7 +62,7 @@ public class AdditionConv extends AbstractOperation {
                                     }
                                 }
                         )
-                        .setHandleInsteadOfDevice( AbstractOperation::executeMe )
+                        .setHandleInsteadOfDevice( CalcUtil::executeFor)
                         .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
                         .setInstantiateNewTensorsForExecutionIn(
                                 call -> {

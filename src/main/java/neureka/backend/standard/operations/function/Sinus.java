@@ -8,6 +8,7 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
@@ -58,7 +59,7 @@ public final class Sinus extends AbstractOperation
         ).setSupplyADAgentFor(
             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
             getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-        ).setHandleInsteadOfDevice( AbstractOperation::executeMe )
+        ).setHandleInsteadOfDevice( CalcUtil::executeFor)
          .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
          .setInstantiateNewTensorsForExecutionIn(
              call -> {

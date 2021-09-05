@@ -9,6 +9,7 @@ import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -61,7 +62,7 @@ public final class Identity extends AbstractOperation
             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
         )
-        .setHandleInsteadOfDevice( AbstractOperation::executeMe )
+        .setHandleInsteadOfDevice( CalcUtil::executeFor)
         .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
         .setInstantiateNewTensorsForExecutionIn(
                 call -> {
@@ -147,7 +148,7 @@ public final class Identity extends AbstractOperation
                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
-            .setHandleInsteadOfDevice( AbstractOperation::executeMe )
+            .setHandleInsteadOfDevice( CalcUtil::executeFor)
             .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
             .setInstantiateNewTensorsForExecutionIn(
                 call -> {

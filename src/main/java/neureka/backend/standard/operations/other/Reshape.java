@@ -7,6 +7,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
@@ -50,7 +51,7 @@ public class Reshape extends AbstractOperation
                 ).setHandleInsteadOfDevice(
                     ( caller, call ) ->
                     {
-                        Tsr<?>[] inputs = AbstractOperation.srcActivation( call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]) );
+                        Tsr<?>[] inputs = CalcUtil.srcActivation( call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]) );
                         int[] newForm = new int[ inputs.length - 1 ];
                         for ( int i = 0; i < inputs.length - 1; i++ ) {
                             newForm[ i ] = (int) Tsr.IO.getFrom( inputs[ i ], 0 );

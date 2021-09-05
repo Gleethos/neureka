@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.Algorithm;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
@@ -209,7 +210,7 @@ public final class Summation extends AbstractOperation
                 }
             }
         )
-        .setHandleInsteadOfDevice( AbstractOperation::executeMe )
+        .setHandleInsteadOfDevice( CalcUtil::executeFor)
         .setHandleRecursivelyAccordingToArity( rja )
         .setInstantiateNewTensorsForExecutionIn(
                 call -> {

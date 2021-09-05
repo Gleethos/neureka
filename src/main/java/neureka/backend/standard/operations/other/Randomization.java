@@ -8,6 +8,7 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.HostImplementation;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
@@ -72,7 +73,7 @@ public class Randomization extends AbstractOperation
             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
         )
-        .setHandleInsteadOfDevice( AbstractOperation::executeMe )
+        .setHandleInsteadOfDevice( CalcUtil::executeFor)
         .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
         .setInstantiateNewTensorsForExecutionIn(
                 call -> {

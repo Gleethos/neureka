@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.Algorithm;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
@@ -323,7 +324,7 @@ public class Modulo extends AbstractOperation {
                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
-            .setHandleInsteadOfDevice( AbstractOperation::executeMe )
+            .setHandleInsteadOfDevice( CalcUtil::executeFor)
             .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
             .build();
 
