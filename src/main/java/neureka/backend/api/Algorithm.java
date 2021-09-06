@@ -118,9 +118,6 @@ public interface Algorithm<FinalType extends Algorithm<FinalType>>
 
     ExecutionCall<? extends Device<?>> instantiateNewTensorsForExecutionIn( ExecutionCall<? extends Device<?>> call );
 
-
-    Tsr<?> recursiveReductionOf( ExecutionCall<? extends Device<?>> call, Consumer<ExecutionCall<? extends Device<?>>> finalExecution );
-
     /**
      *
      *  Implementations of the Algorithm interface ought to express a compositional design pattern. <br>

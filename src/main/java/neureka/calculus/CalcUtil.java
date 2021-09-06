@@ -2,6 +2,7 @@ package neureka.calculus;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.standard.algorithms.Activation;
@@ -12,6 +13,7 @@ import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -217,13 +219,86 @@ public class CalcUtil {
                             "One or more tensor arguments within the given ExecutionCall instance is null."
             );
         }
-        call.getAlgorithm()
-                .recursiveReductionOf(
-                        call,
-                        c -> c.getDevice().execute( c )
-                );
+        recursiveReductionOf(
+                call,
+                c -> c.getDevice().execute( c ),
+                call.getAlgorithm()
+        );
         return;
     }
+
+
+    /**
+     *  The following method is used together with the {@link Algorithm#handleRecursivelyAccordingToArity} method.
+     *  There is already a great implementation of this method in the AbstractBaseAlgorithm class
+     *  which calls the {@link Algorithm#handleRecursivelyAccordingToArity} method whose implementation
+     *  ought to either execute the given call which is passed to it or
+     *  continue to go deeper by calling the passed lambda... <br>
+     *
+     * @param call
+     * @param finalExecution
+     * @param algorithm
+     * @return
+     */
+    public static Tsr<?> recursiveReductionOf(
+            ExecutionCall<? extends Device<?>> call,
+            Consumer<ExecutionCall<? extends Device<?>>> finalExecution,
+            Algorithm<?> algorithm
+    ) {
+        Device<Object> device = call.getDeviceFor(Object.class);
+        Tsr<Object>[] tsrs = (Tsr<Object>[]) call.getTensors();
+        int d = call.getDerivativeIndex();
+        Operation type = call.getOperation();
+
+        Consumer<Tsr<Object>>[] rollbacks = new Consumer[tsrs.length];
+        for ( int i=0; i<tsrs.length; i++ ) {
+            if ( tsrs[ i ] != null && !tsrs[ i ].isOutsourced() ) {
+                try {
+                    device.store(tsrs[i]);
+                } catch ( Exception e ) {
+                    e.printStackTrace();
+                }
+
+                rollbacks[ i ] = tensor -> {
+                    try {
+                        device.restore( tensor );
+                    } catch ( Exception e ) {
+                        e.printStackTrace();
+                    }
+                };
+
+            }
+            else rollbacks[ i ] = t -> {};
+        }
+        /* For the following operations with the correct arity RJAgent should do: ...
+            case ("s" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
+            case ("d" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
+            case ("p" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
+            case ("m" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
+            case ">": tsrs = new Tsr[]{tsrs[ 1 ], tsrs[ 0 ]};
+         */
+        /*
+            Below is the core lambda of recursive preprocessing
+            which is defined for each Algorithm individually :
+         */
+        Tsr<?> result = algorithm.handleRecursivelyAccordingToArity( call, c -> recursiveReductionOf( c, finalExecution, algorithm ) );
+        if ( result == null ) {
+            finalExecution.accept(
+                    ExecutionCall.of(call.getTensors())
+                            .andArgs(Arg.DerivIdx.of(d))
+                            .running(type)
+                            .on(device)
+            );
+        }
+        else return result;
+
+        for ( int i = 0; i < tsrs.length; i++ ) {
+            if ( tsrs[ i ] != null && !tsrs[ i ].isUndefined() ) rollbacks[ i ].accept(tsrs[ i ]);
+        }
+        return tsrs[ 0 ];
+    }
+
+
 
     public static Tsr<?>[] srcActivation(
             Tsr<?>[] inputs, int j, int d, int offset, Function[] src

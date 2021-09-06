@@ -1,16 +1,11 @@
 package neureka.backend.api.algorithms;
 
-import neureka.Tsr;
 import neureka.backend.api.Algorithm;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.ImplementationFor;
-import neureka.backend.api.Operation;
-import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public abstract class AbstractBaseAlgorithm<FinalType extends Algorithm<FinalType>> implements Algorithm<FinalType>
 {
@@ -25,65 +20,6 @@ public abstract class AbstractBaseAlgorithm<FinalType extends Algorithm<FinalTyp
     protected final Map< Class< Device<?> >, ImplementationFor< Device<?> >> _implementations = new HashMap<>();
 
     public AbstractBaseAlgorithm(String name) { _name = name; }
-
-    @Override
-    public Tsr<?> recursiveReductionOf(
-            ExecutionCall<? extends Device<?>> call,
-            Consumer<ExecutionCall<? extends Device<?>>> finalExecution
-    ) {
-        Device<Object> device = call.getDeviceFor(Object.class);
-        Tsr<Object>[] tsrs = (Tsr<Object>[]) call.getTensors();
-        int d = call.getDerivativeIndex();
-        Operation type = call.getOperation();
-
-        Consumer<Tsr<Object>>[] rollbacks = new Consumer[tsrs.length];
-        for ( int i=0; i<tsrs.length; i++ ) {
-            if ( tsrs[ i ] != null && !tsrs[ i ].isOutsourced() ) {
-                try {
-                    device.store(tsrs[i]);
-                } catch ( Exception e ) {
-                    e.printStackTrace();
-                }
-
-                rollbacks[ i ] = tensor -> {
-                    try {
-                    device.restore( tensor );
-                    } catch ( Exception e ) {
-                        e.printStackTrace();
-                    }
-                };
-
-            }
-            else rollbacks[ i ] = t -> {};
-        }
-        /* For the following operations with the correct arity RJAgent should do: ...
-            case ("s" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
-            case ("d" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
-            case ("p" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
-            case ("m" + ((char) 187)): tsrs = new Tsr[]{tsrs[ 2 ], tsrs[ 1 ], tsrs[ 0 ]};
-            case ">": tsrs = new Tsr[]{tsrs[ 1 ], tsrs[ 0 ]};
-         */
-        /*
-            Below is the core lambda of recursive preprocessing
-            which is defined for each OperationImplementation individually :
-         */
-        Tsr<?> result = handleRecursivelyAccordingToArity( call, c -> recursiveReductionOf( c, finalExecution ) );
-        if ( result == null ) {
-            finalExecution.accept(
-                    ExecutionCall.of(call.getTensors())
-                                    .andArgs(Arg.DerivIdx.of(d))
-                                    .running(type)
-                                    .on(device)
-            );
-        }
-        else return result;
-
-        for ( int i = 0; i < tsrs.length; i++ ) {
-            if ( tsrs[ i ] != null && !tsrs[ i ].isUndefined() ) rollbacks[ i ].accept(tsrs[ i ]);
-        }
-        return tsrs[ 0 ];
-    }
-
 
     //---
 

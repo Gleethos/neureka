@@ -197,17 +197,7 @@ This method ought to instantiate necessary output tensors:
 ```java
     ExecutionCall<? extends Device<?>> instantiateNewTensorsForExecutionIn( ExecutionCall<? extends Device<?>> call );
 ```
----
 
-The following method is used together with the `handleRecursivelyAccordingToArity` method.
-There is already a great implementation of this method in the AbstractBaseAlgorithm class
-which calls the 'handleRecursivelyAccordingToArity' method whose implementation
-ought to either execute the given call which is passed to it or
-continue to go deeper by calling the passed lambda... <br>
-
-```java
-    Tsr<?> recursiveReductionOf( ExecutionCall<? extends Device<?>> call, Consumer<ExecutionCall<? extends Device<?>>> finalExecution );
-```
 ---
 
 Implementations of the `Algorithm` interface ought to express a compositional design pattern. <br>
