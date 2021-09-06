@@ -28,7 +28,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
 
     @Contract(pure = true)
     public static void convolve (
-            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int d, int i, int end,
             Operation.TertiaryNDIConsumer operation
     ) {
@@ -38,7 +38,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
 
     @Contract(pure = true)
     public static void _convolve (
-            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int i, int end,
             Operation.TertiaryNDIConsumer operation
     ) {
@@ -97,7 +97,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
                         } else incrementing = false;
                     } else ri++;
                 }
-            }//setInto _value in drn:
+            }//setInto value in drn:
             t0_value[t0Idx.i()] = value;
             //increment on drain:
             t0Idx.increment();
@@ -108,7 +108,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
     }
 
     private static void _deConvolve(
-            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int i, int end,
             Operation.TertiaryNDIConsumer operation
     ) {
@@ -198,7 +198,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
 
     @Contract(pure = true)
     public static void convolve (
-            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int d, int i, int end,
             Operation.TertiaryNDAConsumer operation
     ) {
@@ -283,7 +283,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
 
     @Contract(pure = true)
     private static void _deConvolve (
-            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int i, int end,
             Operation.TertiaryNDAConsumer operation
     ) {

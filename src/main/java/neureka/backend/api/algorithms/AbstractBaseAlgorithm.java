@@ -27,16 +27,16 @@ public abstract class AbstractBaseAlgorithm<FinalType extends Algorithm<FinalTyp
     public AbstractBaseAlgorithm(String name) { _name = name; }
 
     @Override
-    public Tsr recursiveReductionOf(
+    public Tsr<?> recursiveReductionOf(
             ExecutionCall<? extends Device<?>> call,
             Consumer<ExecutionCall<? extends Device<?>>> finalExecution
     ) {
-        Device device = call.getDevice();
-        Tsr[] tsrs = call.getTensors();
+        Device<Object> device = call.getDeviceFor(Object.class);
+        Tsr<Object>[] tsrs = (Tsr<Object>[]) call.getTensors();
         int d = call.getDerivativeIndex();
         Operation type = call.getOperation();
 
-        Consumer<Tsr>[] rollbacks = new Consumer[tsrs.length];
+        Consumer<Tsr<Object>>[] rollbacks = new Consumer[tsrs.length];
         for ( int i=0; i<tsrs.length; i++ ) {
             if ( tsrs[ i ] != null && !tsrs[ i ].isOutsourced() ) {
                 try {
@@ -67,7 +67,7 @@ public abstract class AbstractBaseAlgorithm<FinalType extends Algorithm<FinalTyp
             Below is the core lambda of recursive preprocessing
             which is defined for each OperationImplementation individually :
          */
-        Tsr result = handleRecursivelyAccordingToArity( call, c -> recursiveReductionOf( c, finalExecution ) );
+        Tsr<?> result = handleRecursivelyAccordingToArity( call, c -> recursiveReductionOf( c, finalExecution ) );
         if ( result == null ) {
             finalExecution.accept(
                     ExecutionCall.of(call.getTensors())
@@ -109,7 +109,5 @@ public abstract class AbstractBaseAlgorithm<FinalType extends Algorithm<FinalTyp
      *
      * @return The name of this {@link Algorithm}.
      */
-    public String getName() {
-        return this._name;
-    }
+    public String getName() { return this._name; }
 }
