@@ -94,8 +94,6 @@ public class Addition extends AbstractOperation {
                         .setIsInline(         false      )
         );
 
-        Algorithm.RecursiveJunctor rja = JunctionUtil::forAdditions;
-
         //_____________________
         // DEFAULT OPERATION :
 
@@ -122,7 +120,7 @@ public class Addition extends AbstractOperation {
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
-                .setHandleRecursivelyAccordingToArity( rja )
+                .setHandleRecursivelyAccordingToArity( JunctionUtil::forAdditions )
                 .build();
 
         setAlgorithm(
@@ -250,7 +248,7 @@ public class Addition extends AbstractOperation {
                             getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
                 .setHandleInsteadOfDevice( CalcUtil::executeFor)
-                .setHandleRecursivelyAccordingToArity( rja )
+                .setHandleRecursivelyAccordingToArity( JunctionUtil::forAdditions )
                 .build();
 
         ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =

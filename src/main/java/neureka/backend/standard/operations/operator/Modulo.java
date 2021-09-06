@@ -37,8 +37,6 @@ public class Modulo extends AbstractOperation {
                         .setIsInline(         false       )
         );
 
-        Algorithm.RecursiveJunctor rja = JunctionUtil::forDivisionsOrModuli;
-
         //_____________________
         // DEFAULT OPERATION :
 
@@ -80,7 +78,7 @@ public class Modulo extends AbstractOperation {
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                     )
-                    .setHandleRecursivelyAccordingToArity( rja )
+                    .setHandleRecursivelyAccordingToArity( JunctionUtil::forDivisionsOrModuli )
                     .build();
 
         setAlgorithm(

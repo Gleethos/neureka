@@ -70,9 +70,6 @@ public class Subtraction extends AbstractOperation
                         .setIsInline(         false      )
         );
 
-        Algorithm.RecursiveJunctor rja = JunctionUtil::forSubtractions;
-
-
         //_____________________
         // DEFAULT OPERATION :
 
@@ -100,7 +97,7 @@ public class Subtraction extends AbstractOperation
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
-                .setHandleRecursivelyAccordingToArity( rja )
+                .setHandleRecursivelyAccordingToArity( JunctionUtil::forSubtractions )
                 .build();
 
         setAlgorithm(
@@ -191,7 +188,7 @@ public class Subtraction extends AbstractOperation
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
                 .setHandleInsteadOfDevice( CalcUtil::executeFor)
-                .setHandleRecursivelyAccordingToArity( rja )
+                .setHandleRecursivelyAccordingToArity( JunctionUtil::forSubtractions )
                 .build();
 
         setAlgorithm(
@@ -281,7 +278,7 @@ public class Subtraction extends AbstractOperation
                             }
                         }
                 )
-                .setHandleRecursivelyAccordingToArity( rja )
+                .setHandleRecursivelyAccordingToArity( JunctionUtil::forSubtractions )
                 .build();
 
         setAlgorithm(

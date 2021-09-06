@@ -3,9 +3,6 @@ package neureka.backend.standard.operations.operator;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
-import neureka.backend.api.Algorithm;
-import neureka.calculus.CalcUtil;
-import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -15,7 +12,9 @@ import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.operations.JunctionUtil;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -82,8 +81,6 @@ public class Multiplication extends AbstractOperation
                         .setIsInline(         false      )
         );
 
-        Algorithm.RecursiveJunctor rja =  JunctionUtil::forMultiplications;
-
         //_____________________
         // DEFAULT OPERATION :
 
@@ -127,7 +124,7 @@ public class Multiplication extends AbstractOperation
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                     )
-                    .setHandleRecursivelyAccordingToArity( rja )
+                    .setHandleRecursivelyAccordingToArity( JunctionUtil::forMultiplications )
                     .build();
 
         setAlgorithm(
@@ -216,7 +213,7 @@ public class Multiplication extends AbstractOperation
                         }
                     }
                 )
-                .setHandleRecursivelyAccordingToArity( rja )
+                .setHandleRecursivelyAccordingToArity( JunctionUtil::forMultiplications )
                 .build();
 
         setAlgorithm(
@@ -330,7 +327,7 @@ public class Multiplication extends AbstractOperation
                     }
                 )
                 .setHandleInsteadOfDevice( CalcUtil::executeFor)
-                .setHandleRecursivelyAccordingToArity( rja )
+                .setHandleRecursivelyAccordingToArity( JunctionUtil::forMultiplications )
                 .build();
 
         setAlgorithm(
