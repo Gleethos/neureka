@@ -109,7 +109,6 @@ public class DimFit extends AbstractOperation
                             //}
                         }
                 )
-                .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
                 .setInstantiateNewTensorsForExecutionIn( call -> call )
                 .build();
 

@@ -78,7 +78,6 @@ public class Addition extends AbstractOperation {
                                                             }
                                                         }
                                                     )
-                                                    .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
                                                     .build();
 
     public Addition()

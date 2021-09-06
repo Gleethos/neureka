@@ -220,7 +220,6 @@ public class Modulo extends AbstractOperation {
                     }
                 }
             )
-            .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
             .build();
 
         setAlgorithm(
@@ -323,7 +322,6 @@ public class Modulo extends AbstractOperation {
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
             .setHandleInsteadOfDevice( CalcUtil::executeFor)
-            .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
             .build();
 
         setAlgorithm(

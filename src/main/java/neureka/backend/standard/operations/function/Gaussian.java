@@ -78,7 +78,6 @@ public final class Gaussian extends AbstractOperation
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
         .setHandleInsteadOfDevice( CalcUtil::executeFor)
-        .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
         .setInstantiateNewTensorsForExecutionIn(
                 call -> {
                         Tsr[] tsrs = call.getTensors();

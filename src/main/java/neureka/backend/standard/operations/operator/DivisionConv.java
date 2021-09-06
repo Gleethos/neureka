@@ -63,7 +63,6 @@ public class DivisionConv extends AbstractOperation {
                                 }
                         )
                         .setHandleInsteadOfDevice( CalcUtil::executeFor)
-                        .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
                         .setInstantiateNewTensorsForExecutionIn(
                                 call -> {
                                     Tsr[] tsrs = call.getTensors();

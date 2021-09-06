@@ -68,7 +68,6 @@ public class DimTrim extends AbstractOperation
                             }
                         }
                 )
-                .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
                 .setInstantiateNewTensorsForExecutionIn( call -> call )
                 .build();
 

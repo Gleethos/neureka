@@ -63,7 +63,6 @@ public class Reshape extends AbstractOperation
                         return reshaped( t, newForm, true );
                     }
                 )
-                .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
                 .setInstantiateNewTensorsForExecutionIn( call -> call)
                 .build();
 

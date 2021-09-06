@@ -66,7 +66,6 @@ public class MultiplicationRightConv extends AbstractOperation {
                         }
                 )
                 .setHandleInsteadOfDevice( CalcUtil::executeFor)
-                .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null )
                 .setInstantiateNewTensorsForExecutionIn(
                         call -> {
                             Tsr[] tsrs = call.getTensors();
