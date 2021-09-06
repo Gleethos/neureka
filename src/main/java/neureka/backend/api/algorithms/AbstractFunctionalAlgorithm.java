@@ -38,7 +38,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     private Algorithm.BackwardADAnalyzer _canPerformBackwardADFor;
     private Algorithm.ADAgentSupplier _supplyADAgentFor;
     private Algorithm.InitialCallHook _handleInsteadOfDevice;
-    private Algorithm.RecursiveJunctor _handleRecursivelyAccordingToArity;
+    private Algorithm.RecursiveJunctor _handleRecursivelyAccordingToArity = (call, goDeeperWith) -> null;
     private Algorithm.DrainInstantiation _instantiateNewTensorsForExecutionIn;
 
     public AbstractFunctionalAlgorithm(String name ) {

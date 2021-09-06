@@ -74,8 +74,6 @@ public class Division extends AbstractOperation
                         .setIsInline(         false      )
         );
 
-        Algorithm.RecursiveJunctor rja = JunctionUtil::forDivisionsOrModuli;
-
         //_____________________
         // DEFAULT OPERATION :
 
@@ -118,7 +116,7 @@ public class Division extends AbstractOperation
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
-                .setHandleRecursivelyAccordingToArity( rja )
+                .setHandleRecursivelyAccordingToArity( JunctionUtil::forDivisionsOrModuli )
                 .build();
 
         setAlgorithm(
@@ -221,7 +219,7 @@ public class Division extends AbstractOperation
                                                 }
                                             }
                                         )
-                                        .setHandleRecursivelyAccordingToArity( rja )
+                                        .setHandleRecursivelyAccordingToArity( JunctionUtil::forDivisionsOrModuli )
                                         .build();
 
         setAlgorithm(
@@ -314,7 +312,7 @@ public class Division extends AbstractOperation
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
                 .setHandleInsteadOfDevice( CalcUtil::executeFor)
-                .setHandleRecursivelyAccordingToArity( rja )
+                .setHandleRecursivelyAccordingToArity( JunctionUtil::forDivisionsOrModuli )
                 .build();
 
         setAlgorithm(
