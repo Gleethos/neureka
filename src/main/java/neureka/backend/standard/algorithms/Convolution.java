@@ -209,7 +209,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
 
     @Contract(pure = true)
     private static void _convolve (
-            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int i, int end,
             Operation.TertiaryNDAConsumer operation
     ) {
