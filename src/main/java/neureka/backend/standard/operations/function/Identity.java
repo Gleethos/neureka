@@ -147,7 +147,7 @@ public final class Identity extends AbstractOperation
                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
-            .setHandleInsteadOfDevice( CalcUtil::executeFor)
+            .setHandleInsteadOfDevice( CalcUtil::executeFor )
             .setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
@@ -200,7 +200,7 @@ public final class Identity extends AbstractOperation
                                 .kernelPostfix( this.getFunction() )
                                 .execution(
                                         call -> {
-                                            Tsr t = call.getTsrOfType( Number.class, 0 );
+                                            Tsr<Number> t = call.getTsrOfType( Number.class, 0 );
                                             int gwz = t.size();
                                             call.getDevice().getKernel(call)
                                                     .passAllOf(t)
@@ -235,7 +235,7 @@ public final class Identity extends AbstractOperation
         return calculate(
                 src[ 0 ].call( inputs, j ),
                 d >= 0
-        ) * ( ( d < 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );
+            ) * ( ( d < 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );
     }
 
     @Contract(pure = true)

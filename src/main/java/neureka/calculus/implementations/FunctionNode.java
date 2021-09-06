@@ -98,36 +98,41 @@ public class FunctionNode implements Function
 
     //------------------------------------------------------------------------------------------------------------------
 
-    /**
-     * Responsible for handling functions with multiple inputs!
-     *
-     * @param inputs
-     * @return The result of the execution.
-     */
-    protected Tsr<?> _tensor_activation( Tsr<?>[] inputs, Args arguments )
-    {
-        ExecutionCall<? extends Device<?>> call = ExecutionCall.of( inputs )
-                                                                .andArgs(arguments.getAll(Arg.class))
-                                                                .running(_operation)
-                                                                .on( _deviceFor( inputs ) );
-        ExecutionCall<? extends Device<?>> finalCall;
-        Device<?> possiblyNewDevice = call.getAlgorithm().findDeviceFor( call );
-        if ( possiblyNewDevice != null ) finalCall = call.withDevice( possiblyNewDevice );
-        else finalCall = call;
 
-        int d = arguments.valOf(Arg.DerivIdx.class);
+    @Override
+    public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
+        return preprocess(
+                tensors,
+                this,
+                () -> {
+                    ExecutionCall<? extends Device<?>> call = ExecutionCall.of( tensors )
+                                                                            .andArgs(arguments.getAll(Arg.class))
+                                                                            .running(_operation)
+                                                                            .on( _deviceFor( tensors ) );
+                    ExecutionCall<? extends Device<?>> finalCall;
+                    Device<?> possiblyNewDevice = call.getAlgorithm().findDeviceFor( call );
+                    if ( possiblyNewDevice != null ) finalCall = call.withDevice( possiblyNewDevice );
+                    else finalCall = call;
 
-        if ( _isFlat )
-        {
-            /* The following code is reached in flat functions only:
-               Autograd-Graph will be generated below for the new GraphNode: 
-               only flat functions can be executed directly */
-            if ( d < 0 && _isDoingAD )
-                return new GraphNode<>( this, finalCall, () -> _execute( finalCall ) ).getPayload();
-        }
-        return _execute( finalCall );
+                    int d = arguments.valOf(Arg.DerivIdx.class);
 
+                    if ( _isFlat )
+                    {
+                    /* The following code is reached in flat functions only:
+                       Autograd-Graph will be generated below for the new GraphNode:
+                       only flat functions can be executed directly */
+                        if ( d < 0 && _isDoingAD )
+                            return new GraphNode<>(
+                                    this,
+                                    finalCall,
+                                    () -> _execute( finalCall )
+                            ).getPayload();
+                    }
+                    return _execute( finalCall );
+                }
+        );
     }
+
 
     private Tsr<?> _execute(ExecutionCall<? extends Device<?>> call )
     {
@@ -160,15 +165,6 @@ public class FunctionNode implements Function
 
         if ( device != null && tensors.length == 2 && tensors[ 1 ].size() == 1 ) onSameGuestDevice = true;
         return onSameGuestDevice;
-    }
-
-    @Override
-    public Tsr<?> execute( Args arguments, Tsr<?>... tensors ) {
-        return preprocess(
-                tensors,
-                this,
-                () -> _tensor_activation( tensors, arguments )
-        );
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
