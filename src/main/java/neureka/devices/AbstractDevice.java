@@ -121,20 +121,15 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
      * @return This very device instance in order to enable method chaining.
      */
     @Override
-    public Device<ValType> execute( ExecutionCall<Device<?>> call )
+    public Device<ValType> execute( ExecutionCall<? extends Device<?>> call )
     {
-        call = (ExecutionCall<Device<?>>) call.getAlgorithm().instantiateNewTensorsForExecutionIn( call );
         for ( Tsr<?> t : call.getTensors() ) {
             if ( t == null ) throw new IllegalArgumentException(
                     "Device arguments may not be null!\n" +
-                            "One or more tensor arguments within the given ExecutionCall instance is null."
+                    "One or more tensor arguments within the given ExecutionCall instance is null."
             );
         }
-        call.getAlgorithm()
-                .recursiveReductionOf(
-                    call,
-                    c -> _execute( c.getTensors(), c.getDerivativeIndex(), c.getOperation() )
-                );
+        _execute( call.getTensors(), call.getDerivativeIndex(), call.getOperation() );
         return this;
     }
 

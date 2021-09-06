@@ -53,6 +53,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.AbstractDevice;
@@ -458,7 +459,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         if ( tensor.isVirtual() ) {
             double value = tensor.value64( 0 );
             tensor.setIsOutsourced( true );
-            execute(
+            CalcUtil.recursiveExecution(
                 ExecutionCall.of(tensor, Tsr.of( value ).to( this ))
                                 .andArgs(Arg.DerivIdx.of(-1))
                                 .running(Neureka.get().context().getOperation( "<" ))

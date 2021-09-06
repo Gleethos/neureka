@@ -40,13 +40,13 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     public Device<Object> overwrite64(Tsr tensor, double[] value) { return this; }
 
     @Override
-    public Device<Object> overwrite32(Tsr tensor, float[] value) { return this; }
+    public Device<Object> overwrite32(Tsr<Object> tensor, float[] value) { return this; }
 
     @Override
-    public Device<Object> swap(Tsr former, Tsr replacement) { return this; }
+    public Device<Object> swap(Tsr<Object> former, Tsr<Object> replacement) { return this; }
 
     @Override
-    public Device<Object> execute( ExecutionCall<Device<?>> call ) { return this; }
+    public Device<Object> execute( ExecutionCall<? extends Device<?>> call ) { return this; }
 
     @Override
     public Object valueFor(Tsr<Object> tensor) { return null; }

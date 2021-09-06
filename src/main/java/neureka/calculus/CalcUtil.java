@@ -62,7 +62,7 @@ public class CalcUtil {
         } else {
             tensors = srcActivation(inputs, j, d, 1, nodes);
         }
-        device.execute(
+        CalcUtil.recursiveExecution(
                 ExecutionCall.of(tensors)
                         .andArgs(Arg.DerivIdx.of(d))
                         .running(operation)
@@ -139,7 +139,7 @@ public class CalcUtil {
                 if ( index >= 0 ) inner = tensors[ index ];
                 else {
                     // Optimization above did not apply, so we accumulate all the derivatives!
-                    device.execute(
+                    CalcUtil.recursiveExecution(
                             ExecutionCall.of(tensors)
                                     .andArgs(Arg.DerivIdx.of( -1 ))
                                     .running(Neureka.get().context().getOperation("+"))
@@ -169,7 +169,7 @@ public class CalcUtil {
                 }
             }
             // Use those tensors for the outer derivative:
-            device.execute(
+            CalcUtil.recursiveExecution(
                     ExecutionCall.of(tensors)
                             .andArgs(Arg.DerivIdx.of(d))
                             .running( operation )
@@ -179,7 +179,7 @@ public class CalcUtil {
             //...multiply inner times outer: ( if inner is not 1 entirely... )
             if ( !( ( inner.isVirtual() || inner.size()==1 ) && inner.value64( 0 )==1.0) ) {
                 tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
-                device.execute(
+                CalcUtil.recursiveExecution(
                         ExecutionCall.of(tensors)
                                 .andArgs(Arg.DerivIdx.of( -1 ))
                                 .running(Neureka.get().context().getOperation("*"))
@@ -197,7 +197,7 @@ public class CalcUtil {
             if ( di >= 0 ) {
                 if ( out == null ) out = actor.get();
                 else
-                    device.execute(
+                    CalcUtil.recursiveExecution(
                             ExecutionCall.of( null, actor.get(), out )
                                     .andArgs( Arg.DerivIdx.of( -1 ) )
                                     .running( Neureka.get().context().getOperation("+") )
@@ -206,6 +206,23 @@ public class CalcUtil {
             }
         }
         return out;
+    }
+
+    public static void recursiveExecution( ExecutionCall<? extends Device<?>> call )
+    {
+        call = call.getAlgorithm().instantiateNewTensorsForExecutionIn( call );
+        for ( Tsr<?> t : call.getTensors() ) {
+            if ( t == null ) throw new IllegalArgumentException(
+                    "Device arguments may not be null!\n" +
+                            "One or more tensor arguments within the given ExecutionCall instance is null."
+            );
+        }
+        call.getAlgorithm()
+                .recursiveReductionOf(
+                        call,
+                        c -> c.getDevice().execute( c )
+                );
+        return;
     }
 
     public static Tsr<?>[] srcActivation(

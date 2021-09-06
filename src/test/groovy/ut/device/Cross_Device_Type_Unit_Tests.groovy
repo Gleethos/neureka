@@ -4,6 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.backend.api.Algorithm
 import neureka.backend.api.ExecutionCall
+import neureka.calculus.CalcUtil
 import neureka.devices.Device
 import neureka.devices.file.FileDevice
 import neureka.devices.host.HostCPU
@@ -128,9 +129,11 @@ class Cross_Device_Type_Unit_Tests extends Specification
         and : 'A mocked ExecutionCall with mocked operation implementation and a mocked drain instantiator lambda...'
             def call = Mock(ExecutionCall)
             def implementation = Mock(Algorithm)
+        and :
+            call.getDevice() >> device
 
         when : 'The call is being passed to the device for execution...'
-            device.execute(call)
+            CalcUtil.recursiveExecution(call)
 
         then : '...the implementation is being accessed in order to access the mocked lambda...'
             1 * call.getAlgorithm() >> implementation
