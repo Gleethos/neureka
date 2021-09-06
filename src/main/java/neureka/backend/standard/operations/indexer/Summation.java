@@ -38,8 +38,6 @@ public final class Summation extends AbstractOperation
                         .setIsInline(         false       )
         );
 
-        Algorithm.RecursiveJunctor rja = JunctionUtil::forAdditions;
-
         //________________
         // BROADCASTING :
 
@@ -86,7 +84,7 @@ public final class Summation extends AbstractOperation
                         }
                     }
                 )
-                .setHandleRecursivelyAccordingToArity( rja )
+                .setHandleRecursivelyAccordingToArity( JunctionUtil::forAdditions )
                 .build();
 
 
@@ -211,7 +209,7 @@ public final class Summation extends AbstractOperation
             }
         )
         .setHandleInsteadOfDevice( CalcUtil::executeFor)
-        .setHandleRecursivelyAccordingToArity( rja )
+        .setHandleRecursivelyAccordingToArity( JunctionUtil::forAdditions )
         .setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();

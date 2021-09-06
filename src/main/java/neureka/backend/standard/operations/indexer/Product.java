@@ -38,9 +38,6 @@ public final class Product extends AbstractOperation {
                         .setIsInline(         false       )
         );
 
-        Algorithm.RecursiveJunctor rja = JunctionUtil::forMultiplications;
-
-
         //________________
         // BROADCASTING :
 
@@ -99,7 +96,7 @@ public final class Product extends AbstractOperation {
                         }
                     }
                 )
-                .setHandleRecursivelyAccordingToArity( rja )
+                .setHandleRecursivelyAccordingToArity( JunctionUtil::forMultiplications )
                 .build();
 
         setAlgorithm(
@@ -221,7 +218,7 @@ public final class Product extends AbstractOperation {
                     }
         )
         .setHandleInsteadOfDevice( CalcUtil::executeFor)
-        .setHandleRecursivelyAccordingToArity( rja )
+        .setHandleRecursivelyAccordingToArity( JunctionUtil::forMultiplications )
         .setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
