@@ -686,6 +686,18 @@ public final class Neureka
                     System.out.println(
                             "[Info]: '"+className+"' dependencies not found!"+groovyInfo+"\n[Cause]: "+cause
                     );
+                    /*
+                    // Check lib: $ ls -l /usr/lib/libOpenCL*
+
+                        UBUNTU:
+                        $ sudo apt update
+                        $ sudo apt install ocl-icd-opencl-dev
+                        // Now libOpenCL.so should be located at /usr/lib/x86_64-linux-gnu/libOpenCL.so
+
+                        FEDORA:
+                        $ sudo dnf install ocl-icd-devel
+
+                     */
                 }
                 return found;
             }
