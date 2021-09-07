@@ -60,7 +60,7 @@ public class CalcUtil {
             String asStr = operation.stringify(
                     IntStream.range(0, nodes.length).mapToObj(i -> "I[" + i + "]").toArray(String[]::new)
             );
-            return new FunctionBuilder(Neureka.get().context()).build( asStr, isDoingAD ).execute( tensors );
+            return new FunctionBuilder( Neureka.get().context() ).build( asStr, isDoingAD ).execute( tensors );
         } else {
             tensors = srcActivation(inputs, j, d, 1, nodes);
         }

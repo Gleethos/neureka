@@ -44,10 +44,24 @@ public final class Cache
 {
     private Logger _log = LoggerFactory.getLogger( Cache.class );
 
-    private final Map<String, Function> functionCache = Collections.synchronizedMap( new WeakHashMap<>() );
+    private final Map<String, Function> _functionCache = Collections.synchronizedMap( new WeakHashMap<>() );
 
-    public synchronized Map<String, Function> functions() {
-        return this.functionCache;
+    public void put( Function function ) {
+        boolean doAD = function.isDoingAD();
+        this._functionCache.put(
+                ( ( (doAD) ? "d" : "" ) + "(" + function + ")" ).intern(), // Make the String unique!
+                function
+        );
+    }
+
+    public Function get( String expression, boolean doesAD ) {
+        String k = ( doesAD ? "d" + expression : expression );
+        return this._functionCache.get( k );
+    }
+
+    public boolean has( String expression, boolean doesAD ) {
+        String k = ( doesAD ? "d" + expression : expression );
+        return this._functionCache.containsKey( k );
     }
 
 }

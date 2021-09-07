@@ -43,7 +43,7 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
             def run = context.runner()
         and : 'We create a function based on our optimized operation...'
             Function fun = run {
-                            new FunctionBuilder(Neureka.get().context())
+                            new FunctionBuilder( Neureka.get().context() )
                                         .build(resultOperation, 3, true)
                         }
 

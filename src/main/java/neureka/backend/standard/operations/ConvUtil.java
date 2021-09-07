@@ -40,7 +40,7 @@ public class ConvUtil {
                             Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
 
-                            Function invX = new FunctionBuilder(Neureka.get().context()).build(
+                            Function invX = new FunctionBuilder( Neureka.get().context() ).build(
                                     "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
                                     false
                             );

@@ -198,7 +198,7 @@ public final class Product extends AbstractOperation {
                         {
                             if ( this.supports(Convolution.class) )
                             {
-                                Function invX = new FunctionBuilder(Neureka.get().context()).build(
+                                Function invX = new FunctionBuilder( Neureka.get().context() ).build(
                                         "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
                                         false
                                 );

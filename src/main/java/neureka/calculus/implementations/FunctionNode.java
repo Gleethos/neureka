@@ -58,7 +58,7 @@ public class FunctionNode implements Function
 
         _operation = type;
         _isFlat = isFlat;
-        _src = sources.toArray(new Function[0]);
+        _src = sources.toArray( new Function[0] );
         _isDoingAD = doAD;
     }
 
@@ -66,7 +66,7 @@ public class FunctionNode implements Function
 
     @Override
     public Function newBuild( String expression ) {
-        return new FunctionBuilder(Neureka.get().context()).build( expression, true );
+        return new FunctionBuilder( Neureka.get().context() ).build( expression, true );
     }
 
     //---
@@ -75,23 +75,20 @@ public class FunctionNode implements Function
     public String toString()
     {
         return _operation.stringify(
-                Arrays.stream(_src)
-                        .map( e -> ( e == null ) ? "(null)" : e.toString() )
-                        .collect(Collectors.toList())
-                        .toArray(new String[0])
+                Arrays.stream( _src )
+                        .map( e -> e == null ? "(null)" : e.toString() )
+                        .toArray( String[]::new )
         );
     }
 
     @Override
     public boolean dependsOn( int index ) {
-        for ( Function f : _src ) if ( f.dependsOn(index) ) return true;
+        for ( Function f : _src ) if ( f.dependsOn( index ) ) return true;
         return false;
     }
 
     @Override
-    public Function getDerivative( int index ) {
-        return Function.of( _operation.asDerivative( _src, index ) );
-    }
+    public Function getDerivative( int index ) { return Function.of( _operation.asDerivative( _src, index ) ); }
 
     @Override
     public List<Function> getSubFunctions() { return Arrays.asList(this._src); }
@@ -118,15 +115,16 @@ public class FunctionNode implements Function
 
                     if ( _isFlat )
                     {
-                    /* The following code is reached in flat functions only:
-                       Autograd-Graph will be generated below for the new GraphNode:
-                       only flat functions can be executed directly */
+                        /*  The following code is reached in flat functions only:
+                            Autograd-Graph will be generated below for the new GraphNode:
+                            only flat functions can be executed directly                         */
+
                         if ( d < 0 && _isDoingAD )
                             return new GraphNode<>(
-                                    this,
-                                    finalCall,
-                                    () -> _execute( finalCall )
-                            ).getPayload();
+                                        this,
+                                        finalCall,
+                                        () -> _execute( finalCall )
+                                    ).getPayload();
                     }
                     return _execute( finalCall );
                 }
@@ -138,7 +136,9 @@ public class FunctionNode implements Function
     {
         Tsr<?> alternative = call.getAlgorithm().handleInsteadOfDevice( this, call );
         if ( alternative != null ) return alternative;
-        throw new IllegalStateException("Missing return value for initial call hook for operation '"+call.getOperation().getFunction()+"'");
+        throw new IllegalStateException(
+                "Missing return value for initial call hook for operation '"+call.getOperation().getFunction()+"'"
+        );
     }
 
     private Device<?> _deviceFor( Tsr<?>[] inputs )
@@ -147,14 +147,14 @@ public class FunctionNode implements Function
         Device<?> device = inputs[ 0 ].get( Device.class );
         boolean onSameDevice = _shareGuestDevice( inputs );
         boolean doAccel = !_operation.getOperator().equals(",") && onSameDevice;
-        return ( doAccel && device != null ) ? device : inputs[ 0 ].getDevice();
+        return ( doAccel && device != null ? device : inputs[ 0 ].getDevice() );
     }
 
     private static boolean _shareGuestDevice( Tsr<?>[] tensors )
     {
         boolean onSameGuestDevice = true;
         Device<?> device = null;
-        for ( Tsr<?> tensor : tensors ) device = ( tensor.isOutsourced() ) ? tensor.get( Device.class ) : device;
+        for ( Tsr<?> tensor : tensors ) device = ( tensor.isOutsourced() ? tensor.get( Device.class ) : device );
 
         if ( device != null ) {
             for ( Tsr<?> tsr : tensors ) {
@@ -186,9 +186,7 @@ public class FunctionNode implements Function
 
     public Operation getOperation() { return this._operation; }
 
-    public boolean isFlat() {
-        return this._isFlat;
-    }
+    public boolean isFlat() { return this._isFlat; }
 
     public boolean isDoingAD() { return this._isDoingAD; }
 
@@ -216,8 +214,7 @@ public class FunctionNode implements Function
         }
         GraphLock lock =  untracked.get( GraphNode.class ).getLock();
         attachGraph(inputs, function, lock);
-        Tsr<?> result = activation.get();
-        return result;
+        return activation.get();
     }
 
     private static Tsr<?> commit(

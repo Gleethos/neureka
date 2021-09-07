@@ -47,7 +47,7 @@ public class DimTrim extends AbstractOperation
                             }
                             return new DefaultADAgent()
                                     .withContext(call.getMetaArgs().getAll(Arg.class))
-                                    .setForward((t, derivative) -> new FunctionBuilder(Neureka.get().context()).build(f.toString(), false).derive(new Tsr[]{derivative},0))
+                                    .setForward((t, derivative) -> new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{derivative},0))
                                     .setBackward( (t, error) -> _pad(error, new int[]{prefix, postfix}, true) );
                         }
                 )

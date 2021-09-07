@@ -30,8 +30,8 @@ public class BroadSystemTest
         tester.testTensor(x, new String[]{"[2x2]:(-1.0, 2.0, -3.0, 3.0):g:(-3.0, -3.0, -3.0, -3.0)"});
         //---
         x = Tsr.of(new int[]{1}, 0.1).setRqsGradient(true);
-        Function tanh = new FunctionBuilder(Neureka.get().context()).build("tanh(i0)", true);
-        Function tenxx = new FunctionBuilder(Neureka.get().context()).build("i0*100", true);
+        Function tanh = new FunctionBuilder( Neureka.get().context() ).build("tanh(i0)", true);
+        Function tenxx = new FunctionBuilder( Neureka.get().context() ).build("i0*100", true);
         z = tenxx.call( tanh.call( x ) );
         tester.testTensor(z, new String[]{"[1]:(9.95037E0)"});
         Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true);

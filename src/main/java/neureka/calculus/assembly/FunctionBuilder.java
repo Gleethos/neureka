@@ -44,7 +44,8 @@ public class FunctionBuilder
      */
     public Function build( Operation operation, int numberOfArgs, boolean doAD )
     {
-        if ( operation.isIndexer() ) return build( operation.getFunction() + "( I[j] )", doAD );
+        if ( operation.isIndexer() )
+            return build( operation.getFunction() + "( I[j] )", doAD );
 
         String args = IntStream.iterate( 0, n -> n + 1 )
                                 .limit( numberOfArgs )
@@ -65,18 +66,14 @@ public class FunctionBuilder
                         && (expression.charAt( 0 ) != '(' || expression.charAt( expression.length() - 1 ) != ')'))
                         ? ("(" + expression + ")")
                         : expression;
-        String k = ( doAD ) ? "d" + expression : expression;
 
-        if ( _context.getFunctionCache().functions().containsKey( k ) )
-            return _context.getFunctionCache().functions().get( k );
+        if ( _context.getFunctionCache().has( expression, doAD ) )
+            return _context.getFunctionCache().get( expression, doAD );
 
         expression = FunctionParser.unpackAndCorrect( expression );
         Function built = _build( expression, doAD );
         if ( built != null )
-            _context.getFunctionCache().functions().put(
-                    ( ( (doAD) ? "d" : "" ) + "(" + built + ")" ).intern(), // Make the String unique!
-                    built
-            );
+            _context.getFunctionCache().put( built );
         else
             _LOG.error("Failed to parse function based on expression '"+expression+"' and autograd flag '"+doAD+"'.");
         return built;

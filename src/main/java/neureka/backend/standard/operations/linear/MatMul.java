@@ -113,7 +113,7 @@ public class MatMul extends AbstractOperation
                             //Tsr ctxDerivative = (Tsr) call.findAndGet(Argument.Derivative.class);
                             if ( forward ) throw new IllegalArgumentException("Matrix multiplication of does not support forward-AD!");
 
-                            Function invX = new FunctionBuilder(Neureka.get().context()).build( "I[ 0 ] @ I[ 1 ]", false );
+                            Function invX = new FunctionBuilder( Neureka.get().context() ).build( "I[ 0 ] @ I[ 1 ]", false );
                             Tsr[] inputs = call.getTensors();
                             int d = (1 + call.getDerivativeIndex()) % 2;
                             Tsr deriv = inputs[ d ].T();
