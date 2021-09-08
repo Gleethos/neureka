@@ -228,7 +228,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @return the payload of this graph-node.
      */
     public Tsr<V> getPayload() {
-        return ( _payload == null ) ? null : _payload.get();
+        return ( _payload == null ? null : _payload.get() );
     }
 
     private void _setPayload( Tsr<V> p ) {
@@ -319,9 +319,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @return boolean
      */
-    public boolean isCacheable() {
-        return ( this.getNodeID() != 1 );
-    }
+    public boolean isCacheable() { return ( this.getNodeID() != 1 ); }
 
     //==================================================================================================================
 
@@ -777,7 +775,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param target nodes are graph nodes which contain either tensors requiring errors for accumulation and/or more targets.
      * @param agent ADAgent's are used during back-propagation in order to distribute an error throughout the graph.
      */
-    public void put(GraphNode<V> target, ADAgent agent) {
+    public void put( GraphNode<V> target, ADAgent agent ) {
         if ( _targets_derivatives == null ) _targets_derivatives = new TreeMap<>((a, b) -> a.hashCode() - b.hashCode());
 
         if ( _targets_derivatives.containsKey( target ) )

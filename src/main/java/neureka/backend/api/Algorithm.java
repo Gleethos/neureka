@@ -40,11 +40,10 @@ package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
+import neureka.calculus.Function;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  *   This class is the middle layer of the 3 tier abstraction architecture of this backend. <br>
@@ -58,65 +57,73 @@ import java.util.function.Function;
  *   for performing elementwise operations, whereas otherwise the {@link neureka.backend.standard.algorithms.Broadcast}
  *   algorithm might be called to perform the operation.
  */
-public interface Algorithm<FinalType extends Algorithm<FinalType>>
+public interface Algorithm<C extends Algorithm<C>>
 {
     String getName();
 
-    interface SuitabilityChecker {
-        float canHandle( ExecutionCall<? extends Device<?>> call );
-    }
+    //---
 
     float isSuitableFor( ExecutionCall<? extends Device<?>> call );
-
-    interface DeviceFinder {
-        Device<?> findFor( ExecutionCall<? extends Device<?>> call );
-    }
-
+    
+    //---
+    
+    interface DeviceFinder { Device<?> findFor( ExecutionCall<? extends Device<?>> call );}
     Device<?> findDeviceFor( ExecutionCall<? extends Device<?>> call );
-
-    interface ForwardADAnalyzer {
-        boolean allowsForward( ExecutionCall<? extends Device<?>> call );
-    }
-
+    
+    //---
+    
+    interface ForwardADAnalyzer { boolean allowsForward( ExecutionCall<? extends Device<?>> call );}
     boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call );
-
-    interface BackwardADAnalyzer {
-        boolean allowsBackward( ExecutionCall<? extends Device<?>> call );
-    }
-
+    
+    //---
+    
+    interface BackwardADAnalyzer { boolean allowsBackward( ExecutionCall<? extends Device<?>> call );}
     boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call );
-
+    
+    //---
+    
     interface ADAgentSupplier {
-        ADAgent getADAgentOf(
-                neureka.calculus.Function f,
+        ADAgent getADAgentOf( 
+                Function f,
                 ExecutionCall<? extends Device<?>> call,
                 boolean forward
         );
     }
-
     ADAgent supplyADAgentFor(
-            neureka.calculus.Function f,
+            Function f,
             ExecutionCall<? extends Device<?>> call,
             boolean forward
     );
-
+    
+    //---
+    
     interface InitialCallHook {
         Tsr<?> handle( FunctionNode caller,  ExecutionCall<? extends Device<?>> call );
     }
 
     Tsr<?> handleInsteadOfDevice( FunctionNode caller, ExecutionCall<? extends Device<?>> call );
 
+    //---
+    
+    interface CallExecutor {
+        Tsr<?> execute( ExecutionCall<? extends Device<?>> call );
+    }
+    
     interface RecursiveJunctor {
-        Tsr<?> handle( ExecutionCall<? extends Device<?>> call, Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith );
+        Tsr<?> handle( ExecutionCall<? extends Device<?>> call, CallExecutor goDeeperWith );
     }
 
-    Tsr<?> handleRecursivelyAccordingToArity( ExecutionCall<? extends Device<?>> call, Function<ExecutionCall<? extends Device<?>> , Tsr<?>> goDeeperWith );
+    Tsr<?> handleRecursivelyAccordingToArity( ExecutionCall<? extends Device<?>> call, CallExecutor goDeeperWith );
 
+    //---
+    
     interface DrainInstantiation {
         ExecutionCall<? extends Device<?>> handle( ExecutionCall<? extends Device<?>> call );
     }
 
     ExecutionCall<? extends Device<?>> instantiateNewTensorsForExecutionIn( ExecutionCall<? extends Device<?>> call );
+
+    //---
 
     /**
      *
@@ -133,7 +140,7 @@ public interface Algorithm<FinalType extends Algorithm<FinalType>>
      * @param <E>
      * @return
      */
-    <D extends Device<?>, E extends ImplementationFor<D>> FinalType setImplementationFor(Class<D> deviceClass, E execution);
+    <D extends Device<?>, E extends ImplementationFor<D>> C setImplementationFor(Class<D> deviceClass, E execution);
 
     /**
      *  A device specific implementation can be accessed by passing the class of the implementation

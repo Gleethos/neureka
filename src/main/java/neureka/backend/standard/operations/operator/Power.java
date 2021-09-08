@@ -142,13 +142,13 @@ public class Power extends AbstractOperation
             {
                 if ( d < 0 ) {
                     Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
-                    alternative = goDeeperWith.apply(
+                    alternative = goDeeperWith.execute(
                             call.withTensors( reduction )
                     );
                     tsrs[ 0 ] = reduction[ 0 ];
 
                     reduction = Utility.offsetted(tsrs, 1);
-                    alternative = goDeeperWith.apply(
+                    alternative = goDeeperWith.execute(
                                         call.withTensors( reduction )
                             );
                     tsrs[ 0 ] = reduction[ 0 ];
@@ -157,7 +157,7 @@ public class Power extends AbstractOperation
                     if ( d==0 ) {
                         Tsr[] reduction = Utility.subset(tsrs, 1,  2, tsrs.length-2);
                         reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);
-                        alternative = goDeeperWith.apply(
+                        alternative = goDeeperWith.execute(
                                             ExecutionCall.of(reduction)
                                                             .andArgs(Arg.DerivIdx.of( -1 ))
                                                             .running(Neureka.get().context().getOperation("*"))
@@ -165,7 +165,7 @@ public class Power extends AbstractOperation
                                         );
                         Tsr exp = reduction[ 0 ];
                         reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], exp};
-                        alternative = goDeeperWith.apply(
+                        alternative = goDeeperWith.execute(
                                             ExecutionCall.of(reduction)
                                                             .andArgs(Arg.DerivIdx.of(0))
                                                             .running(type)
@@ -177,7 +177,7 @@ public class Power extends AbstractOperation
                         Tsr<?>[] reduction = Utility.subset(tsrs, 1,  2, tsrs.length-2);
 
                         reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);
-                        alternative = goDeeperWith.apply(
+                        alternative = goDeeperWith.execute(
                                                 ExecutionCall.of(reduction)
                                                                 .andArgs(Arg.DerivIdx.of(d-1))
                                                                 .running(Neureka.get().context().getOperation("*"))
@@ -186,7 +186,7 @@ public class Power extends AbstractOperation
                         Tsr<?> inner = reduction[ 0 ];
 
                         reduction = new Tsr[]{Tsr.Create.newTsrLike(tsrs[ 1 ]), inner, tsrs[d]};
-                        alternative = goDeeperWith.apply(
+                        alternative = goDeeperWith.execute(
                                                 ExecutionCall.of(reduction)
                                                                 .andArgs(Arg.DerivIdx.of(-1))
                                                                 .running(Neureka.get().context().getOperation("*"))
@@ -195,7 +195,7 @@ public class Power extends AbstractOperation
                         Tsr<?> exp = reduction[ 0 ];
 
                         reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], exp};
-                        alternative = goDeeperWith.apply(
+                        alternative = goDeeperWith.execute(
                                 ExecutionCall.of(reduction)
                                                 .andArgs(Arg.DerivIdx.of(1))
                                                 .running(type)

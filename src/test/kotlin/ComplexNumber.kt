@@ -5,18 +5,12 @@ class ComplexNumber(
     /**
      *  @return A new complex number which is the sum of this complex number and the one passed to this function.
      */
-    fun plus( z2 : ComplexNumber ) : ComplexNumber
-    {
-        return ComplexNumber(this.real + z2.real, this.imaginary + z2.imaginary)
-    }
+    fun plus( z2 : ComplexNumber ) = ComplexNumber(this.real + z2.real, this.imaginary + z2.imaginary)
 
     /**
      * @return A new complex number holding the subtraction between this value and the value of the provided complex number.
      */
-    fun minus( z2 : ComplexNumber ) : ComplexNumber
-    {
-        return ComplexNumber(this.real - z2.real, this.imaginary - z2.imaginary)
-    }
+    fun minus( z2 : ComplexNumber ) = ComplexNumber(this.real - z2.real, this.imaginary - z2.imaginary)
 
     /**
      * @return A new complex number which is the product of this complex number and the one passed to this function.
@@ -35,10 +29,7 @@ class ComplexNumber(
         return ComplexNumber(output.real/div,output.imaginary/div)
     }
 
-    fun mod() : Double
-    {
-        return Math.sqrt(Math.pow(this.real,2.0) + Math.pow(this.imaginary,2.0))
-    }
+    fun mod() = Math.sqrt(Math.pow(this.real,2.0) + Math.pow(this.imaginary,2.0))
 
     /**
      * @return A new complex number produced by raising it to the power of the provided integer.
@@ -58,15 +49,9 @@ class ComplexNumber(
     /**
      * @return A new complex number representing the inverse of this number.
      */
-    fun inverse() : ComplexNumber
-    {
-        return ComplexNumber(1.0,0.0).divide(this)
-    }
+    fun inverse() = ComplexNumber(1.0,0.0).divide(this)
 
-    fun conjugate() : ComplexNumber
-    {
-        return ComplexNumber(this.real,-this.imaginary)
-    }
+    fun conjugate() = ComplexNumber(this.real,-this.imaginary)
 
     /**
      * @return A new complex number holding the squared value of this complex number.

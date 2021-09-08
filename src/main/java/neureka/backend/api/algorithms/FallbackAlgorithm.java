@@ -148,7 +148,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
 
     @Override
     public Tsr<?> handleRecursivelyAccordingToArity(
-            ExecutionCall<? extends Device<?>> call, java.util.function.Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith
+            ExecutionCall<? extends Device<?>> call, CallExecutor goDeeperWith
     ) {
         return null;
     }

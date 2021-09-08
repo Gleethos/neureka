@@ -6,6 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.backend.api.algorithms.api.*;
 import neureka.calculus.Function;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
@@ -32,7 +33,7 @@ import neureka.devices.Device;
  */
 public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > extends AbstractBaseAlgorithm<C>
 {
-    private Algorithm.SuitabilityChecker _isSuitableFor;
+    private SuitabilityChecker _isSuitableFor;
     private Algorithm.DeviceFinder _findDeviceFor;
     private Algorithm.ForwardADAnalyzer _canPerformForwardADFor;
     private Algorithm.BackwardADAnalyzer _canPerformBackwardADFor;
@@ -91,7 +92,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     //---
 
     @Override
-    public Tsr<?> handleRecursivelyAccordingToArity( ExecutionCall<? extends Device<?>> call, java.util.function.Function<ExecutionCall<? extends Device<?>>, Tsr<?>> goDeeperWith ) {
+    public Tsr<?> handleRecursivelyAccordingToArity( ExecutionCall<? extends Device<?>> call, CallExecutor goDeeperWith ) {
         return _handleRecursivelyAccordingToArity.handle( call, goDeeperWith );
     }
 
@@ -107,7 +108,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     public C build() { return (C) this; }
 
     /**
-     *  The {@link neureka.backend.api.Algorithm.SuitabilityChecker}
+     *  The {@link SuitabilityChecker}
      *  checks if a given instance of an {@link ExecutionCall} is
      *  suitable to be executed in {@link neureka.backend.api.ImplementationFor}
      *  residing in this {@link Algorithm} as components.
@@ -185,7 +186,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     public DrainInstantiation getInstantiateNewTensorsForExecutionIn() { return this._instantiateNewTensorsForExecutionIn; }
 
     /**
-     *  The {@link neureka.backend.api.Algorithm.SuitabilityChecker}
+     *  The {@link SuitabilityChecker}
      *  checks if a given instance of an {@link ExecutionCall} is
      *  suitable to be executed in {@link neureka.backend.api.ImplementationFor} instances
      *  residing in this {@link Algorithm} as components.
