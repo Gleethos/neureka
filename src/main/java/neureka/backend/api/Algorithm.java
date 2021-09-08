@@ -39,10 +39,7 @@ SOFTWARE.
 package neureka.backend.api;
 
 import neureka.Tsr;
-import neureka.autograd.ADAgent;
-import neureka.backend.api.algorithms.api.DeviceFinder;
-import neureka.backend.api.algorithms.api.SuitabilityChecker;
-import neureka.calculus.Function;
+import neureka.backend.api.algorithms.api.*;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
 
@@ -59,34 +56,10 @@ import neureka.devices.Device;
  *   for performing elementwise operations, whereas otherwise the {@link neureka.backend.standard.algorithms.Broadcast}
  *   algorithm might be called to perform the operation.
  */
-public interface Algorithm<C extends Algorithm<C>> extends SuitabilityChecker, DeviceFinder
+public interface Algorithm<C extends Algorithm<C>>
+extends SuitabilityChecker, DeviceFinder, ForwardADChecker, BackwardADChecker, ADAgentSupplier
 {
     String getName();
-
-    //---
-    
-    interface ForwardADAnalyzer { boolean allowsForward( ExecutionCall<? extends Device<?>> call );}
-    boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call );
-    
-    //---
-    
-    interface BackwardADAnalyzer { boolean allowsBackward( ExecutionCall<? extends Device<?>> call );}
-    boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call );
-    
-    //---
-    
-    interface ADAgentSupplier {
-        ADAgent getADAgentOf( 
-                Function f,
-                ExecutionCall<? extends Device<?>> call,
-                boolean forward
-        );
-    }
-    ADAgent supplyADAgentFor(
-            Function f,
-            ExecutionCall<? extends Device<?>> call,
-            boolean forward
-    );
     
     //---
     

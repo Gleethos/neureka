@@ -35,9 +35,9 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
 {
     private SuitabilityChecker _isSuitableFor;
     private DeviceFinder _findDeviceFor;
-    private Algorithm.ForwardADAnalyzer _canPerformForwardADFor;
-    private Algorithm.BackwardADAnalyzer _canPerformBackwardADFor;
-    private Algorithm.ADAgentSupplier _supplyADAgentFor;
+    private ForwardADChecker _canPerformForwardADFor;
+    private BackwardADChecker _canPerformBackwardADFor;
+    private ADAgentSupplier _supplyADAgentFor;
     private Algorithm.InitialCallHook _handleInsteadOfDevice;
     private Algorithm.RecursiveJunctor _handleRecursivelyAccordingToArity = (call, goDeeperWith) -> null;
     private Algorithm.DrainInstantiation _instantiateNewTensorsForExecutionIn;
@@ -65,21 +65,21 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
 
     @Override
     public boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call ) {
-        return _canPerformForwardADFor.allowsForward(call);
+        return _canPerformForwardADFor.canPerformForwardADFor(call);
     }
 
     //---
 
     @Override
     public boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call ) {
-        return _canPerformBackwardADFor.allowsBackward( call );
+        return _canPerformBackwardADFor.canPerformBackwardADFor( call );
     }
 
     //---
 
     @Override
     public ADAgent supplyADAgentFor( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) {
-        return _supplyADAgentFor.getADAgentOf( f, call, forward );
+        return _supplyADAgentFor.supplyADAgentFor( f, call, forward );
     }
 
     //---
@@ -128,26 +128,26 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     public DeviceFinder getFindDeviceFor() { return this._findDeviceFor; }
 
     /**
-     *  A {@link neureka.backend.api.Algorithm.ForwardADAnalyzer} lambda checks if this
+     *  A {@link ForwardADChecker} lambda checks if this
      *  {@link Algorithm} can perform forward AD for a given {@link ExecutionCall}.
      *
      * @return An analyzer which return a truth value determining if this {@link Algorithm} can perform forward AD on a given {@link ExecutionCall}
      */
-    public ForwardADAnalyzer getCanPerformForwardADFor() { return this._canPerformForwardADFor; }
+    public ForwardADChecker getCanPerformForwardADFor() { return this._canPerformForwardADFor; }
 
     /**
-     *  A {@link neureka.backend.api.Algorithm.BackwardADAnalyzer} lambda checks if this
+     *  A {@link BackwardADChecker} lambda checks if this
      *  {@link Algorithm} can perform backward AD for a given {@link ExecutionCall}.
      *
      * @return An analyzer which return a truth value determining if this {@link Algorithm} can perform backward AD on a given {@link ExecutionCall}
      */
-    public BackwardADAnalyzer getCanPerformBackwardADFor() { return this._canPerformBackwardADFor; }
+    public BackwardADChecker getCanPerformBackwardADFor() { return this._canPerformBackwardADFor; }
 
     /**
-     *  This {@link neureka.backend.api.Algorithm.ADAgentSupplier} will supply
+     *  This {@link neureka.backend.api.algorithms.api.ADAgentSupplier} will supply
      *  {@link ADAgent} instances which can perform backward and forward auto differentiation.
      *
-     * @return An {@link neureka.backend.api.Algorithm.ADAgentSupplier} for creting suitable {@link ADAgent} instances.
+     * @return An {@link neureka.backend.api.algorithms.api.ADAgentSupplier} for creting suitable {@link ADAgent} instances.
      */
     public ADAgentSupplier getSupplyADAgentFor() { return this._supplyADAgentFor; }
 
@@ -213,31 +213,31 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     }
 
     /**
-     *  A {@link neureka.backend.api.Algorithm.ForwardADAnalyzer} lambda checks if this
+     *  A {@link ForwardADChecker} lambda checks if this
      *  {@link Algorithm} can perform forward AD for a given {@link ExecutionCall}.
      *
      * @param canPerformForwardADFor
      * @return This very instance to enable method chaining.
      */
-    public AbstractFunctionalAlgorithm<C> setCanPerformForwardADFor( ForwardADAnalyzer canPerformForwardADFor ) {
+    public AbstractFunctionalAlgorithm<C> setCanPerformForwardADFor( ForwardADChecker canPerformForwardADFor ) {
         this._canPerformForwardADFor = canPerformForwardADFor;
         return this;
     }
 
     /**
-     *  A {@link neureka.backend.api.Algorithm.BackwardADAnalyzer} lambda checks if this
+     *  A {@link BackwardADChecker} lambda checks if this
      *  {@link Algorithm} can perform backward AD for a given {@link ExecutionCall}.
      *
      * @param canPerformBackwardADFor
      * @return This very instance to enable method chaining.
      */
-    public AbstractFunctionalAlgorithm<C> setCanPerformBackwardADFor( BackwardADAnalyzer canPerformBackwardADFor ) {
+    public AbstractFunctionalAlgorithm<C> setCanPerformBackwardADFor( BackwardADChecker canPerformBackwardADFor ) {
         this._canPerformBackwardADFor = canPerformBackwardADFor;
         return this;
     }
 
     /**
-     *  This method receives a {@link neureka.backend.api.Algorithm.ADAgentSupplier} which will supply
+     *  This method receives a {@link neureka.backend.api.algorithms.api.ADAgentSupplier} which will supply
      *  {@link ADAgent} instances which can perform backward and forward auto differentiation.
      *
      * @param supplyADAgentFor
