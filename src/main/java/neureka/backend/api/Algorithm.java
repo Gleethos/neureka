@@ -40,7 +40,6 @@ package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.backend.api.algorithms.api.*;
-import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
 
 
@@ -57,37 +56,9 @@ import neureka.devices.Device;
  *   algorithm might be called to perform the operation.
  */
 public interface Algorithm<C extends Algorithm<C>>
-extends SuitabilityChecker, DeviceFinder, ForwardADChecker, BackwardADChecker, ADAgentSupplier
+extends SuitabilityChecker, DeviceFinder, ForwardADChecker, BackwardADChecker, ADAgentSupplier, RecursiveExecutor, InitialCallHook, DrainInstantiation
 {
     String getName();
-    
-    //---
-    
-    interface InitialCallHook {
-        Tsr<?> handle( FunctionNode caller,  ExecutionCall<? extends Device<?>> call );
-    }
-
-    Tsr<?> handleInsteadOfDevice( FunctionNode caller, ExecutionCall<? extends Device<?>> call );
-
-    //---
-    
-    interface CallExecutor {
-        Tsr<?> execute( ExecutionCall<? extends Device<?>> call );
-    }
-    
-    interface RecursiveJunctor {
-        Tsr<?> handle( ExecutionCall<? extends Device<?>> call, CallExecutor goDeeperWith );
-    }
-
-    Tsr<?> handleRecursivelyAccordingToArity( ExecutionCall<? extends Device<?>> call, CallExecutor goDeeperWith );
-
-    //---
-    
-    interface DrainInstantiation {
-        ExecutionCall<? extends Device<?>> handle( ExecutionCall<? extends Device<?>> call );
-    }
-
-    ExecutionCall<? extends Device<?>> instantiateNewTensorsForExecutionIn( ExecutionCall<? extends Device<?>> call );
 
     //---
 

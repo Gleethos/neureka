@@ -3,9 +3,9 @@ package neureka.backend.standard.operations.linear;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
-import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.backend.api.algorithms.api.RecursiveExecutor;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Convolution;
@@ -36,7 +36,7 @@ public class MatMul extends AbstractOperation
                         .setIsInline(         false       )
         );
 
-        Algorithm.RecursiveJunctor rja = (call, goDeeperWith)->
+        RecursiveExecutor rja = (call, goDeeperWith)->
         {
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();

@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 
 public class FunctionNode implements Function
@@ -134,7 +133,7 @@ public class FunctionNode implements Function
 
     private Tsr<?> _execute(ExecutionCall<? extends Device<?>> call )
     {
-        Tsr<?> alternative = call.getAlgorithm().handleInsteadOfDevice( this, call );
+        Tsr<?> alternative = call.getAlgorithm().handle( this, call );
         if ( alternative != null ) return alternative;
         throw new IllegalStateException(
                 "Missing return value for initial call hook for operation '"+call.getOperation().getFunction()+"'"

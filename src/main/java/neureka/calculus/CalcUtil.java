@@ -212,7 +212,7 @@ public class CalcUtil {
 
     public static void recursiveExecution( ExecutionCall<? extends Device<?>> call )
     {
-        call = call.getAlgorithm().instantiateNewTensorsForExecutionIn( call );
+        call = call.getAlgorithm().handle( call );
         for ( Tsr<?> t : call.getTensors() ) {
             if ( t == null ) throw new IllegalArgumentException(
                     "Device arguments may not be null!\n" +
@@ -229,9 +229,9 @@ public class CalcUtil {
 
 
     /**
-     *  The following method is used together with the {@link Algorithm#handleRecursivelyAccordingToArity} method.
+     *  The following method is used together with the {@link Algorithm#execute} method.
      *  There is already a great implementation of this method in the AbstractBaseAlgorithm class
-     *  which calls the {@link Algorithm#handleRecursivelyAccordingToArity} method whose implementation
+     *  which calls the {@link Algorithm#execute} method whose implementation
      *  ought to either execute the given call which is passed to it or
      *  continue to go deeper by calling the passed lambda... <br>
      *
@@ -281,7 +281,7 @@ public class CalcUtil {
             Below is the core lambda of recursive preprocessing
             which is defined for each Algorithm individually :
          */
-        Tsr<?> result = algorithm.handleRecursivelyAccordingToArity( call, c -> recursiveReductionOf( c, finalExecution, algorithm ) );
+        Tsr<?> result = algorithm.execute( call, c -> recursiveReductionOf( c, finalExecution, algorithm ) );
         if ( result == null ) {
             finalExecution.accept(
                     ExecutionCall.of(call.getTensors())

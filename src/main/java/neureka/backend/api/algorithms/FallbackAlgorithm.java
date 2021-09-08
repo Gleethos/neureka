@@ -4,12 +4,13 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.autograd.DefaultADAgent;
-import neureka.calculus.CalcUtil;
-import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.backend.api.algorithms.api.CallExecutor;
 import neureka.backend.standard.implementations.HostImplementation;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.assembly.FunctionParser;
 import neureka.calculus.implementations.FunctionNode;
@@ -142,19 +143,19 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
     }
 
     @Override
-    public Tsr<?> handleInsteadOfDevice( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
+    public Tsr<?> handle(FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
         return CalcUtil.executeFor(caller, call);
     }
 
     @Override
-    public Tsr<?> handleRecursivelyAccordingToArity(
+    public Tsr<?> execute(
             ExecutionCall<? extends Device<?>> call, CallExecutor goDeeperWith
     ) {
         return null;
     }
 
     @Override
-    public ExecutionCall<? extends Device<?>> instantiateNewTensorsForExecutionIn( ExecutionCall<? extends Device<?>> call )
+    public ExecutionCall<? extends Device<?>> handle(ExecutionCall<? extends Device<?>> call )
     {
         Tsr<?>[] tensors = call.getTensors();
         Device<Object> device = call.getDeviceFor(Object.class);

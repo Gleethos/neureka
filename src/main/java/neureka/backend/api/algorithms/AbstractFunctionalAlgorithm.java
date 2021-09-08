@@ -38,9 +38,9 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     private ForwardADChecker _canPerformForwardADFor;
     private BackwardADChecker _canPerformBackwardADFor;
     private ADAgentSupplier _supplyADAgentFor;
-    private Algorithm.InitialCallHook _handleInsteadOfDevice;
-    private Algorithm.RecursiveJunctor _handleRecursivelyAccordingToArity = (call, goDeeperWith) -> null;
-    private Algorithm.DrainInstantiation _instantiateNewTensorsForExecutionIn;
+    private InitialCallHook _handleInsteadOfDevice;
+    private RecursiveExecutor _handleRecursivelyAccordingToArity = (call, goDeeperWith) -> null;
+    private DrainInstantiation _instantiateNewTensorsForExecutionIn;
 
     public AbstractFunctionalAlgorithm(String name ) {
         super(name);
@@ -85,21 +85,21 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     //---
 
     @Override
-    public Tsr<?> handleInsteadOfDevice( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
+    public Tsr<?> handle(FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
         return _handleInsteadOfDevice.handle( caller, call );
     }
 
     //---
 
     @Override
-    public Tsr<?> handleRecursivelyAccordingToArity( ExecutionCall<? extends Device<?>> call, CallExecutor goDeeperWith ) {
-        return _handleRecursivelyAccordingToArity.handle( call, goDeeperWith );
+    public Tsr<?> execute(ExecutionCall<? extends Device<?>> call, CallExecutor goDeeperWith ) {
+        return _handleRecursivelyAccordingToArity.execute( call, goDeeperWith );
     }
 
     //---
 
     @Override
-    public ExecutionCall<? extends Device<?>> instantiateNewTensorsForExecutionIn( ExecutionCall<? extends Device<?>> call ) {
+    public ExecutionCall<? extends Device<?>> handle(ExecutionCall<? extends Device<?>> call ) {
         return _instantiateNewTensorsForExecutionIn.handle( call );
     }
 
@@ -152,10 +152,10 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     public ADAgentSupplier getSupplyADAgentFor() { return this._supplyADAgentFor; }
 
     /**
-     *  The {@link neureka.backend.api.Algorithm.InitialCallHook} lambda
+     *  The {@link neureka.backend.api.algorithms.api.InitialCallHook} lambda
      *  is simply a bypass procedure which if provided will simply occupy
      *  the rest of the execution without any other steps being taken.
-     *  For example the {@link neureka.backend.api.Algorithm.RecursiveJunctor}
+     *  For example the {@link RecursiveExecutor}
      *  would not be used in that case.
      *  This bypassing is useful for unorthodox types of operations
      *  like the {@link neureka.backend.standard.operations.other.Reshape} opertion.
@@ -165,7 +165,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     public InitialCallHook getHandleInsteadOfDevice() { return this._handleInsteadOfDevice; }
 
     /**
-     *  This returns an instance of the {@link neureka.backend.api.Algorithm.RecursiveJunctor}
+     *  This returns an instance of the {@link RecursiveExecutor}
      *  which enables the pairwise execution of a chain of an abitrary number of
      *  {@link ExecutionCall} arguments.
      *  This is useful for simple operators like '+' or '*' which
@@ -173,12 +173,12 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
      *
      * @return A lambda which will be executed recursively to executes multiple arguments pairwise.
      */
-    public RecursiveJunctor getHandleRecursivelyAccordingToArity() { return this._handleRecursivelyAccordingToArity; }
+    public RecursiveExecutor getHandleRecursivelyAccordingToArity() { return this._handleRecursivelyAccordingToArity; }
 
     /**
      *  An {@link Algorithm} will typically produce a result when executing an {@link ExecutionCall}.
      *  This result must be created somehow.
-     *  The {@link neureka.backend.api.Algorithm.DrainInstantiation} lambda instance
+     *  The {@link neureka.backend.api.algorithms.api.DrainInstantiation} lambda instance
      *  returned by this method will do just that...
      *
      * @return A result instantiation lambda called before execution...
@@ -253,7 +253,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
         return this;
     }
 
-    public AbstractFunctionalAlgorithm<C> setHandleRecursivelyAccordingToArity( RecursiveJunctor handleRecursivelyAccordingToArity ) {
+    public AbstractFunctionalAlgorithm<C> setHandleRecursivelyAccordingToArity( RecursiveExecutor handleRecursivelyAccordingToArity ) {
         this._handleRecursivelyAccordingToArity = handleRecursivelyAccordingToArity;
         return this;
     }

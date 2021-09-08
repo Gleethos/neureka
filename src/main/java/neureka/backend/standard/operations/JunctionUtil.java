@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.backend.api.algorithms.api.CallExecutor;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 
@@ -14,7 +15,7 @@ public class JunctionUtil
 {
     public static Tsr<?> forConvolution(
             ExecutionCall<? extends Device<?>> call,
-            Algorithm.CallExecutor goDeeperWith
+            CallExecutor goDeeperWith
     ) {
         Tsr<?>[] tensors = call.getTensors();
         Device<?> device = call.getDevice();
@@ -61,7 +62,7 @@ public class JunctionUtil
 
     public static Tsr<?> forMultiplications(
             ExecutionCall<? extends Device<?>> call,
-            Algorithm.CallExecutor goDeeperWith
+            CallExecutor goDeeperWith
     ) {
         Tsr<?>[] tsrs = call.getTensors();
         Device<?> device = call.getDevice();
@@ -104,7 +105,7 @@ public class JunctionUtil
 
     public static Tsr<?> forDivisionsOrModuli(
             ExecutionCall<? extends Device<?>> call,
-            Algorithm.CallExecutor goDeeperWith
+            CallExecutor goDeeperWith
     ) {
         Tsr[] tsrs = call.getTensors();
         Device device = call.getDevice();
@@ -177,21 +178,21 @@ public class JunctionUtil
 
     public static Tsr<?> forAdditions(
             ExecutionCall<? extends Device<?>> call,
-            Algorithm.CallExecutor goDeeperWith
+            CallExecutor goDeeperWith
     ) {
         return _forAdditionsOrSubtractions(call, goDeeperWith, true);
     }
 
     public static Tsr<?> forSubtractions(
             ExecutionCall<? extends Device<?>> call,
-            Algorithm.CallExecutor goDeeperWith
+            CallExecutor goDeeperWith
     ) {
         return _forAdditionsOrSubtractions(call, goDeeperWith, false);
     }
 
     private static Tsr<?> _forAdditionsOrSubtractions(
             ExecutionCall<? extends Device<?>> call,
-            Algorithm.CallExecutor goDeeperWith,
+            CallExecutor goDeeperWith,
             boolean thisIsForAddition
     ) {
         Tsr[] tsrs = call.getTensors();
