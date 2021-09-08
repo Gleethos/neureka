@@ -34,7 +34,7 @@ import neureka.devices.Device;
 public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > extends AbstractBaseAlgorithm<C>
 {
     private SuitabilityChecker _isSuitableFor;
-    private Algorithm.DeviceFinder _findDeviceFor;
+    private DeviceFinder _findDeviceFor;
     private Algorithm.ForwardADAnalyzer _canPerformForwardADFor;
     private Algorithm.BackwardADAnalyzer _canPerformBackwardADFor;
     private Algorithm.ADAgentSupplier _supplyADAgentFor;
@@ -51,14 +51,14 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
 
     @Override
     public float isSuitableFor( ExecutionCall<? extends Device<?>> call ) {
-        return _isSuitableFor.canHandle(call);
+        return _isSuitableFor.isSuitableFor(call);
     }
 
     ///---
 
     @Override
     public Device<?> findDeviceFor( ExecutionCall<? extends Device<?>> call ) {
-        return ( _findDeviceFor == null ) ? null : _findDeviceFor.findFor(call);
+        return ( _findDeviceFor == null ) ? null : _findDeviceFor.findDeviceFor(call);
     }
 
     //---
@@ -118,7 +118,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     public SuitabilityChecker getIsSuitableFor() { return this._isSuitableFor; }
 
     /**
-     *  The {@link neureka.backend.api.Algorithm.DeviceFinder} finds
+     *  The {@link neureka.backend.api.algorithms.api.DeviceFinder} finds
      *  a {@link Device} instance which fits the contents of a given {@link ExecutionCall} instance.
      *  The finder is supposed to find a {@link Device} which can be most easily shared
      *  by the {@link Tsr} instances within the {@link ExecutionCall} that is being received by the finder.
@@ -199,7 +199,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     }
 
     /**
-     *  The {@link neureka.backend.api.Algorithm.DeviceFinder} finds
+     *  The {@link neureka.backend.api.algorithms.api.DeviceFinder} finds
      *  a {@link Device} instance which fits the contents of a given {@link ExecutionCall} instance.
      *  The finder is supposed to find a {@link Device} which can be most easily shared
      *  by the {@link Tsr} instances within the {@link ExecutionCall} that is being received by the finder.

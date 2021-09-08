@@ -40,6 +40,8 @@ package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
+import neureka.backend.api.algorithms.api.DeviceFinder;
+import neureka.backend.api.algorithms.api.SuitabilityChecker;
 import neureka.calculus.Function;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
@@ -57,19 +59,10 @@ import neureka.devices.Device;
  *   for performing elementwise operations, whereas otherwise the {@link neureka.backend.standard.algorithms.Broadcast}
  *   algorithm might be called to perform the operation.
  */
-public interface Algorithm<C extends Algorithm<C>>
+public interface Algorithm<C extends Algorithm<C>> extends SuitabilityChecker, DeviceFinder
 {
     String getName();
 
-    //---
-
-    float isSuitableFor( ExecutionCall<? extends Device<?>> call );
-    
-    //---
-    
-    interface DeviceFinder { Device<?> findFor( ExecutionCall<? extends Device<?>> call );}
-    Device<?> findDeviceFor( ExecutionCall<? extends Device<?>> call );
-    
     //---
     
     interface ForwardADAnalyzer { boolean allowsForward( ExecutionCall<? extends Device<?>> call );}

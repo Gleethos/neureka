@@ -2,25 +2,15 @@
 package neureka.backend.api.operations;
 
 
-import neureka.Neureka;
-import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.FallbackAlgorithm;
-import neureka.backend.standard.algorithms.Activation;
-import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
-import neureka.calculus.assembly.FunctionBuilder;
-import neureka.calculus.implementations.FunctionConstant;
-import neureka.devices.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
 /**
  *  This abstract {@link Operation} implementation is a useful template for creating new operations.

@@ -22,6 +22,6 @@ public interface SuitabilityChecker {
      * @param call The {@link ExecutionCall} whose suitability for execution on this {@link Algorithm} ought to be determined.
      * @return The suitability degree expressed by a float value between 0 and 1, where 0 means not suitable and 1 means suitable.
      */
-    float canHandle( ExecutionCall<? extends Device<?>> call );
+    float isSuitableFor(ExecutionCall<? extends Device<?>> call );
 
 }
