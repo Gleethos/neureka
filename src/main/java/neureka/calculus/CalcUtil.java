@@ -7,6 +7,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.RecursiveExecutor;
 import neureka.backend.standard.algorithms.Activation;
+import neureka.backend.standard.operations.JunctionUtil;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.implementations.FunctionConstant;
@@ -30,8 +31,10 @@ public class CalcUtil {
         Operation operation = caller.getOperation();
         boolean isFlat = caller.isFlat();
         boolean isDoingAD = caller.isDoingAD();
-        if ( call.getDerivativeIndex() < 0 ) return _deepActivation( call, nodes, operation, isFlat, isDoingAD );
-        else return _deepDerivative( call, nodes, operation );
+        if ( call.getDerivativeIndex() < 0 )
+            return _deepActivation( call, nodes, operation, isFlat, isDoingAD );
+        else
+            return _deepDerivative( call, nodes, operation );
     }
 
     private static Tsr<?> _deepActivation(
@@ -146,7 +149,8 @@ public class CalcUtil {
                             ExecutionCall.of(tensors)
                                     .andArgs(Arg.DerivIdx.of( -1 ))
                                     .running(Neureka.get().context().getOperation("+"))
-                                    .on(device)
+                                    .on(device),
+                            JunctionUtil::forAdditions
                     );
                     inner = tensors[ 0 ];//-> this is now the inner derivative!
                 }
