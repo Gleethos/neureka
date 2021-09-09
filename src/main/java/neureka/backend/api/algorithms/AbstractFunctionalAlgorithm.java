@@ -6,7 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.algorithms.api.*;
+import neureka.backend.api.algorithms.fun.*;
 import neureka.calculus.Function;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
@@ -118,7 +118,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     public SuitabilityChecker getIsSuitableFor() { return this._isSuitableFor; }
 
     /**
-     *  The {@link neureka.backend.api.algorithms.api.DeviceFinder} finds
+     *  The {@link neureka.backend.api.algorithms.fun.DeviceFinder} finds
      *  a {@link Device} instance which fits the contents of a given {@link ExecutionCall} instance.
      *  The finder is supposed to find a {@link Device} which can be most easily shared
      *  by the {@link Tsr} instances within the {@link ExecutionCall} that is being received by the finder.
@@ -144,15 +144,15 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     public BackwardADChecker getCanPerformBackwardADFor() { return this._canPerformBackwardADFor; }
 
     /**
-     *  This {@link neureka.backend.api.algorithms.api.ADAgentSupplier} will supply
+     *  This {@link neureka.backend.api.algorithms.fun.ADAgentSupplier} will supply
      *  {@link ADAgent} instances which can perform backward and forward auto differentiation.
      *
-     * @return An {@link neureka.backend.api.algorithms.api.ADAgentSupplier} for creting suitable {@link ADAgent} instances.
+     * @return An {@link neureka.backend.api.algorithms.fun.ADAgentSupplier} for creting suitable {@link ADAgent} instances.
      */
     public ADAgentSupplier getSupplyADAgentFor() { return this._supplyADAgentFor; }
 
     /**
-     *  The {@link neureka.backend.api.algorithms.api.InitialCallHook} lambda
+     *  The {@link neureka.backend.api.algorithms.fun.InitialCallHook} lambda
      *  is simply a bypass procedure which if provided will simply occupy
      *  the rest of the execution without any other steps being taken.
      *  For example the {@link RecursiveExecutor}
@@ -178,7 +178,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     /**
      *  An {@link Algorithm} will typically produce a result when executing an {@link ExecutionCall}.
      *  This result must be created somehow.
-     *  The {@link neureka.backend.api.algorithms.api.DrainInstantiation} lambda instance
+     *  The {@link neureka.backend.api.algorithms.fun.DrainInstantiation} lambda instance
      *  returned by this method will do just that...
      *
      * @return A result instantiation lambda called before execution...
@@ -199,7 +199,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     }
 
     /**
-     *  The {@link neureka.backend.api.algorithms.api.DeviceFinder} finds
+     *  The {@link neureka.backend.api.algorithms.fun.DeviceFinder} finds
      *  a {@link Device} instance which fits the contents of a given {@link ExecutionCall} instance.
      *  The finder is supposed to find a {@link Device} which can be most easily shared
      *  by the {@link Tsr} instances within the {@link ExecutionCall} that is being received by the finder.
@@ -237,7 +237,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     }
 
     /**
-     *  This method receives a {@link neureka.backend.api.algorithms.api.ADAgentSupplier} which will supply
+     *  This method receives a {@link neureka.backend.api.algorithms.fun.ADAgentSupplier} which will supply
      *  {@link ADAgent} instances which can perform backward and forward auto differentiation.
      *
      * @param supplyADAgentFor

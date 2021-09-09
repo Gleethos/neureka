@@ -6,7 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.algorithms.api.CallExecutor;
+import neureka.backend.api.algorithms.fun.CallExecutor;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;

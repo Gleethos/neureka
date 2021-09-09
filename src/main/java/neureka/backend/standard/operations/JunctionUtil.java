@@ -2,14 +2,11 @@ package neureka.backend.standard.operations;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.algorithms.api.CallExecutor;
+import neureka.backend.api.algorithms.fun.CallExecutor;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-
-import java.util.function.Function;
 
 public class JunctionUtil
 {

@@ -39,7 +39,7 @@ SOFTWARE.
 package neureka.backend.api;
 
 import neureka.Tsr;
-import neureka.backend.api.algorithms.api.*;
+import neureka.backend.api.algorithms.fun.*;
 import neureka.devices.Device;
 
 
