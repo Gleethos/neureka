@@ -160,7 +160,6 @@ public class MatMul extends AbstractOperation
                             return null;
                         }
                 )
-                .setHandleRecursivelyAccordingToArity( rja )
                 .setInstantiateNewTensorsForExecutionIn(
                         call -> {
                             Tsr[] tsrs = call.getTensors();
