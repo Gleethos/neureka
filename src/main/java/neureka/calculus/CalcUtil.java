@@ -34,7 +34,7 @@ public class CalcUtil {
         if ( call.getDerivativeIndex() < 0 )
             return _deepActivation( call, nodes, operation, isFlat, isDoingAD, call.getAlgorithm() );
         else
-            return _deepDerivative( call, nodes, operation );
+            return _deepDerivative( call, nodes, operation, call.getAlgorithm() );
     }
 
     private static Tsr<?> _deepActivation(
@@ -112,7 +112,8 @@ public class CalcUtil {
     private static Tsr<?> _deepDerivative(
             final ExecutionCall<? extends Device<?>> call,
             final Function[] nodes,
-            final Operation operation
+            final Operation operation,
+            final RecursiveExecutor executor
     ) {
         Supplier<Tsr<?>> actor = () -> {
             Tsr<?>[] inputs = call.getTensors();
@@ -182,7 +183,8 @@ public class CalcUtil {
                     ExecutionCall.of(tensors)
                             .andArgs(Arg.DerivIdx.of(d))
                             .running( operation )
-                            .on( device )
+                            .on( device ),
+                    executor
             );
             // At the end:
             //...multiply inner times outer: ( if inner is not 1 entirely... )
@@ -193,7 +195,7 @@ public class CalcUtil {
                                 .andArgs(Arg.DerivIdx.of( -1 ))
                                 .running(Neureka.get().context().getOperation("*"))
                                 .on( device ),
-                        (executionCall, executor) -> null
+                        (executionCall, exe) -> null
                 );
             } // done!
             return tensors[ 0 ];
@@ -212,7 +214,7 @@ public class CalcUtil {
                                     .andArgs( Arg.DerivIdx.of( -1 ) )
                                     .running( Neureka.get().context().getOperation("+") )
                                     .on( device ),
-                            (executionCall, executor) -> null
+                            (executionCall, exe) -> null
                     );
             }
         }
