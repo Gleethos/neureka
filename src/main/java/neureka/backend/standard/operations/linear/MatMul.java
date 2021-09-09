@@ -137,7 +137,7 @@ public class MatMul extends AbstractOperation
                                         : null;
 
                                 for (Tsr t : tsrs) if (t != null) t.setIsVirtual( false );
-                                CalcUtil.recursiveExecution(call.withTensors(tsrs));
+                                CalcUtil.recursiveExecution(call.withTensors(tsrs), rja);
                                 return tsrs[ 0 ];
                             } else {
                                 if (call.getDerivativeIndex() < 0) {
@@ -148,7 +148,8 @@ public class MatMul extends AbstractOperation
                                                         ExecutionCall.of(tsrs)
                                                                         .andArgs(Arg.DerivIdx.of(0))
                                                                         .running(call.getOperation())
-                                                                        .on(call.getDevice())
+                                                                        .on(call.getDevice()),
+                                                        (executionCall, executor) -> null
                                                 );
                                     if ( call.getOperation() == Neureka.get().context().getOperation("x>>") )
                                         return tsrs[ 2 ];
