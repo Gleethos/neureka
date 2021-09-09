@@ -213,7 +213,7 @@ public class CalcUtil {
 
     public static void recursiveExecution( ExecutionCall<? extends Device<?>> call )
     {
-        recursiveExecution(call, (a, b)->null);
+        recursiveExecution(call, call.getAlgorithm());
     }
     public static void recursiveExecution(ExecutionCall<? extends Device<?>> call, RecursiveExecutor executor )
     {
