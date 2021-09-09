@@ -133,7 +133,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
             call.getDevice() >> device
 
         when : 'The call is being passed to the device for execution...'
-            CalcUtil.recursiveExecution(call)
+            CalcUtil.recursiveExecution(call, (executionCall, executor) -> null)
 
         then : '...the implementation is being accessed in order to access the mocked lambda...'
             (1.._) * call.getAlgorithm() >> implementation
