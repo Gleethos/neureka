@@ -191,7 +191,7 @@ public class CalcUtil {
                                 .andArgs(Arg.DerivIdx.of( -1 ))
                                 .running(Neureka.get().context().getOperation("*"))
                                 .on( device ),
-                        JunctionUtil::forMultiplications
+                        (executionCall, executor) -> null
                 );
             } // done!
             return tensors[ 0 ];
