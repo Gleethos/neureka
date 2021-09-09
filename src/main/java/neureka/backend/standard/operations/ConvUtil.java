@@ -65,7 +65,7 @@ public class ConvUtil {
                                         : null;
 
                                 for (Tsr t : tsrs) if (t != null) t.setIsVirtual( false );
-                                CalcUtil.recursiveExecution( call.withTensors(tsrs) );
+                                CalcUtil.recursiveExecution( call.withTensors(tsrs), JunctionUtil::forConvolution );
                                 return tsrs[ 0 ];
                             } else {
                                 if (call.getDerivativeIndex() < 0) {
@@ -73,11 +73,12 @@ public class ConvUtil {
                                     Tsr.makeFit(tsrs, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                     for ( Tsr t : tsrs ) t.setIsVirtual( false );
                                     CalcUtil.recursiveExecution(
-                                            ExecutionCall.of(tsrs)
-                                                            .andArgs(Arg.DerivIdx.of(0))
-                                                            .running(call.getOperation())
-                                                            .on(call.getDevice())
-                                    );
+                                                    ExecutionCall.of(tsrs)
+                                                                    .andArgs(Arg.DerivIdx.of(0))
+                                                                    .running(call.getOperation())
+                                                                    .on(call.getDevice()),
+                                                    JunctionUtil::forConvolution
+                                                );
                                     if ( call.getOperation() == Neureka.get().context().getOperation("x>>") )
                                         return tsrs[ 2 ];
                                     else
@@ -87,7 +88,7 @@ public class ConvUtil {
                             return CalcUtil.executeFor(caller, call);
                         }
                 )
-                .setHandleRecursivelyAccordingToArity( JunctionUtil::forConvolution )
+                .setHandleRecursivelyAccordingToArity( JunctionUtil::forConvolution ) // TODO: Remove
                 .setInstantiateNewTensorsForExecutionIn(
                         call -> {
                             Tsr[] tsrs = call.getTensors();

@@ -460,10 +460,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
             double value = tensor.value64( 0 );
             tensor.setIsOutsourced( true );
             CalcUtil.recursiveExecution(
-                ExecutionCall.of(tensor, Tsr.of( value ).to( this ))
+                    ExecutionCall.of(tensor, Tsr.of( value ).to( this ))
                                 .andArgs(Arg.DerivIdx.of(-1))
                                 .running(Neureka.get().context().getOperation( "<" ))
-                                .on(this)
+                                .on(this),
+                    (executionCall, executor) -> null
             );
         }
         else tensor.setIsOutsourced( true );
