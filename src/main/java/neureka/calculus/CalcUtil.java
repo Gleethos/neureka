@@ -32,7 +32,7 @@ public class CalcUtil {
         boolean isFlat = caller.isFlat();
         boolean isDoingAD = caller.isDoingAD();
         if ( call.getDerivativeIndex() < 0 )
-            return _deepActivation( call, nodes, operation, isFlat, isDoingAD );
+            return _deepActivation( call, nodes, operation, isFlat, isDoingAD, call.getAlgorithm() );
         else
             return _deepDerivative( call, nodes, operation );
     }
@@ -42,7 +42,8 @@ public class CalcUtil {
             final Function[] nodes,
             final Operation operation,
             final boolean isFlat,
-            final boolean isDoingAD
+            final boolean isDoingAD,
+            final RecursiveExecutor executor
     ) {
         Tsr<?>[] inputs = call.getTensors();
         Device<?> device = call.getDevice();
@@ -72,7 +73,8 @@ public class CalcUtil {
                 ExecutionCall.of(tensors)
                         .andArgs(Arg.DerivIdx.of(d))
                         .running(operation)
-                        .on(device)
+                        .on(device),
+                executor
         );
         if ( tensors[ 0 ] == null ) _LOG.warn("Function did not have a proper return value.");
         return ( tensors[ 0 ] == null ) ? tensors[ 1 ] : tensors[ 0 ];
@@ -108,9 +110,9 @@ public class CalcUtil {
     }
 
     private static Tsr<?> _deepDerivative(
-            ExecutionCall<? extends Device<?>> call,
-            Function[] nodes,
-            Operation operation
+            final ExecutionCall<? extends Device<?>> call,
+            final Function[] nodes,
+            final Operation operation
     ) {
         Supplier<Tsr<?>> actor = () -> {
             Tsr<?>[] inputs = call.getTensors();
