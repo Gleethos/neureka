@@ -45,41 +45,44 @@ public final class Sinus extends AbstractOperation
                         .setIsInline(         false    )
         );
 
-        Activation operationAlgorithm = new Activation()
-        .setCanPerformBackwardADFor( call -> true )
-        .setCanPerformForwardADFor(
-             call -> {
-                 Tsr last = null;
-                 for ( Tsr t : call.getTensors() ) {
-                     if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                     last = t; // Note: shapes are cached!
-                 }
-                 return true;
-             }
-        ).setSupplyADAgentFor(
-            ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-            getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-        ).setHandleInsteadOfDevice( CalcUtil::executeFor)
-         .setInstantiateNewTensorsForExecutionIn(
-             call -> {
-                 Tsr[] tsrs = call.getTensors();
-                 Device device = call.getDevice();
-                 if ( tsrs[ 0 ] == null ) // Creating a new tensor:
-                 {
-                     int[] shp = tsrs[ 1 ].getNDConf().shape();
-                     Tsr output = Tsr.of( shp, 0.0 );
-                     output.setIsVirtual( false );
-                     try {
-                         device.store(output);
-                     } catch ( Exception e ) {
-                         e.printStackTrace();
-                     }
-                     tsrs[ 0 ] = output;
-                 }
-                 return call;
-             }
-        )
-        .build();
+        Activation operationAlgorithm =
+                new Activation()
+                        .setCanPerformBackwardADFor( call -> true )
+                        .setCanPerformForwardADFor(
+                             call -> {
+                                 Tsr last = null;
+                                 for ( Tsr t : call.getTensors() ) {
+                                     if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                                     last = t; // Note: shapes are cached!
+                                 }
+                                 return true;
+                             }
+                        )
+                        .setSupplyADAgentFor(
+                            ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                            getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
+                        )
+                        .setHandleInsteadOfDevice( CalcUtil::executeFor )
+                        .setInstantiateNewTensorsForExecutionIn(
+                             call -> {
+                                 Tsr[] tsrs = call.getTensors();
+                                 Device device = call.getDevice();
+                                 if ( tsrs[ 0 ] == null ) // Creating a new tensor:
+                                 {
+                                     int[] shp = tsrs[ 1 ].getNDConf().shape();
+                                     Tsr output = Tsr.of( shp, 0.0 );
+                                     output.setIsVirtual( false );
+                                     try {
+                                         device.store(output);
+                                     } catch ( Exception e ) {
+                                         e.printStackTrace();
+                                     }
+                                     tsrs[ 0 ] = output;
+                                 }
+                                 return call;
+                             }
+                        )
+                        .build();
 
         setAlgorithm(
                 Activation.class,

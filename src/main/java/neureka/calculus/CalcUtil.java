@@ -204,7 +204,8 @@ public class CalcUtil {
                             ExecutionCall.of( null, actor.get(), out )
                                     .andArgs( Arg.DerivIdx.of( -1 ) )
                                     .running( Neureka.get().context().getOperation("+") )
-                                    .on( device )
+                                    .on( device ),
+                            (executionCall, executor) -> null
                     );
             }
         }
