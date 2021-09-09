@@ -24,8 +24,8 @@ public class CalcUtil {
     private static final Logger _LOG = LoggerFactory.getLogger(CalcUtil.class);
 
     public static Tsr<?> executeFor(
-            Function caller,
-            ExecutionCall<? extends Device<?>> call
+            final Function caller,
+            final ExecutionCall<? extends Device<?>> call
     ) {
         Function[] nodes = caller.getSubFunctions().toArray(new Function[0]);
         Operation operation = caller.getOperation();
@@ -38,11 +38,11 @@ public class CalcUtil {
     }
 
     private static Tsr<?> _deepActivation(
-            ExecutionCall<? extends Device<?>> call,
-            Function[] nodes,
-            Operation operation,
-            boolean isFlat,
-            boolean isDoingAD
+            final ExecutionCall<? extends Device<?>> call,
+            final Function[] nodes,
+            final Operation operation,
+            final boolean isFlat,
+            final boolean isDoingAD
     ) {
         Tsr<?>[] inputs = call.getTensors();
         Device<?> device = call.getDevice();
@@ -221,8 +221,10 @@ public class CalcUtil {
     {
         recursiveExecution(call, call.getAlgorithm());
     }
-    public static void recursiveExecution(ExecutionCall<? extends Device<?>> call, RecursiveExecutor executor )
-    {
+    public static void recursiveExecution(
+            ExecutionCall<? extends Device<?>> call,
+            RecursiveExecutor executor
+    ) {
         call = call.getAlgorithm().handle( call );
         for ( Tsr<?> t : call.getTensors() ) {
             if ( t == null ) throw new IllegalArgumentException(
@@ -251,9 +253,9 @@ public class CalcUtil {
      * @return
      */
     public static Tsr<?> recursiveReductionOf(
-            ExecutionCall<? extends Device<?>> call,
-            Consumer<ExecutionCall<? extends Device<?>>> finalExecution,
-            RecursiveExecutor executor
+            final ExecutionCall<? extends Device<?>> call,
+            final Consumer<ExecutionCall<? extends Device<?>>> finalExecution,
+            final RecursiveExecutor executor
     ) {
         Device<Object> device = call.getDeviceFor(Object.class);
         Tsr<Object>[] tsrs = (Tsr<Object>[]) call.getTensors();
