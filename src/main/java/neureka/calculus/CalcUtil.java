@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.backend.api.algorithms.fun.RecursiveExecutor;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
@@ -212,6 +213,10 @@ public class CalcUtil {
 
     public static void recursiveExecution( ExecutionCall<? extends Device<?>> call )
     {
+        recursiveExecution(call, (a, b)->null);
+    }
+    public static void recursiveExecution(ExecutionCall<? extends Device<?>> call, RecursiveExecutor executor )
+    {
         call = call.getAlgorithm().handle( call );
         for ( Tsr<?> t : call.getTensors() ) {
             if ( t == null ) throw new IllegalArgumentException(
@@ -222,11 +227,10 @@ public class CalcUtil {
         recursiveReductionOf(
                 call,
                 c -> c.getDevice().execute( c ),
-                call.getAlgorithm()
+                executor
         );
         return;
     }
-
 
     /**
      *  The following method is used together with the {@link Algorithm#execute} method.
@@ -237,13 +241,13 @@ public class CalcUtil {
      *
      * @param call
      * @param finalExecution
-     * @param algorithm
+     * @param executor
      * @return
      */
     public static Tsr<?> recursiveReductionOf(
             ExecutionCall<? extends Device<?>> call,
             Consumer<ExecutionCall<? extends Device<?>>> finalExecution,
-            Algorithm<?> algorithm
+            RecursiveExecutor executor
     ) {
         Device<Object> device = call.getDeviceFor(Object.class);
         Tsr<Object>[] tsrs = (Tsr<Object>[]) call.getTensors();
@@ -281,7 +285,7 @@ public class CalcUtil {
             Below is the core lambda of recursive preprocessing
             which is defined for each Algorithm individually :
          */
-        Tsr<?> result = algorithm.execute( call, c -> recursiveReductionOf( c, finalExecution, algorithm ) );
+        Tsr<?> result = executor.execute( call, c -> recursiveReductionOf( c, finalExecution, executor ) );
         if ( result == null ) {
             finalExecution.accept(
                     ExecutionCall.of(call.getTensors())
