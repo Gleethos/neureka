@@ -53,38 +53,36 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                             if ( allNumeric )
                             {
                                 double[] inputs = new double[ call.getTensors().length-1 ];
-                                call
-                                        .getDevice()
-                                        .getExecutor()
-                                        .threaded (
-                                                call.getTsrOfType( Number.class, 0 ).size(),
-                                                ( start, end ) -> {
-                                                    for ( int i = start; i < end; i++ ) {
-                                                        for ( int ii = 0; ii < inputs.length; ii++ ) {
-                                                            inputs[ ii ] = call.getTsrOfType( Number.class, 1 + ii ).value64( i );
-                                                        }
-                                                        call.getTsrOfType( Number.class, 0 ).value64()[ i ] = f.call( inputs );
-                                                    }
+                                call.getDevice()
+                                    .getExecutor()
+                                    .threaded (
+                                        call.getTsrOfType( Number.class, 0 ).size(),
+                                        ( start, end ) -> {
+                                            for ( int i = start; i < end; i++ ) {
+                                                for ( int ii = 0; ii < inputs.length; ii++ ) {
+                                                    inputs[ ii ] = call.getTsrOfType( Number.class, 1 + ii ).value64( i );
                                                 }
-                                        );
+                                                call.getTsrOfType( Number.class, 0 ).value64()[ i ] = f.call( inputs );
+                                            }
+                                        }
+                                    );
                             }
                             else if (typeClass == String.class && call.getOperation().getFunction().equals("add"))
                             {
-                                call
-                                        .getDevice()
-                                        .getExecutor()
-                                        .threaded (
-                                                call.getTsrOfType( Object.class, 0 ).size(),
-                                                ( start, end ) -> {
-                                                    for ( int i = start; i < end; i++ ) {
-                                                        StringBuilder b = new StringBuilder();
-                                                        for ( int ii = 1; ii < call.getTensors().length; ii++ ) {
-                                                            b.append(call.getTsrOfType( Object.class, ii ).getValueAt(i));
-                                                        }
-                                                        call.getTsrOfType( Object.class, 0 ).setAt(i, b.toString());
-                                                    }
+                                call.getDevice()
+                                    .getExecutor()
+                                    .threaded (
+                                        call.getTsrOfType( Object.class, 0 ).size(),
+                                        ( start, end ) -> {
+                                            for ( int i = start; i < end; i++ ) {
+                                                StringBuilder b = new StringBuilder();
+                                                for ( int ii = 1; ii < call.getTensors().length; ii++ ) {
+                                                    b.append(call.getTsrOfType( Object.class, ii ).getValueAt(i));
                                                 }
-                                        );
+                                                call.getTsrOfType( Object.class, 0 ).setAt(i, b.toString());
+                                            }
+                                        }
+                                    );
                             }
                             else
                                 _tryExecute(call, typeClass);
@@ -104,15 +102,6 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
             }
         }
         return 1.0f;
-    }
-
-    /**
-     * @param call The execution call which has been routed to this implementation...
-     * @return null because the default implementation is not outsourced.
-     */
-    @Override
-    public Device<?> findDeviceFor( ExecutionCall<? extends Device<?>> call ) {
-        return null;
     }
 
     @Override

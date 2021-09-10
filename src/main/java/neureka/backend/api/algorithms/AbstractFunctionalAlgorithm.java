@@ -34,7 +34,6 @@ import neureka.devices.Device;
 public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > extends AbstractBaseAlgorithm<C>
 {
     private SuitabilityChecker _isSuitableFor;
-    private DeviceFinder _findDeviceFor;
     private ForwardADChecker _canPerformForwardADFor;
     private BackwardADChecker _canPerformBackwardADFor;
     private ADAgentSupplier _supplyADAgentFor;
@@ -51,13 +50,6 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     @Override
     public float isSuitableFor( ExecutionCall<? extends Device<?>> call ) {
         return _isSuitableFor.isSuitableFor(call);
-    }
-
-    ///---
-
-    @Override
-    public Device<?> findDeviceFor( ExecutionCall<? extends Device<?>> call ) {
-        return ( _findDeviceFor == null ) ? null : _findDeviceFor.findDeviceFor(call);
     }
 
     //---
@@ -109,20 +101,6 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
      */
     public AbstractFunctionalAlgorithm<C> setIsSuitableFor( SuitabilityChecker isSuitableFor ) {
         this._isSuitableFor = isSuitableFor;
-        return this;
-    }
-
-    /**
-     *  The {@link neureka.backend.api.algorithms.fun.DeviceFinder} finds
-     *  a {@link Device} instance which fits the contents of a given {@link ExecutionCall} instance.
-     *  The finder is supposed to find a {@link Device} which can be most easily shared
-     *  by the {@link Tsr} instances within the {@link ExecutionCall} that is being received by the finder.
-     *
-     * @param findDeviceFor The finder lambda which ought to find a suitable device for a given {@link ExecutionCall}.
-     * @return This very instance to enable method chaining.
-     */
-    public AbstractFunctionalAlgorithm<C> setFindDeviceFor( DeviceFinder findDeviceFor ) {
-        this._findDeviceFor = findDeviceFor;
         return this;
     }
 
