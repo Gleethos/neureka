@@ -186,7 +186,7 @@ public class Modulo extends AbstractOperation {
                     }
                 };
 
-        Broadcast broadcast = new Broadcast()
+        Broadcast broadcast = new Broadcast((executionCall, executor) -> null)
             .setCanPerformBackwardADFor( call -> true )
             .setCanPerformForwardADFor(
                     call -> {

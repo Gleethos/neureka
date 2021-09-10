@@ -31,7 +31,7 @@ public class MultiplicationRightConv extends AbstractOperation {
                         .setIsInline(         false      )
         );
 
-        Broadcast xBroadcast = new Broadcast()
+        Broadcast xBroadcast = new Broadcast((executionCall, executor) -> null)
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor(
                         call -> {

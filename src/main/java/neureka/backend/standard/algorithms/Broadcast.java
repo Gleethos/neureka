@@ -5,6 +5,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.algorithms.fun.RecursiveExecutor;
 import neureka.calculus.CalcUtil;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Contract;
 public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
 {
 
-    public Broadcast() {
+    public Broadcast( RecursiveExecutor finalExecutor ) {
         super("broadcast");
         setIsSuitableFor(
                 call->
@@ -55,7 +56,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                         CalcUtil.recursiveExecution( call.withTensors( tsrs ), (executionCall, executor) -> null );
                         return tsrs[0];
                     }
-                    return CalcUtil.executeFor(caller, call);
+                    return CalcUtil.executeFor(caller, call, finalExecutor );
                 }
         );
         setInstantiateNewTensorsForExecutionIn(

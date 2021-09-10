@@ -290,7 +290,7 @@ public class Power extends AbstractOperation
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast = new Broadcast()
+        Broadcast broadcast = new Broadcast(rja)
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> true )
                 .setSupplyADAgentFor(

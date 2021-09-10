@@ -71,7 +71,7 @@ public final class Product extends AbstractOperation {
                     }
                 };
 
-        Broadcast operationAlgorithm = new Broadcast()
+        Broadcast operationAlgorithm = new Broadcast(JunctionUtil::forMultiplications)
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> true )
                 .setSupplyADAgentFor(

@@ -188,7 +188,7 @@ public class Multiplication extends AbstractOperation
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast = new Broadcast()
+        Broadcast broadcast = new Broadcast( JunctionUtil::forMultiplications )
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> true )
                 .setSupplyADAgentFor(

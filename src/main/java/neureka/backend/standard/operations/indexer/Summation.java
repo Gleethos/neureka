@@ -59,7 +59,7 @@ public final class Summation extends AbstractOperation
                     else return ( t0Idx, t1Idx, t2Idx ) -> 1.0;
                 };
 
-        Broadcast operationAlgorithm = new Broadcast()
+        Broadcast operationAlgorithm = new Broadcast(JunctionUtil::forAdditions)
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> true )
                 .setSupplyADAgentFor(

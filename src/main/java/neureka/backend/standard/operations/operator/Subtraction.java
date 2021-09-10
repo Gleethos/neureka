@@ -252,7 +252,7 @@ public class Subtraction extends AbstractOperation
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast = new Broadcast()
+        Broadcast broadcast = new Broadcast(JunctionUtil::forSubtractions)
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor( call -> true )
                 .setSupplyADAgentFor(

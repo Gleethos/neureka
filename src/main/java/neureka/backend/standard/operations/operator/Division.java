@@ -187,7 +187,7 @@ public class Division extends AbstractOperation
         //________________
         // BROADCASTING :
 
-        Broadcast broadcast = new Broadcast()
+        Broadcast broadcast = new Broadcast( JunctionUtil::forDivisionsOrModuli )
                                         .setCanPerformBackwardADFor( call -> true )
                                         .setCanPerformForwardADFor( call -> {
                                                 Tsr<?> last = null;

@@ -30,7 +30,7 @@ public class MultiplicationLeftConv extends AbstractOperation {
                         .setIsInline(         false       )
         );
 
-        Broadcast xBroadcast = new Broadcast()
+        Broadcast xBroadcast = new Broadcast((executionCall, executor) -> null)
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor(
                         call -> {
@@ -41,7 +41,8 @@ public class MultiplicationLeftConv extends AbstractOperation {
                             }
                             return true;
                         }
-                ).setSupplyADAgentFor(
+                )
+                .setSupplyADAgentFor(
                         (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
                             Tsr ctxDerivative = (Tsr) call.getValOf(Arg.Derivative.class);
