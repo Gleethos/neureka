@@ -27,14 +27,22 @@ public class CalcUtil {
             final Function caller,
             final ExecutionCall<? extends Device<?>> call
     ) {
+        return executeFor(caller, call, call.getAlgorithm());
+    }
+
+    public static Tsr<?> executeFor(
+            final Function caller,
+            final ExecutionCall<? extends Device<?>> call,
+            final RecursiveExecutor executor
+    ) {
         Function[] nodes = caller.getSubFunctions().toArray(new Function[0]);
         Operation operation = caller.getOperation();
         boolean isFlat = caller.isFlat();
         boolean isDoingAD = caller.isDoingAD();
         if ( call.getDerivativeIndex() < 0 )
-            return _deepActivation( call, nodes, operation, isFlat, isDoingAD, call.getAlgorithm() );
+            return _deepActivation( call, nodes, operation, isFlat, isDoingAD, executor );
         else
-            return _deepDerivative( call, nodes, operation, call.getAlgorithm() );
+            return _deepDerivative( call, nodes, operation, executor );
     }
 
     private static Tsr<?> _deepActivation(
@@ -221,10 +229,6 @@ public class CalcUtil {
         return out;
     }
 
-    public static void recursiveExecution( ExecutionCall<? extends Device<?>> call )
-    {
-        recursiveExecution(call, call.getAlgorithm());
-    }
     public static void recursiveExecution(
             ExecutionCall<? extends Device<?>> call,
             RecursiveExecutor executor
