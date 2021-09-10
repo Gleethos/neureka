@@ -25,13 +25,6 @@ public class CalcUtil {
 
     public static Tsr<?> executeFor(
             final Function caller,
-            final ExecutionCall<? extends Device<?>> call
-    ) {
-        return executeFor(caller, call, call.getAlgorithm());
-    }
-
-    public static Tsr<?> executeFor(
-            final Function caller,
             final ExecutionCall<? extends Device<?>> call,
             final RecursiveExecutor executor
     ) {
@@ -233,7 +226,7 @@ public class CalcUtil {
             ExecutionCall<? extends Device<?>> call,
             RecursiveExecutor executor
     ) {
-        call = call.getAlgorithm().handle( call );
+        call = call.getAlgorithm().prepare( call );
         for ( Tsr<?> t : call.getTensors() ) {
             if ( t == null ) throw new IllegalArgumentException(
                     "Device arguments may not be null!\n" +

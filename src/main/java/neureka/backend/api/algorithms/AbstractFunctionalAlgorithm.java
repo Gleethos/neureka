@@ -38,11 +38,10 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     private ForwardADChecker _canPerformForwardADFor;
     private BackwardADChecker _canPerformBackwardADFor;
     private ADAgentSupplier _supplyADAgentFor;
-    private InitialCallHook _handleInsteadOfDevice;
-    private RecursiveExecutor _handleRecursivelyAccordingToArity = (call, goDeeperWith) -> null;
-    private DrainInstantiation _instantiateNewTensorsForExecutionIn;
+    private Execution _handleInsteadOfDevice;
+    private ExecutionPreparation _instantiateNewTensorsForExecutionIn;
 
-    public AbstractFunctionalAlgorithm(String name ) {
+    public AbstractFunctionalAlgorithm( String name ) {
         super(name);
     }
 
@@ -85,22 +84,15 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     //---
 
     @Override
-    public Tsr<?> handle(FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
-        return _handleInsteadOfDevice.handle( caller, call );
+    public Tsr<?> execute(FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
+        return _handleInsteadOfDevice.execute( caller, call );
     }
 
     //---
 
     @Override
-    public Tsr<?> execute(ExecutionCall<? extends Device<?>> call, CallExecutor goDeeperWith ) {
-        return _handleRecursivelyAccordingToArity.execute( call, goDeeperWith );
-    }
-
-    //---
-
-    @Override
-    public ExecutionCall<? extends Device<?>> handle(ExecutionCall<? extends Device<?>> call ) {
-        return _instantiateNewTensorsForExecutionIn.handle( call );
+    public ExecutionCall<? extends Device<?>> prepare( ExecutionCall<? extends Device<?>> call ) {
+        return _instantiateNewTensorsForExecutionIn.prepare( call );
     }
 
     //---
@@ -152,7 +144,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     public ADAgentSupplier getSupplyADAgentFor() { return this._supplyADAgentFor; }
 
     /**
-     *  The {@link neureka.backend.api.algorithms.fun.InitialCallHook} lambda
+     *  The {@link Execution} lambda
      *  is simply a bypass procedure which if provided will simply occupy
      *  the rest of the execution without any other steps being taken.
      *  For example the {@link RecursiveExecutor}
@@ -162,28 +154,17 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
      *
      * @return A lambda which bypasses the default execution procedure.
      */
-    public InitialCallHook getHandleInsteadOfDevice() { return this._handleInsteadOfDevice; }
-
-    /**
-     *  This returns an instance of the {@link RecursiveExecutor}
-     *  which enables the pairwise execution of a chain of an abitrary number of
-     *  {@link ExecutionCall} arguments.
-     *  This is useful for simple operators like '+' or '*' which
-     *  might have any number of arguments...
-     *
-     * @return A lambda which will be executed recursively to executes multiple arguments pairwise.
-     */
-    public RecursiveExecutor getHandleRecursivelyAccordingToArity() { return this._handleRecursivelyAccordingToArity; }
+    public Execution getHandleInsteadOfDevice() { return this._handleInsteadOfDevice; }
 
     /**
      *  An {@link Algorithm} will typically produce a result when executing an {@link ExecutionCall}.
      *  This result must be created somehow.
-     *  The {@link neureka.backend.api.algorithms.fun.DrainInstantiation} lambda instance
+     *  The {@link ExecutionPreparation} lambda instance
      *  returned by this method will do just that...
      *
      * @return A result instantiation lambda called before execution...
      */
-    public DrainInstantiation getInstantiateNewTensorsForExecutionIn() { return this._instantiateNewTensorsForExecutionIn; }
+    public ExecutionPreparation getInstantiateNewTensorsForExecutionIn() { return this._instantiateNewTensorsForExecutionIn; }
 
     /**
      *  The {@link SuitabilityChecker}
@@ -248,17 +229,12 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
         return this;
     }
 
-    public AbstractFunctionalAlgorithm<C> setHandleInsteadOfDevice( InitialCallHook handleInsteadOfDevice ) {
+    public AbstractFunctionalAlgorithm<C> setHandleInsteadOfDevice( Execution handleInsteadOfDevice ) {
         this._handleInsteadOfDevice = handleInsteadOfDevice;
         return this;
     }
 
-    public AbstractFunctionalAlgorithm<C> setHandleRecursivelyAccordingToArity( RecursiveExecutor handleRecursivelyAccordingToArity ) {
-        this._handleRecursivelyAccordingToArity = handleRecursivelyAccordingToArity;
-        return this;
-    }
-
-    public AbstractFunctionalAlgorithm<C> setInstantiateNewTensorsForExecutionIn( DrainInstantiation instantiateNewTensorsForExecutionIn ) {
+    public AbstractFunctionalAlgorithm<C> setInstantiateNewTensorsForExecutionIn( ExecutionPreparation instantiateNewTensorsForExecutionIn ) {
         this._instantiateNewTensorsForExecutionIn = instantiateNewTensorsForExecutionIn;
         return this;
     }

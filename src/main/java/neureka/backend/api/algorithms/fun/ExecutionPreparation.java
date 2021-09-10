@@ -6,8 +6,8 @@ import neureka.devices.Device;
 /**
  * instantiate new tensors for execution in
  */
-public interface DrainInstantiation {
+public interface ExecutionPreparation {
 
-    ExecutionCall<? extends Device<?>> handle(ExecutionCall<? extends Device<?>> call );
+    ExecutionCall<? extends Device<?>> prepare(ExecutionCall<? extends Device<?>> call );
 
 }

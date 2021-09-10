@@ -143,19 +143,12 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
     }
 
     @Override
-    public Tsr<?> handle(FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
+    public Tsr<?> execute(FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
         return CalcUtil.executeFor(caller, call, (executionCall, executor) -> null );
     }
 
     @Override
-    public Tsr<?> execute(
-            ExecutionCall<? extends Device<?>> call, CallExecutor goDeeperWith
-    ) {
-        return null; // TODO: REMOVE
-    }
-
-    @Override
-    public ExecutionCall<? extends Device<?>> handle(ExecutionCall<? extends Device<?>> call )
+    public ExecutionCall<? extends Device<?>> prepare(ExecutionCall<? extends Device<?>> call )
     {
         Tsr<?>[] tensors = call.getTensors();
         Device<Object> device = call.getDeviceFor(Object.class);
