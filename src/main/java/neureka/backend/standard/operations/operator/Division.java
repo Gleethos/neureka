@@ -219,7 +219,6 @@ public class Division extends AbstractOperation
                                                 }
                                             }
                                         )
-                                        .setHandleRecursivelyAccordingToArity( JunctionUtil::forDivisionsOrModuli )
                                         .build();
 
         setAlgorithm(

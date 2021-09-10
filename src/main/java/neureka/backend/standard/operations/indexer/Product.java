@@ -96,7 +96,6 @@ public final class Product extends AbstractOperation {
                         }
                     }
                 )
-                .setHandleRecursivelyAccordingToArity( JunctionUtil::forMultiplications )
                 .build();
 
         setAlgorithm(

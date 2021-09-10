@@ -213,7 +213,6 @@ public class Multiplication extends AbstractOperation
                         }
                     }
                 )
-                .setHandleRecursivelyAccordingToArity( JunctionUtil::forMultiplications )
                 .build();
 
         setAlgorithm(

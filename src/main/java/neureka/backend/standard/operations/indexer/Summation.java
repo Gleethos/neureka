@@ -84,7 +84,6 @@ public final class Summation extends AbstractOperation
                         }
                     }
                 )
-                .setHandleRecursivelyAccordingToArity( JunctionUtil::forAdditions )
                 .build();
 
 

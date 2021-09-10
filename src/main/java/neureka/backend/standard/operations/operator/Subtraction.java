@@ -277,7 +277,6 @@ public class Subtraction extends AbstractOperation
                             }
                         }
                 )
-                .setHandleRecursivelyAccordingToArity( JunctionUtil::forSubtractions )
                 .build();
 
         setAlgorithm(

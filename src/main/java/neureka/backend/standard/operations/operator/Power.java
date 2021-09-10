@@ -315,7 +315,6 @@ public class Power extends AbstractOperation
                         }
                     }
                 )
-                .setHandleRecursivelyAccordingToArity( rja )
                 .build();
 
         setAlgorithm(
