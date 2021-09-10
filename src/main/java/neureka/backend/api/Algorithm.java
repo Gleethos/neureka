@@ -56,7 +56,7 @@ import neureka.devices.Device;
  *   algorithm might be called to perform the operation.
  */
 public interface Algorithm<C extends Algorithm<C>>
-extends SuitabilityChecker, DeviceFinder, ForwardADChecker, BackwardADChecker, ADAgentSupplier, Execution, ExecutionPreparation
+extends SuitabilityChecker, DeviceFinder, ForwardADChecker, BackwardADChecker, ADAgentSupplier, ExecutionOrchestration, ExecutionPreparation
 {
     String getName();
 

@@ -48,7 +48,7 @@ public class Reshape extends AbstractOperation
                                 .setForward( (t, derivative ) -> new FunctionBuilder( Neureka.get().context() ).build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
                                 .setBackward( (t, error ) -> new FunctionBuilder( Neureka.get().context() ).build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
                     }
-                ).setHandleInsteadOfDevice(
+                ).setOrchestration(
                     ( caller, call ) ->
                     {
                         Tsr<?>[] inputs = CalcUtil.srcActivation( call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]) );

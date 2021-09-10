@@ -3,7 +3,6 @@ package neureka.backend.standard.operations.operator;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
-import neureka.backend.api.Algorithm;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
@@ -320,7 +319,7 @@ public class Modulo extends AbstractOperation {
                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
-            .setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call, (executionCall, executor) -> null ) )
+            .setOrchestration( (caller, call) -> CalcUtil.executeFor( caller, call, (executionCall, executor) -> null ) )
             .build();
 
         setAlgorithm(

@@ -2,7 +2,6 @@ package neureka.backend.standard.algorithms;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.api.algorithms.fun.RecursiveExecutor;
@@ -43,7 +42,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                     return 1.0f;
                 }
         );
-        setHandleInsteadOfDevice(
+        setOrchestration(
                 ( caller, call ) -> {
                     int offset = ( call.getTsrOfType( Number.class, 0 ) == null ) ? 1 : 0;
                     if (

@@ -404,7 +404,7 @@ public class Power extends AbstractOperation
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
-                .setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call, rja ) )
+                .setOrchestration( (caller, call) -> CalcUtil.executeFor( caller, call, rja ) )
                 .build();
 
         setAlgorithm(

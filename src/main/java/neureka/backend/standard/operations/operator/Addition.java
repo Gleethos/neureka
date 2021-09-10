@@ -3,7 +3,6 @@ package neureka.backend.standard.operations.operator;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
-import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -245,7 +244,7 @@ public class Addition extends AbstractOperation {
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                             getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
-                .setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
+                .setOrchestration( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
                 .build();
 
         ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =

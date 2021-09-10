@@ -3,7 +3,6 @@ package neureka.backend.standard.operations.indexer;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
-import neureka.backend.api.Algorithm;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
@@ -216,7 +215,7 @@ public final class Product extends AbstractOperation {
                         }
                     }
         )
-        .setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forMultiplications ) )
+        .setOrchestration( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forMultiplications ) )
         .setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();

@@ -38,7 +38,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     private ForwardADChecker _canPerformForwardADFor;
     private BackwardADChecker _canPerformBackwardADFor;
     private ADAgentSupplier _supplyADAgentFor;
-    private Execution _handleInsteadOfDevice;
+    private ExecutionOrchestration _handleInsteadOfDevice;
     private ExecutionPreparation _instantiateNewTensorsForExecutionIn;
 
     public AbstractFunctionalAlgorithm( String name ) {
@@ -98,73 +98,6 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     //---
 
     public C build() { return (C) this; }
-
-    /**
-     *  The {@link SuitabilityChecker}
-     *  checks if a given instance of an {@link ExecutionCall} is
-     *  suitable to be executed in {@link neureka.backend.api.ImplementationFor}
-     *  residing in this {@link Algorithm} as components.
-     *
-     * @return A lambda which checks if a given {@link ExecutionCall} instance is suitable to be executed by this {@link Algorithm}.
-     */
-    public SuitabilityChecker getIsSuitableFor() { return this._isSuitableFor; }
-
-    /**
-     *  The {@link neureka.backend.api.algorithms.fun.DeviceFinder} finds
-     *  a {@link Device} instance which fits the contents of a given {@link ExecutionCall} instance.
-     *  The finder is supposed to find a {@link Device} which can be most easily shared
-     *  by the {@link Tsr} instances within the {@link ExecutionCall} that is being received by the finder.
-     *
-     * @return A finder lambda for finding a suitable {@link Device} implementation instance for a given {@link ExecutionCall} passed to the finder.
-     */
-    public DeviceFinder getFindDeviceFor() { return this._findDeviceFor; }
-
-    /**
-     *  A {@link ForwardADChecker} lambda checks if this
-     *  {@link Algorithm} can perform forward AD for a given {@link ExecutionCall}.
-     *
-     * @return An analyzer which return a truth value determining if this {@link Algorithm} can perform forward AD on a given {@link ExecutionCall}
-     */
-    public ForwardADChecker getCanPerformForwardADFor() { return this._canPerformForwardADFor; }
-
-    /**
-     *  A {@link BackwardADChecker} lambda checks if this
-     *  {@link Algorithm} can perform backward AD for a given {@link ExecutionCall}.
-     *
-     * @return An analyzer which return a truth value determining if this {@link Algorithm} can perform backward AD on a given {@link ExecutionCall}
-     */
-    public BackwardADChecker getCanPerformBackwardADFor() { return this._canPerformBackwardADFor; }
-
-    /**
-     *  This {@link neureka.backend.api.algorithms.fun.ADAgentSupplier} will supply
-     *  {@link ADAgent} instances which can perform backward and forward auto differentiation.
-     *
-     * @return An {@link neureka.backend.api.algorithms.fun.ADAgentSupplier} for creting suitable {@link ADAgent} instances.
-     */
-    public ADAgentSupplier getSupplyADAgentFor() { return this._supplyADAgentFor; }
-
-    /**
-     *  The {@link Execution} lambda
-     *  is simply a bypass procedure which if provided will simply occupy
-     *  the rest of the execution without any other steps being taken.
-     *  For example the {@link RecursiveExecutor}
-     *  would not be used in that case.
-     *  This bypassing is useful for unorthodox types of operations
-     *  like the {@link neureka.backend.standard.operations.other.Reshape} opertion.
-     *
-     * @return A lambda which bypasses the default execution procedure.
-     */
-    public Execution getHandleInsteadOfDevice() { return this._handleInsteadOfDevice; }
-
-    /**
-     *  An {@link Algorithm} will typically produce a result when executing an {@link ExecutionCall}.
-     *  This result must be created somehow.
-     *  The {@link ExecutionPreparation} lambda instance
-     *  returned by this method will do just that...
-     *
-     * @return A result instantiation lambda called before execution...
-     */
-    public ExecutionPreparation getInstantiateNewTensorsForExecutionIn() { return this._instantiateNewTensorsForExecutionIn; }
 
     /**
      *  The {@link SuitabilityChecker}
@@ -229,7 +162,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
         return this;
     }
 
-    public AbstractFunctionalAlgorithm<C> setHandleInsteadOfDevice( Execution handleInsteadOfDevice ) {
+    public AbstractFunctionalAlgorithm<C> setOrchestration(ExecutionOrchestration handleInsteadOfDevice ) {
         this._handleInsteadOfDevice = handleInsteadOfDevice;
         return this;
     }

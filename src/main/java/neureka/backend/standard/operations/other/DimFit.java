@@ -49,7 +49,7 @@ public class DimFit extends AbstractOperation
                                         );
                     }
                 )
-                .setHandleInsteadOfDevice(
+                .setOrchestration(
                         ( caller, call ) ->
                         {
                             Tsr<?>[] inputs = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));

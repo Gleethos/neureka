@@ -62,7 +62,7 @@ public final class Identity extends AbstractOperation
             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
         )
-        .setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call, (executionCall, executor) -> null ) )
+        .setOrchestration( (caller, call) -> CalcUtil.executeFor( caller, call, (executionCall, executor) -> null ) )
         .setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
@@ -148,7 +148,7 @@ public final class Identity extends AbstractOperation
                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
-            .setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call, (executionCall, executor) -> null ) )
+            .setOrchestration( (caller, call) -> CalcUtil.executeFor( caller, call, (executionCall, executor) -> null ) )
             .setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
