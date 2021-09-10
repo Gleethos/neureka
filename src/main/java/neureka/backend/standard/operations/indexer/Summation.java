@@ -208,8 +208,7 @@ public final class Summation extends AbstractOperation
                 }
             }
         )
-        .setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call ) )
-        .setHandleRecursivelyAccordingToArity( JunctionUtil::forAdditions )
+        .setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
         .setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();

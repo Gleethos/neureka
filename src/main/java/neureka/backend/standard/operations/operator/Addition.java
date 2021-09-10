@@ -246,8 +246,7 @@ public class Addition extends AbstractOperation {
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                             getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
-                .setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call ) )
-                .setHandleRecursivelyAccordingToArity( JunctionUtil::forAdditions )
+                .setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
                 .build();
 
         ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
