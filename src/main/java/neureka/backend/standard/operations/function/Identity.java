@@ -100,7 +100,8 @@ public final class Identity extends AbstractOperation
                                                 ),
                                 2
                         )
-                ).setImplementationFor(
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
                                 .arity( 2 )

@@ -55,7 +55,7 @@ public class ConvUtil {
                 )
                 .setHandleInsteadOfDevice(
                         ( caller, call ) -> {
-                            if ( !caller.isFlat() ) return CalcUtil.executeFor(caller, call);
+                            if ( !caller.isFlat() ) return CalcUtil.executeFor( caller, call, (executionCall, executor) -> null );
                             if ( call.getOperation().getOperator().equals("x") ) {
 
                                 Tsr<?>[] inputs = call.getTensors();
@@ -85,7 +85,7 @@ public class ConvUtil {
                                         return tsrs[ 0 ];
                                 }
                             }
-                            return CalcUtil.executeFor(caller, call);
+                            return CalcUtil.executeFor(caller, call, (executionCall, executor) -> null);
                         }
                 )
                 .setInstantiateNewTensorsForExecutionIn(
