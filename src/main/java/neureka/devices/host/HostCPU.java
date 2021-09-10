@@ -49,27 +49,7 @@ public class HostCPU extends AbstractDevice<Number>
     @Override
     protected void _execute( Tsr[] tensors, int d, Operation operation )
     {
-        ExecutionCall<HostCPU> call = ExecutionCall.of(tensors)
-                                                    .andArgs(Arg.DerivIdx.of(d))
-                                                    .running(operation)
-                                                    .on(this)
-                                                    .forDeviceType(HostCPU.class);
 
-        Algorithm<?> algorithm = call.getAlgorithm();
-        if ( algorithm == null ) {
-            String message = Messages.Device.couldNotFindSuitableAlgorithmFor( this.getClass() );
-            _LOG.error( message );
-            throw new IllegalStateException( message );
-        } else {
-            ImplementationFor<HostCPU> implementation = algorithm.getImplementationFor( HostCPU.class );
-            if ( implementation == null ) {
-                String message = Messages.Device.couldNotFindSuitableImplementationFor( algorithm, this.getClass() );
-                _LOG.error( message );
-                throw new IllegalStateException( message );
-            } else {
-                implementation.run( call );
-            }
-        }
     }
 
     @Override

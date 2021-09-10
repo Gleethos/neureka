@@ -694,13 +694,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     protected void _execute( Tsr[] tensors, int d, Operation type )
     {
-        ExecutionCall<OpenCLDevice> call = ExecutionCall.of(tensors)
-                                                        .andArgs(Arg.DerivIdx.of(d))
-                                                        .running(type)
-                                                        .on(this)
-                                                        .forDeviceType(OpenCLDevice.class);
         tensors[ 0 ].setIsVirtual( false );
-        call.getAlgorithm().getImplementationFor( OpenCLDevice.class ).run( call );
     }
 
     /*

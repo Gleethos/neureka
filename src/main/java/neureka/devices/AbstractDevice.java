@@ -36,10 +36,14 @@ package neureka.devices;
 
 import neureka.Component;
 import neureka.Tsr;
+import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
+import neureka.calculus.args.Arg;
 import neureka.framing.Relation;
 import neureka.utility.CustomCleaner;
+import neureka.utility.Messages;
 import neureka.utility.NeurekaCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +65,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType>
 {
     private static final NeurekaCleaner _CLEANER = new CustomCleaner();//Cleaner.create();
+    private static final Logger _LOG = LoggerFactory.getLogger( AbstractDevice.class );
 
     protected Logger _log;
 
@@ -129,7 +134,30 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
                     "One or more tensor arguments within the given ExecutionCall instance is null."
             );
         }
+        call = (ExecutionCall<? extends Device<?>>) ExecutionCall.of(call.getTensors())
+                                                                .andArgs(Arg.DerivIdx.of(call.getDerivativeIndex()))
+                                                                .running(call.getOperation())
+                                                                .on(this)
+                                                                .forDeviceType(getClass());
+
         _execute( call.getTensors(), call.getDerivativeIndex(), call.getOperation() );
+
+        Algorithm<?> algorithm = call.getAlgorithm();
+        if ( algorithm == null ) {
+            String message = Messages.Device.couldNotFindSuitableAlgorithmFor( this.getClass() );
+            _LOG.error( message );
+            throw new IllegalStateException( message );
+        } else {
+            ImplementationFor implementation = algorithm.getImplementationFor( this.getClass() );
+            if ( implementation == null ) {
+                String message = Messages.Device.couldNotFindSuitableImplementationFor( algorithm, this.getClass() );
+                _LOG.error( message );
+                throw new IllegalStateException( message );
+            } else {
+                implementation.run( call );
+            }
+        }
+
         return this;
     }
 
