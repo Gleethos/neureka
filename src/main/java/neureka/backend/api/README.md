@@ -111,13 +111,6 @@ that it fits the call best! <br>
 ```
 ---
 
-If the current algorithm has been chosen, then the target device <br>
-for the execution is being picked by the method below. <br>
-
-```java
-    Device findDeviceFor( ExecutionCall<? extends Device<?>> call );
-```
----
 
 The following method ought to check if this
 implementation can perform forward mode AD on
@@ -154,37 +147,22 @@ to perform said procedures.
 ```
 ---
 
-The following method is a bypass lambda used
-for operations / algorithms that do not require a device specific execution.
-The 2 methods following the one below will be ignored
-if this returns a tensor. (a.k.a result) <br>
-If the method returns 'null' then
-the call routing will continue.
+The following method is the main method for orchestrating the execution of the
+provided `ExecutionCall` and `Function` instance.
+When implementing this method one can either use
+the component system of the `Algorithm` to select a `ImplementationFor` the ideal `Device`
+or simply bypass any `Device` specific implementations to perform 
+the operation in other ways.
 
 ```java
-    Tsr<?> handleInsteadOfDevice( AbstractFunction caller, ExecutionCall<? extends Device<?>> call );
+    Tsr<?> handle( Function caller, ExecutionCall<? extends Device<?>> call );
 ```
----
 
-Declared below is a call hook offering recursive
-execution on calls with an arbitrary amount of arguments. <br>
-A given implementation might only be able to handle a fixed amount
-of tensor arguments, however this method solves this problem.<br>
-The second argument is a lambda which can be called in order to
-re-execute this very method! A new call instance with reduced (partially executed)
-tensor arguments can be passed to the lambda.
-
-```java
-    Tsr<?> handleRecursivelyAccordingToArity(
-                ExecutionCall<? extends Device<?>> call,
-                Function<ExecutionCall<? extends Device<?>>,Tsr>goDeeperWith
-            );
-```
 ---
 
 The execution call instance contains an array of arguments.<br>
 Some of these arguments (usually the leading one(s)) are null
-because they serve as output locations for this algorithm. <br>
+because they serve as output locations for the result of this `Algorithm`. <br>
 The instantiation of these output tensors should be left to the
 algorithm instance in most cases, this is because the given algorithm
 "knows best" what shape(s), size(s), data type(s)... these tensors ought to have.<br>
@@ -195,7 +173,7 @@ different from the shape of a tensor produced by broadcasting... <br>
 <br>
 This method ought to instantiate necessary output tensors:
 ```java
-    ExecutionCall<? extends Device<?>> instantiateNewTensorsForExecutionIn( ExecutionCall<? extends Device<?>> call );
+    ExecutionCall<? extends Device<?>> prepare( ExecutionCall<? extends Device<?>> call );
 ```
 
 ---
