@@ -5,7 +5,6 @@ import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.algorithms.fun.RecursiveExecutor;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.operations.JunctionUtil;
 import neureka.calculus.args.Arg;

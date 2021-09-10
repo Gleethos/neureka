@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
-import neureka.backend.api.algorithms.fun.RecursiveExecutor;
+import neureka.calculus.RecursiveExecutor;
 import neureka.calculus.CalcUtil;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;

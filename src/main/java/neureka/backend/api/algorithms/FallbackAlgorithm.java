@@ -6,7 +6,6 @@ import neureka.autograd.ADAgent;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.algorithms.fun.CallExecutor;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
@@ -36,13 +35,13 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                 new HostImplementation(
                         call -> {
                             Function f = new FunctionBuilder(
-                                                Neureka.get().context()
-                                            )
-                                            .build(
-                                                    type,
-                                                    call.getTensors().length-1,
-                                                    false
-                                            );
+                                                    Neureka.get().context()
+                                                )
+                                                .build(
+                                                        type,
+                                                        call.getTensors().length-1,
+                                                        false
+                                                );
 
                             boolean allNumeric = call.validate()
                                                         .all( t -> t.getDataType().typeClassImplements(NumericType.class) )
@@ -105,25 +104,20 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
     }
 
     @Override
-    public boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call ) {
-        return true;
-    }
+    public boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call ) { return true; }
 
     @Override
-    public boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call ) {
-        return true;
-    }
+    public boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call ) { return true; }
 
     @Override
     public ADAgent supplyADAgentFor( Function f, ExecutionCall<? extends Device<?>> call, boolean forward)
     {
-        Object o = call.getValOf(Arg.Derivative.class);
-        Tsr<?> ctxDerivative = (Tsr<?>) o;
+        Tsr<?> derivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
         Function mul = Neureka.get().context().getFunction().mul();
-        if ( ctxDerivative != null ) {
-            return new DefaultADAgent( ctxDerivative )
-                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
-                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, ctxDerivative ) );
+        if ( derivative != null ) {
+            return new DefaultADAgent( derivative )
+                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
         }
         Tsr<?> localDerivative = f.executeDerive( call.getTensors(), call.getDerivativeIndex() );
         return new DefaultADAgent( localDerivative )
@@ -194,7 +188,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
             try {
                 args[offset + 1] = m.invoke(args[offset], args[offset + 1]);
             } catch ( Exception e ) {
-                e.printStackTrace();
+                _LOG.debug("Failed to execute method '"+m.getName()+"'. "+e.getMessage());
                 return null;
             }
             return _tryExecute( m, args, offset + 1 );
@@ -203,8 +197,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
 
     private static Method _findMethod( String name, Class<?> typeClass ) {
         try {
-            Method m = typeClass.getMethod(name, typeClass);
-            return m;
+            return typeClass.getMethod(name, typeClass);
         } catch ( SecurityException e ) {
             e.printStackTrace();
         } catch ( NoSuchMethodException e ) {
@@ -230,7 +223,6 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
             if ( currentScore > 0.5 ) return currentBest;
         }
         return null;
-
     }
 
 }

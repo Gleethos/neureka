@@ -2,6 +2,7 @@ package neureka.backend.api.algorithms.fun;
 
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.calculus.RecursiveExecutor;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
 

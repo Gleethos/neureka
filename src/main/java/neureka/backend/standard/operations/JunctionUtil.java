@@ -4,7 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.algorithms.fun.CallExecutor;
+import neureka.calculus.CallExecutor;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 
