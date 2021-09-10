@@ -92,13 +92,12 @@ public class Subtraction extends AbstractOperation
                     } else return t1Idx -> ( d == 0 ) ? 1.0 : -1.0;
                 };
 
-        Operator operator = new Operator()
-                   .setSupplyADAgentFor(
-                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-                )
-                .setHandleRecursivelyAccordingToArity( JunctionUtil::forSubtractions )
-                .build();
+        Operator operator = new Operator(JunctionUtil::forSubtractions)
+                                   .setSupplyADAgentFor(
+                                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                                                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
+                                    )
+                                    .build();
 
         setAlgorithm(
                 Operator.class,

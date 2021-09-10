@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.algorithms.fun.RecursiveExecutor;
 import neureka.calculus.CalcUtil;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public class Operator extends AbstractFunctionalAlgorithm<Operator>
 {
-    public Operator() {
+    public Operator( RecursiveExecutor finalExecutor ) {
         super("operator");
         setIsSuitableFor(
                 call -> {
@@ -29,7 +30,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         );
         setCanPerformBackwardADFor( call -> true );
         setCanPerformForwardADFor( call -> true );
-        setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call ) );
+        setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call, finalExecutor ) );
         setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr<?>[] tsrs = call.getTensors();

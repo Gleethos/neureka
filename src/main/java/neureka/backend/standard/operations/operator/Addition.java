@@ -114,13 +114,12 @@ public class Addition extends AbstractOperation {
                     else return t1Idx -> 1.0;
                 };
 
-        Operator operator = new Operator()
-                .setSupplyADAgentFor(
-                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-                )
-                .setHandleRecursivelyAccordingToArity( JunctionUtil::forAdditions )
-                .build();
+        Operator operator = new Operator(JunctionUtil::forAdditions)
+                                    .setSupplyADAgentFor(
+                                            ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                                                    getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
+                                    )
+                                    .build();
 
         setAlgorithm(
                 Operator.class,

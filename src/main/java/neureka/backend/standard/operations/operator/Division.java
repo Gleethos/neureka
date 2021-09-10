@@ -111,13 +111,12 @@ public class Division extends AbstractOperation
                     }
                 };
 
-        Operator operator = new Operator()
-                   .setSupplyADAgentFor(
-                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
-                )
-                .setHandleRecursivelyAccordingToArity( JunctionUtil::forDivisionsOrModuli )
-                .build();
+        Operator operator = new Operator(JunctionUtil::forDivisionsOrModuli)
+                                   .setSupplyADAgentFor(
+                                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                                                getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
+                                    )
+                                    .build();
 
         setAlgorithm(
                 Operator.class,
