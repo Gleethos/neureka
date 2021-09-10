@@ -29,7 +29,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         );
         setCanPerformBackwardADFor( call -> true );
         setCanPerformForwardADFor( call -> true );
-        setHandleInsteadOfDevice( CalcUtil::executeFor);
+        setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call ) );
         setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr<?>[] tsrs = call.getTensors();

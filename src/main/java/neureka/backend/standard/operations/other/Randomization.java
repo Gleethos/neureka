@@ -73,7 +73,7 @@ public class Randomization extends AbstractOperation
             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
         )
-        .setHandleInsteadOfDevice( CalcUtil::executeFor)
+        .setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call ) )
         .setInstantiateNewTensorsForExecutionIn(
                 call -> {
                     Tsr[] tsrs = call.getTensors();

@@ -28,7 +28,7 @@ public class Activation extends AbstractFunctionalAlgorithm< Activation >
                                 .all( ( first, second ) -> first.shape().equals(second.shape()) )
                                 .isValid()
                 );
-        setHandleInsteadOfDevice( CalcUtil::executeFor);
+        setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call ) );
         setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -> null );
         setInstantiateNewTensorsForExecutionIn(
                         call -> {

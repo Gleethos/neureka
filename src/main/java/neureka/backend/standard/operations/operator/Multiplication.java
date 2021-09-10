@@ -326,7 +326,7 @@ public class Multiplication extends AbstractOperation
                         }
                     }
                 )
-                .setHandleInsteadOfDevice( CalcUtil::executeFor)
+                .setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call ) )
                 .setHandleRecursivelyAccordingToArity( JunctionUtil::forMultiplications )
                 .build();
 

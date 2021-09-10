@@ -217,7 +217,7 @@ public final class Product extends AbstractOperation {
                         }
                     }
         )
-        .setHandleInsteadOfDevice( CalcUtil::executeFor)
+        .setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call ) )
         .setHandleRecursivelyAccordingToArity( JunctionUtil::forMultiplications )
         .setInstantiateNewTensorsForExecutionIn(
                 call -> {

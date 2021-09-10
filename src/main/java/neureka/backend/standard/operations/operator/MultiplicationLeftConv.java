@@ -63,7 +63,7 @@ public class MultiplicationLeftConv extends AbstractOperation {
                             }
                         }
                 )
-                .setHandleInsteadOfDevice( CalcUtil::executeFor)
+                .setHandleInsteadOfDevice( (caller, call) -> CalcUtil.executeFor( caller, call ) )
                 .setInstantiateNewTensorsForExecutionIn(
                         call -> {
                             Tsr[] tsrs = call.getTensors();
