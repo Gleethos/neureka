@@ -105,11 +105,6 @@ public class FunctionNode implements Function
                                                                             .andArgs(arguments.getAll(Arg.class))
                                                                             .running(_operation)
                                                                             .on( _deviceFor( tensors ) );
-                    ExecutionCall<? extends Device<?>> finalCall;
-                    Device<?> possiblyNewDevice = call.getAlgorithm().findDeviceFor( call );
-                    if ( possiblyNewDevice != null ) finalCall = call.withDevice( possiblyNewDevice );
-                    else finalCall = call;
-
                     int d = arguments.valOf(Arg.DerivIdx.class);
 
                     if ( _isFlat )
@@ -121,11 +116,11 @@ public class FunctionNode implements Function
                         if ( d < 0 && _isDoingAD )
                             return new GraphNode<>(
                                         this,
-                                        finalCall,
-                                        () -> _execute( finalCall )
+                                        call,
+                                        () -> _execute( call )
                                     ).getPayload();
                     }
-                    return _execute( finalCall );
+                    return _execute( call );
                 }
         );
     }
@@ -140,6 +135,12 @@ public class FunctionNode implements Function
         );
     }
 
+    /**
+     *  This method tries to find a common {@link Device} for the provided {@link Tsr}s.
+     *
+     * @param inputs The input {@link Tsr}s for which a {@link Device} ought to be found and returned.
+     * @return A found {@link Device} implementation instance.
+     */
     private Device<?> _deviceFor( Tsr<?>[] inputs )
     {
         if ( inputs.length == 0 ) return HostCPU.instance();
