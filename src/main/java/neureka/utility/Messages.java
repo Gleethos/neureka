@@ -13,19 +13,39 @@ import org.slf4j.helpers.MessageFormatter;
  */
 public class Messages
 {
-    public static final String ILLEGAL_OPERATION_STATE_ERROR =
-                    "Unexpected '"+ Operation.class.getSimpleName()+"' state encountered:\n" +
-                    "The operation '{}' String should not be null but was null!";
 
-    public static final String OPERATION_LOADED_DEBUG =
-                    "Operation: '{}' loaded!";
+    public static class OpenCL {
 
-    public static final String CL_CONTEXT_NOT_CREATED_WARNING =
+        public static String clContextCreationFailed() {
+            return _format(
                     "OpenCL not available!\n" +
-                    "Skipped creating and adding a new '"+ CLContext.class.getSimpleName()+"' " +
-                    "to the current '"+ OperationContext.class.getSimpleName()+"'...";
+                            "Skipped creating and adding a new '"+ CLContext.class.getSimpleName()+"' " +
+                            "to the current '"+ OperationContext.class.getSimpleName()+"'..."
+            );
+        }
 
-    public static class Device {
+    }
+
+    public static class Operations {
+
+        public static String illegalStateFor( String type ) {
+            return _format(
+                    "Unexpected '"+ Operation.class.getSimpleName()+"' state encountered:\n" +
+                    "The operation '{}' String should not be null but was null!",
+                    type
+            );
+        }
+
+        public static String loaded( Operation operation ) {
+            return _format(
+                    "Operation: '{}' loaded!",
+                    operation.getFunction()
+            );
+        }
+
+    }
+
+    public static class Devices {
 
         public static String couldNotFindSuitableAlgorithmFor( Class<?> type ) {
             return _format(

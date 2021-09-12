@@ -106,15 +106,15 @@ public final class Neureka
             for ( Operation operation : serviceLoader ) {
                 assert operation.getFunction() != null;
                 assert operation.getOperator() != null;
-                if ( operation.getFunction() == null ) log.error(Messages.ILLEGAL_OPERATION_STATE_ERROR, "function" );
-                if ( operation.getOperator() == null ) log.error(Messages.ILLEGAL_OPERATION_STATE_ERROR, "operator" );
+                if ( operation.getFunction() == null ) log.error(Messages.Operations.illegalStateFor( "function" ) );
+                if ( operation.getOperator() == null ) log.error(Messages.Operations.illegalStateFor( "operator" ) );
                 _context.addOperation(operation);
-                log.debug(Messages.OPERATION_LOADED_DEBUG, operation.getFunction() );
+                log.debug( Messages.Operations.loaded(operation) );
             }
             if ( _OPENCL_AVAILABLE )
                 _context.set( new CLContext() );
             else
-                log.warn(Messages.CL_CONTEXT_NOT_CREATED_WARNING);
+                log.warn( Messages.OpenCL.clContextCreationFailed() );
         }
         return _context;
     }
@@ -252,17 +252,15 @@ public final class Neureka
         private boolean _isLocked = false;
 
         private Settings() {
-            _debug = new Debug();
+            _debug    = new Debug();
             _autograd = new AutoGrad();
             _indexing = new Indexing();
-            _view = new View();
-            _ndim = new NDim();
-            _dtype = new DType();
+            _view     = new View();
+            _ndim     = new NDim();
+            _dtype    = new DType();
         }
 
-        public Debug debug() {
-            return _debug;
-        }
+        public Debug debug() { return _debug; }
 
         public Debug debug(Object closure) {
             SettingsLoader.tryGroovyClosureOn(closure, _debug);
