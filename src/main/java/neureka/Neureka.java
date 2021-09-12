@@ -681,15 +681,15 @@ public final class Neureka
                 if ( !found ) {
                     System.out.println(
                             "[Info]: '"+className+"' dependencies not found!"+groovyInfo+"\n" +
-                            "[Cause]: "+cause+"\n"
+                            "[Cause]: "+cause+"\n" +
+                             findTip().bootstrapTip()
                     );
-                    findTip().printTip();
                 }
                 return found;
             }
         }
 
-        public static TipOS findTip() {
+        public static Messages.OpenCL.Tips findTip() {
             /*
                 // Check lib: $ ls -l /usr/lib/libOpenCL*
 
@@ -718,7 +718,6 @@ public final class Neureka
             String osName = System.getProperty("os.name");
             if ( osName.toLowerCase().contains("linux") ) {
                 String[] cmd = {"/bin/sh", "-c", "cat /etc/*-release"};
-
                 try {
                     Process p = Runtime.getRuntime().exec(cmd);
                     BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -746,34 +745,11 @@ public final class Neureka
             //---
             String foundOS = properties.getProperty("NAME").toLowerCase().replace("\"", "");
             switch ( foundOS ) {
-                case "ubuntu": return TipOS.UBUNTU;
-                case "fedora": return TipOS.FEDORA;
-                case "windows": return TipOS.WINDOWS;
+                case "ubuntu": return Messages.OpenCL.Tips.UBUNTU;
+                case "fedora": return Messages.OpenCL.Tips.FEDORA;
+                case "windows": return Messages.OpenCL.Tips.WINDOWS;
             }
-            return TipOS.UNKNOWN;
-        }
-
-        private enum TipOS {
-            UBUNTU(
-                    "Try executing the following command to install OpenCL: 'sudo apt install ocl-icd-opencl-dev'.\n" +
-                            "In order to allow OpenCL to find your GPUs consider executing 'sudo ubuntu-drivers autoinstall'!\n"
-            ),
-            FEDORA(
-                    "Try executing the following command to install OpenCL: 'sudo dnf install ocl-icd-devel'.\n" +
-                            "In order to allow OpenCL to find your GPUs consider installing or updating your device drivers!\n"
-            ),
-            WINDOWS(
-                    "Try to install OpenCL and the latest drivers of your GPU (Or other SIMD devices)."
-            ),
-            UNKNOWN("");
-
-            private final String _message;
-
-            TipOS(String message) { _message = message; }
-
-            public void printTip() {
-                if (!_message.isEmpty()) System.out.println("[Tipp]: "+_message);
-            }
+            return Messages.OpenCL.Tips.UNKNOWN;
         }
 
     }

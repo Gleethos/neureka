@@ -24,6 +24,37 @@ public class Messages
             );
         }
 
+
+        public enum Tips {
+            UBUNTU(
+                    "Try executing the following command to install OpenCL: 'sudo apt install ocl-icd-opencl-dev'.\n",
+                    "In order to allow OpenCL to find your GPUs consider executing 'sudo ubuntu-drivers autoinstall'!\n"
+            ),
+            FEDORA(
+                    "Try executing the following command to install OpenCL: 'sudo dnf install ocl-icd-devel'.\n",
+                    "In order to allow OpenCL to find your GPUs consider installing or updating your device drivers!\n"
+            ),
+            WINDOWS(
+                    "Try to install OpenCL and the latest drivers of your GPU (Or other SIMD devices).",
+                    ""
+            ),
+            UNKNOWN("", "");
+
+            public final String HOW_TO_INSTALL_OPENCL;
+            private final String HOW_TO_INSTALL_OPENCL_DRIVERS;
+
+            Tips( String howToInstallOpenCL, String howToInstallDrivers ) {
+                HOW_TO_INSTALL_OPENCL = howToInstallOpenCL;
+                HOW_TO_INSTALL_OPENCL_DRIVERS = howToInstallDrivers;
+            }
+
+            public String bootstrapTip() {
+                return !HOW_TO_INSTALL_OPENCL.isEmpty()
+                                ? ("[Tip]: "+ HOW_TO_INSTALL_OPENCL +""+ HOW_TO_INSTALL_OPENCL_DRIVERS)
+                                : ("");
+            }
+        }
+
     }
 
     public static class Operations {
