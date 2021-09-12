@@ -1,11 +1,10 @@
 package testutility;
 
 import neureka.utility.TsrAsString;
-import org.junit.Assert;
 
 import java.util.List;
 
-public class UnitTester extends Assert
+public class UnitTester
 {
     static String BAR = "[|]";
     private static String LINE = "--------------------------------------------------------------------------------------------";
@@ -81,7 +80,6 @@ public class UnitTester extends Assert
             println(BAR +"  ["+name+"]:("+result+") "+((result.length()>22)?"\n"+ BAR +"    contains   -> test successful!"+"\n"+ BAR +" ":"contains")+" [expected]:("+expected+")"+((result.length()>22)?"":" -> test successful!"));
             _positive_assertions = (_positive_assertions <0)? _positive_assertions : _positive_assertions +1;
             println(BAR + LINE);
-            assertEquals(true, true);
             return true;
         } else {
             println(BAR +"  ["+name+"]:("+result+") "
@@ -103,7 +101,6 @@ public class UnitTester extends Assert
                     :" -> test successful!"));
             _positive_assertions = (_positive_assertions <0)? _positive_assertions : _positive_assertions +1;
             println(BAR + LINE);
-            assertEquals(true, true);
             return true;
         } else {
             println(BAR +"  ["+name+"]:("+result+") "
@@ -125,7 +122,6 @@ public class UnitTester extends Assert
                     :"==")+" [expected]:("+expected+") -> test successful.");
             _positive_assertions = (_positive_assertions <0)? _positive_assertions : _positive_assertions +1;
             println(BAR + LINE);
-            assertTrue(true);
             return true;
         } else {
             println(BAR +"  [result]:("+result+") "+((result.length()>22)
@@ -133,13 +129,12 @@ public class UnitTester extends Assert
                     :"=|=")+" [expected]:("+expected+") -> test failed!");
             _positive_assertions = (_positive_assertions <0)? _positive_assertions -1:-1;
             println(BAR + LINE);
-            //failSession();
             return false;
         }
     }
 
     protected void failSession(){
-        fail(_session);
+        throw new AssertionError(_session);
     }
 
     protected String stringified(int[] a){

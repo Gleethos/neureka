@@ -116,7 +116,7 @@ class FileDevice_Unit_Tests extends Specification
         given :
             def device = FileDevice.at( 'build/resources/test/csv' )
         expect :
-            device.loadable == ['biostats-without-head.csv', 'biostats.csv']
+            device.loadable.toSet() == ['biostats-without-head.csv', 'biostats.csv'].toSet()
             device.loaded == []
 
         when :

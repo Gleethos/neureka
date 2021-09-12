@@ -125,7 +125,7 @@ public class UnitTester_Tensor extends UnitTester
     public int testTensorUtility_makeFit(int[] a, int[] b, int[][] expected){
         int [][] result =  Tsr.Utility.Indexing.makeFit(a, b);
         printSessionStart("Testing Tsr.indexing: dimension _translation!");
-        assertTrue("Invalid result!", result!=null && result.length==2);
+        if ( result.length != 2 ) throw new AssertionError("Invalid result!");
         assertIsEqual(
                 stringified(result[0]),
                 stringified(expected[0])
