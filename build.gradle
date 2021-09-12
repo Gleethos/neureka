@@ -153,7 +153,7 @@ dependencies {
 
     // Core library dependencies :
     implementation 'org.jocl:jocl:2.0.4' //-> Internal dependency!
-    implementation 'org.jetbrains:annotations:16.0.2'
+    implementation 'org.jetbrains:annotations:22.0.0'
 
     //---
         // Multi-Release-Jar :
@@ -180,7 +180,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
     testImplementation 'com.athaydes:spock-reports:2.1-groovy-3.0'//, { transitive = false }
 
-    testImplementation 'org.slf4j:slf4j-api:1.7.30'  // LOGGING
+    testImplementation 'org.slf4j:slf4j-api:1.7.32'  // LOGGING
     testRuntimeClasspath 'org.slf4j:slf4j-simple:1.7.32'
 
     testRuntimeOnly group: 'net.bytebuddy', name: 'byte-buddy', version: '1.11.15' // allows mocking of classes (in addition to interfaces)

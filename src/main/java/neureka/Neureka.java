@@ -45,12 +45,10 @@ import neureka.utility.SettingsLoader;
 import neureka.utility.TsrAsString;
 import org.slf4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ServiceLoader;
 
 /**
@@ -684,26 +682,102 @@ public final class Neureka
             } finally {
                 if ( !found ) {
                     System.out.println(
-                            "[Info]: '"+className+"' dependencies not found!"+groovyInfo+"\n[Cause]: "+cause
+                            "[Info]: '"+className+"' dependencies not found!"+groovyInfo+"\n" +
+                            "[Cause]: "+cause+"\n"
                     );
-                    /*
-                    // Check lib: $ ls -l /usr/lib/libOpenCL*
-
-                        UBUNTU:
-                        $ sudo apt update
-                        $ sudo apt install ocl-icd-opencl-dev
-                        // Now libOpenCL.so should be located at /usr/lib/x86_64-linux-gnu/libOpenCL.so
-
-                        FEDORA:
-                        $ sudo dnf install ocl-icd-devel
-
-                     */
+                    findTip().printTip();
                 }
                 return found;
             }
         }
 
-    }
+        public static TipOS findTip() {
+            /*
+                // Check lib: $ ls -l /usr/lib/libOpenCL*
 
+                       UBUNTU:
+                       $ sudo apt update
+                       $ sudo apt install ocl-icd-opencl-dev
+                       // Now libOpenCL.so should be located at /usr/lib/x86_64-linux-gnu/libOpenCL.so
+                       $ sudo ubuntu-drivers autoinstall
+                       ///////////////////
+                       Switch ing from nvidia to amd:
+                       The following command will remove the proprietary Nvidia driver:
+
+                           $ sudo dpkg -P $(dpkg -l | grep nvidia-driver | awk '{print $2}')
+                           $ sudo apt autoremove
+
+                       Switch back to nouveau driver:
+
+                           $ sudo apt install xserver-xorg-video-nouveau
+
+
+                       FEDORA:
+                       $ sudo dnf install ocl-icd-devel
+
+                */
+            Properties properties = new Properties();
+            String osName = System.getProperty("os.name");
+            if ( osName.toLowerCase().contains("linux") ) {
+                String[] cmd = {"/bin/sh", "-c", "cat /etc/*-release"};
+
+                try {
+                    Process p = Runtime.getRuntime().exec(cmd);
+                    BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                    StringBuilder text = new StringBuilder();
+                    String line = "";
+                    while ((line = bri.readLine()) != null) {
+                        text.append(line);
+                        text.append("\n");
+                    }
+                    properties.load(new StringReader(text.toString()));
+
+                } catch (IOException e) {
+
+                    e.printStackTrace();
+                }
+            }
+            else // We just assume windows for now.
+            {
+                try {
+                    properties.load(new StringReader("NAME=\"Windows\""));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            //---
+            String foundOS = properties.getProperty("NAME").toLowerCase().replace("\"", "");
+            switch ( foundOS ) {
+                case "ubuntu": return TipOS.UBUNTU;
+                case "fedora": return TipOS.FEDORA;
+                case "windows": return TipOS.WINDOWS;
+            }
+            return TipOS.UNKNOWN;
+        }
+
+        private enum TipOS {
+            UBUNTU(
+                    "Try executing the following command to install OpenCL: 'sudo apt install ocl-icd-opencl-dev'.\n" +
+                            "In order to allow OpenCL to find your GPUs consider executing 'sudo ubuntu-drivers autoinstall'!\n"
+            ),
+            FEDORA(
+                    "Try executing the following command to install OpenCL: 'sudo dnf install ocl-icd-devel'.\n" +
+                            "In order to allow OpenCL to find your GPUs consider installing or updating your device drivers!\n"
+            ),
+            WINDOWS(
+                    "Try to install OpenCL and the latest drivers of your GPU (Or other SIMD devices)."
+            ),
+            UNKNOWN("");
+
+            private final String _message;
+
+            TipOS(String message) { _message = message; }
+
+            public void printTip() {
+                if (!_message.isEmpty()) System.out.println("[Tipp]: "+_message);
+            }
+        }
+
+    }
 
 }
