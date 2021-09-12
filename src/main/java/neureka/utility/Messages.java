@@ -24,7 +24,6 @@ public class Messages
             );
         }
 
-
         public enum Tips {
             UBUNTU(
                     "Try executing the following command to install OpenCL: 'sudo apt install ocl-icd-opencl-dev'.\n",
@@ -98,6 +97,14 @@ public class Messages
 
     }
 
+    /**
+     * @param withPlaceholders The {@link String} which may or may not contain placeholder in the for of "{}".
+     * @param toBePutAtPlaceholders Arbitrary {@link Object}s which will be turned into
+     *                              {@link String}s instead of the placeholder brackets.
+     *
+     * @return A {@link String} containing the actual {@link String} representations of th {@link Object}s
+     *         instead of the placeholder brackets within the first argument.
+     */
     private static String _format( String withPlaceholders, Object... toBePutAtPlaceholders ) {
         return MessageFormatter.arrayFormat(withPlaceholders, toBePutAtPlaceholders).getMessage();
     }
