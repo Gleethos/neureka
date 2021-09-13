@@ -682,7 +682,7 @@ public final class Neureka
                     System.out.println(
                             "[Info]: '"+className+"' dependencies not found!"+groovyInfo+"\n" +
                             "[Cause]: "+cause+"\n" +
-                             findTip().bootstrapTip()
+                            "[Tip]: "+ findTip().bootstrapTip()
                     );
                 }
                 return found;
