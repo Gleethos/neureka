@@ -24,7 +24,7 @@ The package you are currently looking at is the
 definition for this standardized API.<br>
 As you can image there is an infinitely large
 number of different algorithms which could act as 
-operations for an equally large number of input tensors... <br>
+operations for an equally large number of unique input tensor configurations... <br>
 Additionally for every operation there might also 
 be any number of concrete implementations tailored to specific
 hardware, tensor dimensions or merely performance requirements.
@@ -36,16 +36,16 @@ nonetheless extremely powerful.
 The package hosts a 3 tier layered API
 made up of core concepts, namely: <br>
 
-- `operations` : A collection of species of algorithms.
-- `algorithms` : Representations of algorithms hosting multiple device specific implementations.
-- `implementations` : Implementations of an algorithm tailored to a specific `Device`.
+- **Operations** : A collection of species of algorithms.
+- **Algorithms** : Representations of algorithms hosting multiple device specific implementations.
+- **Implementations** : Implementations of an algorithm tailored to a specific `Device`.
 
 This package models this architecture by exposing 3 interfaces which govern these concepts, 
 and their relationship.
 The interfaces are the following :
 
-- `ImplementationFor< TargetDeice extends Device >`
-- `Algorithm< FinalType >`
+- `ImplementationFor<TargetDeice extends Device>`
+- `Algorithm<ConcreteType>`
 - `Operation`
 
 
@@ -71,7 +71,7 @@ given request for execution, just to name a view : <br>
 
 Instances of this class are being routed through this three tier <br>
 architecture for final execution on instances of the 
-`ImplementationFor< TargetDeice extends Device >` interface! <br>
+`ImplementationFor<TargetDeice extends Device>` interface! <br>
 
 ## Algorithm ##
 
@@ -155,7 +155,7 @@ or simply bypass any `Device` specific implementations to perform
 the operation in other ways.
 
 ```java
-    Tsr<?> handle( Function caller, ExecutionCall<? extends Device<?>> call );
+    Tsr<?> execute( Function caller, ExecutionCall<? extends Device<?>> call );
 ```
 
 ---
@@ -180,10 +180,11 @@ This method ought to instantiate necessary output tensors:
 
 Implementations of the `Algorithm` interface ought to express a compositional design pattern. <br>
 This means that concrete implementations of an algorithm for a device are not extending
-an `Algorithm`, they are components of it instead. <br>
+an `Algorithm`, instead they are components of it. <br>
+This design makes implementations both modular and highly extensible.
 
 ```java
-    <D extends Device<?>, E extends ImplementationFor<D>> FinalType setImplementationFor(Class<D> deviceClass, E execution);
+    <D extends Device<?>, E extends ImplementationFor<D>> FinalType setImplementationFor( Class<D> deviceClass, E execution);
 ```
 ---
 
@@ -193,12 +194,12 @@ An `Algorithm` instance ought to contain a collection of these device-specific
 implementations...
 
 ```java
-    <D extends Device<?>> ImplementationFor<D> getImplementationFor(Class<D> deviceClass );
+    <D extends Device<?>> ImplementationFor<D> getImplementationFor( Class<D> deviceClass );
 ```
 
 ## ImplementationFor<Device> ##
 
-This interface represents the bottom most layer of
+This interface resides at the bottom most layer of
 the 3 tier architecture of the backend API.
 It is also the simplest of the three interfaces
 because the implementation details are at this
