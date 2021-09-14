@@ -33,23 +33,23 @@ public class ConvUtil {
                 .setSupplyADAgentFor(
                         (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
-                            Tsr ctxDerivative = (Tsr)call.getValOf(Arg.Derivative.class);
+                            Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                             if ( forward ) throw new IllegalArgumentException("Convolution of does not support forward-AD!");
 
                             Function mul = Neureka.get().context().getFunction().mul();
-                            Tsr[] inputs = call.getTensors();
+                            Tsr<?>[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
 
                             Function invX = new FunctionBuilder( Neureka.get().context() ).build(
                                     "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
                                     false
                             );
-                            Tsr deriv = f.derive( inputs, d );
+                            Tsr<?> deriv = f.executeDerive( inputs, d );
                             assert mul != null;
                             assert deriv != null;
                             assert invX != null;
                             return new DefaultADAgent( deriv )
-                                    .setForward( (node, forwardDerivative ) -> mul.call( forwardDerivative, deriv ) )
+                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
                                     .setBackward( (node, error) -> invX.execute( error, deriv, Tsr.of(node.getPayload().shape(), 0) ) ); // WARNING! This produced null pointer!
                         }
                 )
@@ -64,7 +64,7 @@ public class ConvUtil {
                                         ? Tsr.ofShape(Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape()))
                                         : null;
 
-                                for (Tsr<?> t : tsrs) if (t != null) t.setIsVirtual( false );
+                                for (Tsr<?> t : tsrs) if ( t != null ) t.setIsVirtual( false );
                                 CalcUtil.recursiveExecution( call.withTensors(tsrs), JunctionUtil::forConvolution );
                                 return tsrs[ 0 ];
                             } else {
@@ -85,7 +85,7 @@ public class ConvUtil {
                                         return tsrs[ 0 ];
                                 }
                             }
-                            return CalcUtil.executeFor(caller, call, (executionCall, executor) -> null);
+                            return CalcUtil.executeFor( caller, call, ( executionCall, executor ) -> null );
                         }
                 )
                 .setInstantiateNewTensorsForExecutionIn(

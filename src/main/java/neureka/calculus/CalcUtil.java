@@ -84,8 +84,10 @@ public class CalcUtil
                         .on(device),
                 executor
         );
-        if ( tensors[ 0 ] == null ) _LOG.warn("Function did not have a proper return value.");
-        return ( tensors[ 0 ] == null ) ? tensors[ 1 ] : tensors[ 0 ];
+        if ( tensors[ 0 ] == null )
+            _LOG.warn("Executing operation '"+operation.getFunction()+"' did not yield a proper return value.");
+
+        return ( tensors[ 0 ] == null ? tensors[ 1 ] : tensors[ 0 ] );
     }
 
     /**
@@ -196,14 +198,14 @@ public class CalcUtil
             );
             // At the end:
             //...multiply inner times outer: ( if inner is not 1 entirely... )
-            if ( !( ( inner.isVirtual() || inner.size()==1 ) && inner.value64( 0 )==1.0) ) {
+            if ( !( ( inner.isVirtual() || inner.size() == 1 ) && inner.value64( 0 ) == 1.0 ) ) {
                 tensors = new Tsr[]{ null, inner, tensors[ 0 ] };
                 CalcUtil.recursiveExecution(
-                        ExecutionCall.of(tensors)
-                                .andArgs(Arg.DerivIdx.of( -1 ))
-                                .running(Neureka.get().context().getOperation("*"))
+                        ExecutionCall.of( tensors )
+                                .andArgs( Arg.DerivIdx.of( -1 ) )
+                                .running( Neureka.get().context().getOperation("*") )
                                 .on( device ),
-                        (executionCall, exe) -> null
+                        ( executionCall, exe ) -> null
                 );
             } // done!
             return tensors[ 0 ];
@@ -213,7 +215,7 @@ public class CalcUtil
         int d = call.getDerivativeIndex();
         Tsr<?> out = null;
         for ( int i = 0; i < nodes.length; i++ ) { // constants need to be figured out!
-            int di = ( nodes[ i ].dependsOn(d) ) ? i : -1;
+            int di = ( nodes[ i ].dependsOn( d ) ) ? i : -1;
             if ( di >= 0 ) {
                 if ( out == null ) out = actor.get();
                 else
@@ -222,7 +224,7 @@ public class CalcUtil
                                     .andArgs( Arg.DerivIdx.of( -1 ) )
                                     .running( Neureka.get().context().getOperation("+") )
                                     .on( device ),
-                            (executionCall, exe) -> null
+                            ( executionCall, exe ) -> null
                     );
             }
         }
@@ -274,7 +276,7 @@ public class CalcUtil
         Operation type = call.getOperation();
 
         Consumer<Tsr<Object>>[] rollbacks = new Consumer[tsrs.length];
-        for ( int i=0; i<tsrs.length; i++ ) {
+        for ( int i = 0; i < tsrs.length; i++ ) {
             if ( tsrs[ i ] != null && !tsrs[ i ].isOutsourced() ) {
                 try {
                     device.store(tsrs[i]);
@@ -306,10 +308,10 @@ public class CalcUtil
         Tsr<?> result = executor.execute( call, c -> _recursiveReductionOf( c, finalExecution, executor ) );
         if ( result == null ) {
             finalExecution.accept(
-                    ExecutionCall.of(call.getTensors())
-                            .andArgs(Arg.DerivIdx.of(d))
-                            .running(type)
-                            .on(device)
+                    ExecutionCall.of( call.getTensors() )
+                            .andArgs( Arg.DerivIdx.of(d) )
+                            .running( type )
+                            .on( device )
             );
         }
         else return result;
@@ -340,7 +342,7 @@ public class CalcUtil
                                     ? src[ i - offset ].executeDerive( inputs, d, j )
                                     : src[ i - offset ].executeDerive( inputs, d );
 
-                tempShape = ( tempShape == null ) ? tensors[ i ].getNDConf().shape() : tempShape;
+                tempShape = ( tempShape == null ? tensors[ i ].getNDConf().shape() : tempShape );
             }
         }
         for ( int i = offset; i < tensors.length; i++ ) {
