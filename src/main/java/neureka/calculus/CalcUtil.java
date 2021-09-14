@@ -11,6 +11,7 @@ import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.implementations.FunctionConstant;
 import neureka.devices.Device;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,7 @@ public class CalcUtil
 
     private static final Logger _LOG = LoggerFactory.getLogger(CalcUtil.class);
 
+    @Contract( pure = true )
     public static Tsr<?> executeFor(
             final Function caller,
             final ExecutionCall<? extends Device<?>> call,
@@ -45,6 +47,7 @@ public class CalcUtil
             return _deepDerivative( call, nodes, operation, executor );
     }
 
+    @Contract( pure = true )
     private static Tsr<?> _deepActivation(
             final ExecutionCall<? extends Device<?>> call,
             final Function[] nodes,
@@ -100,6 +103,7 @@ public class CalcUtil
      * @param tensors An array of tensors which ought to be analyzed.
      * @return The index of the tensor whose value is "1.0" (if all other are "0.0"), otherwise : -1
      */
+    @Contract( pure = true )
     private static int _indexOfFoundDerivative(Tsr<?>[] tensors )
     {
         boolean allVirtual = true;
@@ -119,6 +123,7 @@ public class CalcUtil
         return -1;
     }
 
+    @Contract( pure = true )
     private static Tsr<?> _deepDerivative(
             final ExecutionCall<? extends Device<?>> call,
             final Function[] nodes,
@@ -265,6 +270,7 @@ public class CalcUtil
      *
      * @return The execution result of the provided {@param call}.
      */
+    @Contract( pure = true )
     private static Tsr<?> _recursiveReductionOf(
             final ExecutionCall<? extends Device<?>> call,
             final Consumer<ExecutionCall<? extends Device<?>>> finalExecution,
@@ -323,7 +329,7 @@ public class CalcUtil
     }
 
 
-
+    @Contract( pure = true )
     public static Tsr<?>[] srcActivation(
             Tsr<?>[] inputs, int j, int d, int offset, Function[] src
     ) {
