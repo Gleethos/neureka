@@ -38,15 +38,15 @@ public class MatMul extends AbstractOperation
 
         RecursiveExecutor rja = (call, goDeeperWith)->
         {
-            Tsr[] tsrs = call.getTensors();
-            Device device = call.getDevice();
+            Tsr<?>[] tsrs = call.getTensors();
+            Device<?> device = call.getDevice();
             int d = call.getDerivativeIndex();
             Operation type = call.getOperation();
 
-            Tsr alternative = null;
+            Tsr<?> alternative = null;
             if (tsrs.length > 3) {
                 if ( d < 0 ) {
-                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
+                    Tsr<?>[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.execute(
                                             ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
                                     );
@@ -114,15 +114,15 @@ public class MatMul extends AbstractOperation
                             if ( forward ) throw new IllegalArgumentException("Matrix multiplication of does not support forward-AD!");
 
                             Function invX = new FunctionBuilder( Neureka.get().context() ).build( "I[ 0 ] @ I[ 1 ]", false );
-                            Tsr[] inputs = call.getTensors();
+                            Tsr<?>[] inputs = call.getTensors();
                             int d = (1 + call.getDerivativeIndex()) % 2;
-                            Tsr deriv = inputs[ d ].T();
+                            Tsr<?> deriv = inputs[ d ].T();
                             if ( d == 0 )
                                 return new DefaultADAgent( deriv )
-                                            .setBackward( (node, error) -> invX.call( error, deriv ) );
+                                            .setBackward( (node, error) -> invX.execute( error, deriv ) );
                             else
                                 return new DefaultADAgent( deriv )
-                                        .setBackward( (node, error) -> invX.call( error, deriv ) );
+                                        .setBackward( (node, error) -> invX.execute( error, deriv ) );
                         }
                 )
                 .setOrchestration(
@@ -130,13 +130,13 @@ public class MatMul extends AbstractOperation
                             if ( !caller.isFlat() ) return CalcUtil.executeFor(caller, call, (executionCall, executor) -> null );
                             if ( call.getOperation().getOperator().equals("x") ) {
 
-                                Tsr[] inputs = call.getTensors();
-                                Tsr[] tsrs = new Tsr[]{null, inputs[ 0 ], inputs[ 1 ]};
+                                Tsr<?>[] inputs = call.getTensors();
+                                Tsr<?>[] tsrs = new Tsr[]{null, inputs[ 0 ], inputs[ 1 ]};
                                 tsrs[ 0 ] = (call.getDerivativeIndex() < 0)
                                         ? Tsr.ofShape( Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape()) )
                                         : null;
 
-                                for (Tsr t : tsrs) if (t != null) t.setIsVirtual( false );
+                                for (Tsr<?> t : tsrs) if (t != null) t.setIsVirtual( false );
                                 CalcUtil.recursiveExecution(call.withTensors(tsrs), rja);
                                 return tsrs[ 0 ];
                             } else {
@@ -162,12 +162,12 @@ public class MatMul extends AbstractOperation
                 )
                 .setInstantiateNewTensorsForExecutionIn(
                         call -> {
-                            Tsr[] tsrs = call.getTensors();
+                            Tsr<?>[] tsrs = call.getTensors();
                             Device device = call.getDevice();
                             if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                             {
                                 int[] shp = Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape());
-                                Tsr output = Tsr.of( shp, 0.0 );
+                                Tsr<?> output = Tsr.of( shp, 0.0 );
                                 output.setIsVirtual( false );
                                 try {
                                     device.store(output);

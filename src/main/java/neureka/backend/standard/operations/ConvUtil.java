@@ -90,12 +90,12 @@ public class ConvUtil {
                 )
                 .setInstantiateNewTensorsForExecutionIn(
                         call -> {
-                            Tsr[] tsrs = call.getTensors();
+                            Tsr<?>[] tsrs = call.getTensors();
                             Device device = call.getDevice();
                             if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                             {
                                 int[] shp = Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape());
-                                Tsr output = Tsr.of( shp, 0.0 );
+                                Tsr<?> output = Tsr.of( shp, 0.0 );
                                 output.setIsVirtual( false );
                                 try {
                                     device.store(output);

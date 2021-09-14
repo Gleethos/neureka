@@ -27,11 +27,11 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                     ) return 0.0f;
 
                     int maxRank = 0;
-                    for ( Tsr t : call.getTensors() ) if ( t != null && t.rank() > maxRank ) maxRank = t.rank();
+                    for ( Tsr<?> t : call.getTensors() ) if ( t != null && t.rank() > maxRank ) maxRank = t.rank();
                     for ( int i = 0; i < maxRank; i++ )
                     {
                         int currentDim = -1;
-                        for( Tsr t : call.getTensors() )
+                        for( Tsr<?> t : call.getTensors() )
                         {
                             if ( t!=null && i < t.rank() ) {
                                 if ( currentDim == -1 ) currentDim = t.shape( i );
@@ -46,10 +46,10 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                 ( caller, call ) -> {
                     int offset = ( call.getTsrOfType( Number.class, 0 ) == null ) ? 1 : 0;
                     if (
-                            call.getTsrOfType( Number.class, 0+offset ).shape().size() != call.getTsrOfType( Number.class, 1+offset).shape().size()
+                            call.getTsrOfType( Number.class, offset).shape().size() != call.getTsrOfType( Number.class, 1+offset).shape().size()
                     ) // Creating a new tensor:
                     {
-                        Tsr[] tsrs = {call.getTsrOfType( Number.class, 0+offset ), call.getTsrOfType( Number.class, 1+offset) };
+                        Tsr<?>[] tsrs = {call.getTsrOfType( Number.class, offset), call.getTsrOfType( Number.class, 1+offset) };
                         Tsr.makeFit(tsrs, caller.isDoingAD() );
                         tsrs = new Tsr[]{null, tsrs[0], tsrs[1]};
                         CalcUtil.recursiveExecution( call.withTensors( tsrs ), (executionCall, executor) -> null );
@@ -60,7 +60,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
         );
         setInstantiateNewTensorsForExecutionIn(
                 call -> {
-                    Tsr[] tsrs = call.getTensors();
+                    Tsr<?>[] tsrs = call.getTensors();
                     Device device = call.getDevice();
                     if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
@@ -76,7 +76,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                         for ( int i = 0; i < newShape.length; i++ )
                             newShape[ i ] = ( s1[ i ] == 1 ) ? s2[ i ] : s1[ i ];
 
-                        Tsr output = Tsr.of( newShape, 0.0 );
+                        Tsr<?> output = Tsr.of( newShape, 0.0 );
                         output.setIsVirtual( false );
                         try {
                             device.store( output );
@@ -104,6 +104,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
         int[] t1Shp = t1_src.getNDConf().shape();
         int[] t2Shp = (t2_src != null) ? t2_src.getNDConf().shape() : t1Shp;
         int rank = t0Shp.length;
+        assert t2_src != null;
         NDIterator t0Idx = NDIterator.of( t0_drn );
         NDIterator t1Idx = NDIterator.of( t1_src );
         t0Idx.set( t0_drn.IndicesOfIndex( i ) );
@@ -192,7 +193,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
 
     @Contract(pure = true)
     public static void broadcast(
-            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            Tsr<?> t0_drn, Tsr<?> t1_src, Tsr<?> t2_src,
             int d, int i, int end,
             Operation.TertiaryNDAConsumer operation
     ) {
