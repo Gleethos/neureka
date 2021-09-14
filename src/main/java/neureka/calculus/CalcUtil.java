@@ -18,7 +18,15 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-public class CalcUtil {
+/**
+ *  This is a utility class which helps with orchestrating the execution of classical operations
+ *  from calculus like the operators '*', '-', '+', '/', as well as linear operations
+ *  like matrix multiplication, broadcasting and convolution.
+ *  This orchestration refers to the way a an {@link ExecutionCall} alongside its caller, a {@link Function},
+ *  should be handles to produce a correct result.
+ */
+public class CalcUtil
+{
 
     private static final Logger _LOG = LoggerFactory.getLogger(CalcUtil.class);
 
@@ -232,7 +240,7 @@ public class CalcUtil {
                             "One or more tensor arguments within the given ExecutionCall instance is null."
             );
         }
-        recursiveReductionOf(
+        _recursiveReductionOf(
                 call,
                 c -> c.getDevice().execute( c ),
                 executor
@@ -242,17 +250,20 @@ public class CalcUtil {
 
     /**
      *  The following method is used together with the {@link Algorithm#execute} method.
-     *  There is already a great implementation of this method in the AbstractBaseAlgorithm class
+     *  There is already a useful implementation of this
+     *  method in the {@link neureka.backend.api.algorithms.AbstractBaseAlgorithm} class
      *  which calls the {@link Algorithm#execute} method whose implementation
      *  ought to either execute the given call which is passed to it or
      *  continue to go deeper by calling the passed lambda... <br>
      *
-     * @param call
-     * @param finalExecution
-     * @param executor
-     * @return
+     * @param call The {@link ExecutionCall} whose arguments ought to be executed in groups.
+     * @param finalExecution The actual execution whose implementation is provided by the caller.
+     * @param executor The traversing algorithm, which decides how to group arguments and when
+     *                 the {@param finalExecution} ought to be called.
+     *
+     * @return The execution result of the provided {@param call}.
      */
-    public static Tsr<?> recursiveReductionOf(
+    private static Tsr<?> _recursiveReductionOf(
             final ExecutionCall<? extends Device<?>> call,
             final Consumer<ExecutionCall<? extends Device<?>>> finalExecution,
             final RecursiveExecutor executor
@@ -278,7 +289,6 @@ public class CalcUtil {
                         e.printStackTrace();
                     }
                 };
-
             }
             else rollbacks[ i ] = t -> {};
         }
@@ -293,7 +303,7 @@ public class CalcUtil {
             Below is the core lambda of recursive preprocessing
             which is defined for each Algorithm individually :
          */
-        Tsr<?> result = executor.execute( call, c -> recursiveReductionOf( c, finalExecution, executor ) );
+        Tsr<?> result = executor.execute( call, c -> _recursiveReductionOf( c, finalExecution, executor ) );
         if ( result == null ) {
             finalExecution.accept(
                     ExecutionCall.of(call.getTensors())

@@ -2,7 +2,7 @@
 # Algorithms
 
 This package expands the middle layer of the 3 tier 
-calculus backend API architecture by partially implementing
+backend API architecture by partially implementing
 the `Algorithm` interface. <br>
 Implementing the `Algorithm` layer is the most complicated of the three. <br> 
 This is because such extensions / implementations 
@@ -24,7 +24,7 @@ The referenced classes are :
 
 - `AbstractFunctionalAlgorithm`
 
-- `GenericAlgorithm`
+- `FallbackAlgorithm`
 
 The first abstract class implements a component system for `ImplementationFor<TargetDevice>` <br>
 instances, and the second class extends the first one and adds support for functional <br>
