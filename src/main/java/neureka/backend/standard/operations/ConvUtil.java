@@ -37,14 +37,14 @@ public class ConvUtil {
                             if ( forward ) throw new IllegalArgumentException("Convolution of does not support forward-AD!");
 
                             Function mul = Neureka.get().context().getFunction().mul();
-                            Tsr<?>[] inputs = call.getTensors();
+                            Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
 
                             Function invX = new FunctionBuilder( Neureka.get().context() ).build(
                                     "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
                                     false
                             );
-                            Tsr<?> deriv = f.executeDerive( inputs, d );
+                            Tsr<?> deriv = f.derive( inputs, d ); // TODO: Fix 'deriveExecute' here returns null! WHY?!?
                             assert mul != null;
                             assert deriv != null;
                             assert invX != null;
