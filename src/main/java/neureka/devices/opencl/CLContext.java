@@ -1,9 +1,11 @@
 package neureka.devices.opencl;
 
 import neureka.Component;
-import neureka.Tsr;
 import neureka.backend.api.OperationContext;
+import neureka.utility.Messages;
 import org.jocl.cl_platform_id;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,8 @@ import static org.jocl.CL.clGetPlatformIDs;
  */
 public class CLContext  implements Component<OperationContext>
 {
+    private static Logger _LOG = LoggerFactory.getLogger(CLContext.class);
+
     private final List<OpenCLPlatform> _platforms = new ArrayList<>();
 
     /**
@@ -71,6 +75,9 @@ public class CLContext  implements Component<OperationContext>
 
         List<OpenCLPlatform> list = new ArrayList<>();
         for ( cl_platform_id id : platforms ) list.add( new OpenCLPlatform( id ) );
+        if ( list.isEmpty() || list.get(0).getDevices().isEmpty() ) {
+            _LOG.warn( Messages.OpenCL.clContextCouldNotFindAnyDevices() );
+        }
         return list;
     }
 }
