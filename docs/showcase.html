@@ -211,10 +211,11 @@
                                                 hljs.initHighlighting.called = false;
                                                 hljs.initHighlighting();
                                                 setTimeout(() => {
-                                                        for (let item of document.getElementsByClassName("MarkdownMe")) {
-                                                            item.innerHTML = marked(item.innerHTML)
-                                                            item.classList.remove("MarkdownMe");
-                                                        }
+                                                        applyMarkdown();
+                                                        // For some weired reason the first time the dom does not find
+                                                        // all the things we want to markdown...
+                                                        applyMarkdown();
+                                                        // Now let's show the fully formatted ajax page:
                                                         $('#DynamicContent').show("fast");
                                                     },
                                                     250
@@ -222,6 +223,14 @@
                                             }
                                         );
                                     });
+                                }
+
+                                function applyMarkdown() {
+                                    for (let item of document.getElementsByClassName("MarkdownMe")) {
+                                        item.innerHTML = marked(item.innerHTML)
+                                        item.classList.remove("MarkdownMe");
+                                        console.log("Converting to markdown in tag "+item.tagName);
+                                    }
                                 }
 
                                 $(document).ready(function () {
