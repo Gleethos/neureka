@@ -2,12 +2,12 @@
 <div class="col-sm 12 col-md-12">
     <div class="ContentBox">
         <h3>
-           I don't understand! :
+           What are Neural Networks?
         </h3>
         <p>
             So you want to create your own artificial neural network,
-            or simply understand the concept, but have no idea where to begin ? <br>
-            Follow this quick guide to understand what they are all about !
+            or simply understand the concept, but have no idea where to begin? <br>
+            Follow this quick guide to understand what they are all about!
         </p>
     </div>
 </div>
@@ -91,39 +91,39 @@
 </div>
 <div class="col-sm-12 col-md-12 col-lg-12">
     <div class="ContentBox">
-        <p>
-            So what does a neuron really do? <br>
-            Well first, it adds up the value of every neurons from the previous column it is connected to. <br>
-            On the Figure 3, there are 3 inputs (a1, a2, a3) coming to the neuron,
-            so 3 neurons of the previous column are connected to our neuron.
-            This value is multiplied, before being added, by another variable called
-            “weight” (w1, w2, w3) which determines the connection between the two neurons.
-            Each connection of neurons has its own weight, and those are the only values that
-            will be modified during the learning process. <br>
-            So what happens formally the calculation of the dot product between
-            the vector (a1, a2, a3) and (w1, w2, w3) ! <br>
-            Let's overview this : <br>
-            <br>
-            (a1, a2, a3) . (w1, w2, w3) = ( a1*w1 + a2*w2 + a3*w3 ) = ( i1 + i2 + i3 ) <br>
-            <br>
-            This concept above gives birth to reason why we use matrices to describe
-            this process happening between layer! <br>
-            To pu it simply : A matrix multiplication is merely
-            calculating the vector of multiple dot products. <br>
-            So every neuron input is simply the dot product of a matrix row
-            with the vector of previous layer output. <br>
-            <br>
-            Note : <br>
-            A important value which is not included in this illustration is the so called
-            "bias"!<br>
-            This value may be added to the total input calculated for every neuron.
-            (Meaning :  "a vector of biasis for every input vector of a layer...") <br>
-            This value is also learned alongside the weights. It stabilizes the network
-            by providing a kind of "default / fallback state" for a neuron... <br>
+        <p class="MarkdownMe">
+So what does a neuron really do? <br>
+Well first, it adds up the value of every neurons from the previous column it is connected to. <br>
+On the Figure 3, there are 3 inputs (a1, a2, a3) coming to the neuron,
+so 3 neurons of the previous column are connected to our neuron.
+This value is multiplied, before being added, by another variable called
+“weight” `(w1, w2, w3)` which determines the connection between the two neurons.
+Each connection of neurons has its own weight, and those are the only values that
+will be modified during the learning process. <br>
+So what happens formally the calculation of the dot product between
+the vector `(a1, a2, a3)` and `(w1, w2, w3)` ! <br>
+Let's overview this : <br>
 
-            After all those summations, the neuron finally applies a function called
-            “activation function” to the obtained value.<br>
-            Then the neurons of the layer are successfully up to date!
+`(a1, a2, a3) . (w1, w2, w3) = ( a1*w1 + a2*w2 + a3*w3 ) = ( i1 + i2 + i3 )`
+
+This concept above gives birth to the reason why we use matrices to describe
+this process happening between layers! <br>
+To put it simply : **A matrix multiplication is merely
+calculating the vector of multiple dot products.** <br>
+So every neuron input is simply the dot product of a matrix row
+with the vector of previous layer output. <br>
+<br>
+Note : <br>
+An important value which is not included in this illustration is the so called
+"bias"!<br>
+This value may be added to the total input calculated for every neuron.
+(Meaning :  "a vector of biases for every input vector of a layer...") <br>
+This value is also learned alongside the weights. It stabilizes the network
+by providing a kind of "default / fallback state" for a neuron... <br>
+
+After all those summations, the neuron finally applies a function called
+“activation function” to the obtained value.<br>
+Then the neurons of the layer are successfully up to date!
         </p>
     </div>
 </div>
@@ -147,7 +147,7 @@
             much more digestible... <br>
             So watching these videos will give you a heads up (uses Python and Numpy) : <br>
             <a
-                    href="https://www.youtube.com/watch?v=bxe2T-V8XRs&list=PLiaHhY2iBX9hdHaRr6b7XevZtgZRa1PoU&ab_channel=WelchLabs"
+                href="https://www.youtube.com/watch?v=bxe2T-V8XRs&list=PLiaHhY2iBX9hdHaRr6b7XevZtgZRa1PoU&ab_channel=WelchLabs"
             >
                ~=> Neural networks demystified ! <=~
             </a>
@@ -159,98 +159,100 @@
 </div>
 <div class="col-sm-12 col-md-12 col-lg-12">
     <div class="ContentBox">
-        <p>
-            <h3>What is backpropagation?</h3>
-            <br>
-            To put it bluntly : <br>
-            <b>Backpropagation is simply the chain-rule applied in reverse, </b> meaning that
-            the statement "inner times outer derivative" is being viewed as "outer times inner" !<br>
-            Or to put it in another way : <br>
-            It's a way to calculate the derivative of a variable(s) by starting from "outside" instead of "within" a
-            given equation <br>
-            <br>
-            That's it ! That's what it is in it's core. <br>
-            If you are confused about derivatives and the chain-rule I would suggest you to study this
-            topic of calculus first before continuing this article... <br>
-            Otherwise however, continue with the following examples ! <br>
-            <br>
-            Let's say you have : <br>
+        <h3>What is backpropagation?</h3>
+        <p class="MarkdownMe">
+<br>
+To put it bluntly : <br>
+**Backpropagation is simply the chain-rule applied in reverse,** meaning that
+the statement *"inner times outer derivative"* is being viewed as *"outer times inner"*!<br>
+Or to put it in another way : <br>
+**It's a way to calculate the derivative of a variable(s) by starting from "outside" instead of "within" a
+given equation.**<br>
+<br>
+That's it ! That's what it is in it's core. <br>
+If you are confused about derivatives and the chain-rule I would suggest you to study this
+topic of calculus first before continuing this article... <br>
+Otherwise however, continue with the following examples ! <br>
+<br>
+Let's say you have : <br>
 
-            <b>n(x) = a( b( c( d( x ) ) ) ) </b><br>
+`n(x) = a( b( c( d( x ) ) ) )`
 
 
-            The famous chain-rule produces the following derivative : <br>
+The famous chain-rule produces the following derivative : <br>
 
-            <b> n'(x) = dn/x = <br>
-            a'( b( c( d( x ) ) ) ) * b'( c( d( x ) ) ) * c'( d( x ) ) * d'( x ) * 1 </b><br>
+```
+    n'(x) = dn/x =
+    a'( b( c( d( x ) ) ) ) * b'( c( d( x ) ) ) * c'( d( x ) ) * d'( x ) * 1
+```
 
-            The interesting thing about the chain-rule is that it involves the "*" operator,  <br>
-            which is associative (and also commutative)!  <br>
-            Therefore, like I already stated it briefly at the beginning of the section,
-            the "chain" in the chain-rule can be executed from left to right or
-            from right to left without changing the result!  <br>
-            This is the core difference between forward mode differentiation and backward mode differentiation (backpropagation). <br>
-            <br>
-            This might seem trivial at first but it gets extremely useful when we have many many variables inside
-            our equation whose derivatives (slopes) we want to calculate.
-            This is the case in neural networks! <br>
-            <br>
-            So let's introduce the matrices W1 & W2 which play the following role : <br>
-            ( and x is a vector... ) <br>
-            <br>
-            <b>b(x) = W2 * x </b><br>
-            <br>
-            <b>... and ...</b> <br>
-            <br>
-            <b>d(x) = W1 * x  </b><br>
-            <br>
-            ... then this would suddenly give us an incentive to calculate <br>
-            the derivatives with respect to two variables in 1 equation! <br>
-            (the weights we want to adjust!)<br>
-            <br>
-            Let's see: <br>
-            <br>
-            <b>dn/x = 1 * ( W1^T ) * c'( d( x ) ) * ( W2^T ) * a'( b( c( d( x ) ) ) ) <br>
-            ( 1 ... vector of ones with shape x )</b><br>
-            <br>
-            <b>dn/W1 = ( x^T ) * c'( d( x ) ) * ( W2^T ) * a'( b( c( d( x ) ) ) )</b><br>
-            <br>
-            <b>dn/W2 = c'( d( x ) )^T * a'( b( c( d( x ) ) ) )</b><br>
-            <br>
-            Do you see the pattern? <br>
-            If not, read it from right to left and it will be obvious!<br>
-            It's always the same calculations until the variable is reached. <br>
-            So instead of going forward
-            (from left to right), we go backward in order to calculate the "derivative".<br>
-            However because we want to train the thing some proper behavior we also start
-            off by multiplying with the error, more on that later ...<br>
-            <br>
-            Note :<br>
-            The "derivatives" above (strictly speaking they are not anymore...) already represent the backpropagation
-            (reverse mode differentiation) because I'm using the transposed matrices W1^T and W2^T !
-            Matrices in a neural network are really just the tangled mess between the neurons.
-            So when multiplying with the matrix it propagates forward, whereas the
-            multiplication with the transposed version simply goes backward!
-            <br>
-            Some things might seem confusing, like for example why this new differentiation
-            contains something like "x^T", but this is really hard to explain in words.
-            I would suggest some more visual explanations : <br>
-            <br>
-            https://www.youtube.com/watch?v=tIeHLnjs5U8 <br>
-            <br>
+The interesting thing about the chain-rule is that it involves the "*" operator,  <br>
+which is associative (and also commutative)!  <br>
+Therefore, like I already stated it briefly at the beginning of the section,
+the "chain" in the chain-rule can be executed from left to right or
+from right to left without changing the result!  <br>
+This is the core difference between forward mode differentiation and backward mode differentiation (backpropagation). <br>
+<br>
+This might seem trivial at first but it gets extremely useful when we have many many variables inside
+our equation whose derivatives (slopes) we want to calculate.
+This is the case in neural networks! <br>
+<br>
+So let's introduce the matrices W1 & W2 which play the following role : <br>
+( and `x` is a vector... ) <br>
+<br>
+`b(x) = W2 * x `<br>
+<br>
+<b>... and ...</b> <br>
+<br>
+`d(x) = W1 * x `<br>
+<br>
+... then this would suddenly give us an incentive to calculate <br>
+the derivatives with respect to two variables in 1 equation! <br>
+(the weights we want to adjust!)<br>
+<br>
+Let's see: <br>
+<br>
+`dn/x = 1 * ( W1^T ) * c'( d( x ) ) * ( W2^T ) * a'( b( c( d( x ) ) ) )`<br>
+( `1` ... vector of ones with shape of `x` )<br>
+<br>
+`dn/W1 = ( x^T ) * c'( d( x ) ) * ( W2^T ) * a'( b( c( d( x ) ) ) )`<br>
+<br>
+`dn/W2 = c'( d( x ) )^T * a'( b( c( d( x ) ) ) )`<br>
+<br>
+Do you see the pattern? <br>
+If not, read it from right to left and it will be obvious!<br>
+It's always the same calculations until the variable is reached. <br>
+So instead of going forward
+(from left to right), we go backward in order to calculate the "derivative".<br>
+However because we want to train the thing some proper behavior we also start
+off by multiplying with the error, more on that later ...<br>
+<br>
+Note :<br>
+The "derivatives" above (strictly speaking they are not anymore...) already represent the backpropagation
+(reverse mode differentiation) because I'm using the transposed matrices `W1^T` and `W2^T`!
+Matrices in a neural network are really just the tangled mess between the neurons.
+So when multiplying with the matrix it propagates forward, whereas the
+multiplication with the transposed version simply goes backward!
+<br>
+Some things might seem confusing, like for example why this new differentiation
+contains something like `x^T`, but this is really hard to explain in words.
+I would suggest some more visual explanations : <br>
+<br>
+https://www.youtube.com/watch?v=tIeHLnjs5U8 <br>
+<br>
 
         </p>
     </div>
 </div>
 <div class="col-sm-12 col-md-6 col-lg-5">
     <div class="ContentBox">
-        <p>
-            The gradient for the three weight variables is being calculated as follows : <br>
-            <br>
-            wg1 = e * a' * a1   <br>
-            wg2 = e * a' * a2   <br>
-            wg3 = e * a' * a3   <br>
-
+        <p class="MarkdownMe">
+The gradient for the three weight variables is being calculated as follows : <br>
+```
+    wg1 = e * a' * a1   <br>
+    wg2 = e * a' * a2   <br>
+    wg3 = e * a' * a3   <br>
+```
         </p>
     </div>
 </div>
@@ -264,15 +266,15 @@
 </div>
 <div class="col-sm-12 col-md-6 col-lg-5">
     <div class="ContentBox">
-        <p>
-            If gradients need to be backpropagated further into the back of the network
-            then we proceed as follows: <br>
-            <br>
-            e1 = e * a' * w1   <br>
-            e2 = e * a' * w2   <br>
-            e3 = e * a' * w3   <br>
-            <br>
-            Where e1, e2 and e3 is the corresponding error for the values a1, a2 and a3 of a given layer. <br>
+        <p class="MarkdownMe">
+If gradients need to be backpropagated further into the back of the network
+then we proceed as follows: <br>
+````
+    e1 = e * a' * w1   <br>
+    e2 = e * a' * w2   <br>
+    e3 = e * a' * w3   <br>
+```
+Where `e1`, `e2` and `e3` is the corresponding error for the values a1, a2 and a3 of a given layer. <br>
         </p>
     </div>
 </div>

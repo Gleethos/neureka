@@ -4,10 +4,10 @@
         <h3>
             The "OpenCLDevice" - Accelerated Operations
         </h3>
-        <p>
-            The OpenCLDevice class is a concrete implementation of the Device interface.
-            Instances of this class internally utilize the OpenCL API in order to use supported
-            accelerator hardware like GPUs or FPGAs for storing tensors and executing operations on them.
+        <p class="MarkdownMe">
+The `OpenCLDevice` class is a concrete implementation of the `Device` interface.
+Instances of this class internally utilize the OpenCL API in order to use supported
+accelerator hardware like **GPUs** or **FPGAs** for storing tensors and executing operations on them.
         </p>
     </div>
 </div>
@@ -16,14 +16,14 @@
         <h4>
             Custom kernels
         </h4>
-        <p>
-            The following example is a brief showcase of an important OpenCLDevice feature
-            which enables just in time kernel compilation and caching for specific use cases.
-            This is particularly useful when extending the operations backend or simply creating
-            extremely fast custom operations for specific tensors. <br>
-            <br>
-            However one has to that this is a fairly low level usage pattern which does
-            not support autograd.
+        <p class="MarkdownMe">
+The following example is a brief showcase of an important `OpenCLDevice` feature
+which enables just in time kernel compilation and caching for specific use cases.
+This is particularly useful when extending the operations backend or simply creating
+extremely fast custom operations for specific tensors. <br>
+<br>
+However one has to that this is a fairly low level usage pattern which does
+not support autograd.
         </p>
     </div>
 </div>
