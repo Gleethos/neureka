@@ -17,11 +17,11 @@
 </div>
 <div class="col-sm-12 col-md-12 col-lg-12">
     <div class="ContentBox">
-        <p>
-            Consequently there is a useful Device implementation which
-            will fulfill this requirement. <br>
-            The "FileDevice" class can be instantiated via a
-            factory method by passing a String expression containing a path :
+        <p class="MarkdownMe">
+Consequently there is a useful `Device` implementation which
+will fulfill this requirement. <br>
+The `FileDevice` class can be instantiated via a
+factory method by passing a String expression containing a path :
         </p>
     </div>
 </div>
@@ -59,11 +59,11 @@
 </div>
 <div class="col-sm-12 col-md-12 col-lg-12">
     <div class="ContentBox">
-        <p>
-            File devices manage directories, meaning that one FileDevice instance uniquely handles
-            tensors stored in this directory (excluding subdirectories).<br>
-            <br>
-            The following code shows how to store tensors on a file device :
+        <p class="MarkdownMe">
+File devices manage directories, meaning that one `FileDevice` instance uniquely handles
+tensors stored in this directory (excluding subdirectories).<br>
+<br>
+The following code shows how to store tensors on a file device :
         </p>
     </div>
 </div>
@@ -179,6 +179,7 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
@@ -199,16 +200,25 @@
 
                 </code></pre>
             </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+    device.restore( myTensor ) // Loads the tensor but does not delete the file.
+
+    device.free( myOtherTensor ) // Deletes the provided tensor (If stored on the file device).
+
+                </code></pre>
+            </div>
         </div>
     </div>
 </div>
 <div class="col-sm-12 col-md-12 col-lg-12">
     <div class="ContentBox">
-        <p>
-            Contrary to other device implementations however, the FileDevice instance will not delete
-            the underlying data source (in this case a file) which stores the recently restored tensor.<br>
-            This is because contrary to let's say an OpenCLDevice the whole purpose of the FileDevice
-            is to persist data. <br>
+        <p class="MarkdownMe">
+Contrary to other device implementations however, the `FileDevice` instance will not delete
+the underlying data source (in this case a file) which stores the recently restored tensor.<br>
+This is because contrary to let's say an OpenCLDevice the whole purpose of the FileDevice
+is to persist data. <br>
         </p>
     </div>
 </div>
