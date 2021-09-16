@@ -36,7 +36,7 @@ public class MatMul extends AbstractOperation
                         .setIsInline(         false       )
         );
 
-        RecursiveExecutor rja = (call, goDeeperWith)->
+        RecursiveExecutor rja = (call, goDeeperWith) ->
         {
             Tsr<?>[] tsrs = call.getTensors();
             Device<?> device = call.getDevice();
@@ -44,7 +44,7 @@ public class MatMul extends AbstractOperation
             Operation type = call.getOperation();
 
             Tsr<?> alternative = null;
-            if (tsrs.length > 3) {
+            if ( tsrs.length > 3 ) {
                 if ( d < 0 ) {
                     Tsr<?>[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                     alternative = goDeeperWith.execute(
@@ -59,12 +59,12 @@ public class MatMul extends AbstractOperation
                     tsrs[ 0 ] = reduction[ 0 ];
                 }
                 return alternative;
-            } else
+            }
+            else
                 return alternative;
-
         };
 
-        DefaultOperatorCreator<TertiaryNDIConsumer> convolutionNDICreator =
+        DefaultOperatorCreator<TertiaryNDIConsumer> matMulIteratorBasedElementWiseLambdaSupplier =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
@@ -72,13 +72,13 @@ public class MatMul extends AbstractOperation
                         return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
                     } else {
                         return ( t0Idx, t1Idx, t2Idx ) -> {
-                            if (d == 0) return t2_val[t2Idx.i()];
+                            if ( d == 0 ) return t2_val[t2Idx.i()];
                             else return t1_val[ t1Idx.i() ];
                         };
                     }
                 };
 
-        DefaultOperatorCreator<TertiaryNDAConsumer> convolutionCreator =
+        DefaultOperatorCreator<TertiaryNDAConsumer> matMulElementWiseLambdaSupplier =
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
@@ -86,14 +86,15 @@ public class MatMul extends AbstractOperation
                         return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] * t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
                     } else {
                         return ( t0Idx, t1Idx, t2Idx ) -> {
-                            if (d == 0) return t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
+                            if ( d == 0 ) return t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
                             else return t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
                         };
                     }
                 };
 
 
-        GenericAlgorithm convolution = new GenericAlgorithm("matmul")
+        GenericAlgorithm simpleMatMulAlgorithm
+                                = new GenericAlgorithm("matmul")
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor(
                         call -> {
@@ -183,7 +184,7 @@ public class MatMul extends AbstractOperation
 
         setAlgorithm(
                 GenericAlgorithm.class,
-                convolution
+                simpleMatMulAlgorithm
                         .setImplementationFor(
                                 HostCPU.class,
                                 new HostImplementation(
@@ -196,7 +197,7 @@ public class MatMul extends AbstractOperation
                                                                         Convolution.convolve (
                                                                                 call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
                                                                                 call.getDerivativeIndex(), start, end,
-                                                                                convolutionCreator.create(
+                                                                                matMulElementWiseLambdaSupplier.create(
                                                                                         call.getTensors(),
                                                                                         -1//call.getDerivativeIndex()
                                                                                 )
@@ -205,7 +206,7 @@ public class MatMul extends AbstractOperation
                                                                         Convolution.convolve (
                                                                                 call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
                                                                                 call.getDerivativeIndex(), start, end,
-                                                                                convolutionNDICreator.create(
+                                                                                matMulIteratorBasedElementWiseLambdaSupplier.create(
                                                                                         call.getTensors(),
                                                                                         -1//call.getDerivativeIndex()
                                                                                 )
@@ -218,7 +219,7 @@ public class MatMul extends AbstractOperation
                                 OpenCLDevice.class,
                                 CLImplementation.fromSource()
                                         .arity( 3 )
-                                        .kernelName( "" )
+                                        .kernelName( "simpleMatMul" )
                                         .kernelSource(
                                                 "_kernel void simpleMatMul(   " +
                                                         "   int widthA,                                     " +
@@ -241,6 +242,33 @@ public class MatMul extends AbstractOperation
                                         .build()
                         )
         );
+
+        CLImplementation.fromSource()
+                .arity( 3 )
+                .kernelName( "fallBackMatMul" )
+                .kernelSource(
+                        "_kernel void fallBackMatMul(                                                 " +
+                                "   int widthA,                                                       " +
+                                "   int heightA,                                                      " +
+                                "   int widthB,                                                       " +
+                                "   int heightB,                                                      " +
+                                "   __global float* outputC, __global int *confC,                     " +
+                                "   __global float* inputA,  __global int *confA,                     " +
+                                "   __global float* inputB   __global int *confB,                     " +
+                                ") {                                                                  " +
+                                "   int prvConfC[32]; _cfg_of_cfg(prvConfC, prvConfC, rank);\n        " +
+                                "   int prvConfA[32]; _cfg_of_cfg(prvConfA, prvConfA, rank);\n        " +
+                                "   int prvConfB[32]; _cfg_of_cfg(prvConfB, prvConfB, rank);          " +
+                                "   int row = get_global_id( 1 );                                     " +
+                                "   int col = get_global_id(0);                                       " +
+                                "   float sum = 0.0f;                                                 " +
+                                "   for ( int i = 0; i < widthA; i++ ) {                              " +
+                                "      sum += inputA[ row * widthA + i ] * inputB[ i * widthB + col ];" +
+                                "   }                                                                 " +
+                                "   outputC[ row * widthB * col ] = sum;                              " +
+                                "}"
+                )
+                .build();
 
 
     }

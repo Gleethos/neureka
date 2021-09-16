@@ -10,13 +10,13 @@
 
     __kernel void convolution_template(
         //-=<ARGUMENT>=-//__global float *frn, __global int *frn_conf,
-        __global float *drn, __global int *drn_conf,
+        __global float *drn,  __global int *drn_conf,
         __global float *src1, __global int *src1_conf,
         __global float *src2, __global int *src2_conf,
         int rank,
         int d
     ){
-        int prv_drn_cfg[32]; _cfg_of_cfg(drn_conf, prv_drn_cfg, rank);
+        int prv_drn_cfg[32];  _cfg_of_cfg(drn_conf,  prv_drn_cfg,  rank);
         int prv_src1_cfg[32]; _cfg_of_cfg(src1_conf, prv_src1_cfg, rank);
         int prv_src2_cfg[32]; _cfg_of_cfg(src2_conf, prv_src2_cfg, rank);
         //-=<CONFIGURATION>=-//int prv_frn_cfg[32]; _cfg_of_cfg(frn_conf, prv_frn_cfg, rank);

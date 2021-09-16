@@ -8,16 +8,66 @@
             Additionally the number of dimensions of a tensor can be
             increased or reduced.
         </p>
+        <p class="MarkdownMe">
+Because reshaping a tensor is a regular operation like any other
+one can use a `Function` to represent it.
+        </p>
     </div>
 </div>
-<div class="col-sm-12 col-md-12">
-                                               <pre><code class="hljs java">
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
 
-        Function f = Function.of("[2, 0, 1]:(I[0])")
+    def f = Function.of('[2, 0, 1]:(I[0])')
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    Function f = Function.of("[2, 0, 1]:(I[0])");
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+    val f : Function = Function.of("[2, 0, 1]:(I[0])")
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm 12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <p class="MarkdownMe">
+When passing a tensor to this `Function` it will
+return a new reshaped tensor <br>
+(with the same underlying data if possible).
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
 
         Tsr t = Tsr.of([3, 4, 2], 1..5)
 
-        //  t:>>
         //  (3x4x2):[
         //      1.0, 2.0,
         //      3.0, 4.0,
@@ -35,9 +85,8 @@
         //      3.0, 4.0
         //  ]
 
-        Tsr r = f.call(t)
+        Tsr r = f(t)
 
-        //  r:>>
         //  (2x3x4):[
         //      1.0, 3.0, 5.0, 2.0,
         //      4.0, 1.0, 3.0, 5.0,
@@ -48,6 +97,80 @@
         //      3.0, 5.0, 2.0, 4.0
         //  ]
 
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
 
-                                                </code></pre>
+        Tsr&#60;Double&#62; t = Tsr.of(Double.class).withShape(3, 4, 2).andFill(1, 2, 3, 4, 5);
+
+        //  (3x4x2):[
+        //      1.0, 2.0,
+        //      3.0, 4.0,
+        //      5.0, 1.0,
+        //      2.0, 3.0,
+        //
+        //      4.0, 5.0,
+        //      1.0, 2.0,
+        //      3.0, 4.0,
+        //      5.0, 1.0,
+        //
+        //      2.0, 3.0,
+        //      4.0, 5.0,
+        //      1.0, 2.0,
+        //      3.0, 4.0
+        //  ]
+
+        Tsr&#60;Double&#62; r = f.call(t);
+
+        //  (2x3x4):[
+        //      1.0, 3.0, 5.0, 2.0,
+        //      4.0, 1.0, 3.0, 5.0,
+        //      2.0, 4.0, 1.0, 3.0,
+        //
+        //      2.0, 4.0, 1.0, 3.0,
+        //      5.0, 2.0, 4.0, 1.0,
+        //      3.0, 5.0, 2.0, 4.0
+        //  ]
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+        val t = Tsr.of(Double::java.class).withShape(3, 4, 2).andFill(1, 2, 3, 4, 5)
+
+        //  (3x4x2):[
+        //      1.0, 2.0,
+        //      3.0, 4.0,
+        //      5.0, 1.0,
+        //      2.0, 3.0,
+        //
+        //      4.0, 5.0,
+        //      1.0, 2.0,
+        //      3.0, 4.0,
+        //      5.0, 1.0,
+        //
+        //      2.0, 3.0,
+        //      4.0, 5.0,
+        //      1.0, 2.0,
+        //      3.0, 4.0
+        //  ]
+
+        val r = f(t)
+
+        //  (2x3x4):[
+        //      1.0, 3.0, 5.0, 2.0,
+        //      4.0, 1.0, 3.0, 5.0,
+        //      2.0, 4.0, 1.0, 3.0,
+        //
+        //      2.0, 4.0, 1.0, 3.0,
+        //      5.0, 2.0, 4.0, 1.0,
+        //      3.0, 5.0, 2.0, 4.0
+        //  ]
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
 </div>
