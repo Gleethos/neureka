@@ -210,15 +210,17 @@
                                                 console.log('Executing format procedure...');
                                                 hljs.initHighlighting.called = false;
                                                 hljs.initHighlighting();
+                                                applyMarkdown(); // After loading we apply markdown
                                                 setTimeout(() => {
-                                                        applyMarkdown();
                                                         // For some weired reason the first time the dom does not find
                                                         // all the things we want to markdown...
+                                                        applyMarkdown();
+                                                        applyMarkdown();// Let' markdown again to make sure everything gets formatted
                                                         applyMarkdown();
                                                         // Now let's show the fully formatted ajax page:
                                                         $('#DynamicContent').show("fast");
                                                     },
-                                                    250
+                                                    200
                                                 );
                                             }
                                         );
@@ -252,11 +254,11 @@
                                     console.log($(src.target).html());
                                 }
                             </script>
-
-                            <div id="DynamicContent" class="row g-1">
-
+                            <!--------------------------------------------------------------------->
+                            <div id="DynamicContent" class="row g-2">
+                                <!---< This is where all the dynamically loaded content lives! >--->
                             </div>
-
+                            <!--------------------------------------------------------------------->
                         </div>
 
                     </div>
