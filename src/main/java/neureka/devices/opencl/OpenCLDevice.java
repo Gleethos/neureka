@@ -541,6 +541,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     public Device<Number> overwrite64( Tsr<Number> tensor, double[] value )
     {
+        if ( value.length == 0 ) return this;
         cl_tsr clt = tensor.get(cl_tsr.class);
         if ( clt.fp == 1 ) overwrite32( tensor, DataConverter.Utility.doubleToFloat( value ) );
         else {
@@ -563,7 +564,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
 
     @Override
-    public Device<Number> overwrite32( Tsr<Number> tensor, float[] value) {
+    public Device<Number> overwrite32( Tsr<Number> tensor, float[] value)
+    {
+        if ( value.length == 0 ) return this;
         cl_tsr clt = tensor.get( cl_tsr.class );
         if ( clt.fp == 1 ) {
             if ( clt.value.event != null ) clWaitForEvents( 1, new cl_event[]{ clt.value.event } );
