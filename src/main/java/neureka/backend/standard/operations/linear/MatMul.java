@@ -19,6 +19,7 @@ import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
+import neureka.ndim.config.types.simple.SimpleD2Configuration;
 
 public class MatMul extends AbstractOperation
 {
@@ -93,8 +94,12 @@ public class MatMul extends AbstractOperation
                 };
 
 
-        GenericAlgorithm simpleMatMulAlgorithm
-                                = new GenericAlgorithm("matmul")
+        GenericAlgorithm simpleMatMulAlgorithm = new GenericAlgorithm("simple_matmul")
+                .setIsSuitableFor(
+                        call -> call.validate()
+                                    .all( t -> t.getNDConf() instanceof SimpleD2Configuration )
+                                    .estimation()
+                )
                 .setCanPerformBackwardADFor( call -> true )
                 .setCanPerformForwardADFor(
                         call -> {
@@ -111,7 +116,6 @@ public class MatMul extends AbstractOperation
                 .setSupplyADAgentFor(
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
-                            //Tsr ctxDerivative = (Tsr) call.findAndGet(Argument.Derivative.class);
                             if ( forward ) throw new IllegalArgumentException("Matrix multiplication of does not support forward-AD!");
 
                             Function invX = new FunctionBuilder( Neureka.get().context() ).build( "I[ 0 ] @ I[ 1 ]", false );
@@ -142,20 +146,20 @@ public class MatMul extends AbstractOperation
                                 return tsrs[ 0 ];
                             } else {
                                 if (call.getDerivativeIndex() < 0) {
-                                    Tsr<?>[] tsrs = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
-                                    Tsr.makeFit(tsrs, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
-                                    for ( Tsr<?> t : tsrs ) t.setIsVirtual( false );
+                                    Tsr<?>[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
+                                    Tsr.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
+                                    for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
                                     CalcUtil.recursiveExecution(
-                                                        ExecutionCall.of(tsrs)
+                                                        ExecutionCall.of(tensors)
                                                                         .andArgs(Arg.DerivIdx.of(0))
                                                                         .running(call.getOperation())
                                                                         .on(call.getDevice()),
                                                         (executionCall, executor) -> null
                                                 );
                                     if ( call.getOperation() == Neureka.get().context().getOperation("x>>") )
-                                        return tsrs[ 2 ];
+                                        return tensors[ 2 ];
                                     else
-                                        return tsrs[ 0 ];
+                                        return tensors[ 0 ];
                                 }
                             }
                             return null;
@@ -183,7 +187,6 @@ public class MatMul extends AbstractOperation
                 .build();
 
         setAlgorithm(
-                GenericAlgorithm.class,
                 simpleMatMulAlgorithm
                         .setImplementationFor(
                                 HostCPU.class,
@@ -192,25 +195,7 @@ public class MatMul extends AbstractOperation
                                                 call.getDevice().getExecutor()
                                                         .threaded (
                                                                 call.getTsrOfType( Number.class, 0 ).size(),
-                                                                (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                                        ? ( start, end ) ->
-                                                                        Convolution.convolve (
-                                                                                call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                                call.getDerivativeIndex(), start, end,
-                                                                                matMulElementWiseLambdaSupplier.create(
-                                                                                        call.getTensors(),
-                                                                                        -1//call.getDerivativeIndex()
-                                                                                )
-                                                                        )
-                                                                        :  ( start, end ) ->
-                                                                        Convolution.convolve (
-                                                                                call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                                call.getDerivativeIndex(), start, end,
-                                                                                matMulIteratorBasedElementWiseLambdaSupplier.create(
-                                                                                        call.getTensors(),
-                                                                                        -1//call.getDerivativeIndex()
-                                                                                )
-                                                                        )
+                                                                ( start, end ) -> {} // TODO: Simple matmul without fancy indexing
                                                         ),
                                         3
                                 )
@@ -242,7 +227,7 @@ public class MatMul extends AbstractOperation
                                         .build()
                         )
         );
-
+        // TODO: Non-simple tensors:
         CLImplementation.fromSource()
                 .arity( 3 )
                 .kernelName( "fallBackMatMul" )
