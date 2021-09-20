@@ -27,7 +27,7 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
             if ( size != 1 || tsrs.length!=2 ) return 0f;
             return 1.0f;
         });
-        setInstantiateNewTensorsForExecutionIn(
+        setCallPreparation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();

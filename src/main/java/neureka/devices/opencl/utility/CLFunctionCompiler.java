@@ -79,7 +79,7 @@ public class CLFunctionCompiler {
                                         }
                                 )
                                 .setOrchestration( (caller, call) -> CalcUtil.executeFor(caller, call, (executionCall, executor) -> null ) )
-                                .setInstantiateNewTensorsForExecutionIn(
+                                .setCallPreparation(
                                         call -> {
                                             Tsr<?>[] args = call.getTensors();
                                             if ( args[0] == null ) // Creating a new tensor:

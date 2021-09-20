@@ -29,7 +29,7 @@ public class Activation extends AbstractFunctionalAlgorithm< Activation >
                                 .isValid()
                 );
         setOrchestration( CalcUtil::defaultRecursiveExecution);
-        setInstantiateNewTensorsForExecutionIn(
+        setCallPreparation(
                         call -> {
                             Tsr[] tsrs = call.getTensors();
                             Device device = call.getDevice();

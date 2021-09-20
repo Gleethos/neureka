@@ -161,7 +161,7 @@ public class MatMul extends AbstractOperation
                             return null;
                         }
                 )
-                .setInstantiateNewTensorsForExecutionIn(
+                .setCallPreparation(
                         call -> {
                             Tsr<?>[] tsrs = call.getTensors();
                             Device device = call.getDevice();

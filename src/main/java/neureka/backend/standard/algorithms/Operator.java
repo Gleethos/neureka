@@ -31,7 +31,7 @@ public class Operator extends AbstractFunctionalAlgorithm<Operator>
         setCanPerformBackwardADFor( call -> true );
         setCanPerformForwardADFor( call -> true );
         setOrchestration( (caller, call) -> CalcUtil.executeFor( caller, call, finalExecutor ) );
-        setInstantiateNewTensorsForExecutionIn(
+        setCallPreparation(
                 call -> {
                     Tsr<?>[] tsrs = call.getTensors();
                     Device<Double> device = (Device<Double>) call.getDevice();

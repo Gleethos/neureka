@@ -74,7 +74,7 @@ public class Randomization extends AbstractOperation
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
         )
         .setOrchestration( CalcUtil::defaultRecursiveExecution)
-        .setInstantiateNewTensorsForExecutionIn(
+        .setCallPreparation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;

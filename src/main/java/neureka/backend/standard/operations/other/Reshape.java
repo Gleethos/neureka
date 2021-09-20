@@ -63,7 +63,7 @@ public class Reshape extends AbstractOperation
                         return reshaped( t, newForm, true );
                     }
                 )
-                .setInstantiateNewTensorsForExecutionIn( call -> call)
+                .setCallPreparation( call -> call)
                 .build();
 
         setAlgorithm(

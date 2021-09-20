@@ -88,7 +88,7 @@ public class ConvUtil {
                             return CalcUtil.executeFor( caller, call, ( executionCall, executor ) -> null );
                         }
                 )
-                .setInstantiateNewTensorsForExecutionIn(
+                .setCallPreparation(
                         call -> {
                             Tsr<?>[] tsrs = call.getTensors();
                             Device device = call.getDevice();

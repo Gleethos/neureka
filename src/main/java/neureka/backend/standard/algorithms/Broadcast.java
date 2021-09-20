@@ -58,7 +58,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                     return CalcUtil.executeFor(caller, call, finalExecutor );
                 }
         );
-        setInstantiateNewTensorsForExecutionIn(
+        setCallPreparation(
                 call -> {
                     Tsr<?>[] tsrs = call.getTensors();
                     Device device = call.getDevice();

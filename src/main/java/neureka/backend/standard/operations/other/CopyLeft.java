@@ -46,7 +46,7 @@ public class CopyLeft extends AbstractOperation {
                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
                 .setOrchestration( CalcUtil::defaultRecursiveExecution)
-                .setInstantiateNewTensorsForExecutionIn(
+                .setCallPreparation(
                         call ->
                         {
                             Tsr[] tsrs = call.getTensors();
@@ -137,7 +137,7 @@ public class CopyLeft extends AbstractOperation {
                         getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
             .setOrchestration( CalcUtil::defaultRecursiveExecution)
-            .setInstantiateNewTensorsForExecutionIn(
+            .setCallPreparation(
                     call ->
                     {
                         Tsr[] tsrs = call.getTensors();

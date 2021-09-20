@@ -216,7 +216,7 @@ public final class Product extends AbstractOperation {
                     }
         )
         .setOrchestration( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forMultiplications ) )
-        .setInstantiateNewTensorsForExecutionIn(
+        .setCallPreparation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();
                     Device device = call.getDevice();

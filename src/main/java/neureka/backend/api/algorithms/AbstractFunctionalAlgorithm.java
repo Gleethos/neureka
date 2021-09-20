@@ -140,12 +140,12 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
         return this;
     }
 
-    public AbstractFunctionalAlgorithm<C> setOrchestration(ExecutionOrchestration handleInsteadOfDevice ) {
+    public AbstractFunctionalAlgorithm<C> setOrchestration( ExecutionOrchestration handleInsteadOfDevice ) {
         this._handleInsteadOfDevice = handleInsteadOfDevice;
         return this;
     }
 
-    public AbstractFunctionalAlgorithm<C> setInstantiateNewTensorsForExecutionIn( ExecutionPreparation instantiateNewTensorsForExecutionIn ) {
+    public AbstractFunctionalAlgorithm<C> setCallPreparation( ExecutionPreparation instantiateNewTensorsForExecutionIn ) {
         this._instantiateNewTensorsForExecutionIn = instantiateNewTensorsForExecutionIn;
         return this;
     }

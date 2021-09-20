@@ -68,7 +68,7 @@ public class DimTrim extends AbstractOperation
                             }
                         }
                 )
-                .setInstantiateNewTensorsForExecutionIn( call -> call )
+                .setCallPreparation( call -> call )
                 .build();
 
         setAlgorithm(

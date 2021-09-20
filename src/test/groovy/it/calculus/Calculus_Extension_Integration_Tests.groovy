@@ -79,7 +79,7 @@ class Calculus_Extension_Integration_Tests extends Specification
                                                         }
                                                 )
                                                 .setOrchestration((caller, call) -> CalcUtil.executeFor(caller,call,(executionCall, executor) -> null ) )
-                                                .setInstantiateNewTensorsForExecutionIn(
+                                                .setCallPreparation(
                                                         call -> {
                                                             Tsr<?>[] tsrs = call.getTensors();
                                                             Device<?> device = call.getDevice();
