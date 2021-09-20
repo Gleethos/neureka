@@ -58,6 +58,11 @@ public class HostCPU extends AbstractDevice<Number>
     }
 
     @Override
+    public Device<Number> write(Tsr<Number> tensor, Object value) {
+        return this;
+    }
+
+    @Override
     public Object valueFor( Tsr<Number> tensor ) {
         return tensor.getValue();
     }
@@ -93,16 +98,6 @@ public class HostCPU extends AbstractDevice<Number>
     @Override
     public Device free( Tsr tensor ) {
         _tensors.remove( tensor );
-        return this;
-    }
-
-    @Override
-    public Device overwrite64( Tsr tensor, double[] value ) {
-        return this;
-    }
-
-    @Override
-    public Device overwrite32( Tsr tensor, float[] value ) {
         return this;
     }
 

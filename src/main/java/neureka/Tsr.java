@@ -2315,7 +2315,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param value The primitive double array whose value ought to be used to populate this tensor.
      */
     private void _setValue64( double[] value ) {
-        if ( this.isOutsourced() ) this.get( Device.class ).overwrite64( this, value );
+        if ( this.isOutsourced() ) this.get( Device.class ).write( this, value );
         else if ( getData() == null ) {
             setDataType( DataType.of( F64.class ) );
             _setData( value );
@@ -2330,7 +2330,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param value The primitive float array whose value ought to be used to populate this tensor.
      */
     private void _setValue32( float[] value ) {
-        if ( this.isOutsourced() ) this.get( Device.class ).overwrite32( this, value );
+        if ( this.isOutsourced() ) this.get( Device.class ).write( this, value );
         else if ( getData() == null ) {
             setDataType( DataType.of( F32.class ) );
             _setData( value );

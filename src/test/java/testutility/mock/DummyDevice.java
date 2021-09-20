@@ -12,18 +12,19 @@ import java.util.Collection;
 public class DummyDevice extends AbstractBaseDevice<Object>
 {
     @Override
-    public void dispose() {
-
-    }
+    public void dispose() { }
 
     @Override
-    public Device<Object> restore(Tsr tensor) { return this; }
+    public Device<Object> write( Tsr<Object> tensor, Object value ) { return this; }
 
     @Override
-    public Device<Object> store(Tsr tensor) { return this; }
+    public Device<Object> restore( Tsr tensor ) { return this; }
 
     @Override
-    public Device<Object> store(Tsr tensor, Tsr parent) { return this; }
+    public Device<Object> store( Tsr tensor ) { return this; }
+
+    @Override
+    public Device<Object> store( Tsr tensor, Tsr parent ) { return this; }
 
     @Override
     public boolean has(Tsr tensor) {
@@ -35,12 +36,6 @@ public class DummyDevice extends AbstractBaseDevice<Object>
 
     @Override
     public Device<Object> cleaning(Tsr tensor, Runnable action) { return null; }
-
-    @Override
-    public Device<Object> overwrite64(Tsr tensor, double[] value) { return this; }
-
-    @Override
-    public Device<Object> overwrite32(Tsr<Object> tensor, float[] value) { return this; }
 
     @Override
     public Device<Object> swap(Tsr<Object> former, Tsr<Object> replacement) { return this; }

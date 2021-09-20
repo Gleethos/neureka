@@ -11,7 +11,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 
-internal class Kotlin_Compatibility_Unit_Testing {
+internal class
+Kotlin_Compatibility_Unit_Testing {
 
     @BeforeEach
     fun setupSpec()
@@ -77,8 +78,8 @@ internal class Kotlin_Compatibility_Unit_Testing {
         // Expect:
         assert(a.toString() == "(3x2):[0.0+0.0i, 0.0+1.0i, 1.0+0.0i, 1.0+1.0i, 2.0+0.0i, 2.0+1.0i]")
         assert(b.toString() == "(3x2):[0.0+0.0i, 1.0+0.0i, 0.0+1.0i, 1.0+1.0i, 0.0+2.0i, 1.0+2.0i]")
-        assert( !a.isVirtual() )
-        assert( !b.isVirtual() )
+        assert( !a.isVirtual )
+        assert( !b.isVirtual )
         assert((a+b).toString() == "(3x2):[0.0+0.0i, 1.0+1.0i, 1.0+1.0i, 2.0+2.0i, 2.0+2.0i, 3.0+3.0i]")
         assert((a-b).toString() == "(3x2):[0.0+0.0i, -1.0+1.0i, 1.0-1.0i, 0.0+0.0i, 2.0-2.0i, 1.0-1.0i]")
         assert((a*b).toString() == "(3x2):[0.0+0.0i, 0.0+1.0i, 0.0+1.0i, 0.0+2.0i, 0.0+4.0i, 0.0+5.0i]")
@@ -106,7 +107,7 @@ internal class Kotlin_Compatibility_Unit_Testing {
             w.set( Optimizer.ofGradient( { g -> exec(g) } ) ).backward()
 
             // Then :
-            assert(w.toString() == "(1):["+weightVal+"]:g:[1.0]")
+            assert(w.toString() == "(1):[$weightVal]:g:[1.0]")
 
             // When :
             w.applyGradient()

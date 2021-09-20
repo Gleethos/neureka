@@ -141,9 +141,7 @@ public interface Device<ValType> extends Component<Tsr<ValType>>, Storage<ValTyp
 
     Device<ValType> cleaning( Tsr<ValType> tensor, Runnable action );
 
-    Device<ValType> overwrite64( Tsr<ValType> tensor, double[] value );
-
-    Device<ValType> overwrite32( Tsr<ValType> tensor, float[] value );
+    Device<ValType> write( Tsr<ValType> tensor, Object value );
 
     Device<ValType> swap( Tsr<ValType> former, Tsr<ValType> replacement );
 

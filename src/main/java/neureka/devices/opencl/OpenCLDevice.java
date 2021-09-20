@@ -539,6 +539,13 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
 
     @Override
+    public Device<Number> write( Tsr<Number> tensor, Object value ) {
+        if ( value instanceof double[] ) return overwrite64( tensor, (double[]) value);
+        else if ( value instanceof float[] ) return overwrite32( tensor, (float[]) value);
+        return this;
+    }
+
+
     public Device<Number> overwrite64( Tsr<Number> tensor, double[] value )
     {
         if ( value.length == 0 ) return this;
@@ -563,7 +570,6 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
 
-    @Override
     public Device<Number> overwrite32( Tsr<Number> tensor, float[] value)
     {
         if ( value.length == 0 ) return this;

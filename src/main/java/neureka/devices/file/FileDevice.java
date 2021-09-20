@@ -212,13 +212,8 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public Device<Object> overwrite64( Tsr<Object> tensor, double[] value ) {
-        return null;
-    }
-
-    @Override
-    public Device<Object> overwrite32( Tsr<Object> tensor, float[] value ) {
-        return null;
+    public Device<Object> write( Tsr<Object> tensor, Object value ) {
+        throw new IllegalAccessError("FileDevice instances do not support writing yet.");
     }
 
     @Override
