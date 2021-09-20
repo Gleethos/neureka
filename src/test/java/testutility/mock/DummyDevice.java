@@ -41,7 +41,7 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     public Device<Object> swap(Tsr<Object> former, Tsr<Object> replacement) { return this; }
 
     @Override
-    public Device<Object> execute( ExecutionCall<? extends Device<?>> call ) { return this; }
+    public Device<Object> approve(ExecutionCall<? extends Device<?>> call ) { return this; }
 
     @Override
     public Object valueFor(Tsr<Object> tensor) { return null; }

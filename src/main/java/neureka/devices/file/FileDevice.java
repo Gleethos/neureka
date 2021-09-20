@@ -222,7 +222,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     @Override
-    public Device<Object> execute( ExecutionCall<? extends Device<?>> call ) {
+    public Device<Object> approve(ExecutionCall<? extends Device<?>> call ) {
         throw new IllegalAccessError("FileDevice instances do not support executions.");
     }
 

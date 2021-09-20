@@ -34,7 +34,13 @@ public abstract class AbstractBaseAlgorithm<FinalType extends Algorithm<FinalTyp
 
     @Override
     public <D extends Device<?>> ImplementationFor<D> getImplementationFor( Class<D> deviceClass ) {
-        return (ImplementationFor<D>) _implementations.get( deviceClass );
+        ImplementationFor<D> found = (ImplementationFor<D>) _implementations.get( deviceClass );
+        if ( found == null ) {
+            for ( Class<Device<?>> type : this._implementations.keySet() ) {
+                if ( type.isAssignableFrom(deviceClass) ) return (ImplementationFor<D>) _implementations.get(type);
+            }
+        }
+        return found;
     }
 
     /**

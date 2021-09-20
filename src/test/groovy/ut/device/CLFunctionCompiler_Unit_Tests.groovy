@@ -19,9 +19,9 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
         given : 'A mocked OpenCLDevice which allows us to test the compiler without OpenCL dependency.'
             def mockDevice = Mock(OpenCLDevice)
         and : 'Three simple scalar tensors (of doubles) which we will keep in RAM (not outsource to a device).'
-            Tsr<Number> t1 = Tsr.of(1)
-            Tsr<Number> t2 = Tsr.of(-2)
-            Tsr<Number> t3 = Tsr.of(5)
+            Tsr<Number> t1 = Tsr.of( 1 )
+            Tsr<Number> t2 = Tsr.of(-2 )
+            Tsr<Number> t3 = Tsr.of( 5 )
         and : 'A simple test function which will serve as the basis for the optimization.'
             def funToBeOptimized = Function.of("i2 - (i0 / i1)")
         and : 'Finally we instantiate the compiler which uses the mocked device and the test function for optimization.'
@@ -51,8 +51,21 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
             fun != null
         and : 'The function should look as follows when represented as a String:'
             fun.toString() == "test_fun(I[0], I[1], I[2])"
+        and : 'The context now stores the newly created operation.'
+            context.getOperation("test_fun") == resultOperation
+        when : 'Querying the new operation for an algorithm...'
+            def foundAlgorithm = resultOperation
+                                    .getAlgorithmFor(
+                                            ExecutionCall.of(t1, t2, t3)
+                                                            .running(resultOperation)
+                                                            .on(mockDevice)
+                                    )
+        then : 'We expect this algorithm to exist!'
+            foundAlgorithm != null
+        and : 'This algorithm is expected to host an implementation for our mocked device.'
+            foundAlgorithm.getImplementationFor(mockDevice.getClass()) != null
 
-        when : 'Calling this function using the previously created scalars...'
+        when: 'Calling this function using the previously created scalars...'
             fun( t1, t2, t3 )
 
         then : """
@@ -79,7 +92,7 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
             (0.._) * mockDevice.has(t1) >>> [false, true] // doesn't have it, then storing it, then has it!
             (0.._) * mockDevice.has(t2) >>> [false, true]
             (0.._) * mockDevice.has(t3) >>> [false, true]
-        and :
+        and : 'The update method is being called on the device because it becomes the component of 3 tensors!'
             (1.._) * mockDevice.update(_) >> true
 
         and : 'Finally the tensors are outsourced members of our mocked OpenCLDevice (Even though they are technically still in RAM).'
@@ -87,16 +100,17 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
             t2.isOutsourced()
             t3.isOutsourced()
 
-        when : 'We call the function again...'
+        when : 'We set a summy implementation so that the real implementation does not get called'
+            foundAlgorithm.setImplementationFor(mockDevice.getClass(), (call)->{})
+        and : 'We call the function again...'
             fun( t1, t2, t3 )
-
 
         then : """
                 We will register that the Operation created by the CLFunctionCompiler managed to 
                 integrate well with the Function backend (calculus package) and eventually
                 dispatch an execution call to our mocked OpenCLDevice.
         """
-            1 * mockDevice.execute({ ExecutionCall<OpenCLDevice> call ->
+            1 * mockDevice.approve({ ExecutionCall<OpenCLDevice> call ->
                 call.device == mockDevice &&
                 call.operation == resultOperation
             })

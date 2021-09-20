@@ -47,9 +47,9 @@ public class HostCPU extends AbstractDevice<Number>
     }
 
     @Override
-    protected void _execute( Tsr[] tensors, int d, Operation operation )
+    protected boolean _approveExecutionOf( Tsr[] tensors, int d, Operation operation )
     {
-
+        return true;
     }
 
     @Override

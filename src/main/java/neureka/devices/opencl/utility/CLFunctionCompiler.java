@@ -196,7 +196,7 @@ public class CLFunctionCompiler {
 
         _device.compileAdHocKernel( kernelSignature, kernelCode );
         KernelCaller caller = _device.getAdHocKernel( kernelSignature );
-        args.forEach( caller::pass);
+        args.forEach( caller::pass );
         caller.call( args.get(0).size() );
     }
 

@@ -84,8 +84,9 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
      * @param tensors An array of input tensors.
      * @param d The index of the input which ought to be derived.
      * @param type The type of operation.
+     * @return The truth value determining if the provided arguments can be executed.
      */
-    protected abstract void _execute( Tsr[] tensors, int d, Operation type );
+    protected abstract boolean _approveExecutionOf(Tsr[] tensors, int d, Operation type );
 
 
 
@@ -118,46 +119,19 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
     }
 
     /**
-     *  <b>This method plays an important role in connecting two main conceptional components of this library.</b>
-     *  It dispatches the execution call object to the backends of Neureka.
-     *  This is the single connection points where these two parts of the library come together.
+     *  <b>This method plays an important role in approving a provided {@link ExecutionCall}.</b>
+     *  When implementing custom operations or such for the backend of this library, then one may use
+     *  this in order to check if the provided call is suitable for this {@link Device}.
      *
-     * @param call The execution call object containing tensor arguments and settings for the device to execute on.
+     * @param call The execution call object containing tensor arguments and settings for the device to approve.
      * @return This very device instance in order to enable method chaining.
      */
     @Override
-    public Device<ValType> execute( ExecutionCall<? extends Device<?>> call )
+    public Device<ValType> approve( ExecutionCall<? extends Device<?>> call )
     {
-        for ( Tsr<?> t : call.getTensors() ) {
-            if ( t == null ) throw new IllegalArgumentException(
-                    "Device arguments may not be null!\n" +
-                    "One or more tensor arguments within the given ExecutionCall instance is null."
-            );
+        if ( !_approveExecutionOf( call.getTensors(), call.getDerivativeIndex(), call.getOperation() ) ) {
+            throw new IllegalArgumentException("Provided execution call has not been approved by this device.");
         }
-        call = (ExecutionCall<? extends Device<?>>) ExecutionCall.of(call.getTensors())
-                                                                .andArgs(Arg.DerivIdx.of(call.getDerivativeIndex()))
-                                                                .running(call.getOperation())
-                                                                .on(this)
-                                                                .forDeviceType(getClass());
-
-        _execute( call.getTensors(), call.getDerivativeIndex(), call.getOperation() );
-
-        Algorithm<?> algorithm = call.getAlgorithm();
-        if ( algorithm == null ) {
-            String message = Messages.Devices.couldNotFindSuitableAlgorithmFor( this.getClass() );
-            _LOG.error( message );
-            throw new IllegalStateException( message );
-        } else {
-            ImplementationFor implementation = algorithm.getImplementationFor( this.getClass() );
-            if ( implementation == null ) {
-                String message = Messages.Devices.couldNotFindSuitableImplementationFor( algorithm, this.getClass() );
-                _LOG.error( message );
-                throw new IllegalStateException( message );
-            } else {
-                implementation.run( call );
-            }
-        }
-
         return this;
     }
 

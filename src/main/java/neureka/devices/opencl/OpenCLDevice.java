@@ -701,9 +701,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected void _execute( Tsr[] tensors, int d, Operation type )
+    protected boolean _approveExecutionOf( Tsr[] tensors, int d, Operation type )
     {
-        tensors[ 0 ].setIsVirtual( false );
+        return true;
     }
 
     /*

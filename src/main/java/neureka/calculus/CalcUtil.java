@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.operations.JunctionUtil;
@@ -11,6 +12,7 @@ import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.implementations.FunctionConstant;
 import neureka.devices.Device;
+import neureka.utility.Messages;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -237,19 +239,50 @@ public class CalcUtil
     }
 
     public static void recursiveExecution(
-            ExecutionCall<? extends Device<?>> call,
+            ExecutionCall<? extends Device<?>> executionCall,
             RecursiveExecutor executor
     ) {
-        call = call.getAlgorithm().prepare( call );
-        for ( Tsr<?> t : call.getTensors() ) {
+        executionCall = executionCall.getAlgorithm().prepare( executionCall );
+        for ( Tsr<?> t : executionCall.getTensors() ) {
             if ( t == null ) throw new IllegalArgumentException(
                     "Device arguments may not be null!\n" +
                             "One or more tensor arguments within the given ExecutionCall instance is null."
             );
         }
         _recursiveReductionOf(
-                call,
-                c -> c.getDevice().execute( c ),
+                executionCall,
+                call -> {
+                    for ( Tsr<?> t : call.getTensors() ) {
+                        if ( t == null ) throw new IllegalArgumentException(
+                                "Device arguments may not be null!\n" +
+                                        "One or more tensor arguments within the given ExecutionCall instance is null."
+                        );
+                    }
+                    call = (ExecutionCall<? extends Device<?>>) ExecutionCall.of(call.getTensors())
+                                                                    .andArgs(Arg.DerivIdx.of(call.getDerivativeIndex()))
+                                                                    .running(call.getOperation())
+                                                                    .on(call.getDevice())
+                                                                    .forDeviceType(call.getDevice().getClass());
+                    Device<?> device = call.getDevice();
+                    device.approve( call );
+                    call.getTensors()[ 0 ].setIsVirtual( false );
+
+                    Algorithm<?> algorithm = call.getAlgorithm();
+                    if ( algorithm == null ) {
+                        String message = Messages.Devices.couldNotFindSuitableAlgorithmFor( device.getClass() );
+                        _LOG.error( message );
+                        throw new IllegalStateException( message );
+                    } else {
+                        ImplementationFor implementation = algorithm.getImplementationFor( device.getClass() );
+                        if ( implementation == null ) {
+                            String message = Messages.Devices.couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
+                            _LOG.error( message );
+                            throw new IllegalStateException( message );
+                        } else {
+                            implementation.run( call );
+                        }
+                    }
+                },
                 executor
         );
         return;
