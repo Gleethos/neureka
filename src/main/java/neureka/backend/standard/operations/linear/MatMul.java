@@ -123,12 +123,12 @@ public class MatMul extends AbstractOperation
                                             .setBackward( (node, error) -> invX.execute( error, deriv ) );
                             else
                                 return new DefaultADAgent( deriv )
-                                        .setBackward( (node, error) -> invX.execute( error, deriv ) );
+                                            .setBackward( (node, error) -> invX.execute( error, deriv ) );
                         }
                 )
                 .setOrchestration(
                         ( caller, call ) -> {
-                            if ( !caller.isFlat() ) return CalcUtil.executeFor(caller, call, (executionCall, executor) -> null );
+                            if ( !caller.isFlat() ) return CalcUtil.defaultRecursiveExecution( caller, call );
                             if ( call.getOperation().getOperator().equals("x") ) {
 
                                 Tsr<?>[] inputs = call.getTensors();

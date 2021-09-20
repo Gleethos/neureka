@@ -64,7 +64,7 @@ public class MultiplicationLeftConv extends AbstractOperation {
                             }
                         }
                 )
-                .setOrchestration( (caller, call) -> CalcUtil.executeFor( caller, call, (executionCall, executor) -> null ) )
+                .setOrchestration( CalcUtil::defaultRecursiveExecution)
                 .setInstantiateNewTensorsForExecutionIn(
                         call -> {
                             Tsr[] tsrs = call.getTensors();

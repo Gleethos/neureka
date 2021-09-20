@@ -55,7 +55,7 @@ public class ConvUtil {
                 )
                 .setOrchestration(
                         ( caller, call ) -> {
-                            if ( !caller.isFlat() ) return CalcUtil.executeFor( caller, call, (executionCall, executor) -> null );
+                            if ( !caller.isFlat() ) return CalcUtil.defaultRecursiveExecution( caller, call );
                             if ( call.getOperation().getOperator().equals("x") ) {
 
                                 Tsr<?>[] inputs = call.getTensors();

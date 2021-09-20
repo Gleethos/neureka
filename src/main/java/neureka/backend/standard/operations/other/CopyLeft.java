@@ -45,7 +45,7 @@ public class CopyLeft extends AbstractOperation {
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
-                .setOrchestration( (caller, call) -> CalcUtil.executeFor( caller, call, (executionCall, executor) -> null ) )
+                .setOrchestration( CalcUtil::defaultRecursiveExecution)
                 .setInstantiateNewTensorsForExecutionIn(
                         call ->
                         {
@@ -136,7 +136,7 @@ public class CopyLeft extends AbstractOperation {
                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
-            .setOrchestration( (caller, call) -> CalcUtil.executeFor( caller, call, (executionCall, executor) -> null ) )
+            .setOrchestration( CalcUtil::defaultRecursiveExecution)
             .setInstantiateNewTensorsForExecutionIn(
                     call ->
                     {

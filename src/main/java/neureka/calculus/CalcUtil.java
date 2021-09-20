@@ -34,6 +34,14 @@ public class CalcUtil
     private static final Logger _LOG = LoggerFactory.getLogger(CalcUtil.class);
 
     @Contract( pure = true )
+    public static Tsr<?> defaultRecursiveExecution(
+            final Function caller,
+            final ExecutionCall<? extends Device<?>> call
+    ) {
+        return executeFor( caller, call, (executionCall, executor) -> null );
+    }
+
+    @Contract( pure = true )
     public static Tsr<?> executeFor(
             final Function caller,
             final ExecutionCall<? extends Device<?>> call,
