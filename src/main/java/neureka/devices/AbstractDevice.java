@@ -38,12 +38,9 @@ import neureka.Component;
 import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
-import neureka.calculus.args.Arg;
 import neureka.framing.Relation;
 import neureka.utility.CustomCleaner;
-import neureka.utility.Messages;
 import neureka.utility.NeurekaCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,40 +57,34 @@ import org.slf4j.LoggerFactory;
  *
  *  - An implementation for the execution method which calls the underlying calculus backend.
  *
- * @param <ValType>
+ * @param <V>
  */
-public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType>
+public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 {
-    private static final NeurekaCleaner _CLEANER = new CustomCleaner();//Cleaner.create();
-    private static final Logger _LOG = LoggerFactory.getLogger( AbstractDevice.class );
+    private static final NeurekaCleaner _CLEANER = new CustomCleaner();
 
     protected Logger _log;
 
-    protected AbstractDevice() {
-        _log = LoggerFactory.getLogger( getClass() );
-    }
+    protected AbstractDevice() { _log = LoggerFactory.getLogger( getClass() ); }
 
     /**
-     *  This method is the internal execution routine called by it's public counterpart
+     *  This method is the internal approval routine called by it's public counterpart
      *  and implemented by classes extending this very abstract class.
-     *  It substitutes the implementation of this public "execute" method
-     *  in order to make any execution call on any device extending this class
-     *  checked before execution.
-     *  The checking occurs in the public "execute" method of this class.
+     *  It may or may not be called by an {@link Algorithm}
+     *  in order to allow a {@link Device} to checked if the provided arguments are suitable for execution.
      *
      * @param tensors An array of input tensors.
      * @param d The index of the input which ought to be derived.
      * @param type The type of operation.
      * @return The truth value determining if the provided arguments can be executed.
      */
-    protected abstract boolean _approveExecutionOf(Tsr[] tensors, int d, Operation type );
-
+    protected abstract boolean _approveExecutionOf( Tsr[] tensors, int d, Operation type );
 
 
     @Override
-    public boolean update( OwnerChangeRequest<Tsr<ValType>> changeRequest ) {
-        Tsr<ValType> oldOwner = changeRequest.getOldOwner();
-        Tsr<ValType> newOwner = changeRequest.getNewOwner();
+    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
+        Tsr<V> oldOwner = changeRequest.getOldOwner();
+        Tsr<V> newOwner = changeRequest.getNewOwner();
         if ( changeRequest.type() == IsBeing.REPLACED ) swap( oldOwner, newOwner );
         else if ( oldOwner == null && newOwner != null ) {
             if ( newOwner.has( Relation.class ) ) {
@@ -127,7 +118,7 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
      * @return This very device instance in order to enable method chaining.
      */
     @Override
-    public Device<ValType> approve( ExecutionCall<? extends Device<?>> call )
+    public Device<V> approve(ExecutionCall<? extends Device<?>> call )
     {
         if ( !_approveExecutionOf( call.getTensors(), call.getDerivativeIndex(), call.getOperation() ) ) {
             throw new IllegalArgumentException("Provided execution call has not been approved by this device.");
@@ -136,7 +127,7 @@ public abstract class AbstractDevice<ValType> extends AbstractBaseDevice<ValType
     }
 
     @Override
-    public <T extends ValType> Storage<ValType> store( Tsr<T> tensor ) {
+    public <T extends V> Storage<V> store(Tsr<T> tensor ) {
         tensor.set( (Component) this ); // This way we move the storing procedure to the update function!
         return this;
     }
