@@ -65,35 +65,6 @@ public class MatMul extends AbstractOperation
                 return alternative;
         };
 
-        DefaultOperatorCreator<TertiaryNDIConsumer> matMulIteratorBasedElementWiseLambdaSupplier =
-                ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].value64();
-                    double[] t2_val = inputs[ 2 ].value64();
-                    if ( d < 0 ) {
-                        return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
-                    } else {
-                        return ( t0Idx, t1Idx, t2Idx ) -> {
-                            if ( d == 0 ) return t2_val[t2Idx.i()];
-                            else return t1_val[ t1Idx.i() ];
-                        };
-                    }
-                };
-
-        DefaultOperatorCreator<TertiaryNDAConsumer> matMulElementWiseLambdaSupplier =
-                ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].value64();
-                    double[] t2_val = inputs[ 2 ].value64();
-                    if ( d < 0 ) {
-                        return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] * t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
-                    } else {
-                        return ( t0Idx, t1Idx, t2Idx ) -> {
-                            if ( d == 0 ) return t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
-                            else return t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
-                        };
-                    }
-                };
-
-
         GenericAlgorithm simpleMatMulAlgorithm = new GenericAlgorithm("simple_matmul")
                 .setIsSuitableFor(
                         call -> call.validate()
