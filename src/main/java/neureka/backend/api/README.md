@@ -111,19 +111,19 @@ that it fits the call best! <br>
 ```
 ---
 
-
-The following method ought to check if this
-implementation can perform forward mode AD on
-the given `ExecutionCall` instance.
+This method checks if forward mode auto differentiation
+can be performed for a given `ExecutionCall` passed to an `Algorithm`.
+The analyzer returns a boolean truth value.
 
 ```java
     boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call );
 ```
 ---
 
-The following method ought to check if this
-algorithm can perform backward mode AD on
-the given `ExecutionCall` instance.
+This method checks if backward mode auto differentiation
+(also known as back-propagation)
+can be performed for a given `ExecutionCall` passed to an `Algorithm`.
+The analyzer returns a boolean truth value.
 
 ```java
     boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call );
