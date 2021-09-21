@@ -18,7 +18,7 @@ to be called in some standardized way by the glue code. <br>
 <br>
 Therefore we need a pile of interfaces which allow
 for polymorphic implementations.
-That is exactly what an API is for! <br>
+**That is exactly what an API is for!** <br>
 
 The package you are currently looking at is the 
 definition for this standardized API.<br>
@@ -44,7 +44,7 @@ This package models this architecture by exposing 3 interfaces which govern thes
 and their relationship.
 The interfaces are the following :
 
-- `ImplementationFor<TargetDeice extends Device>`
+- `ImplementationFor<TargetDevice extends Device>`
 - `Algorithm<ConcreteType>`
 - `Operation`
 
@@ -59,15 +59,18 @@ which are themselves ultimately components of an `Operation` instance. <br>
 
 A key class within Neureka is the `ExecutionCall`. <br>
 Instances of the class contain important context information for a <br>
-given request for execution, just to name a view : <br>
-
-- `Device` : The targeted device for the execution.
-
-- `Operation` : The used operation type.
+given request for execution.
+This context information is composed of the following: <br>
 
 - `Tsr[]` : The tensor arguments for the operation.
 
-- ... 
+- `Operation` : The used operation for the execution.
+
+- `Device` : The targeted device for the execution.
+
+- `Args` : Operation specific meta arguments. 
+
+- `Algorithm` : A fitting algorithm specifically chosen for the above. 
 
 Instances of this class are being routed through this three tier <br>
 architecture for final execution on instances of the 
