@@ -131,10 +131,11 @@ the given `ExecutionCall` instance.
 ---
 
 This method ought to return a new instance
-if the `ADAgent` class. <br>
-This class contains field variables for 2 lambdas. <br>
-One for th forward mode procedure and one <br>
-for back-propagation... <br>
+if the `ADAgent` class responsible for performing automatic differentiation
+both for forward and backward mode differentiation. <br>
+Therefore an `ADAgent` exposes 2 different procedures. <br>
+One is the forward mode differentiation, and the other one <br>
+is the backward mode differentiation which is more commonly known as back-propagation... <br>
 Besides that it may also contain context information used <br>
 to perform said procedures.
 
@@ -147,12 +148,20 @@ to perform said procedures.
 ```
 ---
 
-The following method is the main method for orchestrating the execution of the
-provided `ExecutionCall` and `Function` instance.
-When implementing this method one can either use
-the component system of the `Algorithm` to select a `ImplementationFor` the ideal `Device`
-or simply bypass any `Device` specific implementations to perform 
-the operation in other ways.
+The `ExecutionDispatcher` lambda
+is the final execution procedure which is responsible for electing an `neureka.backend.api.ImplementationFor`
+the chosen `Device` in a given `ExecutionCall`.
+However, the  `ExecutionDispatcher` does not have to select a device specific implementation.
+It can also occupy the rest of the execution without any other steps being taken.
+For example, a `neureka.backend.api.ImplementationFor` or a `RecursiveExecutor`
+would not be used if not explicitly called.
+Bypassing other procedures is useful for full control and of course to implement unorthodox types of operations
+like the `neureka.backend.standard.operations.other.Reshape` operation
+which is very different from classical operations.
+Although the `ExecutionCall` passed to implementations of this will contain
+a fairly suitable `Device` assigned to a given `neureka.backend.api.Algorithm`,
+one can simply ignore it and find a custom one which fits the contents of the given
+`ExecutionCall` instance better.
 
 ```java
     Tsr<?> dispatch( Function caller, ExecutionCall<? extends Device<?>> call );

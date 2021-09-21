@@ -110,7 +110,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
     public boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call ) { return true; }
 
     @Override
-    public ADAgent supplyADAgentFor( Function f, ExecutionCall<? extends Device<?>> call, boolean forward)
+    public ADAgent supplyADAgentFor(Function function, ExecutionCall<? extends Device<?>> call, boolean forward)
     {
         Tsr<?> derivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
         Function mul = Neureka.get().context().getFunction().mul();
@@ -119,7 +119,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                     .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
         }
-        Tsr<?> localDerivative = f.executeDerive( call.getTensors(), call.getDerivativeIndex() );
+        Tsr<?> localDerivative = function.executeDerive( call.getTensors(), call.getDerivativeIndex() );
         return new DefaultADAgent( localDerivative )
                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, localDerivative ) )
                     .setBackward( (node, backwardError ) -> mul.execute( backwardError, localDerivative ) );

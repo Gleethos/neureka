@@ -67,8 +67,8 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     //---
 
     @Override
-    public ADAgent supplyADAgentFor( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) {
-        return _supplyADAgentFor.supplyADAgentFor( f, call, forward );
+    public ADAgent supplyADAgentFor(Function function, ExecutionCall<? extends Device<?>> call, boolean forward ) {
+        return _supplyADAgentFor.supplyADAgentFor(function, call, forward );
     }
 
     //---
