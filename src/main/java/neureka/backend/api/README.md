@@ -79,7 +79,7 @@ architecture for final execution on instances of the
 
 ---
 
-Every implementation has a name. <br>
+Every algorithm has a name. <br>
 This property is not always used, however when it comes to <br>
 for example native code or dynamic kernel compilation the name is <br>
 used to dynamically parse OpenCL code and identify it by said name. <br>
@@ -95,8 +95,8 @@ This is important for when using it for dynamic code compilation...*
 
 ---
 
-When an `ExecutionCall` instance has been formed then it will be routed by <br>
-the given `Operation` instance to their components, namely : <br>
+When an `ExecutionCall` instance has been formed then it will be routed by
+a given `Operation` instance to their components, namely : <br>
 `Algorithm` instances ! <br>
 
 The ability to decide which algorithm is suitable for a given `ExecutionCall` instance <br>
@@ -130,7 +130,7 @@ The analyzer returns a boolean truth value.
 ```
 ---
 
-This method ought to return a new instance
+The method below ought to return a new instance
 if the `ADAgent` class responsible for performing automatic differentiation
 both for forward and backward mode differentiation. <br>
 Therefore an `ADAgent` exposes 2 different procedures. <br>
