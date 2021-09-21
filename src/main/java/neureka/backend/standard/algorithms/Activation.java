@@ -11,7 +11,7 @@ import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
-public class Activation extends AbstractFunctionalAlgorithm< Activation >
+public class Activation extends AbstractFunctionalAlgorithm<Activation>
 {
 
     public Activation() {

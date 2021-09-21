@@ -41,10 +41,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     private ExecutionDispatcher _handleInsteadOfDevice;
     private ExecutionPreparation _instantiateNewTensorsForExecutionIn;
 
-    public AbstractFunctionalAlgorithm( String name ) {
-        super(name);
-    }
-
+    public AbstractFunctionalAlgorithm( String name ) { super(name); }
 
     //---
 
@@ -92,12 +89,12 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
      *  one can simply ignore it and find a custom one which fits the contents of the given
      *  {@link ExecutionCall} instance better.
      *
-     * @param caller
-     * @param call
-     * @return
+     * @param caller The {@link FunctionNode} from which this request for execution emerged.
+     * @param call The {@link ExecutionCall} whose contents ought to be executed.
+     * @return The result of the execution.
      */
     @Override
-    public Tsr<?> dispatch(FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
+    public Tsr<?> dispatch( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
         return _handleInsteadOfDevice.dispatch( caller, call );
     }
 
