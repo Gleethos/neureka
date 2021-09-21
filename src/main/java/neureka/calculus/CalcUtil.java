@@ -38,7 +38,7 @@ public class CalcUtil
             final Function caller,
             final ExecutionCall<? extends Device<?>> call
     ) {
-        return executeFor( caller, call, (executionCall, executor) -> null );
+        return executeFor( caller, call, null );
     }
 
     @Contract( pure = true )
@@ -220,7 +220,7 @@ public class CalcUtil
                                 .andArgs( Arg.DerivIdx.of( -1 ) )
                                 .running( Neureka.get().context().getOperation("*") )
                                 .on( device ),
-                        ( executionCall, exe ) -> null
+                        null
                 );
             } // done!
             return tensors[ 0 ];
@@ -239,7 +239,7 @@ public class CalcUtil
                                     .andArgs( Arg.DerivIdx.of( -1 ) )
                                     .running( Neureka.get().context().getOperation("+") )
                                     .on( device ),
-                            ( executionCall, exe ) -> null
+                            null
                     );
             }
         }
@@ -352,7 +352,10 @@ public class CalcUtil
             Below is the core lambda of recursive preprocessing
             which is defined for each Algorithm individually :
          */
-        Tsr<?> result = executor.execute( call, c -> _recursiveReductionOf( c, finalExecution, executor ) );
+        Tsr<?> result = null;
+        if ( executor != null )
+            result = executor.execute( call, c -> _recursiveReductionOf( c, finalExecution, executor ) );
+
         if ( result == null ) {
             finalExecution.accept(
                     ExecutionCall.of( call.getTensors() )

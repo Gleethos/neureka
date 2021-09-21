@@ -78,7 +78,7 @@ public class CLFunctionCompiler {
                                                     .setBackward((t, error) -> new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{error}, 0));
                                         }
                                 )
-                                .setOrchestration( (caller, call) -> CalcUtil.executeFor(caller, call, (executionCall, executor) -> null ) )
+                                .setOrchestration( CalcUtil::defaultRecursiveExecution )
                                 .setCallPreparation(
                                         call -> {
                                             Tsr<?>[] args = call.getTensors();
