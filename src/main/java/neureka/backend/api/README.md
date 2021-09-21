@@ -148,8 +148,8 @@ to perform said procedures.
 ```
 ---
 
-The `ExecutionDispatcher` lambda
-is the final execution procedure which is responsible for electing an `neureka.backend.api.ImplementationFor`
+This method is defined by the `ExecutionDispatcher` functional interface which
+is supposed to be the final execution procedure responsible for electing an `neureka.backend.api.ImplementationFor`
 the chosen `Device` in a given `ExecutionCall`.
 However, the  `ExecutionDispatcher` does not have to select a device specific implementation.
 It can also occupy the rest of the execution without any other steps being taken.
@@ -169,7 +169,7 @@ one can simply ignore it and find a custom one which fits the contents of the gi
 
 ---
 
-The execution call instance contains an array of arguments.<br>
+An `ExecutionCall` instance contains an array of arguments.<br>
 Some of these arguments (usually the leading one(s)) are null.
 This is because they serve as output locations for the result of a given `Algorithm`. <br>
 The instantiation of these output tensors should be left to the
@@ -221,10 +221,12 @@ The `implementationFor<Device>` interface exposes only the following method:
 
 **What is this interface supposed to represent?**
 
-Instances implementing the `ImplementationFor<TargetDevice extends Device>` interface <br>
-represent the interaction between a given `ExecutionCall` instance and the targeted device. <br>
-So the implementation describes this relationship by calling the device methods <br>
-for a specific device implementation.  <br>
+Instances implementing the `ImplementationFor<D extends Device>` interface <br>
+represent the concrete implementation of a given `Algorithm` to which they belong, tailored to 
+a specific `Device`.
+They receive an `ExecutionCall` instance to perform the actual execution
+requested by said call. This is also where the journey of an `ExecutionCall`
+ought to finally come to an end. <br>
 Here is a simplified example using opencl as backend : <br>
 
 ```java

@@ -1,10 +1,10 @@
 package ut.device
 
 import neureka.Neureka
-import neureka.Tsr;
-import neureka.devices.Device;
+import neureka.Tsr
+import neureka.devices.Device
 import neureka.devices.host.HostCPU
-import spock.lang.Specification;
+import spock.lang.Specification
 
 class HostCPU_Unit_Tests extends Specification
 {
@@ -28,32 +28,37 @@ class HostCPU_Unit_Tests extends Specification
     }
 
 
-    def 'thread pool executes given workload in parallel'()
+    def 'Thread pool executes given workload in parallel'()
     {
+        reportInfo """
+            Warning! This test is flaky simply because it relies on the behaviour of threads
+            which may or may not behave as expected. 
+        """
+
         given : 'Two 4 dimensional tensor instances.'
-            Tsr a = Tsr.of(new int[]{100, 60, 1, 2}, 4)
+            Tsr a = Tsr.of(new int[]{100, 60, 1, 2},  4)
             Tsr b = Tsr.of(new int[]{100, 1, 60, 2}, -2)
 
         and : 'The default device returned by the first tensor:'
             Device cpu = a.getDevice()
         expect : 'This device should not be null but be an instance of the CPU representative device type.'
-            cpu!=null
+            cpu != null
             cpu instanceof HostCPU
         when : 'Accessing the executor of the cpu device...'
-            HostCPU.NativeExecutor exec = ((HostCPU)cpu).getExecutor()
+            HostCPU.NativeExecutor exec = ( (HostCPU) cpu ).getExecutor()
         then : 'The executor is not null as well as its internal thread pool!'
-            exec!=null
+            exec != null
             exec.getPool() != null
 
         expect :
-            if(exec.getPool().getCorePoolSize()<=2) true
+            if ( exec.getPool().getCorePoolSize() <= 2 ) true
             else {
                 int[] min = new int[]{ exec.getPool().getCorePoolSize() }
-                assert min[0] == Runtime.getRuntime().availableProcessors();
+                assert min[0] == Runtime.getRuntime().availableProcessors()
                 Thread t = new Thread(() -> {
-                    while (min[0] > 0) {
-                        int current = exec.getPool().getCorePoolSize() - exec.getPool().getActiveCount();
-                        if (current < min[0]) min[0] = current;
+                    while ( min[0] > 0 ) {
+                        int current = exec.getPool().getCorePoolSize() - exec.getPool().getActiveCount()
+                        if ( current < min[0] ) min[0] = current
                     }
                 })
                 t.start()

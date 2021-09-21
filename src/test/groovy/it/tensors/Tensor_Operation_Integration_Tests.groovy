@@ -22,10 +22,14 @@ class Tensor_Operation_Integration_Tests extends Specification
     def 'Test "x-mul" operator produces expected results. (Not on device)'(
             String expected
     ) {
+        reportInfo """
+            The 'x' operator performs convolution on the provided operands.
+        """
+
         given: 'Gradient auto apply for tensors in ue is set to false.'
-            Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false);
+            Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
         and: 'Tensor legacy view is set to true.'
-            Neureka.get().settings().view().setIsUsingLegacyView(true);
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
         and: 'Two new 3D tensor instances with the shapes: [2x3x1] & [1x3x2].'
             //Same test again but this time with reversed indexing:
             def x = Tsr.of(
@@ -46,20 +50,20 @@ class Tensor_Operation_Integration_Tests extends Specification
                         4, -1,
                         3,  2,
                         3, -1
-                });
+                })
             /*
                 15, 2,
                 10, 2
             */
         when : 'The x-mul result is being instantiated by passing a simple equation to the tensor constructor.'
-            def z = Tsr.of("I0xi1", x, y);
+            def z = Tsr.of("I0xi1", x, y)
         then: 'The result contains the expected String.'
-            z.toString().contains(expected);
+            z.toString().contains(expected)
 
         when: 'The x-mul result is being instantiated by passing a object array containing equation parameters and syntax.'
-            z = Tsr.of(new Object[]{x, "x", y});
+            z = Tsr.of(new Object[]{x, "x", y})
         then: 'The result contains the expected String.'
-            z.toString().contains(expected);
+            z.toString().contains(expected)
 
         where :
             expected << ["[2x1x2]:(15.0, 2.0, 10.0, 2.0)"]
@@ -104,7 +108,7 @@ class Tensor_Operation_Integration_Tests extends Specification
             binding.setVariable('b', b)
 
         when : 'The groovy code is being evaluated.'
-            Tsr c = new GroovyShell(binding).evaluate((code))
+            Tsr c = new GroovyShell(binding).evaluate((code)) as Tsr
 
         then : 'The resulting tensor (toString) will contain the expected String.'
             c.toString().contains(expected)
@@ -129,7 +133,7 @@ class Tensor_Operation_Integration_Tests extends Specification
             binding.setVariable('b', b)
 
         when : '...calling methods on types like Double and Integer that receive Tsr instances...'
-            Tsr c = new GroovyShell(binding).evaluate((code))
+            Tsr c = new GroovyShell(binding).evaluate((code)) as Tsr
 
         then : 'The resulting tensor (toString) will contain the expected String.'
             c.toString().contains(expected)
@@ -160,14 +164,14 @@ class Tensor_Operation_Integration_Tests extends Specification
             Tsr c = Tsr.of(3).setRqsGradient(true)
 
         expect :
-            (a/a).toString().contains("[1]:(1.0)")
-            (c%a).toString().contains("[1]:(1.0)")
-            (((b/b)^c%a)*3).toString().contains("[1]:(3.0)")
-            (a *= b).toString().contains("(-8.0)")
-            (a += -c).toString().contains("(-11.0)")
-            (a -= c).toString().contains("(-14.0)")
-            (a /= Tsr.of(2)).toString().contains("(-7.0)")
-            (a %= c).toString().contains("(-1.0)")
+            ( a / a                     ).toString().contains("[1]:(1.0)")
+            ( c % a                     ).toString().contains("[1]:(1.0)")
+            ( ( ( b / b ) ^ c % a ) * 3 ).toString().contains("[1]:(3.0)")
+            ( a *= b                    ).toString().contains("(-8.0)")
+            ( a += -c                   ).toString().contains("(-11.0)")
+            ( a -= c                    ).toString().contains("(-14.0)")
+            ( a /= Tsr.of(2)      ).toString().contains("(-7.0)")
+            ( a %= c                    ).toString().contains("(-1.0)")
     }
 
     def 'Manual convolution produces expected result.'()
@@ -303,25 +307,25 @@ class Tensor_Operation_Integration_Tests extends Specification
             Device device
     ) {
         given :
-        Neureka.get().settings().view().setIsUsingLegacyView(false)
-        Tsr a = Tsr.of([11, 11], 3..19).to( device )
-        Tsr x = a[1..-2,0..-1]
-        Tsr y = a[0..-3,0..-1]
+            Neureka.get().settings().view().setIsUsingLegacyView(false)
+            Tsr a = Tsr.of([11, 11], 3..19).to( device )
+            Tsr x = a[1..-2,0..-1]
+            Tsr y = a[0..-3,0..-1]
 
         when :
-        Tsr rowconvol = x + y
-        String rcAsStr = rowconvol.toString()
+            Tsr rowconvol = x + y
+            String rcAsStr = rowconvol.toString()
 
         then :
-        assert rcAsStr.contains("(9x11):[17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, " +
-                "26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, " +
-                "26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0, ... + 49 more]")
+            assert rcAsStr.contains("(9x11):[17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, " +
+                    "26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, " +
+                    "26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0, ... + 49 more]")
 
         where : 'The following data is being used for tensor instantiation :'
-        device  << [
-                HostCPU.instance(),
-                Device.find("openCL")
-        ]
+            device  << [
+                    HostCPU.instance(),
+                    Device.find("openCL")
+            ]
     }
 
 
