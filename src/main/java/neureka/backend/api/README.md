@@ -155,7 +155,7 @@ or simply bypass any `Device` specific implementations to perform
 the operation in other ways.
 
 ```java
-    Tsr<?> execute( Function caller, ExecutionCall<? extends Device<?>> call );
+    Tsr<?> dispatch( Function caller, ExecutionCall<? extends Device<?>> call );
 ```
 
 ---
