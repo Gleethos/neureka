@@ -297,12 +297,15 @@ public class CalcUtil
     }
 
     /**
-     *  The following method is used together with the {@link Algorithm#execute} method.
-     *  There is already a useful implementation of this
-     *  method in the {@link neureka.backend.api.algorithms.AbstractBaseAlgorithm} class
-     *  which calls the {@link Algorithm#execute} method whose implementation
-     *  ought to either execute the given call which is passed to it or
-     *  continue to go deeper by calling the passed lambda... <br>
+     *  The following method can be used to split one big execution call into many
+     *  grouped execution calls which will be executed recursively.
+     *  This method receives a the call which ought to be broken down as well as two lambdas
+     *  which contain implementations to perform this task.
+     *  The first lambda, namely {@param finalExecution}, will be called at the end of the
+     *  recursion dive, whereas the second lambda {@param executor} will be called for
+     *  every recursive call in order to perform the grouping.
+     *  The {@param executor} will actually receive the recursive call as lambda, which
+     *  then may or may not be called by implementations of the lambda...
      *
      * @param call The {@link ExecutionCall} whose arguments ought to be executed in groups.
      * @param finalExecution The actual execution whose implementation is provided by the caller.
@@ -354,7 +357,11 @@ public class CalcUtil
          */
         Tsr<?> result = null;
         if ( executor != null )
-            result = executor.execute( call, c -> _recursiveReductionOf( c, finalExecution, executor ) );
+            result = executor.execute( // This is where the recursion occurs:
+                                call,
+                                innerCall -> // This lambda performs the cursive call, implementations decide if they want to dive deeper.
+                                        _recursiveReductionOf( innerCall, finalExecution, executor )
+                            );
 
         if ( result == null ) {
             finalExecution.accept(
