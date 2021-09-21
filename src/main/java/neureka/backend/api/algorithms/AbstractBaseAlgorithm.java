@@ -7,7 +7,14 @@ import neureka.devices.Device;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractBaseAlgorithm<FinalType extends Algorithm<FinalType>> implements Algorithm<FinalType>
+/**
+ *  This is a partial implementation of the {@link Algorithm} interface which implements
+ *  the component system for implementation instances of the {@link ImplementationFor} interface.
+ *  These components implement an algorithm for a specific {@link Algorithm}.
+ *
+ * @param <C> The type of the concrete extension of this class.
+ */
+public abstract class AbstractBaseAlgorithm<C extends Algorithm<C>> implements Algorithm<C>
 {
     /**
      *  This is the name of this {@link Algorithm}
@@ -17,19 +24,28 @@ public abstract class AbstractBaseAlgorithm<FinalType extends Algorithm<FinalTyp
      */
     private final String _name;
 
-    protected final Map< Class< Device<?> >, ImplementationFor< Device<?> >> _implementations = new HashMap<>();
+    protected final Map<Class<Device<?>>, ImplementationFor<Device<?>>> _implementations = new HashMap<>();
 
-    public AbstractBaseAlgorithm(String name) { _name = name; }
+    public AbstractBaseAlgorithm( String name ) { _name = name; }
 
-    //---
+
+    /**
+     *  This method returns the name of this {@link Algorithm}
+     *  which may be used as variable names in OpenCL kernels or other backends.
+     *  Therefore this name is expected to be void of any spaces
+     *  or non numeric and alphabetic characters.
+     *
+     * @return The name of this {@link Algorithm}.
+     */
+    public String getName() { return this._name; }
 
     @Override
-    public <D extends Device<?>, E extends ImplementationFor<D>> FinalType setImplementationFor( Class<D> deviceClass, E implementation ) {
+    public <D extends Device<?>, E extends ImplementationFor<D>> C setImplementationFor(Class<D> deviceClass, E implementation ) {
         _implementations.put(
                 (Class<Device<?>>) deviceClass,
                 (ImplementationFor<Device<?>>) implementation
         );
-        return (FinalType) this;
+        return (C) this;
     }
 
     @Override
@@ -43,13 +59,4 @@ public abstract class AbstractBaseAlgorithm<FinalType extends Algorithm<FinalTyp
         return found;
     }
 
-    /**
-     *  This method returns the name of this {@link Algorithm}
-     *  which may be used as variable names in OpenCL kernels or other backends.
-     *  Therefore this name is expected to be void of any spaces
-     *  or non numeric and alphabetic characters.
-     *
-     * @return The name of this {@link Algorithm}.
-     */
-    public String getName() { return this._name; }
 }
