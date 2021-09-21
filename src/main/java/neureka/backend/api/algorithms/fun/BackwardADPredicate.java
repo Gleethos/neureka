@@ -5,11 +5,11 @@ import neureka.backend.api.ExecutionCall;
 import neureka.devices.Device;
 
 /**
- *  A {@link BackwardADChecker} lambda checks if this
+ *  A {@link BackwardADPredicate} lambda checks if this
  *  {@link Algorithm} can perform backward AD for a given {@link ExecutionCall}.
  *  The analyzer returns a boolean truth value.
  */
-public interface BackwardADChecker {
+public interface BackwardADPredicate {
 
     boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call );
 

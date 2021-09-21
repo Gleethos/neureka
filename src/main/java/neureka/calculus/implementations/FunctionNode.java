@@ -128,7 +128,7 @@ public class FunctionNode implements Function
 
     private Tsr<?> _execute(ExecutionCall<? extends Device<?>> call )
     {
-        Tsr<?> alternative = call.getAlgorithm().execute( this, call );
+        Tsr<?> alternative = call.getAlgorithm().dispatch( this, call );
         if ( alternative != null ) return alternative;
         throw new IllegalStateException(
                 "Missing return value for initial call hook for operation '"+call.getOperation().getFunction()+"'"

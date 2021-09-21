@@ -6,12 +6,12 @@ import neureka.backend.api.Operation;
 import neureka.devices.Device;
 
 /**
- *  The {@link SuitabilityChecker} checks if a given instance of an {@link ExecutionCall} is
+ *  The {@link SuitabilityPredicate} checks if a given instance of an {@link ExecutionCall} is
  *  suitable to be executed in {@link neureka.backend.api.ImplementationFor}
  *  residing in this {@link Algorithm} as components.
  *  It can be implemented as s simple lambda.
  */
-public interface SuitabilityChecker {
+public interface SuitabilityPredicate {
 
     /**
      * When an {@link ExecutionCall} instance has been formed then it will be routed by <br>

@@ -8,6 +8,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.fun.*;
 import neureka.calculus.Function;
+import neureka.calculus.RecursiveExecutor;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
 
@@ -33,11 +34,11 @@ import neureka.devices.Device;
  */
 public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > extends AbstractBaseAlgorithm<C>
 {
-    private SuitabilityChecker _isSuitableFor;
-    private ForwardADChecker _canPerformForwardADFor;
-    private BackwardADChecker _canPerformBackwardADFor;
+    private SuitabilityPredicate _isSuitableFor;
+    private ForwardADPredicate _canPerformForwardADFor;
+    private BackwardADPredicate _canPerformBackwardADFor;
     private ADAgentSupplier _supplyADAgentFor;
-    private ExecutionOrchestration _handleInsteadOfDevice;
+    private ExecutionDispatcher _handleInsteadOfDevice;
     private ExecutionPreparation _instantiateNewTensorsForExecutionIn;
 
     public AbstractFunctionalAlgorithm( String name ) {
@@ -75,9 +76,29 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
 
     //---
 
+    /**
+     *  This method receives an {@link ExecutionDispatcher} lambda which
+     *  is the final execution procedure responsible for electing an {@link neureka.backend.api.ImplementationFor}
+     *  the chosen {@link Device} in a given {@link ExecutionCall}.
+     *  However the  {@link ExecutionDispatcher} does not have to select a device specific implementation.
+     *  It can also occupy the rest of the execution without any other steps being taken.
+     *  For example, a {@link neureka.backend.api.ImplementationFor} or a {@link RecursiveExecutor}
+     *  would not be used if not explicitly called.
+     *  Bypassing other procedures is useful for full control and of course to implement unorthodox types of operations
+     *  like the {@link neureka.backend.standard.operations.other.Reshape} operation
+     *  which is very different from classical operations.
+     *  Although the {@link ExecutionCall} passed to implementations of this will contain
+     *  a fairly suitable {@link Device} assigned to a given {@link neureka.backend.api.Algorithm},
+     *  one can simply ignore it and find a custom one which fits the contents of the given
+     *  {@link ExecutionCall} instance better.
+     *
+     * @param caller
+     * @param call
+     * @return
+     */
     @Override
-    public Tsr<?> execute(FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
-        return _handleInsteadOfDevice.execute( caller, call );
+    public Tsr<?> dispatch(FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
+        return _handleInsteadOfDevice.dispatch( caller, call );
     }
 
     //---
@@ -92,38 +113,38 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
     public C build() { return (C) this; }
 
     /**
-     *  The {@link SuitabilityChecker}
+     *  The {@link SuitabilityPredicate}
      *  checks if a given instance of an {@link ExecutionCall} is
      *  suitable to be executed in {@link neureka.backend.api.ImplementationFor} instances
      *  residing in this {@link Algorithm} as components.
      *
      * @return This very instance to enable method chaining.
      */
-    public AbstractFunctionalAlgorithm<C> setIsSuitableFor( SuitabilityChecker isSuitableFor ) {
+    public AbstractFunctionalAlgorithm<C> setIsSuitableFor( SuitabilityPredicate isSuitableFor ) {
         this._isSuitableFor = isSuitableFor;
         return this;
     }
 
     /**
-     *  A {@link ForwardADChecker} lambda checks if this
+     *  A {@link ForwardADPredicate} lambda checks if this
      *  {@link Algorithm} can perform forward AD for a given {@link ExecutionCall}.
      *
      * @param canPerformForwardADFor
      * @return This very instance to enable method chaining.
      */
-    public AbstractFunctionalAlgorithm<C> setCanPerformForwardADFor( ForwardADChecker canPerformForwardADFor ) {
+    public AbstractFunctionalAlgorithm<C> setCanPerformForwardADFor( ForwardADPredicate canPerformForwardADFor ) {
         this._canPerformForwardADFor = canPerformForwardADFor;
         return this;
     }
 
     /**
-     *  A {@link BackwardADChecker} lambda checks if this
+     *  A {@link BackwardADPredicate} lambda checks if this
      *  {@link Algorithm} can perform backward AD for a given {@link ExecutionCall}.
      *
      * @param canPerformBackwardADFor
      * @return This very instance to enable method chaining.
      */
-    public AbstractFunctionalAlgorithm<C> setCanPerformBackwardADFor( BackwardADChecker canPerformBackwardADFor ) {
+    public AbstractFunctionalAlgorithm<C> setCanPerformBackwardADFor( BackwardADPredicate canPerformBackwardADFor ) {
         this._canPerformBackwardADFor = canPerformBackwardADFor;
         return this;
     }
@@ -140,7 +161,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
         return this;
     }
 
-    public AbstractFunctionalAlgorithm<C> setOrchestration( ExecutionOrchestration handleInsteadOfDevice ) {
+    public AbstractFunctionalAlgorithm<C> setOrchestration( ExecutionDispatcher handleInsteadOfDevice ) {
         this._handleInsteadOfDevice = handleInsteadOfDevice;
         return this;
     }

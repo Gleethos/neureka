@@ -5,11 +5,11 @@ import neureka.backend.api.ExecutionCall;
 import neureka.devices.Device;
 
 /**
- *  A {@link ForwardADChecker} lambda checks if this
+ *  A {@link ForwardADPredicate} lambda checks if this
  *  {@link Algorithm} can perform forward AD for a given {@link ExecutionCall}.
  *  The analyser return a boolean truth value.
  */
-public interface ForwardADChecker {
+public interface ForwardADPredicate {
 
     boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call );
 

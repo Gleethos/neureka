@@ -126,7 +126,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
     }
 
     @Override
-    public Tsr<?> execute(FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
+    public Tsr<?> dispatch(FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
         return CalcUtil.defaultRecursiveExecution( caller, call );
     }
 

@@ -56,7 +56,7 @@ import neureka.devices.Device;
  *   algorithm might be called to perform the operation.
  */
 public interface Algorithm<C extends Algorithm<C>>
-extends SuitabilityChecker, ForwardADChecker, BackwardADChecker, ADAgentSupplier, ExecutionPreparation, ExecutionOrchestration
+extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSupplier, ExecutionPreparation, ExecutionDispatcher
 {
     String getName();
 
@@ -89,7 +89,7 @@ extends SuitabilityChecker, ForwardADChecker, BackwardADChecker, ADAgentSupplier
      * @param <D> The type parameter which has to be a class extending the Device interface.
      * @return The implementation for the passed device type class.
      */
-    <D extends Device<?>> ImplementationFor<D> getImplementationFor(Class<D> deviceClass );
+    <V, D extends Device<V>> ImplementationFor<D> getImplementationFor(Class<D> deviceClass );
 
 
 }
