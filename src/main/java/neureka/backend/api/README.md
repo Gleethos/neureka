@@ -90,8 +90,8 @@ used to dynamically parse OpenCL code and identify it by said name. <br>
 
 **Note:** *The name should adhere to snake- or camel-case
 as well as only contain letters, digits and underscores
-so that it can be used as variable or method identifier
-when using it for dynamic code compilation...*
+so that it can be used as variable or method identifier.
+This is important for when using it for dynamic code compilation...*
 
 ---
 
@@ -170,10 +170,10 @@ one can simply ignore it and find a custom one which fits the contents of the gi
 ---
 
 The execution call instance contains an array of arguments.<br>
-Some of these arguments (usually the leading one(s)) are null
-because they serve as output locations for the result of this `Algorithm`. <br>
+Some of these arguments (usually the leading one(s)) are null.
+This is because they serve as output locations for the result of a given `Algorithm`. <br>
 The instantiation of these output tensors should be left to the
-algorithm instance in most cases, this is because the given algorithm
+algorithm instance in most cases. The reason for this is because a given algorithm
 "knows best" what shape(s), size(s), data type(s)... these tensors ought to have.<br>
 <br>
 An example would be algorithms performing element-wise operations vs broadcasting. <br>
@@ -206,13 +206,13 @@ implementations...
     <D extends Device<?>> ImplementationFor<D> getImplementationFor( Class<D> deviceClass );
 ```
 
-## ImplementationFor<Device> ##
+## ImplementationFor&#60;Device&#62; ##
 
 This interface resides at the bottom most layer of
 the 3 tier architecture of the backend API.
 It is also the simplest of the three interfaces
 because the implementation details are at this
-point solely dependent on the device specific implementation. <br>
+point solely dependent on the device in use. <br>
 The `implementationFor<Device>` interface exposes only the following method:
 
 ```java
@@ -228,45 +228,35 @@ for a specific device implementation.  <br>
 Here is a simplified example using opencl as backend : <br>
 
 ```java
-// Custom executor for a given OperationTypeImplementation :
+// Custom executor for a given `ImplementationFor<OpencCLDevice>` :
 
-ImplementationFor<?> impl = 
-            new CLImplementation( // implements 'ImplementationFor<OpenCLDevice>'
-                (call) -> // A nested lambda containing the actual implementation...
-                {
-                   int gwz = call.getTsrOfType( Number.class, 0 ).size();
-                   call.getDevice().getKernel(call)
-                           .pass( call.getTsrOfType( Number.class, 0 ) )
-                           .pass( call.getTsrOfType( Number.class, 1 ) )
-                           .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                           .pass( call.getDerivativeIndex() ) 
-                           .call( gwz );
-               },
-               3, // Arity (for correctness)
-               someKernelSource, // kernelSource (maybe a file?)
-               // activaion : 
-               """
-                    output = 
-                       (
-                            (float) log(
-                                1 + pow(
-                                    (float) M_E,
-                                    (float) input
-                                )
-                            )
-                        );
-                """,
-                // derivative :
-                """
-                    output =
-                        1 /
-                            ( 1 + (float) pow(
-                                    (float) M_E,
-                                    (float) input
-                                )
-                            );
-                """,
-                someOperation // Operation interface instance...
-            );
+ImplementationFor<OpenCLDevice> impl = 
+                                    CLImplementation // implements 'ImplementationFor<OpenCLDevice>'
+                                    .compiler()  
+                                    .arity( 3 )
+                                    .kernelSource( sourceText ) // kernelSource (maybe a file?)
+                                    .activationSource( "output = input1 / input2;\n" )
+                                    .differentiationSource( // This performs division
+                                        "if (d==0) {\n" + // 'd' is the derivative index.
+                                        "    output = 1/input2;\n" +
+                                        "} else {\n" +
+                                        "    output = -input2 /(float)pow(input1, 2.0f);\n" +
+                                        "}"
+                                    )
+                                    .kernelPostfix( this.getFunction() )
+                                    .execution(
+                                        call -> {
+                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;
+                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();
+                                            call.getDevice().getKernel(call)
+                                            .passAllOf( call.getTsrOfType( Number.class, offset ) )
+                                            .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
+                                            .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
+                                            .pass( call.getTsrOfType( Number.class, 0 ).rank() )
+                                            .pass( call.getDerivativeIndex() )
+                                            .call( gwz );
+                                        }
+                                    )
+                                    .build();
 
 ```
