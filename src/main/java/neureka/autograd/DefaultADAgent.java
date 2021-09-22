@@ -57,12 +57,12 @@ public final class DefaultADAgent extends Args implements ADAgent {
      *  This lambda ought to perform the forward propagation
      *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
      */
-    private ADAction _forward;
+    private ADAction _forward = (node, forwardDerivative ) -> {throw new IllegalStateException("Forward AD not defined!");};
     /**
      *  This lambda ought to perform the backward propagation
      *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
      */
-    private ADAction _backward;
+    private ADAction _backward = (node, backwardError ) -> {throw new IllegalStateException("Backward AD not defined!");};
 
     /**
      * @param derivative The current derivative which will be stored with the name "derivative" in the agents context.

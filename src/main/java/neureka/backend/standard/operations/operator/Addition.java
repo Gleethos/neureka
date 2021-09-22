@@ -15,6 +15,7 @@ import neureka.backend.standard.operations.JunctionUtil;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
+import neureka.calculus.args.Args;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -73,8 +74,7 @@ public class Addition extends AbstractOperation {
                                                             {
                                                                 Tsr deriv = f.derive( inputs, d );
                                                                 return new DefaultADAgent( deriv )
-                                                                        .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
-                                                                        .setBackward( (node, backwardError ) -> mul.execute( backwardError, deriv ) );
+                                                                            .setBackward( (node, backwardError ) -> mul.execute( backwardError, deriv ) );
                                                             }
                                                         }
                                                     )
