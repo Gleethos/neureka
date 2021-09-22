@@ -101,7 +101,7 @@ public class MatMul extends AbstractOperation
                                             .setBackward( (node, error) -> invX.execute( error, deriv ) );
                         }
                 )
-                .setOrchestration(
+                .setExecutionDispatcher(
                         ( caller, call ) -> {
                             if ( !caller.isFlat() ) return CalcUtil.defaultRecursiveExecution( caller, call );
                             if ( call.getOperation().getOperator().equals("x") ) {

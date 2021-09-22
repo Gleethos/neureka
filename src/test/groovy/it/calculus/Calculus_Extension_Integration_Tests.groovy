@@ -78,7 +78,7 @@ class Calculus_Extension_Integration_Tests extends Specification
                                                                     .setBackward((t, error) -> new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{error}, 0));
                                                         }
                                                 )
-                                                .setOrchestration( CalcUtil::defaultRecursiveExecution )
+                                                .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
                                                 .setCallPreparation(
                                                         call -> {
                                                             Tsr<?>[] tsrs = call.getTensors();

@@ -319,7 +319,7 @@ public class Modulo extends AbstractOperation {
                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
-            .setOrchestration( CalcUtil::defaultRecursiveExecution)
+            .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
             .build();
 
         setAlgorithm(

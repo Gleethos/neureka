@@ -62,7 +62,7 @@ public class AdditionConv extends AbstractOperation {
                                     }
                                 }
                         )
-                        .setOrchestration( CalcUtil::defaultRecursiveExecution)
+                        .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
                         .setCallPreparation(
                                 call -> {
                                     Tsr[] tsrs = call.getTensors();

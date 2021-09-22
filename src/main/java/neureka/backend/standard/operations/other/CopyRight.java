@@ -44,7 +44,7 @@ public class CopyRight extends AbstractOperation {
             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
         )
-        .setOrchestration( CalcUtil::defaultRecursiveExecution)
+        .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
         .setCallPreparation(
                 call -> {
                     Tsr<?>[] tsrs = call.getTensors();

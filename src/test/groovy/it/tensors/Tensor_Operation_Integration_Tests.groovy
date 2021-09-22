@@ -339,7 +339,7 @@ class Tensor_Operation_Integration_Tests extends Specification
             Neureka.get().settings().view().setIsUsingLegacyView(true)
             Tsr a = Tsr.of([2,2], 1..5)
             Tsr b = Tsr.of([2,1], 3..4)
-            Tsr c = Tsr.of([2], 8..9).setRqsGradient(true)
+            Tsr c = Tsr.of([2],   8..9).setRqsGradient(true)
 
         when :
             Tsr t1 = (a+c)
@@ -348,7 +348,9 @@ class Tensor_Operation_Integration_Tests extends Specification
         then :
             assert t2.toString().contains("(4.0, 5.0, 7.0, 8.0)")
             assert t1.toString().contains("(9.0, 11.0, 11.0, 13.0)")
-            //t.backward(Tsr.of([2, 2], [5, -2, 7, 3])) // TODO!
+        //when :
+        //    t1.backward(Tsr.of([2, 2], [5, -2, 7, 3])) // TODO!
+        //then :
             assert c.toString().contains("")
             Neureka.get().settings().view().setIsUsingLegacyView(false)
             assert t1.toString().contains("):[9.0, 11.0, 11.0, 13.0]")

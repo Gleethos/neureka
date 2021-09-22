@@ -53,7 +53,7 @@ public class ConvUtil {
                                     .setBackward( (node, error) -> invX.execute( error, deriv, Tsr.of(node.getPayload().shape(), 0) ) ); // WARNING! This produced null pointer!
                         }
                 )
-                .setOrchestration(
+                .setExecutionDispatcher(
                         ( caller, call ) -> {
                             if ( !caller.isFlat() ) return CalcUtil.defaultRecursiveExecution( caller, call );
                             if ( call.getOperation().getOperator().equals("x") ) {

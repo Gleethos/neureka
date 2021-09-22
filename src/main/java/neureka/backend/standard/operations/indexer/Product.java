@@ -215,7 +215,7 @@ public final class Product extends AbstractOperation {
                         }
                     }
         )
-        .setOrchestration( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forMultiplications ) )
+        .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forMultiplications ) )
         .setCallPreparation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();

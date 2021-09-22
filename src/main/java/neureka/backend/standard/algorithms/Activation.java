@@ -28,7 +28,7 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
                                 .all( ( first, second ) -> first.shape().equals(second.shape()) )
                                 .isValid()
                 );
-        setOrchestration( CalcUtil::defaultRecursiveExecution);
+        setExecutionDispatcher( CalcUtil::defaultRecursiveExecution);
         setCallPreparation(
                         call -> {
                             Tsr[] tsrs = call.getTensors();

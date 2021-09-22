@@ -158,7 +158,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
         return this;
     }
 
-    public AbstractFunctionalAlgorithm<C> setOrchestration( ExecutionDispatcher handleInsteadOfDevice ) {
+    public AbstractFunctionalAlgorithm<C> setExecutionDispatcher(ExecutionDispatcher handleInsteadOfDevice ) {
         this._handleInsteadOfDevice = handleInsteadOfDevice;
         return this;
     }

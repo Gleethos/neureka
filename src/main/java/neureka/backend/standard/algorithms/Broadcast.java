@@ -6,6 +6,7 @@ import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.RecursiveExecutor;
+import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
@@ -42,7 +43,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                     return 1.0f;
                 }
         );
-        setOrchestration(
+        setExecutionDispatcher(
                 ( caller, call ) -> {
                     int offset = ( call.getTsrOfType( Number.class, 0 ) == null ) ? 1 : 0;
                     if (
@@ -231,7 +232,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
                 i++;
             }
         }
-        else//---//Note: src2 is now former drain!
+        else//---//Note: t2 is now former drain!
         {
             while ( i < end ) {//increment on drain accordingly:
                 int ri = 0;

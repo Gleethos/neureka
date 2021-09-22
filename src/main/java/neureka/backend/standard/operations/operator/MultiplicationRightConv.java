@@ -65,7 +65,7 @@ public class MultiplicationRightConv extends AbstractOperation {
                             }
                         }
                 )
-                .setOrchestration( CalcUtil::defaultRecursiveExecution)
+                .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
                 .setCallPreparation(
                         call -> {
                             Tsr[] tsrs = call.getTensors();

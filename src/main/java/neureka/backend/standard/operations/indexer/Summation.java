@@ -206,7 +206,7 @@ public final class Summation extends AbstractOperation
                 }
             }
         )
-        .setOrchestration( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
+        .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
         .setCallPreparation(
                 call -> {
                     Tsr[] tsrs = call.getTensors();

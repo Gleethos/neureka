@@ -308,7 +308,7 @@ public class Division extends AbstractOperation
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
-                .setOrchestration( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forDivisionsOrModuli ) )
+                .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forDivisionsOrModuli ) )
                 .build();
 
         setAlgorithm(

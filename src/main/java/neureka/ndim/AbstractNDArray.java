@@ -417,7 +417,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
         public static class Indexing
         {
             @Contract(pure = true)
-            public static void shpCheck( int[] newShp, Tsr t ) {
+            public static void shpCheck( int[] newShp, Tsr<?> t ) {
                 if ( NDConfiguration.Utility.szeOfShp(newShp) != t.size() ) {
                     throw new IllegalArgumentException(
                             "New shape does not match tensor size!" +
