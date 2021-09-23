@@ -4,6 +4,8 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.ImplementationFor;
+import neureka.backend.api.OperationContext;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
@@ -45,8 +47,24 @@ public class Addition extends AbstractOperation {
                 else return ( t0Idx, t1Idx, t2Idx ) -> 1.0;
             };
 
+    private static final DefaultOperatorCreator<TertiaryNDIConsumer> _simpleCreator =
+            ( inputs, d ) -> {
+                double[] t1_val = inputs[ 1 ].value64();
+                double[] t2_val = inputs[ 2 ].value64();
+                return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] + t2_val[t2Idx.i()];
+            };
 
-    private static final Broadcast _broadcast = new Broadcast((executionCall, executor) -> null)
+    private static final DefaultOperatorCreator<TertiaryNDAConsumer> _simpleCreatorX =
+            ( inputs, d ) -> {
+                double[] t1_val = inputs[ 1 ].value64();
+                double[] t2_val = inputs[ 2 ].value64();
+                NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
+                NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
+                return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.indexOfIndices( t1Idx )] + t2_val[ndc2.indexOfIndices(t2Idx)];
+            };
+
+
+    private final Broadcast _broadcast = new Broadcast((executionCall, executor) -> null)
                                                     .setCanPerformBackwardADFor( call -> true )
                                                     .setCanPerformForwardADFor( call -> {
                                                                 Tsr<?> last = null;
@@ -72,9 +90,28 @@ public class Addition extends AbstractOperation {
                                                             if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                                                             else
                                                             {
-                                                                Tsr deriv = f.derive( inputs, d );
+                                                                Tsr deriv = inputs[(d==0?1:0)];
+                                                                Tsr toBeDerived = inputs[d];
+                                                                Device<?> device = call.getDevice();
                                                                 return new DefaultADAgent( deriv )
-                                                                            .setBackward( (node, backwardError ) -> mul.execute( backwardError, deriv ) );
+                                                                            .setBackward(
+                                                                                    (node, backwardError ) -> {
+                                                                                        ExecutionCall backPropCall =
+                                                                                                        ExecutionCall.of(
+                                                                                                                Tsr.Create.newTsrLike(toBeDerived, 0).setIsVirtual(false),
+                                                                                                                Tsr.Create.newTsrLike(inputs[(d==0?1:0)], 0),
+                                                                                                                backwardError
+                                                                                                        )
+                                                                                                        .andArgs(Arg.DerivIdx.of(d))
+                                                                                                        .running(Neureka.get().context().getOperation("+"))
+                                                                                                        .on(device);
+
+                                                                                        this.getAlgorithm(Broadcast.class)
+                                                                                                .getImplementationFor(device.getClass())
+                                                                                                .run(backPropCall);
+                                                                                        return backPropCall.getTensors()[0];
+                                                                                    }
+                                                                            );
                                                             }
                                                         }
                                                     )
@@ -194,17 +231,17 @@ public class Addition extends AbstractOperation {
                                                 .threaded (
                                                         call.getTsrOfType( Number.class, 0 ).size(),
                                                         (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                               ? ( start, end ) ->
+                                                            ? ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
                                                                         call.getDerivativeIndex(), start, end,
-                                                                        _creatorX.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        _simpleCreatorX.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
-                                                : ( start, end ) ->
+                                                            : ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
                                                                         call.getDerivativeIndex(), start, end,
-                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        _simpleCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 ),
                                 3
@@ -317,8 +354,6 @@ public class Addition extends AbstractOperation {
                                 .build()
                 )
         );
-
-
     }
 
     @Contract(pure = true)

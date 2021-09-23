@@ -331,29 +331,51 @@ class Tensor_Operation_Integration_Tests extends Specification
 
 
 
-
-
-    def 'Auto reshape and broadcasting occurs.'()
+    def 'Auto broadcasting occurs and the result can be back propagated.'() // TODO: Cover other broadcasting operations!
     {
         given :
             Neureka.get().settings().view().setIsUsingLegacyView(true)
             Tsr a = Tsr.of([2,2], 1..5)
-            Tsr b = Tsr.of([2,1], 3..4)
+            Tsr c = Tsr.of([1,2], 8..9).setRqsGradient(true)
+
+        when :
+            Tsr t1 = ( a + c )
+
+        then :
+            t1.toString().contains("[2x2]:(9.0, 11.0, 11.0, 13.0)")
+            c.toString() == "[1x2]:(8.0, 9.0):g:(null)"
+        when :
+            t1.backward(Tsr.of([2, 2], [5, -2, 7, 3]))
+        then :
+            c.toString() == "[1x2]:(8.0, 9.0):g:(12.0, 1.0)"
+        when :
+            Neureka.get().settings().view().setIsUsingLegacyView(false)
+        then :
+            t1.toString() == "(2x2):[9.0, 11.0, 11.0, 13.0]"
+
+    }
+
+    def 'Auto reshape and broadcasting occurs and the result can be back propagated.'()
+    {
+        given :
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Tsr a = Tsr.of([2,2], 1..5)
             Tsr c = Tsr.of([2],   8..9).setRqsGradient(true)
 
         when :
             Tsr t1 = (a+c)
-            Tsr t2 = (a+b)
 
         then :
-            assert t2.toString().contains("(4.0, 5.0, 7.0, 8.0)")
-            assert t1.toString().contains("(9.0, 11.0, 11.0, 13.0)")
-        //when :
-        //    t1.backward(Tsr.of([2, 2], [5, -2, 7, 3])) // TODO!
-        //then :
-            assert c.toString().contains("")
+            t1.toString().contains("[2x2]:(9.0, 11.0, 11.0, 13.0)")
+            c.toString() == "[2]:(8.0, 9.0):g:(null)"
+        when :
+            t1.backward(Tsr.of([2, 2], [5, -2, 7, 3]))
+        then :
+            c.toString() == "[2]:(8.0, 9.0):g:(12.0, 1.0)"
+        when :
             Neureka.get().settings().view().setIsUsingLegacyView(false)
-            assert t1.toString().contains("):[9.0, 11.0, 11.0, 13.0]")
+        then :
+            t1.toString() == "(2x2):[9.0, 11.0, 11.0, 13.0]"
 
     }
 

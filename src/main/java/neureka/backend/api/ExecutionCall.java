@@ -255,7 +255,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
         private Builder(Tsr<?>[] tensors) { this.tensors = tensors; }
 
-        public ExecutionCall<D> on(D device) {
+        public <V, D extends Device<V>> ExecutionCall<D> on(D device) {
             return new ExecutionCall<>(
                                     device,
                                     operation,

@@ -1141,7 +1141,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     changeRequest.getNewOwner().shape().hashCode() != this.shape().hashCode() ||
                             Arrays.hashCode(changeRequest.getNewOwner().getNDConf().shape()) != Arrays.hashCode( getNDConf().shape() )
             ) {
-                throw new IllegalArgumentException("Trying to attach a tensor as gradient component to a tensor with different shape.");
+                throw new IllegalArgumentException(
+                        "Trying to attach a tensor as gradient component to a tensor with different shape."
+                );
             }
         }
         changeRequest.executeChange();
@@ -2736,7 +2738,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
         public static Tsr<?> newTsrLike( Tsr<?> template, double value ) {
             Tsr<Object> t = (Tsr<Object>) _newEmptyLike( template );
-            if ( template.getData() instanceof float[] ) t.setValue( (float) value );
+            if ( template.getData() instanceof float[] ) t.setValue( (float) value ); //TODO remove instanceof
             else t.setValue( value );
             try {
                 if ( template.isOutsourced() ) ( (Device<Object>) template.get( Device.class ) ).store( t );

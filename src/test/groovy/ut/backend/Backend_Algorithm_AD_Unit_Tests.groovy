@@ -196,12 +196,14 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
 
         when : 'The agent generator is called once more with the forward flag set to false...'
             agent = imp.supplyADAgentFor(
-                function,
-                call,
-                false
-            )
+                            function,
+                            call,
+                            false
+                        )
 
-        then : 'No exception is being thrown and the agent is configured to perform backward-AD.'
+        then :
+            (1.._) * call.getTensors() >> new Tsr[]{derivative, derivative}
+        and : 'No exception is being thrown and the agent is configured to perform backward-AD.'
             agent.hasForward()
             agent.derivative() == derivative
 

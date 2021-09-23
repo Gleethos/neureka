@@ -13,7 +13,7 @@ import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
-public class Broadcast extends AbstractFunctionalAlgorithm< Broadcast >
+public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
 {
 
     public Broadcast( RecursiveExecutor finalExecutor ) {
