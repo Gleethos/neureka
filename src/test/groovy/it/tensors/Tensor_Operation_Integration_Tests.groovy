@@ -9,6 +9,8 @@ import neureka.utility.SettingsLoader
 import spock.lang.Ignore
 import spock.lang.Specification
 
+import java.util.function.BiFunction
+
 class Tensor_Operation_Integration_Tests extends Specification
 {
 
@@ -329,55 +331,37 @@ class Tensor_Operation_Integration_Tests extends Specification
     }
 
 
-
-
-    def 'Auto broadcasting occurs and the result can be back propagated.'() // TODO: Cover other broadcasting operations!
-    {
+    def 'Auto reshaping and broadcasting works and the result can be back propagated.'(// TODO: Cover other broadcasting operations!
+            BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String expectedGradient
+    ) {
         given :
             Neureka.get().settings().view().setIsUsingLegacyView(true)
             Tsr a = Tsr.of([2,2], 1..5)
-            Tsr c = Tsr.of([1,2], 8..9).setRqsGradient(true)
+            Tsr b = Tsr.of(( testAutoReshaping ? [2] : [1, 2]), 8..9).setRqsGradient(true)
 
         when :
-            Tsr t1 = ( a + c )
+            Tsr t1 = operation.apply(a, b)
 
         then :
             t1.toString().contains("[2x2]:(9.0, 11.0, 11.0, 13.0)")
-            c.toString() == "[1x2]:(8.0, 9.0):g:(null)"
+            b.toString() == "["+( testAutoReshaping ? "2" : "1x2")+"]:(8.0, 9.0):g:(null)"
         when :
             t1.backward(Tsr.of([2, 2], [5, -2, 7, 3]))
         then :
-            c.toString() == "[1x2]:(8.0, 9.0):g:(12.0, 1.0)"
+            b.toString() == "["+( testAutoReshaping ? "2" : "1x2")+"]:(8.0, 9.0):g:("+expectedGradient+")"
         when :
             Neureka.get().settings().view().setIsUsingLegacyView(false)
         then :
             t1.toString() == "(2x2):[9.0, 11.0, 11.0, 13.0]"
 
+        where:
+            testAutoReshaping  | operation         || expectedGradient
+                 false         | { x, y -> x + y}  || "12.0, 1.0"
+                 true          | { x, y -> x + y}  || "12.0, 1.0"
+            //   false         | { x, y -> x - y } || "?"
+            //   true          | { x, y -> x - y } || "?"
     }
 
-    def 'Auto reshape and broadcasting occurs and the result can be back propagated.'()
-    {
-        given :
-            Neureka.get().settings().view().setIsUsingLegacyView(true)
-            Tsr a = Tsr.of([2,2], 1..5)
-            Tsr c = Tsr.of([2],   8..9).setRqsGradient(true)
-
-        when :
-            Tsr t1 = (a+c)
-
-        then :
-            t1.toString().contains("[2x2]:(9.0, 11.0, 11.0, 13.0)")
-            c.toString() == "[2]:(8.0, 9.0):g:(null)"
-        when :
-            t1.backward(Tsr.of([2, 2], [5, -2, 7, 3]))
-        then :
-            c.toString() == "[2]:(8.0, 9.0):g:(12.0, 1.0)"
-        when :
-            Neureka.get().settings().view().setIsUsingLegacyView(false)
-        then :
-            t1.toString() == "(2x2):[9.0, 11.0, 11.0, 13.0]"
-
-    }
 
     void 'A new transposed version of a given tensor will be returned by the "T()" method.'()
     {
@@ -392,6 +376,7 @@ class Tensor_Operation_Integration_Tests extends Specification
 
         then : t.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")
     }
+
 
     def 'Operators "+,*,**,^" produce expected results with gradients which can be accessed via a "Ig[0]" Function instance'()
     {
