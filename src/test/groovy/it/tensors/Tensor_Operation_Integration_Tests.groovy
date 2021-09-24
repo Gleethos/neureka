@@ -332,7 +332,7 @@ class Tensor_Operation_Integration_Tests extends Specification
 
 
     def 'Auto reshaping and broadcasting works and the result can be back propagated.'(// TODO: Cover other broadcasting operations!
-            BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String expectedGradient
+            BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String expectedResult, String expectedGradient
     ) {
         given :
             Neureka.get().settings().view().setIsUsingLegacyView(true)
@@ -343,7 +343,7 @@ class Tensor_Operation_Integration_Tests extends Specification
             Tsr t1 = operation.apply(a, b)
 
         then :
-            t1.toString().contains("[2x2]:(9.0, 11.0, 11.0, 13.0)")
+            t1.toString().contains("[2x2]:("+expectedResult+")")
             b.toString() == "["+( testAutoReshaping ? "2" : "1x2")+"]:(8.0, 9.0):g:(null)"
         when :
             t1.backward(Tsr.of([2, 2], [5, -2, 7, 3]))
@@ -352,14 +352,14 @@ class Tensor_Operation_Integration_Tests extends Specification
         when :
             Neureka.get().settings().view().setIsUsingLegacyView(false)
         then :
-            t1.toString() == "(2x2):[9.0, 11.0, 11.0, 13.0]"
+            t1.toString() == "(2x2):["+expectedResult+"]"
 
         where:
-            testAutoReshaping  | operation         || expectedGradient
-                 false         | { x, y -> x + y}  || "12.0, 1.0"
-                 true          | { x, y -> x + y}  || "12.0, 1.0"
-            //   false         | { x, y -> x - y } || "?"
-            //   true          | { x, y -> x - y } || "?"
+            testAutoReshaping  | operation         ||      expectedResult     | expectedGradient
+                 false         | { x, y -> x + y}  || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
+                 true          | { x, y -> x + y}  || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
+                 false         | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "12.0, 1.0"
+                 true          | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "12.0, 1.0"
     }
 
 

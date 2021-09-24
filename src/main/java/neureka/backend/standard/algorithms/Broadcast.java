@@ -43,6 +43,14 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                     return 1.0f;
                 }
         );
+        setCanPerformForwardADFor( call -> {
+            Tsr<?> last = null;
+            for ( Tsr<?> t : call.getTensors() ) {
+                if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                last = t;
+            }
+            return true;
+        });
         setExecutionDispatcher(
                 ( caller, call ) -> {
                     int offset = ( call.getTsrOfType( Number.class, 0 ) == null ) ? 1 : 0;

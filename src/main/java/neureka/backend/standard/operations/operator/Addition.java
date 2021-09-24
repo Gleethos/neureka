@@ -4,8 +4,6 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.ImplementationFor;
-import neureka.backend.api.OperationContext;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
@@ -17,7 +15,6 @@ import neureka.backend.standard.operations.JunctionUtil;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.args.Args;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -29,52 +26,27 @@ import java.util.stream.Collectors;
 
 public class Addition extends AbstractOperation {
 
-    private static final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
+    private static final DefaultOperatorCreator<TertiaryNDIConsumer> _broadcastCreator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 double[] t2_val = inputs[ 2 ].value64();
-                if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] + t2_val[t2Idx.i()];
-                else return ( t0Idx, t1Idx, t2Idx ) -> 1.0;
-            };
-
-    private static final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
-            ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].value64();
-                double[] t2_val = inputs[ 2 ].value64();
-                NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
-                NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-                if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.indexOfIndices( t1Idx )] + t2_val[ndc2.indexOfIndices(t2Idx)];
-                else return ( t0Idx, t1Idx, t2Idx ) -> 1.0;
-            };
-
-    private static final DefaultOperatorCreator<TertiaryNDIConsumer> _simpleCreator =
-            ( inputs, d ) -> {
-                double[] t1_val = inputs[ 1 ].value64();
-                double[] t2_val = inputs[ 2 ].value64();
+                // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
                 return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] + t2_val[t2Idx.i()];
             };
 
-    private static final DefaultOperatorCreator<TertiaryNDAConsumer> _simpleCreatorX =
+    private static final DefaultOperatorCreator<TertiaryNDAConsumer> _broadcastCreatorX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 double[] t2_val = inputs[ 2 ].value64();
                 NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                 NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
+                // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
                 return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.indexOfIndices( t1Idx )] + t2_val[ndc2.indexOfIndices(t2Idx)];
             };
 
 
     private final Broadcast _broadcast = new Broadcast((executionCall, executor) -> null)
                                                     .setCanPerformBackwardADFor( call -> true )
-                                                    .setCanPerformForwardADFor( call -> {
-                                                                Tsr<?> last = null;
-                                                                for ( Tsr<?> t : call.getTensors() ) {
-                                                                    if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                                                                    last = t;
-                                                                }
-                                                                return true;
-                                                            }
-                                                    )
                                                     .setSupplyADAgentFor(
                                                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                                         {
@@ -235,13 +207,13 @@ public class Addition extends AbstractOperation {
                                                                 Broadcast.broadcast (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
                                                                         call.getDerivativeIndex(), start, end,
-                                                                        _simpleCreatorX.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        _broadcastCreatorX.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                             : ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
                                                                         call.getDerivativeIndex(), start, end,
-                                                                        _simpleCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        _broadcastCreator.create(call.getTensors(), call.getDerivativeIndex())
                                                                 )
                                                 ),
                                 3

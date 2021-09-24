@@ -33,10 +33,12 @@ public class Subtraction extends AbstractOperation
                 if ( d < 0 ) {
                     return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] - t2_val[t2Idx.i()];
                 } else {
-                    return ( t0Idx, t1Idx, t2Idx ) -> {
-                        if (d == 0) return 1;
-                        else return -1;
-                    };
+                    // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
+                    return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] + t2_val[t2Idx.i()];
+                    //return ( t0Idx, t1Idx, t2Idx ) -> {
+                    //    if (d == 0) return 1;
+                    //    else return -1;
+                    //};
                 }
             };
 
@@ -49,10 +51,12 @@ public class Subtraction extends AbstractOperation
                 if ( d < 0 ) {
                     return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.indexOfIndices( t1Idx )] - t2_val[ndc2.indexOfIndices(t2Idx)];
                 } else {
-                    return ( t0Idx, t1Idx, t2Idx ) -> {
-                        if (d == 0) return 1;
-                        else return -1;
-                    };
+                    // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
+                    return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.indexOfIndices( t1Idx )] + t2_val[ndc2.indexOfIndices(t2Idx)];
+                    //return ( t0Idx, t1Idx, t2Idx ) -> {
+                    //    if (d == 0) return 1;
+                    //    else return -1;
+                    //};
                 }
             };
 
@@ -129,7 +133,8 @@ public class Subtraction extends AbstractOperation
                                                 ),
                                 3
                         )
-                ).setImplementationFor(
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
                                 .arity( 3 )
@@ -216,7 +221,8 @@ public class Subtraction extends AbstractOperation
                                 },
                                 3
                         )
-                ).setImplementationFor(
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
                                 .arity( 3 )
@@ -252,7 +258,6 @@ public class Subtraction extends AbstractOperation
 
         Broadcast broadcast = new Broadcast(JunctionUtil::forSubtractions)
                 .setCanPerformBackwardADFor( call -> true )
-                .setCanPerformForwardADFor( call -> true )
                 .setSupplyADAgentFor(
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
@@ -268,10 +273,28 @@ public class Subtraction extends AbstractOperation
                             if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                             else
                             {
-                                Tsr deriv = f.derive( inputs, d );
+                                Tsr deriv = inputs[(d==0?1:0)];
+                                Tsr toBeDerived = inputs[d];
+                                Device<?> device = call.getDevice();
                                 return new DefaultADAgent( deriv )
-                                        .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
-                                        .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
+                                        .setBackward(
+                                                (node, backwardError ) -> {
+                                                    ExecutionCall backPropCall =
+                                                            ExecutionCall.of(
+                                                                            Tsr.Create.newTsrLike(toBeDerived, 0).setIsVirtual(false),
+                                                                            Tsr.Create.newTsrLike(inputs[(d==0?1:0)], 0),
+                                                                            backwardError
+                                                                    )
+                                                                    .andArgs(Arg.DerivIdx.of(d))
+                                                                    .running(Neureka.get().context().getOperation("-"))
+                                                                    .on(device);
+
+                                                    this.getAlgorithm(Broadcast.class)
+                                                            .getImplementationFor(device.getClass())
+                                                            .run(backPropCall);
+                                                    return backPropCall.getTensors()[0];
+                                                }
+                                        );
                             }
                         }
                 )
@@ -303,7 +326,8 @@ public class Subtraction extends AbstractOperation
                                                     ),
                                     3
                             )
-                    ).setImplementationFor(
+                    )
+                    .setImplementationFor(
                             OpenCLDevice.class,
                             CLImplementation.compiler()
                                 .arity( 3 )
