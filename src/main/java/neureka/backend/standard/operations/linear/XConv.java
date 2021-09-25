@@ -8,6 +8,7 @@ import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.operations.ConvUtil;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 
@@ -70,19 +71,19 @@ public class XConv extends AbstractOperation
                                                                 ? ( start, end ) ->
                                                                         Convolution.convolve (
                                                                                 call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                                call.getDerivativeIndex(), start, end,
+                                                                                call.getValOf( Arg.DerivIdx.class ), start, end,
                                                                                 convolutionCreator.create(
                                                                                         call.getTensors(),
-                                                                                        -1//call.getDerivativeIndex()
+                                                                                        -1//call.getValOf( Arg.DerivIdx.class )
                                                                                 )
                                                                         )
                                                                 :  ( start, end ) ->
                                                                         Convolution.convolve (
                                                                                 call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                                call.getDerivativeIndex(), start, end,
+                                                                                call.getValOf( Arg.DerivIdx.class ), start, end,
                                                                                 convolutionNDICreator.create(
                                                                                         call.getTensors(),
-                                                                                        -1//call.getDerivativeIndex()
+                                                                                        -1//call.getValOf( Arg.DerivIdx.class )
                                                                                 )
                                                                         )
                                                         ),
@@ -106,7 +107,7 @@ public class XConv extends AbstractOperation
                                                         .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
                                                         .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
                                                         .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                        .pass( call.getDerivativeIndex() ) //call.getDerivativeIndex()
+                                                        .pass( call.getValOf( Arg.DerivIdx.class ) ) //call.getValOf( Arg.DerivIdx.class )
                                                         .call( gwz );
                                             }
                                     )

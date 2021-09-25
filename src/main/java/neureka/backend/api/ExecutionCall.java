@@ -118,7 +118,7 @@ public class ExecutionCall<D extends Device<?>> implements ImplementationCall<D>
     public String toString() {
         return "ExecutionCall(" +
                     "device=" + this._device + ", " +
-                    "derivativeIndex=" + this.getDerivativeIndex() + ", " +
+                    "derivativeIndex=" + this.getValOf( Arg.DerivIdx.class ) + ", " +
                     "operation=" + this._operation + ", " +
                     "tensors=" + java.util.Arrays.deepToString(this._tensors) + ", " +
                     "j=" + this.getJ() + ", " +
@@ -129,10 +129,6 @@ public class ExecutionCall<D extends Device<?>> implements ImplementationCall<D>
 
     @Override
     public D getDevice() { return this._device; }
-
-    public int getDerivativeIndex() {
-        return this.getValOf( Arg.DerivIdx.class );
-    }
 
     public Operation getOperation() { return this._operation; }
 
@@ -180,7 +176,7 @@ public class ExecutionCall<D extends Device<?>> implements ImplementationCall<D>
      */
     public ExecutionCall<? extends Device<?>> withDevice( Device<?> newDevice ) {
         return ExecutionCall.of( _tensors )
-                                .andArgs( Arg.DerivIdx.of( getDerivativeIndex() ) )
+                                .andArgs( Arg.DerivIdx.of( getValOf( Arg.DerivIdx.class ) ) )
                                 .andArgs( _arguments.getAll(Arg.class) )
                                 .running( _operation )
                                 .algorithm( _algorithm )

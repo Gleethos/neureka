@@ -134,7 +134,7 @@ public class Power extends AbstractOperation
         {
             Tsr[] tsrs = call.getTensors();
             Device device = call.getDevice();
-            int d = call.getDerivativeIndex();
+            int d = call.getValOf( Arg.DerivIdx.class );
             Operation type = call.getOperation();
 
             Tsr alternative = null;
@@ -236,18 +236,18 @@ public class Power extends AbstractOperation
                                                                         call.getTsrOfType( Number.class, 0 ),
                                                                         call.getTsrOfType( Number.class, 1 ),
                                                                         call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getDerivativeIndex(),
+                                                                        call.getValOf( Arg.DerivIdx.class ),
                                                                         start, end,
-                                                                        operationXCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        operationXCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
                                                         : ( start, end ) ->
                                                                 Operator.operate (
                                                                         call.getTsrOfType( Number.class, 0 ),
                                                                         call.getTsrOfType( Number.class, 1 ),
                                                                         call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getDerivativeIndex(),
+                                                                        call.getValOf( Arg.DerivIdx.class ),
                                                                         start, end,
-                                                                        operationCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        operationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
                                                 ),
                                 3
@@ -329,14 +329,14 @@ public class Power extends AbstractOperation
                                                ? ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getDerivativeIndex(), start, end,
-                                                                        _creatorX.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
+                                                                        _creatorX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
                                                 : ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getDerivativeIndex(), start, end,
-                                                                        _creator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
+                                                                        _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
                                                 ),
                                 3
@@ -365,7 +365,7 @@ public class Power extends AbstractOperation
                                                     .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
                                                     .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
                                                     .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getDerivativeIndex() )
+                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
                                                     .call( gwz );
                                         }
                                 )
@@ -458,7 +458,7 @@ public class Power extends AbstractOperation
                                                     .passAllOf(call.getTsrOfType( Number.class, 0 ))
                                                     .pass((float)call.getTsrOfType( Number.class, 1+offset).value64( 0 ))
                                                     .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getDerivativeIndex() )
+                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
                                                     .call( gwz );
                                         }
                                 )

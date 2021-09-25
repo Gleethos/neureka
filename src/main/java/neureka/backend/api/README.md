@@ -258,7 +258,7 @@ ImplementationFor<OpenCLDevice> impl =
                                             .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
                                             .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
                                             .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                            .pass( call.getDerivativeIndex() )
+                                            .pass( call.getValOf( Arg.DerivIdx.class ) )
                                             .call( gwz );
                                         }
                                     )

@@ -9,6 +9,7 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.implementations.FunctionInput;
 import neureka.calculus.implementations.FunctionVariable;
@@ -113,7 +114,7 @@ public class CLFunctionCompiler {
                                     .collect(Collectors.toList());
 
         String kernelSignature =
-                                _functionName + ( call.getDerivativeIndex() >= 0 ? "_derivative" : "" ) +
+                                _functionName + ( call.getValOf( Arg.DerivIdx.class ) >= 0 ? "_derivative" : "" ) +
                                 "_" +
                                         args.stream()
                                                 .map( arg ->
@@ -154,9 +155,9 @@ public class CLFunctionCompiler {
                                     .mapToObj( i -> "__global "+types.get(i)+"* arg" + i )
                                     .collect(Collectors.joining(", "));
 
-        Function toBeCompiled = call.getDerivativeIndex() < 0
+        Function toBeCompiled = call.getValOf( Arg.DerivIdx.class ) < 0
                                     ? _functionToBeOptimized
-                                    : _functionToBeOptimized.getDerivative( call.getDerivativeIndex() );
+                                    : _functionToBeOptimized.getDerivative( call.getValOf( Arg.DerivIdx.class ) );
 
         String compilableFun = IntStream.range( 0, _argPointer.length )
                                         .mapToObj( String::valueOf )

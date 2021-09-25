@@ -18,7 +18,7 @@ public class JunctionUtil
     ) {
         Tsr<?>[] tensors = call.getTensors();
         Device<?> device = call.getDevice();
-        int d = call.getDerivativeIndex();
+        int d = call.getValOf( Arg.DerivIdx.class );
         Operation operation = call.getOperation();
 
         Tsr<?> alternative = null;
@@ -65,7 +65,7 @@ public class JunctionUtil
     ) {
         Tsr<?>[] tsrs = call.getTensors();
         Device<?> device = call.getDevice();
-        int d = call.getDerivativeIndex();
+        int d = call.getValOf( Arg.DerivIdx.class );
         Operation type = call.getOperation();
 
         Tsr<?> alternative = null;
@@ -108,7 +108,7 @@ public class JunctionUtil
     ) {
         Tsr<?>[] tsrs = call.getTensors();
         Device<?> device = call.getDevice();
-        int d = call.getDerivativeIndex();
+        int d = call.getValOf( Arg.DerivIdx.class );
         Operation type = call.getOperation();
 
         Tsr<?> alternative = null;
@@ -199,7 +199,7 @@ public class JunctionUtil
     ) {
         Tsr<?>[] tsrs = call.getTensors();
         Device<?> device = call.getDevice();
-        int d = call.getDerivativeIndex();
+        int d = call.getValOf( Arg.DerivIdx.class );
         Operation operation = call.getOperation();
 
         Tsr<?> alternative = null;

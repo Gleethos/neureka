@@ -89,13 +89,13 @@ public final class Identity extends AbstractOperation
                                                                 Activation.activate (
                                                                         call.getTsrOfType( Number.class, 0 ),
                                                                         start, end,
-                                                                        activationXCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        activationXCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
                                                         : ( start, end ) ->
                                                                 Activation.activate (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
                                                                         start, end,
-                                                                        activationCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        activationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
                                                 ),
                                 2
@@ -119,7 +119,7 @@ public final class Identity extends AbstractOperation
                                                     .passAllOf( call.getTsrOfType( Number.class, offset ) )
                                                     .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
                                                     .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getDerivativeIndex() )
+                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
                                                     .call( gwz );
                                         }
                                 )
@@ -184,7 +184,7 @@ public final class Identity extends AbstractOperation
                                                                 Scalarization.scalarize(
                                                                         call.getTsrOfType( Number.class, 0 ), start, end,
                                                                         scalarizationCreator.create(
-                                                                                call.getTensors(), value, call.getDerivativeIndex()
+                                                                                call.getTensors(), value, call.getValOf( Arg.DerivIdx.class )
                                                                         )
                                                                 )
                                                 );
@@ -208,7 +208,7 @@ public final class Identity extends AbstractOperation
                                                     .passAllOf(t)
                                                     .pass((float)call.getTsrOfType( Number.class, 1 ).value64( 0 ))
                                                     .pass(t.rank())
-                                                    .pass( call.getDerivativeIndex() )
+                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
                                                     .call( gwz );
                                         }
                                 )

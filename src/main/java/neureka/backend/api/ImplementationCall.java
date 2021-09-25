@@ -25,6 +25,10 @@ public interface ImplementationCall<D> {
 
     <V, T extends Arg<V>> T get( Class<T> argumentClass );
 
+    default int getDerivativeIndex() {
+        return this.getValOf( Arg.DerivIdx.class );
+    }
+
     default <V> Tsr<V> getTsrOfType( Class<V> valueTypeClass, int i ) {
         Tsr<?>[] tensors = this.getTensors();
         if ( valueTypeClass == null ) {

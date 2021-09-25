@@ -57,7 +57,7 @@ public class DimTrim extends AbstractOperation
                             Tsr<?>[] inputs = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
                             assert inputs.length == 1;
                             Tsr<?> t = inputs[ 0 ];
-                            if ( call.getDerivativeIndex() == 0 ) {
+                            if ( call.getValOf( Arg.DerivIdx.class ) == 0 ) {
                                 int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
                                 int postfix = call.getValOf(Arg.Ends.class)[ 0 ];
                                 return _pad(t, new int[]{prefix, postfix}, true);

@@ -39,6 +39,7 @@ import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.calculus.args.Arg;
 import neureka.framing.Relation;
 import neureka.utility.CustomCleaner;
 import neureka.utility.NeurekaCleaner;
@@ -120,7 +121,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
     @Override
     public Device<V> approve(ExecutionCall<? extends Device<?>> call )
     {
-        if ( !_approveExecutionOf( call.getTensors(), call.getDerivativeIndex(), call.getOperation() ) ) {
+        if ( !_approveExecutionOf( call.getTensors(), call.getValOf( Arg.DerivIdx.class ), call.getOperation() ) ) {
             throw new IllegalArgumentException("Provided execution call has not been approved by this device.");
         }
         return this;

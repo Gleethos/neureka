@@ -94,18 +94,18 @@ public class Modulo extends AbstractOperation {
                                                                         call.getTsrOfType( Number.class, 0 ),
                                                                         call.getTsrOfType( Number.class, 1 ),
                                                                         call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getDerivativeIndex(),
+                                                                        call.getValOf( Arg.DerivIdx.class ),
                                                                         start, end,
-                                                                        operationXCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        operationXCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
                                                         : ( start, end ) ->
                                                                 Operator.operate (
                                                                         call.getTsrOfType( Number.class, 0 ),
                                                                         call.getTsrOfType( Number.class, 1 ),
                                                                         call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getDerivativeIndex(),
+                                                                        call.getValOf( Arg.DerivIdx.class ),
                                                                         start, end,
-                                                                        operationCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        operationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
                                                 ),
                                 3
@@ -233,14 +233,14 @@ public class Modulo extends AbstractOperation {
                                                         ? ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getDerivativeIndex(), start, end,
-                                                                        creatorX.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
+                                                                        creatorX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
                                                         : ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getDerivativeIndex(), start, end,
-                                                                        creator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
+                                                                        creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
                                                 ),
                                 3
@@ -269,7 +269,7 @@ public class Modulo extends AbstractOperation {
                                                     .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
                                                     .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
                                                     .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getDerivativeIndex() )
+                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
                                                     .call( gwz );
                                         }
                                 )
@@ -373,7 +373,7 @@ public class Modulo extends AbstractOperation {
                                                     .passAllOf(call.getTsrOfType( Number.class, 0 ))
                                                     .pass((float)call.getTsrOfType( Number.class, 1+offset).value64( 0 ))
                                                     .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getDerivativeIndex() )
+                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
                                                     .call( gwz );
                                         }
                                 )

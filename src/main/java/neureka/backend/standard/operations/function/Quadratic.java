@@ -8,6 +8,7 @@ import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -71,13 +72,13 @@ public final class Quadratic extends AbstractOperation
                                                                 Activation.activate (
                                                                         call.getTsrOfType( Number.class, 0 ),
                                                                         start, end,
-                                                                        _creatorNDX.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        _creatorNDX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
                                                         : ( start, end ) ->
                                                                 Activation.activate (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),
                                                                         start, end,
-                                                                        _creatorNDI.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        _creatorNDI.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
                                                 ),
                                 3
@@ -99,7 +100,7 @@ public final class Quadratic extends AbstractOperation
                                                     .passAllOf( call.getTsrOfType( Number.class, offset ) )
                                                     .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
                                                     .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getDerivativeIndex() )
+                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
                                                     .call( gwz );
                                         }
                                 )

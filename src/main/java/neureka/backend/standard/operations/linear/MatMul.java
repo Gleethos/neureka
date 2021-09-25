@@ -41,7 +41,7 @@ public class MatMul extends AbstractOperation
         {
             Tsr<?>[] tsrs = call.getTensors();
             Device<?> device = call.getDevice();
-            int d = call.getDerivativeIndex();
+            int d = call.getValOf( Arg.DerivIdx.class );
             Operation type = call.getOperation();
 
             Tsr<?> alternative = null;
@@ -91,7 +91,7 @@ public class MatMul extends AbstractOperation
 
                             Function invX = new FunctionBuilder( Neureka.get().context() ).build( "I[ 0 ] @ I[ 1 ]", false );
                             Tsr<?>[] inputs = call.getTensors();
-                            int d = (1 + call.getDerivativeIndex()) % 2;
+                            int d = (1 + call.getValOf( Arg.DerivIdx.class )) % 2;
                             Tsr<?> deriv = inputs[ d ].T();
                             if ( d == 0 )
                                 return new DefaultADAgent( deriv )
@@ -108,7 +108,7 @@ public class MatMul extends AbstractOperation
 
                                 Tsr<?>[] inputs = call.getTensors();
                                 Tsr<?>[] tsrs = new Tsr[]{null, inputs[ 0 ], inputs[ 1 ]};
-                                tsrs[ 0 ] = (call.getDerivativeIndex() < 0)
+                                tsrs[ 0 ] = (call.getValOf( Arg.DerivIdx.class ) < 0)
                                         ? Tsr.ofShape( Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape()) )
                                         : null;
 
@@ -116,7 +116,7 @@ public class MatMul extends AbstractOperation
                                 CalcUtil.recursiveExecution(call.withTensors(tsrs), rja);
                                 return tsrs[ 0 ];
                             } else {
-                                if (call.getDerivativeIndex() < 0) {
+                                if (call.getValOf( Arg.DerivIdx.class ) < 0) {
                                     Tsr<?>[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
                                     Tsr.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                     for ( Tsr<?> t : tensors ) t.setIsVirtual( false );

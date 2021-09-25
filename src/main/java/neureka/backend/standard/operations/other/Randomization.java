@@ -100,7 +100,7 @@ public class Randomization extends AbstractOperation
                                                                 creatorX.create(
                                                                         call.getTensors(),
                                                                         call.getTsrOfType( Number.class, 1 ).value64( 0 ),
-                                                                        call.getDerivativeIndex()
+                                                                        call.getValOf( Arg.DerivIdx.class )
                                                                 )
                                                         )
                                                 : ( start, end ) ->
@@ -110,7 +110,7 @@ public class Randomization extends AbstractOperation
                                                             creator.create(
                                                                     call.getTensors(),
                                                                     call.getTsrOfType( Number.class, 1 ).value64( 0 ),
-                                                                    call.getDerivativeIndex()
+                                                                    call.getValOf( Arg.DerivIdx.class )
                                                             )
                                                 )
                                         ),

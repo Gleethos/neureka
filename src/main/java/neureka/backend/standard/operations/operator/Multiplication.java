@@ -141,18 +141,18 @@ public class Multiplication extends AbstractOperation
                                                                         call.getTsrOfType( Number.class, 0 ),
                                                                         call.getTsrOfType( Number.class, 1 ),
                                                                         call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getDerivativeIndex(),
+                                                                        call.getValOf( Arg.DerivIdx.class ),
                                                                         start, end,
-                                                                        defaultOperatorXcreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        defaultOperatorXcreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
                                                         : ( start, end ) ->
                                                                 Operator.operate (
                                                                         call.getTsrOfType( Number.class, 0 ),
                                                                         call.getTsrOfType( Number.class, 1 ),
                                                                         call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getDerivativeIndex(),
+                                                                        call.getValOf( Arg.DerivIdx.class ),
                                                                         start, end,
-                                                                        defaultOperatorcreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        defaultOperatorcreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
                                                 ),
                                 3
@@ -228,14 +228,14 @@ public class Multiplication extends AbstractOperation
                                                     ? ( start, end ) ->
                                                             Broadcast.broadcast (
                                                                 call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                call.getDerivativeIndex(), start, end,
-                                                                _creatorX.create(call.getTensors(), call.getDerivativeIndex())
+                                                                call.getValOf( Arg.DerivIdx.class ), start, end,
+                                                                _creatorX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                             )
                                                     : ( start, end ) ->
                                                             Broadcast.broadcast (
                                                                 call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                call.getDerivativeIndex(), start, end,
-                                                                _creator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                call.getValOf( Arg.DerivIdx.class ), start, end,
+                                                                _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                             )
                                             ),
                             3
@@ -258,7 +258,7 @@ public class Multiplication extends AbstractOperation
                                                 .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
                                                 .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
                                                 .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                .pass( call.getDerivativeIndex() )
+                                                .pass( call.getValOf( Arg.DerivIdx.class ) )
                                                 .call( gwz );
                                     }
                             )
@@ -307,7 +307,7 @@ public class Multiplication extends AbstractOperation
                                     .setBackward( null );
                         }
                         Tsr[] inputs = call.getTensors();
-                        int d = call.getDerivativeIndex();
+                        int d = call.getValOf( Arg.DerivIdx.class );
                         if ( forward )
                         {
                             Tsr deriv = f.derive( inputs, d );
@@ -372,7 +372,7 @@ public class Multiplication extends AbstractOperation
                                                     .passAllOf(call.getTsrOfType( Number.class, 0 ))
                                                     .pass((float)call.getTsrOfType( Number.class, 1+offset).value64( 0 ))
                                                     .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                    .pass( call.getDerivativeIndex() )
+                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
                                                     .call( gwz );
                                         }
                                 )

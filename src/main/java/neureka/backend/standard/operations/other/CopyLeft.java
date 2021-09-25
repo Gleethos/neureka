@@ -121,7 +121,7 @@ public class CopyLeft extends AbstractOperation {
                                                     .passAllOf( t )
                                                     .pass( call.getTsrOfType( Number.class, 1 ).value32( 0 ) )
                                                     .pass( t.rank() )
-                                                    .pass( call.getDerivativeIndex() )
+                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )
                                                     .call( gwz );
                                         }
                                 )

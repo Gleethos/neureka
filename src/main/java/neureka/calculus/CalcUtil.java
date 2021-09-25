@@ -51,7 +51,7 @@ public class CalcUtil
         Operation operation = caller.getOperation();
         boolean isFlat = caller.isFlat();
         boolean isDoingAD = caller.isDoingAD();
-        if ( call.getDerivativeIndex() < 0 )
+        if ( call.getValOf( Arg.DerivIdx.class ) < 0 )
             return _deepActivation( call, nodes, operation, isFlat, isDoingAD, executor );
         else
             return _deepDerivative( call, nodes, operation, executor );
@@ -68,7 +68,7 @@ public class CalcUtil
     ) {
         Tsr<?>[] inputs = call.getTensors();
         Device<?> device = call.getDevice();
-        int d = call.getDerivativeIndex();
+        int d = call.getValOf( Arg.DerivIdx.class );
         int j = call.getJ();
 
         Tsr<?>[] tensors;
@@ -143,7 +143,7 @@ public class CalcUtil
         Supplier<Tsr<?>> actor = () -> {
             Tsr<?>[] inputs = call.getTensors();
             Device<?> device = call.getDevice();
-            int d = call.getDerivativeIndex();
+            int d = call.getValOf( Arg.DerivIdx.class );
             int j = call.getJ();
 
             Tsr<?>[] tensors;
@@ -227,7 +227,7 @@ public class CalcUtil
         };
 
         Device<?> device = call.getDevice();
-        int d = call.getDerivativeIndex();
+        int d = call.getValOf( Arg.DerivIdx.class );
         Tsr<?> out = null;
         for ( int i = 0; i < nodes.length; i++ ) { // constants need to be figured out!
             int di = ( nodes[ i ].dependsOn( d ) ) ? i : -1;
@@ -267,7 +267,7 @@ public class CalcUtil
                         );
                     }
                     call = (ExecutionCall<? extends Device<?>>) ExecutionCall.of(call.getTensors())
-                                                                    .andArgs(Arg.DerivIdx.of(call.getDerivativeIndex()))
+                                                                    .andArgs(Arg.DerivIdx.of(call.getValOf( Arg.DerivIdx.class )))
                                                                     .running(call.getOperation())
                                                                     .on(call.getDevice())
                                                                     .forDeviceType(call.getDevice().getClass());
@@ -322,7 +322,7 @@ public class CalcUtil
     ) {
         Device<Object> device = call.getDeviceFor(Object.class);
         Tsr<Object>[] tsrs = (Tsr<Object>[]) call.getTensors();
-        int d = call.getDerivativeIndex();
+        int d = call.getValOf( Arg.DerivIdx.class );
         Operation type = call.getOperation();
 
         Consumer<Tsr<Object>>[] rollbacks = new Consumer[tsrs.length];

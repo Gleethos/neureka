@@ -9,6 +9,7 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
 import neureka.framing.Relation;
@@ -57,7 +58,7 @@ public class Reshape extends AbstractOperation
                         for ( int i = 0; i < inputs.length - 1; i++ ) {
                             newForm[ i ] = (int) Tsr.IO.getFrom( inputs[ i ], 0 );
                         }
-                        if ( call.getDerivativeIndex() >= 0 ) {//reverse reshape:
+                        if ( call.getValOf( Arg.DerivIdx.class ) >= 0 ) {//reverse reshape:
                             newForm = invert( newForm );
                         }
                         Tsr<?> t = inputs[ inputs.length - 1 ];

@@ -35,7 +35,7 @@ public class DimFit extends AbstractOperation
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
-                        //int index = call.getDerivativeIndex();
+                        //int index = call.getValOf( Arg.DerivIdx.class );
                         //int prefix = ((int[]) call.getAt("ends"))[ 0 ];
                         //int postfix = ((int[]) call.getAt("ends"))[ 1 ];
                         if ( forward ) {
@@ -53,7 +53,7 @@ public class DimFit extends AbstractOperation
                         ( caller, call ) ->
                         {
                             Tsr<?>[] inputs = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
-                            assert call.getDerivativeIndex() < 0;
+                            assert call.getValOf( Arg.DerivIdx.class ) < 0;
 
                             int largest = -1;
                             int[] shape = null;
@@ -98,7 +98,7 @@ public class DimFit extends AbstractOperation
 
 
                             //Tsr<?> t = inputs[ 0 ];
-                            //if ( call.getDerivativeIndex() == 0 ) {
+                            //if ( call.getValOf( Arg.DerivIdx.class ) == 0 ) {
                             //    int prefix = ((int[]) call.getAt("ends"))[ 0 ];
                             //    int postfix = ((int[]) call.getAt("ends"))[ 0 ];
                             //    return pad(t, new int[]{prefix, postfix}, true);

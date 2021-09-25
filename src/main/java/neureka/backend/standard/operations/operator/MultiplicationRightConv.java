@@ -89,14 +89,14 @@ public class MultiplicationRightConv extends AbstractOperation {
                                                                 ? ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getDerivativeIndex(), start, end,
-                                                                        Multiplication.xBCCreatorX.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
+                                                                        Multiplication.xBCCreatorX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
                                                                 : ( start, end ) ->
                                                                 Broadcast.broadcast (
                                                                         call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                        call.getDerivativeIndex(), start, end,
-                                                                        Multiplication.xBCCreator.create(call.getTensors(), call.getDerivativeIndex())
+                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
+                                                                        Multiplication.xBCCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
                                                 ),
                                 3
@@ -119,7 +119,7 @@ public class MultiplicationRightConv extends AbstractOperation {
                                                             .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )
                                                             .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )
                                                             .pass( call.getTsrOfType( Number.class, 0 ).rank() )
-                                                            .pass( call.getDerivativeIndex() )
+                                                            .pass( call.getValOf( Arg.DerivIdx.class ) )
                                                             .call( gwz );
                                                 }
                                         )
