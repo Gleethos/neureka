@@ -477,7 +477,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                             ExecutionCall.of(call.getTensors())
                                                             .andArgs(
                                                                     Arg.DerivIdx.of(i),
-                                                                    Arg.VarIdx.of(call.getMetaArgs().valOf(Arg.VarIdx.class))
+                                                                    Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
                                                             )
                                                             .running(call.getOperation())
                                                             .on(call.getDevice()),
@@ -500,7 +500,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                                     function,
                                                     ExecutionCall.of(call.getTensors())
                                                                     .andArgs(
-                                                                            Arg.VarIdx.of(call.getMetaArgs().valOf(Arg.VarIdx.class)),
+                                                                            Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class)),
                                                                             Arg.DerivIdx.of(finalI),
                                                                             Arg.Derivative.of(targetDerivative)
                                                                     )
@@ -527,7 +527,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
                                         ExecutionCall.of(call.getTensors())
                                                         .andArgs(
                                                                 Arg.DerivIdx.of(i),
-                                                                Arg.VarIdx.of(call.getMetaArgs().valOf(Arg.VarIdx.class))
+                                                                Arg.VarIdx.of(call.getValOf(Arg.VarIdx.class))
                                                         )
                                                         .running(call.getOperation())
                                                         .on(call.getDevice()),

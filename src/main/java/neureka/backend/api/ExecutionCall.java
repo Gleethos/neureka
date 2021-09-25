@@ -106,7 +106,7 @@ public class ExecutionCall<DeviceType extends Device<?>> implements Implementati
         this._operation = operation;
         this._tensors = tensors;
         this._algorithm = algorithm;
-        for ( Arg<?> arg : arguments ) this.getMetaArgs().set(arg);
+        for ( Arg<?> arg : arguments ) _arguments.set(arg);
     }
 
     public static <D extends Device<?>> Builder<D> of( Tsr<?>... tensors ) {
@@ -135,7 +135,7 @@ public class ExecutionCall<DeviceType extends Device<?>> implements Implementati
     }
 
     public int getDerivativeIndex() {
-        return this.getMetaArgs().valOf( Arg.DerivIdx.class );
+        return this.getValOf( Arg.DerivIdx.class );
     }
 
     public Operation getOperation() { return this._operation; }
@@ -143,7 +143,7 @@ public class ExecutionCall<DeviceType extends Device<?>> implements Implementati
     @Override
     public Tsr<?>[] getTensors() { return this._tensors; }
 
-    public int getJ() { return this.getMetaArgs().valOf( Arg.VarIdx.class ); }
+    public int getJ() { return this.getValOf( Arg.VarIdx.class ); }
 
     public ExecutionCall<DeviceType> withTensors( Tsr<?>[] _tensors ) {
         return this._tensors == _tensors
@@ -160,6 +160,11 @@ public class ExecutionCall<DeviceType extends Device<?>> implements Implementati
         return this.getJ() == j
                 ? this
                 : new ExecutionCall<>( _device, _operation, _tensors, _algorithm, args );
+    }
+
+    @Override
+    public <V, T extends Arg<V>> T get( Class<T> argumentClass ) {
+        return _arguments.get(argumentClass);
     }
 
     @Override
@@ -191,28 +196,6 @@ public class ExecutionCall<DeviceType extends Device<?>> implements Implementati
         return (ExecutionCall<T>) this;
     }
 
-
-    public <V> Tsr<V> getTsrOfType( Class<V> valueTypeClass, int i ) {
-        if ( valueTypeClass == null ) {
-            throw new IllegalArgumentException(
-                    "The provided tensor type class is null!\n" +
-                    "Type safe access to the tensor parameter at index '"+i+"' failed."
-            );
-        }
-        if ( _tensors[ i ] != null ) {
-            Class<?> tensorTypeClass = _tensors[ i ].getValueClass();
-            if ( !valueTypeClass.isAssignableFrom(tensorTypeClass) ) {
-                throw new IllegalArgumentException(
-                        "The item value type of the tensor stored at parameter position '"+i+"' is " +
-                        "'"+tensorTypeClass.getSimpleName()+"' and is not a sub-type of the provided " +
-                        "type '"+valueTypeClass.getSimpleName()+"'."
-                );
-            }
-        }
-        return (Tsr<V>) _tensors[ i ];
-    }
-
-
     public Algorithm<?> getAlgorithm() {
         if ( _algorithm != null ) return _algorithm;
         else _algorithm = _operation.getAlgorithmFor( this );
@@ -230,8 +213,8 @@ public class ExecutionCall<DeviceType extends Device<?>> implements Implementati
     public ADAgent getADAgentFrom( Function function, ExecutionCall<? extends Device<?>> call, boolean forward )
     {
         for ( Arg<?> arg : _arguments.getAll(Arg.class) ) {
-            if ( !call.getMetaArgs().has(arg.getClass()) )
-                call.getMetaArgs().set(arg);
+            if ( !call._arguments.has(arg.getClass()) )
+                call._arguments.set(arg);
             // else: This should not happen.
         }
         return getAlgorithm().supplyADAgentFor( function, call, forward );
@@ -240,8 +223,6 @@ public class ExecutionCall<DeviceType extends Device<?>> implements Implementati
     public void mutateArguments( Mutator mutation ) {
         _tensors = mutation.mutate( _tensors );
     }
-
-    public Validator validate() { return new Validator(); }
 
     public static class Builder<D extends Device<?>>
     {
@@ -285,94 +266,6 @@ public class ExecutionCall<DeviceType extends Device<?>> implements Implementati
             return andArgs(Arrays.stream(context).collect(Collectors.toList()));
         }
 
-    }
-
-    /**
-     *  This is a simple nested class offering various lambda based methods
-     *  for validating the tensor arguments stored inside this {@link ExecutionCall}.
-     *  It is a useful tool readable as well as concise validation of a given
-     *  request for execution, that is primarily used inside implementations of the middle
-     *  layer of the backend-API architecture ({@link Algorithm#isSuitableFor(ExecutionCall)}).
-     */
-    
-    public class Validator
-    {
-        private boolean _isValid = true;
-
-        /**
-         *  The validity as float being 1.0/true and 0.0/false.
-         *
-         * @return The current validity of this Validator as float value.
-         */
-        public float estimation() {
-            return ( this._isValid ) ? 1.0f : 0.0f;
-        }
-
-        public Validator first( TensorCondition condition ) {
-            if ( !condition.check( _tensors[ 0 ] ) ) this._isValid = false;
-            return this;
-        }
-
-        public Validator any( TensorCondition condition )
-        {
-            boolean any = false;
-            for ( Tsr<?> t : _tensors ) any = condition.check( t ) || any;
-            if ( !any ) this._isValid = false;
-            return this;
-        }
-
-        public Validator anyNotNull( TensorCondition condition )
-        {
-            boolean any = false;
-            for ( Tsr<?> t : _tensors )
-                if ( t != null ) any = condition.check( t ) || any;
-            if ( !any ) this._isValid = false;
-            return this;
-        }
-
-        public Validator all( TensorCondition condition )
-        {
-            boolean all = true;
-            for ( Tsr<?> t : _tensors ) all = condition.check( t ) && all;
-            if ( !all ) this._isValid = false;
-            return this;
-        }
-
-        public Validator allNotNull( TensorCondition condition )
-        {
-            boolean all = true;
-            for ( Tsr<?> t : _tensors )
-                if ( t != null ) all = condition.check( t ) && all;
-            if ( !all ) this._isValid = false;
-            return this;
-        }
-
-        public Validator all( TensorCompare compare )
-        {
-            boolean all = true;
-            Tsr<?> last = null;
-            for ( Tsr<?> current : _tensors ) {
-                if ( last != null && !compare.check( last, current ) ) all = false;
-                last = current; // Note: shapes are cached!
-            }
-            if ( !all ) this._isValid = false;
-            return this;
-        }
-
-        public Validator forDevice( DeviceCondition condition )
-        {
-            if ( !condition.check( _device ) ) this._isValid = false;
-            return this;
-        }
-
-        public Validator forOperation( OperationCondition condition ) {
-            if ( !condition.check(_operation) ) this._isValid = false;
-            return this;
-        }
-
-        public boolean isValid() {
-            return this._isValid;
-        }
     }
 
 }
