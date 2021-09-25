@@ -3,13 +3,21 @@ package neureka.backend.api;
 import neureka.Tsr;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
+import neureka.devices.Device;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public interface ImplementationCall {
+public interface ImplementationCall<D> {
+
+    D getDevice();
+
+    default <T> Device<T> getDeviceFor(Class<T> supportCheck ) {
+        // TODO: Make it possible to query device for type support!
+        return (Device<T>) this.getDevice();
+    }
 
     public Tsr<?>[] getTensors();
 
@@ -113,7 +121,7 @@ public interface ImplementationCall {
         };
     }
 
-    public static class Builder
+    public static class Builder<D>
     {
         private Tsr<?>[] _tensors;
         private final Args _arguments = Args.of(
@@ -123,9 +131,19 @@ public interface ImplementationCall {
 
         private Builder(Tsr<?>[] tensors) { _tensors = tensors; }
 
-        public ImplementationCall andArgs( List<Arg> arguments ) {
+        public Builder<D> andArgs( List<Arg> arguments ) {
             for ( Arg argument : arguments ) _arguments.set(argument);
-            return new ImplementationCall() {
+            return this;
+        }
+
+        public Builder<D> andArgs( Arg<?>... arguments ) {
+            return andArgs(Arrays.stream(arguments).collect(Collectors.toList()));
+        }
+
+
+        public <V, D extends Device<V>> ImplementationCall<D> runningOn( D device ) {
+            return new ImplementationCall<D>() {
+                @Override public D getDevice() { return device; }
                 @Override public Tsr<?>[] getTensors() { return _tensors; }
                 @Override
                 public <V, T extends Arg<V>> V getValOf( Class<T> argumentClass ) {
@@ -136,10 +154,6 @@ public interface ImplementationCall {
                     return _arguments.get( argumentClass );
                 }
             };
-        }
-
-        public ImplementationCall andArgs( Arg<?>... arguments ) {
-            return andArgs(Arrays.stream(arguments).collect(Collectors.toList()));
         }
     }
 

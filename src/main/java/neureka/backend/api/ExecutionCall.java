@@ -59,14 +59,14 @@ import java.util.stream.Stream;
  *  This is Certain operations might require additionally parameters then the ones
  *  defined in this class... <br>
  *
- * @param <DeviceType> The Device implementation targeted by an instance of this ExecutionCall!
+ * @param <D> The Device implementation targeted by an instance of this ExecutionCall!
 */
-public class ExecutionCall<DeviceType extends Device<?>> implements ImplementationCall
+public class ExecutionCall<D extends Device<?>> implements ImplementationCall<D>
 {
     /**
      *  This field references the device on which this ExecutionCall should be executed.
      */
-    private final DeviceType _device;
+    private final D _device;
 
     /**
      *  This is the operation type which will be applied to this execution call.
@@ -96,7 +96,7 @@ public class ExecutionCall<DeviceType extends Device<?>> implements Implementati
     private final Args _arguments = new Args();
 
     private ExecutionCall(
-            DeviceType device,
+            D device,
             Operation operation,
             Tsr<?>[] tensors,
             Algorithm<?> algorithm,
@@ -127,12 +127,8 @@ public class ExecutionCall<DeviceType extends Device<?>> implements Implementati
                 ")";
     }
 
-    public DeviceType getDevice() { return this._device; }
-
-    public <T> Device<T> getDeviceFor( Class<T> supportCheck ) {
-        // TODO: Make it possible to query device for type support!
-        return (Device<T>) this._device;
-    }
+    @Override
+    public D getDevice() { return this._device; }
 
     public int getDerivativeIndex() {
         return this.getValOf( Arg.DerivIdx.class );
@@ -145,7 +141,7 @@ public class ExecutionCall<DeviceType extends Device<?>> implements Implementati
 
     public int getJ() { return this.getValOf( Arg.VarIdx.class ); }
 
-    public ExecutionCall<DeviceType> withTensors( Tsr<?>[] _tensors ) {
+    public ExecutionCall<D> withTensors(Tsr<?>[] _tensors ) {
         return this._tensors == _tensors
                 ? this
                 : new ExecutionCall<>(
@@ -154,7 +150,7 @@ public class ExecutionCall<DeviceType extends Device<?>> implements Implementati
                     );
     }
 
-    public ExecutionCall<DeviceType> withJ( int j ) {
+    public ExecutionCall<D> withJ(int j ) {
         List<Arg> args = _arguments.getAll(Arg.class);
         args.add(Arg.VarIdx.of(j));
         return this.getJ() == j
