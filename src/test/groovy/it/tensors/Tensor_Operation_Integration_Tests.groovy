@@ -332,34 +332,39 @@ class Tensor_Operation_Integration_Tests extends Specification
 
 
     def 'Auto reshaping and broadcasting works and the result can be back propagated.'(// TODO: Cover other broadcasting operations!
-            BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String expectedResult, String expectedGradient
+            boolean indexing, BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String expectedResult, String expectedGradient
     ) {
         given :
+            Neureka.get().settings().indexing().setIsUsingArrayBasedIndexing(indexing)
             Neureka.get().settings().view().setIsUsingLegacyView(true)
             Tsr a = Tsr.of([2,2], 1..5)
-            Tsr b = Tsr.of(( testAutoReshaping ? [2] : [1, 2]), 8..9).setRqsGradient(true)
+            Tsr b = Tsr.of(( autoReshaping ? [2] : [1, 2]), 8..9).setRqsGradient(true)
 
         when :
             Tsr t1 = operation.apply(a, b)
 
         then :
             t1.toString().contains("[2x2]:("+expectedResult+")")
-            b.toString() == "["+( testAutoReshaping ? "2" : "1x2")+"]:(8.0, 9.0):g:(null)"
+            b.toString() == "["+( autoReshaping ? "2" : "1x2")+"]:(8.0, 9.0):g:(null)"
         when :
             t1.backward(Tsr.of([2, 2], [5, -2, 7, 3]))
         then :
-            b.toString() == "["+( testAutoReshaping ? "2" : "1x2")+"]:(8.0, 9.0):g:("+expectedGradient+")"
+            b.toString() == "["+( autoReshaping ? "2" : "1x2")+"]:(8.0, 9.0):g:("+expectedGradient+")"
         when :
             Neureka.get().settings().view().setIsUsingLegacyView(false)
         then :
             t1.toString() == "(2x2):["+expectedResult+"]"
 
         where:
-            testAutoReshaping  | operation         ||      expectedResult     | expectedGradient
-                 false         | { x, y -> x + y}  || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-                 true          | { x, y -> x + y}  || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-                 false         | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "12.0, 1.0"
-                 true          | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "12.0, 1.0"
+            indexing | autoReshaping |    operation      ||      expectedResult     | expectedGradient
+             true    |    false      | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
+             true    |    true       | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
+             true    |    false      | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "12.0, 1.0"
+             true    |    true       | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "12.0, 1.0"
+             //false   |    false      | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
+             //false   |    true       | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
+             //false   |    false      | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "12.0, 1.0"
+             //false   |    true       | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "12.0, 1.0"
     }
 
 
