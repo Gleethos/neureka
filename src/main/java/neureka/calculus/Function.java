@@ -39,11 +39,13 @@ package neureka.calculus;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.backend.api.Call;
 import neureka.backend.api.Operation;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.implementations.FunctionInput;
+import neureka.devices.Device;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -169,16 +171,27 @@ public interface Function
 
     //------------------------------------------------------------------------------------------------------------------
 
-    interface Call {
+
+    default <T, D> Tsr<T> call( Call<D> call ) { return (Tsr<T>) execute( call ); };
+    default <T, D> Tsr<T> invoke( Call<D> call ) { return (Tsr<T>) execute( call ); }
+    default Tsr<?> execute( Call<?> call ) {
+        List<Arg> args = call.allMetaArgs();
+        if ( call.getDevice() != null ) args.add(Arg.TargetDevice.of((Device<?>) call.getDevice()));
+        Arg[] argArray = new Arg[args.size()];
+        for ( int i = 0; i < argArray.length; i++ ) argArray[i] = args.get(i);
+        return with(argArray).execute(call.getTensors());
+    };
+
+    interface CallOptions {
         <T> Tsr<T> call( Tsr<T>... tensors );
         <T> Tsr<T> invoke( Tsr<T>... tensors );
         Tsr<?> execute( Tsr<?>... tensors );
     }
 
-    default Call with( Arg<?>... arguments ) { return with( Args.of( arguments ) ); }
+    default CallOptions with(Arg<?>... arguments ) { return with( Args.of( arguments ) ); }
 
-    default Call with( Args arguments ) {
-       return new Call() {
+    default CallOptions with(Args arguments ) {
+       return new CallOptions() {
            @Override public <T> Tsr<T> call( Tsr<T>... tensors )   { return Function.this.call( arguments, tensors ); }
            @Override public <T> Tsr<T> invoke( Tsr<T>... tensors ) { return Function.this.invoke( arguments, tensors ); }
            @Override public Tsr<?> execute( Tsr<?>... tensors )    { return Function.this.execute( arguments, tensors ); }

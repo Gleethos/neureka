@@ -2,9 +2,12 @@
 import neureka.Neureka
 import neureka.Tsr
 import neureka.autograd.GraphNode
+import neureka.backend.api.Call
 import neureka.calculus.Function
 import neureka.calculus.args.Arg
 import neureka.calculus.args.Args
+import neureka.devices.Device
+import neureka.devices.host.HostCPU
 import neureka.dtype.DataType
 import neureka.optimization.Optimizer
 import org.junit.jupiter.api.BeforeEach
@@ -122,6 +125,7 @@ Kotlin_Compatibility_Unit_Testing {
 
         listOf(
             Pair( "(1):[4.0]", { Function.of("i0 * 4 - 3").with(Arg.DerivIdx.of(0))(Tsr.of(5.0)) } ),
+            Pair( "(1):[4.0]", { Function.of("i0 * 4 - 3").execute(Call.ofTensors(Tsr.of(5.0)).andArgs(Arg.DerivIdx.of(0)).runningOn(HostCPU.instance())) } ),
             Pair( "(1):[6.0]", { Function.of("i0 * i0").execute(Args.of(Arg.DerivIdx.of(0)), Tsr.of(3.0)) } )
         )
         .forEach { pair ->

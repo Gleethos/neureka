@@ -2,6 +2,7 @@ package neureka.calculus.args;
 
 import neureka.Component;
 import neureka.Tsr;
+import neureka.devices.Device;
 
 public abstract class Arg<T> implements Component<Args> {
 
@@ -40,6 +41,11 @@ public abstract class Arg<T> implements Component<Args> {
     public static class Ends extends Arg<int[]> {
         public static Ends of( int[] arg ) { return new Ends(arg); }
         private Ends(int[] arg) { super(arg); }
+    }
+
+    public static class TargetDevice extends Arg<Device<?>> {
+        public static TargetDevice of( Device<?> arg ) { return new TargetDevice(arg); }
+        private TargetDevice(Device<?> arg) { super(arg); }
     }
 
     /**

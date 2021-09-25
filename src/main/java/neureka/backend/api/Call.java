@@ -11,6 +11,10 @@ import java.util.stream.Collectors;
 
 public class Call<D> {
 
+    public static Call.Builder<?> ofTensors( Tsr<?>... tensors ) {
+        return new Builder<>(tensors);
+    }
+
     /**
      *  The tensor arguments from which an operation will either
      *  read or to which it will write. <br>
@@ -42,6 +46,10 @@ public class Call<D> {
     public <T> Device<T> getDeviceFor(Class<T> supportCheck ) {
         // TODO: Make it possible to query device for type support!
         return (Device<T>) this.getDevice();
+    }
+
+    public List<Arg> allMetaArgs() {
+        return _arguments.getAll(Arg.class).stream().map( a -> (Arg<Object>) a ).collect(Collectors.toList());
     }
 
     public <V, T extends Arg<V>> T get( Class<T> argumentClass ) {
