@@ -115,10 +115,10 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
         int rank = t0Shp.length;
         assert t2_src != null;
         NDIterator t0Idx = NDIterator.of( t0_drn );
-        NDIterator t1Idx = NDIterator.of( t1_src );
+        NDIterator t1Idx = NDIterator.of( t1_src, NDIterator.NonVirtual.TRUE );
         t0Idx.set( t0_drn.IndicesOfIndex( i ) );
         t1Idx.set( t0_drn.IndicesOfIndex( i ) );
-        NDIterator t2Idx = NDIterator.of( t2_src );
+        NDIterator t2Idx = NDIterator.of( t2_src, NDIterator.NonVirtual.TRUE );
         double[] t0_value = t0_drn.value64();
         if ( d < 0 ) {
             while ( i < end ) {//increment on drain accordingly:

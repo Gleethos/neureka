@@ -58,7 +58,13 @@ import java.util.stream.IntStream;
 
 public interface NDIterator
 {
-    static NDIterator of( Tsr<?> t ) {
+    enum NonVirtual { TRUE, FALSE }
+
+    static NDIterator of ( Tsr<?> t ) {
+        return of( t, NonVirtual.FALSE );
+    }
+
+    static NDIterator of( Tsr<?> t, NonVirtual shouldNotBeVirtual ) {
 
         NDConfiguration ndc = t.getNDConf();
 
@@ -70,7 +76,7 @@ public interface NDIterator
         if ( ndc instanceof SimpleD2Configuration ) return new SimpleD2CIterator( (SimpleD2Configuration) ndc );
         if ( ndc instanceof SimpleD3Configuration ) return new SimpleD3CIterator( (SimpleD3Configuration) ndc );
 
-        if ( ndc instanceof VirtualNDConfiguration )
+        if ( ndc instanceof VirtualNDConfiguration && shouldNotBeVirtual == NonVirtual.FALSE )
             return new VirtualNDIterator( (VirtualNDConfiguration) ndc );
         else
             return new DefaultNDIterator( ndc );

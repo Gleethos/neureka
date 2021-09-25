@@ -38,12 +38,16 @@ public final class VirtualNDIterator implements NDIterator
 
     @Override
     public int get(int axis) {
-        return 0;
+        throw new IllegalStateException(
+                "Virtual ND-iterator do not keep track of the iteration index!"
+        );
     }
 
     @Override
     public int[] get() {
-        return new int[_conf.rank()];
+        throw new IllegalStateException(
+                "Virtual ND-iterator do not keep track of the iteration index!"
+        );
     }
 
     @Override
