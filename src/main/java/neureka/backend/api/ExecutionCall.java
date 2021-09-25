@@ -61,27 +61,13 @@ import java.util.stream.Stream;
  *
  * @param <D> The Device implementation targeted by an instance of this ExecutionCall!
 */
-public class ExecutionCall<D extends Device<?>> implements ImplementationCall<D>
+public class ExecutionCall<D extends Device<?>> extends Call<D>
 {
-    /**
-     *  This field references the device on which this ExecutionCall should be executed.
-     */
-    private final D _device;
-
     /**
      *  This is the operation type which will be applied to this execution call.
      *  It contains multiple implementations, one of which might be applicable to this call...
      */
     private final Operation _operation;
-
-    /**
-     *  The tensor arguments from which an operation will either
-     *  read or to which it will write. <br>
-     *  The first entry of this array is usually containing the output tensor,
-     *  however this is not a necessity.
-     *  Some operation algorithms might use multiple argument entries as output tensors.
-     */
-    private Tsr<?>[] _tensors;
 
     /**
      *  This Algorithm variable is the chosen algorithm for a given execution call instance.
@@ -93,8 +79,6 @@ public class ExecutionCall<D extends Device<?>> implements ImplementationCall<D>
      */
     private Algorithm<?> _algorithm = null;
 
-    private final Args _arguments = new Args();
-
     private ExecutionCall(
             D device,
             Operation operation,
@@ -102,11 +86,10 @@ public class ExecutionCall<D extends Device<?>> implements ImplementationCall<D>
             Algorithm<?> algorithm,
             List<Arg> arguments
     ) {
-        this._device = device;
+        super(tensors, device, arguments);
         this._operation = operation;
         this._tensors = tensors;
         this._algorithm = algorithm;
-        for ( Arg<?> arg : arguments ) _arguments.set(arg);
     }
 
     public static <D extends Device<?>> Builder<D> of( Tsr<?>... tensors ) {
@@ -127,13 +110,7 @@ public class ExecutionCall<D extends Device<?>> implements ImplementationCall<D>
                 ")";
     }
 
-    @Override
-    public D getDevice() { return this._device; }
-
     public Operation getOperation() { return this._operation; }
-
-    @Override
-    public Tsr<?>[] getTensors() { return this._tensors; }
 
     public int getJ() { return this.getValOf( Arg.VarIdx.class ); }
 
@@ -144,16 +121,6 @@ public class ExecutionCall<D extends Device<?>> implements ImplementationCall<D>
                         this._device, this._operation,
                         _tensors, _algorithm, _arguments.getAll(Arg.class)
                     );
-    }
-
-    @Override
-    public <V, T extends Arg<V>> T get( Class<T> argumentClass ) {
-        return _arguments.get(argumentClass);
-    }
-
-    @Override
-    public <V, T extends Arg<V>> V getValOf( Class<T> argumentClass ) {
-        return _arguments.valOf(argumentClass);
     }
 
     public interface TensorCondition    { boolean check( Tsr<?> tensor ); }
