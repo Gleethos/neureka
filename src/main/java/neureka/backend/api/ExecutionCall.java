@@ -61,7 +61,7 @@ import java.util.stream.Stream;
  *
  * @param <DeviceType> The Device implementation targeted by an instance of this ExecutionCall!
 */
-public class ExecutionCall<DeviceType extends Device<?>>
+public class ExecutionCall<DeviceType extends Device<?>> implements ImplementationCall
 {
     /**
      *  This field references the device on which this ExecutionCall should be executed.
@@ -100,13 +100,13 @@ public class ExecutionCall<DeviceType extends Device<?>>
             Operation operation,
             Tsr<?>[] tensors,
             Algorithm<?> algorithm,
-            List<Arg> context
+            List<Arg> arguments
     ) {
         this._device = device;
         this._operation = operation;
         this._tensors = tensors;
         this._algorithm = algorithm;
-        for ( Arg<?> arg : context ) this.getMetaArgs().set(arg);
+        for ( Arg<?> arg : arguments ) this.getMetaArgs().set(arg);
     }
 
     public static <D extends Device<?>> Builder<D> of( Tsr<?>... tensors ) {
@@ -140,6 +140,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
     public Operation getOperation() { return this._operation; }
 
+    @Override
     public Tsr<?>[] getTensors() { return this._tensors; }
 
     public int getJ() { return this.getMetaArgs().valOf( Arg.VarIdx.class ); }
@@ -161,7 +162,7 @@ public class ExecutionCall<DeviceType extends Device<?>>
                 : new ExecutionCall<>( _device, _operation, _tensors, _algorithm, args );
     }
 
-
+    @Override
     public <V, T extends Arg<V>> V getValOf( Class<T> argumentClass ) {
         return _arguments.valOf(argumentClass);
     }
@@ -244,39 +245,39 @@ public class ExecutionCall<DeviceType extends Device<?>>
 
     public static class Builder<D extends Device<?>>
     {
-        private Operation operation;
-        private Tsr<?>[] tensors;
-        private Algorithm<?> algorithm;
-        private final List<Arg> context = Stream.of(
+        private Operation _operation;
+        private Tsr<?>[] _tensors;
+        private Algorithm<?> _algorithm;
+        private final List<Arg> _arguments = Stream.of(
                                                 Arg.DerivIdx.of(-1),
                                                 Arg.VarIdx.of(-1)
                                             )
                                             .collect(Collectors.toList());
 
-        private Builder(Tsr<?>[] tensors) { this.tensors = tensors; }
+        private Builder(Tsr<?>[] tensors) { _tensors = tensors; }
 
         public <V, D extends Device<V>> ExecutionCall<D> on(D device) {
             return new ExecutionCall<>(
                                     device,
-                                    operation,
-                                    tensors,
-                                    algorithm,
-                                    context
+                                    _operation,
+                                    _tensors,
+                                    _algorithm,
+                                    _arguments
                             );
         }
 
         public Builder<D> running(Operation operation) {
-            this.operation = operation;
+            _operation = operation;
             return this;
         }
 
         public Builder<D> algorithm(Algorithm<?> algorithm) {
-            this.algorithm = algorithm;
+            _algorithm = algorithm;
             return this;
         }
 
         public Builder<D> andArgs( List<Arg> context ) {
-            this.context.addAll(context);
+            _arguments.addAll(context);
             return this;
         }
 

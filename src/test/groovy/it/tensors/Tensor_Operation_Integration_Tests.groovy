@@ -368,11 +368,10 @@ class Tensor_Operation_Integration_Tests extends Specification
              true    |    false      | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
              true    |    true       | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
 
-             false   |    false      | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"| "12.0, 1.0"
-             false   |    true       | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"| "12.0, 1.0"
-             true    |    false      | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"| "12.0, 1.0"
-             true    |    true       | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"| "12.0, 1.0"
-
+             false   |    false      | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
+             false   |    true       | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
+             true    |    false      | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
+             true    |    true       | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
 
     }
 
