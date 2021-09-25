@@ -7,19 +7,13 @@ public final class VirtualNDIterator implements NDIterator
 {
     private final VirtualNDConfiguration _conf;
 
-    public VirtualNDIterator( VirtualNDConfiguration ndc ) {
-        _conf = ndc;
-    }
+    public VirtualNDIterator( VirtualNDConfiguration ndc ) { _conf = ndc; }
 
     @Override
-    public int shape( int i ) {
-        return _conf.shape(i);
-    }
+    public int shape( int i ) { return _conf.shape(i); }
 
     @Override
-    public int[] shape() {
-        return _conf.shape();
-    }
+    public int[] shape() { return _conf.shape(); }
 
     @Override
     public void increment() {
@@ -39,14 +33,18 @@ public final class VirtualNDIterator implements NDIterator
     @Override
     public int get(int axis) {
         throw new IllegalStateException(
-                "Virtual ND-iterator do not keep track of the iteration index!"
+                "A virtual ND-iterator does not keep track of the iteration index! " +
+                "You cannot use this type of iterator when the data access pattern of your algorithm " +
+                "relies on this type of information."
         );
     }
 
     @Override
     public int[] get() {
         throw new IllegalStateException(
-                "Virtual ND-iterator do not keep track of the iteration index!"
+                "A virtual ND-iterator does not keep track of the iteration index! " +
+                "You cannot use this type of iterator when the data access pattern of your algorithm " +
+                "relies on this type of information."
         );
     }
 
@@ -61,7 +59,5 @@ public final class VirtualNDIterator implements NDIterator
     }
 
     @Override
-    public int rank() {
-        return _conf.rank();
-    }
+    public int rank() { return _conf.rank(); }
 }
