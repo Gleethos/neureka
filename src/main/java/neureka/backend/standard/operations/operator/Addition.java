@@ -51,12 +51,7 @@ public class Addition extends AbstractOperation {
                                                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                                         {
                                                             Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                                                            Function mul = Neureka.get().context().getFunction().mul();
-                                                            if ( ctxDerivative != null ) {
-                                                                return new DefaultADAgent( ctxDerivative )
-                                                                        .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
-                                                                        .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
-                                                            }
+                                                            assert ctxDerivative == null;
                                                             Tsr[] inputs = call.getTensors();
                                                             int d = call.getDerivativeIndex();
                                                             if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
@@ -67,20 +62,19 @@ public class Addition extends AbstractOperation {
                                                                 Device device = call.getDevice();
                                                                 return new DefaultADAgent( deriv )
                                                                             .setBackward(
-                                                                                    (node, backwardError ) -> {
-                                                                                        return this.getAlgorithm(Broadcast.class)
-                                                                                                    .getImplementationFor(device.getClass())
-                                                                                                    .runAndGetFirstTensor(
-                                                                                                            ExecutionCall.of(
-                                                                                                                    Tsr.Create.newTsrLike(toBeDerived, 0).setIsVirtual(false),
-                                                                                                                    Tsr.Create.newTsrLike(inputs[(d==0?1:0)], 0),
-                                                                                                                    backwardError
-                                                                                                            )
-                                                                                                            .andArgs(Arg.DerivIdx.of(d))
-                                                                                                            .running(this)
-                                                                                                            .on(device)
-                                                                                                    );
-                                                                                    }
+                                                                                    (node, backwardError ) ->
+                                                                                        this.getAlgorithm(Broadcast.class)
+                                                                                             .getImplementationFor(device.getClass())
+                                                                                             .runAndGetFirstTensor(
+                                                                                                     ExecutionCall.of(
+                                                                                                             Tsr.Create.newTsrLike(toBeDerived, 0).setIsVirtual(false),
+                                                                                                             Tsr.Create.newTsrLike(inputs[(d==0?1:0)], 0),
+                                                                                                             backwardError
+                                                                                                     )
+                                                                                                     .andArgs(Arg.DerivIdx.of(d))
+                                                                                                     .running(this)
+                                                                                                     .on(device)
+                                                                                             )
                                                                             );
                                                             }
                                                         }

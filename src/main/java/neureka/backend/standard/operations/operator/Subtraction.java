@@ -264,12 +264,7 @@ public class Subtraction extends AbstractOperation
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
                             Tsr<?> ctxDerivative = (Tsr<?>)call.getValOf(Arg.Derivative.class);
-                            Function mul = Neureka.get().context().getFunction().mul();
-                            if ( ctxDerivative != null ) {
-                                return new DefaultADAgent( ctxDerivative )
-                                        .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
-                                        .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
-                            }
+                            assert ctxDerivative == null;
                             Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
                             if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
@@ -279,21 +274,20 @@ public class Subtraction extends AbstractOperation
                                 Tsr toBeDerived = inputs[d];
                                 Device device = call.getDevice();
                                 return new DefaultADAgent( deriv )
-                                        .setBackward(
-                                                (node, backwardError ) -> {
-                                                    return this.getAlgorithm(Broadcast.class)
-                                                                .getImplementationFor(device.getClass())
-                                                                .runAndGetFirstTensor(
-                                                                        ExecutionCall.of(
-                                                                                    Tsr.Create.newTsrLike(toBeDerived, 0).setIsVirtual(false),
-                                                                                    Tsr.Create.newTsrLike(inputs[(d==0?1:0)], 0),
-                                                                                    backwardError
-                                                                                )
-                                                                                .andArgs(Arg.DerivIdx.of(d))
-                                                                                .running(this)
-                                                                                .on(device)
-                                                                );
-                                                }
+                                            .setBackward(
+                                                (node, backwardError ) ->
+                                                    this.getAlgorithm(Broadcast.class)
+                                                        .getImplementationFor(device.getClass())
+                                                        .runAndGetFirstTensor(
+                                                                ExecutionCall.of(
+                                                                            Tsr.Create.newTsrLike(toBeDerived, 0).setIsVirtual(false),
+                                                                            Tsr.Create.newTsrLike(inputs[(d==0?1:0)], 0),
+                                                                            backwardError
+                                                                        )
+                                                                        .andArgs(Arg.DerivIdx.of(d))
+                                                                        .running(this)
+                                                                        .on(device)
+                                                        )
                                         );
                             }
                         }
@@ -302,30 +296,30 @@ public class Subtraction extends AbstractOperation
 
         setAlgorithm(
                 Broadcast.class,
-                        broadcast
-                        .setImplementationFor(
-                            HostCPU.class,
-                            new HostImplementation(
-                                    call ->
-                                            call.getDevice().getExecutor()
-                                                    .threaded (
-                                                            call.getTsrOfType( Number.class, 0 ).size(),
-                                                            (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
-                                                                    ? ( start, end ) ->
-                                                                    Broadcast.broadcast (
-                                                                            call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                            call.getValOf( Arg.DerivIdx.class ), start, end,
-                                                                            _creatorX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                    )
-                                                                    : ( start, end ) ->
-                                                                    Broadcast.broadcast (
-                                                                            call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
-                                                                            call.getValOf( Arg.DerivIdx.class ), start, end,
-                                                                            _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
-                                                                    )
-                                                    ),
-                                    3
-                            )
+                broadcast
+                    .setImplementationFor(
+                        HostCPU.class,
+                        new HostImplementation(
+                                call ->
+                                        call.getDevice().getExecutor()
+                                                .threaded (
+                                                        call.getTsrOfType( Number.class, 0 ).size(),
+                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
+                                                        ? ( start, end ) ->
+                                                                Broadcast.broadcast (
+                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
+                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
+                                                                        _creatorX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
+                                                                )
+                                                        : ( start, end ) ->
+                                                                Broadcast.broadcast (
+                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ), call.getTsrOfType( Number.class, 2 ),
+                                                                        call.getValOf( Arg.DerivIdx.class ), start, end,
+                                                                        _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
+                                                                )
+                                                ),
+                                3
+                        )
                     )
                     .setImplementationFor(
                             OpenCLDevice.class,
