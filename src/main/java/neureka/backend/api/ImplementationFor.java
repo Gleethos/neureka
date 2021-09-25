@@ -39,6 +39,7 @@ SOFTWARE.
 
 package neureka.backend.api;
 
+import neureka.Tsr;
 import neureka.devices.Device;
 
 /**
@@ -66,5 +67,10 @@ public interface ImplementationFor< TargetDevice extends Device<?> >
      *  @param call The call which ought to be executed on this implementation.
      */
     void run( ExecutionCall<TargetDevice> call );
+
+    default Tsr<?> runAndGetFirstTensor(ExecutionCall<TargetDevice> call ) {
+        this.run( call );
+        return call.getTensors()[0];
+    }
 
 }

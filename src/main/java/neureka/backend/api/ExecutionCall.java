@@ -146,14 +146,6 @@ public class ExecutionCall<D extends Device<?>> implements ImplementationCall<D>
                     );
     }
 
-    public ExecutionCall<D> withJ(int j ) {
-        List<Arg> args = _arguments.getAll(Arg.class);
-        args.add(Arg.VarIdx.of(j));
-        return this.getJ() == j
-                ? this
-                : new ExecutionCall<>( _device, _operation, _tensors, _algorithm, args );
-    }
-
     @Override
     public <V, T extends Arg<V>> T get( Class<T> argumentClass ) {
         return _arguments.get(argumentClass);
@@ -170,18 +162,6 @@ public class ExecutionCall<D extends Device<?>> implements ImplementationCall<D>
     public interface OperationCondition { boolean check( Operation type ); }
 
     public interface Mutator { Tsr<?>[] mutate( Tsr<?>[] tensors ); }
-
-    /**
-     * Constructs a copy of this call with the provided device!
-     */
-    public ExecutionCall<? extends Device<?>> withDevice( Device<?> newDevice ) {
-        return ExecutionCall.of( _tensors )
-                                .andArgs( Arg.DerivIdx.of( getValOf( Arg.DerivIdx.class ) ) )
-                                .andArgs( _arguments.getAll(Arg.class) )
-                                .running( _operation )
-                                .algorithm( _algorithm )
-                                .on( newDevice );
-    }
 
     public <T extends Device<?>> ExecutionCall<T> forDeviceType( Class<T> type ) {
         assert _device.getClass() == type;

@@ -277,24 +277,22 @@ public class Subtraction extends AbstractOperation
                             {
                                 Tsr deriv = inputs[(d==0?1:0)];
                                 Tsr toBeDerived = inputs[d];
-                                Device<?> device = call.getDevice();
+                                Device device = call.getDevice();
                                 return new DefaultADAgent( deriv )
                                         .setBackward(
                                                 (node, backwardError ) -> {
-                                                    ExecutionCall backPropCall =
-                                                            ExecutionCall.of(
-                                                                            Tsr.Create.newTsrLike(toBeDerived, 0).setIsVirtual(false),
-                                                                            Tsr.Create.newTsrLike(inputs[(d==0?1:0)], 0),
-                                                                            backwardError
-                                                                    )
-                                                                    .andArgs(Arg.DerivIdx.of(d))
-                                                                    .running(Neureka.get().context().getOperation("-"))
-                                                                    .on(device);
-
-                                                    this.getAlgorithm(Broadcast.class)
-                                                            .getImplementationFor(device.getClass())
-                                                            .run(backPropCall);
-                                                    return backPropCall.getTensors()[0];
+                                                    return this.getAlgorithm(Broadcast.class)
+                                                                .getImplementationFor(device.getClass())
+                                                                .runAndGetFirstTensor(
+                                                                        ExecutionCall.of(
+                                                                                    Tsr.Create.newTsrLike(toBeDerived, 0).setIsVirtual(false),
+                                                                                    Tsr.Create.newTsrLike(inputs[(d==0?1:0)], 0),
+                                                                                    backwardError
+                                                                                )
+                                                                                .andArgs(Arg.DerivIdx.of(d))
+                                                                                .running(this)
+                                                                                .on(device)
+                                                                );
                                                 }
                                         );
                             }
