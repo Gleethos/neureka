@@ -33,8 +33,9 @@ public class Subtraction extends AbstractOperation
                 if ( d < 0 ) {
                     return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] - t2_val[t2Idx.i()];
                 } else {
+                    int sign = -((d * 2) -1);
                     // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
-                    return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] + t2_val[t2Idx.i()];
+                    return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] + t2_val[t2Idx.i()] * sign;
                     //return ( t0Idx, t1Idx, t2Idx ) -> {
                     //    if (d == 0) return 1;
                     //    else return -1;
@@ -51,8 +52,9 @@ public class Subtraction extends AbstractOperation
                 if ( d < 0 ) {
                     return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.indexOfIndices( t1Idx )] - t2_val[ndc2.indexOfIndices(t2Idx)];
                 } else {
+                    int sign = -((d * 2) -1);
                     // In the context of broadcasting the traditional scalar derivative would be 1, broadcasting has different rules...
-                    return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.indexOfIndices( t1Idx )] + t2_val[ndc2.indexOfIndices(t2Idx)];
+                    return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.indexOfIndices( t1Idx )] + t2_val[ndc2.indexOfIndices(t2Idx)] * sign;
                     //return ( t0Idx, t1Idx, t2Idx ) -> {
                     //    if (d == 0) return 1;
                     //    else return -1;

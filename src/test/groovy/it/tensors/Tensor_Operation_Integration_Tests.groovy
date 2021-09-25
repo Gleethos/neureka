@@ -331,7 +331,7 @@ class Tensor_Operation_Integration_Tests extends Specification
     }
 
 
-    def 'Auto reshaping and broadcasting works and the result can be back propagated.'(// TODO: Cover other broadcasting operations!
+    def 'Auto reshaping and broadcasting works and the result can be back propagated.'(// TODO: Cover more broadcasting operations!
             boolean indexing, BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String expectedResult, String expectedGradient
     ) {
         given :
@@ -356,15 +356,24 @@ class Tensor_Operation_Integration_Tests extends Specification
             t1.toString() == "(2x2):["+expectedResult+"]"
 
         where:
-            indexing | autoReshaping |    operation      ||      expectedResult     | expectedGradient
+            indexing | autoReshaping |    operation      ||     expectedResult      | expectedGradient
+
              true    |    false      | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
              true    |    true       | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-             true    |    false      | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "12.0, 1.0"
-             true    |    true       | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "12.0, 1.0"
              false   |    false      | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
              false   |    true       | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-             false   |    false      | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "12.0, 1.0"
-             false   |    true       | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "12.0, 1.0"
+
+             false   |    false      | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
+             false   |    true       | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
+             true    |    false      | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
+             true    |    true       | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
+
+             false   |    false      | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"| "12.0, 1.0"
+             false   |    true       | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"| "12.0, 1.0"
+             true    |    false      | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"| "12.0, 1.0"
+             true    |    true       | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"| "12.0, 1.0"
+
+
     }
 
 
