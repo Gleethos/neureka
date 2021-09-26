@@ -41,8 +41,8 @@ public class DimFit extends AbstractOperation
                         if ( forward ) {
                             throw new IllegalArgumentException("Dim-Fit operation does not support forward-AD!");
                         }
-                        return new DefaultADAgent()
-                                        .withContext(call.getMetaArgs().getAll(Arg.class))
+                        return DefaultADAgent.ofDerivative( null )
+                                        .withContext(call.allMetaArgs())
                                         .setForward(null)
                                         .setBackward(
                                                 null//(t, error) -> pad(error, new int[]{prefix, postfix}, true)
@@ -67,7 +67,6 @@ public class DimFit extends AbstractOperation
                             for ( int i = shape.length-1; i>=0; i-- ) if ( shape[ i ] == 1 ) postfix++; else break;
 
                             int[][] change = new int[inputs.length][];
-
 
                             for ( int i=0; i<inputs.length; i++)
                             {

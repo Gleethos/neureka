@@ -96,7 +96,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         return new Builder<D>(tensors);
     }
 
-    public Args getMetaArgs() { return _arguments; }
+    public ExecutionCall<D> setMetaArg( Arg<?> arg ) { _arguments.set(arg); return this; }
     
     public String toString() {
         return "ExecutionCall(" +
@@ -149,8 +149,11 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         return getAlgorithm().canPerformBackwardADFor( this );
     }
 
-    public ADAgent getADAgentFrom( Function function, ExecutionCall<? extends Device<?>> call, boolean forward )
-    {
+    public ADAgent getADAgentFrom(
+            Function function,
+            ExecutionCall<? extends Device<?>> call,
+            boolean forward
+    ) {
         for ( Arg<?> arg : _arguments.getAll(Arg.class) ) {
             if ( !call._arguments.has(arg.getClass()) )
                 call._arguments.set(arg);

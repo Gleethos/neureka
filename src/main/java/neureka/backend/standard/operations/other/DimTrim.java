@@ -46,7 +46,7 @@ public class DimTrim extends AbstractOperation
                                 throw new IllegalArgumentException("Dim-Trim operation does not support forward-AD!");
                             }
                             return new DefaultADAgent()
-                                    .withContext(call.getMetaArgs().getAll(Arg.class))
+                                    .withContext(call.allMetaArgs())
                                     .setForward((t, derivative) -> new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{derivative},0))
                                     .setBackward( (t, error) -> _pad(error, new int[]{prefix, postfix}, true) );
                         }
@@ -63,7 +63,7 @@ public class DimTrim extends AbstractOperation
                                 return _pad(t, new int[]{prefix, postfix}, true);
                             } else {
                                 int[] ends = new int[ 2 ];
-                                call.getMetaArgs().set(Arg.Ends.of(ends));
+                                call.setMetaArg(Arg.Ends.of(ends));
                                 return _trim(t, ends, true);
                             }
                         }
