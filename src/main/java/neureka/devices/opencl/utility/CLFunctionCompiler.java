@@ -6,8 +6,6 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.operations.OperationBuilder;
-import neureka.backend.standard.algorithms.FunAlgorithm;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -49,7 +47,8 @@ public class CLFunctionCompiler {
         int numberOfArgs = _functionToBeOptimized.numberOfArgs();
         if ( _functionToBeOptimized.getSubFunctions().stream().anyMatch(fun -> fun instanceof FunctionVariable ) )
             numberOfArgs = -1; // The function is an indexer which means that it can have any number of arguments...
-        return new OperationBuilder()
+        return Operation
+                .builder()
                 .setFunction( _functionName )
                 .setOperator( _functionName )
                 .setArity( numberOfArgs )

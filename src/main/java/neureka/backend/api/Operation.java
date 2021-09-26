@@ -41,6 +41,7 @@ package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
+import neureka.backend.api.operations.OperationBuilder;
 import neureka.calculus.Function;
 import neureka.ndim.iterators.NDIterator;
 
@@ -61,6 +62,7 @@ import neureka.ndim.iterators.NDIterator;
  */
 public interface Operation
 {
+    static OperationBuilder builder() { return new OperationBuilder(); }
 
     @FunctionalInterface
     interface TertiaryNDIConsumer { double execute( NDIterator t0Idx, NDIterator t1Idx, NDIterator t2Idx ); }

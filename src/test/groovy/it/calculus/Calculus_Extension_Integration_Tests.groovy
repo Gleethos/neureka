@@ -6,8 +6,8 @@ import neureka.Tsr
 import neureka.autograd.ADAgent
 import neureka.backend.api.Algorithm
 import neureka.backend.api.ExecutionCall
+import neureka.backend.api.Operation
 import neureka.backend.api.OperationContext
-import neureka.backend.api.operations.OperationBuilder
 import neureka.backend.standard.implementations.HostImplementation
 import neureka.calculus.CalcUtil
 import neureka.calculus.Function
@@ -46,7 +46,8 @@ class Calculus_Extension_Integration_Tests extends Specification
             run {
                 Neureka.get().context()
                     .addOperation(
-                        new OperationBuilder()
+                            Operation
+                                .builder()
                                 .setFunction('test_function')
                                 .setOperator('test_function')
                                 .setArity(-1)
