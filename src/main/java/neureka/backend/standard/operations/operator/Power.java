@@ -220,7 +220,7 @@ public class Power extends AbstractOperation
                                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                                 )
-                                .build();
+                                .buildFunAlgorithm();
 
         setAlgorithm(Operator.class,
                 operator.setImplementationFor(
@@ -314,7 +314,7 @@ public class Power extends AbstractOperation
                         }
                     }
                 )
-                .build();
+                .buildFunAlgorithm();
 
         setAlgorithm(
                 Broadcast.class,
@@ -405,7 +405,7 @@ public class Power extends AbstractOperation
                         getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
                 .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, rja ) )
-                .build();
+                .buildFunAlgorithm();
 
         setAlgorithm(
                 Scalarization.class,

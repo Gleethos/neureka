@@ -77,7 +77,7 @@ public class Modulo extends AbstractOperation {
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                     )
-                    .build();
+                    .buildFunAlgorithm();
 
         setAlgorithm(
                 Operator.class,
@@ -218,7 +218,7 @@ public class Modulo extends AbstractOperation {
                     }
                 }
             )
-            .build();
+            .buildFunAlgorithm();
 
         setAlgorithm(
                 Broadcast.class,
@@ -320,7 +320,7 @@ public class Modulo extends AbstractOperation {
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
-            .build();
+            .buildFunAlgorithm();
 
         setAlgorithm(
                 Scalarization.class,

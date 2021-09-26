@@ -107,7 +107,7 @@ public class ConvUtil {
                             return call;
                         }
                 )
-                .build();
+                .buildFunAlgorithm();
     }
 
     public static Convolution getConv() {

@@ -73,7 +73,7 @@ public class AdditionConv extends AbstractOperation {
                                                         .on(call.getDevice());
                                 }
                         )
-                        .build()
+                        .buildFunAlgorithm()
         );
     }
 

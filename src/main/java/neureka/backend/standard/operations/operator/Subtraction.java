@@ -102,7 +102,7 @@ public class Subtraction extends AbstractOperation
                                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                                     )
-                                    .build();
+                                    .buildFunAlgorithm();
 
         setAlgorithm(
                 operator.setImplementationFor(
@@ -190,7 +190,7 @@ public class Subtraction extends AbstractOperation
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
                 .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forSubtractions ) )
-                .build();
+                .buildFunAlgorithm();
 
         setAlgorithm(
                 Scalarization.class,
@@ -289,7 +289,7 @@ public class Subtraction extends AbstractOperation
                             }
                         }
                 )
-                .build();
+                .buildFunAlgorithm();
 
         setAlgorithm(
                 Broadcast.class,

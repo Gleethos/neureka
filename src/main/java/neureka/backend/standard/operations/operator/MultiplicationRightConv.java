@@ -3,7 +3,6 @@ package neureka.backend.standard.operations.operator;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.autograd.DefaultADAgent;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
@@ -75,7 +74,7 @@ public class MultiplicationRightConv extends AbstractOperation {
                                     ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().context().getOperation("idy")).on(call.getDevice());
                         }
                 )
-                .build();
+                .buildFunAlgorithm();
 
         setAlgorithm(
                 Broadcast.class,

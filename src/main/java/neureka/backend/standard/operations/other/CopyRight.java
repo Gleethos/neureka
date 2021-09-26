@@ -57,7 +57,7 @@ public class CopyRight extends AbstractOperation {
                                             .on( call.getDevice() );
                 }
         )
-        .build();
+        .buildFunAlgorithm();
 
         setAlgorithm(Activation.class,
                 activation.setImplementationFor(

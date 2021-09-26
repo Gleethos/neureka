@@ -83,7 +83,7 @@ public final class Sinus extends AbstractOperation
                                  return call;
                              }
                         )
-                        .build();
+                        .buildFunAlgorithm();
 
         setAlgorithm(
                 Activation.class,

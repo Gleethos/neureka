@@ -73,7 +73,7 @@ public final class Identity extends AbstractOperation
                                         .on(call.getDevice());
                 }
         )
-        .build();
+        .buildFunAlgorithm();
 
         setAlgorithm(
                 Activation.class,
@@ -168,7 +168,7 @@ public final class Identity extends AbstractOperation
                     return call;
                 }
             )
-            .build();
+            .buildFunAlgorithm();
 
         setAlgorithm(
                 Scalarization.class,

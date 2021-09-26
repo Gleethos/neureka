@@ -72,7 +72,7 @@ public class MultiplicationLeftConv extends AbstractOperation {
                             return ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().context().getOperation("idy")).on(call.getDevice());
                         }
                 )
-                .build();
+                .buildFunAlgorithm();
 
 
         setAlgorithm(

@@ -95,7 +95,7 @@ public final class Product extends AbstractOperation {
                         }
                     }
                 )
-                .build();
+                .buildFunAlgorithm();
 
         setAlgorithm(
                 Broadcast.class,
@@ -235,7 +235,7 @@ public final class Product extends AbstractOperation {
                     return call;
                 }
         )
-        .build();
+        .buildFunAlgorithm();
 
         setAlgorithm(
                 Activation.class,

@@ -60,7 +60,7 @@ public class CopyLeft extends AbstractOperation {
                                                     .on( call.getDevice() );
                         }
                 )
-                .build();
+                .buildFunAlgorithm();
 
         ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
                 (inputs, value, d) -> {
@@ -149,7 +149,7 @@ public class CopyLeft extends AbstractOperation {
                                             .on(call.getDevice());
                     }
             )
-            .build();
+            .buildFunAlgorithm();
 
         setAlgorithm(
                 Activation.class,

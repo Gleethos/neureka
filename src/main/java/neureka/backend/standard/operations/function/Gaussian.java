@@ -98,7 +98,7 @@ public final class Gaussian extends AbstractOperation
                         return call;
                     }
             )
-            .build();
+            .buildFunAlgorithm();
 
         setAlgorithm(
                 Activation.class,

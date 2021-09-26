@@ -83,7 +83,7 @@ public final class Summation extends AbstractOperation
                         }
                     }
                 )
-                .build();
+                .buildFunAlgorithm();
 
 
         setAlgorithm(
@@ -226,7 +226,7 @@ public final class Summation extends AbstractOperation
                     return call;
                 }
         )
-        .build();
+        .buildFunAlgorithm();
 
         setAlgorithm(
                 Activation.class,

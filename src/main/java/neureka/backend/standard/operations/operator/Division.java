@@ -111,7 +111,7 @@ public class Division extends AbstractOperation
                                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                                     )
-                                    .build();
+                                    .buildFunAlgorithm();
 
         setAlgorithm(
                 Operator.class,
@@ -213,7 +213,7 @@ public class Division extends AbstractOperation
                                                 }
                                             }
                                         )
-                                        .build();
+                                        .buildFunAlgorithm();
 
         setAlgorithm(
                 Broadcast.class,
@@ -305,7 +305,7 @@ public class Division extends AbstractOperation
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
                 .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forDivisionsOrModuli ) )
-                .build();
+                .buildFunAlgorithm();
 
         setAlgorithm(
                 Scalarization.class,

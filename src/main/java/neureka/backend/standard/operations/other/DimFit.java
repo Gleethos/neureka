@@ -105,7 +105,7 @@ public class DimFit extends AbstractOperation
                                     }
                             )
                             .setCallPreparation( call -> call )
-                            .build();
+                            .buildFunAlgorithm();
 
         setAlgorithm(
                 FunAlgorithm.class,

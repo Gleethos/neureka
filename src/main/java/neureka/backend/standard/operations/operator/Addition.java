@@ -79,7 +79,7 @@ public class Addition extends AbstractOperation {
                                                             }
                                                         }
                                                     )
-                                                    .build();
+                                                    .buildFunAlgorithm();
 
     public Addition()
     {
@@ -120,7 +120,7 @@ public class Addition extends AbstractOperation {
                                             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                                     )
-                                    .build();
+                                    .buildFunAlgorithm();
 
         setAlgorithm(
                 operator
@@ -244,7 +244,7 @@ public class Addition extends AbstractOperation {
                             getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
                 )
                 .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
-                .build();
+                .buildFunAlgorithm();
 
         ScalarOperatorCreator<PrimaryNDIConsumer> scalarCreator =
                 (inputs, value, d) -> {

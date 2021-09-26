@@ -157,7 +157,7 @@ public class MatMul extends AbstractOperation
                                             return call;
                                         }
                                     )
-                                    .build();
+                                    .buildFunAlgorithm();
 
         setAlgorithm(
                 simpleMatMulAlgorithm

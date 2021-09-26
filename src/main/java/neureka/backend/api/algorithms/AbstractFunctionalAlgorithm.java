@@ -107,7 +107,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
 
     //---
 
-    public C build() { return (C) this; }
+    public C buildFunAlgorithm() { return (C) this; }
 
     /**
      *  The {@link SuitabilityPredicate}

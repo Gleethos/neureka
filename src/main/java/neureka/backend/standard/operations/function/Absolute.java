@@ -48,7 +48,7 @@ public final class Absolute extends AbstractOperation
                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
-            .build();
+            .buildFunAlgorithm();
 
         setAlgorithm(
                 Activation.class,
