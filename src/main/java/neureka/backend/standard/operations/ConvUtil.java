@@ -48,7 +48,7 @@ public class ConvUtil {
                             assert mul != null;
                             assert deriv != null;
                             assert invX != null;
-                            return new DefaultADAgent( deriv )
+                            return DefaultADAgent.ofDerivative( deriv )
                                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
                                     .setBackward( (node, error) -> invX.execute( error, deriv, Tsr.of(node.getPayload().shape(), 0) ) ); // WARNING! This produced null pointer!
                         }

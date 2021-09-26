@@ -45,7 +45,7 @@ public class AdditionConv extends AbstractOperation {
                                     Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                                     Function mul = Neureka.get().context().getFunction().mul();
                                     if ( ctxDerivative != null ) {
-                                        return new DefaultADAgent( ctxDerivative )
+                                        return DefaultADAgent.ofDerivative( ctxDerivative )
                                                 .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
                                                 .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
                                     }
@@ -56,7 +56,7 @@ public class AdditionConv extends AbstractOperation {
                                     else
                                     {
                                         Tsr<?> localDerivative = f.derive( inputs, d );
-                                        return new DefaultADAgent( localDerivative )
+                                        return DefaultADAgent.ofDerivative( localDerivative )
                                                 .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
                                                 .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
                                     }

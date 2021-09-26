@@ -67,7 +67,7 @@ public final class Summation extends AbstractOperation
                         Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         Function mul = Neureka.get().context().getFunction().mul();
                         if ( ctxDerivative != null ) {
-                            return new DefaultADAgent( ctxDerivative )
+                            return DefaultADAgent.ofDerivative( ctxDerivative )
                                     .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
                                     .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
                         }
@@ -77,7 +77,7 @@ public final class Summation extends AbstractOperation
                         else
                         {
                             Tsr deriv = f.derive( inputs, d );
-                            return new DefaultADAgent( deriv )
+                            return DefaultADAgent.ofDerivative( deriv )
                                     .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
                                     .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
                         }
@@ -170,7 +170,7 @@ public final class Summation extends AbstractOperation
                 Tsr ctxDerivative = (Tsr) call.getValOf(Arg.Derivative.class);
                 Function mul = Neureka.get().context().getFunction().mul();
                 if ( ctxDerivative != null )
-                    return new DefaultADAgent( ctxDerivative )
+                    return DefaultADAgent.ofDerivative( ctxDerivative )
                             .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
                             .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, ctxDerivative } ) );
 
@@ -179,7 +179,7 @@ public final class Summation extends AbstractOperation
                 if ( forward )
                 {
                     Tsr deriv = f.derive( inputs, d );
-                    return new DefaultADAgent( deriv )
+                    return DefaultADAgent.ofDerivative( deriv )
                             .setForward( ( t, derivative ) -> mul.call( derivative, deriv ) )
                             .setBackward( ( t, derivative ) -> mul.call( new Tsr[]{derivative, deriv} ) );
                 }
@@ -192,14 +192,14 @@ public final class Summation extends AbstractOperation
                                 false
                         );
                         Tsr deriv = f.derive( inputs, d );
-                        return new DefaultADAgent( deriv )
+                        return DefaultADAgent.ofDerivative( deriv )
                                 .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
                                 .setBackward( (t, error) -> invX.execute( error, deriv, Tsr.of(t.getPayload().shape(), 0) ) );
                     }
                     else
                     {
                         Tsr deriv = f.derive( inputs, d );
-                        return new DefaultADAgent( deriv )
+                        return DefaultADAgent.ofDerivative( deriv )
                                 .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
                                 .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
                     }

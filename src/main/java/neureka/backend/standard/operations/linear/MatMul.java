@@ -94,10 +94,10 @@ public class MatMul extends AbstractOperation
                             int d = (1 + call.getValOf( Arg.DerivIdx.class )) % 2;
                             Tsr<?> deriv = inputs[ d ].T();
                             if ( d == 0 )
-                                return new DefaultADAgent( deriv )
+                                return DefaultADAgent.ofDerivative( deriv )
                                             .setBackward( (node, error) -> invX.execute( error, deriv ) );
                             else
-                                return new DefaultADAgent( deriv )
+                                return DefaultADAgent.ofDerivative( deriv )
                                             .setBackward( (node, error) -> invX.execute( error, deriv ) );
                         }
                 )

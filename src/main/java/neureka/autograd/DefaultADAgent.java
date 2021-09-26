@@ -34,25 +34,10 @@ import java.util.stream.Collectors;
  */
 public final class DefaultADAgent extends Args implements ADAgent {
 
-    public DefaultADAgent setForward( ADAction _forward ) { this._forward = _forward; return this; }
-
-    public DefaultADAgent setBackward( ADAction _backward ) { this._backward = _backward; return this; }
-
-     /**
-     * This interface is the declaration for
-     * lambda actions for both the {@link #forward(GraphNode, Tsr)}
-     * and {@link #backward(GraphNode, Tsr)} method of the {@link ADAgent} interface.
-     */
-    public interface ADAction
-    {
-        /**
-         * @param node The {@link GraphNode} at which the differentiation ought to be performed.
-         * @param error The error which ought to be used for the forward or backward differentiation.
-         * @return The result of the differentiation.
-         */
-         Tsr<?> execute( GraphNode<?> node, Tsr<?> error );
+    public static DefaultADAgent ofDerivative( Tsr<?> derivative ) {
+        return new DefaultADAgent( derivative );
     }
-
+    
     /**
      *  This lambda ought to perform the forward propagation
      *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
@@ -67,12 +52,19 @@ public final class DefaultADAgent extends Args implements ADAgent {
     /**
      * @param derivative The current derivative which will be stored with the name "derivative" in the agents context.
      */
-    public DefaultADAgent( Tsr<?> derivative ) {
+    private DefaultADAgent( Tsr<?> derivative ) {
         set( Arg.Derivative.of(derivative) );
     }
 
     public DefaultADAgent() { }
 
+
+    public DefaultADAgent setForward( ADAction _forward ) { this._forward = _forward; return this; }
+
+    
+    public DefaultADAgent setBackward( ADAction _backward ) { this._backward = _backward; return this; }
+    
+    
     /**
      *  The {@link DefaultADAgent} will adopt the argument context of the {@link neureka.backend.api.ExecutionCall}
      *  from which it was born. This is so that they can be used by any backend implementation to
@@ -128,12 +120,20 @@ public final class DefaultADAgent extends Args implements ADAgent {
     }
 
 
+    /**
+     * This interface is the declaration for
+     * lambda actions for both the {@link #forward(GraphNode, Tsr)}
+     * and {@link #backward(GraphNode, Tsr)} method of the {@link ADAgent} interface.
+     */
+    public interface ADAction
+    {
+        /**
+         * @param node The {@link GraphNode} at which the differentiation ought to be performed.
+         * @param error The error which ought to be used for the forward or backward differentiation.
+         * @return The result of the differentiation.
+         */
+        Tsr<?> execute( GraphNode<?> node, Tsr<?> error );
+    }
 
-
-
-
-
-
-
-
+    
 }

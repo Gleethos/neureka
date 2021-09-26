@@ -74,7 +74,7 @@ public class CLFunctionCompiler {
                                 .setSupplyADAgentFor(
                                         (Function f, ExecutionCall<? extends Device<?>> call, boolean forward) -> {
                                             // TODO: calculate derivative and supply agent!
-                                            return new DefaultADAgent(null)
+                                            return DefaultADAgent.ofDerivative( null )
                                                     .setForward((t, derivative) -> new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
                                                     .setBackward((t, error) -> new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{error}, 0));
                                         }

@@ -105,7 +105,6 @@ public class Subtraction extends AbstractOperation
                                     .build();
 
         setAlgorithm(
-                Operator.class,
                 operator.setImplementationFor(
                         HostCPU.class,
                         new HostImplementation(
@@ -186,8 +185,6 @@ public class Subtraction extends AbstractOperation
                 };
 
         Scalarization scalarization = new Scalarization()
-                .setCanPerformBackwardADFor( call -> true )
-                .setCanPerformForwardADFor( call -> true )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
@@ -273,7 +270,7 @@ public class Subtraction extends AbstractOperation
                                 Tsr deriv = inputs[(d==0?1:0)];
                                 Tsr toBeDerived = inputs[d];
                                 Device device = call.getDevice();
-                                return new DefaultADAgent( deriv )
+                                return DefaultADAgent.ofDerivative( deriv )
                                             .setBackward(
                                                 (node, backwardError ) ->
                                                     this.getAlgorithm(Broadcast.class)

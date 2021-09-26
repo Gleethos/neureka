@@ -115,12 +115,12 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
         Tsr<?> derivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
         Function mul = Neureka.get().context().getFunction().mul();
         if ( derivative != null ) {
-            return new DefaultADAgent( derivative )
+            return DefaultADAgent.ofDerivative( derivative )
                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
                     .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
         }
         Tsr<?> localDerivative = function.executeDerive( call.getTensors(), call.getDerivativeIndex() );
-        return new DefaultADAgent( localDerivative )
+        return DefaultADAgent.ofDerivative( localDerivative )
                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, localDerivative ) )
                     .setBackward( (node, backwardError ) -> mul.execute( backwardError, localDerivative ) );
     }

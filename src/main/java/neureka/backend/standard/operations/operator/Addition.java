@@ -60,7 +60,7 @@ public class Addition extends AbstractOperation {
                                                                 Tsr deriv = inputs[(d==0?1:0)];
                                                                 Tsr toBeDerived = inputs[d];
                                                                 Device device = call.getDevice();
-                                                                return new DefaultADAgent( deriv )
+                                                                return DefaultADAgent.ofDerivative( deriv )
                                                                             .setBackward(
                                                                                     (node, backwardError ) ->
                                                                                         this.getAlgorithm(Broadcast.class)
@@ -123,7 +123,6 @@ public class Addition extends AbstractOperation {
                                     .build();
 
         setAlgorithm(
-                Operator.class,
                 operator
                         .setImplementationFor(
                             HostCPU.class,
@@ -185,7 +184,7 @@ public class Addition extends AbstractOperation {
         //________________
         // BROADCASTING :
 
-        setAlgorithm(Broadcast.class,
+        setAlgorithm(
                 _broadcast
                 .setImplementationFor(
                         HostCPU.class,
@@ -240,8 +239,6 @@ public class Addition extends AbstractOperation {
         // TENSOR SCALAR OPERATION :
 
         Scalarization scalarization = new Scalarization()
-                .setCanPerformBackwardADFor( call -> true )
-                .setCanPerformForwardADFor( call -> true )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                             getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
@@ -267,7 +264,6 @@ public class Addition extends AbstractOperation {
                 };
 
         setAlgorithm(
-                Scalarization.class,
                 scalarization.setImplementationFor(
                         HostCPU.class,
                                 new HostImplementation(

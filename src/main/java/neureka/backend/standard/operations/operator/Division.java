@@ -201,7 +201,7 @@ public class Division extends AbstractOperation
                                                 Tsr ctxDerivative = (Tsr)call.getValOf(Arg.Derivative.class);
                                                 Function mul = Neureka.get().context().getFunction().mul();
                                                 if ( ctxDerivative != null ) {
-                                                    return new DefaultADAgent( ctxDerivative )
+                                                    return DefaultADAgent.ofDerivative( ctxDerivative )
                                                             .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
                                                             .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
                                                 }
@@ -211,7 +211,7 @@ public class Division extends AbstractOperation
                                                 else
                                                 {
                                                     Tsr deriv = f.derive( inputs, d );
-                                                    return new DefaultADAgent( deriv )
+                                                    return DefaultADAgent.ofDerivative( deriv )
                                                             .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
                                                             .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
                                                 }
