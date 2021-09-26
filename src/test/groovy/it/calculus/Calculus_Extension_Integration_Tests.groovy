@@ -3,11 +3,11 @@ package it.calculus
 import it.calculus.mocks.CLContext
 import neureka.Neureka
 import neureka.Tsr
-import neureka.autograd.DefaultADAgent
+import neureka.autograd.ADAgent
+import neureka.backend.api.Algorithm
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.OperationContext
 import neureka.backend.api.operations.OperationBuilder
-import neureka.backend.standard.algorithms.GenericAlgorithm
 import neureka.backend.standard.implementations.HostImplementation
 import neureka.calculus.CalcUtil
 import neureka.calculus.Function
@@ -65,8 +65,7 @@ class Calculus_Extension_Integration_Tests extends Specification
                                 )
                                 .build()
                                 .setAlgorithm(
-                                        GenericAlgorithm.class,
-                                        new GenericAlgorithm(null)
+                                        Algorithm.withName(null)
                                                 .setIsSuitableFor(call -> 1.0f)
                                                 .setCanPerformBackwardADFor(call -> true)
                                                 .setCanPerformForwardADFor(call -> false)

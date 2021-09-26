@@ -4,12 +4,12 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.Algorithm;
+import neureka.backend.standard.algorithms.FunAlgorithm;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
-import neureka.backend.standard.algorithms.GenericAlgorithm;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
@@ -34,7 +34,7 @@ public class DimTrim extends AbstractOperation
                         .setIsInline(         false       )
         );
 
-        GenericAlgorithm implementation =
+        FunAlgorithm implementation =
                     Algorithm.withName("dimTrim")
                             .setIsSuitableFor( call -> 1.0f )
                             .setCanPerformBackwardADFor( call -> true )
@@ -74,7 +74,7 @@ public class DimTrim extends AbstractOperation
                             .build();
 
         setAlgorithm(
-                GenericAlgorithm.class,
+                FunAlgorithm.class,
                 implementation
         );
 

@@ -40,7 +40,7 @@ package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.backend.api.algorithms.fun.*;
-import neureka.backend.standard.algorithms.GenericAlgorithm;
+import neureka.backend.standard.algorithms.FunAlgorithm;
 import neureka.devices.Device;
 
 
@@ -60,8 +60,8 @@ public interface Algorithm<C extends Algorithm<C>>
 extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSupplier, ExecutionPreparation, ExecutionDispatcher
 {
 
-    static GenericAlgorithm withName( String name ) {
-        return new GenericAlgorithm( name );
+    static FunAlgorithm withName(String name ) {
+        return new FunAlgorithm( name );
     }
 
     String getName();

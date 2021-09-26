@@ -3,10 +3,11 @@ package neureka.devices.opencl.utility;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
+import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.operations.OperationBuilder;
-import neureka.backend.standard.algorithms.GenericAlgorithm;
+import neureka.backend.standard.algorithms.FunAlgorithm;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -67,7 +68,7 @@ public class CLFunctionCompiler {
                 )
                 .build()
                 .setAlgorithm(
-                        new GenericAlgorithm( "generic_algorithm_for_"+ _functionName)
+                        Algorithm.withName( "generic_algorithm_for_"+ _functionName )
                                 .setIsSuitableFor( call -> 1.0f )
                                 .setCanPerformBackwardADFor( call -> true )
                                 .setCanPerformForwardADFor( call -> false )

@@ -113,10 +113,10 @@ public class OpenCLPlatform {
                         else if ( preName.contains("convolution") && type.supportsAlgorithm(Convolution.class) )
                             impl = type.getAlgorithm(Convolution.class).getImplementationFor( OpenCLDevice.class );
                         else if (
-                                type.supportsAlgorithm(GenericAlgorithm.class)
-                                && preName.contains(type.getAlgorithm(GenericAlgorithm.class).getName())
+                                type.supportsAlgorithm(FunAlgorithm.class)
+                                && preName.contains(type.getAlgorithm(FunAlgorithm.class).getName())
                         ) { // TODO: cover!
-                            impl = type.getAlgorithm(GenericAlgorithm.class).getImplementationFor( OpenCLDevice.class );
+                            impl = type.getAlgorithm(FunAlgorithm.class).getImplementationFor( OpenCLDevice.class );
                         }
                         if ( impl instanceof CLImplementation ) {
                             CLImplementation clImplementation = (CLImplementation) impl;

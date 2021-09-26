@@ -9,7 +9,7 @@ import neureka.backend.api.Operation;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Convolution;
-import neureka.backend.standard.algorithms.GenericAlgorithm;
+import neureka.backend.standard.algorithms.FunAlgorithm;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.calculus.CalcUtil;
@@ -66,7 +66,7 @@ public class MatMul extends AbstractOperation
                 return alternative;
         };
 
-        GenericAlgorithm simpleMatMulAlgorithm =
+        FunAlgorithm simpleMatMulAlgorithm =
                         Algorithm.withName("simple_matmul")
                                     .setIsSuitableFor(
                                             call -> call.validate()
