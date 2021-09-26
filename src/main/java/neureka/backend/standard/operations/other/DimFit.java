@@ -44,7 +44,7 @@ public class DimFit extends AbstractOperation
                                         throw new IllegalArgumentException("Dim-Fit operation does not support forward-AD!");
                                     }
                                     return ADAgent.of( null )
-                                                    .withContext(call.allMetaArgs())
+                                                    .withArgs(call.allMetaArgs())
                                                     .setForward(null)
                                                     .setBackward(
                                                             null//(t, error) -> pad(error, new int[]{prefix, postfix}, true)

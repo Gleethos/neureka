@@ -2,15 +2,15 @@ package neureka.backend.standard.operations.other;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.DefaultADAgent;
+import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
-import neureka.backend.standard.algorithms.FunAlgorithm;
-import neureka.calculus.CalcUtil;
-import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
+import neureka.backend.standard.algorithms.FunAlgorithm;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
 import neureka.ndim.config.AbstractNDC;
@@ -47,8 +47,8 @@ public class DimTrim extends AbstractOperation
                                         if ( forward ) {
                                             throw new IllegalArgumentException("Dim-Trim operation does not support forward-AD!");
                                         }
-                                        return new DefaultADAgent()
-                                                .withContext(call.allMetaArgs())
+                                        return ADAgent.of( null )
+                                                .withArgs(call.allMetaArgs())
                                                 .setForward((t, derivative) -> new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{derivative},0))
                                                 .setBackward( (t, error) -> _pad(error, new int[]{prefix, postfix}, true) );
                                     }

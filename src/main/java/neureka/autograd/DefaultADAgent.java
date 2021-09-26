@@ -50,16 +50,11 @@ public final class DefaultADAgent extends Args implements ADAgent {
     /**
      * @param derivative The current derivative which will be stored with the name "derivative" in the agents context.
      */
-    private DefaultADAgent( Tsr<?> derivative ) {
-        set( Arg.Derivative.of(derivative) );
-    }
-
-    public DefaultADAgent() { }
+    private DefaultADAgent( Tsr<?> derivative ) { set( Arg.Derivative.of(derivative) ); }
 
 
     public DefaultADAgent setForward( ADAction _forward ) { this._forward = _forward; return this; }
 
-    
     public DefaultADAgent setBackward( ADAction _backward ) { this._backward = _backward; return this; }
     
     
@@ -68,7 +63,7 @@ public final class DefaultADAgent extends Args implements ADAgent {
      *  from which it was born. This is so that they can be used by any backend implementation to
      *  save variables useful to perform differentiation.
      */
-    public DefaultADAgent withContext( List<Arg> context  ) {
+    public DefaultADAgent withArgs( List<Arg> context  ) {
         for ( Arg<?> arg : context ) this.set(arg);
         return this;
     }

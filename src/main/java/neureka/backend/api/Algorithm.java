@@ -60,9 +60,7 @@ public interface Algorithm<C extends Algorithm<C>>
 extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSupplier, ExecutionPreparation, ExecutionDispatcher
 {
 
-    static FunAlgorithm withName(String name ) {
-        return new FunAlgorithm( name );
-    }
+    static FunAlgorithm withName(String name ) { return new FunAlgorithm( name ); }
 
     String getName();
 
