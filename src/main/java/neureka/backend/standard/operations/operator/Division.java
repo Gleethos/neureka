@@ -28,15 +28,14 @@ public class Division extends AbstractOperation
     ( inputs, d ) -> {
         double[] t1_val = inputs[ 1 ].value64();
         double[] t2_val = inputs[ 2 ].value64();
-        if ( d < 0 ) {
+        if ( d < 0 )
             return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] / t2_val[t2Idx.i()];
-        } else {
+        else {
             return ( t0Idx, t1Idx, t2Idx ) -> {
-                if (d == 0) {//"    output = 1/input2;\n" +
+                if ( d == 0 )
                     return 1 / t2_val[t2Idx.i()];
-                } else {
+                else
                     return -(t1_val[t2Idx.i()] / Math.pow(t2_val[t1Idx.i()], 2));
-                }//"    output = -input2 /(float)pow(input1, 2.0f);\n" +
             };
         }
     };
@@ -47,15 +46,14 @@ public class Division extends AbstractOperation
                 double[] t2_val = inputs[ 2 ].value64();
                 NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                 NDConfiguration ndc2 = inputs[ 2 ].getNDConf();
-                if ( d < 0 ) {
+                if ( d < 0 )
                     return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.indexOfIndices( t1Idx )] / t2_val[ndc2.indexOfIndices(t2Idx)];
-                } else {
+                else {
                     return ( t0Idx, t1Idx, t2Idx ) -> {
-                        if (d == 0) {//"    output = 1/input2;\n" +
+                        if ( d == 0 )
                             return 1 / t2_val[ndc2.indexOfIndices(t2Idx)];
-                        } else {
+                        else
                             return -(t1_val[ndc2.indexOfIndices(t2Idx)] / Math.pow(t2_val[ndc1.indexOfIndices( t1Idx )], 2));
-                        }//"    output = -input2 /(float)pow(input1, 2.0f);\n" +
                     };
                 }
             };
@@ -80,15 +78,14 @@ public class Division extends AbstractOperation
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
-                    if ( d < 0 ) {
+                    if ( d < 0 )
                         return ( t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] / t2_val[t2Idx.i()];
-                    } else {
+                    else {
                         return ( t1Idx, t2Idx ) -> {
-                            if (d == 0) {//"    output = 1/input2;\n" +
+                            if ( d == 0 )
                                 return 1 / t2_val[t2Idx.i()];
-                            } else {
+                            else
                                 return -(t1_val[t2Idx.i()] / Math.pow(t2_val[t1Idx.i()], 2));
-                            }//"    output = -input2 /(float)pow(input1, 2.0f);\n" +
                         };
                     }
                 };
