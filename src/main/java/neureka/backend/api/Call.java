@@ -11,9 +11,7 @@ import java.util.stream.Collectors;
 
 public class Call<D> {
 
-    public static Call.Builder<?> ofTensors( Tsr<?>... tensors ) {
-        return new Builder<>(tensors);
-    }
+    public static Call.Builder<?> ofTensors( Tsr<?>... tensors ) { return new Builder<>(tensors); }
 
     /**
      *  The tensor arguments from which an operation will either
@@ -23,14 +21,13 @@ public class Call<D> {
      *  Some operation algorithms might use multiple argument entries as output tensors.
      */
     protected Tsr<?>[] _tensors;
-
     /**
      *  This field references the device on which this ExecutionCall should be executed.
      */
     protected final D _device;
 
-
     protected final Args _arguments = new Args();
+
 
     protected Call(Tsr<?>[] tensors, D device, List<Arg> arguments ) {
         _tensors = tensors;
@@ -38,13 +35,13 @@ public class Call<D> {
         for ( Arg<?> arg : arguments ) _arguments.set(arg);
     }
 
-
     public D getDevice() { return this._device; }
 
     public Tsr<?>[] getTensors() { return this._tensors; }
 
     public void mutateTensors( int... indices ) {
         Tsr<?>[] tensors = _tensors.clone();
+        _tensors = _tensors.clone();
         for ( int i = 0; i < indices.length; i++ ) {
             _tensors[i] = tensors[indices[i]];
         }
@@ -119,6 +116,7 @@ public class Call<D> {
         public <V, D extends Device<V>> Call<D> runningOn(D device ) {
             return new Call<D>(_tensors, device, _arguments.getAll(Arg.class));
         }
+
     }
 
 
@@ -144,13 +142,13 @@ public class Call<D> {
         public float estimation() { return ( this._isValid ? 1.0f : 0.0f ); }
 
 
-        public Validator first( ExecutionCall.TensorCondition condition ) {
+        public Validator first( TensorCondition condition ) {
             if ( !condition.check( getTensors()[ 0 ] ) ) this._isValid = false;
             return this;
         }
 
 
-        public Validator any( ExecutionCall.TensorCondition condition )
+        public Validator any( TensorCondition condition )
         {
             boolean any = false;
             for ( Tsr<?> t : getTensors() ) any = condition.check( t ) || any;
@@ -159,7 +157,7 @@ public class Call<D> {
         }
 
 
-        public Validator anyNotNull( ExecutionCall.TensorCondition condition )
+        public Validator anyNotNull( TensorCondition condition )
         {
             boolean any = false;
             for ( Tsr<?> t : getTensors() )
@@ -169,7 +167,7 @@ public class Call<D> {
         }
 
 
-        public Validator all( ExecutionCall.TensorCondition condition )
+        public Validator all( TensorCondition condition )
         {
             boolean all = true;
             for ( Tsr<?> t : getTensors() ) all = condition.check( t ) && all;
@@ -178,7 +176,7 @@ public class Call<D> {
         }
 
 
-        public Validator allNotNull( ExecutionCall.TensorCondition condition )
+        public Validator allNotNull( TensorCondition condition )
         {
             boolean all = true;
             for ( Tsr<?> t : getTensors() )
@@ -188,7 +186,7 @@ public class Call<D> {
         }
 
 
-        public Validator all( ExecutionCall.TensorCompare compare )
+        public Validator all( TensorCompare compare )
         {
             boolean all = true;
             Tsr<?> last = null;
@@ -199,6 +197,13 @@ public class Call<D> {
             if ( !all ) this._isValid = false;
             return this;
         }
+
     }
+
+    public interface TensorCondition    { boolean check( Tsr<?> tensor ); }
+    public interface TensorCompare      { boolean check( Tsr<?> first, Tsr<?> second ); }
+    public interface DeviceCondition    { boolean check( Device<?> device ); }
+    public interface OperationCondition { boolean check( Operation type ); }
+
 
 }

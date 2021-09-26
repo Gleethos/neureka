@@ -53,7 +53,7 @@ public class JunctionUtil
                     call.mutateTensors( 0, 1, 2 );
                 }
             } else if ( call.getOperation().getOperator().equals("x"+ ((char) 187)) ) {
-                call.mutateArguments( t -> new Tsr[]{t[ 2 ], t[ 1 ], t[ 0 ]} );
+                call.mutateTensors( 2, 1, 0 );
             }
             return alternative;
         }

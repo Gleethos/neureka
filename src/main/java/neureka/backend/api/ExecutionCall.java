@@ -132,13 +132,6 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
                     );
     }
 
-    public interface TensorCondition    { boolean check( Tsr<?> tensor ); }
-    public interface TensorCompare      { boolean check( Tsr<?> first, Tsr<?> second ); }
-    public interface DeviceCondition    { boolean check( Device<?> device ); }
-    public interface OperationCondition { boolean check( Operation type ); }
-
-    public interface Mutator { Tsr<?>[] mutate( Tsr<?>[] tensors ); }
-
     public <T extends Device<?>> ExecutionCall<T> forDeviceType( Class<T> type ) {
         assert _device.getClass() == type;
         return (ExecutionCall<T>) this;
@@ -169,10 +162,6 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
             // else: This should not happen.
         }
         return getAlgorithm().supplyADAgentFor( function, call, forward );
-    }
-
-    public void mutateArguments( Mutator mutation ) {
-        _tensors = mutation.mutate( _tensors );
     }
 
     public static class Builder<D extends Device<?>>
