@@ -344,16 +344,16 @@ class Tensor_Operation_Integration_Tests extends Specification
             Tsr t1 = operation.apply(a, b)
 
         then :
-            t1.toString().contains("[2x2]:("+expectedResult+")")
+            t1.toString().contains("[2x2]:($expectedResult)")
             b.toString() == "["+( autoReshaping ? "2" : "1x2")+"]:(8.0, 9.0):g:(null)"
         when :
             t1.backward(Tsr.of([2, 2], [5, -2, 7, 3]))
         then :
-            b.toString() == "["+( autoReshaping ? "2" : "1x2")+"]:(8.0, 9.0):g:("+expectedGradient+")"
+            b.toString() == "["+( autoReshaping ? "2" : "1x2")+"]:(8.0, 9.0):g:($expectedGradient)"
         when :
             Neureka.get().settings().view().setIsUsingLegacyView(false)
         then :
-            t1.toString() == "(2x2):["+expectedResult+"]"
+            t1.toString() == "(2x2):[$expectedResult]"
 
         where:
             indexing | autoReshaping |    operation      ||     expectedResult      | expectedGradient

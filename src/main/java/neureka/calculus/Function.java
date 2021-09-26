@@ -172,14 +172,14 @@ public interface Function
     //------------------------------------------------------------------------------------------------------------------
 
 
-    default <T, D> Tsr<T> call( Call<D> call ) { return (Tsr<T>) execute( call ); };
-    default <T, D> Tsr<T> invoke( Call<D> call ) { return (Tsr<T>) execute( call ); }
+    default <T, D extends Device<T>> Tsr<T> call(Call.Builder<T, D> call ) { return (Tsr<T>) execute( call.get() ); };
+    default <T, D extends Device<T>> Tsr<T> invoke(Call.Builder<T, D> call ) { return (Tsr<T>) execute( call.get() ); }
     default Tsr<?> execute( Call<?> call ) {
         List<Arg> args = call.allMetaArgs();
         if ( call.getDevice() != null ) args.add(Arg.TargetDevice.of((Device<?>) call.getDevice()));
-        Arg[] argArray = new Arg[args.size()];
+        Arg<?>[] argArray = new Arg[args.size()];
         for ( int i = 0; i < argArray.length; i++ ) argArray[i] = args.get(i);
-        return with(argArray).execute(call.getTensors());
+        return callWith(argArray).execute(call.getTensors());
     };
 
     interface CallOptions {
@@ -188,17 +188,17 @@ public interface Function
         Tsr<?> execute( Tsr<?>... tensors );
     }
 
-    default CallOptions with(Arg<?>... arguments ) { return with( Args.of( arguments ) ); }
+    default CallOptions callWith( Arg<?>... arguments ) { return callWith( Args.of( arguments ) ); }
 
-    default CallOptions with(Args arguments ) {
+    default CallOptions callWith( Args arguments ) {
        return new CallOptions() {
-           @Override public <T> Tsr<T> call( Tsr<T>... tensors )   { return Function.this.call( arguments, tensors ); }
-           @Override public <T> Tsr<T> invoke( Tsr<T>... tensors ) { return Function.this.invoke( arguments, tensors ); }
-           @Override public Tsr<?> execute( Tsr<?>... tensors )    { return Function.this.execute( arguments, tensors ); }
+           @SafeVarargs @Override public final <T> Tsr<T> call(    Tsr<T>... tensors ) { return Function.this.call( arguments, tensors ); }
+           @SafeVarargs @Override public final <T> Tsr<T> invoke(  Tsr<T>... tensors ) { return Function.this.invoke( arguments, tensors ); }
+           @Override              public final     Tsr<?> execute( Tsr<?>... tensors ) { return Function.this.execute( arguments, tensors ); }
        };
     }
 
-    default <T> Tsr<T> call( Args arguments, Tsr<T>... tensors )   { return (Tsr<T>) execute( arguments, tensors ); }
+    default <T> Tsr<T> call(   Args arguments, Tsr<T>... tensors ) { return (Tsr<T>) execute( arguments, tensors ); }
     default <T> Tsr<T> invoke( Args arguments, Tsr<T>... tensors ) { return (Tsr<T>) execute( arguments, tensors ); }
     Tsr<?> execute( Args arguments, Tsr<?>... tensors );
 
@@ -224,7 +224,6 @@ public interface Function
     default <T> Tsr<T> invoke( Tsr<T>... inputs ) { return call( inputs );             }
 
     //------------------------------------------------------------------------------------------------------------------
-
 
     default <T> Tsr<T> derive( Tsr<T>[] inputs, int d, int j ) { return (Tsr<T>) executeDerive( inputs, d, j ); }
     default <T> Tsr<T> derive( Tsr<T>[] inputs, int d )        { return (Tsr<T>) executeDerive( inputs, d ); }

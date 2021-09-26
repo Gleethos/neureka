@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class Call<D> {
 
-    public static Call.Builder<?> ofTensors( Tsr<?>... tensors ) { return new Builder<>(tensors); }
+    public static <V, T extends Device<V>> Call.Builder<V,T> to( T device ) { return new Builder<V,T>(device); }
 
     /**
      *  The tensor arguments from which an operation will either
@@ -93,28 +93,31 @@ public class Call<D> {
         return new Validator();
     }
 
-    public static class Builder<D>
+    public static class Builder<V, T extends Device<V>>
     {
-        private Tsr<?>[] _tensors;
-        private final Args _arguments = Args.of(
-                                                    Arg.DerivIdx.of(-1),
-                                                    Arg.VarIdx.of(-1)
-                                            );
+        private T _device;
+        private Tsr<V>[] _tensors;
+        private final Args _arguments = Args.of( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) );
 
-        private Builder(Tsr<?>[] tensors) { _tensors = tensors; }
+        private Builder(T device) { _device = device; }
 
-        public Builder<D> andArgs( List<Arg> arguments ) {
-            for ( Arg argument : arguments ) _arguments.set(argument);
+        @SafeVarargs
+        public final <N extends V> Builder<V,T> with(Tsr<N>... tensors) {
+            _tensors = (Tsr<V>[]) tensors;
             return this;
         }
 
-        public Builder<D> andArgs( Arg<?>... arguments ) {
+        public Builder<V,T> andArgs( List<Arg> arguments ) {
+            for ( Arg<?> argument : arguments ) _arguments.set(argument);
+            return this;
+        }
+
+        public Builder<V,T> andArgs( Arg<?>... arguments ) {
             return andArgs(Arrays.stream(arguments).collect(Collectors.toList()));
         }
 
-
-        public <V, D extends Device<V>> Call<D> runningOn(D device ) {
-            return new Call<D>(_tensors, device, _arguments.getAll(Arg.class));
+        public Call<T> get() {
+            return new Call<T>( _tensors, _device, _arguments.getAll(Arg.class) );
         }
 
     }
