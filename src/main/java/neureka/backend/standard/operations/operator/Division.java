@@ -97,15 +97,14 @@ public class Division extends AbstractOperation
                 ( inputs, d ) -> {
                     double[] t1_val = inputs[ 1 ].value64();
                     double[] t2_val = inputs[ 2 ].value64();
-                    if ( d < 0 ) {
+                    if ( d < 0 )
                         return t1Idx -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] / t2_val[inputs[ 2 ].indexOfIndices( t1Idx )];
-                    } else {
+                    else {
                         return t1Idx -> {
-                            if (d == 0) {//"    output = 1/input2;\n" +
+                            if ( d == 0 )
                                 return 1 / t2_val[inputs[ 2 ].indexOfIndices( t1Idx )];
-                            } else {
+                            else
                                 return -(t1_val[inputs[ 2 ].indexOfIndices( t1Idx )] / Math.pow(t2_val[inputs[ 1 ].indexOfIndices( t1Idx )], 2));
-                            }//"    output = -input2 /(float)pow(input1, 2.0f);\n" +
                         };
                     }
                 };
@@ -157,11 +156,11 @@ public class Division extends AbstractOperation
                                 .kernelSource( operator.getKernelSource() )
                                 .activationSource( "output = input1 / input2;\n" )
                                 .differentiationSource(
-                                        "if (d==0) {\n" +
-                                        "    output = 1/input2;\n" +
-                                        "} else {\n" +
-                                        "    output = -input2 /(float)pow(input1, 2.0f);\n" +
-                                        "}"
+                                    "    if (d==0) {                                        \n" +
+                                    "        output = 1 / input2;                           \n" +
+                                    "    } else {                                           \n" +
+                                    "        output = -input2 / (float)pow(input1, 2.0f);   \n" +
+                                    "    }                                                  \n"
                                 )
                                 .kernelPostfix( this.getFunction() )
                                 .execution(
@@ -194,7 +193,7 @@ public class Division extends AbstractOperation
                                                     last = t;
                                                 }
                                                 return true;
-                                        } )
+                                        })
                                         .setSupplyADAgentFor(
                                             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                             {
@@ -251,11 +250,11 @@ public class Division extends AbstractOperation
                                 .kernelSource( broadcast.getKernelSource() )
                                 .activationSource( "value = src1 / src2;\n" )
                                 .differentiationSource(
-                                        "if (d==0) {                                                      \n" +
-                                        "    value += (1/handle) * drain;                                 \n" +
-                                        "} else {                                                         \n" +
-                                        "    value += (-(handle /(float)pow(target, (float)2)) ) * drain; \n" +
-                                        "}                                                                  "
+                                    "    if (d==0) {                                                         \n" +
+                                    "        value += (1/handle) * drain;                                    \n" +
+                                    "    } else {                                                            \n" +
+                                    "        value += (-(handle /(float)pow(target, (float)2)) ) * drain;    \n" +
+                                    "    }                                                                   \n"
                                 )
                                 .kernelPostfix( this.getFunction() )
                                 .execution(
@@ -338,18 +337,20 @@ public class Division extends AbstractOperation
                                 },
                                 3
                         )
-                ).setImplementationFor(
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
-                        CLImplementation.compiler()
+                        CLImplementation
+                                .compiler()
                                 .arity( 3 )
                                 .kernelSource( scalarization.getKernelSource() )
                                 .activationSource( "output = input1 / value;\n" )
                                 .differentiationSource(
-                                        "if (d==0) {\n" +
-                                        "    output = 1/value;\n" +
-                                        "} else {\n" +
-                                        "    output = -value /(float)pow(input1, 2.0f);\n" +
-                                        "}"
+                                    "    if (d==0) {                                       \n" +
+                                    "        output = 1/value;                             \n" +
+                                    "    } else {                                          \n" +
+                                    "        output = -value /(float)pow(input1, 2.0f);    \n" +
+                                    "    }                                                 \n"
                                 )
                                 .kernelPostfix( this.getFunction() )
                                 .execution(
@@ -370,10 +371,7 @@ public class Division extends AbstractOperation
         );
     }
 
-
-
     @Contract(pure = true)
-
     @Override
     public String stringify( String[] children ) {
         StringBuilder reconstructed = new StringBuilder();
@@ -395,7 +393,6 @@ public class Division extends AbstractOperation
         if ( d >= 0 ) {
             if ( index <= 0 ) return children[ 0 ].getDerivative( d ).toString();
             else {
-
                 String first = ( children[ index - 1 ].dependsOn( d ) )
                         ? "(" + _asDerivative( children, d, index - 1 )+ " / " + children[ index ]  + " )"
                         : "";
