@@ -50,7 +50,7 @@ public class JunctionUtil
                     else tensors[ 0 ] = tensors[ 1 ];
                     return tensors[ 0 ];
                 } else {
-                    call.mutateArguments( t -> new Tsr[]{t[ 0 ], t[ 1 ], t[ 2 ]} );
+                    call.mutateTensors( 0, 1, 2 );
                 }
             } else if ( call.getOperation().getOperator().equals("x"+ ((char) 187)) ) {
                 call.mutateArguments( t -> new Tsr[]{t[ 2 ], t[ 1 ], t[ 0 ]} );

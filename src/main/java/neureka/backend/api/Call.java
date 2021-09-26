@@ -43,6 +43,13 @@ public class Call<D> {
 
     public Tsr<?>[] getTensors() { return this._tensors; }
 
+    public void mutateTensors( int... indices ) {
+        Tsr<?>[] tensors = _tensors.clone();
+        for ( int i = 0; i < indices.length; i++ ) {
+            _tensors[i] = tensors[indices[i]];
+        }
+    }
+
     public <T> Device<T> getDeviceFor(Class<T> supportCheck ) {
         // TODO: Make it possible to query device for type support!
         return (Device<T>) this.getDevice();
