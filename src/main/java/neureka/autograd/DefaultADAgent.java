@@ -69,14 +69,10 @@ public final class DefaultADAgent extends Args implements ADAgent {
     }
 
     @Override
-    public <T> Tsr<T> forward( GraphNode<T> target, Tsr<T> derivative ) {
-        return (Tsr<T>) _forward.execute( target, derivative);
-    }
+    public <T> Tsr<T> forward( GraphNode<T> target, Tsr<T> derivative ) { return (Tsr<T>) _forward.execute( target, derivative); }
 
     @Override
-    public <T> Tsr<T> backward( GraphNode<T> target, Tsr<T> error ) {
-        return (Tsr<T>) _backward.execute( target, error );
-    }
+    public <T> Tsr<T> backward( GraphNode<T> target, Tsr<T> error ) { return (Tsr<T>) _backward.execute( target, error ); }
 
     @Override
     public Tsr<?> derivative() {
@@ -85,9 +81,7 @@ public final class DefaultADAgent extends Args implements ADAgent {
     }
 
     @Override
-    public boolean hasForward() {
-        return has(Arg.Derivative.class);
-    }
+    public boolean hasForward() { return has(Arg.Derivative.class); }
 
     @Override
     public boolean hasBackward() { return _backward != null; }
