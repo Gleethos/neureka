@@ -2,6 +2,7 @@ package neureka.backend.standard.operations.other;
 
 import neureka.Neureka;
 import neureka.Tsr;
+import neureka.autograd.ADAgent;
 import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
@@ -45,9 +46,9 @@ public class Reshape extends AbstractOperation
                         if ( forward ) {
                             throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
                         }
-                        return DefaultADAgent.ofDerivative( null )
-                                .setForward( (t, derivative ) -> new FunctionBuilder( Neureka.get().context() ).build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
-                                .setBackward( (t, error ) -> new FunctionBuilder( Neureka.get().context() ).build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
+                        return ADAgent.of( null )
+                                        .setForward( (t, derivative ) -> new FunctionBuilder( Neureka.get().context() ).build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
+                                        .setBackward( (t, error ) -> new FunctionBuilder( Neureka.get().context() ).build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
                     }
                 )
                 .setExecutionDispatcher(

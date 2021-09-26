@@ -2,7 +2,7 @@ package neureka.devices.opencl.utility;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.DefaultADAgent;
+import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -74,9 +74,9 @@ public class CLFunctionCompiler {
                                 .setSupplyADAgentFor(
                                         (Function f, ExecutionCall<? extends Device<?>> call, boolean forward) -> {
                                             // TODO: calculate derivative and supply agent!
-                                            return DefaultADAgent.ofDerivative( null )
-                                                    .setForward((t, derivative) -> new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
-                                                    .setBackward((t, error) -> new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{error}, 0));
+                                            return ADAgent.of( null )
+                                                            .setForward((t, derivative) -> new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
+                                                            .setBackward((t, error) -> new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{error}, 0));
                                         }
                                 )
                                 .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )

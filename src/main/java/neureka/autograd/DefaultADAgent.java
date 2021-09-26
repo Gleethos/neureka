@@ -34,9 +34,7 @@ import java.util.stream.Collectors;
  */
 public final class DefaultADAgent extends Args implements ADAgent {
 
-    public static DefaultADAgent ofDerivative( Tsr<?> derivative ) {
-        return new DefaultADAgent( derivative );
-    }
+    public static DefaultADAgent ofDerivative( Tsr<?> derivative ) { return new DefaultADAgent( derivative ); }
     
     /**
      *  This lambda ought to perform the forward propagation

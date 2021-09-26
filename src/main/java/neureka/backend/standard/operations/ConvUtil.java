@@ -2,7 +2,7 @@ package neureka.backend.standard.operations;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.DefaultADAgent;
+import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.calculus.CalcUtil;
@@ -48,7 +48,7 @@ public class ConvUtil {
                             assert mul != null;
                             assert deriv != null;
                             assert invX != null;
-                            return DefaultADAgent.ofDerivative( deriv )
+                            return ADAgent.of( deriv )
                                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
                                     .setBackward( (node, error) -> invX.execute( error, deriv, Tsr.of(node.getPayload().shape(), 0) ) ); // WARNING! This produced null pointer!
                         }

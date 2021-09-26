@@ -2,7 +2,7 @@ package neureka.backend.standard.operations.operator;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.DefaultADAgent;
+import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -60,8 +60,8 @@ public class Addition extends AbstractOperation {
                                                                 Tsr deriv = inputs[(d==0?1:0)];
                                                                 Tsr toBeDerived = inputs[d];
                                                                 Device device = call.getDevice();
-                                                                return DefaultADAgent.ofDerivative( deriv )
-                                                                            .setBackward(
+                                                                return ADAgent.of( deriv )
+                                                                                .setBackward(
                                                                                     (node, backwardError ) ->
                                                                                         this.getAlgorithm(Broadcast.class)
                                                                                              .getImplementationFor(device.getClass())
@@ -75,7 +75,7 @@ public class Addition extends AbstractOperation {
                                                                                                      .running(this)
                                                                                                      .on(device)
                                                                                              )
-                                                                            );
+                                                                                );
                                                             }
                                                         }
                                                     )

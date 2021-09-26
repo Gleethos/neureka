@@ -73,7 +73,7 @@ class Calculus_Extension_Integration_Tests extends Specification
                                                 .setSupplyADAgentFor(
                                                         (Function f, ExecutionCall<? extends Device<?>> call, boolean forward) -> {
                                                             if (forward) throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
-                                                            return DefaultADAgent.ofDerivative( null )
+                                                            return ADAgent.of( null )
                                                                     .setForward((t, derivative) -> new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))
                                                                     .setBackward((t, error) -> new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{error}, 0));
                                                         }

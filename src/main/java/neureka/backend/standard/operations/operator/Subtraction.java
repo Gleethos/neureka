@@ -2,9 +2,7 @@ package neureka.backend.standard.operations.operator;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.DefaultADAgent;
-import neureka.calculus.CalcUtil;
-import neureka.calculus.args.Arg;
+import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -14,7 +12,9 @@ import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.operations.JunctionUtil;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -270,7 +270,7 @@ public class Subtraction extends AbstractOperation
                                 Tsr deriv = inputs[(d==0?1:0)];
                                 Tsr toBeDerived = inputs[d];
                                 Device device = call.getDevice();
-                                return DefaultADAgent.ofDerivative( deriv )
+                                return ADAgent.of( deriv )
                                             .setBackward(
                                                 (node, backwardError ) ->
                                                     this.getAlgorithm(Broadcast.class)

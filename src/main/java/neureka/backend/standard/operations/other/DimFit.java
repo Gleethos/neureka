@@ -1,14 +1,14 @@
 package neureka.backend.standard.operations.other;
 
 import neureka.Tsr;
-import neureka.autograd.DefaultADAgent;
-import neureka.calculus.CalcUtil;
-import neureka.calculus.args.Arg;
+import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.GenericAlgorithm;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import org.jetbrains.annotations.Contract;
 
@@ -41,7 +41,7 @@ public class DimFit extends AbstractOperation
                         if ( forward ) {
                             throw new IllegalArgumentException("Dim-Fit operation does not support forward-AD!");
                         }
-                        return DefaultADAgent.ofDerivative( null )
+                        return ADAgent.of( null )
                                         .withContext(call.allMetaArgs())
                                         .setForward(null)
                                         .setBackward(

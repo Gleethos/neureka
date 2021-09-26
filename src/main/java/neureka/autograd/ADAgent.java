@@ -52,6 +52,10 @@ import neureka.Tsr;
  */
 public interface ADAgent
 {
+    static DefaultADAgent of( Tsr<?> derivative ) {
+        return DefaultADAgent.ofDerivative( derivative );
+    }
+    
     /**
      *  The auto-differentiation forward pass of an ADAgent
      *  propagate partial differentiations forward along the computation graph.

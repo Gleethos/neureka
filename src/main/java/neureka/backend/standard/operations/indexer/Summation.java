@@ -2,9 +2,7 @@ package neureka.backend.standard.operations.indexer;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.DefaultADAgent;
-import neureka.calculus.CalcUtil;
-import neureka.calculus.args.Arg;
+import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -14,7 +12,9 @@ import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.operations.JunctionUtil;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
@@ -67,7 +67,7 @@ public final class Summation extends AbstractOperation
                         Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         Function mul = Neureka.get().context().getFunction().mul();
                         if ( ctxDerivative != null ) {
-                            return DefaultADAgent.ofDerivative( ctxDerivative )
+                            return ADAgent.of( ctxDerivative )
                                     .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
                                     .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
                         }
@@ -77,7 +77,7 @@ public final class Summation extends AbstractOperation
                         else
                         {
                             Tsr deriv = f.derive( inputs, d );
-                            return DefaultADAgent.ofDerivative( deriv )
+                            return ADAgent.of( deriv )
                                     .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
                                     .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
                         }
@@ -170,7 +170,7 @@ public final class Summation extends AbstractOperation
                 Tsr ctxDerivative = (Tsr) call.getValOf(Arg.Derivative.class);
                 Function mul = Neureka.get().context().getFunction().mul();
                 if ( ctxDerivative != null )
-                    return DefaultADAgent.ofDerivative( ctxDerivative )
+                    return ADAgent.of( ctxDerivative )
                             .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
                             .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, ctxDerivative } ) );
 
@@ -179,7 +179,7 @@ public final class Summation extends AbstractOperation
                 if ( forward )
                 {
                     Tsr deriv = f.derive( inputs, d );
-                    return DefaultADAgent.ofDerivative( deriv )
+                    return ADAgent.of( deriv )
                             .setForward( ( t, derivative ) -> mul.call( derivative, deriv ) )
                             .setBackward( ( t, derivative ) -> mul.call( new Tsr[]{derivative, deriv} ) );
                 }
@@ -192,14 +192,14 @@ public final class Summation extends AbstractOperation
                                 false
                         );
                         Tsr deriv = f.derive( inputs, d );
-                        return DefaultADAgent.ofDerivative( deriv )
+                        return ADAgent.of( deriv )
                                 .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
                                 .setBackward( (t, error) -> invX.execute( error, deriv, Tsr.of(t.getPayload().shape(), 0) ) );
                     }
                     else
                     {
                         Tsr deriv = f.derive( inputs, d );
-                        return DefaultADAgent.ofDerivative( deriv )
+                        return ADAgent.of( deriv )
                                 .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
                                 .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
                     }

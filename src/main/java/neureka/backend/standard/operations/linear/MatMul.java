@@ -2,7 +2,7 @@ package neureka.backend.standard.operations.linear;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.DefaultADAgent;
+import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.operations.AbstractOperation;
@@ -94,11 +94,11 @@ public class MatMul extends AbstractOperation
                             int d = (1 + call.getValOf( Arg.DerivIdx.class )) % 2;
                             Tsr<?> deriv = inputs[ d ].T();
                             if ( d == 0 )
-                                return DefaultADAgent.ofDerivative( deriv )
-                                            .setBackward( (node, error) -> invX.execute( error, deriv ) );
+                                return ADAgent.of( deriv )
+                                                .setBackward( (node, error) -> invX.execute( error, deriv ) );
                             else
-                                return DefaultADAgent.ofDerivative( deriv )
-                                            .setBackward( (node, error) -> invX.execute( error, deriv ) );
+                                return ADAgent.of( deriv )
+                                                .setBackward( (node, error) -> invX.execute( error, deriv ) );
                         }
                 )
                 .setExecutionDispatcher(
