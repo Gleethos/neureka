@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.autograd.DefaultADAgent;
+import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -35,39 +36,40 @@ public class Reshape extends AbstractOperation
                         .setIsInline(         false      )
         );
 
-        GenericAlgorithm implementation = new GenericAlgorithm( "reshape" )
-                .setIsSuitableFor( call -> 1.0f )
-                .setCanPerformBackwardADFor( call -> true )
-                .setCanPerformForwardADFor( call -> false )
-                .setSupplyADAgentFor(
-                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                    {
-                        //Tsr ctxDerivative = (Tsr)call.findAndGet(Argument.Derivative.class);
-                        if ( forward ) {
-                            throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
-                        }
-                        return ADAgent.of( null )
-                                        .setForward( (t, derivative ) -> new FunctionBuilder( Neureka.get().context() ).build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
-                                        .setBackward( (t, error ) -> new FunctionBuilder( Neureka.get().context() ).build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
-                    }
-                )
-                .setExecutionDispatcher(
-                    ( caller, call ) ->
-                    {
-                        Tsr<?>[] inputs = CalcUtil.srcActivation( call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]) );
-                        int[] newForm = new int[ inputs.length - 1 ];
-                        for ( int i = 0; i < inputs.length - 1; i++ ) {
-                            newForm[ i ] = (int) Tsr.IO.getFrom( inputs[ i ], 0 );
-                        }
-                        if ( call.getValOf( Arg.DerivIdx.class ) >= 0 ) {//reverse reshape:
-                            newForm = invert( newForm );
-                        }
-                        Tsr<?> t = inputs[ inputs.length - 1 ];
-                        return reshaped( t, newForm, true );
-                    }
-                )
-                .setCallPreparation( call -> call)
-                .build();
+        GenericAlgorithm implementation
+                = Algorithm.withName( "reshape" )
+                            .setIsSuitableFor( call -> 1.0f )
+                            .setCanPerformBackwardADFor( call -> true )
+                            .setCanPerformForwardADFor( call -> false )
+                            .setSupplyADAgentFor(
+                                ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                                {
+                                    //Tsr ctxDerivative = (Tsr)call.findAndGet(Argument.Derivative.class);
+                                    if ( forward ) {
+                                        throw new IllegalArgumentException("Reshape operation does not support forward-AD!");
+                                    }
+                                    return ADAgent.of( null )
+                                                    .setForward( (t, derivative ) -> new FunctionBuilder( Neureka.get().context() ).build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )
+                                                    .setBackward( (t, error ) -> new FunctionBuilder( Neureka.get().context() ).build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );
+                                }
+                            )
+                            .setExecutionDispatcher(
+                                ( caller, call ) ->
+                                {
+                                    Tsr<?>[] inputs = CalcUtil.srcActivation( call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]) );
+                                    int[] newForm = new int[ inputs.length - 1 ];
+                                    for ( int i = 0; i < inputs.length - 1; i++ ) {
+                                        newForm[ i ] = (int) Tsr.IO.getFrom( inputs[ i ], 0 );
+                                    }
+                                    if ( call.getValOf( Arg.DerivIdx.class ) >= 0 ) {//reverse reshape:
+                                        newForm = invert( newForm );
+                                    }
+                                    Tsr<?> t = inputs[ inputs.length - 1 ];
+                                    return reshaped( t, newForm, true );
+                                }
+                            )
+                            .setCallPreparation( call -> call)
+                            .build();
 
         setAlgorithm(
                 GenericAlgorithm.class,

@@ -3,6 +3,7 @@ package neureka.backend.standard.operations.linear;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
+import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.api.operations.AbstractOperation;
@@ -65,97 +66,98 @@ public class MatMul extends AbstractOperation
                 return alternative;
         };
 
-        GenericAlgorithm simpleMatMulAlgorithm = new GenericAlgorithm("simple_matmul")
-                .setIsSuitableFor(
-                        call -> call.validate()
-                                    .all( t -> t.getNDConf() instanceof SimpleD2Configuration )
-                                    .estimation()
-                )
-                .setCanPerformBackwardADFor( call -> true )
-                .setCanPerformForwardADFor(
-                        call -> {
-                            if ( call.getOperation().supports(Convolution.class) ) return false;
-                            if ( call.getOperation().getOperator().equals(",") ) return false; //Reshape
-                            Tsr<?> last = null;
-                            for ( Tsr<?> t : call.getTensors() ) {
-                                if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                                last = t; // Note: shapes are cached!
-                            }
-                            return true;
-                        }
-                )
-                .setSupplyADAgentFor(
-                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                        {
-                            if ( forward ) throw new IllegalArgumentException("Matrix multiplication of does not support forward-AD!");
+        GenericAlgorithm simpleMatMulAlgorithm =
+                        Algorithm.withName("simple_matmul")
+                                    .setIsSuitableFor(
+                                            call -> call.validate()
+                                                        .all( t -> t.getNDConf() instanceof SimpleD2Configuration )
+                                                        .estimation()
+                                    )
+                                    .setCanPerformBackwardADFor( call -> true )
+                                    .setCanPerformForwardADFor(
+                                        call -> {
+                                            if ( call.getOperation().supports(Convolution.class) ) return false;
+                                            if ( call.getOperation().getOperator().equals(",") ) return false; //Reshape
+                                            Tsr<?> last = null;
+                                            for ( Tsr<?> t : call.getTensors() ) {
+                                                if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                                                last = t; // Note: shapes are cached!
+                                            }
+                                            return true;
+                                        }
+                                    )
+                                    .setSupplyADAgentFor(
+                                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                                        {
+                                            if ( forward ) throw new IllegalArgumentException("Matrix multiplication of does not support forward-AD!");
 
-                            Function invX = new FunctionBuilder( Neureka.get().context() ).build( "I[ 0 ] @ I[ 1 ]", false );
-                            Tsr<?>[] inputs = call.getTensors();
-                            int d = (1 + call.getValOf( Arg.DerivIdx.class )) % 2;
-                            Tsr<?> deriv = inputs[ d ].T();
-                            if ( d == 0 )
-                                return ADAgent.of( deriv )
-                                                .setBackward( (node, error) -> invX.execute( error, deriv ) );
-                            else
-                                return ADAgent.of( deriv )
-                                                .setBackward( (node, error) -> invX.execute( error, deriv ) );
-                        }
-                )
-                .setExecutionDispatcher(
-                        ( caller, call ) -> {
-                            if ( !caller.isFlat() ) return CalcUtil.defaultRecursiveExecution( caller, call );
-                            if ( call.getOperation().getOperator().equals("x") ) {
+                                            Function invX = new FunctionBuilder( Neureka.get().context() ).build( "I[ 0 ] @ I[ 1 ]", false );
+                                            Tsr<?>[] inputs = call.getTensors();
+                                            int d = (1 + call.getValOf( Arg.DerivIdx.class )) % 2;
+                                            Tsr<?> deriv = inputs[ d ].T();
+                                            if ( d == 0 )
+                                                return ADAgent.of( deriv )
+                                                                .setBackward( (node, error) -> invX.execute( error, deriv ) );
+                                            else
+                                                return ADAgent.of( deriv )
+                                                                .setBackward( (node, error) -> invX.execute( error, deriv ) );
+                                        }
+                                    )
+                                    .setExecutionDispatcher(
+                                        ( caller, call ) -> {
+                                            if ( !caller.isFlat() ) return CalcUtil.defaultRecursiveExecution( caller, call );
+                                            if ( call.getOperation().getOperator().equals("x") ) {
 
-                                Tsr<?>[] inputs = call.getTensors();
-                                Tsr<?>[] tsrs = new Tsr[]{null, inputs[ 0 ], inputs[ 1 ]};
-                                tsrs[ 0 ] = (call.getValOf( Arg.DerivIdx.class ) < 0)
-                                        ? Tsr.ofShape( Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape()) )
-                                        : null;
+                                                Tsr<?>[] inputs = call.getTensors();
+                                                Tsr<?>[] tsrs = new Tsr[]{null, inputs[ 0 ], inputs[ 1 ]};
+                                                tsrs[ 0 ] = (call.getValOf( Arg.DerivIdx.class ) < 0)
+                                                        ? Tsr.ofShape( Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape()) )
+                                                        : null;
 
-                                for (Tsr<?> t : tsrs) if (t != null) t.setIsVirtual( false );
-                                CalcUtil.recursiveExecution(call.withTensors(tsrs), rja);
-                                return tsrs[ 0 ];
-                            } else {
-                                if (call.getValOf( Arg.DerivIdx.class ) < 0) {
-                                    Tsr<?>[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
-                                    Tsr.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
-                                    for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
-                                    CalcUtil.recursiveExecution(
-                                                        ExecutionCall.of(tensors)
-                                                                        .andArgs(Arg.DerivIdx.of(0))
-                                                                        .running(call.getOperation())
-                                                                        .on(call.getDevice()),
-                                                        (executionCall, executor) -> null
-                                                );
-                                    if ( call.getOperation() == Neureka.get().context().getOperation("x>>") )
-                                        return tensors[ 2 ];
-                                    else
-                                        return tensors[ 0 ];
-                                }
-                            }
-                            return null;
-                        }
-                )
-                .setCallPreparation(
-                        call -> {
-                            Tsr<?>[] tsrs = call.getTensors();
-                            Device device = call.getDevice();
-                            if ( tsrs[ 0 ] == null ) // Creating a new tensor:
-                            {
-                                int[] shp = Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape());
-                                Tsr<?> output = Tsr.of( shp, 0.0 );
-                                output.setIsVirtual( false );
-                                try {
-                                    device.store(output);
-                                } catch ( Exception e ) {
-                                    e.printStackTrace();
-                                }
-                                tsrs[ 0 ] = output;
-                            }
-                            return call;
-                        }
-                )
-                .build();
+                                                for (Tsr<?> t : tsrs) if (t != null) t.setIsVirtual( false );
+                                                CalcUtil.recursiveExecution(call.withTensors(tsrs), rja);
+                                                return tsrs[ 0 ];
+                                            } else {
+                                                if (call.getValOf( Arg.DerivIdx.class ) < 0) {
+                                                    Tsr<?>[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
+                                                    Tsr.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
+                                                    for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
+                                                    CalcUtil.recursiveExecution(
+                                                                        ExecutionCall.of(tensors)
+                                                                                        .andArgs(Arg.DerivIdx.of(0))
+                                                                                        .running(call.getOperation())
+                                                                                        .on(call.getDevice()),
+                                                                        (executionCall, executor) -> null
+                                                                );
+                                                    if ( call.getOperation() == Neureka.get().context().getOperation("x>>") )
+                                                        return tensors[ 2 ];
+                                                    else
+                                                        return tensors[ 0 ];
+                                                }
+                                            }
+                                            return null;
+                                        }
+                                    )
+                                    .setCallPreparation(
+                                        call -> {
+                                            Tsr<?>[] tsrs = call.getTensors();
+                                            Device device = call.getDevice();
+                                            if ( tsrs[ 0 ] == null ) // Creating a new tensor:
+                                            {
+                                                int[] shp = Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape());
+                                                Tsr<?> output = Tsr.of( shp, 0.0 );
+                                                output.setIsVirtual( false );
+                                                try {
+                                                    device.store(output);
+                                                } catch ( Exception e ) {
+                                                    e.printStackTrace();
+                                                }
+                                                tsrs[ 0 ] = output;
+                                            }
+                                            return call;
+                                        }
+                                    )
+                                    .build();
 
         setAlgorithm(
                 simpleMatMulAlgorithm

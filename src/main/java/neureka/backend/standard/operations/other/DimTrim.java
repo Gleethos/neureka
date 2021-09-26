@@ -3,6 +3,7 @@ package neureka.backend.standard.operations.other;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.DefaultADAgent;
+import neureka.backend.api.Algorithm;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
@@ -33,43 +34,44 @@ public class DimTrim extends AbstractOperation
                         .setIsInline(         false       )
         );
 
-        GenericAlgorithm implementation = new GenericAlgorithm("dimTrim")
-                .setIsSuitableFor( call -> 1.0f )
-                .setCanPerformBackwardADFor( call -> true )
-                .setCanPerformForwardADFor( call -> false )
-                .setSupplyADAgentFor(
-                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
-                        {
-                            int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
-                            int postfix = call.getValOf(Arg.Ends.class)[ 1 ];
-                            if ( forward ) {
-                                throw new IllegalArgumentException("Dim-Trim operation does not support forward-AD!");
-                            }
-                            return new DefaultADAgent()
-                                    .withContext(call.allMetaArgs())
-                                    .setForward((t, derivative) -> new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{derivative},0))
-                                    .setBackward( (t, error) -> _pad(error, new int[]{prefix, postfix}, true) );
-                        }
-                )
-                .setExecutionDispatcher(
-                        ( caller, call ) ->
-                        {
-                            Tsr<?>[] inputs = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
-                            assert inputs.length == 1;
-                            Tsr<?> t = inputs[ 0 ];
-                            if ( call.getValOf( Arg.DerivIdx.class ) == 0 ) {
-                                int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
-                                int postfix = call.getValOf(Arg.Ends.class)[ 0 ];
-                                return _pad(t, new int[]{prefix, postfix}, true);
-                            } else {
-                                int[] ends = new int[ 2 ];
-                                call.setMetaArg(Arg.Ends.of(ends));
-                                return _trim(t, ends, true);
-                            }
-                        }
-                )
-                .setCallPreparation( call -> call )
-                .build();
+        GenericAlgorithm implementation =
+                    Algorithm.withName("dimTrim")
+                            .setIsSuitableFor( call -> 1.0f )
+                            .setCanPerformBackwardADFor( call -> true )
+                            .setCanPerformForwardADFor( call -> false )
+                            .setSupplyADAgentFor(
+                                    ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                                    {
+                                        int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
+                                        int postfix = call.getValOf(Arg.Ends.class)[ 1 ];
+                                        if ( forward ) {
+                                            throw new IllegalArgumentException("Dim-Trim operation does not support forward-AD!");
+                                        }
+                                        return new DefaultADAgent()
+                                                .withContext(call.allMetaArgs())
+                                                .setForward((t, derivative) -> new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{derivative},0))
+                                                .setBackward( (t, error) -> _pad(error, new int[]{prefix, postfix}, true) );
+                                    }
+                            )
+                            .setExecutionDispatcher(
+                                    ( caller, call ) ->
+                                    {
+                                        Tsr<?>[] inputs = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
+                                        assert inputs.length == 1;
+                                        Tsr<?> t = inputs[ 0 ];
+                                        if ( call.getValOf( Arg.DerivIdx.class ) == 0 ) {
+                                            int prefix = call.getValOf(Arg.Ends.class)[ 0 ];
+                                            int postfix = call.getValOf(Arg.Ends.class)[ 0 ];
+                                            return _pad(t, new int[]{prefix, postfix}, true);
+                                        } else {
+                                            int[] ends = new int[ 2 ];
+                                            call.setMetaArg(Arg.Ends.of(ends));
+                                            return _trim(t, ends, true);
+                                        }
+                                    }
+                            )
+                            .setCallPreparation( call -> call )
+                            .build();
 
         setAlgorithm(
                 GenericAlgorithm.class,
