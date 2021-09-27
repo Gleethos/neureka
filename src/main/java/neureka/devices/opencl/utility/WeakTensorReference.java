@@ -18,21 +18,24 @@ public class WeakTensorReference<T> extends WeakReference<T>
      * @param q        the queue with which the reference is to be registered,
      *                 or {@code null} if registration is not required
      */
-    private int _hash;
+    private final int _hash;
 
-    public WeakTensorReference(T referent, ReferenceQueue<? super T> q) {
+    public WeakTensorReference( T referent, ReferenceQueue<? super T> q ) {
         super(referent, q);
         _hash = referent.hashCode();
     }
 
     @Override
-    public int hashCode() {
-        return _hash;
-    }
+    public int hashCode() { return _hash; }
 
     @Override
-    public boolean equals(Object o) {
-        return o.hashCode() == _hash;
+    public boolean equals( Object o ) {
+        if ( !(o instanceof WeakTensorReference) ) return false;
+        if ( o.hashCode() == _hash ) return true;
+        else {
+            T value = get();
+            return value != null && o == value;
+        }
     }
 
 

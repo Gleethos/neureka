@@ -55,11 +55,15 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- *  Instances of this class are components of tensors.
- *  {@link GraphNode}s form a computation graph during runtime which is traversed during backpropagation.
- *  Both parent and child references are use for traversal.
- *  Parents are the graph nodes of the tensors from which the tensor of the current node was formed,
- *  whereas children are the nodes (also) produced by said current node.
+ *  Instances of the {@link GraphNode} class are components of tensors ({@link Tsr} instances)
+ *  which model and record computations / operations between them.
+ *  {@link GraphNode}s form a computation graph when operations are applied to tensors.
+ *  This graph can then later on be used for traversal by an important algorithm implemented inside
+ *  this class, namely: backpropagation.
+ *  This algorithm is more generally known as reverse mode auto differentiation.
+ *  The parent graph nodes of a given node are the nodes of the tensors
+ *  from which the tensor of the current node was formed,
+ *  whereas children are the nodes (also) produced by the computation modelled by said current node.
  *  Children are weakly referenced so that abandoned / detached
  *  graph branches (child nodes) can be garbage collected...
  *  ...whereas parents are strongly referenced in order to grant successful traversal.
@@ -227,10 +231,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @return the payload of this graph-node.
      */
-    public Tsr<V> getPayload() {
-        return ( _payload == null ? null : _payload.get() );
-    }
+    public Tsr<V> getPayload() { return ( _payload == null ? null : _payload.get() ); }
 
+    /**
+     * @param p The {@link Tsr} ought to be set as payload / result of the
+     *          computation modelled by this {@link GraphNode} instance.
+     */
     private void _setPayload( Tsr<V> p ) {
         if ( p == null ) _payload = null;
         else {
@@ -292,8 +298,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
-     *  The children are GraphNode instances which represent computations
-     *  performed on at least the payload of this very node.
+     *  The children are {@link GraphNode} instances which represent computations
+     *  involving the payload of this very {@link GraphNode} instance.
      */
     private List<WeakReference<GraphNode<V>>> _children;
 
