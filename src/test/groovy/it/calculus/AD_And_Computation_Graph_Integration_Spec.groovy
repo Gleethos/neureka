@@ -6,7 +6,8 @@ import neureka.autograd.GraphNode
 import neureka.calculus.Function
 import spock.lang.Specification
 
-class AD_And_Computation_Graph_Integration_Tests extends Specification{
+
+class AD_And_Computation_Graph_Integration_Spec extends Specification{
 
     def setup() {
         Neureka.get().reset()
@@ -14,7 +15,7 @@ class AD_And_Computation_Graph_Integration_Tests extends Specification{
         Neureka.get().settings().view().asString = "dgc"
     }
 
-    def "Reverse indexing with AD produces expected computation graph."(){
+    def "Reshaping produces expected computation graph and also works with reverse mode AD."(){
 
         given :
             Neureka.get().settings().view().setIsUsingLegacyView(true)
@@ -54,7 +55,7 @@ class AD_And_Computation_Graph_Integration_Tests extends Specification{
             assert !nb.getLock().isLocked()
     }
 
-    def "Payloads and derivatives are null."()
+    def "Payloads and derivatives are null after garbage collection."()
     {
         given :
             Tsr a = Tsr.of(2).setRqsGradient(true)
