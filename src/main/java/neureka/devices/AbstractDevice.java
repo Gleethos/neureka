@@ -77,7 +77,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
      * @param type The type of operation.
      * @return The truth value determining if the provided arguments can be executed.
      */
-    protected abstract boolean _approveExecutionOf( Tsr[] tensors, int d, Operation type );
+    protected abstract boolean _approveExecutionOf( Tsr<?>[] tensors, int d, Operation type );
 
 
     @Override
@@ -87,9 +87,9 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
         if ( changeRequest.type() == IsBeing.REPLACED ) swap( oldOwner, newOwner );
         else if ( oldOwner == null && newOwner != null ) {
             if ( newOwner.has( Relation.class ) ) {
-                Relation relation = newOwner.get(Relation.class);
+                Relation<V> relation = newOwner.get(Relation.class);
                 if (relation.hasParent()) { // Root needs to be found ! :
-                    Tsr root = relation.findRootTensor();
+                    Tsr<V> root = relation.findRootTensor();
                     if (!this.has(root) || !root.isOutsourced())
                         throw new IllegalStateException("Data parent is not outsourced!");
                 }
