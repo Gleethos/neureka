@@ -142,7 +142,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     private boolean _isUsedAsDerivative = false;
 
     /**
-     * Recorded Function which produced this GrphNode.
+     * Recorded Function which produced this {@link GraphNode}.
      */
     private Function _function;
 
@@ -834,6 +834,69 @@ public class GraphNode<V> implements Component<Tsr<V>>
     public boolean hasDerivatives() { return _targetsToAgents != null && _targetsToAgents.size() > 0; }
 
     /**
+     *  This is the getter for an important {@link GraphNode} property which
+     *  holds the auto-differentiation mode used by this instance to
+     *  decide if a given error should be forward propagated
+     *  backward propagated or not propagated at all.
+     *  If the mode is greater than 0, then this means this {@link GraphNode}
+     *  will perform forward propagation. In this case the mode number
+     *  is also the cumulative number of forward propagation steps
+     *  in the tree of source {@link GraphNode} instances.
+     *  If the mode is below 0, then this means this instance will
+     *  perform reverse mode differentiation (back-propagation).
+     *  The absolute of a negative mode represents the number of
+     *  referenced source nodes which have a mode state other than zero.
+     *  This means that they directly or indirectly reference
+     *  a {@link GraphNode} instance which represents a {@link Tsr} instance
+     *  having the {@link Tsr#rqsGradient()} flag set to true!
+     *                                                              <br>
+     *  Mode state meaning:                                         <br>
+     *  ----------------------------------------------------------- <br>
+     *  |  mode equals 0  |  no Auto-Differentiation                <br>
+     *  ----------------------------------------------------------- <br>
+     *  |  mode greater 0  |  forward Auto-Differentiation          <br>
+     *  ----------------------------------------------------------- <br>
+     *  |  mode lesser 0  |  backward Auto-Differentiation          <br>
+     *  ----------------------------------------------------------- <br><br>
+     *
+     * @return The differentiation mode represented as an integer which encodes 3 distinct states.
+     */
+    public int getMode() { return this._mode; }
+
+    /**
+     * This flag is used for a performance optimization feature namely 'Just In Time Propagation'.
+     * This feature accumulates errors and continues propagation
+     * as soon as they are needed. (At the end of 'backward()' or when the tensor is used again).
+     * If the flag {@link Neureka.Settings.AutoGrad#isRetainingPendingErrorForJITProp()} is set to true
+     * then error values will accumulate whenever it makes sense.
+     * This technique however uses more memory but will
+     * improve performance for some networks substantially.
+     * <p>
+     * All nodes between a Pending-Error and those requiring gradients will
+     * be marked with '_relies_on_JIPProp=true'!
+     */
+    public boolean isReliesOnJustInTimeProp() { return this._reliesOnJustInTimeProp; }
+
+    public PendingError<V> getPendingError() { return this._pendingError; }
+
+    public boolean isUsedAsDerivative() { return this._isUsedAsDerivative; }
+
+    public Function getFunction() { return this._function; }
+
+    public GraphNode<V>[] getParents() { return this._parents; }
+
+    public int getPayloadReferenceVersion() { return this._payloadReferenceVersion; }
+
+    public GraphLock getLock() { return this._lock; }
+
+    public List<WeakReference<GraphNode<V>>> getChildren() { return this._children; }
+
+    /**
+     * @return The long Node-ID (Used for caching to avoid redundant computation within one computation graph)
+     */
+    public long getNodeID() { return this._nodeID; }
+
+    /**
      * @return Returns the type of the node as descriptive String in capital letters.
      */
     public String type() {
@@ -901,66 +964,4 @@ public class GraphNode<V> implements Component<Tsr<V>>
         return asString.toString();
     }
 
-    /**
-     *  This is the getter for an important {@link GraphNode} property which
-     *  holds the auto-differentiation mode used by this instance to
-     *  decide if a given error should be forward propagated
-     *  backward propagated or not propagated at all.
-     *  If the mode is greater than 0, then this means this {@link GraphNode}
-     *  will perform forward propagation. In this case the mode number
-     *  is also the cumulative number of forward propagation steps
-     *  in the tree of source {@link GraphNode} instances.
-     *  If the mode is below 0, then this means this instance will
-     *  perform reverse mode differentiation (back-propagation).
-     *  The absolute of a negative mode represents the number of
-     *  referenced source nodes which have a mode state other than zero.
-     *  This means that they directly or indirectly reference
-     *  a {@link GraphNode} instance which represents a {@link Tsr} instance
-     *  having the {@link Tsr#rqsGradient()} flag set to true!
-     *                                                              <br>
-     *  Mode state meaning:                                         <br>
-     *  ----------------------------------------------------------- <br>
-     *  |  mode equals 0  |  no Auto-Differentiation                <br>
-     *  ----------------------------------------------------------- <br>
-     *  |  mode greater 0  |  forward Auto-Differentiation          <br>
-     *  ----------------------------------------------------------- <br>
-     *  |  mode lesser 0  |  backward Auto-Differentiation          <br>
-     *  ----------------------------------------------------------- <br><br>
-     *
-     * @return The differentiation mode represented as an integer which encodes 3 distinct states.
-     */
-    public int getMode() { return this._mode; }
-
-    /**
-     * This flag is used for a performance optimization feature namely 'Just In Time Propagation'.
-     * This feature accumulates errors and continues propagation
-     * as soon as they are needed. (At the end of 'backward()' or when the tensor is used again).
-     * If the flag {@link Neureka.Settings.AutoGrad#isRetainingPendingErrorForJITProp()} is set to true
-     * then error values will accumulate whenever it makes sense.
-     * This technique however uses more memory but will
-     * improve performance for some networks substantially.
-     * <p>
-     * All nodes between a Pending-Error and those requiring gradients will
-     * be marked with '_relies_on_JIPProp=true'!
-     */
-    public boolean isReliesOnJustInTimeProp() { return this._reliesOnJustInTimeProp; }
-
-    public PendingError<V> getPendingError() { return this._pendingError; }
-
-    public boolean isUsedAsDerivative() { return this._isUsedAsDerivative; }
-
-    public Function getFunction() { return this._function; }
-
-    public GraphNode<V>[] getParents() { return this._parents; }
-
-    public int getPayloadReferenceVersion() { return this._payloadReferenceVersion; }
-
-    public GraphLock getLock() { return this._lock; }
-
-    public List<WeakReference<GraphNode<V>>> getChildren() { return this._children; }
-
-    /**
-     * @return The long Node-ID (Used for caching to avoid redundant computation within one computation graph)
-     */
-    public long getNodeID() { return this._nodeID; }
 }
