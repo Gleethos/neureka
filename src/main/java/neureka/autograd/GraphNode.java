@@ -84,35 +84,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
     private int _mode;
 
     /**
-     * This gradient node is involved in auto-differentiation.
-     *
-     * @return boolean
-     */
-    public boolean usesAD() {
-        return ( _mode != 0 );
-    }
-
-    /**
-     * This node propagates forward.
-     *
-     * @return boolean
-     */
-    public boolean usesForwardAD() {
-        return ( _mode > 0 );
-    }
-
-    /**
-     * This node propagates _backward.
-     *
-     * @return boolean
-     */
-    public boolean usesReverseAD() {
-        return ( _mode < 0 );
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
      *  This flag records the support evaluation of the forward-AD availability analysis
      *  done in the corresponding OperationTypeImplementation method
      *  for a given ExecutionCall instance.
@@ -126,8 +97,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *  be possible given an ExecutionCall whose state allows for such...
      */
     private boolean _allows_forward;
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      *  This flag records the support evaluation of the backward-AD availability analysis
@@ -144,8 +113,6 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private boolean _allows_backward;
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     /**
      * This flag is used for a performance optimization feature namely 'Just In Time Propagation'.
      * This feature accumulates errors and continues propagation
@@ -160,28 +127,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private boolean _reliesOnJustInTimeProp = false;
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
-     * This method is called by the JITProp component.
-     * A pending should only ever be retrieved from a GraphNode once because
-     * afterwards the accumulated error is about to be backpropagated.
-     * Therefore this method nulls the reference when returning the PendingError instance.
-     * @return Returns an instance of the PendingError class containing a error accumulation.
-     */
-    public PendingError<V> getAndRemovePendingError() {
-        PendingError<V> pe = _pendingError;
-        _pendingError = null;
-        return pe;
-    }
-
     /**
      * Used by the Just-In-Time back-prop component.
      */
     private PendingError<V> _pendingError = null;
-
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * The chain-rule states that the derivative of f(x) = h(g(x)) with respect to x is: g'(x) * h'(g(x))
@@ -192,14 +141,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private boolean _isUsedAsDerivative = false;
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     /**
      * Recorded Function which produced this GrphNode.
      */
     private Function _function;
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * The GraphNodes of the input tensors. ('Parents' of the tensor of this node)
@@ -208,63 +153,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private GraphNode<V>[] _parents;
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     /**
      * This is the tensor owning this GraphNode component.
      * It is referenced weakly because it might not be needed anymore (Not referenced inside AD-Agent for example)
      * and can therefore be garbage collected.
      */
     private WeakReference<Tsr<V>> _payload;
-
-    /**
-     * The value of this graph node!
-     * This node belongs to a tensor during creation.
-     * The payload is referenced weakly and might be garbage collected.
-     * When the tensor becomes phantom reachable the lambda defined
-     * in this method will be executed.
-     * It is stored inside the Cleaner within the device of the payload.
-     * Cleaning means to null the targets_derivatives map.
-     * Leaning however only occurs if the payload reference is still null.
-     * If it is not null then this means that the payload
-     * changed (happens during injection)
-     *
-     * @return the payload of this graph-node.
-     */
-    public Tsr<V> getPayload() { return ( _payload == null ? null : _payload.get() ); }
-
-    /**
-     * @param p The {@link Tsr} ought to be set as payload / result of the
-     *          computation modelled by this {@link GraphNode} instance.
-     */
-    private void _setPayload( Tsr<V> p ) {
-        if ( p == null ) _payload = null;
-        else {
-            assert !p.isUndefined();
-            _payload = new WeakReference<>( p );
-            p.getDevice().cleaning( p, () -> {
-                if ( this.getPayload() == null ) {
-                    boolean allChildrenUseForwardAD = true;
-                    if ( _children != null ) {
-                        for ( WeakReference<GraphNode<V>> childRef : _children ) {
-                            GraphNode<V> childNode = childRef.get();
-                            if ( childNode != null && childNode.usesReverseAD() ) allChildrenUseForwardAD = false;
-                        }
-                    }
-                    if ( allChildrenUseForwardAD ) _targets_derivatives = null;
-                }
-            });
-        }
-    }
-
-    @Override
-    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
-        _setPayload( changeRequest.getNewOwner() );
-        changeRequest.executeChange();
-        return true;
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      *  This variable holds a copy of the version of the payload tensor
@@ -275,27 +169,20 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private int _payloadReferenceVersion = -1;
 
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     /**
-     * Keys are targets and values are gradients with respect to that target
+     * Keys are {@link GraphNode} targets and values are {@link ADAgent}s which most of the times
+     * simply store derivatives as well as operation specific implementations
+     * to propagate these derivatives with respect to mentioned  {@link GraphNode} targets.  <br>
      * Note: values can be null if the recorded function is of type 'reshape'!
      * Why? => because reshape operation does not need variables for _backward pass!
      */
-    private TreeMap<GraphNode<V>, List<ADAgent>> _targets_derivatives;
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    private TreeMap<GraphNode<V>, List<ADAgent>> _targetsToAgents;
 
     /**
      * "Lock object" for graph identity. (result caching)
      * Unique object which locks the payload to the current computation graph.
-     *
-     * @return GraphLock
      */
     private GraphLock _lock;
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      *  The children are {@link GraphNode} instances which represent computations
@@ -304,61 +191,10 @@ public class GraphNode<V> implements Component<Tsr<V>>
     private List<WeakReference<GraphNode<V>>> _children;
 
     /**
-     * @param newChild which references it's input namely the parent (this) has...
-     */
-    private synchronized void _attachChild( GraphNode<V> newChild ) {
-        if ( _children == null ) _children = new ArrayList<>();
-        WeakReference<GraphNode<V>> ref = new WeakTensorReference<>( newChild, null );
-        _children.add( ref );
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /**
      * long Node-ID (Used for caching to avoid redundant computation within one computation graph)
      */
     private long _nodeID = -1;
 
-    /**
-     * Some nodes are not cacheable! Namely: leave tensors! They are not results of
-     * any function operation.
-     *
-     * @return boolean
-     */
-    public boolean isCacheable() { return ( this.getNodeID() != 1 ); }
-
-    //==================================================================================================================
-
-    /**
-     * @param newLock The new lock of this GraphNode.
-     */
-    public synchronized void obtainLocking( GraphLock newLock ) {
-        _lock = newLock;
-    }
-
-    /**
-     * This node (and the corresponding tensor) was not created by a function! (it's a leave tensor)
-     *
-     * @return boolean
-     */
-    public boolean isLeave() { return _parents == null && _function == null; }
-
-    public boolean isGraphLeave() {
-        if ( this.isLeave() ) return true;
-        for ( GraphNode<V> p : _parents ) {
-            if ( p.getLock() != this.getLock() ) return true;
-        }
-        return false;
-    }
-
-    /**
-     * @return if the tensor to which this graph node is attached has been deleted!
-     */
-    public boolean isVirtual() {
-        return getPayload() == null;
-    }
-
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     /**
      * @param function        Is the function that lead to the creation of this node.
@@ -374,12 +210,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( context instanceof GraphLock ) // Note function always null in this case:
             _construct( payloadSupplier.get(), function, null, (GraphLock) context );
         else if ( context instanceof ExecutionCall ) {
-            ExecutionCall call = (ExecutionCall) context;
-            Tsr<V>[] inputs = call.getTensors();
+            ExecutionCall<Device<?>> call = (ExecutionCall<Device<?>>) context;
+            Tsr<?>[] inputs = call.getTensors();
             /* Applying JITProp and gradients */
             Neureka.Settings.AutoGrad adSetting = Neureka.get().settings().autograd();
             if ( adSetting.isApplyingGradientWhenTensorIsUsed() ) {
-                for ( Tsr<V> t : inputs ) {
+                for ( Tsr<?> t : inputs ) {
                     if ( !adSetting.isApplyingGradientWhenRequested() || t.gradientApplyRequested() ) {
                         t.applyGradient(); // activates JITProp if present and removes it...
                         t.setGradientApplyRequested( false );
@@ -439,7 +275,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
             _function = null;
             _parents = null;
         } else {
-            _mode = _modeOf( call, function );
+            _mode = _modeOf( call );
             _function = function;
             _parents = new GraphNode[ inputs.length ];
             for ( int i = 0; i < inputs.length; i++ ) {
@@ -557,10 +393,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      *
      * @param call The call containing inputs for the function which created the payload tensor of this GraphNode.
-     * @param function The function which produced the payload tensor of this GraphNode.
      * @return int The mode of this GraphNode! ( m<0 : backward-AD, m>0 : forward-AD, m=0 : no-AD )
      */
-    private int _modeOf( ExecutionCall<? extends Device<?>> call, Function function )
+    private int _modeOf( ExecutionCall<? extends Device<?>> call )
     {
         Tsr<V>[] inputs = (Tsr<V>[]) call.getTensors();
         int resultMode = 0;
@@ -612,6 +447,132 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( also != null ) also.accept( payload );
     }
 
+
+    /**
+     * This gradient node is involved in auto-differentiation.
+     *
+     * @return boolean
+     */
+    public boolean usesAD() { return ( _mode != 0 ); }
+
+    /**
+     * This node propagates forward.
+     *
+     * @return boolean
+     */
+    public boolean usesForwardAD() { return ( _mode > 0 ); }
+
+    /**
+     * This node propagates _backward.
+     *
+     * @return boolean
+     */
+    public boolean usesReverseAD() { return ( _mode < 0 ); }
+
+
+    /**
+     * Some nodes are not cacheable! Namely: leave tensors! They are not results of
+     * any function operation.
+     *
+     * @return boolean
+     */
+    public boolean isCacheable() { return ( this.getNodeID() != 1 ); }
+
+    /**
+     * @param newLock The new lock of this GraphNode.
+     */
+    public synchronized void obtainLocking( GraphLock newLock ) {
+        _lock = newLock;
+    }
+
+    /**
+     * This node (and the corresponding tensor) was not created by a function! (it's a leave tensor)
+     *
+     * @return boolean
+     */
+    public boolean isLeave() { return _parents == null && _function == null; }
+
+    public boolean isGraphLeave() {
+        if ( this.isLeave() ) return true;
+        for ( GraphNode<V> p : _parents ) {
+            if ( p.getLock() != this.getLock() ) return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return if the tensor to which this graph node is attached has been deleted!
+     */
+    public boolean isVirtual() { return getPayload() == null; }
+
+    /**
+     * @param newChild which references it's input namely the parent (this) has...
+     */
+    private synchronized void _attachChild( GraphNode<V> newChild ) {
+        if ( _children == null ) _children = new ArrayList<>();
+        WeakReference<GraphNode<V>> ref = new WeakTensorReference<>( newChild, null );
+        _children.add( ref );
+    }
+
+    /**
+     * The value of this graph node!
+     * This node belongs to a tensor during creation.
+     * The payload is referenced weakly and might be garbage collected.
+     * When the tensor becomes phantom reachable the lambda defined
+     * in this method will be executed.
+     * It is stored inside the Cleaner within the device of the payload.
+     * Cleaning means to null the targets_derivatives map.
+     * Leaning however only occurs if the payload reference is still null.
+     * If it is not null then this means that the payload
+     * changed (happens during injection)
+     *
+     * @return the payload of this graph-node.
+     */
+    public Tsr<V> getPayload() { return ( _payload == null ? null : _payload.get() ); }
+
+    /**
+     * @param p The {@link Tsr} ought to be set as payload / result of the
+     *          computation modelled by this {@link GraphNode} instance.
+     */
+    private void _setPayload( Tsr<V> p ) {
+        if ( p == null ) _payload = null;
+        else {
+            assert !p.isUndefined();
+            _payload = new WeakReference<>( p );
+            p.getDevice().cleaning( p, () -> {
+                if ( this.getPayload() == null ) {
+                    boolean allChildrenUseForwardAD = true;
+                    if ( _children != null ) {
+                        for ( WeakReference<GraphNode<V>> childRef : _children ) {
+                            GraphNode<V> childNode = childRef.get();
+                            if ( childNode != null && childNode.usesReverseAD() ) allChildrenUseForwardAD = false;
+                        }
+                    }
+                    if ( allChildrenUseForwardAD ) _targetsToAgents = null;
+                }
+            });
+        }
+    }
+
+    @Override
+    public boolean update( OwnerChangeRequest<Tsr<V>> changeRequest ) {
+        _setPayload( changeRequest.getNewOwner() );
+        changeRequest.executeChange();
+        return true;
+    }
+
+    /**
+     * This method is called by the JITProp component.
+     * A pending should only ever be retrieved from a GraphNode once because
+     * afterwards the accumulated error is about to be backpropagated.
+     * Therefore this method nulls the reference when returning the PendingError instance.
+     * @return Returns an instance of the PendingError class containing a error accumulation.
+     */
+    public PendingError<V> getAndRemovePendingError() {
+        PendingError<V> pe = _pendingError;
+        _pendingError = null;
+        return pe;
+    }
 
     /**
      * This method is the entry-point for the back-propagation process.
@@ -753,7 +714,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      */
     private void _deleteDerivativesRecursively() {
         if ( !Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads() ) { // <=- This flag is almost always false. (Used for testing)
-            if ( !this.isReliesOnJustInTimeProp() ) _targets_derivatives = null;
+            if ( !this.isReliesOnJustInTimeProp() ) _targetsToAgents = null;
             if ( !this.isGraphLeave() ) forEachTarget( GraphNode::_deleteDerivativesRecursively );
         }
     }
@@ -782,12 +743,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param agent ADAgent's are used during back-propagation in order to distribute an error throughout the graph.
      */
     public void put( GraphNode<V> target, ADAgent agent ) {
-        if ( _targets_derivatives == null ) _targets_derivatives = new TreeMap<>((a, b) -> a.hashCode() - b.hashCode());
+        if ( _targetsToAgents == null ) _targetsToAgents = new TreeMap<>((a, b) -> a.hashCode() - b.hashCode());
 
-        if ( _targets_derivatives.containsKey( target ) )
-            _targets_derivatives.get( target ).add( agent );
+        if ( _targetsToAgents.containsKey( target ) )
+            _targetsToAgents.get( target ).add( agent );
         else
-            _targets_derivatives.put( target, new ArrayList<>( Arrays.asList( agent ) ) );
+            _targetsToAgents.put( target, new ArrayList<>( Arrays.asList( agent ) ) );
 
         Tsr<?> d = agent.derivative();
         if ( d != null && d.has( GraphNode.class ) ) d.get( GraphNode.class )._isUsedAsDerivative = true;
@@ -800,8 +761,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @return Tsr&lt;ValType&gt;
      */
     public List<ADAgent> get( GraphNode<V> target ) {
-        if ( _targets_derivatives == null ) return null;
-        return _targets_derivatives.get( target );
+        if ( _targetsToAgents == null ) return null;
+        return _targetsToAgents.get( target );
     }
 
     /**
@@ -812,8 +773,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @return boolean
      */
     public boolean has( GraphNode<V> target ) {
-        if ( _targets_derivatives == null ) return false;
-        return _targets_derivatives.containsKey( target );
+        if ( _targetsToAgents == null ) return false;
+        return _targetsToAgents.containsKey( target );
     }
 
     /**
@@ -822,14 +783,14 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @return int
      */
-    public int size() { return _targets_derivatives != null ? this._targets_derivatives.size() : 0; }
+    public int size() { return _targetsToAgents != null ? this._targetsToAgents.size() : 0; }
 
     /**
      * @param action The lambda performing an action on all targeted nodes and their agents.
      */
     public void forEachDerivative( BiConsumer<GraphNode<V>, ADAgent> action ) {
-        if ( _targets_derivatives == null ) return;
-        _targets_derivatives.forEach(
+        if ( _targetsToAgents == null ) return;
+        _targetsToAgents.forEach(
                 ( t, agents ) -> agents.forEach( a -> action.accept( t, a ) )
         );
     }
@@ -838,8 +799,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param action A lambda action providing derivative and target node as parameter.
      */
     public void forEachBackward( Tsr<V> error, BiConsumer<GraphNode<V>, Tsr<V>> action ) {
-        if ( _targets_derivatives == null ) return;
-        _targets_derivatives.forEach( ( t, agents ) -> {
+        if ( _targetsToAgents == null ) return;
+        _targetsToAgents.forEach( (t, agents ) -> {
             for ( ADAgent a : agents ) action.accept( t, a.backward( t, error ) );
         });
     }
@@ -848,16 +809,16 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @param action
      */
     public void forEachTarget( Consumer<GraphNode<V>> action ) {
-        if ( _targets_derivatives == null ) return;
-        _targets_derivatives.forEach( ( t, o ) -> action.accept( t ) );
+        if ( _targetsToAgents == null ) return;
+        _targetsToAgents.forEach( (t, o ) -> action.accept( t ) );
     }
 
     /**
-     * @param action
+     * @param action The action which ought to be applied to each target {@link GraphNode} / {@link ADAgent} pair.
      */
     public void forEachTargetAgentPair( BiConsumer<GraphNode<V>, ADAgent> action ) {
-        if ( _targets_derivatives == null ) return;
-        _targets_derivatives
+        if ( _targetsToAgents == null ) return;
+        _targetsToAgents
                 .forEach(
                     ( targetNode, agents ) ->
                         agents.forEach(
@@ -870,7 +831,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     /**
      * @return Checks if this node stores target / AD-action (usually derivatives) pairs.
      */
-    public boolean hasDerivatives() { return _targets_derivatives != null && _targets_derivatives.size() > 0; }
+    public boolean hasDerivatives() { return _targetsToAgents != null && _targetsToAgents.size() > 0; }
 
     /**
      * @return Returns the type of the node as descriptive String in capital letters.
