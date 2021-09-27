@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Utility for parsing function expressions.
  **/
-public class FunctionParser
+public class ParseUtil
 {
     @Contract( pure = true ) 
     public static int numberOfOperationsWithin( final List<String> operations ) {
@@ -29,7 +29,7 @@ public class FunctionParser
         String operation = "";
         for ( int i = exp.length()-1; i >= index; i--) {
             operation = exp.substring(index, i);
-            if (FunctionParser.isAnOperation(operation) || FunctionParser.isAnOperation(operation.toLowerCase())) {
+            if (ParseUtil.isAnOperation(operation) || ParseUtil.isAnOperation(operation.toLowerCase())) {
                 return operation;
             }
         }
@@ -49,7 +49,7 @@ public class FunctionParser
             if ( bracketDepth == 0 ) {
                 String possibleOperation;
                 for ( int ii = exp.length()-1; ii >= i+1; ii--) {
-                    String found = FunctionParser.parsedOperation( exp.substring( i, ii ), i );
+                    String found = ParseUtil.parsedOperation( exp.substring( i, ii ), i );
                     if (
                          found != null && // If the found string is a function then we continue!
                                  !Neureka.get().context().getOperation(found).getOperator().equals(found)
@@ -59,7 +59,7 @@ public class FunctionParser
                         i += found.length()-1;
                     } else {
                         possibleOperation = exp.substring( i + 1, ii );
-                        if ( FunctionParser.isAnOperation( possibleOperation ) ) {
+                        if ( ParseUtil.isAnOperation( possibleOperation ) ) {
                             if (
                                     ( exp.charAt( i ) == 'j' || !Character.isLetter( exp.charAt( i ) ) )
                             ) {
@@ -140,7 +140,7 @@ public class FunctionParser
         StringBuilder updated = new StringBuilder();
         boolean condition = true;
         while ( condition ) {
-            if (FunctionParser.isForbiddenChar(exp.charAt(ci)) || (exp.charAt(ci) >= 'A' && exp.charAt(ci) <= 'Z') || (exp.charAt(ci) >= 'a' && exp.charAt(ci) <= 'z')) {
+            if (ParseUtil.isForbiddenChar(exp.charAt(ci)) || (exp.charAt(ci) >= 'A' && exp.charAt(ci) <= 'Z') || (exp.charAt(ci) >= 'a' && exp.charAt(ci) <= 'z')) {
                 ci++;
             } else condition = false;
             if (ci == exp.length()) condition = false;

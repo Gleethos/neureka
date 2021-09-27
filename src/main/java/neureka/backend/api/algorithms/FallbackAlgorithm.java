@@ -3,7 +3,6 @@ package neureka.backend.api.algorithms;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
-import neureka.autograd.DefaultADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.standard.implementations.HostImplementation;
@@ -11,7 +10,7 @@ import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
-import neureka.calculus.assembly.FunctionParser;
+import neureka.calculus.assembly.ParseUtil;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
@@ -213,7 +212,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                 int numberOfParams = m.getParameterCount();
                 Class<?> type = (numberOfParams == 0) ? null : m.getParameterTypes()[0];
                 if ( numberOfParams == 1 && type == typeClass ) {
-                    double score = FunctionParser.similarity( m.getName(), name );
+                    double score = ParseUtil.similarity( m.getName(), name );
                     if ( score > currentScore ) {
                         currentBest = m;
                         currentScore = score;

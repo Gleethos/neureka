@@ -3,7 +3,7 @@ package ut.optimization
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
-import neureka.calculus.assembly.FunctionParser
+import neureka.calculus.assembly.ParseUtil
 import neureka.ndim.config.types.views.SimpleReshapeView
 import spock.lang.Ignore
 
@@ -79,7 +79,7 @@ class Optimizer_Tests extends Specification
             //y.toString().contains(
             //        "(8):[0.31170E0, 26.1058E0, -0.76121E0, 82.0447E0, 0.22348E0, 26.5363E0, 6.02289E0, 57.1377E0]"
             //)
-            FunctionParser.similarity(
+            ParseUtil.similarity(
                     y.toString(),
                     "(8):[0.31170E0, 26.1058E0, -0.76121E0, 82.0447E0, 0.22348E0, 26.5363E0, 6.02289E0, 57.1377E0]; ->d({ends=[I@e0530f4}), "
             ) > 0.8

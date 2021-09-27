@@ -70,7 +70,7 @@ public class FunctionBuilder
         if ( _context.getFunctionCache().has( expression, doAD ) )
             return _context.getFunctionCache().get( expression, doAD );
 
-        expression = FunctionParser.unpackAndCorrect( expression );
+        expression = ParseUtil.unpackAndCorrect( expression );
         Function built = _build( expression, doAD );
         if ( built != null )
             _context.getFunctionCache().put( built );
@@ -96,12 +96,12 @@ public class FunctionBuilder
         if ( expression.equals("") )
             return new FunctionConstant().newBuild("0");
 
-        expression = FunctionParser.unpackAndCorrect(expression);
+        expression = ParseUtil.unpackAndCorrect(expression);
         List<String> foundOperations = new ArrayList<>();
         List<String> foundComponents = new ArrayList<>();
 
         for ( int ei = 0; ei < expression.length(); ) {
-            final String newComponent = FunctionParser.findComponentIn( expression, ei );
+            final String newComponent = ParseUtil.findComponentIn( expression, ei );
             if ( newComponent != null ) {
                 // Empty strings are not components and will be skipped:
                 if ( newComponent.trim().isEmpty()) ei += newComponent.length();
@@ -112,7 +112,7 @@ public class FunctionBuilder
                     }
                     ei += newComponent.length(); // And now we continue parsing where the string ends...
                     // After a component however, we expect an operator:
-                    final String newOperation = FunctionParser.parsedOperation( expression, ei );
+                    final String newOperation = ParseUtil.parsedOperation( expression, ei );
                     if ( newOperation != null ) {
                         ei += newOperation.length();
                         if ( newOperation.length() <= 0 ) continue;
@@ -138,7 +138,7 @@ public class FunctionBuilder
             if ( foundOperations.contains( _context.getOperation( operationID ).getOperator() ) ) {
                 String currentChain = null;
                 boolean groupingOccurred = false;
-                boolean enoughPresent = FunctionParser.numberOfOperationsWithin( foundOperations ) > 1;// Otherwise: I[j]^4 goes nuts!
+                boolean enoughPresent = ParseUtil.numberOfOperationsWithin( foundOperations ) > 1;// Otherwise: I[j]^4 goes nuts!
                 if ( enoughPresent ) {
                     String[] foundCompArray = foundComponents.toArray( new String[ 0 ] );
                     int length = foundCompArray.length;
@@ -154,7 +154,7 @@ public class FunctionBuilder
                                     currentOperation.equals(_context.getOperation(operationID).getOperator())
                             ) {
                                 final String newChain =
-                                        FunctionParser.groupBy(
+                                        ParseUtil.groupBy(
                                                 _context.getOperation(operationID).getOperator(),
                                                 currentChain,
                                                 currentComponent,
@@ -199,14 +199,14 @@ public class FunctionBuilder
 
     private Function _buildFunction( String foundComponent, boolean doAD ) {
         ArrayList<Function> sources = new ArrayList<>();
-        String possibleFunction = FunctionParser.parsedOperation(
+        String possibleFunction = ParseUtil.parsedOperation(
                 foundComponent,
                 0
         );
         if ( possibleFunction != null && possibleFunction.length() > 1 ) {
             for ( int oi = 0; oi < _context.size(); oi++ ) {
                 if (_context.getOperation(oi).getFunction().equalsIgnoreCase(possibleFunction)) {
-                    List<String> parameters = FunctionParser.findParametersIn(
+                    List<String> parameters = ParseUtil.findParametersIn(
                                                                         foundComponent,
                                                                         possibleFunction.length()
                                                                 );
@@ -217,7 +217,7 @@ public class FunctionBuilder
             }
         }
         //---
-        String component = FunctionParser.unpackAndCorrect( foundComponent );
+        String component = ParseUtil.unpackAndCorrect( foundComponent );
 
         if ( constantPattern.matcher( component ).matches()   ) return new FunctionConstant().newBuild( component );
         else if ( inputPattern.matcher( component ).find()    ) return new FunctionInput()   .newBuild( component );
@@ -227,9 +227,9 @@ public class FunctionBuilder
             return _build(component, doAD);
         }
         // If the component did not trigger constant/input/variable creation: -> Cleaning!
-        String cleaned = FunctionParser.cleanedHeadAndTail(component);
+        String cleaned = ParseUtil.cleanedHeadAndTail(component);
         String raw = component.replace( cleaned, "" );
-        String assumed = FunctionParser.assumptionBasedOn( raw );
+        String assumed = ParseUtil.assumptionBasedOn( raw );
         if ( assumed.trim().equals("") ) component = cleaned;
         else component = assumed + cleaned;
         // Let's try again:

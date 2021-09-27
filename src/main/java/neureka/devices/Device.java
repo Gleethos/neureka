@@ -44,7 +44,7 @@ import neureka.backend.api.Operation;
 import neureka.backend.api.OperationContext;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
-import neureka.calculus.assembly.FunctionParser;
+import neureka.calculus.assembly.ParseUtil;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.CLContext;
 import neureka.devices.opencl.OpenCLDevice;
@@ -89,13 +89,13 @@ public interface Device<ValType> extends Component<Tsr<ValType>>, Storage<ValTyp
         }
 
         Device<Number> result = HostCPU.instance();
-        double score = FunctionParser.similarity( "jvm native host cpu threaded", search );
+        double score = ParseUtil.similarity( "jvm native host cpu threaded", search );
         if ( probablyWantsGPU ) score /= 10; // HostCPU instance is most likely not meant!
 
         for ( OpenCLPlatform p : Neureka.get().context().get(CLContext.class).getPlatforms() ) {
             for ( OpenCLDevice d : p.getDevices() ) {
                 String str = ("opencl | "+d.type()+" | "+d.name()+" | "+d.vendor()).toLowerCase();
-                double similarity = FunctionParser.similarity( str, search );
+                double similarity = ParseUtil.similarity( str, search );
                 if ( similarity > score || str.contains(search) ) {
                     result = d;
                     score = similarity;
