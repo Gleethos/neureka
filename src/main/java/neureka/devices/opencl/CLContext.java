@@ -1,6 +1,6 @@
 package neureka.devices.opencl;
 
-import neureka.Component;
+import neureka.common.composition.Component;
 import neureka.backend.api.OperationContext;
 import neureka.utility.Messages;
 import org.jocl.cl_platform_id;

@@ -34,15 +34,13 @@ SOFTWARE.
 
 package neureka.devices;
 
-import neureka.Component;
+import neureka.common.composition.Component;
 import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.calculus.args.Arg;
 import neureka.framing.Relation;
-import neureka.utility.CustomCleaner;
-import neureka.utility.NeurekaCleaner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +60,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
 {
-    private static final NeurekaCleaner _CLEANER = new CustomCleaner();
+    private static final DeviceCleaner _CLEANER = new CustomDeviceCleaner();
 
     protected Logger _log;
 

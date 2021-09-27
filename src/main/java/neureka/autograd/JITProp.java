@@ -1,6 +1,6 @@
 package neureka.autograd;
 
-import neureka.Component;
+import neureka.common.composition.Component;
 import neureka.Tsr;
 
 import java.util.HashSet;

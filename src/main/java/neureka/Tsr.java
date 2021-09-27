@@ -89,6 +89,7 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.standard.operations.other.Reshape;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
+import neureka.common.composition.Component;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
@@ -106,6 +107,7 @@ import neureka.optimization.Optimizer;
 import neureka.utility.DataConverter;
 import neureka.utility.ListReader;
 import neureka.utility.TsrAsString;
+import neureka.common.composition.AbstractComponentOwner;
 import neureka.utility.fluent.TensorBuilder;
 import neureka.utility.fluent.states.WithShapeOrScalarOrVector;
 import neureka.utility.slicing.SliceBuilder;
@@ -1070,7 +1072,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     /**
      * This method is executed when a new Component is added to the tensor.
      * The public add method is implemented in the super class
-     * '{@link neureka.ndim.AbstractComponentOwner}' from which this class inherits.
+     * '{@link AbstractComponentOwner}' from which this class inherits.
      * In this super class the component logic is implemented.
      *
      * @param newComponent A component used to access features. ({@link GraphNode}, {@link NDFrame}, {@link Relation}, int[], ...)
@@ -1090,7 +1092,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     /**
      * This method is executed when a component is being removed from the tensor.
      * The public remove method is implemented in the super class
-     * '{@link neureka.ndim.AbstractComponentOwner}' from which this class inherits.
+     * '{@link AbstractComponentOwner}' from which this class inherits.
      * In this super class the component logic is implemented.
      *
      * @param newComponent A component used to access features. ({@link GraphNode}, {@link NDFrame}, {@link Relation}, int[], ...)

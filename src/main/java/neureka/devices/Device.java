@@ -36,7 +36,7 @@ SOFTWARE.
 
 package neureka.devices;
 
-import neureka.Component;
+import neureka.common.composition.Component;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;

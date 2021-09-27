@@ -1,6 +1,6 @@
 package neureka.framing;
 
-import neureka.Component;
+import neureka.common.composition.Component;
 import neureka.Tsr;
 import neureka.framing.states.AxisFrame;
 

@@ -1,18 +1,16 @@
 package ut.utility
 
 import neureka.Tsr
-import neureka.utility.CustomCleaner
+import neureka.devices.DeviceCleaner
 import spock.lang.Specification
-
-import java.lang.ref.Cleaner
 
 class Cleaner_Testing extends Specification
 {
 
-    def 'CustomCleaner works'(){
+    def 'The default DeviceCleaner works'(){
 
         given :
-            def cleaner = new CustomCleaner()
+            def cleaner = DeviceCleaner.getInstance()
             def refCount = 10
             def r1 =  Tsr.ofShape( 2, 4 )
             def r2 =  Tsr.ofShape( 2, 4 )

@@ -1,4 +1,4 @@
-package neureka.utility;
+package neureka.devices;
 
 import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
@@ -11,7 +11,7 @@ import java.util.List;
  *  for Neureka is Java 8, which means that this cleaner class introduced in Java 11 is not available here!
  *  That is why a custom cleaner implementation is being defined below.<br>
  */
-public class CustomCleaner implements NeurekaCleaner, Runnable
+class CustomDeviceCleaner implements DeviceCleaner, Runnable
 {
     private final ReferenceQueue<Object> _referenceQueue = new ReferenceQueue<>();
     private final long _timeout = 60*1000;

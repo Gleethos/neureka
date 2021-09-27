@@ -2,8 +2,8 @@ package neureka.framing.states;
 
 
 import neureka.framing.NDFrame;
-import neureka.utility.functional.Replace;
-import neureka.utility.functional.With;
+import neureka.common.functional.Replace;
+import neureka.common.functional.With;
 
 import java.util.List;
 import java.util.function.Function;

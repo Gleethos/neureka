@@ -1,4 +1,4 @@
-package neureka.utility.functional;
+package neureka.common.functional;
 
 public interface With<ValueType, TargetType> {
 

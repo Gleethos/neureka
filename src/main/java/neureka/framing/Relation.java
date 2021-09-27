@@ -35,7 +35,7 @@ SOFTWARE.
 
 package neureka.framing;
 
-import neureka.Component;
+import neureka.common.composition.Component;
 import neureka.Tsr;
 
 import java.lang.ref.WeakReference;

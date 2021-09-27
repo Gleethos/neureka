@@ -42,7 +42,7 @@ import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
 import neureka.utility.DataConverter;
-import neureka.utility.NDAConstructor;
+import neureka.common.composition.AbstractComponentOwner;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 

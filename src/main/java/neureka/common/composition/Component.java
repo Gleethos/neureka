@@ -1,10 +1,12 @@
-package neureka;
+package neureka.common.composition;
+
+import neureka.Tsr;
 
 /**
- *  This interface alongside the {@link neureka.ndim.AbstractComponentOwner} class define a simple component system.
+ *  This interface alongside the {@link AbstractComponentOwner} class define a simple component system.
  *  The component type defined by this interface is used to create components for the {@link Tsr} class
  *  as well as the {@link neureka.backend.api.OperationContext} class which both directly or indirectly
- *  extend the {@link neureka.ndim.AbstractComponentOwner} class.
+ *  extend the {@link AbstractComponentOwner} class.
  *  The type parameter of this interface represents the "owner" of the {@link Component}.
  *
  * @param <O> The owner type of which an implementation of this interface is a component.

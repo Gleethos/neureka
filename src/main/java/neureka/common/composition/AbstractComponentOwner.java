@@ -35,9 +35,8 @@ SOFTWARE.
 
 */
 
-package neureka.ndim;
+package neureka.common.composition;
 
-import neureka.Component;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;

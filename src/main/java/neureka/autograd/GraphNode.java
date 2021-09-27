@@ -39,7 +39,7 @@ SOFTWARE.
 
 package neureka.autograd;
 
-import neureka.Component;
+import neureka.common.composition.Component;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
