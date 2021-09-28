@@ -5,8 +5,19 @@ import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.devices.opencl.OpenCLDevice
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("The tensor slicing specification")
+@Narrative('''
+
+    Slicing can be a tedious and complicated procedure.
+    Therefore a tensor should expose a various user friendly API for slicing which
+    are also fit for various languages.
+    This specification covers these APIs for tensor slicing.
+                    
+''')
 class Tensor_Slicing_Integration_Spec extends Specification
 {
     def setupSpec() {
