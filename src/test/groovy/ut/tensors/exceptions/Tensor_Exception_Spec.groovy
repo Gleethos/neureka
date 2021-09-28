@@ -1,11 +1,23 @@
-package ut.tensors
+package ut.tensors.exceptions
 
 import neureka.Neureka
 import neureka.Tsr
 import org.slf4j.Logger
+import spock.lang.Narrative
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title('Tensors Exception Behavior')
+@Narrative("""
+
+    This specification covers the behavior of the $Tsr class in
+    exceptional scenarious which are contrary to its intended use.
+    The purpose of this is to assert that the $Tsr class will provide
+    useful feedback to a user to explain that a missuse of its API
+    occurred so that the user can correct this missuse.
+
+""")
 class Tensor_Exception_Spec extends Specification
 {
     def setupSpec() {
