@@ -1,13 +1,13 @@
 package neureka.backend.api;
 
 
-import neureka.common.composition.Component;
 import neureka.Neureka;
 import neureka.calculus.Cache;
 import neureka.calculus.Function;
 import neureka.calculus.Functions;
 import neureka.calculus.assembly.ParseUtil;
 import neureka.common.composition.AbstractComponentOwner;
+import neureka.common.composition.Component;
 import org.slf4j.Logger;
 
 import java.util.*;

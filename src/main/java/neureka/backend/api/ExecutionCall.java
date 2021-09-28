@@ -42,7 +42,6 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.calculus.args.Args;
 import neureka.devices.Device;
 
 import java.util.Arrays;
