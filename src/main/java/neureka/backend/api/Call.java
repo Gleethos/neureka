@@ -9,6 +9,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ *  Instances of this class model simple execution calls to the backend.
+ *  They can be passed to {@link neureka.calculus.Function} instances in order to get full
+ *  control over the execution of the provided parameters.
+ *  This class is the precursor class of {@link ExecutionCall} which is a more complete
+ *  execution state bundle used in the backend implementations.
+ *
+ * @param <D>
+ */
 public class Call<D> {
 
     public static <V, T extends Device<V>> Call.Builder<V,T> to( T device ) { return new Builder<V,T>(device); }
