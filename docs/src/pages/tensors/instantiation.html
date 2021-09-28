@@ -4,9 +4,9 @@
         <h3>
             Tensor instantiation:
         </h3>
-        <p>
-            At the core of Neureka lies the 'Tsr' class,<br>
-            which is a three-letter abbreviation of the word <b>t</b>en<b>s</b>o<b>r</b>!<br>
+        <p class="MarkdownMe">
+At the core of Neureka lies the `Tsr` class,<br>
+which is a three-letter abbreviation of the word <b>t</b>en<b>s</b>o<b>r</b>!<br>
         </p>
     </div>
 </div>
@@ -15,15 +15,16 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
     Tsr t = Tsr.of([2, 4],[
-            1, 2, 3, 4,
-            9, 8, 6, 5
-    ])
+                1, 2, 3, 4,
+                9, 8, 6, 5
+            ])
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
@@ -34,7 +35,18 @@
          new double[]{
                 1, 2, 3, 4,
                 9, 8, 6, 5,
-    });
+        });
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+    val t = Tsr.of(
+         intArrayOf(2, 4),
+         doubleArrayOf(
+                1, 2, 3, 4,
+                9, 8, 6, 5,
+        ))
                 </code></pre>
             </div>
         </div>
@@ -55,6 +67,7 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
@@ -71,6 +84,13 @@
 
                 </code></pre>
             </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+        val t = Tsr.of(intArrayOf(2, 4), -5)
+
+                </code></pre>
+            </div>
         </div>
     </div>
 </div>
@@ -83,14 +103,12 @@
     </div>
 </div>
 
-
-
-
 <div class="col-sm-12 col-md-6">
     <div class="TabWrapper">
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
@@ -104,6 +122,13 @@
                 <pre><code class="hljs java">
 
     Tsr t = Tsr.of(-5);
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+    val t = Tsr.of(-5)
 
                 </code></pre>
             </div>
