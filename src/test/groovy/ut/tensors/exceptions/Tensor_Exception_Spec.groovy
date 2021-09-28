@@ -9,7 +9,7 @@ import spock.lang.Specification
 import spock.lang.Title
 
 @Title('Tensors Exception Behavior')
-@Narrative("""
+@Narrative('''
 
     This specification covers the behavior of the $Tsr class in
     exceptional scenarious which are contrary to its intended use.
@@ -17,7 +17,7 @@ import spock.lang.Title
     useful feedback to a user to explain that a missuse of its API
     occurred so that the user can correct this missuse.
 
-""")
+''')
 class Tensor_Exception_Spec extends Specification
 {
     def setupSpec() {

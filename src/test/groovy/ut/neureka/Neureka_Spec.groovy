@@ -8,14 +8,14 @@ import spock.lang.Specification
 import spock.lang.Title
 
 @Title('The Neureka context can be used and configured as expected.')
-@Narrative("""
+@Narrative('''
 
     This specification covers the behavior of the $Neureka which
     exposes a global API for configuring thread local contexts and library settings.
     The purpose of this is to assert that the API exposed by the $Neureka class 
     is both thread local and configurable.
 
-""")
+''')
 class Neureka_Spec extends Specification
 {
     def setupSpec()
