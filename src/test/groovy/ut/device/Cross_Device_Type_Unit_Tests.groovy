@@ -10,6 +10,7 @@ import neureka.devices.file.FileDevice
 import neureka.devices.host.HostCPU
 import neureka.devices.opencl.OpenCLDevice
 import spock.lang.Ignore
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 import java.util.function.BiConsumer
@@ -34,12 +35,10 @@ class Cross_Device_Type_Unit_Tests extends Specification
         Neureka.get().settings().view().asString = "dgc"
     }
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'Querying for Device implementations works as expected.'(
             String query, Class type
     ) {
-        given : 'This system supports OpenCL.'
-            if ( !Neureka.get().canAccessOpenCL() ) return
-
         when : 'The query is being passed to the "find" method...'
             def device = Device.find(query)
 

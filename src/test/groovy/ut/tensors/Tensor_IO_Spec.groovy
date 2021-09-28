@@ -6,6 +6,7 @@ import neureka.calculus.Function
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.dtype.DataType
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 class Tensor_IO_Spec extends Specification
@@ -326,11 +327,10 @@ class Tensor_IO_Spec extends Specification
 
     }
 
-
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'Adding OpenCL device to tensor makes tensor be "outsourced" and contain the Device instance as component.'()
     {
         given : 'Neureka can access OpenCL (JOCL).'
-            if ( !Neureka.get().canAccessOpenCL() ) return
             Device gpu = Device.find("nvidia")
             Tsr t = Tsr.of([3, 4, 1], 3)
 

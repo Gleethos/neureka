@@ -4,6 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.opencl.CLContext
 import org.slf4j.Logger
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 class OpenCLDevice_Exception_Integration_Spec extends Specification
@@ -21,10 +22,10 @@ class OpenCLDevice_Exception_Integration_Spec extends Specification
         Neureka.get().reset()
     }
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'Ad hoc compilation produces expected exceptions.'()
     {
-        given : 'This system supports OpenCL'
-            if ( !Neureka.get().canAccessOpenCL() ) return
+        given :
             def device = Neureka.get().context().get(CLContext.class).platforms[0].devices[0]
 
         expect : 'Initially there is no ad hoc kernel with the following name.'
@@ -53,10 +54,10 @@ class OpenCLDevice_Exception_Integration_Spec extends Specification
 
     }
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'Ad hoc compilation produces expected exceptions when duplication is found.'()
     {
-        given : 'This system supports OpenCL'
-            if ( !Neureka.get().canAccessOpenCL() ) return
+        given :
             def device = Neureka.get().context().get(CLContext.class).getPlatforms()[0].devices[0]
             def code = """
                         __kernel void right_dummy_kernel_name (
@@ -94,10 +95,10 @@ class OpenCLDevice_Exception_Integration_Spec extends Specification
     }
 
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'Trying to restore a tensor which is not on a device raises exception.'()
     {
-        given : 'This system supports OpenCL'
-            if ( !Neureka.get().canAccessOpenCL() ) return
+        given :
             def device = Neureka.get().context().get(CLContext.class).getPlatforms()[0].devices[0]
         and : 'We create a new mock logger for the OpenCL device.'
             def oldLogger = device._log
@@ -118,9 +119,8 @@ class OpenCLDevice_Exception_Integration_Spec extends Specification
             )
 
         cleanup : 'Afterwards we restore the original logger!'
-            if ( Neureka.get().canAccessOpenCL() ) device._log = oldLogger
+            device._log = oldLogger
     }
-
 
 
 }

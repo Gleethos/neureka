@@ -4,6 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
 import neureka.devices.opencl.CLContext
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 class CLFunctionCompiler_Integration_Spec extends Specification {
@@ -26,11 +27,10 @@ class CLFunctionCompiler_Integration_Spec extends Specification {
         Neureka.get().settings().view().asString = "dgc"
     }
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'The OpenCLDevice produces a working optimized Function (internally using the CLFunctionCompiler).'() {
 
-        given : 'This system supports OpenCL'
-            if ( !Neureka.get().canAccessOpenCL() ) return
-        and : 'We get the first available OpenCLDevice we can find in the CLContext!'
+        given : 'We get the first available OpenCLDevice we can find in the CLContext!'
             def device = Neureka.get().context().get(CLContext.class).platforms[0].devices[0]
         and : 'Three scalar test tensors which will be used as inputs to the optimized function.'
             Tsr<Double> t1 = Tsr.of(-2).to(device)

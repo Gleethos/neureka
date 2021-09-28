@@ -6,6 +6,7 @@ import neureka.devices.Device
 import neureka.devices.opencl.CLContext
 import neureka.devices.opencl.utility.DispatchUtility
 import neureka.dtype.DataType
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 class OpenCLDevice_Integration_Spec extends Specification
@@ -25,11 +26,10 @@ class OpenCLDevice_Integration_Spec extends Specification
         Neureka.get().settings().view().asString = "dgc"
     }
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'An OpenCLDevice will throw an exception when trying to add a tensor whose "data parent" is not outsourced.'()
     {
-        given: 'This system supports OpenCL.'
-            if (!Neureka.get().canAccessOpenCL()) return
-        and : 'The first found OpenCLDevice instance.'
+        given: 'The first found OpenCLDevice instance.'
             Device device = Device.find('first')
         and : 'A tensor and a slice tensor of the prior.'
             Tsr t = Tsr.of([4, 3], 2)
@@ -51,11 +51,10 @@ class OpenCLDevice_Integration_Spec extends Specification
     }
 
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'The "getValue()" method of an outsourced tensor will return the expected array type.'()
     {
-        given : 'This system supports OpenCL'
-            if (!Neureka.get().canAccessOpenCL()) return
-        and : 'A new tensor.'
+        given : 'A new tensor.'
             Tsr t = Tsr.ofShape( 1, 2 )
 
         expect : 'This tensor is initially of type "Double", meaning it is backed by a "double[]" array internally...'
@@ -80,11 +79,10 @@ class OpenCLDevice_Integration_Spec extends Specification
         //    value instanceof float[] // WIP!
     }
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'The "getData()" method of an outsourced tensor will return null when outsourced.'()
     {
-        given : 'This system supports OpenCL'
-            if ( !Neureka.get().canAccessOpenCL() ) return
-        and : 'A new tensor belonging to the first found OpenCLDevice instance.'
+        given : 'A new tensor belonging to the first found OpenCLDevice instance.'
             Tsr t = Tsr.ofShape( 1, 2 )
 
         expect : 'The tensor start with having data stored within.'
@@ -99,10 +97,10 @@ class OpenCLDevice_Integration_Spec extends Specification
             data == null
     }
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'Ad hoc compilation produces executable kernel.'() {
 
-        given : 'This system supports OpenCL'
-            if ( !Neureka.get().canAccessOpenCL() ) return
+        given :
             def device = Neureka.get().context().get(CLContext.class).getPlatforms()[0].devices[0]
             def someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).to( device )
 
@@ -150,12 +148,12 @@ class OpenCLDevice_Integration_Spec extends Specification
     }
 
 
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'Ad hoc compilation works for matrix multiplication.'(
            int regSize, int locSize, int M, int K, int N, String expected
     ) {
 
-        given : 'This system supports OpenCL'
-            if ( !Neureka.get().canAccessOpenCL() ) return
+        given :
             def device = Neureka.get().context().get(CLContext.class).getPlatforms()[0].devices[0]
             def kernelName = "dummy_mm_${M}x${K}x${N}"
             def params = DispatchUtility.findBestParams(locSize, regSize, K, M, N)
@@ -302,13 +300,12 @@ class OpenCLDevice_Integration_Spec extends Specification
 
     }
 
-
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'Ad hoc compilation works for OpenCL backends matrix multiplication.'(
             int seed, int M, int K, int N, String expected
     ) {
 
-        given : 'This system supports OpenCL'
-            if ( !Neureka.get().canAccessOpenCL() ) return
+        given :
             def device = Neureka.get().context().get(CLContext.class).platforms[0].devices[0]
             def kernelName = "backend_mm_${M}x${K}x${N}"
 
