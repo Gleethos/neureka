@@ -169,35 +169,27 @@ public final class Neureka
     /**
      * @return The truth value determining if OpenCL is accessible.
      */
-    public boolean canAccessOpenCL() {
-        return _OPENCL_AVAILABLE;
-    }
+    public boolean canAccessOpenCL() { return _OPENCL_AVAILABLE; }
 
     /**
      * @return An instance of library wide {@link Settings} determining the behaviour of many classes...
      */
-    public Settings settings() {
-        return _settings;
-    }
+    public Settings settings() { return _settings; }
 
     public Settings settings(Object closure) {
-        SettingsLoader.tryGroovyClosureOn(closure, _settings);
+        SettingsLoader.tryGroovyClosureOn( closure, _settings );
         return _settings;
     }
 
     /**
      * @return An instance of an utility class useful for loading resources or checking if they are even available.
      */
-    public Utility utility() {
-        return _utility;
-    }
+    public Utility utility() { return _utility; }
 
     /**
      * @return The semantic version of the Neureka library.
      */
-    public static String version() {
-        return _VERSION;
-    }
+    public static String version() { return _VERSION; }
 
     /**
      *  This method will try to reload the "library_settings.groovy" script
@@ -269,58 +261,44 @@ public final class Neureka
             return _debug;
         }
 
-        public AutoGrad autograd() {
-            return _autograd;
-        }
+        public AutoGrad autograd() { return _autograd; }
 
         public AutoGrad autograd( Object closure ) {
             SettingsLoader.tryGroovyClosureOn( closure, _autograd );
             return _autograd;
         }
 
-        public Indexing indexing() {
-            return _indexing;
-        }
+        public Indexing indexing() { return _indexing; }
 
         public Indexing indexing( Object closure ) {
             SettingsLoader.tryGroovyClosureOn( closure, _indexing );
             return _indexing;
         }
 
-        public View view() {
-            return _view;
-        }
+        public View view() { return _view; }
 
         public View view( Object closure ) {
             SettingsLoader.tryGroovyClosureOn( closure, _view );
             return _view;
         }
 
-        public NDim ndim() {
-            return _ndim;
-        }
+        public NDim ndim() { return _ndim; }
 
         public NDim ndim( Object closure ) {
             SettingsLoader.tryGroovyClosureOn( closure, _ndim );
             return _ndim;
         }
 
-        public DType dtype() {
-            return _dtype;
-        }
+        public DType dtype() { return _dtype; }
 
         public DType dtype( Object closure ) {
             SettingsLoader.tryGroovyClosureOn( closure, _dtype );
             return _dtype;
         }
 
-        public boolean isLocked() {
-            return  _isLocked;
-        }
+        public boolean isLocked() { return  _isLocked; }
 
-        public void setIsLocked(boolean locked) {
-            _isLocked = locked;
-        }
+        public void setIsLocked(boolean locked) { _isLocked = locked; }
 
         public String toString() {
             return "Neureka.Settings(" +
@@ -354,9 +332,7 @@ public final class Neureka
              * It is used in the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
              */
-            public boolean isKeepingDerivativeTargetPayloads() {
-                return _isKeepingDerivativeTargetPayloads;
-            }
+            public boolean isKeepingDerivativeTargetPayloads() { return _isKeepingDerivativeTargetPayloads; }
 
             /**
              * Every derivative is calculated with respect to some graph node.
@@ -398,9 +374,7 @@ public final class Neureka
              *  is being modified.
              *  Usually the result of an operation is stored inside a new tensor.
              */
-            public boolean isPreventingInlineOperations() {
-                return _isPreventingInlineOperations;
-            }
+            public boolean isPreventingInlineOperations() { return _isPreventingInlineOperations; }
 
             /**
              *  Inline operations are operations where the data of a tensor passed into an operation
@@ -422,9 +396,7 @@ public final class Neureka
              *  improve performance for some networks substantially.
              *  The technique is termed JIT-Propagation.
              */
-            public boolean isRetainingPendingErrorForJITProp() {
-                return _isRetainingPendingErrorForJITProp;
-            }
+            public boolean isRetainingPendingErrorForJITProp() { return _isRetainingPendingErrorForJITProp; }
 
             /**
              *  This flag enables an optimization technique which only propagates error values to
@@ -446,9 +418,7 @@ public final class Neureka
              *  they are being used for calculation ({@link neureka.autograd.GraphNode} instantiation).
              *  This feature works well with JIT-Propagation.
              */
-            public boolean isApplyingGradientWhenTensorIsUsed() {
-                return _isApplyingGradientWhenTensorIsUsed;
-            }
+            public boolean isApplyingGradientWhenTensorIsUsed() { return _isApplyingGradientWhenTensorIsUsed; }
 
             /**
              *  Gradients will automatically be applied (or JITed) to tensors as soon as
@@ -480,9 +450,7 @@ public final class Neureka
              *  be updated by its gradient</b>. This request can be dispatched to a {@link Tsr}
              *  by setting {@link Tsr#setGradientApplyRequested(boolean)} to {@code true}.<br>
              */
-            public boolean isApplyingGradientWhenRequested() {
-                return _isApplyingGradientWhenRequested;
-            }
+            public boolean isApplyingGradientWhenRequested() { return _isApplyingGradientWhenRequested; }
 
             /**
              * Gradients will only be applied if requested.
@@ -512,9 +480,7 @@ public final class Neureka
         {
             private boolean _isUsingArrayBasedIndexing = true;
 
-            public boolean isUsingArrayBasedIndexing() {
-                return _isUsingArrayBasedIndexing;
-            }
+            public boolean isUsingArrayBasedIndexing() { return _isUsingArrayBasedIndexing; }
 
             public void setIsUsingArrayBasedIndexing( boolean thorough ) {
                 if ( _isLocked || _currentThreadIsNotAuthorized()) return;
@@ -531,6 +497,11 @@ public final class Neureka
         
         public class View
         {
+            private boolean _isUsingLegacyView = false;
+
+            private Map<TsrAsString.Should, Object> _asString;
+
+
             View(){
                 _asString = new HashMap<>();
                 _asString.put( TsrAsString.Should.BE_SHORTENED_BY,      50    );
@@ -544,31 +515,18 @@ public final class Neureka
                 _asString.put( TsrAsString.Should.HAVE_SHAPE,           true  );
             }
 
-            private boolean _isUsingLegacyView = false;
-
-            private Map<TsrAsString.Should, Object> _asString;
-
-
-            public boolean isUsingLegacyView() {
-                return _isUsingLegacyView;
-            }
+            public boolean isUsingLegacyView() { return _isUsingLegacyView; }
 
             public void setIsUsingLegacyView(boolean enabled) {
                 if ( _isLocked || _currentThreadIsNotAuthorized()) return;
                 _isUsingLegacyView = enabled;
             }
 
-            public Map<TsrAsString.Should, Object> getAsString() {
-                return _asString;
-            }
+            public Map<TsrAsString.Should, Object> getAsString() { return _asString; }
 
-            public void setAsString( Map<TsrAsString.Should, Object> should ) {
-                _asString = should;
-            }
+            public void setAsString( Map<TsrAsString.Should, Object> should ) { _asString = should; }
 
-            public void setAsString( String modes ) {
-                setAsString( TsrAsString.Util.configFromCode( modes ) );
-            }
+            public void setAsString( String modes ) { setAsString( TsrAsString.Util.configFromCode( modes ) ); }
 
             public String toString() {
                 return "Neureka.Settings.View(" +
@@ -588,9 +546,7 @@ public final class Neureka
              */
             private boolean _isOnlyUsingDefaultNDConfiguration = false;
 
-            public boolean isOnlyUsingDefaultNDConfiguration() {
-                return _isOnlyUsingDefaultNDConfiguration;
-            }
+            public boolean isOnlyUsingDefaultNDConfiguration() { return _isOnlyUsingDefaultNDConfiguration; }
 
             public void setIsOnlyUsingDefaultNDConfiguration(boolean enabled) {
                 if ( _isLocked || _currentThreadIsNotAuthorized()) return;
@@ -611,18 +567,14 @@ public final class Neureka
 
             private boolean _isAutoConvertingExternalDataToJVMTypes = true;
 
-            public Class<?> getDefaultDataTypeClass() {
-                return _defaultDataTypeClass;
-            }
+            public Class<?> getDefaultDataTypeClass() { return _defaultDataTypeClass; }
 
             public void setDefaultDataTypeClass( Class<?> dtype ) {
                 if ( _isLocked || _currentThreadIsNotAuthorized()) return;
                 _defaultDataTypeClass = dtype;
             }
 
-            public boolean getIsAutoConvertingExternalDataToJVMTypes() {
-                return _isAutoConvertingExternalDataToJVMTypes;
-            }
+            public boolean getIsAutoConvertingExternalDataToJVMTypes() { return _isAutoConvertingExternalDataToJVMTypes; }
 
             public void setIsAutoConvertingExternalDataToJVMTypes( boolean autoConvert ) {
                 if ( _isLocked || _currentThreadIsNotAuthorized()) return;
@@ -630,7 +582,10 @@ public final class Neureka
             }
 
             public String toString() {
-                return "Neureka.Settings.DType(_defaultDataTypeClass=" + this.getDefaultDataTypeClass() + ", _isAutoConvertingExternalDataToJVMTypes=" + this._isAutoConvertingExternalDataToJVMTypes + ")";
+                return "Neureka.Settings.DType(" +
+                            "defaultDataTypeClass=" + this.getDefaultDataTypeClass() + ", " +
+                            "isAutoConvertingExternalDataToJVMTypes=" + this._isAutoConvertingExternalDataToJVMTypes +
+                        ")";
             }
         }
 

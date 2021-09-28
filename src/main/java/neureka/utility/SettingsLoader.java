@@ -102,7 +102,7 @@ public class SettingsLoader
 
         private static Logger _LOG = LoggerFactory.getLogger(SettingsLoader.class);
 
-        private Properties _properties;
+        private final Properties _properties;
 
         TypeChecker(Properties properties) { _properties = properties; }
 
@@ -146,6 +146,13 @@ public class SettingsLoader
         }
     }
 
+    /**
+     *  This method makes it possible to configure the library via a Groovy DSL!
+     *
+     * @param closure A Groovy closure which should be called with the provided delegate.
+     * @param delegate The delegate for the provided closure (Can be a settings object).
+     * @return The result returned by provided closure.
+     */
     public static Object tryGroovyClosureOn(Object closure, Object delegate) {
         try {
             Method setDelegate = closure.getClass().getMethod("setDelegate", Object.class);

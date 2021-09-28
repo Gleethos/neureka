@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  *  This class is the precursor class of {@link ExecutionCall} which is a more complete
  *  execution state bundle used in the backend implementations.
  *
- * @param <D>
+ * @param <D> The type parameter which defines the {@link Device} targeted by this {@link Call}.
  */
 public class Call<D> {
 
