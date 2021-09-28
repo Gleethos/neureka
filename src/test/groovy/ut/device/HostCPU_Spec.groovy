@@ -6,7 +6,7 @@ import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import spock.lang.Specification
 
-class HostCPU_Unit_Tests extends Specification
+class HostCPU_Spec extends Specification
 {
     def setupSpec()
     {

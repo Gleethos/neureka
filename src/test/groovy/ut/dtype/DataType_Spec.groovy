@@ -8,7 +8,7 @@ import neureka.dtype.custom.I8
 import neureka.dtype.custom.UI8
 import spock.lang.Specification
 
-class DataType_Unit_Tests extends Specification
+class DataType_Spec extends Specification
 {
 
     def setupSpec()

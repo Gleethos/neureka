@@ -13,7 +13,7 @@ import neureka.dtype.custom.UI64
 import neureka.dtype.custom.UI8;
 import spock.lang.Specification;
 
-class NumericType_Unit_Tests extends Specification
+class NumericType_Spec extends Specification
 {
 
     def setupSpec()

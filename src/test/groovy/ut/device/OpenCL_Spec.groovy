@@ -7,16 +7,15 @@ import neureka.devices.Device
 import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.utility.DeviceQuery
 import neureka.framing.Relation
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
-class OpenCL_Unit_Test extends Specification
+class OpenCL_Spec extends Specification
 {
 
+    @IgnoreIf({ Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'First found OpenCLDevice will have realistic properties inside summary query.'()
     {
-        given: 'This system supports OpenCL.'
-            if (!Neureka.get().canAccessOpenCL()) return
-
         when: 'Information about all existing OpenCL devices is being queried.'
             String query = DeviceQuery.query()
 
@@ -30,11 +29,9 @@ class OpenCL_Unit_Test extends Specification
             query.contains("CL_DEVICE_TYPE")
     }
 
+    @IgnoreIf({ Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'First found OpenCLDevice will have realistic numeric properties.'()
     {
-       given : 'This system supports OpenCL.'
-            if ( !Neureka.get().canAccessOpenCL() ) return
-
        when : 'The first found Device instance is used.'
             OpenCLDevice cld = Device.find('first') as OpenCLDevice
 
@@ -58,12 +55,10 @@ class OpenCL_Unit_Test extends Specification
             cld.prefVecWidthShort() > 0
     }
 
+    @IgnoreIf({ Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'First found OpenCLDevice will have realistic text properties.'()
     {
-        given : 'This system supports OpenCL.'
-            if ( !Neureka.get().canAccessOpenCL() ) return
-
-        when : 'The first found Device instance is used.'
+        when :  'The first found Device instance is used.'
             OpenCLDevice cld = Device.find('first') as OpenCLDevice
 
         then : 'The device has realistic properties.'
@@ -74,12 +69,10 @@ class OpenCL_Unit_Test extends Specification
             !cld.version().isBlank()
     }
 
+    @IgnoreIf({ Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'An OpenCLDevice will throw an exception when trying to add a tensor whose "data parent" is not outsourced.'()
     {
-        given: 'This system supports OpenCL.'
-            if (!Neureka.get().canAccessOpenCL()) return
-
-        and : 'The first found OpenCLDevice instance.'
+        given: 'The first found OpenCLDevice instance.'
             Device device = Device.find('first')
 
         and : 'A mocked tensor that is not outsourced.'

@@ -1,10 +1,22 @@
 package ut.neureka
 
 import neureka.Neureka
+import neureka.Tsr
 import neureka.utility.SettingsLoader
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
-class Neureka_Unit_Tests extends Specification
+@Title('The Neureka context can be used and configured as expected.')
+@Narrative("""
+
+    This specification covers the behavior of the $Neureka which
+    exposes a global API for configuring thread local contexts and library settings.
+    The purpose of this is to assert that the API exposed by the $Neureka class 
+    is both thread local and configurable.
+
+""")
+class Neureka_Spec extends Specification
 {
     def setupSpec()
     {
