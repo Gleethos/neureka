@@ -8,7 +8,7 @@ import neureka.optimization.implementations.ADAM
 import spock.lang.Shared
 import spock.lang.Specification
 
-class ADAM_Tests extends Specification
+class ADAM_Spec extends Specification
 {
     @Shared Tsr w = Tsr.of(0)
     @Shared Optimizer<?> o = new ADAM<>(w)

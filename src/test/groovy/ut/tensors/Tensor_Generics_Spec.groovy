@@ -5,7 +5,7 @@ import neureka.Tsr
 import neureka.dtype.DataType
 import spock.lang.Specification
 
-class Tensor_Generics_Unit_Tests extends Specification
+class Tensor_Generics_Spec extends Specification
 {
     def setupSpec()
     {

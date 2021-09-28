@@ -7,7 +7,7 @@ import neureka.dtype.custom.I8
 import neureka.utility.TsrAsString
 import spock.lang.Specification
 
-class Tensor_State_Unit_Test extends Specification
+class Tensor_State_Spec extends Specification
 {
     def setupSpec() {
         reportHeader """    

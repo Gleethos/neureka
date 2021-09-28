@@ -7,7 +7,7 @@ import spock.lang.Specification
 
 import java.util.function.Function
 
-class OperationContext_Unit_Tests extends Specification
+class OperationContext_Spec extends Specification
 {
     def 'OperationContext instances can be created by cloning from Singleton instance.'()
     {

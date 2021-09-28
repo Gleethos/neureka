@@ -5,7 +5,7 @@ import neureka.dtype.DataType
 import neureka.ndim.Initializer
 import spock.lang.Specification
 
-class Tensor_Building_Unit_Test extends Specification
+class Tensor_Building_Spec extends Specification
 {
 
     def 'Tensors can be created fluently.'(

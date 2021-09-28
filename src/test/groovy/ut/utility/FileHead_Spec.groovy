@@ -12,7 +12,7 @@ import neureka.dtype.custom.I16
 import neureka.dtype.custom.UI8
 import spock.lang.Specification
 
-class FileHead_Unit_Tests extends Specification
+class FileHead_Spec extends Specification
 {
     def setupSpec()
     {

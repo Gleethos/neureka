@@ -4,7 +4,7 @@ import neureka.Tsr
 import neureka.dtype.DataType
 import spock.lang.Specification
 
-class Tensor_Delete_Exception_Unit_Tests extends Specification
+class Tensor_Delete_Exception_Spec extends Specification
 {
 
     def 'A deleted tensor will tell you that it has been deleted.'() {

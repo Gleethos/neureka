@@ -7,7 +7,7 @@ import neureka.devices.host.HostCPU
 import neureka.devices.opencl.OpenCLDevice
 import spock.lang.Specification
 
-class Tensor_Slicing_Integration_Tests extends Specification
+class Tensor_Slicing_Integration_Spec extends Specification
 {
     def setupSpec() {
         reportHeader """

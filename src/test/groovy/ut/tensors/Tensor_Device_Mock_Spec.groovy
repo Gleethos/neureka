@@ -6,7 +6,7 @@ import neureka.Tsr
 import neureka.devices.Device
 import spock.lang.Specification
 
-class Tensor_Device_Mock_Unit_Tests extends Specification
+class Tensor_Device_Mock_Spec extends Specification
 {
     def setupSpec() {
         reportHeader """    

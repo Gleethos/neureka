@@ -11,7 +11,7 @@ import spock.lang.Specification
 
 import java.util.function.BiFunction
 
-class Tensor_Operation_Integration_Tests extends Specification
+class Tensor_Operation_Integration_Spec extends Specification
 {
 
     def setup() {

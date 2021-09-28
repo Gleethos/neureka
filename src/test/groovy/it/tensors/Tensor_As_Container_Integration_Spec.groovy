@@ -5,7 +5,7 @@ import neureka.Tsr
 import neureka.dtype.DataType
 import spock.lang.Specification
 
-class Tensor_As_Container_Integration_Tests extends Specification
+class Tensor_As_Container_Integration_Spec extends Specification
 {
 
     def setupSpec()

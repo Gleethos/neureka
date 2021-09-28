@@ -8,7 +8,7 @@ import neureka.ndim.config.types.simple.SimpleD1Configuration
 import neureka.ndim.config.types.simple.SimpleScalarConfiguration
 import spock.lang.Specification
 
-class Tensor_NDConfiguration_Integration_Tests extends Specification
+class Tensor_NDConfiguration_Integration_Spec extends Specification
 {
     def setupSpec()
     {

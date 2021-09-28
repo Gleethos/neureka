@@ -6,7 +6,7 @@ import neureka.devices.opencl.CLContext
 import org.slf4j.Logger
 import spock.lang.Specification
 
-class OpenCLDevice_Exception_Integration_Tests extends Specification
+class OpenCLDevice_Exception_Integration_Spec extends Specification
 {
     def setupSpec()
     {

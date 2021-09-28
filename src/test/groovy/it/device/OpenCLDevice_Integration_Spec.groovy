@@ -8,7 +8,7 @@ import neureka.devices.opencl.utility.DispatchUtility
 import neureka.dtype.DataType
 import spock.lang.Specification
 
-class OpenCLDevice_Integration_Tests extends Specification
+class OpenCLDevice_Integration_Spec extends Specification
 {
     def setupSpec()
     {

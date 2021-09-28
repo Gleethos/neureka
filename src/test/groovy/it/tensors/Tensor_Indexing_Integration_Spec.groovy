@@ -4,7 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import spock.lang.Specification
 
-class Tensor_Indexing_Integration_Tests extends Specification
+class Tensor_Indexing_Integration_Spec extends Specification
 {
 
     def setup() {

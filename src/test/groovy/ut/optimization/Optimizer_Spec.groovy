@@ -10,7 +10,7 @@ import spock.lang.Ignore
 //import org.junit.Test
 import spock.lang.Specification
 
-class Optimizer_Tests extends Specification
+class Optimizer_Spec extends Specification
 {
 
     def setup() {

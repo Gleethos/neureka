@@ -3,7 +3,7 @@ package ut.utility
 import neureka.utility.DataConverter
 import spock.lang.Specification
 
-class DataConverter_Tests extends Specification
+class DataConverter_Spec extends Specification
 {
     def 'The DataConverter can convert the given array data.'() {
 

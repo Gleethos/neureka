@@ -5,7 +5,7 @@ import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionBuilder
 import spock.lang.Specification
 
-class Calculus_Scalar_Unit_Tests extends Specification
+class Calculus_Scalar_Spec extends Specification
 {
 
     def 'Function "1/I[0]" instance returns expected scalar results.'(

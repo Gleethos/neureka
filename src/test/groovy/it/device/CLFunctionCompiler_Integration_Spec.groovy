@@ -6,7 +6,7 @@ import neureka.calculus.Function
 import neureka.devices.opencl.CLContext
 import spock.lang.Specification
 
-class CLFunctionCompiler_Integration_Tests extends Specification {
+class CLFunctionCompiler_Integration_Spec extends Specification {
 
     def setupSpec()
     {

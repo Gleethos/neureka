@@ -3,7 +3,7 @@ package ut.utility
 import neureka.utility.ListReader
 import spock.lang.Specification
 
-class ListReader_Exception_Tests extends Specification
+class ListReader_Exception_Spec extends Specification
 {
 
     def 'The ListReader will detect inconsistent types in the provided data.'()

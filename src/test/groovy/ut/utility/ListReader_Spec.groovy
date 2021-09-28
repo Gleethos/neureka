@@ -1,9 +1,9 @@
 package ut.utility
 
 import neureka.utility.ListReader
-import spock.lang.Specification;
+import spock.lang.Specification
 
-class ListReader_Tests extends Specification
+class ListReader_Spec extends Specification
 {
 
     def 'The ListReader can interpret nested lists resembling a matrix into a shape list and value list.'()

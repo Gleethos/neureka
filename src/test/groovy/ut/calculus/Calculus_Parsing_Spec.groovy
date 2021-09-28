@@ -3,7 +3,7 @@ package ut.calculus
 import neureka.calculus.Function
 import spock.lang.Specification
 
-class Calculus_Parsing_Unit_Tests extends Specification
+class Calculus_Parsing_Spec extends Specification
 {
     def setupSpec()
     {

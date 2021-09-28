@@ -8,7 +8,7 @@ import neureka.devices.host.HostCPU
 import neureka.dtype.DataType
 import spock.lang.Specification
 
-class Tensor_IO_Unit_Tests extends Specification
+class Tensor_IO_Spec extends Specification
 {
     def setupSpec()
     {

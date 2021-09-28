@@ -5,7 +5,7 @@ import neureka.Tsr
 import neureka.calculus.Function
 import spock.lang.Specification
 
-class Tensor_Slice_Reshape_Integration_Tests extends Specification
+class Tensor_Slice_Reshape_Integration_Spec extends Specification
 {
     def setup() {
         Neureka.get().reset()

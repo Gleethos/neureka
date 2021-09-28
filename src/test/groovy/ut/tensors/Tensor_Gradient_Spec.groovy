@@ -4,7 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import spock.lang.Specification
 
-class Tensor_Gradient_Unit_Test extends Specification
+class Tensor_Gradient_Spec extends Specification
 {
     def setupSpec()
     {

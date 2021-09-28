@@ -6,7 +6,7 @@ import org.slf4j.Logger
 import spock.lang.Shared
 import spock.lang.Specification
 
-class Tensor_Exception_Unit_Tests extends Specification
+class Tensor_Exception_Spec extends Specification
 {
     def setupSpec() {
         reportHeader """
