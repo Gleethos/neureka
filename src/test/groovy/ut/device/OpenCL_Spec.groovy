@@ -13,7 +13,7 @@ import spock.lang.Specification
 class OpenCL_Spec extends Specification
 {
 
-    @IgnoreIf({ Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'First found OpenCLDevice will have realistic properties inside summary query.'()
     {
         when: 'Information about all existing OpenCL devices is being queried.'
@@ -29,7 +29,7 @@ class OpenCL_Spec extends Specification
             query.contains("CL_DEVICE_TYPE")
     }
 
-    @IgnoreIf({ Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'First found OpenCLDevice will have realistic numeric properties.'()
     {
        when : 'The first found Device instance is used.'
@@ -55,7 +55,7 @@ class OpenCL_Spec extends Specification
             cld.prefVecWidthShort() > 0
     }
 
-    @IgnoreIf({ Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'First found OpenCLDevice will have realistic text properties.'()
     {
         when :  'The first found Device instance is used.'
@@ -69,7 +69,7 @@ class OpenCL_Spec extends Specification
             !cld.version().isBlank()
     }
 
-    @IgnoreIf({ Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'An OpenCLDevice will throw an exception when trying to add a tensor whose "data parent" is not outsourced.'()
     {
         given: 'The first found OpenCLDevice instance.'
