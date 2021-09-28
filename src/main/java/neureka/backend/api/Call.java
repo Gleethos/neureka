@@ -44,9 +44,12 @@ public class Call<D> {
         for ( Arg<?> arg : arguments ) _arguments.set(arg);
     }
 
-    public D getDevice() { return this._device; }
+    public D getDevice() { return _device; }
 
-    public Tsr<?>[] getTensors() { return this._tensors; }
+    /**
+     * @return The {@link Tsr} parameters of this {@link Call} fo execution.
+     */
+    public Tsr<?>[] getTensors() { return _tensors; }
 
     public void mutateTensors( int... indices ) {
         Tsr<?>[] tensors = _tensors.clone();

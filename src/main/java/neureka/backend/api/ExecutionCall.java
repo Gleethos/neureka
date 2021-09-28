@@ -122,12 +122,12 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
 
     public int getJ() { return this.getValOf( Arg.VarIdx.class ); }
 
-    public ExecutionCall<D> withTensors(Tsr<?>[] _tensors ) {
-        return this._tensors == _tensors
+    public ExecutionCall<D> withTensors(Tsr<?>[] tensors ) {
+        return this._tensors == tensors
                 ? this
                 : new ExecutionCall<>(
-                        this._device, this._operation,
-                        _tensors, _algorithm, _arguments.getAll(Arg.class)
+                        _device, _operation,
+                        tensors, _algorithm, _arguments.getAll(Arg.class)
                     );
     }
 

@@ -106,12 +106,12 @@ public class CalcUtil
     /**
      *  This method return the index of the tensor
      *  in the given tensor array which is virtual and contains "1.0".
-     *  However if not all tensors are virtual or their values are not all "0.0" except one
-     *  whose value is "1.0" then it return -1, because the optimization cannot
+     *  However, if not all tensors are virtual or their values are not all "0.0" except one
+     *  whose value is "1.0" then it returns -1, because the optimization cannot
      *  be made...
      *
      * @param tensors An array of tensors which ought to be analyzed.
-     * @return The index of the tensor whose value is "1.0" (if all other are "0.0"), otherwise : -1
+     * @return The index of the tensor whose value is "1.0" (if all others are "0.0"), otherwise : -1
      */
     @Contract( pure = true )
     private static int _indexOfFoundDerivative(Tsr<?>[] tensors )
@@ -174,10 +174,10 @@ public class CalcUtil
                 else {
                     // Optimization above did not apply, so we accumulate all the derivatives!
                     CalcUtil.recursiveExecution(
-                            ExecutionCall.of(tensors)
-                                    .andArgs(Arg.DerivIdx.of( -1 ))
-                                    .running(Neureka.get().context().getOperation("+"))
-                                    .on(device),
+                            ExecutionCall.of( tensors )
+                                    .andArgs( Arg.DerivIdx.of( -1 ) )
+                                    .running( Neureka.get().context().getOperation("+") )
+                                    .on( device ),
                             JunctionUtil::forAdditions
                     );
                     inner = tensors[ 0 ];//-> this is now the inner derivative!
@@ -198,15 +198,15 @@ public class CalcUtil
             }
             //...get derivative index within src list:
             for ( int i = 0; i < nodes.length; i++ ) {
-                if ( nodes[ i ].dependsOn(d) && !operation.isIndexer() ) {
+                if ( nodes[ i ].dependsOn( d ) && !operation.isIndexer() ) {
                     d = i;
                     break;
                 }
             }
             // Use those tensors for the outer derivative:
             CalcUtil.recursiveExecution(
-                    ExecutionCall.of(tensors)
-                            .andArgs(Arg.DerivIdx.of(d))
+                    ExecutionCall.of( tensors )
+                            .andArgs( Arg.DerivIdx.of( d ) )
                             .running( operation )
                             .on( device ),
                     executor
@@ -237,7 +237,7 @@ public class CalcUtil
                     CalcUtil.recursiveExecution(
                             ExecutionCall.of( null, actor.get(), out )
                                     .andArgs( Arg.DerivIdx.of( -1 ) )
-                                    .running( Neureka.get().context().getOperation("+") )
+                                    .running( Neureka.get().context().getOperation( "+" ) )
                                     .on( device ),
                             null
                     );
@@ -266,11 +266,11 @@ public class CalcUtil
                                         "One or more tensor arguments within the given ExecutionCall instance is null."
                         );
                     }
-                    call = (ExecutionCall<? extends Device<?>>) ExecutionCall.of(call.getTensors())
-                                                                    .andArgs(Arg.DerivIdx.of(call.getValOf( Arg.DerivIdx.class )))
-                                                                    .running(call.getOperation())
-                                                                    .on(call.getDevice())
-                                                                    .forDeviceType(call.getDevice().getClass());
+                    call = (ExecutionCall<? extends Device<?>>) ExecutionCall.of( call.getTensors() )
+                                                                    .andArgs( Arg.DerivIdx.of( call.getValOf( Arg.DerivIdx.class ) ) )
+                                                                    .running( call.getOperation() )
+                                                                    .on( call.getDevice() )
+                                                                    .forDeviceType( call.getDevice().getClass() );
                     Device<?> device = call.getDevice();
                     device.approve( call );
                     call.getTensors()[ 0 ].setIsVirtual( false );
@@ -325,11 +325,11 @@ public class CalcUtil
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation type = call.getOperation();
 
-        Consumer<Tsr<Object>>[] rollbacks = new Consumer[tsrs.length];
+        Consumer<Tsr<Object>>[] rollbacks = new Consumer[ tsrs.length ];
         for ( int i = 0; i < tsrs.length; i++ ) {
             if ( tsrs[ i ] != null && !tsrs[ i ].isOutsourced() ) {
                 try {
-                    device.store(tsrs[i]);
+                    device.store( tsrs[ i ] );
                 } catch ( Exception e ) {
                     e.printStackTrace();
                 }
@@ -387,7 +387,7 @@ public class CalcUtil
         int[] tempShape = null;
         Tsr<?>[] tensors = new Tsr[ src.length + offset ];
         for ( int i = offset; i < tensors.length; i++ ) {//constants need to be figured out!
-            if ( !(src[ i - offset ] instanceof FunctionConstant) ) {
+            if ( !( src[ i - offset ] instanceof FunctionConstant ) ) {
                 if ( d < 0 ) // Not deriving this!
                     tensors[ i ] =
                             ( j >= 0 )
@@ -406,8 +406,8 @@ public class CalcUtil
             if ( tensors[ i ] == null )
                 tensors[ i ] =
                         ( j < 0 )
-                                ? Tsr.of(tempShape, ((FunctionConstant) src[ i - offset ]).value())
-                                : Tsr.of(tempShape, src[ i - offset ].call(new double[]{}, j));
+                            ? Tsr.of( tempShape, ((FunctionConstant) src[ i - offset ]).value() )
+                            : Tsr.of( tempShape, src[ i - offset ].call(new double[]{}, j) );
         }
         return tensors;
     }
