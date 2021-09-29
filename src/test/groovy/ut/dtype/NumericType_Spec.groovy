@@ -10,9 +10,21 @@ import neureka.dtype.NumericType
 import neureka.dtype.custom.UI16
 import neureka.dtype.custom.UI32
 import neureka.dtype.custom.UI64
-import neureka.dtype.custom.UI8;
-import spock.lang.Specification;
+import neureka.dtype.custom.UI8
+import spock.lang.Narrative
+import spock.lang.Specification
+import spock.lang.Title
 
+@Title("The $NumericType and its implementations model their respective numeric data types.")
+@Narrative('''
+
+    This specification covers the behavior of the NumericType interface
+    which is responsible for modelling numeric data types which may or may not be native to the JVM. 
+    These implementations however do not model in the traditional OO style
+    but merely expose useful utility method for converting and representing 
+    these numeric data types using JVM types.
+
+''')
 class NumericType_Spec extends Specification
 {
 
