@@ -32,7 +32,7 @@ class NumericType_Spec extends Specification
     {
         reportHeader """
             This specification covers implementations
-            of the "NumericType" interface.
+            of the "$NumericType" interface.
             Such classes are responsible for
             representing all numeric types including the ones
             which are foreign to the JVM, namely : 
