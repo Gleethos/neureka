@@ -15,7 +15,7 @@ import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
 
-@Title("The $NumericType and its implementations model their respective numeric data types.")
+@Title("The NumericType and its implementations model their respective numeric data types.")
 @Narrative('''
 
     This specification covers the behavior of the NumericType interface
