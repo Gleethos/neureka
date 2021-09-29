@@ -10,7 +10,65 @@ which is a three-letter abbreviation of the word <b>t</b>en<b>s</b>o<b>r</b>!<br
         </p>
     </div>
 </div>
-<div class="col-sm-12 col-md-6">
+
+<div class="col-sm-12 col-md-5 col-lg-4">
+    <div class="ContentBox">
+        <p class="MarkdownMe">
+The most readable and type safe way of instantiating a `Tsr`
+is by using the internal tensor builder which is exposed by
+the static `Tsr::of(T type)` factory method.
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-7 col-lg-8">
+    <div class="TabWrapper">
+        <div class="TabHead">
+            <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
+            <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
+        </div>
+        <div class="TabBody">
+            <div class="groovyTab">
+                <pre><code class="hljs java">
+
+    Tsr t = Tsr.of(Double)
+                    .withShape(2, 4)
+                    .andFill(
+                        1, 2, 3, 4,
+                        9, 8, 6, 5
+                    )
+
+                </code></pre>
+            </div>
+            <div class="javaTab" style="display:none">
+                <pre><code class="hljs java">
+
+    Tsr t = Tsr.of(Double.class)
+                    .withShape(2, 4)
+                    .andFill(
+                        1, 2, 3, 4,
+                        9, 8, 6, 5
+                    );
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+    val t = Tsr.of(Double::class.java)
+                    .withShape(2, 4)
+                    .andFill(
+                        1.0, 2.0, 3.0, 4.0,
+                        9.0, 8.0, 6.0, 5.0
+                    );
+
+                </code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-12 col-lg-12 col-md-6">
     <div class="TabWrapper">
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
