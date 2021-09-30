@@ -3,10 +3,22 @@ package ut.calculus
 import neureka.Neureka
 import neureka.backend.api.Operation
 import neureka.backend.api.OperationContext
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
 import java.util.function.Function
 
+@Title("The OperationContext is a cloneable context which can run Tasks.")
+@Narrative('''
+    
+    This specification defines the expected behaviour of the operation context
+    which should expose a convenient API to work with.
+    This API should allow for tasks to be running on a given context
+    which is important for testing and modularity not only
+    during library startup but also throughout the runtime.
+    
+''')
 class OperationContext_Spec extends Specification
 {
     def 'OperationContext instances can be created by cloning from Singleton instance.'()

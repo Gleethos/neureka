@@ -2,8 +2,19 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("Gradients are Tensors which are Components of other Tensors")
+@Narrative('''
+    
+    This specification defines the gradient API on tensors.
+    So one ought to be able to check wetter or not a tensor has a gradient attached to it or not.
+    In that case one should be able to get this gradient and then work with
+    it independently of the original tensor to which it belongs to...
+    
+''')
 class Tensor_Gradient_Spec extends Specification
 {
     def setupSpec()
