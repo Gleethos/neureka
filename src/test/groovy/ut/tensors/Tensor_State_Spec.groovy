@@ -5,8 +5,20 @@ import neureka.Tsr
 import neureka.dtype.DataType
 import neureka.dtype.custom.I8
 import neureka.utility.TsrAsString
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("The Tensor Initialization and State Specification")
+@Narrative('''
+    
+    This specification defines the expected states of freshly instantiated
+    and initialized tensors.
+    After a tensor was created successfully we expect it 
+    to have certain properties like a shape, rank, type nnd data array
+    among other things.
+    
+''')
 class Tensor_State_Spec extends Specification
 {
     def setupSpec() {
