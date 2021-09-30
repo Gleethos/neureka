@@ -1,8 +1,19 @@
 package ut.utility
 
 import neureka.utility.ListReader
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("The Internal ListReader turning lists into flat arrays with shape and type data")
+@Narrative('''
+    
+    This specification covers an internal class which should not be used
+    outside this library, namely the ListReader class.
+    This class is simply a converter which turns nested lists
+    into flat arrays alongside the type of the elements and the shape of this "tensor".
+    
+''')
 class ListReader_Spec extends Specification
 {
 
