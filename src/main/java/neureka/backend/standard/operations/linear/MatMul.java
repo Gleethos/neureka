@@ -168,7 +168,11 @@ public class MatMul extends AbstractOperation
                                                 call.getDevice().getExecutor()
                                                         .threaded (
                                                                 call.getTsrOfType( Number.class, 0 ).size(),
-                                                                ( start, end ) -> {} // TODO: Simple matmul without fancy indexing
+                                                                ( start, end ) -> { // TODO: Simple matmul without fancy indexing
+
+                                                                    //double[] A =
+
+                                                                }
                                                         ),
                                         3
                                 )
