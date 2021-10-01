@@ -6,7 +6,7 @@ import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionBuilder
 import spock.lang.Specification
 
-class Calculus_Integration_Tests extends Specification
+class Calculus_Integration_Spec extends Specification
 {
     def setupSpec()
     {

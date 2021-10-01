@@ -38,34 +38,6 @@ public class MatMul extends AbstractOperation
                         .setIsInline(         false       )
         );
 
-        RecursiveExecutor rja = (call, goDeeperWith) ->
-        {
-            Tsr<?>[] tsrs = call.getTensors();
-            Device<?> device = call.getDevice();
-            int d = call.getValOf( Arg.DerivIdx.class );
-            Operation type = call.getOperation();
-
-            Tsr<?> alternative = null;
-            if ( tsrs.length > 3 ) {
-                if ( d < 0 ) {
-                    Tsr<?>[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
-                    alternative = goDeeperWith.execute(
-                                            ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
-                                    );
-                    tsrs[ 0 ] = reduction[ 0 ];
-
-                    reduction = Utility.offsetted(tsrs, 1);
-                    alternative = goDeeperWith.execute(
-                            ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
-                    );
-                    tsrs[ 0 ] = reduction[ 0 ];
-                }
-                return alternative;
-            }
-            else
-                return alternative;
-        };
-
         FunAlgorithm simpleMatMulAlgorithm =
                         Algorithm.withName("simple_matmul")
                                     .setIsSuitableFor(
@@ -89,9 +61,9 @@ public class MatMul extends AbstractOperation
                                     .setSupplyADAgentFor(
                                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                         {
-                                            if ( forward ) throw new IllegalArgumentException("Matrix multiplication of does not support forward-AD!");
+                                            if ( forward ) throw new IllegalArgumentException("Matrix multiplication does not support forward-AD!");
 
-                                            Function invX = new FunctionBuilder( Neureka.get().context() ).build( "I[ 0 ] @ I[ 1 ]", false );
+                                            Function invX = Neureka.get().context().getFunction().matMul();
                                             Tsr<?>[] inputs = call.getTensors();
                                             int d = (1 + call.getValOf( Arg.DerivIdx.class )) % 2;
                                             Tsr<?> deriv = inputs[ d ].T();
@@ -106,34 +78,12 @@ public class MatMul extends AbstractOperation
                                     .setExecutionDispatcher(
                                         ( caller, call ) -> {
                                             if ( !caller.isFlat() ) return CalcUtil.defaultRecursiveExecution( caller, call );
-                                            if ( call.getOperation().getOperator().equals("x") ) {
 
-                                                Tsr<?>[] inputs = call.getTensors();
-                                                Tsr<?>[] tsrs = new Tsr[]{null, inputs[ 0 ], inputs[ 1 ]};
-                                                tsrs[ 0 ] = (call.getValOf( Arg.DerivIdx.class ) < 0)
-                                                        ? Tsr.ofShape( Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape()) )
-                                                        : null;
-
-                                                for (Tsr<?> t : tsrs) if (t != null) t.setIsVirtual( false );
-                                                CalcUtil.recursiveExecution(call.withTensors(tsrs), rja);
-                                                return tsrs[ 0 ];
-                                            } else {
-                                                if (call.getValOf( Arg.DerivIdx.class ) < 0) {
-                                                    Tsr<?>[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
-                                                    Tsr.makeFit(tensors, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
-                                                    for ( Tsr<?> t : tensors ) t.setIsVirtual( false );
-                                                    CalcUtil.recursiveExecution(
-                                                                        ExecutionCall.of(tensors)
-                                                                                        .andArgs(Arg.DerivIdx.of(0))
-                                                                                        .running(call.getOperation())
-                                                                                        .on(call.getDevice()),
-                                                                        (executionCall, executor) -> null
-                                                                );
-                                                    if ( call.getOperation() == Neureka.get().context().getOperation("x>>") )
-                                                        return tensors[ 2 ];
-                                                    else
-                                                        return tensors[ 0 ];
-                                                }
+                                            if (call.getValOf( Arg.DerivIdx.class ) < 0) {
+                                                Tsr<?>[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 1, caller.getSubFunctions().toArray(new Function[0]));
+                                                for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
+                                                call.getAlgorithm().prepare( call.withTensors(tensors) );
+                                                return tensors[ 0 ];
                                             }
                                             return null;
                                         }
@@ -144,7 +94,7 @@ public class MatMul extends AbstractOperation
                                             Device device = call.getDevice();
                                             if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                                             {
-                                                int[] shp = Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape());
+                                                int[] shp = new int[]{ tsrs[ 1 ].shape(0), tsrs[ 2 ].shape(1) };
                                                 Tsr<?> output = Tsr.of( shp, 0.0 );
                                                 output.setIsVirtual( false );
                                                 try {

@@ -1866,7 +1866,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             _LOG.error(message);
             throw new IllegalArgumentException(message);
         }
-        return this.dot( b );
+        return Neureka.get().context().getAutogradFunction().matMul().call(this, b);
     }
 
     /**

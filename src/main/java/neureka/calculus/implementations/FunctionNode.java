@@ -6,6 +6,7 @@ import neureka.autograd.GraphLock;
 import neureka.autograd.GraphNode;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.backend.api.algorithms.fun.ExecutionDispatcher;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
@@ -131,7 +132,7 @@ public class FunctionNode implements Function
         Tsr<?> alternative = call.getAlgorithm().dispatch( this, call );
         if ( alternative != null ) return alternative;
         throw new IllegalStateException(
-                "Missing return value for initial call hook for operation '"+call.getOperation().getFunction()+"'"
+                "Missing return value of "+ ExecutionDispatcher.class.getSimpleName() +" in algorithm '"+call.getAlgorithm().getClass().getSimpleName()+"' in operation '"+call.getOperation().getClass().getName()+"'"
         );
     }
 

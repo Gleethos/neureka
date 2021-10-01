@@ -21,6 +21,8 @@ public class Functions {
     Function modAssign;
     Function neg;
 
+    Function matMul;
+
     public Functions( boolean doingAD ) {
         dimTrim = Function.of( "dimtrim(I[ 0 ])",             doingAD );
         idy = Function.of( "I[ 0 ]<-I[ 1 ]",                  doingAD );
@@ -40,6 +42,7 @@ public class Functions {
         mod = Function.of( "(I[ 0 ]%I[ 1 ])",                 doingAD );
         modAssign = Function.of( "I[ 0 ]<-(I[ 0 ]%I[ 1 ])",   doingAD );
         neg = Function.of( "(-1*I[ 0 ])",                     doingAD );
+        matMul = Function.of("I[0] @ I[1]",                   doingAD );
     }
 
 
@@ -150,4 +153,7 @@ public class Functions {
     public Function neg() {
         return this.neg;
     }
+
+    public Function matMul() { return this.matMul; }
+
 }

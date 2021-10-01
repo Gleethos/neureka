@@ -43,6 +43,9 @@ neureka.backend.standard.operations.linear.XConv
 neureka.backend.standard.operations.linear.XConvLeft
 neureka.backend.standard.operations.linear.XConvRight
 
+# Matrix Multiplication :
+neureka.backend.standard.operations.linear.MatMul
+
 # other :
 neureka.backend.standard.operations.other.DimTrim
 neureka.backend.standard.operations.other.Reshape

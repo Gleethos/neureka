@@ -49,6 +49,7 @@ class Calculus_Parsing_Spec extends Specification
             "add(I[0], 3, 3/I[1])"                      || "(I[0] + 3.0 + (3.0 / I[1]))"
             "multiply(1, 4, -2, I[1])"                  || "(1.0 * 4.0 * -2.0 * I[1])"
             "divide(I[0], 3*I[1], I[3]-6)"              || "(I[0] / (3.0 * I[1]) / (I[3] - 6.0))"
+            "i0@i1"                                     || "(I[0] @ I[1])"
             // TODO: WIP:
             //"soft( [2, 1, 0]:( I[0] )*-100 )"           || "softplus( [2,1,0]:( I[0] ) * -100.0 )"
     }
