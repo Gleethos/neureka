@@ -3,6 +3,8 @@ package it.autograd
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
+import spock.lang.Ignore
+import spock.lang.IgnoreIf
 import spock.lang.Specification;
 
 class Autograd_NN_Integration extends Specification
@@ -30,7 +32,6 @@ class Autograd_NN_Integration extends Specification
 
     def 'Autograd works in a simple feed forward neural network.'()
     {
-
         given :
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false )
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
@@ -149,5 +150,29 @@ class Autograd_NN_Integration extends Specification
 """)
 
     }
+
+    @Ignore
+    def 'Autograd work for simple matrix multiplications.'() {
+
+        given :
+            def a = Tsr.of([2, 3], -1..4).setRqsGradient(true)
+            def b = Tsr.of([3, 2], -4..3)
+
+        when :
+            def c = a.matMul(b)
+
+        then :
+            c.toString() == "(2x2):[4.0, 4.0, -14.0, -5.0]; ->d(2x3):[-4.0, -2.0, 0.0, -3.0, -1.0, 1.0], "
+        and :
+            a.toString() == "(2x3):[-1.0, 0.0, 1.0, 2.0, 3.0, 4.0]:g:[null]"
+
+        when :
+            c.backward(Tsr.of(c.shape(), -1..1))
+
+        then :
+            c.toString() == "(2x2):[?]"
+
+    }
+
 
 }

@@ -89,6 +89,16 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         this._operation = operation;
         this._tensors = tensors;
         this._algorithm = algorithm;
+        int thisArity = _tensors.length;
+        if ( thisArity < Math.abs(_operation.getArity()) ) {
+            throw new IllegalArgumentException(
+                    "Trying to instantiate an "+this.getClass().getSimpleName()+" with an arity " +
+                            "of "+thisArity+", which is not suitable to the targeted operation " +
+                            _operation.getClass().getSimpleName()+" with " +
+                            ( _operation.getArity() < 0 ? " a minimum " : " the expected " ) +
+                            "arity of "+Math.abs(_operation.getArity())
+            );
+        }
     }
 
     public static <D extends Device<?>> Builder<D> of( Tsr<?>... tensors ) {
@@ -111,9 +121,9 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
                     "device=" + this._device + ", " +
                     "derivativeIndex=" + this.getValOf( Arg.DerivIdx.class ) + ", " +
                     "operation=" + this._operation + ", " +
-                    "tensors=" + java.util.Arrays.deepToString(this._tensors) + ", " +
+                    "tensors=[.."+_tensors.length+"..], " +
                     "j=" + this.getJ() + ", " +
-                    "algorithm=" + this.getAlgorithm() + ", " +
+                    "algorithm=?, " +
                     "context=" + _arguments.getAll(Arg.class) +
                 ")";
     }

@@ -135,7 +135,7 @@ import java.util.stream.Collectors;
  *  <br>
  * @param <V> The type parameter for the individual value items within this tensor.
  */
-public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<V>>
+public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<V>>, Cloneable
 {
     static {
         _CPU = HostCPU.instance();
@@ -2033,6 +2033,18 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         }
         return getAt( ranges.toArray() );
     }
+
+    @Override
+    public Tsr<V> clone() {
+        return Neureka.get()
+                        .context()
+                        .getFunction()
+                        .idy()
+                        .call(
+                                (Tsr<V>) Tsr.of(this.shape(), 0.0), this
+                        );
+    }
+
 
     /**
      *  This method enables tensor slicing!

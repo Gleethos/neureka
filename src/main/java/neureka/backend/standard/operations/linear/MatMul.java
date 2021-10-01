@@ -55,7 +55,7 @@ public class MatMul extends AbstractOperation
                                             Function invX = Neureka.get().context().getFunction().matMul();
                                             Tsr<?>[] inputs = call.getTensors();
                                             int d = (1 + call.getValOf( Arg.DerivIdx.class )) % 2;
-                                            Tsr<?> deriv = inputs[ d ].T();
+                                            Tsr<?> deriv = inputs[ d ].T().clone();
                                             if ( d == 0 )
                                                 return ADAgent.of( deriv )
                                                                 .setBackward( (node, error) -> invX.execute( error, deriv ) );

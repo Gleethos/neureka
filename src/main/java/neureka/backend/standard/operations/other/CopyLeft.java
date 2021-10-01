@@ -23,7 +23,7 @@ public class CopyLeft extends AbstractOperation {
                 new OperationBuilder()
                         .setFunction(         "left_inline"    )
                         .setOperator(         "<"        )
-                        .setArity(            -1         )
+                        .setArity(            -2         )
                         .setIsOperator(       true       )
                         .setIsIndexer(        false      )
                         .setIsDifferentiable( false       )
