@@ -6,7 +6,6 @@ import neureka.calculus.assembly.FunctionBuilder
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.utility.SettingsLoader
-import spock.lang.Ignore
 import spock.lang.Specification
 
 import java.util.function.BiFunction
@@ -85,7 +84,7 @@ class Tensor_Operation_Integration_Spec extends Specification
             c.toString().contains("(4x2x5x2)")
     }
 
-    //@Ignore
+
     def 'The "matMul" operation produces the expected result.'(
             Double[] A, Double[] B, int M, int K, int N, double[] expectedC
     ) {
@@ -94,19 +93,16 @@ class Tensor_Operation_Integration_Spec extends Specification
             Tsr b = Tsr.of(Double.class).withShape(K, N).andFill(B)
 
         when : 'The "matMul" method is being called on "a" receiving "b"...'
-            Tsr c = a.matmul(b)
+            Tsr c = a.matMul(b)
 
-        then : 'The result tensor contains the expected shape.'
+        then : 'The result tensor contains the expected shape and values.'
             c.toString() == "(${M}x${N}):$expectedC"
 
-
-        where :
+        where : 'We use the following data and matrix dimensions!'
             A            | B                  | M | K | N || expectedC
             [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 1, 0, 0, 1 ]
             [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 0.5 ]
             [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
-
-
     }
 
     def 'New method "asFunction" of String added at runtime is callable by groovy and also works.'(

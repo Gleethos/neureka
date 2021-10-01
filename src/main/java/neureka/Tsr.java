@@ -1859,7 +1859,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                         .dimtrim();
     }
 
-    public Tsr<V> matmul( Tsr<V> b ) {
+    public Tsr<V> matMul(Tsr<V> b ) {
         if ( this.rank() != 2 || b.rank() != 2 ) {
             String message = "Cannot perform matrix multiplication for tensors whose ranks are not both 2!\n" +
                              "Encountered ranks: "+this.rank()+", "+b.rank()+";";
