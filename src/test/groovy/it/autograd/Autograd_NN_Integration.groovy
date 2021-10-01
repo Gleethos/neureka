@@ -151,26 +151,39 @@ class Autograd_NN_Integration extends Specification
 
     }
 
-    @Ignore
+
     def 'Autograd work for simple matrix multiplications.'() {
 
         given :
             def a = Tsr.of([2, 3], -1..4).setRqsGradient(true)
-            def b = Tsr.of([3, 2], -4..3)
+            def b = Tsr.of([3, 1], [-4, -2, 0]).setRqsGradient(true)
 
         when :
             def c = a.matMul(b)
 
         then :
-            c.toString() == "(2x2):[4.0, 4.0, -14.0, -5.0]; ->d(2x3):[-4.0, -2.0, 0.0, -3.0, -1.0, 1.0], "
+            a.toString() == "(2x3):[" +
+                                "-1.0, 0.0, 1.0, " +
+                                "2.0, 3.0, 4.0" +
+                            "]:g:[null]"
         and :
-            a.toString() == "(2x3):[-1.0, 0.0, 1.0, 2.0, 3.0, 4.0]:g:[null]"
+            b.toString() == "(3x1):[" +
+                                    "-4.0, " +
+                                    "-2.0, " +
+                                    "0.0" +
+                                "]:g:[null]"
+        and :
+            def cStr = c.toString()
+            cStr.contains "(2x1):[4.0, -14.0]"
+            cStr.contains "->d(3x2):[-1.0, 2.0, 0.0, 3.0, 1.0, 4.0]"
+            cStr.contains "->d(1x3):[-4.0, -2.0, 0.0]"
 
         when :
-            c.backward(Tsr.of(c.shape(), -1..1))
+            c.backward(Tsr.of(c.shape(), [-1, 1])) // (2x1):[-1, 1]
 
         then :
-            c.toString() == "(2x2):[?]"
+            a.toString() == "(2x3):[-1.0, 0.0, 1.0, 2.0, 3.0, 4.0]:g:[4.0, 2.0, 0.0, -4.0, -2.0, 0.0]"
+            b.toString() == "(3x1):[-4.0, -2.0, 0.0]:g:[3.0, 3.0, 3.0]"
 
     }
 

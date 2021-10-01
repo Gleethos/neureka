@@ -56,12 +56,13 @@ public class MatMul extends AbstractOperation
                                             Tsr<?>[] inputs = call.getTensors();
                                             int d = (1 + call.getValOf( Arg.DerivIdx.class )) % 2;
                                             Tsr<?> deriv = inputs[ d ].T().clone();
-                                            if ( d == 0 )
-                                                return ADAgent.of( deriv )
-                                                                .setBackward( (node, error) -> invX.execute( error, deriv ) );
-                                            else
-                                                return ADAgent.of( deriv )
-                                                                .setBackward( (node, error) -> invX.execute( error, deriv ) );
+                                            return ADAgent.of( deriv )
+                                                            .setBackward( (node, error) -> {
+                                                                if ( d == 1 )
+                                                                    return invX.execute( error, deriv );
+                                                                else
+                                                                    return invX.execute( deriv, error );
+                                                            } );
                                         }
                                     )
                                     .setExecutionDispatcher(
