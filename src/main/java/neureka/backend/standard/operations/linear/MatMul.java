@@ -165,15 +165,17 @@ public class MatMul extends AbstractOperation
                                 HostCPU.class,
                                 new HostImplementation(
                                         call ->
-                                                call.getDevice().getExecutor()
-                                                        .threaded (
-                                                                call.getTsrOfType( Number.class, 0 ).size(),
-                                                                ( start, end ) -> { // TODO: Simple matmul without fancy indexing
+                                        {
+                                            double[] A = (double[]) call.getTsrOfType(Double.class, 1).getData();
+                                            double[] B = (double[]) call.getTsrOfType(Double.class, 2).getData();
+                                            double[] C = (double[]) call.getTsrOfType(Double.class, 0).getData();
 
-                                                                    //double[] A =
+                                            int[] shapeA = call.getTsrOfType(Double.class, 1).getNDConf().shape();
+                                            int[] shapeB = call.getTsrOfType(Double.class, 2).getNDConf().shape();
+                                            int[] shapeC = call.getTsrOfType(Double.class, 0).getNDConf().shape();
 
-                                                                }
-                                                        ),
+                                            SimpleMatMul.execute(A, shapeA, B, shapeB, C, shapeC);
+                                        },
                                         3
                                 )
                         )
