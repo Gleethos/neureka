@@ -46,18 +46,7 @@ public class MatMul extends AbstractOperation
                                                         .estimation()
                                     )
                                     .setCanPerformBackwardADFor( call -> true )
-                                    .setCanPerformForwardADFor(
-                                        call -> {
-                                            if ( call.getOperation().supports(Convolution.class) ) return false;
-                                            if ( call.getOperation().getOperator().equals(",") ) return false; //Reshape
-                                            Tsr<?> last = null;
-                                            for ( Tsr<?> t : call.getTensors() ) {
-                                                if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                                                last = t; // Note: shapes are cached!
-                                            }
-                                            return true;
-                                        }
-                                    )
+                                    .setCanPerformForwardADFor( call -> false )
                                     .setSupplyADAgentFor(
                                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                         {
@@ -77,15 +66,15 @@ public class MatMul extends AbstractOperation
                                     )
                                     .setExecutionDispatcher(
                                         ( caller, call ) -> {
-                                            if ( !caller.isFlat() ) return CalcUtil.defaultRecursiveExecution( caller, call );
+                                            if ( !caller.isFlat() )
+                                                return CalcUtil.defaultRecursiveExecution( caller, call );
 
-                                            if (call.getValOf( Arg.DerivIdx.class ) < 0) {
-                                                Tsr<?>[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 1, caller.getSubFunctions().toArray(new Function[0]));
-                                                for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
-                                                call.getAlgorithm().prepare( call.withTensors(tensors) );
-                                                return tensors[ 0 ];
-                                            }
-                                            return null;
+                                            Tsr<?>[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 1, caller.getSubFunctions().toArray(new Function[0]));
+                                            for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
+                                            ExecutionCall<HostCPU> preparedCall = (ExecutionCall<HostCPU>) call.getAlgorithm().prepare( call.withTensors(tensors) );
+                                            return call.getAlgorithm()
+                                                        .getImplementationFor(HostCPU.class)
+                                                        .runAndGetFirstTensor(preparedCall);
                                         }
                                     )
                                     .setCallPreparation(

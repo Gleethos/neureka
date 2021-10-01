@@ -86,17 +86,27 @@ class Tensor_Operation_Integration_Spec extends Specification
     }
 
     //@Ignore
-    def 'The "matMul" operation produces the expected result.'()
-    {
+    def 'The "matMul" operation produces the expected result.'(
+            Double[] A, Double[] B, int M, int K, int N, double[] expectedC
+    ) {
         given : 'Two 2-dimensional tensors.'
-            Tsr a = Tsr.of(Double.class).withShape(2, 3).iterativelyFilledFrom(-2).to(5).step(1)
-            Tsr b = Tsr.of(Double.class).withShape(3, 4).iterativelyFilledFrom(3).to(9).step(1)
+            Tsr a = Tsr.of(Double.class).withShape(M, K).andFill(A)
+            Tsr b = Tsr.of(Double.class).withShape(K, N).andFill(B)
 
         when : 'The "matMul" method is being called on "a" receiving "b"...'
             Tsr c = a.matmul(b)
 
         then : 'The result tensor contains the expected shape.'
-            c.toString().contains("(2x4)")
+            c.toString() == "(${M}x${N}):$expectedC"
+
+
+        where :
+            A            | B                  | M | K | N || expectedC
+            [4, 3, 2, 1] | [-0.5, 1.5, 1, -2] | 2 | 2 | 2 || [ 1, 0, 0, 1 ]
+            [-2, 1]      | [-1, -1.5]         | 1 | 2 | 1 || [ 0.5 ]
+            [-2, 1]      | [-1, -1.5]         | 2 | 1 | 2 || [ 2.0, 3.0, -1.0, -1.5 ]
+
+
     }
 
     def 'New method "asFunction" of String added at runtime is callable by groovy and also works.'(
