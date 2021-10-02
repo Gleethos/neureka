@@ -2,14 +2,10 @@
 #
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
-version: '2.1'
+version: 2.1
 orbs:
-  codecov: codecov/codecov@1.2.4
-workflows:
-  upload-to-codecov:
-    jobs:
-      - checkout
-      - codecov/upload
+  codecov: codecov/codecov@3.1.0
+
 jobs:
   build:
     docker:
@@ -28,9 +24,11 @@ jobs:
       JVM_OPTS: -Xmx3200m
       TERM: dumb
 
-    steps:
-      - checkout
-
+    steps: 
+      - checkout 
+      - codecov/upload:
+          file: docs/coverage
+      
       # Download and cache dependencies
       - restore_cache:
           keys:
