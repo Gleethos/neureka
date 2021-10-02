@@ -27,7 +27,7 @@ jobs:
     steps: 
       - checkout 
       - codecov/upload:
-          file: docs/coverage
+          file: docs/coverage/test/jacocoTestReport.xml
       
       # Download and cache dependencies
       - restore_cache:
