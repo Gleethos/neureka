@@ -144,7 +144,7 @@ Min-jar file:
 
 ## :mount_fuji: Dependencies ##
 
-- OpenCL 2.^ - (JOCL binding)
+- OpenCL 2.+ - (JOCL binding)
 - SLF4J 1.7.+ - (Logging API allowing for custom backends)
 
 ---
