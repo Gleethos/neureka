@@ -51,6 +51,7 @@ jobs:
           path: build/test-results/test
           when: always
 
+      - run: gradle jacocoTestReport
       # Upload coverage results to codecov:
       - codecov/upload:
           file: docs/coverage/test/jacocoTestReport.xml
