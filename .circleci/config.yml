@@ -26,9 +26,7 @@ jobs:
 
     steps: 
       - checkout 
-      - codecov/upload:
-          file: docs/coverage/test/jacocoTestReport.xml
-      
+
       # Download and cache dependencies
       - restore_cache:
           keys:
@@ -52,3 +50,8 @@ jobs:
       - store_artifacts: # Upload test results for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
           path: build/test-results/test
           when: always
+
+      # Upload coverage results to codecov:
+      - codecov/upload:
+          file: docs/coverage/test/jacocoTestReport.xml
+      
