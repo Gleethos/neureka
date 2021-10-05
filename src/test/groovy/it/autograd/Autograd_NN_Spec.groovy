@@ -6,11 +6,10 @@ import neureka.calculus.Function
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.devices.opencl.OpenCLDevice
-import spock.lang.Ignore
 import spock.lang.IgnoreIf
-import spock.lang.Specification;
+import spock.lang.Specification
 
-class Autograd_NN_Integration extends Specification
+class Autograd_NN_Spec extends Specification
 {
     def setupSpec()
     {
