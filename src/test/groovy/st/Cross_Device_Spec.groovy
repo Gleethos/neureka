@@ -13,7 +13,7 @@ import st.tests.SimpleNNSystemTest
 import testutility.mock.DummyDevice
 
 @CompileDynamic
-class Cross_Device_System_Tests extends Specification
+class Cross_Device_Spec extends Specification
 {
     def setup() {
         Neureka.get().reset()
