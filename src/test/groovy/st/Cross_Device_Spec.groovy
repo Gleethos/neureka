@@ -5,7 +5,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
-import neureka.devices.opencl.CLContext
+import neureka.devices.opencl.OpenCLDevice
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 import st.tests.CrossDeviceSystemTest
@@ -80,23 +80,25 @@ class Cross_Device_Spec extends Specification
     }
 
 
-
-    def 'Test simple NN implementation with manual backprop'()
-    {
-        given :
+    @IgnoreIf({!Neureka.get().canAccessOpenCL() && (device instanceof OpenCLDevice)})
+    def 'Test simple NN implementation with manual backprop'(Device device) {
+        given:
             Neureka.get().settings().view().setIsUsingLegacyView(true)
 
-        when : Device device = new DummyDevice()
-        then : SimpleNNSystemTest.on(device)
+        expect:
+            SimpleNNSystemTest.on(device)
 
-        and :
-        if ( !Neureka.get().canAccessOpenCL() ) return
+        where :
+            device << [new DummyDevice(), Device.find('first gpu')]
+    }
 
-        when : Device gpu = Neureka.get().context().get(CLContext.class).getPlatforms().get(0).getDevices().get(0)
-        then : SimpleNNSystemTest.on(gpu)
-
+    @IgnoreIf({!Neureka.get().canAccessOpenCL() && (device instanceof OpenCLDevice)})
+    def 'Test back-prop'(Device device)
+    {
         // Some more asserts:
-        and : Tsr t = Tsr.of([2, 2], 4).setRqsGradient(true).to(gpu)
+        given :
+            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Tsr t = Tsr.of([2, 2], 4).setRqsGradient(true).to(device)
         when :
             t.backward(1)
             Tsr g = t.getGradient()
@@ -108,6 +110,9 @@ class Cross_Device_Spec extends Specification
             assert g.isOutsourced()
             //t.setIsOutsourced(false)
             //assert !g.isOutsourced()
+
+        where :
+            device << [HostCPU.instance(), Device.find('first gpu')]
 
     }
 
