@@ -6,6 +6,7 @@ import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.devices.opencl.CLContext
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 import st.tests.CrossDeviceSystemTest
 import st.tests.SimpleNNSystemTest
@@ -20,23 +21,14 @@ class Cross_Device_System_Tests extends Specification
         Neureka.get().settings().view().asString = "dgc"
     }
 
-    /*  ! WIP !
-    def '...'(
-            String deviceType, boolean legacyIndexing
-    ) {
-        given : 'A given device of any type and the settings configured for testing.'
-            if (
-            deviceType == "GPU" && // OpenCL cannot run inside TravisCI ! :/
-                    !Neureka.instance().canAccessOpenCL()
-            ) return
-            Device device = ( deviceType == "CPU" ) ? HostCPU.instance() : Device.find('first')
-            Neureka.instance().reset()
-            Neureka.instance().settings().debug().isKeepingDerivativeTargetPayloads = true
-            Neureka.instance().settings().view().isUsingLegacyView = true
 
-        and : 'The indexing mode set to "legacy"!'
-            Neureka.instance().settings().indexing().isUsingLegacyIndexing = legacyIndexing
-            if ( device instanceof OpenCLDevice ) Neureka.get().context().find(ContextComponent.class).getPlatforms().get(0).recompile()
+    @IgnoreIf({deviceType == "GPU" && !Neureka.get().canAccessOpenCL()})
+    def 'Convolution can model matrix multiplications across devices.'(String deviceType) {
+        given : 'A given device of any type and the settings configured for testing.'
+            Device device = ( deviceType == "CPU" ) ? HostCPU.instance() : Device.find('first')
+            Neureka.get().reset()
+            Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true
+            Neureka.get().settings().view().isUsingLegacyView = true
 
         and : 'Two tensors, one requiring gradients and the other one does not.'
             def tensor1 = Tsr.of(new int[]{2, 2, 1}, new double[]{
@@ -47,45 +39,35 @@ class Cross_Device_System_Tests extends Specification
                     -2, 3, //  0  7
                     1, 2,  // -7  0
             })
-            device.add(tensor1).add(tensor2)
+            device.store(tensor1).store(tensor2)
 
         and :
-            Tsr product = Tsr.of(new Tsr[]{tensor1, tensor2}, "i0xi1")
+            Tsr product = Tsr.of("i0xi1", tensor1, tensor2)
             product.backward( Tsr.of(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}) )
             String result = product.toString("rc")
-            String t1AsStr = Arrays.toString(
-                    ((legacyIndexing) ? new double[]{-1.0, -1.0, 5.0, 5.0} : new double[]{1.0, 3.0, 1.0, 3.0})
-            )
+
 
         expect :
             result.contains(
-                        "[2x1x2]:(" +
-                                ((legacyIndexing)?"4.0, -13.0, 5.0, -4.0":"0.0, 7.0, -7.0, 0.0")+
-                                "); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"
+                        "[2x1x2]:(0.0, 7.0, -7.0, 0.0); =>d|[ [1x2x2]:(-2.0, 3.0, 1.0, 2.0) ]|:t{ [2x2x1]:(1.0, 2.0, 2.0, -3.0) }"
             )
-            Arrays.toString(tensor1.value64()) == t1AsStr
 
-
-            //product.delete();
+        cleanup:
+            product.delete()
+            tensor1.delete()
+            //tensor2.delete() // TODO: FIX EXCEPTION!
 
 
         where : 'The following settings are being used: '
-        deviceType  ||  legacyIndexing
-        //'CPU'     ||     false
-        //'CPU'     ||     true
-        'GPU'     ||     true
-        'GPU'     ||     false
+            deviceType << ['CPU',  'GPU']
     }
-    */
 
+
+    @IgnoreIf({deviceType == "GPU" && !Neureka.get().canAccessOpenCL()})
     def 'Test cross device integration with default and legacy indexing.' (
             String deviceType
     ) {
         given : 'A given device of any type and the settings configured for testing.'
-            if (
-                deviceType == "GPU" && // OpenCL cannot run inside TravisCI ! :/
-                !Neureka.get().canAccessOpenCL()
-            ) return
             Device device = ( deviceType == "CPU" ) ? HostCPU.instance() : Device.find('first')
             Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true
             Neureka.get().settings().view().isUsingLegacyView = true
