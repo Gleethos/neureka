@@ -41,6 +41,7 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
 
     private String _source;
     private String _name;
+    private final boolean isSimple;
 
     private CLImplementation(
             ImplementationFor<OpenCLDevice> execution,
@@ -51,6 +52,7 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
         super( execution, arity );
         _name = kernelName;
         _source = kernelSource;
+        isSimple = true;
     }
 
     private CLImplementation(
@@ -62,6 +64,7 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
             String postfix
     ) {
         super( lambda, arity );
+        this.isSimple = false;
         boolean templateFound;
         if (kernelSource.contains("__kernel")) {
             String[] parts = kernelSource.split("__kernel")[ 1 ].split("\\(")[ 0 ].split(" ");
@@ -81,6 +84,10 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
                 _source = map.values().toArray(new String[ 0 ])[ 0 ];
             }
         }
+    }
+
+    public boolean isSimpleSource() {
+        return isSimple;
     }
 
     public static SourceBuilder fromSource() {

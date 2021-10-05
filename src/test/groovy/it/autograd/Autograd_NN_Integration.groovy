@@ -3,6 +3,9 @@ package it.autograd
 import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
+import neureka.devices.Device
+import neureka.devices.host.HostCPU
+import neureka.devices.opencl.OpenCLDevice
 import spock.lang.Ignore
 import spock.lang.IgnoreIf
 import spock.lang.Specification;
@@ -187,12 +190,13 @@ class Autograd_NN_Integration extends Specification
     }
 
 
-    def 'Autograd work for 2 matrix multiplications in a row.'() {
+    @IgnoreIf({!(Neureka.get().canAccessOpenCL() || !(device instanceof OpenCLDevice))})
+    def 'Autograd work for 2 matrix multiplications in a row.'(Device<?> device) {
 
         given :
-            def a = Tsr.of([2, 3], -1..4).setRqsGradient(true)
-            def b = Tsr.of([3, 1], [-4, -2, 0]).setRqsGradient(true)
-            def x = Tsr.of([[0.5, 0.5]])
+            def a = Tsr.of([2, 3], -1..4).setRqsGradient(true).to(device)
+            def b = Tsr.of([3, 1], [-4, -2, 0]).setRqsGradient(true).to(device)
+            def x = Tsr.of([[0.5, 0.5]]).to(device)
 
         when :
             def c = a.matMul(b)
@@ -210,13 +214,13 @@ class Autograd_NN_Integration extends Specification
                                     "0.0" +
                                 "]:g:[null]"
         and :
-            x.toString() == "(1x2):[0.5, 0.5]"
-            o.toString() == "(1x1):[-5.0]; ->d(2x1):[0.5, 0.5], "
-        and :
             def cStr = c.toString()
             cStr.contains "(2x1):[4.0, -14.0]"
             cStr.contains "->d(3x2):[-1.0, 2.0, 0.0, 3.0, 1.0, 4.0]"
             cStr.contains "->d(1x3):[-4.0, -2.0, 0.0]"
+        and :
+            x.toString() == "(1x2):[0.5, 0.5]"
+            o.toString() == "(1x1):[-5.0]; ->d(2x1):[0.5, 0.5], "
 
         when :
             o.backward()
@@ -224,6 +228,10 @@ class Autograd_NN_Integration extends Specification
         then :
             a.toString() == "(2x3):[-1.0, 0.0, 1.0, 2.0, 3.0, 4.0]:g:[-2.0, -1.0, 0.0, -2.0, -1.0, 0.0]"
             b.toString() == "(3x1):[-4.0, -2.0, 0.0]:g:[0.5, 1.5, 2.5]"
+
+        where :
+            device << [HostCPU.instance(), Device.find('first gpu')]
+
     }
 
 

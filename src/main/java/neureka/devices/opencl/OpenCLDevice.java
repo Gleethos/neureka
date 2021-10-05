@@ -48,6 +48,8 @@ SOFTWARE.
 
 package neureka.devices.opencl;
 
+import neureka.backend.api.ImplementationFor;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.common.composition.Component;
 import neureka.Neureka;
 import neureka.Tsr;
@@ -695,8 +697,14 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     public KernelCaller getKernel( ExecutionCall<OpenCLDevice> call ) {
         // We create the kernel name from the chosen algorithm:
-        String chosen = call.getAlgorithm().getName() + "_" + call.getOperation().getFunction();
+        ImplementationFor<OpenCLDevice> impl = call.getAlgorithm().getImplementationFor(OpenCLDevice.class);
+        String chosen;
+        if ( impl instanceof CLImplementation && _platform.getKernels().containsKey(((CLImplementation)impl).getName()) ){
+            chosen = ((CLImplementation)impl).getName();
+        }
+        else chosen = call.getAlgorithm().getName() + "_" + call.getOperation().getFunction();
         cl_kernel kernel = _platform.getKernels().get( chosen );
+        if ( kernel == null ) throw new IllegalStateException("No kernel found for '"+chosen+"'!");
         return new KernelCaller( kernel, _queue );
     }
 

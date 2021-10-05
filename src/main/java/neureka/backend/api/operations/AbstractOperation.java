@@ -114,6 +114,12 @@ public abstract class AbstractOperation implements Operation
 
     //==================================================================================================================
 
+    @Override
+    public Algorithm<?>[] getAllAlgorithms() {
+        return _algorithms.values().toArray(new Algorithm[0]);
+    }
+
+
     /**
      *  {@link Operation} implementations embody a component system hosting unique {@link Algorithm} instances.
      *  For a given class implementing the {@link Algorithm} class, there can only be a single

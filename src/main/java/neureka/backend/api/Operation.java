@@ -87,6 +87,8 @@ public interface Operation
 
     //==================================================================================================================
 
+    Algorithm<?>[] getAllAlgorithms();
+
     /**
      *  Alongside a component system made up of {@link Algorithm} instances, implementations
      *  of this interface also ought to express a routing mechanism which finds the best {@link Algorithm}

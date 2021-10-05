@@ -1,6 +1,7 @@
 package neureka.devices.opencl;
 
 import neureka.Neureka;
+import neureka.backend.api.Algorithm;
 import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
 import neureka.backend.standard.algorithms.*;
@@ -114,7 +115,8 @@ public class OpenCLPlatform {
                             impl = type.getAlgorithm(Convolution.class).getImplementationFor( OpenCLDevice.class );
                         else if (
                                 type.supportsAlgorithm(FunAlgorithm.class)
-                                && preName.contains(type.getAlgorithm(FunAlgorithm.class).getName())
+                                &&
+                                preName.contains(type.getAlgorithm(FunAlgorithm.class).getName())
                         ) { // TODO: cover!
                             impl = type.getAlgorithm(FunAlgorithm.class).getImplementationFor( OpenCLDevice.class );
                         }
@@ -132,6 +134,19 @@ public class OpenCLPlatform {
                 }
             }
             if ( !templateFound ) sources.add( kernelSource );
+        }
+
+        for ( Operation type : Neureka.get().context().getOperations() ) {
+            for (Algorithm<?> algorithm : type.getAllAlgorithms()) {
+                ImplementationFor<OpenCLDevice> impl = algorithm.getImplementationFor(OpenCLDevice.class);
+                if ( impl instanceof CLImplementation ) {
+                    CLImplementation cli = ((CLImplementation) impl);
+                    if ( cli.isSimpleSource() ) {
+                        names.add(cli.getName());
+                        sources.add(cli.getSource());
+                    }
+                }
+            }
         }
 
         // Create the program

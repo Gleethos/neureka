@@ -29,7 +29,7 @@ public class MatMul extends AbstractOperation
     {
         super(
                 new OperationBuilder()
-                        .setFunction(         "matmul"    )
+                        .setFunction(         "matMul"    )
                         .setOperator(         "@"         )
                         .setArity(            2           )
                         .setIsOperator(       true        )
@@ -56,6 +56,7 @@ public class MatMul extends AbstractOperation
                                             Tsr<?>[] inputs = call.getTensors();
                                             int d = (1 + call.getValOf( Arg.DerivIdx.class )) % 2;
                                             Tsr<?> deriv = inputs[ d ].T().clone();
+                                            deriv.to(call.getDevice());
                                             return ADAgent.of( deriv )
                                                             .setBackward( (node, error) -> {
                                                                 if ( d == 1 )
@@ -72,9 +73,9 @@ public class MatMul extends AbstractOperation
 
                                             Tsr<?>[] tensors = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 1, caller.getSubFunctions().toArray(new Function[0]));
                                             for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
-                                            ExecutionCall<HostCPU> preparedCall = (ExecutionCall<HostCPU>) call.getAlgorithm().prepare( call.withTensors(tensors) );
+                                            ExecutionCall<Device<Object>> preparedCall = (ExecutionCall<Device<Object>>) call.getAlgorithm().prepare( call.withTensors(tensors) );
                                             return call.getAlgorithm()
-                                                        .getImplementationFor(HostCPU.class)
+                                                        .getImplementationFor((Class<Device<Object>>) call.getDevice().getClass())
                                                         .runAndGetFirstTensor(preparedCall);
                                         }
                                     )
@@ -123,29 +124,44 @@ public class MatMul extends AbstractOperation
                                 OpenCLDevice.class,
                                 CLImplementation.fromSource()
                                         .arity( 3 )
-                                        .kernelName( "simpleMatMul" )
+                                        .kernelName( "simple_matMul" )
                                         .kernelSource(
-                                                "_kernel void simpleMatMul(   " +
-                                                        "   int widthA,                                     " +
-                                                        "   int heightA,                                    " +
-                                                        "   int widthB,                                     " +
-                                                        "   int heightB,                                    " +
-                                                        "   __global float* outputC,                        " +
-                                                        "   __global float* inputA,                         " +
-                                                        "   __global float* inputB                          " +
-                                                        ") {                                                " +
-                                                        "   int row = get_global_id( 1 );                     " +
-                                                        "   int col = get_global_id(0);                     " +
-                                                        "   float sum = 0.0f;                               " +
-                                                        "   for ( int i = 0; i < widthA; i++ ) {            " +
-                                                        "      sum += inputA[ row * widthA + i ] * inputB[ i * widthB + col ];" +
-                                                        "   }                                               " +
-                                                        "   outputC[ row * widthB * col ] = sum;" +
-                                                        "}"
+                                                "__kernel void simple_matMul(                                          \n" +
+                                                "       const int M, const int N, const int K,                        \n" +
+                                                "       const __global float* A,                                      \n" +
+                                                "       const __global float* B,                                      \n" +
+                                                "       __global float* C                                             \n" +
+                                                ") {                                                                  \n" +
+                                                "    const int globalRow = get_global_id(0); // Row ID of C (0..M)    \n" +
+                                                "    const int globalCol = get_global_id(1); // Col ID of C (0..N)    \n" +
+                                                "                                                                     \n" +
+                                                "    // Compute a single element (loop over K)                        \n" +
+                                                "    float acc = 0.0f;                                                \n" +
+                                                "    for ( int k = 0; k < K; k++ ) {                                  \n" +
+                                                "        acc += A[k + globalRow*K] * B[globalCol + k*N];              \n" +
+                                                "    }                                                                \n" +
+                                                "    // Store the result                                              \n" +
+                                                "    C[globalCol + globalRow*N] = acc;                                \n" +
+                                                "}                                                                    \n"
                                         )
+                                        .lambda( call -> {
+                                            int M = call.getTensors()[1].shape(0);
+                                            int N = call.getTensors()[2].shape(1);
+                                            int K = call.getTensors()[1].shape(1);
+                                            call.getDevice()
+                                                    .getKernel(call)
+                                                    .pass(M) // M
+                                                    .pass(N) // N
+                                                    .pass(K) // K
+                                                    .pass(call.getTsrOfType(Number.class, 1))
+                                                    .pass(call.getTsrOfType(Number.class, 2))
+                                                    .pass(call.getTsrOfType(Number.class, 0))
+                                                    .call(new long[]{M,N}, null);
+                                        } )
                                         .build()
                         )
         );
+        /*
         // TODO: Non-simple tensors:
         CLImplementation.fromSource()
                 .arity( 3 )
@@ -173,7 +189,7 @@ public class MatMul extends AbstractOperation
                                 "}"
                 )
                 .build();
-
+        */
 
     }
 

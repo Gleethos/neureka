@@ -67,8 +67,9 @@ import java.util.stream.Stream;
  * as well as the device itself which also knows about the tensors it holds.
  * A tensor stored on a device will have its "isOutsourced" property set to true!
  *
+ * @param <V> The value type of super type of the values stored on a {@link Device} implementation...
  */
-public interface Device<ValType> extends Component<Tsr<ValType>>, Storage<ValType>, Iterable<Tsr<ValType>>
+public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V>>
 {
     /**
      * This method returns {@link Device} instances matching
@@ -133,25 +134,25 @@ public interface Device<ValType> extends Component<Tsr<ValType>>, Storage<ValTyp
      * @param tensor The tensor whose data ought to be stored.
      * @return A reference this object to allow for method chaining. (factory pattern)
      */
-    <T extends ValType> Device<ValType> store( Tsr<T> tensor, Tsr<T> parent );
+    <T extends V> Device<V> store(Tsr<T> tensor, Tsr<T> parent );
 
-    <T extends ValType> boolean has( Tsr<T> tensor );
+    <T extends V> boolean has(Tsr<T> tensor );
 
-    <T extends ValType> Device<ValType> free( Tsr<T> tensor );
+    <T extends V> Device<V> free(Tsr<T> tensor );
 
-    Device<ValType> cleaning( Tsr<ValType> tensor, Runnable action );
+    Device<V> cleaning(Tsr<V> tensor, Runnable action );
 
-    Device<ValType> write( Tsr<ValType> tensor, Object value );
+    Device<V> write(Tsr<V> tensor, Object value );
 
-    Device<ValType> swap( Tsr<ValType> former, Tsr<ValType> replacement );
+    Device<V> swap(Tsr<V> former, Tsr<V> replacement );
 
-    Device<ValType> approve(ExecutionCall<? extends Device<?>> call );
+    Device<V> approve(ExecutionCall<? extends Device<?>> call );
 
-    Object valueFor( Tsr<ValType> tensor );
+    Object valueFor( Tsr<V> tensor );
 
-    ValType valueFor( Tsr<ValType> tensor, int index );
+    V valueFor(Tsr<V> tensor, int index );
 
-    Collection< Tsr<ValType> > getTensors();
+    Collection< Tsr<V> > getTensors();
 
     /**
      *  This method has the same signature of the Collection interface in Java 11,

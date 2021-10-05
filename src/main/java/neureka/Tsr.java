@@ -1442,7 +1442,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return The tensor on which this method was called. (factory pattern)
      */
     public Tsr<V> backward( Tsr<V> error ) {
-        if ( !forComponent( GraphNode.class, node -> node.backward( error ) ) && this.rqsGradient() ) {
+        if ( this.isOutsourced() ) {
+            error = error.clone();
+            error = error.to(this.getDevice());
+        }
+        Tsr<V> finalError = error;
+        if ( !forComponent( GraphNode.class, node -> node.backward(finalError) ) && this.rqsGradient() ) {
             addToGradient( error );
         }
         return this;
