@@ -6,16 +6,23 @@ import testutility.mock.DummyDevice
 
 class SimpleNNSystemTest
 {
-    enum Mode { CONVOLUTION, MATRIX_MULTIPLICATION }
+    enum Mode {
+        CONVOLUTION,
+        MATRIX_MULTIPLICATION
+    }
 
     private final Mode mode
 
-    SimpleNNSystemTest(Mode mode) { this.mode = mode; }
+    SimpleNNSystemTest(Mode mode) { this.mode = mode }
 
-    static void on(Device device)
+    void on(Device device)
     {
+        def inputShape = [5,3,1]
+        def w1Shape = [1, inputShape[1], 4]
+        def outputShape = [5, 1, 1]
+
         Tsr X = Tsr.of(// input data: 5 vectors in binary form
-                [5, 3, 1],
+                inputShape, // (5x3)
                 [
                         0, 0, 1,
                         1, 1, 0,
@@ -26,10 +33,10 @@ class SimpleNNSystemTest
         ).to(device)
 
         // output values (labels)
-        Tsr y = Tsr.of([5, 1, 1],[0,1,1,1,0]).to(device)
+        Tsr y = Tsr.of(outputShape,[0,1,1,1,0]).to(device)
 
         Tsr input = X
-        Tsr weights1 = Tsr.of([1, input.shape(1), 4],
+        Tsr weights1 = Tsr.of(w1Shape,
                                 [4.17022005e-01, 7.20324493e-01, 1.14374817e-04, 3.02332573e-01,
                                  1.46755891e-01, 9.23385948e-02, 1.86260211e-01, 3.45560727e-01,
                                  3.96767474e-01, 5.38816734e-01, 4.19194514e-01, 6.85219500e-01]
@@ -50,8 +57,9 @@ class SimpleNNSystemTest
              [0.02738759]
              [0.67046751]]
          */
-        Tsr output = Tsr.of(y.shape(), [0.0, 0.0, 0.0, 0.0, 0.0]).to(device)
+        Tsr output = Tsr.of(outputShape, [0.0, 0.0, 0.0, 0.0, 0.0]).to(device)
         /*
+            [5x1x1]...
             out (5, 1) :
             [[0.0]
              [0.0]
@@ -60,14 +68,6 @@ class SimpleNNSystemTest
              [0.0]]
         */
         Tsr layer1 = Tsr.newInstance()
-        /*
-              inp (5, 3) :
-              [[0, 0, 1]
-               [1, 1, 0]
-               [1, 0, 1]
-               [0, 1, 1]
-               [1, 1, 1]]
-         */
 
         // iterate 500 times
         for( i in 0..500 ){
@@ -90,6 +90,7 @@ class SimpleNNSystemTest
         assert output.value64()[2] >= 0.95 && output.value64()[2]<= 1.0
         assert output.value64()[3] >= 0.95 && output.value64()[3] <= 1.0
         assert output.value64()[4] >= 0.05 && output.value64()[4] <= 0.06
+
         if ( device instanceof DummyDevice ) {
             // When we are not running on the GPU we can assert the result deterministically
             assert output.getValue() == [0.005138652230769073, 0.9643301624478202, 0.973443956356711, 0.9602105841917244, 0.05098795507447197]
@@ -107,7 +108,7 @@ class SimpleNNSystemTest
         return x * (-x + 1)
     }
 
-    static void feedforward(Tsr weights1, Tsr weights2, Tsr input, Tsr output, Tsr layer1) {
+    void feedforward(Tsr weights1, Tsr weights2, Tsr input, Tsr output, Tsr layer1) {
         Tsr in0 = Tsr.of("i0xi1", [input, weights1])
         layer1[] = sigmoid(in0)
         //println(layer1.toString("shp")+"=sig(  I"+input.toString("shp")+" X W"+weights1.toString("shp")+" )")
@@ -116,7 +117,7 @@ class SimpleNNSystemTest
         //println(output.toString("shp")+"=sig( L1"+layer1.toString("shp")+" X W"+weights2.toString("shp")+" )\n")
     }
 
-    static void backprop(Tsr weights1, Tsr weights2, Tsr input, Tsr output, Tsr layer1, Tsr y) {
+    void backprop(Tsr weights1, Tsr weights2, Tsr input, Tsr output, Tsr layer1, Tsr y) {
         // application of the chain rule to find derivative of the loss function with respect to weights2 and weights1
         Tsr delta = (y - output)*2
         Tsr derivative = delta*2*sigmoid_derivative(output)

@@ -86,7 +86,7 @@ class Cross_Device_Spec extends Specification
             Neureka.get().settings().view().setIsUsingLegacyView(true)
 
         expect:
-            SimpleNNSystemTest.on(device)
+            new SimpleNNSystemTest(SimpleNNSystemTest.Mode.CONVOLUTION).on(device)
 
         where :
             device << [new DummyDevice(), Device.find('first gpu')]
