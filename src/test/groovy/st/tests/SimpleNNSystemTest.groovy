@@ -8,18 +8,27 @@ class SimpleNNSystemTest
 {
     enum Mode {
         CONVOLUTION,
-        MATRIX_MULTIPLICATION
+        MAT_MUL
     }
 
     private final Mode mode
+    private final Closure<Tsr> prop
 
-    SimpleNNSystemTest(Mode mode) { this.mode = mode }
+    SimpleNNSystemTest(Mode mode) {
+        this.mode = mode
+        switch (mode) {
+            case Mode.CONVOLUTION: prop = { a, b -> Tsr.of('I[0] x I[1]', [a, b]) }; break
+            case Mode.MAT_MUL: prop = { a, b -> a.matMul(b) }; break
+            default: prop = null
+        }
+    }
 
     void on(Device device)
     {
-        def inputShape = [5,3,1]
-        def w1Shape = [1, inputShape[1], 4]
-        def outputShape = [5, 1, 1]
+        def inputShape = [5,3,1] // (5x3)
+        def w1Shape = [1, inputShape[1], 4] // (3x4)
+        def w2Shape = [1, 1, 4] // (4x1)
+        def outputShape = [5, 1, 1] // (5x1)
 
         Tsr X = Tsr.of(// input data: 5 vectors in binary form
                 inputShape, // (5x3)
@@ -48,7 +57,7 @@ class SimpleNNSystemTest
              [1.46755891e-01 9.23385948e-02 1.86260211e-01 3.45560727e-01]
              [3.96767474e-01 5.38816734e-01 4.19194514e-01 6.85219500e-01]]
         */
-        Tsr weights2 = Tsr.of([1, 1, 4], [0.20445225, 0.87811744, 0.02738759, 0.67046751]).to(device)
+        Tsr weights2 = Tsr.of(w2Shape, [0.20445225, 0.87811744, 0.02738759, 0.67046751]).to(device)
         /*
             [1x1x4]:...
             w2 (4, 1) :

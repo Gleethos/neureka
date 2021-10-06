@@ -104,15 +104,15 @@ class Cross_Device_Spec extends Specification
             Tsr g = t.getGradient()
 
         then :
-            assert g.toString().contains("[2x2]:(1.0, 1.0, 1.0, 1.0)")
-            assert t.toString().contains("[2x2]:(4.0, 4.0, 4.0, 4.0):g:(1.0, 1.0, 1.0, 1.0)")
-            assert t.isOutsourced()
-            assert g.isOutsourced()
+            g.toString().contains("[2x2]:(1.0, 1.0, 1.0, 1.0)")
+            t.toString().contains("[2x2]:(4.0, 4.0, 4.0, 4.0):g:(1.0, 1.0, 1.0, 1.0)")
+            //t.isOutsourced()
+            //g.isOutsourced()
             //t.setIsOutsourced(false)
-            //assert !g.isOutsourced()
+            //!g.isOutsourced()
 
         where :
-            device << [HostCPU.instance(), Device.find('first gpu')]
+            device << [new DummyDevice(), Device.find('first gpu')]
 
     }
 
