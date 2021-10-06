@@ -12,14 +12,14 @@ class SimpleNNSystemTest
     }
 
     private final Mode mode
-    private final Closure<Tsr> prop
+    private final def _$
 
     SimpleNNSystemTest(Mode mode) {
         this.mode = mode
         switch (mode) {
-            case Mode.CONVOLUTION: prop = { a, b -> Tsr.of('I[0] x I[1]', [a, b]) }; break
-            case Mode.MAT_MUL: prop = { a, b -> a.matMul(b) }; break
-            default: prop = null
+            case Mode.CONVOLUTION: _$ = { a, b -> Tsr.of('I[0] x I[1]', [a, b]) }; break
+            case Mode.MAT_MUL:     _$ = { a, b -> a.matMul(b) }; break
+            default: _$ = null
         }
     }
 
@@ -118,26 +118,20 @@ class SimpleNNSystemTest
     }
 
     void feedforward(Tsr weights1, Tsr weights2, Tsr input, Tsr output, Tsr layer1) {
-        Tsr in0 = Tsr.of("i0xi1", [input, weights1])
+        Tsr in0 = _$(input, weights1)
         layer1[] = sigmoid(in0)
         //println(layer1.toString("shp")+"=sig(  I"+input.toString("shp")+" X W"+weights1.toString("shp")+" )")
-        Tsr in1 = Tsr.of("i0xi1", [layer1, weights2])
+        Tsr in1 = _$(layer1, weights2)
         output[] = sigmoid(in1)
         //println(output.toString("shp")+"=sig( L1"+layer1.toString("shp")+" X W"+weights2.toString("shp")+" )\n")
     }
 
     void backprop(Tsr weights1, Tsr weights2, Tsr input, Tsr output, Tsr layer1, Tsr y) {
         // application of the chain rule to find derivative of the loss function with respect to weights2 and weights1
-        Tsr delta = (y - output)*2
-        Tsr derivative = delta*2*sigmoid_derivative(output)
-        Tsr d_weights2 = Tsr.of(
-                "i0xi1",
-                [layer1, (derivative)]
-        )
-        Tsr d_weights1 = Tsr.of(
-                "i0xi1",
-                [input, (Tsr.of("i0xi1", [derivative, weights2]) * sigmoid_derivative(layer1))]
-        )
+        Tsr delta = (y - output) * 2
+        Tsr derivative = delta * 2 * sigmoid_derivative(output)
+        Tsr d_weights2 = _$(layer1, derivative)
+        Tsr d_weights1 = _$(input, _$(derivative, weights2) * sigmoid_derivative(layer1))
         // update the weights with the derivative (slope) of the loss function
         weights1[] = weights1 + d_weights1
         weights2[] = weights2 + d_weights2
