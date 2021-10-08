@@ -1708,7 +1708,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     /**
      *  The {@link #plus(Tsr)} method will produce the sum of
-     *  two arrays with the same rank, where the left operand is this {@link Tsr}
+     *  two arrays with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
      *  the result will be a regular elementwise addition.
@@ -1735,7 +1736,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     /**
      *  The {@link #minus(Tsr)} method will perform subtraction on
-     *  two arrays with the same rank, where the left operand is this {@link Tsr}
+     *  two arrays with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
      *  the result will be a regular elementwise subtraction.
@@ -1771,7 +1773,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     /**
      *  The {@link #multiply(Tsr)} method is synonymous with the {@link #times(Tsr)} method.
      *  Both of which will produce the product of
-     *  two arrays with the same rank, where the left operand is this {@link Tsr}
+     *  two arrays with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
      *  the result will be a regular elementwise product.
@@ -1799,7 +1802,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     /**
      *  The {@link #times(Tsr)} method is synonymous to the {@link #multiply(Tsr)}.
      *  Both of which will produce the product of
-     *  two arrays with the same rank, where the left operand is this {@link Tsr}
+     *  two arrays with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
      *  the result will be a regular elementwise product.
@@ -1826,7 +1830,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     /**
      *  The {@link #div(Tsr)} method will produce the quotient of
-     *  two arrays with the same rank, where the left operand is this {@link Tsr}
+     *  two arrays with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
      *  the result will be a regular elementwise division.
@@ -1853,7 +1858,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     /**
      *  The {@link #mod(Tsr)} method will produce the modulus of
-     *  two arrays with the same rank, where the left operand is this {@link Tsr}
+     *  two arrays with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
      *  the result will be a regular elementwise modulo operation.
@@ -1884,7 +1890,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     /**
      *  The {@link #power(Tsr)} (Tsr)} method will produce the power of
-     *  two arrays with the same rank, where the left operand is this {@link Tsr}
+     *  two arrays with the same rank (or two ranks which can be made compatible with padding ones),
+     *  where the left operand is this {@link Tsr}
      *  instance and the right operand is the tensor passed to the method.
      *  If the shapes of both of the involved tensors is identical then
      *  the result will be a regular elementwise exponentiation.
