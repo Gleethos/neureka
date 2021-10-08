@@ -80,7 +80,7 @@ class Tensor_Slice_Reshape_Integration_Spec extends Specification
                  "]"
 
         when : 'Both 2D matrices are being multiplied via the dot operation...'
-            Tsr c = a.dot(b)
+            Tsr c = a.convDot(b)
 
         then : 'This produces the following matrix: '
             c.toString() == "(2x1x2):[12.0, 55.0, 44.0, 43.0]"

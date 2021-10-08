@@ -78,7 +78,7 @@ class Tensor_Operation_Integration_Spec extends Specification
             Tsr b = Tsr.of([1, 3, 5, 2, 1], [-5..3])
 
         when : 'The "dot" method is being called on "a" receiving "b"...'
-            Tsr c = a.dot(b)
+            Tsr c = a.convDot(b)
 
         then : 'The result tensor contains the expected shape.'
             c.toString().contains("(4x2x5x2)")

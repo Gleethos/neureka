@@ -1840,14 +1840,16 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     /**
-     *  This method performs a dot product between the last dimension of this tensor
+     *  This method performs a convolutional based dot product between the last dimension of this tensor
      *  and the first dimension of the passed tensor.
      *
      * @param b The tensor which is the right part of the dot product operation.
      * @return A new tensor which is the dot product of this tensor and the passed one.
      */
-    public Tsr<V> dot( Tsr<V> b ) {
+    public Tsr<V> convDot(Tsr<V> b ) {
         Tsr<V> a = this;
+        //if ( a.rank() == 2 && b.rank() == 2 ) return a.matMul( b );
+        // TODO: The below does still not produce correct behaviour... FIX!
         int[][] fitter = AbstractNDArray.Utility.Indexing.makeFit( a.getNDConf().shape(), b.getNDConf().shape() );
         boolean doReshape = false;
         for ( int i = 0; i < fitter[ 0 ].length && !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;

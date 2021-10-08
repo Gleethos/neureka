@@ -63,10 +63,10 @@ class Optimizer_Spec extends Specification
             f.toString() == "softplus(I[0])"
 
         when :
-            Tsr s = w1.dot(X)
+            Tsr s = w1.convDot(X)
             Tsr a = f(s)
-            Tsr b = f(w2.dot(a))
-            def y = w3.dot(b)
+            Tsr b = f(w2.convDot(a))
+            def y = w3.convDot(b)
             //dox(new Tsr[]{abs(y-Y), Tsr.of(y.shape(), 1,)}) // TODO!
 
         then:

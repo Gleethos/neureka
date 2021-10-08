@@ -47,6 +47,8 @@ import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.opencl.utility.WeakTensorReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -70,6 +72,7 @@ import java.util.function.Supplier;
  */
 public class GraphNode<V> implements Component<Tsr<V>>
 {
+    private static Logger _LOG = LoggerFactory.getLogger(GraphNode.class);
 
     /**
      * mode state meaning:
@@ -590,8 +593,12 @@ public class GraphNode<V> implements Component<Tsr<V>>
             pendingNodes.forEach( n -> n._carryPendingBackPropToGradients( pendingNodes ) );
         } else {
             pendingNodes.forEach( n -> {
-                if ( !n._pendingError.isFullyAccumulated() )
-                    throw new IllegalStateException("Pending error has not received expected accumulation.");
+                if ( !n._pendingError.isFullyAccumulated() ) {
+                    _LOG.error(
+                            "Pending error in graph node '"+n.toString()+"' has not received expected accumulation. " +
+                            ""
+                    );
+                }
                 n.backward( n._pendingError.getAccumulatedError() ); // Continue back-propagation recursively!
             });
         }
@@ -916,6 +923,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @return Returns a String representation of this node.
      */
     public String toString( String m ) {
+        if ( m.equals("") ) {
+            return this.getClass().getSimpleName()+"{ "+this._function.toString()+" }";
+        }
         if ( m.contains( "g" ) ) {
             String flags = m.replace( "g", "" );
             return "]> LOCK: " + getLock() + " |> GRAPH:\n]\n" + _toString( "]    0", true, flags ) + "\n]\n]|END|>";

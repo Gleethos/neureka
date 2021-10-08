@@ -158,7 +158,7 @@ class Autograd_Tensor_Integration_Spec extends Specification
             Tsr b = Tsr.of(2)
 
         when : 'Both tensors are being multiplied via the "dot" method.'
-            Tsr c = a.dot(b)
+            Tsr c = a.convDot(b)
 
         and : 'One tries to delete tensor "b"...'
             b.delete()

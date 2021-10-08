@@ -75,7 +75,7 @@ class Calculus_Stress_Test extends Specification
             Tsr t = Tsr.of( shape, -4..2 )
 
         when :
-            t = t.dot( t.T() )
+            t = t.convDot( t.T() )
 
         then :
             t.toString() == expected
