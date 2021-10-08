@@ -114,6 +114,7 @@ import neureka.utility.slicing.SliceBuilder;
 import neureka.utility.slicing.SmartSlicer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -1705,6 +1706,21 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         -----------------------------
      */
 
+    /**
+     *  The {@link #plus(Tsr)} method will produce the sum of
+     *  two arrays with the same rank, where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular elementwise addition.
+     *  Otherwise the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) & (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) & (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the addition.
+     * @return The sum of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
     public Tsr<V> plus( Tsr<V> other ) {
         return Neureka.get().context().getAutogradFunction().plus().call( this, other );
     }
@@ -1717,6 +1733,21 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return plus( _of( this.shape(), value ) );
     }
 
+    /**
+     *  The {@link #minus(Tsr)} method will perform subtraction on
+     *  two arrays with the same rank, where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular elementwise subtraction.
+     *  Otherwise the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) & (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) & (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the subtraction.
+     * @return The difference between this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
     public Tsr<V> minus( Tsr<V> other ) {
         return Neureka.get().context().getAutogradFunction().minus().call( this, other );
     }
@@ -1737,6 +1768,22 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return Neureka.get().context().getAutogradFunction().neg().call( this );
     }
 
+    /**
+     *  The {@link #multiply(Tsr)} method is synonymous with the {@link #times(Tsr)} method.
+     *  Both of which will produce the product of
+     *  two arrays with the same rank, where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular elementwise product.
+     *  Otherwise the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) & (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) & (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the multiplication.
+     * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
     public Tsr<V> multiply( Tsr<V> other ) {
         return Neureka.get().context().getAutogradFunction().mul().call( this, other );
     }
@@ -1749,6 +1796,22 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                         );
     }
 
+    /**
+     *  The {@link #times(Tsr)} method is synonymous to the {@link #multiply(Tsr)}.
+     *  Both of which will produce the product of
+     *  two arrays with the same rank, where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular elementwise product.
+     *  Otherwise the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) & (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) & (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the multiplication.
+     * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
     public Tsr<V> times( Tsr<V> other ) { return multiply( other ); }
 
     public Tsr<V> times( V other ) { return multiply( other ); }
@@ -1866,7 +1929,30 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                         .dimtrim();
     }
 
-    public Tsr<V> matMul(Tsr<V> b ) {
+    /**
+     *  This method performs a dot product between the last dimension of this tensor
+     *  and the first dimension of the passed tensor.
+     *  However, currently this method can only handle matrices which means
+     *  that it is functionally completely identical to the {@link #matMul(Tsr)} method.
+     *
+     * @param b The tensor which is the right part of the dot product operation.
+     * @return A new tensor which is the dot product of this tensor and the passed one.
+     */
+    public Tsr<V> dot( Tsr<V> b ) {
+        if ( this.rank() != 2 && b.rank() != 2 )
+            throw new NotImplementedException(); // This is not yet available in the backend!
+        return this.matMul( b );
+    }
+
+    /**
+     *  The {@link #matMul(Tsr)} method will produce the matrix product of
+     *  two 2 dimensional arrays, where the left operand is this {@link Tsr}
+     *  instaance and the right operand is the tensor passed to the method.
+     *
+     * @param b The right operand of the matrix multiplication.
+     * @return The matrix product of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
+    public Tsr<V> matMul( Tsr<V> b ) {
         if ( this.rank() != 2 || b.rank() != 2 ) {
             String message = "Cannot perform matrix multiplication for tensors whose ranks are not both 2!\n" +
                              "Encountered ranks: "+this.rank()+", "+b.rank()+";";
