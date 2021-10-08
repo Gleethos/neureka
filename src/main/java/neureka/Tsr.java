@@ -1959,8 +1959,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public Tsr<V> convDot(Tsr<V> b ) {
         Tsr<V> a = this;
-        //if ( a.rank() == 2 && b.rank() == 2 ) return a.matMul( b );
-        // TODO: The below does still not produce correct behaviour... FIX!
         int[][] fitter = AbstractNDArray.Utility.Indexing.makeFit( a.getNDConf().shape(), b.getNDConf().shape() );
         boolean doReshape = false;
         for ( int i = 0; i < fitter[ 0 ].length && !doReshape; i++ ) if ( fitter[ 0 ][ i ] != i ) doReshape = true;
