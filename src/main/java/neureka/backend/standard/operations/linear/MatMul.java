@@ -17,9 +17,12 @@ import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.types.simple.SimpleD2Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MatMul extends AbstractOperation
 {
+    private static Logger _LOG = LoggerFactory.getLogger(MatMul.class);
 
     public MatMul()
     {
@@ -38,8 +41,11 @@ public class MatMul extends AbstractOperation
                         Algorithm.withName("simple_matmul")
                                     .setIsSuitableFor(
                                             call -> call.validate()
-                                                        .all( t -> t.getNDConf() instanceof SimpleD2Configuration )
-                                                        .estimation()
+                                                        .allNotNull( t -> Number.class.isAssignableFrom(t.getValueClass()) )
+                                                        .getEstimator()
+                                                            .goodIfAnyNonNull( t -> t.getNDConf() instanceof SimpleD2Configuration )
+                                                            .badIfAnyNonNull( t -> !( t.getNDConf() instanceof SimpleD2Configuration ) )
+                                                            .getEstimation()
                                     )
                                     .setCanPerformBackwardADFor( call -> true )
                                     .setCanPerformForwardADFor( call -> false )
@@ -51,7 +57,7 @@ public class MatMul extends AbstractOperation
                                             Function invX = Neureka.get().context().getFunction().matMul();
                                             Tsr<?>[] inputs = call.getTensors();
                                             int d = (1 + call.getValOf( Arg.DerivIdx.class )) % 2;
-                                            Tsr<?> deriv = inputs[ d ].T().clone();
+                                            Tsr<?> deriv = inputs[ d ].T().clone(); // We need to clone it to make it have a simple nd configuration...
                                             deriv.to(call.getDevice());
                                             return ADAgent.of( deriv )
                                                             .setBackward( (node, error) -> {
@@ -59,7 +65,7 @@ public class MatMul extends AbstractOperation
                                                                     return invX.execute( error, deriv );
                                                                 else
                                                                     return invX.execute( deriv, error );
-                                                            } );
+                                                            });
                                         }
                                     )
                                     .setExecutionDispatcher(
@@ -91,6 +97,7 @@ public class MatMul extends AbstractOperation
                                                 }
                                                 tsrs[ 0 ] = output;
                                             }
+                                            _autoClone( tsrs );
                                             return call;
                                         }
                                     )
@@ -189,6 +196,14 @@ public class MatMul extends AbstractOperation
 
     }
 
+    private static void _autoClone( Tsr<?>[] tensors ) {
+        for ( int i = 0; i < tensors.length; i++ ) {
+            if ( !(tensors[i].getNDConf() instanceof SimpleD2Configuration) ) {
+                _LOG.warn("Auto cloning a tensor which does not have a simple ND configuration...");
+                tensors[i] = tensors[i].clone();
+            }
+        }
+    }
 
     @Override
     public String stringify( String[] children ) {

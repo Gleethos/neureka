@@ -154,63 +154,120 @@ public class Call<D> {
          *
          * @return The current validity of this Validator as float value.
          */
-        public float estimation() { return ( this._isValid ? 1.0f : 0.0f ); }
+        public float estimation() {
+            return ( this._isValid ? 1.0f : 0.0f );
+        }
 
+        public Estimator getEstimator() { return new Estimator(_isValid); }
 
         public Validator first( TensorCondition condition ) {
             if ( !condition.check( getTensors()[ 0 ] ) ) this._isValid = false;
             return this;
         }
 
-
         public Validator any( TensorCondition condition )
         {
-            boolean any = false;
-            for ( Tsr<?> t : getTensors() ) any = condition.check( t ) || any;
-            if ( !any ) this._isValid = false;
+            if ( !_anyMatch( condition ) ) this._isValid = false;
             return this;
         }
 
+        private boolean _anyMatch( TensorCondition condition )
+        {
+            boolean any = false;
+            for ( Tsr<?> t : getTensors() ) any = condition.check( t ) || any;
+            return any;
+        }
 
         public Validator anyNotNull( TensorCondition condition )
+        {
+            if ( !_anyNotNullMatch( condition ) ) this._isValid = false;
+            return this;
+        }
+
+        private boolean _anyNotNullMatch( TensorCondition condition )
         {
             boolean any = false;
             for ( Tsr<?> t : getTensors() )
                 if ( t != null ) any = condition.check( t ) || any;
-            if ( !any ) this._isValid = false;
-            return this;
+            return any;
         }
-
 
         public Validator all( TensorCondition condition )
         {
-            boolean all = true;
-            for ( Tsr<?> t : getTensors() ) all = condition.check( t ) && all;
-            if ( !all ) this._isValid = false;
+            if ( !_allMatch( condition ) ) this._isValid = false;
             return this;
         }
 
+        private boolean _allMatch( TensorCondition condition ) {
+            boolean all = true;
+            for ( Tsr<?> t : getTensors() ) all = condition.check( t ) && all;
+            return all;
+        }
 
         public Validator allNotNull( TensorCondition condition )
+        {
+            if ( !_allNotNullMatch( condition ) ) this._isValid = false;
+            return this;
+        }
+
+        private boolean _allNotNullMatch( TensorCondition condition )
         {
             boolean all = true;
             for ( Tsr<?> t : getTensors() )
                 if ( t != null ) all = condition.check( t ) && all;
-            if ( !all ) this._isValid = false;
-            return this;
+            return all;
         }
-
 
         public Validator all( TensorCompare compare )
         {
+            if ( !_allMatch( compare ) ) this._isValid = false;
+            return this;
+        }
+
+        private boolean _allMatch( TensorCompare compare ) {
             boolean all = true;
             Tsr<?> last = null;
             for ( Tsr<?> current : getTensors() ) {
                 if ( last != null && !compare.check( last, current ) ) all = false;
                 last = current; // Note: shapes are cached!
             }
-            if ( !all ) this._isValid = false;
-            return this;
+            return all;
+        }
+
+        public class Estimator {
+
+            private float _estimation;
+
+            public Estimator(boolean isValid) {
+                _estimation = ( isValid ? 0.5f : 0f );
+            }
+
+            private void _mod(float f) {
+                f = Math.max(-1f, f);
+                f = Math.min( 1f, f);
+                _estimation *= ( 1 + (f * (1-_estimation)) );
+            }
+
+            public Estimator goodIfAll( TensorCondition condition ) { if ( _allMatch( condition ) ) _mod(0.5f); return this; }
+
+            public Estimator badIfAll( TensorCondition condition ) { if ( _allMatch( condition ) ) _mod(-0.5f); return this; }
+
+            public Estimator goodIfAnyNonNull( TensorCondition condition ) { return goodIfAny( t -> t != null && condition.check(t) ); }
+
+            public Estimator goodIfAny( TensorCondition condition ) { if ( _anyMatch( condition ) ) _mod(0.5f); return this; }
+
+            public Estimator badIfAnyNonNull( TensorCondition condition ) { return badIfAny( t -> t != null && condition.check(t) ); }
+
+            public Estimator badIfAny( TensorCondition condition ) { if ( _anyMatch( condition ) ) _mod(-0.5f); return this; }
+
+            public Estimator goodIfAll( TensorCompare condition ) { if ( _allMatch( condition ) ) _mod(0.5f); return this; }
+
+            public Estimator badIfAll( TensorCompare condition ) { if ( _allMatch( condition ) ) _mod(-0.5f); return this; }
+
+            public float getEstimation() {
+                return _estimation;
+            }
+
         }
 
     }

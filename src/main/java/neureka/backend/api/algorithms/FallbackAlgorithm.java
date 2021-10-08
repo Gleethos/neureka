@@ -6,6 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.operations.linear.MatMul;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -99,7 +100,8 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                 else if ( !Arrays.equals(shape, t.getNDConf().shape())) return 0.0f;
             }
         }
-        return 1.0f;
+        if ( call.getOperation().getClass() == MatMul.class ) return 0;
+        return 0.5f;
     }
 
     @Override

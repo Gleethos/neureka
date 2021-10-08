@@ -87,6 +87,9 @@ class Cross_Device_Spec extends Specification
 
         expect:
             new SimpleNNSystemTest(SimpleNNSystemTest.Mode.CONVOLUTION).on(device)
+        and:
+            if ( !(device instanceof OpenCLDevice) )
+                new SimpleNNSystemTest(SimpleNNSystemTest.Mode.MAT_MUL).on(device)
 
         where :
             device << [new DummyDevice(), Device.find('first gpu')]

@@ -49,7 +49,7 @@ public class CopyLeft extends AbstractOperation {
                 .setCallPreparation(
                         call ->
                         {
-                            Tsr[] tsrs = call.getTensors();
+                            Tsr<?>[] tsrs = call.getTensors();
                             int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                             call.getTsrOfType( Number.class, offset).incrementVersionBecauseOf(call);
                             call.getTsrOfType( Number.class, offset).setIsVirtual( false );
@@ -104,7 +104,8 @@ public class CopyLeft extends AbstractOperation {
                                 },
                                 2
                         )
-                ).setImplementationFor(
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
                                 .arity( 2 )
@@ -136,7 +137,7 @@ public class CopyLeft extends AbstractOperation {
                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
             )
-            .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
+            .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )
             .setCallPreparation(
                     call ->
                     {

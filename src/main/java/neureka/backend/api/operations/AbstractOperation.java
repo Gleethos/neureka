@@ -193,7 +193,12 @@ public abstract class AbstractOperation implements Operation
             }
         }
 
-        if ( _defaultAlgorithm.isSuitableFor( call ) > 0.0f ) return (Algorithm<T>) _defaultAlgorithm;
+        float defaultSuitability = _defaultAlgorithm.isSuitableFor( call );
+
+        if ( defaultSuitability > bestScore || ( bestImpl == null && defaultSuitability > 0 ) ) {
+            _LOG.debug("Default algorithm picked for call targeting operation '"+call.getOperation()+"'.");
+            return (Algorithm<T>) _defaultAlgorithm;
+        }
 
         if ( bestImpl == null ) {
             String message = "No suitable implementation for execution call '"+call+"' could be found.\n" +
