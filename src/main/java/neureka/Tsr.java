@@ -1882,6 +1882,21 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return Neureka.get().context().getFunction().modAssign().call( this, other );
     }
 
+    /**
+     *  The {@link #power(Tsr)} (Tsr)} method will produce the power of
+     *  two arrays with the same rank, where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular elementwise exponentiation.
+     *  Otherwise the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) & (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) & (3, 4, 1)         <br>
+     *
+     * @param other The right operand, also known as exponent, of the exponentiation.
+     * @return The power of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
     public Tsr<V> power( Tsr<V> other ) {
         return Neureka.get().context().getAutogradFunction().pow().call( this, other );
     }
@@ -1890,6 +1905,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return power( _of( this.shape(), value ) );
     }
 
+    /**
+     *  This method is synonymous to the {@link #power(Tsr)} method.
+     */
     public Tsr<V> xor( Tsr<V> other ) {
         return Neureka.get().context().getAutogradFunction().pow().call( this, other );
     }
