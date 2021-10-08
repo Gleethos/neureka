@@ -1514,7 +1514,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 g -> {
                     // If an optimizer is present then we also optimize the gradient first!
                     if ( this.has( Optimizer.class ) )
-                        g = this.get(Optimizer.class).optimize(this);
+                        g = this.get(Optimizer.class).optimize( this );
                     // And then we remove the gradient because it is no longer needed.
                     remove( Tsr.class );
                     // We are now ready to apply the gradient to the tensor. This is an inline operation!
@@ -1522,7 +1522,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     boolean inlineSafety = Neureka.get().settings().autograd().isPreventingInlineOperations();
                     if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( false );
                     // INLINE OPERATION :
-                    Neureka.get().context().getFunction().plusAssign().call(this, g); //-> Finally applying the gradient!
+                    Neureka.get().context().getFunction().plusAssign().call( this, g ); //-> Finally applying the gradient!
                     // INLINE END ! -> We can now revert to the previous setting:
                     if ( inlineSafety ) Neureka.get().settings().autograd().setIsPreventingInlineOperations( true );
                 }
@@ -1824,6 +1824,21 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return multiply( _of( this.shape(), value ) );
     }
 
+    /**
+     *  The {@link #div(Tsr)} method will produce the quotient of
+     *  two arrays with the same rank, where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular elementwise division.
+     *  Otherwise the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) & (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) & (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the division.
+     * @return The quotient of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
     public Tsr<V> div( Tsr<V> other ) {
         return Neureka.get().context().getAutogradFunction().div().call( this, other );
     }
@@ -1836,6 +1851,21 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return Neureka.get().context().getFunction().divAssign().call( this, other );
     }
 
+    /**
+     *  The {@link #mod(Tsr)} method will produce the modulus of
+     *  two arrays with the same rank, where the left operand is this {@link Tsr}
+     *  instance and the right operand is the tensor passed to the method.
+     *  If the shapes of both of the involved tensors is identical then
+     *  the result will be a regular elementwise modulo operation.
+     *  Otherwise the method will also be able to perform broadcasting, however only if
+     *  for every pair of shape dimension the following is true:
+     *  Either the dimensions have the same size or one of them has size 1. <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) & (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) & (3, 4, 1)         <br>
+     *
+     * @param other The right operand of the modulo operation.
+     * @return The modulus of this instance as the left and the passed {@link Tsr} instance as right operand.
+     */
     public Tsr<V> mod( Tsr<V> other ) {
         return Neureka.get().context().getAutogradFunction().mod().call( this, other );
     }
@@ -1955,11 +1985,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public Tsr<V> matMul( Tsr<V> b ) {
         if ( this.rank() != 2 || b.rank() != 2 ) {
             String message = "Cannot perform matrix multiplication for tensors whose ranks are not both 2!\n" +
-                             "Encountered ranks: "+this.rank()+", "+b.rank()+";";
-            _LOG.error(message);
-            throw new IllegalArgumentException(message);
+                             "Encountered ranks: " + this.rank() + ", " + b.rank() + ";";
+            _LOG.error( message );
+            throw new IllegalArgumentException( message );
         }
-        return Neureka.get().context().getAutogradFunction().matMul().call(this, b);
+        return Neureka.get().context().getAutogradFunction().matMul().call( this, b );
     }
 
     /**
