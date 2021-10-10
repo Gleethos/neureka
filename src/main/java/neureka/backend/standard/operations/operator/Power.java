@@ -132,31 +132,31 @@ public class Power extends AbstractOperation
 
         RecursiveExecutor rja = (call, goDeeperWith)->
         {
-            Tsr[] tsrs = call.getTensors();
+            Tsr<?>[] tensors = call.getTensors();
             Device device = call.getDevice();
             int d = call.getValOf( Arg.DerivIdx.class );
             Operation type = call.getOperation();
 
-            Tsr alternative = null;
-            if ( tsrs.length > 3 )
+            Tsr<?> alternative = null;
+            if ( tensors.length > 3 )
             {
                 if ( d < 0 ) {
-                    Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
+                    Tsr<?>[] reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], tensors[ 2 ]};
                     alternative = goDeeperWith.execute(
                             call.withTensors( reduction )
                     );
-                    tsrs[ 0 ] = reduction[ 0 ];
+                    tensors[ 0 ] = reduction[ 0 ];
 
-                    reduction = Utility.offsetted(tsrs, 1);
+                    reduction = Utility.offsetted(tensors, 1);
                     alternative = goDeeperWith.execute(
                                         call.withTensors( reduction )
                             );
-                    tsrs[ 0 ] = reduction[ 0 ];
+                    tensors[ 0 ] = reduction[ 0 ];
                 } else {
 
                     if ( d==0 ) {
-                        Tsr[] reduction = Utility.subset(tsrs, 1,  2, tsrs.length-2);
-                        reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);
+                        Tsr<?>[] reduction = Utility.subset(tensors, 1,  2, tensors.length-2);
+                        reduction[ 0 ] =  Tsr.Create.newTsrLike(tensors[ 1 ]);
                         alternative = goDeeperWith.execute(
                                             ExecutionCall.of(reduction)
                                                             .andArgs(Arg.DerivIdx.of( -1 ))
@@ -164,19 +164,19 @@ public class Power extends AbstractOperation
                                                             .on(device)
                                         );
                         Tsr exp = reduction[ 0 ];
-                        reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], exp};
+                        reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], exp};
                         alternative = goDeeperWith.execute(
                                             ExecutionCall.of(reduction)
                                                             .andArgs(Arg.DerivIdx.of(0))
                                                             .running(type)
                                                             .on( device )
                                         );
-                        tsrs[ 0 ] = reduction[ 0 ];
+                        tensors[ 0 ] = reduction[ 0 ];
                         exp.delete();
                     } else {
-                        Tsr<?>[] reduction = Utility.subset(tsrs, 1,  2, tsrs.length-2);
+                        Tsr<?>[] reduction = Utility.subset(tensors, 1,  2, tensors.length-2);
 
-                        reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);
+                        reduction[ 0 ] =  Tsr.Create.newTsrLike(tensors[ 1 ]);
                         alternative = goDeeperWith.execute(
                                                 ExecutionCall.of(reduction)
                                                                 .andArgs(Arg.DerivIdx.of(d-1))
@@ -185,7 +185,7 @@ public class Power extends AbstractOperation
                                         );
                         Tsr<?> inner = reduction[ 0 ];
 
-                        reduction = new Tsr[]{Tsr.Create.newTsrLike(tsrs[ 1 ]), inner, tsrs[d]};
+                        reduction = new Tsr[]{Tsr.Create.newTsrLike(tensors[ 1 ]), inner, tensors[d]};
                         alternative = goDeeperWith.execute(
                                                 ExecutionCall.of(reduction)
                                                                 .andArgs(Arg.DerivIdx.of(-1))
@@ -194,25 +194,22 @@ public class Power extends AbstractOperation
                                         );
                         Tsr<?> exp = reduction[ 0 ];
 
-                        reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], exp};
+                        reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], exp};
                         alternative = goDeeperWith.execute(
                                 ExecutionCall.of(reduction)
                                                 .andArgs(Arg.DerivIdx.of(1))
                                                 .running(type)
                                                 .on(device)
                             );
-                        tsrs[ 0 ] = reduction[ 0 ];
+                        tensors[ 0 ] = reduction[ 0 ];
 
                         inner.delete();
                         exp.delete();
                     }
                 }
                 return alternative;
-            } else
-                return alternative;
-
-
-
+            }
+            else return alternative;
         };
 
         Operator operator = new Operator( rja )
@@ -295,22 +292,22 @@ public class Power extends AbstractOperation
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
-                        Tsr<?> ctxDerivative = (Tsr<?>)call.getValOf(Arg.Derivative.class);
+                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         Function mul = Neureka.get().context().getFunction().mul();
                         if ( ctxDerivative != null ) {
                             return ADAgent.of( ctxDerivative )
-                                            .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
-                                            .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
+                                            .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
+                                            .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
                         }
-                        Tsr[] inputs = call.getTensors();
+                        Tsr<?>[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr<?> deriv = f.derive( inputs, d );
-                            return ADAgent.of( deriv )
-                                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
-                                    .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
+                            Tsr<?> derivative = f.executeDerive( inputs, d );
+                            return ADAgent.of( derivative )
+                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
                         }
                     }
                 )
@@ -320,7 +317,9 @@ public class Power extends AbstractOperation
                 Broadcast.class,
                 broadcast.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -338,9 +337,8 @@ public class Power extends AbstractOperation
                                                                         call.getValOf( Arg.DerivIdx.class ), start, end,
                                                                         _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
-                                                ),
-                                3
-                        )
+                                                )
+                                )
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,
@@ -411,7 +409,9 @@ public class Power extends AbstractOperation
                 Scalarization.class,
                 scalarization.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call -> {
                                     double value = call.getTsrOfType( Number.class, 0 ).value64( 2 );
                                     call.getDevice().getExecutor()
@@ -431,9 +431,8 @@ public class Power extends AbstractOperation
                                                             scalarCreator.create(call.getTensors(), value, -1)
                                                     )
                                             );
-                                },
-                                3
-                        )
+                                }
+                            )
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,
@@ -558,7 +557,7 @@ public class Power extends AbstractOperation
         } else {
             double b = 1;
             double bd = 0;
-            double a = 0;
+            double a;
             for ( int i = 1; i < src.length; i++ ) {
                 double dd = 1;
                 a = src[ i ].call( inputs );

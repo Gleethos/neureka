@@ -80,7 +80,9 @@ public class CopyLeft extends AbstractOperation {
                 Scalarization.class,
                 scalarization.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(2)
+                            .andImplementation(
                                 call ->
                                 {
                                     double value = call.getTsrOfType( Number.class, 1 ).value64( 0 );
@@ -101,8 +103,7 @@ public class CopyLeft extends AbstractOperation {
                                                                     scalarCreator.create(call.getTensors(), value, -1)
                                                             )
                                             );
-                                },
-                                2
+                                }
                         )
                 )
                 .setImplementationFor(

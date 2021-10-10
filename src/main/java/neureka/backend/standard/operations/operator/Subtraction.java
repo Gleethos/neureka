@@ -107,7 +107,9 @@ public class Subtraction extends AbstractOperation
         setAlgorithm(
                 operator.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -131,9 +133,8 @@ public class Subtraction extends AbstractOperation
                                                                         start, end,
                                                                         operationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
-                                                ),
-                                3
-                        )
+                                                )
+                            )
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,
@@ -196,7 +197,9 @@ public class Subtraction extends AbstractOperation
                 Scalarization.class,
                 scalarization.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call -> {
                                     int offset = (call.getTsrOfType( Number.class, 2 ).isVirtual() || call.getTsrOfType( Number.class, 2 ).size() == 1) ? 1 : 0;
                                     double value = call.getTsrOfType( Number.class, 1+offset).value64( 0 );
@@ -217,9 +220,8 @@ public class Subtraction extends AbstractOperation
                                                                     scalarOperatorCreator.create(call.getTensors(), value, -1)
                                                             )
                                             );
-                                },
-                                3
-                        )
+                                }
+                            )
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,
@@ -262,13 +264,13 @@ public class Subtraction extends AbstractOperation
                         {
                             Tsr<?> ctxDerivative = (Tsr<?>)call.getValOf(Arg.Derivative.class);
                             assert ctxDerivative == null;
-                            Tsr[] inputs = call.getTensors();
+                            Tsr<?>[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
                             if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                             else
                             {
-                                Tsr deriv = inputs[(d==0?1:0)];
-                                Tsr toBeDerived = inputs[d];
+                                Tsr<?> deriv = inputs[(d==0?1:0)];
+                                Tsr<?> toBeDerived = inputs[d];
                                 Device device = call.getDevice();
                                 return ADAgent.of( deriv )
                                             .setBackward(
@@ -296,8 +298,10 @@ public class Subtraction extends AbstractOperation
                 broadcast
                     .setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
-                                call ->
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
+                                    call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
                                                         call.getTsrOfType( Number.class, 0 ).size(),
@@ -314,9 +318,8 @@ public class Subtraction extends AbstractOperation
                                                                         call.getValOf( Arg.DerivIdx.class ), start, end,
                                                                         _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
-                                                ),
-                                3
-                        )
+                                                )
+                            )
                     )
                     .setImplementationFor(
                             OpenCLDevice.class,
