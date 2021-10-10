@@ -49,12 +49,12 @@ public class CopyLeft extends AbstractOperation {
                 .setCallPreparation(
                         call ->
                         {
-                            Tsr<?>[] tsrs = call.getTensors();
-                            int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
+                            Tsr<?>[] tensors = call.getTensors();
+                            int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
                             call.getTsrOfType( Number.class, offset).incrementVersionBecauseOf(call);
                             call.getTsrOfType( Number.class, offset).setIsVirtual( false );
                             return
-                                    ExecutionCall.of(tsrs[offset], tsrs[1+offset])
+                                    ExecutionCall.of(tensors[offset], tensors[1+offset])
                                                     .andArgs(Arg.DerivIdx.of(-1))
                                                     .running(this)
                                                     .on( call.getDevice() );
@@ -115,7 +115,7 @@ public class CopyLeft extends AbstractOperation {
                                 .kernelPostfix( this.getFunction() )
                                 .execution(
                                         call -> {
-                                            Tsr t = call.getTsrOfType( Number.class, 0 );
+                                            Tsr<Number> t = call.getTsrOfType( Number.class, 0 );
                                             int gwz = t.size();
                                             call.getDevice().getKernel(call)
                                                     .passAllOf( t )
@@ -141,10 +141,10 @@ public class CopyLeft extends AbstractOperation {
             .setCallPreparation(
                     call ->
                     {
-                        Tsr[] tsrs = call.getTensors();
-                        int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
+                        Tsr<?>[] tensors = call.getTensors();
+                        int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
                         call.getTsrOfType( Number.class, offset).incrementVersionBecauseOf(call);
-                        return ExecutionCall.of(tsrs[offset], tsrs[1+offset])
+                        return ExecutionCall.of(tensors[offset], tensors[1+offset])
                                             .andArgs(Arg.DerivIdx.of(-1))
                                             .running(Neureka.get().context().getOperation("idy"))
                                             .on(call.getDevice());
@@ -157,17 +157,18 @@ public class CopyLeft extends AbstractOperation {
                 activation
                     .setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
-                                call ->
-                                {
-                                    call.getTsrOfType( Number.class, 0 ).setIsVirtual( false );
-                                    Neureka.get().context().getOperation("idy")
-                                            .getAlgorithm( Activation.class )
-                                            .getImplementationFor( HostCPU.class )
-                                            .run(call);
-                                },
-                                2
-                        )
+                        HostImplementation
+                                .withArity(2)
+                                .andImplementation(
+                                        call ->
+                                        {
+                                            call.getTsrOfType( Number.class, 0 ).setIsVirtual( false );
+                                            Neureka.get().context().getOperation("idy")
+                                                    .getAlgorithm( Activation.class )
+                                                    .getImplementationFor( HostCPU.class )
+                                                    .run(call);
+                                        }
+                                )
                     )
                     .setImplementationFor(
                         OpenCLDevice.class,

@@ -96,7 +96,9 @@ class Calculus_Extension_Integration_Spec extends Specification
                                                 )
                                                 .setImplementationFor(
                                                         HostCPU.class,
-                                                        new HostImplementation(
+                                                        HostImplementation
+                                                            .withArity(3)
+                                                            .andImplementation(
                                                                 (call) -> {
                                                                     Tsr drn = call.getTsrOfType(Number.class, 0)
                                                                     Tsr src1 = call.getTsrOfType(Number.class, 1)
@@ -121,9 +123,8 @@ class Calculus_Extension_Integration_Spec extends Specification
                                                                     //    )
                                                                     //    clContext.increment()
                                                                     //}
-                                                                },
-                                                                3
-                                                        )
+                                                                }
+                                                            )
                                                 )
                                 )
                 )

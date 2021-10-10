@@ -55,6 +55,7 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  *  Instances of the {@link GraphNode} class are components of tensors ({@link Tsr} instances)
@@ -923,8 +924,14 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * @return Returns a String representation of this node.
      */
     public String toString( String m ) {
+        Tsr<?> payload = getPayload();
         if ( m.equals("") ) {
-            return this.getClass().getSimpleName()+"{ "+this._function.toString()+" }";
+            return this.getClass().getSimpleName()+"{ " +
+                    Arrays.stream(_parents).map(GraphNode::getPayload).map(t -> (t==null ? "?" : t.shape().stream().map(Object::toString).collect(Collectors.joining("x")))).collect(Collectors.joining(", ")) +
+                    " -> " +
+                    this._function.toString()+
+                    " -> " + (payload != null ? payload.shape().stream().map(Object::toString).collect(Collectors.joining("x")) : "?" ) +
+                    " }";
         }
         if ( m.contains( "g" ) ) {
             String flags = m.replace( "g", "" );
@@ -937,13 +944,13 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     (
                             ( _function == null ) ? "(NONE)" : _function
                     )
-                    + " => " + ( (getPayload() == null ) ? "NULL" : getPayload().toString( "cs" ) ) + "  )>";
+                    + " => " + ( (payload == null ) ? "NULL" : payload.toString( "cs" ) ) + "  )>";
         } else
             return
                     "[" + nid + "]:( " + (
-                            ( getPayload() == null )
+                            ( payload == null )
                                     ? "NULL"
-                                    : getPayload().toString("cs")
+                                    : payload.toString("cs")
                     ) + " )";
     }
 

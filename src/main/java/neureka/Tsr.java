@@ -1535,8 +1535,10 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  Nodes within a computation graph are instances of the "{@link GraphNode}" class which are also
      *  simple components of the tensors they represent in the graph. <br>
      *  Therefore, "detaching" this tensor from the graph simply means removing its {@link GraphNode} component.
+     *
+     * @return This very instance in order to allows for a more streamline usage of this method.
      */
-    public void detach() { this.remove( GraphNode.class ); }
+    public Tsr<V> detach() { this.remove( GraphNode.class ); return this; }
 
     /*
         ----------------------------

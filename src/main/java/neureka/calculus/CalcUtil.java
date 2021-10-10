@@ -286,14 +286,12 @@ public class CalcUtil
                             String message = Messages.Devices.couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
                             _LOG.error( message );
                             throw new IllegalStateException( message );
-                        } else {
-                            implementation.run( call );
                         }
+                        else implementation.run( call );
                     }
                 },
                 executor
         );
-        return;
     }
 
     /**
@@ -321,15 +319,15 @@ public class CalcUtil
             final RecursiveExecutor executor
     ) {
         Device<Object> device = call.getDeviceFor(Object.class);
-        Tsr<Object>[] tsrs = (Tsr<Object>[]) call.getTensors();
+        Tsr<Object>[] tensors = (Tsr<Object>[]) call.getTensors();
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation type = call.getOperation();
 
-        Consumer<Tsr<Object>>[] rollbacks = new Consumer[ tsrs.length ];
-        for ( int i = 0; i < tsrs.length; i++ ) {
-            if ( tsrs[ i ] != null && !tsrs[ i ].isOutsourced() ) {
+        Consumer<Tsr<Object>>[] rollbacks = new Consumer[ tensors.length ];
+        for ( int i = 0; i < tensors.length; i++ ) {
+            if ( tensors[ i ] != null && !tensors[ i ].isOutsourced() ) {
                 try {
-                    device.store( tsrs[ i ] );
+                    device.store( tensors[ i ] );
                 } catch ( Exception e ) {
                     e.printStackTrace();
                 }
@@ -359,7 +357,7 @@ public class CalcUtil
         if ( executor != null )
             result = executor.execute( // This is where the recursion occurs:
                                 call,
-                                innerCall -> // This lambda performs the cursive call, implementations decide if they want to dive deeper.
+                                innerCall -> // This lambda performs the recursive call, implementations decide if they want to dive deeper.
                                         _recursiveReductionOf( innerCall, finalExecution, executor )
                             );
 
@@ -373,10 +371,10 @@ public class CalcUtil
         }
         else return result;
 
-        for ( int i = 0; i < tsrs.length; i++ ) {
-            if ( tsrs[ i ] != null && !tsrs[ i ].isUndefined() ) rollbacks[ i ].accept(tsrs[ i ]);
+        for ( int i = 0; i < tensors.length; i++ ) {
+            if ( tensors[ i ] != null && !tensors[ i ].isUndefined() ) rollbacks[ i ].accept(tensors[ i ]);
         }
-        return tsrs[ 0 ];
+        return tensors[ 0 ];
     }
 
 

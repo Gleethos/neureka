@@ -29,14 +29,6 @@ public class CopyRight extends AbstractOperation {
                         .setIsInline(         true      )
         );
 
-        DefaultOperatorCreator<TertiaryNDIConsumer> activationCreator =
-                ( inputs, d ) -> {
-                    double[] t1_val = inputs[ 1 ].value64();
-                    if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
-                    else return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ];
-                };
-
-
         Activation activation = new Activation()
         .setCanPerformBackwardADFor( call -> false )
         .setCanPerformForwardADFor( call -> false )
@@ -47,11 +39,10 @@ public class CopyRight extends AbstractOperation {
         .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
         .setCallPreparation(
                 call -> {
-                    Tsr<?>[] tsrs = call.getTensors();
-                    int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                    //tsrs[0] = tsrs[2];
+                    Tsr<?>[] tensors = call.getTensors();
+                    int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
                     return
-                            ExecutionCall.of(tsrs[1+offset], tsrs[offset])
+                            ExecutionCall.of(tensors[1+offset], tensors[offset])
                                             .andArgs( Arg.DerivIdx.of( -1 ) )
                                             .running( Neureka.get().context().getOperation("idy") ) // This routes to another operation!
                                             .on( call.getDevice() );
@@ -59,13 +50,16 @@ public class CopyRight extends AbstractOperation {
         )
         .buildFunAlgorithm();
 
-        setAlgorithm(Activation.class,
-                activation.setImplementationFor(
+        setAlgorithm(
+                activation
+                    .setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(2)
+                            .andImplementation(
                                 call -> {
                                     int offset = 1;
-                                    Tsr[] args = { call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)};
+                                    Tsr<?>[] args = { call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)};
                                     ExecutionCall<HostCPU> newCall =
                                             ExecutionCall.of(args)
                                                             .andArgs(Arg.DerivIdx.of(-1))
@@ -77,15 +71,14 @@ public class CopyRight extends AbstractOperation {
                                             .getImplementationFor( HostCPU.class )
                                             .run(newCall);
                                     call.getTensors()[0] = args[1];
-                                },
-                                2
-                        )
+                                }
+                            )
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,
                         call -> {
                             int offset = 1;
-                            Tsr[] args = { call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)};
+                            Tsr<?>[] args = { call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)};
                             ExecutionCall<OpenCLDevice> newCall = ExecutionCall.of(args)
                                                                                 .andArgs(Arg.DerivIdx.of( -1 ))
                                                                                 .running(call.getOperation())

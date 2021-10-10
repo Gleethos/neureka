@@ -15,8 +15,16 @@ import neureka.devices.host.HostCPU;
  */
 public class HostImplementation extends AbstractImplementationFor<HostCPU>
 {
+    public static AndImplementation withArity( int arity ) {
+        return (lambda) -> new HostImplementation(lambda, arity);
+    }
+
     public HostImplementation( ImplementationFor<HostCPU> creator, int arity )
     {
         super( creator, arity );
+    }
+
+    public interface AndImplementation {
+        HostImplementation andImplementation( ImplementationFor<HostCPU> creator );
     }
 }

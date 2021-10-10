@@ -32,7 +32,9 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
         super( name );
         setImplementationFor(
                 HostCPU.class,
-                new HostImplementation(
+                HostImplementation
+                    .withArity(arity)
+                    .andImplementation(
                         call -> {
                             Function f = new FunctionBuilder(
                                                     Neureka.get().context()
@@ -85,9 +87,8 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                             }
                             else
                                 _tryExecute(call, typeClass);
-                        },
-                        arity
-                )
+                        }
+                    )
         );
     }
 

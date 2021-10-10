@@ -33,26 +33,22 @@ public class Randomization extends AbstractOperation
         );
 
         ScalarOperatorCreator< PrimaryNDIConsumer > creator =
-                ( inputs, value, d ) -> {
-                    return t1Idx -> {
-                        int sum = 0;
-                        int[] indices = t1Idx.get();
-                        for ( int i : indices ) sum += i;
-                        Random dice = new Random();
-                        dice.setSeed( Double.doubleToLongBits( value + sum ) );
-                        return dice.nextGaussian();
-                    };
+                ( inputs, value, d ) -> t1Idx -> {
+                    int sum = 0;
+                    int[] indices = t1Idx.get();
+                    for ( int i : indices ) sum += i;
+                    Random dice = new Random();
+                    dice.setSeed( Double.doubleToLongBits( value + sum ) );
+                    return dice.nextGaussian();
                 };
 
         ScalarOperatorCreator<PrimaryNDAConsumer> creatorX =
-                ( inputs, value, d ) -> {
-                    return t1Idx -> {
-                        int sum = 0;
-                        for ( int indices : t1Idx) sum += indices;
-                        Random dice = new Random();
-                        dice.setSeed(Double.doubleToLongBits(value+sum));
-                        return dice.nextGaussian();
-                    };
+                ( inputs, value, d ) -> t1Idx -> {
+                    int sum = 0;
+                    for ( int indices : t1Idx ) sum += indices;
+                    Random dice = new Random();
+                    dice.setSeed( Double.doubleToLongBits( value + sum ) );
+                    return dice.nextGaussian();
                 };
 
         Scalarization scalarization = new Scalarization()
@@ -76,10 +72,10 @@ public class Randomization extends AbstractOperation
         .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
         .setCallPreparation(
                 call -> {
-                    Tsr[] tsrs = call.getTensors();
-                    int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
+                    Tsr<?>[] tensors = call.getTensors();
+                    int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
                     return
-                            ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().context().getOperation("idy")).on(call.getDevice());
+                            ExecutionCall.of(tensors[offset], tensors[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().context().getOperation("idy")).on(call.getDevice());
                 }
         )
         .buildFunAlgorithm();
@@ -88,7 +84,9 @@ public class Randomization extends AbstractOperation
                 Scalarization.class,
                 scalarization.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call -> call.getDevice().getExecutor()
                                         .threaded (
                                                 call.getTsrOfType( Number.class, 0 ).size(),
@@ -113,8 +111,7 @@ public class Randomization extends AbstractOperation
                                                                     call.getValOf( Arg.DerivIdx.class )
                                                             )
                                                 )
-                                        ),
-                                3
+                                        )
                         )
                 )
         );
