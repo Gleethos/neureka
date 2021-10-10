@@ -222,7 +222,9 @@ public class Power extends AbstractOperation
         setAlgorithm(Operator.class,
                 operator.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -246,10 +248,10 @@ public class Power extends AbstractOperation
                                                                         start, end,
                                                                         operationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
-                                                ),
-                                3
-                        )
-                ).setImplementationFor(
+                                                )
+                            )
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
                                 .arity( 3 )
