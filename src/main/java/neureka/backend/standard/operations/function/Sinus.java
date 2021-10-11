@@ -89,7 +89,9 @@ public final class Sinus extends AbstractOperation
                 Activation.class,
                 operationAlgorithm.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call  ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -107,9 +109,8 @@ public final class Sinus extends AbstractOperation
                                                                         start, end,
                                                                         _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
-                                                ),
-                                3
-                        )
+                                                )
+                            )
                 ).setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
