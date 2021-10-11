@@ -57,7 +57,9 @@ public final class Sigmoid extends AbstractOperation
                 Activation.class,
                 operationAlgorithm.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call  ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -75,10 +77,10 @@ public final class Sigmoid extends AbstractOperation
                                                                         start, end,
                                                                         _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
-                                                ),
-                                3
-                        )
-                ).setImplementationFor(
+                                                )
+                            )
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
                                 .arity( 3 )

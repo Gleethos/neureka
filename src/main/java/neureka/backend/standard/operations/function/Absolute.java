@@ -17,13 +17,13 @@ import org.jetbrains.annotations.Contract;
 public final class Absolute extends AbstractOperation
 {
 
-    private DefaultOperatorCreator<TertiaryNDIConsumer> _activationCreator =
+    private final DefaultOperatorCreator<TertiaryNDIConsumer> _activationCreator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.abs(t1_val[ t1Idx.i() ]);
                 else return ( t0Idx, t1Idx, t2Idx ) -> ( t1_val[ t1Idx.i() ] < 0 ) ? -1 : 1;
             };
-    private DefaultOperatorCreator<TertiaryNDAConsumer> _activationXCreator =
+    private final DefaultOperatorCreator<TertiaryNDAConsumer> _activationXCreator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.abs(t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]);
@@ -54,7 +54,9 @@ public final class Absolute extends AbstractOperation
                 Activation.class,
                 operationAlgorithm.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call  -> call.getDevice().getExecutor()
                                             .threaded(
                                                 call.getTsrOfType( Number.class, 0 ).size(),
@@ -71,10 +73,10 @@ public final class Absolute extends AbstractOperation
                                                                         start, end,
                                                                         _activationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
-                                                ),
-                                3
-                        )
-                ).setImplementationFor(
+                                                )
+                            )
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
                                         .arity(3)

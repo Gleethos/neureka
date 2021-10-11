@@ -104,7 +104,9 @@ public final class Gaussian extends AbstractOperation
                 Activation.class,
                 operationAlgorithm.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call  ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -122,9 +124,8 @@ public final class Gaussian extends AbstractOperation
                                                                         start, end,
                                                                         activationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
-                                                ),
-                                3
-                        )
+                                                )
+                            )
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,

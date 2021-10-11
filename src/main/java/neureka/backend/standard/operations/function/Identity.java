@@ -79,7 +79,9 @@ public final class Identity extends AbstractOperation
                 Activation.class,
                 operationAlgorithm.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(2)
+                            .andImplementation(
                                 call  ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -97,9 +99,8 @@ public final class Identity extends AbstractOperation
                                                                         start, end,
                                                                         activationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
-                                                ),
-                                2
-                        )
+                                                )
+                            )
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,
@@ -174,7 +175,9 @@ public final class Identity extends AbstractOperation
                 Scalarization.class,
                 scalarization.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(2)
+                            .andImplementation(
                                 call  -> {
                                     double value = call.getTsrOfType( Number.class, 0 ).value64( 2 );
                                         call.getDevice().getExecutor()
@@ -188,10 +191,10 @@ public final class Identity extends AbstractOperation
                                                                         )
                                                                 )
                                                 );
-                                },
-                                2
-                        )
-                ).setImplementationFor(
+                                }
+                            )
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
                                 .arity( 2 )
