@@ -62,7 +62,9 @@ public class XConv extends AbstractOperation
                 convolution
                         .setImplementationFor(
                                 HostCPU.class,
-                                new HostImplementation(
+                                HostImplementation
+                                    .withArity(3)
+                                    .andImplementation(
                                         call ->
                                                 call.getDevice().getExecutor()
                                                         .threaded (
@@ -86,9 +88,8 @@ public class XConv extends AbstractOperation
                                                                                         -1//call.getValOf( Arg.DerivIdx.class )
                                                                                 )
                                                                         )
-                                                        ),
-                                        3
-                                )
+                                                        )
+                                    )
                         )
                         .setImplementationFor(
                             OpenCLDevice.class,

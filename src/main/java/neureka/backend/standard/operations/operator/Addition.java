@@ -126,7 +126,9 @@ public class Addition extends AbstractOperation {
                 operator
                         .setImplementationFor(
                             HostCPU.class,
-                                new HostImplementation(
+                                HostImplementation
+                                    .withArity(3)
+                                    .andImplementation(
                                         call ->
                                                 call.getDevice()
                                                         .getExecutor()
@@ -151,9 +153,8 @@ public class Addition extends AbstractOperation {
                                                                                 start, end,
                                                                                 operationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                         )
-                                                        ),
-                                        3
-                                )
+                                                        )
+                                    )
                         )
                         .setImplementationFor(
                             OpenCLDevice.class,
@@ -188,7 +189,9 @@ public class Addition extends AbstractOperation {
                 _broadcast
                 .setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -206,9 +209,8 @@ public class Addition extends AbstractOperation {
                                                                         call.getValOf( Arg.DerivIdx.class ), start, end,
                                                                         _broadcastCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
-                                                ),
-                                3
-                        )
+                                                )
+                            )
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,
@@ -266,7 +268,9 @@ public class Addition extends AbstractOperation {
         setAlgorithm(
                 scalarization.setImplementationFor(
                         HostCPU.class,
-                                new HostImplementation(
+                                HostImplementation
+                                    .withArity(3)
+                                    .andImplementation(
                                         call -> {
                                             double value = call.getTsrOfType( Number.class, 0 ).value64( 2 );
                                             call.getDevice().getExecutor()
@@ -286,9 +290,8 @@ public class Addition extends AbstractOperation {
                                                                             scalarCreator.create(call.getTensors(), value, -1)
                                                                     )
                                                     );
-                                            },
-                                        3
-                                )
+                                            }
+                                    )
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,

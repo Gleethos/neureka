@@ -118,7 +118,9 @@ public class Division extends AbstractOperation
                 operator
                     .setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -142,9 +144,8 @@ public class Division extends AbstractOperation
                                                                     start, end,
                                                                     _operationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
-                                                ),
-                                3
-                        )
+                                                )
+                            )
                     )
                     .setImplementationFor(
                         OpenCLDevice.class,
@@ -219,7 +220,9 @@ public class Division extends AbstractOperation
                 Broadcast.class,
                 broadcast.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -237,9 +240,8 @@ public class Division extends AbstractOperation
                                                                         call.getValOf( Arg.DerivIdx.class ), start, end,
                                                                         _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
-                                                ),
-                                3
-                        )
+                                                )
+                            )
                 ).setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()

@@ -107,7 +107,9 @@ public class MatMul extends AbstractOperation
                 simpleMatMulAlgorithm
                         .setImplementationFor(
                                 HostCPU.class,
-                                new HostImplementation(
+                                HostImplementation
+                                    .withArity(3)
+                                    .andImplementation(
                                         call ->
                                         {
                                             double[] A = (double[]) call.getTsrOfType(Double.class, 1).getData();
@@ -119,9 +121,8 @@ public class MatMul extends AbstractOperation
                                             int[] shapeC = call.getTsrOfType(Double.class, 0).getNDConf().shape();
 
                                             SimpleMatMul.execute(A, shapeA, B, shapeB, C, shapeC);
-                                        },
-                                        3
-                                )
+                                        }
+                                    )
                         )
                         .setImplementationFor(
                                 OpenCLDevice.class,
