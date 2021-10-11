@@ -19,14 +19,14 @@ import org.jetbrains.annotations.Contract;
 public final class Sinus extends AbstractOperation
 {
 
-    private DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
+    private final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.sin(t1_val[ t1Idx.i() ]);
                 else return ( t0Idx, t1Idx, t2Idx ) -> Math.cos(t1_val[ t1Idx.i() ]);
             };
 
-    private DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
+    private final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.sin(t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]);
@@ -51,8 +51,8 @@ public final class Sinus extends AbstractOperation
                         .setCanPerformBackwardADFor( call -> true )
                         .setCanPerformForwardADFor(
                              call -> {
-                                 Tsr last = null;
-                                 for ( Tsr t : call.getTensors() ) {
+                                 Tsr<?> last = null;
+                                 for ( Tsr<?> t : call.getTensors() ) {
                                      if ( last != null && !last.shape().equals(t.shape()) ) return false;
                                      last = t; // Note: shapes are cached!
                                  }
@@ -66,12 +66,12 @@ public final class Sinus extends AbstractOperation
                         .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
                         .setCallPreparation(
                              call -> {
-                                 Tsr[] tsrs = call.getTensors();
+                                 Tsr<?>[] tsrs = call.getTensors();
                                  Device device = call.getDevice();
                                  if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                                  {
                                      int[] shp = tsrs[ 1 ].getNDConf().shape();
-                                     Tsr output = Tsr.of( shp, 0.0 );
+                                     Tsr<?> output = Tsr.of( shp, 0.0 );
                                      output.setIsVirtual( false );
                                      try {
                                          device.store(output);

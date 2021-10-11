@@ -58,16 +58,17 @@ public final class Identity extends AbstractOperation
                     }
                     return true;
                 }
-        ).setSupplyADAgentFor(
+        )
+        .setSupplyADAgentFor(
             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                 getDefaultAlgorithm().supplyADAgentFor( f, call, forward )
         )
         .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
         .setCallPreparation(
                 call -> {
-                    Tsr[] tsrs = call.getTensors();
-                    int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                    return ExecutionCall.of(tsrs[offset], tsrs[1+offset])
+                    Tsr<?>[] tensors = call.getTensors();
+                    int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
+                    return ExecutionCall.of(tensors[offset], tensors[1+offset])
                                         .andArgs(Arg.DerivIdx.of(-1))
                                         .running(Neureka.get().context().getOperation("idy"))
                                         .on(call.getDevice());
@@ -138,11 +139,11 @@ public final class Identity extends AbstractOperation
             .setCanPerformForwardADFor(
                     call -> {
                         Tsr<?> last = null;
-                    for ( Tsr<?> t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
-                    }
-                    return true;
+                        for ( Tsr<?> t : call.getTensors() ) {
+                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                            last = t; // Note: shapes are cached!
+                        }
+                        return true;
                     }
             )
             .setSupplyADAgentFor(
@@ -152,12 +153,12 @@ public final class Identity extends AbstractOperation
             .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
             .setCallPreparation(
                 call -> {
-                    Tsr[] tsrs = call.getTensors();
+                    Tsr<?>[] tsrs = call.getTensors();
                     Device device = call.getDevice();
                     if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[ 1 ].getNDConf().shape();
-                        Tsr output = Tsr.of( shp, 0.0 );
+                        Tsr<?> output = Tsr.of( shp, 0.0 );
                         output.setIsVirtual( false );
                         try {
                             device.store(output);

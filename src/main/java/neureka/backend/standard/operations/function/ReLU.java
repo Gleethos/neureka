@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Contract;
 public final class ReLU extends AbstractOperation
 {
 
-    private DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
+    private final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) {
@@ -33,7 +33,7 @@ public final class ReLU extends AbstractOperation
                 }
             };
 
-    private DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
+    private final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) {

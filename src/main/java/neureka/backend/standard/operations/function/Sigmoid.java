@@ -17,14 +17,14 @@ import org.jetbrains.annotations.Contract;
 public final class Sigmoid extends AbstractOperation
 {
 
-    private DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
+    private final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> calculate( t1_val[ t1Idx.i() ], false );
                 else return ( t0Idx, t1Idx, t2Idx ) ->  calculate( t1_val[ t1Idx.i() ], true );
             };
 
-    private DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
+    private final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> calculate( t1_val[inputs[ 1 ].indexOfIndices( t1Idx )], false );
