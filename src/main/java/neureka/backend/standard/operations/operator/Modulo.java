@@ -83,7 +83,9 @@ public class Modulo extends AbstractOperation {
                 Operator.class,
                 operator.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -107,9 +109,8 @@ public class Modulo extends AbstractOperation {
                                                                         start, end,
                                                                         operationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
-                                                ),
-                                3
-                        )
+                                                )
+                            )
                 ).setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
@@ -224,7 +225,9 @@ public class Modulo extends AbstractOperation {
                 Broadcast.class,
                 broadcast.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -242,9 +245,8 @@ public class Modulo extends AbstractOperation {
                                                                         call.getValOf( Arg.DerivIdx.class ), start, end,
                                                                         creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
-                                                ),
-                                3
-                        )
+                                                )
+                            )
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,
@@ -326,7 +328,9 @@ public class Modulo extends AbstractOperation {
                 Scalarization.class,
                 scalarization.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call -> {
                                     double value = call.getTsrOfType( Number.class, 0 ).value64( 2 );
                                     call.getDevice().getExecutor()
@@ -346,9 +350,8 @@ public class Modulo extends AbstractOperation {
                                                                     scalarCreator.create(call.getTensors(), value, -1)
                                                             )
                                             );
-                                },
-                                3
-                        )
+                                }
+                            )
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,

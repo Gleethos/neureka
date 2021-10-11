@@ -79,7 +79,9 @@ public class MultiplicationLeftConv extends AbstractOperation {
                 Broadcast.class,
                 xBroadcast.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call ->
                                         call.getDevice().getExecutor()
                                                 .threaded (
@@ -97,10 +99,10 @@ public class MultiplicationLeftConv extends AbstractOperation {
                                                                         call.getValOf( Arg.DerivIdx.class ), start, end,
                                                                         Multiplication.xBCCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))
                                                                 )
-                                                ),
-                                3
-                        )
-                ).setImplementationFor(
+                                                )
+                            )
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
                                 .arity( 3 )

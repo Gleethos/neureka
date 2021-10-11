@@ -311,7 +311,9 @@ public class Division extends AbstractOperation
                 Scalarization.class,
                 scalarization.setImplementationFor(
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+                            .withArity(3)
+                            .andImplementation(
                                 call -> {
                                     double value = call.getTsrOfType( Number.class, 0 ).value64( 2 );
                                     call.getDevice().getExecutor()
@@ -331,9 +333,8 @@ public class Division extends AbstractOperation
                                                                     scalarCreator.create(call.getTensors(), value, call.getValOf( Arg.DerivIdx.class ))
                                                             )
                                             );
-                                },
-                                3
-                        )
+                                }
+                            )
                 )
                 .setImplementationFor(
                         OpenCLDevice.class,
