@@ -17,13 +17,13 @@ import org.jetbrains.annotations.Contract;
 public final class Cosinus extends AbstractOperation
 {
 
-    private DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
+    private final DefaultOperatorCreator<TertiaryNDIConsumer> _creator =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.cos(t1_val[ t1Idx.i() ]);
                 else return ( t0Idx, t1Idx, t2Idx ) -> -Math.sin(t1_val[ t1Idx.i() ]);
             };
-    private DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
+    private final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.cos(t1_val[inputs[ 1 ].indexOfIndices( t1Idx )]);
@@ -76,7 +76,8 @@ public final class Cosinus extends AbstractOperation
                                                         )
                                 )
                             )
-                ).setImplementationFor(
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
                                 .arity( 3 )
@@ -99,7 +100,6 @@ public final class Cosinus extends AbstractOperation
                                 .build()
                 )
         );
-
     }
 
     @Override

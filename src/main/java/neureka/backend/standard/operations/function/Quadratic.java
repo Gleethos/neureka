@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Contract;
 public final class Quadratic extends AbstractOperation
 {
 
-    private DefaultOperatorCreator<TertiaryNDIConsumer> _creatorNDI =
+    private final DefaultOperatorCreator<TertiaryNDIConsumer> _creatorNDI =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) {
@@ -28,7 +28,7 @@ public final class Quadratic extends AbstractOperation
                 } else return ( t0Idx, t1Idx, t2Idx ) -> 2 * t1_val[ t1Idx.i() ];
             };
 
-    private DefaultOperatorCreator<TertiaryNDAConsumer> _creatorNDX =
+    private final DefaultOperatorCreator<TertiaryNDAConsumer> _creatorNDX =
             ( inputs, d ) -> {
                 double[] t1_val = inputs[ 1 ].value64();
                 if ( d < 0 ) {
@@ -108,8 +108,6 @@ public final class Quadratic extends AbstractOperation
                                 .build()
                 )
         );
-
-
     }
 
     @Override

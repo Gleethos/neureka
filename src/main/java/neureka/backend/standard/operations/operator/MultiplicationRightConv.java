@@ -58,17 +58,17 @@ public class MultiplicationRightConv extends AbstractOperation {
                             if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                             else
                             {
-                                Tsr deriv = f.derive( inputs, d );
+                                Tsr<?> deriv = f.derive( inputs, d );
                                 return ADAgent.of( deriv )
-                                                .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
-                                                .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
+                                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
+                                                .setBackward( (node, backwardError ) -> mul.execute( backwardError, deriv ) );
                             }
                         }
                 )
                 .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
                 .setCallPreparation(
                         call -> {
-                            Tsr[] tsrs = call.getTensors();
+                            Tsr<?>[] tsrs = call.getTensors();
                             int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
                             return
                                     ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().context().getOperation("idy")).on(call.getDevice());

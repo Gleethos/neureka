@@ -162,7 +162,6 @@ public final class Gaussian extends AbstractOperation
                                 .build()
                 )
         );
-
     }
 
     @Override

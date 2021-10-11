@@ -103,10 +103,6 @@ public final class Sigmoid extends AbstractOperation
                                 .build()
                 )
         );
-
-
-
-
     }
 
     @Override

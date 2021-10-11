@@ -119,8 +119,6 @@ public final class ReLU extends AbstractOperation
                                 .build()
                 )
         );
-
-
     }
 
     @Override
