@@ -8,7 +8,9 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.HostImplementation;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
 
@@ -19,129 +21,120 @@ public class Randomization extends AbstractOperation
 
     public Randomization()
     {
-<span class="nc" id="L22">        super(</span>
+<span class="nc" id="L24">        super(</span>
                 new OperationBuilder()
-<span class="nc" id="L24">                        .setFunction(         &quot;random&quot;    )</span>
-<span class="nc" id="L25">                        .setOperator(         &quot;rand&quot;        )</span>
-<span class="nc" id="L26">                        .setArity(            1          )</span>
-<span class="nc" id="L27">                        .setIsOperator(       true       )</span>
-<span class="nc" id="L28">                        .setIsIndexer(        false      )</span>
-<span class="nc" id="L29">                        .setIsDifferentiable( false       )</span>
-<span class="nc" id="L30">                        .setIsInline(         true      )</span>
+<span class="nc" id="L26">                        .setFunction(         &quot;random&quot;    )</span>
+<span class="nc" id="L27">                        .setOperator(         &quot;rand&quot;        )</span>
+<span class="nc" id="L28">                        .setArity(            1          )</span>
+<span class="nc" id="L29">                        .setIsOperator(       true       )</span>
+<span class="nc" id="L30">                        .setIsIndexer(        false      )</span>
+<span class="nc" id="L31">                        .setIsDifferentiable( false       )</span>
+<span class="nc" id="L32">                        .setIsInline(         true      )</span>
         );
 
-<span class="nc" id="L33">        ScalarOperatorCreator&lt; PrimaryNDIConsumer &gt; creator =</span>
-                ( inputs, value, d ) -&gt; {
-<span class="nc" id="L35">                    return t1Idx -&gt; {</span>
-<span class="nc" id="L36">                        int sum = 0;</span>
-<span class="nc" id="L37">                        int[] indices = t1Idx.get();</span>
-<span class="nc bnc" id="L38" title="All 2 branches missed.">                        for ( int i : indices ) sum += i;</span>
-<span class="nc" id="L39">                        Random dice = new Random();</span>
-<span class="nc" id="L40">                        dice.setSeed( Double.doubleToLongBits( value + sum ) );</span>
-<span class="nc" id="L41">                        return dice.nextGaussian();</span>
-                    };
+<span class="nc" id="L35">        ScalarOperatorCreator&lt; PrimaryNDIConsumer &gt; creator =</span>
+<span class="nc" id="L36">                ( inputs, value, d ) -&gt; t1Idx -&gt; {</span>
+<span class="nc" id="L37">                    int sum = 0;</span>
+<span class="nc" id="L38">                    int[] indices = t1Idx.get();</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">                    for ( int i : indices ) sum += i;</span>
+<span class="nc" id="L40">                    Random dice = new Random();</span>
+<span class="nc" id="L41">                    dice.setSeed( Double.doubleToLongBits( value + sum ) );</span>
+<span class="nc" id="L42">                    return dice.nextGaussian();</span>
                 };
 
 <span class="nc" id="L45">        ScalarOperatorCreator&lt;PrimaryNDAConsumer&gt; creatorX =</span>
-                ( inputs, value, d ) -&gt; {
-<span class="nc" id="L47">                    return t1Idx -&gt; {</span>
-<span class="nc" id="L48">                        int sum = 0;</span>
-<span class="nc bnc" id="L49" title="All 2 branches missed.">                        for ( int indices : t1Idx) sum += indices;</span>
-<span class="nc" id="L50">                        Random dice = new Random();</span>
-<span class="nc" id="L51">                        dice.setSeed(Double.doubleToLongBits(value+sum));</span>
-<span class="nc" id="L52">                        return dice.nextGaussian();</span>
-                    };
+<span class="nc" id="L46">                ( inputs, value, d ) -&gt; t1Idx -&gt; {</span>
+<span class="nc" id="L47">                    int sum = 0;</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">                    for ( int indices : t1Idx ) sum += indices;</span>
+<span class="nc" id="L49">                    Random dice = new Random();</span>
+<span class="nc" id="L50">                    dice.setSeed( Double.doubleToLongBits( value + sum ) );</span>
+<span class="nc" id="L51">                    return dice.nextGaussian();</span>
                 };
 
-<span class="nc" id="L56">        Scalarization scalarization = new Scalarization()</span>
-<span class="nc" id="L57">        .setCanPerformBackwardADFor( call -&gt; true )</span>
-<span class="nc" id="L58">        .setCanPerformForwardADFor(</span>
+<span class="nc" id="L54">        Scalarization scalarization = new Scalarization()</span>
+<span class="nc" id="L55">        .setCanPerformBackwardADFor( call -&gt; true )</span>
+<span class="nc" id="L56">        .setCanPerformForwardADFor(</span>
                 call -&gt; {
-<span class="nc bnc" id="L60" title="All 2 branches missed.">                    if ( call.getOperation().supports(Convolution.class) ) return false;</span>
-<span class="nc bnc" id="L61" title="All 2 branches missed.">                    if ( call.getOperation().getOperator().equals(&quot;,&quot;) ) return false; //Reshape</span>
-<span class="nc" id="L62">                    Tsr&lt;?&gt; last = null;</span>
-<span class="nc bnc" id="L63" title="All 2 branches missed.">                    for ( Tsr&lt;?&gt; t : call.getTensors() ) {</span>
-<span class="nc bnc" id="L64" title="All 4 branches missed.">                        if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return false;</span>
-<span class="nc" id="L65">                        last = t; // Note: shapes are cached!</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">                    if ( call.getOperation().supports(Convolution.class) ) return false;</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">                    if ( call.getOperation().getOperator().equals(&quot;,&quot;) ) return false; //Reshape</span>
+<span class="nc" id="L60">                    Tsr&lt;?&gt; last = null;</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">                    for ( Tsr&lt;?&gt; t : call.getTensors() ) {</span>
+<span class="nc bnc" id="L62" title="All 4 branches missed.">                        if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return false;</span>
+<span class="nc" id="L63">                        last = t; // Note: shapes are cached!</span>
                     }
-<span class="nc" id="L67">                    return true;</span>
+<span class="nc" id="L65">                    return true;</span>
                 }
         )
-<span class="nc" id="L70">        .setSupplyADAgentFor(</span>
+<span class="nc" id="L68">        .setSupplyADAgentFor(</span>
             ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt;
-<span class="nc" id="L72">                    getDefaultAlgorithm().supplyADAgentFor( f, call, forward )</span>
+<span class="nc" id="L70">                    getDefaultAlgorithm().supplyADAgentFor( f, call, forward )</span>
         )
-<span class="nc" id="L74">        .setHandleInsteadOfDevice( (caller, call ) -&gt; null )</span>
-<span class="nc" id="L75">        .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -&gt; null )</span>
-<span class="nc" id="L76">        .setInstantiateNewTensorsForExecutionIn(</span>
+<span class="nc" id="L72">        .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)</span>
+<span class="nc" id="L73">        .setCallPreparation(</span>
                 call -&gt; {
-<span class="nc" id="L78">                    Tsr[] tsrs = call.getTensors();</span>
-<span class="nc bnc" id="L79" title="All 2 branches missed.">                    int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;</span>
-<span class="nc" id="L80">                    return</span>
-<span class="nc" id="L81">                            ExecutionCall.builder()</span>
-<span class="nc" id="L82">                                .device( call.getDevice() )</span>
-<span class="nc" id="L83">                                .tensors( new Tsr[]{tsrs[offset], tsrs[1+offset]} )</span>
-<span class="nc" id="L84">                                .derivativeIndex( -1 )</span>
-<span class="nc" id="L85">                                .operation( Neureka.get().context().instance(&quot;idy&quot;) )</span>
-<span class="nc" id="L86">                                .build();</span>
+<span class="nc" id="L75">                    Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">                    int offset = ( tensors[ 0 ] == null ) ? 1 : 0;</span>
+<span class="nc" id="L77">                    return</span>
+<span class="nc" id="L78">                            ExecutionCall.of(tensors[offset], tensors[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().context().getOperation(&quot;idy&quot;)).on(call.getDevice());</span>
                 }
         )
-<span class="nc" id="L89">        .build();</span>
+<span class="nc" id="L81">        .buildFunAlgorithm();</span>
 
-<span class="nc" id="L91">        setAlgorithm(</span>
+<span class="nc" id="L83">        setAlgorithm(</span>
                 Scalarization.class,
-<span class="nc" id="L93">                scalarization.setImplementationFor(</span>
+<span class="nc" id="L85">                scalarization.setImplementationFor(</span>
                         HostCPU.class,
-                        new HostImplementation(
-<span class="nc" id="L96">                                call -&gt; call.getDevice().getExecutor()</span>
-<span class="nc" id="L97">                                        .threaded (</span>
-<span class="nc" id="L98">                                                call.getTsrOfType( Number.class, 0 ).size(),</span>
-<span class="nc bnc" id="L99" title="All 2 branches missed.">                                                (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())</span>
-<span class="nc" id="L100">                                                ? ( start, end ) -&gt;</span>
-<span class="nc" id="L101">                                                        Scalarization.scalarize (</span>
-<span class="nc" id="L102">                                                                call.getTsrOfType( Number.class, 0 ),</span>
+                        HostImplementation
+<span class="nc" id="L88">                            .withArity(3)</span>
+<span class="nc" id="L89">                            .andImplementation(</span>
+<span class="nc" id="L90">                                call -&gt; call.getDevice().getExecutor()</span>
+<span class="nc" id="L91">                                        .threaded (</span>
+<span class="nc" id="L92">                                                call.getTsrOfType( Number.class, 0 ).size(),</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">                                                (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())</span>
+<span class="nc" id="L94">                                                ? ( start, end ) -&gt;</span>
+<span class="nc" id="L95">                                                        Scalarization.scalarize (</span>
+<span class="nc" id="L96">                                                                call.getTsrOfType( Number.class, 0 ),</span>
                                                                 start, end,
-<span class="nc" id="L104">                                                                creatorX.create(</span>
-<span class="nc" id="L105">                                                                        call.getTensors(),</span>
-<span class="nc" id="L106">                                                                        call.getTsrOfType( Number.class, 1 ).value64( 0 ),</span>
-<span class="nc" id="L107">                                                                        call.getDerivativeIndex()</span>
+<span class="nc" id="L98">                                                                creatorX.create(</span>
+<span class="nc" id="L99">                                                                        call.getTensors(),</span>
+<span class="nc" id="L100">                                                                        call.getTsrOfType( Number.class, 1 ).value64( 0 ),</span>
+<span class="nc" id="L101">                                                                        call.getValOf( Arg.DerivIdx.class )</span>
                                                                 )
                                                         )
-<span class="nc" id="L110">                                                : ( start, end ) -&gt;</span>
-<span class="nc" id="L111">                                                        Scalarization.scalarize (</span>
-<span class="nc" id="L112">                                                            call.getTsrOfType( Number.class, 0 ),</span>
+<span class="nc" id="L104">                                                : ( start, end ) -&gt;</span>
+<span class="nc" id="L105">                                                        Scalarization.scalarize (</span>
+<span class="nc" id="L106">                                                            call.getTsrOfType( Number.class, 0 ),</span>
                                                             start, end,
-<span class="nc" id="L114">                                                            creator.create(</span>
-<span class="nc" id="L115">                                                                    call.getTensors(),</span>
-<span class="nc" id="L116">                                                                    call.getTsrOfType( Number.class, 1 ).value64( 0 ),</span>
-<span class="nc" id="L117">                                                                    call.getDerivativeIndex()</span>
+<span class="nc" id="L108">                                                            creator.create(</span>
+<span class="nc" id="L109">                                                                    call.getTensors(),</span>
+<span class="nc" id="L110">                                                                    call.getTsrOfType( Number.class, 1 ).value64( 0 ),</span>
+<span class="nc" id="L111">                                                                    call.getValOf( Arg.DerivIdx.class )</span>
                                                             )
                                                 )
-                                        ),
-                                3
+                                        )
                         )
                 )
         );
 
-<span class="nc" id="L126">    }</span>
+<span class="nc" id="L119">    }</span>
 
     @Override
     public String stringify( String[] children ) {
-<span class="nc" id="L130">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="nc bnc" id="L131" title="All 4 branches missed.">        if (expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')') {</span>
-<span class="nc" id="L132">            return &quot;rand&quot; + expression;</span>
+<span class="nc" id="L123">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="nc bnc" id="L124" title="All 4 branches missed.">        if (expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')') {</span>
+<span class="nc" id="L125">            return &quot;rand&quot; + expression;</span>
         }
-<span class="nc" id="L134">        return &quot;rand&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+<span class="nc" id="L127">        return &quot;rand&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L139">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L132">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="nc" id="L144">            return src[ 0 ].call( inputs, j );</span>
+<span class="nc" id="L137">            return src[ 0 ].call( inputs, j );</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

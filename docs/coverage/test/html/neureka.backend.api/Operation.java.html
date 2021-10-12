@@ -41,6 +41,7 @@ package neureka.backend.api;
 
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
+import neureka.backend.api.operations.OperationBuilder;
 import neureka.calculus.Function;
 import neureka.ndim.iterators.NDIterator;
 
@@ -61,6 +62,7 @@ import neureka.ndim.iterators.NDIterator;
  */
 public interface Operation
 {
+<span class="fc" id="L65">    static OperationBuilder builder() { return new OperationBuilder(); }</span>
 
     @FunctionalInterface
     interface TertiaryNDIConsumer { double execute( NDIterator t0Idx, NDIterator t1Idx, NDIterator t2Idx ); }
@@ -84,6 +86,8 @@ public interface Operation
     {  T create( Tsr&lt;?&gt;[] inputs, double scalar, int d ); }
 
     //==================================================================================================================
+
+    Algorithm&lt;?&gt;[] getAllAlgorithms();
 
     /**
      *  Alongside a component system made up of {@link Algorithm} instances, implementations
@@ -123,7 +127,7 @@ public interface Operation
     &lt;T extends Algorithm&lt;T&gt;&gt; Operation setAlgorithm( Class&lt;T&gt; type, T instance );
 
     default &lt;T extends Algorithm&lt;T&gt;&gt; Operation setAlgorithm( T instance ) {
-<span class="fc" id="L126">        return setAlgorithm( (Class&lt;T&gt;) instance.getClass(), instance );</span>
+<span class="fc" id="L130">        return setAlgorithm( (Class&lt;T&gt;) instance.getClass(), instance );</span>
     }
 
     /**
@@ -256,38 +260,38 @@ public interface Operation
      *  These slices may be used for many reasons, however mainly when iterating over
      *  inputs to a Function recursively in order to execute them pairwise for example...
      */
-<span class="nc" id="L259">    class Utility</span>
+<span class="nc" id="L263">    class Utility</span>
     {
         public static Tsr&lt;?&gt;[] subset( Tsr&lt;?&gt;[] tsrs, int padding, int index, int offset ) {
-<span class="pc bpc" id="L262" title="1 of 2 branches missed.">            if ( offset &lt; 0 ) {</span>
-<span class="nc" id="L263">                index += offset;</span>
-<span class="nc" id="L264">                offset *= -1;</span>
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">            if ( offset &lt; 0 ) {</span>
+<span class="nc" id="L267">                index += offset;</span>
+<span class="nc" id="L268">                offset *= -1;</span>
             }
-<span class="fc" id="L266">            Tsr&lt;?&gt;[] newTsrs = new Tsr[ offset + padding ];</span>
-<span class="fc" id="L267">            System.arraycopy( tsrs, index, newTsrs, padding, offset );</span>
-<span class="fc" id="L268">            return newTsrs;</span>
+<span class="fc" id="L270">            Tsr&lt;?&gt;[] newTsrs = new Tsr[ offset + padding ];</span>
+<span class="fc" id="L271">            System.arraycopy( tsrs, index, newTsrs, padding, offset );</span>
+<span class="fc" id="L272">            return newTsrs;</span>
         }
 
         public static Tsr&lt;?&gt;[] without( Tsr&lt;?&gt;[] tsrs, int index ) {
-<span class="fc" id="L272">            Tsr&lt;?&gt;[] newTsrs = new Tsr[ tsrs.length - 1 ];</span>
-<span class="fc bfc" id="L273" title="All 4 branches covered.">            for ( int i = 0; i &lt; newTsrs.length; i++ ) newTsrs[ i ] = tsrs[ i + ( ( i &lt; index ) ? 0 : 1 ) ];</span>
-<span class="fc" id="L274">            return newTsrs;</span>
+<span class="fc" id="L276">            Tsr&lt;?&gt;[] newTsrs = new Tsr[ tsrs.length - 1 ];</span>
+<span class="fc bfc" id="L277" title="All 4 branches covered.">            for ( int i = 0; i &lt; newTsrs.length; i++ ) newTsrs[ i ] = tsrs[ i + ( ( i &lt; index ) ? 0 : 1 ) ];</span>
+<span class="fc" id="L278">            return newTsrs;</span>
         }
 
         public static Tsr&lt;?&gt;[] offsetted( Tsr&lt;?&gt;[] tsrs, int offset ) {
-<span class="fc" id="L278">            Tsr&lt;?&gt;[] newTsrs = new Tsr[ tsrs.length - offset ];</span>
-<span class="fc" id="L279">            newTsrs[ 0 ] = Tsr.Create.newTsrLike( tsrs[ 1 ] );</span>
-<span class="fc bfc" id="L280" title="All 4 branches covered.">            if ( !tsrs[ 1 ].has( GraphNode.class ) &amp;&amp; tsrs[ 1 ] != tsrs[ 0 ] ) {//Deleting intermediate results!</span>
-<span class="fc" id="L281">                tsrs[ 1 ].delete();</span>
-<span class="fc" id="L282">                tsrs[ 1 ] = null;</span>
+<span class="fc" id="L282">            Tsr&lt;?&gt;[] newTsrs = new Tsr[ tsrs.length - offset ];</span>
+<span class="fc" id="L283">            newTsrs[ 0 ] = Tsr.Create.newTsrLike( tsrs[ 1 ] );</span>
+<span class="fc bfc" id="L284" title="All 4 branches covered.">            if ( !tsrs[ 1 ].has( GraphNode.class ) &amp;&amp; tsrs[ 1 ] != tsrs[ 0 ] ) {//Deleting intermediate results!</span>
+<span class="fc" id="L285">                tsrs[ 1 ].delete();</span>
+<span class="fc" id="L286">                tsrs[ 1 ] = null;</span>
             }
-<span class="pc bpc" id="L284" title="1 of 4 branches missed.">            if (!tsrs[ 2 ].has( GraphNode.class ) &amp;&amp; tsrs[ 2 ] != tsrs[ 0 ]) {//Deleting intermediate results!</span>
-<span class="fc" id="L285">                tsrs[ 2 ].delete();</span>
-<span class="fc" id="L286">                tsrs[ 2 ] = null;</span>
+<span class="pc bpc" id="L288" title="1 of 4 branches missed.">            if (!tsrs[ 2 ].has( GraphNode.class ) &amp;&amp; tsrs[ 2 ] != tsrs[ 0 ]) {//Deleting intermediate results!</span>
+<span class="fc" id="L289">                tsrs[ 2 ].delete();</span>
+<span class="fc" id="L290">                tsrs[ 2 ] = null;</span>
             }
-<span class="fc" id="L288">            System.arraycopy( tsrs, 1 + offset, newTsrs, 1, tsrs.length - 1 - offset );</span>
-<span class="fc" id="L289">            newTsrs[ 1 ] = tsrs[ 0 ];</span>
-<span class="fc" id="L290">            return newTsrs;</span>
+<span class="fc" id="L292">            System.arraycopy( tsrs, 1 + offset, newTsrs, 1, tsrs.length - 1 - offset );</span>
+<span class="fc" id="L293">            newTsrs[ 1 ] = tsrs[ 0 ];</span>
+<span class="fc" id="L294">            return newTsrs;</span>
         }
 
     }

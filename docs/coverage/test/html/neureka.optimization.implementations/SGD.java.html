@@ -40,7 +40,7 @@ import neureka.Tsr;
 import neureka.calculus.Function;
 import neureka.optimization.Optimizer;
 
-public class SGD&lt;ValType&gt; implements Optimizer&lt;ValType&gt;
+public class SGD&lt;V&gt; implements Optimizer&lt;V&gt;
 {
     private final double _learningRate;
     private final Function _function;
@@ -52,17 +52,17 @@ public class SGD&lt;ValType&gt; implements Optimizer&lt;ValType&gt;
 <span class="nc" id="L52">    }</span>
 
     @Override
-    public void optimize( Tsr&lt;ValType&gt; w ) {
-<span class="nc" id="L56">        Tsr&lt;ValType&gt; g = w.getGradient();</span>
-<span class="nc" id="L57">        Neureka.get().context().getFunction().idy().call( _function.call( g ) );</span>
-<span class="nc" id="L58">    }</span>
+    public Tsr&lt;V&gt; optimize( Tsr&lt;V&gt; w ) {
+<span class="nc" id="L56">        Tsr&lt;V&gt; g = w.getGradient();</span>
+<span class="nc" id="L57">        return Neureka.get().context().getFunction().idy().call( _function.call( g ) );</span>
+    }
 
     public double learningRate() {
 <span class="nc" id="L61">        return _learningRate;</span>
     }
 
     @Override
-    public boolean update( OwnerChangeRequest&lt;Tsr&lt;ValType&gt;&gt; changeRequest ) {
+    public boolean update( OwnerChangeRequest&lt;Tsr&lt;V&gt;&gt; changeRequest ) {
 <span class="nc" id="L66">        changeRequest.executeChange();</span>
 <span class="nc" id="L67">        return true;</span>
     }

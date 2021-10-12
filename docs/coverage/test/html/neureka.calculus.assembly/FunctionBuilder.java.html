@@ -23,17 +23,18 @@ import java.util.stream.IntStream;
 
 <span class="fc" id="L24">    private static final Pattern variablePattern = Pattern.compile(&quot;^(-?[iI]{1}[g]?\\[?[ ]*[g]?[jJ]+[ ]*\\]?)&quot;);</span>
 <span class="fc" id="L25">    private static final Pattern inputPattern    = Pattern.compile(&quot;^(-?[iI]{1}[g]?\\[?[ ]*[g]?[0-9]+[ ]*\\]?)&quot;);</span>
-<span class="fc" id="L26">    private static final Pattern constantPattern = Pattern.compile(&quot;^((-{1}[0-9]*|[0-9]*)[.]?[0-9]*(e[-]?[0-9]+)?)&quot;);</span>
+<span class="fc" id="L26">    private static final Pattern constantPattern = Pattern.compile(&quot;^((-?[0-9]*|[0-9]*)[.]?[0-9]*(e[-]?[0-9]+)?)&quot;);</span>
 
 <span class="fc" id="L28">    private static final Pattern reshapePattern = Pattern.compile(&quot;^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))&quot;);</span>
 <span class="fc" id="L29">    private static final Pattern nodePattern = Pattern.compile(&quot;^([\\(]{1}.+[\\)]{1})&quot;);</span>
 
     private final OperationContext _context;
-    
-    public FunctionBuilder( OperationContext context )
-<span class="fc" id="L34">    {</span>
-<span class="fc" id="L35">        _context = context;</span>
-<span class="fc" id="L36">    }</span>
+
+    /**
+     * @param context The {@link OperationContext} which will be used as a basis to parse new {@link Function}
+     *                implementation instance from provided {@link String} expressions.
+     */
+<span class="fc" id="L37">    public FunctionBuilder( OperationContext context ) { _context = context; }</span>
     
     /**
      * @param operation The {@link Operation} based on which the {@link Function} ought to be created.
@@ -43,14 +44,15 @@ import java.util.stream.IntStream;
      */
     public Function build( Operation operation, int numberOfArgs, boolean doAD )
     {
-<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if ( operation.isIndexer() ) return build( operation.getFunction() + &quot;( I[j] )&quot;, doAD );</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">        if ( operation.isIndexer() )</span>
+<span class="nc" id="L48">            return build( operation.getFunction() + &quot;( I[j] )&quot;, doAD );</span>
 
-<span class="fc" id="L48">        String args = IntStream.iterate( 0, n -&gt; n + 1 )</span>
-<span class="fc" id="L49">                                .limit( numberOfArgs )</span>
-<span class="fc" id="L50">                                .mapToObj( i -&gt; &quot;I[&quot; + i + &quot;]&quot; )</span>
-<span class="fc" id="L51">                                .collect( Collectors.joining( &quot;, &quot; ) );</span>
+<span class="fc" id="L50">        String args = IntStream.iterate( 0, n -&gt; n + 1 )</span>
+<span class="fc" id="L51">                                .limit( numberOfArgs )</span>
+<span class="fc" id="L52">                                .mapToObj( i -&gt; &quot;I[&quot; + i + &quot;]&quot; )</span>
+<span class="fc" id="L53">                                .collect( Collectors.joining( &quot;, &quot; ) );</span>
 
-<span class="fc" id="L53">        return build( operation.getFunction() + &quot;(&quot; + args + &quot;)&quot;, doAD );</span>
+<span class="fc" id="L55">        return build( operation.getFunction() + &quot;(&quot; + args + &quot;)&quot;, doAD );</span>
     }
 
     /**
@@ -60,25 +62,21 @@ import java.util.stream.IntStream;
      */
     public Function build( String expression, boolean doAD ) {
         expression =
-<span class="pc bpc" id="L63" title="1 of 2 branches missed.">                (expression.length() &gt; 0</span>
-<span class="fc bfc" id="L64" title="All 4 branches covered.">                        &amp;&amp; (expression.charAt( 0 ) != '(' || expression.charAt( expression.length() - 1 ) != ')'))</span>
-<span class="fc" id="L65">                        ? (&quot;(&quot; + expression + &quot;)&quot;)</span>
-<span class="fc" id="L66">                        : expression;</span>
-<span class="fc bfc" id="L67" title="All 2 branches covered.">        String k = ( doAD ) ? &quot;d&quot; + expression : expression;</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">                (expression.length() &gt; 0</span>
+<span class="fc bfc" id="L66" title="All 4 branches covered.">                        &amp;&amp; (expression.charAt( 0 ) != '(' || expression.charAt( expression.length() - 1 ) != ')'))</span>
+<span class="fc" id="L67">                        ? (&quot;(&quot; + expression + &quot;)&quot;)</span>
+<span class="fc" id="L68">                        : expression;</span>
 
-<span class="fc bfc" id="L69" title="All 2 branches covered.">        if ( _context.functionCache().functions().containsKey( k ) )</span>
-<span class="fc" id="L70">            return _context.functionCache().functions().get( k );</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if ( _context.getFunctionCache().has( expression, doAD ) )</span>
+<span class="fc" id="L71">            return _context.getFunctionCache().get( expression, doAD );</span>
 
-<span class="fc" id="L72">        expression = FunctionParser.unpackAndCorrect( expression );</span>
-<span class="fc" id="L73">        Function built = _build( expression, doAD );</span>
-<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if ( built != null )</span>
-<span class="fc" id="L75">            _context.functionCache().functions().put(</span>
-<span class="fc bfc" id="L76" title="All 2 branches covered.">                    ( ( (doAD) ? &quot;d&quot; : &quot;&quot; ) + &quot;(&quot; + built + &quot;)&quot; ).intern(), // Make the String unique!</span>
-                    built
-            );
+<span class="fc" id="L73">        expression = ParseUtil.unpackAndCorrect( expression );</span>
+<span class="fc" id="L74">        Function built = _build( expression, doAD );</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        if ( built != null )</span>
+<span class="fc" id="L76">            _context.getFunctionCache().put( built );</span>
         else
-<span class="nc" id="L80">            _LOG.error(&quot;Failed to parse function based on expression '&quot;+expression+&quot;' and autograd flag '&quot;+doAD+&quot;'.&quot;);</span>
-<span class="fc" id="L81">        return built;</span>
+<span class="nc" id="L78">            _LOG.error(&quot;Failed to parse function based on expression '&quot;+expression+&quot;' and autograd flag '&quot;+doAD+&quot;'.&quot;);</span>
+<span class="fc" id="L79">        return built;</span>
     }
 
     /**
@@ -88,231 +86,232 @@ import java.util.stream.IntStream;
      */
     private Function _build( String expression, boolean doAD )
     {
-<span class="fc" id="L91">        expression = expression</span>
-<span class="fc" id="L92">                .replace(&quot;&lt;&lt;&quot;, &quot;&quot; + ((char) 171))</span>
-<span class="fc" id="L93">                .replace(&quot;&gt;&gt;&quot;, &quot;&quot; + ((char) 187));</span>
-<span class="fc" id="L94">        expression = expression</span>
-<span class="fc" id="L95">                .replace(&quot;&lt;-&quot;, &quot;&lt;&quot;)</span>
-<span class="fc" id="L96">                .replace(&quot;-&gt;&quot;, &quot;&gt;&quot;);</span>
+<span class="fc" id="L89">        expression = expression</span>
+<span class="fc" id="L90">                .replace(&quot;&lt;&lt;&quot;, &quot;&quot; + ((char) 171))</span>
+<span class="fc" id="L91">                .replace(&quot;&gt;&gt;&quot;, &quot;&quot; + ((char) 187));</span>
+<span class="fc" id="L92">        expression = expression</span>
+<span class="fc" id="L93">                .replace(&quot;&lt;-&quot;, &quot;&lt;&quot;)</span>
+<span class="fc" id="L94">                .replace(&quot;-&gt;&quot;, &quot;&gt;&quot;);</span>
 
-<span class="fc bfc" id="L98" title="All 2 branches covered.">        if ( expression.equals(&quot;&quot;) )</span>
-<span class="fc" id="L99">            return new FunctionConstant().newBuild(&quot;0&quot;);</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if ( expression.equals(&quot;&quot;) )</span>
+<span class="fc" id="L97">            return new FunctionConstant().newBuild(&quot;0&quot;);</span>
 
-<span class="fc" id="L101">        expression = FunctionParser.unpackAndCorrect(expression);</span>
-<span class="fc" id="L102">        List&lt;String&gt; foundJunctors = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L103">        List&lt;String&gt; foundComponents = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L99">        expression = ParseUtil.unpackAndCorrect(expression);</span>
+<span class="fc" id="L100">        List&lt;String&gt; foundOperations = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L101">        List&lt;String&gt; foundComponents = new ArrayList&lt;&gt;();</span>
 
-<span class="fc bfc" id="L105" title="All 2 branches covered.">        for ( int ei = 0; ei &lt; expression.length(); ) {</span>
-<span class="fc" id="L106">            final String newComponent = FunctionParser.findComponentIn( expression, ei );</span>
-<span class="pc bpc" id="L107" title="1 of 2 branches missed.">            if ( newComponent != null ) {</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        for ( int ei = 0; ei &lt; expression.length(); ) {</span>
+<span class="fc" id="L104">            final String newComponent = ParseUtil.findComponentIn( expression, ei );</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">            if ( newComponent != null ) {</span>
                 // Empty strings are not components and will be skipped:
-<span class="fc bfc" id="L109" title="All 2 branches covered.">                if ( newComponent.trim().isEmpty()) ei += newComponent.length();</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">                if ( newComponent.trim().isEmpty()) ei += newComponent.length();</span>
                 else // String has content so lets add it to the lists:
                 {
-<span class="pc bpc" id="L112" title="1 of 2 branches missed.">                    if ( foundComponents.size() &lt;= foundJunctors.size() ) {</span>
-<span class="fc" id="L113">                        foundComponents.add(newComponent);</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">                    if ( foundComponents.size() &lt;= foundOperations.size() ) {</span>
+<span class="fc" id="L111">                        foundComponents.add(newComponent);</span>
                     }
-<span class="fc" id="L115">                    ei += newComponent.length(); // And now we continue parsing where the string ends...</span>
+<span class="fc" id="L113">                    ei += newComponent.length(); // And now we continue parsing where the string ends...</span>
                     // After a component however, we expect an operator:
-<span class="fc" id="L117">                    final String newOperation = FunctionParser.parsedOperation( expression, ei );</span>
-<span class="fc bfc" id="L118" title="All 2 branches covered.">                    if ( newOperation != null ) {</span>
-<span class="fc" id="L119">                        ei += newOperation.length();</span>
-<span class="pc bpc" id="L120" title="1 of 2 branches missed.">                        if ( newOperation.length() &lt;= 0 ) continue;</span>
-<span class="fc" id="L121">                        foundJunctors.add( newOperation );</span>
+<span class="fc" id="L115">                    final String newOperation = ParseUtil.parsedOperation( expression, ei );</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">                    if ( newOperation != null ) {</span>
+<span class="fc" id="L117">                        ei += newOperation.length();</span>
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">                        if ( newOperation.length() &lt;= 0 ) continue;</span>
+<span class="fc" id="L119">                        foundOperations.add( newOperation );</span>
                     }
-<span class="fc" id="L123">                }</span>
+<span class="fc" id="L121">                }</span>
             }
             else
-<span class="nc" id="L126">                ++ei; // Parsing failed for this index so let's try the next one!</span>
-<span class="fc" id="L127">        }</span>
+<span class="nc" id="L124">                ++ei; // Parsing failed for this index so let's try the next one!</span>
+<span class="fc" id="L125">        }</span>
         //---
 
-<span class="fc" id="L130">        int counter = _context.size();</span>
-<span class="fc bfc" id="L131" title="All 2 branches covered.">        for ( int j = _context.size(); j &gt; 0; --j ) {</span>
-<span class="fc bfc" id="L132" title="All 2 branches covered.">            if ( !foundJunctors.contains( _context.instance(j - 1).getOperator() ) )</span>
-<span class="fc" id="L133">                --counter;</span>
+<span class="fc" id="L128">        int counter = _context.size();</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        for ( int j = _context.size(); j &gt; 0; --j ) {</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">            if ( !foundOperations.contains( _context.getOperation(j - 1).getOperator() ) )</span>
+<span class="fc" id="L131">                --counter;</span>
             else
-<span class="fc" id="L135">                j = 0;</span>
+<span class="fc" id="L133">                j = 0;</span>
         }
-<span class="fc bfc" id="L137" title="All 2 branches covered.">        for ( int operationID = 0; operationID &lt; counter; operationID++ ) {</span>
-<span class="fc" id="L138">            final List&lt;String&gt; newJunctors = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L139">            final List&lt;String&gt; newComponents = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L140" title="All 2 branches covered.">            if ( foundJunctors.contains( _context.instance( operationID ).getOperator() ) ) {</span>
-<span class="fc" id="L141">                String currentChain = null;</span>
-<span class="fc" id="L142">                boolean groupingOccurred = false;</span>
-<span class="fc bfc" id="L143" title="All 2 branches covered.">                boolean enoughPresent = FunctionParser.numberOfOperationsWithin( foundJunctors ) &gt; 1;// Otherwise: I[j]^4 goes nuts!</span>
-<span class="fc bfc" id="L144" title="All 2 branches covered.">                if ( enoughPresent ) {</span>
-<span class="fc" id="L145">                    String[] ComponentsArray = foundComponents.toArray( new String[ 0 ] );</span>
-<span class="fc" id="L146">                    int length = ComponentsArray.length;</span>
-<span class="fc bfc" id="L147" title="All 2 branches covered.">                    for ( int ci = 0; ci &lt; length; ci++ ) {</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        for ( int operationID = 0; operationID &lt; counter; operationID++ ) {</span>
+<span class="fc" id="L136">            final List&lt;String&gt; newJunctors = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L137">            final List&lt;String&gt; newComponents = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">            if ( foundOperations.contains( _context.getOperation( operationID ).getOperator() ) ) {</span>
+<span class="fc" id="L139">                String currentChain = null;</span>
+<span class="fc" id="L140">                boolean groupingOccurred = false;</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">                boolean enoughPresent = ParseUtil.numberOfOperationsWithin( foundOperations ) &gt; 1;// Otherwise: I[j]^4 goes nuts!</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">                if ( enoughPresent ) {</span>
+<span class="fc" id="L143">                    String[] foundCompArray = foundComponents.toArray( new String[ 0 ] );</span>
+<span class="fc" id="L144">                    int length = foundCompArray.length;</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">                    for ( int ci = 0; ci &lt; length; ci++ ) {</span>
                         String currentComponent;
-<span class="fc" id="L149">                        currentComponent = ComponentsArray[ci];</span>
-<span class="fc" id="L150">                        String currentOperation = null;</span>
-<span class="fc bfc" id="L151" title="All 2 branches covered.">                        if ( foundJunctors.size() &gt; ci ) {</span>
-<span class="fc" id="L152">                            currentOperation = foundJunctors.get(ci);</span>
+<span class="fc" id="L147">                        currentComponent = foundCompArray[ci];</span>
+<span class="fc" id="L148">                        String currentOperation = null;</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">                        if ( foundOperations.size() &gt; ci ) {</span>
+<span class="fc" id="L150">                            currentOperation = foundOperations.get(ci);</span>
                         }
-<span class="fc bfc" id="L154" title="All 2 branches covered.">                        if ( currentOperation != null ) {</span>
-<span class="fc" id="L155">                            if (</span>
-<span class="fc bfc" id="L156" title="All 2 branches covered.">                                    currentOperation.equals(_context.instance(operationID).getOperator())</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">                        if ( currentOperation != null ) {</span>
+<span class="fc" id="L153">                            if (</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">                                    currentOperation.equals(_context.getOperation(operationID).getOperator())</span>
                             ) {
-<span class="fc" id="L158">                                final String newChain =</span>
-<span class="fc" id="L159">                                        FunctionParser.groupBy(</span>
-<span class="fc" id="L160">                                                _context.instance(operationID).getOperator(),</span>
+<span class="fc" id="L156">                                final String newChain =</span>
+<span class="fc" id="L157">                                        ParseUtil.groupBy(</span>
+<span class="fc" id="L158">                                                _context.getOperation(operationID).getOperator(),</span>
                                                 currentChain,
                                                 currentComponent,
                                                 currentOperation
                                         );
-<span class="pc bpc" id="L165" title="1 of 2 branches missed.">                                if ( newChain != null ) currentChain = newChain;</span>
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">                                if ( newChain != null ) currentChain = newChain;</span>
 
-<span class="fc" id="L167">                                groupingOccurred = true;</span>
-<span class="fc" id="L168">                            } else {</span>
-<span class="fc bfc" id="L169" title="All 2 branches covered.">                                if ( currentChain == null ) newComponents.add(currentComponent);</span>
-<span class="fc" id="L170">                                else newComponents.add( currentChain + currentComponent );</span>
-<span class="fc" id="L171">                                newJunctors.add( currentOperation );</span>
-<span class="fc" id="L172">                                groupingOccurred = true;</span>
-<span class="fc" id="L173">                                currentChain = null;</span>
+<span class="fc" id="L165">                                groupingOccurred = true;</span>
+<span class="fc" id="L166">                            } else {</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">                                if ( currentChain == null ) newComponents.add(currentComponent);</span>
+<span class="fc" id="L168">                                else newComponents.add( currentChain + currentComponent );</span>
+<span class="fc" id="L169">                                newJunctors.add( currentOperation );</span>
+<span class="fc" id="L170">                                groupingOccurred = true;</span>
+<span class="fc" id="L171">                                currentChain = null;</span>
                             }
                         } else {
-<span class="fc bfc" id="L176" title="All 2 branches covered.">                            if ( currentChain == null )</span>
-<span class="fc" id="L177">                                newComponents.add( currentComponent );</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">                            if ( currentChain == null )</span>
+<span class="fc" id="L175">                                newComponents.add( currentComponent );</span>
                             else {
-<span class="fc" id="L179">                                newComponents.add( currentChain + currentComponent );</span>
-<span class="fc" id="L180">                                groupingOccurred = true;</span>
+<span class="fc" id="L177">                                newComponents.add( currentChain + currentComponent );</span>
+<span class="fc" id="L178">                                groupingOccurred = true;</span>
                             }
-<span class="fc" id="L182">                            currentChain = null;</span>
+<span class="fc" id="L180">                            currentChain = null;</span>
                         }
                     }
                 }
-<span class="fc bfc" id="L186" title="All 2 branches covered.">                if ( groupingOccurred ) {</span>
-<span class="fc" id="L187">                    foundJunctors = newJunctors;</span>
-<span class="fc" id="L188">                    foundComponents = newComponents;</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">                if ( groupingOccurred ) {</span>
+<span class="fc" id="L185">                    foundOperations = newJunctors;</span>
+<span class="fc" id="L186">                    foundComponents = newComponents;</span>
                 }
             }
         }
 
         // building sources and function:
-<span class="fc bfc" id="L194" title="All 2 branches covered.">        if ( foundComponents.size() == 1 )</span>
-<span class="fc" id="L195">            return _buildFunction( foundComponents.get(0), doAD );</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">        if ( foundComponents.size() == 1 )</span>
+<span class="fc" id="L193">            return _buildFunction( foundComponents.get(0), doAD );</span>
         else
-<span class="fc" id="L197">            return _buildOperators( foundComponents, foundJunctors, doAD );</span>
+            // It's not a function but operators:
+<span class="fc" id="L196">            return _buildOperators( foundComponents, foundOperations, doAD );</span>
 
     }
 
     private Function _buildFunction( String foundComponent, boolean doAD ) {
-<span class="fc" id="L202">        ArrayList&lt;Function&gt; sources = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L203">        String possibleFunction = FunctionParser.parsedOperation(</span>
+<span class="fc" id="L201">        ArrayList&lt;Function&gt; sources = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L202">        String possibleFunction = ParseUtil.parsedOperation(</span>
                 foundComponent,
                 0
         );
-<span class="fc bfc" id="L207" title="All 4 branches covered.">        if ( possibleFunction != null &amp;&amp; possibleFunction.length() &gt; 1 ) {</span>
-<span class="pc bpc" id="L208" title="1 of 2 branches missed.">            for ( int oi = 0; oi &lt; _context.size(); oi++ ) {</span>
-<span class="fc bfc" id="L209" title="All 2 branches covered.">                if (_context.instance(oi).getFunction().equalsIgnoreCase(possibleFunction)) {</span>
-<span class="fc" id="L210">                    List&lt;String&gt; parameters = FunctionParser.findParametersIn(</span>
+<span class="fc bfc" id="L206" title="All 4 branches covered.">        if ( possibleFunction != null &amp;&amp; possibleFunction.length() &gt; 1 ) {</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">            for ( int oi = 0; oi &lt; _context.size(); oi++ ) {</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">                if (_context.getOperation(oi).getFunction().equalsIgnoreCase(possibleFunction)) {</span>
+<span class="fc" id="L209">                    List&lt;String&gt; parameters = ParseUtil.findParametersIn(</span>
                                                                         foundComponent,
-<span class="fc" id="L212">                                                                        possibleFunction.length()</span>
+<span class="fc" id="L211">                                                                        possibleFunction.length()</span>
                                                                 );
-<span class="pc bpc" id="L214" title="2 of 4 branches missed.">                    assert parameters != null;</span>
-<span class="fc bfc" id="L215" title="All 2 branches covered.">                    for ( String p : parameters ) sources.add(build(p, doAD));</span>
-<span class="fc" id="L216">                    return new FunctionNode( _context.instance( oi ), sources, doAD );</span>
+<span class="pc bpc" id="L213" title="2 of 4 branches missed.">                    assert parameters != null;</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">                    for ( String p : parameters ) sources.add(build(p, doAD));</span>
+<span class="fc" id="L215">                    return new FunctionNode( _context.getOperation( oi ), sources, doAD );</span>
                 }
             }
         }
         //---
-<span class="fc" id="L221">        String component = FunctionParser.unpackAndCorrect( foundComponent );</span>
+<span class="fc" id="L220">        String component = ParseUtil.unpackAndCorrect( foundComponent );</span>
 
-<span class="fc bfc" id="L223" title="All 2 branches covered.">        if ( constantPattern.matcher( component ).matches()   ) return new FunctionConstant().newBuild( component );</span>
-<span class="fc bfc" id="L224" title="All 2 branches covered.">        else if ( inputPattern.matcher( component ).find()    ) return new FunctionInput()   .newBuild( component );</span>
-<span class="fc bfc" id="L225" title="All 2 branches covered.">        else if ( variablePattern.matcher( component ).find() ) return new FunctionVariable().newBuild( component );</span>
-<span class="fc bfc" id="L226" title="All 2 branches covered.">        else if ( component.startsWith(&quot;-&quot;) ) {</span>
-<span class="fc" id="L227">            component = &quot;-1 * &quot;+component.substring(1);</span>
-<span class="fc" id="L228">            return _build(component, doAD);</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        if ( constantPattern.matcher( component ).matches()   ) return new FunctionConstant().newBuild( component );</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">        else if ( inputPattern.matcher( component ).find()    ) return new FunctionInput()   .newBuild( component );</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">        else if ( variablePattern.matcher( component ).find() ) return new FunctionVariable().newBuild( component );</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">        else if ( component.startsWith(&quot;-&quot;) ) {</span>
+<span class="fc" id="L226">            component = &quot;-1 * &quot;+component.substring(1);</span>
+<span class="fc" id="L227">            return _build(component, doAD);</span>
         }
         // If the component did not trigger constant/input/variable creation: -&gt; Cleaning!
-<span class="fc" id="L231">        String cleaned = FunctionParser.cleanedHeadAndTail(component);</span>
-<span class="fc" id="L232">        String raw = component.replace( cleaned, &quot;&quot; );</span>
-<span class="fc" id="L233">        String assumed = FunctionParser.assumptionBasedOn( raw );</span>
-<span class="fc bfc" id="L234" title="All 2 branches covered.">        if ( assumed.trim().equals(&quot;&quot;) ) component = cleaned;</span>
-<span class="fc" id="L235">        else component = assumed + cleaned;</span>
+<span class="fc" id="L230">        String cleaned = ParseUtil.cleanedHeadAndTail(component);</span>
+<span class="fc" id="L231">        String raw = component.replace( cleaned, &quot;&quot; );</span>
+<span class="fc" id="L232">        String assumed = ParseUtil.assumptionBasedOn( raw );</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">        if ( assumed.trim().equals(&quot;&quot;) ) component = cleaned;</span>
+<span class="fc" id="L234">        else component = assumed + cleaned;</span>
         // Let's try again:
-<span class="fc" id="L237">        return build(component, doAD);</span>
+<span class="fc" id="L236">        return build(component, doAD);</span>
     }
 
     private Function _buildOperators(
             List&lt;String&gt; foundComponents,
-            List&lt;String&gt; foundJunctors,
+            List&lt;String&gt; foundOperators,
             boolean doAD
     ) {
         // identifying operator id:
-<span class="fc" id="L246">        int operationIndex = 0;</span>
-<span class="pc bpc" id="L247" title="1 of 2 branches missed.">        if ( foundJunctors.size() &gt;= 1 ) {</span>
-<span class="fc bfc" id="L248" title="All 2 branches covered.">            for (int currentIndex = 0; currentIndex &lt; _context.size(); ++currentIndex) {</span>
-<span class="fc bfc" id="L249" title="All 2 branches covered.">                if ( _context.instance(currentIndex).getOperator().equals(foundJunctors.get( 0 )) ) {</span>
-<span class="fc" id="L250">                    operationIndex = currentIndex;</span>
+<span class="fc" id="L245">        int operationIndex = 0;</span>
+<span class="pc bpc" id="L246" title="1 of 2 branches missed.">        if ( foundOperators.size() &gt;= 1 ) {</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">            for (int currentIndex = 0; currentIndex &lt; _context.size(); ++currentIndex) {</span>
+<span class="fc bfc" id="L248" title="All 2 branches covered.">                if ( _context.getOperation(currentIndex).getOperator().equals(foundOperators.get( 0 )) ) {</span>
+<span class="fc" id="L249">                    operationIndex = currentIndex;</span>
                 }
             }
         }
-<span class="fc" id="L254">        String asString = foundComponents.stream()</span>
-<span class="fc" id="L255">                .collect(</span>
-<span class="fc" id="L256">                        Collectors.joining(</span>
-<span class="fc" id="L257">                                _context.instance( operationIndex ).getOperator()</span>
+<span class="fc" id="L253">        String asString = foundComponents.stream()</span>
+<span class="fc" id="L254">                .collect(</span>
+<span class="fc" id="L255">                        Collectors.joining(</span>
+<span class="fc" id="L256">                                _context.getOperation( operationIndex ).getOperator()</span>
                         )
                 );
         // More than one component left:
-<span class="fc" id="L261">        ArrayList&lt;Function&gt; sources = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L262" title="All 2 branches covered.">        if ( _context.instance( operationIndex ).getArity() &gt; 1 ) {</span>
-<span class="fc" id="L263">            foundComponents = _groupAccordingToArity(</span>
-<span class="fc" id="L264">                                        _context.instance( operationIndex ).getArity(),</span>
+<span class="fc" id="L260">        ArrayList&lt;Function&gt; sources = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L261" title="All 2 branches covered.">        if ( _context.getOperation( operationIndex ).getArity() &gt; 1 ) {</span>
+<span class="fc" id="L262">            foundComponents = _groupAccordingToArity(</span>
+<span class="fc" id="L263">                                        _context.getOperation( operationIndex ).getArity(),</span>
                                         foundComponents,
-<span class="fc" id="L266">                                        _context.instance( operationIndex ).getOperator()</span>
+<span class="fc" id="L265">                                        _context.getOperation( operationIndex ).getOperator()</span>
                                 );
-<span class="fc bfc" id="L268" title="All 2 branches covered.">        } else if ( reshapePattern.matcher(asString).matches() ) {</span>
-<span class="fc" id="L269">            foundComponents.set(0, foundComponents.get( 0 ).substring(1));</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">        } else if ( reshapePattern.matcher(asString).matches() ) {</span>
+<span class="fc" id="L268">            foundComponents.set(0, foundComponents.get( 0 ).substring(1));</span>
             String[] splitted;
-<span class="pc bpc" id="L271" title="1 of 2 branches missed.">            if (foundComponents.get(foundComponents.size() - 1).contains(&quot;]&quot;)) {</span>
-<span class="fc" id="L272">                int offset = 1;</span>
-<span class="fc bfc" id="L273" title="All 2 branches covered.">                if (foundComponents.get(foundComponents.size() - 1).contains(&quot;]:&quot;)) {</span>
-<span class="fc" id="L274">                    offset = 2;</span>
-<span class="fc" id="L275">                    splitted = foundComponents.get(foundComponents.size() - 1).split(&quot;]:&quot;);</span>
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">            if (foundComponents.get(foundComponents.size() - 1).contains(&quot;]&quot;)) {</span>
+<span class="fc" id="L271">                int offset = 1;</span>
+<span class="fc bfc" id="L272" title="All 2 branches covered.">                if (foundComponents.get(foundComponents.size() - 1).contains(&quot;]:&quot;)) {</span>
+<span class="fc" id="L273">                    offset = 2;</span>
+<span class="fc" id="L274">                    splitted = foundComponents.get(foundComponents.size() - 1).split(&quot;]:&quot;);</span>
                 } else {
-<span class="fc" id="L277">                    splitted = foundComponents.get(foundComponents.size() - 1).split(&quot;]&quot;);</span>
+<span class="fc" id="L276">                    splitted = foundComponents.get(foundComponents.size() - 1).split(&quot;]&quot;);</span>
                 }
-<span class="pc bpc" id="L279" title="1 of 2 branches missed.">                if (splitted.length &gt; 1) {</span>
-<span class="fc" id="L280">                    splitted = new String[]{splitted[ 0 ], foundComponents.get(foundComponents.size() - 1).substring(splitted[ 0 ].length() + offset)};</span>
-<span class="fc" id="L281">                    foundComponents.remove(foundComponents.size() - 1);</span>
-<span class="fc" id="L282">                    foundComponents.addAll(Arrays.asList(splitted));</span>
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">                if (splitted.length &gt; 1) {</span>
+<span class="fc" id="L279">                    splitted = new String[]{splitted[ 0 ], foundComponents.get(foundComponents.size() - 1).substring(splitted[ 0 ].length() + offset)};</span>
+<span class="fc" id="L280">                    foundComponents.remove(foundComponents.size() - 1);</span>
+<span class="fc" id="L281">                    foundComponents.addAll(Arrays.asList(splitted));</span>
                 }
             }
         }
-<span class="fc bfc" id="L286" title="All 2 branches covered.">        for ( String component : foundComponents )</span>
-<span class="fc" id="L287">            sources.add(</span>
-<span class="fc" id="L288">                    build(component, doAD) // a dangerous recursion lives here!</span>
+<span class="fc bfc" id="L285" title="All 2 branches covered.">        for ( String component : foundComponents )</span>
+<span class="fc" id="L286">            sources.add(</span>
+<span class="fc" id="L287">                    build(component, doAD) // a dangerous recursion lives here!</span>
             );
 
-<span class="fc" id="L291">        sources.trimToSize();</span>
-<span class="pc bpc" id="L292" title="1 of 2 branches missed.">        if ( sources.size() == 1 ) return sources.get( 0 );</span>
-<span class="pc bpc" id="L293" title="1 of 2 branches missed.">        if ( sources.size() == 0 ) return null;</span>
-<span class="fc" id="L294">        ArrayList&lt;Function&gt; newVariable = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L295" title="All 2 branches covered.">        for ( Function source : sources ) {</span>
-<span class="pc bpc" id="L296" title="1 of 2 branches missed.">            if ( source != null ) newVariable.add(source);</span>
-<span class="fc" id="L297">        }</span>
-<span class="fc" id="L298">        sources = newVariable;</span>
-<span class="fc" id="L299">        return new FunctionNode( _context.instance(operationIndex), sources, doAD );</span>
+<span class="fc" id="L290">        sources.trimToSize();</span>
+<span class="pc bpc" id="L291" title="1 of 2 branches missed.">        if ( sources.size() == 1 ) return sources.get( 0 );</span>
+<span class="pc bpc" id="L292" title="1 of 2 branches missed.">        if ( sources.size() == 0 ) return null;</span>
+<span class="fc" id="L293">        ArrayList&lt;Function&gt; newVariable = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L294" title="All 2 branches covered.">        for ( Function source : sources ) {</span>
+<span class="pc bpc" id="L295" title="1 of 2 branches missed.">            if ( source != null ) newVariable.add(source);</span>
+<span class="fc" id="L296">        }</span>
+<span class="fc" id="L297">        sources = newVariable;</span>
+<span class="fc" id="L298">        return new FunctionNode( _context.getOperation(operationIndex), sources, doAD );</span>
     }
 
     private List&lt;String&gt; _groupAccordingToArity(int arity, List&lt;String&gt; components, String operator) {
-<span class="pc bpc" id="L303" title="1 of 4 branches missed.">        if ( components.size() &gt; arity &amp;&amp; arity &gt; 1 ) {</span>
-<span class="fc" id="L304">            String newComponent =</span>
+<span class="pc bpc" id="L302" title="1 of 4 branches missed.">        if ( components.size() &gt; arity &amp;&amp; arity &gt; 1 ) {</span>
+<span class="fc" id="L303">            String newComponent =</span>
                     &quot;(&quot; +
-<span class="fc" id="L306">                            IntStream.iterate(0, n -&gt; n + 1)</span>
-<span class="fc" id="L307">                             .limit(arity)</span>
-<span class="fc" id="L308">                             .mapToObj( components::get )</span>
-<span class="fc" id="L309">                             .collect(Collectors.joining( operator )) +</span>
+<span class="fc" id="L305">                            IntStream.iterate(0, n -&gt; n + 1)</span>
+<span class="fc" id="L306">                             .limit(arity)</span>
+<span class="fc" id="L307">                             .mapToObj( components::get )</span>
+<span class="fc" id="L308">                             .collect(Collectors.joining( operator )) +</span>
                     &quot;)&quot;;
-<span class="fc bfc" id="L311" title="All 2 branches covered.">            for ( int i = 0; i &lt; arity; i++ )  components.remove(components.get( 0 ));</span>
-<span class="fc" id="L312">            components.add(0, newComponent);</span>
-<span class="fc" id="L313">            return _groupAccordingToArity( arity, components, operator );</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">            for ( int i = 0; i &lt; arity; i++ )  components.remove(components.get( 0 ));</span>
+<span class="fc" id="L311">            components.add(0, newComponent);</span>
+<span class="fc" id="L312">            return _groupAccordingToArity( arity, components, operator );</span>
         }
-<span class="fc" id="L315">        return components;</span>
+<span class="fc" id="L314">        return components;</span>
     }
 
 }

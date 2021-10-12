@@ -63,7 +63,7 @@ import java.util.Map;
 <span class="fc" id="L63">                    first = (Integer) ranges[ i ];</span>
 <span class="fc" id="L64">                    last = (Integer) ranges[ i ];</span>
                 } else {
-<span class="fc" id="L66">                    NDFrame&lt;?&gt; frame = source.find( NDFrame.class );</span>
+<span class="fc" id="L66">                    NDFrame&lt;?&gt; frame = source.get( NDFrame.class );</span>
 <span class="pc bpc" id="L67" title="1 of 2 branches missed.">                    if ( frame != null ) {</span>
 <span class="fc" id="L68">                        int position = frame.atAxis( i ).getIndexAtAlias( ranges[i] );</span>
                                     //frame.get( ranges[ i ], i );
@@ -84,7 +84,7 @@ import java.util.Map;
                         !( ( (Object[]) ( ranges[ i ] ) )[ 0 ] instanceof Integer )
                                 || !( ( (Object[]) ranges[ i ] )[ ( (Object[]) ( ranges[ i ] ) ).length - 1 ] instanceof Integer )
                 ) {
-<span class="fc" id="L87">                    NDFrame&lt;?&gt; frame = source.find( NDFrame.class );</span>
+<span class="fc" id="L87">                    NDFrame&lt;?&gt; frame = source.get( NDFrame.class );</span>
 <span class="pc bpc" id="L88" title="1 of 2 branches missed.">                    if ( !( ( (Object[]) (ranges[ i ]) )[ 0 ] instanceof Integer ) ) {</span>
 <span class="pc bpc" id="L89" title="1 of 2 branches missed.">                        if ( frame != null ) {</span>
 <span class="fc" id="L90">                            first =</span>

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Aug 06 13:08:55 CEST 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Tue Oct 12 10:15:02 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.445 seconds</td>
+<td>1.685 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -452,11 +452,11 @@ b.spread() != null</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x2b9f6776f70], platform=neureka.devices.opencl.OpenCLPlatform@4169533d)</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x2213bb55c30], platform=neureka.devices.opencl.OpenCLPlatform@2d6518bd)</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@179628d6</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@51f21f6a</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>
@@ -684,8 +684,8 @@ b.spread() != null</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr p = Tsr.of([2,2], [2, 55, 4, 7]).set((device instanceof DummyDevice)?null:device)
-Tsr u = Tsr.of([2,2], [5, 2, 7, 34]).set((device instanceof DummyDevice)?null:device)
+<pre class='block-source'>Tsr p = Tsr.of([2,2], [2, 55, 4, 7]).to((device instanceof DummyDevice)?null:device)
+Tsr u = Tsr.of([2,2], [5, 2, 7, 34]).to((device instanceof DummyDevice)?null:device)
 p[] = u</pre>
 </td>
 </tr>
@@ -782,11 +782,11 @@ x = Tsr.of(b, "x", c)</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x2b9f6776f70], platform=neureka.devices.opencl.OpenCLPlatform@4169533d)</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x2213bb55c30], platform=neureka.devices.opencl.OpenCLPlatform@2d6518bd)</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@179628d6</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@51f21f6a</td>
 <td class='ex-result'>OK</td>
 </tr>
 </tbody>

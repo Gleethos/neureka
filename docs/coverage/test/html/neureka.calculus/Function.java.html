@@ -39,15 +39,16 @@ package neureka.calculus;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.GraphLock;
-import neureka.autograd.GraphNode;
+import neureka.backend.api.Call;
 import neureka.backend.api.Operation;
+import neureka.calculus.args.Arg;
+import neureka.calculus.args.Args;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.implementations.FunctionInput;
+import neureka.devices.Device;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  *  Besides the {@link Tsr} class, which is the core class of Neureka, this interface and its implementations
@@ -77,7 +78,7 @@ public interface Function
      * @param expression The right part of a function equation where inputs are denoted by 'I[0]', 'I[1]', 'I[2]'...
      * @return A {@link Function} instance created based on the provided {@link String}, ready to receive inputs and execute on them.
      */
-<span class="fc" id="L80">    static Function of( String expression ) { return of( expression, true ); }</span>
+<span class="fc" id="L81">    static Function of( String expression ) { return of( expression, true ); }</span>
 
     /**
      *  This static factory method will return {@link Function} instances
@@ -91,63 +92,7 @@ public interface Function
      * @return A {@link Function} instance created based on the provided {@link String}, ready to receive inputs and execute on them.
      */
     static Function of( String expression, boolean doAD ) {
-<span class="fc" id="L94">        return new FunctionBuilder(Neureka.get().context()).build(expression, doAD);</span>
-    }
-
-    /**
-     *  This static nested class acts as namespace for a set of useful
-     *  entry points to executing the provided parameters.
-     */
-<span class="nc" id="L101">    class Setup</span>
-    {
-        public static &lt;T&gt; Tsr&lt;T&gt; commit( Tsr&lt;T&gt;[] tensors, String operation, boolean doAD )
-        {
-<span class="fc" id="L105">            return commit( null, tensors, new FunctionBuilder(Neureka.get().context()).build( operation, doAD ) );</span>
-        }
-
-        public static &lt;T&gt; Tsr&lt;T&gt; commit( Tsr&lt;T&gt; drain, Tsr&lt;T&gt;[] tensors, String operation, boolean doAD )
-        {
-<span class="fc" id="L110">            return commit( drain, tensors, new FunctionBuilder(Neureka.get().context()).build( operation, doAD ) );</span>
-        }
-
-        public static &lt;T&gt; Tsr&lt;T&gt; commit( Tsr&lt;T&gt;[] inputs, Function function )
-        {
-<span class="nc" id="L115">            return commit( null, inputs, function );</span>
-        }
-
-        public static &lt;T&gt; Tsr&lt;T&gt; commit( Tsr&lt;T&gt; drain, Tsr&lt;T&gt;[] inputs, Function function )
-        {
-<span class="fc" id="L120">            return commit( drain, inputs, function, null );</span>
-        }
-
-        public static &lt;T&gt; Tsr&lt;T&gt; commit( Tsr&lt;?&gt; drain, Tsr&lt;?&gt;[] inputs, Function function, Supplier&lt;Tsr&lt;Object&gt;&gt; activation )
-        {
-<span class="fc" id="L125">            Tsr.makeFit( inputs, function.isDoingAD() ); // reshaping if needed</span>
-
-<span class="fc" id="L127">            GraphLock newLock = new GraphLock( function );</span>
-<span class="fc bfc" id="L128" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; t : inputs ) {</span>
-<span class="fc bfc" id="L129" title="All 2 branches covered.">                if ( t.has( GraphNode.class ) ) t.find( GraphNode.class ).obtainLocking( newLock );</span>
-<span class="fc" id="L130">                else new GraphNode( function, newLock, () -&gt; t );</span>
-            }
-            Tsr&lt;T&gt; result;
-<span class="fc bfc" id="L133" title="All 2 branches covered.">            if ( activation == null ) result = (Tsr&lt;T&gt;) function.execute( inputs );</span>
-<span class="fc" id="L134">            else result = (Tsr&lt;T&gt;) activation.get();</span>
-
-<span class="fc" id="L136">            Neureka.get().context().functionCache().free( newLock );</span>
-<span class="fc" id="L137">            boolean resultIsUnique = true;</span>
-<span class="fc bfc" id="L138" title="All 2 branches covered.">            if ( drain != null ) {</span>
-<span class="fc bfc" id="L139" title="All 2 branches covered.">                for( Tsr&lt;?&gt; t : inputs ) {</span>
-<span class="fc" id="L140">                    Tsr&lt;?&gt; g = t.getGradient();</span>
-<span class="pc bpc" id="L141" title="1 of 6 branches missed.">                    if (t == result || ( g != null &amp;&amp; g == result ) ) {</span>
-<span class="fc" id="L142">                        resultIsUnique = false;</span>
-<span class="fc" id="L143">                        break;</span>
-                    }
-                }
-            }
-<span class="fc bfc" id="L147" title="All 2 branches covered.">            if ( resultIsUnique )</span>
-<span class="fc" id="L148">                return result;</span>
-<span class="fc" id="L149">            else return null;</span>
-        }
+<span class="fc" id="L95">        return new FunctionBuilder( Neureka.get().context() ).build(expression, doAD);</span>
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -172,89 +117,121 @@ public interface Function
      */
     Operation getOperation();
 
+    /**
+     * @param index The index which ought to match the input index of a potentially referenced {@link FunctionInput}.
+     * @return The truth value determining if this {@link Function} (or any sub-functions) reference an {@link FunctionInput} with the provided index.
+     */
     boolean dependsOn( int index );
 
+    /**
+     *  This method builds a new {@link Function} which is the derivative of this {@link Function} with respect to the provided input index.
+     * @param index The index of the input which ought to serve as the variable which ought to be derived.
+     * @return The derivative of this {@link Function}.
+     */
     Function getDerivative( int index );
 
     List&lt;Function&gt; getSubFunctions();
 
     default List&lt;Function&gt; getAllFunctions() {
-<span class="fc" id="L182">        return _unpack( this.getSubFunctions() );</span>
+<span class="fc" id="L136">        List&lt;Function&gt; allFuns = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L137">        allFuns.add(this);</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        for ( Function fun : this.getSubFunctions() ) {</span>
+<span class="fc" id="L139">            allFuns.addAll(fun.getAllFunctions());</span>
+<span class="fc" id="L140">        }</span>
+<span class="fc" id="L141">        return allFuns;</span>
     }
 
     default int numberOfArgs() {
-<span class="fc" id="L186">        return (int) getAllFunctions()</span>
-<span class="fc" id="L187">                        .stream()</span>
-<span class="fc" id="L188">                        .filter( fun -&gt; fun instanceof FunctionInput )</span>
-<span class="fc" id="L189">                        .map( fun -&gt; (FunctionInput) fun )</span>
-<span class="fc" id="L190">                        .mapToInt( FunctionInput::index )</span>
-<span class="fc" id="L191">                        .distinct()</span>
-<span class="fc" id="L192">                        .count();</span>
+<span class="fc" id="L145">        return (int) getAllFunctions()</span>
+<span class="fc" id="L146">                        .stream()</span>
+<span class="fc" id="L147">                        .filter( fun -&gt; fun instanceof FunctionInput )</span>
+<span class="fc" id="L148">                        .map( fun -&gt; (FunctionInput) fun )</span>
+<span class="fc" id="L149">                        .mapToInt( FunctionInput::index )</span>
+<span class="fc" id="L150">                        .distinct()</span>
+<span class="fc" id="L151">                        .count();</span>
     }
-
-    static List&lt;Function&gt; _unpack( List&lt;Function&gt; functions ) {
-<span class="fc" id="L196">        List&lt;Function&gt; collected = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L197">        __unpack(functions, collected);</span>
-<span class="fc" id="L198">        return collected;</span>
-    }
-
-    static void __unpack( List&lt;Function&gt; functions, List&lt;Function&gt; target ) {
-<span class="fc" id="L202">        target.addAll(functions);</span>
-<span class="fc bfc" id="L203" title="All 2 branches covered.">        for ( Function fun : functions ) __unpack(fun.getSubFunctions(), target);</span>
-<span class="fc" id="L204">    }</span>
-
 
     //------------------------------------------------------------------------------------------------------------------
 
-    double call( double input );
-    double invoke( double input );
+<span class="nc" id="L156">    default double call( double input )   { return call( new double[]{input} ); }</span>
+<span class="nc" id="L157">    default double invoke( double input ) { return call( input               ); }</span>
 
     //------------------------------------------------------------------------------------------------------------------
 
     double call( double[] inputs, int j );
-    double invoke( double[] inputs, int j );
+<span class="nc" id="L162">    default double invoke( double[] inputs, int j ) { return call( inputs, j ); }</span>
 
 
-    double call( double... inputs );
-    double invoke( double... inputs );
+<span class="fc" id="L165">    default double call( double... inputs )   { return call( inputs, -1 ); }</span>
+<span class="nc" id="L166">    default double invoke( double... inputs ) { return call( inputs        ); }</span>
 
 
     double derive( double[] inputs, int index, int j );
-    double derive( double[] inputs, int index );
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    Tsr&lt;?&gt; execute( Tsr&lt;?&gt;... inputs );
-    Tsr&lt;?&gt; execute( Tsr&lt;?&gt;[] inputs, int j );
-    Tsr&lt;?&gt; executeDerive( Tsr&lt;?&gt;[] inputs, int index, int j );
-    Tsr&lt;?&gt; executeDerive( Tsr&lt;?&gt;[] inputs, int index );
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt; input );
-    &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt; input );
-
-    &lt;T&gt; Tsr&lt;T&gt; call( List&lt;Tsr&lt;T&gt;&gt; input );
-    &lt;T&gt; Tsr&lt;T&gt; invoke( List&lt;Tsr&lt;T&gt;&gt; input );
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;[] inputs, int j );
-    &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;[] inputs, int j );
-
-    &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;... inputs );
-    &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;... inputs );
+    double derive( double[] inputs, int index        );
 
     //------------------------------------------------------------------------------------------------------------------
 
 
-    &lt;T&gt; Tsr&lt;T&gt; derive( Tsr&lt;T&gt;[] inputs, int index, int j );
-    &lt;T&gt; Tsr&lt;T&gt; derive( Tsr&lt;T&gt;[] inputs, int index );
+<span class="nc" id="L175">    default &lt;T, D extends Device&lt;T&gt;&gt; Tsr&lt;T&gt; call(Call.Builder&lt;T, D&gt; call ) { return (Tsr&lt;T&gt;) execute( call.get() ); };</span>
+<span class="fc" id="L176">    default &lt;T, D extends Device&lt;T&gt;&gt; Tsr&lt;T&gt; invoke(Call.Builder&lt;T, D&gt; call ) { return (Tsr&lt;T&gt;) execute( call.get() ); }</span>
+    default Tsr&lt;?&gt; execute( Call&lt;?&gt; call ) {
+<span class="fc" id="L178">        List&lt;Arg&gt; args = call.allMetaArgs();</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">        if ( call.getDevice() != null ) args.add(Arg.TargetDevice.of((Device&lt;?&gt;) call.getDevice()));</span>
+<span class="fc" id="L180">        Arg&lt;?&gt;[] argArray = new Arg[args.size()];</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        for ( int i = 0; i &lt; argArray.length; i++ ) argArray[i] = args.get(i);</span>
+<span class="fc" id="L182">        return callWith(argArray).execute(call.getTensors());</span>
+    };
+
+    interface CallOptions {
+        &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;... tensors );
+        &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;... tensors );
+        Tsr&lt;?&gt; execute( Tsr&lt;?&gt;... tensors );
+    }
+
+<span class="fc" id="L191">    default CallOptions callWith( Arg&lt;?&gt;... arguments ) { return callWith( Args.of( arguments ) ); }</span>
+
+    default CallOptions callWith( Args arguments ) {
+<span class="fc" id="L194">       return new CallOptions() {</span>
+<span class="nc" id="L195">           @SafeVarargs @Override public final &lt;T&gt; Tsr&lt;T&gt; call(    Tsr&lt;T&gt;... tensors ) { return Function.this.call( arguments, tensors ); }</span>
+<span class="fc" id="L196">           @SafeVarargs @Override public final &lt;T&gt; Tsr&lt;T&gt; invoke(  Tsr&lt;T&gt;... tensors ) { return Function.this.invoke( arguments, tensors ); }</span>
+<span class="fc" id="L197">           @Override              public final     Tsr&lt;?&gt; execute( Tsr&lt;?&gt;... tensors ) { return Function.this.execute( arguments, tensors ); }</span>
+       };
+    }
+
+<span class="nc" id="L201">    default &lt;T&gt; Tsr&lt;T&gt; call(   Args arguments, Tsr&lt;T&gt;... tensors ) { return (Tsr&lt;T&gt;) execute( arguments, tensors ); }</span>
+<span class="fc" id="L202">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Args arguments, Tsr&lt;T&gt;... tensors ) { return (Tsr&lt;T&gt;) execute( arguments, tensors ); }</span>
+    Tsr&lt;?&gt; execute( Args arguments, Tsr&lt;?&gt;... tensors );
+
+<span class="fc" id="L205">    default Tsr&lt;?&gt; execute( Tsr&lt;?&gt;... inputs ) { return execute( inputs, -1 ); }</span>
+<span class="fc" id="L206">    default Tsr&lt;?&gt; execute( Tsr&lt;?&gt;[] inputs, int j ) { return execute(Args.of(Arg.DerivIdx.of(-1), Arg.VarIdx.of(j)), inputs); }</span>
+<span class="fc" id="L207">    default Tsr&lt;?&gt; executeDerive( Tsr&lt;?&gt;[] inputs, int index, int j ) { return execute(Args.of(Arg.DerivIdx.of(index), Arg.VarIdx.of(j)), inputs); }</span>
+<span class="fc" id="L208">    default Tsr&lt;?&gt; executeDerive( Tsr&lt;?&gt;[] inputs, int index ) { return executeDerive( inputs, index, -1 ); }</span>
+
+    //------------------------------------------------------------------------------------------------------------------
+
+<span class="fc" id="L212">    default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt; input )   { return call( new Tsr[]{ input } ); }</span>
+<span class="nc" id="L213">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt; input ) { return call( input );            }</span>
+
+<span class="fc" id="L215">    default &lt;T&gt; Tsr&lt;T&gt; call( List&lt;Tsr&lt;T&gt;&gt; input )   { return call( input.toArray(new Tsr[ 0 ]) ); }</span>
+<span class="nc" id="L216">    default &lt;T&gt; Tsr&lt;T&gt; invoke( List&lt;Tsr&lt;T&gt;&gt; input ) { return call( input );                       }</span>
+
+    //------------------------------------------------------------------------------------------------------------------
+
+<span class="nc" id="L220">    default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;[] inputs, int j )   { return (Tsr&lt;T&gt;) execute( inputs, j ); }</span>
+<span class="nc" id="L221">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;[] inputs, int j ) { return call( inputs, j );             }</span>
+
+<span class="fc" id="L223">    default &lt;T&gt; Tsr&lt;T&gt; call( Tsr&lt;T&gt;... inputs )   { return (Tsr&lt;T&gt;) execute( inputs ); }</span>
+<span class="nc" id="L224">    default &lt;T&gt; Tsr&lt;T&gt; invoke( Tsr&lt;T&gt;... inputs ) { return call( inputs );             }</span>
+
+    //------------------------------------------------------------------------------------------------------------------
+
+<span class="nc" id="L228">    default &lt;T&gt; Tsr&lt;T&gt; derive( Tsr&lt;T&gt;[] inputs, int d, int j ) { return (Tsr&lt;T&gt;) executeDerive( inputs, d, j ); }</span>
+<span class="fc" id="L229">    default &lt;T&gt; Tsr&lt;T&gt; derive( Tsr&lt;T&gt;[] inputs, int d )        { return (Tsr&lt;T&gt;) executeDerive( inputs, d ); }</span>
 
     //---
 
-    &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index, int j );
-    &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index );
+<span class="nc" id="L233">    default &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index, int j ) { return derive( inputs.toArray( new Tsr[ 0 ] ), index, j ); }</span>
+<span class="fc" id="L234">    default &lt;T&gt; Tsr&lt;T&gt; derive( List&lt;Tsr&lt;T&gt;&gt; inputs, int index )        { return derive( inputs.toArray( new Tsr[ 0 ] ), index ); }</span>
 
     //---
 

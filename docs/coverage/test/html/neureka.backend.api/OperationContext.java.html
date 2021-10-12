@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OperationContext.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api</a> &gt; <span class="el_source">OperationContext.java</span></div><h1>OperationContext.java</h1><pre class="source lang-java linenums">package neureka.backend.api;
 
 
-import neureka.Component;
 import neureka.Neureka;
 import neureka.calculus.Cache;
 import neureka.calculus.Function;
 import neureka.calculus.Functions;
-import neureka.ndim.AbstractComponentOwner;
+import neureka.calculus.assembly.ParseUtil;
+import neureka.common.composition.AbstractComponentOwner;
+import neureka.common.composition.Component;
 import org.slf4j.Logger;
 
 import java.util.*;
@@ -21,7 +22,7 @@ import java.util.function.Supplier;
  *    pre-instantiated {@link Function} implementation instances.
  *    &lt;br&gt;&lt;br&gt;
  *    The {@link OperationContext} initializes and stores {@link Operation} instances in various data structures
- *    for fast access and querying (Mostly used by the {@link neureka.calculus.assembly.FunctionParser}).
+ *    for fast access and querying (Mostly used by the {@link ParseUtil}).
  *    &lt;br&gt;
  *    {@link Operation}s are stored in simple list and map collections,
  *    namely: &lt;br&gt;
@@ -35,9 +36,9 @@ import java.util.function.Supplier;
  *    context during the execution of provided lambdas.
  *
  */
-<span class="pc bpc" id="L38" title="1 of 2 branches missed.">public class OperationContext extends AbstractComponentOwner&lt;OperationContext&gt; implements Cloneable</span>
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">public class OperationContext extends AbstractComponentOwner&lt;OperationContext&gt; implements Cloneable</span>
 {
-<span class="fc" id="L40">    private static final Logger log = org.slf4j.LoggerFactory.getLogger(OperationContext.class);</span>
+<span class="fc" id="L41">    private static final Logger log = org.slf4j.LoggerFactory.getLogger(OperationContext.class);</span>
     /**
      *  A mapping between OperationType identifiers and their corresponding instances.
      */
@@ -46,7 +47,7 @@ import java.util.function.Supplier;
     /**
      *  A list of all OperationType instances.
      */
-    private final List&lt;Operation&gt; _instances;
+    private final List&lt;Operation&gt; _operations;
 
     /**
      *  The number of operation instances stored in this context.
@@ -54,9 +55,9 @@ import java.util.function.Supplier;
     private int _size;
 
     // Global context and cache:
-<span class="fc" id="L57">    private final Cache _functionCache = new Cache();</span>
+<span class="fc" id="L58">    private final Cache _functionCache = new Cache();</span>
 
-<span class="fc" id="L59">    private Functions _getAutogradFunction = null;</span>
+<span class="fc" id="L60">    private Functions _getAutogradFunction = null;</span>
 
     /**
      *  This {@link Functions} instance wraps pre-instantiated
@@ -64,7 +65,7 @@ import java.util.function.Supplier;
      *  This means that no computation graph will be built by these instances.
      *  ( Computation graphs in Neureka are made of instances of the &quot;GraphNode&quot; class... )
      */
-<span class="fc" id="L67">    private Functions _getFunction = null;</span>
+<span class="fc" id="L68">    private Functions _getFunction = null;</span>
 
 
     /**
@@ -75,7 +76,7 @@ import java.util.function.Supplier;
      *
      * @return A lambda {@link Runner} which performs temporary context switching between the caller's context and this context.
      */
-<span class="fc" id="L78">    public Runner runner() { return new Runner( this, Neureka.get().context() ); }</span>
+<span class="fc" id="L79">    public Runner runner() { return new Runner( this, Neureka.get().context() ); }</span>
 
     /**
      * This method returns an unmodifiable view of the mapping between the {@link Operation#getFunction()} / {@link Operation#getOperator()} properties
@@ -86,7 +87,7 @@ import java.util.function.Supplier;
      *
      * @return An unmodifiable mapping of {@link Operation} properties to the {@link Operation} instances to which they belong.
      */
-<span class="fc" id="L89">    public Map&lt;String, Operation&gt; lookup() { return Collections.unmodifiableMap( this._lookup ); }</span>
+<span class="fc" id="L90">    public Map&lt;String, Operation&gt; getOperationLookupMap() { return Collections.unmodifiableMap( this._lookup ); }</span>
 
     /**
      * This method returns an unmodifiable view of the
@@ -97,17 +98,17 @@ import java.util.function.Supplier;
      *
      * @return An unmodifiable view of the list of {@link Operation} implementation instances managed by this context
      */
-<span class="fc" id="L100">    public List&lt;Operation&gt; instances() { return Collections.unmodifiableList( this._instances ); }</span>
+<span class="fc" id="L101">    public List&lt;Operation&gt; getOperations() { return Collections.unmodifiableList( this._operations); }</span>
 
     /**
      * @return The number of {@link Operation} instances stored on this {@link OperationContext}.
      */
-<span class="fc" id="L105">    public int size() { return this._size; }</span>
+<span class="fc" id="L106">    public int size() { return this._size; }</span>
 
     /**
      * @return The {@link Function} and {@link neureka.Tsr} cache of this {@link OperationContext}
      */
-<span class="fc" id="L110">    public Cache functionCache() { return this._functionCache; }</span>
+<span class="fc" id="L111">    public Cache getFunctionCache() { return this._functionCache; }</span>
 
     /**
      *  This method returns a {@link Functions} instance which wraps pre-instantiated
@@ -116,8 +117,8 @@ import java.util.function.Supplier;
      *  ( Computation graphs in Neureka are made of instances of the {@link neureka.autograd.GraphNode} class... )
      */
     public Functions getFunction() {
-<span class="fc bfc" id="L119" title="All 2 branches covered.">        if ( _getFunction == null ) _getFunction = new Functions( false );</span>
-<span class="fc" id="L120">        return _getFunction;</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        if ( _getFunction == null ) _getFunction = new Functions( false );</span>
+<span class="fc" id="L121">        return _getFunction;</span>
     }
 
     /**
@@ -127,8 +128,8 @@ import java.util.function.Supplier;
      *  ( Computation graphs in Neureka are made of instances of the {@link neureka.autograd.GraphNode} class... )
      */
     public Functions getAutogradFunction() {
-<span class="fc bfc" id="L130" title="All 2 branches covered.">        if ( _getAutogradFunction == null ) _getAutogradFunction = new Functions( true );</span>
-<span class="fc" id="L131">        return _getAutogradFunction;</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        if ( _getAutogradFunction == null ) _getAutogradFunction = new Functions( true );</span>
+<span class="fc" id="L132">        return _getAutogradFunction;</span>
     }
 
     /**
@@ -136,11 +137,11 @@ import java.util.function.Supplier;
      *  Use this constructor to test, debug, build and populate custom execution contexts.
      */
     public OperationContext()
-<span class="fc" id="L139">    {</span>
-<span class="fc" id="L140">        _lookup = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L141">        _instances = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L142">        _size = 0;</span>
-<span class="fc" id="L143">    }</span>
+<span class="fc" id="L140">    {</span>
+<span class="fc" id="L141">        _lookup = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L142">        _operations = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L143">        _size = 0;</span>
+<span class="fc" id="L144">    }</span>
 
     /**
      *  This method registers {@link Operation} implementation instances in this {@link OperationContext}
@@ -151,28 +152,28 @@ import java.util.function.Supplier;
      */
     public OperationContext addOperation( Operation operation )
     {
-<span class="fc" id="L154">        _instances.add( operation );</span>
-<span class="fc" id="L155">        String function = operation.getFunction();</span>
-<span class="fc" id="L156">        String operator = operation.getOperator();</span>
-<span class="pc bpc" id="L157" title="2 of 4 branches missed.">        assert !_lookup.containsKey( operator );</span>
-<span class="pc bpc" id="L158" title="2 of 4 branches missed.">        assert !_lookup.containsKey( function );</span>
-<span class="fc" id="L159">        _lookup.put( operator, operation );</span>
-<span class="fc" id="L160">        _lookup.put( function, operation );</span>
-<span class="fc" id="L161">        _lookup.put( operator.toLowerCase(), operation );</span>
-<span class="fc" id="L162">        if (</span>
+<span class="fc" id="L155">        _operations.add( operation );</span>
+<span class="fc" id="L156">        String function = operation.getFunction();</span>
+<span class="fc" id="L157">        String operator = operation.getOperator();</span>
+<span class="pc bpc" id="L158" title="2 of 4 branches missed.">        assert !_lookup.containsKey( operator );</span>
+<span class="pc bpc" id="L159" title="2 of 4 branches missed.">        assert !_lookup.containsKey( function );</span>
+<span class="fc" id="L160">        _lookup.put( operator, operation );</span>
+<span class="fc" id="L161">        _lookup.put( function, operation );</span>
+<span class="fc" id="L162">        _lookup.put( operator.toLowerCase(), operation );</span>
+<span class="fc" id="L163">        if (</span>
                 operator
-<span class="fc" id="L164">                        .replace((&quot;&quot;+((char)171)), &quot;&quot;)</span>
-<span class="fc" id="L165">                        .replace((&quot;&quot;+((char)187)), &quot;&quot;)</span>
-<span class="fc bfc" id="L166" title="All 2 branches covered.">                        .matches(&quot;[a-z]&quot;)</span>
+<span class="fc" id="L165">                        .replace((&quot;&quot;+((char)171)), &quot;&quot;)</span>
+<span class="fc" id="L166">                        .replace((&quot;&quot;+((char)187)), &quot;&quot;)</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">                        .matches(&quot;[a-z]&quot;)</span>
         ) {
-<span class="fc bfc" id="L168" title="All 2 branches covered.">            if ( operator.contains( &quot;&quot;+((char)171) ) )</span>
-<span class="fc" id="L169">                this._lookup.put(operator.replace((&quot;&quot;+((char)171)), &quot;&lt;&lt;&quot;), operation);</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">            if ( operator.contains( &quot;&quot;+((char)171) ) )</span>
+<span class="fc" id="L170">                this._lookup.put(operator.replace((&quot;&quot;+((char)171)), &quot;&lt;&lt;&quot;), operation);</span>
 
-<span class="fc bfc" id="L171" title="All 2 branches covered.">            if ( operator.contains( &quot;&quot;+((char)187) ) )</span>
-<span class="fc" id="L172">                this._lookup.put(operator.replace((&quot;&quot;+((char)187)),&quot;&gt;&gt;&quot;), operation);</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">            if ( operator.contains( &quot;&quot;+((char)187) ) )</span>
+<span class="fc" id="L173">                this._lookup.put(operator.replace((&quot;&quot;+((char)187)),&quot;&gt;&gt;&quot;), operation);</span>
         }
-<span class="fc" id="L174">        _size++;</span>
-<span class="fc" id="L175">        return this;</span>
+<span class="fc" id="L175">        _size++;</span>
+<span class="fc" id="L176">        return this;</span>
     }
 
     /**
@@ -180,7 +181,7 @@ import java.util.function.Supplier;
      * @return The truth value determining if the provided {@link Operation} is part of this {@link OperationContext}.
      */
     public boolean hasOperation( Operation operation ) {
-<span class="fc" id="L183">        return this._lookup.containsKey( operation.getFunction() );</span>
+<span class="fc" id="L184">        return this._lookup.containsKey( operation.getFunction() );</span>
     }
 
 
@@ -192,7 +193,7 @@ import java.util.function.Supplier;
      * @param index The index of the operation.
      * @return The found Operation instance or null.
      */
-<span class="fc" id="L195">    public Operation instance( int index ) { return _instances.get( index ); }</span>
+<span class="fc" id="L196">    public Operation getOperation( int index ) { return _operations.get( index ); }</span>
 
     /**
      *  This method queries the operations in this OperationContext
@@ -202,7 +203,7 @@ import java.util.function.Supplier;
      * @param identifier The operation identifier, aka: its name.
      * @return The requested Operation or null.
      */
-<span class="fc" id="L205">    public Operation instance( String identifier ) { return _lookup.getOrDefault( identifier, null ); }</span>
+<span class="fc" id="L206">    public Operation getOperation(String identifier ) { return _lookup.getOrDefault( identifier, null ); }</span>
 
     /**
      *  This method produces a shallow copy of this {@link OperationContext}.
@@ -213,25 +214,25 @@ import java.util.function.Supplier;
     @Override
     public OperationContext clone()
     {
-<span class="fc" id="L216">        OperationContext clone = new OperationContext();</span>
-<span class="fc" id="L217">        clone._size = _size;</span>
-<span class="fc" id="L218">        clone._lookup.putAll( _lookup );</span>
-<span class="fc" id="L219">        clone._instances.addAll( _instances );</span>
-<span class="fc" id="L220">        return clone;</span>
+<span class="fc" id="L217">        OperationContext clone = new OperationContext();</span>
+<span class="fc" id="L218">        clone._size = _size;</span>
+<span class="fc" id="L219">        clone._lookup.putAll( _lookup );</span>
+<span class="fc" id="L220">        clone._operations.addAll(_operations);</span>
+<span class="fc" id="L221">        return clone;</span>
     }
 
     public String toString() {
-<span class="nc" id="L224">        return &quot;OperationContext(_lookup=&quot; + this.lookup() + &quot;, _instances=&quot; + this.instances() + &quot;, _size=&quot; + this.size() + &quot;, _functionCache=&quot; + this.functionCache() + &quot;, _getAutogradFunction=&quot; + this.getAutogradFunction() + &quot;, _getFunction=&quot; + this.getFunction() + &quot;)&quot;;</span>
+<span class="nc" id="L225">        return &quot;OperationContext(size=&quot; + this.size() + &quot;)&quot;;</span>
     }
 
     @Override
     protected &lt;T extends Component&lt;OperationContext&gt;&gt; T _setOrReject(T newComponent) {
-<span class="fc" id="L229">        return newComponent;</span>
+<span class="fc" id="L230">        return newComponent;</span>
     }
 
     @Override
     protected &lt;T extends Component&lt;OperationContext&gt;&gt; T _removeOrReject(T newComponent) {
-<span class="nc" id="L234">        return newComponent;</span>
+<span class="nc" id="L235">        return newComponent;</span>
     }
 
 
@@ -253,11 +254,11 @@ import java.util.function.Supplier;
         private final OperationContext originalContext;
         private final OperationContext visitedContext;
 
-<span class="fc" id="L256">        private Runner( OperationContext visited, OperationContext originalContext ) {</span>
-<span class="pc bpc" id="L257" title="1 of 2 branches missed.">            if ( visited == originalContext ) log.warn(&quot;Context runner encountered two identical contexts!&quot;);</span>
-<span class="fc" id="L258">            this.originalContext = originalContext;</span>
-<span class="fc" id="L259">            this.visitedContext = visited;</span>
-<span class="fc" id="L260">        }</span>
+<span class="fc" id="L257">        private Runner( OperationContext visited, OperationContext originalContext ) {</span>
+<span class="pc bpc" id="L258" title="1 of 2 branches missed.">            if ( visited == originalContext ) log.warn(&quot;Context runner encountered two identical contexts!&quot;);</span>
+<span class="fc" id="L259">            this.originalContext = originalContext;</span>
+<span class="fc" id="L260">            this.visitedContext = visited;</span>
+<span class="fc" id="L261">        }</span>
 
         /**
          *  Use this method to supply a lambda which will be executed in the {@link OperationContext}
@@ -269,10 +270,10 @@ import java.util.function.Supplier;
          * @return This very {@link Runner} instance to enable method chaining.
          */
         public Runner run( Runnable contextSpecificAction ) {
-<span class="fc" id="L272">            Neureka.get().setContext( visitedContext );</span>
-<span class="fc" id="L273">            contextSpecificAction.run();</span>
-<span class="fc" id="L274">            Neureka.get().setContext( originalContext );</span>
-<span class="fc" id="L275">            return this;</span>
+<span class="fc" id="L273">            Neureka.get().setContext( visitedContext );</span>
+<span class="fc" id="L274">            contextSpecificAction.run();</span>
+<span class="fc" id="L275">            Neureka.get().setContext( originalContext );</span>
+<span class="fc" id="L276">            return this;</span>
         }
 
         /**
@@ -289,10 +290,10 @@ import java.util.function.Supplier;
          * @return The result of the supplied context action.
          */
         public &lt;T&gt; T runAndGet( Supplier&lt;T&gt; contextSpecificAction ) {
-<span class="fc" id="L292">            Neureka.get().setContext( visitedContext );</span>
-<span class="fc" id="L293">            T result = contextSpecificAction.get();</span>
-<span class="fc" id="L294">            Neureka.get().setContext( originalContext );</span>
-<span class="fc" id="L295">            return result;</span>
+<span class="fc" id="L293">            Neureka.get().setContext( visitedContext );</span>
+<span class="fc" id="L294">            T result = contextSpecificAction.get();</span>
+<span class="fc" id="L295">            Neureka.get().setContext( originalContext );</span>
+<span class="fc" id="L296">            return result;</span>
         }
 
         /**
@@ -311,7 +312,7 @@ import java.util.function.Supplier;
          * @return The result of the supplied context action.
          */
         public &lt;T&gt; T call( Supplier&lt;T&gt; contextSpecificAction ) {
-<span class="fc" id="L314">            return runAndGet( contextSpecificAction );</span>
+<span class="fc" id="L315">            return runAndGet( contextSpecificAction );</span>
         }
 
         /**
@@ -330,7 +331,7 @@ import java.util.function.Supplier;
          * @return The result of the supplied context action.
          */
         public &lt;T&gt; T invoke( Supplier&lt;T&gt; contextSpecificAction ) {
-<span class="fc" id="L333">            return call( contextSpecificAction );</span>
+<span class="fc" id="L334">            return call( contextSpecificAction );</span>
         }
     }
 

@@ -54,7 +54,7 @@ class Neureka_Spec extends Specification
             assert Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()
 
         and : 'The version number is as expected!'
-            assert Neureka.version()=="0.7.0"//version
+            assert Neureka.version()=="0.8.0"//version
     }
 
     

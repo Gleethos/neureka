@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Aug 06 13:09:04 CEST 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Tue Oct 12 10:15:07 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>1.008 seconds</td>
+<td>4.707 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -634,14 +634,14 @@ exception.message ==
 2 * inputsNodeMock.getLock() &gt;&gt; Mock( GraphLock )
 0 * function.isDoingAD() &gt;&gt; true
 0 * payload.getDevice() &gt;&gt; device
-0 * payload.set( _ )
+0 * payload.to( _ )
 0 * device.cleaning( payload, _ )
 (1..2) * function.getOperation() &gt;&gt; type
 (0.._) * type.isDifferentiable() &gt;&gt; true
 (1.._) * type.isInline() &gt;&gt; true
-1 * inputs[0].find( GraphNode.class ) &gt;&gt; inputsNodeMock
-1 * inputs[1].find( GraphNode.class ) &gt;&gt; null
-0 * inputs[2].find( GraphNode.class ) &gt;&gt; null
+1 * inputs[0].get( GraphNode.class ) &gt;&gt; inputsNodeMock
+1 * inputs[1].get( GraphNode.class ) &gt;&gt; null
+0 * inputs[2].get( GraphNode.class ) &gt;&gt; null
 0 * context.allowsForward() &gt;&gt; true</pre>
 </td>
 </tr>
@@ -724,14 +724,14 @@ exception.message ==
 1 * otherInputsNodeMock.getLock() &gt;&gt; Mock( GraphLock )
 0 * function.isDoingAD() &gt;&gt; true
 0 * payload.getDevice() &gt;&gt; device
-0 * payload.set( _ )
+0 * payload.to( _ )
 0 * device.cleaning( payload, _ )
 (1.._) * function.getOperation() &gt;&gt; type
 (0.._) * type.isDifferentiable() &gt;&gt; true
 (1.._) * type.isInline() &gt;&gt; true
-1 * inputs[0].find( GraphNode.class ) &gt;&gt; inputsNodeMock
-1 * inputs[1].find( GraphNode.class ) &gt;&gt; inputsNodeMock
-1 * inputs[2].find( GraphNode.class ) &gt;&gt; otherInputsNodeMock
+1 * inputs[0].get( GraphNode.class ) &gt;&gt; inputsNodeMock
+1 * inputs[1].get( GraphNode.class ) &gt;&gt; inputsNodeMock
+1 * inputs[2].get( GraphNode.class ) &gt;&gt; otherInputsNodeMock
 0 * context.allowsForward() &gt;&gt; true</pre>
 </td>
 </tr>
@@ -814,11 +814,11 @@ exception.message ==
 0 * function.isDoingAD() &gt;&gt; true
 1 * type.isInline() &gt;&gt; true
 0 * payload.getDevice() &gt;&gt; device
-0 * payload.set( _ )
+0 * payload.to( _ )
 0 * device.cleaning( payload, _ )
-1 * inputs[0].find( GraphNode.class ) &gt;&gt; inputsNodeMock
-0 * inputs[1].find( GraphNode.class ) &gt;&gt; inputsNodeMock
-0 * inputs[2].find( GraphNode.class ) &gt;&gt; inputsNodeMock
+1 * inputs[0].get( GraphNode.class ) &gt;&gt; inputsNodeMock
+0 * inputs[1].get( GraphNode.class ) &gt;&gt; inputsNodeMock
+0 * inputs[2].get( GraphNode.class ) &gt;&gt; inputsNodeMock
 0 * inputsNodeMock.getMode() &gt;&gt; -2
 1 * inputsNodeMock.usesAD() &gt;&gt; true
 0 * inputs[0].rqsGradient() &gt;&gt; true

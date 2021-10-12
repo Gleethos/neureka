@@ -5,9 +5,9 @@ import neureka.ndim.iterators.NDIterator;
 
 public final class ComplexD3CIterator extends ComplexD3Configuration implements NDIterator
 {
-<span class="nc" id="L8">    protected int _d1 = 0;</span>
-<span class="nc" id="L9">    protected int _d2 = 0;</span>
-<span class="nc" id="L10">    protected int _d3 = 0;</span>
+<span class="nc" id="L8">    private int _d1 = 0;</span>
+<span class="nc" id="L9">    private int _d2 = 0;</span>
+<span class="nc" id="L10">    private int _d3 = 0;</span>
 
     public ComplexD3CIterator(ComplexD3Configuration ndc) {
 <span class="nc" id="L13">        super( ndc.shape(), ndc.translation(), ndc.indicesMap(), ndc.spread(), ndc.offset() );</span>

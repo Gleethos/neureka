@@ -18,21 +18,24 @@ public class WeakTensorReference&lt;T&gt; extends WeakReference&lt;T&gt;
      * @param q        the queue with which the reference is to be registered,
      *                 or {@code null} if registration is not required
      */
-    private int _hash;
+    private final int _hash;
 
-    public WeakTensorReference(T referent, ReferenceQueue&lt;? super T&gt; q) {
+    public WeakTensorReference( T referent, ReferenceQueue&lt;? super T&gt; q ) {
 <span class="fc" id="L24">        super(referent, q);</span>
 <span class="fc" id="L25">        _hash = referent.hashCode();</span>
 <span class="fc" id="L26">    }</span>
 
     @Override
-    public int hashCode() {
-<span class="nc" id="L30">        return _hash;</span>
-    }
+<span class="nc" id="L29">    public int hashCode() { return _hash; }</span>
 
     @Override
-    public boolean equals(Object o) {
-<span class="nc bnc" id="L35" title="All 2 branches missed.">        return o.hashCode() == _hash;</span>
+    public boolean equals( Object o ) {
+<span class="nc bnc" id="L33" title="All 2 branches missed.">        if ( !(o instanceof WeakTensorReference) ) return false;</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">        if ( o.hashCode() == _hash ) return true;</span>
+        else {
+<span class="nc" id="L36">            T value = get();</span>
+<span class="nc bnc" id="L37" title="All 4 branches missed.">            return value != null &amp;&amp; o == value;</span>
+        }
     }
 
 

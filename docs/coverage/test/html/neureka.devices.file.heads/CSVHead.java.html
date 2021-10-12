@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 <span class="fc" id="L44">        super( filename );</span>
 <span class="pc bpc" id="L45" title="2 of 4 branches missed.">        assert tensor.rank() == 2;</span>
 <span class="fc" id="L46">        _delimiter = &quot;,&quot;;</span>
-<span class="fc" id="L47">        NDFrame&lt;?&gt; alias = tensor.find( NDFrame.class );</span>
+<span class="fc" id="L47">        NDFrame&lt;?&gt; alias = tensor.get( NDFrame.class );</span>
 <span class="fc bfc" id="L48" title="All 2 branches covered.">        List&lt;Object&gt; index = (alias != null) ? alias.atAxis( 0 ).getAllAliases() : null;</span>
 <span class="fc bfc" id="L49" title="All 2 branches covered.">        List&lt;Object&gt; labels = (alias != null ) ? alias.atAxis( 1 ).getAllAliases() : null;</span>
 <span class="fc bfc" id="L50" title="All 2 branches covered.">        _tensorName = (alias != null) ? alias.getTensorName() : null;</span>

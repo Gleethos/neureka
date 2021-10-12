@@ -2,7 +2,9 @@
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.DefaultADAgent;
+import neureka.autograd.ADAgent;
+import neureka.calculus.CalcUtil;
+import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -13,91 +15,85 @@ import neureka.devices.Device;
 public class DivisionConv extends AbstractOperation {
 
     public DivisionConv() {
-<span class="fc" id="L16">        super(</span>
+<span class="fc" id="L18">        super(</span>
                 new OperationBuilder()
-<span class="fc" id="L18">                        .setFunction(         &quot;divide_conv&quot;           )</span>
-<span class="fc" id="L19">                        .setOperator(         &quot;d&quot;                )</span>
-<span class="fc" id="L20">                        .setArity(            2                  )</span>
-<span class="fc" id="L21">                        .setIsOperator(       true               )</span>
-<span class="fc" id="L22">                        .setIsIndexer(        false              )</span>
-<span class="fc" id="L23">                        .setIsDifferentiable( true               )</span>
-<span class="fc" id="L24">                        .setIsInline(         false              )</span>
+<span class="fc" id="L20">                        .setFunction(         &quot;divide_conv&quot;           )</span>
+<span class="fc" id="L21">                        .setOperator(         &quot;d&quot;                )</span>
+<span class="fc" id="L22">                        .setArity(            2                  )</span>
+<span class="fc" id="L23">                        .setIsOperator(       true               )</span>
+<span class="fc" id="L24">                        .setIsIndexer(        false              )</span>
+<span class="fc" id="L25">                        .setIsDifferentiable( true               )</span>
+<span class="fc" id="L26">                        .setIsInline(         false              )</span>
         );
-<span class="fc" id="L26">        setAlgorithm(</span>
+<span class="fc" id="L28">        setAlgorithm(</span>
                 Convolution.class,
                 new Convolution()
-<span class="pc" id="L29">                        .setCanPerformBackwardADFor( call -&gt; true )</span>
-<span class="fc" id="L30">                        .setCanPerformForwardADFor(</span>
+<span class="pc" id="L31">                        .setCanPerformBackwardADFor( call -&gt; true )</span>
+<span class="fc" id="L32">                        .setCanPerformForwardADFor(</span>
                                 call -&gt; {
-<span class="nc" id="L32">                                    Tsr&lt;?&gt; last = null;</span>
-<span class="nc bnc" id="L33" title="All 2 branches missed.">                                    for ( Tsr&lt;?&gt; t : call.getTensors() ) {</span>
-<span class="nc bnc" id="L34" title="All 4 branches missed.">                                        if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return false;</span>
-<span class="nc" id="L35">                                        last = t; // Note: shapes are cached!</span>
+<span class="nc" id="L34">                                    Tsr&lt;?&gt; last = null;</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">                                    for ( Tsr&lt;?&gt; t : call.getTensors() ) {</span>
+<span class="nc bnc" id="L36" title="All 4 branches missed.">                                        if ( last != null &amp;&amp; !last.shape().equals(t.shape()) ) return false;</span>
+<span class="nc" id="L37">                                        last = t; // Note: shapes are cached!</span>
                                     }
-<span class="nc" id="L37">                                    return true;</span>
+<span class="nc" id="L39">                                    return true;</span>
                                 }
                         )
-<span class="fc" id="L40">                        .setSupplyADAgentFor(</span>
+<span class="fc" id="L42">                        .setSupplyADAgentFor(</span>
                                 (Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt;
                                 {
-<span class="fc" id="L43">                                    Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getAt(&quot;derivative&quot;);</span>
-<span class="fc" id="L44">                                    Function mul = Neureka.get().context().getFunction().mul();</span>
-<span class="pc bpc" id="L45" title="1 of 2 branches missed.">                                    if ( ctxDerivative != null ) {</span>
-<span class="nc" id="L46">                                        return new DefaultADAgent( ctxDerivative )</span>
-<span class="nc" id="L47">                                                .setForward( (node, forwardDerivative ) -&gt; mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )</span>
-<span class="nc" id="L48">                                                .setBackward( (node, forwardDerivative ) -&gt; mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );</span>
+<span class="fc" id="L45">                                    Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
+<span class="fc" id="L46">                                    Function mul = Neureka.get().context().getFunction().mul();</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">                                    if ( ctxDerivative != null ) {</span>
+<span class="nc" id="L48">                                        return ADAgent.of( ctxDerivative )</span>
+<span class="nc" id="L49">                                                        .setForward( (node, forwardDerivative ) -&gt; mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )</span>
+<span class="nc" id="L50">                                                        .setBackward( (node, forwardDerivative ) -&gt; mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );</span>
                                     }
-<span class="fc" id="L50">                                    Tsr[] inputs = call.getTensors();</span>
-<span class="fc" id="L51">                                    int d = call.getDerivativeIndex();</span>
-<span class="fc bfc" id="L52" title="All 2 branches covered.">                                    if ( forward )</span>
-<span class="fc" id="L53">                                        throw new IllegalArgumentException(&quot;Convolution of does not support forward-AD!&quot;);</span>
+<span class="fc" id="L52">                                    Tsr[] inputs = call.getTensors();</span>
+<span class="fc" id="L53">                                    int d = call.getDerivativeIndex();</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">                                    if ( forward )</span>
+<span class="fc" id="L55">                                        throw new IllegalArgumentException(&quot;Convolution of does not support forward-AD!&quot;);</span>
                                     else
                                     {
-<span class="fc" id="L56">                                        Tsr&lt;?&gt; localDerivative = f.derive( inputs, d );</span>
-<span class="fc" id="L57">                                        return new DefaultADAgent( localDerivative )</span>
-<span class="pc" id="L58">                                                .setForward( (node, forwardDerivative ) -&gt; mul.call(new Tsr[]{forwardDerivative, localDerivative}) )</span>
-<span class="pc" id="L59">                                                .setBackward( (node, backwardError ) -&gt; mul.call(new Tsr[]{backwardError, localDerivative}) );</span>
+<span class="fc" id="L58">                                        Tsr&lt;?&gt; localDerivative = f.derive( inputs, d );</span>
+<span class="fc" id="L59">                                        return ADAgent.of( localDerivative )</span>
+<span class="pc" id="L60">                                                        .setForward( (node, forwardDerivative ) -&gt; mul.call(new Tsr[]{forwardDerivative, localDerivative}) )</span>
+<span class="pc" id="L61">                                                        .setBackward( (node, backwardError ) -&gt; mul.call(new Tsr[]{backwardError, localDerivative}) );</span>
                                     }
                                 }
                         )
-<span class="pc" id="L63">                        .setHandleInsteadOfDevice( (caller, call ) -&gt; null )</span>
-<span class="pc" id="L64">                        .setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -&gt; null )</span>
-<span class="fc" id="L65">                        .setInstantiateNewTensorsForExecutionIn(</span>
+<span class="fc" id="L65">                        .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)</span>
+<span class="fc" id="L66">                        .setCallPreparation(</span>
                                 call -&gt; {
-<span class="nc" id="L67">                                    Tsr[] tsrs = call.getTensors();</span>
-<span class="nc bnc" id="L68" title="All 2 branches missed.">                                    int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;</span>
-<span class="nc" id="L69">                                    return ExecutionCall.builder()</span>
-<span class="nc" id="L70">                                            .device( call.getDevice() )</span>
-<span class="nc" id="L71">                                            .tensors( new Tsr[]{tsrs[offset], tsrs[1+offset]} )</span>
-<span class="nc" id="L72">                                            .derivativeIndex( -1 )</span>
-<span class="nc" id="L73">                                            .operation( Neureka.get().context().instance(&quot;idy&quot;) )</span>
-<span class="nc" id="L74">                                            .build();</span>
+<span class="nc" id="L68">                                    Tsr[] tsrs = call.getTensors();</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">                                    int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;</span>
+<span class="nc" id="L70">                                    return ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().context().getOperation(&quot;idy&quot;)).on(call.getDevice());</span>
                                 }
                         )
-<span class="fc" id="L77">                        .build()</span>
+<span class="fc" id="L73">                        .buildFunAlgorithm()</span>
         );
-<span class="fc" id="L79">    }</span>
+<span class="fc" id="L75">    }</span>
 
     @Override
     public String stringify(String[] children) {
-<span class="fc" id="L83">        StringBuilder reconstructed = new StringBuilder();</span>
-<span class="fc bfc" id="L84" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
-<span class="fc" id="L85">            reconstructed.append( children[ i ] );</span>
-<span class="fc bfc" id="L86" title="All 2 branches covered.">            if ( i &lt; children.length - 1 ) {</span>
-<span class="fc" id="L87">                reconstructed.append(&quot; d &quot;);</span>
+<span class="fc" id="L79">        StringBuilder reconstructed = new StringBuilder();</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
+<span class="fc" id="L81">            reconstructed.append( children[ i ] );</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">            if ( i &lt; children.length - 1 ) {</span>
+<span class="fc" id="L83">                reconstructed.append(&quot; d &quot;);</span>
             }
         }
-<span class="fc" id="L90">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
+<span class="fc" id="L86">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative(Function[] children, int derivationIndex) {
-<span class="nc" id="L95">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L91">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="nc" id="L100">        return 0;</span>
+<span class="nc" id="L96">        return 0;</span>
     }
 
 }

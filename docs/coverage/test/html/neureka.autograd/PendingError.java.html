@@ -15,14 +15,14 @@ public final class PendingError&lt;ValType&gt;
 <span class="fc" id="L15">    }</span>
 
     public void accumulate( Tsr&lt;?&gt; error ) {
-<span class="fc" id="L18">        new FunctionBuilder(Neureka.get().context()).build(</span>
+<span class="fc" id="L18">        new FunctionBuilder( Neureka.get().context() ).build(</span>
                 &quot;I[ 0 ]&lt;-(I[ 0 ]+I[ 1 ])&quot;, false
 <span class="fc" id="L20">        ).call( new Tsr[]{ _accumulatedError, error } );</span>
 <span class="fc" id="L21">        _toBeReceived--;</span>
 <span class="fc" id="L22">    }</span>
 
     public boolean isFullyAccumulated() {
-<span class="pc bpc" id="L25" title="1 of 2 branches missed.">        return _toBeReceived == 0;</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        return _toBeReceived == 0;</span>
     }
 
     public String toString() {

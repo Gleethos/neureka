@@ -28,7 +28,7 @@ public class Convolution extends AbstractFunctionalAlgorithm&lt; Convolution &gt
 
     @Contract(pure = true)
     public static void convolve (
-            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            Tsr&lt;?&gt; t0_drn, Tsr&lt;?&gt; t1_src, Tsr&lt;?&gt; t2_src,
             int d, int i, int end,
             Operation.TertiaryNDIConsumer operation
     ) {
@@ -38,7 +38,7 @@ public class Convolution extends AbstractFunctionalAlgorithm&lt; Convolution &gt
 
     @Contract(pure = true)
     public static void _convolve (
-            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            Tsr&lt;?&gt; t0_drn, Tsr&lt;?&gt; t1_src, Tsr&lt;?&gt; t2_src,
             int i, int end,
             Operation.TertiaryNDIConsumer operation
     ) {
@@ -97,7 +97,7 @@ public class Convolution extends AbstractFunctionalAlgorithm&lt; Convolution &gt
 <span class="fc" id="L97">                        } else incrementing = false;</span>
 <span class="nc" id="L98">                    } else ri++;</span>
                 }
-            }//setInto _value in drn:
+            }//setInto value in drn:
 <span class="fc" id="L101">            t0_value[t0Idx.i()] = value;</span>
             //increment on drain:
 <span class="fc" id="L103">            t0Idx.increment();</span>
@@ -108,7 +108,7 @@ public class Convolution extends AbstractFunctionalAlgorithm&lt; Convolution &gt
 <span class="fc" id="L108">    }</span>
 
     private static void _deConvolve(
-            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            Tsr&lt;?&gt; t0_drn, Tsr&lt;?&gt; t1_src, Tsr&lt;?&gt; t2_src,
             int i, int end,
             Operation.TertiaryNDIConsumer operation
     ) {
@@ -198,7 +198,7 @@ public class Convolution extends AbstractFunctionalAlgorithm&lt; Convolution &gt
 
     @Contract(pure = true)
     public static void convolve (
-            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            Tsr&lt;?&gt; t0_drn, Tsr&lt;?&gt; t1_src, Tsr&lt;?&gt; t2_src,
             int d, int i, int end,
             Operation.TertiaryNDAConsumer operation
     ) {
@@ -209,7 +209,7 @@ public class Convolution extends AbstractFunctionalAlgorithm&lt; Convolution &gt
 
     @Contract(pure = true)
     private static void _convolve (
-            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            Tsr&lt;?&gt; t0_drn, Tsr&lt;?&gt; t1_src, Tsr&lt;?&gt; t2_src,
             int i, int end,
             Operation.TertiaryNDAConsumer operation
     ) {
@@ -283,7 +283,7 @@ public class Convolution extends AbstractFunctionalAlgorithm&lt; Convolution &gt
 
     @Contract(pure = true)
     private static void _deConvolve (
-            Tsr t0_drn, Tsr t1_src, Tsr t2_src,
+            Tsr&lt;?&gt; t0_drn, Tsr&lt;?&gt; t1_src, Tsr&lt;?&gt; t2_src,
             int i, int end,
             Operation.TertiaryNDAConsumer operation
     ) {

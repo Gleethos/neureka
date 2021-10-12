@@ -253,10 +253,10 @@ public final class DataType&lt;Type&gt;
     }
 
     public Class&lt;?&gt; getJVMTypeClass() {
-<span class="pc bpc" id="L256" title="1 of 2 branches missed.">        if ( this.typeClassImplements(NumericType.class) )</span>
+<span class="fc bfc" id="L256" title="All 2 branches covered.">        if ( this.typeClassImplements(NumericType.class) )</span>
 <span class="fc" id="L257">            return ((NumericType) this.getTypeClassInstance()).holderType();</span>
 
-<span class="nc" id="L259">        return getTypeClass();</span>
+<span class="fc" id="L259">        return getTypeClass();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

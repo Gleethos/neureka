@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Aug 06 13:08:59 CEST 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Tue Oct 12 10:15:22 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.155 seconds</td>
+<td>0.144 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -782,7 +782,7 @@ new File( path ).listFiles().any {
 <div class='block-kind'>Expect:</div>
 </td>
 <td>
-<pre class='block-source'>device.loadable == ['biostats-without-head.csv', 'biostats.csv']
+<pre class='block-source'>device.loadable.toSet() == ['biostats-without-head.csv', 'biostats.csv'].toSet()
 device.loaded == []</pre>
 </td>
 </tr>

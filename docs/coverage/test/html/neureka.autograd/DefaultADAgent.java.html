@@ -2,105 +2,97 @@
 
 
 import neureka.Tsr;
+import neureka.calculus.args.Args;
+import neureka.calculus.args.Arg;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
 /**
- * This class implements the ADAgent interface.
- * ADAgent stands for &quot;Auto-Differentiation-Agent&quot;, meaning
- * that implementations of this class are responsible for managing
- * forward- and reverse- mode differentiation actions.
- * These actions are accessible through the &quot;forward(...)&quot;
- * and &quot;backward(...)&quot; method which are being triggered
- * by instances of the GraphNode class during propagation. &lt;br&gt;
- * &lt;br&gt;
- * This class stores implementations for these methods
- * inside the agent as lambda instances. &lt;br&gt;
+ *  This class implements the ADAgent interface.
+ *  {@link ADAgent} stands for &quot;Auto-Differentiation-Agent&quot;, meaning
+ *  that implementations of this class are responsible for managing
+ *  forward- and reverse- mode differentiation actions.
+ *  These actions are accessible through the {@link #forward(GraphNode, Tsr)}
+ *  and {@link #backward(GraphNode, Tsr)} method which are being triggered
+ *  by instances of the GraphNode class during propagation. &lt;br&gt;
+ *  &lt;br&gt;
+ *  This class stores implementations for these methods
+ *  inside the agent as lambda instances. &lt;br&gt;
  *
- * So in essence this class is a container for lambda actions
- * allowing for easy instantiation of ADAgents.
- * Additionally this class the class manages a variable context
- * for storing useful data used by a particular operation to
- * perform propagation. &lt;br&gt;
- *
+ *  So in essence this class is a container for lambda actions
+ *  allowing for easy instantiation of {@link ADAgent}s.
+ *  Additionally this class the class manages a variable context
+ *  for storing useful data used by a particular {@link neureka.backend.api.Operation} to
+ *  perform propagation. &lt;br&gt;
+ *  This context will be populated by a given {@link neureka.backend.api.ExecutionCall},
+ *  which will itself have gathered the context
+ *  variables within a given backend implementation, more specifically an {@link neureka.backend.api.Operation}.
+ *  These variables are used by an implementation of the {@link neureka.backend.api.Operation} to perform auto differentiation
+ *  or to facilitate further configuration of an {@link neureka.backend.api.ExecutionCall}.
  */
-public final class DefaultADAgent implements ADAgent
-{
-    public DefaultADAgent setForward(ADAction _forward) {
-<span class="fc" id="L33">        this._forward = _forward;</span>
-<span class="fc" id="L34">        return this;</span>
-    }
+public final class DefaultADAgent extends Args implements ADAgent {
 
-    public DefaultADAgent setBackward(ADAction _backward) {
-<span class="fc" id="L38">        this._backward = _backward;</span>
-<span class="fc" id="L39">        return this;</span>
-    }
-
-    /**
-     * This interface is the declaration for
-     * lambda actions for both the &quot;forward(...)&quot;
-     * and &quot;backward(...)&quot; method of the ADAgent interface.
-     */
-    public interface ADAction
-    {
-         Tsr&lt;?&gt; execute(GraphNode&lt;?&gt; t, Tsr&lt;?&gt; error);
-    }
-
+<span class="fc" id="L37">    public static DefaultADAgent ofDerivative( Tsr&lt;?&gt; derivative ) { return new DefaultADAgent( derivative ); }</span>
+    
     /**
      *  This lambda ought to perform the forward propagation
      *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
      */
-    private ADAction _forward;
+<span class="pc" id="L43">    private ADAction _forward = (node, forwardDerivative ) -&gt; {throw new IllegalStateException(&quot;Forward AD not defined!&quot;);};</span>
     /**
      *  This lambda ought to perform the backward propagation
      *  for the concrete {@link neureka.backend.api.ImplementationFor} of a {@link neureka.devices.Device}.
      */
-    private ADAction _backward;
-<span class="fc" id="L62">    private final Map&lt;String, Object&gt; _context = new TreeMap&lt;&gt;();</span>
+<span class="pc" id="L48">    private ADAction _backward = (node, backwardError ) -&gt; {throw new IllegalStateException(&quot;Backward AD not defined!&quot;);};</span>
 
-<span class="fc" id="L64">    public DefaultADAgent(  Tsr&lt;?&gt; derivative  ) {</span>
-<span class="fc" id="L65">        _context.put( &quot;derivative&quot;, derivative );</span>
-<span class="fc" id="L66">    }</span>
+    /**
+     * @param derivative The current derivative which will be stored with the name &quot;derivative&quot; in the agents context.
+     */
+<span class="fc" id="L53">    private DefaultADAgent( Tsr&lt;?&gt; derivative ) { set( Arg.Derivative.of(derivative) ); }</span>
 
-<span class="fc" id="L68">    public DefaultADAgent() { }</span>
 
-    public DefaultADAgent withContext( Map&lt;String, Object&gt; context  ) {
-<span class="fc" id="L71">        _context.putAll( context );</span>
-<span class="fc" id="L72">        return this;</span>
+<span class="fc" id="L56">    public DefaultADAgent setForward( ADAction _forward ) { this._forward = _forward; return this; }</span>
+
+<span class="fc" id="L58">    public DefaultADAgent setBackward( ADAction _backward ) { this._backward = _backward; return this; }</span>
+    
+    
+    /**
+     *  The {@link DefaultADAgent} will adopt the argument context of the {@link neureka.backend.api.ExecutionCall}
+     *  from which it was born. This is so that they can be used by any backend implementation to
+     *  save variables useful to perform differentiation.
+     */
+    public DefaultADAgent withArgs( List&lt;Arg&gt; context  ) {
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        for ( Arg&lt;?&gt; arg : context ) this.set(arg);</span>
+<span class="fc" id="L68">        return this;</span>
     }
 
     @Override
-    public &lt;T&gt; Tsr&lt;T&gt; forward( GraphNode&lt;T&gt; target, Tsr&lt;T&gt; derivative) {
-<span class="fc" id="L77">        return (Tsr&lt;T&gt;) _forward.execute( target, derivative);</span>
-    }
+<span class="fc" id="L72">    public &lt;T&gt; Tsr&lt;T&gt; forward( GraphNode&lt;T&gt; target, Tsr&lt;T&gt; derivative ) { return (Tsr&lt;T&gt;) _forward.execute( target, derivative); }</span>
 
     @Override
-    public &lt;T&gt; Tsr&lt;T&gt; backward( GraphNode&lt;T&gt; target, Tsr&lt;T&gt; error ) {
-<span class="fc" id="L82">        return (Tsr&lt;T&gt;) _backward.execute( target, error );</span>
-    }
+<span class="fc" id="L75">    public &lt;T&gt; Tsr&lt;T&gt; backward( GraphNode&lt;T&gt; target, Tsr&lt;T&gt; error ) { return (Tsr&lt;T&gt;) _backward.execute( target, error ); }</span>
 
     @Override
     public Tsr&lt;?&gt; derivative() {
-<span class="fc" id="L87">        return (Tsr&lt;?&gt;) _context.get( &quot;derivative&quot; );</span>
+<span class="fc" id="L79">        Arg.Derivative arg = get(Arg.Derivative.class);</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        if ( arg != null ) return (Tsr&lt;?&gt;) arg.get(); else return null;</span>
     }
 
     @Override
-    public boolean hasForward() {
-<span class="fc" id="L92">        return _context.containsKey( &quot;derivative&quot; );</span>
-    }
+<span class="fc" id="L84">    public boolean hasForward() { return has(Arg.Derivative.class); }</span>
 
     @Override
-    public boolean hasBackward() {
-<span class="nc bnc" id="L97" title="All 2 branches missed.">        return _backward != null;</span>
-    }
+<span class="nc bnc" id="L87" title="All 2 branches missed.">    public boolean hasBackward() { return _backward != null; }</span>
 
     /**
      *  An {@link ADAgent} also contains a context of variables which have been
      *  passed to it by an {@link neureka.backend.api.ExecutionCall}.
-     *  These variables specify how an implementation of an operation ought to execute.
+     *  A given {@link neureka.backend.api.ExecutionCall} will itself have gathered the context
+     *  variables within a given backend implementation, more specifically an {@link neureka.backend.api.Operation}.
+     *  These variables are used by an implementation of the {@link neureka.backend.api.Operation} to perform auto differentiation
+     *  or to facilitate further configuration of an {@link neureka.backend.api.ExecutionCall}.
      *  This method let's us view the current state of these variables for this agent in the form of
      *  a nice {@link String}...
      *
@@ -108,20 +100,28 @@ public final class DefaultADAgent implements ADAgent
      */
     @Override
     public String toString() {
-<span class="pc bpc" id="L111" title="1 of 2 branches missed.">        if ( this.derivative() != null ) return derivative().toString();</span>
-<span class="fc" id="L112">        return _context.keySet().stream()</span>
-<span class="fc" id="L113">                .map( key -&gt; key + &quot;=&quot; + _context.get( key ) )</span>
-<span class="fc" id="L114">                .collect( Collectors.joining( &quot;, &quot;, &quot;{&quot;, &quot;}&quot; ) );</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        if ( this.derivative() != null ) return derivative().toString();</span>
+<span class="fc" id="L104">        return getAll(Arg.class).stream()</span>
+<span class="fc" id="L105">                .map( key -&gt; key.getClass().getSimpleName() + &quot;=&quot; + get(key.getClass()) )</span>
+<span class="fc" id="L106">                .collect( Collectors.joining( &quot;, &quot;, &quot;{&quot;, &quot;}&quot; ) );</span>
     }
 
 
+    /**
+     * This interface is the declaration for
+     * lambda actions for both the {@link #forward(GraphNode, Tsr)}
+     * and {@link #backward(GraphNode, Tsr)} method of the {@link ADAgent} interface.
+     */
+    public interface ADAction
+    {
+        /**
+         * @param node The {@link GraphNode} at which the differentiation ought to be performed.
+         * @param error The error which ought to be used for the forward or backward differentiation.
+         * @return The result of the differentiation.
+         */
+        Tsr&lt;?&gt; execute( GraphNode&lt;?&gt; node, Tsr&lt;?&gt; error );
+    }
 
-
-
-
-
-
-
-
+    
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

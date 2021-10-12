@@ -83,7 +83,7 @@ public class TensorBuilder&lt;V&gt; implements WithShapeOrScalarOrVector&lt;V&gt
 <span class="fc" id="L83">    public Tsr&lt;V&gt; andWhere( Initializer&lt;V&gt; initializer) { return Tsr.of( _dataType, _shape, initializer ); }</span>
 
     @Override
-<span class="fc" id="L86">    public To&lt;V&gt; iterativelyFilledFrom( V index ) { _from = index; return this; }</span>
+<span class="fc" id="L86">    public To&lt;V&gt; iterativelyFilledFrom( V index ) { _from = _checked(index); return this; }</span>
 
     @Override
 <span class="fc" id="L89">    public Tsr&lt;V&gt; all( V value ) { return Tsr.of( _dataType, _shape, value ); }</span>
@@ -98,7 +98,7 @@ public class TensorBuilder&lt;V&gt; implements WithShapeOrScalarOrVector&lt;V&gt
 <span class="fc" id="L98">    public Tsr&lt;V&gt; scalar( V value ) { return Tsr.of( value.getClass(), new int[]{1}, value ); }</span>
 
     @Override
-<span class="fc" id="L101">    public Step&lt;V&gt; to( V index ) { _to = index; return this; }</span>
+<span class="fc" id="L101">    public Step&lt;V&gt; to( V index ) { _to = _checked(index); return this; }</span>
 
     @Override
     public Tsr&lt;V&gt; step( double size ) {
@@ -174,6 +174,22 @@ public class TensorBuilder&lt;V&gt; implements WithShapeOrScalarOrVector&lt;V&gt
 <span class="fc" id="L174">        int size = 1;</span>
 <span class="fc bfc" id="L175" title="All 2 branches covered.">        for ( int axis : _shape ) size *= axis;</span>
 <span class="fc" id="L176">        return size;</span>
+    }
+
+    private V _checked( V o ) {
+<span class="fc" id="L180">        Class&lt;?&gt; jvmTypeClass = this._dataType.getJVMTypeClass();</span>
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">        if ( Number.class.isAssignableFrom(jvmTypeClass) ) {</span>
+<span class="pc bpc" id="L182" title="2 of 4 branches missed.">            if ( o instanceof Number &amp;&amp; o.getClass() != jvmTypeClass ) {</span>
+<span class="nc" id="L183">                Number n = (Number) o;</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">                if ( jvmTypeClass == Integer.class ) return (V) ((Integer) n.intValue());</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">                if ( jvmTypeClass == Double.class ) return (V) ((Double) n.doubleValue());</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">                if ( jvmTypeClass == Short.class ) return (V) ((Short) n.shortValue());</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">                if ( jvmTypeClass == Byte.class ) return (V) ((Byte) n.byteValue());</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">                if ( jvmTypeClass == Long.class ) return (V) ((Long) n.longValue());</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">                if ( jvmTypeClass == Float.class ) return (V) ((Float) n.floatValue());</span>
+            }
+        }
+<span class="fc" id="L192">        return o;</span>
     }
 
 }

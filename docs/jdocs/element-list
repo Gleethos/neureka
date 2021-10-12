@@ -2,6 +2,7 @@ neureka
 neureka.autograd
 neureka.backend.api
 neureka.backend.api.algorithms
+neureka.backend.api.algorithms.fun
 neureka.backend.api.implementations
 neureka.backend.api.operations
 neureka.backend.standard.algorithms
@@ -13,8 +14,11 @@ neureka.backend.standard.operations.linear
 neureka.backend.standard.operations.operator
 neureka.backend.standard.operations.other
 neureka.calculus
+neureka.calculus.args
 neureka.calculus.assembly
 neureka.calculus.implementations
+neureka.common.composition
+neureka.common.functional
 neureka.devices
 neureka.devices.file
 neureka.devices.file.heads
@@ -44,6 +48,5 @@ neureka.optimization.implementations
 neureka.utility
 neureka.utility.fluent
 neureka.utility.fluent.states
-neureka.utility.functional
 neureka.utility.slicing
 neureka.utility.slicing.states

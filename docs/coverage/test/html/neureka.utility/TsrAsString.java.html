@@ -297,8 +297,8 @@ import java.util.function.Function;
             else
 <span class="fc bfc" id="L298" title="All 2 branches covered.">                _$( ( ( _legacy ) ? &quot;:(null)&quot; : &quot;:[null]&quot; ) );</span>
         }
-<span class="fc bfc" id="L300" title="All 6 branches covered.">        if ( _hasRecursiveGraph &amp;&amp; _tensor.has( GraphNode.class ) &amp;&amp; _tensor.find( GraphNode.class ).size() &gt; 0 ) {</span>
-<span class="fc" id="L301">            GraphNode&lt;?&gt; node = _tensor.find( GraphNode.class );</span>
+<span class="fc bfc" id="L300" title="All 6 branches covered.">        if ( _hasRecursiveGraph &amp;&amp; _tensor.has( GraphNode.class ) &amp;&amp; _tensor.get( GraphNode.class ).size() &gt; 0 ) {</span>
+<span class="fc" id="L301">            GraphNode&lt;?&gt; node = _tensor.get( GraphNode.class );</span>
 <span class="fc" id="L302">            _$( &quot;; &quot; );</span>
 <span class="fc" id="L303">            node.forEachDerivative( ( t, agent ) -&gt; {</span>
 <span class="pc bpc" id="L304" title="1 of 2 branches missed.">                if ( agent.derivative() == null ) _$( &quot;-&gt;d(null), &quot; );</span>
@@ -314,8 +314,8 @@ import java.util.function.Function;
                 }
 <span class="fc" id="L315">            });</span>
         }
-<span class="fc bfc" id="L317" title="All 6 branches covered.">        if ( _hasDerivatives &amp;&amp; _tensor.has( GraphNode.class ) &amp;&amp; _tensor.find( GraphNode.class ).size() &gt; 0 ) {</span>
-<span class="fc" id="L318">            GraphNode&lt;?&gt; node = _tensor.find( GraphNode.class );</span>
+<span class="fc bfc" id="L317" title="All 6 branches covered.">        if ( _hasDerivatives &amp;&amp; _tensor.has( GraphNode.class ) &amp;&amp; _tensor.get( GraphNode.class ).size() &gt; 0 ) {</span>
+<span class="fc" id="L318">            GraphNode&lt;?&gt; node = _tensor.get( GraphNode.class );</span>
 <span class="pc bpc" id="L319" title="1 of 2 branches missed.">            if ( node.getMode() != 0 ) {</span>
 <span class="fc" id="L320">                _$( &quot;; &quot; );</span>
 <span class="fc" id="L321">                node.forEachDerivative( ( t, agent ) -&gt; {</span>
@@ -388,7 +388,7 @@ import java.util.function.Function;
 <span class="fc" id="L388">        int trimStart = ( _shape[ dim ] / 2 - trimSize / 2 );</span>
 <span class="fc" id="L389">        int trimEnd = ( _shape[ dim ] / 2 + trimSize / 2 );</span>
 <span class="pc bpc" id="L390" title="2 of 4 branches missed.">        assert trimEnd - trimStart == trimSize;</span>
-<span class="fc" id="L391">        NDFrame&lt;?&gt; alias = _tensor.find( NDFrame.class );</span>
+<span class="fc" id="L391">        NDFrame&lt;?&gt; alias = _tensor.get( NDFrame.class );</span>
 <span class="fc bfc" id="L392" title="All 2 branches covered.">        if ( dim == indices.length - 1 ) {</span>
 <span class="pc bpc" id="L393" title="1 of 4 branches missed.">            if (</span>
                     alias != null &amp;&amp;

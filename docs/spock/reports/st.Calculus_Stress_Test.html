@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Aug 06 13:08:48 CEST 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Tue Oct 12 10:14:56 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.574 seconds</td>
+<td>2.069 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -396,7 +396,7 @@ div.footer {
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t = Tsr.of( [3, 3, 3, 3], 0 ).set( device )</pre>
+<pre class='block-source'>Tsr t = Tsr.of( [3, 3, 3, 3], 0 ).to( device )</pre>
 </td>
 </tr>
 <tr>
@@ -459,17 +459,17 @@ t = t[1..2, 0..2, 1..1, 0..2]</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>true</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>false</td>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1886ae38780], platform=neureka.devices.opencl.OpenCLPlatform@3d3e07ed)</td>
 <td class='ex-value'>true</td>
 <td class='ex-result'>OK</td>
 </tr>
@@ -512,7 +512,7 @@ t = t[1..2, 0..2, 1..1, 0..2]</pre>
 <div class='block-kind'>When:</div>
 </td>
 <td>
-<pre class='block-source'>t = t.dot( t.T() )</pre>
+<pre class='block-source'>t = t.convDot( t.T() )</pre>
 </td>
 </tr>
 <tr>
@@ -593,8 +593,8 @@ t = t[1..2, 0..2, 1..1, 0..2]</pre>
 <div class='block-kind'>And:</div>
 </td>
 <td>
-<pre class='block-source'>Tsr t1 = Tsr.of( shape1, -4..2 ).set( device )
-Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
+<pre class='block-source'>Tsr t1 = Tsr.of( shape1, -4..2 ).to( device )
+Tsr t2 = Tsr.of( shape2, -3..5 ).to( device )</pre>
 </td>
 </tr>
 <tr>
@@ -632,7 +632,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 </thead>
 <tbody>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -641,7 +641,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -650,7 +650,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -659,7 +659,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -668,7 +668,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1886ae38780], platform=neureka.devices.opencl.OpenCLPlatform@3d3e07ed)</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -677,7 +677,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1886ae38780], platform=neureka.devices.opencl.OpenCLPlatform@3d3e07ed)</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -686,7 +686,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1886ae38780], platform=neureka.devices.opencl.OpenCLPlatform@3d3e07ed)</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -695,7 +695,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1886ae38780], platform=neureka.devices.opencl.OpenCLPlatform@3d3e07ed)</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -704,7 +704,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -713,7 +713,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -722,7 +722,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -731,7 +731,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -740,7 +740,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1886ae38780], platform=neureka.devices.opencl.OpenCLPlatform@3d3e07ed)</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -749,7 +749,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1886ae38780], platform=neureka.devices.opencl.OpenCLPlatform@3d3e07ed)</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -758,7 +758,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1886ae38780], platform=neureka.devices.opencl.OpenCLPlatform@3d3e07ed)</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -767,7 +767,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1886ae38780], platform=neureka.devices.opencl.OpenCLPlatform@3d3e07ed)</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -776,7 +776,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -785,7 +785,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -794,7 +794,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -803,7 +803,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -812,7 +812,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1886ae38780], platform=neureka.devices.opencl.OpenCLPlatform@3d3e07ed)</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -821,7 +821,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1886ae38780], platform=neureka.devices.opencl.OpenCLPlatform@3d3e07ed)</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -830,7 +830,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1886ae38780], platform=neureka.devices.opencl.OpenCLPlatform@3d3e07ed)</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -839,7 +839,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1626fa43e70], platform=neureka.devices.opencl.OpenCLPlatform@16abbe46)</td>
+<td class='ex-value'>OpenCLDevice(deviceId=cl_device_id[0x1886ae38780], platform=neureka.devices.opencl.OpenCLPlatform@3d3e07ed)</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -848,7 +848,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -857,7 +857,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>true</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>
@@ -866,7 +866,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 1]</td>
 <td class='ex-value'>[2, 2]</td>
@@ -875,7 +875,7 @@ Tsr t2 = Tsr.of( shape2, -3..5 ).set( device )</pre>
 <td class='ex-result'>OK</td>
 </tr>
 <tr class='ex-pass'>
-<td class='ex-value'>neureka.devices.host.HostCPU@62bc1f8a</td>
+<td class='ex-value'>neureka.devices.host.HostCPU@68b13d09</td>
 <td class='ex-value'>false</td>
 <td class='ex-value'>[2, 3, 1]</td>
 <td class='ex-value'>[1, 3, 2]</td>

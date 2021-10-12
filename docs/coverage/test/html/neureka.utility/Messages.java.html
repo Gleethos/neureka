@@ -6,31 +6,169 @@ import neureka.backend.api.OperationContext;
 import neureka.devices.opencl.CLContext;
 import org.slf4j.helpers.MessageFormatter;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.util.Properties;
+
 /**
  *  A simple collection of prepared
  *  String messages which provide helpful messages for the logging
  *  backend and ultimately the user of this library.
  */
-<span class="nc" id="L14">public class Messages</span>
+<span class="nc" id="L20">public class Messages</span>
 {
-<span class="fc" id="L16">    public static final String ILLEGAL_OPERATION_STATE_ERROR =</span>
-<span class="fc" id="L17">                    &quot;Unexpected '&quot;+ Operation.class.getSimpleName()+&quot;' state encountered:\n&quot; +</span>
-                    &quot;The operation '{}' String should not be null but was null!&quot;;
+    /**
+     * OpenCL specific messages and tips.
+     */
+<span class="nc" id="L25">    public static class OpenCL {</span>
 
-    public static final String OPERATION_LOADED_DEBUG =
-                    &quot;Operation: '{}' loaded!&quot;;
-
-<span class="fc" id="L23">    public static final String CL_CONTEXT_NOT_CREATED_WARNING =</span>
+        public static String clContextCreationFailed() {
+<span class="nc" id="L28">            return _format(</span>
                     &quot;OpenCL not available!\n&quot; +
-<span class="fc" id="L25">                    &quot;Skipped creating and adding a new '&quot;+ CLContext.class.getSimpleName()+&quot;' &quot; +</span>
-<span class="fc" id="L26">                    &quot;to the current '&quot;+ OperationContext.class.getSimpleName()+&quot;'...&quot;;</span>
+<span class="nc" id="L30">                            &quot;Skipped creating and adding a new '&quot;+ CLContext.class.getSimpleName()+&quot;' &quot; +</span>
+<span class="nc" id="L31">                            &quot;to the current '&quot;+ OperationContext.class.getSimpleName()+&quot;'...\n&quot; +</span>
+<span class="nc" id="L32">                            findTip().bootstrapTip()</span>
+            );
+        }
 
-<span class="nc" id="L28">    public static class Device {</span>
+        public static String clContextCouldNotFindAnyDevices() {
+<span class="nc" id="L37">            return _format(</span>
+<span class="nc" id="L38">                    &quot;OpenCL could not detect any devices in the current '&quot;+ CLContext.class.getSimpleName()+&quot;'.\n&quot; +</span>
+<span class="nc" id="L39">                            findTip().HOW_TO_INSTALL_OPENCL_DRIVERS</span>
+            );
+        }
+
+        public static Messages.OpenCL.Tips findTip() {
+            /*
+                // Check lib: $ ls -l /usr/lib/libOpenCL*
+
+                       UBUNTU:
+                       $ sudo apt update
+                       $ sudo apt install ocl-icd-opencl-dev
+                       // Now libOpenCL.so should be located at /usr/lib/x86_64-linux-gnu/libOpenCL.so
+                       $ sudo ubuntu-drivers autoinstall
+                       ///////////////////
+                       Switch ing from nvidia to amd:
+                       The following command will remove the proprietary Nvidia driver:
+
+                           $ sudo dpkg -P $(dpkg -l | grep nvidia-driver | awk '{print $2}')
+                           $ sudo apt autoremove
+
+                       Switch back to nouveau driver:
+
+                           $ sudo apt install xserver-xorg-video-nouveau
+
+
+                       FEDORA:
+                       $ sudo dnf install ocl-icd-devel
+
+                */
+<span class="nc" id="L68">            Properties properties = new Properties();</span>
+<span class="nc" id="L69">            String osName = System.getProperty(&quot;os.name&quot;);</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">            if ( osName.toLowerCase().contains(&quot;linux&quot;) ) {</span>
+<span class="nc" id="L71">                String[] cmd = {&quot;/bin/sh&quot;, &quot;-c&quot;, &quot;cat /etc/*-release&quot;};</span>
+                try {
+<span class="nc" id="L73">                    Process p = Runtime.getRuntime().exec(cmd);</span>
+<span class="nc" id="L74">                    BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));</span>
+<span class="nc" id="L75">                    StringBuilder text = new StringBuilder();</span>
+<span class="nc" id="L76">                    String line = &quot;&quot;;</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">                    while ((line = bri.readLine()) != null) {</span>
+<span class="nc" id="L78">                        text.append(line);</span>
+<span class="nc" id="L79">                        text.append(&quot;\n&quot;);</span>
+                    }
+<span class="nc" id="L81">                    properties.load(new StringReader(text.toString()));</span>
+
+<span class="nc" id="L83">                } catch (IOException e) {</span>
+
+<span class="nc" id="L85">                    e.printStackTrace();</span>
+<span class="nc" id="L86">                }</span>
+<span class="nc" id="L87">            }</span>
+            else // We just assume windows for now.
+            {
+                try {
+<span class="nc" id="L91">                    properties.load(new StringReader(&quot;NAME=\&quot;Windows\&quot;&quot;));</span>
+<span class="nc" id="L92">                } catch (IOException e) {</span>
+<span class="nc" id="L93">                    e.printStackTrace();</span>
+<span class="nc" id="L94">                }</span>
+            }
+            //---
+<span class="nc" id="L97">            String foundOS = properties.getProperty(&quot;NAME&quot;).toLowerCase().replace(&quot;\&quot;&quot;, &quot;&quot;);</span>
+<span class="nc bnc" id="L98" title="All 4 branches missed.">            switch ( foundOS ) {</span>
+<span class="nc" id="L99">                case &quot;ubuntu&quot;: return Messages.OpenCL.Tips.UBUNTU;</span>
+<span class="nc" id="L100">                case &quot;fedora&quot;: return Messages.OpenCL.Tips.FEDORA;</span>
+<span class="nc" id="L101">                case &quot;windows&quot;: return Messages.OpenCL.Tips.WINDOWS;</span>
+            }
+<span class="nc" id="L103">            return Messages.OpenCL.Tips.UNKNOWN;</span>
+        }
+
+<span class="nc" id="L106">        public enum Tips {</span>
+<span class="nc" id="L107">            UBUNTU(</span>
+                    &quot;Try executing the following command to install OpenCL: 'sudo apt install ocl-icd-opencl-dev'.\n&quot;,
+                    &quot;In order to allow OpenCL to find your GPUs consider executing 'sudo ubuntu-drivers autoinstall'!\n&quot;
+            ),
+<span class="nc" id="L111">            FEDORA(</span>
+                    &quot;Try executing the following command to install OpenCL: 'sudo dnf install ocl-icd-devel'.\n&quot;,
+                    &quot;In order to allow OpenCL to find your GPUs consider installing or updating your device drivers!\n&quot;
+            ),
+<span class="nc" id="L115">            WINDOWS(</span>
+                    &quot;&quot;, // Should already work
+                    &quot;Try to install the latest drivers of your GPU (Or other SIMD devices).&quot;
+            ),
+<span class="nc" id="L119">            UNKNOWN(</span>
+                    &quot;Try to install the latest OpenCL runtime for your system.&quot;,
+                    &quot;If you already have an OpenCL runtime installed consider installing the latest drivers for your GPU (Or other SIMD devices).&quot;
+            );
+
+            public final String HOW_TO_INSTALL_OPENCL;
+            private final String HOW_TO_INSTALL_OPENCL_DRIVERS;
+
+<span class="nc" id="L127">            Tips( String howToInstallOpenCL, String howToInstallDrivers ) {</span>
+<span class="nc" id="L128">                HOW_TO_INSTALL_OPENCL = howToInstallOpenCL;</span>
+<span class="nc" id="L129">                HOW_TO_INSTALL_OPENCL_DRIVERS = howToInstallDrivers;</span>
+<span class="nc" id="L130">            }</span>
+
+            public String bootstrapTip() {
+<span class="nc bnc" id="L133" title="All 2 branches missed.">                return !HOW_TO_INSTALL_OPENCL.isEmpty()</span>
+<span class="nc" id="L134">                                ? (HOW_TO_INSTALL_OPENCL +&quot;&quot;+ HOW_TO_INSTALL_OPENCL_DRIVERS)</span>
+<span class="nc" id="L135">                                : (&quot;&quot;);</span>
+            }
+        }
+
+    }
+
+    /**
+     * {@link Operation} related messages and tips.
+     */
+<span class="nc" id="L144">    public static class Operations {</span>
+
+        public static String illegalStateFor( String type ) {
+<span class="nc" id="L147">            return _format(</span>
+<span class="nc" id="L148">                    &quot;Unexpected '&quot;+ Operation.class.getSimpleName()+&quot;' state encountered:\n&quot; +</span>
+                    &quot;The operation '{}' String should not be null but was null!&quot;,
+                    type
+            );
+        }
+
+        public static String loaded( Operation operation ) {
+<span class="fc" id="L155">            return _format(</span>
+                    &quot;Operation: '{}' loaded!&quot;,
+<span class="fc" id="L157">                    operation.getFunction()</span>
+            );
+        }
+
+    }
+
+    /**
+     *  {@link neureka.devices.Device} implementation related messages.
+     */
+<span class="nc" id="L166">    public static class Devices {</span>
 
         public static String couldNotFindSuitableAlgorithmFor( Class&lt;?&gt; type ) {
-<span class="nc" id="L31">            return _format(</span>
-<span class="nc" id="L32">                        &quot;No suitable '&quot;+ Algorithm.class.getSimpleName()+&quot;' found for device of type '{}'.&quot;,</span>
-<span class="nc" id="L33">                        type.getSimpleName()</span>
+<span class="nc" id="L169">            return _format(</span>
+<span class="nc" id="L170">                        &quot;No suitable '&quot;+ Algorithm.class.getSimpleName()+&quot;' found for device of type '{}'.&quot;,</span>
+<span class="nc" id="L171">                        type.getSimpleName()</span>
                     );
         }
 
@@ -38,17 +176,25 @@ import org.slf4j.helpers.MessageFormatter;
                 Algorithm&lt;?&gt; algorithm,
                 Class&lt;?&gt; type
         ) {
-<span class="fc" id="L41">           return _format(</span>
+<span class="fc" id="L179">           return _format(</span>
                    &quot;No suitable implementation found for algorithm '{}' and device type '{}'.&quot;,
-<span class="fc" id="L43">                   algorithm.getName(),</span>
-<span class="fc" id="L44">                   type.getSimpleName()</span>
+<span class="fc" id="L181">                   algorithm.getName(),</span>
+<span class="fc" id="L182">                   type.getSimpleName()</span>
                );
         }
 
     }
 
+    /**
+     * @param withPlaceholders The {@link String} which may or may not contain placeholder in the for of &quot;{}&quot;.
+     * @param toBePutAtPlaceholders Arbitrary {@link Object}s which will be turned into
+     *                              {@link String}s instead of the placeholder brackets.
+     *
+     * @return A {@link String} containing the actual {@link String} representations of th {@link Object}s
+     *         instead of the placeholder brackets within the first argument.
+     */
     private static String _format( String withPlaceholders, Object... toBePutAtPlaceholders ) {
-<span class="fc" id="L51">        return MessageFormatter.arrayFormat(withPlaceholders, toBePutAtPlaceholders).getMessage();</span>
+<span class="fc" id="L197">        return MessageFormatter.arrayFormat(withPlaceholders, toBePutAtPlaceholders).getMessage();</span>
     }
 
 }

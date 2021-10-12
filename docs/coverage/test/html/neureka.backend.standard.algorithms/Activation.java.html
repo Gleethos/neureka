@@ -4,32 +4,32 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.calculus.CalcUtil;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
-public class Activation extends AbstractFunctionalAlgorithm&lt; Activation &gt;
+public class Activation extends AbstractFunctionalAlgorithm&lt;Activation&gt;
 {
 
     public Activation() {
-<span class="fc" id="L17">        super(&quot;activation&quot;);</span>
-<span class="fc" id="L18">        setIsSuitableFor(</span>
-<span class="fc" id="L19">                call -&gt; call.validate()</span>
-<span class="fc" id="L20">                            .allNotNull( t -&gt; t.getDataType().typeClassImplements(NumericType.class) )</span>
-<span class="fc" id="L21">                            .estimation()</span>
+<span class="fc" id="L18">        super(&quot;activation&quot;);</span>
+<span class="fc" id="L19">        setIsSuitableFor(</span>
+<span class="fc" id="L20">                call -&gt; call.validate()</span>
+<span class="fc" id="L21">                            .allNotNull( t -&gt; t.getDataType().typeClassImplements(NumericType.class) )</span>
+<span class="fc" id="L22">                            .estimation()</span>
         );
-<span class="fc" id="L23">        setCanPerformBackwardADFor( call -&gt; true );</span>
-<span class="fc" id="L24">        setCanPerformForwardADFor(</span>
-<span class="fc" id="L25">                        call -&gt; call</span>
-<span class="fc" id="L26">                                .validate()</span>
-<span class="pc" id="L27">                                .all( ( first, second ) -&gt; first.shape().equals(second.shape()) )</span>
-<span class="fc" id="L28">                                .isValid()</span>
+<span class="fc" id="L24">        setCanPerformBackwardADFor( call -&gt; true );</span>
+<span class="fc" id="L25">        setCanPerformForwardADFor(</span>
+<span class="fc" id="L26">                        call -&gt; call</span>
+<span class="fc" id="L27">                                .validate()</span>
+<span class="pc" id="L28">                                .all( ( first, second ) -&gt; first.shape().equals(second.shape()) )</span>
+<span class="fc" id="L29">                                .isValid()</span>
                 );
-<span class="fc" id="L30">        setHandleInsteadOfDevice( (caller, call ) -&gt; null );</span>
-<span class="fc" id="L31">        setHandleRecursivelyAccordingToArity( (call, goDeeperWith ) -&gt; null );</span>
-<span class="fc" id="L32">        setInstantiateNewTensorsForExecutionIn(</span>
+<span class="fc" id="L31">        setExecutionDispatcher( CalcUtil::defaultRecursiveExecution);</span>
+<span class="fc" id="L32">        setCallPreparation(</span>
                         call -&gt; {
 <span class="fc" id="L34">                            Tsr[] tsrs = call.getTensors();</span>
 <span class="fc" id="L35">                            Device device = call.getDevice();</span>

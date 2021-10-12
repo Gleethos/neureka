@@ -102,7 +102,7 @@ import java.util.function.Consumer;
 
 <span class="fc" id="L103">        private static Logger _LOG = LoggerFactory.getLogger(SettingsLoader.class);</span>
 
-        private Properties _properties;
+        private final Properties _properties;
 
 <span class="fc" id="L107">        TypeChecker(Properties properties) { _properties = properties; }</span>
 
@@ -146,27 +146,34 @@ import java.util.function.Consumer;
         }
     }
 
+    /**
+     *  This method makes it possible to configure the library via a Groovy DSL!
+     *
+     * @param closure A Groovy closure which should be called with the provided delegate.
+     * @param delegate The delegate for the provided closure (Can be a settings object).
+     * @return The result returned by provided closure.
+     */
     public static Object tryGroovyClosureOn(Object closure, Object delegate) {
         try {
-<span class="fc" id="L151">            Method setDelegate = closure.getClass().getMethod(&quot;setDelegate&quot;, Object.class);</span>
-<span class="fc" id="L152">            Method call = closure.getClass().getMethod(&quot;call&quot;, Object.class);</span>
-<span class="fc" id="L153">            setDelegate.invoke(closure, delegate);</span>
-<span class="fc" id="L154">            return call.invoke(closure, delegate);</span>
-<span class="nc" id="L155">        } catch (NoSuchMethodException e) {</span>
-<span class="nc" id="L156">            e.printStackTrace();</span>
-<span class="nc" id="L157">        } catch (InvocationTargetException e) {</span>
-<span class="nc" id="L158">            e.printStackTrace();</span>
-<span class="nc" id="L159">        } catch (IllegalAccessException e) {</span>
-<span class="nc" id="L160">            e.printStackTrace();</span>
-<span class="nc" id="L161">        }</span>
-<span class="nc" id="L162">        return null;</span>
+<span class="fc" id="L158">            Method setDelegate = closure.getClass().getMethod(&quot;setDelegate&quot;, Object.class);</span>
+<span class="fc" id="L159">            Method call = closure.getClass().getMethod(&quot;call&quot;, Object.class);</span>
+<span class="fc" id="L160">            setDelegate.invoke(closure, delegate);</span>
+<span class="fc" id="L161">            return call.invoke(closure, delegate);</span>
+<span class="nc" id="L162">        } catch (NoSuchMethodException e) {</span>
+<span class="nc" id="L163">            e.printStackTrace();</span>
+<span class="nc" id="L164">        } catch (InvocationTargetException e) {</span>
+<span class="nc" id="L165">            e.printStackTrace();</span>
+<span class="nc" id="L166">        } catch (IllegalAccessException e) {</span>
+<span class="nc" id="L167">            e.printStackTrace();</span>
+<span class="nc" id="L168">        }</span>
+<span class="nc" id="L169">        return null;</span>
     }
 
     public static void tryGroovyScriptsOn(Neureka instance, Consumer&lt;String&gt; scriptConsumer)
     {
-<span class="pc bpc" id="L167" title="1 of 4 branches missed.">        if ( _settings_source == null || _setup_source == null) {</span>
-<span class="fc" id="L168">            _settings_source = instance.utility().readResource(&quot;library_settings.groovy&quot;);</span>
-<span class="fc" id="L169">            _setup_source = instance.utility().readResource(&quot;scripting_setup.groovy&quot;);</span>
+<span class="pc bpc" id="L174" title="1 of 4 branches missed.">        if ( _settings_source == null || _setup_source == null) {</span>
+<span class="fc" id="L175">            _settings_source = instance.utility().readResource(&quot;library_settings.groovy&quot;);</span>
+<span class="fc" id="L176">            _setup_source = instance.utility().readResource(&quot;scripting_setup.groovy&quot;);</span>
         }
         try {
             /*
@@ -177,13 +184,13 @@ import java.util.function.Consumer;
                 );
             }
             */
-<span class="fc" id="L180">            scriptConsumer.accept(_settings_source);</span>
-<span class="fc" id="L181">            scriptConsumer.accept(_setup_source);</span>
-<span class="nc" id="L182">        } catch (Exception e) {</span>
-<span class="nc" id="L183">            e.printStackTrace();</span>
-<span class="fc" id="L184">        }</span>
+<span class="fc" id="L187">            scriptConsumer.accept(_settings_source);</span>
+<span class="fc" id="L188">            scriptConsumer.accept(_setup_source);</span>
+<span class="nc" id="L189">        } catch (Exception e) {</span>
+<span class="nc" id="L190">            e.printStackTrace();</span>
+<span class="fc" id="L191">        }</span>
 
-<span class="fc" id="L186">    }</span>
+<span class="fc" id="L193">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Fri Aug 06 13:08:59 CEST 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Tue Oct 12 10:15:03 CEST 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.488 seconds</td>
+<td>0.595 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -390,9 +390,9 @@ div.footer {
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Tsr&lt;Number&gt; t1 = Tsr.of(1)
-Tsr&lt;Number&gt; t2 = Tsr.of(-2)
-Tsr&lt;Number&gt; t3 = Tsr.of(5)</pre>
+<pre class='block-source'>Tsr&lt;Number&gt; t1 = Tsr.of( 1 )
+Tsr&lt;Number&gt; t2 = Tsr.of(-2 )
+Tsr&lt;Number&gt; t3 = Tsr.of( 5 )</pre>
 </td>
 </tr>
 <tr>
@@ -495,7 +495,7 @@ Tsr&lt;Number&gt; t3 = Tsr.of(5)</pre>
 <td></td>
 <td>
 <pre class='block-source'>Function fun = run {
-    new FunctionBuilder(Neureka.get().context())
+    new FunctionBuilder( Neureka.get().context() )
                 .build(resultOperation, 3, true)
 }</pre>
 </td>
@@ -526,6 +526,67 @@ Tsr&lt;Number&gt; t3 = Tsr.of(5)</pre>
 <td></td>
 <td>
 <pre class='block-source'>fun.toString() == "test_fun(I[0], I[1], I[2])"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The context now stores the newly created operation.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>context.getOperation("test_fun") == resultOperation</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>Querying the new operation for an algorithm...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def foundAlgorithm = resultOperation
+.getAlgorithmFor(
+        ExecutionCall.of(t1, t2, t3)
+                        .running(resultOperation)
+                        .on(mockDevice)
+)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>We expect this algorithm to exist!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>foundAlgorithm != null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>This algorithm is expected to host an implementation for our mocked device.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>foundAlgorithm.getImplementationFor(mockDevice.getClass()) != null</pre>
 </td>
 </tr>
 <tr>
@@ -572,9 +633,9 @@ exception.message == "No suitable implementation found for algorithm 'generic_al
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>t1.set(mockDevice)
-t2.set(mockDevice)
-t3.set(mockDevice)
+<pre class='block-source'>t1.to(mockDevice)
+t2.to(mockDevice)
+t3.to(mockDevice)
 t1.setIsOutsourced(true)
 t2.setIsOutsourced(true)
 t3.setIsOutsourced(true)</pre>
@@ -605,6 +666,12 @@ t3.setIsOutsourced(true)</pre>
 <div class='block-kind'>And:</div>
 </td>
 <td>
+<div class='block-text'>The update method is being called on the device because it becomes the component of 3 tensors!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
 <pre class='block-source'>(1.._) * mockDevice.update(_) &gt;&gt; true</pre>
 </td>
 </tr>
@@ -627,6 +694,20 @@ t3.isOutsourced()</pre>
 <tr>
 <td>
 <div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We set a summy implementation so that the real implementation does not get called</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>foundAlgorithm.setImplementationFor(mockDevice.getClass(), (call)-&gt;{})</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
 </td>
 <td>
 <div class='block-text'>We call the function again...</div>
@@ -653,7 +734,7 @@ t3.isOutsourced()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>1 * mockDevice.execute({ ExecutionCall&lt;OpenCLDevice&gt; call -&gt;
+<pre class='block-source'>1 * mockDevice.approve({ ExecutionCall&lt;OpenCLDevice&gt; call -&gt;
     call.device == mockDevice &amp;&amp;
     call.operation == resultOperation
 })</pre>
@@ -799,12 +880,10 @@ t3.isOutsourced()</pre>
 <pre class='block-source'>algorithm
 .getImplementationFor(OpenCLDevice.class)
 .run(
-        ExecutionCall.builder()
-                        .tensors(Tsr.of(0), Tsr.of(1), Tsr.of(2), Tsr.of(3))
-                        .operation(resultOperation)
+        ExecutionCall.of(Tsr.of(0), Tsr.of(1), Tsr.of(2), Tsr.of(3))
+                        .running(resultOperation)
                         .algorithm(algorithm)
-                        .device(mockDevice)
-                        .build() as ExecutionCall&lt;OpenCLDevice&gt;
+                        .on(mockDevice) as ExecutionCall&lt;OpenCLDevice&gt;
 )</pre>
 </td>
 </tr>
@@ -902,7 +981,7 @@ t3.isOutsourced()</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>4 * mockCaller.passRaw(_)</pre>
+<pre class='block-source'>4 * mockCaller.pass(_)</pre>
 </td>
 </tr>
 <tr>

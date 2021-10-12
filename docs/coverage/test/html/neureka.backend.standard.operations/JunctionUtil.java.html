@@ -4,253 +4,231 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.calculus.CallExecutor;
+import neureka.calculus.args.Arg;
 import neureka.devices.Device;
+import org.jetbrains.annotations.Contract;
 
-import java.util.function.Function;
-
-<span class="nc" id="L11">public class JunctionUtil</span>
+<span class="nc" id="L12">public class JunctionUtil</span>
 {
+    @Contract( pure = true )
     public static Tsr&lt;?&gt; forConvolution(
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
-            Function&lt;ExecutionCall&lt;? extends Device&lt;?&gt;&gt;, Tsr&lt;?&gt;&gt; goDeeperWith
+            CallExecutor goDeeperWith
     ) {
-<span class="fc" id="L17">        Tsr[] tsrs = call.getTensors();</span>
-<span class="fc" id="L18">        Device device = call.getDevice();</span>
-<span class="fc" id="L19">        int d = call.getDerivativeIndex();</span>
-<span class="fc" id="L20">        Operation type = call.getOperation();</span>
+<span class="fc" id="L19">        Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
+<span class="fc" id="L20">        Device&lt;?&gt; device = call.getDevice();</span>
+<span class="fc" id="L21">        int d = call.getValOf( Arg.DerivIdx.class );</span>
+<span class="fc" id="L22">        Operation operation = call.getOperation();</span>
 
-<span class="fc" id="L22">        Tsr alternative = null;</span>
-<span class="pc bpc" id="L23" title="1 of 2 branches missed.">        if (tsrs.length &gt; 3) {</span>
-<span class="nc bnc" id="L24" title="All 2 branches missed.">            if ( d &lt; 0 ) {</span>
-<span class="nc" id="L25">                Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};</span>
-<span class="nc" id="L26">                alternative = goDeeperWith.apply(</span>
-<span class="nc" id="L27">                        ExecutionCall.builder()</span>
-<span class="nc" id="L28">                                .device(device)</span>
-<span class="nc" id="L29">                                .tensors(reduction)</span>
-<span class="nc" id="L30">                                .derivativeIndex(d)</span>
-<span class="nc" id="L31">                                .operation(type)</span>
-<span class="nc" id="L32">                                .build()</span>
-                );
-<span class="nc" id="L34">                tsrs[ 0 ] = reduction[ 0 ];</span>
+<span class="fc" id="L24">        Tsr&lt;?&gt; alternative = null;</span>
+<span class="pc bpc" id="L25" title="1 of 2 branches missed.">        if ( tensors.length &gt; 3 ) {</span>
+<span class="nc bnc" id="L26" title="All 2 branches missed.">            if ( d &lt; 0 ) {</span>
+<span class="nc" id="L27">                Tsr&lt;?&gt;[] reduction = new Tsr[]{ tensors[ 0 ], tensors[ 1 ], tensors[ 2 ] };</span>
+<span class="nc" id="L28">                alternative = goDeeperWith.execute(</span>
+<span class="nc" id="L29">                                    ExecutionCall.of( reduction )</span>
+<span class="nc" id="L30">                                                    .andArgs( Arg.DerivIdx.of(d) )</span>
+<span class="nc" id="L31">                                                    .running( operation )</span>
+<span class="nc" id="L32">                                                    .on(device)</span>
+                                );
+<span class="nc" id="L34">                tensors[ 0 ] = reduction[ 0 ];</span>
 
-<span class="nc" id="L36">                reduction = Operation.Utility.offsetted(tsrs, 1);</span>
-<span class="nc" id="L37">                alternative = goDeeperWith.apply(</span>
-<span class="nc" id="L38">                        ExecutionCall.builder()</span>
-<span class="nc" id="L39">                                .device(device)</span>
-<span class="nc" id="L40">                                .tensors(reduction)</span>
-<span class="nc" id="L41">                                .derivativeIndex(d)</span>
-<span class="nc" id="L42">                                .operation(type)</span>
-<span class="nc" id="L43">                                .build()</span>
-                );
-<span class="nc" id="L45">                tsrs[ 0 ] = reduction[ 0 ];</span>
+<span class="nc" id="L36">                reduction = Operation.Utility.offsetted(tensors, 1);</span>
+<span class="nc" id="L37">                alternative = goDeeperWith.execute(</span>
+<span class="nc" id="L38">                                    ExecutionCall.of(reduction)</span>
+<span class="nc" id="L39">                                                    .andArgs(Arg.DerivIdx.of(d))</span>
+<span class="nc" id="L40">                                                    .running(operation)</span>
+<span class="nc" id="L41">                                                    .on(device)</span>
+                                );
+<span class="nc" id="L43">                tensors[ 0 ] = reduction[ 0 ];</span>
             }
-<span class="nc" id="L47">            return alternative;</span>
+<span class="nc" id="L45">            return alternative;</span>
         } else {
-<span class="fc bfc" id="L49" title="All 2 branches covered.">            if ( call.getOperation().getOperator().equals(&quot;x&quot;) ) {</span>
-<span class="fc bfc" id="L50" title="All 2 branches covered.">                if (d &gt;= 0) {</span>
-<span class="fc bfc" id="L51" title="All 2 branches covered.">                    if (d == 0) tsrs[ 0 ] = tsrs[ 2 ];</span>
-<span class="fc" id="L52">                    else tsrs[ 0 ] = tsrs[ 1 ];</span>
-<span class="fc" id="L53">                    return tsrs[ 0 ];</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">            if ( call.getOperation().getOperator().equals(&quot;x&quot;) ) {</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">                if ( d &gt;= 0 ) {</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">                    if ( d == 0 ) tensors[ 0 ] = tensors[ 2 ];</span>
+<span class="fc" id="L50">                    else tensors[ 0 ] = tensors[ 1 ];</span>
+<span class="fc" id="L51">                    return tensors[ 0 ];</span>
                 } else {
-<span class="fc" id="L55">                    call.mutateArguments( t -&gt; new Tsr[]{t[ 0 ], t[ 1 ], t[ 2 ]} );</span>
+<span class="fc" id="L53">                    call.mutateTensors( 0, 1, 2 );</span>
                 }
-<span class="fc bfc" id="L57" title="All 2 branches covered.">            } else if ( call.getOperation().getOperator().equals(&quot;x&quot;+ ((char) 187)) ) {</span>
-<span class="fc" id="L58">                call.mutateArguments( t -&gt; new Tsr[]{t[ 2 ], t[ 1 ], t[ 0 ]} );</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">            } else if ( call.getOperation().getOperator().equals(&quot;x&quot;+ ((char) 187)) ) {</span>
+<span class="fc" id="L56">                call.mutateTensors( 2, 1, 0 );</span>
             }
-<span class="fc" id="L60">            return alternative;</span>
+<span class="fc" id="L58">            return alternative;</span>
         }
     }
 
     public static Tsr&lt;?&gt; forMultiplications(
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
-            Function&lt;ExecutionCall&lt;? extends Device&lt;?&gt;&gt;, Tsr&lt;?&gt;&gt; goDeeperWith
+            CallExecutor goDeeperWith
     ) {
-<span class="fc" id="L68">        Tsr[] tsrs = call.getTensors();</span>
-<span class="fc" id="L69">        Device device = call.getDevice();</span>
-<span class="fc" id="L70">        int d = call.getDerivativeIndex();</span>
-<span class="fc" id="L71">        Operation type = call.getOperation();</span>
+<span class="fc" id="L66">        Tsr&lt;?&gt;[] tsrs = call.getTensors();</span>
+<span class="fc" id="L67">        Device&lt;?&gt; device = call.getDevice();</span>
+<span class="fc" id="L68">        int d = call.getValOf( Arg.DerivIdx.class );</span>
+<span class="fc" id="L69">        Operation type = call.getOperation();</span>
 
-<span class="fc" id="L73">        Tsr alternative = null;</span>
-<span class="fc bfc" id="L74" title="All 2 branches covered.">        if (tsrs.length &gt; 3) {</span>
-<span class="fc bfc" id="L75" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
-<span class="fc" id="L76">                Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};</span>
-<span class="fc" id="L77">                alternative = goDeeperWith.apply(</span>
-<span class="fc" id="L78">                        ExecutionCall.builder()</span>
-<span class="fc" id="L79">                                .device(device)</span>
-<span class="fc" id="L80">                                .tensors(reduction)</span>
-<span class="fc" id="L81">                                .derivativeIndex(d)</span>
-<span class="fc" id="L82">                                .operation(type)</span>
-<span class="fc" id="L83">                                .build()</span>
+<span class="fc" id="L71">        Tsr&lt;?&gt; alternative = null;</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        if (tsrs.length &gt; 3) {</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
+<span class="fc" id="L74">                Tsr&lt;?&gt;[] reduction = new Tsr[]{ tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ] };</span>
+<span class="fc" id="L75">                alternative = goDeeperWith.execute(</span>
+<span class="fc" id="L76">                        ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)</span>
                 );
-<span class="fc" id="L85">                tsrs[ 0 ] = reduction[ 0 ];</span>
+<span class="fc" id="L78">                tsrs[ 0 ] = reduction[ 0 ];</span>
 
-<span class="fc" id="L87">                reduction = Operation.Utility.offsetted(tsrs, 1);</span>
-<span class="fc" id="L88">                alternative = goDeeperWith.apply(</span>
-<span class="fc" id="L89">                        ExecutionCall.builder()</span>
-<span class="fc" id="L90">                                .device(device)</span>
-<span class="fc" id="L91">                                .tensors(reduction)</span>
-<span class="fc" id="L92">                                .derivativeIndex(d)</span>
-<span class="fc" id="L93">                                .operation(type)</span>
-<span class="fc" id="L94">                                .build()</span>
+<span class="fc" id="L80">                reduction = Operation.Utility.offsetted(tsrs, 1);</span>
+<span class="fc" id="L81">                alternative = goDeeperWith.execute(</span>
+<span class="fc" id="L82">                        ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)</span>
                 );
-<span class="fc" id="L96">                tsrs[ 0 ] = reduction[ 0 ];</span>
-<span class="fc" id="L97">            } else {</span>
-<span class="fc" id="L98">                Tsr[] reduction = Operation.Utility.without(tsrs, 1+d);</span>
-<span class="pc bpc" id="L99" title="1 of 2 branches missed.">                if ( reduction.length &gt; 2 ) {</span>
-<span class="pc bpc" id="L100" title="1 of 2 branches missed.">                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tsrs[ 1 ]) : reduction[ 0 ];</span>
-<span class="fc" id="L101">                    alternative = goDeeperWith.apply(</span>
-<span class="fc" id="L102">                            ExecutionCall.builder()</span>
-<span class="fc" id="L103">                                    .device( device )</span>
-<span class="fc" id="L104">                                    .tensors( reduction )</span>
-<span class="fc" id="L105">                                    .derivativeIndex( -1 )</span>
-<span class="fc" id="L106">                                    .operation( Neureka.get().context().instance(&quot;*&quot;) )</span>
-<span class="fc" id="L107">                                    .build()</span>
+<span class="fc" id="L84">                tsrs[ 0 ] = reduction[ 0 ];</span>
+<span class="fc" id="L85">            } else {</span>
+<span class="fc" id="L86">                Tsr&lt;?&gt;[] reduction = Operation.Utility.without(tsrs, 1+d);</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">                if ( reduction.length &gt; 2 ) {</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tsrs[ 1 ]) : reduction[ 0 ];</span>
+<span class="fc" id="L89">                    alternative = goDeeperWith.execute(</span>
+<span class="fc" id="L90">                            ExecutionCall.of(reduction)</span>
+<span class="fc" id="L91">                                            .andArgs( Arg.DerivIdx.of( -1 ) )</span>
+<span class="fc" id="L92">                                            .running( Neureka.get().context().getOperation(&quot;*&quot;) )</span>
+<span class="fc" id="L93">                                            .on( device )</span>
                     );
-<span class="fc" id="L109">                    tsrs[ 0 ] = reduction[ 0 ];</span>
-<span class="nc" id="L110">                } else tsrs[ 0 ] = reduction[ 1 ];</span>
+<span class="fc" id="L95">                    tsrs[ 0 ] = reduction[ 0 ];</span>
+<span class="nc" id="L96">                } else tsrs[ 0 ] = reduction[ 1 ];</span>
             }
-<span class="fc" id="L112">            return alternative;</span>
+<span class="fc" id="L98">            return alternative;</span>
         } else
-<span class="fc" id="L114">            return alternative;</span>
+<span class="fc" id="L100">            return alternative;</span>
 
     }
 
-
+    @Contract( pure = true )
     public static Tsr&lt;?&gt; forDivisionsOrModuli(
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
-            Function&lt;ExecutionCall&lt;? extends Device&lt;?&gt;&gt;, Tsr&lt;?&gt;&gt; goDeeperWith
+            CallExecutor goDeeperWith
     ) {
-<span class="fc" id="L123">        Tsr[] tsrs = call.getTensors();</span>
-<span class="fc" id="L124">        Device device = call.getDevice();</span>
-<span class="fc" id="L125">        int d = call.getDerivativeIndex();</span>
-<span class="fc" id="L126">        Operation type = call.getOperation();</span>
+<span class="fc" id="L109">        Tsr&lt;?&gt;[] tsrs = call.getTensors();</span>
+<span class="fc" id="L110">        Device&lt;?&gt; device = call.getDevice();</span>
+<span class="fc" id="L111">        int d = call.getValOf( Arg.DerivIdx.class );</span>
+<span class="fc" id="L112">        Operation type = call.getOperation();</span>
 
-<span class="fc" id="L128">        Tsr alternative = null;</span>
-<span class="fc bfc" id="L129" title="All 2 branches covered.">        if ( tsrs.length &gt; 3 )</span>
+<span class="fc" id="L114">        Tsr&lt;?&gt; alternative = null;</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        if ( tsrs.length &gt; 3 )</span>
         {
-<span class="fc bfc" id="L131" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
-<span class="fc" id="L132">                Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};</span>
-<span class="fc" id="L133">                alternative = goDeeperWith.apply(</span>
-<span class="fc" id="L134">                        call.withTensors( reduction )</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
+<span class="fc" id="L118">                Tsr&lt;?&gt;[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};</span>
+<span class="fc" id="L119">                alternative = goDeeperWith.execute(</span>
+<span class="fc" id="L120">                        call.withTensors( reduction )</span>
                             );
-<span class="fc" id="L136">                tsrs[ 0 ] = reduction[ 0 ];</span>
+<span class="fc" id="L122">                tsrs[ 0 ] = reduction[ 0 ];</span>
 
-<span class="fc" id="L138">                reduction = Operation.Utility.offsetted(tsrs, 1);</span>
-<span class="fc" id="L139">                alternative = goDeeperWith.apply(</span>
-<span class="fc" id="L140">                                    call.withTensors(reduction)</span>
+<span class="fc" id="L124">                reduction = Operation.Utility.offsetted(tsrs, 1);</span>
+<span class="fc" id="L125">                alternative = goDeeperWith.execute(</span>
+<span class="fc" id="L126">                                    call.withTensors(reduction)</span>
                             );
-<span class="fc" id="L142">                tsrs[ 0 ] = reduction[ 0 ];</span>
-<span class="fc" id="L143">            } else {</span>
-                Tsr a;
-<span class="pc bpc" id="L145" title="1 of 2 branches missed.">                if ( d &gt; 1 ) {</span>
-<span class="nc" id="L146">                    Tsr[] reduction = Operation.Utility.subset(tsrs, 1, 1, d+1);</span>
-<span class="nc" id="L147">                    reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);</span>
-<span class="nc" id="L148">                    alternative = goDeeperWith.apply(</span>
-<span class="nc" id="L149">                                        ExecutionCall.builder()</span>
-<span class="nc" id="L150">                                                .device(device)</span>
-<span class="nc" id="L151">                                                .tensors(reduction)</span>
-<span class="nc" id="L152">                                                .derivativeIndex(-1)</span>
-<span class="nc" id="L153">                                                .operation(Neureka.get().context().instance(&quot;/&quot;))</span>
-<span class="nc" id="L154">                                                .build()</span>
+<span class="fc" id="L128">                tsrs[ 0 ] = reduction[ 0 ];</span>
+<span class="fc" id="L129">            } else {</span>
+                Tsr&lt;?&gt; a;
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">                if ( d &gt; 1 ) {</span>
+<span class="nc" id="L132">                    Tsr&lt;?&gt;[] reduction = Operation.Utility.subset(tsrs, 1, 1, d+1);</span>
+<span class="nc" id="L133">                    reduction[ 0 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ]);</span>
+<span class="nc" id="L134">                    alternative = goDeeperWith.execute(</span>
+<span class="nc" id="L135">                                        ExecutionCall.of(reduction)</span>
+<span class="nc" id="L136">                                                        .andArgs(Arg.DerivIdx.of(-1))</span>
+<span class="nc" id="L137">                                                        .running(Neureka.get().context().getOperation(&quot;/&quot;))</span>
+<span class="nc" id="L138">                                                        .on(device)</span>
                     );
-<span class="nc" id="L156">                    a = reduction[ 0 ];</span>
-<span class="nc" id="L157">                }</span>
-<span class="pc bpc" id="L158" title="1 of 2 branches missed.">                else if ( d == 1 ) a = tsrs[ 1 ];</span>
-<span class="nc" id="L159">                else a = Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);</span>
-                Tsr b;
-<span class="pc bpc" id="L161" title="1 of 2 branches missed.">                if ( tsrs.length -  d - 2  &gt; 1 ) {</span>
-<span class="fc" id="L162">                    Tsr[] reduction = Operation.Utility.subset(tsrs, 2, d+2, tsrs.length-(d+2));</span>
-<span class="fc" id="L163">                    reduction[ 1 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);</span>
-<span class="fc" id="L164">                    reduction[ 0 ] = reduction[ 1 ];</span>
-<span class="fc" id="L165">                    alternative = goDeeperWith.apply(</span>
-<span class="fc" id="L166">                            ExecutionCall.builder()</span>
-<span class="fc" id="L167">                                    .device(device)</span>
-<span class="fc" id="L168">                                    .tensors(reduction)</span>
-<span class="fc" id="L169">                                    .derivativeIndex(-1)</span>
-<span class="fc" id="L170">                                    .operation(Neureka.get().context().instance(&quot;/&quot;))</span>
-<span class="fc" id="L171">                                    .build()</span>
-                    );
-<span class="fc" id="L173">                    b = reduction[ 0 ];</span>
-<span class="pc" id="L174">                } else b = Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);</span>
+<span class="nc" id="L140">                    a = reduction[ 0 ];</span>
+<span class="nc" id="L141">                }</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">                else if ( d == 1 ) a = tsrs[ 1 ];</span>
+<span class="nc" id="L143">                else a = Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);</span>
+                Tsr&lt;?&gt; b;
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">                if ( tsrs.length -  d - 2  &gt; 1 ) {</span>
+<span class="fc" id="L146">                    Tsr&lt;?&gt;[] reduction = Operation.Utility.subset(tsrs, 2, d+2, tsrs.length-(d+2));</span>
+<span class="fc" id="L147">                    reduction[ 1 ] =  Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);</span>
+<span class="fc" id="L148">                    reduction[ 0 ] = reduction[ 1 ];</span>
+<span class="fc" id="L149">                    alternative = goDeeperWith.execute(</span>
+<span class="fc" id="L150">                                        ExecutionCall.of(reduction)</span>
+<span class="fc" id="L151">                                                        .andArgs(Arg.DerivIdx.of(-1))</span>
+<span class="fc" id="L152">                                                        .running(Neureka.get().context().getOperation(&quot;/&quot;))</span>
+<span class="fc" id="L153">                                                        .on(device)</span>
+                                );
+<span class="fc" id="L155">                    b = reduction[ 0 ];</span>
+<span class="pc" id="L156">                } else b = Tsr.Create.newTsrLike(tsrs[ 1 ], 1.0);</span>
 
-<span class="fc" id="L176">                alternative = goDeeperWith.apply(</span>
-<span class="fc" id="L177">                        ExecutionCall.builder()</span>
-<span class="fc" id="L178">                                .device(device)</span>
-<span class="fc" id="L179">                                .tensors( new Tsr[]{tsrs[ 0 ], a, b} )</span>
-<span class="fc" id="L180">                                .derivativeIndex( -1 )</span>
-<span class="fc" id="L181">                                .operation( Neureka.get().context().instance(&quot;*&quot;) )</span>
-<span class="fc" id="L182">                                .build()</span>
-                );
-<span class="fc" id="L184">                alternative = goDeeperWith.apply(</span>
-<span class="fc" id="L185">                        ExecutionCall.builder()</span>
-<span class="fc" id="L186">                                .device(device)</span>
-<span class="fc" id="L187">                                .tensors( new Tsr[]{tsrs[ 0 ], tsrs[ 0 ], tsrs[d+1]} )</span>
-<span class="fc" id="L188">                                .derivativeIndex( 1 )</span>
-<span class="fc" id="L189">                                .operation( Neureka.get().context().instance(&quot;/&quot;) )</span>
-<span class="fc" id="L190">                                .build()</span>
-                );
-<span class="pc bpc" id="L192" title="1 of 2 branches missed.">                if ( d == 0 ) a.delete();</span>
-<span class="fc" id="L193">                b.delete();</span>
+<span class="fc" id="L158">                alternative = goDeeperWith.execute(</span>
+<span class="fc" id="L159">                                        ExecutionCall.of( tsrs[ 0 ], a, b )</span>
+<span class="fc" id="L160">                                                        .andArgs( Arg.DerivIdx.of( -1 ) )</span>
+<span class="fc" id="L161">                                                        .running( Neureka.get().context().getOperation(&quot;*&quot;) )</span>
+<span class="fc" id="L162">                                                        .on( device )</span>
+                                );
+<span class="fc" id="L164">                alternative = goDeeperWith.execute(</span>
+<span class="fc" id="L165">                                        ExecutionCall.of( tsrs[ 0 ], tsrs[ 0 ], tsrs[d+1] )</span>
+<span class="fc" id="L166">                                                        .andArgs(Arg.DerivIdx.of(1))</span>
+<span class="fc" id="L167">                                                        .running(Neureka.get().context().getOperation(&quot;/&quot;))</span>
+<span class="fc" id="L168">                                                        .on(device)</span>
+                                );
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">                if ( d == 0 ) a.delete();</span>
+<span class="fc" id="L171">                b.delete();</span>
             }
-<span class="fc" id="L195">            return alternative;</span>
+<span class="fc" id="L173">            return alternative;</span>
         } else
-<span class="fc" id="L197">            return alternative;</span>
+<span class="fc" id="L175">            return alternative;</span>
     }
 
+    @Contract( pure = true )
     public static Tsr&lt;?&gt; forAdditions(
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
-            Function&lt;ExecutionCall&lt;? extends Device&lt;?&gt;&gt;, Tsr&lt;?&gt;&gt; goDeeperWith
+            CallExecutor goDeeperWith
     ) {
-<span class="fc" id="L204">        return _forAdditionsOrSubtractions(call, goDeeperWith, true);</span>
+<span class="fc" id="L183">        return _forAdditionsOrSubtractions(call, goDeeperWith, true);</span>
     }
 
+    @Contract( pure = true )
     public static Tsr&lt;?&gt; forSubtractions(
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
-            Function&lt;ExecutionCall&lt;? extends Device&lt;?&gt;&gt;, Tsr&lt;?&gt;&gt; goDeeperWith
+            CallExecutor goDeeperWith
     ) {
-<span class="fc" id="L211">        return _forAdditionsOrSubtractions(call, goDeeperWith, false);</span>
+<span class="fc" id="L191">        return _forAdditionsOrSubtractions(call, goDeeperWith, false);</span>
     }
 
+    @Contract( pure = true )
     private static Tsr&lt;?&gt; _forAdditionsOrSubtractions(
             ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call,
-            Function&lt;ExecutionCall&lt;? extends Device&lt;?&gt;&gt;, Tsr&lt;?&gt;&gt; goDeeperWith,
+            CallExecutor goDeeperWith,
             boolean thisIsForAddition
     ) {
-<span class="fc" id="L219">        Tsr[] tsrs = call.getTensors();</span>
-<span class="fc" id="L220">        Device device = call.getDevice();</span>
-<span class="fc" id="L221">        int d = call.getDerivativeIndex();</span>
-<span class="fc" id="L222">        Operation type = call.getOperation();</span>
+<span class="fc" id="L200">        Tsr&lt;?&gt;[] tsrs = call.getTensors();</span>
+<span class="fc" id="L201">        Device&lt;?&gt; device = call.getDevice();</span>
+<span class="fc" id="L202">        int d = call.getValOf( Arg.DerivIdx.class );</span>
+<span class="fc" id="L203">        Operation operation = call.getOperation();</span>
 
-<span class="fc" id="L224">        Tsr alternative = null;</span>
-<span class="fc bfc" id="L225" title="All 2 branches covered.">        if (tsrs.length &gt; 3) {</span>
-<span class="fc bfc" id="L226" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
-<span class="fc" id="L227">                Tsr[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};</span>
-<span class="fc" id="L228">                alternative = goDeeperWith.apply(</span>
-<span class="fc" id="L229">                        ExecutionCall.builder()</span>
-<span class="fc" id="L230">                                .device(device)</span>
-<span class="fc" id="L231">                                .tensors(reduction)</span>
-<span class="fc" id="L232">                                .derivativeIndex(d)</span>
-<span class="fc" id="L233">                                .operation(type)</span>
-<span class="fc" id="L234">                                .build()</span>
-                );
-<span class="fc" id="L236">                tsrs[ 0 ] = reduction[ 0 ];</span>
+<span class="fc" id="L205">        Tsr&lt;?&gt; alternative = null;</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">        if (tsrs.length &gt; 3) {</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">            if ( d &lt; 0 ) {</span>
+<span class="fc" id="L208">                Tsr&lt;?&gt;[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};</span>
+<span class="fc" id="L209">                alternative = goDeeperWith.execute(</span>
+<span class="fc" id="L210">                                    ExecutionCall.of(reduction)</span>
+<span class="fc" id="L211">                                                    .andArgs(Arg.DerivIdx.of(d))</span>
+<span class="fc" id="L212">                                                    .running(operation)</span>
+<span class="fc" id="L213">                                                    .on(device)</span>
+                            );
+<span class="fc" id="L215">                tsrs[ 0 ] = reduction[ 0 ];</span>
 
-<span class="fc" id="L238">                reduction = Operation.Utility.offsetted(tsrs, 1);</span>
-<span class="fc" id="L239">                alternative = goDeeperWith.apply(</span>
-<span class="fc" id="L240">                        ExecutionCall.builder()</span>
-<span class="fc" id="L241">                                .device(device)</span>
-<span class="fc" id="L242">                                .tensors(reduction)</span>
-<span class="fc" id="L243">                                .derivativeIndex(d)</span>
-<span class="fc" id="L244">                                .operation(type)</span>
-<span class="fc" id="L245">                                .build()</span>
-                );
-<span class="fc" id="L247">                tsrs[ 0 ] = reduction[ 0 ];</span>
-<span class="fc" id="L248">            } else {</span>
-<span class="pc bpc" id="L249" title="2 of 4 branches missed.">                tsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[ 1 ]).setValue((d==0||thisIsForAddition)?1.0f:-1.0f);</span>
+<span class="fc" id="L217">                reduction = Operation.Utility.offsetted(tsrs, 1);</span>
+<span class="fc" id="L218">                alternative = goDeeperWith.execute(</span>
+<span class="fc" id="L219">                                        ExecutionCall.of(reduction)</span>
+<span class="fc" id="L220">                                                        .andArgs(Arg.DerivIdx.of(d))</span>
+<span class="fc" id="L221">                                                        .running(operation)</span>
+<span class="fc" id="L222">                                                        .on(device)</span>
+                                );
+<span class="fc" id="L224">                tsrs[ 0 ] = reduction[ 0 ];</span>
+<span class="fc" id="L225">            } else {</span>
+<span class="pc bpc" id="L226" title="2 of 4 branches missed.">                tsrs[ 0 ] = Tsr.Create.newTsrLike(tsrs[ 1 ]).setValue((d==0||thisIsForAddition)?1.0f:-1.0f);</span>
             }
-<span class="fc" id="L251">            return alternative;</span>
-        } else
-<span class="fc" id="L253">            return alternative;</span>
+<span class="fc" id="L228">            return alternative;</span>
+        }
+        else
+<span class="fc" id="L231">            return alternative;</span>
     }
 
 }

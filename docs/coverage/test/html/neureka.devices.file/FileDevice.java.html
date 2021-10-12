@@ -212,73 +212,68 @@ import java.util.stream.Collectors;
     }
 
     @Override
-    public Device&lt;Object&gt; overwrite64( Tsr&lt;Object&gt; tensor, double[] value ) {
-<span class="nc" id="L216">        return null;</span>
-    }
-
-    @Override
-    public Device&lt;Object&gt; overwrite32( Tsr&lt;Object&gt; tensor, float[] value ) {
-<span class="nc" id="L221">        return null;</span>
+    public Device&lt;Object&gt; write( Tsr&lt;Object&gt; tensor, Object value ) {
+<span class="nc" id="L216">        throw new IllegalAccessError(&quot;FileDevice instances do not support writing yet.&quot;);</span>
     }
 
     @Override
     public Device&lt;Object&gt; swap( Tsr&lt;Object&gt; former, Tsr&lt;Object&gt; replacement ) {
-<span class="nc" id="L226">        return null;</span>
+<span class="nc" id="L221">        return null;</span>
     }
 
     @Override
-    public Device&lt;Object&gt; execute( ExecutionCall&lt;Device&lt;?&gt;&gt; call ) {
-<span class="nc" id="L231">        throw new IllegalAccessError(&quot;FileDevice instances do not support executions.&quot;);</span>
+    public Device&lt;Object&gt; approve(ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call ) {
+<span class="nc" id="L226">        throw new IllegalAccessError(&quot;FileDevice instances do not support executions.&quot;);</span>
     }
 
     @Override
     public Object valueFor( Tsr&lt;Object&gt; tensor ) {
-<span class="nc" id="L236">        return tensor.getValue();</span>
+<span class="nc" id="L231">        return tensor.getValue();</span>
     }
 
     @Override
     public Object valueFor( Tsr&lt;Object&gt; tensor, int index ) {
-<span class="nc" id="L241">        return tensor.getValueAt( index );</span>
+<span class="nc" id="L236">        return tensor.getValueAt( index );</span>
     }
 
     @Override
     public Collection&lt;Tsr&lt;Object&gt;&gt; getTensors() {
-<span class="fc" id="L246">        return _stored.keySet();</span>
+<span class="fc" id="L241">        return _stored.keySet();</span>
     }
 
     @Override
     public Operation optimizedOperationOf( Function function, String name ) {
-<span class="nc" id="L251">        throw new IllegalStateException();</span>
+<span class="nc" id="L246">        throw new IllegalStateException();</span>
     }
 
     @Override
     public boolean update( OwnerChangeRequest&lt;Tsr&lt;Object&gt;&gt; changeRequest ) {
-<span class="nc" id="L256">        Tsr&lt;Object&gt; oldOwner = changeRequest.getOldOwner();</span>
-<span class="nc" id="L257">        Tsr&lt;Object&gt; newOwner = changeRequest.getNewOwner();</span>
-<span class="nc bnc" id="L258" title="All 2 branches missed.">        if ( _stored.containsKey( oldOwner ) ) {</span>
-<span class="nc" id="L259">            FileHead&lt;?, Object&gt; head = _stored.get( oldOwner );</span>
-<span class="nc" id="L260">            _stored.remove( oldOwner );</span>
-<span class="nc" id="L261">            _stored.put( newOwner, head );</span>
+<span class="nc" id="L251">        Tsr&lt;Object&gt; oldOwner = changeRequest.getOldOwner();</span>
+<span class="nc" id="L252">        Tsr&lt;Object&gt; newOwner = changeRequest.getNewOwner();</span>
+<span class="nc bnc" id="L253" title="All 2 branches missed.">        if ( _stored.containsKey( oldOwner ) ) {</span>
+<span class="nc" id="L254">            FileHead&lt;?, Object&gt; head = _stored.get( oldOwner );</span>
+<span class="nc" id="L255">            _stored.remove( oldOwner );</span>
+<span class="nc" id="L256">            _stored.put( newOwner, head );</span>
         }
-<span class="nc" id="L263">        changeRequest.executeChange();</span>
-<span class="nc" id="L264">        return true;</span>
+<span class="nc" id="L258">        changeRequest.executeChange();</span>
+<span class="nc" id="L259">        return true;</span>
     }
 
 
     public String toString() {
-<span class="fc" id="L269">        return &quot;FileDevice(directory=&quot; + this._directory + &quot;, stored=&quot; + this._stored + &quot;, loadable=&quot; + this._loadable + &quot;, loaded=&quot; + this._loaded + &quot;)&quot;;</span>
+<span class="fc" id="L264">        return &quot;FileDevice(directory=&quot; + this._directory + &quot;, stored=&quot; + this._stored + &quot;, loadable=&quot; + this._loadable + &quot;, loaded=&quot; + this._loaded + &quot;)&quot;;</span>
     }
 
     public String getDirectory() {
-<span class="nc" id="L273">        return this._directory;</span>
+<span class="nc" id="L268">        return this._directory;</span>
     }
 
     public List&lt;String&gt; getLoadable() {
-<span class="fc" id="L277">        return this._loadable;</span>
+<span class="fc" id="L272">        return this._loadable;</span>
     }
 
     public List&lt;String&gt; getLoaded() {
-<span class="fc" id="L281">        return this._loaded;</span>
+<span class="fc" id="L276">        return this._loaded;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

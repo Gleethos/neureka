@@ -2,8 +2,7 @@
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.autograd.DefaultADAgent;
-import neureka.backend.api.Algorithm;
+import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
@@ -13,7 +12,9 @@ import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.implementations.CLImplementation;
 import neureka.backend.standard.implementations.HostImplementation;
 import neureka.backend.standard.operations.JunctionUtil;
+import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
+import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
 import neureka.devices.host.HostCPU;
@@ -25,74 +26,73 @@ public final class Summation extends AbstractOperation
 
     public Summation()
     {
-<span class="fc" id="L28">        super (</span>
+<span class="fc" id="L29">        super (</span>
                 new OperationBuilder()
-<span class="fc" id="L30">                        .setFunction(         &quot;sumJs&quot;    )</span>
-<span class="fc" id="L31">                        .setOperator(         &quot;sumJs&quot;    )</span>
-<span class="fc" id="L32">                        .setArity(            1           )</span>
-<span class="fc" id="L33">                        .setIsOperator(       false       )</span>
-<span class="fc" id="L34">                        .setIsIndexer(        true        )</span>
-<span class="fc" id="L35">                        .setIsDifferentiable( true        )</span>
-<span class="fc" id="L36">                        .setIsInline(         false       )</span>
+<span class="fc" id="L31">                        .setFunction(         &quot;sumJs&quot;    )</span>
+<span class="fc" id="L32">                        .setOperator(         &quot;sumJs&quot;    )</span>
+<span class="fc" id="L33">                        .setArity(            1           )</span>
+<span class="fc" id="L34">                        .setIsOperator(       false       )</span>
+<span class="fc" id="L35">                        .setIsIndexer(        true        )</span>
+<span class="fc" id="L36">                        .setIsDifferentiable( true        )</span>
+<span class="fc" id="L37">                        .setIsInline(         false       )</span>
         );
-
-<span class="fc" id="L39">        Algorithm.RecursiveJunctor rja = JunctionUtil::forAdditions;</span>
 
         //________________
         // BROADCASTING :
 
-<span class="fc" id="L44">        DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; _creator =</span>
+<span class="fc" id="L43">        DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; _creator =</span>
                 ( inputs, d ) -&gt;
                 {
-<span class="nc" id="L47">                    double[] t1_val = inputs[ 1 ].value64();</span>
-<span class="nc" id="L48">                    double[] t2_val = inputs[ 2 ].value64();</span>
-<span class="nc bnc" id="L49" title="All 2 branches missed.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ] + t2_val[t2Idx.i()];</span>
-<span class="nc" id="L50">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; 1.0;</span>
+<span class="nc" id="L46">                    double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc" id="L47">                    double[] t2_val = inputs[ 2 ].value64();</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ] + t2_val[t2Idx.i()];</span>
+<span class="nc" id="L49">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; 1.0;</span>
                 };
 
-<span class="fc" id="L53">        DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; _creatorX =</span>
+<span class="fc" id="L52">        DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; _creatorX =</span>
                 ( inputs, d ) -&gt;
                 {
-<span class="fc" id="L56">                    double[] t1_val = inputs[ 1 ].value64();</span>
-<span class="fc" id="L57">                    double[] t2_val = inputs[ 2 ].value64();</span>
-<span class="fc bfc" id="L58" title="All 2 branches covered.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] + t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];</span>
-<span class="fc" id="L59">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; 1.0;</span>
+<span class="fc" id="L55">                    double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="fc" id="L56">                    double[] t2_val = inputs[ 2 ].value64();</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] + t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];</span>
+<span class="fc" id="L58">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; 1.0;</span>
                 };
 
-<span class="fc" id="L62">        Broadcast operationAlgorithm = new Broadcast()</span>
-<span class="fc" id="L63">                .setCanPerformBackwardADFor( call -&gt; true )</span>
-<span class="fc" id="L64">                .setCanPerformForwardADFor( call -&gt; true )</span>
-<span class="fc" id="L65">                .setSupplyADAgentFor(</span>
+<span class="fc" id="L61">        Broadcast operationAlgorithm = new Broadcast(JunctionUtil::forAdditions)</span>
+<span class="fc" id="L62">                .setCanPerformBackwardADFor( call -&gt; true )</span>
+<span class="fc" id="L63">                .setCanPerformForwardADFor( call -&gt; true )</span>
+<span class="fc" id="L64">                .setSupplyADAgentFor(</span>
                     ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt;
                     {
-<span class="nc" id="L68">                        Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getAt(&quot;derivative&quot;);</span>
-<span class="nc" id="L69">                        Function mul = Neureka.get().context().getFunction().mul();</span>
-<span class="nc bnc" id="L70" title="All 2 branches missed.">                        if ( ctxDerivative != null ) {</span>
-<span class="nc" id="L71">                            return new DefaultADAgent( ctxDerivative )</span>
-<span class="nc" id="L72">                                    .setForward( (node, forwardDerivative ) -&gt; mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )</span>
-<span class="nc" id="L73">                                    .setBackward( (node, forwardDerivative ) -&gt; mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );</span>
+<span class="nc" id="L67">                        Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
+<span class="nc" id="L68">                        Function mul = Neureka.get().context().getFunction().mul();</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">                        if ( ctxDerivative != null ) {</span>
+<span class="nc" id="L70">                            return ADAgent.of( ctxDerivative )</span>
+<span class="nc" id="L71">                                    .setForward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, ctxDerivative ) )</span>
+<span class="nc" id="L72">                                    .setBackward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, ctxDerivative ) );</span>
                         }
-<span class="nc" id="L75">                        Tsr[] inputs = call.getTensors();</span>
-<span class="nc" id="L76">                        int d = call.getDerivativeIndex();</span>
-<span class="nc bnc" id="L77" title="All 2 branches missed.">                        if ( forward ) throw new IllegalArgumentException(&quot;Broadcast implementation does not support forward-AD!&quot;);</span>
+<span class="nc" id="L74">                        Tsr&lt;?&gt;[] inputs = call.getTensors();</span>
+<span class="nc" id="L75">                        int d = call.getValOf( Arg.DerivIdx.class );</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">                        if ( forward ) throw new IllegalArgumentException(&quot;Broadcast implementation does not support forward-AD!&quot;);</span>
                         else
                         {
-<span class="nc" id="L80">                            Tsr deriv = f.derive( inputs, d );</span>
-<span class="nc" id="L81">                            return new DefaultADAgent( deriv )</span>
-<span class="nc" id="L82">                                    .setForward( (node, forwardDerivative ) -&gt; mul.call( new Tsr[]{ forwardDerivative, deriv } ) )</span>
-<span class="nc" id="L83">                                    .setBackward( (node, backwardError ) -&gt; mul.call( new Tsr[]{ backwardError, deriv } ) );</span>
+<span class="nc" id="L79">                            Tsr&lt;?&gt; deriv = f.executeDerive( inputs, d );</span>
+<span class="nc" id="L80">                            return ADAgent.of( deriv )</span>
+<span class="nc" id="L81">                                    .setForward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, deriv ) )</span>
+<span class="nc" id="L82">                                    .setBackward( (node, backwardError ) -&gt; mul.execute( backwardError, deriv ) );</span>
                         }
                     }
                 )
-<span class="fc" id="L87">                .setHandleRecursivelyAccordingToArity( rja )</span>
-<span class="fc" id="L88">                .build();</span>
+<span class="fc" id="L86">                .buildFunAlgorithm();</span>
 
 
-<span class="fc" id="L91">        setAlgorithm(</span>
+<span class="fc" id="L89">        setAlgorithm(</span>
                 Broadcast.class,
-<span class="fc" id="L93">                operationAlgorithm.setImplementationFor(</span>
+<span class="fc" id="L91">                operationAlgorithm.setImplementationFor(</span>
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+<span class="fc" id="L94">                            .withArity(3)</span>
+<span class="fc" id="L95">                            .andImplementation(</span>
                                 call  -&gt;
 <span class="fc" id="L97">                                        call.getDevice().getExecutor()</span>
 <span class="fc" id="L98">                                                .threaded (</span>
@@ -103,45 +103,44 @@ public final class Summation extends AbstractOperation
 <span class="fc" id="L103">                                                                            call.getTsrOfType( Number.class, 0 ),</span>
 <span class="fc" id="L104">                                                                            call.getTsrOfType( Number.class, 1 ),</span>
 <span class="fc" id="L105">                                                                            call.getTsrOfType( Number.class, 2 ),</span>
-<span class="fc" id="L106">                                                                            call.getDerivativeIndex(),</span>
+<span class="fc" id="L106">                                                                            call.getValOf( Arg.DerivIdx.class ),</span>
                                                                             start, end,
-<span class="fc" id="L108">                                                                            _creatorX.create(call.getTensors(), call.getDerivativeIndex())</span>
+<span class="fc" id="L108">                                                                            _creatorX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))</span>
                                                                     )
 <span class="nc" id="L110">                                                                :  ( start, end ) -&gt;</span>
 <span class="nc" id="L111">                                                                    Broadcast.broadcast (</span>
 <span class="nc" id="L112">                                                                            call.getTsrOfType( Number.class, 0 ),</span>
 <span class="nc" id="L113">                                                                            call.getTsrOfType( Number.class, 1 ),</span>
 <span class="nc" id="L114">                                                                            call.getTsrOfType( Number.class, 2 ),</span>
-<span class="nc" id="L115">                                                                            call.getDerivativeIndex(),</span>
+<span class="nc" id="L115">                                                                            call.getValOf( Arg.DerivIdx.class ),</span>
                                                                             start, end,
-<span class="nc" id="L117">                                                                            _creator.create(call.getTensors(), call.getDerivativeIndex())</span>
+<span class="nc" id="L117">                                                                            _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))</span>
                                                                     )
-                                                ),
-                                3
-                        )
+                                                )
+                            )
                 )
-<span class="fc" id="L123">                .setImplementationFor(</span>
+<span class="fc" id="L122">                .setImplementationFor(</span>
                         OpenCLDevice.class,
-<span class="fc" id="L125">                        CLImplementation.compiler()</span>
-<span class="fc" id="L126">                                .arity( 3 )</span>
-<span class="fc" id="L127">                                .kernelSource( operationAlgorithm.getKernelSource() )</span>
-<span class="fc" id="L128">                                .activationSource( &quot;value = src1 + src2;\n&quot; )</span>
-<span class="fc" id="L129">                                .differentiationSource( &quot;value += 1 * drain;\n&quot; )</span>
-<span class="fc" id="L130">                                .kernelPostfix( this.getFunction() )</span>
-<span class="fc" id="L131">                                .execution(</span>
+<span class="fc" id="L124">                        CLImplementation.compiler()</span>
+<span class="fc" id="L125">                                .arity( 3 )</span>
+<span class="fc" id="L126">                                .kernelSource( operationAlgorithm.getKernelSource() )</span>
+<span class="fc" id="L127">                                .activationSource( &quot;value = src1 + src2;\n&quot; )</span>
+<span class="fc" id="L128">                                .differentiationSource( &quot;value += 1 * drain;\n&quot; )</span>
+<span class="fc" id="L129">                                .kernelPostfix( this.getFunction() )</span>
+<span class="fc" id="L130">                                .execution(</span>
                                         call -&gt; {
-<span class="nc bnc" id="L133" title="All 2 branches missed.">                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;</span>
-<span class="nc bnc" id="L134" title="All 2 branches missed.">                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();</span>
-<span class="nc" id="L135">                                            call.getDevice().getKernel(call)</span>
-<span class="nc" id="L136">                                                    .pass( call.getTsrOfType( Number.class, offset ) )</span>
-<span class="nc" id="L137">                                                    .pass( call.getTsrOfType( Number.class, offset + 1 ) )</span>
-<span class="nc" id="L138">                                                    .pass( call.getTsrOfType( Number.class, offset + 2 ) )</span>
-<span class="nc" id="L139">                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )</span>
-<span class="nc" id="L140">                                                    .pass( call.getDerivativeIndex() )</span>
-<span class="nc" id="L141">                                                    .call( gwz );</span>
-<span class="nc" id="L142">                                        }</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();</span>
+<span class="nc" id="L134">                                            call.getDevice().getKernel(call)</span>
+<span class="nc" id="L135">                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )</span>
+<span class="nc" id="L136">                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )</span>
+<span class="nc" id="L137">                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 2 ) )</span>
+<span class="nc" id="L138">                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )</span>
+<span class="nc" id="L139">                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
+<span class="nc" id="L140">                                                    .call( gwz );</span>
+<span class="nc" id="L141">                                        }</span>
                                 )
-<span class="fc" id="L144">                                .build()</span>
+<span class="fc" id="L143">                                .build()</span>
                 )
         );
 
@@ -149,93 +148,94 @@ public final class Summation extends AbstractOperation
         //______________
         // ACTIVATION :
 
-<span class="fc" id="L152">        DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; activationCreator =</span>
+<span class="fc" id="L151">        DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; activationCreator =</span>
                 ( inputs, d ) -&gt; {
-<span class="nc" id="L154">                    double[] t1_val = inputs[ 1 ].value64();</span>
-<span class="nc bnc" id="L155" title="All 2 branches missed.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ];</span>
-<span class="nc" id="L156">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ];</span>
+<span class="nc" id="L153">                    double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ];</span>
+<span class="nc" id="L155">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ];</span>
                 };
 
-<span class="fc" id="L159">        DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; activationXCreator =</span>
+<span class="fc" id="L158">        DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; activationXCreator =</span>
                 ( inputs, d ) -&gt; {
-<span class="nc" id="L161">                    double[] t1_val = inputs[ 1 ].value64();</span>
-<span class="nc bnc" id="L162" title="All 2 branches missed.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];</span>
-<span class="nc" id="L163">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];</span>
+<span class="nc" id="L160">                    double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">                    if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];</span>
+<span class="nc" id="L162">                    else return ( t0Idx, t1Idx, t2Idx ) -&gt; t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];</span>
                 };
 
-<span class="fc" id="L166">        Activation activation = new Activation()</span>
-<span class="pc" id="L167">        .setCanPerformBackwardADFor( call -&gt; true )</span>
-<span class="pc" id="L168">        .setCanPerformForwardADFor( call -&gt; true )</span>
-<span class="fc" id="L169">        .setSupplyADAgentFor(</span>
+<span class="fc" id="L165">        Activation activation = new Activation()</span>
+<span class="pc" id="L166">        .setCanPerformBackwardADFor( call -&gt; true )</span>
+<span class="pc" id="L167">        .setCanPerformForwardADFor( call -&gt; true )</span>
+<span class="fc" id="L168">        .setSupplyADAgentFor(</span>
             ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt;
             {
-<span class="fc" id="L172">                Tsr ctxDerivative = (Tsr) call.getAt(&quot;derivative&quot;);</span>
-<span class="fc" id="L173">                Function mul = Neureka.get().context().getFunction().mul();</span>
-<span class="pc bpc" id="L174" title="1 of 2 branches missed.">                if ( ctxDerivative != null )</span>
-<span class="nc" id="L175">                    return new DefaultADAgent( ctxDerivative )</span>
-<span class="nc" id="L176">                            .setForward( (node, forwardDerivative ) -&gt; mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )</span>
-<span class="nc" id="L177">                            .setBackward( (node, backwardError ) -&gt; mul.call( new Tsr[]{ backwardError, ctxDerivative } ) );</span>
+<span class="fc" id="L171">                Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
+<span class="fc" id="L172">                Function mul = Neureka.get().context().getFunction().mul();</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">                if ( ctxDerivative != null )</span>
+<span class="nc" id="L174">                    return ADAgent.of( ctxDerivative )</span>
+<span class="nc" id="L175">                            .setForward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, ctxDerivative ) )</span>
+<span class="nc" id="L176">                            .setBackward( (node, backwardError ) -&gt; mul.execute( backwardError, ctxDerivative ) );</span>
 
-<span class="fc" id="L179">                Tsr[] inputs = call.getTensors();</span>
-<span class="fc" id="L180">                int d = call.getDerivativeIndex();</span>
-<span class="fc bfc" id="L181" title="All 2 branches covered.">                if ( forward )</span>
+<span class="fc" id="L178">                Tsr&lt;?&gt;[] inputs = call.getTensors();</span>
+<span class="fc" id="L179">                int d = call.getDerivativeIndex();</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">                if ( forward )</span>
                 {
-<span class="fc" id="L183">                    Tsr deriv = f.derive( inputs, d );</span>
-<span class="fc" id="L184">                    return new DefaultADAgent( deriv )</span>
-<span class="pc" id="L185">                            .setForward( ( t, derivative ) -&gt; mul.call( derivative, deriv ) )</span>
-<span class="pc" id="L186">                            .setBackward( ( t, derivative ) -&gt; mul.call( new Tsr[]{derivative, deriv} ) );</span>
+<span class="fc" id="L182">                    Tsr&lt;?&gt; deriv = f.executeDerive( inputs, d );</span>
+<span class="fc" id="L183">                    return ADAgent.of( deriv )</span>
+<span class="pc" id="L184">                            .setForward( ( t, derivative ) -&gt; mul.execute( derivative, deriv ) )</span>
+<span class="pc" id="L185">                            .setBackward( ( t, derivative ) -&gt; mul.execute( derivative, deriv ) );</span>
                 }
                 else
                 {
-<span class="pc bpc" id="L190" title="1 of 2 branches missed.">                    if ( this.supports(Convolution.class) )</span>
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">                    if ( this.supports(Convolution.class) )</span>
                     {
-<span class="nc" id="L192">                        Function invX = new FunctionBuilder(Neureka.get().context()).build(</span>
-<span class="nc" id="L193">                                &quot;I[ 0 ]&quot; + getOperator() + &quot;&gt;&gt;I[ 1 ]&quot; + getOperator() + &quot;&gt;&gt;I[ 2 ]&quot;,</span>
+<span class="nc" id="L191">                        Function invX = new FunctionBuilder( Neureka.get().context() ).build(</span>
+<span class="nc" id="L192">                                &quot;I[ 0 ]&quot; + getOperator() + &quot;&gt;&gt;I[ 1 ]&quot; + getOperator() + &quot;&gt;&gt;I[ 2 ]&quot;,</span>
                                 false
                         );
-<span class="nc" id="L196">                        Tsr deriv = f.derive( inputs, d );</span>
-<span class="nc" id="L197">                        return new DefaultADAgent( deriv )</span>
-<span class="nc" id="L198">                                .setForward( (node, forwardDerivative ) -&gt; mul.call( new Tsr[]{ forwardDerivative, deriv } ) )</span>
-<span class="nc" id="L199">                                .setBackward( (t, error) -&gt; invX.execute( error, deriv, Tsr.of(t.getPayload().shape(), 0) ) );</span>
+<span class="nc" id="L195">                        Tsr&lt;?&gt; deriv = f.executeDerive( inputs, d );</span>
+<span class="nc" id="L196">                        return ADAgent.of( deriv )</span>
+<span class="nc" id="L197">                                .setForward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, deriv ) )</span>
+<span class="nc" id="L198">                                .setBackward( (t, error) -&gt; invX.execute( error, deriv, Tsr.of(t.getPayload().shape(), 0) ) );</span>
                     }
                     else
                     {
-<span class="fc" id="L203">                        Tsr deriv = f.derive( inputs, d );</span>
-<span class="fc" id="L204">                        return new DefaultADAgent( deriv )</span>
-<span class="pc" id="L205">                                .setForward( (node, forwardDerivative ) -&gt; mul.call( new Tsr[]{ forwardDerivative, deriv } ) )</span>
-<span class="pc" id="L206">                                .setBackward( (node, backwardError ) -&gt; mul.call( new Tsr[]{ backwardError, deriv } ) );</span>
+<span class="fc" id="L202">                        Tsr&lt;?&gt; deriv = f.executeDerive( inputs, d );</span>
+<span class="fc" id="L203">                        return ADAgent.of( deriv )</span>
+<span class="pc" id="L204">                                .setForward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, deriv ) )</span>
+<span class="pc" id="L205">                                .setBackward( (node, backwardError ) -&gt; mul.execute( backwardError, deriv ) );</span>
                     }
                 }
             }
         )
-<span class="pc" id="L211">        .setHandleInsteadOfDevice( (caller, call ) -&gt; null )</span>
-<span class="fc" id="L212">        .setHandleRecursivelyAccordingToArity( rja )</span>
-<span class="fc" id="L213">        .setInstantiateNewTensorsForExecutionIn(</span>
+<span class="pc" id="L210">        .setExecutionDispatcher( (caller, call) -&gt; CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )</span>
+<span class="fc" id="L211">        .setCallPreparation(</span>
                 call -&gt; {
-<span class="nc" id="L215">                    Tsr[] tsrs = call.getTensors();</span>
-<span class="nc" id="L216">                    Device device = call.getDevice();</span>
-<span class="nc bnc" id="L217" title="All 2 branches missed.">                    if ( tsrs[ 0 ] == null ) // Creating a new tensor:</span>
+<span class="nc" id="L213">                    Tsr&lt;?&gt;[] tsrs = call.getTensors();</span>
+<span class="nc" id="L214">                    Device device = call.getDevice();</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">                    if ( tsrs[ 0 ] == null ) // Creating a new tensor:</span>
                     {
-<span class="nc" id="L219">                        int[] shp = tsrs[ 1 ].getNDConf().shape();</span>
-<span class="nc" id="L220">                        Tsr output = Tsr.of( shp, 0.0 );</span>
-<span class="nc" id="L221">                        output.setIsVirtual( false );</span>
+<span class="nc" id="L217">                        int[] shp = tsrs[ 1 ].getNDConf().shape();</span>
+<span class="nc" id="L218">                        Tsr output = Tsr.of( shp, 0.0 );</span>
+<span class="nc" id="L219">                        output.setIsVirtual( false );</span>
                         try {
-<span class="nc" id="L223">                            device.store(output);</span>
-<span class="nc" id="L224">                        } catch( Exception e ) {</span>
-<span class="nc" id="L225">                            e.printStackTrace();</span>
-<span class="nc" id="L226">                        }</span>
-<span class="nc" id="L227">                        tsrs[ 0 ] = output;</span>
+<span class="nc" id="L221">                            device.store(output);</span>
+<span class="nc" id="L222">                        } catch( Exception e ) {</span>
+<span class="nc" id="L223">                            e.printStackTrace();</span>
+<span class="nc" id="L224">                        }</span>
+<span class="nc" id="L225">                        tsrs[ 0 ] = output;</span>
                     }
-<span class="nc" id="L229">                    return call;</span>
+<span class="nc" id="L227">                    return call;</span>
                 }
         )
-<span class="fc" id="L232">        .build();</span>
+<span class="fc" id="L230">        .buildFunAlgorithm();</span>
 
-<span class="fc" id="L234">        setAlgorithm(</span>
+<span class="fc" id="L232">        setAlgorithm(</span>
                 Activation.class,
-<span class="fc" id="L236">                activation.setImplementationFor(</span>
+<span class="fc" id="L234">                activation.setImplementationFor(</span>
                         HostCPU.class,
-                        new HostImplementation(
+                        HostImplementation
+<span class="fc" id="L237">                            .withArity(3)</span>
+<span class="fc" id="L238">                            .andImplementation(</span>
                                 call  -&gt;
 <span class="nc" id="L240">                                        call.getDevice().getExecutor()</span>
 <span class="nc" id="L241">                                                .threaded (</span>
@@ -245,100 +245,94 @@ public final class Summation extends AbstractOperation
 <span class="nc" id="L245">                                                                Activation.activate (</span>
 <span class="nc" id="L246">                                                                        call.getTsrOfType( Number.class, 0 ),</span>
                                                                         start, end,
-<span class="nc" id="L248">                                                                        activationXCreator.create(call.getTensors(), call.getDerivativeIndex())</span>
+<span class="nc" id="L248">                                                                        activationXCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))</span>
                                                                 )
 <span class="nc" id="L250">                                                        : ( start, end ) -&gt;</span>
 <span class="nc" id="L251">                                                                Activation.activate (</span>
 <span class="nc" id="L252">                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),</span>
                                                                         start, end,
-<span class="nc" id="L254">                                                                        activationCreator.create(call.getTensors(), call.getDerivativeIndex())</span>
+<span class="nc" id="L254">                                                                        activationCreator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))</span>
                                                                 )
-                                                ),
-                                3
-                        )
+                                                )
+                            )
                 )
-<span class="fc" id="L260">                .setImplementationFor(</span>
+<span class="fc" id="L259">                .setImplementationFor(</span>
                         OpenCLDevice.class,
-<span class="fc" id="L262">                        CLImplementation.compiler()</span>
-<span class="fc" id="L263">                                .arity( 3 )</span>
-<span class="fc" id="L264">                                .kernelSource( activation.getKernelSource() )</span>
-<span class="fc" id="L265">                                .activationSource( &quot;output = input;&quot; )</span>
-<span class="fc" id="L266">                                .differentiationSource( &quot;output = 1;&quot; )</span>
-<span class="fc" id="L267">                                .kernelPostfix( this.getFunction() )</span>
-<span class="fc" id="L268">                                .execution(</span>
+<span class="fc" id="L261">                        CLImplementation.compiler()</span>
+<span class="fc" id="L262">                                .arity( 3 )</span>
+<span class="fc" id="L263">                                .kernelSource( activation.getKernelSource() )</span>
+<span class="fc" id="L264">                                .activationSource( &quot;output = input;&quot; )</span>
+<span class="fc" id="L265">                                .differentiationSource( &quot;output = 1;&quot; )</span>
+<span class="fc" id="L266">                                .kernelPostfix( this.getFunction() )</span>
+<span class="fc" id="L267">                                .execution(</span>
                                         call -&gt; {
-<span class="nc bnc" id="L270" title="All 2 branches missed.">                                            int offset = ( call.getTsrOfType( Number.class, 0 ) != null ) ? 0 : 1;</span>
+<span class="nc bnc" id="L269" title="All 2 branches missed.">                                            int offset = ( call.getTsrOfType( Number.class, 0 ) != null ) ? 0 : 1;</span>
                                             int gwz =
-<span class="nc bnc" id="L272" title="All 2 branches missed.">                                                    ( call.getTsrOfType( Number.class, 0 ) != null )</span>
-<span class="nc" id="L273">                                                            ? call.getTsrOfType( Number.class, 0 ).size()</span>
-<span class="nc" id="L274">                                                            : call.getTsrOfType( Number.class, 1 ).size();</span>
-<span class="nc" id="L275">                                            call.getDevice().getKernel(call)</span>
-<span class="nc" id="L276">                                                    .pass( call.getTsrOfType( Number.class, offset ) )</span>
-<span class="nc" id="L277">                                                    .pass( call.getTsrOfType( Number.class, offset + 1 ) )</span>
-<span class="nc" id="L278">                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )</span>
-<span class="nc" id="L279">                                                    .pass( call.getDerivativeIndex() )</span>
-<span class="nc" id="L280">                                                    .call( gwz );</span>
-<span class="nc" id="L281">                                        }</span>
+<span class="nc bnc" id="L271" title="All 2 branches missed.">                                                    ( call.getTsrOfType( Number.class, 0 ) != null )</span>
+<span class="nc" id="L272">                                                            ? call.getTsrOfType( Number.class, 0 ).size()</span>
+<span class="nc" id="L273">                                                            : call.getTsrOfType( Number.class, 1 ).size();</span>
+<span class="nc" id="L274">                                            call.getDevice().getKernel(call)</span>
+<span class="nc" id="L275">                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )</span>
+<span class="nc" id="L276">                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )</span>
+<span class="nc" id="L277">                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )</span>
+<span class="nc" id="L278">                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
+<span class="nc" id="L279">                                                    .call( gwz );</span>
+<span class="nc" id="L280">                                        }</span>
                                 )
-<span class="fc" id="L283">                                .build()</span>
+<span class="fc" id="L282">                                .build()</span>
                 )
         );
 
-<span class="fc" id="L287">    }</span>
+<span class="fc" id="L286">    }</span>
 
     @Override
     public String stringify( String[] children ) {
-<span class="fc" id="L291">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="pc bpc" id="L292" title="1 of 4 branches missed.">        if (expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')') {</span>
-<span class="fc" id="L293">            return &quot;sumJs&quot; + expression;</span>
+<span class="fc" id="L290">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="pc bpc" id="L291" title="1 of 4 branches missed.">        if (expression.charAt( 0 ) == '(' &amp;&amp; expression.charAt( expression.length() - 1 ) == ')') {</span>
+<span class="fc" id="L292">            return &quot;sumJs&quot; + expression;</span>
         }
-<span class="fc" id="L295">        return &quot;sumJs&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+<span class="fc" id="L294">        return &quot;sumJs&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L300">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L299">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="pc bpc" id="L305" title="1 of 2 branches missed.">        if ( j &lt; 0 ) return calculate( inputs, d, src );</span>
-<span class="nc bnc" id="L306" title="All 2 branches missed.">        if ( d &lt; 0 ) {</span>
-<span class="nc" id="L307">            double sum = 0;</span>
-<span class="nc" id="L308">            boolean nothingDone = true;</span>
-<span class="nc bnc" id="L309" title="All 2 branches missed.">            for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
-<span class="nc" id="L310">                sum += src[ 0 ].call( inputs, i );</span>
-<span class="nc" id="L311">                nothingDone = false;</span>
-            }
-<span class="nc bnc" id="L313" title="All 2 branches missed.">            if ( nothingDone ) return src[ 0 ].call( inputs );</span>
-<span class="nc" id="L314">            return sum;</span>
-        }
-<span class="nc" id="L316">        else return src[ 0 ].derive( inputs, d, j );</span>
+<span class="pc bpc" id="L304" title="1 of 2 branches missed.">        if ( j &lt; 0 ) return calculate( inputs, d, src );</span>
+<span class="nc bnc" id="L305" title="All 2 branches missed.">        if ( d &lt; 0 ) return _calculate( inputs, src );</span>
+<span class="nc" id="L306">        else return src[ 0 ].derive( inputs, d, j );</span>
     }
 
     @Contract(pure = true)
     public static double calculate( double[] inputs, int d, Function[] src ) {
-<span class="fc bfc" id="L321" title="All 2 branches covered.">        if ( d &lt; 0 ) {</span>
-<span class="fc" id="L322">            double sum = 0;</span>
-<span class="fc" id="L323">            boolean nothingDone = true;</span>
-<span class="fc bfc" id="L324" title="All 2 branches covered.">            for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
-<span class="fc" id="L325">                sum += src[ 0 ].call( inputs, i );</span>
-<span class="fc" id="L326">                nothingDone = false;</span>
+<span class="fc bfc" id="L311" title="All 2 branches covered.">        if ( d &lt; 0 )</span>
+<span class="fc" id="L312">            return _calculate( inputs, src );</span>
+        else {
+<span class="fc" id="L314">            double sum = 0;</span>
+<span class="fc" id="L315">            boolean nothingDone = true;</span>
+<span class="fc bfc" id="L316" title="All 2 branches covered.">            for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
+<span class="fc" id="L317">                double r = src[ 0 ].derive( inputs, d, i );</span>
+<span class="fc" id="L318">                sum += r;</span>
+<span class="fc" id="L319">                nothingDone = false;</span>
             }
-<span class="pc bpc" id="L328" title="1 of 2 branches missed.">            if ( nothingDone ) return src[ 0 ].call( inputs );</span>
-<span class="fc" id="L329">            return sum;</span>
-        } else {
-<span class="fc" id="L331">            double sum = 0;</span>
-<span class="fc" id="L332">            boolean nothingDone = true;</span>
-<span class="fc bfc" id="L333" title="All 2 branches covered.">            for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
-<span class="fc" id="L334">                double r = src[ 0 ].derive( inputs, d, i );</span>
-<span class="fc" id="L335">                sum += r;</span>
-<span class="fc" id="L336">                nothingDone = false;</span>
-            }
-<span class="pc bpc" id="L338" title="1 of 2 branches missed.">            if ( nothingDone ) return src[ 0 ].call( inputs );</span>
-<span class="fc" id="L339">            return sum;</span>
+<span class="pc bpc" id="L321" title="1 of 2 branches missed.">            if ( nothingDone ) return src[ 0 ].call( inputs );</span>
+<span class="fc" id="L322">            return sum;</span>
         }
 
+    }
+
+    private static double _calculate( double[] inputs, Function[] src ) {
+<span class="fc" id="L328">        double sum = 0;</span>
+<span class="fc" id="L329">        boolean nothingDone = true;</span>
+<span class="fc bfc" id="L330" title="All 2 branches covered.">        for ( int i = 0; i &lt; inputs.length; i++ ) {</span>
+<span class="fc" id="L331">            sum += src[ 0 ].call( inputs, i );</span>
+<span class="fc" id="L332">            nothingDone = false;</span>
+        }
+<span class="pc bpc" id="L334" title="1 of 2 branches missed.">        if ( nothingDone ) return src[ 0 ].call( inputs );</span>
+<span class="fc" id="L335">        return sum;</span>
     }
 
 

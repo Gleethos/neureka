@@ -7,17 +7,17 @@ import neureka.utility.slicing.states.FromOrAt;
 import neureka.utility.slicing.states.StepsOrAxisOrGet;
 import neureka.utility.slicing.states.To;
 
-public class AxisSliceBuilder&lt;ValType&gt; implements FromOrAt&lt;ValType&gt;, To&lt;ValType&gt;, StepsOrAxisOrGet&lt;ValType&gt;, AxisOrGet&lt;ValType&gt;
+public class AxisSliceBuilder&lt;V&gt; implements FromOrAt&lt;V&gt;, To&lt;V&gt;, StepsOrAxisOrGet&lt;V&gt;, AxisOrGet&lt;V&gt;
 {
 
     interface Resolution&lt;V&gt; { SliceBuilder&lt;V&gt; resolve(int from, int to, int steps ); }
 
-    private final Resolution&lt;ValType&gt; _then;
+    private final Resolution&lt;V&gt; _then;
     private int _from;
     private int _to;
     private int _steps;
 
-<span class="fc" id="L20">    AxisSliceBuilder( int axisSize, Resolution&lt;ValType&gt; then ) {</span>
+<span class="fc" id="L20">    AxisSliceBuilder( int axisSize, Resolution&lt;V&gt; then ) {</span>
 <span class="fc" id="L21">        _then = then;</span>
 <span class="fc" id="L22">        _from = 0;</span>
 <span class="fc" id="L23">        _to = axisSize - 1;</span>
@@ -34,7 +34,7 @@ public class AxisSliceBuilder&lt;ValType&gt; implements FromOrAt&lt;ValType&gt;,
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link To} interface.
      */
     @Override
-    public To&lt;ValType&gt; from( int index ) {
+    public To&lt;V&gt; from(int index ) {
 <span class="fc" id="L38">        _from = index;</span>
 <span class="fc" id="L39">        return this;</span>
     }
@@ -49,7 +49,7 @@ public class AxisSliceBuilder&lt;ValType&gt; implements FromOrAt&lt;ValType&gt;,
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link StepsOrAxisOrGet} interface.
      */
     @Override
-    public StepsOrAxisOrGet&lt;ValType&gt; to(int index ) {
+    public StepsOrAxisOrGet&lt;V&gt; to(int index ) {
 <span class="fc" id="L53">        _to = index;</span>
 <span class="fc" id="L54">        return this;</span>
     }
@@ -64,7 +64,7 @@ public class AxisSliceBuilder&lt;ValType&gt; implements FromOrAt&lt;ValType&gt;,
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link AxisOrGet} interface.
      */
     @Override
-    public AxisOrGet&lt;ValType&gt; step(int size) {
+    public AxisOrGet&lt;V&gt; step(int size) {
 <span class="fc" id="L68">        _steps = size;</span>
 <span class="fc" id="L69">        return this;</span>
     }
@@ -79,7 +79,7 @@ public class AxisSliceBuilder&lt;ValType&gt; implements FromOrAt&lt;ValType&gt;,
      * @return An instance of the {@link AxisSliceBuilder} disguised by the {@link AxisOrGet} interface.
      */
     @Override
-    public AxisOrGet&lt;ValType&gt; at(int index ) {
+    public AxisOrGet&lt;V&gt; at(int index ) {
 <span class="fc" id="L83">        _from = index;</span>
 <span class="fc" id="L84">        _to = index;</span>
 <span class="fc" id="L85">        return this;</span>
@@ -90,12 +90,12 @@ public class AxisSliceBuilder&lt;ValType&gt; implements FromOrAt&lt;ValType&gt;,
      *  This method returns an instance of the {@link AxisSliceBuilder} targeted by the provided index.
      */
     @Override
-    public FromOrAt&lt;ValType&gt; axis(int axis) {
+    public FromOrAt&lt;V&gt; axis(int axis) {
 <span class="fc" id="L94">       return _then.resolve(_from, _to, _steps).axis(axis);</span>
     }
 
     @Override
-    public Tsr&lt;ValType&gt; get() {
+    public Tsr&lt;V&gt; get() {
 <span class="fc" id="L99">        return _then.resolve(_from, _to, _steps).get();</span>
     }
 

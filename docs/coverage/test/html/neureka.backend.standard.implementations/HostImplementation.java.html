@@ -15,9 +15,17 @@ import neureka.devices.host.HostCPU;
  */
 public class HostImplementation extends AbstractImplementationFor&lt;HostCPU&gt;
 {
-    public HostImplementation( ImplementationFor&lt;HostCPU&gt; creator, int arity )
+    public static AndImplementation withArity( int arity ) {
+<span class="fc" id="L19">        return (lambda) -&gt; new HostImplementation(lambda, arity);</span>
+    }
+
+    private HostImplementation( ImplementationFor&lt;HostCPU&gt; creator, int arity )
     {
-<span class="fc" id="L20">        super( creator, arity );</span>
-<span class="fc" id="L21">    }</span>
+<span class="fc" id="L24">        super( creator, arity );</span>
+<span class="fc" id="L25">    }</span>
+
+    public interface AndImplementation {
+        HostImplementation andImplementation( ImplementationFor&lt;HostCPU&gt; creator );
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
