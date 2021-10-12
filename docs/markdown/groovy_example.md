@@ -17,25 +17,27 @@ Simple scalar calculation:
 ```
 Matrix multiplication:
 ```groovy
-    x = Tsr.of(
-                [2, 3, 1],
+    def x = Tsr.of(
+                [2, 3],
                 [
                         3,   2, -1,
                         -2,  2,  4
                 ]
-    )
-    y = Tsr.of(
-            [1, 3, 2],
-            [
-                    4, -1,  
-                    3,  2,  
-                    3, -1
-            ])
+            )
             
-    def z = Tsr.of('i0 x i1', x, y)
+    def y = Tsr.of(
+                [3, 2],
+                [
+                        4, -1,  
+                        3,  2,  
+                        3, -1
+                ]
+             )
+            
+    def z = x.matMul(y)
     
     /*
-     *   z.toString(): "(2x1x2):[15.0, 2.0, 10.0, 2.0]"    
+     *   z.toString(): "(2x2):[15.0, 2.0, 10.0, 2.0]"    
      */
 ```
 Convolution:
