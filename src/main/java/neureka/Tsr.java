@@ -114,7 +114,6 @@ import neureka.utility.slicing.SliceBuilder;
 import neureka.utility.slicing.SmartSlicer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -1985,7 +1984,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public Tsr<V> dot( Tsr<V> b ) {
         if ( this.rank() != 2 && b.rank() != 2 )
-            throw new NotImplementedException(); // This is not yet available in the backend!
+            throw new IllegalStateException("Not yet implemented!"); // This is not yet available in the backend!
         return this.matMul( b );
     }
 

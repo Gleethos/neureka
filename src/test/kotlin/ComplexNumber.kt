@@ -78,10 +78,10 @@ class ComplexNumber(
     /**
      * @return The truth value determining if the value of this complex number is equals to the provided object.
      */
-    override fun equals( z: Any? ): Boolean
+    override fun equals( other: Any? ): Boolean
     {
-        if ( z !is ComplexNumber ) return false
-        val a : ComplexNumber =  z
+        if ( other !is ComplexNumber ) return false
+        val a : ComplexNumber =  other
         return (real == a.real) && (imaginary == a.imaginary)
     }
 

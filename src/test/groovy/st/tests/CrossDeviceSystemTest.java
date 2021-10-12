@@ -14,6 +14,8 @@ public class CrossDeviceSystemTest
 
     public static boolean on( Device gpu )
     {
+        int initialNumberOfOutsourced = gpu.size();
+
         UnitTester_Tensor tester = new UnitTester_Tensor("");
 
         List<Tsr> listOfTensors = new ArrayList<>();
@@ -205,10 +207,11 @@ public class CrossDeviceSystemTest
         if(gpu instanceof OpenCLDevice)
         {
             Collection<Tsr> outsourced = gpu.getTensors();
+            int numberOfOutsourced = outsourced.size() - initialNumberOfOutsourced;
 
             String sentence = "Number of outsourced tensors: ";
             tester.testContains(
-                    sentence +(outsourced.size()),
+                    sentence + numberOfOutsourced,
                     new String[]{sentence+(listOfTensors.size())},
                     "Testing for memory leaks!"
             );
@@ -225,7 +228,7 @@ public class CrossDeviceSystemTest
             listOfTensors.forEach(gpu::free);
             sentence = "Number of tensors after deleting: ";
             tester.testContains(
-                    sentence +gpu.getTensors().size(),
+                    sentence + Math.max(0, gpu.getTensors().size()-initialNumberOfOutsourced),
                     new String[]{sentence+"0"},
                     "Testing if all tensors have been deleted!"
             );

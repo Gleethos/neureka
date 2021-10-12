@@ -69,12 +69,12 @@ Kotlin_Compatibility_Unit_Testing {
         val a : Tsr<ComplexNumber> = Tsr.of(
                                         DataType.of(ComplexNumber::class.java),
                                         intArrayOf(3, 2),
-                                        { i : Int, indices : IntArray -> ComplexNumber( indices[0].toDouble(), indices[1].toDouble() ) }
+                                        { _ : Int, indices : IntArray -> ComplexNumber( indices[0].toDouble(), indices[1].toDouble() ) }
                                     )
         val b : Tsr<ComplexNumber> = Tsr.of(
                                         DataType.of(ComplexNumber::class.java),
                                         intArrayOf(3, 2),
-                                        { i : Int, indices : IntArray -> ComplexNumber( indices[1].toDouble(), indices[0].toDouble() ) }
+                                        { _ : Int, indices : IntArray -> ComplexNumber( indices[1].toDouble(), indices[0].toDouble() ) }
                                     )
 
         // Expect:
