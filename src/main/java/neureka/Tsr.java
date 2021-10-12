@@ -763,7 +763,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  it will also receive gradients when the {@link #backward()} method is being called
      *  on any descendant tensor within the computation graph.
      *
-     * @@param rqsGradient The truth value determining if this tensor ought to receive gradients via
+     * @param rqsGradient The truth value determining if this tensor ought to receive gradients via
      *                     the built in automatic backpropagation system.
      * @return This very {@link Tsr} instance in order to enable method chaining.
      */
@@ -1707,8 +1707,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  Otherwise the method will also be able to perform broadcasting, however only if
      *  for every pair of shape dimension the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
-     *  Here is an example of 2 matching shapes: (1, 4, 1) & (3, 4, 1)       <br>
-     *  And here is an example of a mismatch: (2, 4, 1) & (3, 4, 1)         <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
      *
      * @param other The right operand of the addition.
      * @return The sum of this instance as the left and the passed {@link Tsr} instance as right operand.
@@ -1735,8 +1735,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  Otherwise the method will also be able to perform broadcasting, however only if
      *  for every pair of shape dimension the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
-     *  Here is an example of 2 matching shapes: (1, 4, 1) & (3, 4, 1)       <br>
-     *  And here is an example of a mismatch: (2, 4, 1) & (3, 4, 1)         <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
      *
      * @param other The right operand of the subtraction.
      * @return The difference between this instance as the left and the passed {@link Tsr} instance as right operand.
@@ -1772,8 +1772,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  Otherwise the method will also be able to perform broadcasting, however only if
      *  for every pair of shape dimension the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
-     *  Here is an example of 2 matching shapes: (1, 4, 1) & (3, 4, 1)       <br>
-     *  And here is an example of a mismatch: (2, 4, 1) & (3, 4, 1)         <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
      *
      * @param other The right operand of the multiplication.
      * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
@@ -1801,8 +1801,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  Otherwise the method will also be able to perform broadcasting, however only if
      *  for every pair of shape dimension the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
-     *  Here is an example of 2 matching shapes: (1, 4, 1) & (3, 4, 1)       <br>
-     *  And here is an example of a mismatch: (2, 4, 1) & (3, 4, 1)         <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
      *
      * @param other The right operand of the multiplication.
      * @return The product of this instance as the left and the passed {@link Tsr} instance as right operand.
@@ -1829,8 +1829,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  Otherwise the method will also be able to perform broadcasting, however only if
      *  for every pair of shape dimension the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
-     *  Here is an example of 2 matching shapes: (1, 4, 1) & (3, 4, 1)       <br>
-     *  And here is an example of a mismatch: (2, 4, 1) & (3, 4, 1)         <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
      *
      * @param other The right operand of the division.
      * @return The quotient of this instance as the left and the passed {@link Tsr} instance as right operand.
@@ -1857,8 +1857,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  Otherwise the method will also be able to perform broadcasting, however only if
      *  for every pair of shape dimension the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
-     *  Here is an example of 2 matching shapes: (1, 4, 1) & (3, 4, 1)       <br>
-     *  And here is an example of a mismatch: (2, 4, 1) & (3, 4, 1)         <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
      *
      * @param other The right operand of the modulo operation.
      * @return The modulus of this instance as the left and the passed {@link Tsr} instance as right operand.
@@ -1889,8 +1889,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  Otherwise the method will also be able to perform broadcasting, however only if
      *  for every pair of shape dimension the following is true:
      *  Either the dimensions have the same size or one of them has size 1. <br>
-     *  Here is an example of 2 matching shapes: (1, 4, 1) & (3, 4, 1)       <br>
-     *  And here is an example of a mismatch: (2, 4, 1) & (3, 4, 1)         <br>
+     *  Here is an example of 2 matching shapes: (1, 4, 1) and (3, 4, 1)       <br>
+     *  And here is an example of a mismatch: (2, 4, 1) and (3, 4, 1)         <br>
      *
      * @param other The right operand, also known as exponent, of the exponentiation.
      * @return The power of this instance as the left and the passed {@link Tsr} instance as right operand.
