@@ -46,7 +46,7 @@ public class Modulo extends AbstractOperation {
                     if ( d < 0 ) return ( t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] % t2_val[t2Idx.i()];
                     else {
                         return ( t1Idx, t2Idx ) -> {
-                            if (d == 0) {
+                            if ( d == 0 ) {
                                 return 1 / t2_val[t2Idx.i()];
                             } else {
                                 return -(t1_val[ t1Idx.i() ] / Math.pow(t2_val[t2Idx.i()], 2));
@@ -155,13 +155,13 @@ public class Modulo extends AbstractOperation {
                         return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] % t2_val[t2Idx.i()];
                     } else {
                         return ( t0Idx, t1Idx, t2Idx ) -> {
-                            if (d == 0) {
+                            if ( d == 0 ) {
                                 return 1 / t2_val[t2Idx.i()];
                             } else {
                                 return
                                         -(t1_val[ t1Idx.i() ]
                                                 /
-                                                Math.pow(t2_val[t2Idx.i()], 2));
+                                        Math.pow(t2_val[t2Idx.i()], 2));
                             }
                         };
                     }
@@ -200,19 +200,19 @@ public class Modulo extends AbstractOperation {
             .setSupplyADAgentFor(
                 ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                 {
-                    Tsr ctxDerivative = (Tsr)call.getValOf(Arg.Derivative.class);
+                    Tsr<?> ctxDerivative = (Tsr) call.getValOf(Arg.Derivative.class);
                     Function mul = Neureka.get().context().getFunction().mul();
                     if ( ctxDerivative != null ) {
                         return ADAgent.of( ctxDerivative )
-                                        .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
-                                        .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
+                                        .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
+                                        .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
                     }
-                    Tsr[] inputs = call.getTensors();
+                    Tsr<?>[] inputs = call.getTensors();
                     int d = call.getDerivativeIndex();
                     if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                     else
                     {
-                        Tsr deriv = f.derive( inputs, d );
+                        Tsr<?> deriv = f.executeDerive( inputs, d );
                         return ADAgent.of( deriv )
                                         .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
                                         .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
@@ -310,11 +310,11 @@ public class Modulo extends AbstractOperation {
             .setCanPerformForwardADFor(
                     call -> {
                         Tsr<?> last = null;
-                    for ( Tsr<?> t : call.getTensors() ) {
-                        if ( last != null && !last.shape().equals(t.shape()) ) return false;
-                        last = t; // Note: shapes are cached!
-                    }
-                    return true;
+                        for ( Tsr<?> t : call.getTensors() ) {
+                            if ( last != null && !last.shape().equals(t.shape()) ) return false;
+                            last = t; // Note: shapes are cached!
+                        }
+                        return true;
                     }
             )
             .setSupplyADAgentFor(

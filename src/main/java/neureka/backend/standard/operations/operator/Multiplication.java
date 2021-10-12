@@ -194,22 +194,22 @@ public class Multiplication extends AbstractOperation
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
-                        Tsr ctxDerivative = (Tsr) call.getValOf(Arg.Derivative.class);
+                        Tsr<?> ctxDerivative = (Tsr) call.getValOf(Arg.Derivative.class);
                         Function mul = Neureka.get().context().getFunction().mul();
                         if ( ctxDerivative != null ) {
                             return ADAgent.of( ctxDerivative )
-                                            .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
-                                            .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
+                                            .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
+                                            .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
                         }
-                        Tsr[] inputs = call.getTensors();
+                        Tsr<?>[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr deriv = f.derive( inputs, d );
+                            Tsr<?> deriv = f.executeDerive( inputs, d );
                             return ADAgent.of( deriv )
-                                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
-                                    .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
+                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
+                                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, deriv ) );
                         }
                     }
                 )
@@ -301,28 +301,28 @@ public class Multiplication extends AbstractOperation
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
-                        Tsr ctxDerivative = (Tsr)call.getValOf(Arg.Derivative.class);
+                        Tsr<?> ctxDerivative = (Tsr)call.getValOf(Arg.Derivative.class);
                         Function mul = Neureka.get().context().getFunction().mul();
                         if ( ctxDerivative != null ) {
                             return ADAgent.of( ctxDerivative )
-                                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
+                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
                                     .setBackward( null );
                         }
-                        Tsr[] inputs = call.getTensors();
+                        Tsr<?>[] inputs = call.getTensors();
                         int d = call.getValOf( Arg.DerivIdx.class );
                         if ( forward )
                         {
-                            Tsr deriv = f.derive( inputs, d );
+                            Tsr<?> deriv = f.executeDerive( inputs, d );
                             return ADAgent.of( deriv )
-                                    .setForward( (t, derivative ) -> mul.call( derivative, deriv ) )
+                                    .setForward( (t, derivative ) -> mul.execute( derivative, deriv ) )
                                     .setBackward( null );
                         }
                         else
                         {
-                            Tsr deriv = f.derive( inputs, d );
+                            Tsr<?> deriv = f.executeDerive( inputs, d );
                             return ADAgent.of( deriv )
-                                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
-                                    .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
+                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
+                                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, deriv ) );
                         }
                     }
                 )

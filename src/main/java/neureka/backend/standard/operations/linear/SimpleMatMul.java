@@ -16,7 +16,7 @@ public class SimpleMatMul {
         int bRows = shapeB[0];
         int bCols = shapeB[1];
 
-        if (aCols != bRows) {
+        if ( aCols != bRows ) {
             throw new IllegalArgumentException("A:Rows: " + aCols + " did not match B:Columns " + bRows + ".");
         }
 
@@ -26,10 +26,10 @@ public class SimpleMatMul {
     public static void execute(
             double[] A, double[] B, double[] C, int aRows, int aCols, int bCols
     ) {
-        for (int i = 0; i < aRows; i++) { // aRow
-            for (int j = 0; j < bCols; j++) { // bColumn
-                for (int k = 0; k < aCols; k++) { // aColumn
-                    C[i*bCols+j] += A[i*aCols+k] * B[k*bCols+j];
+        for ( int i = 0; i < aRows; i++ ) { // aRow
+            for ( int j = 0; j < bCols; j++ ) { // bColumn
+                for ( int k = 0; k < aCols; k++ ) { // aColumn
+                    C[ i * bCols + j ] += A[ i * aCols + k ] * B[ k * bCols + j ];
                 }
             }
         }

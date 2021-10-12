@@ -68,18 +68,18 @@ public final class Summation extends AbstractOperation
                         Function mul = Neureka.get().context().getFunction().mul();
                         if ( ctxDerivative != null ) {
                             return ADAgent.of( ctxDerivative )
-                                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
-                                    .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
+                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
+                                    .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
                         }
-                        Tsr[] inputs = call.getTensors();
+                        Tsr<?>[] inputs = call.getTensors();
                         int d = call.getValOf( Arg.DerivIdx.class );
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr deriv = f.derive( inputs, d );
+                            Tsr<?> deriv = f.executeDerive( inputs, d );
                             return ADAgent.of( deriv )
-                                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
-                                    .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
+                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
+                                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, deriv ) );
                         }
                     }
                 )
@@ -168,21 +168,21 @@ public final class Summation extends AbstractOperation
         .setSupplyADAgentFor(
             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
             {
-                Tsr ctxDerivative = (Tsr) call.getValOf(Arg.Derivative.class);
+                Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                 Function mul = Neureka.get().context().getFunction().mul();
                 if ( ctxDerivative != null )
                     return ADAgent.of( ctxDerivative )
-                            .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
-                            .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, ctxDerivative } ) );
+                            .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
+                            .setBackward( (node, backwardError ) -> mul.execute( backwardError, ctxDerivative ) );
 
-                Tsr[] inputs = call.getTensors();
+                Tsr<?>[] inputs = call.getTensors();
                 int d = call.getDerivativeIndex();
                 if ( forward )
                 {
-                    Tsr deriv = f.derive( inputs, d );
+                    Tsr<?> deriv = f.executeDerive( inputs, d );
                     return ADAgent.of( deriv )
-                            .setForward( ( t, derivative ) -> mul.call( derivative, deriv ) )
-                            .setBackward( ( t, derivative ) -> mul.call( new Tsr[]{derivative, deriv} ) );
+                            .setForward( ( t, derivative ) -> mul.execute( derivative, deriv ) )
+                            .setBackward( ( t, derivative ) -> mul.execute( derivative, deriv ) );
                 }
                 else
                 {
@@ -192,17 +192,17 @@ public final class Summation extends AbstractOperation
                                 "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
                                 false
                         );
-                        Tsr deriv = f.derive( inputs, d );
+                        Tsr<?> deriv = f.executeDerive( inputs, d );
                         return ADAgent.of( deriv )
-                                .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
+                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
                                 .setBackward( (t, error) -> invX.execute( error, deriv, Tsr.of(t.getPayload().shape(), 0) ) );
                     }
                     else
                     {
-                        Tsr deriv = f.derive( inputs, d );
+                        Tsr<?> deriv = f.executeDerive( inputs, d );
                         return ADAgent.of( deriv )
-                                .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
-                                .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
+                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
+                                .setBackward( (node, backwardError ) -> mul.execute( backwardError, deriv ) );
                     }
                 }
             }
@@ -210,7 +210,7 @@ public final class Summation extends AbstractOperation
         .setExecutionDispatcher( (caller, call) -> CalcUtil.executeFor( caller, call, JunctionUtil::forAdditions ) )
         .setCallPreparation(
                 call -> {
-                    Tsr[] tsrs = call.getTensors();
+                    Tsr<?>[] tsrs = call.getTensors();
                     Device device = call.getDevice();
                     if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
@@ -302,31 +302,15 @@ public final class Summation extends AbstractOperation
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
         if ( j < 0 ) return calculate( inputs, d, src );
-        if ( d < 0 ) {
-            double sum = 0;
-            boolean nothingDone = true;
-            for ( int i = 0; i < inputs.length; i++ ) {
-                sum += src[ 0 ].call( inputs, i );
-                nothingDone = false;
-            }
-            if ( nothingDone ) return src[ 0 ].call( inputs );
-            return sum;
-        }
+        if ( d < 0 ) return _calculate( inputs, src );
         else return src[ 0 ].derive( inputs, d, j );
     }
 
     @Contract(pure = true)
     public static double calculate( double[] inputs, int d, Function[] src ) {
-        if ( d < 0 ) {
-            double sum = 0;
-            boolean nothingDone = true;
-            for ( int i = 0; i < inputs.length; i++ ) {
-                sum += src[ 0 ].call( inputs, i );
-                nothingDone = false;
-            }
-            if ( nothingDone ) return src[ 0 ].call( inputs );
-            return sum;
-        } else {
+        if ( d < 0 )
+            return _calculate( inputs, src );
+        else {
             double sum = 0;
             boolean nothingDone = true;
             for ( int i = 0; i < inputs.length; i++ ) {
@@ -338,6 +322,17 @@ public final class Summation extends AbstractOperation
             return sum;
         }
 
+    }
+
+    private static double _calculate( double[] inputs, Function[] src ) {
+        double sum = 0;
+        boolean nothingDone = true;
+        for ( int i = 0; i < inputs.length; i++ ) {
+            sum += src[ 0 ].call( inputs, i );
+            nothingDone = false;
+        }
+        if ( nothingDone ) return src[ 0 ].call( inputs );
+        return sum;
     }
 
 
