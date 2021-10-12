@@ -240,8 +240,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 throw new IllegalArgumentException( message );
             }
         }
-        args[ 0 ] = ( args[ 0 ] instanceof ArrayList ) ? ( (List) args[ 0 ] ).toArray() : args[ 0 ];
-        args[ 1 ] = ( args[ 1 ] instanceof ArrayList ) ? ( (List) args[ 1 ] ).toArray() : args[ 1 ];
+        args[ 0 ] = ( args[ 0 ] instanceof ArrayList ) ? ( (List<?>) args[ 0 ] ).toArray() : args[ 0 ];
+        args[ 1 ] = ( args[ 1 ] instanceof ArrayList ) ? ( (List<?>) args[ 1 ] ).toArray() : args[ 1 ];
         if ( args[ 0 ] instanceof Object[] ) {
             if ( ( (Object[]) args[ 0 ] )[ 0 ] instanceof Integer || ((Object[])args[ 0 ])[ 0 ] instanceof Double) {
                 args[ 0 ] = _intArray( (Object[]) args[ 0 ] );
@@ -301,7 +301,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             else if ( o instanceof  String ) f.append( (String) o );
             else if ( o instanceof  Boolean ) doAD = (Boolean) o;
         }
-        if ( tensors == null || tensors.length == 0 || tensors[ 0 ] == null ) return new Tsr<>();
+        if ( tensors.length == 0 || tensors[0] == null) return new Tsr<>();
         return Function.of( f.toString(), doAD ).call( tensors );
     }
 
@@ -944,9 +944,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @return The truth value determining if this tensor is virtual (and therefore not "actual").
      */
     @Override
-    public boolean isVirtual() {
-        return ( _flags & IS_VIRTUAL_MASK ) == IS_VIRTUAL_MASK;
-    }
+    public boolean isVirtual() { return ( _flags & IS_VIRTUAL_MASK ) == IS_VIRTUAL_MASK; }
 
     /**
      *  This method is the inner counterpart to the public "{@link Tsr#setIsVirtual}" method.
@@ -1015,9 +1013,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  <br>
      * @return The truth value determining if the application of the gradient of this tensor is requested.
      */
-    public boolean gradientApplyRequested() {
-        return ( _flags & GRADIENT_APPLY_RQD_MASK ) == GRADIENT_APPLY_RQD_MASK;
-    }
+    public boolean gradientApplyRequested() { return ( _flags & GRADIENT_APPLY_RQD_MASK ) == GRADIENT_APPLY_RQD_MASK; }
 
     /*
     --------------------------------------------
@@ -1282,9 +1278,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     /**
      * @return The gradient of this tensor which is internally stored as component.
      */
-    public Tsr<V> getGradient() {
-        return this.get( Tsr.class );
-    }
+    public Tsr<V> getGradient() { return this.get( Tsr.class ); }
 
     /**
      * @return The device on which this tensor is stored or 'CPU' if it is not outsourced.
@@ -1297,16 +1291,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     /**
      * @return The graph node of the computation graph to which this tensor belongs or null if not part of a graph.
      */
-    public GraphNode<V> getGraphNode() {
-        return get( GraphNode.class );
-    }
+    public GraphNode<V> getGraphNode() { return get( GraphNode.class ); }
 
     /**
      * @return An instance of the {@link NDFrame} component if present.
      */
-    public NDFrame<V> frame() {
-        return get( NDFrame.class );
-    }
+    public NDFrame<V> frame() { return get( NDFrame.class ); }
 
 
     /*
