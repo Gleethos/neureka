@@ -76,7 +76,7 @@ public final class Product extends AbstractOperation {
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
-                        Tsr<?> ctxDerivative = (Tsr) call.getValOf(Arg.Derivative.class);
+                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         Function mul = Neureka.get().context().getFunction().mul();
                         if ( ctxDerivative != null ) {
                                 return ADAgent.of( ctxDerivative )
@@ -129,7 +129,8 @@ public final class Product extends AbstractOperation {
                                                                 )
                                                 )
                             )
-                ).setImplementationFor(
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
                                 .arity( 3 )
@@ -177,18 +178,18 @@ public final class Product extends AbstractOperation {
         .setSupplyADAgentFor(
             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
-                        Tsr<?> ctxDerivative = (Tsr)call.getValOf(Arg.Derivative.class);
+                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         Function mul = Neureka.get().context().getFunction().mul();
                         if ( ctxDerivative != null ) {
                             return ADAgent.of( ctxDerivative )
                                 .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
                                 .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
                         }
-                        Tsr[] inputs = call.getTensors();
+                        Tsr<?>[] inputs = call.getTensors();
                         int d = call.getDerivativeIndex();
                         if ( forward )
                         {
-                            Tsr<?> deriv = f.derive( inputs, d );
+                            Tsr<?> deriv = f.executeDerive( inputs, d );
                             return ADAgent.of( deriv )
                                     .setForward( (t, derivative ) -> mul.execute( derivative, deriv ) )
                                     .setBackward( (t, derivative ) -> mul.execute( derivative, deriv ) );
@@ -201,14 +202,14 @@ public final class Product extends AbstractOperation {
                                         "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
                                         false
                                 );
-                                Tsr<?> deriv = f.derive( inputs, d );
+                                Tsr<?> deriv = f.executeDerive( inputs, d );
                                 return ADAgent.of( deriv )
                                         .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
                                         .setBackward( (t, error) -> invX.execute( error, deriv, Tsr.of(t.getPayload().shape(), 0) ) );
                             }
                             else
                             {
-                                Tsr<?> deriv = f.derive( inputs, d );
+                                Tsr<?> deriv = f.executeDerive( inputs, d );
                                 return ADAgent.of( deriv )
                                         .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
                                         .setBackward( (node, backwardError ) -> mul.execute( backwardError, deriv ) );
