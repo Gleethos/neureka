@@ -17,23 +17,25 @@ Simple scalar calculation:
 ```
 Matrix multiplication:
 ```java
-    x = Tsr.of(Double.class)
-            .withShape(2, 3, 1)
-            .andFill(
-                  3,   2, -1,
-                  -2,  2,  4
-            );
-    y = Tsr.of(Double.class)
-            .withShape(1, 3, 2)
+    var x = Tsr.of(Double.class)
+                    .withShape(2, 3)
+                    .andFill(
+                          3,   2, -1,
+                          -2,  2,  4
+                    );
+                    
+    var y = Tsr.of(Double.class)
+            .withShape(3, 2)
             .andFill(
                     4, -1,  
                     3,  2,  
                     3, -1
             );
-    Tsr z = Tsr.of("i0 x i1", x, y);
+            
+    Tsr<Double> z = x.matMul(y);
     
     /*
-     *   z.toString(): "(2x1x2):[15.0, 2.0, 10.0, 2.0]"    
+     *   z.toString(): "(2x2):[15.0, 2.0, 10.0, 2.0]"    
      */
 ```
 Convolution:
