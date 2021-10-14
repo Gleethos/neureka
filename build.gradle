@@ -423,6 +423,9 @@ task ('proguard', type: proguard.gradle.ProGuardTask) {
     // keep 'public class com.example.MyClass'
     // keep 'public interface com.example.MyInterface'
     // keep 'public class * implements com.example.MyInterface'
+    keep 'public class neureka.Neureka { public *; }'
+    keep 'public class neureka.Tsr { public *; }'
+    keep 'public interface *'
 
     keep 'class org.jocl.** { *; }'
     keep 'interface org.jocl.** { *; }'
@@ -492,7 +495,7 @@ uploadArchives { // For deployment visit: "https://oss.sonatype.org/#stagingRepo
             }
 
             pom.project {
-                name 'Example Application'
+                name 'Neureka'
                 packaging 'jar'
                 // optionally artifactId can be defined here
                 description 'A platform independent tensor library written in Java.'
