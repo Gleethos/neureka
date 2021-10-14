@@ -1815,9 +1815,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return Neureka.get().context().getFunction().mulAssign().call( this, other );
     }
 
-    public Tsr<V> multiply( double value ) {
-        return multiply( _of( this.shape(), value ) );
-    }
+    public Tsr<V> multiply( double value ) { return multiply( _of( this.shape(), value ) ); }
 
     /**
      *  The {@link #div(Tsr)} method will produce the quotient of
@@ -2016,9 +2014,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      * @return A tensor with the same underlying data but possibly trimmed shape without preceding or trailing ones.
      */
-    public Tsr<V> dimtrim() {
-        return Neureka.get().context().getAutogradFunction().dimTrim().call( this );
-    }
+    public Tsr<V> dimtrim() { return Neureka.get().context().getAutogradFunction().dimTrim().call( this ); }
 
     /**
      *  This method name translates to the "in" keyword in Groovy!
@@ -2046,9 +2042,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param t The tensor which will be checked.
      * @return The answer to the following question: Is the data of the provided tensor a subset of the data of this tensor?
      */
-    public boolean contains( Tsr<V> t ) {
-        return isCase( t );
-    }
+    public boolean contains( Tsr<V> t ) { return isCase( t ); }
 
 
     /*==================================================================================================================
@@ -2070,9 +2064,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param indices The index array of the element which should be returned.
      * @return An element located at the provided index.
      */
-    public V getAt( int... indices ) {
-        return getDataAt( getNDConf().indexOfIndices( indices ) );
-    }
+    public V getAt( int... indices ) { return getDataAt( getNDConf().indexOfIndices( indices ) ); }
 
     /**
      *  The following method enables the creation of tensor slices which access
@@ -2095,9 +2087,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param i The index of the value item which should be returned as a tensor instance.
      * @return A tensor holding a single value element which is internally still residing in the original tensor.
      */
-    public Tsr<V> getAt( int i ) {
-        return getAt( new Object[]{ i, i } );
-    }
+    public Tsr<V> getAt( int i ) { return getAt( new Object[]{ i, i } ); }
 
     /**
      *  The following method returns a raw value item within this tensor
@@ -2106,9 +2096,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param i The scalar index of the value item which should be returned by the method.
      * @return The value item found at the targeted index.
      */
-    public V getValueAt( int i ) {
-        return getDataAt( getNDConf().indexOfIndex( i ) );
-    }
+    public V getValueAt( int i ) { return getDataAt( getNDConf().indexOfIndex( i ) ); }
 
     /**
      *  This method returns a raw value item within this tensor
@@ -2120,9 +2108,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param indices The index array which targets a single value item within this tensor.
      * @return The found raw value item targeted by the provided index array.
      */
-    public V getValueAt( int... indices ) {
-        return getDataAt( getNDConf().indexOfIndices( indices ) );
-    }
+    public V getValueAt( int... indices ) { return getDataAt( getNDConf().indexOfIndices( indices ) ); }
 
     /**
      *  Individual entries for value items in this tensor can be set
@@ -2247,9 +2233,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      * @return An instance of the {@link SliceBuilder} class exposing a readable builder API for creating slices.
      */
-    public SliceBuilder<V> slice() {
-        return new SliceBuilder<>( this, this::_sliceOf );
-    }
+    public SliceBuilder<V> slice() { return new SliceBuilder<>( this, this::_sliceOf ); }
 
     /**
      *  This method is where the creation of a slice occurs.
@@ -2345,8 +2329,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         this.set( parent );
         return subset;
     }
-
-
 
 
     /*
@@ -2736,7 +2718,6 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return new TsrAsString( this ).toString();
     }
 
-
     public static void makeFit( Tsr<?>[] tensors, boolean doesAD )
     {
         int largest = -1;
@@ -2770,9 +2751,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     }
 
-    public int getVersion() {
-        return this._version;
-    }
+    public int getVersion() { return this._version; }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2784,10 +2763,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public static class IO
     {
-        public IO() {
-        }
+        public IO() { }
 
-        public static double getFrom(Tsr<?> t, int i ) {
+        public static double getFrom( Tsr<?> t, int i ) {
             if ( t.isEmpty() || t.isUndefined() ) return 0;
             else if ( t.isVirtual() ) return t.value64()[ 0 ];
             return t.value64()[ t.indexOfIndex( i ) ];
@@ -2870,17 +2848,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     {
         public Create() { }
 
-        public  static Tsr<?> E( List<Integer> shape ) {
-            return E( shape.stream().mapToInt( e -> e ).toArray() );
-        }
+        public  static Tsr<?> E( List<Integer> shape ) { return E( shape.stream().mapToInt( e -> e ).toArray() ); }
 
-        public  static Tsr<Double> E( int... shape ) {
-            return new Tsr<>( shape, 2.7182818284590452353602874713527 );
-        }
+        public  static Tsr<Double> E( int... shape ) { return new Tsr<>( shape, 2.7182818284590452353602874713527 ); }
 
-        public static Tsr<?> newRandom( int... shape ) {
-            return newRandom( shape, 8701252152903546L );
-        }
+        public static Tsr<?> newRandom( int... shape ) { return newRandom( shape, 8701252152903546L ); }
 
         public static Tsr<?> newRandom( int[] shape, long seed ) {
             int size = NDConfiguration.Utility.szeOfShp( shape );
