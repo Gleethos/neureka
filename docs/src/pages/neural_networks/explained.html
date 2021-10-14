@@ -2,12 +2,14 @@
 <div class="col-sm 12 col-md-12">
     <div class="ContentBox">
         <h3>
-           What are Neural Networks?
+           Neural Networks, how do they work?
         </h3>
         <p>
-            So you want to create your own artificial neural network,
-            or simply understand the concept, but have no idea where to begin? <br>
-            Follow this quick guide to understand what they are all about!
+            If you want to understand how artificial neural network work in order to
+            eventually create your own networks with Neureka,
+            this might be a good place for you to start.
+            This page will help you comprehend the concept to a
+            point where they will no longer be a mystery.
         </p>
     </div>
 </div>
@@ -21,22 +23,24 @@
 </div>
 <div class="col-sm-12 col-md-6 col-lg-8">
     <div class="ContentBox">
-        <p>
-            Neural networks can usually be read from left to right.
-            One of the simplest neural network as seen in this illustration is
-            really just three vectors interconnected by 2 matrices. <br>
-            These three vectors are also referred to as layers.
-            In this case there is an input layer of the size 3 on the left
-            end of the network, a so called 'hidden' layer of size 4 in the middle,
-            and an output layer of size 2 on the right side. <br>
-            As already said, these layers are vectors, consequently the
-            green circles on the image represent scalar values. <br>
-            Now you might wonder what I mean by matrices...
-            The tangled lines in between the three layers are the
-            two matrices I was referring to at the beginning of this paragraph.
-            In fact every single line connecting two circles represents
-            also just a single scalar value. This value is being referred to
-            as "scalar weight", whereas the entire matrix is called "weight matrix"!
+        <p class="MarkdownMe">
+Most illustrations of Neural networks can be read from left to right
+where the dots or circles of a given illustrations represent artificial neurons
+and the lines connecting them are their artificial dendrites!
+An example of a very simple neural network as seen in this illustration is
+structurally really just three vectors interconnected by 2 matrices. <br>
+The three vectors are also referred to as layers.
+In this case there is an **input layer of size 3** on the left
+end of the network, a so called **hidden layer of size 4** in the middle,
+and an **output layer of size 2** on the right side. <br>
+As already said, these layers are vectors, consequently the
+green **circles** on the image **represent scalar values**. <br>
+Now you might wonder where matrices come into play here...
+The tangled lines in between the three layers are the
+two matrices I was referring to at the beginning of this paragraph.
+In fact **every single line** connecting two circles **represents
+also just a single scalar value**. This type of value is being referred to
+as "scalar weight", whereas the entire matrix is called "weight matrix"!
         </p>
     </div>
 </div>
@@ -57,6 +61,15 @@
             The result of this operation is yet another vector, namely a vector with the length 2,
             or depending on the point of view one might see it also as a matrix, a 2x1 matrix.
 
+            <br><br>
+
+            Now the reason why this is important is because it tells us what the input to a single artificial
+            neuron is, namely: It's the cross product between the outputs of the neurons in the previous layer
+            and a corresponding row in the weight matrix.
+            Take a look at the illustration of a single artificial neuron below.
+            Here you can see that the scalar input to the depicted neuron is indeed
+            the result of said dot product:
+
         </p>
     </div>
 </div>
@@ -66,12 +79,12 @@
             Now you might be thinking : "It's all just matrix multiplications?" <br><br>
             However that is not entirely true!  <br>
             <br>
-            I have not yet revealed an important
+            I have not yet revealed an important little
             detail that really captures the essence of the <b>neural</b> in "neural network" !<br>
-            What I am referring to is the so called "activation function", which is
+            What I am referring to is the so called "<b>activation function</b>", which is
             important because of it's <b>non linearity</b>. <br>
             <br>
-            Let's take a look at <b>the structure of a single neuron</b> !
+            Again take a look at <b>the structure of a single neuron</b> !
 
         </p>
     </div>
@@ -88,18 +101,34 @@
 </div>
 <div class="col-sm-12 col-md-12 col-lg-12">
     <div class="ContentBox">
+        <p>
+            Here you can see that the input to the neuron is being sent through
+            a function. This function can actually be almost any regular mathematical
+            function as long as it has this property of non linearity.
+            There is a lot of debate and research about this topic with respect to
+            which kind of function one should choose simply because there is
+            a lot of tradeoffs between the different kinds.
+            So there is no single answer to this.
+        </p>
+    </div>
+</div>
+<div class="col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
         <p class="MarkdownMe">
 ### So what does a neuron really do? ###
 
-Well first, it adds up the value of every neurons from the previous column it is connected to. <br>
-On the Figure 3, there are 3 inputs `(a1, a2, a3)` coming to the neuron,
-so 3 neurons of the previous column are connected to our neuron.
-This value is multiplied, before being added, by another variable called
-“weight” `(w1, w2, w3)` which determines the connection between the two neurons.
-Each connection of neurons has its own weight,
-and those weights (alongside biases which I will cover later) are the values that
+Before moving along further let's go through the inner workings of a single neuron
+step by step!
+First, a neuron receives an input signal from every neuron it is connected to. <br>
+On Figure 3, there are 3 inputs `(a1, a2, a3)` to the neuron, which are usually the
+outputs of other neurons.
+These 3 input signals will be multiplied by a weight vector of 3 weights
+`(w1, w2, w3)` and then summed up.
+Each of these weights determines how a connection will propagate
+signals between two neurons.
+These connection weights (alongside biases which I will cover later) are the values that
 will be modified during the learning process.
-So what happens formally in the calculation of the dot product between
+So what happens formally in the calculation of the neurons input is the dot product between
 the vector `(a1, a2, a3)` and `(w1, w2, w3)`!
 
 Let's overview this :
@@ -121,8 +150,9 @@ This value may be added to the total input `i` calculated for every neuron.
 (Meaning :  "a vector of biases for every input vector of a layer...")
 This value is also learned alongside the weights. It stabilizes the network
 by shifting the activation functions of neurons.
-In a sense, this gives a neuron kind of "default / fallback state" for when
-the input `i` is 0. <br>
+In a sense, this gives a neuron a preferred kind state or
+"default / fallback state" which is might cause a neuron to
+be less active or more active on average. <br>
 After all those summations, the neuron finally applies a function called
 *“activation function”* `a` to the obtained value.
 Then the neurons of the layer are successfully up to date!
