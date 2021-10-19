@@ -1721,9 +1721,17 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return Neureka.get().context().getFunction().plusAssign().call( this, other );
     }
 
-    public Tsr<V> plus( double value ) {
-        return plus( _of( this.shape(), value ) );
-    }
+    /**
+     *  The {@link #plus(double)} method will create a new {@link Tsr}
+     *  with the provided double scalar added to all elements of this {@link Tsr}.
+     *
+     *  The shapes of this tensor is irrelevant as the provided value will
+     *  simply be broadcastet to any possible shape.
+     *
+     * @param other The right operand of the addition.
+     * @return The sum between this instance as the left and the passed double as right operand.
+     */
+    public Tsr<V> plus( double value ) { return plus( _of( this.shape(), value ) ); }
 
     /**
      *  The {@link #minus(Tsr)} method will perform subtraction on

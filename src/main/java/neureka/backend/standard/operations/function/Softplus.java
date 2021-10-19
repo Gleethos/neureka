@@ -80,7 +80,8 @@ public final class Softplus extends AbstractOperation
                                                                 )
                                                 )
                             )
-                ).setImplementationFor(
+                )
+                .setImplementationFor(
                         OpenCLDevice.class,
                         CLImplementation.compiler()
                                 .arity( 3 )
@@ -123,9 +124,6 @@ public final class Softplus extends AbstractOperation
                                 .build()
                 )
         );
-
-
-
     }
 
     @Override

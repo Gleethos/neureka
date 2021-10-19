@@ -164,10 +164,7 @@ public final class TsrAsString
      * @param toBeAppended The String which ought to be appended to this builder.
      * @return This very instance in order to enable method-chaining.
      */
-    private TsrAsString _$( String toBeAppended ) {
-        _asStr.append( toBeAppended );
-        return this;
-    }
+    private TsrAsString _$( String toBeAppended ) { _asStr.append( toBeAppended ); return this; }
 
     /**
      *  This method is a wrapper for the _asStr.append() call.
@@ -179,10 +176,7 @@ public final class TsrAsString
      * @param toBeAppended The int which ought to be appended to this builder.
      * @return This very instance in order to enable method-chaining.
      */
-    private TsrAsString _$( int toBeAppended ) {
-        _asStr.append( toBeAppended );
-        return this;
-    }
+    private TsrAsString _$( int toBeAppended ) { _asStr.append( toBeAppended ); return this; }
 
     /**
      *  This method takes the data of a tensor and converts it into
@@ -265,10 +259,7 @@ public final class TsrAsString
             return  _padding;
     }
 
-    public String toString()
-    {
-        return toString("");
-    }
+    public String toString() { return toString(""); }
 
     public String toString( String deep )
     {
@@ -451,12 +442,12 @@ public final class TsrAsString
         int pos = dim - 1;
         List<Object> key = alias.atAxis( pos ).getAllAliases();
         if ( pos >= 0 && key != null ) {
-            _$( (_legacy) ? "[ " : "( ");
+            _$( _legacy ? "[ " : "( " );
             int i = ( dim == indices.length - 1 )
                     ? ( _shape[ pos ] + indices[ pos ] - 1 ) % _shape[ pos ]
                     : indices[ pos ];
             _$( key.get( i ).toString() );
-            _$( (_legacy) ? " ]" : " )");
+            _$( _legacy ? " ]" : " )" );
         }
         return this;
     }
@@ -468,12 +459,12 @@ public final class TsrAsString
     private void _strShape()
     {
         boolean legacy = Neureka.get().settings().view().isUsingLegacyView();
-        _$( (legacy) ? "[" : "(" );
+        _$( legacy ? "[" : "(" );
         for ( int i = 0; i < _shape.length; i++ ) {
             _$( _shape[ i ] );
             if ( i < _shape.length - 1 ) _$( "x" );
         }
-        _$( (legacy) ? "]" : ")" );
+        _$( legacy ? "]" : ")" );
     }
 
     /**
@@ -484,9 +475,7 @@ public final class TsrAsString
     public static class Util
     {
         @Contract( pure = true )
-        public static String indent( int n ){
-            return String.join("", Collections.nCopies( n, "   " ));
-        }
+        public static String indent( int n ){ return String.join("", Collections.nCopies( n, "   " )); }
 
         @Contract( pure = true )
         public static String pad( int left, String s ) {
