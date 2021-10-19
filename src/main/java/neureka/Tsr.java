@@ -754,7 +754,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      *
      */
-    public static <V> Tsr<V> of( String expression, boolean doAD,  Tsr<V>... tensors ) {
+    @SafeVarargs
+    public static <V> Tsr<V> of(String expression, boolean doAD, Tsr<V>... tensors ) {
         return _constructFunctional( null, tensors, expression, doAD );
     }
 
@@ -966,7 +967,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 );
                 throw new IllegalStateException( message );
             }
-        } else if ( isVirtual && getData() == null ) _allocate( 1 ); //> Only a single value representing the rest.
+        }
+        else if ( isVirtual && getData() == null ) _allocate( 1 ); //> Only a single value representing the rest.
         return this;
     }
 
@@ -1060,9 +1062,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     --------------------------------------------
     */
 
-    public boolean isDeleted() {
-        return ( _flags & WAS_DELETED_MASK ) == WAS_DELETED_MASK;
-    }
+    public boolean isDeleted() { return ( _flags & WAS_DELETED_MASK ) == WAS_DELETED_MASK; }
 
     /**
      *  Although tensors will be garbage collected when they are not strongly referenced,
@@ -1434,9 +1434,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             private final int _size = size();
 
             @Override
-            public boolean hasNext() {
-                return _count != _size;
-            }
+            public boolean hasNext() { return _count != _size; }
 
             @Override
             public V next() {
