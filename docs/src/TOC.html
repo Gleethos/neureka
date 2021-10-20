@@ -3,6 +3,7 @@
         --mainColor: #00e968;
     }
     .NavBox a {
+        white-space: nowrap;
         background: linear-gradient(
                 to bottom, var(--mainColor) 0%,
                 var(--mainColor) 100%
@@ -60,7 +61,7 @@
         </section>
     </div>
 </div>
-<div class="NavBox col-sm-12 col-md-6">
+<div class="NavBox col-sm-12 col-md-6 col-lg-6">
     <div class="ContentBox">
         <section class="toc_container">
             <h3 href="#">Tensors</h3>
@@ -84,7 +85,7 @@
         </section>
     </div>
 </div>
-<div class="NavBox col-sm-12 col-md-6">
+<div class="NavBox col-sm-12 col-md-6 col-lg-6">
     <div class="ContentBox">
         <section class="toc_container">
             <h3 href="#">Calculus</h3>
@@ -102,7 +103,7 @@
         </section>
     </div>
 </div>
-<div class="NavBox col-sm-12 col-md-6">
+<div class="NavBox col-sm-12 col-md-6 col-lg-6">
     <div class="ContentBox">
         <section class="toc_container">
             <h3 href="#">Autograd</h3>
@@ -117,19 +118,7 @@
         </section>
     </div>
 </div>
-<div class="NavBox col-sm-12 col-md-6">
-    <div class="ContentBox">
-        <section class="toc_container">
-            <h3 href="#">Optimization</h3>
-            <div>
-                <a class="navTopic" onclick="loadContent('optimization/instantiation')">
-                    Instantiation
-                </a>
-            </div>
-        </section>
-    </div>
-</div>
-<div class="NavBox col-sm-12 col-md-6">
+<div class="NavBox col-sm-12 col-md-6 col-lg-6">
     <div class="ContentBox">
         <section class="toc_container">
             <h3 href="#">Devices</h3>
@@ -145,6 +134,18 @@
                 </a>
                 <a class="navTopic" onclick="loadContent('devices/opencl_device')">
                     Bare Metal with OpenCL Devices
+                </a>
+            </div>
+        </section>
+    </div>
+</div>
+<div class="NavBox col-sm-12 col-md-12 col-lg-12">
+    <div class="ContentBox">
+        <section class="toc_container">
+            <h3 href="#">Optimization</h3>
+            <div>
+                <a class="navTopic" onclick="loadContent('optimization/instantiation')">
+                    Instantiation
                 </a>
             </div>
         </section>
