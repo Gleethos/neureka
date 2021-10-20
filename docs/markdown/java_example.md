@@ -29,12 +29,12 @@ Matrix multiplication:
                     );
                     
     var y = Tsr.of(Double.class)
-            .withShape(3, 2)
-            .andFill(
-                    4.0, -1.0,  
-                    3.0,  2.0,  
-                    3.0, -1.0
-            );
+                .withShape(3, 2)
+                .andFill(
+                        4.0, -1.0,  
+                        3.0,  2.0,  
+                        3.0, -1.0
+                );
             
     Tsr<Double> z = x.matMul(y);
     
@@ -49,18 +49,19 @@ Matrix multiplication:
 Convolution:
 ```java
         var x = Tsr.of(Double.class)
-                .withShape(3, 3)
-                .andFill(
-                        1.0, 2.0, 5.0,
-                        -1.0, 4.0,-2.0,
-                        -2.0, 3.0, 4.0
-                );
+                    .withShape(3, 3)
+                    .andFill(
+                            1.0, 2.0, 5.0,
+                            -1.0, 4.0,-2.0,
+                            -2.0, 3.0, 4.0
+                    );
+                    
         var y = Tsr.of(Double.class)
-                .withShape(2, 2)
-                .andFill(
-                        -1.0, 3.0,
-                        2.0, 3.0
-                );
+                    .withShape(2, 2)
+                    .andFill(
+                            -1.0, 3.0,
+                            2.0, 3.0
+                    );
 
         y.setRqsGradient(true);
 
