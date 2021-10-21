@@ -48,12 +48,27 @@ public class OpenCLPlatform {
                 null, null, null
         );
 
+        List<cl_device_id> successfullyLoaded = new ArrayList<>();
+
         // Collect all devices of this platform
         for (cl_device_id did : devicesArray) {
-            OpenCLDevice clDevice = OpenCLDevice.newInstanceOf( this, did );
-            _id_device.put(did, clDevice);
+            try {
+                OpenCLDevice clDevice = OpenCLDevice.newInstanceOf(this, did);
+                _id_device.put(did, clDevice);
+                successfullyLoaded.add(did);
+            } catch ( Exception e ) {
+                String message =
+                        "Failed to create '"+OpenCLDevice.class.getSimpleName()+"' instance for " +
+                        "OpenCL device id '0x" + Long.toHexString(did.getNativePointer()) + "' under platform id '0x"+Long.toHexString(pid.getNativePointer())+"'!";
+                _LOG.error(message, e);
+            }
         }
-        _compile(devicesArray);
+        if ( !successfullyLoaded.isEmpty() )
+            _compile(successfullyLoaded.toArray(new cl_device_id[0]));
+        else
+            _LOG.warn(
+                "'"+this.getClass().getSimpleName()+"' with id '"+Long.toHexString(pid.getNativePointer())+"' does not have a valid device attached to it!"
+            );
     }
 
     public void recompile() {

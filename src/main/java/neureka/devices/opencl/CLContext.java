@@ -73,11 +73,22 @@ public class CLContext  implements Component<OperationContext>
         cl_platform_id[] platforms = new cl_platform_id[ numPlatforms[ 0 ] ];
         clGetPlatformIDs( platforms.length, platforms, null );
 
-        List<OpenCLPlatform> list = new ArrayList<>();
-        for ( cl_platform_id id : platforms ) list.add( new OpenCLPlatform( id ) );
-        if ( list.isEmpty() || list.get(0).getDevices().isEmpty() ) {
+        List<OpenCLPlatform> loadedPlatforms = new ArrayList<>();
+        for ( cl_platform_id id : platforms ) {
+            OpenCLPlatform newPlarform;
+            try {
+                newPlarform = new OpenCLPlatform(id);
+                loadedPlatforms.add(newPlarform);
+            } catch ( Exception e ) {
+                String message =
+                        "Failed to instantiate '"+OpenCLPlatform.class.getSimpleName()+"' " +
+                        "with id '0x"+Long.toHexString(id.getNativePointer())+"'!";
+                _LOG.error(message, e);
+            }
+        }
+        if ( loadedPlatforms.isEmpty() || loadedPlatforms.stream().allMatch( p -> p.getDevices().isEmpty() ) ) {
             _LOG.warn( Messages.OpenCL.clContextCouldNotFindAnyDevices() );
         }
-        return list;
+        return loadedPlatforms;
     }
 }
