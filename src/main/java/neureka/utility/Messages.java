@@ -96,8 +96,8 @@ public class Messages
             //---
             String foundOS = properties.getProperty("NAME").toLowerCase().replace("\"", "");
             switch ( foundOS ) {
-                case "ubuntu": return Messages.OpenCL.Tips.UBUNTU;
-                case "fedora": return Messages.OpenCL.Tips.FEDORA;
+                case "ubuntu":  return Messages.OpenCL.Tips.UBUNTU;
+                case "fedora":  return Messages.OpenCL.Tips.FEDORA;
                 case "windows": return Messages.OpenCL.Tips.WINDOWS;
             }
             return Messages.OpenCL.Tips.UNKNOWN;

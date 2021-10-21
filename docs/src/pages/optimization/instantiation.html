@@ -1,13 +1,16 @@
 <div class="col-sm 12 col-md-12">
     <div class="ContentBox">
         <h3>
-            Optimization:
+            Optimization
         </h3>
-        <p>
-            The optimization package provides a generic interface for implementing
-            optimization components called by tensors when gradients will be applied.
-            One of the most famous optimization algorithms termed 'ADAM' is
-            already implemented and ready for use.
+        <p class="MarkdownMe">
+The optimization package provides the `Optimization` interface for implementing
+optimizations as `Tsr` components called by them when their gradients will be applied.
+One of the most basic optimization algorithms, *stochastic gradient descent* is
+already implemented and ready for use by instantiating the `SGD` class.<br>
+Otherwise there is only a single other optimizer implementing this interface,
+namely the `ADAM` class which is still work in progress.
+If you want more options, consider implementing the interface for custom optimizers.
         </p>
     </div>
 </div>
@@ -16,6 +19,7 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
@@ -33,6 +37,15 @@
         Tsr w = Tsr.of(0);
         Optimizer o = new SGD(w);
         w.set(o);
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+        val w = Tsr.of(0)
+        val o = new SGD(w)
+        w.set(o)
 
                 </code></pre>
             </div>
@@ -60,6 +73,7 @@
         <div class="TabHead">
             <button onclick="switchTab(event, '.groovyTab')" class="selected">Groovy</button>
             <button onclick="switchTab(event, '.javaTab')">Java</button>
+            <button onclick="switchTab(event, '.kotlinTab')">Kotlin</button>
         </div>
         <div class="TabBody">
             <div class="groovyTab">
@@ -77,6 +91,15 @@
         Tsr w = Tsr.of(0);
         Optimizer o = new ADAM(w);
         w.set(o);
+
+                </code></pre>
+            </div>
+            <div class="kotlinTab" style="display:none">
+                <pre><code class="hljs kotlin">
+
+        val w = Tsr.of(0)
+        val o = new ADAM(w)
+        w.set(o)
 
                 </code></pre>
             </div>

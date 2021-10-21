@@ -411,15 +411,55 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         --------------------------------------------
     */
 
-    public static <V> WithShapeOrScalarOrVector<V> of(Class<V> typeClass ) { return new TensorBuilder( typeClass ); }
+    /**
+     *  This is the entry point to the fluent tensor builder API for building
+     *  {@link Tsr} instances in a readable and type safe fashion.
+     *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
+     *  fluent {@link Tsr} builder API which will lead to the creation
+     *  of a tensor storing values defined by the provided type class.
+     *
+     * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
+     */
+    public static <V> WithShapeOrScalarOrVector<V> of( Class<V> typeClass ) { return new TensorBuilder( typeClass ); }
 
+    /**
+     *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
+     *  method like so: {@code Tsr.of(Double.class)}.
+     *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
+     *  fluent {@link Tsr} builder API which in this case will lead to the creation
+     *  of a tensor storing doubles.
+     *
+     * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
+     */
     public static WithShapeOrScalarOrVector<Double> ofDoubles() { return of(Double.class); }
 
+    /**
+     *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
+     *  method like so: {@code Tsr.of(Float.class)}.
+     *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
+     *  fluent {@link Tsr} builder API which in this case will lead to the creation
+     *  of a tensor storing floats.
+     *
+     * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
+     */
     public static WithShapeOrScalarOrVector<Float> ofFloats() { return of(Float.class); }
 
+    /**
+     *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
+     *  method like so: {@code Tsr.of(Integer.class)}.
+     *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
+     *  fluent {@link Tsr} builder API which in this case will lead to the creation
+     *  of a tensor storing integers.
+     *
+     * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
+     */
     public static WithShapeOrScalarOrVector<Integer> ofInts() { return of(Integer.class); }
 
-    public static Tsr<Double> of( double value ) { return new Tsr(value); }
+    /**
+     * @param value The scalar value which ought to be represented as tensor.
+     * @return A scalar double tensor.
+     */
+    public static Tsr<Double> of( double value ) { return new Tsr<Double>(value); }
 
     private Tsr( double value ) { createConstructionAPI()._constructAllF64( new int[]{ 1 }, value ); }
 
@@ -714,7 +754,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      * @param tensors An array of tensors used as inputs to the Function instance parsed from the provided expression.
      *
      */
-    public static <V> Tsr<V> of( String expression, boolean doAD,  Tsr<V>... tensors ) {
+    @SafeVarargs
+    public static <V> Tsr<V> of(String expression, boolean doAD, Tsr<V>... tensors ) {
         return _constructFunctional( null, tensors, expression, doAD );
     }
 
@@ -926,7 +967,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 );
                 throw new IllegalStateException( message );
             }
-        } else if ( isVirtual && getData() == null ) _allocate( 1 ); //> Only a single value representing the rest.
+        }
+        else if ( isVirtual && getData() == null ) _allocate( 1 ); //> Only a single value representing the rest.
         return this;
     }
 
@@ -1020,9 +1062,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     --------------------------------------------
     */
 
-    public boolean isDeleted() {
-        return ( _flags & WAS_DELETED_MASK ) == WAS_DELETED_MASK;
-    }
+    public boolean isDeleted() { return ( _flags & WAS_DELETED_MASK ) == WAS_DELETED_MASK; }
 
     /**
      *  Although tensors will be garbage collected when they are not strongly referenced,
@@ -1394,9 +1434,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             private final int _size = size();
 
             @Override
-            public boolean hasNext() {
-                return _count != _size;
-            }
+            public boolean hasNext() { return _count != _size; }
 
             @Override
             public V next() {
@@ -1721,9 +1759,17 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return Neureka.get().context().getFunction().plusAssign().call( this, other );
     }
 
-    public Tsr<V> plus( double value ) {
-        return plus( _of( this.shape(), value ) );
-    }
+    /**
+     *  The {@link #plus(double)} method will create a new {@link Tsr}
+     *  with the provided double scalar added to all elements of this {@link Tsr}.
+     *
+     *  The shapes of this tensor is irrelevant as the provided value will
+     *  simply be broadcastet to any possible shape.
+     *
+     * @param value The right operand of the addition.
+     * @return The sum between this instance as the left and the passed double as right operand.
+     */
+    public Tsr<V> plus( double value ) { return plus( _of( this.shape(), value ) ); }
 
     /**
      *  The {@link #minus(Tsr)} method will perform subtraction on

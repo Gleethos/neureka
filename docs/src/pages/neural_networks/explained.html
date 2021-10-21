@@ -214,7 +214,7 @@ given equation.</b><br>
 <br>
 That's it ! That's what it is in it's core. <br>
 Now if you are confused about derivatives and the chain-rule in general I would suggest you study this
-topic of calculus first on your own before continuing this article as it can help to grasp why
+topic of calculus first on your own before continuing on this page as it can help to grasp why
 backpropagation even works. <br>
 Otherwise however, continue with the following examples! <br>
 <br>
@@ -248,17 +248,17 @@ our equation whose derivatives (slopes) we want to calculate.
 This is the case in neural networks! <br>
 <br>
 So let's introduce the matrices `W1` & `W2` which play the following role : <br>
-( and `x` is a vector... ) <br>
+( below, `x` is a vector... ) <br>
 ```
-    b(x) = W2 * x
+    b(x) = W2 . x
 ```
 <b>... and ...</b> <br>
 ```
-     d(x) = W1 * x
+     d(x) = W1 . x
 ```
-... then this would suddenly give us an incentive to calculate
+... Now this would give us an incentive to calculate
 the derivatives with respect to two variables in 1 equation.
-(the weights we want to adjust!)<br>
+(the weights matrices we want to adjust!)<br>
 <br>
 Let's see:
 ```

@@ -4,12 +4,13 @@
         <h3>
             Function instantiation:
         </h3>
-        <p>
-            The calculus package contains a class of major importance in Neureka.
-            Namely the Function interface.
-            Instances implementing this interface are the responsible for scheduling
-            the executorFor of operations on tensors.
-            A Function is created by calling the static factory method on the interface.
+        <p class="MarkdownMe">
+The calculus package contains a class of major importance in Neureka.
+Namely, the `Function` interface.
+Instances implementing this interface are responsible for scheduling
+the execution of operations on tensors.
+
+A `Function` is created by calling its static factory method:
         </p>
     </div>
 </div>
@@ -47,11 +48,11 @@
 </div>
 <div class="col-sm-12 col-md-6 col-lg-6">
     <div class="ContentBox">
-        <p>
-            Internally a Function is really a graph of nodes that represent a given equation.
-            Inputs are recognized by 'I[j]', 'Ij' or 'ij', where j is the input index.
-            Functions accept arrays which is why variables must be targeted in such a way.
-
+        <p class="MarkdownMe">
+Internally a `Function` is really a graph of nodes that represent a given equation.
+In a given string expression passed to the factory method,
+inputs will be recognized by '`I[j]`', '`Ij`' or '`ij`', where `j` is the input index.
+`Function` instances accept arrays which is why variables must be targeted in such a way.
         </p>
     </div>
 </div>
@@ -91,7 +92,7 @@
 <div class="col-sm-12 col-md-12 col-lg-12">
     <div class="ContentBox">
         <p>
-            There are plenty of pre-instantiated and optimized Functions
+            There are plenty of pre-instantiated and optimized functions
             to pick from in the operation context.
         </p>
     </div>
@@ -132,12 +133,13 @@
 </div>
 <div class="col-sm-12 col-md-6 col-lg-6">
     <div class="ContentBox">
-        <p>
-            Usually a Function creates a dynamic computation graph responsible for
-            enabling Neureka's autograd system.
-            If you have tensors attached to a graph requiring autograd, but
-            you do not want there to be derivatives created simply
-            use the Functions within the 'Detached' subclass of the Function interface.
+        <p class="MarkdownMe">
+Usually a `Function` will create a dynamic computation graph during execution
+which is then responsible for enabling Neureka's autograd system.
+If you have tensors attached to a graph requiring autograd, but
+you do not want there to be derivatives created simply
+use the `Function` instances exposed by the `getFunction()`
+in the current operation context.
         </p>
     </div>
 </div>
