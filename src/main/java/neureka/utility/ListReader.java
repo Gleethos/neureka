@@ -6,6 +6,11 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ *  This is a simple utility class which traverses nested data structures and converts them into
+ *  information which can be used to instantiate a tensor,
+ *  namely: A flat data array, a shape array and a type class.
+ */
 public class ListReader {
 
     private final Class<?> _type;

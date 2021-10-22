@@ -24,6 +24,8 @@ public class Messages
      */
     public static class OpenCL {
 
+        private OpenCL(){} // This is a utility class / namespace, instances not allowed!
+
         public static String clContextCreationFailed() {
             return _format(
                     "OpenCL not available!\n" +
@@ -143,6 +145,8 @@ public class Messages
      */
     public static class Operations {
 
+        private Operations() {} // This is a utility class / namespace, instances not allowed!
+
         public static String illegalStateFor( String type ) {
             return _format(
                     "Unexpected '"+ Operation.class.getSimpleName()+"' state encountered:\n" +
@@ -164,6 +168,8 @@ public class Messages
      *  {@link neureka.devices.Device} implementation related messages.
      */
     public static class Devices {
+
+        private Devices() {} // This is a utility class / namespace, instances not allowed!
 
         public static String couldNotFindSuitableAlgorithmFor( Class<?> type ) {
             return _format(

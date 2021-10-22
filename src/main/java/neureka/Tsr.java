@@ -121,7 +121,7 @@ import java.util.stream.Collectors;
 
 
 /**
- *  This class name "Tsr" is a 3 letter abbreviation of the word "tensor", a mathematical concept.
+ *  This class name {@link Tsr} is a 3 letter abbreviation of the word "tensor", a mathematical concept.
  *  A tensor is a type of multidimensional data-structure with certain transformation properties.
  *  Technically however, it is mostly a simple container / data-structure which can house data indexed by N dimensions.
  *  Therefore it is often also described as an nd-array.
@@ -143,7 +143,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     /**
-     *  The default device is an instance of the "{@link HostCPU}" class. <br>
+     *  The default device is an instance of the {@link HostCPU} class. <br>
      *  This field is a reference to this default device implementation.
      */
     private static final Device<Number> _CPU;
@@ -157,23 +157,25 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     /**
      *  The following fields are bit masks used to store true / false values
-     *  in a targeted bit inside the "_flags" variable.
+     *  in a targeted bit inside the {@link #_flags} variable.
      */
-    private static final int RQS_GRADIENT_MASK = 1;
-    private static final int IS_OUTSOURCED_MASK = 2;
-    private static final int IS_VIRTUAL_MASK = 4;
+    private static final int RQS_GRADIENT_MASK       = 1;
+    private static final int IS_OUTSOURCED_MASK      = 2;
+    private static final int IS_VIRTUAL_MASK         = 4;
     private static final int GRADIENT_APPLY_RQD_MASK = 8;
-    private static final int WAS_DELETED_MASK = 18;
+    private static final int WAS_DELETED_MASK        = 18;
 
     /**
-     *  The version of the data ( _data ) stored within this tensor.
+     *  This integer represents the version of the data (accessible through {@link #getData()})
+     *  stored within this tensor.
      *  It gets incremented every time an inline operation occurs!
      *  {@link GraphNode} instances tied to this tensor (as component) store
      *  a reference version which is a copy of this field.
      *  If this version changes, despite there being a GraphNode which might
      *  perform auto-differentiation at some point, then an exception will be thrown for debugging.
      *  <br>
-     *  The getter returns the version of the data (_data) stored within this tensor.
+     *  The corresponding getter returns the version of the data (accessible through {@link #getData()})
+     *  stored within this tensor.
      */
     private int _version = 0;
 
