@@ -15,8 +15,22 @@ import neureka.utility.slicing.SliceBuilder;
  */
 public interface AxisOrGet<V>  {
 
-    FromOrAt<V> axis(int axis );
+    /**
+     *  Slicing a tensor ultimately means slicing one or more of its axes!
+     *  This method allows one to specify which axis should be sliced next.
+     *
+     * @param axis The axis which ought to be sliced next.
+     * @return The fluent axis slicing API.
+     */
+    FromOrAt<V> axis( int axis );
 
+    /**
+     *  This method concludes the slicing API by performing the actual slicing and
+     *  returning the resulting {@link Tsr} instance based on the previously
+     *  specified slice configuration...
+     *
+     * @return An new {@link Tsr} instance which is a slice of the original tensor.
+     */
     Tsr<V> get();
 
 }

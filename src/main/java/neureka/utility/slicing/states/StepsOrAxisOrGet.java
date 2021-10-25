@@ -13,5 +13,13 @@ package neureka.utility.slicing.states;
  */
 public interface StepsOrAxisOrGet<V> extends AxisOrGet<V>
 {
-    AxisOrGet<V> step(int size );
+    /**
+     *  This method allows one to specify a step size within the slice range
+     *  previously specified for the currently sliced axis.
+     *
+     * @param size The step size of the iterator slicing the underlying {@link neureka.Tsr} shape.
+     * @return The next step in the slicing API which allows one to slice another axis or simply
+     *         perform the actual slicing and get the tensor.
+     */
+    AxisOrGet<V> step( int size );
 }

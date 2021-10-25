@@ -165,7 +165,8 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
         }
         else if ( _from instanceof Comparable && _to instanceof Comparable ) {
             //data = new ObjectRange( (Comparable<V>) _from, (Comparable<V>) _to ).step( (int) size );
-            throw new IllegalStateException(); // TODO: make it possible to have ranges like 'a' to 'z'...
+            throw new IllegalStateException("Cannot form a range for the provided elements...");
+            // TODO: make it possible to have ranges like 'a' to 'z'...
         }
         return Tsr.of( _dataType, _shape, data );
     }
@@ -182,11 +183,11 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
             if ( o instanceof Number && o.getClass() != jvmTypeClass ) {
                 Number n = (Number) o;
                 if ( jvmTypeClass == Integer.class ) return (V) ((Integer) n.intValue());
-                if ( jvmTypeClass == Double.class ) return (V) ((Double) n.doubleValue());
-                if ( jvmTypeClass == Short.class ) return (V) ((Short) n.shortValue());
-                if ( jvmTypeClass == Byte.class ) return (V) ((Byte) n.byteValue());
-                if ( jvmTypeClass == Long.class ) return (V) ((Long) n.longValue());
-                if ( jvmTypeClass == Float.class ) return (V) ((Float) n.floatValue());
+                if ( jvmTypeClass == Double.class  ) return (V) ((Double) n.doubleValue());
+                if ( jvmTypeClass == Short.class   ) return (V) ((Short) n.shortValue());
+                if ( jvmTypeClass == Byte.class    ) return (V) ((Byte) n.byteValue());
+                if ( jvmTypeClass == Long.class    ) return (V) ((Long) n.longValue());
+                if ( jvmTypeClass == Float.class   ) return (V) ((Float) n.floatValue());
             }
         }
         return o;

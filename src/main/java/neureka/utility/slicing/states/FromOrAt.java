@@ -14,6 +14,23 @@ package neureka.utility.slicing.states;
  */
 public interface FromOrAt<V>
 {
-    To<V> from(int index );
-    AxisOrGet<V> at(int index );
+    /**
+     *  This is the starting point for defining the slice range of a specified axis within
+     *  the method chain/graph exposed by the slice builder API.
+     *  I receives the index at which the slice range should start.
+     *
+     * @param index A valid index in the current axis from which the slice should start.
+     * @return The next step in the slicing API which expects one to specify the end of the slice range.
+     */
+    To<V> from( int index );
+
+    /**
+     *  This is a convenience method replacing "{@code from(i).to(i)}", meaning that
+     *  it simply slices a single axis from the original tensor at the specified index.
+     *
+     * @param index The index which ought to be sliced.
+     * @return The next step in the slicing API which allows one to slice another axis or simply
+     *         perform the actual slicing and get the tensor.
+     */
+    AxisOrGet<V> at( int index );
 }
