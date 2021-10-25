@@ -50,7 +50,7 @@ import java.util.stream.IntStream;
  *  Its sole job is to simply take in any kind ob object and convert it into
  *  another object of a provided Class type...
  *  In essence the {@link DataConverter} is merely a utility class.
- *  It also contains a nested static class named "Utility" which
+ *  It also contains a nested static class named {@link Utility} which
  *  provides useful methods to handle primitive data types and arrays
  *  of said types.
  */
