@@ -698,7 +698,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *  namely : "I[0]" <br>
      *  An example would be the following :
      * <ul>
-     *      <li><i> 'Tsr a = Tsr.of( b, "sin( I[0] ) * 2" )'</i></li>
+     *      <li><i> 'Tsr a = Tsr.of( "sin( I[0] ) * 2", b )'</i></li>
      * </ul>
      *
      *  Which takes the tensor 'b' and applies the function "f(x) = sin(x) * 2"
@@ -757,7 +757,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *
      */
     @SafeVarargs
-    public static <V> Tsr<V> of(String expression, boolean doAD, Tsr<V>... tensors ) {
+    public static <V> Tsr<V> of( String expression, boolean doAD, Tsr<V>... tensors ) {
         return _constructFunctional( null, tensors, expression, doAD );
     }
 
@@ -810,7 +810,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      *                     the built in automatic backpropagation system.
      * @return This very {@link Tsr} instance in order to enable method chaining.
      */
-    public Tsr<V> setRqsGradient(boolean rqsGradient ) {
+    public Tsr<V> setRqsGradient( boolean rqsGradient ) {
         if ( rqsGradient() != rqsGradient && !rqsGradient ) this.remove( Tsr.class );
         _setRqsGradient( rqsGradient );
         return this;
@@ -840,6 +840,17 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     ---------------------------------------------
     */
 
+    /**
+     *  This method informs this tensor if it's data is supposed to be kept in RAM
+     *  or if it has already been migrated somewhere else.
+     *  In the latter case, the tensor will nullify the reference to it's
+     *  underlying data array to make it elegable for garbage collection.
+     *  Otherwise, if {@code isOutsourced} is set to true, the method might
+     *  allocate a new data array if none is present.
+     *
+     * @param isOutsourced The truth value which determines if this tensor should live in RAM or somewhere else.
+     * @return This very instance to allow for method chaining.
+     */
     public Tsr<V> setIsOutsourced( boolean isOutsourced ) {
         _setIsOutsourced( isOutsourced );
         if ( isOutsourced )
@@ -887,7 +898,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     /**
-     * Outsourced means that the tensor is stored on a {@link Device} implementation instance.
+     *  Outsourced means that the tensor is stored on a {@link Device} implementation instance.
      *
      * @return The truth value determining if the data of this tensor is not actually stored inside of it
      *         in the form of of a traditional primitive JVM array!
