@@ -114,8 +114,16 @@ public class HostCPU extends AbstractDevice<Number>
     @Override
     public Operation optimizedOperationOf( Function function, String name ) { throw new IllegalStateException(); }
 
+    /**
+     *  This method is part of the component system built into the {@link Tsr} class.
+     *  Do not use this as part of anything but said component system.
+     *
+     * @param changeRequest An API which describes the type of update and a method for executing said update.
+     * @return The truth value determining if this {@link Device} ought to be added to a tensor (Here always false!).
+     */
     @Override
     public boolean update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {
+        super.update( changeRequest );
         return false; // This type of device can not be a component simply because it is the default device
         //super.update( changeRequest );
     }

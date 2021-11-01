@@ -3,6 +3,7 @@ package it.device
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
+import neureka.devices.host.HostCPU
 import neureka.devices.opencl.CLContext
 import neureka.devices.opencl.utility.DispatchUtility
 import neureka.dtype.DataType
@@ -27,29 +28,35 @@ class OpenCLDevice_Integration_Spec extends Specification
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
-    def 'An OpenCLDevice will throw an exception when trying to add a tensor whose "data parent" is not outsourced.'()
+    def 'An OpenCLDevice loads tensors in a provided lambda temporarily.'()
     {
         given: 'The first found OpenCLDevice instance.'
-            Device device = Device.find('first')
-        and : 'A tensor and a slice tensor of the prior.'
-            Tsr t = Tsr.of([4, 3], 2)
-            Tsr s = t[1..3, 1..2]
+            Device<?> device = Device.find('first')
+        and : 'We create 2 tensors with different default devices.'
+            Tsr<?> t = Tsr.of([4, 3], 2)
+            Tsr<?> s = Tsr.of([3, 2], -1).to(device)
 
-        expect : 'Both tensors share not only the same data but also the same data type.'
-            t.data == s.data
-            t.dataType == DataType.of( Double.class )
-            s.dataType == DataType.of( Double.class )
+        expect : 'At first, both tensors are stored where we said they should be.'
+            !device.has(t)
+            device.has(s)
+        and : 'The two tensors should also know to which devices they belong!'
+            t.device === HostCPU.instance()
+            s.device === device
 
-        when : 'We try to add the slice to the device.'
-            device.store(s)
+        and : 'When we check their location in the lambda we expect them both to be on the device!'
+            device.use(t, s)
+                   .in(() -> {
+                       return device.has(t) && device.has(s)
+                   })
 
-        then : 'An exception is being thrown.'
-            def exception = thrown(IllegalStateException)
+        and : 'After the lambda ran, we expect everything to be reverted.'
+            !device.has(t)
+            device.has(s)
+        and : 'The two tensors should also know to which devices they belong!'
+            t.device === HostCPU.instance()
+            s.device === device
 
-        and : 'It explains what went wrong.'
-            exception.message=="Data parent is not outsourced!"
     }
-
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'The "getValue()" method of an outsourced tensor will return the expected array type.'()

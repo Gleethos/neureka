@@ -305,7 +305,7 @@ public abstract class AbstractComponentOwner<C>
                 _addOrRemoveComp( oldCompartment, true );
             }
         }
-        _addOrRemoveComp(newComponent, false );
+        _addOrRemoveComp( newComponent, false );
         return _this();
     }
 

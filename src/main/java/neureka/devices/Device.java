@@ -50,8 +50,10 @@ import neureka.devices.opencl.CLContext;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.devices.opencl.OpenCLPlatform;
 
-import java.util.Collection;
+import java.util.*;
 import java.util.function.IntFunction;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -179,6 +181,53 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
                                     function.numberOfArgs(),
                                     function.isDoingAD()
                             );
+    }
+
+    /**
+     *  This is a very simple fluent API for temporarily storing a number
+     *  of tensors on this {@link Device}, executing a provided lambda action,
+     *  and then migrating all the tensors back to their original devices.
+     *
+     * @param first The first tensor among all passed tensors which ought to be
+     *              stored temporarily on this {@link Device}.
+     * @param rest Any number of other tensors passed to this method to be
+     *             stored temporarily on this {@link Device}.
+     *
+     * @return A simple lambda runner which will migrate the tensors passed to this method to
+     *         this very {@link Device}, execute the provided lambda, and then  migrate all the
+     *         tensors back to their original devices!
+     */
+    default In use( Tsr<V> first, Tsr<V>... rest ) {
+        List<Tsr<V>> tensors = new ArrayList<>();
+        if ( first != null ) tensors.add( first );
+        if ( rest.length > 0 )
+            tensors.addAll( Arrays.stream( rest ).filter(Objects::nonNull).collect(Collectors.toList()) );
+
+        return new In() {
+            @Override
+            public <R> R in( Supplier<R> lambda ) {
+                List<Device<?>> devices = tensors.stream().map( Tsr::getDevice ).collect( Collectors.toList() );
+                for ( Tsr<V> t : tensors ) store( t );
+                R result = lambda.get();
+                for ( int i = 0; i < tensors.size(); i++ ) {
+                    if ( devices.get( i ) != null ) tensors.get( i ).to( devices.get( i ) );
+                }
+                return result;
+            }
+        };
+    }
+
+
+    interface In {
+        /**
+         *
+         * @param lambda
+         * @param <R> The return type parameter of the lambda which is expected to be passed to
+         *            the context runner {@link In} returned by this method.
+         *
+         * @return
+         */
+        <R> R in( Supplier<R> lambda );
     }
 
 }

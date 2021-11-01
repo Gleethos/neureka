@@ -2,7 +2,9 @@ package it.device
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.devices.Device
 import neureka.devices.opencl.CLContext
+import neureka.dtype.DataType
 import org.slf4j.Logger
 import spock.lang.IgnoreIf
 import spock.lang.Specification
@@ -20,6 +22,31 @@ class OpenCLDevice_Exception_Integration_Spec extends Specification
             </p>
         """
         Neureka.get().reset()
+    }
+
+
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    def 'An OpenCLDevice will throw an exception when trying to add a tensor whose "data parent" is not outsourced.'()
+    {
+        given: 'The first found OpenCLDevice instance.'
+            Device device = Device.find('first')
+        and : 'A tensor and a slice tensor of the prior.'
+            Tsr t = Tsr.of([4, 3], 2)
+            Tsr s = t[1..3, 1..2]
+
+        expect : 'Both tensors share not only the same data but also the same data type.'
+            t.data == s.data
+            t.dataType == DataType.of( Double.class )
+            s.dataType == DataType.of( Double.class )
+
+        when : 'We try to add the slice to the device.'
+            device.store(s)
+
+        then : 'An exception is being thrown.'
+            def exception = thrown(IllegalStateException)
+
+        and : 'It explains what went wrong.'
+            exception.message=="Data parent is not outsourced!"
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
