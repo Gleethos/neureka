@@ -85,14 +85,18 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
         Tsr<V> oldOwner = changeRequest.getOldOwner();
         Tsr<V> newOwner = changeRequest.getNewOwner();
         if ( changeRequest.type() == IsBeing.REPLACED ) swap( oldOwner, newOwner );
-        else if ( oldOwner == null && newOwner != null ) {
+        else if ( changeRequest.type() == IsBeing.ADDED ) {
             if ( newOwner.has( Relation.class ) ) {
                 Relation<V> relation = newOwner.get(Relation.class);
-                if (relation.hasParent()) { // Root needs to be found ! :
+                if ( relation.hasParent() ) { // Root needs to be found ! :
                     Tsr<V> root = relation.findRootTensor();
                     if (!this.has(root) || !root.isOutsourced())
                         throw new IllegalStateException("Data parent is not outsourced!");
                 }
+            }
+            Device<V> found = newOwner.getDevice();
+            if ( found != null && found != this ) {
+                found.restore( newOwner );
             }
         }
         return true;

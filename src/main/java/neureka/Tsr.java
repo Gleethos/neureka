@@ -79,6 +79,8 @@ SOFTWARE.
     §(9) : SLICING, INDEXING & INJECTING
         §(9.0) : SLICING
         §(9.1) : INJECTING
+
+    §(10) : MAPPING
 */
 
 package neureka;
@@ -118,6 +120,8 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 
 /**
@@ -1075,6 +1079,15 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     --------------------------------------------
     */
 
+    /**
+     *  This will check if the {@link #delete()} method was previously called on this tensor.
+     *  This means that any references inside the tensor will be null
+     *  as well as that the tensor data was freed on every device,
+     *  meaning that what was previously referenced was most likely garbage collected...
+     *
+     * @return The truth value which determines if {@link #delete()} was called on this tensor,
+     *         making it in essence an empty shell void of any references to data.
+     */
     public boolean isDeleted() { return ( _flags & WAS_DELETED_MASK ) == WAS_DELETED_MASK; }
 
     /**
@@ -1333,7 +1346,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public Tsr<V> getGradient() { return this.get( Tsr.class ); }
 
     /**
-     * @return The device on which this tensor is stored or 'CPU' if it is not outsourced.
+     * @return The device on which this tensor is stored or {@link HostCPU} if it is not outsourced.
      */
     public Device<V> getDevice() {
         if ( this.isOutsourced() ) return this.get( Device.class );
@@ -2589,6 +2602,36 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         }
         else if ( !this.isVirtual() ) return getData();
         else return getDataType().actualize( getData(), this.size() );
+    }
+
+    /*==================================================================================================================
+    |
+    |       §(10) : Mapping :
+    |   -----------------------------------------------------
+    |       ...transformation and modification...
+    */
+
+    public <T> Tsr<T> mapTo(Class<T> typeClass, java.util.function.Function<V,T> mapper) {
+        Object newData = null;
+        String failMessage = "Conversion to type "+typeClass+" not yet supported.";
+        if ( this.getValueClass() == Integer.class ) {
+            IntStream stream = IntStream.of((int[]) this.getData()).parallel();
+            if ( typeClass == Double.class )
+                newData = stream.mapToDouble( d -> (Double) mapper.apply((V) Integer.valueOf(d)) ).toArray();
+            else if (  typeClass == Long.class )
+                newData = stream.mapToLong( d -> (Long) mapper.apply((V) Integer.valueOf(d)) ).toArray();
+            else
+                throw new IllegalArgumentException(failMessage);
+        } else if ( this.getValueClass() == Double.class ) {
+            DoubleStream stream = DoubleStream.of((double[]) this.getData()).parallel();
+            if ( typeClass == Integer.class )
+                newData = stream.mapToInt( d -> (Integer) mapper.apply((V) Double.valueOf(d)) ).toArray();
+            else if (  typeClass == Long.class )
+                newData = stream.mapToLong( d -> (Long) mapper.apply((V) Double.valueOf(d)) ).toArray();
+            else
+                throw new IllegalArgumentException(failMessage);
+        }
+        return Tsr.of(typeClass, this.getNDConf().shape(), newData);
     }
 
     /**
