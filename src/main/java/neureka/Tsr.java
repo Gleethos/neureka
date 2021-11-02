@@ -2647,7 +2647,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                         else
                             throw new IllegalArgumentException(failMessage);
                     }
-                    return Tsr.of(typeClass, this.getNDConf().shape(), newData);
+                    return Tsr.of( typeClass, this.getNDConf().shape(), newData );
                 });
     }
 
