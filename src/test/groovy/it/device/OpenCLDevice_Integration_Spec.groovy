@@ -59,6 +59,37 @@ class OpenCLDevice_Integration_Spec extends Specification
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
+    def 'An OpenCLDevice loads tensors in a provided lambda temporarily.'()
+    {
+        given: 'The first found OpenCLDevice instance.'
+            Device<?> device = Device.find('first')
+        and : 'We create 2 tensors with different default devices.'
+            Tsr<?> t = Tsr.of([4, 3], 2)
+            Tsr<?> s = Tsr.of([3, 2], -1).to(device)
+
+        expect : 'At first, both tensors are stored where we said they should be.'
+            !device.has(t)
+            device.has(s)
+        and : 'The two tensors should also know to which devices they belong!'
+            t.device === HostCPU.instance()
+            s.device === device
+
+        and : 'When we check their location in the lambda we expect them both to be on the device!'
+            device.use(t, s)
+                   .in(() -> {
+                       return device.has(t) && device.has(s)
+                   })
+
+        and : 'After the lambda ran, we expect everything to be reverted.'
+            !device.has(t)
+            device.has(s)
+        and : 'The two tensors should also know to which devices they belong!'
+            t.device === HostCPU.instance()
+            s.device === device
+
+    }
+
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!
     def 'The "getValue()" method of an outsourced tensor will return the expected array type.'()
     {
         given : 'A new tensor.'
