@@ -2626,10 +2626,17 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return HostCPU.instance() // This little API will temporarily migrate this to the JVM.
                 .use( (Tsr<Number>) this )
                 .in( () -> {
+                    Object data = getData();
+                    if ( data == null ) {
+                        if ( this.isOutsourced() )
+                            _LOG.error("Encountered an outsourced tensor! Only local tensors stored in RAM can be mapped.");
+                        else
+                            _LOG.error("Invalid tensor state encountered! Cannot map a tensor without data.");
+                    }
                     Object newData = null;
                     String failMessage = "Conversion to type "+typeClass+" not yet supported.";
                     if ( this.getValueClass() == Integer.class ) {
-                        IntStream stream = IntStream.of((int[]) this.getData()).parallel();
+                        IntStream stream = IntStream.of((int[]) data).parallel();
                         if ( typeClass == Double.class )
                             newData = stream.mapToDouble( d -> (Double) mapper.apply((V) Integer.valueOf(d)) ).toArray();
                         else if (  typeClass == Long.class )
@@ -2637,19 +2644,32 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                         else
                             throw new IllegalArgumentException(failMessage);
                     } else if ( this.getValueClass() == Double.class ) {
-                        DoubleStream stream = DoubleStream.of((double[]) this.getData()).parallel();
-                        if ( typeClass == Integer.class )
+                            DoubleStream stream = DoubleStream.of((double[]) data).parallel();
+                        if ( typeClass == Double.class )
+                            newData = stream.map( d -> (Double) mapper.apply((V) Double.valueOf(d)) ).toArray();
+                        else if ( typeClass == Integer.class )
                             newData = stream.mapToInt( d -> (Integer) mapper.apply((V) Double.valueOf(d)) ).toArray();
                         else if (  typeClass == Long.class )
                             newData = stream.mapToLong( d -> (Long) mapper.apply((V) Double.valueOf(d)) ).toArray();
                         else if ( typeClass == String.class )
                             newData = stream.mapToObj( d -> (String) mapper.apply((V) Double.valueOf(d)) ).toArray();
-                        else
+                        else if ( typeClass == Float.class ) {
+                            int size = this.size();
+                            float[] floatData = new float[size];
+                            double[] thisData = (double[]) data;
+                            IntStream.range(0,size)
+                                        .parallel()
+                                        .forEach( i -> {
+                                            floatData[i] = ((Number) mapper.apply((V) Double.valueOf(thisData[i]))).floatValue();
+                                        });
+                            newData = floatData;
+                        } else
                             throw new IllegalArgumentException(failMessage);
                     }
                     return Tsr.of( typeClass, this.getNDConf().shape(), newData );
                 });
     }
+
 
     /**
      *  This method takes the provided {@link Tsr} instance and adds it's

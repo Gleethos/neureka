@@ -202,12 +202,12 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         if ( first != null ) tensors.add( first );
         if ( rest.length > 0 )
             tensors.addAll( Arrays.stream( rest ).filter(Objects::nonNull).collect(Collectors.toList()) );
-
+        Device<?> thisDevice = this;
         return new In() {
             @Override
             public <R> R in( Supplier<R> lambda ) {
                 List<Device<?>> devices = tensors.stream().map( Tsr::getDevice ).collect( Collectors.toList() );
-                for ( Tsr<V> t : tensors ) store( t );
+                for ( Tsr<V> t : tensors ) t.to( thisDevice );
                 R result = lambda.get();
                 for ( int i = 0; i < tensors.size(); i++ ) {
                     if ( devices.get( i ) != null ) tensors.get( i ).to( devices.get( i ) );

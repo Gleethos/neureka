@@ -12,6 +12,8 @@ import st.tests.CrossDeviceSystemTest
 import st.tests.SimpleNNSystemTest
 import testutility.mock.DummyDevice
 
+import java.util.function.Function
+
 @CompileDynamic
 class Cross_Device_Spec extends Specification
 {
@@ -121,6 +123,30 @@ class Cross_Device_Spec extends Specification
 
 
 
+    @IgnoreIf({!Neureka.get().canAccessOpenCL() && (device instanceof OpenCLDevice)}) // We need to assure that this system supports OpenCL!
+    def 'Mapping tensors works for every device (even if they are not used).'(
+              def tensor, Device device, Class<?> target, Function<?,?> lambda, String expected
+    ) {
+        given :
+            tensor.to(device)
+
+        when :
+            def result = tensor.mapTo(target, lambda)
+
+        then :
+            result.toString() == expected
+        and :
+            tensor.isOutsourced() == !(device instanceof HostCPU)
+            tensor.device == device
+
+        where :
+            tensor    | device               | target       | lambda  || expected
+            Tsr.of(3) | Device.find('first') | Double.class | {it*it} || '(1):[9.0]'
+            Tsr.of(-1)| Device.find('first') | Float.class  | {it/2}  || '(1):[-0.5]'
+            Tsr.of(3) | HostCPU.instance()   | Double.class | {it*it} || '(1):[9.0]'
+            Tsr.of(-1)| HostCPU.instance()   | Float.class  | {it/2}  || '(1):[-0.5]'
+
+    }
 
 
 }
