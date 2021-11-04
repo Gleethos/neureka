@@ -2630,7 +2630,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                 .use( (Tsr<Number>) this )
                 .in( () -> {
                     Object data = getData();
-                    DataConverter.Mapper map = new DataConverter.Mapper( this );
+                    DataConverter.ForTensor map = new DataConverter.ForTensor( this );
                     if ( data == null ) {
                         if ( this.isOutsourced() )
                             _LOG.error("Encountered an outsourced tensor! Only local tensors stored in RAM can be mapped.");
@@ -2647,6 +2647,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                         } else if (this.getValueClass() == Double.class) {
                             double[] sourceData = (double[]) this.getData();
                             access = (i -> (Number) mapper.apply((V) Double.valueOf(sourceData[i])));
+                        } else if (this.getValueClass() == Float.class) {
+                            float[] sourceData = (float[]) this.getData();
+                            access = (i -> (Number) mapper.apply((V) Float.valueOf(sourceData[i])));
                         } else
                             throw new IllegalArgumentException(failMessage);
 

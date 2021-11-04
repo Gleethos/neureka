@@ -60,6 +60,7 @@ import java.util.stream.IntStream;
 public class DataConverter
 {
     private final static Logger _LOG = LoggerFactory.getLogger(DataConverter.class);
+
     /**
      *  This interface declares a simple lambda which represents type conversion implementations...
      *  These conversion lambdas are then stored within a nested Map that can be extended easily.
@@ -270,12 +271,18 @@ public class DataConverter
         }
     }
 
-    public static class Mapper {
+    /**
+     *  This is a stateful and parallelized converter for converting the internal data array of a tensor
+     *  to another data array based on a provided lambda.
+     *  The converter will consider tensors with more complex access pattern like
+     *  for example those of slices.
+     */
+    public static class ForTensor {
 
         private final NDConfiguration.IndexToIndexFunction _access;
         private final int _size;
 
-        public Mapper( Tsr<?> t ) {
+        public ForTensor( Tsr<?> t ) {
             this._access = t.getNDConf().getIndexToIndexAccessPattern();
             this._size = t.size();
         }
