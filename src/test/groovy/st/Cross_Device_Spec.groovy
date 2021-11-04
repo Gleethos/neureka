@@ -142,6 +142,11 @@ class Cross_Device_Spec extends Specification
 
         where :
             tensor                     | device               | target         | lambda  || expected
+            Tsr.of(3.5)                | HostCPU.instance()   | String.class   | {"~$it"}|| '(1):[~3.5]'
+            Tsr.of(3.5)                | Device.find('first') | String.class   | {"~$it"}|| '(1):[~3.5]'
+            Tsr.ofFloats().scalar(3.5f)| HostCPU.instance()   | String.class   | {"~$it"}|| '(1):[~3.5]'
+            Tsr.ofFloats().scalar(3.5f)| Device.find('first') | String.class   | {"~$it"}|| '(1):[~3.5]'
+
             Tsr.of( 3 )                | Device.find('first') | Double.class   | {it*it} || '(1):[9.0]'
             Tsr.of(-1 )                | Device.find('first') | Float.class    | {it/2}  || '(1):[-0.5]'
             Tsr.of(0.5)                | Device.find('first') | Integer.class  | {it*10} || '(1):[5.0]'

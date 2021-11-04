@@ -2621,6 +2621,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             Class<T> typeClass,
             java.util.function.Function<V,T> mapper
     ) {
+        if ( this.isEmpty() )
+            throw new IllegalArgumentException("Trying to map an empty tensor!");
         /*
            The provided lambda cannot be executed anywhere but the CPU (Note: Maybe we should consider Aparapi here)
            This is a problem if this tensor here lives somewhere other than the JVM.
@@ -2669,6 +2671,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                         } else if (this.getValueClass() == Double.class) {
                             double[] sourceData = (double[]) this.getData();
                             access = (i -> mapper.apply((V) Double.valueOf(sourceData[i])));
+                        } else if (this.getValueClass() == Float.class) {
+                            float[] sourceData = (float[]) this.getData();
+                            access = (i -> mapper.apply((V) Float.valueOf(sourceData[i])));
                         } else
                             throw new IllegalArgumentException(failMessage);
 
