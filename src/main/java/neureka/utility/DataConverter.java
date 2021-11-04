@@ -35,7 +35,9 @@ SOFTWARE.
 
 package neureka.utility;
 
+import neureka.Tsr;
 import neureka.dtype.DataType;
+import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 /**
@@ -265,6 +268,74 @@ public class DataConverter
             for ( Iterator<F> it = stream; it.hasNext(); ) { array[ index ] = it.next(); index++; }
             return convert( array, to );
         }
+    }
+
+    public static class Mapper {
+
+        private final NDConfiguration.IndexToIndexFunction _access;
+        private final int _size;
+
+        public Mapper( Tsr<?> t ) {
+            this._access = t.getNDConf().getIndexToIndexAccessPattern();
+            this._size = t.size();
+        }
+
+        public float[] toFloatArray( Function<Integer, Number> source ) {
+            float[] data = new float[ _size ];
+            IntStream.range( 0, _size )
+                    .parallel()
+                    .forEach( i -> data[i] = source.apply(_access.map(i)).floatValue());
+            return data;
+        }
+
+        public byte[] toByteArray( Function<Integer, Number> source ) {
+            byte[] data = new byte[ _size ];
+            IntStream.range( 0, _size )
+                    .parallel()
+                    .forEach( i -> data[i] = source.apply(_access.map(i)).byteValue());
+            return data;
+        }
+
+        public long[] toLongArray( Function<Integer, Number> source ) {
+            long[] data = new long[ _size ];
+            IntStream.range( 0, _size )
+                    .parallel()
+                    .forEach( i -> data[i] = source.apply(_access.map(i)).longValue());
+            return data;
+        }
+
+        public int[] toIntArray( Function<Integer, Number> source ) {
+            int[] data = new int[ _size ];
+            IntStream.range( 0, _size )
+                    .parallel()
+                    .forEach( i -> data[i] = source.apply(_access.map(i)).intValue());
+            return data;
+        }
+
+        public double[] toDoubleArray( Function<Integer, Number> source ) {
+            double[] data = new double[ _size ];
+            IntStream.range( 0, _size )
+                    .parallel()
+                    .forEach( i -> data[i] = source.apply(_access.map(i)).doubleValue());
+            return data;
+        }
+
+        public short[] toShortArray( Function<Integer, Number> source ) {
+            short[] data = new short[ _size ];
+            IntStream.range( 0, _size )
+                    .parallel()
+                    .forEach( i -> data[i] = source.apply(_access.map(i)).shortValue());
+            return data;
+        }
+
+        public Object[] toObjectArray( Function<Integer, Object> source ) {
+            Object[] data = new Object[ _size ];
+            IntStream.range( 0, _size )
+                    .parallel()
+                    .forEach( i -> data[i] = source.apply(_access.map(i)));
+            return data;
+        }
+
     }
 
     /**

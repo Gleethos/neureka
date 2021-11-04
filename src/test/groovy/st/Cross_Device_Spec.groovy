@@ -136,15 +136,23 @@ class Cross_Device_Spec extends Specification
         then :
             result.toString() == expected
         and :
+            result.valueClass == target
             tensor.isOutsourced() == !(device instanceof HostCPU)
             tensor.device == device
 
         where :
-            tensor    | device               | target       | lambda  || expected
-            Tsr.of(3) | Device.find('first') | Double.class | {it*it} || '(1):[9.0]'
-            Tsr.of(-1)| Device.find('first') | Float.class  | {it/2}  || '(1):[-0.5]'
-            Tsr.of(3) | HostCPU.instance()   | Double.class | {it*it} || '(1):[9.0]'
-            Tsr.of(-1)| HostCPU.instance()   | Float.class  | {it/2}  || '(1):[-0.5]'
+            tensor     | device               | target         | lambda  || expected
+            Tsr.of(3)  | Device.find('first') | Double.class   | {it*it} || '(1):[9.0]'
+            Tsr.of(-1) | Device.find('first') | Float.class    | {it/2}  || '(1):[-0.5]'
+            Tsr.of(0.5)| Device.find('first') | Integer.class  | {it*10} || '(1):[5.0]'
+            Tsr.of(0.7)| Device.find('first') | Long.class     | {it*5}  || '(1):[3.0]'
+            Tsr.of(0.9)| Device.find('first') | Byte.class     | {it*2}  || '(1):[1.0]'
+            Tsr.of(3.8)| Device.find('first') | Short.class    | {it/2}  || '(1):[1.0]'
+            Tsr.of(3)  | HostCPU.instance()   | Double.class   | {it*it} || '(1):[9.0]'
+            Tsr.of(-1) | HostCPU.instance()   | Float.class    | {it/2}  || '(1):[-0.5]'
+            Tsr.of(0.5)| HostCPU.instance()   | Integer.class  | {it*10} || '(1):[5.0]'
+            Tsr.of(0.7)| HostCPU.instance()   | Long.class     | {it*5}  || '(1):[3.0]'
+            Tsr.of(3.8)| HostCPU.instance()   | Short.class    | {it/2}  || '(1):[1.0]'
 
     }
 

@@ -241,6 +241,10 @@ public final class TsrAsString
             return i -> ( isCompact )
                     ? Util.formatFP( ( (byte[]) data )[ i ] )
                     : String.valueOf( ( (byte[]) data )[ i ] );
+        else if ( data instanceof long[] )
+            return i -> ( isCompact )
+                    ? Util.formatFP( ( (long[]) data )[ i ] )
+                    : String.valueOf( ( (long[]) data )[ i ] );
         else if ( data == null )
             return i -> ( isCompact )
                     ? Util.formatFP( _tensor.value64( i ) )

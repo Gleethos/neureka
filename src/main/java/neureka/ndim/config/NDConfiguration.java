@@ -174,6 +174,13 @@ public interface NDConfiguration
                IntStream.range(0, this.rank()).allMatch( i -> this.offset(i) == 0 );
     }
 
+    default IndexToIndexFunction getIndexToIndexAccessPattern() {
+        NDConfiguration nda = this;
+        return (nda::indexOfIndex);
+    }
+
+    interface IndexToIndexFunction { int map(int i); }
+
     /**
      *  This utility class provides static methods which are helpful
      *  for nd-configuration related operations like reshaping,

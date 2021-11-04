@@ -2585,6 +2585,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         } else if ( value instanceof long[] ) {
             _setData( value );
             setIsVirtual( false );
+        } else if ( value instanceof byte[] ) {
+            _setData( value );
+            setIsVirtual( false );
         } else if ( value instanceof Object[] ) {
             _setData( value );
             setIsVirtual( false );
@@ -2621,12 +2624,13 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         /*
            The provided lambda cannot be executed anywhere but the CPU (Note: Maybe we should consider Aparapi here)
            This is a problem if this tensor here lives somewhere other than the JVM.
-           So therefore we invite it back home for dinner!
+           So therefore, we invite it back home for dinner!
          */
         return HostCPU.instance() // This little API will temporarily migrate this to the JVM.
                 .use( (Tsr<Number>) this )
                 .in( () -> {
                     Object data = getData();
+                    DataConverter.Mapper map = new DataConverter.Mapper( this );
                     if ( data == null ) {
                         if ( this.isOutsourced() )
                             _LOG.error("Encountered an outsourced tensor! Only local tensors stored in RAM can be mapped.");
@@ -2635,36 +2639,37 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     }
                     Object newData = null;
                     String failMessage = "Conversion to type "+typeClass+" not yet supported.";
-                    if ( this.getValueClass() == Integer.class ) {
-                        IntStream stream = IntStream.of((int[]) data).parallel();
-                        if ( typeClass == Double.class )
-                            newData = stream.mapToDouble( d -> (Double) mapper.apply((V) Integer.valueOf(d)) ).toArray();
-                        else if (  typeClass == Long.class )
-                            newData = stream.mapToLong( d -> (Long) mapper.apply((V) Integer.valueOf(d)) ).toArray();
-                        else
-                            throw new IllegalArgumentException(failMessage);
-                    } else if ( this.getValueClass() == Double.class ) {
-                            DoubleStream stream = DoubleStream.of((double[]) data).parallel();
-                        if ( typeClass == Double.class )
-                            newData = stream.map( d -> (Double) mapper.apply((V) Double.valueOf(d)) ).toArray();
-                        else if ( typeClass == Integer.class )
-                            newData = stream.mapToInt( d -> (Integer) mapper.apply((V) Double.valueOf(d)) ).toArray();
-                        else if (  typeClass == Long.class )
-                            newData = stream.mapToLong( d -> (Long) mapper.apply((V) Double.valueOf(d)) ).toArray();
-                        else if ( typeClass == String.class )
-                            newData = stream.mapToObj( d -> (String) mapper.apply((V) Double.valueOf(d)) ).toArray();
-                        else if ( typeClass == Float.class ) {
-                            int size = this.size();
-                            float[] floatData = new float[size];
-                            double[] thisData = (double[]) data;
-                            IntStream.range(0,size)
-                                        .parallel()
-                                        .forEach( i -> {
-                                            floatData[i] = ((Number) mapper.apply((V) Double.valueOf(thisData[i]))).floatValue();
-                                        });
-                            newData = floatData;
+                    if ( Number.class.isAssignableFrom(typeClass) ) {
+                        java.util.function.Function<Integer, Number> access = null;
+                        if (this.getValueClass() == Integer.class) {
+                            int[] sourceData = (int[]) this.getData();
+                            access = (i -> (Number) mapper.apply((V) Integer.valueOf(sourceData[i])));
+                        } else if (this.getValueClass() == Double.class) {
+                            double[] sourceData = (double[]) this.getData();
+                            access = (i -> (Number) mapper.apply((V) Double.valueOf(sourceData[i])));
                         } else
                             throw new IllegalArgumentException(failMessage);
+
+                        if (typeClass == Double.class) newData = map.toDoubleArray(access);
+                        else if (typeClass == Integer.class) newData = map.toIntArray(access);
+                        else if (typeClass == Long.class) newData = map.toLongArray(access);
+                        else if (typeClass == Byte.class) newData = map.toByteArray(access);
+                        else if (typeClass == Float.class) newData = map.toFloatArray(access);
+                        else if (typeClass == Short.class) newData = map.toShortArray(access);
+                        else
+                            throw new IllegalArgumentException(failMessage);
+                    } else {
+                        java.util.function.Function<Integer, Object> access = null;
+                        if (this.getValueClass() == Integer.class) {
+                            int[] sourceData = (int[]) this.getData();
+                            access = (i -> mapper.apply((V) Integer.valueOf(sourceData[i])));
+                        } else if (this.getValueClass() == Double.class) {
+                            double[] sourceData = (double[]) this.getData();
+                            access = (i -> mapper.apply((V) Double.valueOf(sourceData[i])));
+                        } else
+                            throw new IllegalArgumentException(failMessage);
+
+                        newData = map.toObjectArray(access);
                     }
                     return Tsr.of( typeClass, this.getNDConf().shape(), newData );
                 });
