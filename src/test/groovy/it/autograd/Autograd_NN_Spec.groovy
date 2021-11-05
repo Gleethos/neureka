@@ -128,9 +128,12 @@ class Autograd_NN_Spec extends Specification
     }
 
 
-    def 'Autograd works in a simple convolutional dot product based feed forward neural network.'()
-    {
+    def 'Autograd works in a simple convolutional dot product based feed forward neural network.'(
+            boolean useIteratorBasedIndexing
+    ) {
         given :
+            Neureka.get().settings().indexing().setIsUsingArrayBasedIndexing(!useIteratorBasedIndexing)
+        and :
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested( false )
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed( false )
             Neureka.get().settings().autograd().setIsRetainingPendingErrorForJITProp( false )
@@ -246,6 +249,8 @@ class Autograd_NN_Spec extends Specification
 ]                   \\
 ]                    0»0»(LEAVE RQS GRADIENT): [NODE]:<(  f(NONE) => (3x1):[2.14504E0, 0.17962E0, -0.43376E0]  )>
 """)
+        where :
+            useIteratorBasedIndexing << [true, false]
 
     }
 

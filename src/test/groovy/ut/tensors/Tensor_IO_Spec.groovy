@@ -126,9 +126,7 @@ class Tensor_IO_Spec extends Specification
         then :
             t.toString().contains("(2):[3.0, 5.0]")
             t.value64().length==2
-
     }
-
 
     def 'Indexing after reshaping works as expected.'()
     {
