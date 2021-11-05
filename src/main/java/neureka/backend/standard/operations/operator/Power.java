@@ -530,19 +530,23 @@ public class Power extends AbstractOperation
             }
             return result;
         } else {
-            double out = 0;
-            for ( int si = 0; si < src.length; si++ ) {
-                double b = 1;
-                for ( int i = 1; i < src.length; i++ ) {
-                    b *= src[ i ].call( inputs, j );
+            double b = 1;
+            double bd = 0;
+            double a;
+            for ( int i = 1; i < src.length; i++ ) {
+                double dd = 1;
+                a = src[ i ].call( inputs, j );
+                for ( int di = 1; di < src.length; di++ ) {
+                    if ( di != i ) dd *= a;
+                    else dd *= src[ di ].derive( inputs, d, j );
                 }
-                if ( si == 0 ) {
-                    out += src[ 0 ].derive( inputs, d, j ) * b * Math.pow(src[ 0 ].call( inputs, j ), b - 1);
-                } else {
-                    double a = src[ 0 ].call( inputs, j );
-                    out += ( a >= 0 ) ? src[ si ].derive( inputs, d, j ) * b * Math.log(a) : 0;
-                }
+                bd += dd;
+                b *= a;
             }
+            double out = 0;
+            a = src[ 0 ].call( inputs, j );
+            out += src[ 0 ].derive( inputs, d, j ) * b * Math.pow(a, b - 1);
+            out += (a >= 0) ? bd *  Math.pow(a, b) * Math.log(a) : 0;
             return out;
         }
     }

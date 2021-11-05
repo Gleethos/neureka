@@ -3,8 +3,17 @@ package ut.calculus
 import neureka.Neureka
 import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionBuilder
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("A Function as such!.")
+@Narrative('''
+    
+    This specification defines the expected behaviour of the Function API
+    with respect to receiving simple scalar values as arguments.
+    
+''')
 class Calculus_Scalar_Spec extends Specification
 {
 
@@ -44,7 +53,7 @@ class Calculus_Scalar_Spec extends Specification
     }
 
 
-    def 'Function "(I[0]+1/I[0])^-I[0]" instance return expected scalar result.'(
+    def 'Function "(I[0]+1/I[0])^-I[0]" instance returns expected scalar result.'(
             double[] inputs, Integer index, double expected
     ){
         given : 'We create a Function instance from expression "(I[0]+1/I[0])^-I[0]".'
@@ -61,7 +70,7 @@ class Calculus_Scalar_Spec extends Specification
     }
 
 
-    def 'Function "(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)" instance return expected scalars.'(
+    def 'Function "(cos(I[0]*5)/5+I[0])*(1+sin(I[0])/2)" instance returns expected scalars.'(
             double[] inputs, Integer index, double expected
     ){
         given :
@@ -131,7 +140,19 @@ class Calculus_Scalar_Spec extends Specification
             "quad(abs(prod(ij))-6)"          | new double[]{2, 3, -2}           | 1     || -12*-4
             "sumJs(ij)"                      | new double[]{2, 3, -2}           | null  || 3
             "sumJs(ij)"                      | new double[]{2, 3, -2}           | 1     || 1
-            //Todo: pow inside indexer!
+            "sumJs(ij^1)"                    | new double[]{2, 3, -2}           | null  || 3
+            "sumJs(ij^1)"                    | new double[]{2, 3, -2}           | 1     || 1
+            "I[1]^2"                         | new double[]{2, 3, -2}           | null  || 9
+            "I[1]^2"                         | new double[]{2, 3, -2}           | 1     || 6
+            "sumJs(ij^2)"                    | new double[]{2, 3, -2}           | null  || 17
+            "sumJs(ij^2)"                    | new double[]{2, 3, -2}           | 1     || 6
+            "2^I[1]"                         | new double[]{2, 3, -2}           | null  || 8
+            "2^I[0]"                         | new double[]{2, 3, -2}           | null  || 4
+            "2^I[2]"                         | new double[]{2, 3, -2}           | null  || 0.25
+            "2^I[1]"                         | new double[]{2, 3, -2}           | 1     || 5.545177444479562
+            "sumJs(2^I[j])"                  | new double[]{2, 3, -2}           | null  || 12.25
+            "sumJs(2^I[j])"                  | new double[]{2, 3, -2}           | 1     || 5.545177444479562
+
     }
 
 
