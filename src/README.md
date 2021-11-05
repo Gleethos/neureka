@@ -4,7 +4,7 @@
 ## Note ##
 
 If you want to contribute to Neureka or merely 
-take a look at it in your IDEA of choice consider the following 
+take a look at it in your IDE of choice consider the following 
 tips with respect to formalities and the 
 dependencies on which Neureka is built : <br>
 
