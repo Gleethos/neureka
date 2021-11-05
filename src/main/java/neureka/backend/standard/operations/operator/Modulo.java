@@ -397,7 +397,8 @@ public class Modulo extends AbstractOperation {
                 result %= current;
             }
             return result;
-        } else return src[ 0 ].derive( inputs, d );
+        }
+        else return src[ 0 ].derive( inputs, d );
     }
 
     @Contract(pure = true)
