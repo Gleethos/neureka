@@ -146,6 +146,12 @@ class Cross_Device_Spec extends Specification
             Tsr.of(3.5)                | Device.find('first') | String.class   | {"~$it"}|| '(1):[~3.5]'
             Tsr.ofFloats().scalar(3.5f)| HostCPU.instance()   | String.class   | {"~$it"}|| '(1):[~3.5]'
             Tsr.ofFloats().scalar(3.5f)| Device.find('first') | String.class   | {"~$it"}|| '(1):[~3.5]'
+            Tsr.ofShorts().scalar(3.5f)| HostCPU.instance()   | String.class   | {"~$it"}|| '(1):[~3]'
+            //Tsr.ofShorts().scalar(3.5f)| Device.find('first') | String.class   | {"~$it"}|| '(1):[~3]' // TODO: Allow for shorts on the GPU
+            Tsr.ofBytes().scalar(2.7)  | HostCPU.instance()   | String.class   | {"~$it"}|| '(1):[~2]'
+            //Tsr.ofBytes().scalar(2.7)  | Device.find('first') | String.class   | {"~$it"}|| '(1):[~2]' // TODO: Allow for bytes on the GPU
+            Tsr.ofInts().scalar(6.1f)  | HostCPU.instance()   | String.class   | {"~$it"}|| '(1):[~6]'
+            //Tsr.ofInts().scalar(6.1f)  | Device.find('first') | String.class   | {"~$it"}|| '(1):[~6]' // TODO: Allow for ints on the GPU
 
             Tsr.of( 3 )                | Device.find('first') | Double.class   | {it*it} || '(1):[9.0]'
             Tsr.of(-1 )                | Device.find('first') | Float.class    | {it/2}  || '(1):[-0.5]'
@@ -157,6 +163,7 @@ class Cross_Device_Spec extends Specification
             Tsr.of(-1 )                | HostCPU.instance()   | Float.class    | {it/2}  || '(1):[-0.5]'
             Tsr.of(0.5)                | HostCPU.instance()   | Integer.class  | {it*10} || '(1):[5.0]'
             Tsr.of(0.7)                | HostCPU.instance()   | Long.class     | {it*5}  || '(1):[3.0]'
+            Tsr.of(0.9)                | HostCPU.instance()   | Byte.class     | {it*2}  || '(1):[1.0]'
             Tsr.of(3.8)                | HostCPU.instance()   | Short.class    | {it/2}  || '(1):[1.0]'
 
             Tsr.ofFloats().scalar( 3f )| Device.find('first') | Double.class   | {it*it} || '(1):[9.0]'
@@ -169,19 +176,48 @@ class Cross_Device_Spec extends Specification
             Tsr.ofFloats().scalar(-1f )| HostCPU.instance()   | Float.class    | {it/2}  || '(1):[-0.5]'
             Tsr.ofFloats().scalar(0.5f)| HostCPU.instance()   | Integer.class  | {it*10} || '(1):[5.0]'
             Tsr.ofFloats().scalar(0.7f)| HostCPU.instance()   | Long.class     | {it*5}  || '(1):[3.0]'
+            Tsr.ofFloats().scalar(0.9f)| HostCPU.instance()   | Byte.class     | {it*2}  || '(1):[1.0]'
             Tsr.ofFloats().scalar(3.8f)| HostCPU.instance()   | Short.class    | {it/2}  || '(1):[1.0]'
 
             //Tsr.ofInts().scalar( 3 )   | Device.find('first') | Double.class   | {it*it} || '(1):[9.0]' // TODO: Allow for ints on the GPU
             //Tsr.ofInts().scalar(-1 )   | Device.find('first') | Float.class    | {it/2}  || '(1):[-0.5]'
             //Tsr.ofInts().scalar( 5 )   | Device.find('first') | Integer.class  | {it*10} || '(1):[50.0]'
             //Tsr.ofInts().scalar( 70)   | Device.find('first') | Long.class     | {it*5}  || '(1):[350.0]'
-            //Tsr.ofInts().scalar( 90)   | Device.find('first') | Byte.class     | {it*2}  || '(1):[45.0]'
+            //Tsr.ofInts().scalar( 90)   | Device.find('first') | Byte.class     | {it*2}  || '(1):[180.0]'
             //Tsr.ofInts().scalar( 37)   | Device.find('first') | Short.class    | {it/2}  || '(1):[18.0]'
             Tsr.ofInts().scalar( 3 )   | HostCPU.instance()   | Double.class   | {it*it} || '(1):[9.0]'
             Tsr.ofInts().scalar(-1 )   | HostCPU.instance()   | Float.class    | {it/2}  || '(1):[-0.5]'
             Tsr.ofInts().scalar( 5 )   | HostCPU.instance()   | Integer.class  | {it*10} || '(1):[50.0]'
             Tsr.ofInts().scalar( 70)   | HostCPU.instance()   | Long.class     | {it*5}  || '(1):[350.0]'
-            Tsr.ofInts().scalar( 90)   | HostCPU.instance()   | Short.class    | {it/2}  || '(1):[45.0]'
+            Tsr.ofInts().scalar( 90)   | HostCPU.instance()   | Byte.class     | {it*2}  || '(1):[-76.0]'
+            Tsr.ofInts().scalar( 37)   | HostCPU.instance()   | Short.class    | {it/2}  || '(1):[18.0]'
+
+            //Tsr.ofShorts().scalar( 3 ) | Device.find('first') | Double.class   | {it*it} || '(1):[9.0]' // TODO: Allow for shorts on the GPU
+            //Tsr.ofShorts().scalar(-1 ) | Device.find('first') | Float.class    | {it/2}  || '(1):[-0.5]'
+            //Tsr.ofShorts().scalar( 5 ) | Device.find('first') | Integer.class  | {it*10} || '(1):[50.0]'
+            //Tsr.ofShorts().scalar( 70) | Device.find('first') | Long.class     | {it*5}  || '(1):[350.0]'
+            //Tsr.ofShorts().scalar( 90) | Device.find('first') | Byte.class     | {it*2}  || '(1):[180.0]'
+            //Tsr.ofShorts().scalar( 37) | Device.find('first') | Short.class    | {it/2}  || '(1):[18.0]'
+            Tsr.ofShorts().scalar( 3 ) | HostCPU.instance()   | Double.class   | {it*it} || '(1):[9.0]'
+            Tsr.ofShorts().scalar(-1 ) | HostCPU.instance()   | Float.class    | {it/2}  || '(1):[-0.5]'
+            Tsr.ofShorts().scalar( 5 ) | HostCPU.instance()   | Integer.class  | {it*10} || '(1):[50.0]'
+            Tsr.ofShorts().scalar( 70) | HostCPU.instance()   | Long.class     | {it*5}  || '(1):[350.0]'
+            Tsr.ofShorts().scalar( 90) | HostCPU.instance()   | Byte.class     | {it*2}  || '(1):[-76.0]'
+            Tsr.ofShorts().scalar( 37) | HostCPU.instance()   | Short.class    | {it/2}  || '(1):[18.0]'
+
+            //Tsr.ofBytes().scalar( 3 )  | Device.find('first') | Double.class   | {it*it} || '(1):[9.0]' // TODO: Allow for bytes on the GPU
+            //Tsr.ofBytes().scalar(-1 )  | Device.find('first') | Float.class    | {it/2}  || '(1):[-0.5]'
+            //Tsr.ofBytes().scalar( 5 )  | Device.find('first') | Integer.class  | {it*10} || '(1):[50.0]'
+            //Tsr.ofBytes().scalar( 70)  | Device.find('first') | Long.class     | {it*5}  || '(1):[350.0]'
+            //Tsr.ofBytes().scalar( 90)  | Device.find('first') | Byte.class     | {it*2}  || '(1):[180.0]'
+            //Tsr.ofBytes().scalar( 37)  | Device.find('first') | Short.class    | {it/2}  || '(1):[18.0]'
+            Tsr.ofBytes().scalar( 3 )  | HostCPU.instance()   | Double.class   | {it*it} || '(1):[9.0]'
+            Tsr.ofBytes().scalar(-1 )  | HostCPU.instance()   | Float.class    | {it/2}  || '(1):[-0.5]'
+            Tsr.ofBytes().scalar( 5 )  | HostCPU.instance()   | Integer.class  | {it*10} || '(1):[50.0]'
+            Tsr.ofBytes().scalar( 70)  | HostCPU.instance()   | Long.class     | {it*5}  || '(1):[350.0]'
+            Tsr.ofBytes().scalar( 90)  | HostCPU.instance()   | Byte.class     | {it*2}  || '(1):[-76.0]'
+            Tsr.ofBytes().scalar( 37)  | HostCPU.instance()   | Short.class    | {it/2}  || '(1):[18.0]'
+
     }
 
 

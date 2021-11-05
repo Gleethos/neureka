@@ -51,12 +51,6 @@ public class NDAConstructor {
             throw new IllegalArgumentException( message );
         }
         if ( _API.getData() == null && autoAllocate ) _API.allocate( makeVirtual ? 1 : size );
-        //int length = _dataLength();
-        //if ( length >= 0 && size != length && ( !this.isVirtual() || !makeVirtual) ) {
-        //    String message = "Size of shape does not match stored data array size!";
-        //    _LOG.error( message );
-        //    throw new IllegalArgumentException( message );
-        //}
         if ( makeVirtual ) _API.setConf( VirtualNDConfiguration.construct( newShape ) );
         else {
             int[] newTranslation = NDConfiguration.Utility.newTlnOf( newShape );

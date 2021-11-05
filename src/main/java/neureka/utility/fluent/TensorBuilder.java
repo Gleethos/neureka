@@ -95,7 +95,25 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
     public Tsr<V> vector( Object[] values ) { return Tsr.of( _dataType, new int[]{ values.length }, values ); }
 
     @Override
-    public Tsr<V> scalar( V value ) { return Tsr.of( value.getClass(), new int[]{1}, value ); }
+    public Tsr<V> scalar( V value ) {
+        Object data = value;
+        Class<?> targetType = _dataType.getJVMTypeClass();
+        if ( value != null && value != targetType ) {
+            if (
+                    Number.class.isAssignableFrom( value.getClass() ) &&
+                    Number.class.isAssignableFrom( targetType )
+            ) {
+                // This branch will mostly be reached when using Groovy, which not necessarily enforces the type "V"!
+                if (      targetType == Double.class  ) data = Double.valueOf(((Number)value).doubleValue());
+                else if ( targetType == Float.class   ) data = Float.valueOf(((Number)value).floatValue());
+                else if ( targetType == Integer.class ) data = Integer.valueOf(((Number)value).intValue());
+                else if ( targetType == Short.class   ) data = Short.valueOf(((Number)value).shortValue());
+                else if ( targetType == Byte.class    ) data = Byte.valueOf(((Number)value).byteValue());
+            } else
+                throw new IllegalArgumentException("Provided value is of the wrong type!");
+        }
+        return Tsr.of( _dataType, new int[]{1}, data );
+    }
 
     @Override
     public Step<V> to( V index ) { _to = _checked(index); return this; }

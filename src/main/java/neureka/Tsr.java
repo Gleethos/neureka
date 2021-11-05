@@ -462,6 +462,28 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public static WithShapeOrScalarOrVector<Integer> ofInts() { return of(Integer.class); }
 
     /**
+     *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
+     *  method like so: {@code Tsr.of(Short.class)}.
+     *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
+     *  fluent {@link Tsr} builder API which in this case will lead to the creation
+     *  of a tensor storing shorts.
+     *
+     * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
+     */
+    public static WithShapeOrScalarOrVector<Short> ofShorts() { return of(Short.class); }
+
+    /**
+     *  This is a simple convenience method which is simply calling the {@link Tsr#of(Class)}
+     *  method like so: {@code Tsr.of(Byte.class)}.
+     *  The returned {@link WithShapeOrScalarOrVector} is the next step in the
+     *  fluent {@link Tsr} builder API which in this case will lead to the creation
+     *  of a tensor storing bytes.
+     *
+     * @return The next step of the {@link Tsr} builder API which exposes methods for defining shapes.
+     */
+    public static WithShapeOrScalarOrVector<Byte> ofBytes() { return of(Byte.class); }
+
+    /**
      * @param value The scalar value which ought to be represented as tensor.
      * @return A scalar double tensor.
      */
@@ -2626,7 +2648,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         /*
            The provided lambda cannot be executed anywhere but the CPU (Note: Maybe we should consider Aparapi here)
            This is a problem if this tensor here lives somewhere other than the JVM.
-           So therefore, we invite it back home for dinner!
+           So, therefore, we invite it back home for dinner!
          */
         return HostCPU.instance() // This little API will temporarily migrate this to the JVM.
                 .use( (Tsr<Number>) this )
@@ -2652,6 +2674,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                         } else if (this.getValueClass() == Float.class) {
                             float[] sourceData = (float[]) this.getData();
                             access = (i -> (Number) mapper.apply((V) Float.valueOf(sourceData[i])));
+                        } else if (this.getValueClass() == Short.class) {
+                            short[] sourceData = (short[]) this.getData();
+                            access = (i -> (Number) mapper.apply((V) Short.valueOf(sourceData[i])));
+                        } else if (this.getValueClass() == Byte.class) {
+                            byte[] sourceData = (byte[]) this.getData();
+                            access = (i -> (Number) mapper.apply((V) Byte.valueOf(sourceData[i])));
                         } else
                             throw new IllegalArgumentException(failMessage);
 
@@ -2674,6 +2702,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                         } else if (this.getValueClass() == Float.class) {
                             float[] sourceData = (float[]) this.getData();
                             access = (i -> mapper.apply((V) Float.valueOf(sourceData[i])));
+                        } else if (this.getValueClass() == Short.class) {
+                            short[] sourceData = (short[]) this.getData();
+                            access = (i -> mapper.apply((V) Short.valueOf(sourceData[i])));
+                        } else if (this.getValueClass() == Byte.class) {
+                            byte[] sourceData = (byte[]) this.getData();
+                            access = (i -> mapper.apply((V) Byte.valueOf(sourceData[i])));
                         } else
                             throw new IllegalArgumentException(failMessage);
 
@@ -2685,7 +2719,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
 
     /**
-     *  This method takes the provided {@link Tsr} instance and adds it's
+     *  This method takes the provided {@link Tsr} instance and adds its
      *  contents to the contents of the {@link Tsr} which is set as gradient of this very {@link Tsr}.
      *
      * @param error The error gradient which ought to be added to the gradient of this tensor.
