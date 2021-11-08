@@ -98,21 +98,28 @@ class Cross_Device_Spec extends Specification
     }
 
     @IgnoreIf({!Neureka.get().canAccessOpenCL() && (device instanceof OpenCLDevice)})
-    def 'Test back-prop'(Device device)
-    {
+    def 'A gradient of ones can be set by calling the backward method on a tensor sitting on any device.'(
+            Device device
+    ) {
         // Some more asserts:
-        given :
+        given : 'We use the legacy representation of tensors for this little test!'
             Neureka.get().settings().view().setIsUsingLegacyView(true)
+        and : 'We create a small matrix of 4 fours which requires a gradient and is stored on the provided device!'
             Tsr t = Tsr.of([2, 2], 4).setRqsGradient(true).to(device)
-        when :
+        when : 'We now call the backward method on the tensor directly without having done any operations...'
             t.backward(1)
+        and : 'Then we take the gradient to see what happened.'
             Tsr g = t.getGradient()
 
-        then :
+        then : 'We expect this gradient to be all ones with the shape of our matrix!'
             g.toString().contains("[2x2]:(1.0, 1.0, 1.0, 1.0)")
             t.toString().contains("[2x2]:(4.0, 4.0, 4.0, 4.0):g:(1.0, 1.0, 1.0, 1.0)")
-            //t.isOutsourced()
-            //g.isOutsourced()
+        and :
+            t.isOutsourced() == !(device instanceof DummyDevice)
+            g.isOutsourced() == !(device instanceof DummyDevice)
+        and :
+            t.device == device || (device instanceof DummyDevice && !t.isOutsourced())
+            g.device == device || (device instanceof DummyDevice && !t.isOutsourced())
             //t.setIsOutsourced(false)
             //!g.isOutsourced()
 
@@ -122,25 +129,34 @@ class Cross_Device_Spec extends Specification
     }
 
 
-
     @IgnoreIf({!Neureka.get().canAccessOpenCL() && (device instanceof OpenCLDevice)}) // We need to assure that this system supports OpenCL!
     def 'Mapping tensors works for every device (even if they are not used).'(
               def tensor, Device device, Class<?> target, Function<?,?> lambda, String expected
     ) {
-        given :
+        given : """
+                    We start off by storing the provided tensor on the provided device.
+                    This might be any kind of device like for example an $OpenCLDevice.
+                    Which means the tensor might not be sitting in RAM!
+                """
             tensor.to(device)
 
-        when :
-            def result = tensor.mapTo(target, lambda)
+        when : """
+                    We call the mapping method which is supposed to create a new tensor of the provided type.
+                    This procedure is only supported when the tensor is stored in RAM, so when
+                    the tensor is outsourced (stored on a device), then we expect that the mapping method
+                    temporarily migrates the tensor back and forth internally...
+               """
+            Tsr<?> result = tensor.mapTo(target, lambda)
 
-        then :
+        then : 'We expect the String representation of the tensor to be as expected!'
             result.toString() == expected
-        and :
+        and : 'We expect the result to have the expected target class!'
             result.valueClass == target
+        and : 'Lastly, the original tensor used as mapping source should be stored on the original device!'
             tensor.isOutsourced() == !(device instanceof HostCPU)
             tensor.device == device
 
-        where :
+        where : 'We use the following data to test this mapping for a wide range of types and values!'
             tensor                     | device               | target         | lambda  || expected
             Tsr.of(3.5)                | HostCPU.instance()   | String.class   | {"~$it"}|| '(1):[~3.5]'
             Tsr.of(3.5)                | Device.find('first') | String.class   | {"~$it"}|| '(1):[~3.5]'
