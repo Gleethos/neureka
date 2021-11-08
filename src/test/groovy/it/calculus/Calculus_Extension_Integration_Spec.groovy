@@ -186,7 +186,7 @@ class Calculus_Extension_Integration_Spec extends Specification
 
         then :
             result == expected as int[]
-            println( size - expected.inject(1, {a,b -> a*b}) )
+            //println( size - expected.inject(1, {a,b -> a*b}) )
 
         where :
             size  | shape                 || expected
