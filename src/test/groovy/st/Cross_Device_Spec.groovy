@@ -7,13 +7,23 @@ import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.devices.opencl.OpenCLDevice
 import spock.lang.IgnoreIf
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 import st.tests.CrossDeviceSystemTest
 import st.tests.SimpleNNSystemTest
 import testutility.mock.DummyDevice
 
 import java.util.function.Function
 
+@Title("Cross Device Stress Test Specification")
+@Narrative('''
+
+    This specification is pretty much a system test which covers
+    the behavior of the library as a whole across multiple devices!
+    No matter which device is being used for a given stress test, the result should be the same...
+                    
+''')
 @CompileDynamic
 class Cross_Device_Spec extends Specification
 {

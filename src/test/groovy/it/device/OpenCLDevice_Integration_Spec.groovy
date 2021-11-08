@@ -8,8 +8,23 @@ import neureka.devices.opencl.CLContext
 import neureka.devices.opencl.utility.DispatchUtility
 import neureka.dtype.DataType
 import spock.lang.IgnoreIf
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("The OpenCLDevice Specification")
+@Narrative('''
+
+    Tensors need devices for execution!
+    By default we use the CPU as a default device, but sometimes we want to
+    use something more suitable for large amounts of data an a high degree of parallelization.
+    This is were the OpenCLDevice comes into play!
+    It is a Device implementation built on top of the JOCL library, a thin OpenCL API!
+    We expect the OpenCLDevice to stored tensors while still being able to read and write
+    data from and to stored tensors.
+    Also, an OpenCLDevice should allows us to compile OpenCL kernel code on the fly...
+                    
+''')
 class OpenCLDevice_Integration_Spec extends Specification
 {
     def setupSpec()

@@ -7,8 +7,20 @@ import neureka.devices.Device
 import neureka.devices.host.HostCPU
 import neureka.dtype.DataType
 import spock.lang.IgnoreIf
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("The Tensor state Input and Output Specification")
+@Narrative('''
+
+    Tensors are complicated data structures with a wide range of different possible states.
+    They can host elements of different types residing on many kinds of different devices.
+    Here we want to define some basic stuff about how a tensor can be instantiated
+    and how we can read from and write to the state of a tensor.
+    Here we also specify how a tensor can be converted to another tensor of a different data type!
+                    
+''')
 class Tensor_IO_Spec extends Specification
 {
     def setupSpec()
