@@ -18,6 +18,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
+/**
+ *  This is a singleton class which simply represents the CPU as a {@link Device}.
+ *  Tensors stored on the {@link CPU} simply reside in the JVM heap.
+ */
 public class CPU extends AbstractDevice<Number>
 {
     private static final Logger _LOG = LoggerFactory.getLogger( CPU.class );
@@ -25,19 +29,17 @@ public class CPU extends AbstractDevice<Number>
 
     static {  _INSTANCE = new CPU();  }
 
-    private final NativeExecutor _executor;
-    private Set<Tsr<Number>> _tensors = Collections.newSetFromMap(new WeakHashMap<Tsr<Number>, Boolean>());
+    private final JVMExecutor _executor;
+    private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap(new WeakHashMap<Tsr<Number>, Boolean>());
 
     private CPU() {
         super();
-        _executor = new NativeExecutor();
+        _executor = new JVMExecutor();
     }
 
-    public static CPU get() {
-        return _INSTANCE;
-    }
+    public static CPU get() { return _INSTANCE; }
 
-    public NativeExecutor getExecutor() {
+    public JVMExecutor getExecutor() {
         return _executor;
     }
 
@@ -63,23 +65,19 @@ public class CPU extends AbstractDevice<Number>
     }
 
     @Override
-    public Number valueFor( Tsr<Number> tensor, int index ) {
-        return tensor.getValueAt( index );
-    }
+    public Number valueFor( Tsr<Number> tensor, int index ) { return tensor.getValueAt( index ); }
 
     @Override
-    public Device restore( Tsr tensor ) {
-        return this;
-    }
+    public CPU restore( Tsr<Number> tensor ) { return this; }
 
     @Override
-    public Device store( Tsr tensor ) {
+    public CPU store( Tsr tensor ) {
         _tensors.add( tensor );
         return this;
     }
 
     @Override
-    public Device store( Tsr tensor, Tsr parent ) {
+    public CPU store( Tsr tensor, Tsr parent ) {
         _tensors.add( tensor );
         _tensors.add( parent );
         return this;
@@ -91,15 +89,13 @@ public class CPU extends AbstractDevice<Number>
     }
 
     @Override
-    public Device free( Tsr tensor ) {
+    public CPU free( Tsr tensor ) {
         _tensors.remove( tensor );
         return this;
     }
 
     @Override
-    public Device swap( Tsr former, Tsr replacement ) {
-        return this;
-    }
+    public CPU swap( Tsr former, Tsr replacement ) { return this; }
 
     @Override
     public Collection<Tsr<Number>> getTensors() {
@@ -127,29 +123,27 @@ public class CPU extends AbstractDevice<Number>
         void execute(int start, int end);
     }
 
-    public class NativeExecutor
+    public static class JVMExecutor
     {
         private final ThreadPoolExecutor _pool =
                 (ThreadPoolExecutor) Executors.newFixedThreadPool(
                         Runtime.getRuntime().availableProcessors()
                 );
 
-        public ThreadPoolExecutor getPool() {
-            return _pool;
-        }
+        public ThreadPoolExecutor getPool() { return _pool; }
 
         //==============================================================================================================
 
-        public void threaded( int sze, Range range )
+        public void threaded( int size, Range range )
         {
             int cores = _pool.getCorePoolSize() - _pool.getActiveCount();
             cores = ( cores == 0 ) ? 1 : cores;
-            if ( sze >= 32 && ( ( sze / cores ) >= 8 ) ) {
-                final int chunk = sze / cores;
+            if ( size >= 32 && ( ( size / cores ) >= 8 ) ) {
+                final int chunk = size / cores;
                 Future<?>[] futures = new Future[ cores ];
                 for ( int i = 0; i < cores; i++ ) {
                     final int start = i * chunk;
-                    final int end = ( i == cores - 1 ) ? sze : ( (i + 1) * chunk );
+                    final int end = ( i == cores - 1 ) ? size : ( (i + 1) * chunk );
                     Neureka neureka = Neureka.get();
                     futures[ i ] = _pool.submit(() -> {
                         Neureka.set( neureka ); // This ensures that the threads in the pool have the same settings!
@@ -165,7 +159,8 @@ public class CPU extends AbstractDevice<Number>
                         e.printStackTrace();
                     }
                 }
-            } else range.execute(0, sze);
+            }
+            else range.execute(0, size);
         }
 
     }

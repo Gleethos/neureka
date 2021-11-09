@@ -83,7 +83,7 @@ class Backend_Algorithm_Implementation_Tests extends Specification
             def device = Mock( CPU )
             def tensor = Mock( Tsr )
             def hostExecutor = imp.getImplementationFor( CPU.class )
-            def nativeExecutor = Mock( CPU.NativeExecutor )
+            def nativeExecutor = Mock( CPU.JVMExecutor )
 
         when : 'Host-executor instance is being called...'
             hostExecutor.run( call )

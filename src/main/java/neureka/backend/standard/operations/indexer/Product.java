@@ -248,8 +248,9 @@ public final class Product extends AbstractOperation {
                             .withArity(3)
                             .andImplementation(
                                 call  ->
-                                        call.getDevice().getExecutor()
-                                                .threaded (
+                                        call.getDevice()
+                                                .getExecutor()
+                                                .threaded(
                                                         call.getTsrOfType( Number.class, 0 ).size(),
                                                         (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())
                                                         ? ( start, end ) ->

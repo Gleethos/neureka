@@ -45,7 +45,7 @@ class CPU_Spec extends Specification
             cpu != null
             cpu instanceof CPU
         when : 'Accessing the executor of the cpu device...'
-            CPU.NativeExecutor exec = ( (CPU) cpu ).getExecutor()
+        CPU.JVMExecutor exec = ( (CPU) cpu ).getExecutor()
         then : 'The executor is not null as well as its internal thread pool!'
             exec != null
             exec.getPool() != null
