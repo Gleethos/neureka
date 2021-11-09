@@ -3,7 +3,7 @@ package st
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
-import neureka.devices.host.HostCPU
+import neureka.devices.host.CPU
 import neureka.utility.SettingsLoader
 import org.slf4j.Logger
 import spock.lang.Specification
@@ -55,7 +55,7 @@ class Benchmark_System_Test extends Specification
         when : 'The benchmark script is being called...'
             session(
                     configuration, null,
-                    HostCPU.instance(),
+                    CPU.get(),
                     tsr -> {
                         hash = (hash+tsr.toString()).md5()
                     }
@@ -106,7 +106,7 @@ class Benchmark_System_Test extends Specification
                         "intensifier":50
                     ],
                     "neureka_bench_CPU_"+currentDate+".csv",
-                    HostCPU.instance(),
+                    CPU.get(),
                     tsr->{}
             )
     */
@@ -120,7 +120,7 @@ class Benchmark_System_Test extends Specification
                         "intensifier":5
                     ],
                     null,//"neureka_bench_CPU_"+currentDate+".csv",
-                    HostCPU.instance(),
+                    CPU.get(),
                     tsr->{}
             )
             session([
@@ -130,7 +130,7 @@ class Benchmark_System_Test extends Specification
                         "intensifier":50
                     ],
                     "neureka0.4.1_CPU_it1_ss20_dif_15_int50_"+currentDate+".csv",
-                    HostCPU.instance(),
+                    CPU.get(),
                     tsr->{}
             )
             then : true
@@ -154,7 +154,7 @@ class Benchmark_System_Test extends Specification
                     }]
                 ],
                 "neureka_1_CPU_it1_ss20_dif_15_int50_"+currentDate+".csv",
-                HostCPU.instance(),
+                CPU.get(),
                 tsr->{}
         ) == null
         */
@@ -177,7 +177,7 @@ class Benchmark_System_Test extends Specification
                         "intensifier":0
                     ],
                     "neureka_bench_CPU_500x_cd5_"+currentDate+".csv",
-                    HostCPU.instance(),
+                    CPU.get(),
                     tsr->{}
             )
         */
@@ -192,7 +192,7 @@ class Benchmark_System_Test extends Specification
                         "intensifier":0
                     ],
                     "ndim_default_bench_CPU_250x_cd10_"+currentDate+".csv",
-                    HostCPU.instance(),
+                    CPU.get(),
                     tsr->{}
             )
             Neureka.instance().settings().ndim().setIsOnlyUsingDefaultNDConfiguration(false)
@@ -203,7 +203,7 @@ class Benchmark_System_Test extends Specification
                     "intensifier":0
             ],
                     "ndim_optimized_bench_CPU_250x_cd10_"+currentDate+".csv",
-                    HostCPU.instance(),
+                    CPU.get(),
                     tsr->{}
             )
          */

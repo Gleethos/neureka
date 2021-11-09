@@ -7,7 +7,7 @@ import neureka.backend.api.ExecutionCall
 import neureka.calculus.CalcUtil
 import neureka.devices.Device
 import neureka.devices.file.FileDevice
-import neureka.devices.host.HostCPU
+import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice
 import spock.lang.Ignore
 import spock.lang.IgnoreIf
@@ -47,10 +47,10 @@ class Cross_Device_Type_Unit_Tests extends Specification
 
         where :
             query                       || type
-            "cPu"                       || HostCPU.class
-            "jVm"                       || HostCPU.class
-            "natiVe"                    || HostCPU.class
-            "Threaded"                  || HostCPU.class
+            "cPu"                       || CPU.class
+            "jVm"                       || CPU.class
+            "natiVe"                    || CPU.class
+            "Threaded"                  || CPU.class
             "openCl"                    || OpenCLDevice.class
             "nvidia or amd or intel"    || OpenCLDevice.class // This assumes that there is an amd/intel/nvidia gpu!
             "first"                     || OpenCLDevice.class
@@ -146,7 +146,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
 
         where : 'The following Device instances are being tested :'
             device << [
-                    HostCPU.instance(),
+                    CPU.get(),
                     Device.find("openCL")
             ]
 
@@ -202,7 +202,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
 
         where : 'The following Device instances are being tested :'
             device << [
-                    HostCPU.instance(),
+                    CPU.get(),
                     Device.find( "openCL" ),
                     FileDevice.at( "build/test-can" )
             ]
@@ -247,7 +247,7 @@ class Cross_Device_Type_Unit_Tests extends Specification
 
         where : 'The following Device instances are being tested :'
         device << [
-                //HostCPU.instance(),
+                //CPU.get(),
                 Device.find( "openCL" ),
                 //FileDevice.at( "build/test-can" )
         ]
@@ -301,9 +301,9 @@ class Cross_Device_Type_Unit_Tests extends Specification
             Device.find( "openCL" )                 | { d, t -> d.store(t) }
             Device.find( "openCL" )                 | { d, t -> t.to(d)   }
             //FileDevice.at( "build/test-can" )     | { d, t -> d.store(t) }
-            //HostCPU.instance()                    | { d, t -> t.set(d)   }
+            //CPU.get()                    | { d, t -> t.set(d)   }
             //FileDevice.at( "build/test-can" )     | { d, t -> t.set(d)   }
-            //HostCPU.instance()                    | { d, t -> d.store(t) }
+            //CPU.get()                    | { d, t -> d.store(t) }
     }
 
 }

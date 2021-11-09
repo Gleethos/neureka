@@ -8,12 +8,12 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 
 public class MultiplicationLeftConv extends AbstractOperation {
@@ -78,8 +78,8 @@ public class MultiplicationLeftConv extends AbstractOperation {
         setAlgorithm(
                 Broadcast.class,
                 xBroadcast.setImplementationFor(
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
                             .withArity(3)
                             .andImplementation(
                                 call ->

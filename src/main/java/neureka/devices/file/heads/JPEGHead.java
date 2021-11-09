@@ -2,7 +2,7 @@ package neureka.devices.file.heads;
 
 import neureka.Tsr;
 import neureka.devices.Storage;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.I16;
 import neureka.dtype.custom.UI8;
@@ -107,7 +107,7 @@ public class JPEGHead extends AbstractFileHead<JPEGHead, Number>
             short[] newData = new short[ data.length ];
 
             UI8 ui8 = new UI8();
-            HostCPU.instance().getExecutor().threaded(
+            CPU.get().getExecutor().threaded(
                     data.length,
                     ( start, end ) -> {
                         for ( int i=start; i<end; i++ ) newData[i] = ui8.toTarget( data[i] );

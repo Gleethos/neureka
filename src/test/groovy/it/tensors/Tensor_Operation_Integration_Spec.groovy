@@ -4,7 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.assembly.FunctionBuilder
 import neureka.devices.Device
-import neureka.devices.host.HostCPU
+import neureka.devices.host.CPU
 import neureka.utility.SettingsLoader
 import spock.lang.Specification
 
@@ -279,7 +279,7 @@ class Tensor_Operation_Integration_Spec extends Specification
             assert ccAsStr.contains("(2x2):[0.0, 0.0, 0.0, 0.0]")
 
         where : 'The following data is being used for tensor instantiation :'
-            device  << [ HostCPU.instance(), Device.find("openCL") ]
+            device  << [CPU.get(), Device.find("openCL") ]
     }
 
     //This needs verification!
@@ -331,7 +331,7 @@ class Tensor_Operation_Integration_Spec extends Specification
 
         where : 'The following data is being used for tensor instantiation :'
             device  << [
-                    HostCPU.instance(),
+                    CPU.get(),
                     Device.find("openCL")
             ]
     }

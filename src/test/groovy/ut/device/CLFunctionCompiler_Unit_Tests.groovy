@@ -74,7 +74,7 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
                 Therefore in order for this to work we need to fake the membership of these tensors!
         """
             def exception = thrown(IllegalStateException)
-            exception.message == "No suitable implementation found for algorithm 'generic_algorithm_for_test_fun' and device type 'HostCPU'."
+            exception.message == "No suitable implementation found for algorithm 'generic_algorithm_for_test_fun' and device type 'CPU'."
 
         when : 'We set the mocked device as components of our three scalar tensors...'
             t1.to(mockDevice)

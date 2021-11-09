@@ -12,7 +12,7 @@ import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,7 +144,7 @@ public class FunctionNode implements Function
      */
     private Device<?> _deviceFor( Tsr<?>[] inputs )
     {
-        if ( inputs.length == 0 ) return HostCPU.instance();
+        if ( inputs.length == 0 ) return CPU.get();
         Device<?> device = inputs[ 0 ].get( Device.class );
         boolean onSameDevice = _shareGuestDevice( inputs );
         boolean doAccel = !_operation.getOperator().equals(",") && onSameDevice;

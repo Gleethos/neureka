@@ -4,7 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
 import neureka.devices.Device
-import neureka.devices.host.HostCPU
+import neureka.devices.host.CPU
 import neureka.dtype.DataType
 import spock.lang.IgnoreIf
 import spock.lang.Narrative
@@ -223,7 +223,7 @@ class Tensor_IO_Spec extends Specification
             !x.isSliceParent()
             !x.belongsToGraph()
             x.getDevice() !=null
-            x.getDevice() instanceof HostCPU
+            x.getDevice() instanceof CPU
             x.rank()==1
             !x.rqsGradient()
             x.size()==1

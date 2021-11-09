@@ -3,6 +3,7 @@ package neureka.backend.standard.operations.operator;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.autograd.ADAgent;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.args.Arg;
 import neureka.backend.api.ExecutionCall;
@@ -10,10 +11,9 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
 import neureka.calculus.Function;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 
 public class MultiplicationRightConv extends AbstractOperation {
@@ -79,8 +79,8 @@ public class MultiplicationRightConv extends AbstractOperation {
         setAlgorithm(
                 Broadcast.class,
                 xBroadcast.setImplementationFor(
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
                             .withArity(3)
                             .andImplementation(
                                 call ->

@@ -8,12 +8,12 @@ import neureka.backend.api.Algorithm
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
 import neureka.backend.api.OperationContext
-import neureka.backend.standard.implementations.HostImplementation
+import neureka.backend.standard.implementations.CPUImplementation
 import neureka.calculus.CalcUtil
 import neureka.calculus.Function
 import neureka.calculus.assembly.FunctionBuilder
 import neureka.devices.Device
-import neureka.devices.host.HostCPU
+import neureka.devices.host.CPU
 import neureka.devices.opencl.utility.DispatchUtility
 import spock.lang.Specification
 
@@ -95,8 +95,8 @@ class Calculus_Extension_Integration_Spec extends Specification
                                                         }
                                                 )
                                                 .setImplementationFor(
-                                                        HostCPU.class,
-                                                        HostImplementation
+                                                        CPU.class,
+                                                        CPUImplementation
                                                             .withArity(3)
                                                             .andImplementation(
                                                                 (call) -> {

@@ -10,13 +10,13 @@ import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.backend.standard.operations.JunctionUtil;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
@@ -106,8 +106,8 @@ public class Subtraction extends AbstractOperation
 
         setAlgorithm(
                 operator.setImplementationFor(
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
                             .withArity(3)
                             .andImplementation(
                                 call ->
@@ -196,8 +196,8 @@ public class Subtraction extends AbstractOperation
         setAlgorithm(
                 Scalarization.class,
                 scalarization.setImplementationFor(
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
                             .withArity(3)
                             .andImplementation(
                                 call -> {
@@ -297,8 +297,8 @@ public class Subtraction extends AbstractOperation
                 Broadcast.class,
                 broadcast
                     .setImplementationFor(
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
                             .withArity(3)
                             .andImplementation(
                                     call ->

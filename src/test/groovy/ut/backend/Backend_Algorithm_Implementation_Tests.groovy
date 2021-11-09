@@ -2,7 +2,7 @@ package ut.backend
 
 import neureka.Neureka
 import neureka.Tsr
-import neureka.devices.host.HostCPU
+import neureka.devices.host.CPU
 import neureka.devices.opencl.KernelCaller
 import neureka.devices.opencl.OpenCLDevice
 import neureka.backend.api.ExecutionCall
@@ -28,7 +28,7 @@ class Backend_Algorithm_Implementation_Tests extends Specification
     ){
 
         when : 'Host- and CL- executor instance are being fetched...'
-            def hostExecutor = imp.getImplementationFor( HostCPU.class )
+            def hostExecutor = imp.getImplementationFor( CPU.class )
             def clExecutor = imp.getImplementationFor( OpenCLDevice.class )
 
         then : 'The variables containing the executor instances are not null.'
@@ -55,7 +55,7 @@ class Backend_Algorithm_Implementation_Tests extends Specification
     ){
 
         when : 'Host- and CL- executor instance are being fetched...'
-            def hostExecutor = imp.getImplementationFor( HostCPU.class )
+            def hostExecutor = imp.getImplementationFor( CPU.class )
             def clExecutor = imp.getImplementationFor( OpenCLDevice.class )
 
         then : 'The variables containing the executor instances are not null.'
@@ -80,10 +80,10 @@ class Backend_Algorithm_Implementation_Tests extends Specification
 
         given : 'Mock instances to simulate an ExecutionCall instance.'
             def call = Mock( ExecutionCall )
-            def device = Mock( HostCPU )
+            def device = Mock( CPU )
             def tensor = Mock( Tsr )
-            def hostExecutor = imp.getImplementationFor( HostCPU.class )
-            def nativeExecutor = Mock( HostCPU.NativeExecutor )
+            def hostExecutor = imp.getImplementationFor( CPU.class )
+            def nativeExecutor = Mock( CPU.NativeExecutor )
 
         when : 'Host-executor instance is being called...'
             hostExecutor.run( call )

@@ -4,7 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
 import neureka.devices.Device
-import neureka.devices.host.HostCPU
+import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice
 import spock.lang.IgnoreIf
 import spock.lang.Specification
@@ -329,7 +329,7 @@ class Autograd_NN_Spec extends Specification
             b.toString() == "(3x1):[-4.0, -2.0, 0.0]:g:[0.5, 1.5, 2.5]"
 
         where :
-            device << [HostCPU.instance(), Device.find('first gpu')]
+            device << [CPU.get(), Device.find('first gpu')]
 
     }
 

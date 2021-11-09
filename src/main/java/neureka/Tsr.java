@@ -93,7 +93,7 @@ import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.common.composition.Component;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.*;
@@ -120,8 +120,6 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
 
 
 /**
@@ -142,12 +140,12 @@ import java.util.stream.IntStream;
 public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<V>>, Cloneable
 {
     static {
-        _CPU = HostCPU.instance();
+        _CPU = CPU.get();
         _LOG = LoggerFactory.getLogger( Tsr.class );
     }
 
     /**
-     *  The default device is an instance of the {@link HostCPU} class. <br>
+     *  The default device is an instance of the {@link CPU} class. <br>
      *  This field is a reference to this default device implementation.
      */
     private static final Device<Number> _CPU;
@@ -1368,7 +1366,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     public Tsr<V> getGradient() { return this.get( Tsr.class ); }
 
     /**
-     * @return The device on which this tensor is stored or {@link HostCPU} if it is not outsourced.
+     * @return The device on which this tensor is stored or {@link CPU} if it is not outsourced.
      */
     public Device<V> getDevice() {
         if ( this.isOutsourced() ) return this.get( Device.class );
@@ -2650,7 +2648,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
            This is a problem if this tensor here lives somewhere other than the JVM.
            So, therefore, we invite it back home for dinner!
          */
-        return HostCPU.instance() // This little API will temporarily migrate this to the JVM.
+        return CPU.get() // This little API will temporarily migrate this to the JVM.
                 .use( (Tsr<Number>) this )
                 .in( () -> {
                     Object data = getData();

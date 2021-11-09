@@ -281,9 +281,7 @@ public abstract class AbstractComponentOwner<C>
      * @param componentClass The class/type of a component that might exist in components.
      * @return True if the component of the given type/class has been found.
      */
-    public <T extends Component<C>> boolean has( Class<T> componentClass ) {
-        return get( componentClass ) != null;
-    }
+    public <T extends Component<C>> boolean has( Class<T> componentClass ) { return get( componentClass ) != null; }
 
     /**
      * This methods stores the passed component inside the component

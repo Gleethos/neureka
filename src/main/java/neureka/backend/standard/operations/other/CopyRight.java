@@ -6,12 +6,12 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 
 public class CopyRight extends AbstractOperation {
@@ -53,22 +53,22 @@ public class CopyRight extends AbstractOperation {
         setAlgorithm(
                 activation
                     .setImplementationFor(
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
                             .withArity(2)
                             .andImplementation(
                                 call -> {
                                     int offset = 1;
                                     Tsr<?>[] args = { call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)};
-                                    ExecutionCall<HostCPU> newCall =
+                                    ExecutionCall<CPU> newCall =
                                             ExecutionCall.of(args)
                                                             .andArgs(Arg.DerivIdx.of(-1))
                                                             .running(call.getOperation())
                                                             .on( call.getDevice() )
-                                                            .forDeviceType(HostCPU.class);
+                                                            .forDeviceType(CPU.class);
                                     Neureka.get().context().getOperation("idy")
                                             .getAlgorithm(Activation.class)
-                                            .getImplementationFor( HostCPU.class )
+                                            .getImplementationFor( CPU.class )
                                             .run(newCall);
                                     call.getTensors()[0] = args[1];
                                 }

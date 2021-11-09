@@ -3,7 +3,7 @@ package it.tensors
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
-import neureka.devices.host.HostCPU
+import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice
 import spock.lang.Narrative
 import spock.lang.Specification
@@ -77,7 +77,7 @@ class Tensor_Slicing_Integration_Spec extends Specification
             s.shape() == [2, 2, 3]
 
         where: 'This works both on the GPU as well as CPU of course.'
-            device << [Device.find('gpu'), HostCPU.instance() ]
+            device << [Device.find('gpu'), CPU.get() ]
 
     }
 
@@ -121,7 +121,7 @@ class Tensor_Slicing_Integration_Spec extends Specification
             s.shape() == [1, 3, 2]
 
         where: 'This works both on the GPU as well as CPU of course.'
-            device << [Device.find('gpu'), HostCPU.instance() ]
+            device << [Device.find('gpu'), CPU.get() ]
 
     }
 
@@ -167,7 +167,7 @@ class Tensor_Slicing_Integration_Spec extends Specification
             s.shape() == [1, 3, 2]
 
         where: 'This works both on the GPU as well as CPU of course.'
-            device << [Device.find('gpu'), HostCPU.instance() ]
+            device << [Device.find('gpu'), CPU.get() ]
 
     }
 
@@ -209,7 +209,7 @@ class Tensor_Slicing_Integration_Spec extends Specification
             s.shape() == [1, 3, 2]
 
         where: 'This works both on the GPU as well as CPU of course.'
-            device << [Device.find('gpu'), HostCPU.instance() ]
+            device << [Device.find('gpu'), CPU.get() ]
 
     }
 
@@ -252,7 +252,7 @@ class Tensor_Slicing_Integration_Spec extends Specification
             s.shape() == [1, 1, 2]
 
         where: 'This works both on the GPU as well as CPU of course.'
-            device << [Device.find('gpu'), HostCPU.instance() ]
+            device << [Device.find('gpu'), CPU.get() ]
 
     }
 

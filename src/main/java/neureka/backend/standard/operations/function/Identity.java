@@ -8,12 +8,12 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
@@ -79,8 +79,8 @@ public final class Identity extends AbstractOperation
         setAlgorithm(
                 Activation.class,
                 operationAlgorithm.setImplementationFor(
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
                             .withArity(2)
                             .andImplementation(
                                 call  ->
@@ -175,8 +175,8 @@ public final class Identity extends AbstractOperation
         setAlgorithm(
                 Scalarization.class,
                 scalarization.setImplementationFor(
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
                             .withArity(2)
                             .andImplementation(
                                 call  -> {

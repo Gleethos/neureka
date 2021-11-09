@@ -45,7 +45,7 @@ import neureka.backend.api.OperationContext;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.assembly.ParseUtil;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.CLContext;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.devices.opencl.OpenCLPlatform;
@@ -77,7 +77,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
      * This method returns {@link Device} instances matching
      * the given search parameter.
      * @param name The search parameter and name of the requested {@link Device} instance.
-     * @return The found {@link Device} instance or simply the HostCPU instance by default.
+     * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
     static Device<?> find( String name )
     {
@@ -88,12 +88,12 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         if ( !Neureka.get().canAccessOpenCL() ) {
             if ( probablyWantsGPU ) {
                 return null; // User wants OpenCL but cannot have it :/
-            } else return HostCPU.instance();
+            } else return CPU.get();
         }
 
-        Device<Number> result = HostCPU.instance();
+        Device<Number> result = CPU.get();
         double score = ParseUtil.similarity( "jvm native host cpu threaded", search );
-        if ( probablyWantsGPU ) score /= 10; // HostCPU instance is most likely not meant!
+        if ( probablyWantsGPU ) score /= 10; // CPU instance is most likely not meant!
 
         for ( OpenCLPlatform p : Neureka.get().context().get(CLContext.class).getPlatforms() ) {
             for ( OpenCLDevice d : p.getDevices() ) {
@@ -105,7 +105,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
                 }
             }
         }
-        if ( result == HostCPU.instance() && name.equals("first") ) {
+        if ( result == CPU.get() && name.equals("first") ) {
             Device<Number> first = Neureka.get()
                                             .context()
                                             .get(CLContext.class)

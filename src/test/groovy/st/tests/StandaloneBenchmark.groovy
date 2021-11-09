@@ -1,8 +1,7 @@
 package st.tests
 
 import neureka.Neureka
-import neureka.devices.host.HostCPU
-import testutility.Utility
+import neureka.devices.host.CPU
 
 class StandaloneBenchmark {
 
@@ -24,7 +23,7 @@ class StandaloneBenchmark {
 		String expected = "56b2eb74955e49cd777469c7dad0536e"
 
 		session(
-				configuration, null, HostCPU.instance(),
+				configuration, null, CPU.get(),
 				tsr -> {
 					hash = (hash+tsr.toString()).md5()
 				}

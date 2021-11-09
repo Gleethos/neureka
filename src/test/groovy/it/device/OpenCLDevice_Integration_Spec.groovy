@@ -3,7 +3,7 @@ package it.device
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
-import neureka.devices.host.HostCPU
+import neureka.devices.host.CPU
 import neureka.devices.opencl.CLContext
 import neureka.devices.opencl.utility.DispatchUtility
 import neureka.dtype.DataType
@@ -55,7 +55,7 @@ class OpenCLDevice_Integration_Spec extends Specification
             !device.has(t)
             device.has(s)
         and : 'The two tensors should also know to which devices they belong!'
-            t.device === HostCPU.instance()
+            t.device === CPU.get()
             s.device === device
 
         and : 'When we check their location in the lambda we expect them both to be on the device!'
@@ -68,7 +68,7 @@ class OpenCLDevice_Integration_Spec extends Specification
             !device.has(t)
             device.has(s)
         and : 'The two tensors should also know to which devices they belong!'
-            t.device === HostCPU.instance()
+            t.device === CPU.get()
             s.device === device
 
     }

@@ -3,18 +3,18 @@ package ut.device
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
-import neureka.devices.host.HostCPU
+import neureka.devices.host.CPU
 import spock.lang.Specification
 
-class HostCPU_Spec extends Specification
+class CPU_Spec extends Specification
 {
     def setupSpec()
     {
         reportHeader """
-                <h2> HostCPU Behavior </h2>
+                <h2> $CPU Behavior </h2>
                 <br> 
                 <p>
-                    The thread pool of the HostCPU executor becomes
+                    The thread pool of the $CPU executor becomes
                     more active when receiving larger workloads which
                     benefit from parallelization.           
                 </p>
@@ -43,9 +43,9 @@ class HostCPU_Spec extends Specification
             Device cpu = a.getDevice()
         expect : 'This device should not be null but be an instance of the CPU representative device type.'
             cpu != null
-            cpu instanceof HostCPU
+            cpu instanceof CPU
         when : 'Accessing the executor of the cpu device...'
-            HostCPU.NativeExecutor exec = ( (HostCPU) cpu ).getExecutor()
+            CPU.NativeExecutor exec = ( (CPU) cpu ).getExecutor()
         then : 'The executor is not null as well as its internal thread pool!'
             exec != null
             exec.getPool() != null

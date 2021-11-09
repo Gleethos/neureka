@@ -2,15 +2,10 @@ package neureka.devices.host;
 
 import neureka.Neureka;
 import neureka.Tsr;
-import neureka.backend.api.Algorithm;
-import neureka.backend.api.ExecutionCall;
-import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
 import neureka.calculus.Function;
-import neureka.calculus.args.Arg;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
-import neureka.utility.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,22 +18,22 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
-public class HostCPU extends AbstractDevice<Number>
+public class CPU extends AbstractDevice<Number>
 {
-    private static final Logger _LOG = LoggerFactory.getLogger( HostCPU.class );
-    private static final HostCPU _INSTANCE;
+    private static final Logger _LOG = LoggerFactory.getLogger( CPU.class );
+    private static final CPU _INSTANCE;
 
-    static {  _INSTANCE = new HostCPU();  }
+    static {  _INSTANCE = new CPU();  }
 
     private final NativeExecutor _executor;
     private Set<Tsr<Number>> _tensors = Collections.newSetFromMap(new WeakHashMap<Tsr<Number>, Boolean>());
 
-    private HostCPU() {
+    private CPU() {
         super();
         _executor = new NativeExecutor();
     }
 
-    public static HostCPU instance() {
+    public static CPU get() {
         return _INSTANCE;
     }
 

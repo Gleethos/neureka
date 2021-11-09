@@ -9,12 +9,12 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.FunAlgorithm;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.types.simple.SimpleD2Configuration;
 import org.slf4j.Logger;
@@ -106,8 +106,8 @@ public class MatMul extends AbstractOperation
         setAlgorithm(
                 simpleMatMulAlgorithm
                         .setImplementationFor(
-                                HostCPU.class,
-                                HostImplementation
+                                CPU.class,
+                                CPUImplementation
                                     .withArity(3)
                                     .andImplementation(
                                         call ->

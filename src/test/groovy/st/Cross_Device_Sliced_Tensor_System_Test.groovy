@@ -4,7 +4,7 @@ package st
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
-import neureka.devices.host.HostCPU
+import neureka.devices.host.CPU
 import neureka.devices.opencl.OpenCLDevice
 import spock.lang.Specification
 
@@ -89,7 +89,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
              y.toString() == ''
         */
         where:
-            device << [ Device.find('gpu'), HostCPU.instance() ]
+            device << [Device.find('gpu'), CPU.get() ]
 
     }
 
@@ -329,7 +329,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
             )
 
         where:
-            device << [ Device.find('gpu'), HostCPU.instance() ]
+            device << [Device.find('gpu'), CPU.get() ]
     }
 
 

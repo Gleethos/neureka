@@ -5,11 +5,11 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.backend.standard.operations.ConvUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 
 public class XConv extends AbstractOperation
@@ -61,8 +61,8 @@ public class XConv extends AbstractOperation
                 Convolution.class,
                 convolution
                         .setImplementationFor(
-                                HostCPU.class,
-                                HostImplementation
+                                CPU.class,
+                                CPUImplementation
                                     .withArity(3)
                                     .andImplementation(
                                         call ->

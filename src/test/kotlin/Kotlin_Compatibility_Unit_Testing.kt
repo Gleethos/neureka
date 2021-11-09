@@ -6,7 +6,7 @@ import neureka.backend.api.Call
 import neureka.calculus.Function
 import neureka.calculus.args.Arg
 import neureka.calculus.args.Args
-import neureka.devices.host.HostCPU
+import neureka.devices.host.CPU
 import neureka.dtype.DataType
 import neureka.optimization.Optimizer
 import org.junit.jupiter.api.BeforeEach
@@ -124,7 +124,7 @@ Kotlin_Compatibility_Unit_Testing {
 
         listOf(
             Pair( "(1):[4.0]", { Function.of("i0 * 4 - 3").callWith(Arg.DerivIdx.of(0))(Tsr.of(5.0)) } ),
-            Pair( "(1):[4.0]", { Function.of("i0 * 4 - 3").invoke(Call.to(HostCPU.instance()).with(Tsr.of(5.0)).andArgs(Arg.DerivIdx.of(0))) } ),
+            Pair( "(1):[4.0]", { Function.of("i0 * 4 - 3").invoke(Call.to(CPU.get()).with(Tsr.of(5.0)).andArgs(Arg.DerivIdx.of(0))) } ),
             Pair( "(1):[6.0]", { Function.of("i0 * i0").execute(Args.of(Arg.DerivIdx.of(0)), Tsr.of(3.0)) } )
         )
         .forEach { pair ->

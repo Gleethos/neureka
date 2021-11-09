@@ -5,7 +5,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.backend.standard.operations.linear.MatMul;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
@@ -14,7 +14,7 @@ import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.assembly.ParseUtil;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.dtype.NumericType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +31,8 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
     {
         super( name );
         setImplementationFor(
-                HostCPU.class,
-                HostImplementation
+                CPU.class,
+                CPUImplementation
                     .withArity(arity)
                     .andImplementation(
                         call -> {
@@ -152,7 +152,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
         return call;
     }
 
-    private void _tryExecute(ExecutionCall<HostCPU> call, Class<?> typeClass ) {
+    private void _tryExecute(ExecutionCall<CPU> call, Class<?> typeClass ) {
         Method m = _findMethod( call.getOperation().getFunction(), typeClass );
         if ( m == null ) {
             switch (call.getOperation().getOperator()) {
