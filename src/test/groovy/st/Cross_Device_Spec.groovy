@@ -107,7 +107,7 @@ class Cross_Device_Spec extends Specification
             device << [new DummyDevice(), Device.find('first gpu')]
     }
 
-    @IgnoreIf({!Neureka.get().canAccessOpenCL() && (device instanceof OpenCLDevice)})
+    @IgnoreIf({!Neureka.get().canAccessOpenCL() && (device instanceof OpenCLDevice) || device == null})
     def 'A gradient of ones can be set by calling the backward method on a tensor sitting on any device.'(
             Device device
     ) {

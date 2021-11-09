@@ -88,7 +88,8 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         if ( !Neureka.get().canAccessOpenCL() ) {
             if ( probablyWantsGPU ) {
                 return null; // User wants OpenCL but cannot have it :/
-            } else return CPU.get();
+            }
+            else return CPU.get();
         }
 
         Device<Number> result = CPU.get();
