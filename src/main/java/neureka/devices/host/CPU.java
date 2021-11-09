@@ -119,6 +119,19 @@ public class CPU extends AbstractDevice<Number>
         //super.update( changeRequest );
     }
 
+    /**
+     * Returns the number of CPU cores available to the Java virtual machine.
+     * This value may change during a particular invocation of the virtual machine.
+     * Applications that are sensitive to the number of available processors should
+     * therefore occasionally poll this property and adjust their resource usage appropriately.
+     *
+     * @return The maximum number of CPU cores available to the JVM.
+     *         This number is never smaller than one!
+     */
+    public int getCoreCount() {
+        return Runtime.getRuntime().availableProcessors();
+    }
+
     public interface Range {
         void execute(int start, int end);
     }

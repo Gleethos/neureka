@@ -77,4 +77,12 @@ class CPU_Spec extends Specification
     }
 
 
+    def 'CPU knows the current number of available processor cores!'() {
+
+        expect :
+            CPU.get().coreCount == Runtime.getRuntime().availableProcessors()
+
+    }
+
+
 }
