@@ -144,8 +144,14 @@ public class CPU extends AbstractDevice<Number>
         return Runtime.getRuntime().availableProcessors();
     }
 
+    /**
+     *  A simple functional execution range interface whose implementations will
+     *  either be executed sequentially or they are being dispatched to
+     *  a thread-pool, given that the provided workload is large enough.
+     */
+    @FunctionalInterface
     public interface Range {
-        void execute(int start, int end);
+        void execute( int start, int end );
     }
 
     /**
@@ -160,6 +166,13 @@ public class CPU extends AbstractDevice<Number>
      */
     public static class JVMExecutor
     {
+        /*
+            The following 2 constants determine if any given workload size will be parallelize or not...
+            We might want to adjust this some more for better performance...
+         */
+        private static final int MIN_THREADED_WORKLOAD_SIZE = 32;
+        private static final int MIN_WORKLOAD_PER_THREAD = 8;
+
         private final ThreadPoolExecutor _pool =
                 (ThreadPoolExecutor) Executors.newFixedThreadPool(
                         Runtime.getRuntime().availableProcessors()
@@ -167,18 +180,22 @@ public class CPU extends AbstractDevice<Number>
 
         public ThreadPoolExecutor getPool() { return _pool; }
 
-        //==============================================================================================================
-
-        public void threaded( int size, Range range )
+        /**
+         *  This method slices the provided workload size into multiple ranges which can be executed in parallel.
+         *
+         * @param workloadSize The total workload size which ought to be split into multiple ranges.
+         * @param range The range lambda which ought to be executed across multiple threads.
+         */
+        public void threaded( int workloadSize, Range range )
         {
             int cores = _pool.getCorePoolSize() - _pool.getActiveCount();
             cores = ( cores == 0 ) ? 1 : cores;
-            if ( size >= 32 && ( ( size / cores ) >= 8 ) ) {
-                final int chunk = size / cores;
+            if ( workloadSize >= MIN_THREADED_WORKLOAD_SIZE && ( ( workloadSize / cores ) >= MIN_WORKLOAD_PER_THREAD ) ) {
+                final int chunk = workloadSize / cores;
                 Future<?>[] futures = new Future[ cores ];
                 for ( int i = 0; i < cores; i++ ) {
                     final int start = i * chunk;
-                    final int end = ( i == cores - 1 ) ? size : ( (i + 1) * chunk );
+                    final int end = ( i == cores - 1 ) ? workloadSize : ( (i + 1) * chunk );
                     Neureka neureka = Neureka.get();
                     futures[ i ] = _pool.submit(() -> {
                         Neureka.set( neureka ); // This ensures that the threads in the pool have the same settings!
@@ -187,15 +204,26 @@ public class CPU extends AbstractDevice<Number>
                 }
                 for ( Future<?> f : futures ) {
                     try {
-                        f.get();
-                    } catch (InterruptedException e) {
+                        f.get(); // Return value is null because we submitted merely a simple Runnable
+                    } catch ( InterruptedException e ) {
                         e.printStackTrace();
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
                 }
             }
-            else range.execute(0, size);
+            else sequential( workloadSize, range );
+        }
+
+        /**
+         *  This method will simply execute the provided {@link Range} lambda sequentially
+         *  with 0 as the start index and {@code workloadSize} as the exclusive range.       <br><br>
+         *
+         * @param workloadSize The workload size which will be passed to the provided {@link Range} as second argument.
+         * @param range The {@link Range} which will be executed sequentially.
+         */
+        public void sequential( int workloadSize, Range range ) {
+            range.execute( 0, workloadSize );
         }
 
     }
