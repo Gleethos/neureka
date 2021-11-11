@@ -37,17 +37,29 @@ public class CPU extends AbstractDevice<Number>
         _executor = new JVMExecutor();
     }
 
+    /**
+     *  Use this method to access the singleton instance of this {@link CPU} class,
+     *  which is a {@link Device} type and default location for freshly instantiated {@link Tsr} instances.
+     *  {@link Tsr} instances located on the {@link CPU} device will reside in regular RAM
+     *  causing operations to run on the JVM and thereby the CPU.
+     *
+     * @return The singleton instance of this {@link CPU} class.
+     */
     public static CPU get() { return _INSTANCE; }
 
+    /**
+     *  The {@link JVMExecutor} offers a similar functionality as the parallel stream API,
+     *  however it differs in that the {@link JVMExecutor} is processing {@link Range} lambdas
+     *  instead of simply exposing a single index or concrete elements for a given workload size.
+     *
+     * @return A parallel range based execution API running on the JVM.
+     */
     public JVMExecutor getExecutor() {
         return _executor;
     }
 
     @Override
-    protected boolean _approveExecutionOf( Tsr[] tensors, int d, Operation operation )
-    {
-        return true;
-    }
+    protected boolean _approveExecutionOf( Tsr[] tensors, int d, Operation operation ) { return true; }
 
     @Override
     public void dispose() {
@@ -136,6 +148,16 @@ public class CPU extends AbstractDevice<Number>
         void execute(int start, int end);
     }
 
+    /**
+     *  The {@link JVMExecutor} offers a similar functionality as the parallel stream API,
+     *  however it differs in that the {@link JVMExecutor} is processing {@link Range} lambdas
+     *  instead of simply exposing a single index or concrete elements for a given workload size.
+     *  This means that a {@link Range} lambda will be called with the work range of a single worker thread
+     *  processing its current workload.
+     *  This range is dependent on the number of available threads as well as the size of the workload.
+     *  If the workload is very small, then the current main thread will process the entire workload range
+     *  whereas the underlying {@link ThreadPoolExecutor} will not be used to avoid unnecessary overhead.
+     */
     public static class JVMExecutor
     {
         private final ThreadPoolExecutor _pool =
