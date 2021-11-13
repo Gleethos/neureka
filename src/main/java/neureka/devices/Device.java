@@ -115,7 +115,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
                                             .getDevices()
                                             .get( 0 );
 
-            if ( first!=null ) result = first;
+            if ( first != null ) result = first;
         }
         return result;
     }
@@ -141,21 +141,21 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
 
     <T extends V> boolean has(Tsr<T> tensor );
 
-    <T extends V> Device<V> free(Tsr<T> tensor );
+    <T extends V> Device<V> free( Tsr<T> tensor );
 
-    Device<V> cleaning(Tsr<V> tensor, Runnable action );
+    <T extends V> Device<V> cleaning( Tsr<T> tensor, Runnable action );
 
-    Device<V> write(Tsr<V> tensor, Object value );
+    <T extends V> Device<V> write( Tsr<T> tensor, Object value );
 
-    Device<V> swap(Tsr<V> former, Tsr<V> replacement );
+    <T extends V> Device<V> swap( Tsr<T> former, Tsr<T> replacement );
 
-    Device<V> approve(ExecutionCall<? extends Device<?>> call );
+    Device<V> approve( ExecutionCall<? extends Device<?>> call );
 
-    Object valueFor( Tsr<V> tensor );
+    <T extends V> Object valueFor( Tsr<T> tensor );
 
-    V valueFor(Tsr<V> tensor, int index );
+    <T extends V> V valueFor( Tsr<T> tensor, int index );
 
-    Collection< Tsr<V> > getTensors();
+    Collection<Tsr<V>> getTensors();
 
     /**
      *  This method has the same signature of the Collection interface in Java 11,

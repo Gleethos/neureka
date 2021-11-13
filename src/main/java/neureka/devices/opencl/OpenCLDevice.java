@@ -115,7 +115,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
      * a reference to a wrapper containing a pointer to the tensors data (cl_data)
      * The latter two lend their identity for garbage collection!
      */
-    static class cl_tsr implements Component<Tsr<Number>>
+    static class cl_tsr<V, T extends V> implements Component<Tsr<T>>
     {
 
         /**
@@ -150,7 +150,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         public cl_value value;
 
         @Override
-        public boolean update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {
+        public boolean update( OwnerChangeRequest<Tsr<T>> changeRequest ) {
             // Update not needed...
             changeRequest.executeChange();
             return true;
@@ -541,9 +541,9 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
 
     @Override
-    public Device<Number> write( Tsr<Number> tensor, Object value ) {
-        if ( value instanceof double[] ) return overwrite64( tensor, (double[]) value);
-        else if ( value instanceof float[] ) return overwrite32( tensor, (float[]) value);
+    public <T extends Number> Device<Number> write( Tsr<T> tensor, Object value ) {
+        if ( value instanceof double[] ) return overwrite64( (Tsr<Number>) tensor, (double[]) value);
+        else if ( value instanceof float[] ) return overwrite32 ((Tsr<Number>) tensor, (float[]) value);
         return this;
     }
 
@@ -597,13 +597,13 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public Device<Number> swap(Tsr<Number> former, Tsr<Number> replacement)
+    public <T extends Number> Device<Number> swap( Tsr<T> former, Tsr<T> replacement )
     {
         cl_tsr clTsr = former.get( cl_tsr.class );
         former.remove( cl_tsr.class );
         replacement.set( clTsr );
         _tensors.remove( former );
-        _tensors.add( replacement );
+        _tensors.add( (Tsr<Number>) replacement );
         return this;
     }
 
@@ -676,13 +676,13 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    public Object valueFor( Tsr<Number> tensor ) {
-        return value32f( tensor );
+    public <T extends Number> Object valueFor( Tsr<T> tensor ) {
+        return value32f( (Tsr<Number>) tensor );
     }
 
     @Override
-    public Number valueFor( Tsr<Number> tensor, int index ) {
-        return value32f( tensor, index );
+    public <T extends Number> Number valueFor( Tsr<T> tensor, int index ) {
+        return value32f( (Tsr<Number>) tensor, index );
     }
 
     public double value64f( Tsr<Number> tensor, int index ) {

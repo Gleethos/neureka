@@ -6,6 +6,7 @@ import neureka.backend.api.Operation;
 import neureka.calculus.Function;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
+import neureka.devices.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,13 +30,10 @@ public class CPU extends AbstractDevice<Number>
 
     static {  _INSTANCE = new CPU();  }
 
-    private final JVMExecutor _executor;
+    private final JVMExecutor _executor = new JVMExecutor();
     private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap(new WeakHashMap<Tsr<Number>, Boolean>());
 
-    private CPU() {
-        super();
-        _executor = new JVMExecutor();
-    }
+    private CPU() { super(); }
 
     /**
      *  Use this method to access the singleton instance of this {@link CPU} class,
@@ -49,70 +47,70 @@ public class CPU extends AbstractDevice<Number>
 
     /**
      *  The {@link JVMExecutor} offers a similar functionality as the parallel stream API,
-     *  however it differs in that the {@link JVMExecutor} is processing {@link Range} lambdas
+     *  however it differs in that the {@link JVMExecutor} is processing {@link RangeWorkload} lambdas
      *  instead of simply exposing a single index or concrete elements for a given workload size.
      *
      * @return A parallel range based execution API running on the JVM.
      */
-    public JVMExecutor getExecutor() {
-        return _executor;
-    }
+    public JVMExecutor getExecutor() { return _executor; }
 
     @Override
-    protected boolean _approveExecutionOf( Tsr[] tensors, int d, Operation operation ) { return true; }
+    protected boolean _approveExecutionOf( Tsr<?>[] tensors, int d, Operation operation ) { return true; }
 
+    /**
+     *  This method will shutdown the internal thread-pool used by this
+     *  class to execute JVM/CPU based operations in parallel.
+     */
     @Override
     public void dispose() {
         _executor.getPool().shutdown();
+        _tensors.clear();
+        _LOG.warn(
+                "Main thread pool in '"+this.getClass()+"' shutdown! " +
+                "Newly incoming operations will not be executed in parallel."
+        );
     }
 
     @Override
-    public Device<Number> write(Tsr<Number> tensor, Object value) {
-        return this;
-    }
+    public <T extends Number> Device<Number> write( Tsr<T> tensor, Object value ) { return this; }
 
     @Override
-    public Object valueFor( Tsr<Number> tensor ) {
-        return tensor.getValue();
-    }
+    public <T extends Number> Object valueFor( Tsr<T> tensor ) { return tensor.getValue(); }
 
     @Override
-    public Number valueFor( Tsr<Number> tensor, int index ) { return tensor.getValueAt( index ); }
+    public <T extends Number> Number valueFor( Tsr<T> tensor, int index ) { return tensor.getValueAt( index ); }
 
     @Override
     public CPU restore( Tsr<Number> tensor ) { return this; }
 
     @Override
-    public CPU store( Tsr tensor ) {
-        _tensors.add( tensor );
+    public <T extends Number> CPU store( Tsr<T> tensor ) {
+        //super.store(tensor);
+        _tensors.add( (Tsr<Number>) tensor);
         return this;
     }
 
     @Override
-    public CPU store( Tsr tensor, Tsr parent ) {
-        _tensors.add( tensor );
-        _tensors.add( parent );
+    public <T extends Number> CPU store( Tsr<T> tensor, Tsr<T> parent ) {
+        _tensors.add( (Tsr<Number>) tensor);
+        _tensors.add( (Tsr<Number>) parent);
         return this;
     }
 
     @Override
-    public boolean has( Tsr tensor ) {
-        return _tensors.contains( tensor );
-    }
+    public <T extends Number> boolean has( Tsr<T> tensor ) { return _tensors.contains( tensor ); }
 
     @Override
-    public CPU free( Tsr tensor ) {
+    public <T extends Number> CPU free( Tsr<T> tensor ) {
         _tensors.remove( tensor );
         return this;
     }
 
     @Override
-    public CPU swap( Tsr former, Tsr replacement ) { return this; }
+    public <T extends Number> CPU swap( Tsr<T> former, Tsr<T> replacement ) { return this; }
 
     @Override
-    public Collection<Tsr<Number>> getTensors() {
-        return _tensors;
-    }
+    public Collection<Tsr<Number>> getTensors() { return _tensors; }
 
     @Override
     public Operation optimizedOperationOf( Function function, String name ) { throw new IllegalStateException(); }
@@ -128,7 +126,6 @@ public class CPU extends AbstractDevice<Number>
     public boolean update( OwnerChangeRequest<Tsr<Number>> changeRequest ) {
         super.update( changeRequest );
         return false; // This type of device can not be a component simply because it is the default device
-        //super.update( changeRequest );
     }
 
     /**
@@ -140,25 +137,23 @@ public class CPU extends AbstractDevice<Number>
      * @return The maximum number of CPU cores available to the JVM.
      *         This number is never smaller than one!
      */
-    public int getCoreCount() {
-        return Runtime.getRuntime().availableProcessors();
-    }
+    public int getCoreCount() { return Runtime.getRuntime().availableProcessors(); }
 
     /**
-     *  A simple functional execution range interface whose implementations will
+     *  A simple functional interface for executing a range whose implementations will
      *  either be executed sequentially or they are being dispatched to
      *  a thread-pool, given that the provided workload is large enough.
      */
     @FunctionalInterface
-    public interface Range {
+    public interface RangeWorkload {
         void execute( int start, int end );
     }
 
     /**
      *  The {@link JVMExecutor} offers a similar functionality as the parallel stream API,
-     *  however it differs in that the {@link JVMExecutor} is processing {@link Range} lambdas
+     *  however it differs in that the {@link JVMExecutor} is processing {@link RangeWorkload} lambdas
      *  instead of simply exposing a single index or concrete elements for a given workload size.
-     *  This means that a {@link Range} lambda will be called with the work range of a single worker thread
+     *  This means that a {@link RangeWorkload} lambda will be called with the work range of a single worker thread
      *  processing its current workload.
      *  This range is dependent on the number of available threads as well as the size of the workload.
      *  If the workload is very small, then the current main thread will process the entire workload range
@@ -184,9 +179,9 @@ public class CPU extends AbstractDevice<Number>
          *  This method slices the provided workload size into multiple ranges which can be executed in parallel.
          *
          * @param workloadSize The total workload size which ought to be split into multiple ranges.
-         * @param range The range lambda which ought to be executed across multiple threads.
+         * @param workload The range lambda which ought to be executed across multiple threads.
          */
-        public void threaded( int workloadSize, Range range )
+        public void threaded( int workloadSize, RangeWorkload workload )
         {
             int cores = _pool.getCorePoolSize() - _pool.getActiveCount();
             cores = ( cores == 0 ) ? 1 : cores;
@@ -199,7 +194,7 @@ public class CPU extends AbstractDevice<Number>
                     Neureka neureka = Neureka.get();
                     futures[ i ] = _pool.submit(() -> {
                         Neureka.set( neureka ); // This ensures that the threads in the pool have the same settings!
-                        range.execute( start, end );
+                        workload.execute( start, end );
                     });
                 }
                 for ( Future<?> f : futures ) {
@@ -207,23 +202,23 @@ public class CPU extends AbstractDevice<Number>
                         f.get(); // Return value is null because we submitted merely a simple Runnable
                     } catch ( InterruptedException e ) {
                         e.printStackTrace();
-                    } catch (ExecutionException e) {
+                    } catch ( ExecutionException e ) {
                         e.printStackTrace();
                     }
                 }
             }
-            else sequential( workloadSize, range );
+            else sequential( workloadSize, workload );
         }
 
         /**
-         *  This method will simply execute the provided {@link Range} lambda sequentially
+         *  This method will simply execute the provided {@link RangeWorkload} lambda sequentially
          *  with 0 as the start index and {@code workloadSize} as the exclusive range.       <br><br>
          *
-         * @param workloadSize The workload size which will be passed to the provided {@link Range} as second argument.
-         * @param range The {@link Range} which will be executed sequentially.
+         * @param workloadSize The workload size which will be passed to the provided {@link RangeWorkload} as second argument.
+         * @param workload The {@link RangeWorkload} which will be executed sequentially.
          */
-        public void sequential( int workloadSize, Range range ) {
-            range.execute( 0, workloadSize );
+        public void sequential( int workloadSize, RangeWorkload workload ) {
+            workload.execute( 0, workloadSize );
         }
 
     }

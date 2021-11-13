@@ -15,7 +15,7 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     public void dispose() { }
 
     @Override
-    public Device<Object> write( Tsr<Object> tensor, Object value ) { return this; }
+    public <T extends Object> Device<Object> write( Tsr<T> tensor, Object value ) { return this; }
 
     @Override
     public Device<Object> restore( Tsr tensor ) { return this; }
@@ -38,16 +38,16 @@ public class DummyDevice extends AbstractBaseDevice<Object>
     public Device<Object> cleaning(Tsr tensor, Runnable action) { return null; }
 
     @Override
-    public Device<Object> swap(Tsr<Object> former, Tsr<Object> replacement) { return this; }
+    public <T extends Object> Device<Object> swap( Tsr<T> former, Tsr<T> replacement ) { return this; }
 
     @Override
     public Device<Object> approve(ExecutionCall<? extends Device<?>> call ) { return this; }
 
     @Override
-    public Object valueFor(Tsr<Object> tensor) { return null; }
+    public <T extends Object> Object valueFor( Tsr<T> tensor ) { return null; }
 
     @Override
-    public Object valueFor(Tsr<Object> tensor, int index) { return null; }
+    public <T extends Object> Object valueFor( Tsr<T> tensor, int index ) { return null; }
 
     @Override
     public Collection<Tsr<Object>> getTensors() { return null; }

@@ -130,7 +130,7 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
     }
 
     @Override
-    public <T extends V> Storage<V> store(Tsr<T> tensor ) {
+    public <T extends V> Storage<V> store( Tsr<T> tensor ) {
         tensor.set( (Component) this ); // This way we move the storing procedure to the update function!
         return this;
     }
