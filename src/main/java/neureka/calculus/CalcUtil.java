@@ -30,8 +30,7 @@ import java.util.stream.IntStream;
  */
 public class CalcUtil
 {
-
-    private static final Logger _LOG = LoggerFactory.getLogger(CalcUtil.class);
+    private static final Logger _LOG = LoggerFactory.getLogger( CalcUtil.class );
 
     @Contract( pure = true )
     public static Tsr<?> defaultRecursiveExecution(
@@ -84,17 +83,17 @@ public class CalcUtil
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
             tensors = srcActivation(inputs, j, d, 0, nodes);
             String asStr = operation.stringify(
-                    IntStream.range(0, nodes.length).mapToObj(i -> "I[" + i + "]").toArray(String[]::new)
+                    IntStream.range(0, nodes.length).mapToObj( i -> "I[" + i + "]" ).toArray(String[]::new)
             );
             return new FunctionBuilder( Neureka.get().context() ).build( asStr, isDoingAD ).execute( tensors );
-        } else {
-            tensors = srcActivation(inputs, j, d, 1, nodes);
-        }
+        } else
+            tensors = srcActivation( inputs, j, d, 1, nodes );
+
         CalcUtil.recursiveExecution(
-                ExecutionCall.of(tensors)
-                        .andArgs(Arg.DerivIdx.of(d))
-                        .running(operation)
-                        .on(device),
+                ExecutionCall.of( tensors )
+                        .andArgs( Arg.DerivIdx.of(d) )
+                        .running( operation )
+                        .on( device ),
                 executor
         );
         if ( tensors[ 0 ] == null )
@@ -114,7 +113,7 @@ public class CalcUtil
      * @return The index of the tensor whose value is "1.0" (if all others are "0.0"), otherwise : -1
      */
     @Contract( pure = true )
-    private static int _indexOfFoundDerivative(Tsr<?>[] tensors )
+    private static int _indexOfFoundDerivative( Tsr<?>[] tensors )
     {
         boolean allVirtual = true;
         for ( Tsr<?> t : tensors ) if ( t != null && !t.isVirtual() ) allVirtual = false;

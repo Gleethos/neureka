@@ -53,20 +53,19 @@ public abstract class AbstractBaseDevice<V> implements Device<V>
         return tensors.size();
     }
 
+    /**
+     *  A device is empty if there are no tensors stored on it.
+     *
+     * @return The truth value determining if there are no tensors stored on this device.
+     */
     @Override
-    public boolean isEmpty() {
-        return this.size() == 0;
-    }
+    public boolean isEmpty() { return this.size() == 0; }
 
     @Override
-    public boolean contains( Tsr<V> o ) {
-        return this.getTensors().contains( o );
-    }
+    public boolean contains( Tsr<V> o ) { return this.getTensors().contains( o ); }
 
     @Override
-    public Iterator<Tsr<V>> iterator() {
-        return this.getTensors().iterator();
-    }
+    public Iterator<Tsr<V>> iterator() { return this.getTensors().iterator(); }
 
     @Override
     public <T> T[] toArray( IntFunction<T[]> generator ) {
@@ -74,8 +73,6 @@ public abstract class AbstractBaseDevice<V> implements Device<V>
     }
 
     @Override
-    public Spliterator<Tsr<V>> spliterator() {
-        return getTensors().spliterator();
-    }
+    public Spliterator<Tsr<V>> spliterator() { return getTensors().spliterator(); }
 
 }

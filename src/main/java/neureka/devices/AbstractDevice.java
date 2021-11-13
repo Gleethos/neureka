@@ -103,14 +103,12 @@ public abstract class AbstractDevice<V> extends AbstractBaseDevice<V>
     }
 
     @Override
-    public Device cleaning( Tsr tensor, Runnable action ) {
+    public <T extends V> Device<V> cleaning( Tsr<T> tensor, Runnable action ) {
         _cleaning( tensor, action );
         return this;
     }
 
-    protected void _cleaning( Object o, Runnable action ) {
-        _CLEANER.register( o, action );
-    }
+    protected void _cleaning( Object o, Runnable action ) { _CLEANER.register( o, action ); }
 
     /**
      *  <b>This method plays an important role in approving a provided {@link ExecutionCall}.</b>

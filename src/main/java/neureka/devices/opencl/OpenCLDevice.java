@@ -386,17 +386,17 @@ public class OpenCLDevice extends AbstractDevice<Number>
     private <T extends Number> Device<Number> _store( Tsr<T> tensor, Tsr<T> parent, Runnable migration ) {
         if ( !parent.isOutsourced() ) throw new IllegalStateException( "Data parent is not outsourced!" );
         _add( (Tsr<Number>) tensor, parent.get( cl_tsr.class ), migration );
-        _tensors.add((Tsr<Number>) tensor);
+        _tensors.add( (Tsr<Number>) tensor );
         return this;
     }
 
-    private void _add( Tsr<Number> tensor, cl_tsr parent, Runnable migration  )
+    private <T extends Number> void _add( Tsr<Number> tensor, cl_tsr<Number, T> parent, Runnable migration  )
     {
         if ( this.has( tensor ) ) {
             _LOG.debug("Trying to add a tensor to a device which already reports hosting it.");
             return;
         }
-        cl_tsr newClt = new cl_tsr();
+        cl_tsr<Number,Number> newClt = new cl_tsr<>();
 
         //VALUE TRANSFER:
         if ( parent == null ) {
@@ -422,7 +422,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
         newClt.config.data = clCreateBuffer(
                 _platform.getContext(),
                 CL_MEM_READ_WRITE,
-                config.length * Sizeof.cl_int,
+                (long) config.length * Sizeof.cl_int,
                 null, null
         );
         clEnqueueWriteBuffer(
@@ -430,7 +430,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                 newClt.config.data,
                 CL_TRUE,
                 0,
-                config.length * Sizeof.cl_int,
+                (long) config.length * Sizeof.cl_int,
                 Pointer.to(config),
                 0,
                 null,
@@ -487,7 +487,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     public <T extends Number> boolean has( Tsr<T> tensor ) { return _tensors.contains( tensor ); }
 
 
-    private void _store( Tsr<Number> tensor, cl_tsr newClTsr, int fp ) {
+    private void _store( Tsr<Number> tensor, cl_tsr<?,?> newClTsr, int fp ) {
         Pointer p;
         int size;
         //if ( !tensor.isVirtual() ) {
@@ -531,11 +531,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
 
     @Override
     public <T extends Number> Device<Number> free( Tsr<T> tensor ) {
-        cl_tsr clt = tensor.get( cl_tsr.class );
+        cl_tsr<?,?> clt = tensor.get( cl_tsr.class );
         if ( clt == null ) return this;
         _tensors.remove( tensor );
         tensor.setIsOutsourced( false );
-        ((Tsr<Number>)tensor).remove( cl_tsr.class );
+        ( (Tsr<Number>) tensor ).remove( cl_tsr.class );
         return this;
     }
 
@@ -543,7 +543,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     public <T extends Number> Device<Number> write( Tsr<T> tensor, Object value ) {
         if ( value instanceof double[] ) return overwrite64( (Tsr<Number>) tensor, (double[]) value);
-        else if ( value instanceof float[] ) return overwrite32 ((Tsr<Number>) tensor, (float[]) value);
+        else if ( value instanceof float[] ) return overwrite32( (Tsr<Number>) tensor, (float[]) value);
         return this;
     }
 
@@ -551,7 +551,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     public Device<Number> overwrite64( Tsr<Number> tensor, double[] value )
     {
         if ( value.length == 0 ) return this;
-        cl_tsr clt = tensor.get(cl_tsr.class);
+        cl_tsr<?,?> clt = tensor.get(cl_tsr.class);
         if ( clt.fp == 1 ) overwrite32( tensor, DataConverter.Utility.doubleToFloat( value ) );
         else {
             if ( clt.value.event != null ) clWaitForEvents( 1, new cl_event[]{ clt.value.event } );
@@ -561,7 +561,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     clt.value.data,
                     CL_FALSE,
                     0,
-                    Sizeof.cl_double * value.length,
+                    (long) Sizeof.cl_double * value.length,
                     Pointer.to( value ),
                     0,
                     null,
@@ -575,7 +575,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     public Device<Number> overwrite32( Tsr<Number> tensor, float[] value)
     {
         if ( value.length == 0 ) return this;
-        cl_tsr clt = tensor.get( cl_tsr.class );
+        cl_tsr<?,?> clt = tensor.get( cl_tsr.class );
         if ( clt.fp == 1 ) {
             if ( clt.value.event != null ) clWaitForEvents( 1, new cl_event[]{ clt.value.event } );
             clt.value.event = new cl_event();
@@ -584,7 +584,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     clt.value.data,
                     CL_TRUE,
                     0,
-                    Sizeof.cl_float * value.length,
+                    (long) Sizeof.cl_float * value.length,
                     Pointer.to(value),
                     0,
                     null,
@@ -599,7 +599,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     @Override
     public <T extends Number> Device<Number> swap( Tsr<T> former, Tsr<T> replacement )
     {
-        cl_tsr clTsr = former.get( cl_tsr.class );
+        cl_tsr<Number,T> clTsr = former.get( cl_tsr.class );
         former.remove( cl_tsr.class );
         replacement.set( clTsr );
         _tensors.remove( former );
@@ -619,19 +619,19 @@ public class OpenCLDevice extends AbstractDevice<Number>
         return true;
     }
 
-    private void _updateInternal( Tsr newOwner, Runnable migration ) {
+    private void _updateInternal( Tsr<Number> newOwner, Runnable migration ) {
         Tsr<Number> root = null;
         if ( newOwner.has( Relation.class ) ) root = ((Relation<Number>)newOwner.get( Relation.class )).findRootTensor();
         if ( root != null ) store( newOwner, root );
-        else _add( (Tsr<Number>) newOwner, null, migration );
+        else _add( newOwner, null, migration );
     }
 
     public double[] value64f( Tsr<Number> tensor ) {
-        cl_tsr clt = tensor.get( cl_tsr.class );
+        cl_tsr<?,?> clt = tensor.get( cl_tsr.class );
         return _value64f( clt, clt.value.size, 0 );
     }
 
-    private double[] _value64f( cl_tsr clt , int size, int offset )
+    private double[] _value64f( cl_tsr<?,?> clt , int size, int offset )
     {
         if ( clt.fp == 1 ) return DataConverter.Utility.floatToDouble( _value32f( clt, size, offset ) );
         else {
@@ -640,8 +640,8 @@ public class OpenCLDevice extends AbstractDevice<Number>
                     _queue,
                     clt.value.data,
                     CL_TRUE,
-                    offset * 8, // one double == eight byte
-                    Sizeof.cl_double * data.length,
+                    offset * 8L, // one double == eight byte
+                    (long) Sizeof.cl_double * data.length,
                     Pointer.to( data ),
                     0,
                     null,
@@ -652,18 +652,18 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     public float[] value32f( Tsr<Number> tensor ) {
-        cl_tsr clt = tensor.get( cl_tsr.class );
+        cl_tsr<?,?> clt = tensor.get( cl_tsr.class );
         return _value32f( clt, clt.value.size, 0 );
     }
 
-    private float[] _value32f( cl_tsr clt, int size, int offset ) {
+    private float[] _value32f( cl_tsr<?,?> clt, int size, int offset ) {
         if ( clt.fp == 1 ) {
             float[] data = new float[ size ];
             clEnqueueReadBuffer(
                     _queue,
                     clt.value.data,
                     CL_TRUE,
-                    offset * 4, // one float == four bytes !
+                    offset * 4L, // one float == four bytes !
                     (long) Sizeof.cl_float * data.length,
                     Pointer.to( data ),
                     0,
@@ -686,12 +686,12 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     public double value64f( Tsr<Number> tensor, int index ) {
-        cl_tsr clt = tensor.get( cl_tsr.class );
+        cl_tsr<?,?> clt = tensor.get( cl_tsr.class );
         return _value64f( clt, 1, index )[ 0 ];
     }
 
     public float value32f( Tsr<Number> tensor, int index ) {
-        cl_tsr clt = tensor.get( cl_tsr.class );
+        cl_tsr<?,?> clt = tensor.get( cl_tsr.class );
         return _value32f( clt, 1, index )[ 0 ];
     }
 
@@ -709,7 +709,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     @Override
-    protected boolean _approveExecutionOf( Tsr[] tensors, int d, Operation type )
+    protected boolean _approveExecutionOf( Tsr<?>[] tensors, int d, Operation type )
     {
         return true;
     }
