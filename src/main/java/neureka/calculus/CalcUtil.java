@@ -25,7 +25,7 @@ import java.util.stream.IntStream;
  *  This is a utility class which helps with orchestrating the execution of classical operations
  *  from calculus like the operators '*', '-', '+', '/', as well as linear operations
  *  like matrix multiplication, broadcasting and convolution.
- *  This orchestration refers to the way a an {@link ExecutionCall} alongside its caller, a {@link Function},
+ *  This orchestration refers to the way an {@link ExecutionCall} alongside its caller, a {@link Function},
  *  should be handles to produce a correct result.
  */
 public class CalcUtil
@@ -67,8 +67,8 @@ public class CalcUtil
     ) {
         Tsr<?>[] inputs = call.getTensors();
         Device<?> device = call.getDevice();
-        int d = call.getValOf( Arg.DerivIdx.class );
         int j = call.getJ();
+        assert call.getValOf( Arg.DerivIdx.class ) == -1;
 
         Tsr<?>[] tensors;
         if ( operation.isIndexer() ) tensors = new Tsr[ 1 + inputs.length ];
@@ -81,17 +81,17 @@ public class CalcUtil
                         operation.isOperator() || operation.supportsAlgorithm(Activation.class)
                 )
         ) {/*   '+', '-', 'x', '*', '%', '«', '»', ',', ...   */
-            tensors = srcActivation(inputs, j, d, 0, nodes);
+            tensors = srcActivation(inputs, j, -1, 0, nodes);
             String asStr = operation.stringify(
                     IntStream.range(0, nodes.length).mapToObj( i -> "I[" + i + "]" ).toArray(String[]::new)
             );
             return new FunctionBuilder( Neureka.get().context() ).build( asStr, isDoingAD ).execute( tensors );
         } else
-            tensors = srcActivation( inputs, j, d, 1, nodes );
+            tensors = srcActivation( inputs, j, -1, 1, nodes );
 
         CalcUtil.recursiveExecution(
                 ExecutionCall.of( tensors )
-                        .andArgs( Arg.DerivIdx.of(d) )
+                        .andArgs( Arg.DerivIdx.of(-1) )
                         .running( operation )
                         .on( device ),
                 executor
@@ -144,6 +144,7 @@ public class CalcUtil
             Device<?> device = call.getDevice();
             int d = call.getValOf( Arg.DerivIdx.class );
             int j = call.getJ();
+            assert d >= 0;
 
             Tsr<?>[] tensors;
             if ( operation.isIndexer() ) tensors = new Tsr[ 1 + inputs.length ];
@@ -376,7 +377,10 @@ public class CalcUtil
         return tensors[ 0 ];
     }
 
-
+    /**
+     *  This method performs a classical execution of a {@link Function} alongside an array of provided
+     *  arguments and an offset used to make room in the output array returned by this method.
+     */
     @Contract( pure = true )
     public static Tsr<?>[] srcActivation(
             Tsr<?>[] inputs, int j, int d, int offset, Function[] src

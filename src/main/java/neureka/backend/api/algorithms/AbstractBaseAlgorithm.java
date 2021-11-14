@@ -28,7 +28,6 @@ public abstract class AbstractBaseAlgorithm<C extends Algorithm<C>> implements A
 
     public AbstractBaseAlgorithm( String name ) { _name = name; }
 
-
     /**
      *  This method returns the name of this {@link Algorithm}
      *  which may be used as variable names in OpenCL kernels or other backends.
@@ -40,7 +39,7 @@ public abstract class AbstractBaseAlgorithm<C extends Algorithm<C>> implements A
     public String getName() { return this._name; }
 
     @Override
-    public <D extends Device<?>, E extends ImplementationFor<D>> C setImplementationFor(Class<D> deviceClass, E implementation ) {
+    public <D extends Device<?>, E extends ImplementationFor<D>> C setImplementationFor( Class<D> deviceClass, E implementation ) {
         _implementations.put(
                 (Class<Device<?>>) deviceClass,
                 (ImplementationFor<Device<?>>) implementation
