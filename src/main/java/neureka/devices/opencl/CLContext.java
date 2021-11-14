@@ -1,7 +1,7 @@
 package neureka.devices.opencl;
 
-import neureka.common.composition.Component;
 import neureka.backend.api.OperationContext;
+import neureka.common.composition.Component;
 import neureka.utility.Messages;
 import org.jocl.cl_platform_id;
 import org.slf4j.Logger;

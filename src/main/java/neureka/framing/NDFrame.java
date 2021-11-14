@@ -1,7 +1,7 @@
 package neureka.framing;
 
-import neureka.common.composition.Component;
 import neureka.Tsr;
+import neureka.common.composition.Component;
 import neureka.framing.states.AxisFrame;
 
 import java.util.*;

@@ -39,12 +39,12 @@ SOFTWARE.
 
 package neureka.autograd;
 
-import neureka.common.composition.Component;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
+import neureka.common.composition.Component;
 import neureka.devices.Device;
 import neureka.devices.opencl.utility.WeakTensorReference;
 import org.slf4j.Logger;
@@ -765,7 +765,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
     /**
      * This method returns what is needed for AD, usually a derivative of AD-Agent.
      *
-     * @param target
+     * @param target The targeted derivation graph node reference.
      * @return Tsr&lt;ValType&gt;
      */
     public List<ADAgent> get( GraphNode<V> target ) {
@@ -777,7 +777,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * This method checks if a given graph node is an AD target of this node.
      * This would mean that this node contains an AD-action for the given GraphNode (target).
      *
-     * @param target
+     * @param target The targeted derivation graph node reference.
      * @return boolean
      */
     public boolean has( GraphNode<V> target ) {

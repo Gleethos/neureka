@@ -48,16 +48,16 @@ SOFTWARE.
 
 package neureka.devices.opencl;
 
-import neureka.backend.api.ImplementationFor;
-import neureka.backend.standard.implementations.CLImplementation;
-import neureka.common.composition.Component;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
+import neureka.common.composition.Component;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
 import neureka.devices.opencl.utility.CLFunctionCompiler;
