@@ -11,7 +11,7 @@ import java.util.List;
  *  for Neureka is Java 8, which means that this cleaner class introduced in Java 11 is not available here!
  *  That is why a custom cleaner implementation is being defined below.<br>
  */
-class CustomDeviceCleaner implements DeviceCleaner, Runnable
+public class CustomDeviceCleaner implements DeviceCleaner, Runnable
 {
     private final ReferenceQueue<Object> _referenceQueue = new ReferenceQueue<>();
     private final long _timeout = 60*1000;
@@ -57,4 +57,12 @@ class CustomDeviceCleaner implements DeviceCleaner, Runnable
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName()+"@"+Integer.toHexString(this.hashCode())+"[" +
+                    "registered=" + _registered +
+                "]";
+    }
+
 }

@@ -198,13 +198,13 @@ public abstract class AbstractNDC implements NDConfiguration
 
     @Override
     public String toString() {
-        return "(NDConfiguration|@"+Integer.toHexString(hashCode())+"#"+Long.toHexString(keyCode())+"):{ " +
-                    "shape : "+Arrays.toString(shape())+", "+
-                    "translation : "+Arrays.toString(translation())+", "+
-                    "indicesMap : "+Arrays.toString(indicesMap())+", "+
-                    "spread : "+Arrays.toString(spread())+", "+
-                    "offset : "+Arrays.toString(offset())+" "+
-                "}";
+        return "NDConfiguration@"+Integer.toHexString(hashCode())+"#"+Long.toHexString(keyCode())+"[" +
+                    "shape="+Arrays.toString(shape())+","+
+                    "translation="+Arrays.toString(translation())+","+
+                    "indicesMap="+Arrays.toString(indicesMap())+","+
+                    "spread="+Arrays.toString(spread())+","+
+                    "offset="+Arrays.toString(offset())+""+
+                "]";
     }
 
     protected static NDConfiguration _simpleReshape( int[] newForm, NDConfiguration ndc )

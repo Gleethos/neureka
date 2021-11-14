@@ -89,7 +89,7 @@ public final class JITProp<ValType> implements Component<Tsr<ValType>>
     public String toString() {
         int finished = ( _finished == null ) ? 0 : _finished.size();
         int pending = ( _pending == null ) ? 0 : _pending.size();
-        return "(JIT@"+hashCode()+"):{finished:"+finished+", pending:"+pending+", isDone:"+isDone()+"}";
+        return this.getClass().getSimpleName()+"@"+hashCode()+"[finished="+finished+",pending="+pending+",isDone="+isDone()+"]";
     }
 
 

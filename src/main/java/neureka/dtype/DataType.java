@@ -245,7 +245,7 @@ public final class DataType<Type>
     }
 
     public String toString() {
-        return "DataType(" + this.getTypeClass() + ")";
+        return "DataType[class=" + this.getTypeClass().getSimpleName() + "]";
     }
 
     public Class<Type> getTypeClass() {

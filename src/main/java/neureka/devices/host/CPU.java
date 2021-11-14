@@ -139,6 +139,11 @@ public class CPU extends AbstractDevice<Number>
      */
     public int getCoreCount() { return Runtime.getRuntime().availableProcessors(); }
 
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName()+"[coreCount="+getCoreCount()+"]";
+    }
+
     /**
      *  A simple functional interface for executing a range whose implementations will
      *  either be executed sequentially or they are being dispatched to

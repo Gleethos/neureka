@@ -90,7 +90,7 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     public String toString() {
-        return "OpenCLDevice(deviceId=" + this._deviceId + ", platform=" + this._platform + ")";
+        return "OpenCLDevice[deviceId=" + this._deviceId + ",platform=" + this._platform + "]";
     }
 
     public cl_device_id getDeviceId() {

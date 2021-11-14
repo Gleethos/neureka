@@ -117,15 +117,15 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     public ExecutionCall<D> setMetaArg( Arg<?> arg ) { _arguments.set(arg); return this; }
     
     public String toString() {
-        return "ExecutionCall(" +
-                    "device=" + this._device + ", " +
-                    "derivativeIndex=" + this.getValOf( Arg.DerivIdx.class ) + ", " +
-                    "operation=" + this._operation + ", " +
-                    "tensors=[.."+_tensors.length+"..], " +
+        return this.getClass().getSimpleName()+"[" +
+                    "device=" + this._device + "," +
+                    "derivativeIndex=" + this.getValOf( Arg.DerivIdx.class ) + "," +
+                    "operation=" + this._operation + "," +
+                    "tensors=[.."+_tensors.length+"..]," +
                     "j=" + this.getJ() + ", " +
-                    "algorithm=?, " +
+                    "algorithm=?," +
                     "context=" + _arguments.getAll(Arg.class) +
-                ")";
+                "]";
     }
 
     public Operation getOperation() { return this._operation; }

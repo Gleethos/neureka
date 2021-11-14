@@ -2,7 +2,7 @@ package neureka.backend.api;
 
 
 import neureka.Neureka;
-import neureka.calculus.Cache;
+import neureka.calculus.FunctionCache;
 import neureka.calculus.Function;
 import neureka.calculus.Functions;
 import neureka.calculus.assembly.ParseUtil;
@@ -55,7 +55,7 @@ public class OperationContext extends AbstractComponentOwner<OperationContext> i
     private int _size;
 
     // Global context and cache:
-    private final Cache _functionCache = new Cache();
+    private final FunctionCache _functionCache = new FunctionCache();
 
     private Functions _getAutogradFunction = null;
 
@@ -108,7 +108,7 @@ public class OperationContext extends AbstractComponentOwner<OperationContext> i
     /**
      * @return The {@link Function} and {@link neureka.Tsr} cache of this {@link OperationContext}
      */
-    public Cache getFunctionCache() { return this._functionCache; }
+    public FunctionCache getFunctionCache() { return this._functionCache; }
 
     /**
      *  This method returns a {@link Functions} instance which wraps pre-instantiated
@@ -161,7 +161,7 @@ public class OperationContext extends AbstractComponentOwner<OperationContext> i
         _lookup.put( function, operation );
         _lookup.put( operator.toLowerCase(), operation );
         if (
-                operator
+                operator // TODO: Remove this! Its nonsensical and error prone!!
                         .replace((""+((char)171)), "")
                         .replace((""+((char)187)), "")
                         .matches("[a-z]")
@@ -217,12 +217,12 @@ public class OperationContext extends AbstractComponentOwner<OperationContext> i
         OperationContext clone = new OperationContext();
         clone._size = _size;
         clone._lookup.putAll( _lookup );
-        clone._operations.addAll(_operations);
+        clone._operations.addAll( _operations );
         return clone;
     }
 
     public String toString() {
-        return "OperationContext(size=" + this.size() + ")";
+        return getClass().getSimpleName()+"[size=" + this.size() + "]";
     }
 
     @Override

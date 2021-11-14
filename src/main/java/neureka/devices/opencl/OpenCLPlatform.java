@@ -225,4 +225,13 @@ public class OpenCLPlatform {
         return this._context;
     }
 
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode())+"[" +
+                    "pid=" + this._pid + "," +
+                    "context="+this._context +
+                    "kernels=[.."+_kernels.size()+"..]" +
+                "]";
+    }
+
 }

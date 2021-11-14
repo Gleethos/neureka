@@ -2,7 +2,17 @@ package ut.neureka
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.autograd.JITProp
+import neureka.backend.api.ExecutionCall
+import neureka.devices.CustomDeviceCleaner
+import neureka.devices.host.CPU
+import neureka.devices.opencl.CLContext
+import neureka.devices.opencl.OpenCLDevice
+import neureka.devices.opencl.OpenCLPlatform
+import neureka.dtype.DataType
+import neureka.framing.Relation
 import neureka.utility.SettingsLoader
+import spock.lang.IgnoreIf
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
@@ -82,6 +92,51 @@ class Neureka_Spec extends Specification
 
     }
 
+    @IgnoreIf({
+        neurekaObject == null
+            ||
+        !Neureka.get().canAccessOpenCL() && (
+                neurekaObject instanceof OpenCLDevice || neurekaObject instanceof OpenCLPlatform
+        )
+    })
+    def 'Various library objects adhere to the same toString formatting convention!'(
+            Object neurekaObject
+    ) {
+        expect : 'The provided object matches the following regex defining a common standard!'
+            neurekaObject.toString().matches(
+                    "^(" +
+                            "(([a-zA-Z]+\\.)*[A-Z][0-9a-zA-Z]+)" +
+                            "(@[0-9a-f]+)?" +
+                            "(#[0-9a-f]+)?" +
+                            "(" +
+                            "(\\[)(()|([a-zA-Z_\$][a-zA-Z_\$0-9]?)+=(.+))?(\\])" +
+                            ")?" +
+                    ")\$"
+            )
+
+        where : 'The following objects are being used..'
+            neurekaObject << [
+                    CPU.get(),
+                    DataType.of(String),
+                    new Relation<>(),
+                    new JITProp<>([] as Set),
+                    Neureka.get(),
+                    Neureka.get().settings(),
+                    Neureka.get().settings().indexing(),
+                    Neureka.get().settings().autograd(),
+                    Neureka.get().settings().debug(),
+                    Neureka.get().settings().dtype(),
+                    Neureka.get().settings().ndim(),
+                    Neureka.get().settings().view(),
+                    Neureka.get().context().getAutogradFunction(),
+                    Neureka.get().context().getFunction(),
+                    Neureka.get().context(),
+                    Neureka.get().context().getFunctionCache(),
+                    Neureka.get().getContext().get(CLContext),
+                    ExecutionCall.of(Tsr.of(3)).running(Neureka.get().context().getOperation("+")).on(CPU.get()),
+                    new CustomDeviceCleaner()
+        ]
+    }
 
     
 }

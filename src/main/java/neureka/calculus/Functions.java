@@ -1,5 +1,8 @@
 package neureka.calculus;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class Functions {
 
     Function dimTrim;
@@ -155,5 +158,19 @@ public class Functions {
     }
 
     public Function matMul() { return this.matMul; }
+
+    @Override
+    public String toString() {
+        String state = Arrays.stream(this.getClass().getDeclaredFields())
+                                .map( field -> {
+                                    try {
+                                        return field.getName()+"="+field.get(this).toString()+"";
+                                    } catch (IllegalAccessException e) {
+                                        return field.getName()+"=?";
+                                    }
+                                })
+                                .collect(Collectors.joining(","));
+        return this.getClass().getSimpleName()+"["+state+"]";
+    }
 
 }

@@ -216,11 +216,11 @@ public final class Neureka
     }
 
     public String toString() {
-        return "Neureka(" +
-                    "settings=" + this._settings + ", " +
-                    "utility=" + this._utility + ", " +
+        return "Neureka[" +
+                    "settings=" + this._settings + "," +
+                    "utility=" + this._utility + "," +
                     "context=" + this._context +
-                ")";
+                "]";
     }
 
     public OperationContext getContext() {
@@ -301,15 +301,15 @@ public final class Neureka
         public void setIsLocked(boolean locked) { _isLocked = locked; }
 
         public String toString() {
-            return "Neureka.Settings(" +
-                        "debug=" + this._debug + ", " +
-                        "autograd=" + this._autograd + ", " +
-                        "indexing=" + this._indexing + ", " +
-                        "view=" + this._view + ", " +
-                        "ndim=" + this._ndim + ", " +
-                        "dtype=" + this._dtype + ", " +
+            return "Neureka.Settings[" +
+                        "debug=" + this._debug + "," +
+                        "autograd=" + this._autograd + "," +
+                        "indexing=" + this._indexing + "," +
+                        "view=" + this._view + "," +
+                        "ndim=" + this._ndim + "," +
+                        "dtype=" + this._dtype + "," +
                         "isLocked=" + this.isLocked() +
-                    ")";
+                    "]";
         }
 
         
@@ -355,9 +355,9 @@ public final class Neureka
             }
 
             public String toString() {
-                return "Neureka.Settings.Debug(" +
+                return "Neureka.Settings.Debug[" +
                             "isKeepingDerivativeTargetPayloads=" + this.isKeepingDerivativeTargetPayloads() +
-                        ")";
+                        "]";
             }
         }
 
@@ -466,12 +466,12 @@ public final class Neureka
             }
 
             public String toString() {
-                return "Neureka.Settings.AutoGrad(" +
-                            "isPreventingInlineOperations=" + this.isPreventingInlineOperations() + ", " +
-                            "isRetainingPendingErrorForJITProp=" + this.isRetainingPendingErrorForJITProp() + ", " +
-                            "isApplyingGradientWhenTensorIsUsed=" + this.isApplyingGradientWhenTensorIsUsed() + ", " +
+                return "Neureka.Settings.AutoGrad[" +
+                            "isPreventingInlineOperations=" + this.isPreventingInlineOperations() + "," +
+                            "isRetainingPendingErrorForJITProp=" + this.isRetainingPendingErrorForJITProp() + "," +
+                            "isApplyingGradientWhenTensorIsUsed=" + this.isApplyingGradientWhenTensorIsUsed() + "," +
                             "isApplyingGradientWhenRequested=" + this.isApplyingGradientWhenRequested() +
-                        ")";
+                        "]";
             }
         }
 
@@ -488,9 +488,9 @@ public final class Neureka
             }
 
             public String toString() {
-                return "Neureka.Settings.Indexing(" +
+                return "Neureka.Settings.Indexing[" +
                             "isUsingArrayBasedIndexing=" + this.isUsingArrayBasedIndexing() +
-                        ")";
+                        "]";
             }
         }
 
@@ -529,10 +529,10 @@ public final class Neureka
             public void setAsString( String modes ) { setAsString( TsrAsString.Util.configFromCode( modes ) ); }
 
             public String toString() {
-                return "Neureka.Settings.View(" +
-                            "isUsingLegacyView=" + this.isUsingLegacyView() + ", " +
+                return "Neureka.Settings.View[" +
+                            "isUsingLegacyView=" + this.isUsingLegacyView() + "," +
                             "asString=" + this.getAsString() +
-                        ")";
+                        "]";
             }
         }
 
@@ -554,9 +554,9 @@ public final class Neureka
             }
 
             public String toString() {
-                return "Neureka.Settings.NDim(" +
+                return "Neureka.Settings.NDim[" +
                               "isOnlyUsingDefaultNDConfiguration=" + this.isOnlyUsingDefaultNDConfiguration() +
-                        ")";
+                        "]";
             }
         }
 
@@ -582,10 +582,10 @@ public final class Neureka
             }
 
             public String toString() {
-                return "Neureka.Settings.DType(" +
-                            "defaultDataTypeClass=" + this.getDefaultDataTypeClass() + ", " +
+                return "Neureka.Settings.DType[" +
+                            "defaultDataTypeClass=" + this.getDefaultDataTypeClass() + "," +
                             "isAutoConvertingExternalDataToJVMTypes=" + this._isAutoConvertingExternalDataToJVMTypes +
-                        ")";
+                        "]";
             }
         }
 

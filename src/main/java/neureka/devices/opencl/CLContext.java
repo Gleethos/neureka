@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.jocl.CL.clGetPlatformIDs;
 
@@ -58,6 +59,15 @@ public class CLContext  implements Component<OperationContext>
         this._platforms.addAll( _findLoadAndCompileForAllPlatforms() );
         changeRequest.executeChange();
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode())+"[" +
+                    "platforms=["+
+                        _platforms.stream().map(Object::toString).collect(Collectors.joining(","))+
+                    "]" +
+                "]";
     }
 
     /**
