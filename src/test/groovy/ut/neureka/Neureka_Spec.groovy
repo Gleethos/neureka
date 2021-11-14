@@ -2,8 +2,10 @@ package ut.neureka
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.autograd.GraphLock
 import neureka.autograd.JITProp
 import neureka.backend.api.ExecutionCall
+import neureka.calculus.Function
 import neureka.devices.CustomDeviceCleaner
 import neureka.devices.host.CPU
 import neureka.devices.opencl.CLContext
@@ -129,7 +131,8 @@ class Neureka_Spec extends Specification
                     Neureka.get().getContext().get(CLContext),
                     ExecutionCall.of(Tsr.of(3)).running(Neureka.get().context().getOperation("+")).on(CPU.get()),
                     new CustomDeviceCleaner(),
-                    (Tsr.of(2).setRqsGradient(true)*Tsr.of(-2)).graphNode
+                    (Tsr.of(2).setRqsGradient(true)*Tsr.of(-2)).graphNode,
+                    new GraphLock(Function.of('i0*3/2'))
         ]
     }
 

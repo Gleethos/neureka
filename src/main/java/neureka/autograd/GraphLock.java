@@ -11,16 +11,13 @@ import neureka.calculus.Function;
  * */
 public class GraphLock
 {
-
     /**
      *  Owner of the lock of a graph:
      */
-    private Function _owner;
+    private final Function _owner;
 
     /**
      *  Lock status (is locked if the graph is currently processing)
-     *
-     *  @return Returns true if the graph is locked
      */
     private boolean _isLocked = true;
 
@@ -28,26 +25,25 @@ public class GraphLock
      * CONSTRUCTOR
      * @param owner The function which currently processes the graph of nodes of which this lock is referenced by.
      */
-    public GraphLock( Function owner ) {
-        _owner = owner;
-    }
+    public GraphLock( Function owner ) { _owner = owner; }
 
     /**
      *  Releases this lock and permits nodes of this graph
      *  to be used for further processing.
      */
-    public void release() {
-        _isLocked = false;
-    }
+    public void release() { _isLocked = false; }
 
     /**
      * @return A description based on the identity of this lock and its owner (a function)!
      */
     @Override
     public String toString() {
-        return "GID:"+Integer.toHexString(this.hashCode())+":f"+ _owner.toString()+"";
+        return this.getClass().getSimpleName()+"@"+Integer.toHexString(this.hashCode())+"[owner="+ _owner.toString()+"]";
     }
 
+    /**
+     * @return Returns true if the graph is locked.
+     */
     public boolean isLocked() {
         return this._isLocked;
     }
