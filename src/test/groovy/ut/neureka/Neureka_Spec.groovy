@@ -92,13 +92,7 @@ class Neureka_Spec extends Specification
 
     }
 
-    @IgnoreIf({
-        neurekaObject == null
-            ||
-        !Neureka.get().canAccessOpenCL() && (
-                neurekaObject instanceof OpenCLDevice || neurekaObject instanceof OpenCLPlatform
-        )
-    })
+    @IgnoreIf({ neurekaObject == null })
     def 'Various library objects adhere to the same toString formatting convention!'(
             Object neurekaObject
     ) {
@@ -134,7 +128,8 @@ class Neureka_Spec extends Specification
                     Neureka.get().context().getFunctionCache(),
                     Neureka.get().getContext().get(CLContext),
                     ExecutionCall.of(Tsr.of(3)).running(Neureka.get().context().getOperation("+")).on(CPU.get()),
-                    new CustomDeviceCleaner()
+                    new CustomDeviceCleaner(),
+                    (Tsr.of(2).setRqsGradient(true)*Tsr.of(-2)).graphNode
         ]
     }
 

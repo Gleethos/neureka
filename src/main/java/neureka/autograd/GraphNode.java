@@ -926,12 +926,11 @@ public class GraphNode<V> implements Component<Tsr<V>>
     public String toString( String m ) {
         Tsr<?> payload = getPayload();
         if ( m.equals("") ) {
-            return this.getClass().getSimpleName()+"{ " +
-                    Arrays.stream(_parents).map(GraphNode::getPayload).map(t -> (t==null ? "?" : t.shape().stream().map(Object::toString).collect(Collectors.joining("x")))).collect(Collectors.joining(", ")) +
-                    " -> " +
-                    this._function.toString()+
-                    " -> " + (payload != null ? payload.shape().stream().map(Object::toString).collect(Collectors.joining("x")) : "?" ) +
-                    " }";
+            return this.getClass().getSimpleName()+"@"+Integer.toHexString(this.hashCode())+"[" +
+                        "parents=[" + Arrays.stream(_parents).map(GraphNode::getPayload).map(t -> (t==null ? "?" : t.shape().stream().map(Object::toString).collect(Collectors.joining("x")))).collect(Collectors.joining(", ")) + "]," +
+                        "function=" + this._function.toString() + "," +
+                        "shape=" + (payload != null ? payload.shape().stream().map(Object::toString).collect(Collectors.joining("x")) : "?" ) +
+                    "]";
         }
         if ( m.contains( "g" ) ) {
             String flags = m.replace( "g", "" );
