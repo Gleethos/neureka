@@ -53,7 +53,7 @@ import neureka.devices.Device;
  *   originating from different {@link ExecutionCall} instances with unique arguments.
  *   {@link Tsr} instances within an execution call having the same shape would
  *   cause the {@link Operation} instance to chose an {@link Algorithm} instance which is responsible
- *   for performing elementwise operations, whereas otherwise the {@link neureka.backend.standard.algorithms.Broadcast}
+ *   for performing element-wise operations, whereas otherwise the {@link neureka.backend.standard.algorithms.Broadcast}
  *   algorithm might be called to perform the operation.
  */
 public interface Algorithm<C extends Algorithm<C>>
@@ -69,6 +69,13 @@ extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSu
         return new FunAlgorithm(name);
     }
 
+    /**
+     *  The name of an {@link Algorithm} may be used for OpenCL kernel compilation or simply
+     *  for debugging purposes to identify which type of algorithm is being executed at any
+     *  given time...
+     *
+     * @return The name of this {@link Algorithm}.
+     */
     String getName();
 
     //---
