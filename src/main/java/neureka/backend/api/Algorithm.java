@@ -90,9 +90,9 @@ extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSu
     <D extends Device<?>, I extends ImplementationFor<D>> C setImplementationFor(Class<D> deviceClass, I implementation );
 
     /**
-     * A device specific implementation can be accessed by passing the class of the implementation
-     * of the 'ImplementationFor&lt;Device&lt;' class.
-     * An Algorithm instance ought to contain a collection of these device specific
+     * An {@link ImplementationFor} a specific {@link Device} can be accessed by passing the class of
+     * the {@link Device} for which an implementation should be returned.
+     * An Algorithm instance ought to contain a collection of these {@link Device} specific
      * implementations...
      *
      * @param deviceClass The class of the device for which the stored algorithm implementation should be returned.
@@ -101,6 +101,16 @@ extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSu
      */
     <D extends Device<?>> ImplementationFor<D> getImplementationFor( Class<D> deviceClass );
 
+    /**
+     * An {@link ImplementationFor} a specific {@link Device} can be accessed by passing the
+     * the {@link Device} for which an implementation should be returned.
+     * An Algorithm instance ought to contain a collection of these {@link Device} specific
+     * implementations...
+     *
+     * @param device The device for which the stored algorithm implementation should be returned.
+     * @param <D>    type parameter which has to be a class extending the Device interface.
+     * @return The implementation for the passed device type class.
+     */
     default <D extends Device<?>> ImplementationFor<D> getImplementationFor( D device ) {
         return (ImplementationFor<D>) getImplementationFor(device.getClass());
     }
