@@ -52,15 +52,15 @@ public class Addition extends AbstractOperation {
                                                         {
                                                             Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                                                             assert ctxDerivative == null;
-                                                            Tsr[] inputs = call.getTensors();
+                                                            Tsr<?>[] inputs = call.getTensors();
                                                             int d = call.getDerivativeIndex();
                                                             if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                                                             else
                                                             {
-                                                                Tsr deriv = inputs[(d==0?1:0)];
-                                                                Tsr toBeDerived = inputs[d];
-                                                                Device device = call.getDevice();
-                                                                return ADAgent.of( deriv )
+                                                                Tsr<?> derivative = inputs[(d==0?1:0)];
+                                                                Tsr<?> toBeDerived = inputs[d];
+                                                                Device device = call.getDeviceFor(Number.class);
+                                                                return ADAgent.of( derivative )
                                                                                 .setBackward(
                                                                                     (node, backwardError ) ->
                                                                                         this.getAlgorithm(Broadcast.class)
@@ -354,9 +354,9 @@ public class Addition extends AbstractOperation {
             return result;
         } else {
             double derivative = 0;
-            for ( int i = 0; i < src.length; i++ ) {
-                derivative += src[ i ].derive( inputs, d, j );
-            }
+            for ( Function function : src )
+                derivative += function.derive(inputs, d, j);
+
             return derivative;
         }
     }

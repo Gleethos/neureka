@@ -262,17 +262,17 @@ public class Subtraction extends AbstractOperation
                 .setSupplyADAgentFor(
                         ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
-                            Tsr<?> ctxDerivative = (Tsr<?>)call.getValOf(Arg.Derivative.class);
+                            Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                             assert ctxDerivative == null;
                             Tsr<?>[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
                             if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                             else
                             {
-                                Tsr<?> deriv = inputs[(d==0?1:0)];
+                                Tsr<?> derivative = inputs[(d==0?1:0)];
                                 Tsr<?> toBeDerived = inputs[d];
                                 Device device = call.getDevice();
-                                return ADAgent.of( deriv )
+                                return ADAgent.of( derivative )
                                             .setBackward(
                                                 (node, backwardError ) ->
                                                     this.getAlgorithm(Broadcast.class)

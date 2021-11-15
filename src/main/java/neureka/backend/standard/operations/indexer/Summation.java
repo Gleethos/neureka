@@ -76,10 +76,10 @@ public final class Summation extends AbstractOperation
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr<?> deriv = f.executeDerive( inputs, d );
-                            return ADAgent.of( deriv )
-                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
-                                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, deriv ) );
+                            Tsr<?> derivative = f.executeDerive( inputs, d );
+                            return ADAgent.of( derivative )
+                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
                         }
                     }
                 )
@@ -211,11 +211,11 @@ public final class Summation extends AbstractOperation
         .setCallPreparation(
                 call -> {
                     Tsr<?>[] tsrs = call.getTensors();
-                    Device device = call.getDevice();
+                    Device<Number> device = call.getDeviceFor(Number.class);
                     if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                     {
                         int[] shp = tsrs[ 1 ].getNDConf().shape();
-                        Tsr output = Tsr.of( shp, 0.0 );
+                        Tsr<Double> output = Tsr.of( shp, 0.0 );
                         output.setIsVirtual( false );
                         try {
                             device.store(output);

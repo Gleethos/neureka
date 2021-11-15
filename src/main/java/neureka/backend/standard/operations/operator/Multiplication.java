@@ -194,7 +194,7 @@ public class Multiplication extends AbstractOperation
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
-                        Tsr<?> ctxDerivative = (Tsr) call.getValOf(Arg.Derivative.class);
+                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         Function mul = Neureka.get().context().getFunction().mul();
                         if ( ctxDerivative != null ) {
                             return ADAgent.of( ctxDerivative )
@@ -206,10 +206,10 @@ public class Multiplication extends AbstractOperation
                         if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                         else
                         {
-                            Tsr<?> deriv = f.executeDerive( inputs, d );
-                            return ADAgent.of( deriv )
-                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
-                                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, deriv ) );
+                            Tsr<?> derivative = f.executeDerive( inputs, d );
+                            return ADAgent.of( derivative )
+                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
                         }
                     }
                 )
@@ -301,7 +301,7 @@ public class Multiplication extends AbstractOperation
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
-                        Tsr<?> ctxDerivative = (Tsr)call.getValOf(Arg.Derivative.class);
+                        Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                         Function mul = Neureka.get().context().getFunction().mul();
                         if ( ctxDerivative != null ) {
                             return ADAgent.of( ctxDerivative )
@@ -312,17 +312,17 @@ public class Multiplication extends AbstractOperation
                         int d = call.getValOf( Arg.DerivIdx.class );
                         if ( forward )
                         {
-                            Tsr<?> deriv = f.executeDerive( inputs, d );
-                            return ADAgent.of( deriv )
-                                    .setForward( (t, derivative ) -> mul.execute( derivative, deriv ) )
+                            Tsr<?> derivative = f.executeDerive( inputs, d );
+                            return ADAgent.of( derivative )
+                                    .setForward( (t, graphDerivative ) -> mul.execute( graphDerivative, derivative ) )
                                     .setBackward( null );
                         }
                         else
                         {
-                            Tsr<?> deriv = f.executeDerive( inputs, d );
-                            return ADAgent.of( deriv )
-                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
-                                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, deriv ) );
+                            Tsr<?> derivative = f.executeDerive( inputs, d );
+                            return ADAgent.of( derivative )
+                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                                    .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
                         }
                     }
                 )

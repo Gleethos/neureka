@@ -195,22 +195,22 @@ public class Division extends AbstractOperation
                                         .setSupplyADAgentFor(
                                             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                             {
-                                                Tsr ctxDerivative = (Tsr)call.getValOf(Arg.Derivative.class);
+                                                Tsr<?> ctxDerivative = (Tsr<?>)call.getValOf(Arg.Derivative.class);
                                                 Function mul = Neureka.get().context().getFunction().mul();
                                                 if ( ctxDerivative != null ) {
                                                     return ADAgent.of( ctxDerivative )
-                                                                    .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
-                                                                    .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
+                                                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
+                                                                    .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
                                                 }
-                                                Tsr[] inputs = call.getTensors();
+                                                Tsr<?>[] inputs = call.getTensors();
                                                 int d = call.getDerivativeIndex();
                                                 if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                                                 else
                                                 {
-                                                    Tsr deriv = f.derive( inputs, d );
-                                                    return ADAgent.of( deriv )
-                                                            .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, deriv } ) )
-                                                            .setBackward( (node, backwardError ) -> mul.call( new Tsr[]{ backwardError, deriv } ) );
+                                                    Tsr<?> derivative = f.executeDerive( inputs, d );
+                                                    return ADAgent.of( derivative )
+                                                            .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                                                            .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
                                                 }
                                             }
                                         )
@@ -449,7 +449,7 @@ public class Division extends AbstractOperation
             }
             return result;
         } else {
-            double derivative = 0;
+            double derivative;
             double tempVar = src[ 0 ].call( inputs );
             derivative = src[ 0 ].derive( inputs, d );
 

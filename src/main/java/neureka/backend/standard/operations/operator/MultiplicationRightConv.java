@@ -50,18 +50,18 @@ public class MultiplicationRightConv extends AbstractOperation {
                             Function mul = Neureka.get().context().getFunction().mul();
                             if ( ctxDerivative != null ) {
                                 return ADAgent.of( ctxDerivative )
-                                                .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
-                                                .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
+                                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
+                                                .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
                             }
-                            Tsr[] inputs = call.getTensors();
+                            Tsr<?>[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
                             if ( forward ) throw new IllegalArgumentException("Broadcast implementation does not support forward-AD!");
                             else
                             {
-                                Tsr<?> deriv = f.derive( inputs, d );
-                                return ADAgent.of( deriv )
-                                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
-                                                .setBackward( (node, backwardError ) -> mul.execute( backwardError, deriv ) );
+                                Tsr<?> derivative = f.executeDerive( inputs, d );
+                                return ADAgent.of( derivative )
+                                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                                                .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
                             }
                         }
                 )

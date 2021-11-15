@@ -57,14 +57,14 @@ public class MatMul extends AbstractOperation
                                             Function invX = Neureka.get().context().getFunction().matMul();
                                             Tsr<?>[] inputs = call.getTensors();
                                             int d = (1 + call.getValOf( Arg.DerivIdx.class )) % 2;
-                                            Tsr<?> deriv = inputs[ d ].T().clone(); // We need to clone it to make it have a simple nd configuration...
-                                            deriv.to(call.getDevice());
-                                            return ADAgent.of( deriv )
+                                            Tsr<?> derivative = inputs[ d ].T().clone(); // We need to clone it to make it have a simple nd configuration...
+                                            derivative.to(call.getDevice());
+                                            return ADAgent.of( derivative )
                                                             .setBackward( (node, error) -> {
                                                                 if ( d == 1 )
-                                                                    return invX.execute( error, deriv );
+                                                                    return invX.execute( error, derivative );
                                                                 else
-                                                                    return invX.execute( deriv, error );
+                                                                    return invX.execute( derivative, error );
                                                             });
                                         }
                                     )
@@ -197,6 +197,12 @@ public class MatMul extends AbstractOperation
 
     }
 
+    /**
+     *  This method will clone {@link Tsr} instances if they do not
+     *  possess a simple {@link neureka.ndim.config.NDConfiguration}.
+     *
+     * @param tensors The tensors which ought to be cloned based on the complexity of their access patterns.
+     */
     private static void _autoClone( Tsr<?>[] tensors ) {
         for ( int i = 0; i < tensors.length; i++ ) {
             if ( !(tensors[i].getNDConf() instanceof SimpleD2Configuration) ) {
