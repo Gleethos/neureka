@@ -52,7 +52,7 @@ import neureka.devices.Device;
  *   The "+" operator for example has different {@link Algorithm} instances tailored to specific requirements
  *   originating from different {@link ExecutionCall} instances with unique arguments.
  *   {@link Tsr} instances within an execution call having the same shape would
- *   cause the {@link Operation} instance to chose an {@link Algorithm} instance which is responsible
+ *   cause the {@link Operation} instance to choose an {@link Algorithm} instance which is responsible
  *   for performing element-wise operations, whereas otherwise the {@link neureka.backend.standard.algorithms.Broadcast}
  *   algorithm might be called to perform the operation.
  */
