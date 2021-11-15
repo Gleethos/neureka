@@ -138,7 +138,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
 
         then : 'An exception is being thrown because implementations of type "Convolution" can only perform reverse mode AD!'
             def exception = thrown(IllegalArgumentException)
-            exception.message == "Convolution of does not support forward-AD!"
+            exception.message == "Convolution does not support forward-AD!"
 
         when : 'The agent generator is called once more with the forward flag set to false...'
             agent = imp.supplyADAgentFor(
@@ -146,6 +146,8 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
                                 call,
                                 false
                             )
+        then :
+            (1.._) * call.getTensors() >> [Tsr.of(1), Tsr.of(2)]
 
         then : 'No exception is being thrown and the agent is configured to perform backward-AD.'
             //!agent.isForward() //TODO: Fix this

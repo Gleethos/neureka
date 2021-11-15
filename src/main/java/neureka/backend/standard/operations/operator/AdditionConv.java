@@ -52,7 +52,7 @@ public class AdditionConv extends AbstractOperation {
                                     Tsr[] inputs = call.getTensors();
                                     int d = call.getDerivativeIndex();
                                     if ( forward )
-                                        throw new IllegalArgumentException("Convolution of does not support forward-AD!");
+                                        throw new IllegalArgumentException("Convolution does not support forward-AD!");
                                     else
                                     {
                                         Tsr<?> localDerivative = f.derive( inputs, d );

@@ -10,6 +10,10 @@ import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
+import neureka.ndim.AbstractNDArray;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class ConvUtil {
 
@@ -31,35 +35,38 @@ public class ConvUtil {
                         }
                 )
                 .setSupplyADAgentFor(
-                        (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
+                        ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
                             Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
                             if ( forward )
                                 throw new IllegalArgumentException("Convolution does not support forward-AD!");
 
                             Function mul = Neureka.get().context().getFunction().mul();
-                            Tsr<?>[] inputs = call.getTensors();
+                            Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
 
                             Function invX = new FunctionBuilder( Neureka.get().context() ).build(
                                     "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
                                     false
                             );
-                            Tsr<?> derivative = f.executeDerive( inputs, d );
+                            Tsr<?> derivative = f.derive( inputs, d );
+                            assert d >= 0 && d <= 1;
                             assert mul != null;
                             assert derivative != null;
                             assert invX != null;
+                            assert inputs.length >= 2 && inputs.length <= 3;
+                            int[] shp = inputs[ inputs.length > 2 ? d + 1 : d ].getNDConf().shape();
                             return ADAgent.of( derivative )
                                     .setForward(
-                                            (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative )
+                                        (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative )
                                     )
                                     .setBackward(
-                                            (node, error) -> invX.execute(
-                                                                    error,
-                                                                    derivative,  // Warning! Payload can be null because of garbage collector!
-                                                                    Tsr.of(node.getPayload().shape(), 0)
-                                                            )
-                                    ); // WARNING! This produced null pointer!
+                                        (node, error) -> invX.execute(
+                                                                error,
+                                                                derivative,
+                                                                Tsr.of(shp, 0)
+                                                        )
+                                    );
                         }
                 )
                 .setExecutionDispatcher(
@@ -99,19 +106,19 @@ public class ConvUtil {
                 )
                 .setCallPreparation(
                         call -> {
-                            Tsr<?>[] tsrs = call.getTensors();
-                            Device device = call.getDevice();
-                            if ( tsrs[ 0 ] == null ) // Creating a new tensor:
+                            Tsr<?>[] tensors = call.getTensors();
+                            Device<Number> device = call.getDeviceFor(Number.class);
+                            if ( tensors[ 0 ] == null ) // Creating a new tensor:
                             {
-                                int[] shp = Tsr.Utility.Indexing.shpOfCon(tsrs[ 1 ].getNDConf().shape(), tsrs[ 2 ].getNDConf().shape());
-                                Tsr<?> output = Tsr.of( shp, 0.0 );
+                                int[] shp = Tsr.Utility.Indexing.shpOfCon(tensors[ 1 ].getNDConf().shape(), tensors[ 2 ].getNDConf().shape());
+                                Tsr<Double> output = Tsr.of( shp, 0.0 );
                                 output.setIsVirtual( false );
                                 try {
                                     device.store( output );
                                 } catch ( Exception e ) {
                                     e.printStackTrace();
                                 }
-                                tsrs[ 0 ] = output;
+                                tensors[ 0 ] = output;
                             }
                             return call;
                         }
