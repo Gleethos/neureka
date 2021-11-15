@@ -110,7 +110,11 @@ public final class DefaultADAgent extends Args implements ADAgent {
     /**
      * This interface is the declaration for
      * lambda actions for both the {@link #forward(GraphNode, Tsr)}
-     * and {@link #backward(GraphNode, Tsr)} method of the {@link ADAgent} interface.
+     * and {@link #backward(GraphNode, Tsr)} method of the {@link ADAgent} interface. <br><br>
+     *
+     * Note: Do not access the {@link GraphNode#getPayload()} of the {@link GraphNode}
+     *       passed to implementation of this.
+     *       The payload is weakly referenced, meaning that this method can return null!
      */
     public interface ADAction
     {

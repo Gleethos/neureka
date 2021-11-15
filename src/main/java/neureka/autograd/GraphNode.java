@@ -519,18 +519,13 @@ public class GraphNode<V> implements Component<Tsr<V>>
     }
 
     /**
-     * The value of this graph node!
-     * This node belongs to a tensor during creation.
-     * The payload is referenced weakly and might be garbage collected.
-     * When the tensor becomes phantom reachable the lambda defined
-     * in this method will be executed.
-     * It is stored inside the Cleaner within the device of the payload.
-     * Cleaning means to null the targets_derivatives map.
-     * Leaning however only occurs if the payload reference is still null.
-     * If it is not null then this means that the payload
-     * changed (happens during injection)
+     *  The value of a graph node is the tensor to which it belongs (is a component of).  <br><br>
      *
-     * @return the payload of this graph-node.
+     *  Warning: This method might return null because
+     *           the payload is weakly referenced!
+     *           Meaning that it might get garbage collected.
+     *
+     * @return The tensor payload of this graph-node.
      */
     public Tsr<V> getPayload() { return ( _payload == null ? null : _payload.get() ); }
 

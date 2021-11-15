@@ -202,17 +202,17 @@ public final class Product extends AbstractOperation {
                                         "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
                                         false
                                 );
-                                Tsr<?> deriv = f.executeDerive( inputs, d );
-                                return ADAgent.of( deriv )
-                                        .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
-                                        .setBackward( (t, error) -> invX.execute( error, deriv, Tsr.of(t.getPayload().shape(), 0) ) );
+                                Tsr<?> derivative = f.executeDerive( inputs, d );
+                                return ADAgent.of( derivative )
+                                        .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                                        .setBackward( (t, error) -> invX.execute( error, derivative, Tsr.of(t.getPayload().shape(), 0) ) );
                             }
                             else
                             {
-                                Tsr<?> deriv = f.executeDerive( inputs, d );
-                                return ADAgent.of( deriv )
-                                        .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
-                                        .setBackward( (node, backwardError ) -> mul.execute( backwardError, deriv ) );
+                                Tsr<?> derivative = f.executeDerive( inputs, d );
+                                return ADAgent.of( derivative )
+                                        .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                                        .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
                             }
                         }
                     }

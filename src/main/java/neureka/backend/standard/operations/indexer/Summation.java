@@ -199,10 +199,10 @@ public final class Summation extends AbstractOperation
                     }
                     else
                     {
-                        Tsr<?> deriv = f.executeDerive( inputs, d );
-                        return ADAgent.of( deriv )
-                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
-                                .setBackward( (node, backwardError ) -> mul.execute( backwardError, deriv ) );
+                        Tsr<?> derivative = f.executeDerive( inputs, d );
+                        return ADAgent.of( derivative )
+                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                                .setBackward( (node, backwardError ) -> mul.execute( backwardError, derivative ) );
                     }
                 }
             }

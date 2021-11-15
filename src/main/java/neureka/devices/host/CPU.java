@@ -6,7 +6,6 @@ import neureka.backend.api.Operation;
 import neureka.calculus.Function;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
-import neureka.devices.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +30,7 @@ public class CPU extends AbstractDevice<Number>
     static {  _INSTANCE = new CPU();  }
 
     private final JVMExecutor _executor = new JVMExecutor();
-    private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap(new WeakHashMap<Tsr<Number>, Boolean>());
+    private final Set<Tsr<Number>> _tensors = Collections.newSetFromMap(new WeakHashMap<>());
 
     private CPU() { super(); }
 
@@ -205,9 +204,7 @@ public class CPU extends AbstractDevice<Number>
                 for ( Future<?> f : futures ) {
                     try {
                         f.get(); // Return value is null because we submitted merely a simple Runnable
-                    } catch ( InterruptedException e ) {
-                        e.printStackTrace();
-                    } catch ( ExecutionException e ) {
+                    } catch ( InterruptedException | ExecutionException e ) {
                         e.printStackTrace();
                     }
                 }

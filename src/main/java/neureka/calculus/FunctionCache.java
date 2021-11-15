@@ -47,6 +47,10 @@ public final class FunctionCache
     private final Map<String, Function> _functionCache = Collections.synchronizedMap( new WeakHashMap<>() );
 
     public void put( Function function ) {
+        if ( function == null ) {
+            _log.error("Null reference passed to '"+getClass().getSimpleName()+"'!");
+            return;
+        }
         boolean doAD = function.isDoingAD();
         this._functionCache.put(
                 ( ( (doAD) ? "d" : "" ) + "(" + function + ")" ).intern(), // Make the String unique!

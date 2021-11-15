@@ -34,23 +34,32 @@ public class ConvUtil {
                         (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
                             Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                            if ( forward ) throw new IllegalArgumentException("Convolution of does not support forward-AD!");
+                            if ( forward )
+                                throw new IllegalArgumentException("Convolution does not support forward-AD!");
 
                             Function mul = Neureka.get().context().getFunction().mul();
-                            Tsr[] inputs = call.getTensors();
+                            Tsr<?>[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
 
                             Function invX = new FunctionBuilder( Neureka.get().context() ).build(
                                     "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
                                     false
                             );
-                            Tsr<?> deriv = f.derive( inputs, d ); // TODO: Fix 'deriveExecute' here returns null! WHY?!?
+                            Tsr<?> derivative = f.executeDerive( inputs, d );
                             assert mul != null;
-                            assert deriv != null;
+                            assert derivative != null;
                             assert invX != null;
-                            return ADAgent.of( deriv )
-                                    .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
-                                    .setBackward( (node, error) -> invX.execute( error, deriv, Tsr.of(node.getPayload().shape(), 0) ) ); // WARNING! This produced null pointer!
+                            return ADAgent.of( derivative )
+                                    .setForward(
+                                            (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative )
+                                    )
+                                    .setBackward(
+                                            (node, error) -> invX.execute(
+                                                                    error,
+                                                                    derivative,  // Warning! Payload can be null because of garbage collector!
+                                                                    Tsr.of(node.getPayload().shape(), 0)
+                                                            )
+                                    ); // WARNING! This produced null pointer!
                         }
                 )
                 .setExecutionDispatcher(
