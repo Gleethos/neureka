@@ -88,7 +88,7 @@ class Calculus_Extension_Integration_Spec extends Specification
                                                                 int[] shp = new int[]{tsrs[1].getNDConf().shape()[0], tsrs[2].getNDConf().shape()[1]}
                                                                 Tsr output = Tsr.of(shp, 0.0);
                                                                 output.setIsVirtual(false);
-                                                                device.store(output);
+                                                                device.store( output );
                                                                 tsrs[0] = output;
                                                             }
                                                             return call;

@@ -161,7 +161,7 @@ public final class Identity extends AbstractOperation
                         Tsr<?> output = Tsr.of( shp, 0.0 );
                         output.setIsVirtual( false );
                         try {
-                            device.store(output);
+                            device.store( output );
                         } catch( Exception e ) {
                             e.printStackTrace();
                         }

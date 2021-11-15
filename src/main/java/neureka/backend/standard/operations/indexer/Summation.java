@@ -179,10 +179,10 @@ public final class Summation extends AbstractOperation
                 int d = call.getDerivativeIndex();
                 if ( forward )
                 {
-                    Tsr<?> deriv = f.executeDerive( inputs, d );
-                    return ADAgent.of( deriv )
-                            .setForward( ( t, derivative ) -> mul.execute( derivative, deriv ) )
-                            .setBackward( ( t, derivative ) -> mul.execute( derivative, deriv ) );
+                    Tsr<?> derivative = f.executeDerive( inputs, d );
+                    return ADAgent.of( derivative )
+                            .setForward( ( t, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                            .setBackward( ( t, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) );
                 }
                 else
                 {
@@ -192,10 +192,10 @@ public final class Summation extends AbstractOperation
                                 "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
                                 false
                         );
-                        Tsr<?> deriv = f.executeDerive( inputs, d );
-                        return ADAgent.of( deriv )
-                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, deriv ) )
-                                .setBackward( (t, error) -> invX.execute( error, deriv, Tsr.of(t.getPayload().shape(), 0) ) );
+                        Tsr<?> derivative = f.executeDerive( inputs, d );
+                        return ADAgent.of( derivative )
+                                .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
+                                .setBackward( (t, error) -> invX.execute( error, derivative, Tsr.of(t.getPayload().shape(), 0) ) );
                     }
                     else
                     {
@@ -218,7 +218,7 @@ public final class Summation extends AbstractOperation
                         Tsr<Double> output = Tsr.of( shp, 0.0 );
                         output.setIsVirtual( false );
                         try {
-                            device.store(output);
+                            device.store( output );
                         } catch( Exception e ) {
                             e.printStackTrace();
                         }

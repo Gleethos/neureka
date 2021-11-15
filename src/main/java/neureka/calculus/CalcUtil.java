@@ -281,13 +281,13 @@ public class CalcUtil
                         _LOG.error( message );
                         throw new IllegalStateException( message );
                     } else {
-                        ImplementationFor implementation = algorithm.getImplementationFor( device.getClass() );
+                        ImplementationFor<Device<?>> implementation = algorithm.getImplementationFor( device );
                         if ( implementation == null ) {
                             String message = Messages.Devices.couldNotFindSuitableImplementationFor( algorithm, device.getClass() );
                             _LOG.error( message );
                             throw new IllegalStateException( message );
                         }
-                        else implementation.run( call );
+                        else implementation.run( (ExecutionCall<Device<?>>) call );
                     }
                 },
                 executor

@@ -77,21 +77,21 @@ public class MatMul extends AbstractOperation
                                             for ( Tsr<?> t : tensors ) if ( t != null ) t.setIsVirtual( false );
                                             ExecutionCall<Device<Object>> preparedCall = (ExecutionCall<Device<Object>>) call.getAlgorithm().prepare( call.withTensors(tensors) );
                                             return call.getAlgorithm()
-                                                        .getImplementationFor((Class<Device<Object>>) call.getDevice().getClass())
+                                                        .getImplementationFor(call.getDeviceFor(Object.class))
                                                         .runAndGetFirstTensor(preparedCall);
                                         }
                                     )
                                     .setCallPreparation(
                                         call -> {
                                             Tsr<?>[] tsrs = call.getTensors();
-                                            Device device = call.getDevice();
+                                            Device<Number> device = call.getDeviceFor(Number.class);
                                             if ( tsrs[ 0 ] == null ) // Creating a new tensor:
                                             {
                                                 int[] shp = new int[]{ tsrs[ 1 ].shape(0), tsrs[ 2 ].shape(1) };
-                                                Tsr<?> output = Tsr.of( shp, 0.0 );
+                                                Tsr<Double> output = Tsr.of( shp, 0.0 );
                                                 output.setIsVirtual( false );
                                                 try {
-                                                    device.store(output);
+                                                    device.store( output );
                                                 } catch ( Exception e ) {
                                                     e.printStackTrace();
                                                 }

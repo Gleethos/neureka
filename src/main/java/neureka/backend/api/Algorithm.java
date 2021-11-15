@@ -99,7 +99,11 @@ extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSu
      * @param <D>         The type parameter which has to be a class extending the Device interface.
      * @return The implementation for the passed device type class.
      */
-    <D extends Device<?>> ImplementationFor<D> getImplementationFor(Class<D> deviceClass);
+    <D extends Device<?>> ImplementationFor<D> getImplementationFor( Class<D> deviceClass );
+
+    default <D extends Device<?>> ImplementationFor<D> getImplementationFor( D device ) {
+        return (ImplementationFor<D>) getImplementationFor(device.getClass());
+    }
 
 
 }

@@ -64,7 +64,7 @@ public class Addition extends AbstractOperation {
                                                                                 .setBackward(
                                                                                     (node, backwardError ) ->
                                                                                         this.getAlgorithm(Broadcast.class)
-                                                                                             .getImplementationFor(device.getClass())
+                                                                                             .getImplementationFor(device)
                                                                                              .runAndGetFirstTensor(
                                                                                                      ExecutionCall.of(
                                                                                                              Tsr.Create.newTsrLike(toBeDerived, 0).setIsVirtual(false),
