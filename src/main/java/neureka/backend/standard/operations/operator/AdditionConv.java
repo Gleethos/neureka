@@ -46,28 +46,28 @@ public class AdditionConv extends AbstractOperation {
                                     Function mul = Neureka.get().context().getFunction().mul();
                                     if ( ctxDerivative != null ) {
                                         return ADAgent.of( ctxDerivative )
-                                                        .setForward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )
-                                                        .setBackward( (node, forwardDerivative ) -> mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );
+                                                        .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
+                                                        .setBackward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) );
                                     }
-                                    Tsr[] inputs = call.getTensors();
+                                    Tsr<?>[] inputs = call.getTensors();
                                     int d = call.getDerivativeIndex();
                                     if ( forward )
                                         throw new IllegalArgumentException("Convolution does not support forward-AD!");
                                     else
                                     {
-                                        Tsr<?> localDerivative = f.derive( inputs, d );
+                                        Tsr<?> localDerivative = f.executeDerive( inputs, d );
                                         return ADAgent.of( localDerivative )
-                                                        .setForward( (node, forwardDerivative ) -> mul.call(new Tsr[]{forwardDerivative, localDerivative}) )
-                                                        .setBackward( (node, backwardError ) -> mul.call(new Tsr[]{backwardError, localDerivative}) );
+                                                        .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, localDerivative ) )
+                                                        .setBackward( (node, backwardError ) -> mul.execute( backwardError, localDerivative ) );
                                     }
                                 }
                         )
                         .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution)
                         .setCallPreparation(
                                 call -> {
-                                    Tsr[] tsrs = call.getTensors();
-                                    int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                                    return ExecutionCall.of(tsrs[offset], tsrs[1+offset])
+                                    Tsr<?>[] tensors = call.getTensors();
+                                    int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
+                                    return ExecutionCall.of(tensors[offset], tensors[1+offset])
                                                         .andArgs(Arg.DerivIdx.of(-1))
                                                         .running(Neureka.get().context().getOperation("idy"))
                                                         .on(call.getDevice());

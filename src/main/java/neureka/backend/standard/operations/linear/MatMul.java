@@ -56,7 +56,7 @@ public class MatMul extends AbstractOperation
 
                                             Function matMul = Neureka.get().context().getFunction().matMul();
                                             Tsr<?>[] inputs = call.getTensors();
-                                            int d = (1 + call.getValOf( Arg.DerivIdx.class )) % 2;
+                                            int d = ( 1 + call.getValOf( Arg.DerivIdx.class ) ) % 2;
                                             Tsr<?> derivative = inputs[ d ].T().clone(); // We need to clone it to make it have a simple nd configuration...
                                             derivative.to(call.getDevice());
                                             return ADAgent.of( derivative )
