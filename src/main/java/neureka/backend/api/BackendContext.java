@@ -185,6 +185,13 @@ public class BackendContext implements Cloneable
         return this._lookup.containsKey( operation.getFunction() );
     }
 
+    /**
+     * @param operationIdentifier The {@link Operation} identifier which may be the function name or operator if present.
+     * @return The truth value determining if the provided {@link Operation} is part of this {@link BackendContext}.
+     */
+    public boolean hasOperation( String operationIdentifier ) {
+        return this._lookup.containsKey( operationIdentifier );
+    }
 
     /**
      *  This method queries the operations in this {@link BackendContext}
