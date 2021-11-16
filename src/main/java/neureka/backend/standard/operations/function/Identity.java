@@ -70,7 +70,7 @@ public final class Identity extends AbstractOperation
                     int offset = ( tensors[ 0 ] == null ) ? 1 : 0;
                     return ExecutionCall.of(tensors[offset], tensors[1+offset])
                                         .andArgs(Arg.DerivIdx.of(-1))
-                                        .running(Neureka.get().context().getOperation("idy"))
+                                        .running(Neureka.get().backend().getOperation("idy"))
                                         .on(call.getDevice());
                 }
         )

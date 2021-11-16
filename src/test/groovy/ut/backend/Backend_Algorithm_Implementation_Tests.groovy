@@ -36,7 +36,7 @@ class Backend_Algorithm_Implementation_Tests extends Specification
             clExecutor != null
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
-            imp << Neureka.get().context()
+            imp << Neureka.get().backend()
                     .getOperations()
                     .stream()
                     .filter(
@@ -63,7 +63,7 @@ class Backend_Algorithm_Implementation_Tests extends Specification
         clExecutor != null
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
-        imp << Neureka.get().context()
+        imp << Neureka.get().backend()
                 .getOperations()
                 .stream()
                 .filter(
@@ -96,7 +96,7 @@ class Backend_Algorithm_Implementation_Tests extends Specification
             (1.._) * tensor.size() >> 0
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
-            imp << Neureka.get().context()
+            imp << Neureka.get().backend()
                             .getOperations()
                             .stream()
                             .filter(
@@ -135,7 +135,7 @@ class Backend_Algorithm_Implementation_Tests extends Specification
             (1.._) * kernel.call(_)
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
-            imp << Neureka.get().context()
+            imp << Neureka.get().backend()
                             .getOperations()
                             .stream()
                             .filter(

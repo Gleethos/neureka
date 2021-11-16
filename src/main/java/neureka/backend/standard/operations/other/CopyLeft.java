@@ -147,7 +147,7 @@ public class CopyLeft extends AbstractOperation {
                         call.getTsrOfType( Number.class, offset).incrementVersionBecauseOf(call);
                         return ExecutionCall.of(tensors[offset], tensors[1+offset])
                                             .andArgs(Arg.DerivIdx.of(-1))
-                                            .running(Neureka.get().context().getOperation("idy"))
+                                            .running(Neureka.get().backend().getOperation("idy"))
                                             .on(call.getDevice());
                     }
             )
@@ -164,7 +164,7 @@ public class CopyLeft extends AbstractOperation {
                                         call ->
                                         {
                                             call.getTsrOfType( Number.class, 0 ).setIsVirtual( false );
-                                            Neureka.get().context().getOperation("idy")
+                                            Neureka.get().backend().getOperation("idy")
                                                     .getAlgorithm( Activation.class )
                                                     .getImplementationFor( CPU.class )
                                                     .run(call);
@@ -175,7 +175,7 @@ public class CopyLeft extends AbstractOperation {
                         OpenCLDevice.class,
                         call -> {
                             call.getTsrOfType( Number.class, 0 ).setIsVirtual( false );
-                            Neureka.get().context().getOperation("idy")
+                            Neureka.get().backend().getOperation("idy")
                                     .getAlgorithm(Activation.class)
                                     .getImplementationFor( OpenCLDevice.class )
                                     .run(call);

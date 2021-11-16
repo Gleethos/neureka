@@ -86,7 +86,7 @@ public class SettingsLoader
                     .checkAndAssign("view.TsrAsString.Should.BE_CELL_BOUND"        , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.BE_CELL_BOUND       , v))//~= false
                     .checkAndAssign("ndim.isOnlyUsingDefaultNDConfiguration"       , Boolean.class, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)                      )//~= false
                     .checkAndAssign("dtype.defaultDataTypeClass"                   , Class.class,   v -> s.dtype().setDefaultDataTypeClass(v)                                  )
-                    .checkAndAssign("dtype.isAutoConvertingExternalDataToJVMTypes", Boolean.class, v -> s.dtype().setIsAutoConvertingExternalDataToJVMTypes(v)                );
+                    .checkAndAssign("dtype.isAutoConvertingExternalDataToJVMTypes", Boolean.class, v -> s.dtype().setIsAutoConvertingExternalDataToJVMTypes(v)                 );
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -10,10 +10,6 @@ import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
-import neureka.ndim.AbstractNDArray;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class ConvUtil {
 
@@ -41,11 +37,11 @@ public class ConvUtil {
                             if ( forward )
                                 throw new IllegalArgumentException("Convolution does not support forward-AD!");
 
-                            Function mul = Neureka.get().context().getFunction().mul();
+                            Function mul = Neureka.get().backend().getFunction().mul();
                             Tsr[] inputs = call.getTensors();
                             int d = call.getDerivativeIndex();
 
-                            Function invX = new FunctionBuilder( Neureka.get().context() ).build(
+                            Function deConv = new FunctionBuilder( Neureka.get().backend() ).build(
                                     "I[ 0 ]" + operator + ">>I[ 1 ]" + operator + ">>I[ 2 ]",
                                     false
                             );
@@ -53,19 +49,17 @@ public class ConvUtil {
                             assert d >= 0 && d <= 1;
                             assert mul != null;
                             assert derivative != null;
-                            assert invX != null;
+                            assert deConv != null;
                             assert inputs.length >= 2 && inputs.length <= 3;
-                            int[] shp = inputs[ inputs.length > 2 ? d + 1 : d ].getNDConf().shape();
+                            // Now we need to remember the shape of the input which is targeted for back prop.
+                            int[] shape = inputs[ inputs.length > 2 ? d + 1 : d ].getNDConf().shape();
+                            // This is because it will be the shape of the output to the de-convolution!
                             return ADAgent.of( derivative )
                                     .setForward(
                                         (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative )
                                     )
                                     .setBackward(
-                                        (node, error) -> invX.execute(
-                                                                error,
-                                                                derivative,
-                                                                Tsr.of(shp, 0)
-                                                        )
+                                        (node, error) -> deConv.execute( error, derivative, Tsr.of(shape, 0) )
                                     );
                         }
                 )
@@ -95,7 +89,7 @@ public class ConvUtil {
                                                                     .on(call.getDevice()),
                                                     JunctionUtil::forConvolution
                                                 );
-                                    if ( call.getOperation() == Neureka.get().context().getOperation("x>>") )
+                                    if ( call.getOperation() == Neureka.get().backend().getOperation("x>>") )
                                         return tsrs[ 2 ];
                                     else
                                         return tsrs[ 0 ];

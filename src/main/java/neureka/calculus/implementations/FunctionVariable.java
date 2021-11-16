@@ -92,7 +92,7 @@ public class FunctionVariable implements Function, GradientProvider {
             for( int i = 1; i < tensors.length; i++ )
                 exp.append("+I[").append(i).append("]");
 
-            return new FunctionBuilder( Neureka.get().context() )
+            return new FunctionBuilder( Neureka.get().backend() )
                                         .build(exp.toString(), false)
                                         .execute( tensors );
         }

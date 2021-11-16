@@ -160,7 +160,7 @@ public class Power extends AbstractOperation
                         alternative = goDeeperWith.execute(
                                             ExecutionCall.of(reduction)
                                                             .andArgs(Arg.DerivIdx.of( -1 ))
-                                                            .running(Neureka.get().context().getOperation("*"))
+                                                            .running(Neureka.get().backend().getOperation("*"))
                                                             .on(device)
                                         );
                         Tsr exp = reduction[ 0 ];
@@ -180,7 +180,7 @@ public class Power extends AbstractOperation
                         alternative = goDeeperWith.execute(
                                                 ExecutionCall.of(reduction)
                                                                 .andArgs(Arg.DerivIdx.of(d-1))
-                                                                .running(Neureka.get().context().getOperation("*"))
+                                                                .running(Neureka.get().backend().getOperation("*"))
                                                                 .on(device)
                                         );
                         Tsr<?> inner = reduction[ 0 ];
@@ -189,7 +189,7 @@ public class Power extends AbstractOperation
                         alternative = goDeeperWith.execute(
                                                 ExecutionCall.of(reduction)
                                                                 .andArgs(Arg.DerivIdx.of(-1))
-                                                                .running(Neureka.get().context().getOperation("*"))
+                                                                .running(Neureka.get().backend().getOperation("*"))
                                                                 .on(device)
                                         );
                         Tsr<?> exp = reduction[ 0 ];
@@ -295,7 +295,7 @@ public class Power extends AbstractOperation
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
                         Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                        Function mul = Neureka.get().context().getFunction().mul();
+                        Function mul = Neureka.get().backend().getFunction().mul();
                         if ( ctxDerivative != null ) {
                             return ADAgent.of( ctxDerivative )
                                             .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )

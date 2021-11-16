@@ -196,7 +196,7 @@ public class Division extends AbstractOperation
                                             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                                             {
                                                 Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                                                Function mul = Neureka.get().context().getFunction().mul();
+                                                Function mul = Neureka.get().backend().getFunction().mul();
                                                 if ( ctxDerivative != null ) {
                                                     return ADAgent.of( ctxDerivative )
                                                                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )

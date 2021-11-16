@@ -77,7 +77,7 @@ public final class Product extends AbstractOperation {
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
                         Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                        Function mul = Neureka.get().context().getFunction().mul();
+                        Function mul = Neureka.get().backend().getFunction().mul();
                         if ( ctxDerivative != null ) {
                                 return ADAgent.of( ctxDerivative )
                                                 .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
@@ -179,7 +179,7 @@ public final class Product extends AbstractOperation {
             ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
                         Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                        Function mul = Neureka.get().context().getFunction().mul();
+                        Function mul = Neureka.get().backend().getFunction().mul();
                         if ( ctxDerivative != null ) {
                             return ADAgent.of( ctxDerivative )
                                 .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
@@ -198,14 +198,14 @@ public final class Product extends AbstractOperation {
                         {
                             if ( this.supports(Convolution.class) )
                             {
-                                Function invX = new FunctionBuilder( Neureka.get().context() ).build(
-                                        "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
-                                        false
-                                );
+                                Function deConv = new FunctionBuilder( Neureka.get().backend() ).build(
+                                                            "I[ 0 ]" + getOperator() + ">>I[ 1 ]" + getOperator() + ">>I[ 2 ]",
+                                                            false
+                                                        );
                                 Tsr<?> derivative = f.executeDerive( inputs, d );
                                 return ADAgent.of( derivative )
                                         .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
-                                        .setBackward( (t, error) -> invX.execute( error, derivative, Tsr.of(t.getPayload().shape(), 0) ) );
+                                        .setBackward( (t, error) -> deConv.execute( error, derivative, Tsr.of(t.getPayload().shape(), 0) ) );
                             }
                             else
                             {

@@ -2,30 +2,30 @@ package ut.calculus
 
 import neureka.Neureka
 import neureka.backend.api.Operation
-import neureka.backend.api.OperationContext
+import neureka.backend.api.BackendContext
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
 
 import java.util.function.Function
 
-@Title("The OperationContext is a cloneable context which can run Tasks.")
+@Title("The BackendContext is a cloneable context which can run Tasks.")
 @Narrative('''
     
-    This specification defines the expected behaviour of the operation context
+    This specification defines the expected behaviour of the backend context
     which should expose a convenient API to work with.
     This API should allow for tasks to be running on a given context
     which is important for testing and modularity not only
     during library startup but also throughout the runtime.
     
 ''')
-class OperationContext_Spec extends Specification
+class BackendContext_Spec extends Specification
 {
-    def 'OperationContext instances can be created by cloning from Singleton instance.'()
+    def 'BackendContext instances can be created by cloning from Singleton instance.'()
     {
-        given : 'The singleton OperationContext instance and a OperationType mock.'
+        given : 'The singleton BackendContext instance and a OperationType mock.'
             def mockOperation = Mock(Operation)
-            def context = Neureka.get().context()
+            def context = Neureka.get().backend()
 
         when : 'A clone is being created by calling "clone()" on the given context...'
             def clone = context.clone()
@@ -59,10 +59,10 @@ class OperationContext_Spec extends Specification
     }
 
 
-    def 'OperationContext instances return Runner instances for easy visiting.'()
+    def 'BackendContext instances return Runner instances for easy visiting.'()
     {
-        given : 'The current thread local OperationContext instance.'
-            def current = Neureka.get().context()
+        given : 'The current thread local BackendContext instance.'
+            def current = Neureka.get().backend()
 
         and : 'A clone is being created by calling "clone()" on the given context...'
             def clone = current.clone()
@@ -74,23 +74,23 @@ class OperationContext_Spec extends Specification
             def spy = Mock(Function)
 
         when : 'We pass a lambda to the "useFor" method to the runner, containing a closure with the spy...'
-            run.run({spy.apply(Neureka.get().context())})
+            run.run({spy.apply(Neureka.get().backend())})
 
         then : 'The spy will tell us that the passed lambda has been executed by the runner in the clone context!'
             1 * spy.apply(clone)
 
         and : 'The context accessible through the static "get" method will indeed be the current context!'
-            current == Neureka.get().context()
+            current == Neureka.get().backend()
 
     }
 
 
-    def 'OperationContext instances return Runner instances for easy visiting with return values.'(
+    def 'BackendContext instances return Runner instances for easy visiting with return values.'(
             Closure<Object> runWrapper
     ) {
 
-        given : 'The current thread local OperationContext instance.'
-            def current = Neureka.get().context()
+        given : 'The current thread local BackendContext instance.'
+            def current = Neureka.get().backend()
 
         and : 'A clone is being created by calling "clone()" on the given context...'
             def clone = current.clone()
@@ -99,9 +99,9 @@ class OperationContext_Spec extends Specification
             def run = runWrapper( clone.runner() )
 
         when : 'Querying the thread local context inside the Runner...'
-            def innerContext = run { Neureka.get().context() }
+            def innerContext = run { Neureka.get().backend() }
         and : '...also outside the Runner lambda...'
-            def outerContext = Neureka.get().context()
+            def outerContext = Neureka.get().backend()
 
         then : 'These two context instances will be different objects!'
             innerContext != outerContext
@@ -114,9 +114,9 @@ class OperationContext_Spec extends Specification
 
         where : 'The following conceptually identical Runner methods can be used:'
             runWrapper << [
-                    (OperationContext.Runner runner) -> { (arg) -> runner.call(arg) },
-                    (OperationContext.Runner runner) -> { (arg) -> runner.invoke(arg) },
-                    (OperationContext.Runner runner) -> { (arg) -> runner.runAndGet(arg) }
+                    (BackendContext.Runner runner) -> { (arg) -> runner.call(arg) },
+                    (BackendContext.Runner runner) -> { (arg) -> runner.invoke(arg) },
+                    (BackendContext.Runner runner) -> { (arg) -> runner.runAndGet(arg) }
             ]
     }
 

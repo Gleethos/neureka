@@ -85,7 +85,7 @@ public class CalcUtil
             String asStr = operation.stringify(
                     IntStream.range(0, nodes.length).mapToObj( i -> "I[" + i + "]" ).toArray(String[]::new)
             );
-            return new FunctionBuilder( Neureka.get().context() ).build( asStr, isDoingAD ).execute( tensors );
+            return new FunctionBuilder( Neureka.get().backend() ).build( asStr, isDoingAD ).execute( tensors );
         } else
             tensors = srcActivation( inputs, j, -1, 1, nodes );
 
@@ -176,7 +176,7 @@ public class CalcUtil
                     CalcUtil.recursiveExecution(
                             ExecutionCall.of( tensors )
                                     .andArgs( Arg.DerivIdx.of( -1 ) )
-                                    .running( Neureka.get().context().getOperation("+") )
+                                    .running( Neureka.get().backend().getOperation("+") )
                                     .on( device ),
                             JunctionUtil::forAdditions
                     );
@@ -218,7 +218,7 @@ public class CalcUtil
                 CalcUtil.recursiveExecution(
                         ExecutionCall.of( tensors )
                                 .andArgs( Arg.DerivIdx.of( -1 ) )
-                                .running( Neureka.get().context().getOperation("*") )
+                                .running( Neureka.get().backend().getOperation("*") )
                                 .on( device ),
                         null
                 );
@@ -237,7 +237,7 @@ public class CalcUtil
                     CalcUtil.recursiveExecution(
                             ExecutionCall.of( null, actor.get(), out )
                                     .andArgs( Arg.DerivIdx.of( -1 ) )
-                                    .running( Neureka.get().context().getOperation( "+" ) )
+                                    .running( Neureka.get().backend().getOperation( "+" ) )
                                     .on( device ),
                             null
                     );

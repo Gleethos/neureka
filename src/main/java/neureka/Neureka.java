@@ -36,8 +36,8 @@ SOFTWARE.
 package neureka;
 
 
+import neureka.backend.api.BackendContext;
 import neureka.backend.api.Operation;
-import neureka.backend.api.OperationContext;
 import neureka.devices.opencl.CLContext;
 import neureka.dtype.custom.F64;
 import neureka.utility.Messages;
@@ -55,12 +55,12 @@ import java.util.ServiceLoader;
 
 /**
  *    {@link Neureka} is the key access point for thread local / global library settings ( see{@link Settings})
- *    as well as execution contexts (see {@link OperationContext})
+ *    as well as execution contexts (see {@link BackendContext})
  *    and pre-instantiated {@link neureka.calculus.Function}s.
- *    {@link Neureka} exposes the execution context via the {@link #context()} method,
+ *    {@link Neureka} exposes the execution context via the {@link #backend()} method,
  *    the library settings which govern the behaviour of various library components
  *    can be accessed via the {@link #settings()} method.
- *    Common functions can be accessed within a given {@link OperationContext} instance based on which they were built.
+ *    Common functions can be accessed within a given {@link BackendContext} instance based on which they were built.
  *    If one wishes to modify the default library settings it is possible to do so by editing
  *    the "library_settings.groovy" DSL file.
  */
@@ -89,18 +89,18 @@ public final class Neureka
     private final Utility _utility;
 
     /**
-     *  This is a lazy reference to the so called {@link OperationContext}
-     *  which will instantiated and populated as soon as the {@link #context()}
+     *  This is a lazy reference to the so called {@link BackendContext}
+     *  which will instantiated and populated as soon as the {@link #backend()}
      *  method is being called for the first time.
      *  This context contains anything needed to perform operations
      *  on tensors on using different {@link neureka.calculus.Function}
      *  or {@link neureka.devices.Device} implementation instances.
      */
-    private OperationContext _context;
+    private BackendContext _backend;
 
-    public OperationContext context() {
-        if ( _context == null ) {
-            _context = new OperationContext();
+    public BackendContext backend() {
+        if ( _backend == null ) {
+            _backend = new BackendContext();
             // loading operations!
             ServiceLoader<Operation> serviceLoader = ServiceLoader.load( Operation.class );
 
@@ -110,15 +110,15 @@ public final class Neureka
                 assert operation.getOperator() != null;
                 if ( operation.getFunction() == null ) log.error(Messages.Operations.illegalStateFor( "function" ) );
                 if ( operation.getOperator() == null ) log.error(Messages.Operations.illegalStateFor( "operator" ) );
-                _context.addOperation(operation);
+                _backend.addOperation(operation);
                 log.debug( Messages.Operations.loaded(operation) );
             }
             if ( _OPENCL_AVAILABLE )
-                _context.set( new CLContext() );
+                _backend.set( new CLContext() );
             else
                 log.warn( Messages.OpenCL.clContextCreationFailed() );
         }
-        return _context;
+        return _backend;
     }
 
     private Neureka() {
@@ -219,17 +219,13 @@ public final class Neureka
         return "Neureka[" +
                     "settings=" + this._settings + "," +
                     "utility=" + this._utility + "," +
-                    "context=" + this._context +
+                    "backend=" + this._backend +
                 "]";
     }
 
-    public OperationContext getContext() {
-        return this._context;
-    }
+    public BackendContext getBackend() { return this.backend(); }
 
-    public void setContext(OperationContext _context) {
-        this._context = _context;
-    }
+    public void setBackend( BackendContext backendContext ) { this._backend = backendContext; }
 
     /**
      *  This class hosts the settings of the {@link Neureka} instance which will be used throughout the library.

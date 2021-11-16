@@ -17,7 +17,7 @@ public class ParseUtil
     @Contract( pure = true ) 
     public static int numberOfOperationsWithin( final List<String> operations ) {
         int counter = 0;
-        for( Operation ot : Neureka.get().context().getOperations() ) {
+        for( Operation ot : Neureka.get().backend().getOperations() ) {
             if (operations.contains(ot.getOperator())) ++counter;
         }
         return counter;
@@ -52,7 +52,7 @@ public class ParseUtil
                     String found = ParseUtil.parsedOperation( exp.substring( i, ii ), i );
                     if (
                          found != null && // If the found string is a function then we continue!
-                                 !Neureka.get().context().getOperation(found).getOperator().equals(found)
+                                 !Neureka.get().backend().getOperation(found).getOperator().equals(found)
                     ) {
                         ii = -1; // end inner loop
                         component.append( found, 0, found.length() - 1 );
@@ -106,7 +106,7 @@ public class ParseUtil
     @Contract( pure = true )
     public static boolean isAnOperation( final String operationName ) {
         if ( operationName.length() > 32 ) return false;
-        Operation operation = Neureka.get().context().getOperation( operationName );
+        Operation operation = Neureka.get().backend().getOperation( operationName );
         return operation != null;
     }
 
@@ -245,15 +245,15 @@ public class ParseUtil
     public static String assumptionBasedOn( String expression ) {
         double largest = -1;
         int best = 0;
-        for (int i = 0; i< Neureka.get().context().size(); i++ ) {
-            double s = similarity( expression, Neureka.get().context().getOperation( i ).getOperator() );
+        for (int i = 0; i< Neureka.get().backend().size(); i++ ) {
+            double s = similarity( expression, Neureka.get().backend().getOperation( i ).getOperator() );
             if ( largest == -1 ) largest = s;
             else if (s > largest) {
                 best = i;
                 largest = s;
             }
         }
-        return ( largest > 0.1 ) ? Neureka.get().context().getOperation(best).getOperator() : "";
+        return ( largest > 0.1 ) ? Neureka.get().backend().getOperation(best).getOperator() : "";
     }
 
     /**

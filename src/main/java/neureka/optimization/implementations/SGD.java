@@ -54,7 +54,7 @@ public class SGD<V> implements Optimizer<V>
     @Override
     public Tsr<V> optimize( Tsr<V> w ) {
         Tsr<V> g = w.getGradient();
-        return Neureka.get().context().getFunction().idy().call( _function.call( g ) );
+        return Neureka.get().backend().getFunction().idy().call( _function.call( g ) );
     }
 
     public double learningRate() {

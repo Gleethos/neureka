@@ -432,14 +432,14 @@ class Tensor_Operation_Integration_Spec extends Specification
         when :
             Tsr[] trs = new Tsr[]{x}
         and :
-            def fun = new FunctionBuilder( Neureka.get().context() ).build("Ig[0]", false)
+            def fun = new FunctionBuilder( Neureka.get().backend() ).build("Ig[0]", false)
         then :
             fun(trs).toString().equals("[1]:(-8.0)")
 
         when :
             trs[0] = y
         and :
-            fun = new FunctionBuilder( Neureka.get().context() ).build("Ig[0]", false)
+            fun = new FunctionBuilder( Neureka.get().backend() ).build("Ig[0]", false)
 
         then :
             fun(trs) == null

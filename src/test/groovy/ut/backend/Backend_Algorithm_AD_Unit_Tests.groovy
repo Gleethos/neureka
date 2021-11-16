@@ -54,7 +54,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
-            imp << Neureka.get().context()
+            imp << Neureka.get().backend()
                     .getOperations()
                     .stream()
                     .filter(
@@ -104,7 +104,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Activation".'
-            imp << Neureka.get().context()
+            imp << Neureka.get().backend()
                 .getOperations()
                 .stream()
                 .filter(
@@ -125,6 +125,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             def function = Mock(Function)
             def derivative = Mock(Tsr)
             function.derive(*_) >> derivative
+            function.executeDerive(*_) >> derivative
 
         and : 'A mock ExecutionCall.'
             def call = Mock(ExecutionCall)
@@ -154,7 +155,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Convolution".'
-            imp << Neureka.get().context()
+            imp << Neureka.get().backend()
                                 .getOperations()
                                 .stream()
                                 .filter(
@@ -211,7 +212,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Convolution".'
-            imp << Neureka.get().context()
+            imp << Neureka.get().backend()
                                 .getOperations()
                                 .stream()
                                 .filter(

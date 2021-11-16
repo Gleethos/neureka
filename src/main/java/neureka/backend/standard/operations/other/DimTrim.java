@@ -52,7 +52,7 @@ public class DimTrim extends AbstractOperation
                                     .withArgs(call.allMetaArgs())
                                     .setForward(
                                           (t, derivative) ->
-                                              new FunctionBuilder( Neureka.get().context() )
+                                              new FunctionBuilder( Neureka.get().backend() )
                                                       .build(f.toString(), false)
                                                       .derive(new Tsr[]{derivative},0)
                                     )

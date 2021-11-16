@@ -53,7 +53,7 @@ class OpenCLDevice_Exception_Integration_Spec extends Specification
     def 'Ad hoc compilation produces expected exceptions.'()
     {
         given :
-            def device = Neureka.get().context().get(CLContext.class).platforms[0].devices[0]
+            def device = Neureka.get().backend().get(CLContext.class).platforms[0].devices[0]
 
         expect : 'Initially there is no ad hoc kernel with the following name.'
             !device.hasAdHocKernel( 'right_dummy_kernel_name' )
@@ -85,7 +85,7 @@ class OpenCLDevice_Exception_Integration_Spec extends Specification
     def 'Ad hoc compilation produces expected exceptions when duplication is found.'()
     {
         given :
-            def device = Neureka.get().context().get(CLContext.class).getPlatforms()[0].devices[0]
+            def device = Neureka.get().backend().get(CLContext.class).getPlatforms()[0].devices[0]
             def code = """
                         __kernel void right_dummy_kernel_name (
                                 __global float* output,
@@ -126,7 +126,7 @@ class OpenCLDevice_Exception_Integration_Spec extends Specification
     def 'Trying to restore a tensor which is not on a device raises exception.'()
     {
         given :
-            def device = Neureka.get().context().get(CLContext.class).getPlatforms()[0].devices[0]
+            def device = Neureka.get().backend().get(CLContext.class).getPlatforms()[0].devices[0]
         and : 'We create a new mock logger for the OpenCL device.'
             def oldLogger = device._log
             device._log = Mock( Logger )

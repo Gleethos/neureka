@@ -123,7 +123,7 @@ class OpenCLDevice_Integration_Spec extends Specification
     def 'Ad hoc compilation produces executable kernel.'() {
 
         given :
-            def device = Neureka.get().context().get(CLContext.class).getPlatforms()[0].devices[0]
+            def device = Neureka.get().backend().get(CLContext.class).getPlatforms()[0].devices[0]
             def someData = Tsr.of( new float[]{ 2, -5, -3, 9, -1 } ).to( device )
 
         expect : 'The OpenCL device initially does not have the "dummy_kernel" we are going to create.'
@@ -176,7 +176,7 @@ class OpenCLDevice_Integration_Spec extends Specification
     ) {
 
         given :
-            def device = Neureka.get().context().get(CLContext.class).getPlatforms()[0].devices[0]
+            def device = Neureka.get().backend().get(CLContext.class).getPlatforms()[0].devices[0]
             def kernelName = "dummy_mm_${M}x${K}x${N}"
             def params = DispatchUtility.findBestParams(locSize, regSize, K, M, N)
 
@@ -328,7 +328,7 @@ class OpenCLDevice_Integration_Spec extends Specification
     ) {
 
         given :
-            def device = Neureka.get().context().get(CLContext.class).platforms[0].devices[0]
+            def device = Neureka.get().backend().get(CLContext.class).platforms[0].devices[0]
             def kernelName = "backend_mm_${M}x${K}x${N}"
 
             long[] local=   new long[]{ Math.min(16, M), Math.min(16, K) }

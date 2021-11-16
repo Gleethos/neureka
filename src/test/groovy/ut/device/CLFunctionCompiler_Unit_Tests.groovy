@@ -38,12 +38,12 @@ class CLFunctionCompiler_Unit_Tests extends Specification {
             resultOperation != null
 
         when : 'We create a new cloned context from the current one with the added test operation...'
-            def context = Neureka.get().context().clone().addOperation(resultOperation)
+            def context = Neureka.get().backend().clone().addOperation(resultOperation)
         and : '... a context runner ...'
             def run = context.runner()
         and : 'We create a function based on our optimized operation...'
             Function fun = run {
-                            new FunctionBuilder( Neureka.get().context() )
+                            new FunctionBuilder( Neureka.get().backend() )
                                         .build(resultOperation, 3, true)
                         }
 
