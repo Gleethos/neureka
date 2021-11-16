@@ -44,7 +44,7 @@ public class CopyRight extends AbstractOperation {
                     return
                             ExecutionCall.of(tensors[1+offset], tensors[offset])
                                             .andArgs( Arg.DerivIdx.of( -1 ) )
-                                            .running( Neureka.get().context().getOperation("idy") ) // This routes to another operation!
+                                            .running( Neureka.get().backend().getOperation("idy") ) // This routes to another operation!
                                             .on( call.getDevice() );
                 }
         )
@@ -66,7 +66,7 @@ public class CopyRight extends AbstractOperation {
                                                             .running(call.getOperation())
                                                             .on( call.getDevice() )
                                                             .forDeviceType(CPU.class);
-                                    Neureka.get().context().getOperation("idy")
+                                    Neureka.get().backend().getOperation("idy")
                                             .getAlgorithm(Activation.class)
                                             .getImplementationFor( CPU.class )
                                             .run(newCall);
@@ -84,7 +84,7 @@ public class CopyRight extends AbstractOperation {
                                                                                 .running(call.getOperation())
                                                                                 .on( call.getDevice() )
                                                                                 .forDeviceType(OpenCLDevice.class);
-                            Neureka.get().context().getOperation("idy")
+                            Neureka.get().backend().getOperation("idy")
                                     .getAlgorithm(Activation.class)
                                     .getImplementationFor( OpenCLDevice.class )
                                     .run(newCall);

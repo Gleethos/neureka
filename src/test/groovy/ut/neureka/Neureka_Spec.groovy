@@ -127,11 +127,11 @@ class Neureka_Spec extends Specification
                     Neureka.get().settings().dtype(),
                     Neureka.get().settings().ndim(),
                     Neureka.get().settings().view(),
-                    Neureka.get().context().getAutogradFunction(),
-                    Neureka.get().context().getFunction(),
-                    Neureka.get().context(),
-                    Neureka.get().context().getFunctionCache(),
-                    ExecutionCall.of(Tsr.of(3)).running(Neureka.get().context().getOperation("+")).on(CPU.get()),
+                    Neureka.get().backend().getAutogradFunction(),
+                    Neureka.get().backend().getFunction(),
+                    Neureka.get().backend(),
+                    Neureka.get().backend().getFunctionCache(),
+                    ExecutionCall.of(Tsr.of(3)).running(Neureka.get().backend().getOperation("+")).on(CPU.get()),
                     new CustomDeviceCleaner(),
                     (Tsr.of(2).setRqsGradient(true)*Tsr.of(-2)).graphNode,
                     new GraphLock(Function.of('i0*3/2'))
@@ -147,9 +147,9 @@ class Neureka_Spec extends Specification
 
         where : 'The following objects are being used..'
             neurekaCLObject << [
-                    Neureka.get().context.get(CLContext),
-                    Neureka.get().context.get(CLContext).platforms[0],
-                    Neureka.get().context.get(CLContext).platforms[0].devices[0]
+                    Neureka.get().backend.get(CLContext),
+                    Neureka.get().backend.get(CLContext).platforms[0],
+                    Neureka.get().backend.get(CLContext).platforms[0].devices[0]
             ]
     }
 

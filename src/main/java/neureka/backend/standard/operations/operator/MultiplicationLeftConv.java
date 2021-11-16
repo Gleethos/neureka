@@ -46,7 +46,7 @@ public class MultiplicationLeftConv extends AbstractOperation {
                         (Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                         {
                             Tsr<?> ctxDerivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-                            Function mul = Neureka.get().context().getFunction().mul();
+                            Function mul = Neureka.get().backend().getFunction().mul();
                             if ( ctxDerivative != null ) {
                                 return ADAgent.of( ctxDerivative )
                                                 .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, ctxDerivative ) )
@@ -69,7 +69,7 @@ public class MultiplicationLeftConv extends AbstractOperation {
                         call -> {
                             Tsr<?>[] tsrs = call.getTensors();
                             int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;
-                            return ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().context().getOperation("idy")).on(call.getDevice());
+                            return ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation("idy")).on(call.getDevice());
                         }
                 )
                 .buildFunAlgorithm();

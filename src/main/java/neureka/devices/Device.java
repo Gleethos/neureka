@@ -96,7 +96,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         double score = ParseUtil.similarity( "jvm native host cpu threaded", search );
         if ( probablyWantsGPU ) score /= 10; // CPU instance is most likely not meant!
 
-        for ( OpenCLPlatform p : Neureka.get().context().get(CLContext.class).getPlatforms() ) {
+        for ( OpenCLPlatform p : Neureka.get().backend().get(CLContext.class).getPlatforms() ) {
             for ( OpenCLDevice d : p.getDevices() ) {
                 String str = ("opencl | "+d.type()+" | "+d.name()+" | "+d.vendor()).toLowerCase();
                 double similarity = ParseUtil.similarity( str, search );
@@ -108,7 +108,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         }
         if ( result == CPU.get() && name.equals("first") ) {
             Device<Number> first = Neureka.get()
-                                            .context()
+                                            .backend()
                                             .get(CLContext.class)
                                             .getPlatforms()
                                             .get( 0 )
@@ -172,7 +172,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
 
     default Function optimizedFunctionOf( Function function, String name ) {
         Operation optimizedOperation = optimizedOperationOf( function, name );
-        BackendContext currentContext = Neureka.get().context();
+        BackendContext currentContext = Neureka.get().backend();
         if ( !currentContext.hasOperation( optimizedOperation ) )
             currentContext.addOperation( optimizedOperation );
 

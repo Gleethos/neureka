@@ -73,11 +73,11 @@ public class BackendContext implements Cloneable
      *  A {@link Runner} wraps both the called context as well as the context of the caller in order
      *  to perform temporary context switching during the execution of lambdas passed to the {@link Runner}.
      *  After a given lambda was executed successfully, the original context will be restored in the current
-     *  thread local {@link Neureka} instance through the {@link Neureka#setContext(BackendContext)}) method.
+     *  thread local {@link Neureka} instance through the {@link Neureka#setBackend(BackendContext)}) method.
      *
      * @return A lambda {@link Runner} which performs temporary context switching between the caller's context and this context.
      */
-    public Runner runner() { return new Runner( this, Neureka.get().context() ); }
+    public Runner runner() { return new Runner( this, Neureka.get().backend() ); }
 
     /**
      * This method returns an unmodifiable view of the mapping between the {@link Operation#getFunction()} / {@link Operation#getOperator()} properties
@@ -268,7 +268,7 @@ public class BackendContext implements Cloneable
      *  A {@link Runner} wraps both the called context as well as the context of the caller in order
      *  to perform this temporary context switching throughout the execution of the lambdas passed to the {@link Runner}.
      *  After a given lambda was executed, the original context will be restored in the current thread
-     *  local {@link Neureka} instance through the {@link Neureka#setContext(BackendContext)}) method.
+     *  local {@link Neureka} instance through the {@link Neureka#setBackend(BackendContext)}) method.
      */
     public static class Runner
     {
@@ -291,9 +291,9 @@ public class BackendContext implements Cloneable
          * @return This very {@link Runner} instance to enable method chaining.
          */
         public Runner run( Runnable contextSpecificAction ) {
-            Neureka.get().setContext( visitedContext );
+            Neureka.get().setBackend( visitedContext );
             contextSpecificAction.run();
-            Neureka.get().setContext( originalContext );
+            Neureka.get().setBackend( originalContext );
             return this;
         }
 
@@ -311,9 +311,9 @@ public class BackendContext implements Cloneable
          * @return The result of the supplied context action.
          */
         public <T> T runAndGet( Supplier<T> contextSpecificAction ) {
-            Neureka.get().setContext( visitedContext );
+            Neureka.get().setBackend( visitedContext );
             T result = contextSpecificAction.get();
-            Neureka.get().setContext( originalContext );
+            Neureka.get().setBackend( originalContext );
             return result;
         }
 

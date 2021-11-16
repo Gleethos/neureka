@@ -84,7 +84,7 @@
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    def platforms = Neureka.get().context().get(ContextComponent.class).getPlatforms()
+    def platforms = Neureka.get().backend().get(CLContext.class).getPlatforms()
     def devices = platforms[0].devices
 
                 </code></pre>
@@ -92,7 +92,7 @@
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    List&#60;OpenCLPlatform&#62; platforms = Neureka.get().context().get(ContextComponent.class).getPlatforms();
+    List&#60;OpenCLPlatform&#62; platforms = Neureka.get().backend().get(CLContext.class).getPlatforms();
     List&#60;OpenCLDevice&#62; devices = platforms.get(0).getDevices();
 
                 </code></pre>
@@ -100,7 +100,7 @@
             <div class="kotlinTab" style="display:none">
                 <pre><code class="hljs kotlin">
 
-    val platforms : List&#60;OpenCLPlatform&#62; = Neureka.get().context.get(ContextComponent.class).platforms
+    val platforms : List&#60;OpenCLPlatform&#62; = Neureka.get().context.get(CLContext.class).platforms
     val devices : List&#60;OpenCLDevice&#62; = platforms[0].devices
 
                 </code></pre>

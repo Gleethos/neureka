@@ -25,7 +25,7 @@ class BackendContext_Spec extends Specification
     {
         given : 'The singleton BackendContext instance and a OperationType mock.'
             def mockOperation = Mock(Operation)
-            def context = Neureka.get().context()
+            def context = Neureka.get().backend()
 
         when : 'A clone is being created by calling "clone()" on the given context...'
             def clone = context.clone()
@@ -62,7 +62,7 @@ class BackendContext_Spec extends Specification
     def 'BackendContext instances return Runner instances for easy visiting.'()
     {
         given : 'The current thread local BackendContext instance.'
-            def current = Neureka.get().context()
+            def current = Neureka.get().backend()
 
         and : 'A clone is being created by calling "clone()" on the given context...'
             def clone = current.clone()
@@ -74,13 +74,13 @@ class BackendContext_Spec extends Specification
             def spy = Mock(Function)
 
         when : 'We pass a lambda to the "useFor" method to the runner, containing a closure with the spy...'
-            run.run({spy.apply(Neureka.get().context())})
+            run.run({spy.apply(Neureka.get().backend())})
 
         then : 'The spy will tell us that the passed lambda has been executed by the runner in the clone context!'
             1 * spy.apply(clone)
 
         and : 'The context accessible through the static "get" method will indeed be the current context!'
-            current == Neureka.get().context()
+            current == Neureka.get().backend()
 
     }
 
@@ -90,7 +90,7 @@ class BackendContext_Spec extends Specification
     ) {
 
         given : 'The current thread local BackendContext instance.'
-            def current = Neureka.get().context()
+            def current = Neureka.get().backend()
 
         and : 'A clone is being created by calling "clone()" on the given context...'
             def clone = current.clone()
@@ -99,9 +99,9 @@ class BackendContext_Spec extends Specification
             def run = runWrapper( clone.runner() )
 
         when : 'Querying the thread local context inside the Runner...'
-            def innerContext = run { Neureka.get().context() }
+            def innerContext = run { Neureka.get().backend() }
         and : '...also outside the Runner lambda...'
-            def outerContext = Neureka.get().context()
+            def outerContext = Neureka.get().backend()
 
         then : 'These two context instances will be different objects!'
             innerContext != outerContext

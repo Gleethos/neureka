@@ -20,7 +20,7 @@ Neureka library = Neureka.get();
 This in turn contains and exposes the backend context
 which contains operations and backend extensions!
 ```java   
-BackendContext backendContext = library.getContext();
+BackendContext backendContext = library.backend();
 ```
 Now we can build a custom backend extension and hook it into the default context:
 ```java   

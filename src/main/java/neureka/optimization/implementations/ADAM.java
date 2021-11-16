@@ -66,7 +66,7 @@ public class ADAM<V> implements Optimizer<V> {
         Tsr<V> mh = Tsr.of(m, "/(1-", b1, ")");
         Tsr<V> vh = Tsr.of(v, "/(1-", b2, ")");
         Tsr<V> newg = Tsr.of("-",a,"*",mh,"/(",vh,"^0.5+",e,")");
-        Neureka.get().context().getFunction().idy().call(g, newg);
+        Neureka.get().backend().getFunction().idy().call(g, newg);
         return g;
     }
 

@@ -75,7 +75,7 @@ inputs will be recognized by '`I[j]`', '`Ij`' or '`ij`', where `j` is the input 
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    Neureka.get().context().getAutogradFunction().sig().call(4);
+    Neureka.get().backend().getAutogradFunction().sig().call(4);
 
                 </code></pre>
             </div>
@@ -110,14 +110,14 @@ inputs will be recognized by '`I[j]`', '`Ij`' or '`ij`', where `j` is the input 
             <div class="groovyTab">
                 <pre><code class="hljs java">
 
-    Neureka.get().context().getFunction().sig(4)
+    Neureka.get().backend().getFunction().sig(4)
 
                 </code></pre>
             </div>
             <div class="javaTab" style="display:none">
                 <pre><code class="hljs java">
 
-    Neureka.get().context().getFunction().sig().call(4);
+    Neureka.get().backend().getFunction().sig().call(4);
 
                 </code></pre>
             </div>

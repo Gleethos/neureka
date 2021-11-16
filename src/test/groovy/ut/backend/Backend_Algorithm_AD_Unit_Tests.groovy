@@ -54,7 +54,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Operator".'
-            imp << Neureka.get().context()
+            imp << Neureka.get().backend()
                     .getOperations()
                     .stream()
                     .filter(
@@ -104,7 +104,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Activation".'
-            imp << Neureka.get().context()
+            imp << Neureka.get().backend()
                 .getOperations()
                 .stream()
                 .filter(
@@ -155,7 +155,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Convolution".'
-            imp << Neureka.get().context()
+            imp << Neureka.get().backend()
                                 .getOperations()
                                 .stream()
                                 .filter(
@@ -212,7 +212,7 @@ class Backend_Algorithm_AD_Unit_Tests extends Specification
             agent.derivative() == derivative
 
         where : 'The variable "imp" is from a List of OperationType implementations of type "Convolution".'
-            imp << Neureka.get().context()
+            imp << Neureka.get().backend()
                                 .getOperations()
                                 .stream()
                                 .filter(

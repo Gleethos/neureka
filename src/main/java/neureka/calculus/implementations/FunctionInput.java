@@ -62,7 +62,7 @@ public class FunctionInput implements Function, GradientProvider
     public Function newBuild( final String equation ) {
 
         if ( equation.charAt( 0 ) == '-' )
-            return new FunctionBuilder( Neureka.get().context() )
+            return new FunctionBuilder( Neureka.get().backend() )
                                         .build(
                                                 equation.substring(1)+"*-1",
                                                 true

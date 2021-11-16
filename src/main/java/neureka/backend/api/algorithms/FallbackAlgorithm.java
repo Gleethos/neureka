@@ -37,7 +37,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                     .andImplementation(
                         call -> {
                             Function f = new FunctionBuilder(
-                                                    Neureka.get().context()
+                                                    Neureka.get().backend()
                                                 )
                                                 .build(
                                                         type,
@@ -115,7 +115,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
     public ADAgent supplyADAgentFor(Function function, ExecutionCall<? extends Device<?>> call, boolean forward)
     {
         Tsr<?> derivative = (Tsr<?>) call.getValOf(Arg.Derivative.class);
-        Function mul = Neureka.get().context().getFunction().mul();
+        Function mul = Neureka.get().backend().getFunction().mul();
         if ( derivative != null ) {
             return ADAgent.of( derivative )
                     .setForward( (node, forwardDerivative ) -> mul.execute( forwardDerivative, derivative ) )
