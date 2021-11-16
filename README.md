@@ -5,9 +5,10 @@
 <p align="center">OpenCL accelerated nd-arrays / tensors for Java, Kotlin, Groovy, Scala, Jython, JRuby...</p>
 
 ---
-  
+ <!---
   - Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
   - Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/lib/neureka-0.8.0.jar)
+ -->
  <!--- - [![HitCount](http://hits.dwyl.com/Gleethos/neureka.svg)](http://hits.dwyl.com/Gleethos/neureka) -->
  
 | Current Build | Code Coverage | Version  | Code Quality | Licence | Size |
