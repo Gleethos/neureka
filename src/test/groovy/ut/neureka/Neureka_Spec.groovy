@@ -116,6 +116,7 @@ class Neureka_Spec extends Specification
             true  | {it.autograd().isRetainingPendingErrorForJITProp()} | {s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}
             true  | {it.autograd().isApplyingGradientWhenTensorIsUsed()}| {s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}
             true  | {it.autograd().isApplyingGradientWhenRequested()}   | {s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}
+            true  | {it.indexing().isUsingArrayBasedIndexing()}         | {s, v -> s.indexing().setIsUsingArrayBasedIndexing(v)}
     }
 
 
