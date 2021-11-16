@@ -67,7 +67,7 @@ import java.util.ServiceLoader;
 public final class Neureka
 {
     private static final ThreadLocal<Neureka> _INSTANCES;
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(Neureka.class);
+    private static final Logger _LOG = org.slf4j.LoggerFactory.getLogger(Neureka.class);
 
     /**
      *  The current semantic version of this library build.
@@ -108,15 +108,15 @@ public final class Neureka
             for ( Operation operation : serviceLoader ) {
                 assert operation.getFunction() != null;
                 assert operation.getOperator() != null;
-                if ( operation.getFunction() == null ) log.error(Messages.Operations.illegalStateFor( "function" ) );
-                if ( operation.getOperator() == null ) log.error(Messages.Operations.illegalStateFor( "operator" ) );
+                if ( operation.getFunction() == null ) _LOG.error(Messages.Operations.illegalStateFor( "function" ) );
+                if ( operation.getOperator() == null ) _LOG.error(Messages.Operations.illegalStateFor( "operator" ) );
                 _backend.addOperation(operation);
-                log.debug( Messages.Operations.loaded(operation) );
+                _LOG.debug( Messages.Operations.loaded(operation) );
             }
             if ( _OPENCL_AVAILABLE )
                 _backend.set( new CLContext() );
             else
-                log.warn( Messages.OpenCL.clContextCreationFailed() );
+                _LOG.warn( Messages.OpenCL.clContextCreationFailed() );
         }
         return _backend;
     }
@@ -211,9 +211,7 @@ public final class Neureka
         }
     }
 
-    private boolean _currentThreadIsNotAuthorized() {
-        return !this.equals(_INSTANCES.get());
-    }
+    private boolean _currentThreadIsNotAuthorized() { return !this.equals(_INSTANCES.get()); }
 
     public String toString() {
         return "Neureka[" +
@@ -250,6 +248,17 @@ public final class Neureka
             _dtype    = new DType();
         }
 
+        private boolean notModifiable() {
+            if ( _isLocked || _currentThreadIsNotAuthorized() ) {
+                if ( _isLocked )
+                    _LOG.error("Cannot modify settings! They are locked.");
+                else
+                    _LOG.error("Cannot modify settings! Current thread not authorized.");
+                return true;
+            }
+            else return false;
+        }
+        
         public Debug debug() { return _debug; }
 
         public Debug debug(Object closure) {
@@ -292,9 +301,20 @@ public final class Neureka
             return _dtype;
         }
 
+        /**
+         *  Locked settings can only be read but not written to.
+         *  Trying to write to a locked {@link Settings} instance will not have an effect.
+         *  The attempt, however, will be logged.
+         */
         public boolean isLocked() { return  _isLocked; }
 
-        public void setIsLocked(boolean locked) { _isLocked = locked; }
+        /**
+         *  Can be used to lock or unlock the settings of the current thread-local {@link Neureka} instance.
+         *  Locked settings can only be read but not written to.
+         *  Trying to write to a locked {@link Settings} instance will not have an effect.
+         *  The attempt, however, will be logged.
+         */
+        public void setIsLocked( boolean locked ) { _isLocked = locked; }
 
         public String toString() {
             return "Neureka.Settings[" +
@@ -316,8 +336,8 @@ public final class Neureka
             /**
              * Every derivative is calculated with respect to some graph node.
              * Graph nodes contain payload tensors.
-             * A tensor might not always be used for backpropagation.
-             * Therefore it will be deleted if possible.
+             * A tensor might not always be used for backpropagation,
+             * which means it will be deleted if possible.
              * Targeted tensors are either leave tensors (They require gradients)
              * or they are angle points between forward- and reverse-mode-AutoDiff!
              * In this case:
@@ -333,8 +353,8 @@ public final class Neureka
             /**
              * Every derivative is calculated with respect to some graph node.
              * Graph nodes contain payload tensors.
-             * A tensor might not always be used for backpropagation.
-             * Therefore it will be deleted if possible.
+             * A tensor might not always be used for backpropagation,
+             * which means it will be deleted if possible.
              * Targeted tensors are either leave tensors (They require gradients)
              * or they are angle points between forward- and reverse-mode-AutoDiff!
              * In this case:
@@ -345,8 +365,8 @@ public final class Neureka
              * It is used in the test suit to validate that the right tensors were calculated.
              * This flag should not be modified in production! (memory leak)
              */
-            public void setIsKeepingDerivativeTargetPayloads(boolean keep) {
-                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
+            public void setIsKeepingDerivativeTargetPayloads( boolean keep ) {
+                if ( notModifiable() ) return;
                 _isKeepingDerivativeTargetPayloads = keep;
             }
 
@@ -377,8 +397,8 @@ public final class Neureka
              *  is being modified.
              *  Usually the result of an operation is stored inside a new tensor.
              */
-            public void setIsPreventingInlineOperations(boolean prevent) {
-                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
+            public void setIsPreventingInlineOperations( boolean prevent ) {
+                if ( _isLocked || _currentThreadIsNotAuthorized() ) return;
                 _isPreventingInlineOperations = prevent;
             }
 
@@ -404,8 +424,8 @@ public final class Neureka
              *  improve performance for some networks substantially.
              *  The technique is termed JIT-Propagation.
              */
-            public void setIsRetainingPendingErrorForJITProp(boolean retain) {
-                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
+            public void setIsRetainingPendingErrorForJITProp( boolean retain ) {
+                if ( _isLocked || _currentThreadIsNotAuthorized() ) return;
                 _isRetainingPendingErrorForJITProp = retain;
             }
 
@@ -421,8 +441,8 @@ public final class Neureka
              *  they are being used for calculation ({@link neureka.autograd.GraphNode} instantiation).
              *  This feature works well with JIT-Propagation.
              */
-            public void setIsApplyingGradientWhenTensorIsUsed(boolean apply) {
-                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
+            public void setIsApplyingGradientWhenTensorIsUsed( boolean apply ) {
+                if ( _isLocked || _currentThreadIsNotAuthorized() ) return;
                 _isApplyingGradientWhenTensorIsUsed = apply;
             }
 
@@ -434,10 +454,10 @@ public final class Neureka
              *  gradient if requested AND the tensor is used for calculation!
              *  ({@link neureka.autograd.GraphNode} instantiation).  <br> <br>
              *
-             *  This flag works alongside two other autograd features which can be enables by flipping the feature flags <br>
+             *  This flag works alongside two other autograd features which can be enabled by flipping the feature flags <br>
              *  <i>'isApplyingGradientWhenRequested'</i> and <i>'isApplyingGradientWhenTensorIsUsed'</i><br>
              *  As the first flag name suggests gradients will be applied to their tensors when it is set to true,
-             *  however this will only happened when the second flag is set to true as well, because otherwise gradients
+             *  however this will only happen when the second flag is set to true as well, because otherwise gradients
              *  wouldn't be applied to their tensors automatically in the first place... <br>
              *  <br>
              *  Setting both flags to true will inhibit the effect of the second setting <i>'isApplyingGradientWhenTensorIsUsed'</i>
@@ -457,7 +477,7 @@ public final class Neureka
              * ({@link neureka.autograd.GraphNode} instantiation).
              */
             public void setIsApplyingGradientWhenRequested(boolean apply) {
-                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
+                if ( notModifiable() ) return;
                 _isApplyingGradientWhenRequested = apply;
             }
 
@@ -479,7 +499,7 @@ public final class Neureka
             public boolean isUsingArrayBasedIndexing() { return _isUsingArrayBasedIndexing; }
 
             public void setIsUsingArrayBasedIndexing( boolean thorough ) {
-                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
+                if ( notModifiable() ) return;
                 _isUsingArrayBasedIndexing = thorough;
             }
 
@@ -514,7 +534,7 @@ public final class Neureka
             public boolean isUsingLegacyView() { return _isUsingLegacyView; }
 
             public void setIsUsingLegacyView(boolean enabled) {
-                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
+                if ( notModifiable() ) return;
                 _isUsingLegacyView = enabled;
             }
 
@@ -544,8 +564,8 @@ public final class Neureka
 
             public boolean isOnlyUsingDefaultNDConfiguration() { return _isOnlyUsingDefaultNDConfiguration; }
 
-            public void setIsOnlyUsingDefaultNDConfiguration(boolean enabled) {
-                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
+            public void setIsOnlyUsingDefaultNDConfiguration( boolean enabled ) {
+                if ( notModifiable() ) return;
                 _isOnlyUsingDefaultNDConfiguration = enabled;
             }
 
@@ -566,14 +586,14 @@ public final class Neureka
             public Class<?> getDefaultDataTypeClass() { return _defaultDataTypeClass; }
 
             public void setDefaultDataTypeClass( Class<?> dtype ) {
-                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
+                if ( notModifiable() ) return;
                 _defaultDataTypeClass = dtype;
             }
 
             public boolean getIsAutoConvertingExternalDataToJVMTypes() { return _isAutoConvertingExternalDataToJVMTypes; }
 
             public void setIsAutoConvertingExternalDataToJVMTypes( boolean autoConvert ) {
-                if ( _isLocked || _currentThreadIsNotAuthorized()) return;
+                if ( notModifiable() ) return;
                 _isAutoConvertingExternalDataToJVMTypes = autoConvert;
             }
 
