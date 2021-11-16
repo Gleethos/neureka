@@ -36,8 +36,8 @@ SOFTWARE.
 package neureka;
 
 
+import neureka.backend.api.BackendContext;
 import neureka.backend.api.Operation;
-import neureka.backend.api.OperationContext;
 import neureka.devices.opencl.CLContext;
 import neureka.dtype.custom.F64;
 import neureka.utility.Messages;
@@ -55,12 +55,12 @@ import java.util.ServiceLoader;
 
 /**
  *    {@link Neureka} is the key access point for thread local / global library settings ( see{@link Settings})
- *    as well as execution contexts (see {@link OperationContext})
+ *    as well as execution contexts (see {@link BackendContext})
  *    and pre-instantiated {@link neureka.calculus.Function}s.
  *    {@link Neureka} exposes the execution context via the {@link #context()} method,
  *    the library settings which govern the behaviour of various library components
  *    can be accessed via the {@link #settings()} method.
- *    Common functions can be accessed within a given {@link OperationContext} instance based on which they were built.
+ *    Common functions can be accessed within a given {@link BackendContext} instance based on which they were built.
  *    If one wishes to modify the default library settings it is possible to do so by editing
  *    the "library_settings.groovy" DSL file.
  */
@@ -89,18 +89,18 @@ public final class Neureka
     private final Utility _utility;
 
     /**
-     *  This is a lazy reference to the so called {@link OperationContext}
+     *  This is a lazy reference to the so called {@link BackendContext}
      *  which will instantiated and populated as soon as the {@link #context()}
      *  method is being called for the first time.
      *  This context contains anything needed to perform operations
      *  on tensors on using different {@link neureka.calculus.Function}
      *  or {@link neureka.devices.Device} implementation instances.
      */
-    private OperationContext _context;
+    private BackendContext _context;
 
-    public OperationContext context() {
+    public BackendContext context() {
         if ( _context == null ) {
-            _context = new OperationContext();
+            _context = new BackendContext();
             // loading operations!
             ServiceLoader<Operation> serviceLoader = ServiceLoader.load( Operation.class );
 
@@ -223,11 +223,11 @@ public final class Neureka
                 "]";
     }
 
-    public OperationContext getContext() {
+    public BackendContext getContext() {
         return this.context();
     }
 
-    public void setContext(OperationContext _context) {
+    public void setContext(BackendContext _context) {
         this._context = _context;
     }
 

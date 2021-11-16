@@ -40,6 +40,7 @@ package neureka.common.composition;
 import neureka.Tsr;
 import neureka.autograd.GraphNode;
 import neureka.autograd.JITProp;
+import neureka.backend.api.BackendContext;
 import neureka.devices.Device;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.framing.Relation;
@@ -62,9 +63,9 @@ import java.util.function.Consumer;
  *                                                                                                   <br>
  *  This class is used as the root precursor class of the concrete {@link Tsr} class
  *  from which tensor instances can be created, but also the precursor class of
- *  the {@link neureka.backend.api.OperationContext} which is managed by thread local
+ *  the {@link BackendContext} which is managed by thread local
  *  {@link neureka.Neureka} library context instances.
- *  An {@link neureka.backend.api.OperationContext} directly or indirectly
+ *  An {@link BackendContext} directly or indirectly
  *  hosts {@link neureka.backend.api.Operation}, {@link java.util.function.Function}
  *  and of course {@link Component} implementations.
  *  Tensors on the other hand use this component system to enable autograd
@@ -278,7 +279,7 @@ public abstract class AbstractComponentOwner<C>
      * This method checks if a component identified by the passed {@link Class}
      * instance is present inside the stored component collection.
      *
-     * @param componentClass The class/type of a component that might exist in components.
+     * @param componentClass The class/type of component that might exist in components.
      * @return True if the component of the given type/class has been found.
      */
     public <T extends Component<C>> boolean has( Class<T> componentClass ) { return get( componentClass ) != null; }
@@ -286,7 +287,7 @@ public abstract class AbstractComponentOwner<C>
     /**
      * This methods stores the passed component inside the component
      * collection of this class...
-     * However it only adds the provided component if it is not
+     * However, it only adds the provided component if it is not
      * "rejected" by an abstract method, namely : "_addOrReject" !
      * Rejection means that this method simply returns null.
      *

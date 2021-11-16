@@ -41,7 +41,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.OperationContext;
+import neureka.backend.api.BackendContext;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.assembly.ParseUtil;
@@ -172,7 +172,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
 
     default Function optimizedFunctionOf( Function function, String name ) {
         Operation optimizedOperation = optimizedOperationOf( function, name );
-        OperationContext currentContext = Neureka.get().context();
+        BackendContext currentContext = Neureka.get().context();
         if ( !currentContext.hasOperation( optimizedOperation ) )
             currentContext.addOperation( optimizedOperation );
 

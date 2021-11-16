@@ -1,8 +1,8 @@
 package neureka.utility;
 
 import neureka.backend.api.Algorithm;
+import neureka.backend.api.BackendContext;
 import neureka.backend.api.Operation;
-import neureka.backend.api.OperationContext;
 import neureka.devices.opencl.CLContext;
 import org.slf4j.helpers.MessageFormatter;
 
@@ -30,7 +30,7 @@ public class Messages
             return _format(
                     "OpenCL not available!\n" +
                             "Skipped creating and adding a new '"+ CLContext.class.getSimpleName()+"' " +
-                            "to the current '"+ OperationContext.class.getSimpleName()+"'...\n" +
+                            "to the current '"+ BackendContext.class.getSimpleName()+"'...\n" +
                             findTip().bootstrapTip()
             );
         }

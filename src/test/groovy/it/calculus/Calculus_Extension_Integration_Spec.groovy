@@ -7,7 +7,7 @@ import neureka.autograd.ADAgent
 import neureka.backend.api.Algorithm
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
-import neureka.backend.api.OperationContext
+import neureka.backend.api.BackendContext
 import neureka.backend.standard.implementations.CPUImplementation
 import neureka.calculus.CalcUtil
 import neureka.calculus.Function
@@ -31,8 +31,8 @@ class Calculus_Extension_Integration_Spec extends Specification
             //def clContext = new CLContext(lws, rws, com_sze, row_sze, col_sze)
             //def kernel = new GEMMKernelReferenceImplementation( clContext )
 
-            OperationContext oldContext = Neureka.get().context()
-            OperationContext testContext = oldContext.clone()
+        BackendContext oldContext = Neureka.get().context()
+            BackendContext testContext = oldContext.clone()
 
         when:
             def run = testContext.runner()

@@ -1,6 +1,8 @@
 package neureka.devices.opencl;
 
-import neureka.backend.api.OperationContext;
+import neureka.backend.api.BackendContext;
+import neureka.backend.api.BackendExtension;
+import neureka.backend.api.Extensions;
 import neureka.common.composition.Component;
 import neureka.utility.Messages;
 import org.jocl.cl_platform_id;
@@ -14,21 +16,21 @@ import java.util.stream.Collectors;
 import static org.jocl.CL.clGetPlatformIDs;
 
 /**
- *  This is an OpenCL context component for any given {@link OperationContext} which
- *  extends a given operation context instance for additional functionality, which in
+ *  This is an OpenCL context component for any given {@link BackendContext} which
+ *  extends a given backend context instance for additional functionality, which in
  *  this case is the OpenCL backend storing platform and device information.
- *  {@link OperationContext}s are thread local states
+ *  {@link BackendContext}s are thread local states
  *  used for managing {@link neureka.backend.api.Operation}, {@link neureka.calculus.Function}
  *  as well as {@link Component} implementation instances like this one.
  *  A given state might not be compatible with the concepts introduced in other contexts
  *  which is why it makes sense to have separate "worlds" with potential different operations...
- *  The component system of the {@link OperationContext} exist so that a given context
+ *  The component system of the {@link BackendContext} exist so that a given context
  *  can be extended for more functionality
  *  and also to attach relevant states like for example in this case the {@link CLContext}
  *  instance will directly or indirectly reference kernels, memory objects and other concepts
  *  exposed by OpenCL...
  */
-public class CLContext  implements Component<OperationContext>
+public class CLContext implements BackendExtension
 {
     private static Logger _LOG = LoggerFactory.getLogger(CLContext.class);
 
@@ -51,10 +53,9 @@ public class CLContext  implements Component<OperationContext>
      *  This will in effect also cause the recreation of any {@link OpenCLDevice} instances
      *  as part of these {@link OpenCLPlatform}s.
      *  This will subsequently cause the recompilation of many OpenCL kernels.
-     *
      */
     @Override
-    public boolean update( OwnerChangeRequest<OperationContext> changeRequest ) {
+    public boolean update( OwnerChangeRequest<Extensions> changeRequest ) {
         this._platforms.clear();
         this._platforms.addAll( _findLoadAndCompileForAllPlatforms() );
         changeRequest.executeChange();
@@ -100,5 +101,10 @@ public class CLContext  implements Component<OperationContext>
             _LOG.warn( Messages.OpenCL.clContextCouldNotFindAnyDevices() );
         }
         return loadedPlatforms;
+    }
+
+    @Override
+    public void dispose() {
+
     }
 }

@@ -1,7 +1,7 @@
 package neureka.calculus.assembly;
 
 import neureka.backend.api.Operation;
-import neureka.backend.api.OperationContext;
+import neureka.backend.api.BackendContext;
 import neureka.calculus.Function;
 import neureka.calculus.implementations.FunctionConstant;
 import neureka.calculus.implementations.FunctionInput;
@@ -28,13 +28,13 @@ public class FunctionBuilder
     private static final Pattern reshapePattern = Pattern.compile("^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))");
     private static final Pattern nodePattern = Pattern.compile("^([\\(]{1}.+[\\)]{1})");
 
-    private final OperationContext _context;
+    private final BackendContext _context;
 
     /**
-     * @param context The {@link OperationContext} which will be used as a basis to parse new {@link Function}
+     * @param context The {@link BackendContext} which will be used as a basis to parse new {@link Function}
      *                implementation instance from provided {@link String} expressions.
      */
-    public FunctionBuilder( OperationContext context ) { _context = context; }
+    public FunctionBuilder( BackendContext context ) { _context = context; }
     
     /**
      * @param operation The {@link Operation} based on which the {@link Function} ought to be created.
