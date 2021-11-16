@@ -1,7 +1,7 @@
 # Extending Neureka #
 
-Neureka is a lightweight library, meaning that by default its backend only 
-supports `double` based tensors on the CPU and `float` based tensors for the GPU.
+Neureka is a lightweight library, meaning that by its default backend operations only 
+support `double` based tensors on the CPU and `float` based tensors on the GPU.
 However, the backend of this library adheres to a standardized API
 based on which you can easily extend the existing backend through a common library context!
 <br>
