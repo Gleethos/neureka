@@ -63,7 +63,7 @@ extends SuitabilityPredicate, ForwardADPredicate, BackwardADPredicate, ADAgentSu
      * This is a factory method for creating a new instance of this {@link FunAlgorithm} class.
      *
      * @param name The name of the functional algorithm.
-     * @return An new {@link FunAlgorithm} with the provided name.
+     * @return A new {@link FunAlgorithm} with the provided name.
      */
     static FunAlgorithm withName(String name) {
         return new FunAlgorithm(name);

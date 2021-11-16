@@ -66,22 +66,59 @@ class Neureka_Spec extends Specification
     def 'Neureka class instance has expected behaviour.'()
     {
         expect : 'Important settings have their expected states.'
-            assert !Neureka.get().settings().isLocked()
-            assert !Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads()
-            assert Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
+            !Neureka.get().settings().isLocked()
+            !Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads()
+            Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
 
         when : 'One settings is changes to false...'
             Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
 
         then : 'This setting change applies!'
-            assert !Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
-            assert Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()
+            !Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
+            Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()
 
         and : 'The version number is as expected!'
-            assert Neureka.version()=="0.8.0"//version
+            Neureka.version()=="0.8.0"//version
     }
 
-    
+    def 'Neureka settings class can be locked.'(
+        boolean value, def getter, def setter
+    ) {
+        given :
+            def set = { it -> setter(Neureka.get().settings(), it) }
+            def get = { getter(Neureka.get().settings()) }
+        expect :
+            get() == value
+
+        when :
+            Neureka.get().settings().setIsLocked(true)
+        and :
+            set(!value)
+        then :
+            get() == value
+
+        when :
+            Neureka.get().settings().setIsLocked(false)
+        and :
+            set(!value)
+        then :
+            get() != value
+
+        cleanup :
+            set(value)
+
+        where :
+            value | getter                                              | setter
+            false | {it.view().isUsingLegacyView()}                     | {s, v -> s.view().setIsUsingLegacyView(v)}
+            false | {it.ndim().isOnlyUsingDefaultNDConfiguration()}     | {s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}
+            false | {it.debug().isKeepingDerivativeTargetPayloads()}    | {s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}
+            true  | {it.autograd().isPreventingInlineOperations()}      | {s, v -> s.autograd().setIsPreventingInlineOperations(v)}
+            true  | {it.autograd().isRetainingPendingErrorForJITProp()} | {s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}
+            true  | {it.autograd().isApplyingGradientWhenTensorIsUsed()}| {s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}
+            true  | {it.autograd().isApplyingGradientWhenRequested()}   | {s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}
+    }
+
+
     def 'Every Thread instance has their own Neureka instance.'()
     {
         given : 'A map containing entries for Neureka instances.'
