@@ -265,15 +265,15 @@ public final class TsrAsString
 
     public String toString() { return toString(""); }
 
-    public String toString( String deep )
+    public String toString( String depth )
     {
         if ( _tensor.isEmpty() ) return "empty";
         else if ( _tensor.isUndefined() ) return "undefined";
         _asStr = new StringBuilder();
-        String base = ( deep == null ) ? "" : "\n" + deep;
-        String delimiter = ( deep == null ) ? "" : "    ";
-        String half = ( deep == null ) ? "" : "  ";
-        String deeper = ( deep == null ) ? deep : deep + delimiter;
+        String base      = ( depth == null ? ""   : "\n" + depth      );
+        String delimiter = ( depth == null ? ""   : "    "            );
+        String half      = ( depth == null ? ""   : "  "              );
+        String deeper    = ( depth == null ? null : depth + delimiter );
         if ( _hasShape ) _strShape();
         if ( !_hasValue ) return _asStr.toString();
         _$( ":" );
@@ -409,21 +409,21 @@ public final class TsrAsString
                 }
             }
             _$( Util.indent( dim ) );
-            _$( (_legacy) ? "( " : "[ " );
+            _$( _legacy ? "( " : "[ " );
             ValStringifier getter = _createValStringifierAndFormatter( _tensor.getData() );
             Function<int[], String> fun = ( _tensor.isVirtual() )
                     ? iarr -> getter.stringify( 0 )
                     : iarr -> getter.stringify( _tensor.indexOfIndices( iarr ) );
 
             _buildRow( trimStart, trimEnd, trimSize, indices, fun, ", " );
-            _$( (_legacy) ? " )" : " ]" );
+            _$( _legacy ? " )" : " ]" );
 
             if ( alias != null ) _$( ":" )._buildSingleLabel( alias, dim, indices );
         } else {
             _$( Util.indent( dim ) );
             if ( dim > 0 && alias != null )
                 _buildSingleLabel( alias, dim, indices )._$(":");
-            _$( (_legacy) ? "(\n" : "[\n" );
+            _$( _legacy ? "(\n" : "[\n" );
             int i = 0;
             do {
                 if ( i < trimStart || i >= trimEnd )
@@ -442,7 +442,7 @@ public final class TsrAsString
         _$( "\n" );
     }
 
-    private TsrAsString _buildSingleLabel(NDFrame<?> alias, int dim, int[] indices ) {
+    private TsrAsString _buildSingleLabel( NDFrame<?> alias, int dim, int[] indices ) {
         int pos = dim - 1;
         List<Object> key = alias.atAxis( pos ).getAllAliases();
         if ( pos >= 0 && key != null ) {
@@ -479,7 +479,7 @@ public final class TsrAsString
     public static class Util
     {
         @Contract( pure = true )
-        public static String indent( int n ){ return String.join("", Collections.nCopies( n, "   " )); }
+        public static String indent( int n ) { return String.join("", Collections.nCopies( n, "   " )); }
 
         @Contract( pure = true )
         public static String pad( int left, String s ) {
@@ -499,14 +499,14 @@ public final class TsrAsString
             String vStr = String.valueOf( v );
             final int offset = 0;
             if ( vStr.length() > ( 7 - offset ) ) {
-                if ( vStr.startsWith("0.") ) {
-                    vStr = vStr.substring( 0, 7-offset )+"E0";
-                } else if ( vStr.startsWith( "-0." ) ) {
-                    vStr = vStr.substring( 0, 8-offset )+"E0";
-                } else {
+                if ( vStr.startsWith("0.") )
+                    vStr = vStr.substring( 0, 7 - offset ) + "E0";
+                else if ( vStr.startsWith( "-0." ) )
+                    vStr = vStr.substring( 0, 8 - offset ) + "E0";
+                else {
                     vStr = formatter.format( v );
-                    vStr = (!vStr.contains(".0E0"))?vStr:vStr.replace(".0E0",".0");
-                    vStr = (vStr.contains("."))?vStr:vStr.replace("E0",".0");
+                    vStr = !vStr.contains(".0E0") ? vStr : vStr.replace(".0E0",".0");
+                    vStr =  vStr.contains(".")    ? vStr : vStr.replace("E0",".0");
                 }
             }
             return vStr;
@@ -517,17 +517,18 @@ public final class TsrAsString
         {
             if ( modes == null )
                 return Neureka.get().settings().view().getAsString();
+
             Map< Should, Object > conf = new HashMap<>();
-            conf.put( Should.BE_SHORTENED_BY,      (modes.contains( "s") ) ? 3 : 50                      );
-            conf.put( Should.BE_COMPACT,           modes.contains( "c" )                                 );
-            conf.put( Should.BE_FORMATTED,         modes.contains( "f" )                                 );
-            conf.put( Should.HAVE_GRADIENT,        modes.contains( "g" )                                 );
-            conf.put( Should.HAVE_PADDING_OF,     (modes.contains( "p" )) ? 6 : modes.contains( "f" )?2:1 );
-            conf.put( Should.HAVE_VALUE,          !(modes.contains( "shp" ) || modes.contains("shape"))   );
-            conf.put( Should.HAVE_RECURSIVE_GRAPH, modes.contains( "r" )                                 );
-            conf.put( Should.HAVE_DERIVATIVES,     modes.contains( "d" )                                 );
-            conf.put( Should.HAVE_SHAPE,           !modes.contains( "v" )                                );
-            conf.put( Should.BE_CELL_BOUND,        modes.contains("b")                                   );
+            conf.put( Should.BE_SHORTENED_BY,      modes.contains( "s" ) ? 3 : 50                             );
+            conf.put( Should.BE_COMPACT,           modes.contains( "c" )                                      );
+            conf.put( Should.BE_FORMATTED,         modes.contains( "f" )                                      );
+            conf.put( Should.HAVE_GRADIENT,        modes.contains( "g" )                                      );
+            conf.put( Should.HAVE_PADDING_OF,      modes.contains( "p" ) ? 6 : modes.contains( "f" ) ? 2 : 1  );
+            conf.put( Should.HAVE_VALUE,          !(modes.contains( "shp" ) || modes.contains("shape"))       );
+            conf.put( Should.HAVE_RECURSIVE_GRAPH, modes.contains( "r" )                                      );
+            conf.put( Should.HAVE_DERIVATIVES,     modes.contains( "d" )                                      );
+            conf.put( Should.HAVE_SHAPE,           !modes.contains( "v" )                                     );
+            conf.put( Should.BE_CELL_BOUND,        modes.contains( "b" )                                      );
             return conf;
         }
     }
