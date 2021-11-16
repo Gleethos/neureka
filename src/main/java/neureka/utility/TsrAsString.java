@@ -279,9 +279,9 @@ public final class TsrAsString
         _$( ":" );
         if ( _isFormatted ) _recursiveFormatting( new int[ _tensor.rank() ], -1 );
         else {
-            _$( (_legacy) ? "(" : "[" );
+            _$( _legacy ? "(" : "[" );
             _stringifyAllValues();
-            _$( (_legacy) ? ")" : "]" );
+            _$( _legacy ? ")" : "]" );
         }
 
         if ( _hasGradient && ( _tensor.rqsGradient() || _tensor.hasGradient() ) ) {
@@ -393,16 +393,16 @@ public final class TsrAsString
                 List<Object> aliases = alias.atAxis( indices.length - 1 ).getAllAliases();
                 if ( aliases != null ) {
                     _$( Util.indent( dim ) );
-                    _$( (_legacy) ? "[ " : "( " ); // The following assert has prevented many String miscarriages!
+                    _$( _legacy ? "[ " : "( " ); // The following assert has prevented many String miscarriages!
                     assert aliases.size() - _shape[ indices.length - 1 ] == 0; // This is a basic requirement for the label size...
                     ValStringifier getter = _createValStringifierAndFormatter( aliases.toArray() );
                     _buildRow(
                             trimStart, trimEnd, trimSize,
                             new int[ indices.length ],
                             iarr -> getter.stringify( iarr[ iarr.length -1 ] ),
-                            (_legacy) ? "][" : ")("
+                            _legacy ? "][" : ")("
                     );
-                    _$( (_legacy) ? " ]" : " )" );
+                    _$( _legacy ? " ]" : " )" );
                     if ( alias.getTensorName() != null )
                         _$( (_legacy) ? ":[ " : ":( " )._$( alias.getTensorName() )._$( (_legacy) ? " ]" : " )" );
                     _$( "\n" );
@@ -435,7 +435,7 @@ public final class TsrAsString
                 i++;
             }
             while ( indices[ dim ] != 0 );
-            _$( Util.indent( dim ) )._$( (_legacy) ? ")" : "]" );
+            _$( Util.indent( dim ) )._$( _legacy ? ")" : "]" );
         }
         int i = dim - 1;
         if ( i >= 0 && i < indices.length && indices[ i ] != 0 ) _$( "," );
