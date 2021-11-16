@@ -224,7 +224,7 @@ public final class Neureka
     }
 
     public OperationContext getContext() {
-        return this._context;
+        return this.context();
     }
 
     public void setContext(OperationContext _context) {

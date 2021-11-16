@@ -12,11 +12,7 @@ import neureka.devices.opencl.CLContext
 import neureka.dtype.DataType
 import neureka.framing.Relation
 import neureka.utility.SettingsLoader
-import spock.lang.IgnoreIf
-import spock.lang.Narrative
-import spock.lang.Shared
-import spock.lang.Specification
-import spock.lang.Title
+import spock.lang.*
 
 import java.util.regex.Pattern
 
@@ -135,7 +131,6 @@ class Neureka_Spec extends Specification
                     Neureka.get().context().getFunction(),
                     Neureka.get().context(),
                     Neureka.get().context().getFunctionCache(),
-                    Neureka.get().getContext().get(CLContext),
                     ExecutionCall.of(Tsr.of(3)).running(Neureka.get().context().getOperation("+")).on(CPU.get()),
                     new CustomDeviceCleaner(),
                     (Tsr.of(2).setRqsGradient(true)*Tsr.of(-2)).graphNode,
@@ -143,17 +138,18 @@ class Neureka_Spec extends Specification
             ]
     }
 
-    @IgnoreIf({ Neureka.get().canAccessOpenCL() })
+    @IgnoreIf({ !Neureka.get().canAccessOpenCL() })
     def 'OpenCL related library objects adhere to the same toString formatting convention!'(
-            Object neurekaObject
+            Object neurekaCLObject
     ) {
         expect : 'The provided object matches the following pattern defining a common standard!'
-            toStringStandard.matcher(neurekaObject.toString()).matches()
+            toStringStandard.matcher(neurekaCLObject.toString()).matches()
 
         where : 'The following objects are being used..'
-            neurekaObject << [
-                    Neureka.get().getContext().get(CLContext).platforms[0],
-                    Neureka.get().getContext().get(CLContext).platforms[0].devices[0]
+            neurekaCLObject << [
+                    Neureka.get().context.get(CLContext),
+                    Neureka.get().context.get(CLContext).platforms[0],
+                    Neureka.get().context.get(CLContext).platforms[0].devices[0]
             ]
     }
 
