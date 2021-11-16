@@ -3,8 +3,7 @@
 <h2 align="center"><b> A lightweight <br> platform independent <br> tensor library for the JVM </b></h2>
 
 <p align="center">OpenCL accelerated nd-arrays / tensors for Java, Kotlin, Groovy, Scala, Jython, JRuby...</p>
-
----
+ 
  <!---
   - Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
   - Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/lib/neureka-0.8.0.jar)
