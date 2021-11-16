@@ -9,27 +9,43 @@ import neureka.calculus.Function
 import neureka.devices.CustomDeviceCleaner
 import neureka.devices.host.CPU
 import neureka.devices.opencl.CLContext
-import neureka.devices.opencl.OpenCLDevice
-import neureka.devices.opencl.OpenCLPlatform
 import neureka.dtype.DataType
 import neureka.framing.Relation
 import neureka.utility.SettingsLoader
 import spock.lang.IgnoreIf
 import spock.lang.Narrative
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Title
+
+import java.util.regex.Pattern
 
 @Title('The Neureka context can be used and configured as expected.')
 @Narrative('''
 
-    This specification covers the behavior of the Neureka which
+    This specification covers the behavior of the Neureka class which
     exposes a global API for configuring thread local contexts and library settings.
-    The purpose of this is to assert that the API exposed by the $Neureka class 
+    The purpose of this is to assert that the API exposed by the Neureka class 
     is both thread local and configurable.
+    This specification also exists to cover standards for the Neureka library in general.
 
 ''')
 class Neureka_Spec extends Specification
 {
+    /**
+     *  The below pattern defines a common standard for the strings returned by 'toString' methods
+     *  returned by classes in the Neureka library.
+     */
+    @Shared
+    Pattern toStringStandard = ~("^(" +
+                                        "(([a-zA-Z]+\\.)*[A-Z][0-9a-zA-Z]+)" +
+                                        "(@[0-9a-f]+)?" +
+                                        "(#[0-9a-f]+)?" +
+                                        "(" +
+                                            "(\\[)(()|([a-zA-Z_\$][a-zA-Z_\$0-9]?)+=(.+))?(\\])" +
+                                        ")?" +
+                                ")\$")
+
     def setupSpec()
     {
         reportHeader """
@@ -98,17 +114,8 @@ class Neureka_Spec extends Specification
     def 'Various library objects adhere to the same toString formatting convention!'(
             Object neurekaObject
     ) {
-        expect : 'The provided object matches the following regex defining a common standard!'
-            neurekaObject.toString().matches(
-                    "^(" +
-                            "(([a-zA-Z]+\\.)*[A-Z][0-9a-zA-Z]+)" +
-                            "(@[0-9a-f]+)?" +
-                            "(#[0-9a-f]+)?" +
-                            "(" +
-                            "(\\[)(()|([a-zA-Z_\$][a-zA-Z_\$0-9]?)+=(.+))?(\\])" +
-                            ")?" +
-                    ")\$"
-            )
+        expect : 'The provided object matches the following pattern defining a common standard!'
+            toStringStandard.matcher(neurekaObject.toString()).matches()
 
         where : 'The following objects are being used..'
             neurekaObject << [
@@ -133,8 +140,21 @@ class Neureka_Spec extends Specification
                     new CustomDeviceCleaner(),
                     (Tsr.of(2).setRqsGradient(true)*Tsr.of(-2)).graphNode,
                     new GraphLock(Function.of('i0*3/2'))
-        ]
+            ]
     }
 
-    
+    @IgnoreIf({ Neureka.get().canAccessOpenCL() })
+    def 'OpenCL related library objects adhere to the same toString formatting convention!'(
+            Object neurekaObject
+    ) {
+        expect : 'The provided object matches the following pattern defining a common standard!'
+            toStringStandard.matcher(neurekaObject.toString()).matches()
+
+        where : 'The following objects are being used..'
+            neurekaObject << [
+                    Neureka.get().getContext().get(CLContext).platforms[0],
+                    Neureka.get().getContext().get(CLContext).platforms[0].devices[0]
+            ]
+    }
+
 }
