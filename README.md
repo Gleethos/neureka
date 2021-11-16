@@ -1,6 +1,6 @@
 <h1 align="center"> :cyclone: <a href="https://gleethos.github.io/neureka/index.html">NEUREKA</a> :cyclone: </h1>
 
-<h2 align="center"><b> A platform independent tensor library written in Java. </b></h2>
+<h2 align="center"><b> A lightweight <br> platform independent <br> tensor library for the JVM </b></h2>
 
 <p align="center">OpenCL accelerated nd-arrays / tensors for Java, Kotlin, Groovy, Scala, Jython, JRuby...</p>
 
@@ -26,6 +26,7 @@
 -   seeding
 -   labeling
 -   loading and saving as jpg/idx files
+-   [a highly extensible and modular backend](docs/markdown/extending_neureka.md)
 
 ### Take a quick look ###
 
