@@ -79,7 +79,7 @@ public final class JITProp&lt;ValType&gt; implements Component&lt;Tsr&lt;ValType
      * @return The truth value determining if the back-propagation has been completed.
      */
     public boolean isDone() {
-<span class="pc bpc" id="L82" title="2 of 4 branches missed.">        return ( _finished == null &amp;&amp; _pending == null );</span>
+<span class="pc bpc" id="L82" title="1 of 4 branches missed.">        return ( _finished == null &amp;&amp; _pending == null );</span>
     }
 
 
@@ -87,9 +87,9 @@ public final class JITProp&lt;ValType&gt; implements Component&lt;Tsr&lt;ValType
 
     @Override
     public String toString() {
-<span class="nc bnc" id="L90" title="All 2 branches missed.">        int finished = ( _finished == null ) ? 0 : _finished.size();</span>
-<span class="nc bnc" id="L91" title="All 2 branches missed.">        int pending = ( _pending == null ) ? 0 : _pending.size();</span>
-<span class="nc" id="L92">        return &quot;(JIT@&quot;+hashCode()+&quot;):{finished:&quot;+finished+&quot;, pending:&quot;+pending+&quot;, isDone:&quot;+isDone()+&quot;}&quot;;</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        int finished = ( _finished == null ) ? 0 : _finished.size();</span>
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">        int pending = ( _pending == null ) ? 0 : _pending.size();</span>
+<span class="fc" id="L92">        return this.getClass().getSimpleName()+&quot;@&quot;+hashCode()+&quot;[finished=&quot;+finished+&quot;,pending=&quot;+pending+&quot;,isDone=&quot;+isDone()+&quot;]&quot;;</span>
     }
 
 

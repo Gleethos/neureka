@@ -92,7 +92,7 @@ public interface Function
      * @return A {@link Function} instance created based on the provided {@link String}, ready to receive inputs and execute on them.
      */
     static Function of( String expression, boolean doAD ) {
-<span class="fc" id="L95">        return new FunctionBuilder( Neureka.get().context() ).build(expression, doAD);</span>
+<span class="fc" id="L95">        return new FunctionBuilder( Neureka.get().backend() ).build(expression, doAD);</span>
     }
 
     //------------------------------------------------------------------------------------------------------------------

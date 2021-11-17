@@ -54,7 +54,7 @@ public class SGD&lt;V&gt; implements Optimizer&lt;V&gt;
     @Override
     public Tsr&lt;V&gt; optimize( Tsr&lt;V&gt; w ) {
 <span class="nc" id="L56">        Tsr&lt;V&gt; g = w.getGradient();</span>
-<span class="nc" id="L57">        return Neureka.get().context().getFunction().idy().call( _function.call( g ) );</span>
+<span class="nc" id="L57">        return Neureka.get().backend().getFunction().idy().call( _function.call( g ) );</span>
     }
 
     public double learningRate() {

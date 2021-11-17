@@ -1,0 +1,1189 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 300;
+}
+
+h2 {
+    font-weight: 400;
+}
+
+hr {
+    margin-bottom: 1.5em;
+}
+
+h3 {
+    font-weight: 200;
+}
+
+table {
+    margin: 7px;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+}
+
+.ignored {
+    color: gray;
+}
+
+div.project-header {
+    margin-bottom: 10px;
+    font-size: large;
+}
+
+div.project-header &gt; span.project-name {
+
+                        }
+
+div.project-header &gt; span.project-version {
+                            padding-left: 20px;
+                        }
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+div.spec-title {
+    padding: 10px 0px 5px 0px;
+}
+
+tr.error td, td.error {
+    background-color: #F89A4F !important;
+}
+
+tr.failure td, td.failure {
+    color: red;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}
+
+
+
+
+
+
+.back-link {
+    font-size: small;
+    font-weight: bold;
+}
+
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+table.features-table {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table {
+    width: 99%;
+
+    font-weight: bold;
+    font-size: small;
+}
+
+table.summary-table tbody {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table th {
+    background: lightblue;
+    padding: 6px;
+}
+
+table.summary-table td {
+    background: #E0E0E0;
+    padding: 6px;
+}
+
+pre.title {
+    font-family: inherit;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+pre.narrative {
+    font-family: inherit;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 23px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+.feature-description {
+    font-size: large;
+    background: lightblue;
+    padding: 12px;
+}
+
+.feature-toc-error {
+    color: #F89A4F;
+}
+
+.feature-toc-failure {
+    color: #FF8080;
+}
+
+.feature-toc-ignored {
+    color: lightgray;
+}
+
+.feature-toc-pass {
+    color: green;
+}
+
+.feature-description.error {
+    background: #F89A4F;
+}
+
+.feature-description.failure {
+    background: #FF8080;
+}
+
+.feature-description.ignored {
+    background: lightgray;
+}
+
+.feature-description.ignored .reason {
+    color: black;
+    font-style: italic;
+    font-size: small;
+}
+
+div.extra-info {
+    font-size: small;
+}
+
+div.spec-headers {
+    margin: 4px;
+    font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+    margin-top: 6px;
+    padding: 10px 5px 5px 5px;
+    background-color: lemonchiffon;
+    color: black;
+    font-weight: 500;
+    font-size: small;
+    max-width: 50%;
+}
+
+div.pending-feature {
+    background-color: dodgerblue;
+    color: white;
+    margin-top: 6px;
+    padding: 5px;
+    text-align: center;
+    font-size: small;
+    max-width: 120px;
+}
+
+div.problem-description {
+    padding: 10px;
+    background: pink;
+    border-radius: 10px;
+}
+
+div.problem-header {
+    font-weight: bold;
+    color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table{
+    width: 98%;
+}
+
+table.ex-table th {
+    background: lightblue;
+    padding: 5px;
+}
+
+table.ex-table td {
+    background: #E0E0E0;
+    padding: 2px 5px 2px 5px;
+}
+
+table td {
+    min-width: 50px;
+}
+
+col.block-kind-col {
+    width: 70px;
+}
+
+span.spec-header {
+    font-weight: bold;
+}
+
+div.spec-text {
+    /*color: green;*/
+}
+
+div.spec-status {
+    font-style: italic;
+}
+
+.ignored {
+    color: gray;
+}
+
+td.ex-result {
+    text-align: center;
+    background: white !important;
+}
+
+.ex-pass {
+    color: darkgreen;
+}
+
+.ex-fail {
+    color: red;
+    font-weight: bold;
+}
+
+div.block-kind {
+    margin: 2px;
+    font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+    background-color: whitesmoke;
+    padding: 10px;
+}
+
+pre.block-source.error {
+    background-color: pink;
+    color: red;
+    font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+    margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+    color: gray;
+    margin-top: -14px;
+}
+
+pre.block-source.post-error {
+    color: gray;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}</style>
+</head>
+<body>
+<h2>Report for ut.dtype.NumericType_Spec</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Wed Nov 17 22:25:35 CET 2021 by Daglemino</div>
+<table class='summary-table'>
+<thead>
+<tr>
+<th>Executed features</th>
+<th>Passed</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4</td>
+<td>4</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>0.167 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre class='title'>The NumericType and its implementations model their respective numeric data types.</pre>
+<pre class='narrative'>This specification covers the behavior of the NumericType interface
+    which is responsible for modelling numeric data types which may or may not be native to the JVM. 
+    These implementations however do not model in the traditional OO style
+    but merely expose useful utility method for converting and representing 
+    these numeric data types using JVM types.</pre>
+<div class='spec-headers'>
+<div class='spec-header'>
+            This specification covers implementations
+            of the "interface neureka.dtype.NumericType" interface.
+            Such classes are responsible for
+            representing all numeric types including the ones
+            which are foreign to the JVM, namely : 
+            unsigned integer types.
+        </div>
+</div>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#140490353' class='feature-toc-pass'>NumericType implementations return their expected properties.</a>
+</li>
+<li>
+<a href='#179002469' class='feature-toc-pass'>NumericType implementations behave as expected.</a>
+</li>
+<li>
+<a href='#-1027221992' class='feature-toc-pass'>Conversion goes both ways and produces expected numeric values.</a>
+</li>
+<li>
+<a href='#1611266829' class='feature-toc-pass'>NumericType conversion to holder types yields expected results.</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='140490353'>
+<span>NumericType implementations return their expected properties.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>The type instance describes the expected number of bytes.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>type.numberOfBytes() == bytes</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>It describes the expected JVM target type.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>type.targetType() == target</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>It also describes the expected array type of said JVM target type.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>type.targetArrayType() == array</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The instance knows if it is signed or not.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>type.signed() == signed</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following data is being used: </div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>bytes</th>
+<th class='ex-header'>target</th>
+<th class='ex-header'>array</th>
+<th class='ex-header'>signed</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I8@483bf357</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>class [B</td>
+<td class='ex-value'>true</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI8@5f9dd826</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>class [S</td>
+<td class='ex-value'>false</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I16@46c0e903</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>class [S</td>
+<td class='ex-value'>true</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI16@6e583b26</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>class [I</td>
+<td class='ex-value'>false</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I32@32b8e65a</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>class [I</td>
+<td class='ex-value'>true</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI32@4c323687</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-value'>class [J</td>
+<td class='ex-value'>false</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I64@1dfc18ee</td>
+<td class='ex-value'>8</td>
+<td class='ex-value'>class java.lang.Long</td>
+<td class='ex-value'>class [J</td>
+<td class='ex-value'>true</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI64@3ab30a37</td>
+<td class='ex-value'>8</td>
+<td class='ex-value'>class java.math.BigInteger</td>
+<td class='ex-value'>class [Ljava.math.BigInteger;</td>
+<td class='ex-value'>false</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.F32@47920d3</td>
+<td class='ex-value'>4</td>
+<td class='ex-value'>class java.lang.Float</td>
+<td class='ex-value'>class [F</td>
+<td class='ex-value'>true</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.F64@5317ebc0</td>
+<td class='ex-value'>8</td>
+<td class='ex-value'>class java.lang.Double</td>
+<td class='ex-value'>class [D</td>
+<td class='ex-value'>true</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>10/10 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='179002469'>
+<span>NumericType implementations behave as expected.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>def result = type.foreignHolderBytesToTarget( data as byte[] )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>The array of bytes  is being converted to a fitting JVM type.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>result == converted</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The original byte array can be recreated by converting with the inverse...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>type.targetToForeignHolderBytes(result) == ( data as byte[] )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following NumericType instances and bytes are being used :</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>type</th>
+<th class='ex-header'>data</th>
+<th class='ex-header'>converted</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I8@756af78f</td>
+<td class='ex-value'>[-23]</td>
+<td class='ex-value'>-23</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI8@34dddeea</td>
+<td class='ex-value'>[-23]</td>
+<td class='ex-value'>233</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I16@2949cdd1</td>
+<td class='ex-value'>[2, 3]</td>
+<td class='ex-value'>515</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I16@3f1c9355</td>
+<td class='ex-value'>[-16, -53]</td>
+<td class='ex-value'>-3893</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I16@3fab583c</td>
+<td class='ex-value'>[16, -53]</td>
+<td class='ex-value'>4299</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I16@4aa2317</td>
+<td class='ex-value'>[-1, -1]</td>
+<td class='ex-value'>-1</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI16@29f04929</td>
+<td class='ex-value'>[2, 3]</td>
+<td class='ex-value'>515</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI16@68b502bf</td>
+<td class='ex-value'>[-16, -53]</td>
+<td class='ex-value'>61643</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI16@48e1b82</td>
+<td class='ex-value'>[16, -53]</td>
+<td class='ex-value'>4299</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI16@7e43bcbc</td>
+<td class='ex-value'>[-1, -1]</td>
+<td class='ex-value'>65535</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I32@4001bc5e</td>
+<td class='ex-value'>[22, -2, 3, -4]</td>
+<td class='ex-value'>385745916</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I32@2cfe13b</td>
+<td class='ex-value'>[-22, -2, -3, -4]</td>
+<td class='ex-value'>-352387588</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI32@44d78977</td>
+<td class='ex-value'>[22, -2, 3, -4]</td>
+<td class='ex-value'>385745916</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI32@8e802f8</td>
+<td class='ex-value'>[-22, -2, -3, -4]</td>
+<td class='ex-value'>3942579708</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I64@300f8313</td>
+<td class='ex-value'>[99, 2, 1, 35, 2, 5, 37, 22]</td>
+<td class='ex-value'>7134266009577661718</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I64@4f00a1d1</td>
+<td class='ex-value'>[-99, 2, 1, -35, 2, 5, -37, 22]</td>
+<td class='ex-value'>-7133136811068105962</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI64@3944b7bc</td>
+<td class='ex-value'>[99, 2, 1, 35, 2, 5, 37, 22]</td>
+<td class='ex-value'>7134266009577661718</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI64@52b44ec6</td>
+<td class='ex-value'>[-99, 2, 1, -35, 2, 5, -37, 22]</td>
+<td class='ex-value'>11313607262641445654</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>18/18 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1027221992'>
+<span>Conversion goes both ways and produces expected numeric values.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>We apply a filter in order to guarantee that the right data type is being used.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>original = [
+        'UI8' : { o -&gt; o as Byte },
+        'UI16': { o -&gt; o as Short },
+        'UI32': { o -&gt; o as Integer },
+        'UI64': { o -&gt; o as Long },
+        'I8'  : { o -&gt; o as Byte },
+        'I16' : { o -&gt; o as Short },
+        'I32' : { o -&gt; o as Integer },
+        'I64' : { o -&gt; o as Long },
+        'F32' : { o -&gt; o as Float },
+        'F64' : { o -&gt; o as Double }
+][ num.class.simpleName ](original)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The convert the raw type (might represent unsigned value) to a JVM compatible target type...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def resultTarget = num.foreignHolderBytesToTarget( rawOriginal )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Then convert this result to the true byte array of the value...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def backToRaw = num.targetToForeignHolderBytes( resultTarget )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>This produces the expected values which express the following relationships:</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>resultTarget == target
+backToRaw == rawOriginal
+num.toTarget( original ) == target</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The numeric type instance can perform array conversion.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>num.convertToTargetArray( rawOriginal as double[] ) == rawOriginal
+num.convertToTargetArray( rawOriginal as float[] ) == rawOriginal
+num.convertToTargetArray( rawOriginal as int[] ) == rawOriginal
+num.convertToTargetArray( rawOriginal as short[] ) == rawOriginal
+num.convertToTargetArray( rawOriginal as long[] ) == rawOriginal</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following "NumericType" implementation instances and numeric data is being used: </div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>num</th>
+<th class='ex-header'>original</th>
+<th class='ex-header'>rawOriginal</th>
+<th class='ex-header'>target</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI8@79240d9c</td>
+<td class='ex-value'>-3</td>
+<td class='ex-value'>[-3]</td>
+<td class='ex-value'>253</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI16@2a7548f3</td>
+<td class='ex-value'>-3</td>
+<td class='ex-value'>[-1, -3]</td>
+<td class='ex-value'>65533</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI32@1f7d66b5</td>
+<td class='ex-value'>-3</td>
+<td class='ex-value'>[-1, -1, -1, -3]</td>
+<td class='ex-value'>4294967293</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.UI64@3d03f4ca</td>
+<td class='ex-value'>-3</td>
+<td class='ex-value'>[-1, -1, -1, -1, -1, -1, -1, -3]</td>
+<td class='ex-value'>18446744073709551613</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I8@7ddf4cee</td>
+<td class='ex-value'>-3</td>
+<td class='ex-value'>[-3]</td>
+<td class='ex-value'>-3</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I16@6442016e</td>
+<td class='ex-value'>-3</td>
+<td class='ex-value'>[-1, -3]</td>
+<td class='ex-value'>-3</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I32@1d0fba0b</td>
+<td class='ex-value'>-3</td>
+<td class='ex-value'>[-1, -1, -1, -3]</td>
+<td class='ex-value'>-3</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I64@7c92891b</td>
+<td class='ex-value'>-3</td>
+<td class='ex-value'>[-1, -1, -1, -1, -1, -1, -1, -3]</td>
+<td class='ex-value'>-3</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.F32@4f912aa5</td>
+<td class='ex-value'>-0.3</td>
+<td class='ex-value'>[-66, -103, -103, -102]</td>
+<td class='ex-value'>-0.3</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.F64@bde0708</td>
+<td class='ex-value'>-0.3</td>
+<td class='ex-value'>[-65, -45, 51, 51, 51, 51, 51, 51]</td>
+<td class='ex-value'>-0.3</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.F32@1eb7720f</td>
+<td class='ex-value'>-5432.39928</td>
+<td class='ex-value'>[-59, -87, -61, 50]</td>
+<td class='ex-value'>-5432.3994</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.F64@6b03650</td>
+<td class='ex-value'>-5432.39928</td>
+<td class='ex-value'>[-64, -75, 56, 102, 55, 54, -51, -14]</td>
+<td class='ex-value'>-5432.39928</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>12/12 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='1611266829'>
+<span>NumericType conversion to holder types yields expected results.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>def result = num.convertToHolder( from )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>result == expected</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>result.class == expected.class</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>result.class == holderType</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>num.holderType() == holderType</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>num.holderArrayType() == holderArrayType</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>num</th>
+<th class='ex-header'>from</th>
+<th class='ex-header'>expected</th>
+<th class='ex-header'>holderType</th>
+<th class='ex-header'>holderArrayType</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I32@29455757</td>
+<td class='ex-value'>3</td>
+<td class='ex-value'>3</td>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>class [I</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I32@381b3886</td>
+<td class='ex-value'>8</td>
+<td class='ex-value'>8</td>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>class [I</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I32@783eaf8</td>
+<td class='ex-value'>863.834</td>
+<td class='ex-value'>863</td>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>class [I</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I32@511a48fe</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>class [I</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I32@3c5f0a5f</td>
+<td class='ex-value'>9</td>
+<td class='ex-value'>9</td>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>class [I</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I32@2b7abbdb</td>
+<td class='ex-value'>23.422</td>
+<td class='ex-value'>23</td>
+<td class='ex-value'>class java.lang.Integer</td>
+<td class='ex-value'>class [I</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I16@549bc804</td>
+<td class='ex-value'>3</td>
+<td class='ex-value'>3</td>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>class [S</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I16@20336568</td>
+<td class='ex-value'>8</td>
+<td class='ex-value'>8</td>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>class [S</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I16@2b1c14b5</td>
+<td class='ex-value'>863.834</td>
+<td class='ex-value'>863</td>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>class [S</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I16@38dcb52</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>class [S</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I16@e1b21b</td>
+<td class='ex-value'>9</td>
+<td class='ex-value'>9</td>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>class [S</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I16@2232b054</td>
+<td class='ex-value'>23.422</td>
+<td class='ex-value'>23</td>
+<td class='ex-value'>class java.lang.Short</td>
+<td class='ex-value'>class [S</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I8@79f8efbd</td>
+<td class='ex-value'>3</td>
+<td class='ex-value'>3</td>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>class [B</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I8@4054bed5</td>
+<td class='ex-value'>8</td>
+<td class='ex-value'>8</td>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>class [B</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I8@2deafad9</td>
+<td class='ex-value'>863.834</td>
+<td class='ex-value'>95</td>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>class [B</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I8@45cd658d</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>class [B</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I8@57b0dacb</td>
+<td class='ex-value'>9</td>
+<td class='ex-value'>9</td>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>class [B</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>neureka.dtype.custom.I8@2dca640</td>
+<td class='ex-value'>23.422</td>
+<td class='ex-value'>23</td>
+<td class='ex-value'>class java.lang.Byte</td>
+<td class='ex-value'>class [B</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>18/18 passed</div>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>

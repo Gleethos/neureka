@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Tue Oct 12 10:15:03 CEST 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Nov 17 22:25:15 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>0.595 seconds</td>
+<td>0.689 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -466,7 +466,7 @@ Tsr&lt;Number&gt; t3 = Tsr.of( 5 )</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>def context = Neureka.get().context().clone().addOperation(resultOperation)</pre>
+<pre class='block-source'>def context = Neureka.get().backend().clone().addOperation(resultOperation)</pre>
 </td>
 </tr>
 <tr>
@@ -495,7 +495,7 @@ Tsr&lt;Number&gt; t3 = Tsr.of( 5 )</pre>
 <td></td>
 <td>
 <pre class='block-source'>Function fun = run {
-    new FunctionBuilder( Neureka.get().context() )
+    new FunctionBuilder( Neureka.get().backend() )
                 .build(resultOperation, 3, true)
 }</pre>
 </td>
@@ -619,7 +619,7 @@ Tsr&lt;Number&gt; t3 = Tsr.of( 5 )</pre>
 <td></td>
 <td>
 <pre class='block-source'>def exception = thrown(IllegalStateException)
-exception.message == "No suitable implementation found for algorithm 'generic_algorithm_for_test_fun' and device type 'HostCPU'."</pre>
+exception.message == "No suitable implementation found for algorithm 'generic_algorithm_for_test_fun' and device type 'CPU'."</pre>
 </td>
 </tr>
 <tr>

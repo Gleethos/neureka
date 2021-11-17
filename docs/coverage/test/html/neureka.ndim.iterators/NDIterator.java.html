@@ -69,15 +69,15 @@ public interface NDIterator
 <span class="fc" id="L69">        NDConfiguration ndc = t.getNDConf();</span>
 
 <span class="pc bpc" id="L71" title="1 of 2 branches missed.">        if ( ndc instanceof ComplexD1Configuration) return new ComplexD1CIterator( (ComplexD1Configuration) ndc );</span>
-<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        if ( ndc instanceof SimpleD1Configuration ) return new SimpleD1CIterator( (SimpleD1Configuration) ndc );</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        if ( ndc instanceof SimpleD1Configuration ) return new SimpleD1CIterator( (SimpleD1Configuration) ndc );</span>
 
 <span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if ( ndc instanceof ComplexD2Configuration) return new ComplexD2CIterator( (ComplexD2Configuration) ndc );</span>
 <span class="pc bpc" id="L75" title="1 of 2 branches missed.">        if ( ndc instanceof ComplexD3Configuration) return new ComplexD3CIterator( (ComplexD3Configuration) ndc );</span>
 <span class="fc bfc" id="L76" title="All 2 branches covered.">        if ( ndc instanceof SimpleD2Configuration ) return new SimpleD2CIterator( (SimpleD2Configuration) ndc );</span>
 <span class="fc bfc" id="L77" title="All 2 branches covered.">        if ( ndc instanceof SimpleD3Configuration ) return new SimpleD3CIterator( (SimpleD3Configuration) ndc );</span>
 
-<span class="pc bpc" id="L79" title="1 of 4 branches missed.">        if ( ndc instanceof VirtualNDConfiguration &amp;&amp; shouldNotBeVirtual == NonVirtual.FALSE )</span>
-<span class="nc" id="L80">            return new VirtualNDIterator( (VirtualNDConfiguration) ndc );</span>
+<span class="fc bfc" id="L79" title="All 4 branches covered.">        if ( ndc instanceof VirtualNDConfiguration &amp;&amp; shouldNotBeVirtual == NonVirtual.FALSE )</span>
+<span class="fc" id="L80">            return new VirtualNDIterator( (VirtualNDConfiguration) ndc );</span>
         else
 <span class="fc" id="L82">            return new DefaultNDIterator( ndc );</span>
     }

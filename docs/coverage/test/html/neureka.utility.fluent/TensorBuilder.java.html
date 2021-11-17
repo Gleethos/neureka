@@ -95,101 +95,120 @@ public class TensorBuilder&lt;V&gt; implements WithShapeOrScalarOrVector&lt;V&gt
 <span class="fc" id="L95">    public Tsr&lt;V&gt; vector( Object[] values ) { return Tsr.of( _dataType, new int[]{ values.length }, values ); }</span>
 
     @Override
-<span class="fc" id="L98">    public Tsr&lt;V&gt; scalar( V value ) { return Tsr.of( value.getClass(), new int[]{1}, value ); }</span>
+    public Tsr&lt;V&gt; scalar( V value ) {
+<span class="fc" id="L99">        Object data = value;</span>
+<span class="fc" id="L100">        Class&lt;?&gt; targetType = _dataType.getJVMTypeClass();</span>
+<span class="pc bpc" id="L101" title="2 of 4 branches missed.">        if ( value != null &amp;&amp; value != targetType ) {</span>
+<span class="fc" id="L102">            if (</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">                    Number.class.isAssignableFrom( value.getClass() ) &amp;&amp;</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">                    Number.class.isAssignableFrom( targetType )</span>
+            ) {
+                // This branch will mostly be reached when using Groovy, which not necessarily enforces the type &quot;V&quot;!
+<span class="fc bfc" id="L107" title="All 2 branches covered.">                if (      targetType == Double.class  ) data = Double.valueOf(((Number)value).doubleValue());</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">                else if ( targetType == Float.class   ) data = Float.valueOf(((Number)value).floatValue());</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">                else if ( targetType == Integer.class ) data = Integer.valueOf(((Number)value).intValue());</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">                else if ( targetType == Short.class   ) data = Short.valueOf(((Number)value).shortValue());</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">                else if ( targetType == Byte.class    ) data = Byte.valueOf(((Number)value).byteValue());</span>
+            } else
+<span class="nc" id="L113">                throw new IllegalArgumentException(&quot;Provided value is of the wrong type!&quot;);</span>
+        }
+<span class="fc" id="L115">        return Tsr.of( _dataType, new int[]{1}, data );</span>
+    }
 
     @Override
-<span class="fc" id="L101">    public Step&lt;V&gt; to( V index ) { _to = _checked(index); return this; }</span>
+<span class="fc" id="L119">    public Step&lt;V&gt; to( V index ) { _to = _checked(index); return this; }</span>
 
     @Override
     public Tsr&lt;V&gt; step( double size ) {
-<span class="fc" id="L105">        int tensorSize = _size();</span>
-<span class="fc" id="L106">        Object data = null;</span>
-<span class="fc" id="L107">        int itemLimit = _size();</span>
-<span class="fc" id="L108">        int itemIndex = 0;</span>
-<span class="fc bfc" id="L109" title="All 2 branches covered.">        if ( _dataType == DataType.of( Integer.class ) ) {</span>
-<span class="fc" id="L110">            List&lt;Integer&gt; range = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L111" title="All 4 branches covered.">            for ( int index = ((Integer) _from); index &lt;= ((Integer)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
-<span class="fc" id="L112">                range.add( index );</span>
-<span class="fc" id="L113">                itemIndex++;</span>
+<span class="fc" id="L123">        int tensorSize = _size();</span>
+<span class="fc" id="L124">        Object data = null;</span>
+<span class="fc" id="L125">        int itemLimit = _size();</span>
+<span class="fc" id="L126">        int itemIndex = 0;</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">        if ( _dataType == DataType.of( Integer.class ) ) {</span>
+<span class="fc" id="L128">            List&lt;Integer&gt; range = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L129" title="All 4 branches covered.">            for ( int index = ((Integer) _from); index &lt;= ((Integer)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
+<span class="fc" id="L130">                range.add( index );</span>
+<span class="fc" id="L131">                itemIndex++;</span>
             }
-<span class="fc" id="L115">            data = IntStream.iterate( 0, i -&gt; i + 1 )</span>
-<span class="fc" id="L116">                            .limit( tensorSize )</span>
-<span class="fc" id="L117">                            .map( i -&gt; range.get( i % range.size() ) )</span>
-<span class="fc" id="L118">                            .toArray();</span>
-<span class="fc" id="L119">        }</span>
-<span class="fc bfc" id="L120" title="All 2 branches covered.">        else if ( _dataType == DataType.of( Double.class ) ) {</span>
-<span class="fc" id="L121">            List&lt;Double&gt; range = new ArrayList&lt;&gt;();</span>
-<span class="pc bpc" id="L122" title="1 of 4 branches missed.">            for ( double index = ((Double) _from); index &lt;= ((Double)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
-<span class="fc" id="L123">                range.add( index );</span>
-<span class="fc" id="L124">                itemIndex++;</span>
+<span class="fc" id="L133">            data = IntStream.iterate( 0, i -&gt; i + 1 )</span>
+<span class="fc" id="L134">                            .limit( tensorSize )</span>
+<span class="fc" id="L135">                            .map( i -&gt; range.get( i % range.size() ) )</span>
+<span class="fc" id="L136">                            .toArray();</span>
+<span class="fc" id="L137">        }</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        else if ( _dataType == DataType.of( Double.class ) ) {</span>
+<span class="fc" id="L139">            List&lt;Double&gt; range = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L140" title="1 of 4 branches missed.">            for ( double index = ((Double) _from); index &lt;= ((Double)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
+<span class="fc" id="L141">                range.add( index );</span>
+<span class="fc" id="L142">                itemIndex++;</span>
             }
-<span class="fc" id="L126">            data = IntStream.iterate( 0, i -&gt; i + 1 )</span>
-<span class="fc" id="L127">                            .limit( tensorSize )</span>
-<span class="fc" id="L128">                            .mapToDouble( i -&gt; range.get( i % range.size() ) )</span>
-<span class="fc" id="L129">                            .toArray();</span>
-<span class="fc" id="L130">        }</span>
-<span class="fc bfc" id="L131" title="All 2 branches covered.">        else if ( _dataType == DataType.of( Long.class ) ) {</span>
-<span class="fc" id="L132">            List&lt;Long&gt; range = new ArrayList&lt;&gt;();</span>
-<span class="pc bpc" id="L133" title="1 of 4 branches missed.">            for ( long index = ((Long) _from); index &lt;= ((Long)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
-<span class="fc" id="L134">                range.add( index );</span>
-<span class="fc" id="L135">                itemIndex++;</span>
+<span class="fc" id="L144">            data = IntStream.iterate( 0, i -&gt; i + 1 )</span>
+<span class="fc" id="L145">                            .limit( tensorSize )</span>
+<span class="fc" id="L146">                            .mapToDouble( i -&gt; range.get( i % range.size() ) )</span>
+<span class="fc" id="L147">                            .toArray();</span>
+<span class="fc" id="L148">        }</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        else if ( _dataType == DataType.of( Long.class ) ) {</span>
+<span class="fc" id="L150">            List&lt;Long&gt; range = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L151" title="1 of 4 branches missed.">            for ( long index = ((Long) _from); index &lt;= ((Long)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
+<span class="fc" id="L152">                range.add( index );</span>
+<span class="fc" id="L153">                itemIndex++;</span>
             }
-<span class="fc" id="L137">            data = IntStream.iterate( 0, i -&gt; i + 1 )</span>
-<span class="fc" id="L138">                    .limit( tensorSize )</span>
-<span class="fc" id="L139">                    .mapToLong( i -&gt; range.get( i % range.size() ) )</span>
-<span class="fc" id="L140">                    .toArray();</span>
-<span class="fc" id="L141">        }</span>
-<span class="fc bfc" id="L142" title="All 2 branches covered.">        else if ( _dataType == DataType.of( Float.class ) ) {</span>
-<span class="fc" id="L143">            List&lt;Float&gt; range = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L144" title="All 4 branches covered.">            for ( double index = ((Float) _from); index &lt;= ((Float)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
-<span class="fc" id="L145">                range.add( (float) index );</span>
-<span class="fc" id="L146">                itemIndex++;</span>
+<span class="fc" id="L155">            data = IntStream.iterate( 0, i -&gt; i + 1 )</span>
+<span class="fc" id="L156">                    .limit( tensorSize )</span>
+<span class="fc" id="L157">                    .mapToLong( i -&gt; range.get( i % range.size() ) )</span>
+<span class="fc" id="L158">                    .toArray();</span>
+<span class="fc" id="L159">        }</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        else if ( _dataType == DataType.of( Float.class ) ) {</span>
+<span class="fc" id="L161">            List&lt;Float&gt; range = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L162" title="All 4 branches covered.">            for ( double index = ((Float) _from); index &lt;= ((Float)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
+<span class="fc" id="L163">                range.add( (float) index );</span>
+<span class="fc" id="L164">                itemIndex++;</span>
             }
-<span class="fc" id="L148">            float[] primData = new float[tensorSize];</span>
-<span class="fc bfc" id="L149" title="All 2 branches covered.">            for ( int ii = 0; ii &lt; tensorSize; ii ++) {</span>
-<span class="fc" id="L150">                primData[ii] = range.get( ii % range.size() );</span>
+<span class="fc" id="L166">            float[] primData = new float[tensorSize];</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">            for ( int ii = 0; ii &lt; tensorSize; ii ++) {</span>
+<span class="fc" id="L168">                primData[ii] = range.get( ii % range.size() );</span>
             }
-<span class="fc" id="L152">            data = primData;</span>
-<span class="fc" id="L153">        }</span>
-<span class="pc bpc" id="L154" title="1 of 2 branches missed.">        else if ( _dataType == DataType.of( Byte.class ) ) {</span>
-<span class="fc" id="L155">            List&lt;Byte&gt; range = new ArrayList&lt;&gt;();</span>
-<span class="pc bpc" id="L156" title="1 of 4 branches missed.">            for ( byte index = ((Byte) _from); index &lt;= ((Byte)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
-<span class="fc" id="L157">                range.add( index );</span>
-<span class="fc" id="L158">                itemIndex++;</span>
+<span class="fc" id="L170">            data = primData;</span>
+<span class="fc" id="L171">        }</span>
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">        else if ( _dataType == DataType.of( Byte.class ) ) {</span>
+<span class="fc" id="L173">            List&lt;Byte&gt; range = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L174" title="1 of 4 branches missed.">            for ( byte index = ((Byte) _from); index &lt;= ((Byte)_to) &amp;&amp; itemIndex &lt; itemLimit; index += size ) {</span>
+<span class="fc" id="L175">                range.add( index );</span>
+<span class="fc" id="L176">                itemIndex++;</span>
             }
-<span class="fc" id="L160">            byte[] primData = new byte[tensorSize];</span>
-<span class="fc bfc" id="L161" title="All 2 branches covered.">            for ( int ii = 0; ii &lt; tensorSize; ii ++) {</span>
-<span class="fc" id="L162">                primData[ii] = range.get( ii % range.size() );</span>
+<span class="fc" id="L178">            byte[] primData = new byte[tensorSize];</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">            for ( int ii = 0; ii &lt; tensorSize; ii ++) {</span>
+<span class="fc" id="L180">                primData[ii] = range.get( ii % range.size() );</span>
             }
-<span class="fc" id="L164">            data = primData;</span>
-<span class="fc" id="L165">        }</span>
-<span class="nc bnc" id="L166" title="All 4 branches missed.">        else if ( _from instanceof Comparable &amp;&amp; _to instanceof Comparable ) {</span>
+<span class="fc" id="L182">            data = primData;</span>
+<span class="fc" id="L183">        }</span>
+<span class="nc bnc" id="L184" title="All 4 branches missed.">        else if ( _from instanceof Comparable &amp;&amp; _to instanceof Comparable ) {</span>
             //data = new ObjectRange( (Comparable&lt;V&gt;) _from, (Comparable&lt;V&gt;) _to ).step( (int) size );
-<span class="nc" id="L168">            throw new IllegalStateException(); // TODO: make it possible to have ranges like 'a' to 'z'...</span>
+<span class="nc" id="L186">            throw new IllegalStateException(&quot;Cannot form a range for the provided elements...&quot;);</span>
+            // TODO: make it possible to have ranges like 'a' to 'z'...
         }
-<span class="fc" id="L170">        return Tsr.of( _dataType, _shape, data );</span>
+<span class="fc" id="L189">        return Tsr.of( _dataType, _shape, data );</span>
     }
 
     private int _size() {
-<span class="fc" id="L174">        int size = 1;</span>
-<span class="fc bfc" id="L175" title="All 2 branches covered.">        for ( int axis : _shape ) size *= axis;</span>
-<span class="fc" id="L176">        return size;</span>
+<span class="fc" id="L193">        int size = 1;</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        for ( int axis : _shape ) size *= axis;</span>
+<span class="fc" id="L195">        return size;</span>
     }
 
     private V _checked( V o ) {
-<span class="fc" id="L180">        Class&lt;?&gt; jvmTypeClass = this._dataType.getJVMTypeClass();</span>
-<span class="pc bpc" id="L181" title="1 of 2 branches missed.">        if ( Number.class.isAssignableFrom(jvmTypeClass) ) {</span>
-<span class="pc bpc" id="L182" title="2 of 4 branches missed.">            if ( o instanceof Number &amp;&amp; o.getClass() != jvmTypeClass ) {</span>
-<span class="nc" id="L183">                Number n = (Number) o;</span>
-<span class="nc bnc" id="L184" title="All 2 branches missed.">                if ( jvmTypeClass == Integer.class ) return (V) ((Integer) n.intValue());</span>
-<span class="nc bnc" id="L185" title="All 2 branches missed.">                if ( jvmTypeClass == Double.class ) return (V) ((Double) n.doubleValue());</span>
-<span class="nc bnc" id="L186" title="All 2 branches missed.">                if ( jvmTypeClass == Short.class ) return (V) ((Short) n.shortValue());</span>
-<span class="nc bnc" id="L187" title="All 2 branches missed.">                if ( jvmTypeClass == Byte.class ) return (V) ((Byte) n.byteValue());</span>
-<span class="nc bnc" id="L188" title="All 2 branches missed.">                if ( jvmTypeClass == Long.class ) return (V) ((Long) n.longValue());</span>
-<span class="nc bnc" id="L189" title="All 2 branches missed.">                if ( jvmTypeClass == Float.class ) return (V) ((Float) n.floatValue());</span>
+<span class="fc" id="L199">        Class&lt;?&gt; jvmTypeClass = this._dataType.getJVMTypeClass();</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">        if ( Number.class.isAssignableFrom(jvmTypeClass) ) {</span>
+<span class="pc bpc" id="L201" title="2 of 4 branches missed.">            if ( o instanceof Number &amp;&amp; o.getClass() != jvmTypeClass ) {</span>
+<span class="nc" id="L202">                Number n = (Number) o;</span>
+<span class="nc bnc" id="L203" title="All 2 branches missed.">                if ( jvmTypeClass == Integer.class ) return (V) ((Integer) n.intValue());</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">                if ( jvmTypeClass == Double.class  ) return (V) ((Double) n.doubleValue());</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">                if ( jvmTypeClass == Short.class   ) return (V) ((Short) n.shortValue());</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">                if ( jvmTypeClass == Byte.class    ) return (V) ((Byte) n.byteValue());</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">                if ( jvmTypeClass == Long.class    ) return (V) ((Long) n.longValue());</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">                if ( jvmTypeClass == Float.class   ) return (V) ((Float) n.floatValue());</span>
             }
         }
-<span class="fc" id="L192">        return o;</span>
+<span class="fc" id="L211">        return o;</span>
     }
 
 }

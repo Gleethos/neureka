@@ -6,11 +6,11 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
@@ -19,9 +19,9 @@ public final class Sigmoid extends AbstractOperation
 
 <span class="fc" id="L20">    private final DefaultOperatorCreator&lt;TertiaryNDIConsumer&gt; _creator =</span>
             ( inputs, d ) -&gt; {
-<span class="nc" id="L22">                double[] t1_val = inputs[ 1 ].value64();</span>
-<span class="nc bnc" id="L23" title="All 2 branches missed.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; calculate( t1_val[ t1Idx.i() ], false );</span>
-<span class="nc" id="L24">                else return ( t0Idx, t1Idx, t2Idx ) -&gt;  calculate( t1_val[ t1Idx.i() ], true );</span>
+<span class="fc" id="L22">                double[] t1_val = inputs[ 1 ].value64();</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">                if ( d &lt; 0 ) return ( t0Idx, t1Idx, t2Idx ) -&gt; calculate( t1_val[ t1Idx.i() ], false );</span>
+<span class="fc" id="L24">                else return ( t0Idx, t1Idx, t2Idx ) -&gt;  calculate( t1_val[ t1Idx.i() ], true );</span>
             };
 
 <span class="fc" id="L27">    private final DefaultOperatorCreator&lt;TertiaryNDAConsumer&gt; _creatorX =</span>
@@ -56,26 +56,26 @@ public final class Sigmoid extends AbstractOperation
 <span class="fc" id="L56">        setAlgorithm(</span>
                 Activation.class,
 <span class="fc" id="L58">                operationAlgorithm.setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L61">                            .withArity(3)</span>
 <span class="fc" id="L62">                            .andImplementation(</span>
                                 call  -&gt;
 <span class="fc" id="L64">                                        call.getDevice().getExecutor()</span>
 <span class="fc" id="L65">                                                .threaded (</span>
 <span class="fc" id="L66">                                                        call.getTsrOfType( Number.class, 0 ).size(),</span>
-<span class="pc bpc" id="L67" title="1 of 2 branches missed.">                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">                                                        (Neureka.get().settings().indexing().isUsingArrayBasedIndexing())</span>
 <span class="fc" id="L68">                                                        ? ( start, end ) -&gt;</span>
 <span class="fc" id="L69">                                                                Activation.activate (</span>
 <span class="fc" id="L70">                                                                        call.getTsrOfType( Number.class, 0 ),</span>
                                                                         start, end,
 <span class="fc" id="L72">                                                                        _creatorX.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))</span>
                                                                 )
-<span class="nc" id="L74">                                                        : ( start, end ) -&gt;</span>
-<span class="nc" id="L75">                                                                Activation.activate (</span>
-<span class="nc" id="L76">                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),</span>
+<span class="fc" id="L74">                                                        : ( start, end ) -&gt;</span>
+<span class="fc" id="L75">                                                                Activation.activate (</span>
+<span class="fc" id="L76">                                                                        call.getTsrOfType( Number.class, 0 ), call.getTsrOfType( Number.class, 1 ),</span>
                                                                         start, end,
-<span class="nc" id="L78">                                                                        _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))</span>
+<span class="fc" id="L78">                                                                        _creator.create(call.getTensors(), call.getValOf( Arg.DerivIdx.class ))</span>
                                                                 )
                                                 )
                             )

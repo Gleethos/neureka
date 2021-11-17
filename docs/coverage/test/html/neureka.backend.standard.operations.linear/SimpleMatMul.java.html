@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SimpleMatMul.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.standard.operations.linear</a> &gt; <span class="el_source">SimpleMatMul.java</span></div><h1>SimpleMatMul.java</h1><pre class="source lang-java linenums">package neureka.backend.standard.operations.linear;
+
+<span class="nc" id="L3">public class SimpleMatMul {</span>
+
+    public static void execute(
+            double[] A,
+            int[] shapeA,
+            double[] B,
+            int[] shapeB,
+            double[] C,
+            int[] shapeC
+    ) {
+        // A * B = C // [MxK]*[KxN] = [MxN]
+<span class="fc" id="L14">        int aRows = shapeA[0];</span>
+<span class="fc" id="L15">        int aCols = shapeA[1];</span>
+<span class="fc" id="L16">        int bRows = shapeB[0];</span>
+<span class="fc" id="L17">        int bCols = shapeB[1];</span>
+
+<span class="pc bpc" id="L19" title="1 of 2 branches missed.">        if ( aCols != bRows ) {</span>
+<span class="nc" id="L20">            throw new IllegalArgumentException(&quot;A:Rows: &quot; + aCols + &quot; did not match B:Columns &quot; + bRows + &quot;.&quot;);</span>
+        }
+
+<span class="fc" id="L23">        execute(A, B, C, aRows, aCols, bCols);</span>
+<span class="fc" id="L24">    }</span>
+
+    public static void execute(
+            double[] A, double[] B, double[] C, int aRows, int aCols, int bCols
+    ) {
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        for ( int i = 0; i &lt; aRows; i++ ) { // aRow</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">            for ( int j = 0; j &lt; bCols; j++ ) { // bColumn</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">                for ( int k = 0; k &lt; aCols; k++ ) { // aColumn</span>
+<span class="fc" id="L32">                    C[ i * bCols + j ] += A[ i * aCols + k ] * B[ k * bCols + j ];</span>
+                }
+            }
+        }
+<span class="fc" id="L36">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -314,7 +314,7 @@ div.footer {
 </div>
 <div class='summary-report'>
 <h3>Summary:</h3>
-<div class='date-test-ran'>Created on Tue Oct 12 10:15:00 CEST 2021 by Daglemino</div>
+<div class='date-test-ran'>Created on Wed Nov 17 22:25:20 CET 2021 by Daglemino</div>
 <table class='summary-table'>
 <thead>
 <tr>
@@ -335,7 +335,7 @@ div.footer {
 <td>0</td>
 <td>0</td>
 <td>100.0%</td>
-<td>11.977 seconds</td>
+<td>9.696 seconds</td>
 </tr>
 </tbody>
 </table>
@@ -445,8 +445,8 @@ assert t.toString().contains("(3):[1.0, 3.3, 6.0]")</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Logger oldLogger = Neureka.get().context().getFunctionCache()._log
-Neureka.get().context().getFunctionCache()._log = Mock( Logger )</pre>
+<pre class='block-source'>Logger oldLogger = Neureka.get().backend().getFunctionCache()._log
+Neureka.get().backend().getFunctionCache()._log = Mock( Logger )</pre>
 </td>
 </tr>
 <tr>
@@ -491,7 +491,7 @@ String expected = "56b2eb74955e49cd777469c7dad0536e"</pre>
 <td>
 <pre class='block-source'>session(
         configuration, null,
-        HostCPU.instance(),
+        CPU.get(),
         tsr -&gt; {
             hash = (hash+tsr.toString()).md5()
         }
@@ -523,7 +523,7 @@ String expected = "56b2eb74955e49cd777469c7dad0536e"</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>0 * Neureka.get().context().getFunctionCache()._log.debug(_)</pre>
+<pre class='block-source'>0 * Neureka.get().backend().getFunctionCache()._log.debug(_)</pre>
 </td>
 </tr>
 <tr>
@@ -537,7 +537,7 @@ String expected = "56b2eb74955e49cd777469c7dad0536e"</pre>
 <tr>
 <td></td>
 <td>
-<pre class='block-source'>Neureka.get().context().getFunctionCache()._log = oldLogger</pre>
+<pre class='block-source'>Neureka.get().backend().getFunctionCache()._log = oldLogger</pre>
 </td>
 </tr>
 <tr>

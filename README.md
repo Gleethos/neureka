@@ -6,13 +6,13 @@
  
  <!---
   - Visit [Neurekas homepage](https://gleethos.github.io/neureka/index.html) for more information!
-  - Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/lib/neureka-0.8.0.jar)
+  - Try out the latest release: [neureka.jar](https://github.com/Gleethos/neureka/raw/master/production/lib/neureka-0.9.0.jar)
  -->
  <!--- - [![HitCount](http://hits.dwyl.com/Gleethos/neureka.svg)](http://hits.dwyl.com/Gleethos/neureka) -->
  
 | Current Build | Code Coverage | Version  | Code Quality | Licence | Size |
 |:-------------:|:-------------:|:--------:|:------------:|:-------:|:----:|
-| [![Build Status](https://circleci.com/gh/Gleethos/neureka.svg?branch=master&style=shield)](https://app.circleci.com/pipelines/github/Gleethos/neureka) [![Build Status](https://www.travis-ci.com/Gleethos/neureka.svg?branch=master)](https://travis-ci.com/Gleethos/neureka) | [![Code Coverage](https://img.shields.io/codecov/c/github/gleethos/neureka)](https://codecov.io/github/gleethos/neureka) | [![GitHub version](https://badge.fury.io/gh/Gleethos%2Fneureka.svg)](https://github.com/Gleethos/neureka) ![Java Version](https://img.shields.io/static/v1.svg?label=Java&message=8%2B&color=blue) | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6bfd22ba9b8c410285b19e3d37f4fbc6)](https://www.codacy.com/manual/Gleethos/neureka?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Gleethos/neureka&amp;utm_campaign=Badge_Grade) [![codebeat badge](https://codebeat.co/badges/16d286ca-995a-43fa-8735-b1c4a217cfcc)](https://codebeat.co/projects/github-com-gleethos-neureka-master) | [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) |![Size](https://img.badgesize.io/Gleethos/neureka/master/production/lib/neureka-0.8.0.jar) <br> ![Min Size](https://img.badgesize.io/Gleethos/neureka/master/production/min-lib/neureka-min-0.8.0.jar?label=minified) |
+| [![Build Status](https://circleci.com/gh/Gleethos/neureka.svg?branch=master&style=shield)](https://app.circleci.com/pipelines/github/Gleethos/neureka) [![Build Status](https://www.travis-ci.com/Gleethos/neureka.svg?branch=master)](https://travis-ci.com/Gleethos/neureka) | [![Code Coverage](https://img.shields.io/codecov/c/github/gleethos/neureka)](https://codecov.io/github/gleethos/neureka) | [![GitHub version](https://badge.fury.io/gh/Gleethos%2Fneureka.svg)](https://github.com/Gleethos/neureka) ![Java Version](https://img.shields.io/static/v1.svg?label=Java&message=8%2B&color=blue) | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6bfd22ba9b8c410285b19e3d37f4fbc6)](https://www.codacy.com/manual/Gleethos/neureka?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Gleethos/neureka&amp;utm_campaign=Badge_Grade) [![codebeat badge](https://codebeat.co/badges/16d286ca-995a-43fa-8735-b1c4a217cfcc)](https://codebeat.co/projects/github-com-gleethos-neureka-master) | [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) |![Size](https://img.badgesize.io/Gleethos/neureka/master/production/lib/neureka-0.9.0.jar) <br> ![Min Size](https://img.badgesize.io/Gleethos/neureka/master/production/min-lib/neureka-min-0.8.0.jar?label=minified) |
 
 ---  
 
@@ -74,7 +74,7 @@ This powerful feature has been inspired by PyTorch:
 <dependency>
   <groupId>com.github.gleethos</groupId>
   <artifactId>neureka</artifactId>
-  <version>0.8.0</version>
+  <version>0.9.0</version>
 </dependency>
 ```
 ---
@@ -82,11 +82,11 @@ This powerful feature has been inspired by PyTorch:
 ## Getting started with Gradle ##
 Groovy DSL:
 ```
-implementation 'com.github.gleethos:neureka:0.8.0'
+implementation 'com.github.gleethos:neureka:0.9.0'
 ```
 Kotlin DSL:
 ```
-implementation("com.github.gleethos:neureka:0.8.0")
+implementation("com.github.gleethos:neureka:0.9.0")
 ```
 ...or alternatively: 
 
@@ -102,7 +102,7 @@ allprojects {
 2. Add Neureka as dependency:
 ```
 dependencies {
-	implementation 'com.github.Gleethos:neureka:v0.8.0'
+	implementation 'com.github.Gleethos:neureka:v0.9.0'
 }
 ```
 
@@ -112,7 +112,7 @@ dependencies {
 
 ```
 @GrabResolver(name = 'jitpack.io', root = 'https://jitpack.io')
-@Grab('com.github.Gleethos:neureka:v0.8.0')
+@Grab('com.github.Gleethos:neureka:v0.9.0')
 
 import neureka.*
 ```

@@ -10,13 +10,13 @@ import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.backend.standard.operations.JunctionUtil;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
@@ -82,9 +82,9 @@ import java.util.stream.Collectors;
                 ( inputs, d ) -&gt; {
 <span class="fc" id="L83">                    double[] t1_val = inputs[ 1 ].value64();</span>
 <span class="fc" id="L84">                    double[] t2_val = inputs[ 2 ].value64();</span>
-<span class="pc bpc" id="L85" title="1 of 2 branches missed.">                    if ( d &lt; 0 ) {</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">                    if ( d &lt; 0 ) {</span>
 <span class="fc" id="L86">                        return ( t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ] - t2_val[t2Idx.i()];</span>
-<span class="nc bnc" id="L87" title="All 2 branches missed.">                    } else return ( t1Idx, t2Idx ) -&gt; ( d == 0 ) ? 1.0 : -1.0;</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">                    } else return ( t1Idx, t2Idx ) -&gt; ( d == 0 ) ? 1.0 : -1.0;</span>
                 };
 <span class="fc" id="L89">        DefaultOperatorCreator&lt;PrimaryNDAConsumer&gt; operationXCreator =</span>
                 ( inputs, d ) -&gt; {
@@ -106,8 +106,8 @@ import java.util.stream.Collectors;
 
 <span class="fc" id="L107">        setAlgorithm(</span>
 <span class="fc" id="L108">                operator.setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L111">                            .withArity(3)</span>
 <span class="fc" id="L112">                            .andImplementation(</span>
                                 call -&gt;
@@ -196,8 +196,8 @@ import java.util.stream.Collectors;
 <span class="fc" id="L196">        setAlgorithm(</span>
                 Scalarization.class,
 <span class="fc" id="L198">                scalarization.setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L201">                            .withArity(3)</span>
 <span class="fc" id="L202">                            .andImplementation(</span>
                                 call -&gt; {
@@ -262,21 +262,21 @@ import java.util.stream.Collectors;
 <span class="fc" id="L262">                .setSupplyADAgentFor(</span>
                         ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt;
                         {
-<span class="fc" id="L265">                            Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;)call.getValOf(Arg.Derivative.class);</span>
+<span class="fc" id="L265">                            Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
 <span class="pc bpc" id="L266" title="2 of 4 branches missed.">                            assert ctxDerivative == null;</span>
 <span class="fc" id="L267">                            Tsr&lt;?&gt;[] inputs = call.getTensors();</span>
 <span class="fc" id="L268">                            int d = call.getDerivativeIndex();</span>
 <span class="fc bfc" id="L269" title="All 2 branches covered.">                            if ( forward ) throw new IllegalArgumentException(&quot;Broadcast implementation does not support forward-AD!&quot;);</span>
                             else
                             {
-<span class="fc bfc" id="L272" title="All 2 branches covered.">                                Tsr&lt;?&gt; deriv = inputs[(d==0?1:0)];</span>
+<span class="fc bfc" id="L272" title="All 2 branches covered.">                                Tsr&lt;?&gt; derivative = inputs[(d==0?1:0)];</span>
 <span class="fc" id="L273">                                Tsr&lt;?&gt; toBeDerived = inputs[d];</span>
 <span class="fc" id="L274">                                Device device = call.getDevice();</span>
-<span class="fc" id="L275">                                return ADAgent.of( deriv )</span>
+<span class="fc" id="L275">                                return ADAgent.of( derivative )</span>
 <span class="fc" id="L276">                                            .setBackward(</span>
                                                 (node, backwardError ) -&gt;
 <span class="fc" id="L278">                                                    this.getAlgorithm(Broadcast.class)</span>
-<span class="fc" id="L279">                                                        .getImplementationFor(device.getClass())</span>
+<span class="fc" id="L279">                                                        .getImplementationFor(device)</span>
 <span class="fc" id="L280">                                                        .runAndGetFirstTensor(</span>
 <span class="fc" id="L281">                                                                ExecutionCall.of(</span>
 <span class="fc" id="L282">                                                                            Tsr.Create.newTsrLike(toBeDerived, 0).setIsVirtual(false),</span>
@@ -297,8 +297,8 @@ import java.util.stream.Collectors;
                 Broadcast.class,
                 broadcast
 <span class="fc" id="L299">                    .setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L302">                            .withArity(3)</span>
 <span class="fc" id="L303">                            .andImplementation(</span>
                                     call -&gt;

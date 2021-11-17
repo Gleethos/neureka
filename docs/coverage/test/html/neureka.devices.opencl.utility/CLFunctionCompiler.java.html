@@ -75,8 +75,8 @@ public class CLFunctionCompiler {
                                         (Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward) -&gt; {
                                             // TODO: calculate derivative and supply agent!
 <span class="nc" id="L77">                                            return ADAgent.of( null )</span>
-<span class="nc" id="L78">                                                            .setForward((t, derivative) -&gt; new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))</span>
-<span class="nc" id="L79">                                                            .setBackward((t, error) -&gt; new FunctionBuilder( Neureka.get().context() ).build(f.toString(), false).derive(new Tsr[]{error}, 0));</span>
+<span class="nc" id="L78">                                                            .setForward((t, derivative) -&gt; new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{derivative}, 0))</span>
+<span class="nc" id="L79">                                                            .setBackward((t, error) -&gt; new FunctionBuilder( Neureka.get().backend() ).build(f.toString(), false).derive(new Tsr[]{error}, 0));</span>
                                         }
                                 )
 <span class="fc" id="L82">                                .setExecutionDispatcher( CalcUtil::defaultRecursiveExecution )</span>

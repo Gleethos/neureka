@@ -52,7 +52,7 @@ import java.util.List;
 <span class="fc" id="L52">                                    .withArgs(call.allMetaArgs())</span>
 <span class="fc" id="L53">                                    .setForward(</span>
                                           (t, derivative) -&gt;
-<span class="nc" id="L55">                                              new FunctionBuilder( Neureka.get().context() )</span>
+<span class="nc" id="L55">                                              new FunctionBuilder( Neureka.get().backend() )</span>
 <span class="nc" id="L56">                                                      .build(f.toString(), false)</span>
 <span class="nc" id="L57">                                                      .derive(new Tsr[]{derivative},0)</span>
                                     )

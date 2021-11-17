@@ -11,13 +11,13 @@ import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.RecursiveExecutor;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
@@ -92,15 +92,15 @@ public class Power extends AbstractOperation
         {
 <span class="fc" id="L93">            double[] t1_val = inputs[ 1 ].value64();</span>
 <span class="fc" id="L94">            double[] t2_val = inputs[ 2 ].value64();</span>
-<span class="pc bpc" id="L95" title="1 of 2 branches missed.">            if ( d &lt; 0 ) return ( t1Idx, t2Idx ) -&gt;</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">            if ( d &lt; 0 ) return ( t1Idx, t2Idx ) -&gt;</span>
 <span class="fc" id="L96">                    Math.pow(t1_val[ t1Idx.i() ], t2_val[t2Idx.i()]);</span>
             else {
-<span class="nc" id="L98">                return ( t1Idx, t2Idx ) -&gt;</span>
+<span class="fc" id="L98">                return ( t1Idx, t2Idx ) -&gt;</span>
                 {
-<span class="nc bnc" id="L100" title="All 2 branches missed.">                    if ( d == 0 ) return</span>
-<span class="nc" id="L101">                            t2_val[t2Idx.i()] * Math.pow(</span>
-<span class="nc" id="L102">                                t1_val[ t1Idx.i() ],</span>
-<span class="nc" id="L103">                                t2_val[t2Idx.i()] - 1</span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">                    if ( d == 0 ) return</span>
+<span class="fc" id="L101">                            t2_val[t2Idx.i()] * Math.pow(</span>
+<span class="fc" id="L102">                                t1_val[ t1Idx.i() ],</span>
+<span class="fc" id="L103">                                t2_val[t2Idx.i()] - 1</span>
                             );
 <span class="nc" id="L105">                    else return</span>
 <span class="nc" id="L106">                            Math.pow(</span>
@@ -160,7 +160,7 @@ public class Power extends AbstractOperation
 <span class="fc" id="L160">                        alternative = goDeeperWith.execute(</span>
 <span class="fc" id="L161">                                            ExecutionCall.of(reduction)</span>
 <span class="fc" id="L162">                                                            .andArgs(Arg.DerivIdx.of( -1 ))</span>
-<span class="fc" id="L163">                                                            .running(Neureka.get().context().getOperation(&quot;*&quot;))</span>
+<span class="fc" id="L163">                                                            .running(Neureka.get().backend().getOperation(&quot;*&quot;))</span>
 <span class="fc" id="L164">                                                            .on(device)</span>
                                         );
 <span class="fc" id="L166">                        Tsr exp = reduction[ 0 ];</span>
@@ -180,7 +180,7 @@ public class Power extends AbstractOperation
 <span class="fc" id="L180">                        alternative = goDeeperWith.execute(</span>
 <span class="fc" id="L181">                                                ExecutionCall.of(reduction)</span>
 <span class="fc" id="L182">                                                                .andArgs(Arg.DerivIdx.of(d-1))</span>
-<span class="fc" id="L183">                                                                .running(Neureka.get().context().getOperation(&quot;*&quot;))</span>
+<span class="fc" id="L183">                                                                .running(Neureka.get().backend().getOperation(&quot;*&quot;))</span>
 <span class="fc" id="L184">                                                                .on(device)</span>
                                         );
 <span class="fc" id="L186">                        Tsr&lt;?&gt; inner = reduction[ 0 ];</span>
@@ -189,7 +189,7 @@ public class Power extends AbstractOperation
 <span class="fc" id="L189">                        alternative = goDeeperWith.execute(</span>
 <span class="fc" id="L190">                                                ExecutionCall.of(reduction)</span>
 <span class="fc" id="L191">                                                                .andArgs(Arg.DerivIdx.of(-1))</span>
-<span class="fc" id="L192">                                                                .running(Neureka.get().context().getOperation(&quot;*&quot;))</span>
+<span class="fc" id="L192">                                                                .running(Neureka.get().backend().getOperation(&quot;*&quot;))</span>
 <span class="fc" id="L193">                                                                .on(device)</span>
                                         );
 <span class="fc" id="L195">                        Tsr&lt;?&gt; exp = reduction[ 0 ];</span>
@@ -221,8 +221,8 @@ public class Power extends AbstractOperation
 
 <span class="fc" id="L222">        setAlgorithm(Operator.class,</span>
 <span class="fc" id="L223">                operator.setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L226">                            .withArity(3)</span>
 <span class="fc" id="L227">                            .andImplementation(</span>
                                 call -&gt;
@@ -295,7 +295,7 @@ public class Power extends AbstractOperation
                     ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt;
                     {
 <span class="fc" id="L297">                        Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
-<span class="fc" id="L298">                        Function mul = Neureka.get().context().getFunction().mul();</span>
+<span class="fc" id="L298">                        Function mul = Neureka.get().backend().getFunction().mul();</span>
 <span class="pc bpc" id="L299" title="1 of 2 branches missed.">                        if ( ctxDerivative != null ) {</span>
 <span class="nc" id="L300">                            return ADAgent.of( ctxDerivative )</span>
 <span class="nc" id="L301">                                            .setForward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, ctxDerivative ) )</span>
@@ -318,8 +318,8 @@ public class Power extends AbstractOperation
 <span class="fc" id="L318">        setAlgorithm(</span>
                 Broadcast.class,
 <span class="fc" id="L320">                broadcast.setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L323">                            .withArity(3)</span>
 <span class="fc" id="L324">                            .andImplementation(</span>
                                 call -&gt;
@@ -410,8 +410,8 @@ public class Power extends AbstractOperation
 <span class="fc" id="L410">        setAlgorithm(</span>
                 Scalarization.class,
 <span class="fc" id="L412">                scalarization.setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L415">                            .withArity(3)</span>
 <span class="fc" id="L416">                            .andImplementation(</span>
                                 call -&gt; {
@@ -521,60 +521,64 @@ public class Power extends AbstractOperation
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="pc bpc" id="L524" title="1 of 2 branches missed.">        if ( j &lt; 0 ) return calculate( inputs, d, src );</span>
-<span class="nc bnc" id="L525" title="All 2 branches missed.">        if ( d &lt; 0 ) {</span>
-<span class="nc" id="L526">            double result = src[ 0 ].call( inputs, j );</span>
-<span class="nc bnc" id="L527" title="All 2 branches missed.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
-<span class="nc" id="L528">                final double current = src[ i ].call( inputs, j );</span>
-<span class="nc" id="L529">                result = Math.pow(result, current);</span>
+<span class="fc bfc" id="L524" title="All 2 branches covered.">        if ( j &lt; 0 ) return calculate( inputs, d, src );</span>
+<span class="fc bfc" id="L525" title="All 2 branches covered.">        if ( d &lt; 0 ) {</span>
+<span class="fc" id="L526">            double result = src[ 0 ].call( inputs, j );</span>
+<span class="fc bfc" id="L527" title="All 2 branches covered.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
+<span class="fc" id="L528">                final double current = src[ i ].call( inputs, j );</span>
+<span class="fc" id="L529">                result = Math.pow(result, current);</span>
             }
-<span class="nc" id="L531">            return result;</span>
+<span class="fc" id="L531">            return result;</span>
         } else {
-<span class="nc" id="L533">            double out = 0;</span>
-<span class="nc bnc" id="L534" title="All 2 branches missed.">            for ( int si = 0; si &lt; src.length; si++ ) {</span>
-<span class="nc" id="L535">                double b = 1;</span>
-<span class="nc bnc" id="L536" title="All 2 branches missed.">                for ( int i = 1; i &lt; src.length; i++ ) {</span>
-<span class="nc" id="L537">                    b *= src[ i ].call( inputs, j );</span>
+<span class="fc" id="L533">            double b = 1;</span>
+<span class="fc" id="L534">            double bd = 0;</span>
+            double a;
+<span class="fc bfc" id="L536" title="All 2 branches covered.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
+<span class="fc" id="L537">                double dd = 1;</span>
+<span class="fc" id="L538">                a = src[ i ].call( inputs, j );</span>
+<span class="fc bfc" id="L539" title="All 2 branches covered.">                for ( int di = 1; di &lt; src.length; di++ ) {</span>
+<span class="pc bpc" id="L540" title="1 of 2 branches missed.">                    if ( di != i ) dd *= a;</span>
+<span class="fc" id="L541">                    else dd *= src[ di ].derive( inputs, d, j );</span>
                 }
-<span class="nc bnc" id="L539" title="All 2 branches missed.">                if ( si == 0 ) {</span>
-<span class="nc" id="L540">                    out += src[ 0 ].derive( inputs, d, j ) * b * Math.pow(src[ 0 ].call( inputs, j ), b - 1);</span>
-                } else {
-<span class="nc" id="L542">                    double a = src[ 0 ].call( inputs, j );</span>
-<span class="nc bnc" id="L543" title="All 2 branches missed.">                    out += ( a &gt;= 0 ) ? src[ si ].derive( inputs, d, j ) * b * Math.log(a) : 0;</span>
-                }
+<span class="fc" id="L543">                bd += dd;</span>
+<span class="fc" id="L544">                b *= a;</span>
             }
-<span class="nc" id="L546">            return out;</span>
+<span class="fc" id="L546">            double out = 0;</span>
+<span class="fc" id="L547">            a = src[ 0 ].call( inputs, j );</span>
+<span class="fc" id="L548">            out += src[ 0 ].derive( inputs, d, j ) * b * Math.pow(a, b - 1);</span>
+<span class="fc bfc" id="L549" title="All 2 branches covered.">            out += (a &gt;= 0) ? bd *  Math.pow(a, b) * Math.log(a) : 0;</span>
+<span class="fc" id="L550">            return out;</span>
         }
     }
 
     @Contract(pure = true)
     public static double calculate( double[] inputs, int d, Function[] src ) {
-<span class="fc bfc" id="L552" title="All 2 branches covered.">        if ( d &lt; 0 ) {</span>
-<span class="fc" id="L553">            double result = src[ 0 ].call( inputs );</span>
-<span class="fc bfc" id="L554" title="All 2 branches covered.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
-<span class="fc" id="L555">                final double current = src[ i ].call( inputs );</span>
-<span class="fc" id="L556">                result = Math.pow(result, current);</span>
+<span class="fc bfc" id="L556" title="All 2 branches covered.">        if ( d &lt; 0 ) {</span>
+<span class="fc" id="L557">            double result = src[ 0 ].call( inputs );</span>
+<span class="fc bfc" id="L558" title="All 2 branches covered.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
+<span class="fc" id="L559">                final double current = src[ i ].call( inputs );</span>
+<span class="fc" id="L560">                result = Math.pow(result, current);</span>
             }
-<span class="fc" id="L558">            return result;</span>
+<span class="fc" id="L562">            return result;</span>
         } else {
-<span class="fc" id="L560">            double b = 1;</span>
-<span class="fc" id="L561">            double bd = 0;</span>
+<span class="fc" id="L564">            double b = 1;</span>
+<span class="fc" id="L565">            double bd = 0;</span>
             double a;
-<span class="fc bfc" id="L563" title="All 2 branches covered.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
-<span class="fc" id="L564">                double dd = 1;</span>
-<span class="fc" id="L565">                a = src[ i ].call( inputs );</span>
-<span class="fc bfc" id="L566" title="All 2 branches covered.">                for ( int di = 1; di &lt; src.length; di++ ) {</span>
-<span class="pc bpc" id="L567" title="1 of 2 branches missed.">                    if ( di != i ) dd *= a;</span>
-<span class="fc" id="L568">                    else dd *= src[ di ].derive( inputs, d );</span>
+<span class="fc bfc" id="L567" title="All 2 branches covered.">            for ( int i = 1; i &lt; src.length; i++ ) {</span>
+<span class="fc" id="L568">                double dd = 1;</span>
+<span class="fc" id="L569">                a = src[ i ].call( inputs );</span>
+<span class="fc bfc" id="L570" title="All 2 branches covered.">                for ( int di = 1; di &lt; src.length; di++ ) {</span>
+<span class="pc bpc" id="L571" title="1 of 2 branches missed.">                    if ( di != i ) dd *= a;</span>
+<span class="fc" id="L572">                    else dd *= src[ di ].derive( inputs, d );</span>
                 }
-<span class="fc" id="L570">                bd += dd;</span>
-<span class="fc" id="L571">                b *= a;</span>
+<span class="fc" id="L574">                bd += dd;</span>
+<span class="fc" id="L575">                b *= a;</span>
             }
-<span class="fc" id="L573">            double out = 0;</span>
-<span class="fc" id="L574">            a = src[ 0 ].call( inputs );</span>
-<span class="fc" id="L575">            out += src[ 0 ].derive( inputs, d ) * b * Math.pow(a, b - 1);</span>
-<span class="pc bpc" id="L576" title="1 of 2 branches missed.">            out += (a &gt;= 0) ? bd *  Math.pow(a, b) * Math.log(a) : 0;</span>
-<span class="fc" id="L577">            return out;</span>
+<span class="fc" id="L577">            double out = 0;</span>
+<span class="fc" id="L578">            a = src[ 0 ].call( inputs );</span>
+<span class="fc" id="L579">            out += src[ 0 ].derive( inputs, d ) * b * Math.pow(a, b - 1);</span>
+<span class="pc bpc" id="L580" title="1 of 2 branches missed.">            out += (a &gt;= 0) ? bd *  Math.pow(a, b) * Math.log(a) : 0;</span>
+<span class="fc" id="L581">            return out;</span>
         }
     }
 

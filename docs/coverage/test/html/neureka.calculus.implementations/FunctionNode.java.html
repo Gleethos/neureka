@@ -12,7 +12,7 @@ import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +66,7 @@ public class FunctionNode implements Function
 
     @Override
     public Function newBuild( String expression ) {
-<span class="nc" id="L69">        return new FunctionBuilder( Neureka.get().context() ).build( expression, true );</span>
+<span class="nc" id="L69">        return new FunctionBuilder( Neureka.get().backend() ).build( expression, true );</span>
     }
 
     //---
@@ -144,7 +144,7 @@ public class FunctionNode implements Function
      */
     private Device&lt;?&gt; _deviceFor( Tsr&lt;?&gt;[] inputs )
     {
-<span class="fc bfc" id="L147" title="All 2 branches covered.">        if ( inputs.length == 0 ) return HostCPU.instance();</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        if ( inputs.length == 0 ) return CPU.get();</span>
 <span class="fc" id="L148">        Device&lt;?&gt; device = inputs[ 0 ].get( Device.class );</span>
 <span class="fc" id="L149">        boolean onSameDevice = _shareGuestDevice( inputs );</span>
 <span class="fc bfc" id="L150" title="All 4 branches covered.">        boolean doAccel = !_operation.getOperator().equals(&quot;,&quot;) &amp;&amp; onSameDevice;</span>

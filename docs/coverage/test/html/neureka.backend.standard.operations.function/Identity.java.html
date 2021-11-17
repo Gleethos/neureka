@@ -8,12 +8,12 @@ import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
@@ -70,7 +70,7 @@ public final class Identity extends AbstractOperation
 <span class="nc bnc" id="L70" title="All 2 branches missed.">                    int offset = ( tensors[ 0 ] == null ) ? 1 : 0;</span>
 <span class="nc" id="L71">                    return ExecutionCall.of(tensors[offset], tensors[1+offset])</span>
 <span class="nc" id="L72">                                        .andArgs(Arg.DerivIdx.of(-1))</span>
-<span class="nc" id="L73">                                        .running(Neureka.get().context().getOperation(&quot;idy&quot;))</span>
+<span class="nc" id="L73">                                        .running(Neureka.get().backend().getOperation(&quot;idy&quot;))</span>
 <span class="nc" id="L74">                                        .on(call.getDevice());</span>
                 }
         )
@@ -79,8 +79,8 @@ public final class Identity extends AbstractOperation
 <span class="fc" id="L79">        setAlgorithm(</span>
                 Activation.class,
 <span class="fc" id="L81">                operationAlgorithm.setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L84">                            .withArity(2)</span>
 <span class="fc" id="L85">                            .andImplementation(</span>
                                 call  -&gt;
@@ -161,7 +161,7 @@ public final class Identity extends AbstractOperation
 <span class="nc" id="L161">                        Tsr&lt;?&gt; output = Tsr.of( shp, 0.0 );</span>
 <span class="nc" id="L162">                        output.setIsVirtual( false );</span>
                         try {
-<span class="nc" id="L164">                            device.store(output);</span>
+<span class="nc" id="L164">                            device.store( output );</span>
 <span class="nc" id="L165">                        } catch( Exception e ) {</span>
 <span class="nc" id="L166">                            e.printStackTrace();</span>
 <span class="nc" id="L167">                        }</span>
@@ -175,8 +175,8 @@ public final class Identity extends AbstractOperation
 <span class="fc" id="L175">        setAlgorithm(</span>
                 Scalarization.class,
 <span class="fc" id="L177">                scalarization.setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L180">                            .withArity(2)</span>
 <span class="fc" id="L181">                            .andImplementation(</span>
                                 call  -&gt; {

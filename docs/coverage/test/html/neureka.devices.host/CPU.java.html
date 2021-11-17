@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CPU.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.devices.host</a> &gt; <span class="el_source">CPU.java</span></div><h1>CPU.java</h1><pre class="source lang-java linenums">package neureka.devices.host;
+
+import neureka.Neureka;
+import neureka.Tsr;
+import neureka.backend.api.Operation;
+import neureka.calculus.Function;
+import neureka.devices.AbstractDevice;
+import neureka.devices.Device;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+
+/**
+ *  This is a singleton class which simply represents the CPU as a {@link Device}.
+ *  Tensors stored on the {@link CPU} simply reside in the JVM heap.
+ */
+public class CPU extends AbstractDevice&lt;Number&gt;
+{
+<span class="fc" id="L27">    private static final Logger _LOG = LoggerFactory.getLogger( CPU.class );</span>
+    private static final CPU _INSTANCE;
+
+<span class="fc" id="L30">    static {  _INSTANCE = new CPU();  }</span>
+
+<span class="fc" id="L32">    private final JVMExecutor _executor = new JVMExecutor();</span>
+<span class="fc" id="L33">    private final Set&lt;Tsr&lt;Number&gt;&gt; _tensors = Collections.newSetFromMap(new WeakHashMap&lt;&gt;());</span>
+
+<span class="fc" id="L35">    private CPU() { super(); }</span>
+
+    /**
+     *  Use this method to access the singleton instance of this {@link CPU} class,
+     *  which is a {@link Device} type and default location for freshly instantiated {@link Tsr} instances.
+     *  {@link Tsr} instances located on the {@link CPU} device will reside in regular RAM
+     *  causing operations to run on the JVM and thereby the CPU.
+     *
+     * @return The singleton instance of this {@link CPU} class.
+     */
+<span class="fc" id="L45">    public static CPU get() { return _INSTANCE; }</span>
+
+    /**
+     *  The {@link JVMExecutor} offers a similar functionality as the parallel stream API,
+     *  however it differs in that the {@link JVMExecutor} is processing {@link RangeWorkload} lambdas
+     *  instead of simply exposing a single index or concrete elements for a given workload size.
+     *
+     * @return A parallel range based execution API running on the JVM.
+     */
+<span class="fc" id="L54">    public JVMExecutor getExecutor() { return _executor; }</span>
+
+    @Override
+<span class="fc" id="L57">    protected boolean _approveExecutionOf( Tsr&lt;?&gt;[] tensors, int d, Operation operation ) { return true; }</span>
+
+    /**
+     *  This method will shutdown the internal thread-pool used by this
+     *  class to execute JVM/CPU based operations in parallel.
+     */
+    @Override
+    public void dispose() {
+<span class="nc" id="L65">        _executor.getPool().shutdown();</span>
+<span class="nc" id="L66">        _tensors.clear();</span>
+<span class="nc" id="L67">        _LOG.warn(</span>
+<span class="nc" id="L68">                &quot;Main thread pool in '&quot;+this.getClass()+&quot;' shutdown! &quot; +</span>
+                &quot;Newly incoming operations will not be executed in parallel.&quot;
+        );
+<span class="nc" id="L71">    }</span>
+
+    @Override
+<span class="nc" id="L74">    public &lt;T extends Number&gt; Device&lt;Number&gt; write( Tsr&lt;T&gt; tensor, Object value ) { return this; }</span>
+
+    @Override
+<span class="nc" id="L77">    public &lt;T extends Number&gt; Object valueFor( Tsr&lt;T&gt; tensor ) { return tensor.getValue(); }</span>
+
+    @Override
+<span class="fc" id="L80">    public &lt;T extends Number&gt; Number valueFor( Tsr&lt;T&gt; tensor, int index ) { return tensor.getValueAt( index ); }</span>
+
+    @Override
+<span class="fc" id="L83">    public CPU restore( Tsr&lt;Number&gt; tensor ) { return this; }</span>
+
+    @Override
+    public &lt;T extends Number&gt; CPU store( Tsr&lt;T&gt; tensor ) {
+        //super.store(tensor);
+<span class="fc" id="L88">        _tensors.add( (Tsr&lt;Number&gt;) tensor);</span>
+<span class="fc" id="L89">        return this;</span>
+    }
+
+    @Override
+    public &lt;T extends Number&gt; CPU store( Tsr&lt;T&gt; tensor, Tsr&lt;T&gt; parent ) {
+<span class="nc" id="L94">        _tensors.add( (Tsr&lt;Number&gt;) tensor);</span>
+<span class="nc" id="L95">        _tensors.add( (Tsr&lt;Number&gt;) parent);</span>
+<span class="nc" id="L96">        return this;</span>
+    }
+
+    @Override
+<span class="fc" id="L100">    public &lt;T extends Number&gt; boolean has( Tsr&lt;T&gt; tensor ) { return _tensors.contains( tensor ); }</span>
+
+    @Override
+    public &lt;T extends Number&gt; CPU free( Tsr&lt;T&gt; tensor ) {
+<span class="fc" id="L104">        _tensors.remove( tensor );</span>
+<span class="fc" id="L105">        return this;</span>
+    }
+
+    @Override
+<span class="nc" id="L109">    public &lt;T extends Number&gt; CPU swap( Tsr&lt;T&gt; former, Tsr&lt;T&gt; replacement ) { return this; }</span>
+
+    @Override
+<span class="fc" id="L112">    public Collection&lt;Tsr&lt;Number&gt;&gt; getTensors() { return _tensors; }</span>
+
+    @Override
+<span class="nc" id="L115">    public Operation optimizedOperationOf( Function function, String name ) { throw new IllegalStateException(); }</span>
+
+    /**
+     *  This method is part of the component system built into the {@link Tsr} class.
+     *  Do not use this as part of anything but said component system.
+     *
+     * @param changeRequest An API which describes the type of update and a method for executing said update.
+     * @return The truth value determining if this {@link Device} ought to be added to a tensor (Here always false!).
+     */
+    @Override
+    public boolean update( OwnerChangeRequest&lt;Tsr&lt;Number&gt;&gt; changeRequest ) {
+<span class="fc" id="L126">        super.update( changeRequest );</span>
+<span class="fc" id="L127">        return false; // This type of device can not be a component simply because it is the default device</span>
+    }
+
+    /**
+     * Returns the number of CPU cores available to the Java virtual machine.
+     * This value may change during a particular invocation of the virtual machine.
+     * Applications that are sensitive to the number of available processors should
+     * therefore occasionally poll this property and adjust their resource usage appropriately.
+     *
+     * @return The maximum number of CPU cores available to the JVM.
+     *         This number is never smaller than one!
+     */
+<span class="fc" id="L139">    public int getCoreCount() { return Runtime.getRuntime().availableProcessors(); }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L143">        return this.getClass().getSimpleName()+&quot;[coreCount=&quot;+getCoreCount()+&quot;]&quot;;</span>
+    }
+
+    /**
+     *  A simple functional interface for executing a range whose implementations will
+     *  either be executed sequentially or they are being dispatched to
+     *  a thread-pool, given that the provided workload is large enough.
+     */
+    @FunctionalInterface
+    public interface RangeWorkload {
+        void execute( int start, int end );
+    }
+
+    /**
+     *  The {@link JVMExecutor} offers a similar functionality as the parallel stream API,
+     *  however it differs in that the {@link JVMExecutor} is processing {@link RangeWorkload} lambdas
+     *  instead of simply exposing a single index or concrete elements for a given workload size.
+     *  This means that a {@link RangeWorkload} lambda will be called with the work range of a single worker thread
+     *  processing its current workload.
+     *  This range is dependent on the number of available threads as well as the size of the workload.
+     *  If the workload is very small, then the current main thread will process the entire workload range
+     *  whereas the underlying {@link ThreadPoolExecutor} will not be used to avoid unnecessary overhead.
+     */
+<span class="fc" id="L166">    public static class JVMExecutor</span>
+    {
+        /*
+            The following 2 constants determine if any given workload size will be parallelize or not...
+            We might want to adjust this some more for better performance...
+         */
+        private static final int MIN_THREADED_WORKLOAD_SIZE = 32;
+        private static final int MIN_WORKLOAD_PER_THREAD = 8;
+
+<span class="fc" id="L175">        private final ThreadPoolExecutor _pool =</span>
+<span class="fc" id="L176">                (ThreadPoolExecutor) Executors.newFixedThreadPool(</span>
+<span class="fc" id="L177">                        Runtime.getRuntime().availableProcessors()</span>
+                );
+
+<span class="fc" id="L180">        public ThreadPoolExecutor getPool() { return _pool; }</span>
+
+        /**
+         *  This method slices the provided workload size into multiple ranges which can be executed in parallel.
+         *
+         * @param workloadSize The total workload size which ought to be split into multiple ranges.
+         * @param workload The range lambda which ought to be executed across multiple threads.
+         */
+        public void threaded( int workloadSize, RangeWorkload workload )
+        {
+<span class="fc" id="L190">            int cores = _pool.getCorePoolSize() - _pool.getActiveCount();</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">            cores = ( cores == 0 ) ? 1 : cores;</span>
+<span class="fc bfc" id="L192" title="All 4 branches covered.">            if ( workloadSize &gt;= MIN_THREADED_WORKLOAD_SIZE &amp;&amp; ( ( workloadSize / cores ) &gt;= MIN_WORKLOAD_PER_THREAD ) ) {</span>
+<span class="fc" id="L193">                final int chunk = workloadSize / cores;</span>
+<span class="fc" id="L194">                Future&lt;?&gt;[] futures = new Future[ cores ];</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">                for ( int i = 0; i &lt; cores; i++ ) {</span>
+<span class="fc" id="L196">                    final int start = i * chunk;</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">                    final int end = ( i == cores - 1 ) ? workloadSize : ( (i + 1) * chunk );</span>
+<span class="fc" id="L198">                    Neureka neureka = Neureka.get();</span>
+<span class="fc" id="L199">                    futures[ i ] = _pool.submit(() -&gt; {</span>
+<span class="fc" id="L200">                        Neureka.set( neureka ); // This ensures that the threads in the pool have the same settings!</span>
+<span class="fc" id="L201">                        workload.execute( start, end );</span>
+<span class="fc" id="L202">                    });</span>
+                }
+<span class="fc bfc" id="L204" title="All 2 branches covered.">                for ( Future&lt;?&gt; f : futures ) {</span>
+                    try {
+<span class="fc" id="L206">                        f.get(); // Return value is null because we submitted merely a simple Runnable</span>
+<span class="nc" id="L207">                    } catch ( InterruptedException | ExecutionException e ) {</span>
+<span class="nc" id="L208">                        e.printStackTrace();</span>
+<span class="fc" id="L209">                    }</span>
+                }
+<span class="fc" id="L211">            }</span>
+<span class="fc" id="L212">            else sequential( workloadSize, workload );</span>
+<span class="fc" id="L213">        }</span>
+
+        /**
+         *  This method will simply execute the provided {@link RangeWorkload} lambda sequentially
+         *  with 0 as the start index and {@code workloadSize} as the exclusive range.       &lt;br&gt;&lt;br&gt;
+         *
+         * @param workloadSize The workload size which will be passed to the provided {@link RangeWorkload} as second argument.
+         * @param workload The {@link RangeWorkload} which will be executed sequentially.
+         */
+        public void sequential( int workloadSize, RangeWorkload workload ) {
+<span class="fc" id="L223">            workload.execute( 0, workloadSize );</span>
+<span class="fc" id="L224">        }</span>
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

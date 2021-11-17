@@ -116,7 +116,7 @@ import java.util.WeakHashMap;
     @Override
     public boolean equals( NDConfiguration ndc )
     {
-<span class="pc bpc" id="L119" title="1 of 2 branches missed.">        return  Arrays.equals(shape(), ndc.shape()) &amp;&amp;</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        return  Arrays.equals(shape(), ndc.shape()) &amp;&amp;</span>
 <span class="pc bpc" id="L120" title="1 of 2 branches missed.">                Arrays.equals(translation(), ndc.translation()) &amp;&amp;</span>
 <span class="pc bpc" id="L121" title="1 of 2 branches missed.">                Arrays.equals(indicesMap(), ndc.indicesMap()) &amp;&amp;</span>
 <span class="pc bpc" id="L122" title="1 of 2 branches missed.">                Arrays.equals(spread(), ndc.spread()) &amp;&amp;</span>
@@ -171,7 +171,7 @@ import java.util.WeakHashMap;
 <span class="pc bpc" id="L171" title="2 of 4 branches missed.">        assert !( ndc instanceof VirtualNDConfiguration );</span>
 <span class="fc" id="L172">        long key = ndc.keyCode();</span>
 <span class="fc" id="L173">        NDConfiguration found = _CACHED_NDCS.get( key );</span>
-<span class="pc bpc" id="L174" title="1 of 4 branches missed.">        if ( found != null &amp;&amp; ndc.equals(found) ) return found;</span>
+<span class="fc bfc" id="L174" title="All 4 branches covered.">        if ( found != null &amp;&amp; ndc.equals(found) ) return found;</span>
         else {
 <span class="fc" id="L176">            _CACHED_NDCS.put( key, ndc );</span>
 <span class="fc" id="L177">            return ndc;</span>
@@ -198,13 +198,13 @@ import java.util.WeakHashMap;
 
     @Override
     public String toString() {
-<span class="nc" id="L201">        return &quot;(NDConfiguration|@&quot;+Integer.toHexString(hashCode())+&quot;#&quot;+Long.toHexString(keyCode())+&quot;):{ &quot; +</span>
-<span class="nc" id="L202">                    &quot;shape : &quot;+Arrays.toString(shape())+&quot;, &quot;+</span>
-<span class="nc" id="L203">                    &quot;translation : &quot;+Arrays.toString(translation())+&quot;, &quot;+</span>
-<span class="nc" id="L204">                    &quot;indicesMap : &quot;+Arrays.toString(indicesMap())+&quot;, &quot;+</span>
-<span class="nc" id="L205">                    &quot;spread : &quot;+Arrays.toString(spread())+&quot;, &quot;+</span>
-<span class="nc" id="L206">                    &quot;offset : &quot;+Arrays.toString(offset())+&quot; &quot;+</span>
-                &quot;}&quot;;
+<span class="nc" id="L201">        return &quot;NDConfiguration@&quot;+Integer.toHexString(hashCode())+&quot;#&quot;+Long.toHexString(keyCode())+&quot;[&quot; +</span>
+<span class="nc" id="L202">                    &quot;shape=&quot;+Arrays.toString(shape())+&quot;,&quot;+</span>
+<span class="nc" id="L203">                    &quot;translation=&quot;+Arrays.toString(translation())+&quot;,&quot;+</span>
+<span class="nc" id="L204">                    &quot;indicesMap=&quot;+Arrays.toString(indicesMap())+&quot;,&quot;+</span>
+<span class="nc" id="L205">                    &quot;spread=&quot;+Arrays.toString(spread())+&quot;,&quot;+</span>
+<span class="nc" id="L206">                    &quot;offset=&quot;+Arrays.toString(offset())+&quot;&quot;+</span>
+                &quot;]&quot;;
     }
 
     protected static NDConfiguration _simpleReshape( int[] newForm, NDConfiguration ndc )

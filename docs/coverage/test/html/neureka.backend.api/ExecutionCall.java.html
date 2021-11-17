@@ -117,15 +117,15 @@ import java.util.stream.Stream;
 <span class="fc" id="L117">    public ExecutionCall&lt;D&gt; setMetaArg( Arg&lt;?&gt; arg ) { _arguments.set(arg); return this; }</span>
     
     public String toString() {
-<span class="nc" id="L120">        return &quot;ExecutionCall(&quot; +</span>
-                    &quot;device=&quot; + this._device + &quot;, &quot; +
-<span class="nc" id="L122">                    &quot;derivativeIndex=&quot; + this.getValOf( Arg.DerivIdx.class ) + &quot;, &quot; +</span>
-                    &quot;operation=&quot; + this._operation + &quot;, &quot; +
-                    &quot;tensors=[..&quot;+_tensors.length+&quot;..], &quot; +
-<span class="nc" id="L125">                    &quot;j=&quot; + this.getJ() + &quot;, &quot; +</span>
-                    &quot;algorithm=?, &quot; +
-<span class="nc" id="L127">                    &quot;context=&quot; + _arguments.getAll(Arg.class) +</span>
-                &quot;)&quot;;
+<span class="fc" id="L120">        return this.getClass().getSimpleName()+&quot;[&quot; +</span>
+                    &quot;device=&quot; + this._device + &quot;,&quot; +
+<span class="fc" id="L122">                    &quot;derivativeIndex=&quot; + this.getValOf( Arg.DerivIdx.class ) + &quot;,&quot; +</span>
+                    &quot;operation=&quot; + this._operation + &quot;,&quot; +
+                    &quot;tensors=[..&quot;+_tensors.length+&quot;..],&quot; +
+<span class="fc" id="L125">                    &quot;j=&quot; + this.getJ() + &quot;, &quot; +</span>
+                    &quot;algorithm=?,&quot; +
+<span class="fc" id="L127">                    &quot;context=&quot; + _arguments.getAll(Arg.class) +</span>
+                &quot;]&quot;;
     }
 
 <span class="fc" id="L131">    public Operation getOperation() { return this._operation; }</span>

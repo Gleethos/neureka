@@ -7,12 +7,12 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
@@ -74,7 +74,7 @@ public final class Sinus extends AbstractOperation
 <span class="nc" id="L74">                                     Tsr&lt;?&gt; output = Tsr.of( shp, 0.0 );</span>
 <span class="nc" id="L75">                                     output.setIsVirtual( false );</span>
                                      try {
-<span class="nc" id="L77">                                         device.store(output);</span>
+<span class="nc" id="L77">                                         device.store( output );</span>
 <span class="nc" id="L78">                                     } catch ( Exception e ) {</span>
 <span class="nc" id="L79">                                         e.printStackTrace();</span>
 <span class="nc" id="L80">                                     }</span>
@@ -88,8 +88,8 @@ public final class Sinus extends AbstractOperation
 <span class="fc" id="L88">        setAlgorithm(</span>
                 Activation.class,
 <span class="fc" id="L90">                operationAlgorithm.setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L93">                            .withArity(3)</span>
 <span class="fc" id="L94">                            .andImplementation(</span>
                                 call  -&gt;

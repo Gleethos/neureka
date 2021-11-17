@@ -9,12 +9,12 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.FunAlgorithm;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.types.simple.SimpleD2Configuration;
 import org.slf4j.Logger;
@@ -54,17 +54,17 @@ public class MatMul extends AbstractOperation
                                         {
 <span class="pc bpc" id="L55" title="1 of 2 branches missed.">                                            if ( forward ) throw new IllegalArgumentException(&quot;Matrix multiplication does not support forward-AD!&quot;);</span>
 
-<span class="fc" id="L57">                                            Function invX = Neureka.get().context().getFunction().matMul();</span>
+<span class="fc" id="L57">                                            Function matMul = Neureka.get().backend().getFunction().matMul();</span>
 <span class="fc" id="L58">                                            Tsr&lt;?&gt;[] inputs = call.getTensors();</span>
-<span class="fc" id="L59">                                            int d = (1 + call.getValOf( Arg.DerivIdx.class )) % 2;</span>
-<span class="fc" id="L60">                                            Tsr&lt;?&gt; deriv = inputs[ d ].T().clone(); // We need to clone it to make it have a simple nd configuration...</span>
-<span class="fc" id="L61">                                            deriv.to(call.getDevice());</span>
-<span class="fc" id="L62">                                            return ADAgent.of( deriv )</span>
+<span class="fc" id="L59">                                            int d = ( 1 + call.getValOf( Arg.DerivIdx.class ) ) % 2;</span>
+<span class="fc" id="L60">                                            Tsr&lt;?&gt; derivative = inputs[ d ].T().clone(); // We need to clone it to make it have a simple nd configuration...</span>
+<span class="fc" id="L61">                                            derivative.to(call.getDevice());</span>
+<span class="fc" id="L62">                                            return ADAgent.of( derivative )</span>
 <span class="fc" id="L63">                                                            .setBackward( (node, error) -&gt; {</span>
 <span class="fc bfc" id="L64" title="All 2 branches covered.">                                                                if ( d == 1 )</span>
-<span class="fc" id="L65">                                                                    return invX.execute( error, deriv );</span>
+<span class="fc" id="L65">                                                                    return matMul.execute( error, derivative );</span>
                                                                 else
-<span class="fc" id="L67">                                                                    return invX.execute( deriv, error );</span>
+<span class="fc" id="L67">                                                                    return matMul.execute( derivative, error );</span>
                                                             });
                                         }
                                     )
@@ -77,21 +77,21 @@ public class MatMul extends AbstractOperation
 <span class="fc bfc" id="L77" title="All 4 branches covered.">                                            for ( Tsr&lt;?&gt; t : tensors ) if ( t != null ) t.setIsVirtual( false );</span>
 <span class="fc" id="L78">                                            ExecutionCall&lt;Device&lt;Object&gt;&gt; preparedCall = (ExecutionCall&lt;Device&lt;Object&gt;&gt;) call.getAlgorithm().prepare( call.withTensors(tensors) );</span>
 <span class="fc" id="L79">                                            return call.getAlgorithm()</span>
-<span class="fc" id="L80">                                                        .getImplementationFor((Class&lt;Device&lt;Object&gt;&gt;) call.getDevice().getClass())</span>
+<span class="fc" id="L80">                                                        .getImplementationFor(call.getDeviceFor(Object.class))</span>
 <span class="fc" id="L81">                                                        .runAndGetFirstTensor(preparedCall);</span>
                                         }
                                     )
 <span class="fc" id="L84">                                    .setCallPreparation(</span>
                                         call -&gt; {
 <span class="fc" id="L86">                                            Tsr&lt;?&gt;[] tsrs = call.getTensors();</span>
-<span class="fc" id="L87">                                            Device device = call.getDevice();</span>
+<span class="fc" id="L87">                                            Device&lt;Number&gt; device = call.getDeviceFor(Number.class);</span>
 <span class="pc bpc" id="L88" title="1 of 2 branches missed.">                                            if ( tsrs[ 0 ] == null ) // Creating a new tensor:</span>
                                             {
 <span class="fc" id="L90">                                                int[] shp = new int[]{ tsrs[ 1 ].shape(0), tsrs[ 2 ].shape(1) };</span>
-<span class="fc" id="L91">                                                Tsr&lt;?&gt; output = Tsr.of( shp, 0.0 );</span>
+<span class="fc" id="L91">                                                Tsr&lt;Double&gt; output = Tsr.of( shp, 0.0 );</span>
 <span class="fc" id="L92">                                                output.setIsVirtual( false );</span>
                                                 try {
-<span class="fc" id="L94">                                                    device.store(output);</span>
+<span class="fc" id="L94">                                                    device.store( output );</span>
 <span class="nc" id="L95">                                                } catch ( Exception e ) {</span>
 <span class="nc" id="L96">                                                    e.printStackTrace();</span>
 <span class="fc" id="L97">                                                }</span>
@@ -106,8 +106,8 @@ public class MatMul extends AbstractOperation
 <span class="fc" id="L106">        setAlgorithm(</span>
                 simpleMatMulAlgorithm
 <span class="fc" id="L108">                        .setImplementationFor(</span>
-                                HostCPU.class,
-                                HostImplementation
+                                CPU.class,
+                                CPUImplementation
 <span class="fc" id="L111">                                    .withArity(3)</span>
 <span class="fc" id="L112">                                    .andImplementation(</span>
                                         call -&gt;
@@ -197,35 +197,41 @@ public class MatMul extends AbstractOperation
 
 <span class="fc" id="L198">    }</span>
 
+    /**
+     *  This method will clone {@link Tsr} instances if they do not
+     *  possess a simple {@link neureka.ndim.config.NDConfiguration}.
+     *
+     * @param tensors The tensors which ought to be cloned based on the complexity of their access patterns.
+     */
     private static void _autoClone( Tsr&lt;?&gt;[] tensors ) {
-<span class="fc bfc" id="L201" title="All 2 branches covered.">        for ( int i = 0; i &lt; tensors.length; i++ ) {</span>
-<span class="fc bfc" id="L202" title="All 2 branches covered.">            if ( !(tensors[i].getNDConf() instanceof SimpleD2Configuration) ) {</span>
-<span class="fc" id="L203">                _LOG.warn(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
-<span class="fc" id="L204">                tensors[i] = tensors[i].clone();</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">        for ( int i = 0; i &lt; tensors.length; i++ ) {</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">            if ( !(tensors[i].getNDConf() instanceof SimpleD2Configuration) ) {</span>
+<span class="fc" id="L209">                _LOG.warn(&quot;Auto cloning a tensor which does not have a simple ND configuration...&quot;);</span>
+<span class="fc" id="L210">                tensors[i] = tensors[i].clone();</span>
             }
         }
-<span class="fc" id="L207">    }</span>
+<span class="fc" id="L213">    }</span>
 
     @Override
     public String stringify( String[] children ) {
-<span class="fc" id="L211">        StringBuilder reconstructed = new StringBuilder();</span>
-<span class="fc bfc" id="L212" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
-<span class="fc" id="L213">            reconstructed.append( children[ i ] );</span>
-<span class="fc bfc" id="L214" title="All 2 branches covered.">            if ( i &lt; children.length - 1 ) {</span>
-<span class="fc" id="L215">                reconstructed.append(&quot; @ &quot;);</span>
+<span class="fc" id="L217">        StringBuilder reconstructed = new StringBuilder();</span>
+<span class="fc bfc" id="L218" title="All 2 branches covered.">        for ( int i = 0; i &lt; children.length; ++i ) {</span>
+<span class="fc" id="L219">            reconstructed.append( children[ i ] );</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">            if ( i &lt; children.length - 1 ) {</span>
+<span class="fc" id="L221">                reconstructed.append(&quot; @ &quot;);</span>
             }
         }
-<span class="fc" id="L218">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
+<span class="fc" id="L224">        return &quot;(&quot; + reconstructed + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L223">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L229">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="nc" id="L228">        return src[ 0 ].call( inputs, j );</span>
+<span class="nc" id="L234">        return src[ 0 ].call( inputs, j );</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

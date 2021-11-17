@@ -28,7 +28,6 @@ public abstract class AbstractBaseAlgorithm&lt;C extends Algorithm&lt;C&gt;&gt; 
 
 <span class="fc" id="L29">    public AbstractBaseAlgorithm( String name ) { _name = name; }</span>
 
-
     /**
      *  This method returns the name of this {@link Algorithm}
      *  which may be used as variable names in OpenCL kernels or other backends.
@@ -37,26 +36,26 @@ public abstract class AbstractBaseAlgorithm&lt;C extends Algorithm&lt;C&gt;&gt; 
      *
      * @return The name of this {@link Algorithm}.
      */
-<span class="fc" id="L40">    public String getName() { return this._name; }</span>
+<span class="fc" id="L39">    public String getName() { return this._name; }</span>
 
     @Override
-    public &lt;D extends Device&lt;?&gt;, E extends ImplementationFor&lt;D&gt;&gt; C setImplementationFor(Class&lt;D&gt; deviceClass, E implementation ) {
-<span class="fc" id="L44">        _implementations.put(</span>
+    public &lt;D extends Device&lt;?&gt;, E extends ImplementationFor&lt;D&gt;&gt; C setImplementationFor( Class&lt;D&gt; deviceClass, E implementation ) {
+<span class="fc" id="L43">        _implementations.put(</span>
                 (Class&lt;Device&lt;?&gt;&gt;) deviceClass,
                 (ImplementationFor&lt;Device&lt;?&gt;&gt;) implementation
         );
-<span class="fc" id="L48">        return (C) this;</span>
+<span class="fc" id="L47">        return (C) this;</span>
     }
 
     @Override
     public &lt;D extends Device&lt;?&gt;&gt; ImplementationFor&lt;D&gt; getImplementationFor( Class&lt;D&gt; deviceClass ) {
-<span class="fc" id="L53">        ImplementationFor&lt;D&gt; found = (ImplementationFor&lt;D&gt;) _implementations.get( deviceClass );</span>
-<span class="fc bfc" id="L54" title="All 2 branches covered.">        if ( found == null ) {</span>
-<span class="fc bfc" id="L55" title="All 2 branches covered.">            for ( Class&lt;Device&lt;?&gt;&gt; type : this._implementations.keySet() ) {</span>
-<span class="fc bfc" id="L56" title="All 2 branches covered.">                if ( type.isAssignableFrom(deviceClass) ) return (ImplementationFor&lt;D&gt;) _implementations.get(type);</span>
-<span class="fc" id="L57">            }</span>
+<span class="fc" id="L52">        ImplementationFor&lt;D&gt; found = (ImplementationFor&lt;D&gt;) _implementations.get( deviceClass );</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if ( found == null ) {</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">            for ( Class&lt;Device&lt;?&gt;&gt; type : this._implementations.keySet() ) {</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">                if ( type.isAssignableFrom(deviceClass) ) return (ImplementationFor&lt;D&gt;) _implementations.get(type);</span>
+<span class="fc" id="L56">            }</span>
         }
-<span class="fc" id="L59">        return found;</span>
+<span class="fc" id="L58">        return found;</span>
     }
 
 }

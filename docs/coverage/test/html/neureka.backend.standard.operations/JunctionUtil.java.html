@@ -89,7 +89,7 @@ import org.jetbrains.annotations.Contract;
 <span class="fc" id="L89">                    alternative = goDeeperWith.execute(</span>
 <span class="fc" id="L90">                            ExecutionCall.of(reduction)</span>
 <span class="fc" id="L91">                                            .andArgs( Arg.DerivIdx.of( -1 ) )</span>
-<span class="fc" id="L92">                                            .running( Neureka.get().context().getOperation(&quot;*&quot;) )</span>
+<span class="fc" id="L92">                                            .running( Neureka.get().backend().getOperation(&quot;*&quot;) )</span>
 <span class="fc" id="L93">                                            .on( device )</span>
                     );
 <span class="fc" id="L95">                    tsrs[ 0 ] = reduction[ 0 ];</span>
@@ -134,7 +134,7 @@ import org.jetbrains.annotations.Contract;
 <span class="nc" id="L134">                    alternative = goDeeperWith.execute(</span>
 <span class="nc" id="L135">                                        ExecutionCall.of(reduction)</span>
 <span class="nc" id="L136">                                                        .andArgs(Arg.DerivIdx.of(-1))</span>
-<span class="nc" id="L137">                                                        .running(Neureka.get().context().getOperation(&quot;/&quot;))</span>
+<span class="nc" id="L137">                                                        .running(Neureka.get().backend().getOperation(&quot;/&quot;))</span>
 <span class="nc" id="L138">                                                        .on(device)</span>
                     );
 <span class="nc" id="L140">                    a = reduction[ 0 ];</span>
@@ -149,7 +149,7 @@ import org.jetbrains.annotations.Contract;
 <span class="fc" id="L149">                    alternative = goDeeperWith.execute(</span>
 <span class="fc" id="L150">                                        ExecutionCall.of(reduction)</span>
 <span class="fc" id="L151">                                                        .andArgs(Arg.DerivIdx.of(-1))</span>
-<span class="fc" id="L152">                                                        .running(Neureka.get().context().getOperation(&quot;/&quot;))</span>
+<span class="fc" id="L152">                                                        .running(Neureka.get().backend().getOperation(&quot;/&quot;))</span>
 <span class="fc" id="L153">                                                        .on(device)</span>
                                 );
 <span class="fc" id="L155">                    b = reduction[ 0 ];</span>
@@ -158,13 +158,13 @@ import org.jetbrains.annotations.Contract;
 <span class="fc" id="L158">                alternative = goDeeperWith.execute(</span>
 <span class="fc" id="L159">                                        ExecutionCall.of( tsrs[ 0 ], a, b )</span>
 <span class="fc" id="L160">                                                        .andArgs( Arg.DerivIdx.of( -1 ) )</span>
-<span class="fc" id="L161">                                                        .running( Neureka.get().context().getOperation(&quot;*&quot;) )</span>
+<span class="fc" id="L161">                                                        .running( Neureka.get().backend().getOperation(&quot;*&quot;) )</span>
 <span class="fc" id="L162">                                                        .on( device )</span>
                                 );
 <span class="fc" id="L164">                alternative = goDeeperWith.execute(</span>
 <span class="fc" id="L165">                                        ExecutionCall.of( tsrs[ 0 ], tsrs[ 0 ], tsrs[d+1] )</span>
 <span class="fc" id="L166">                                                        .andArgs(Arg.DerivIdx.of(1))</span>
-<span class="fc" id="L167">                                                        .running(Neureka.get().context().getOperation(&quot;/&quot;))</span>
+<span class="fc" id="L167">                                                        .running(Neureka.get().backend().getOperation(&quot;/&quot;))</span>
 <span class="fc" id="L168">                                                        .on(device)</span>
                                 );
 <span class="pc bpc" id="L170" title="1 of 2 branches missed.">                if ( d == 0 ) a.delete();</span>

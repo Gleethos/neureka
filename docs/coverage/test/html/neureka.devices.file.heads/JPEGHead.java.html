@@ -2,7 +2,7 @@
 
 import neureka.Tsr;
 import neureka.devices.Storage;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.I16;
 import neureka.dtype.custom.UI8;
@@ -107,7 +107,7 @@ import java.io.IOException;
 <span class="fc" id="L107">            short[] newData = new short[ data.length ];</span>
 
 <span class="fc" id="L109">            UI8 ui8 = new UI8();</span>
-<span class="fc" id="L110">            HostCPU.instance().getExecutor().threaded(</span>
+<span class="fc" id="L110">            CPU.get().getExecutor().threaded(</span>
                     data.length,
                     ( start, end ) -&gt; {
 <span class="fc bfc" id="L113" title="All 2 branches covered.">                        for ( int i=start; i&lt;end; i++ ) newData[i] = ui8.toTarget( data[i] );</span>

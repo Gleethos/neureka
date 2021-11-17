@@ -78,7 +78,7 @@ class Neureka_Spec extends Specification
             Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()
 
         and : 'The version number is as expected!'
-            Neureka.version()=="0.8.0"//version
+            Neureka.version()=="0.9.0"//version
     }
 
     def 'Neureka settings class can be locked.'(

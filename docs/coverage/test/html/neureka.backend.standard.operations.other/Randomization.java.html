@@ -7,12 +7,12 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Convolution;
 import neureka.backend.standard.algorithms.Scalarization;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 
 import java.util.Random;
 
@@ -75,7 +75,7 @@ public class Randomization extends AbstractOperation
 <span class="nc" id="L75">                    Tsr&lt;?&gt;[] tensors = call.getTensors();</span>
 <span class="nc bnc" id="L76" title="All 2 branches missed.">                    int offset = ( tensors[ 0 ] == null ) ? 1 : 0;</span>
 <span class="nc" id="L77">                    return</span>
-<span class="nc" id="L78">                            ExecutionCall.of(tensors[offset], tensors[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().context().getOperation(&quot;idy&quot;)).on(call.getDevice());</span>
+<span class="nc" id="L78">                            ExecutionCall.of(tensors[offset], tensors[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation(&quot;idy&quot;)).on(call.getDevice());</span>
                 }
         )
 <span class="nc" id="L81">        .buildFunAlgorithm();</span>
@@ -83,8 +83,8 @@ public class Randomization extends AbstractOperation
 <span class="nc" id="L83">        setAlgorithm(</span>
                 Scalarization.class,
 <span class="nc" id="L85">                scalarization.setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="nc" id="L88">                            .withArity(3)</span>
 <span class="nc" id="L89">                            .andImplementation(</span>
 <span class="nc" id="L90">                                call -&gt; call.getDevice().getExecutor()</span>

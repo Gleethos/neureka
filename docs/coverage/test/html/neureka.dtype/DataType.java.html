@@ -245,7 +245,7 @@ public final class DataType&lt;Type&gt;
     }
 
     public String toString() {
-<span class="nc" id="L248">        return &quot;DataType(&quot; + this.getTypeClass() + &quot;)&quot;;</span>
+<span class="fc" id="L248">        return &quot;DataType[class=&quot; + this.getTypeClass().getSimpleName() + &quot;]&quot;;</span>
     }
 
     public Class&lt;Type&gt; getTypeClass() {

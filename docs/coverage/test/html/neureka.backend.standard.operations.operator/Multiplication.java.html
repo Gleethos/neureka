@@ -10,13 +10,13 @@ import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.backend.standard.operations.JunctionUtil;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
@@ -129,8 +129,8 @@ public class Multiplication extends AbstractOperation
 <span class="fc" id="L129">        setAlgorithm(</span>
                 Operator.class,
 <span class="fc" id="L131">                operator.setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L134">                            .withArity(3)</span>
 <span class="fc" id="L135">                            .andImplementation(</span>
                                 call -&gt;
@@ -194,8 +194,8 @@ public class Multiplication extends AbstractOperation
 <span class="fc" id="L194">                .setSupplyADAgentFor(</span>
                     ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt;
                     {
-<span class="fc" id="L197">                        Tsr&lt;?&gt; ctxDerivative = (Tsr) call.getValOf(Arg.Derivative.class);</span>
-<span class="fc" id="L198">                        Function mul = Neureka.get().context().getFunction().mul();</span>
+<span class="fc" id="L197">                        Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
+<span class="fc" id="L198">                        Function mul = Neureka.get().backend().getFunction().mul();</span>
 <span class="pc bpc" id="L199" title="1 of 2 branches missed.">                        if ( ctxDerivative != null ) {</span>
 <span class="nc" id="L200">                            return ADAgent.of( ctxDerivative )</span>
 <span class="nc" id="L201">                                            .setForward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, ctxDerivative ) )</span>
@@ -206,10 +206,10 @@ public class Multiplication extends AbstractOperation
 <span class="fc bfc" id="L206" title="All 2 branches covered.">                        if ( forward ) throw new IllegalArgumentException(&quot;Broadcast implementation does not support forward-AD!&quot;);</span>
                         else
                         {
-<span class="fc" id="L209">                            Tsr&lt;?&gt; deriv = f.executeDerive( inputs, d );</span>
-<span class="fc" id="L210">                            return ADAgent.of( deriv )</span>
-<span class="pc" id="L211">                                    .setForward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, deriv ) )</span>
-<span class="pc" id="L212">                                    .setBackward( (node, backwardError ) -&gt; mul.execute( backwardError, deriv ) );</span>
+<span class="fc" id="L209">                            Tsr&lt;?&gt; derivative = f.executeDerive( inputs, d );</span>
+<span class="fc" id="L210">                            return ADAgent.of( derivative )</span>
+<span class="pc" id="L211">                                    .setForward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, derivative ) )</span>
+<span class="pc" id="L212">                                    .setBackward( (node, backwardError ) -&gt; mul.execute( backwardError, derivative ) );</span>
                         }
                     }
                 )
@@ -219,8 +219,8 @@ public class Multiplication extends AbstractOperation
                 Broadcast.class,
                 broadcast
 <span class="fc" id="L221">                    .setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L224">                            .withArity(3)</span>
 <span class="fc" id="L225">                            .andImplementation(</span>
                                 call -&gt;
@@ -301,8 +301,8 @@ public class Multiplication extends AbstractOperation
 <span class="fc" id="L301">                .setSupplyADAgentFor(</span>
                     ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt;
                     {
-<span class="nc" id="L304">                        Tsr&lt;?&gt; ctxDerivative = (Tsr)call.getValOf(Arg.Derivative.class);</span>
-<span class="nc" id="L305">                        Function mul = Neureka.get().context().getFunction().mul();</span>
+<span class="nc" id="L304">                        Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
+<span class="nc" id="L305">                        Function mul = Neureka.get().backend().getFunction().mul();</span>
 <span class="nc bnc" id="L306" title="All 2 branches missed.">                        if ( ctxDerivative != null ) {</span>
 <span class="nc" id="L307">                            return ADAgent.of( ctxDerivative )</span>
 <span class="nc" id="L308">                                    .setForward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, ctxDerivative ) )</span>
@@ -312,17 +312,17 @@ public class Multiplication extends AbstractOperation
 <span class="nc" id="L312">                        int d = call.getValOf( Arg.DerivIdx.class );</span>
 <span class="nc bnc" id="L313" title="All 2 branches missed.">                        if ( forward )</span>
                         {
-<span class="nc" id="L315">                            Tsr&lt;?&gt; deriv = f.executeDerive( inputs, d );</span>
-<span class="nc" id="L316">                            return ADAgent.of( deriv )</span>
-<span class="nc" id="L317">                                    .setForward( (t, derivative ) -&gt; mul.execute( derivative, deriv ) )</span>
+<span class="nc" id="L315">                            Tsr&lt;?&gt; derivative = f.executeDerive( inputs, d );</span>
+<span class="nc" id="L316">                            return ADAgent.of( derivative )</span>
+<span class="nc" id="L317">                                    .setForward( (t, graphDerivative ) -&gt; mul.execute( graphDerivative, derivative ) )</span>
 <span class="nc" id="L318">                                    .setBackward( null );</span>
                         }
                         else
                         {
-<span class="nc" id="L322">                            Tsr&lt;?&gt; deriv = f.executeDerive( inputs, d );</span>
-<span class="nc" id="L323">                            return ADAgent.of( deriv )</span>
-<span class="nc" id="L324">                                    .setForward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, deriv ) )</span>
-<span class="nc" id="L325">                                    .setBackward( (node, backwardError ) -&gt; mul.execute( backwardError, deriv ) );</span>
+<span class="nc" id="L322">                            Tsr&lt;?&gt; derivative = f.executeDerive( inputs, d );</span>
+<span class="nc" id="L323">                            return ADAgent.of( derivative )</span>
+<span class="nc" id="L324">                                    .setForward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, derivative ) )</span>
+<span class="nc" id="L325">                                    .setBackward( (node, backwardError ) -&gt; mul.execute( backwardError, derivative ) );</span>
                         }
                     }
                 )
@@ -332,8 +332,8 @@ public class Multiplication extends AbstractOperation
 <span class="fc" id="L332">        setAlgorithm(</span>
                 Scalarization.class,
 <span class="fc" id="L334">                scalarization.setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L337">                            .withArity(3)</span>
 <span class="fc" id="L338">                            .andImplementation(</span>
                                 call -&gt; {

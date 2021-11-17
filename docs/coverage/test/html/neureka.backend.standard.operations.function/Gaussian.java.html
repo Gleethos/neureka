@@ -7,12 +7,12 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
@@ -89,7 +89,7 @@ public final class Gaussian extends AbstractOperation
 <span class="nc" id="L89">                        Tsr output = Tsr.of( shp, 0.0 );</span>
 <span class="nc" id="L90">                        output.setIsVirtual( false );</span>
                         try {
-<span class="nc" id="L92">                            device.store(output);</span>
+<span class="nc" id="L92">                            device.store( output );</span>
 <span class="nc" id="L93">                        } catch( Exception e ) {</span>
 <span class="nc" id="L94">                            e.printStackTrace();</span>
 <span class="nc" id="L95">                        }</span>
@@ -103,8 +103,8 @@ public final class Gaussian extends AbstractOperation
 <span class="fc" id="L103">        setAlgorithm(</span>
                 Activation.class,
 <span class="fc" id="L105">                operationAlgorithm.setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L108">                            .withArity(3)</span>
 <span class="fc" id="L109">                            .andImplementation(</span>
                                 call  -&gt;

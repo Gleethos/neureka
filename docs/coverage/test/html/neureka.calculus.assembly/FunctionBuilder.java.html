@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FunctionBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.calculus.assembly</a> &gt; <span class="el_source">FunctionBuilder.java</span></div><h1>FunctionBuilder.java</h1><pre class="source lang-java linenums">package neureka.calculus.assembly;
 
 import neureka.backend.api.Operation;
-import neureka.backend.api.OperationContext;
+import neureka.backend.api.BackendContext;
 import neureka.calculus.Function;
 import neureka.calculus.implementations.FunctionConstant;
 import neureka.calculus.implementations.FunctionInput;
@@ -28,13 +28,13 @@ import java.util.stream.IntStream;
 <span class="fc" id="L28">    private static final Pattern reshapePattern = Pattern.compile(&quot;^(\\[{1}(.,)*(.)+[,]?\\]{1}:?((\\({1}[.]*\\){1})|(.+)))&quot;);</span>
 <span class="fc" id="L29">    private static final Pattern nodePattern = Pattern.compile(&quot;^([\\(]{1}.+[\\)]{1})&quot;);</span>
 
-    private final OperationContext _context;
+    private final BackendContext _context;
 
     /**
-     * @param context The {@link OperationContext} which will be used as a basis to parse new {@link Function}
+     * @param context The {@link BackendContext} which will be used as a basis to parse new {@link Function}
      *                implementation instance from provided {@link String} expressions.
      */
-<span class="fc" id="L37">    public FunctionBuilder( OperationContext context ) { _context = context; }</span>
+<span class="fc" id="L37">    public FunctionBuilder( BackendContext context ) { _context = context; }</span>
     
     /**
      * @param operation The {@link Operation} based on which the {@link Function} ought to be created.

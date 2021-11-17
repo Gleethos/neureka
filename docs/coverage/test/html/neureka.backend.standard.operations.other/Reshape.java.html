@@ -48,8 +48,8 @@ public class Reshape extends AbstractOperation
 <span class="nc" id="L48">                                        throw new IllegalArgumentException(&quot;Reshape operation does not support forward-AD!&quot;);</span>
                                     }
 <span class="fc" id="L50">                                    return ADAgent.of( null )</span>
-<span class="pc" id="L51">                                                    .setForward( (t, derivative ) -&gt; new FunctionBuilder( Neureka.get().context() ).build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )</span>
-<span class="fc" id="L52">                                                    .setBackward( (t, error ) -&gt; new FunctionBuilder( Neureka.get().context() ).build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );</span>
+<span class="pc" id="L51">                                                    .setForward( (t, derivative ) -&gt; new FunctionBuilder( Neureka.get().backend() ).build( f.toString(), false ).derive( new Tsr[]{ derivative },0 ) )</span>
+<span class="fc" id="L52">                                                    .setBackward( (t, error ) -&gt; new FunctionBuilder( Neureka.get().backend() ).build( f.toString(), false ).derive( new Tsr[]{ error },0 ) );</span>
                                 }
                             )
 <span class="fc" id="L55">                            .setExecutionDispatcher(</span>

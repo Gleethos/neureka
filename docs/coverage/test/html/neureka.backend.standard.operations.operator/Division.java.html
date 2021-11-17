@@ -10,13 +10,13 @@ import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.algorithms.Operator;
 import neureka.backend.standard.algorithms.Scalarization;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.backend.standard.operations.JunctionUtil;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.ndim.config.NDConfiguration;
 import org.jetbrains.annotations.Contract;
@@ -78,12 +78,12 @@ public class Division extends AbstractOperation
                 ( inputs, d ) -&gt; {
 <span class="fc" id="L79">                    double[] t1_val = inputs[ 1 ].value64();</span>
 <span class="fc" id="L80">                    double[] t2_val = inputs[ 2 ].value64();</span>
-<span class="pc bpc" id="L81" title="1 of 2 branches missed.">                    if ( d &lt; 0 )</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">                    if ( d &lt; 0 )</span>
 <span class="fc" id="L82">                        return ( t1Idx, t2Idx ) -&gt; t1_val[ t1Idx.i() ] / t2_val[t2Idx.i()];</span>
                     else {
-<span class="nc" id="L84">                        return ( t1Idx, t2Idx ) -&gt; {</span>
-<span class="nc bnc" id="L85" title="All 2 branches missed.">                            if ( d == 0 )</span>
-<span class="nc" id="L86">                                return 1 / t2_val[t2Idx.i()];</span>
+<span class="fc" id="L84">                        return ( t1Idx, t2Idx ) -&gt; {</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">                            if ( d == 0 )</span>
+<span class="fc" id="L86">                                return 1 / t2_val[t2Idx.i()];</span>
                             else
 <span class="nc" id="L88">                                return -(t1_val[t2Idx.i()] / Math.pow(t2_val[t1Idx.i()], 2));</span>
                         };
@@ -117,8 +117,8 @@ public class Division extends AbstractOperation
                 Operator.class,
                 operator
 <span class="fc" id="L119">                    .setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L122">                            .withArity(3)</span>
 <span class="fc" id="L123">                            .andImplementation(</span>
                                 call -&gt;
@@ -195,22 +195,22 @@ public class Division extends AbstractOperation
 <span class="fc" id="L195">                                        .setSupplyADAgentFor(</span>
                                             ( Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt;
                                             {
-<span class="fc" id="L198">                                                Tsr ctxDerivative = (Tsr)call.getValOf(Arg.Derivative.class);</span>
-<span class="fc" id="L199">                                                Function mul = Neureka.get().context().getFunction().mul();</span>
+<span class="fc" id="L198">                                                Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
+<span class="fc" id="L199">                                                Function mul = Neureka.get().backend().getFunction().mul();</span>
 <span class="pc bpc" id="L200" title="1 of 2 branches missed.">                                                if ( ctxDerivative != null ) {</span>
 <span class="nc" id="L201">                                                    return ADAgent.of( ctxDerivative )</span>
-<span class="nc" id="L202">                                                                    .setForward( (node, forwardDerivative ) -&gt; mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) )</span>
-<span class="nc" id="L203">                                                                    .setBackward( (node, forwardDerivative ) -&gt; mul.call( new Tsr[]{ forwardDerivative, ctxDerivative } ) );</span>
+<span class="nc" id="L202">                                                                    .setForward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, ctxDerivative ) )</span>
+<span class="nc" id="L203">                                                                    .setBackward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, ctxDerivative ) );</span>
                                                 }
-<span class="fc" id="L205">                                                Tsr[] inputs = call.getTensors();</span>
+<span class="fc" id="L205">                                                Tsr&lt;?&gt;[] inputs = call.getTensors();</span>
 <span class="fc" id="L206">                                                int d = call.getDerivativeIndex();</span>
 <span class="fc bfc" id="L207" title="All 2 branches covered.">                                                if ( forward ) throw new IllegalArgumentException(&quot;Broadcast implementation does not support forward-AD!&quot;);</span>
                                                 else
                                                 {
-<span class="fc" id="L210">                                                    Tsr deriv = f.derive( inputs, d );</span>
-<span class="fc" id="L211">                                                    return ADAgent.of( deriv )</span>
-<span class="pc" id="L212">                                                            .setForward( (node, forwardDerivative ) -&gt; mul.call( new Tsr[]{ forwardDerivative, deriv } ) )</span>
-<span class="pc" id="L213">                                                            .setBackward( (node, backwardError ) -&gt; mul.call( new Tsr[]{ backwardError, deriv } ) );</span>
+<span class="fc" id="L210">                                                    Tsr&lt;?&gt; derivative = f.executeDerive( inputs, d );</span>
+<span class="fc" id="L211">                                                    return ADAgent.of( derivative )</span>
+<span class="pc" id="L212">                                                            .setForward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, derivative ) )</span>
+<span class="pc" id="L213">                                                            .setBackward( (node, backwardError ) -&gt; mul.execute( backwardError, derivative ) );</span>
                                                 }
                                             }
                                         )
@@ -219,8 +219,8 @@ public class Division extends AbstractOperation
 <span class="fc" id="L219">        setAlgorithm(</span>
                 Broadcast.class,
 <span class="fc" id="L221">                broadcast.setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L224">                            .withArity(3)</span>
 <span class="fc" id="L225">                            .andImplementation(</span>
                                 call -&gt;
@@ -312,8 +312,8 @@ public class Division extends AbstractOperation
 <span class="fc" id="L312">        setAlgorithm(</span>
                 Scalarization.class,
 <span class="fc" id="L314">                scalarization.setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L317">                            .withArity(3)</span>
 <span class="fc" id="L318">                            .andImplementation(</span>
                                 call -&gt; {
@@ -449,7 +449,7 @@ public class Division extends AbstractOperation
             }
 <span class="fc" id="L450">            return result;</span>
         } else {
-<span class="fc" id="L452">            double derivative = 0;</span>
+            double derivative;
 <span class="fc" id="L453">            double tempVar = src[ 0 ].call( inputs );</span>
 <span class="fc" id="L454">            derivative = src[ 0 ].derive( inputs, d );</span>
 

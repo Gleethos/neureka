@@ -53,30 +53,27 @@ import java.util.function.IntFunction;
 <span class="fc" id="L53">        return tensors.size();</span>
     }
 
+    /**
+     *  A device is empty if there are no tensors stored on it.
+     *
+     * @return The truth value determining if there are no tensors stored on this device.
+     */
     @Override
-    public boolean isEmpty() {
-<span class="fc bfc" id="L58" title="All 2 branches covered.">        return this.size() == 0;</span>
-    }
+<span class="fc bfc" id="L62" title="All 2 branches covered.">    public boolean isEmpty() { return this.size() == 0; }</span>
 
     @Override
-    public boolean contains( Tsr&lt;V&gt; o ) {
-<span class="fc" id="L63">        return this.getTensors().contains( o );</span>
-    }
+<span class="fc" id="L65">    public boolean contains( Tsr&lt;V&gt; o ) { return this.getTensors().contains( o ); }</span>
 
     @Override
-    public Iterator&lt;Tsr&lt;V&gt;&gt; iterator() {
-<span class="nc" id="L68">        return this.getTensors().iterator();</span>
-    }
+<span class="nc" id="L68">    public Iterator&lt;Tsr&lt;V&gt;&gt; iterator() { return this.getTensors().iterator(); }</span>
 
     @Override
     public &lt;T&gt; T[] toArray( IntFunction&lt;T[]&gt; generator ) {
-<span class="nc" id="L73">        return null; // this.getTensors().toArray( generator );</span>
+<span class="nc" id="L72">        return null; // this.getTensors().toArray( generator );</span>
     }
 
     @Override
-    public Spliterator&lt;Tsr&lt;V&gt;&gt; spliterator() {
-<span class="nc" id="L78">        return getTensors().spliterator();</span>
-    }
+<span class="nc" id="L76">    public Spliterator&lt;Tsr&lt;V&gt;&gt; spliterator() { return getTensors().spliterator(); }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

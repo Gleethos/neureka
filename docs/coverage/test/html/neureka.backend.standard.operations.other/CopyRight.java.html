@@ -6,12 +6,12 @@ import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 
 public class CopyRight extends AbstractOperation {
@@ -44,7 +44,7 @@ public class CopyRight extends AbstractOperation {
 <span class="fc" id="L44">                    return</span>
 <span class="fc" id="L45">                            ExecutionCall.of(tensors[1+offset], tensors[offset])</span>
 <span class="fc" id="L46">                                            .andArgs( Arg.DerivIdx.of( -1 ) )</span>
-<span class="fc" id="L47">                                            .running( Neureka.get().context().getOperation(&quot;idy&quot;) ) // This routes to another operation!</span>
+<span class="fc" id="L47">                                            .running( Neureka.get().backend().getOperation(&quot;idy&quot;) ) // This routes to another operation!</span>
 <span class="fc" id="L48">                                            .on( call.getDevice() );</span>
                 }
         )
@@ -53,22 +53,22 @@ public class CopyRight extends AbstractOperation {
 <span class="fc" id="L53">        setAlgorithm(</span>
                 activation
 <span class="fc" id="L55">                    .setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L58">                            .withArity(2)</span>
 <span class="fc" id="L59">                            .andImplementation(</span>
                                 call -&gt; {
 <span class="nc" id="L61">                                    int offset = 1;</span>
 <span class="nc" id="L62">                                    Tsr&lt;?&gt;[] args = { call.getTsrOfType( Number.class, 1+offset), call.getTsrOfType( Number.class, offset)};</span>
-<span class="nc" id="L63">                                    ExecutionCall&lt;HostCPU&gt; newCall =</span>
+<span class="nc" id="L63">                                    ExecutionCall&lt;CPU&gt; newCall =</span>
 <span class="nc" id="L64">                                            ExecutionCall.of(args)</span>
 <span class="nc" id="L65">                                                            .andArgs(Arg.DerivIdx.of(-1))</span>
 <span class="nc" id="L66">                                                            .running(call.getOperation())</span>
 <span class="nc" id="L67">                                                            .on( call.getDevice() )</span>
-<span class="nc" id="L68">                                                            .forDeviceType(HostCPU.class);</span>
-<span class="nc" id="L69">                                    Neureka.get().context().getOperation(&quot;idy&quot;)</span>
+<span class="nc" id="L68">                                                            .forDeviceType(CPU.class);</span>
+<span class="nc" id="L69">                                    Neureka.get().backend().getOperation(&quot;idy&quot;)</span>
 <span class="nc" id="L70">                                            .getAlgorithm(Activation.class)</span>
-<span class="nc" id="L71">                                            .getImplementationFor( HostCPU.class )</span>
+<span class="nc" id="L71">                                            .getImplementationFor( CPU.class )</span>
 <span class="nc" id="L72">                                            .run(newCall);</span>
 <span class="nc" id="L73">                                    call.getTensors()[0] = args[1];</span>
 <span class="nc" id="L74">                                }</span>
@@ -84,7 +84,7 @@ public class CopyRight extends AbstractOperation {
 <span class="nc" id="L84">                                                                                .running(call.getOperation())</span>
 <span class="nc" id="L85">                                                                                .on( call.getDevice() )</span>
 <span class="nc" id="L86">                                                                                .forDeviceType(OpenCLDevice.class);</span>
-<span class="nc" id="L87">                            Neureka.get().context().getOperation(&quot;idy&quot;)</span>
+<span class="nc" id="L87">                            Neureka.get().backend().getOperation(&quot;idy&quot;)</span>
 <span class="nc" id="L88">                                    .getAlgorithm(Activation.class)</span>
 <span class="nc" id="L89">                                    .getImplementationFor( OpenCLDevice.class )</span>
 <span class="nc" id="L90">                                    .run(newCall);</span>

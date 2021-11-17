@@ -92,7 +92,7 @@ import java.util.List;
 <span class="pc bpc" id="L92" title="1 of 2 branches missed.">            for( int i = 1; i &lt; tensors.length; i++ )</span>
 <span class="nc" id="L93">                exp.append(&quot;+I[&quot;).append(i).append(&quot;]&quot;);</span>
 
-<span class="fc" id="L95">            return new FunctionBuilder( Neureka.get().context() )</span>
+<span class="fc" id="L95">            return new FunctionBuilder( Neureka.get().backend() )</span>
 <span class="fc" id="L96">                                        .build(exp.toString(), false)</span>
 <span class="fc" id="L97">                                        .execute( tensors );</span>
         }

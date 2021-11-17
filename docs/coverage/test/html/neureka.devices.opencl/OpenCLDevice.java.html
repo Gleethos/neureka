@@ -48,16 +48,16 @@ SOFTWARE.
 
 package neureka.devices.opencl;
 
-import neureka.backend.api.ImplementationFor;
-import neureka.backend.standard.implementations.CLImplementation;
-import neureka.common.composition.Component;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.ImplementationFor;
 import neureka.backend.api.Operation;
+import neureka.backend.standard.implementations.CLImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
+import neureka.common.composition.Component;
 import neureka.devices.AbstractDevice;
 import neureka.devices.Device;
 import neureka.devices.opencl.utility.CLFunctionCompiler;
@@ -90,7 +90,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
     }
 
     public String toString() {
-<span class="fc" id="L93">        return &quot;OpenCLDevice(deviceId=&quot; + this._deviceId + &quot;, platform=&quot; + this._platform + &quot;)&quot;;</span>
+<span class="fc" id="L93">        return &quot;OpenCLDevice[deviceId=&quot; + this._deviceId + &quot;,platform=&quot; + this._platform + &quot;]&quot;;</span>
     }
 
     public cl_device_id getDeviceId() {
@@ -115,7 +115,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
      * a reference to a wrapper containing a pointer to the tensors data (cl_data)
      * The latter two lend their identity for garbage collection!
      */
-<span class="fc" id="L118">    static class cl_tsr implements Component&lt;Tsr&lt;Number&gt;&gt;</span>
+<span class="fc" id="L118">    static class cl_tsr&lt;V, T extends V&gt; implements Component&lt;Tsr&lt;T&gt;&gt;</span>
     {
 
         /**
@@ -150,7 +150,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
         public cl_value value;
 
         @Override
-        public boolean update( OwnerChangeRequest&lt;Tsr&lt;Number&gt;&gt; changeRequest ) {
+        public boolean update( OwnerChangeRequest&lt;Tsr&lt;T&gt;&gt; changeRequest ) {
             // Update not needed...
 <span class="fc" id="L155">            changeRequest.executeChange();</span>
 <span class="fc" id="L156">            return true;</span>
@@ -386,17 +386,17 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
     private &lt;T extends Number&gt; Device&lt;Number&gt; _store( Tsr&lt;T&gt; tensor, Tsr&lt;T&gt; parent, Runnable migration ) {
 <span class="fc bfc" id="L387" title="All 2 branches covered.">        if ( !parent.isOutsourced() ) throw new IllegalStateException( &quot;Data parent is not outsourced!&quot; );</span>
 <span class="fc" id="L388">        _add( (Tsr&lt;Number&gt;) tensor, parent.get( cl_tsr.class ), migration );</span>
-<span class="fc" id="L389">        _tensors.add((Tsr&lt;Number&gt;) tensor);</span>
+<span class="fc" id="L389">        _tensors.add( (Tsr&lt;Number&gt;) tensor );</span>
 <span class="fc" id="L390">        return this;</span>
     }
 
-    private void _add( Tsr&lt;Number&gt; tensor, cl_tsr parent, Runnable migration  )
+    private &lt;T extends Number&gt; void _add( Tsr&lt;Number&gt; tensor, cl_tsr&lt;Number, T&gt; parent, Runnable migration  )
     {
 <span class="fc bfc" id="L395" title="All 2 branches covered.">        if ( this.has( tensor ) ) {</span>
 <span class="fc" id="L396">            _LOG.debug(&quot;Trying to add a tensor to a device which already reports hosting it.&quot;);</span>
 <span class="fc" id="L397">            return;</span>
         }
-<span class="fc" id="L399">        cl_tsr newClt = new cl_tsr();</span>
+<span class="fc" id="L399">        cl_tsr&lt;Number,Number&gt; newClt = new cl_tsr&lt;&gt;();</span>
 
         //VALUE TRANSFER:
 <span class="fc bfc" id="L402" title="All 2 branches covered.">        if ( parent == null ) {</span>
@@ -422,7 +422,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
 <span class="fc" id="L422">        newClt.config.data = clCreateBuffer(</span>
 <span class="fc" id="L423">                _platform.getContext(),</span>
                 CL_MEM_READ_WRITE,
-                config.length * Sizeof.cl_int,
+                (long) config.length * Sizeof.cl_int,
                 null, null
         );
 <span class="fc" id="L428">        clEnqueueWriteBuffer(</span>
@@ -430,7 +430,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
                 newClt.config.data,
                 CL_TRUE,
                 0,
-                config.length * Sizeof.cl_int,
+                (long) config.length * Sizeof.cl_int,
 <span class="fc" id="L434">                Pointer.to(config),</span>
                 0,
                 null,
@@ -464,7 +464,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
 <span class="fc" id="L464">            CalcUtil.recursiveExecution(</span>
 <span class="fc" id="L465">                    ExecutionCall.of(tensor, Tsr.of( value ).to( this ))</span>
 <span class="fc" id="L466">                                .andArgs(Arg.DerivIdx.of(-1))</span>
-<span class="fc" id="L467">                                .running(Neureka.get().context().getOperation( &quot;&lt;&quot; ))</span>
+<span class="fc" id="L467">                                .running(Neureka.get().backend().getOperation( &quot;&lt;&quot; ))</span>
 <span class="fc" id="L468">                                .on(this),</span>
 <span class="fc" id="L469">                    (executionCall, executor) -&gt; null</span>
             );
@@ -487,7 +487,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
 <span class="fc" id="L487">    public &lt;T extends Number&gt; boolean has( Tsr&lt;T&gt; tensor ) { return _tensors.contains( tensor ); }</span>
 
 
-    private void _store( Tsr&lt;Number&gt; tensor, cl_tsr newClTsr, int fp ) {
+    private void _store( Tsr&lt;Number&gt; tensor, cl_tsr&lt;?,?&gt; newClTsr, int fp ) {
         Pointer p;
         int size;
         //if ( !tensor.isVirtual() ) {
@@ -531,19 +531,19 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
 
     @Override
     public &lt;T extends Number&gt; Device&lt;Number&gt; free( Tsr&lt;T&gt; tensor ) {
-<span class="fc" id="L534">        cl_tsr clt = tensor.get( cl_tsr.class );</span>
+<span class="fc" id="L534">        cl_tsr&lt;?,?&gt; clt = tensor.get( cl_tsr.class );</span>
 <span class="pc bpc" id="L535" title="1 of 2 branches missed.">        if ( clt == null ) return this;</span>
 <span class="fc" id="L536">        _tensors.remove( tensor );</span>
 <span class="fc" id="L537">        tensor.setIsOutsourced( false );</span>
-<span class="fc" id="L538">        ((Tsr&lt;Number&gt;)tensor).remove( cl_tsr.class );</span>
+<span class="fc" id="L538">        ( (Tsr&lt;Number&gt;) tensor ).remove( cl_tsr.class );</span>
 <span class="fc" id="L539">        return this;</span>
     }
 
 
     @Override
-    public Device&lt;Number&gt; write( Tsr&lt;Number&gt; tensor, Object value ) {
-<span class="fc bfc" id="L545" title="All 2 branches covered.">        if ( value instanceof double[] ) return overwrite64( tensor, (double[]) value);</span>
-<span class="pc bpc" id="L546" title="1 of 2 branches missed.">        else if ( value instanceof float[] ) return overwrite32( tensor, (float[]) value);</span>
+    public &lt;T extends Number&gt; Device&lt;Number&gt; write( Tsr&lt;T&gt; tensor, Object value ) {
+<span class="fc bfc" id="L545" title="All 2 branches covered.">        if ( value instanceof double[] ) return overwrite64( (Tsr&lt;Number&gt;) tensor, (double[]) value);</span>
+<span class="pc bpc" id="L546" title="1 of 2 branches missed.">        else if ( value instanceof float[] ) return overwrite32( (Tsr&lt;Number&gt;) tensor, (float[]) value);</span>
 <span class="nc" id="L547">        return this;</span>
     }
 
@@ -551,7 +551,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
     public Device&lt;Number&gt; overwrite64( Tsr&lt;Number&gt; tensor, double[] value )
     {
 <span class="pc bpc" id="L553" title="1 of 2 branches missed.">        if ( value.length == 0 ) return this;</span>
-<span class="fc" id="L554">        cl_tsr clt = tensor.get(cl_tsr.class);</span>
+<span class="fc" id="L554">        cl_tsr&lt;?,?&gt; clt = tensor.get(cl_tsr.class);</span>
 <span class="pc bpc" id="L555" title="1 of 2 branches missed.">        if ( clt.fp == 1 ) overwrite32( tensor, DataConverter.Utility.doubleToFloat( value ) );</span>
         else {
 <span class="nc bnc" id="L557" title="All 2 branches missed.">            if ( clt.value.event != null ) clWaitForEvents( 1, new cl_event[]{ clt.value.event } );</span>
@@ -561,7 +561,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
                     clt.value.data,
                     CL_FALSE,
                     0,
-                    Sizeof.cl_double * value.length,
+                    (long) Sizeof.cl_double * value.length,
 <span class="nc" id="L565">                    Pointer.to( value ),</span>
                     0,
                     null,
@@ -575,7 +575,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
     public Device&lt;Number&gt; overwrite32( Tsr&lt;Number&gt; tensor, float[] value)
     {
 <span class="fc bfc" id="L577" title="All 2 branches covered.">        if ( value.length == 0 ) return this;</span>
-<span class="fc" id="L578">        cl_tsr clt = tensor.get( cl_tsr.class );</span>
+<span class="fc" id="L578">        cl_tsr&lt;?,?&gt; clt = tensor.get( cl_tsr.class );</span>
 <span class="pc bpc" id="L579" title="1 of 2 branches missed.">        if ( clt.fp == 1 ) {</span>
 <span class="fc bfc" id="L580" title="All 2 branches covered.">            if ( clt.value.event != null ) clWaitForEvents( 1, new cl_event[]{ clt.value.event } );</span>
 <span class="fc" id="L581">            clt.value.event = new cl_event();</span>
@@ -584,7 +584,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
                     clt.value.data,
                     CL_TRUE,
                     0,
-                    Sizeof.cl_float * value.length,
+                    (long) Sizeof.cl_float * value.length,
 <span class="fc" id="L588">                    Pointer.to(value),</span>
                     0,
                     null,
@@ -597,13 +597,13 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
     }
 
     @Override
-    public Device&lt;Number&gt; swap(Tsr&lt;Number&gt; former, Tsr&lt;Number&gt; replacement)
+    public &lt;T extends Number&gt; Device&lt;Number&gt; swap( Tsr&lt;T&gt; former, Tsr&lt;T&gt; replacement )
     {
-<span class="nc" id="L602">        cl_tsr clTsr = former.get( cl_tsr.class );</span>
+<span class="nc" id="L602">        cl_tsr&lt;Number,T&gt; clTsr = former.get( cl_tsr.class );</span>
 <span class="nc" id="L603">        former.remove( cl_tsr.class );</span>
 <span class="nc" id="L604">        replacement.set( clTsr );</span>
 <span class="nc" id="L605">        _tensors.remove( former );</span>
-<span class="nc" id="L606">        _tensors.add( replacement );</span>
+<span class="nc" id="L606">        _tensors.add( (Tsr&lt;Number&gt;) replacement );</span>
 <span class="nc" id="L607">        return this;</span>
     }
 
@@ -619,19 +619,19 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
 <span class="fc" id="L619">        return true;</span>
     }
 
-    private void _updateInternal( Tsr newOwner, Runnable migration ) {
+    private void _updateInternal( Tsr&lt;Number&gt; newOwner, Runnable migration ) {
 <span class="fc" id="L623">        Tsr&lt;Number&gt; root = null;</span>
 <span class="fc bfc" id="L624" title="All 2 branches covered.">        if ( newOwner.has( Relation.class ) ) root = ((Relation&lt;Number&gt;)newOwner.get( Relation.class )).findRootTensor();</span>
 <span class="fc bfc" id="L625" title="All 2 branches covered.">        if ( root != null ) store( newOwner, root );</span>
-<span class="fc" id="L626">        else _add( (Tsr&lt;Number&gt;) newOwner, null, migration );</span>
+<span class="fc" id="L626">        else _add( newOwner, null, migration );</span>
 <span class="fc" id="L627">    }</span>
 
     public double[] value64f( Tsr&lt;Number&gt; tensor ) {
-<span class="fc" id="L630">        cl_tsr clt = tensor.get( cl_tsr.class );</span>
+<span class="fc" id="L630">        cl_tsr&lt;?,?&gt; clt = tensor.get( cl_tsr.class );</span>
 <span class="fc" id="L631">        return _value64f( clt, clt.value.size, 0 );</span>
     }
 
-    private double[] _value64f( cl_tsr clt , int size, int offset )
+    private double[] _value64f( cl_tsr&lt;?,?&gt; clt , int size, int offset )
     {
 <span class="pc bpc" id="L636" title="1 of 2 branches missed.">        if ( clt.fp == 1 ) return DataConverter.Utility.floatToDouble( _value32f( clt, size, offset ) );</span>
         else {
@@ -640,8 +640,8 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
                     _queue,
                     clt.value.data,
                     CL_TRUE,
-                    offset * 8, // one double == eight byte
-                    Sizeof.cl_double * data.length,
+                    offset * 8L, // one double == eight byte
+                    (long) Sizeof.cl_double * data.length,
 <span class="nc" id="L645">                    Pointer.to( data ),</span>
                     0,
                     null,
@@ -652,18 +652,18 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
     }
 
     public float[] value32f( Tsr&lt;Number&gt; tensor ) {
-<span class="fc" id="L655">        cl_tsr clt = tensor.get( cl_tsr.class );</span>
+<span class="fc" id="L655">        cl_tsr&lt;?,?&gt; clt = tensor.get( cl_tsr.class );</span>
 <span class="fc" id="L656">        return _value32f( clt, clt.value.size, 0 );</span>
     }
 
-    private float[] _value32f( cl_tsr clt, int size, int offset ) {
+    private float[] _value32f( cl_tsr&lt;?,?&gt; clt, int size, int offset ) {
 <span class="pc bpc" id="L660" title="1 of 2 branches missed.">        if ( clt.fp == 1 ) {</span>
 <span class="fc" id="L661">            float[] data = new float[ size ];</span>
 <span class="fc" id="L662">            clEnqueueReadBuffer(</span>
                     _queue,
                     clt.value.data,
                     CL_TRUE,
-                    offset * 4, // one float == four bytes !
+                    offset * 4L, // one float == four bytes !
                     (long) Sizeof.cl_float * data.length,
 <span class="fc" id="L668">                    Pointer.to( data ),</span>
                     0,
@@ -676,22 +676,22 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
     }
 
     @Override
-    public Object valueFor( Tsr&lt;Number&gt; tensor ) {
-<span class="fc" id="L680">        return value32f( tensor );</span>
+    public &lt;T extends Number&gt; Object valueFor( Tsr&lt;T&gt; tensor ) {
+<span class="fc" id="L680">        return value32f( (Tsr&lt;Number&gt;) tensor );</span>
     }
 
     @Override
-    public Number valueFor( Tsr&lt;Number&gt; tensor, int index ) {
-<span class="fc" id="L685">        return value32f( tensor, index );</span>
+    public &lt;T extends Number&gt; Number valueFor( Tsr&lt;T&gt; tensor, int index ) {
+<span class="fc" id="L685">        return value32f( (Tsr&lt;Number&gt;) tensor, index );</span>
     }
 
     public double value64f( Tsr&lt;Number&gt; tensor, int index ) {
-<span class="fc" id="L689">        cl_tsr clt = tensor.get( cl_tsr.class );</span>
+<span class="fc" id="L689">        cl_tsr&lt;?,?&gt; clt = tensor.get( cl_tsr.class );</span>
 <span class="fc" id="L690">        return _value64f( clt, 1, index )[ 0 ];</span>
     }
 
     public float value32f( Tsr&lt;Number&gt; tensor, int index ) {
-<span class="fc" id="L694">        cl_tsr clt = tensor.get( cl_tsr.class );</span>
+<span class="fc" id="L694">        cl_tsr&lt;?,?&gt; clt = tensor.get( cl_tsr.class );</span>
 <span class="fc" id="L695">        return _value32f( clt, 1, index )[ 0 ];</span>
     }
 
@@ -709,7 +709,7 @@ public class OpenCLDevice extends AbstractDevice&lt;Number&gt;
     }
 
     @Override
-    protected boolean _approveExecutionOf( Tsr[] tensors, int d, Operation type )
+    protected boolean _approveExecutionOf( Tsr&lt;?&gt;[] tensors, int d, Operation type )
     {
 <span class="fc" id="L714">        return true;</span>
     }

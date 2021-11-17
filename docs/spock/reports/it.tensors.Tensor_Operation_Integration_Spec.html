@@ -1,0 +1,1624 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 300;
+}
+
+h2 {
+    font-weight: 400;
+}
+
+hr {
+    margin-bottom: 1.5em;
+}
+
+h3 {
+    font-weight: 200;
+}
+
+table {
+    margin: 7px;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+}
+
+.ignored {
+    color: gray;
+}
+
+div.project-header {
+    margin-bottom: 10px;
+    font-size: large;
+}
+
+div.project-header &gt; span.project-name {
+
+                        }
+
+div.project-header &gt; span.project-version {
+                            padding-left: 20px;
+                        }
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+div.spec-title {
+    padding: 10px 0px 5px 0px;
+}
+
+tr.error td, td.error {
+    background-color: #F89A4F !important;
+}
+
+tr.failure td, td.failure {
+    color: red;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}
+
+
+
+
+
+
+.back-link {
+    font-size: small;
+    font-weight: bold;
+}
+
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+table.features-table {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table {
+    width: 99%;
+
+    font-weight: bold;
+    font-size: small;
+}
+
+table.summary-table tbody {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table th {
+    background: lightblue;
+    padding: 6px;
+}
+
+table.summary-table td {
+    background: #E0E0E0;
+    padding: 6px;
+}
+
+pre.title {
+    font-family: inherit;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+pre.narrative {
+    font-family: inherit;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 23px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+.feature-description {
+    font-size: large;
+    background: lightblue;
+    padding: 12px;
+}
+
+.feature-toc-error {
+    color: #F89A4F;
+}
+
+.feature-toc-failure {
+    color: #FF8080;
+}
+
+.feature-toc-ignored {
+    color: lightgray;
+}
+
+.feature-toc-pass {
+    color: green;
+}
+
+.feature-description.error {
+    background: #F89A4F;
+}
+
+.feature-description.failure {
+    background: #FF8080;
+}
+
+.feature-description.ignored {
+    background: lightgray;
+}
+
+.feature-description.ignored .reason {
+    color: black;
+    font-style: italic;
+    font-size: small;
+}
+
+div.extra-info {
+    font-size: small;
+}
+
+div.spec-headers {
+    margin: 4px;
+    font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+    margin-top: 6px;
+    padding: 10px 5px 5px 5px;
+    background-color: lemonchiffon;
+    color: black;
+    font-weight: 500;
+    font-size: small;
+    max-width: 50%;
+}
+
+div.pending-feature {
+    background-color: dodgerblue;
+    color: white;
+    margin-top: 6px;
+    padding: 5px;
+    text-align: center;
+    font-size: small;
+    max-width: 120px;
+}
+
+div.problem-description {
+    padding: 10px;
+    background: pink;
+    border-radius: 10px;
+}
+
+div.problem-header {
+    font-weight: bold;
+    color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table{
+    width: 98%;
+}
+
+table.ex-table th {
+    background: lightblue;
+    padding: 5px;
+}
+
+table.ex-table td {
+    background: #E0E0E0;
+    padding: 2px 5px 2px 5px;
+}
+
+table td {
+    min-width: 50px;
+}
+
+col.block-kind-col {
+    width: 70px;
+}
+
+span.spec-header {
+    font-weight: bold;
+}
+
+div.spec-text {
+    /*color: green;*/
+}
+
+div.spec-status {
+    font-style: italic;
+}
+
+.ignored {
+    color: gray;
+}
+
+td.ex-result {
+    text-align: center;
+    background: white !important;
+}
+
+.ex-pass {
+    color: darkgreen;
+}
+
+.ex-fail {
+    color: red;
+    font-weight: bold;
+}
+
+div.block-kind {
+    margin: 2px;
+    font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+    background-color: whitesmoke;
+    padding: 10px;
+}
+
+pre.block-source.error {
+    background-color: pink;
+    color: red;
+    font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+    margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+    color: gray;
+    margin-top: -14px;
+}
+
+pre.block-source.post-error {
+    color: gray;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}</style>
+</head>
+<body>
+<h2>Report for it.tensors.Tensor_Operation_Integration_Spec</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Wed Nov 17 22:25:26 CET 2021 by Daglemino</div>
+<table class='summary-table'>
+<thead>
+<tr>
+<th>Executed features</th>
+<th>Passed</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>12</td>
+<td>12</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>19.487 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#-1985424227' class='feature-toc-pass'>Test "x-mul" operator produces expected results. (Not on device)</a>
+</li>
+<li>
+<a href='#-2074180502' class='feature-toc-pass'>The "dot" operation reshapes and produces valid "x" operation result.</a>
+</li>
+<li>
+<a href='#-1114774697' class='feature-toc-pass'>The "matMul" operation produces the expected result.</a>
+</li>
+<li>
+<a href='#-1742155683' class='feature-toc-pass'>New method "asFunction" of String added at runtime is callable by groovy and also works.</a>
+</li>
+<li>
+<a href='#-1167705094' class='feature-toc-pass'>New operator methods added to "SDK-types" at runtime are callable by groovy and also work.</a>
+</li>
+<li>
+<a href='#-513933212' class='feature-toc-pass'>Overloaded operation methods on tensors produce expected results when called.</a>
+</li>
+<li>
+<a href='#141960180' class='feature-toc-pass'>Manual convolution produces expected result.</a>
+</li>
+<li>
+<a href='#-726362696' class='feature-toc-pass'>Very simple manual convolution produces expected result.</a>
+</li>
+<li>
+<a href='#-338894098' class='feature-toc-pass'>Simple slice addition produces expected result.</a>
+</li>
+<li>
+<a href='#-2093975990' class='feature-toc-pass'>Auto reshaping and broadcasting works and the result can be back propagated.</a>
+</li>
+<li>
+<a href='#-1054980820' class='feature-toc-pass'>A new transposed version of a given tensor will be returned by the "T()" method.</a>
+</li>
+<li>
+<a href='#-1712186838' class='feature-toc-pass'>Operators "+,*,**,^" produce expected results with gradients which can be accessed via a "Ig[0]" Function instance</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1985424227'>
+<span>Test "x-mul" operator produces expected results. (Not on device)</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+<div class='extra-info'>
+<ul>
+<li>
+<div>
+            The 'x' operator performs convolution on the provided operands.
+        </div>
+</li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Gradient auto apply for tensors in ue is set to false.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Tensor legacy view is set to true.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>Two new 3D tensor instances with the shapes: [2x3x1] &amp; [1x3x2].</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def x = Tsr.of(
+    new int[]{2, 3, 1},
+    new double[]{
+            3,  2, -1, //&lt;=- Format of legacy : false
+            -2,  2,  4
+            /* Format otherwise :
+                 3,  2,
+                -1, -2,
+                 2,  4
+             */
+    }
+)
+def y = Tsr.of(
+new int[]{1, 3, 2},
+new double[]{
+        4, -1,
+        3,  2,
+        3, -1
+})</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The x-mul result is being instantiated by passing a simple equation to the tensor constructor.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def z = Tsr.of("I0xi1", x, y)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The result contains the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>z.toString().contains(expected)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The x-mul result is being instantiated by passing a object array containing equation parameters and syntax.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>z = Tsr.of(new Object[]{x, "x", y})</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The result contains the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>z.toString().contains(expected)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>[2x1x2]:(15.0, 2.0, 10.0, 2.0)</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>1/1 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-2074180502'>
+<span>The "dot" operation reshapes and produces valid "x" operation result.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Two multi-dimensional tensors.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr a = Tsr.of([1, 4, 4, 1], [4..12])
+Tsr b = Tsr.of([1, 3, 5, 2, 1], [-5..3])</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The "dot" method is being called on "a" receiving "b"...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr c = a.convDot(b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The result tensor contains the expected shape.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>c.toString().contains("(4x2x5x2)")</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1114774697'>
+<span>The "matMul" operation produces the expected result.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Two 2-dimensional tensors.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr a = Tsr.of(Double.class).withShape(M, K).andFill(A)
+Tsr b = Tsr.of(Double.class).withShape(K, N).andFill(B)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The "matMul" method is being called on "a" receiving "b"...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr c = a.matMul(b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The result tensor contains the expected shape and values.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>c.toString() == "(${M}x${N}):$expectedC"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>We use the following data and matrix dimensions!</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>A</th>
+<th class='ex-header'>B</th>
+<th class='ex-header'>M</th>
+<th class='ex-header'>K</th>
+<th class='ex-header'>N</th>
+<th class='ex-header'>expectedC</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>[4.0, 3.0, 2.0, 1.0]</td>
+<td class='ex-value'>[-0.5, 1.5, 1.0, -2.0]</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>[1.0, 0.0, 0.0, 1.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[-2.0, 1.0]</td>
+<td class='ex-value'>[-1.0, -1.5]</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>[0.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>[-2.0, 1.0]</td>
+<td class='ex-value'>[-1.0, -1.5]</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>2</td>
+<td class='ex-value'>[2.0, 3.0, -1.0, -1.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>3/3 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1742155683'>
+<span>New method "asFunction" of String added at runtime is callable by groovy and also works.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr a = Tsr.of([1,2], [3, 2])
+Tsr b = Tsr.of([2,1], [-1, 4])
+Binding binding = new Binding()
+binding.setVariable('a', a)
+binding.setVariable('b', b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The groovy code is being evaluated.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr c = new GroovyShell(binding).evaluate((code)) as Tsr</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The resulting tensor (toString) will contain the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>c.toString().contains(expected)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>code</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>"I[0]xI[1]".asFunction()([a, b])</td>
+<td class='ex-value'>(2x2):[-3.0, -2.0, 12.0, 8.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>"I[0]xI[1]"[a, b]</td>
+<td class='ex-value'>(2x2):[-3.0, -2.0, 12.0, 8.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>"i0 x i1"%[a, b]</td>
+<td class='ex-value'>(2x2):[-3.0, -2.0, 12.0, 8.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>"i0"%a</td>
+<td class='ex-value'>(1x2):[3.0, 2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>4/4 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1167705094'>
+<span>New operator methods added to "SDK-types" at runtime are callable by groovy and also work.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView true
+Tsr a = Tsr.of(5)
+Tsr b = Tsr.of(3)
+Binding binding = new Binding()
+binding.setVariable('a', a)
+binding.setVariable('b', b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>...calling methods on types like Double and Integer that receive Tsr instances...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr c = new GroovyShell(binding).evaluate((code)) as Tsr</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The resulting tensor (toString) will contain the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>c.toString().contains(expected)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>code</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>(2+a)</td>
+<td class='ex-value'>7.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(2*b)</td>
+<td class='ex-value'>6.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(6/b)</td>
+<td class='ex-value'>2.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(2^b)</td>
+<td class='ex-value'>8.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(2**b)</td>
+<td class='ex-value'>8.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(4-a)</td>
+<td class='ex-value'>-1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(2.0+a)</td>
+<td class='ex-value'>7.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(2.0*b)</td>
+<td class='ex-value'>6.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(6.0/b)</td>
+<td class='ex-value'>2.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(2.0^b)</td>
+<td class='ex-value'>8.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(2.0**b)</td>
+<td class='ex-value'>8.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>(4.0-a)</td>
+<td class='ex-value'>-1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>12/12 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-513933212'>
+<span>Overloaded operation methods on tensors produce expected results when called.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView true
+Tsr a = Tsr.of(2).setRqsGradient(true)
+Tsr b = Tsr.of(-4)
+Tsr c = Tsr.of(3).setRqsGradient(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>( a / a                     ).toString().contains("[1]:(1.0)")
+( c % a                     ).toString().contains("[1]:(1.0)")
+( ( ( b / b ) ^ c % a ) * 3 ).toString().contains("[1]:(3.0)")
+( a *= b                    ).toString().contains("(-8.0)")
+( a += -c                   ).toString().contains("(-11.0)")
+( a -= c                    ).toString().contains("(-14.0)")
+( a /= Tsr.of(2)      ).toString().contains("(-7.0)")
+( a %= c                    ).toString().contains("(-1.0)")</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='141960180'>
+<span>Manual convolution produces expected result.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(false)
+Tsr a = Tsr.of([100, 100], 3..19)
+Tsr x = a[1..-2,0..-1]
+Tsr y = a[0..-3,0..-1]
+Tsr z = a[2..-1,0..-1]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr rowconvol = x + y + z
+Tsr k = rowconvol[0..-1,1..-2]
+Tsr v = rowconvol[0..-1,0..-3]
+Tsr j = rowconvol[0..-1,2..-1]
+Tsr u = a[1..-2,1..-2]
+Tsr colconvol = k + v + j - 9 * u
+String xAsStr = x.toString()
+String yAsStr = y.toString()
+String zAsStr = z.toString()
+String rcAsStr = rowconvol.toString()
+String kAsStr = k.toString()
+String vAsStr = v.toString()
+String jAsStr = j.toString()
+String uAsStr = u.toString()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert xAsStr.contains("(98x100)")
+assert xAsStr.contains("):[18.0, 19.0, 3.0, 4.0, 5.0")
+assert yAsStr.contains("(98x100)")
+assert yAsStr.contains("):[3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0")
+assert zAsStr.contains("(98x100)")
+zAsStr.contains("):[16.0, 17.0, 18.0, 19.0, 3.0")
+assert rcAsStr.contains("(98x100)")
+assert rcAsStr.contains("):[37.0, 40.0, 26.0, 29.0, 15.0, 18.0")
+assert kAsStr.contains("(98x98)")
+kAsStr.contains("):[40.0, 26.0, 29.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0")
+assert vAsStr.contains("(98x98)")
+assert vAsStr.contains("):[37.0, 40.0, 26.0, 29.0, 15.0, 18.0, 21.0")
+assert jAsStr.contains("(98x98)")
+jAsStr.contains("):[26.0, 29.0, 15.0, 18.0, 21.0, 24.0")
+assert uAsStr.contains("(98x98)")
+assert uAsStr.contains("):[19.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, ")
+String ccAsStr = colconvol.toString()
+assert ccAsStr.contains("(98x98)")
+ccAsStr.contains("(98x98):[-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, " +
+"-34.0, -68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, -34.0, " +
+"-68.0, 68.0, 34.0, 17.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -17.0, ... + 9554 more]")</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-726362696'>
+<span>Very simple manual convolution produces expected result.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(false)
+Tsr a = Tsr.of([4, 4], 0..16).to( device )
+Tsr x = a[1..-2,0..-1]
+Tsr y = a[0..-3,0..-1]
+Tsr z = a[2..-1,0..-1]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr rowconvol = x + y + z
+Tsr k = rowconvol[0..-1,1..-2]
+Tsr v = rowconvol[0..-1,0..-3]
+Tsr j = rowconvol[0..-1,2..-1]
+Tsr u = a[1..-2,1..-2]
+Tsr colconvol = k + v + j - 9 * u
+String xAsStr = x.toString()
+String yAsStr = y.toString()
+String zAsStr = z.toString()
+String rcAsStr = rowconvol.toString()
+String kAsStr = k.toString()
+String vAsStr = v.toString()
+String jAsStr = j.toString()
+String uAsStr = u.toString()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert xAsStr.contains("(2x4):[4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0]")
+assert yAsStr.contains("(2x4):[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]")
+assert zAsStr.contains("(2x4):[8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0]")
+assert rcAsStr.contains("(2x4):[12.0, 15.0, 18.0, 21.0, 24.0, 27.0, 30.0, 33.0]")
+assert kAsStr.contains("(2x2):[15.0, 18.0, 27.0, 30.0]")
+assert vAsStr.contains("(2x2):[12.0, 15.0, 24.0, 27.0]")
+assert jAsStr.contains("(2x2):[18.0, 21.0, 30.0, 33.0]")
+assert uAsStr.contains("(2x2):[5.0, 6.0, 9.0, 10.0]")
+String ccAsStr = colconvol.toString()
+assert ccAsStr.contains("(2x2):[0.0, 0.0, 0.0, 0.0]")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following data is being used for tensor instantiation :</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>device</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x297b98bbba0],platform=OpenCLPlatform@23d170b6[pid=cl_platform_id[0x297bb281d40],context=cl_context[0x297baa84a60]kernels=[..39..]]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-338894098'>
+<span>Simple slice addition produces expected result.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(false)
+Tsr a = Tsr.of([11, 11], 3..19).to( device )
+Tsr x = a[1..-2,0..-1]
+Tsr y = a[0..-3,0..-1]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr rowconvol = x + y
+String rcAsStr = rowconvol.toString()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>assert rcAsStr.contains("(9x11):[17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, " +
+"26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, " +
+"26.0, 28.0, 30.0, 32.0, 17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0, ... + 49 more]")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following data is being used for tensor instantiation :</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>device</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x297b98bbba0],platform=OpenCLPlatform@23d170b6[pid=cl_platform_id[0x297bb281d40],context=cl_context[0x297baa84a60]kernels=[..39..]]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>2/2 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-2093975990'>
+<span>Auto reshaping and broadcasting works and the result can be back propagated.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().indexing().setIsUsingArrayBasedIndexing(indexing)
+Neureka.get().settings().view().setIsUsingLegacyView(true)
+Tsr a = Tsr.of([2,2], 1..5)
+Tsr b = Tsr.of(( autoReshaping ? [2] : [1, 2]), 8..9).setRqsGradient(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr t1 = operation.apply(a, b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t1.toString().contains("[2x2]:($expectedResult)")
+b.toString() == "["+( autoReshaping ? "2" : "1x2")+"]:(8.0, 9.0):g:(null)"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>t1.backward(Tsr.of([2, 2], [5, -2, 7, 3]))</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>b.toString() == "["+( autoReshaping ? "2" : "1x2")+"]:(8.0, 9.0):g:($expectedGradient)"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(false)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t1.toString() == "(2x2):[$expectedResult]"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>indexing</th>
+<th class='ex-header'>autoReshaping</th>
+<th class='ex-header'>operation</th>
+<th class='ex-header'>expectedResult</th>
+<th class='ex-header'>expectedGradient</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>true</td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure2@222f672b</td>
+<td class='ex-value'>9.0, 11.0, 11.0, 13.0</td>
+<td class='ex-value'>12.0, 1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>true</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure3@7ba0e08c</td>
+<td class='ex-value'>9.0, 11.0, 11.0, 13.0</td>
+<td class='ex-value'>12.0, 1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>false</td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure4@bf13d72</td>
+<td class='ex-value'>9.0, 11.0, 11.0, 13.0</td>
+<td class='ex-value'>12.0, 1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>false</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure5@1745753</td>
+<td class='ex-value'>9.0, 11.0, 11.0, 13.0</td>
+<td class='ex-value'>12.0, 1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>false</td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure6@7828f5c5</td>
+<td class='ex-value'>-7.0, -7.0, -5.0, -5.0</td>
+<td class='ex-value'>-12.0, -1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>false</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure7@68e13f33</td>
+<td class='ex-value'>-7.0, -7.0, -5.0, -5.0</td>
+<td class='ex-value'>-12.0, -1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>true</td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure8@abaedea</td>
+<td class='ex-value'>-7.0, -7.0, -5.0, -5.0</td>
+<td class='ex-value'>-12.0, -1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>true</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure9@21e6ad62</td>
+<td class='ex-value'>-7.0, -7.0, -5.0, -5.0</td>
+<td class='ex-value'>-12.0, -1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>false</td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure10@19c3a128</td>
+<td class='ex-value'>7.0, 7.0, 5.0, 5.0</td>
+<td class='ex-value'>12.0, 1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>false</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure11@3b9b75bd</td>
+<td class='ex-value'>7.0, 7.0, 5.0, 5.0</td>
+<td class='ex-value'>12.0, 1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>true</td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure12@38869ca2</td>
+<td class='ex-value'>7.0, 7.0, 5.0, 5.0</td>
+<td class='ex-value'>12.0, 1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>true</td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>it.tensors.Tensor_Operation_Integration_Spec$__spock_feature_0_9prov2_closure13@3983ecea</td>
+<td class='ex-value'>7.0, 7.0, 5.0, 5.0</td>
+<td class='ex-value'>12.0, 1.0</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>12/12 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1054980820'>
+<span>A new transposed version of a given tensor will be returned by the "T()" method.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().isUsingLegacyView = true</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>A three by two matrix is being transposed...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr t = Tsr.of([2, 3], [
+        1, 2, 3,
+        4, 5, 6
+]).T()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t.toString().contains("[3x2]:(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)")</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1712186838'>
+<span>Operators "+,*,**,^" produce expected results with gradients which can be accessed via a "Ig[0]" Function instance</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Neurekas view is set to legacy and three tensors of which one requires gradients.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.get().settings().view().setIsUsingLegacyView(true)
+Tsr x = Tsr.of(3).setRqsGradient(true)
+Tsr b = Tsr.of(-4)
+Tsr w = Tsr.of(2)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr y = ( (x+b)*w )**2</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>y.toString().contains("[1]:(4.0); -&gt;d[1]:(-8.0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>y = ((x+b)*w)^2</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>y.toString().contains("[1]:(4.0); -&gt;d[1]:(-8.0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>y.backward(Tsr.of(1))</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr t1 = Tsr.of( "Ig[0]", [y] )
+Tsr t2 = Tsr.of( "Ig[0]", [x] )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>t1 == null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>t2.toString() == "[1]:(-8.0)"</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>t2 == x.gradient</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().debug().setIsKeepingDerivativeTargetPayloads(false)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Tsr[] trs = new Tsr[]{x}</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>def fun = new FunctionBuilder( Neureka.get().backend() ).build("Ig[0]", false)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>fun(trs).toString().equals("[1]:(-8.0)")</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>trs[0] = y</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>fun = new FunctionBuilder( Neureka.get().backend() ).build("Ig[0]", false)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>fun(trs) == null</pre>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>

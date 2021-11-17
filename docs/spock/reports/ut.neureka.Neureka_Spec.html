@@ -1,0 +1,883 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 300;
+}
+
+h2 {
+    font-weight: 400;
+}
+
+hr {
+    margin-bottom: 1.5em;
+}
+
+h3 {
+    font-weight: 200;
+}
+
+table {
+    margin: 7px;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+}
+
+.ignored {
+    color: gray;
+}
+
+div.project-header {
+    margin-bottom: 10px;
+    font-size: large;
+}
+
+div.project-header &gt; span.project-name {
+
+                        }
+
+div.project-header &gt; span.project-version {
+                            padding-left: 20px;
+                        }
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+div.spec-title {
+    padding: 10px 0px 5px 0px;
+}
+
+tr.error td, td.error {
+    background-color: #F89A4F !important;
+}
+
+tr.failure td, td.failure {
+    color: red;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}
+
+
+
+
+
+
+.back-link {
+    font-size: small;
+    font-weight: bold;
+}
+
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+table.features-table {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table {
+    width: 99%;
+
+    font-weight: bold;
+    font-size: small;
+}
+
+table.summary-table tbody {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table th {
+    background: lightblue;
+    padding: 6px;
+}
+
+table.summary-table td {
+    background: #E0E0E0;
+    padding: 6px;
+}
+
+pre.title {
+    font-family: inherit;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+pre.narrative {
+    font-family: inherit;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 23px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+.feature-description {
+    font-size: large;
+    background: lightblue;
+    padding: 12px;
+}
+
+.feature-toc-error {
+    color: #F89A4F;
+}
+
+.feature-toc-failure {
+    color: #FF8080;
+}
+
+.feature-toc-ignored {
+    color: lightgray;
+}
+
+.feature-toc-pass {
+    color: green;
+}
+
+.feature-description.error {
+    background: #F89A4F;
+}
+
+.feature-description.failure {
+    background: #FF8080;
+}
+
+.feature-description.ignored {
+    background: lightgray;
+}
+
+.feature-description.ignored .reason {
+    color: black;
+    font-style: italic;
+    font-size: small;
+}
+
+div.extra-info {
+    font-size: small;
+}
+
+div.spec-headers {
+    margin: 4px;
+    font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+    margin-top: 6px;
+    padding: 10px 5px 5px 5px;
+    background-color: lemonchiffon;
+    color: black;
+    font-weight: 500;
+    font-size: small;
+    max-width: 50%;
+}
+
+div.pending-feature {
+    background-color: dodgerblue;
+    color: white;
+    margin-top: 6px;
+    padding: 5px;
+    text-align: center;
+    font-size: small;
+    max-width: 120px;
+}
+
+div.problem-description {
+    padding: 10px;
+    background: pink;
+    border-radius: 10px;
+}
+
+div.problem-header {
+    font-weight: bold;
+    color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table{
+    width: 98%;
+}
+
+table.ex-table th {
+    background: lightblue;
+    padding: 5px;
+}
+
+table.ex-table td {
+    background: #E0E0E0;
+    padding: 2px 5px 2px 5px;
+}
+
+table td {
+    min-width: 50px;
+}
+
+col.block-kind-col {
+    width: 70px;
+}
+
+span.spec-header {
+    font-weight: bold;
+}
+
+div.spec-text {
+    /*color: green;*/
+}
+
+div.spec-status {
+    font-style: italic;
+}
+
+.ignored {
+    color: gray;
+}
+
+td.ex-result {
+    text-align: center;
+    background: white !important;
+}
+
+.ex-pass {
+    color: darkgreen;
+}
+
+.ex-fail {
+    color: red;
+    font-weight: bold;
+}
+
+div.block-kind {
+    margin: 2px;
+    font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+    background-color: whitesmoke;
+    padding: 10px;
+}
+
+pre.block-source.error {
+    background-color: pink;
+    color: red;
+    font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+    margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+    color: gray;
+    margin-top: -14px;
+}
+
+pre.block-source.post-error {
+    color: gray;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}</style>
+</head>
+<body>
+<h2>Report for ut.neureka.Neureka_Spec</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Wed Nov 17 22:25:41 CET 2021 by Daglemino</div>
+<table class='summary-table'>
+<thead>
+<tr>
+<th>Executed features</th>
+<th>Passed</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>5</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>5.418 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre class='title'>The Neureka context can be used and configured as expected.</pre>
+<pre class='narrative'>This specification covers the behavior of the Neureka class which
+    exposes a global API for configuring thread local contexts and library settings.
+    The purpose of this is to assert that the API exposed by the Neureka class 
+    is both thread local and configurable.
+    This specification also exists to cover standards for the Neureka library in general.</pre>
+<div class='spec-headers'>
+<div class='spec-header'>
+                <h2> Neureka Behavior </h2>
+                <br> 
+                <p>
+                    This specification covers the behavior
+                    of the "Neureka" class, which is used as 
+                    a thread local configuration.          
+                </p>
+            </div>
+</div>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#721771273' class='feature-toc-pass'>Neureka class instance has expected behaviour.</a>
+</li>
+<li>
+<a href='#-1185608637' class='feature-toc-pass'>Neureka settings class can be locked.</a>
+</li>
+<li>
+<a href='#-837524416' class='feature-toc-pass'>Every Thread instance has their own Neureka instance.</a>
+</li>
+<li>
+<a href='#-1722016036' class='feature-toc-pass'>Various library objects adhere to the same toString formatting convention!</a>
+</li>
+<li>
+<a href='#-1947032983' class='feature-toc-pass'>OpenCL related library objects adhere to the same toString formatting convention!</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='721771273'>
+<span>Neureka class instance has expected behaviour.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>Important settings have their expected states.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>!Neureka.get().settings().isLocked()
+!Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads()
+Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>One settings is changes to false...</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>This setting change applies!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>!Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed()
+Neureka.get().settings().autograd().isRetainingPendingErrorForJITProp()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The version number is as expected!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Neureka.version()=="0.9.0"</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1185608637'>
+<span>Neureka settings class can be locked.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>def set = { it -&gt; setter(Neureka.get().settings(), it) }
+def get = { getter(Neureka.get().settings()) }</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>get() == value</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().setIsLocked(true)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>set(!value)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>get() == value</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().setIsLocked(false)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<pre class='block-source'>set(!value)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<pre class='block-source'>get() != value</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Cleanup:</div>
+</td>
+<td>
+<pre class='block-source'>set(value)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>value</th>
+<th class='ex-header'>getter</th>
+<th class='ex-header'>setter</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>false</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>false</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>false</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>true</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>true</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>true</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>true</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>true</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>8/8 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-837524416'>
+<span>Every Thread instance has their own Neureka instance.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>A map containing entries for Neureka instances.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def map = ['instance 1':null, 'instance 2':null]</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>Two newly instantiated tensors store their Neureka instances in the map.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def t1 = new Thread({ map['instance 1'] = Neureka.get() })
+def t2 = new Thread({ map['instance 2'] = Neureka.get() })</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The tensors are being started and joined.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>t1.start()
+t2.start()
+t1.join()
+t2.join()</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The map entries will no longer be filled with null.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>map['instance 1'] != null
+map['instance 2'] != null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The Neureka instances stored in the map will be different objects.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>map['instance 1'] != map['instance 2']</pre>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1722016036'>
+<span>Various library objects adhere to the same toString formatting convention!</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>The provided object matches the following pattern defining a common standard!</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following objects are being used..</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>neurekaObject</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>CPU[coreCount=12]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>DataType[class=String]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Relation[parent=null,children=null,shapeRelations=null]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>JITProp@2139387064[finished=0,pending=0,isDone=false]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Neureka[settings=Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=true,isApplyingGradientWhenTensorIsUsed=true,isApplyingGradientWhenRequested=true],indexing=Neureka.Settings.Indexing[isUsingArrayBasedIndexing=true],view=Neureka.Settings.View[isUsingLegacyView=false,asString={BE_COMPACT=true, HAVE_RECURSIVE_GRAPH=false, HAVE_DERIVATIVES=true, HAVE_GRADIENT=true, HAVE_VALUE=true, BE_FORMATTED=false, HAVE_SHAPE=true, BE_CELL_BOUND=false, HAVE_PADDING_OF=1, BE_SHORTENED_BY=50}],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false],utility=neureka.Neureka$Utility@7699169e,backend=BackendContext[size=41]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Neureka.Settings[debug=Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false],autograd=Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=true,isApplyingGradientWhenTensorIsUsed=true,isApplyingGradientWhenRequested=true],indexing=Neureka.Settings.Indexing[isUsingArrayBasedIndexing=true],view=Neureka.Settings.View[isUsingLegacyView=false,asString={BE_COMPACT=true, HAVE_RECURSIVE_GRAPH=false, HAVE_DERIVATIVES=true, HAVE_GRADIENT=true, HAVE_VALUE=true, BE_FORMATTED=false, HAVE_SHAPE=true, BE_CELL_BOUND=false, HAVE_PADDING_OF=1, BE_SHORTENED_BY=50}],ndim=Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false],dtype=Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true],isLocked=false]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Neureka.Settings.Indexing[isUsingArrayBasedIndexing=true]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Neureka.Settings.AutoGrad[isPreventingInlineOperations=true,isRetainingPendingErrorForJITProp=true,isApplyingGradientWhenTensorIsUsed=true,isApplyingGradientWhenRequested=true]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Neureka.Settings.Debug[isKeepingDerivativeTargetPayloads=false]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Neureka.Settings.DType[defaultDataTypeClass=class neureka.dtype.custom.F64,isAutoConvertingExternalDataToJVMTypes=true]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Neureka.Settings.NDim[isOnlyUsingDefaultNDConfiguration=false]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Neureka.Settings.View[isUsingLegacyView=false,asString={BE_COMPACT=true, HAVE_RECURSIVE_GRAPH=false, HAVE_DERIVATIVES=true, HAVE_GRADIENT=true, HAVE_VALUE=true, BE_FORMATTED=false, HAVE_SHAPE=true, BE_CELL_BOUND=false, HAVE_PADDING_OF=1, BE_SHORTENED_BY=50}]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Functions[dimTrim=dimtrim(I[0]),idy=(I[0] &lt;- I[1]),conv=(I[0] x I[1]),plus=(I[0] + I[1]),plusAssign=(I[0] &lt;- (I[0] + I[1])),minus=(I[0] - I[1]),minusAssign=(I[0] &lt;- (I[0] - I[1])),div=(I[0] / I[1]),divAssign=(I[0] &lt;- (I[0] / I[1])),pow=(I[0] ^ I[1]),powAssign=(I[0] &lt;- (I[0] ^ I[1])),mul=(I[0] * I[1]),mulAssign=(I[0] &lt;- (I[0] * I[1])),add=(I[0] + I[1]),addAssign=(I[0] &lt;- (I[0] + I[1])),mod=(I[0] % I[1]),modAssign=(I[0] &lt;- (I[0] % I[1])),neg=(-1.0 * I[0]),matMul=(I[0] @ I[1]),$jacocoData=[Z@39ac9087]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>Functions[dimTrim=dimtrim(I[0]),idy=(I[0] &lt;- I[1]),conv=(I[0] x I[1]),plus=(I[0] + I[1]),plusAssign=(I[0] &lt;- (I[0] + I[1])),minus=(I[0] - I[1]),minusAssign=(I[0] &lt;- (I[0] - I[1])),div=(I[0] / I[1]),divAssign=(I[0] &lt;- (I[0] / I[1])),pow=(I[0] ^ I[1]),powAssign=(I[0] &lt;- (I[0] ^ I[1])),mul=(I[0] * I[1]),mulAssign=(I[0] &lt;- (I[0] * I[1])),add=(I[0] + I[1]),addAssign=(I[0] &lt;- (I[0] + I[1])),mod=(I[0] % I[1]),modAssign=(I[0] &lt;- (I[0] % I[1])),neg=(-1.0 * I[0]),matMul=(I[0] @ I[1]),$jacocoData=[Z@39ac9087]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>BackendContext[size=41]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>FunctionCache[size=0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>ExecutionCall[device=CPU[coreCount=12],derivativeIndex=-1,operation=neureka.backend.standard.operations.operator.Addition@46f53493,tensors=[..1..],j=-1, algorithm=?,context=[-1, -1]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>&lt;executable&gt;</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GraphNode@45a6e133[parents=[?, ?],function=(I[0] * I[1]),shape=?]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>GraphLock@7b341db6[owner=(I[0] * (3.0 / 2.0))]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>20/20 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1947032983'>
+<span>OpenCL related library objects adhere to the same toString formatting convention!</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>The provided object matches the following pattern defining a common standard!</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following objects are being used..</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>neurekaCLObject</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>CLContext@156d56a3[platforms=[OpenCLPlatform@67196666[pid=cl_platform_id[0x2066d693c30],context=cl_context[0x2066f5a3a40]kernels=[..39..]],OpenCLPlatform@7664fe3b[pid=cl_platform_id[0x2067091a7e0],context=cl_context[0x2066d0748b0]kernels=[..39..]]]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLPlatform@67196666[pid=cl_platform_id[0x2066d693c30],context=cl_context[0x2066f5a3a40]kernels=[..39..]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>OpenCLDevice[deviceId=cl_device_id[0x2066d693190],platform=OpenCLPlatform@67196666[pid=cl_platform_id[0x2066d693c30],context=cl_context[0x2066f5a3a40]kernels=[..39..]]]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>3/3 passed</div>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>

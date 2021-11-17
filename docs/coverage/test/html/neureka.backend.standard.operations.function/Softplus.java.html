@@ -6,11 +6,11 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 import org.jetbrains.annotations.Contract;
 
@@ -57,8 +57,8 @@ public final class Softplus extends AbstractOperation
                 Activation.class,
                 operationAlgorithm
 <span class="fc" id="L59">                        .setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L62">                            .withArity(3)</span>
 <span class="fc" id="L63">                            .andImplementation(</span>
                                 call  -&gt;
@@ -80,12 +80,13 @@ public final class Softplus extends AbstractOperation
                                                                 )
                                                 )
                             )
-<span class="fc" id="L83">                ).setImplementationFor(</span>
+                )
+<span class="fc" id="L84">                .setImplementationFor(</span>
                         OpenCLDevice.class,
-<span class="fc" id="L85">                        CLImplementation.compiler()</span>
-<span class="fc" id="L86">                                .arity( 3 )</span>
-<span class="fc" id="L87">                                .kernelSource( operationAlgorithm.getKernelSource() )</span>
-<span class="fc" id="L88">                                .activationSource(</span>
+<span class="fc" id="L86">                        CLImplementation.compiler()</span>
+<span class="fc" id="L87">                                .arity( 3 )</span>
+<span class="fc" id="L88">                                .kernelSource( operationAlgorithm.getKernelSource() )</span>
+<span class="fc" id="L89">                                .activationSource(</span>
                                         &quot;output = \n&quot; +
                                                 &quot;   (\n&quot; +
                                                 &quot;        (float) log(\n&quot; +
@@ -98,7 +99,7 @@ public final class Softplus extends AbstractOperation
                                                 &quot;        )\n&quot; +
                                                 &quot;    );&quot;
                                 )
-<span class="fc" id="L101">                                .differentiationSource(</span>
+<span class="fc" id="L102">                                .differentiationSource(</span>
                                         &quot;output =\n&quot; +
                                                 &quot;    1 /\n&quot; +
                                                 &quot;        (1 + (float) pow(\n&quot; +
@@ -107,51 +108,48 @@ public final class Softplus extends AbstractOperation
                                                 &quot;            )\n&quot; +
                                                 &quot;        );\n&quot;
                                 )
-<span class="fc" id="L110">                                .kernelPostfix( this.getFunction() )</span>
-<span class="fc" id="L111">                                .execution(</span>
+<span class="fc" id="L111">                                .kernelPostfix( this.getFunction() )</span>
+<span class="fc" id="L112">                                .execution(</span>
                                         call -&gt; {
-<span class="pc bpc" id="L113" title="1 of 2 branches missed.">                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;</span>
-<span class="pc bpc" id="L114" title="1 of 2 branches missed.">                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();</span>
-<span class="fc" id="L115">                                            call.getDevice().getKernel(call)</span>
-<span class="fc" id="L116">                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )</span>
-<span class="fc" id="L117">                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )</span>
-<span class="fc" id="L118">                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )</span>
-<span class="fc" id="L119">                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
-<span class="fc" id="L120">                                                    .call( gwz );</span>
-<span class="fc" id="L121">                                        }</span>
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">                                            int offset = (call.getTsrOfType( Number.class, 0 ) != null) ? 0 : 1;</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">                                            int gwz = (call.getTsrOfType( Number.class, 0 ) != null) ? call.getTsrOfType( Number.class, 0 ).size() : call.getTsrOfType( Number.class, 1 ).size();</span>
+<span class="fc" id="L116">                                            call.getDevice().getKernel(call)</span>
+<span class="fc" id="L117">                                                    .passAllOf( call.getTsrOfType( Number.class, offset ) )</span>
+<span class="fc" id="L118">                                                    .passAllOf( call.getTsrOfType( Number.class, offset + 1 ) )</span>
+<span class="fc" id="L119">                                                    .pass( call.getTsrOfType( Number.class, 0 ).rank() )</span>
+<span class="fc" id="L120">                                                    .pass( call.getValOf( Arg.DerivIdx.class ) )</span>
+<span class="fc" id="L121">                                                    .call( gwz );</span>
+<span class="fc" id="L122">                                        }</span>
                                 )
-<span class="fc" id="L123">                                .build()</span>
+<span class="fc" id="L124">                                .build()</span>
                 )
         );
-
-
-
-<span class="fc" id="L129">    }</span>
+<span class="fc" id="L127">    }</span>
 
     @Override
     public String stringify( String[] children ) {
-<span class="fc" id="L133">        String expression = String.join( &quot;, &quot;, children );</span>
-<span class="pc bpc" id="L134" title="1 of 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return &quot;softplus&quot; + expression;</span>
-<span class="fc" id="L135">        return &quot;softplus&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
+<span class="fc" id="L131">        String expression = String.join( &quot;, &quot;, children );</span>
+<span class="pc bpc" id="L132" title="1 of 4 branches missed.">        if ( expression.startsWith(&quot;(&quot;) &amp;&amp; expression.endsWith(&quot;)&quot;) ) return &quot;softplus&quot; + expression;</span>
+<span class="fc" id="L133">        return &quot;softplus&quot; + &quot;(&quot; + expression + &quot;)&quot;;</span>
     }
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-<span class="nc" id="L140">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
+<span class="nc" id="L138">        throw new IllegalStateException(&quot;Operation does not support dynamic derivation!&quot;);</span>
     }
 
     @Override
     public double calculate( double[] inputs, int j, int d, Function[] src ) {
-<span class="fc" id="L145">        return calculate(</span>
-<span class="fc bfc" id="L146" title="All 2 branches covered.">                src[ 0 ].call( inputs, j ),</span>
+<span class="fc" id="L143">        return calculate(</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">                src[ 0 ].call( inputs, j ),</span>
                 d &gt;= 0
-<span class="fc bfc" id="L148" title="All 2 branches covered.">        ) * ( ( d &lt; 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        ) * ( ( d &lt; 0 ) ? 1 : src[ 0 ].derive( inputs, d, j ) );</span>
     }
 
     @Contract(pure = true)
     public static double calculate(double input, boolean derive ) {
-<span class="fc bfc" id="L153" title="All 2 branches covered.">        if ( !derive ) return Math.log(1 + Math.pow(Math.E, input));</span>
-<span class="fc" id="L154">        else return Sigmoid.calculate(input, false);</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        if ( !derive ) return Math.log(1 + Math.pow(Math.E, input));</span>
+<span class="fc" id="L152">        else return Sigmoid.calculate(input, false);</span>
     }
 
 

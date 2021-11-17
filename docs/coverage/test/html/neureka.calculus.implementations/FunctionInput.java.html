@@ -62,7 +62,7 @@ import java.util.List;
     public Function newBuild( final String equation ) {
 
 <span class="fc bfc" id="L64" title="All 2 branches covered.">        if ( equation.charAt( 0 ) == '-' )</span>
-<span class="fc" id="L65">            return new FunctionBuilder( Neureka.get().context() )</span>
+<span class="fc" id="L65">            return new FunctionBuilder( Neureka.get().backend() )</span>
 <span class="fc" id="L66">                                        .build(</span>
 <span class="fc" id="L67">                                                equation.substring(1)+&quot;*-1&quot;,</span>
                                                 true

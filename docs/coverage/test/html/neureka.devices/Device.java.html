@@ -41,17 +41,19 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
-import neureka.backend.api.OperationContext;
+import neureka.backend.api.BackendContext;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.calculus.assembly.ParseUtil;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.CLContext;
 import neureka.devices.opencl.OpenCLDevice;
 import neureka.devices.opencl.OpenCLPlatform;
 
-import java.util.Collection;
+import java.util.*;
 import java.util.function.IntFunction;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -75,46 +77,47 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
      * This method returns {@link Device} instances matching
      * the given search parameter.
      * @param name The search parameter and name of the requested {@link Device} instance.
-     * @return The found {@link Device} instance or simply the HostCPU instance by default.
+     * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
     static Device&lt;?&gt; find( String name )
     {
-<span class="fc" id="L82">        String search = name.toLowerCase();</span>
-<span class="fc" id="L83">        boolean probablyWantsGPU = Stream.of(&quot;gpu&quot;, &quot;nvidia&quot;, &quot;amd&quot;, &quot;intel&quot;, &quot;opencl&quot;, &quot;fpga&quot;, &quot;radeon&quot;)</span>
-<span class="fc" id="L84">                                            .anyMatch(search::contains);</span>
+<span class="fc" id="L84">        String search = name.toLowerCase();</span>
+<span class="fc" id="L85">        boolean probablyWantsGPU = Stream.of(&quot;gpu&quot;, &quot;nvidia&quot;, &quot;amd&quot;, &quot;intel&quot;, &quot;opencl&quot;, &quot;fpga&quot;, &quot;radeon&quot;)</span>
+<span class="fc" id="L86">                                            .anyMatch(search::contains);</span>
 
-<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        if ( !Neureka.get().canAccessOpenCL() ) {</span>
-<span class="nc bnc" id="L87" title="All 2 branches missed.">            if ( probablyWantsGPU ) {</span>
-<span class="nc" id="L88">                return null; // User wants OpenCL but cannot have it :/</span>
-<span class="nc" id="L89">            } else return HostCPU.instance();</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">        if ( !Neureka.get().canAccessOpenCL() ) {</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">            if ( probablyWantsGPU ) {</span>
+<span class="nc" id="L90">                return null; // User wants OpenCL but cannot have it :/</span>
+            }
+<span class="nc" id="L92">            else return CPU.get();</span>
         }
 
-<span class="fc" id="L92">        Device&lt;Number&gt; result = HostCPU.instance();</span>
-<span class="fc" id="L93">        double score = ParseUtil.similarity( &quot;jvm native host cpu threaded&quot;, search );</span>
-<span class="fc bfc" id="L94" title="All 2 branches covered.">        if ( probablyWantsGPU ) score /= 10; // HostCPU instance is most likely not meant!</span>
+<span class="fc" id="L95">        Device&lt;Number&gt; result = CPU.get();</span>
+<span class="fc" id="L96">        double score = ParseUtil.similarity( &quot;jvm native host cpu threaded&quot;, search );</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if ( probablyWantsGPU ) score /= 10; // CPU instance is most likely not meant!</span>
 
-<span class="fc bfc" id="L96" title="All 2 branches covered.">        for ( OpenCLPlatform p : Neureka.get().context().get(CLContext.class).getPlatforms() ) {</span>
-<span class="fc bfc" id="L97" title="All 2 branches covered.">            for ( OpenCLDevice d : p.getDevices() ) {</span>
-<span class="fc" id="L98">                String str = (&quot;opencl | &quot;+d.type()+&quot; | &quot;+d.name()+&quot; | &quot;+d.vendor()).toLowerCase();</span>
-<span class="fc" id="L99">                double similarity = ParseUtil.similarity( str, search );</span>
-<span class="pc bpc" id="L100" title="1 of 4 branches missed.">                if ( similarity &gt; score || str.contains(search) ) {</span>
-<span class="fc" id="L101">                    result = d;</span>
-<span class="fc" id="L102">                    score = similarity;</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        for ( OpenCLPlatform p : Neureka.get().backend().get(CLContext.class).getPlatforms() ) {</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            for ( OpenCLDevice d : p.getDevices() ) {</span>
+<span class="fc" id="L101">                String str = (&quot;opencl | &quot;+d.type()+&quot; | &quot;+d.name()+&quot; | &quot;+d.vendor()).toLowerCase();</span>
+<span class="fc" id="L102">                double similarity = ParseUtil.similarity( str, search );</span>
+<span class="pc bpc" id="L103" title="1 of 4 branches missed.">                if ( similarity &gt; score || str.contains(search) ) {</span>
+<span class="fc" id="L104">                    result = d;</span>
+<span class="fc" id="L105">                    score = similarity;</span>
                 }
-<span class="fc" id="L104">            }</span>
-<span class="fc" id="L105">        }</span>
-<span class="fc bfc" id="L106" title="All 4 branches covered.">        if ( result == HostCPU.instance() &amp;&amp; name.equals(&quot;first&quot;) ) {</span>
-<span class="fc" id="L107">            Device&lt;Number&gt; first = Neureka.get()</span>
-<span class="fc" id="L108">                                            .context()</span>
-<span class="fc" id="L109">                                            .get(CLContext.class)</span>
-<span class="fc" id="L110">                                            .getPlatforms()</span>
-<span class="fc" id="L111">                                            .get( 0 )</span>
-<span class="fc" id="L112">                                            .getDevices()</span>
-<span class="fc" id="L113">                                            .get( 0 );</span>
+<span class="fc" id="L107">            }</span>
+<span class="fc" id="L108">        }</span>
+<span class="fc bfc" id="L109" title="All 4 branches covered.">        if ( result == CPU.get() &amp;&amp; name.equals(&quot;first&quot;) ) {</span>
+<span class="fc" id="L110">            Device&lt;Number&gt; first = Neureka.get()</span>
+<span class="fc" id="L111">                                            .backend()</span>
+<span class="fc" id="L112">                                            .get(CLContext.class)</span>
+<span class="fc" id="L113">                                            .getPlatforms()</span>
+<span class="fc" id="L114">                                            .get( 0 )</span>
+<span class="fc" id="L115">                                            .getDevices()</span>
+<span class="fc" id="L116">                                            .get( 0 );</span>
 
-<span class="pc bpc" id="L115" title="1 of 2 branches missed.">            if ( first!=null ) result = first;</span>
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">            if ( first != null ) result = first;</span>
         }
-<span class="fc" id="L117">        return result;</span>
+<span class="fc" id="L120">        return result;</span>
     }
 
     /**
@@ -138,21 +141,21 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
 
     &lt;T extends V&gt; boolean has(Tsr&lt;T&gt; tensor );
 
-    &lt;T extends V&gt; Device&lt;V&gt; free(Tsr&lt;T&gt; tensor );
+    &lt;T extends V&gt; Device&lt;V&gt; free( Tsr&lt;T&gt; tensor );
 
-    Device&lt;V&gt; cleaning(Tsr&lt;V&gt; tensor, Runnable action );
+    &lt;T extends V&gt; Device&lt;V&gt; cleaning( Tsr&lt;T&gt; tensor, Runnable action );
 
-    Device&lt;V&gt; write(Tsr&lt;V&gt; tensor, Object value );
+    &lt;T extends V&gt; Device&lt;V&gt; write( Tsr&lt;T&gt; tensor, Object value );
 
-    Device&lt;V&gt; swap(Tsr&lt;V&gt; former, Tsr&lt;V&gt; replacement );
+    &lt;T extends V&gt; Device&lt;V&gt; swap( Tsr&lt;T&gt; former, Tsr&lt;T&gt; replacement );
 
-    Device&lt;V&gt; approve(ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call );
+    Device&lt;V&gt; approve( ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call );
 
-    Object valueFor( Tsr&lt;V&gt; tensor );
+    &lt;T extends V&gt; Object valueFor( Tsr&lt;T&gt; tensor );
 
-    V valueFor(Tsr&lt;V&gt; tensor, int index );
+    &lt;T extends V&gt; V valueFor( Tsr&lt;T&gt; tensor, int index );
 
-    Collection&lt; Tsr&lt;V&gt; &gt; getTensors();
+    Collection&lt;Tsr&lt;V&gt;&gt; getTensors();
 
     /**
      *  This method has the same signature of the Collection interface in Java 11,
@@ -168,17 +171,64 @@ public interface Device&lt;V&gt; extends Component&lt;Tsr&lt;V&gt;&gt;, Storage&
     Operation optimizedOperationOf( Function function, String name );
 
     default Function optimizedFunctionOf( Function function, String name ) {
-<span class="fc" id="L171">        Operation optimizedOperation = optimizedOperationOf( function, name );</span>
-<span class="fc" id="L172">        OperationContext currentContext = Neureka.get().context();</span>
-<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        if ( !currentContext.hasOperation( optimizedOperation ) )</span>
-<span class="fc" id="L174">            currentContext.addOperation( optimizedOperation );</span>
+<span class="fc" id="L174">        Operation optimizedOperation = optimizedOperationOf( function, name );</span>
+<span class="fc" id="L175">        BackendContext currentContext = Neureka.get().backend();</span>
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        if ( !currentContext.hasOperation( optimizedOperation ) )</span>
+<span class="fc" id="L177">            currentContext.addOperation( optimizedOperation );</span>
 
-<span class="fc" id="L176">        return new FunctionBuilder( currentContext )</span>
-<span class="fc" id="L177">                            .build(</span>
+<span class="fc" id="L179">        return new FunctionBuilder( currentContext )</span>
+<span class="fc" id="L180">                            .build(</span>
                                     optimizedOperation,
-<span class="fc" id="L179">                                    function.numberOfArgs(),</span>
-<span class="fc" id="L180">                                    function.isDoingAD()</span>
+<span class="fc" id="L182">                                    function.numberOfArgs(),</span>
+<span class="fc" id="L183">                                    function.isDoingAD()</span>
                             );
+    }
+
+    /**
+     *  This is a very simple fluent API for temporarily storing a number
+     *  of tensors on this {@link Device}, executing a provided lambda action,
+     *  and then migrating all the tensors back to their original devices.
+     *
+     * @param first The first tensor among all passed tensors which ought to be
+     *              stored temporarily on this {@link Device}.
+     * @param rest Any number of other tensors passed to this method to be
+     *             stored temporarily on this {@link Device}.
+     *
+     * @return A simple lambda runner which will migrate the tensors passed to this method to
+     *         this very {@link Device}, execute the provided lambda, and then  migrate all the
+     *         tensors back to their original devices!
+     */
+    default In use( Tsr&lt;V&gt; first, Tsr&lt;V&gt;... rest ) {
+<span class="fc" id="L202">        List&lt;Tsr&lt;V&gt;&gt; tensors = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">        if ( first != null ) tensors.add( first );</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">        if ( rest.length &gt; 0 )</span>
+<span class="fc" id="L205">            tensors.addAll( Arrays.stream( rest ).filter(Objects::nonNull).collect(Collectors.toList()) );</span>
+<span class="fc" id="L206">        Device&lt;?&gt; thisDevice = this;</span>
+<span class="fc" id="L207">        return new In() {</span>
+            @Override
+            public &lt;R&gt; R in( Supplier&lt;R&gt; lambda ) {
+<span class="fc" id="L210">                List&lt;Device&lt;?&gt;&gt; devices = tensors.stream().map( Tsr::getDevice ).collect( Collectors.toList() );</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">                for ( Tsr&lt;V&gt; t : tensors ) t.to( thisDevice );</span>
+<span class="fc" id="L212">                R result = lambda.get();</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">                for ( int i = 0; i &lt; tensors.size(); i++ ) {</span>
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">                    if ( devices.get( i ) != null ) tensors.get( i ).to( devices.get( i ) );</span>
+                }
+<span class="fc" id="L216">                return result;</span>
+            }
+        };
+    }
+
+
+    interface In {
+        /**
+         *
+         * @param lambda
+         * @param &lt;R&gt; The return type parameter of the lambda which is expected to be passed to
+         *            the context runner {@link In} returned by this method.
+         *
+         * @return
+         */
+        &lt;R&gt; R in( Supplier&lt;R&gt; lambda );
     }
 
 }

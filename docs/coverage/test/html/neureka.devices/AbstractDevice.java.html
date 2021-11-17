@@ -85,28 +85,30 @@ public abstract class AbstractDevice&lt;V&gt; extends AbstractBaseDevice&lt;V&gt
 <span class="fc" id="L85">        Tsr&lt;V&gt; oldOwner = changeRequest.getOldOwner();</span>
 <span class="fc" id="L86">        Tsr&lt;V&gt; newOwner = changeRequest.getNewOwner();</span>
 <span class="pc bpc" id="L87" title="1 of 2 branches missed.">        if ( changeRequest.type() == IsBeing.REPLACED ) swap( oldOwner, newOwner );</span>
-<span class="pc bpc" id="L88" title="1 of 4 branches missed.">        else if ( oldOwner == null &amp;&amp; newOwner != null ) {</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        else if ( changeRequest.type() == IsBeing.ADDED ) {</span>
 <span class="fc bfc" id="L89" title="All 2 branches covered.">            if ( newOwner.has( Relation.class ) ) {</span>
 <span class="fc" id="L90">                Relation&lt;V&gt; relation = newOwner.get(Relation.class);</span>
-<span class="fc bfc" id="L91" title="All 2 branches covered.">                if (relation.hasParent()) { // Root needs to be found ! :</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">                if ( relation.hasParent() ) { // Root needs to be found ! :</span>
 <span class="fc" id="L92">                    Tsr&lt;V&gt; root = relation.findRootTensor();</span>
 <span class="pc bpc" id="L93" title="1 of 4 branches missed.">                    if (!this.has(root) || !root.isOutsourced())</span>
 <span class="fc" id="L94">                        throw new IllegalStateException(&quot;Data parent is not outsourced!&quot;);</span>
                 }
             }
+<span class="fc" id="L97">            Device&lt;V&gt; found = newOwner.getDevice();</span>
+<span class="fc bfc" id="L98" title="All 4 branches covered.">            if ( found != null &amp;&amp; found != this ) {</span>
+<span class="fc" id="L99">                found.restore( newOwner );</span>
+            }
         }
-<span class="fc" id="L98">        return true;</span>
+<span class="fc" id="L102">        return true;</span>
     }
 
     @Override
-    public Device cleaning( Tsr tensor, Runnable action ) {
-<span class="fc" id="L103">        _cleaning( tensor, action );</span>
-<span class="fc" id="L104">        return this;</span>
+    public &lt;T extends V&gt; Device&lt;V&gt; cleaning( Tsr&lt;T&gt; tensor, Runnable action ) {
+<span class="fc" id="L107">        _cleaning( tensor, action );</span>
+<span class="fc" id="L108">        return this;</span>
     }
 
-    protected void _cleaning( Object o, Runnable action ) {
-<span class="fc" id="L108">        _CLEANER.register( o, action );</span>
-<span class="fc" id="L109">    }</span>
+<span class="fc" id="L111">    protected void _cleaning( Object o, Runnable action ) { _CLEANER.register( o, action ); }</span>
 
     /**
      *  &lt;b&gt;This method plays an important role in approving a provided {@link ExecutionCall}.&lt;/b&gt;
@@ -119,16 +121,16 @@ public abstract class AbstractDevice&lt;V&gt; extends AbstractBaseDevice&lt;V&gt
     @Override
     public Device&lt;V&gt; approve(ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call )
     {
-<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if ( !_approveExecutionOf( call.getTensors(), call.getValOf( Arg.DerivIdx.class ), call.getOperation() ) ) {</span>
-<span class="nc" id="L123">            throw new IllegalArgumentException(&quot;Provided execution call has not been approved by this device.&quot;);</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">        if ( !_approveExecutionOf( call.getTensors(), call.getValOf( Arg.DerivIdx.class ), call.getOperation() ) ) {</span>
+<span class="nc" id="L125">            throw new IllegalArgumentException(&quot;Provided execution call has not been approved by this device.&quot;);</span>
         }
-<span class="fc" id="L125">        return this;</span>
+<span class="fc" id="L127">        return this;</span>
     }
 
     @Override
-    public &lt;T extends V&gt; Storage&lt;V&gt; store(Tsr&lt;T&gt; tensor ) {
-<span class="fc" id="L130">        tensor.set( (Component) this ); // This way we move the storing procedure to the update function!</span>
-<span class="fc" id="L131">        return this;</span>
+    public &lt;T extends V&gt; Storage&lt;V&gt; store( Tsr&lt;T&gt; tensor ) {
+<span class="fc" id="L132">        tensor.set( (Component) this ); // This way we move the storing procedure to the update function!</span>
+<span class="fc" id="L133">        return this;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

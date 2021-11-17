@@ -15,7 +15,7 @@ public final class PendingError&lt;ValType&gt;
 <span class="fc" id="L15">    }</span>
 
     public void accumulate( Tsr&lt;?&gt; error ) {
-<span class="fc" id="L18">        new FunctionBuilder( Neureka.get().context() ).build(</span>
+<span class="fc" id="L18">        new FunctionBuilder( Neureka.get().backend() ).build(</span>
                 &quot;I[ 0 ]&lt;-(I[ 0 ]+I[ 1 ])&quot;, false
 <span class="fc" id="L20">        ).call( new Tsr[]{ _accumulatedError, error } );</span>
 <span class="fc" id="L21">        _toBeReceived--;</span>
@@ -26,7 +26,7 @@ public final class PendingError&lt;ValType&gt;
     }
 
     public String toString() {
-<span class="nc" id="L29">        return &quot;PendingError(_toBeReceived=&quot; + this._toBeReceived + &quot;, _accumulatedError=&quot; + this._accumulatedError + &quot;)&quot;;</span>
+<span class="nc" id="L29">        return this.getClass().getSimpleName()+&quot;[toBeReceived=&quot; + this._toBeReceived + &quot;,accumulatedError=&quot; + this._accumulatedError + &quot;]&quot;;</span>
     }
 
     public int getToBeReceived() {

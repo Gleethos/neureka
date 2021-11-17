@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Call.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">neureka</a> &gt; <a href="index.source.html" class="el_package">neureka.backend.api</a> &gt; <span class="el_source">Call.java</span></div><h1>Call.java</h1><pre class="source lang-java linenums">package neureka.backend.api;
+
+import neureka.Tsr;
+import neureka.calculus.args.Arg;
+import neureka.calculus.args.Args;
+import neureka.devices.Device;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ *  Instances of this class model simple execution calls to the backend.
+ *  They can be passed to {@link neureka.calculus.Function} instances in order to get full
+ *  control over the execution of the provided parameters.
+ *  This class is the precursor class of {@link ExecutionCall} which is a more complete
+ *  execution state bundle used in the backend implementations.
+ *
+ * @param &lt;D&gt; The type parameter which defines the {@link Device} targeted by this {@link Call}.
+ */
+public class Call&lt;D&gt; {
+
+<span class="fc" id="L23">    public static &lt;V, T extends Device&lt;V&gt;&gt; Call.Builder&lt;V,T&gt; to( T device ) { return new Builder&lt;V,T&gt;(device); }</span>
+
+    /**
+     *  The tensor arguments from which an operation will either
+     *  read or to which it will write. &lt;br&gt;
+     *  The first entry of this array is usually containing the output tensor,
+     *  however this is not a necessity.
+     *  Some operation algorithms might use multiple argument entries as output tensors.
+     */
+    protected Tsr&lt;?&gt;[] _tensors;
+    /**
+     *  This field references the device on which this ExecutionCall should be executed.
+     */
+    protected final D _device;
+
+<span class="fc" id="L38">    protected final Args _arguments = new Args();</span>
+
+
+<span class="fc" id="L41">    protected Call(Tsr&lt;?&gt;[] tensors, D device, List&lt;Arg&gt; arguments ) {</span>
+<span class="fc" id="L42">        _tensors = tensors;</span>
+<span class="fc" id="L43">        _device = device;</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        for ( Arg&lt;?&gt; arg : arguments ) _arguments.set(arg);</span>
+<span class="fc" id="L45">    }</span>
+
+<span class="fc" id="L47">    public D getDevice() { return _device; }</span>
+
+    /**
+     * @return The {@link Tsr} parameters of this {@link Call} fo execution.
+     */
+<span class="fc" id="L52">    public Tsr&lt;?&gt;[] getTensors() { return _tensors; }</span>
+
+    public void mutateTensors( int... indices ) {
+<span class="fc" id="L55">        Tsr&lt;?&gt;[] tensors = _tensors.clone();</span>
+<span class="fc" id="L56">        _tensors = _tensors.clone();</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        for ( int i = 0; i &lt; indices.length; i++ ) {</span>
+<span class="fc" id="L58">            _tensors[i] = tensors[indices[i]];</span>
+        }
+<span class="fc" id="L60">    }</span>
+
+    public &lt;T&gt; Device&lt;T&gt; getDeviceFor(Class&lt;T&gt; supportCheck ) {
+        // TODO: Make it possible to query device for type support!
+<span class="fc" id="L64">        return (Device&lt;T&gt;) this.getDevice();</span>
+    }
+
+    public List&lt;Arg&gt; allMetaArgs() {
+<span class="fc" id="L68">        return _arguments.getAll(Arg.class).stream().map( a -&gt; (Arg&lt;Object&gt;) a ).collect(Collectors.toList());</span>
+    }
+
+    public &lt;V, T extends Arg&lt;V&gt;&gt; T get( Class&lt;T&gt; argumentClass ) {
+<span class="nc" id="L72">        return _arguments.get(argumentClass);</span>
+    }
+
+    public &lt;V, T extends Arg&lt;V&gt;&gt; V getValOf( Class&lt;T&gt; argumentClass ) {
+<span class="fc" id="L76">        return _arguments.valOf(argumentClass);</span>
+    }
+
+    public int getDerivativeIndex() {
+<span class="fc" id="L80">        return this.getValOf( Arg.DerivIdx.class );</span>
+    }
+
+    public  &lt;V&gt; Tsr&lt;V&gt; getTsrOfType( Class&lt;V&gt; valueTypeClass, int i ) {
+<span class="fc" id="L84">        Tsr&lt;?&gt;[] tensors = this.getTensors();</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        if ( valueTypeClass == null ) {</span>
+<span class="nc" id="L86">            throw new IllegalArgumentException(</span>
+                    &quot;The provided tensor type class is null!\n&quot; +
+                            &quot;Type safe access to the tensor parameter at index '&quot;+i+&quot;' failed.&quot;
+            );
+        }
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">        if ( tensors[ i ] != null ) {</span>
+<span class="fc" id="L92">            Class&lt;?&gt; tensorTypeClass = tensors[ i ].getValueClass();</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">            if ( !valueTypeClass.isAssignableFrom(tensorTypeClass) ) {</span>
+<span class="nc" id="L94">                throw new IllegalArgumentException(</span>
+                        &quot;The item value type of the tensor stored at parameter position '&quot;+i+&quot;' is &quot; +
+<span class="nc" id="L96">                                &quot;'&quot;+tensorTypeClass.getSimpleName()+&quot;' and is not a sub-type of the provided &quot; +</span>
+<span class="nc" id="L97">                                &quot;type '&quot;+valueTypeClass.getSimpleName()+&quot;'.&quot;</span>
+                );
+            }
+        }
+<span class="fc" id="L101">        return (Tsr&lt;V&gt;) tensors[ i ];</span>
+    }
+
+    public Validator validate() {
+<span class="fc" id="L105">        return new Validator();</span>
+    }
+
+    public static class Builder&lt;V, T extends Device&lt;V&gt;&gt;
+    {
+        private T _device;
+        private Tsr&lt;V&gt;[] _tensors;
+<span class="fc" id="L112">        private final Args _arguments = Args.of( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) );</span>
+
+<span class="fc" id="L114">        private Builder(T device) { _device = device; }</span>
+
+        @SafeVarargs
+        public final &lt;N extends V&gt; Builder&lt;V,T&gt; with(Tsr&lt;N&gt;... tensors) {
+<span class="fc" id="L118">            _tensors = (Tsr&lt;V&gt;[]) tensors;</span>
+<span class="fc" id="L119">            return this;</span>
+        }
+
+        public Builder&lt;V,T&gt; andArgs( List&lt;Arg&gt; arguments ) {
+<span class="fc bfc" id="L123" title="All 2 branches covered.">            for ( Arg&lt;?&gt; argument : arguments ) _arguments.set(argument);</span>
+<span class="fc" id="L124">            return this;</span>
+        }
+
+        public Builder&lt;V,T&gt; andArgs( Arg&lt;?&gt;... arguments ) {
+<span class="fc" id="L128">            return andArgs(Arrays.stream(arguments).collect(Collectors.toList()));</span>
+        }
+
+        public Call&lt;T&gt; get() {
+<span class="fc" id="L132">            return new Call&lt;T&gt;( _tensors, _device, _arguments.getAll(Arg.class) );</span>
+        }
+
+    }
+
+
+    /**
+     *  This is a simple nested class offering various lambda based methods
+     *  for validating the tensor arguments stored inside this {@link ExecutionCall}.
+     *  It is a useful tool readable as well as concise validation of a given
+     *  request for execution, that is primarily used inside implementations of the middle
+     *  layer of the backend-API architecture ({@link Algorithm#isSuitableFor(ExecutionCall)}).
+     */
+<span class="fc" id="L145">    public class Validator {</span>
+
+<span class="fc" id="L147">        private boolean _isValid = true;</span>
+
+
+<span class="fc" id="L150">        public boolean isValid() { return this._isValid; }</span>
+
+        /**
+         *  The validity as float being 1.0/true and 0.0/false.
+         *
+         * @return The current validity of this Validator as float value.
+         */
+        public float estimation() {
+<span class="fc bfc" id="L158" title="All 2 branches covered.">            return ( this._isValid ? 1.0f : 0.0f );</span>
+        }
+
+<span class="fc" id="L161">        public Estimator getEstimator() { return new Estimator(_isValid); }</span>
+
+        public Validator first( TensorCondition condition ) {
+<span class="fc bfc" id="L164" title="All 2 branches covered.">            if ( !condition.check( getTensors()[ 0 ] ) ) this._isValid = false;</span>
+<span class="fc" id="L165">            return this;</span>
+        }
+
+        public Validator any( TensorCondition condition )
+        {
+<span class="nc bnc" id="L170" title="All 2 branches missed.">            if ( !_anyMatch( condition ) ) this._isValid = false;</span>
+<span class="nc" id="L171">            return this;</span>
+        }
+
+        private boolean _anyMatch( TensorCondition condition )
+        {
+<span class="fc" id="L176">            boolean any = false;</span>
+<span class="fc bfc" id="L177" title="All 6 branches covered.">            for ( Tsr&lt;?&gt; t : getTensors() ) any = condition.check( t ) || any;</span>
+<span class="fc" id="L178">            return any;</span>
+        }
+
+        public Validator anyNotNull( TensorCondition condition )
+        {
+<span class="nc bnc" id="L183" title="All 2 branches missed.">            if ( !_anyNotNullMatch( condition ) ) this._isValid = false;</span>
+<span class="nc" id="L184">            return this;</span>
+        }
+
+        private boolean _anyNotNullMatch( TensorCondition condition )
+        {
+<span class="nc" id="L189">            boolean any = false;</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">            for ( Tsr&lt;?&gt; t : getTensors() )</span>
+<span class="nc bnc" id="L191" title="All 6 branches missed.">                if ( t != null ) any = condition.check( t ) || any;</span>
+<span class="nc" id="L192">            return any;</span>
+        }
+
+        public Validator all( TensorCondition condition )
+        {
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">            if ( !_allMatch( condition ) ) this._isValid = false;</span>
+<span class="fc" id="L198">            return this;</span>
+        }
+
+        private boolean _allMatch( TensorCondition condition ) {
+<span class="fc" id="L202">            boolean all = true;</span>
+<span class="pc bpc" id="L203" title="3 of 6 branches missed.">            for ( Tsr&lt;?&gt; t : getTensors() ) all = condition.check( t ) &amp;&amp; all;</span>
+<span class="fc" id="L204">            return all;</span>
+        }
+
+        public Validator allNotNull( TensorCondition condition )
+        {
+<span class="fc bfc" id="L209" title="All 2 branches covered.">            if ( !_allNotNullMatch( condition ) ) this._isValid = false;</span>
+<span class="fc" id="L210">            return this;</span>
+        }
+
+        private boolean _allNotNullMatch( TensorCondition condition )
+        {
+<span class="fc" id="L215">            boolean all = true;</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; t : getTensors() )</span>
+<span class="fc bfc" id="L217" title="All 6 branches covered.">                if ( t != null ) all = condition.check( t ) &amp;&amp; all;</span>
+<span class="fc" id="L218">            return all;</span>
+        }
+
+        public Validator all( TensorCompare compare )
+        {
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">            if ( !_allMatch( compare ) ) this._isValid = false;</span>
+<span class="fc" id="L224">            return this;</span>
+        }
+
+        private boolean _allMatch( TensorCompare compare ) {
+<span class="fc" id="L228">            boolean all = true;</span>
+<span class="fc" id="L229">            Tsr&lt;?&gt; last = null;</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">            for ( Tsr&lt;?&gt; current : getTensors() ) {</span>
+<span class="pc bpc" id="L231" title="3 of 4 branches missed.">                if ( last != null &amp;&amp; !compare.check( last, current ) ) all = false;</span>
+<span class="fc" id="L232">                last = current; // Note: shapes are cached!</span>
+            }
+<span class="fc" id="L234">            return all;</span>
+        }
+
+        public class Estimator {
+
+            private float _estimation;
+
+<span class="fc" id="L241">            public Estimator(boolean isValid) {</span>
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">                _estimation = ( isValid ? 0.5f : 0f );</span>
+<span class="fc" id="L243">            }</span>
+
+            private void _mod(float f) {
+<span class="fc" id="L246">                f = Math.max(-1f, f);</span>
+<span class="fc" id="L247">                f = Math.min( 1f, f);</span>
+<span class="fc" id="L248">                _estimation *= ( 1 + (f * (1-_estimation)) );</span>
+<span class="fc" id="L249">            }</span>
+
+<span class="nc bnc" id="L251" title="All 2 branches missed.">            public Estimator goodIfAll( TensorCondition condition ) { if ( _allMatch( condition ) ) _mod(0.5f); return this; }</span>
+
+<span class="nc bnc" id="L253" title="All 2 branches missed.">            public Estimator badIfAll( TensorCondition condition ) { if ( _allMatch( condition ) ) _mod(-0.5f); return this; }</span>
+
+<span class="pc bpc" id="L255" title="1 of 4 branches missed.">            public Estimator goodIfAnyNonNull( TensorCondition condition ) { return goodIfAny( t -&gt; t != null &amp;&amp; condition.check(t) ); }</span>
+
+<span class="pc bpc" id="L257" title="1 of 2 branches missed.">            public Estimator goodIfAny( TensorCondition condition ) { if ( _anyMatch( condition ) ) _mod(0.5f); return this; }</span>
+
+<span class="pc bpc" id="L259" title="1 of 4 branches missed.">            public Estimator badIfAnyNonNull( TensorCondition condition ) { return badIfAny( t -&gt; t != null &amp;&amp; condition.check(t) ); }</span>
+
+<span class="fc bfc" id="L261" title="All 2 branches covered.">            public Estimator badIfAny( TensorCondition condition ) { if ( _anyMatch( condition ) ) _mod(-0.5f); return this; }</span>
+
+<span class="nc bnc" id="L263" title="All 2 branches missed.">            public Estimator goodIfAll( TensorCompare condition ) { if ( _allMatch( condition ) ) _mod(0.5f); return this; }</span>
+
+<span class="nc bnc" id="L265" title="All 2 branches missed.">            public Estimator badIfAll( TensorCompare condition ) { if ( _allMatch( condition ) ) _mod(-0.5f); return this; }</span>
+
+            public float getEstimation() {
+<span class="fc" id="L268">                return _estimation;</span>
+            }
+
+        }
+
+    }
+
+    public interface TensorCondition    { boolean check( Tsr&lt;?&gt; tensor ); }
+    public interface TensorCompare      { boolean check( Tsr&lt;?&gt; first, Tsr&lt;?&gt; second ); }
+    public interface DeviceCondition    { boolean check( Device&lt;?&gt; device ); }
+    public interface OperationCondition { boolean check( Operation type ); }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

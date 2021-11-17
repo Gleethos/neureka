@@ -8,12 +8,12 @@ import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Broadcast;
 import neureka.backend.standard.implementations.CLImplementation;
-import neureka.backend.standard.implementations.HostImplementation;
+import neureka.backend.standard.implementations.CPUImplementation;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
-import neureka.devices.host.HostCPU;
+import neureka.devices.host.CPU;
 import neureka.devices.opencl.OpenCLDevice;
 
 public class MultiplicationLeftConv extends AbstractOperation {
@@ -45,8 +45,8 @@ public class MultiplicationLeftConv extends AbstractOperation {
 <span class="fc" id="L45">                .setSupplyADAgentFor(</span>
                         (Function f, ExecutionCall&lt;? extends Device&lt;?&gt;&gt; call, boolean forward ) -&gt;
                         {
-<span class="fc" id="L48">                            Tsr&lt;?&gt; ctxDerivative = (Tsr) call.getValOf(Arg.Derivative.class);</span>
-<span class="fc" id="L49">                            Function mul = Neureka.get().context().getFunction().mul();</span>
+<span class="fc" id="L48">                            Tsr&lt;?&gt; ctxDerivative = (Tsr&lt;?&gt;) call.getValOf(Arg.Derivative.class);</span>
+<span class="fc" id="L49">                            Function mul = Neureka.get().backend().getFunction().mul();</span>
 <span class="pc bpc" id="L50" title="1 of 2 branches missed.">                            if ( ctxDerivative != null ) {</span>
 <span class="nc" id="L51">                                return ADAgent.of( ctxDerivative )</span>
 <span class="nc" id="L52">                                                .setForward( (node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, ctxDerivative ) )</span>
@@ -57,10 +57,10 @@ public class MultiplicationLeftConv extends AbstractOperation {
 <span class="fc bfc" id="L57" title="All 2 branches covered.">                            if ( forward ) throw new IllegalArgumentException(&quot;Broadcast implementation does not support forward-AD!&quot;);</span>
                             else
                             {
-<span class="fc" id="L60">                                Tsr&lt;?&gt; deriv = f.executeDerive( inputs, d );</span>
-<span class="fc" id="L61">                                return ADAgent.of( deriv )</span>
-<span class="pc" id="L62">                                                .setForward( ( node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, deriv ) )</span>
-<span class="pc" id="L63">                                                .setBackward( ( node, backwardError ) -&gt; mul.execute( backwardError, deriv ) );</span>
+<span class="fc" id="L60">                                Tsr&lt;?&gt; derivative = f.executeDerive( inputs, d );</span>
+<span class="fc" id="L61">                                return ADAgent.of( derivative )</span>
+<span class="pc" id="L62">                                                .setForward( ( node, forwardDerivative ) -&gt; mul.execute( forwardDerivative, derivative ) )</span>
+<span class="pc" id="L63">                                                .setBackward( ( node, backwardError ) -&gt; mul.execute( backwardError, derivative ) );</span>
                             }
                         }
                 )
@@ -69,7 +69,7 @@ public class MultiplicationLeftConv extends AbstractOperation {
                         call -&gt; {
 <span class="nc" id="L70">                            Tsr&lt;?&gt;[] tsrs = call.getTensors();</span>
 <span class="nc bnc" id="L71" title="All 2 branches missed.">                            int offset = ( tsrs[ 0 ] == null ) ? 1 : 0;</span>
-<span class="nc" id="L72">                            return ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().context().getOperation(&quot;idy&quot;)).on(call.getDevice());</span>
+<span class="nc" id="L72">                            return ExecutionCall.of(tsrs[offset], tsrs[1+offset]).andArgs(Arg.DerivIdx.of(-1)).running(Neureka.get().backend().getOperation(&quot;idy&quot;)).on(call.getDevice());</span>
                         }
                 )
 <span class="fc" id="L75">                .buildFunAlgorithm();</span>
@@ -78,8 +78,8 @@ public class MultiplicationLeftConv extends AbstractOperation {
 <span class="fc" id="L78">        setAlgorithm(</span>
                 Broadcast.class,
 <span class="fc" id="L80">                xBroadcast.setImplementationFor(</span>
-                        HostCPU.class,
-                        HostImplementation
+                        CPU.class,
+                        CPUImplementation
 <span class="fc" id="L83">                            .withArity(3)</span>
 <span class="fc" id="L84">                            .andImplementation(</span>
                                 call -&gt;

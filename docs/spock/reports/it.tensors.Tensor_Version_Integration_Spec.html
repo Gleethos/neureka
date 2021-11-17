@@ -1,0 +1,896 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></meta>
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 300;
+}
+
+h2 {
+    font-weight: 400;
+}
+
+hr {
+    margin-bottom: 1.5em;
+}
+
+h3 {
+    font-weight: 200;
+}
+
+table {
+    margin: 7px;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.75);
+}
+
+.ignored {
+    color: gray;
+}
+
+div.project-header {
+    margin-bottom: 10px;
+    font-size: large;
+}
+
+div.project-header &gt; span.project-name {
+
+                        }
+
+div.project-header &gt; span.project-version {
+                            padding-left: 20px;
+                        }
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+div.spec-title {
+    padding: 10px 0px 5px 0px;
+}
+
+tr.error td, td.error {
+    background-color: #F89A4F !important;
+}
+
+tr.failure td, td.failure {
+    color: red;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}
+
+
+
+
+
+
+.back-link {
+    font-size: small;
+    font-weight: bold;
+}
+
+
+div.date-test-ran {
+    font-size: small;
+    font-style: italic;
+}
+
+table.features-table {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table {
+    width: 99%;
+
+    font-weight: bold;
+    font-size: small;
+}
+
+table.summary-table tbody {
+    width: 99%;
+    text-align: left;
+}
+
+table.summary-table th {
+    background: lightblue;
+    padding: 6px;
+}
+
+table.summary-table td {
+    background: #E0E0E0;
+    padding: 6px;
+}
+
+pre.title {
+    font-family: inherit;
+    font-size: 24px;
+    line-height: 28px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+pre.narrative {
+    font-family: inherit;
+    font-size: 18px;
+    font-style: italic;
+    line-height: 23px;
+    letter-spacing: -1px;
+    color: #333;
+}
+
+.feature-description {
+    font-size: large;
+    background: lightblue;
+    padding: 12px;
+}
+
+.feature-toc-error {
+    color: #F89A4F;
+}
+
+.feature-toc-failure {
+    color: #FF8080;
+}
+
+.feature-toc-ignored {
+    color: lightgray;
+}
+
+.feature-toc-pass {
+    color: green;
+}
+
+.feature-description.error {
+    background: #F89A4F;
+}
+
+.feature-description.failure {
+    background: #FF8080;
+}
+
+.feature-description.ignored {
+    background: lightgray;
+}
+
+.feature-description.ignored .reason {
+    color: black;
+    font-style: italic;
+    font-size: small;
+}
+
+div.extra-info {
+    font-size: small;
+}
+
+div.spec-headers {
+    margin: 4px;
+    font-style: italic;
+}
+
+div.spec-header {
+}
+
+div.issues {
+    margin-top: 6px;
+    padding: 10px 5px 5px 5px;
+    background-color: lemonchiffon;
+    color: black;
+    font-weight: 500;
+    font-size: small;
+    max-width: 50%;
+}
+
+div.pending-feature {
+    background-color: dodgerblue;
+    color: white;
+    margin-top: 6px;
+    padding: 5px;
+    text-align: center;
+    font-size: small;
+    max-width: 120px;
+}
+
+div.problem-description {
+    padding: 10px;
+    background: pink;
+    border-radius: 10px;
+}
+
+div.problem-header {
+    font-weight: bold;
+    color: red;
+}
+
+div.problem-list {
+
+}
+
+table.ex-table{
+    width: 98%;
+}
+
+table.ex-table th {
+    background: lightblue;
+    padding: 5px;
+}
+
+table.ex-table td {
+    background: #E0E0E0;
+    padding: 2px 5px 2px 5px;
+}
+
+table td {
+    min-width: 50px;
+}
+
+col.block-kind-col {
+    width: 70px;
+}
+
+span.spec-header {
+    font-weight: bold;
+}
+
+div.spec-text {
+    /*color: green;*/
+}
+
+div.spec-status {
+    font-style: italic;
+}
+
+.ignored {
+    color: gray;
+}
+
+td.ex-result {
+    text-align: center;
+    background: white !important;
+}
+
+.ex-pass {
+    color: darkgreen;
+}
+
+.ex-fail {
+    color: red;
+    font-weight: bold;
+}
+
+div.block-kind {
+    margin: 2px;
+    font-style: italic;
+}
+
+div.block-text {
+
+}
+
+pre.block-source {
+    background-color: whitesmoke;
+    padding: 10px;
+}
+
+pre.block-source.error {
+    background-color: pink;
+    color: red;
+    font-weight: bold;
+}
+
+pre.block-source.pre-error {
+
+}
+
+pre.block-source.before-error {
+    margin-bottom: -14px;
+}
+
+pre.block-source.after-error {
+    color: gray;
+    margin-top: -14px;
+}
+
+pre.block-source.post-error {
+    color: gray;
+}
+
+div.footer {
+    text-align: center;
+    font-size: small;
+}</style>
+</head>
+<body>
+<h2>Report for it.tensors.Tensor_Version_Integration_Spec</h2>
+<hr></hr>
+<div class='back-link'>
+<a href='index.html'>&lt;&lt; Back</a>
+</div>
+<div class='summary-report'>
+<h3>Summary:</h3>
+<div class='date-test-ran'>Created on Wed Nov 17 22:25:10 CET 2021 by Daglemino</div>
+<table class='summary-table'>
+<thead>
+<tr>
+<th>Executed features</th>
+<th>Passed</th>
+<th>Failures</th>
+<th>Errors</th>
+<th>Skipped</th>
+<th>Success rate</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100.0%</td>
+<td>1.754 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class='spec-headers'>
+<div class='spec-header'>
+                <h2> Tensor Version Behavior </h2>
+                <br> 
+                <p>
+                    There are two fundamental categories of operations
+                    which can be applied to tensors : <br>
+                    Inline operations and Non-Inline  operations! <br>
+                    <br>
+                    Inline operations are often times problematic because they produce
+                    side effects by changing passed tensors instead of producing new ones... <br>   
+                    One such bad side effect can easily occur for tensors involved in the
+                    autograd system, more specifically: the recorded computation graph. <br>
+                    Inline operations can break the mathematically pureness of the back-propagation
+                    procedure by for example changing partial derivatives... <br>
+                    In order to prevent said errors to occur unnoticed tensors
+                    have versions which will increment when the underlying data of the tensor changes. <br>
+                    This version will be tracked by the computation graph as well in order to
+                    match it with the ones stored inside the tensor. <br>
+                    A mismatch would then yield an exception! <br>
+                    <br>
+                    This specification is responsible for defining the behaviour of this
+                    version number with respect to their wrapping tensors as well as computation graph nodes.
+                
+                </p>
+            </div>
+</div>
+<h3>Features:</h3>
+<table class='features-table'>
+<colgroup>
+<col class='block-kind-col'></col>
+<col class='block-text-col'></col>
+</colgroup>
+<tbody>
+<ul id='toc'>
+<li>
+<a href='#884075735' class='feature-toc-pass'>Non-inline operations causes version incrementation.</a>
+</li>
+<li>
+<a href='#-134787625' class='feature-toc-pass'>Inline operations causes version incrementation.</a>
+</li>
+<li>
+<a href='#-1893411315' class='feature-toc-pass'>Inline operations cause illegal state exceptions.</a>
+</li>
+</ul>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='884075735'>
+<span>Non-inline operations causes version incrementation.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<div class='block-text'>Two tensors, one requiring gradients and the other one not.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr a = Tsr.of(6).setRqsGradient(true)
+Tsr b = Tsr.of(-4)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>A binding for both tensors as preparation for calling the Groovy shell.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Binding binding = new Binding()
+binding.setVariable('a', a)
+binding.setVariable('b', b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<div class='block-text'>The versions of both tensors are 0 initially.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>a.getVersion() == 0
+b.getVersion() == 0</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The Groovy code is being evaluated inside the Groovy shell.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr c = new GroovyShell(binding).evaluate((code))</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The resulting tensor (toString) will contain the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>c.toString().contains(expected)
+c != a</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The three tensors have the expected versions.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>a.getVersion() == version_of_a
+b.getVersion() == version_of_b
+c.getVersion() == version_of_c</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Where:</div>
+</td>
+<td>
+<div class='block-text'>The following arguments are being used:</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>code</th>
+<th class='ex-header'>no_inline</th>
+<th class='ex-header'>version_of_c</th>
+<th class='ex-header'>version_of_a</th>
+<th class='ex-header'>version_of_b</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'> a + b </td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1):[2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'> a - b </td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1):[10.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'> a * b </td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1):[-24.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'> a / b </td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1):[-1.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'> a + b </td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1):[2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'> a - b </td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1):[10.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'> a * b </td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1):[-24.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'> a / b </td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1):[-1.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>8/8 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-134787625'>
+<span>Inline operations causes version incrementation.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().autograd().setIsPreventingInlineOperations( save_inline )
+Tsr a = Tsr.of(4) + Tsr.of(2)
+Tsr b = Tsr.of(-1) + Tsr.of(-3).setRqsGradient(true)
+Binding binding = new Binding()
+binding.setVariable('a', a)
+binding.setVariable('b', b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>a.getVersion() == 0
+b.getVersion() == 0</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The groovy code is being evaluated.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr c = new GroovyShell(binding).evaluate((code))</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>The resulting tensor (toString) will contain the expected String.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>c.toString().contains(expected)
+c == a</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The three tensors have the expected versions.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>a.getVersion() == version_of_a
+b.getVersion() == version_of_b
+c.getVersion() == version_of_c</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>code</th>
+<th class='ex-header'>save_inline</th>
+<th class='ex-header'>version_of_c</th>
+<th class='ex-header'>version_of_a</th>
+<th class='ex-header'>version_of_b</th>
+<th class='ex-header'>expected</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'> a.plusAssign(b) </td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1):[2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'> a.minusAssign(b) </td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1):[10.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'> a.timesAssign(b) </td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1):[-24.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'> a.divAssign(b) </td>
+<td class='ex-value'>true</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>1</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1):[-1.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'> a.plusAssign(b) </td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1):[2.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'> a.minusAssign(b) </td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1):[10.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'> a.timesAssign(b) </td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1):[-24.0]</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'> a.divAssign(b) </td>
+<td class='ex-value'>false</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>0</td>
+<td class='ex-value'>(1):[-1.5]</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>8/8 passed</div>
+</td>
+</tr>
+<tr>
+<td colspan='10'>
+<div class='feature-description' id='-1893411315'>
+<span>Inline operations cause illegal state exceptions.</span>
+<span style='float: right; font-size: 60%;'>
+<a href='#toc'>Return</a>
+</span>
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Given:</div>
+</td>
+<td>
+<pre class='block-source'>Neureka.get().settings().autograd().setIsPreventingInlineOperations( true )
+Tsr a = Tsr.of(4) + Tsr.of(2).setRqsGradient(true)
+Tsr b = Tsr.of(-4)
+Binding binding = new Binding()
+binding.setVariable('a', a)
+binding.setVariable('b', b)</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Expect:</div>
+</td>
+<td>
+<pre class='block-source'>a.getVersion() == 0
+b.getVersion() == 0</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>When:</div>
+</td>
+<td>
+<div class='block-text'>The groovy code is being evaluated.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>Tsr c = new GroovyShell( binding ).evaluate( code )</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Then:</div>
+</td>
+<td>
+<div class='block-text'>An illegal state exception is being thrown.</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>def exception = thrown(IllegalStateException)
+exception.message == message</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>And:</div>
+</td>
+<td>
+<div class='block-text'>The variable "c" is null!</div>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<pre class='block-source'>c == null</pre>
+</td>
+</tr>
+<tr>
+<td>
+<div class='block-kind'>Examples:</div>
+</td>
+<td>
+<div class='spec-examples'>
+<table class='ex-table'>
+<thead>
+<tr>
+<th class='ex-header'>code</th>
+<th class='ex-header'>message</th>
+</tr>
+</thead>
+<tbody>
+<tr class='ex-pass'>
+<td class='ex-value'>a.plusAssign(b) </td>
+<td class='ex-value'>Inline operation occurred on tensor which is part of a computation graph node with autograd support!
+The following OperationType caused an internal version mismatch: 'left_inline'</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>a.minusAssign(b)</td>
+<td class='ex-value'>Inline operation occurred on tensor which is part of a computation graph node with autograd support!
+The following OperationType caused an internal version mismatch: 'left_inline'</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>a.timesAssign(b)</td>
+<td class='ex-value'>Inline operation occurred on tensor which is part of a computation graph node with autograd support!
+The following OperationType caused an internal version mismatch: 'left_inline'</td>
+<td class='ex-result'>OK</td>
+</tr>
+<tr class='ex-pass'>
+<td class='ex-value'>a.divAssign(b) </td>
+<td class='ex-value'>Inline operation occurred on tensor which is part of a computation graph node with autograd support!
+The following OperationType caused an internal version mismatch: 'left_inline'</td>
+<td class='ex-result'>OK</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+<td>
+<div class='spec-status'>4/4 passed</div>
+</td>
+</tr>
+</tbody>
+</table>
+<hr></hr>
+<div class='footer'>Generated by <a href='https://github.com/renatoathaydes/spock-reports'>Athaydes Spock Reports</a></div>
+</body>
+</html>
