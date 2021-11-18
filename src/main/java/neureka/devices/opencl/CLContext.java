@@ -105,6 +105,10 @@ public class CLContext implements BackendExtension
 
     @Override
     public void dispose() {
-
+        for ( OpenCLPlatform platform : _platforms ) {
+            for ( OpenCLDevice device : platform.getDevices() ) {
+                device.dispose();
+            }
+        }
     }
 }

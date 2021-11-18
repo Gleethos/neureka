@@ -54,19 +54,20 @@ import java.util.function.Consumer;
  */
 public class SettingsLoader
 {
+    private static final Logger _LOG = LoggerFactory.getLogger(SettingsLoader.class);
     private static String _settings_source;
     private static String _setup_source;
 
-    public static void loadProperties(Neureka instance) {
+    public static void loadProperties( Neureka instance ) {
         try (
                 final InputStream stream = instance.getClass()
                                                     .getClassLoader()
                                                     .getResourceAsStream( "library_settings.properties" )
         ) {
             Properties properties = new Properties();
-            properties.load(stream);
+            properties.load( stream );
             Neureka.Settings s = instance.settings();
-            new TypeChecker(properties)
+            new TypeChecker( properties )
                     .checkAndAssign("debug.isKeepingDerivativeTargetPayloads"      , Boolean.class, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)                     )//~= false
                     .checkAndAssign("autograd.isPreventingInlineOperations"        , Boolean.class, v -> s.autograd().setIsPreventingInlineOperations(v)                       )//~= true
                     .checkAndAssign("autograd.isRetainingPendingErrorForJITProp"   , Boolean.class, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)                  )//~= true
@@ -86,16 +87,14 @@ public class SettingsLoader
                     .checkAndAssign("view.TsrAsString.Should.BE_CELL_BOUND"        , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.BE_CELL_BOUND       , v))//~= false
                     .checkAndAssign("ndim.isOnlyUsingDefaultNDConfiguration"       , Boolean.class, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)                      )//~= false
                     .checkAndAssign("dtype.defaultDataTypeClass"                   , Class.class,   v -> s.dtype().setDefaultDataTypeClass(v)                                  )
-                    .checkAndAssign("dtype.isAutoConvertingExternalDataToJVMTypes", Boolean.class, v -> s.dtype().setIsAutoConvertingExternalDataToJVMTypes(v)                 );
+                    .checkAndAssign("dtype.isAutoConvertingExternalDataToJVMTypes" , Boolean.class, v -> s.dtype().setIsAutoConvertingExternalDataToJVMTypes(v)                );
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch ( IOException e ) {
+            _LOG.error("Failed to load library settings!", e);
         }
     }
 
     private static class TypeChecker {
-
-        private static Logger _LOG = LoggerFactory.getLogger(SettingsLoader.class);
 
         private final Properties _properties;
 
@@ -154,17 +153,13 @@ public class SettingsLoader
             Method call = closure.getClass().getMethod("call", Object.class);
             setDelegate.invoke(closure, delegate);
             return call.invoke(closure, delegate);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            _LOG.error("Failed calling Groovy closure for loading settings!", e);
         }
         return null;
     }
 
-    public static void tryGroovyScriptsOn(Neureka instance, Consumer<String> scriptConsumer)
+    public static void tryGroovyScriptsOn( Neureka instance, Consumer<String> scriptConsumer )
     {
         if ( _settings_source == null || _setup_source == null) {
             _settings_source = instance.utility().readResource("library_settings.groovy");
@@ -182,7 +177,7 @@ public class SettingsLoader
             scriptConsumer.accept(_settings_source);
             scriptConsumer.accept(_setup_source);
         } catch (Exception e) {
-            e.printStackTrace();
+            _LOG.error("Failed to load settings from Groovy script!", e);
         }
 
     }
