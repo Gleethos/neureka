@@ -46,7 +46,6 @@ import org.jetbrains.annotations.Contract;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
-import java.util.function.Function;
 
 /**
  *  This class is in essence a simple wrapper class for a tensor and a StringBuilder
@@ -362,11 +361,11 @@ public final class TsrAsString
      * @param delimiter The String which ought to separate stringified entries.
      */
     private void _buildRow(
-            int trimStart, int trimEnd, int trimSize, int[] indices, Function<int[],String> stringifier, String delimiter
+            int trimStart, int trimEnd, int trimSize, int[] indices, NDValStringifier stringifier, String delimiter
     ) {
         for ( int i = 0; i < _shape[ _shape.length - 1 ]; i++ ) {
             if ( i < trimStart || i >= trimEnd ) {
-                _$( stringifier.apply( indices ) );
+                _$( stringifier.stringify( indices ) );
                 if ( i < _shape[ _shape.length - 1 ] - 1 ) _$( delimiter );
             }
             else if ( i == trimStart ) _$( "... " )._$( trimSize )._$( " more ..., " );
@@ -424,9 +423,9 @@ public final class TsrAsString
             _$( Util.indent( dim ) );
             _$( _legacy ? "( " : "[ " );
             ValStringifier getter = _createValStringifierAndFormatter( _tensor.getData() );
-            Function<int[], String> fun = ( _tensor.isVirtual() )
-                    ? iarr -> getter.stringify( 0 )
-                    : iarr -> getter.stringify( _tensor.indexOfIndices( iarr ) );
+            NDValStringifier fun = _tensor.isVirtual()
+                                        ? iarr -> getter.stringify( 0 )
+                                        : iarr -> getter.stringify( _tensor.indexOfIndices( iarr ) );
 
             _buildRow( trimStart, trimEnd, trimSize, indices, fun, ", " );
             _$( _legacy ? " )" : " ]" );
@@ -515,6 +514,16 @@ public final class TsrAsString
     private interface ValStringifier
     {
         String stringify( int i );
+    }
+
+    /**
+     *  A simple functional interface for turning something at a particular
+     *  multi dimensional index into a {@link String}.
+     */
+    @FunctionalInterface
+    private interface NDValStringifier
+    {
+        String stringify( int[] idx );
     }
 
     /**
