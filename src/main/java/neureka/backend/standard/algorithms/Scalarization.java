@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
@@ -23,11 +24,11 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
                             .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
                             .first( t -> t == null )
                             .isValid()
-            ) return 0.0f;
+            ) return SuitabilityPredicate.UNSUITABLE;
             Tsr[] tsrs = call.getTensors();
             int size = tsrs[tsrs.length-1].size();
-            if ( size != 1 || tsrs.length!=2 ) return 0f;
-            return 1.0f;
+            if ( size != 1 || tsrs.length != 2 ) return SuitabilityPredicate.UNSUITABLE;
+            return SuitabilityPredicate.GOOD;
         });
         setCallPreparation(
                 call -> {

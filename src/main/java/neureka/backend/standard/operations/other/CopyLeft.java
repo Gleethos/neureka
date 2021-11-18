@@ -3,6 +3,7 @@ package neureka.backend.standard.operations.other;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.Activation;
@@ -34,9 +35,10 @@ public class CopyLeft extends AbstractOperation {
                 .setIsSuitableFor(
                         call ->
                         {
-                            if ( call.getTsrOfType( Number.class, 1 ).isVirtual() || call.getTsrOfType( Number.class, 1 ).size() == 1 ) {
-                                return 1.0f;
-                            } else return 0.0f;
+                            if ( call.getTsrOfType( Number.class, 1 ).isVirtual() || call.getTsrOfType( Number.class, 1 ).size() == 1 )
+                                return SuitabilityPredicate.GOOD;
+                            else
+                                return SuitabilityPredicate.UNSUITABLE;
                         }
                 )
                 .setCanPerformBackwardADFor( call -> false )

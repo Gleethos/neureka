@@ -8,6 +8,7 @@ import neureka.backend.api.Algorithm
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
 import neureka.backend.api.BackendContext
+import neureka.backend.api.algorithms.fun.SuitabilityPredicate
 import neureka.backend.standard.implementations.CPUImplementation
 import neureka.calculus.CalcUtil
 import neureka.calculus.Function
@@ -67,7 +68,7 @@ class Calculus_Extension_Integration_Spec extends Specification
                                 .build()
                                 .setAlgorithm(
                                         Algorithm.withName(null)
-                                                .setIsSuitableFor(call -> 1.0f)
+                                                .setIsSuitableFor(call -> SuitabilityPredicate.GOOD  )
                                                 .setCanPerformBackwardADFor(call -> true)
                                                 .setCanPerformForwardADFor(call -> false)
                                                 .setSupplyADAgentFor(

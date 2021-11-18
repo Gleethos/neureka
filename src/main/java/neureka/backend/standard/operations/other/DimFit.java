@@ -4,6 +4,7 @@ import neureka.Tsr;
 import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
+import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.backend.api.operations.AbstractOperation;
 import neureka.backend.api.operations.OperationBuilder;
 import neureka.backend.standard.algorithms.FunAlgorithm;
@@ -31,7 +32,7 @@ public class DimFit extends AbstractOperation
 
         FunAlgorithm implementation =
                 Algorithm.withName("reshape")
-                            .setIsSuitableFor( call -> 1.0f )
+                            .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
                             .setCanPerformBackwardADFor( call -> true )
                             .setCanPerformForwardADFor( call -> false )
                             .setSupplyADAgentFor(

@@ -1,6 +1,7 @@
 package neureka.backend.api;
 
 import neureka.Tsr;
+import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.calculus.args.Arg;
 import neureka.calculus.args.Args;
 import neureka.devices.Device;
@@ -150,15 +151,19 @@ public class Call<D> {
         public boolean isValid() { return this._isValid; }
 
         /**
-         *  The validity as float being 1.0/true and 0.0/false.
+         *  The validity as float being >0/true and 0.0/false.
+         *  If the {@link Call} is valid then a suitability estimation of 0.9f
+         *  will be returned simply because a suitability of 1 would mean
+         *  that no other algorithm could ever compete with this one if if was
+         *  faster or simply better suited!
          *
          * @return The current validity of this Validator as float value.
          */
         public float estimation() {
-            return ( this._isValid ? 1.0f : 0.0f );
+            return ( this._isValid ? SuitabilityPredicate.GOOD : SuitabilityPredicate.UNSUITABLE );
         }
 
-        public Estimator getEstimator() { return new Estimator(_isValid); }
+        public Estimator getEstimator() { return new Estimator( _isValid ); }
 
         public Validator first( TensorCondition condition ) {
             if ( !condition.check( getTensors()[ 0 ] ) ) this._isValid = false;
@@ -239,7 +244,7 @@ public class Call<D> {
             private float _estimation;
 
             public Estimator(boolean isValid) {
-                _estimation = ( isValid ? 0.5f : 0f );
+                _estimation = ( isValid ? SuitabilityPredicate.OKAY : SuitabilityPredicate.UNSUITABLE );
             }
 
             private void _mod(float f) {
@@ -276,6 +281,5 @@ public class Call<D> {
     public interface TensorCompare      { boolean check( Tsr<?> first, Tsr<?> second ); }
     public interface DeviceCondition    { boolean check( Device<?> device ); }
     public interface OperationCondition { boolean check( Operation type ); }
-
 
 }

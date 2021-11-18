@@ -4,6 +4,7 @@ import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.Operation;
 import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
+import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.RecursiveExecutor;
 import neureka.calculus.args.Arg;
@@ -25,7 +26,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                             !call.validate()
                             .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
                             .isValid()
-                    ) return 0.0f;
+                    ) return SuitabilityPredicate.UNSUITABLE;
 
                     int maxRank = 0;
                     for ( Tsr<?> t : call.getTensors() ) if ( t != null && t.rank() > maxRank ) maxRank = t.rank();
@@ -40,7 +41,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                             }
                         }
                     }
-                    return 1.0f;
+                    return SuitabilityPredicate.GOOD;
                 }
         );
         setCanPerformForwardADFor( call -> {

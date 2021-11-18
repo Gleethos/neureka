@@ -6,6 +6,7 @@ import neureka.autograd.ADAgent;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
+import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
@@ -68,7 +69,7 @@ public class CLFunctionCompiler {
                 .build()
                 .setAlgorithm(
                         Algorithm.withName( "generic_algorithm_for_"+ _functionName )
-                                .setIsSuitableFor( call -> 1.0f )
+                                .setIsSuitableFor( call -> SuitabilityPredicate.GOOD )
                                 .setCanPerformBackwardADFor( call -> true )
                                 .setCanPerformForwardADFor( call -> false )
                                 .setSupplyADAgentFor(

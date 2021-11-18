@@ -13,6 +13,20 @@ import neureka.devices.Device;
  */
 public interface SuitabilityPredicate {
 
+    /*
+        The following are reference values for calculating a suitability value for a given
+        call for execution on any given algorithm...
+     */
+    float PERFECT    = 1.000f;
+    float EXCELLENT  =  .875f;
+    float VERY_GOOD  =  .750f;
+    float GOOD       =  .625f;
+    float OKAY       =  .500f;
+    float NOT_GOOD   =  .375f;
+    float BAD        =  .250f;
+    float TERRIBLE   =  .125f;
+    float UNSUITABLE = 0.000f;
+
     /**
      * When an {@link ExecutionCall} instance has been formed then it will be routed by <br>
      * the given {@link Operation} instance to their components, namely : <br>
