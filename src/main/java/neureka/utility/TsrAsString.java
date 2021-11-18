@@ -561,7 +561,7 @@ public final class TsrAsString
         @Contract( pure = true )
         public static Map<Should, Object> configFromCode( String modes )
         {
-            if ( modes == null || modes.trim().isEmpty() )
+            if ( modes == null )
                 return Neureka.get().settings().view().getAsString();
 
             Map< Should, Object > conf = new HashMap<>();
