@@ -89,32 +89,45 @@ public final class TsrAsString
         BE_CELL_BOUND
     }
 
-    private interface ValStringifier {
-        String stringify( int i );
+    /**
+     *  A builder providing multiple different configuration options for building
+     *  a {@link TsrAsString} instance in a fluent way.
+     */
+    public static Builder representing( Tsr<?> t ) {
+        return new Builder() {
+            /**
+             * @param configMap The configuration map used as basis for turning the wrapped {@link Tsr} to a {@link String}.
+             * @return A new {@link TsrAsString} based on the provided configuration.
+             */
+            @Override
+            public TsrAsString withConfig( Map<Should, Object> configMap ) { return new TsrAsString( t, configMap ); }
+            /**
+             * @param config The configuration used as basis for turning the wrapped {@link Tsr} to a {@link String}.
+             * @return A new {@link TsrAsString} based on the provided configuration.
+             */
+            @Override
+            public TsrAsString withConfig( String config ) { return new TsrAsString( t, config ); }
+            /**
+             * @return A new {@link TsrAsString} based on the default configuration.
+             */
+            @Override
+            public TsrAsString byDefaults() { return new TsrAsString(t); }
+        };
     }
 
-    public TsrAsString( Tsr<?> tensor, Map< Should, Object > settings )
-    {
-        Map< Should, Object > copy = Util.configFromCode( "" );
+    private TsrAsString( Tsr<?> tensor, Map<Should, Object> settings ) {
+        Map<Should, Object> copy = Util.configFromCode( "" );
         for ( Should s : Should.values() )
             if ( settings.containsKey( s ) ) copy.put( s, settings.get( s ) );
         _construct( tensor, copy );
     }
 
-    public TsrAsString( Tsr<?> tensor, String modes )
-    {
-        _construct(
-                tensor,
-                Util.configFromCode( modes )
-        );
+    private TsrAsString( Tsr<?> tensor, String modes ) {
+        _construct( tensor, Util.configFromCode( modes ) );
     }
 
-    public TsrAsString( Tsr<?> tensor )
-    {
-        _construct(
-                tensor,
-                Util.configFromCode( null )
-        );
+    private TsrAsString( Tsr<?> tensor ) {
+        _construct( tensor, Util.configFromCode( null ) );
     }
 
     private void _construct( Tsr<?> tensor, Map< Should, Object > settings )
@@ -265,15 +278,15 @@ public final class TsrAsString
 
     public String toString() { return toString(""); }
 
-    public String toString( String depth )
+    public String toString( String indent )
     {
         if ( _tensor.isEmpty() ) return "empty";
         else if ( _tensor.isUndefined() ) return "undefined";
         _asStr = new StringBuilder();
-        String base      = ( depth == null ? ""   : "\n" + depth      );
-        String delimiter = ( depth == null ? ""   : "    "            );
-        String half      = ( depth == null ? ""   : "  "              );
-        String deeper    = ( depth == null ? null : depth + delimiter );
+        String base      = ( indent == null ? ""   : "\n" + indent      );
+        String delimiter = ( indent == null ? ""   : "    "            );
+        String half      = ( indent == null ? ""   : "  "              );
+        String deeper    = ( indent == null ? null : indent + delimiter );
         if ( _hasShape ) _strShape();
         if ( !_hasValue ) return _asStr.toString();
         _$( ":" );
@@ -472,6 +485,39 @@ public final class TsrAsString
     }
 
     /**
+     *  A builder interface providing multiple different options for building
+     *  a {@link TsrAsString} instance in a fluent way.
+     */
+    public interface Builder {
+        /**
+         * @param configMap The configuration map used as basis for turning the wrapped {@link Tsr} to a {@link String}.
+         * @return A new {@link TsrAsString} based on the provided configuration.
+         */
+        TsrAsString withConfig(Map< Should, Object > configMap );
+
+        /**
+         * @param config The configuration used as basis for turning the wrapped {@link Tsr} to a {@link String}.
+         * @return A new {@link TsrAsString} based on the provided configuration.
+         */
+        TsrAsString withConfig( String config );
+
+        /**
+         * @return A new {@link TsrAsString} based on the default configuration.
+         */
+        TsrAsString byDefaults();
+    }
+
+    /**
+     *  A simple functional interface for turning something at a particular
+     *  index into a {@link String}.
+     */
+    @FunctionalInterface
+    private interface ValStringifier
+    {
+        String stringify( int i );
+    }
+
+    /**
      *  This class is a simple utility class which contains
      *  a collection of static and stateless methods containing
      *  useful functionalities for tensor stringification.
@@ -515,7 +561,7 @@ public final class TsrAsString
         @Contract( pure = true )
         public static Map<Should, Object> configFromCode( String modes )
         {
-            if ( modes == null )
+            if ( modes == null || modes.trim().isEmpty() )
                 return Neureka.get().settings().view().getAsString();
 
             Map< Should, Object > conf = new HashMap<>();

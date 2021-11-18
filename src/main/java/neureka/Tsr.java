@@ -2883,24 +2883,24 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
     public String toString( Map<TsrAsString.Should, Object> config, String indent ) {
-        return new TsrAsString( this, config ).toString( indent );
+        return TsrAsString.representing( this ).withConfig( config ).toString( indent );
     }
 
     public String toString( Map<TsrAsString.Should, Object> config ) {
-        return new TsrAsString( this, config ).toString();
+        return TsrAsString.representing( this ).withConfig( config ).toString();
     }
 
 
-    protected String _toString( String mode, String deep )
+    protected String _toString( String config, String indent )
     {
-        return new TsrAsString( this, mode ).toString( deep );
+        return TsrAsString.representing( this ).withConfig( config ).toString( indent );
     }
 
     @Override
     public String toString()
     {
         if ( this.isDeleted() ) return "deleted";
-        return new TsrAsString( this ).toString();
+        return TsrAsString.representing( this ).byDefaults().toString();
     }
 
     public static void makeFit( Tsr<?>[] tensors, boolean doesAD )
