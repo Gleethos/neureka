@@ -561,8 +561,8 @@ public final class TsrAsString
         @Contract( pure = true )
         public static Map<Should, Object> configFromCode( String modes )
         {
-            if ( modes == null )
-                return Neureka.get().settings().view().getAsString();
+            if ( modes == null || modes.trim().isEmpty() )
+                return new TreeMap<>(Neureka.get().settings().view().getAsString());
 
             Map< Should, Object > conf = new HashMap<>();
             conf.put( Should.BE_SHORTENED_BY,      modes.contains( "s" ) ? 3 : 50                             );
