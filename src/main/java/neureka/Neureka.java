@@ -215,15 +215,15 @@ public final class Neureka
 
     public String toString() {
         return "Neureka[" +
-                    "settings=" + this._settings + "," +
-                    "utility=" + this._utility + "," +
-                    "backend=" + this._backend +
+                    "settings=" + _settings + "," +
+                    "utility="  + _utility  + "," +
+                    "backend="  + _backend  +
                 "]";
     }
 
     public BackendContext getBackend() { return this.backend(); }
 
-    public void setBackend( BackendContext backendContext ) { this._backend = backendContext; }
+    public void setBackend( BackendContext backendContext ) { _backend = backendContext; }
 
     /**
      *  This class hosts the settings of the {@link Neureka} instance which will be used throughout the library.
@@ -318,12 +318,12 @@ public final class Neureka
 
         public String toString() {
             return "Neureka.Settings[" +
-                        "debug=" + this._debug + "," +
-                        "autograd=" + this._autograd + "," +
-                        "indexing=" + this._indexing + "," +
-                        "view=" + this._view + "," +
-                        "ndim=" + this._ndim + "," +
-                        "dtype=" + this._dtype + "," +
+                        "debug="    + _debug    + "," +
+                        "autograd=" + _autograd + "," +
+                        "indexing=" + _indexing + "," +
+                        "view="     + _view     + "," +
+                        "ndim="     + _ndim     + "," +
+                        "dtype="    + _dtype    + "," +
                         "isLocked=" + this.isLocked() +
                     "]";
         }
@@ -600,7 +600,7 @@ public final class Neureka
             public String toString() {
                 return "Neureka.Settings.DType[" +
                             "defaultDataTypeClass=" + this.getDefaultDataTypeClass() + "," +
-                            "isAutoConvertingExternalDataToJVMTypes=" + this._isAutoConvertingExternalDataToJVMTypes +
+                            "isAutoConvertingExternalDataToJVMTypes=" + _isAutoConvertingExternalDataToJVMTypes +
                         "]";
             }
         }

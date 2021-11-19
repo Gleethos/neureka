@@ -2581,8 +2581,8 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public Tsr<V> setValue( Object value )
     {
-        if ( value instanceof float[] ) this._setValue32( (float[]) value );
-        else if ( value instanceof  double[] ) this._setValue64( (double[]) value );
+        if ( value instanceof float[] ) _setValue32( (float[]) value );
+        else if ( value instanceof  double[] ) _setValue64( (double[]) value );
         else if ( value instanceof Float ) {
             this.setIsVirtual( true );
             if ( getData() instanceof float[] ) ( (float[]) getData())[ 0 ] = (Float) value;
@@ -2936,7 +2936,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
 
     }
 
-    public int getVersion() { return this._version; }
+    public int getVersion() { return _version; }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

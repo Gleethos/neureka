@@ -53,9 +53,9 @@ public final class DefaultADAgent extends Args implements ADAgent {
     private DefaultADAgent( Tsr<?> derivative ) { set( Arg.Derivative.of(derivative) ); }
 
 
-    public DefaultADAgent setForward( ADAction _forward ) { this._forward = _forward; return this; }
+    public DefaultADAgent setForward( ADAction forward ) { _forward = forward; return this; }
 
-    public DefaultADAgent setBackward( ADAction _backward ) { this._backward = _backward; return this; }
+    public DefaultADAgent setBackward( ADAction backward ) { _backward = backward; return this; }
     
     
     /**

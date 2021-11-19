@@ -36,11 +36,11 @@ public final class AxisFrame<G, V> {
             Supplier<List<Object>> allAliasGetter,
             Function<Integer, List<Object>> allAliasGetterForIndex
     ) {
-        this._keyBasedGetter = keyBasedGetter;
-        this._keyBasedSetter = keyBasedSetter;
-        this._replace = replace;
-        this._allAliasGetter = allAliasGetter;
-        this._allAliasGetterForIndex = allAliasGetterForIndex;
+        _keyBasedGetter         = keyBasedGetter;
+        _keyBasedSetter         = keyBasedSetter;
+        _replace                = replace;
+        _allAliasGetter         = allAliasGetter;
+        _allAliasGetterForIndex = allAliasGetterForIndex;
     }
 
     public static <SetType, GetType, ValueType> Builder<SetType, GetType, ValueType> builder() {

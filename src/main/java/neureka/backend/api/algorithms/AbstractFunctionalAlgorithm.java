@@ -32,13 +32,13 @@ import neureka.devices.Device;
  *
  * @param <C> The final type extending this class.
  */
-public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > extends AbstractBaseAlgorithm<C>
+public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extends AbstractBaseAlgorithm<C>
 {
     private SuitabilityPredicate _isSuitableFor;
-    private ForwardADPredicate _canPerformForwardADFor;
-    private BackwardADPredicate _canPerformBackwardADFor;
-    private ADAgentSupplier _supplyADAgentFor;
-    private ExecutionDispatcher _handleInsteadOfDevice;
+    private ForwardADPredicate   _canPerformForwardADFor;
+    private BackwardADPredicate  _canPerformBackwardADFor;
+    private ADAgentSupplier      _supplyADAgentFor;
+    private ExecutionDispatcher  _handleInsteadOfDevice;
     private ExecutionPreparation _instantiateNewTensorsForExecutionIn;
 
     public AbstractFunctionalAlgorithm( String name ) { super(name); }
@@ -98,8 +98,10 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
         return _handleInsteadOfDevice.dispatch( caller, call );
     }
 
-    //---
-
+    /**
+     * @param call The execution call which needs to be prepared for execution.
+     * @return The prepared {@link ExecutionCall} instance.
+     */
     @Override
     public ExecutionCall<? extends Device<?>> prepare( ExecutionCall<? extends Device<?>> call ) {
         return _instantiateNewTensorsForExecutionIn.prepare( call );
@@ -118,7 +120,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setIsSuitableFor( SuitabilityPredicate isSuitableFor ) {
-        this._isSuitableFor = isSuitableFor;
+        _isSuitableFor = isSuitableFor;
         return this;
     }
 
@@ -126,11 +128,11 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
      *  A {@link ForwardADPredicate} lambda checks if this
      *  {@link Algorithm} can perform forward AD for a given {@link ExecutionCall}.
      *
-     * @param canPerformForwardADFor
+     * @param canPerformForwardADFor The lambda which evaluates if a provided {@link ExecutionCall} can be forward propagated.
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setCanPerformForwardADFor( ForwardADPredicate canPerformForwardADFor ) {
-        this._canPerformForwardADFor = canPerformForwardADFor;
+        _canPerformForwardADFor = canPerformForwardADFor;
         return this;
     }
 
@@ -142,7 +144,7 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setCanPerformBackwardADFor( BackwardADPredicate canPerformBackwardADFor ) {
-        this._canPerformBackwardADFor = canPerformBackwardADFor;
+        _canPerformBackwardADFor = canPerformBackwardADFor;
         return this;
     }
 
@@ -154,17 +156,17 @@ public abstract class AbstractFunctionalAlgorithm< C extends Algorithm<C> > exte
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setSupplyADAgentFor( ADAgentSupplier supplyADAgentFor ) {
-        this._supplyADAgentFor = supplyADAgentFor;
+        _supplyADAgentFor = supplyADAgentFor;
         return this;
     }
 
     public AbstractFunctionalAlgorithm<C> setExecutionDispatcher(ExecutionDispatcher handleInsteadOfDevice ) {
-        this._handleInsteadOfDevice = handleInsteadOfDevice;
+        _handleInsteadOfDevice = handleInsteadOfDevice;
         return this;
     }
 
     public AbstractFunctionalAlgorithm<C> setCallPreparation( ExecutionPreparation instantiateNewTensorsForExecutionIn ) {
-        this._instantiateNewTensorsForExecutionIn = instantiateNewTensorsForExecutionIn;
+        _instantiateNewTensorsForExecutionIn = instantiateNewTensorsForExecutionIn;
         return this;
     }
 }
