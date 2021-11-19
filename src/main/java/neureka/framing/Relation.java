@@ -258,7 +258,7 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
     }
 
     public String toString() {
-        return "Relation[parent=" + this._parent + ",children=" + java.util.Arrays.deepToString(this._children) + ",shapeRelations=" + java.util.Arrays.deepToString(this._shapeRelations) + "]";
+        return "Relation[parent=" + _parent + ",children=" + java.util.Arrays.deepToString(_children) + ",shapeRelations=" + java.util.Arrays.deepToString(_shapeRelations) + "]";
     }
 
     public Tsr<ValType> getParent() {

@@ -91,7 +91,7 @@ public class FunctionNode implements Function
     public Function getDerivative( int index ) { return Function.of( _operation.asDerivative( _src, index ) ); }
 
     @Override
-    public List<Function> getSubFunctions() { return Arrays.asList(this._src); }
+    public List<Function> getSubFunctions() { return Arrays.asList(_src); }
 
     //------------------------------------------------------------------------------------------------------------------
 

@@ -196,7 +196,7 @@ public class TensorBuilder<V> implements WithShapeOrScalarOrVector<V>, IterByOrI
     }
 
     private V _checked( V o ) {
-        Class<?> jvmTypeClass = this._dataType.getJVMTypeClass();
+        Class<?> jvmTypeClass = _dataType.getJVMTypeClass();
         if ( Number.class.isAssignableFrom(jvmTypeClass) ) {
             if ( o instanceof Number && o.getClass() != jvmTypeClass ) {
                 Number n = (Number) o;

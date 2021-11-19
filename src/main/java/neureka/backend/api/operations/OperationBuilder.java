@@ -82,48 +82,48 @@ public class OperationBuilder
 
     public Boolean getIsInline() { return _isInline; }
 
-    public OperationBuilder setStringifier(Stringifier _stringifier) {
-        this._stringifier = _stringifier;
+    public OperationBuilder setStringifier(Stringifier stringifier) {
+        _stringifier = stringifier;
         return this;
     }
 
-    public OperationBuilder setDerivator(Derivator _derivator) {
-        this._derivator = _derivator;
+    public OperationBuilder setDerivator(Derivator derivator) {
+        _derivator = derivator;
         return this;
     }
 
-    public OperationBuilder setFunction(String _function) {
-        this._function = _function;
+    public OperationBuilder setFunction(String function) {
+        _function = function;
         return this;
     }
 
-    public OperationBuilder setOperator(String _operator) {
-        this._operator = _operator;
+    public OperationBuilder setOperator(String operator) {
+        _operator = operator;
         return this;
     }
 
-    public OperationBuilder setArity(Integer _arity) {
-        this._arity = _arity;
+    public OperationBuilder setArity(Integer arity) {
+        _arity = arity;
         return this;
     }
 
-    public OperationBuilder setIsOperator(Boolean _isOperator) {
-        this._isOperator = _isOperator;
+    public OperationBuilder setIsOperator(Boolean isOperator) {
+        _isOperator = isOperator;
         return this;
     }
 
-    public OperationBuilder setIsIndexer(Boolean _isIndexer) {
-        this._isIndexer = _isIndexer;
+    public OperationBuilder setIsIndexer(Boolean isIndexer) {
+        _isIndexer = isIndexer;
         return this;
     }
 
-    public OperationBuilder setIsDifferentiable(Boolean _isDifferentiable) {
-        this._isDifferentiable = _isDifferentiable;
+    public OperationBuilder setIsDifferentiable(Boolean isDifferentiable) {
+        _isDifferentiable = isDifferentiable;
         return this;
     }
 
-    public OperationBuilder setIsInline(Boolean _isInline) {
-        this._isInline = _isInline;
+    public OperationBuilder setIsInline(Boolean isInline) {
+        _isInline = isInline;
         return this;
     }
 

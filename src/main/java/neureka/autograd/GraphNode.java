@@ -786,7 +786,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @return int
      */
-    public int size() { return _targetsToAgents != null ? this._targetsToAgents.size() : 0; }
+    public int size() { return _targetsToAgents != null ? _targetsToAgents.size() : 0; }
 
     /**
      * @param action The lambda performing an action on all targeted nodes and their agents.
@@ -921,9 +921,9 @@ public class GraphNode<V> implements Component<Tsr<V>>
     public String toString( String m ) {
         Tsr<?> payload = getPayload();
         if ( m.equals("") ) {
-            return this.getClass().getSimpleName()+"@"+Integer.toHexString(this.hashCode())+"[" +
+            return this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode())+"[" +
                         "parents=[" + Arrays.stream(_parents).map(GraphNode::getPayload).map(t -> (t==null ? "?" : t.shape().stream().map(Object::toString).collect(Collectors.joining("x")))).collect(Collectors.joining(", ")) + "]," +
-                        "function=" + this._function.toString() + "," +
+                        "function=" + _function.toString() + "," +
                         "shape=" + (payload != null ? payload.shape().stream().map(Object::toString).collect(Collectors.joining("x")) : "?" ) +
                     "]";
         }

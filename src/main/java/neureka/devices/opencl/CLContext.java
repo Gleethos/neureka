@@ -56,8 +56,8 @@ public class CLContext implements BackendExtension
      */
     @Override
     public boolean update( OwnerChangeRequest<Extensions> changeRequest ) {
-        this._platforms.clear();
-        this._platforms.addAll( _findLoadAndCompileForAllPlatforms() );
+        _platforms.clear();
+        _platforms.addAll( _findLoadAndCompileForAllPlatforms() );
         changeRequest.executeChange();
         return true;
     }

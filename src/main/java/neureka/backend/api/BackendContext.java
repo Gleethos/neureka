@@ -88,7 +88,7 @@ public class BackendContext implements Cloneable
      *
      * @return An unmodifiable mapping of {@link Operation} properties to the {@link Operation} instances to which they belong.
      */
-    public Map<String, Operation> getOperationLookupMap() { return Collections.unmodifiableMap( this._lookup ); }
+    public Map<String, Operation> getOperationLookupMap() { return Collections.unmodifiableMap( _lookup ); }
 
     /**
      * This method returns an unmodifiable view of the
@@ -99,7 +99,7 @@ public class BackendContext implements Cloneable
      *
      * @return An unmodifiable view of the list of {@link Operation} implementation instances managed by this context
      */
-    public List<Operation> getOperations() { return Collections.unmodifiableList( this._operations); }
+    public List<Operation> getOperations() { return Collections.unmodifiableList( _operations); }
 
     /**
      * @return The number of {@link Operation} instances stored on this {@link BackendContext}.
@@ -168,10 +168,10 @@ public class BackendContext implements Cloneable
                         .matches("[a-z]")
         ) {
             if ( operator.contains( ""+((char)171) ) )
-                this._lookup.put(operator.replace((""+((char)171)), "<<"), operation);
+                _lookup.put(operator.replace((""+((char)171)), "<<"), operation);
 
             if ( operator.contains( ""+((char)187) ) )
-                this._lookup.put(operator.replace((""+((char)187)),">>"), operation);
+                _lookup.put(operator.replace((""+((char)187)),">>"), operation);
         }
         _size++;
         return this;

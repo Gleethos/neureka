@@ -51,7 +51,7 @@ public abstract class AbstractBaseAlgorithm<C extends Algorithm<C>> implements A
     public <D extends Device<?>> ImplementationFor<D> getImplementationFor( Class<D> deviceClass ) {
         ImplementationFor<D> found = (ImplementationFor<D>) _implementations.get( deviceClass );
         if ( found == null ) {
-            for ( Class<Device<?>> type : this._implementations.keySet() ) {
+            for ( Class<Device<?>> type : _implementations.keySet() ) {
                 if ( type.isAssignableFrom(deviceClass) ) return (ImplementationFor<D>) _implementations.get(type);
             }
         }

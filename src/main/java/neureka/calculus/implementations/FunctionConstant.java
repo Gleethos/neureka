@@ -84,7 +84,7 @@ public class FunctionConstant implements Function
 		if ( arguments.has(Arg.DerivIdx.class) && arguments.valOf(Arg.DerivIdx.class) >= 0 ) {
 			return Tsr.of( tensors[ 0 ].shape(), 0.0 );
 		}
-		return Tsr.of( tensors[ 0 ].shape(), this._value );
+		return Tsr.of( tensors[ 0 ].shape(), _value );
 	}
 
 	//------------------------------------------------------------------------------------------------------------------

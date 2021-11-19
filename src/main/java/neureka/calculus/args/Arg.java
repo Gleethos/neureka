@@ -8,7 +8,7 @@ public abstract class Arg<T> implements Component<Args> {
 
     private final T _value;
 
-    public Arg(T arg ) { this._value = arg; }
+    public Arg( T arg ) { _value = arg; }
 
     public T get() { return _value; }
 

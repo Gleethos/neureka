@@ -56,7 +56,7 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
 
     @Contract(pure = true)
     public static void activate(
-            Tsr t0_drn, Tsr t1_src,
+            Tsr<?> t0_drn, Tsr<?> t1_src,
             int i, int end,
             Operation.TertiaryNDIConsumer operation
     ) {
@@ -78,7 +78,7 @@ public class Activation extends AbstractFunctionalAlgorithm<Activation>
 
     @Contract(pure = true)
     public static void activate(
-            Tsr t0_drn,
+            Tsr<?> t0_drn,
             int i, int end,
             Operation.TertiaryNDAConsumer operation
     ) {

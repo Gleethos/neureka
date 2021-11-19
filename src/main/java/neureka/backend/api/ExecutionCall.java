@@ -86,9 +86,9 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
             List<Arg> arguments
     ) {
         super(tensors, device, arguments);
-        this._operation = operation;
-        this._tensors = tensors;
-        this._algorithm = algorithm;
+        _operation = operation;
+        _tensors   = tensors;
+        _algorithm = algorithm;
         int thisArity = _tensors.length;
         if ( thisArity < Math.abs(_operation.getArity()) ) {
             throw new IllegalArgumentException(
@@ -118,11 +118,11 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     
     public String toString() {
         return this.getClass().getSimpleName()+"[" +
-                    "device=" + this._device + "," +
-                    "derivativeIndex=" + this.getValOf( Arg.DerivIdx.class ) + "," +
-                    "operation=" + this._operation + "," +
+                    "device=" + _device + "," +
+                    "derivativeIndex=" + getValOf( Arg.DerivIdx.class ) + "," +
+                    "operation=" + _operation + "," +
                     "tensors=[.."+_tensors.length+"..]," +
-                    "j=" + this.getJ() + ", " +
+                    "j=" + getJ() + ", " +
                     "algorithm=?," +
                     "context=" + _arguments.getAll(Arg.class) +
                 "]";

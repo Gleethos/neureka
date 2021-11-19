@@ -30,7 +30,7 @@ public class NDAConstructor {
 
     private final API _API;
 
-    public NDAConstructor( API API ) { this._API = API; }
+    public NDAConstructor( API API ) { _API = API; }
 
     /**
      *  This method is responsible for instantiating and setting the _conf variable.

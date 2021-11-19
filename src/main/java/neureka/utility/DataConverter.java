@@ -283,8 +283,8 @@ public class DataConverter
         private final int _size;
 
         public ForTensor( Tsr<?> t ) {
-            this._access = t.getNDConf().getIndexToIndexAccessPattern();
-            this._size = t.size();
+            _access = t.getNDConf().getIndexToIndexAccessPattern();
+            _size = t.size();
         }
 
         public float[] toFloatArray( Function<Integer, Number> source ) {

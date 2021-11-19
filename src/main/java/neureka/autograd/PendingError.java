@@ -26,7 +26,7 @@ public final class PendingError<ValType>
     }
 
     public String toString() {
-        return this.getClass().getSimpleName()+"[toBeReceived=" + this._toBeReceived + ",accumulatedError=" + this._accumulatedError + "]";
+        return this.getClass().getSimpleName()+"[toBeReceived=" + _toBeReceived + ",accumulatedError=" + _accumulatedError + "]";
     }
 
     public int getToBeReceived() {

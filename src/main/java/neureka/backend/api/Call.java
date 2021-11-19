@@ -160,19 +160,19 @@ public class Call<D> {
          * @return The current validity of this Validator as float value.
          */
         public float estimation() {
-            return ( this._isValid ? SuitabilityPredicate.GOOD : SuitabilityPredicate.UNSUITABLE );
+            return ( _isValid ? SuitabilityPredicate.GOOD : SuitabilityPredicate.UNSUITABLE );
         }
 
         public Estimator getEstimator() { return new Estimator( _isValid ); }
 
         public Validator first( TensorCondition condition ) {
-            if ( !condition.check( getTensors()[ 0 ] ) ) this._isValid = false;
+            if ( !condition.check( getTensors()[ 0 ] ) ) _isValid = false;
             return this;
         }
 
         public Validator any( TensorCondition condition )
         {
-            if ( !_anyMatch( condition ) ) this._isValid = false;
+            if ( !_anyMatch( condition ) ) _isValid = false;
             return this;
         }
 
@@ -185,7 +185,7 @@ public class Call<D> {
 
         public Validator anyNotNull( TensorCondition condition )
         {
-            if ( !_anyNotNullMatch( condition ) ) this._isValid = false;
+            if ( !_anyNotNullMatch( condition ) ) _isValid = false;
             return this;
         }
 
@@ -199,7 +199,7 @@ public class Call<D> {
 
         public Validator all( TensorCondition condition )
         {
-            if ( !_allMatch( condition ) ) this._isValid = false;
+            if ( !_allMatch( condition ) ) _isValid = false;
             return this;
         }
 
@@ -211,7 +211,7 @@ public class Call<D> {
 
         public Validator allNotNull( TensorCondition condition )
         {
-            if ( !_allNotNullMatch( condition ) ) this._isValid = false;
+            if ( !_allNotNullMatch( condition ) ) _isValid = false;
             return this;
         }
 
@@ -225,7 +225,7 @@ public class Call<D> {
 
         public Validator all( TensorCompare compare )
         {
-            if ( !_allMatch( compare ) ) this._isValid = false;
+            if ( !_allMatch( compare ) ) _isValid = false;
             return this;
         }
 

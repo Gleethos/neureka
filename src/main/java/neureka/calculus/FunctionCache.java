@@ -52,7 +52,7 @@ public final class FunctionCache
             return;
         }
         boolean doAD = function.isDoingAD();
-        this._functionCache.put(
+        _functionCache.put(
                 ( ( (doAD) ? "d" : "" ) + "(" + function + ")" ).intern(), // Make the String unique!
                 function
         );
@@ -69,7 +69,7 @@ public final class FunctionCache
     }
 
     public String toString() {
-        return this.getClass().getSimpleName()+"[size="+this._functionCache.size()+"]";
+        return this.getClass().getSimpleName()+"[size="+_functionCache.size()+"]";
     }
 
 }

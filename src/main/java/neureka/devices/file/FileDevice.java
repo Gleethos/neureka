@@ -261,7 +261,7 @@ public class FileDevice extends AbstractBaseDevice<Object>
 
 
     public String toString() {
-        return this.getClass().getSimpleName()+"[directory=" + this._directory + ",stored=" + this._stored + ",loadable=" + this._loadable + ",loaded=" + this._loaded + "]";
+        return this.getClass().getSimpleName()+"[directory=" + _directory + ",stored=" + _stored + ",loadable=" + _loadable + ",loaded=" + _loaded + "]";
     }
 
     public String getDirectory() {
