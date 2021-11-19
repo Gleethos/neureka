@@ -7,7 +7,7 @@ import neureka.devices.Device;
 
 /**
  *  Implementations of this functional interface ought to return a new instance
- *  if the {@link ADAgent} class responsible for performing automatic differentiation
+ *  of the {@link ADAgent} class responsible for performing automatic differentiation
  *  both for forward and backward mode differentiation. <br>
  *  Therefore an {@link ADAgent} exposes 2 different procedures. <br>
  *  One is the forward mode differentiation, and the other one <br>

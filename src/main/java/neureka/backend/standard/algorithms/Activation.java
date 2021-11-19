@@ -11,6 +11,11 @@ import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
+/**
+ *  This is lambda based {@link neureka.backend.api.Algorithm} implementation
+ *  providing some basic functionality for implementing custom
+ *  activation functions.
+ */
 public class Activation extends AbstractFunctionalAlgorithm<Activation>
 {
 

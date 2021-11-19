@@ -43,35 +43,51 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
 
     public AbstractFunctionalAlgorithm( String name ) { super(name); }
 
-    //---
-
+    /**
+     *  The {@link SuitabilityPredicate} checks if a given instance of an {@link ExecutionCall} is
+     *  suitable to be executed in {@link neureka.backend.api.ImplementationFor}
+     *  residing in this {@link Algorithm} as components.
+     *  It can be implemented as s simple lambda.
+     */
     @Override
     public float isSuitableFor( ExecutionCall<? extends Device<?>> call ) {
         return _isSuitableFor.isSuitableFor(call);
     }
 
-    //---
-
+    /**
+     *  The {@link ForwardADPredicate} lambda received by this method checks if forward mode auto differentiation
+     *  can be performed for a given {@link ExecutionCall}.
+     *  The analyzer returns a boolean truth value.
+     */
     @Override
     public boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call ) {
         return _canPerformForwardADFor.canPerformForwardADFor(call);
     }
 
-    //---
-
+    /**
+     *  A {@link BackwardADPredicate} lambda checks if backward mode auto differentiation
+     *  (also known as back-propagation) can be performed for a given {@link ExecutionCall}.
+     *  The analyzer returns a boolean truth value.
+     */
     @Override
     public boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call ) {
         return _canPerformBackwardADFor.canPerformBackwardADFor( call );
     }
 
-    //---
-
+    /**
+     *  The functional interface received by this method ought to return a new instance
+     *  of the {@link ADAgent} class responsible for performing automatic differentiation
+     *  both for forward and backward mode differentiation. <br>
+     *  Therefore an {@link ADAgent} exposes 2 different procedures. <br>
+     *  One is the forward mode differentiation, and the other one <br>
+     *  is the backward mode differentiation which is more commonly known as back-propagation... <br>
+     *  Besides that it may also contain context information used <br>
+     *  to perform said procedures.
+     */
     @Override
     public ADAgent supplyADAgentFor(Function function, ExecutionCall<? extends Device<?>> call, boolean forward ) {
         return _supplyADAgentFor.supplyADAgentFor(function, call, forward );
     }
-
-    //---
 
     /**
      *  This method receives an {@link ExecutionDispatcher} lambda which
@@ -160,11 +176,40 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
         return this;
     }
 
+    /**
+     *  The {@link ExecutionDispatcher} lambda
+     *  is the most ipoortant procedure within an {@link Algorithm}, which is responsible for
+     *  electing an {@link neureka.backend.api.ImplementationFor}
+     *  the chosen {@link Device} in a given {@link ExecutionCall} passed to the {@link ExecutionDispatcher}.
+     *  However the  {@link ExecutionDispatcher} does not have to select a device specific implementation.
+     *  It can also occupy the rest of the execution without any other steps being taken.
+     *  For example, a {@link neureka.backend.api.ImplementationFor} or a {@link RecursiveExecutor}
+     *  would not be used if not explicitly called.
+     *  Bypassing other procedures is useful for full control and of course to implement unorthodox types of operations
+     *  like the {@link neureka.backend.standard.operations.other.Reshape} operation
+     *  which is very different from classical operations.
+     *  Although the {@link ExecutionCall} passed to implementations of this will contain
+     *  a fairly suitable {@link Device} assigned to a given {@link neureka.backend.api.Algorithm},
+     *  one can simply ignore it and find a custom one which fits the contents of the given
+     *  {@link ExecutionCall} instance better.
+     */
     public AbstractFunctionalAlgorithm<C> setExecutionDispatcher(ExecutionDispatcher handleInsteadOfDevice ) {
         _handleInsteadOfDevice = handleInsteadOfDevice;
         return this;
     }
 
+    /**
+     *  An {@link Algorithm} will typically produce a result when executing an {@link ExecutionCall}.
+     *  This result must be created somehow.
+     *  A {@link ExecutionPreparation} implementation instance will do just that...
+     *  Often times the first entry in the array of tensors stored inside the call
+     *  will be null to serve as a position for the output to be placed at.
+     *  The creation of this output tensor is of course highly dependent on the type
+     *  of operation and algorithm that is currently being used.
+     *  Element-wise operations for example will require the creation of an output tensor
+     *  with the shape of the provided input tensors, whereas the execution of a
+     *  linear operation like for example a broadcast operation will require a very different approach...
+     */
     public AbstractFunctionalAlgorithm<C> setCallPreparation( ExecutionPreparation instantiateNewTensorsForExecutionIn ) {
         _instantiateNewTensorsForExecutionIn = instantiateNewTensorsForExecutionIn;
         return this;

@@ -8,8 +8,9 @@ import neureka.devices.Device;
 
 /**
  *  The {@link ExecutionDispatcher} lambda
- *  is the final execution procedure which is responsible for electing an {@link neureka.backend.api.ImplementationFor}
- *  the chosen {@link Device} in a given {@link ExecutionCall}.
+ *  is the most important procedure within an {@link neureka.backend.api.Algorithm}, which is responsible
+ *  for electing an {@link neureka.backend.api.ImplementationFor}
+ *  the chosen {@link Device} in a given {@link ExecutionCall} passed to the {@link ExecutionDispatcher}.
  *  However the  {@link ExecutionDispatcher} does not have to select a device specific implementation.
  *  It can also occupy the rest of the execution without any other steps being taken.
  *  For example, a {@link neureka.backend.api.ImplementationFor} or a {@link RecursiveExecutor}
