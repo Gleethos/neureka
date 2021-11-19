@@ -36,7 +36,7 @@ public abstract class AbstractBaseAlgorithm<C extends Algorithm<C>> implements A
      *
      * @return The name of this {@link Algorithm}.
      */
-    public String getName() { return this._name; }
+    public String getName() { return _name; }
 
     @Override
     public <D extends Device<?>, E extends ImplementationFor<D>> C setImplementationFor( Class<D> deviceClass, E implementation ) {

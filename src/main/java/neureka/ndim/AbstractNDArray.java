@@ -108,7 +108,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
     /**
      * @return The {@link NDConfiguration} implementation instance of this {@link Tsr} storing dimensionality information.
      */
-    public NDConfiguration getNDConf() { _guardGet("ND-Configuration"); return this._NDConf; }
+    public NDConfiguration getNDConf() { _guardGet("ND-Configuration"); return _NDConf; }
 
     /**
      *  This method returns the {@link DataType} instance of this {@link Tsr}, which is
@@ -117,7 +117,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      *
      * @return The {@link DataType} instance of this {@link Tsr} storing important type information.
      */
-    public DataType<?> getDataType() { _guardGet("data type"); return this._dataType; }
+    public DataType<?> getDataType() { _guardGet("data type"); return _dataType; }
 
     /**
      *  This returns the underlying raw data object of this tensor.
@@ -126,7 +126,7 @@ public abstract class AbstractNDArray<C, V> extends AbstractComponentOwner<C> im
      *
      * @return The raw data object underlying this tensor.
      */
-    public Object getData() { _guardGet("data object"); return this._data; }
+    public Object getData() { _guardGet("data object"); return _data; }
 
     /**
      * @return The type class of individual value items within this {@link Tsr} instance.

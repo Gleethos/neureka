@@ -104,12 +104,12 @@ public class BackendContext implements Cloneable
     /**
      * @return The number of {@link Operation} instances stored on this {@link BackendContext}.
      */
-    public int size() { return this._size; }
+    public int size() { return _size; }
 
     /**
      * @return The {@link Function} and {@link neureka.Tsr} cache of this {@link BackendContext}
      */
-    public FunctionCache getFunctionCache() { return this._functionCache; }
+    public FunctionCache getFunctionCache() { return _functionCache; }
 
     /**
      *  This method returns a {@link Functions} instance which wraps pre-instantiated
@@ -182,7 +182,7 @@ public class BackendContext implements Cloneable
      * @return The truth value determining if the provided {@link Operation} is part of this {@link BackendContext}.
      */
     public boolean hasOperation( Operation operation ) {
-        return this._lookup.containsKey( operation.getFunction() );
+        return _lookup.containsKey( operation.getFunction() );
     }
 
     /**
@@ -190,7 +190,7 @@ public class BackendContext implements Cloneable
      * @return The truth value determining if the provided {@link Operation} is part of this {@link BackendContext}.
      */
     public boolean hasOperation( String operationIdentifier ) {
-        return this._lookup.containsKey( operationIdentifier );
+        return _lookup.containsKey( operationIdentifier );
     }
 
     /**

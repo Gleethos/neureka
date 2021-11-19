@@ -218,11 +218,11 @@ public class OpenCLPlatform {
     }
 
     public cl_platform_id getPid() {
-        return this._pid;
+        return _pid;
     }
 
     public cl_context getContext() {
-        return this._context;
+        return _context;
     }
 
     @Override

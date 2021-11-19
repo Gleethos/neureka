@@ -864,7 +864,7 @@ public class GraphNode<V> implements Component<Tsr<V>>
      *
      * @return The differentiation mode represented as an integer which encodes 3 distinct states.
      */
-    public int getMode() { return this._mode; }
+    public int getMode() { return _mode; }
 
     /**
      * This flag is used for a performance optimization feature namely 'Just In Time Propagation'.
@@ -878,26 +878,26 @@ public class GraphNode<V> implements Component<Tsr<V>>
      * All nodes between a Pending-Error and those requiring gradients will
      * be marked with '_relies_on_JIPProp=true'!
      */
-    public boolean isReliesOnJustInTimeProp() { return this._reliesOnJustInTimeProp; }
+    public boolean isReliesOnJustInTimeProp() { return _reliesOnJustInTimeProp; }
 
-    public PendingError<V> getPendingError() { return this._pendingError; }
+    public PendingError<V> getPendingError() { return _pendingError; }
 
-    public boolean isUsedAsDerivative() { return this._isUsedAsDerivative; }
+    public boolean isUsedAsDerivative() { return _isUsedAsDerivative; }
 
-    public Function getFunction() { return this._function; }
+    public Function getFunction() { return _function; }
 
-    public GraphNode<V>[] getParents() { return this._parents; }
+    public GraphNode<V>[] getParents() { return _parents; }
 
-    public int getPayloadReferenceVersion() { return this._payloadReferenceVersion; }
+    public int getPayloadReferenceVersion() { return _payloadReferenceVersion; }
 
-    public GraphLock getLock() { return this._lock; }
+    public GraphLock getLock() { return _lock; }
 
-    public List<WeakReference<GraphNode<V>>> getChildren() { return this._children; }
+    public List<WeakReference<GraphNode<V>>> getChildren() { return _children; }
 
     /**
      * @return The long Node-ID (Used for caching to avoid redundant computation within one computation graph)
      */
-    public long getNodeID() { return this._nodeID; }
+    public long getNodeID() { return _nodeID; }
 
     /**
      * @return Returns the type of the node as descriptive String in capital letters.

@@ -265,14 +265,14 @@ public class FileDevice extends AbstractBaseDevice<Object>
     }
 
     public String getDirectory() {
-        return this._directory;
+        return _directory;
     }
 
     public List<String> getLoadable() {
-        return this._loadable;
+        return _loadable;
     }
 
     public List<String> getLoaded() {
-        return this._loaded;
+        return _loaded;
     }
 }

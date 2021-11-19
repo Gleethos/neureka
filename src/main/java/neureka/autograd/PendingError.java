@@ -30,10 +30,10 @@ public final class PendingError<ValType>
     }
 
     public int getToBeReceived() {
-        return this._toBeReceived;
+        return _toBeReceived;
     }
 
     public Tsr<ValType> getAccumulatedError() {
-        return this._accumulatedError;
+        return _accumulatedError;
     }
 }

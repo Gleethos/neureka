@@ -217,7 +217,7 @@ public final class DataType<Type>
 
 
     public Logger getLog() {
-        return this._log;
+        return _log;
     }
 
     public boolean equals(final Object o) {
@@ -249,7 +249,7 @@ public final class DataType<Type>
     }
 
     public Class<Type> getTypeClass() {
-        return this._typeClass;
+        return _typeClass;
     }
 
     public Class<?> getJVMTypeClass() {

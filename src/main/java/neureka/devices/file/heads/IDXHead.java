@@ -200,14 +200,14 @@ public class IDXHead extends AbstractFileHead<IDXHead, Number>
 
 
     public DataType<NumericType<?, ?, ?, ?>> getDataType() {
-        return this._dataType;
+        return _dataType;
     }
 
     public int getValueSize() {
-        return this._valueSize;
+        return _valueSize;
     }
 
     public int[] getShape() {
-        return this._shape;
+        return _shape;
     }
 }

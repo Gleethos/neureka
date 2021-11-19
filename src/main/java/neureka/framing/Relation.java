@@ -262,6 +262,6 @@ public class Relation<ValType> implements Component<Tsr<ValType>>
     }
 
     public Tsr<ValType> getParent() {
-        return this._parent;
+        return _parent;
     }
 }

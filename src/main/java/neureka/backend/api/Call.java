@@ -148,7 +148,7 @@ public class Call<D> {
         private boolean _isValid = true;
 
 
-        public boolean isValid() { return this._isValid; }
+        public boolean isValid() { return _isValid; }
 
         /**
          *  The validity as float being >0/true and 0.0/false.

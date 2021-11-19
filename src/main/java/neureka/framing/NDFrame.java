@@ -279,10 +279,10 @@ public final class NDFrame<ValType> implements Component<Tsr<ValType>>
     }
 
     public Map<Object, Object> getMapping() {
-        return this._mapping;
+        return _mapping;
     }
 
     public String getTensorName() {
-        return this._tensorName;
+        return _tensorName;
     }
 }

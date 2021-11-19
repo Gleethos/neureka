@@ -60,12 +60,12 @@ public final class FunctionCache
 
     public Function get( String expression, boolean doesAD ) {
         String k = ( doesAD ? "d" + expression : expression );
-        return this._functionCache.get( k );
+        return _functionCache.get( k );
     }
 
     public boolean has( String expression, boolean doesAD ) {
         String k = ( doesAD ? "d" + expression : expression );
-        return this._functionCache.containsKey( k );
+        return _functionCache.containsKey( k );
     }
 
     public String toString() {

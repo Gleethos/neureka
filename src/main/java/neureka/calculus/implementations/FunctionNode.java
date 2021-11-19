@@ -185,11 +185,11 @@ public class FunctionNode implements Function
         return this.getOperation().calculate( inputs, -1, d, _src );
     }
 
-    public Operation getOperation() { return this._operation; }
+    public Operation getOperation() { return _operation; }
 
-    public boolean isFlat() { return this._isFlat; }
+    public boolean isFlat() { return _isFlat; }
 
-    public boolean isDoingAD() { return this._isDoingAD; }
+    public boolean isDoingAD() { return _isDoingAD; }
 
 
     private Tsr<?> preprocess(

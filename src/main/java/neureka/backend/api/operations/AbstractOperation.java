@@ -223,30 +223,30 @@ public abstract class AbstractOperation implements Operation
 
 
     public String getFunction() {
-        return this._function;
+        return _function;
     }
 
     public String getOperator() {
-        return this._operator;
+        return _operator;
     }
 
     public int getArity() {
-        return this._arity;
+        return _arity;
     }
 
     public boolean isIndexer() {
-        return this._isIndexer;
+        return _isIndexer;
     }
 
     public boolean isDifferentiable() {
-        return this._isDifferentiable;
+        return _isDifferentiable;
     }
 
     public boolean isInline() {
-        return this._isInline;
+        return _isInline;
     }
 
     public Algorithm<?> getDefaultAlgorithm() {
-        return this._defaultAlgorithm;
+        return _defaultAlgorithm;
     }
 }

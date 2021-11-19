@@ -25,7 +25,7 @@ public class FunctionConstant implements Function
 {
 	private double _value;
 
-	public double value() { return this._value; }
+	public double value() { return _value; }
 
 	//------------------------------------------------------------------------------------------------------------------
 

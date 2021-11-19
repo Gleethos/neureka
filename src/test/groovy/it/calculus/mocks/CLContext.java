@@ -88,26 +88,26 @@ public class CLContext {
     }
 
     public int[] getLocal() {
-        return this._local;
+        return _local;
     }
 
     public int getCounter() {
-        return this._counter;
+        return _counter;
     }
 
     public int[] getGlobal() {
-        return this._global;
+        return _global;
     }
 
     public int getLws() {
-        return this._lws;
+        return _lws;
     }
 
     public int getGws() {
-        return this._gws;
+        return _gws;
     }
 
     public int getWgs() {
-        return this._wgs;
+        return _wgs;
     }
 }

@@ -64,23 +64,23 @@ public class OperationBuilder
         String asDerivative( Function[] children, int d );
     }
 
-    public Stringifier getStringifier() { return this._stringifier; }
+    public Stringifier getStringifier() { return _stringifier; }
 
-    public Derivator getDerivator() { return this._derivator; }
+    public Derivator getDerivator() { return _derivator; }
 
-    public String getFunction() { return this._function; }
+    public String getFunction() { return _function; }
 
-    public String getOperator() { return this._operator; }
+    public String getOperator() { return _operator; }
 
-    public Integer getArity() { return this._arity; }
+    public Integer getArity() { return _arity; }
 
-    public Boolean getIsOperator() { return this._isOperator; }
+    public Boolean getIsOperator() { return _isOperator; }
 
-    public Boolean getIsIndexer() { return this._isIndexer; }
+    public Boolean getIsIndexer() { return _isIndexer; }
 
-    public Boolean getIsDifferentiable() { return this._isDifferentiable; }
+    public Boolean getIsDifferentiable() { return _isDifferentiable; }
 
-    public Boolean getIsInline() { return this._isInline; }
+    public Boolean getIsInline() { return _isInline; }
 
     public OperationBuilder setStringifier(Stringifier _stringifier) {
         this._stringifier = _stringifier;

@@ -99,11 +99,11 @@ public class CLImplementation extends AbstractImplementationFor<OpenCLDevice>
     }
 
     public String getSource() {
-        return this._source;
+        return _source;
     }
 
     public String getName() {
-        return this._name;
+        return _name;
     }
 
     private interface Parser

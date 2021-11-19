@@ -268,30 +268,30 @@ public class CSVHead extends AbstractFileHead<CSVHead, String>
     }
 
     public String getDelimiter() {
-        return this._delimiter;
+        return _delimiter;
     }
 
     public boolean isFirstRowIsLabels() {
-        return this._firstRowIsLabels;
+        return _firstRowIsLabels;
     }
 
     public String[] getColLabels() {
-        return this._colLabels;
+        return _colLabels;
     }
 
     public boolean isFirstColIsIndex() {
-        return this._firstColIsIndex;
+        return _firstColIsIndex;
     }
 
     public String[] getRowLabels() {
-        return this._rowLabels;
+        return _rowLabels;
     }
 
     public Integer getNumberOfRows() {
-        return this._numberOfRows;
+        return _numberOfRows;
     }
 
     public Integer getNumberOfColumns() {
-        return this._numberOfColumns;
+        return _numberOfColumns;
     }
 }

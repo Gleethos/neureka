@@ -94,11 +94,11 @@ public class OpenCLDevice extends AbstractDevice<Number>
     }
 
     public cl_device_id getDeviceId() {
-        return this._deviceId;
+        return _deviceId;
     }
 
     public OpenCLPlatform getPlatform() {
-        return this._platform;
+        return _platform;
     }
 
     /*==================================================================================================================
