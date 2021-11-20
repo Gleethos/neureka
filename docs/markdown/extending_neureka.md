@@ -36,7 +36,7 @@ if ( !backendContext.hasOperation("customFunction") )
     backendContext.addOperation(new MyCustomFunOperation());
 ```
 Often times however, we simply want to extend an existing operation, like for example we might want to add
-support for other kinds of data types for the "+","*","/"... operations! <br>
+support for other kinds of data types for the `+`,`*`,`/`... operations! <br>
 We can simply extend any given operation like so:
 ```java      
 Operation plus = backendContext.getOperation("+");
