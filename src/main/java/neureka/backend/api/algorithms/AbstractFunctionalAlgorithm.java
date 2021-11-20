@@ -214,6 +214,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
         _instantiateNewTensorsForExecutionIn = instantiateNewTensorsForExecutionIn;
         return this;
     }
+
 }
 
 

@@ -130,10 +130,10 @@ public class Power extends AbstractOperation
             }
         };
 
-        RecursiveExecutor rja = (call, goDeeperWith)->
+        RecursiveExecutor rja = (call, traverse)->
         {
             Tsr<?>[] tensors = call.getTensors();
-            Device device = call.getDevice();
+            Device<Number> device = call.getDeviceFor(Number.class);
             int d = call.getValOf( Arg.DerivIdx.class );
             Operation type = call.getOperation();
 
@@ -142,22 +142,23 @@ public class Power extends AbstractOperation
             {
                 if ( d < 0 ) {
                     Tsr<?>[] reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], tensors[ 2 ]};
-                    alternative = goDeeperWith.execute(
+                    alternative = traverse.execute(
                             call.withTensors( reduction )
                     );
                     tensors[ 0 ] = reduction[ 0 ];
 
                     reduction = Utility.offsetted(tensors, 1);
-                    alternative = goDeeperWith.execute(
+                    alternative = traverse.execute(
                                         call.withTensors( reduction )
                             );
                     tensors[ 0 ] = reduction[ 0 ];
                 } else {
 
+                    Tsr<?>[] reduction = Utility.subset(tensors, 1,  2, tensors.length-2);
+                    reduction[ 0 ] =  Tsr.Create.newTsrLike(tensors[ 1 ]);
+
                     if ( d==0 ) {
-                        Tsr<?>[] reduction = Utility.subset(tensors, 1,  2, tensors.length-2);
-                        reduction[ 0 ] =  Tsr.Create.newTsrLike(tensors[ 1 ]);
-                        alternative = goDeeperWith.execute(
+                        alternative = traverse.execute(
                                             ExecutionCall.of(reduction)
                                                             .andArgs(Arg.DerivIdx.of( -1 ))
                                                             .running(Neureka.get().backend().getOperation("*"))
@@ -165,7 +166,7 @@ public class Power extends AbstractOperation
                                         );
                         Tsr exp = reduction[ 0 ];
                         reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], exp};
-                        alternative = goDeeperWith.execute(
+                        alternative = traverse.execute(
                                             ExecutionCall.of(reduction)
                                                             .andArgs(Arg.DerivIdx.of(0))
                                                             .running(type)
@@ -174,10 +175,8 @@ public class Power extends AbstractOperation
                         tensors[ 0 ] = reduction[ 0 ];
                         exp.delete();
                     } else {
-                        Tsr<?>[] reduction = Utility.subset(tensors, 1,  2, tensors.length-2);
 
-                        reduction[ 0 ] =  Tsr.Create.newTsrLike(tensors[ 1 ]);
-                        alternative = goDeeperWith.execute(
+                        alternative = traverse.execute(
                                                 ExecutionCall.of(reduction)
                                                                 .andArgs(Arg.DerivIdx.of(d-1))
                                                                 .running(Neureka.get().backend().getOperation("*"))
@@ -186,7 +185,7 @@ public class Power extends AbstractOperation
                         Tsr<?> inner = reduction[ 0 ];
 
                         reduction = new Tsr[]{Tsr.Create.newTsrLike(tensors[ 1 ]), inner, tensors[d]};
-                        alternative = goDeeperWith.execute(
+                        alternative = traverse.execute(
                                                 ExecutionCall.of(reduction)
                                                                 .andArgs(Arg.DerivIdx.of(-1))
                                                                 .running(Neureka.get().backend().getOperation("*"))
@@ -195,7 +194,7 @@ public class Power extends AbstractOperation
                         Tsr<?> exp = reduction[ 0 ];
 
                         reduction = new Tsr[]{tensors[ 0 ], tensors[ 1 ], exp};
-                        alternative = goDeeperWith.execute(
+                        alternative = traverse.execute(
                                 ExecutionCall.of(reduction)
                                                 .andArgs(Arg.DerivIdx.of(1))
                                                 .running(type)
@@ -207,9 +206,8 @@ public class Power extends AbstractOperation
                         exp.delete();
                     }
                 }
-                return alternative;
             }
-            else return alternative;
+            return alternative;
         };
 
         Operator operator = new Operator( rja )

@@ -58,4 +58,11 @@ public abstract class AbstractBaseAlgorithm<C extends Algorithm<C>> implements A
         return found;
     }
 
+    @Override
+    public String toString() {
+        String algorithmString = getClass().getSimpleName()+"@"+Integer.toHexString(hashCode());
+        algorithmString = ( algorithmString + "[name=" + getName() + "]" );
+        return algorithmString;
+    }
+
 }

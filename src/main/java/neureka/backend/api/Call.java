@@ -108,11 +108,11 @@ public class Call<D> {
 
     public static class Builder<V, T extends Device<V>>
     {
-        private T _device;
+        private final T _device;
         private Tsr<V>[] _tensors;
         private final Args _arguments = Args.of( Arg.DerivIdx.of(-1), Arg.VarIdx.of(-1) );
 
-        private Builder(T device) { _device = device; }
+        private Builder( T device ) { _device = device; }
 
         @SafeVarargs
         public final <N extends V> Builder<V,T> with(Tsr<N>... tensors) {

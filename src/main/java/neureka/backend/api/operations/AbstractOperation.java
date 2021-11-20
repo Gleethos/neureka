@@ -249,4 +249,11 @@ public abstract class AbstractOperation implements Operation
     public Algorithm<?> getDefaultAlgorithm() {
         return _defaultAlgorithm;
     }
+
+    @Override
+    public String toString() {
+        String asString = this.getClass().getSimpleName()+"@"+Integer.toHexString(hashCode());
+        asString = asString + "[identifier='" + _function + "',operator='"+_operator+"']";
+        return asString;
+    }
 }

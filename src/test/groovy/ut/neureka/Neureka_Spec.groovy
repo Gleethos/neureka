@@ -5,6 +5,7 @@ import neureka.Tsr
 import neureka.autograd.GraphLock
 import neureka.autograd.JITProp
 import neureka.backend.api.ExecutionCall
+import neureka.backend.api.Operation
 import neureka.calculus.Function
 import neureka.devices.CustomDeviceCleaner
 import neureka.devices.host.CPU
@@ -190,5 +191,21 @@ class Neureka_Spec extends Specification
                     Neureka.get().backend.get(CLContext).platforms[0].devices[0]
             ]
     }
+    
+    def 'Backend related library objects adhere to the same toString formatting convention!'(
+            Operation operation
+    ) {
+        expect : 'The provided object matches the following pattern defining a common standard!'
+            toStringStandard.matcher(operation.toString()).matches()
+        and : 'The same criteria should also be met for every algorithm within the current operation.'
+            operation.getAllAlgorithms().every {
+                toStringStandard.matcher(it.toString()).matches()
+            }
+
+        where : 'The following operations are being used..'
+            operation << Neureka.get().backend.operations
+
+    }
+
 
 }

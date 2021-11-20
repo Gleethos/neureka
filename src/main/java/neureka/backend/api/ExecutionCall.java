@@ -43,6 +43,8 @@ import neureka.autograd.ADAgent;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.devices.Device;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -62,6 +64,8 @@ import java.util.stream.Stream;
 */
 public class ExecutionCall<D extends Device<?>> extends Call<D>
 {
+    private final static Logger _LOG = LoggerFactory.getLogger(ExecutionCall.class);
+
     /**
      *  This is the operation type which will be applied to this execution call.
      *  It contains multiple implementations, one of which might be applicable to this call...
@@ -117,14 +121,18 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     public ExecutionCall<D> setMetaArg( Arg<?> arg ) { _arguments.set(arg); return this; }
     
     public String toString() {
+        String algorithmString = "?";
+        if ( _algorithm != null ) {
+            algorithmString = _algorithm.toString();
+        }
         return this.getClass().getSimpleName()+"[" +
-                    "device=" + _device + "," +
+                    "device="          + _device + "," +
                     "derivativeIndex=" + getValOf( Arg.DerivIdx.class ) + "," +
-                    "operation=" + _operation + "," +
-                    "tensors=[.."+_tensors.length+"..]," +
-                    "j=" + getJ() + ", " +
-                    "algorithm=?," +
-                    "context=" + _arguments.getAll(Arg.class) +
+                    "operation="       + _operation + "," +
+                    "tensors="         + "[.." + _tensors.length + "..]," +
+                    "j="               + getJ() + ", " +
+                    "algorithm="       + algorithmString + "," +
+                    "context="         + _arguments.getAll(Arg.class) +
                 "]";
     }
 
@@ -146,18 +154,51 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
         return (ExecutionCall<T>) this;
     }
 
+    /**
+     *  An {@link ExecutionCall} will either already have a targeted {@link Algorithm} defined
+     *  at instantiation or otherwise it will query the associated {@link Operation}
+     *  for an {@link Algorithm} best suitable for the state of this {@link ExecutionCall}.
+     *  Generally speaking, this method should only very rarely return null, however, if it
+     *  does, then this most definitely means that there is nor backend support
+     *  for this call for execution...
+     *
+     * @return The {@link Algorithm} suitable for this {@link ExecutionCall}.
+     */
     public Algorithm<?> getAlgorithm() {
         if ( _algorithm != null ) return _algorithm;
         else _algorithm = _operation.getAlgorithmFor( this );
+        if ( _algorithm == null ) {
+            _LOG.error(
+                "No suitable '"+Algorithm.class.getSimpleName()+"' implementation found for this '"+this+"'!"
+            );
+        }
         return _algorithm;
     }
 
+    /**
+     *  This method queries the underlying {@link Operation} of this {@link ExecutionCall} to see
+     *  if forward mode auto differentiation can be performed.
+     *
+     * @return The truth value determining if forward mode auto differentiation can be performed for this.
+     */
     public boolean allowsForward() {
-        return getAlgorithm().canPerformForwardADFor( this );
+        Algorithm<?> algorithm = getAlgorithm();
+        if ( algorithm != null )
+            return algorithm.canPerformForwardADFor( this );
+        return false;
     }
 
+    /**
+     *  This method queries the underlying {@link Operation} of this {@link ExecutionCall} to see
+     *  if backward mode auto differentiation can be performed.
+     *
+     * @return The truth value determining if backward mode auto differentiation can be performed for this.
+     */
     public boolean allowsBackward() {
-        return getAlgorithm().canPerformBackwardADFor( this );
+        Algorithm<?> algorithm = getAlgorithm();
+        if ( algorithm != null )
+            return algorithm.canPerformBackwardADFor( this );
+        return false;
     }
 
     public ADAgent getADAgentFrom(
@@ -176,7 +217,7 @@ public class ExecutionCall<D extends Device<?>> extends Call<D>
     public static class Builder<D extends Device<?>>
     {
         private Operation _operation;
-        private Tsr<?>[] _tensors;
+        private final Tsr<?>[] _tensors;
         private Algorithm<?> _algorithm;
         private final List<Arg> _arguments = Stream.of(
                                                 Arg.DerivIdx.of(-1),
