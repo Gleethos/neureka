@@ -46,7 +46,7 @@ public class Multiplication extends AbstractOperation
                     return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ndc1.indexOfIndices( t1Idx )] * t2_val[ndc2.indexOfIndices(t2Idx)];
                 } else {
                     return ( t0Idx, t1Idx, t2Idx ) -> {
-                        if (d == 0) return t2_val[ndc2.indexOfIndices(t2Idx)];
+                        if ( d == 0 ) return t2_val[ndc2.indexOfIndices(t2Idx)];
                         else return t1_val[ndc1.indexOfIndices( t1Idx )];
                     };
                 }
@@ -165,7 +165,7 @@ public class Multiplication extends AbstractOperation
                                 .arity( 3 )
                                 .kernelSource( operator.getKernelSource() )
                                 .activationSource( "output = input1 * input2;\n" )
-                                .differentiationSource( "if (d==0) {output = input2;}else{output = input1;}\n" )
+                                .differentiationSource( "if ( d==0 ) {output = input2;}else{output = input1;}\n" )
                                 .kernelPostfix( this.getFunction() )
                                 .execution(
                                         call -> {
@@ -364,7 +364,7 @@ public class Multiplication extends AbstractOperation
                                 .arity( 3 )
                                 .kernelSource( scalarization.getKernelSource() )
                                 .activationSource( "output = input1 * value;\n" )
-                                .differentiationSource( "if (d==0) {output = value;}else{output = input1;}\n" )
+                                .differentiationSource( "if ( d == 0 ) {output = value;}else{output = input1;}\n" )
                                 .kernelPostfix( this.getFunction() )
                                 .execution(
                                         call -> {

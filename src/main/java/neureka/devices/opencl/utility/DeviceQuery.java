@@ -129,7 +129,7 @@ public class DeviceQuery
 
             // CL_DEVICE_QUEUE_PROPERTIES
             long queueProperties = getLong(device, CL_DEVICE_QUEUE_PROPERTIES);
-            if(( queueProperties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE ) != 0)
+            if ( ( queueProperties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE ) != 0 )
                 result += ("CL_DEVICE_QUEUE_PROPERTIES: CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE\n");
             if(( queueProperties & CL_QUEUE_PROFILING_ENABLE ) != 0)
                 result += ("CL_DEVICE_QUEUE_PROPERTIES: CL_QUEUE_PROFILING_ENABLE\n");

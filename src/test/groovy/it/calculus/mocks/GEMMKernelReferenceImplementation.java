@@ -291,21 +291,20 @@ public class GEMMKernelReferenceImplementation
 
     //======================================================================================================================
 
-    private void _cfg_of_cfg(int[] cfg, int[] new_cfg, int rank)
+    private void _cfg_of_cfg( int[] cfg, int[] new_cfg, int rank )
     {
-        for(int i=0; i<rank*5; i++)
+        for ( int i = 0; i < rank * 5; i++ )
         {
-            if(i>=rank*3 && i<rank*4){
-                new_cfg[i+2*rank] = cfg[ i ];
-            } else {
+            if ( i >= rank * 3 && i < rank * 4 )
+                new_cfg[ i + 2 * rank ] = cfg[ i ];
+            else
                 new_cfg[ i ] = cfg[ i ];
-            }
         }
     }
 
 //======================================================================================================================
 
-    private int _i_of_i(int i, int[] cfg, int rank)// cfg: <[ shape | translation | indicesMap | indices | indicesScale | idxBase ]>
+    private int _i_of_i( int i, int[] cfg, int rank )// cfg: <[ shape | translation | indicesMap | indices | indicesScale | idxBase ]>
     {
         int[] indices = new int[ rank ];//(cfg+rank*3);
         int[] indicesMap = new int[ rank ];//(cfg+rank*2);

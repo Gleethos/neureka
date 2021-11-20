@@ -78,7 +78,7 @@ public class ConvUtil {
                                 CalcUtil.recursiveExecution( call.withTensors(tsrs), JunctionUtil::forConvolution );
                                 return tsrs[ 0 ];
                             } else {
-                                if (call.getValOf( Arg.DerivIdx.class ) < 0) {
+                                if ( call.getValOf( Arg.DerivIdx.class ) < 0 ) {
                                     Tsr<?>[] tsrs = CalcUtil.srcActivation(call.getTensors(), call.getJ(), -1, 0, caller.getSubFunctions().toArray(new Function[0]));
                                     Tsr.makeFit(tsrs, caller.isDoingAD()); // This might not fit here... (fitting should probably be a setup thing...)
                                     for ( Tsr<?> t : tsrs ) t.setIsVirtual( false );

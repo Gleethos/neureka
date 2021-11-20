@@ -49,7 +49,7 @@ public final class Product extends AbstractOperation {
                         return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
                     } else {
                         return ( t0Idx, t1Idx, t2Idx ) -> {
-                            if (d == 0) return t2_val[t2Idx.i()];
+                            if ( d == 0 ) return t2_val[t2Idx.i()];
                             else return t1_val[ t1Idx.i() ];
                         };
                     }
@@ -64,7 +64,7 @@ public final class Product extends AbstractOperation {
                         return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] * t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
                     } else {
                         return ( t0Idx, t1Idx, t2Idx ) -> {
-                            if (d == 0) return t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
+                            if ( d == 0 ) return t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
                             else return t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
                         };
                     }
@@ -302,7 +302,7 @@ public final class Product extends AbstractOperation {
     @Override
     public String stringify( String[] children ) {
         String expression = String.join( ", ", children );
-        if (expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')') {
+        if ( expression.charAt( 0 ) == '(' && expression.charAt( expression.length() - 1 ) == ')' ) {
             return "prodJs" + expression;
         }
         return "prodJs" + "(" + expression + ")";

@@ -35,16 +35,16 @@ public class Power extends AbstractOperation
         if ( d < 0 ) return ( t0Idx, t1Idx, t2Idx ) -> Math.pow(t1_val[ t1Idx.i() ], t2_val[t2Idx.i()]);
         else {
             return ( t0Idx, t1Idx, t2Idx ) -> {
-                if (d == 0) {
-                    return t2_val[t2Idx.i()]
+                if ( d == 0 ) {
+                    return t2_val[ t2Idx.i() ]
                             * Math.pow(
                             t1_val[ t1Idx.i() ],
-                            t2_val[t2Idx.i()] - 1
+                            t2_val[ t2Idx.i() ] - 1
                     );
                 } else {
                     return Math.pow(
                             t1_val[ t1Idx.i() ],
-                            t2_val[t2Idx.i()]
+                            t2_val[ t2Idx.i() ]
                     ) * Math.log(t1_val[ t1Idx.i() ]);
                 }
             };
@@ -61,7 +61,7 @@ public class Power extends AbstractOperation
                 Math.pow(t1_val[ndc1.indexOfIndices( t1Idx )], t2_val[ndc2.indexOfIndices(t2Idx)]);
         else {
             return ( t0Idx, t1Idx, t2Idx ) -> {
-                if (d == 0) {
+                if ( d == 0 ) {
                     double temp = t2_val[ndc2.indexOfIndices(t2Idx)];
                     return temp * Math.pow( t1_val[ndc1.indexOfIndices( t1Idx )], temp - 1 );
                 } else {
@@ -258,7 +258,7 @@ public class Power extends AbstractOperation
                                 .kernelSource( operator.getKernelSource() )
                                 .activationSource( "output = pow(input1, input2);" )
                                 .differentiationSource(
-                                        "if (d==0) {                                    \n" +
+                                        "if ( d == 0 ) {                                    \n" +
                                         "    output = input2 * pow(input1, input2-1.0f);  \n" +
                                         "} else {                                         \n" +
                                         "    output = pow(input1, input2) * log(input1);  \n" +
@@ -349,7 +349,7 @@ public class Power extends AbstractOperation
                                 .kernelSource( broadcast.getKernelSource() )
                                 .activationSource( "value += pow(src1, src2);" )
                                 .differentiationSource(
-                                        "if (d==0) {\n" +
+                                        "if ( d == 0 ) {\n" +
                                         "    value = (handle * pow(target, handle-(float)1 )) * drain;\n" +
                                         "} else {\n" +
                                         "    value += (pow(target, handle) * log(handle)) * drain;\n" +
@@ -381,7 +381,7 @@ public class Power extends AbstractOperation
                     double[] t1_val = inputs[ 1 ].value64();
                     if ( d < 0 ) return t1Idx -> Math.pow(t1_val[ t1Idx.i() ], value);
                     else {
-                        if (d==0) return t1Idx -> value*Math.pow(t1_val[ t1Idx.i() ], value-1);
+                        if ( d == 0 ) return t1Idx -> value*Math.pow(t1_val[ t1Idx.i() ], value-1);
                         else return t1Idx -> Math.pow(t1_val[ t1Idx.i() ], value)*Math.log(value);
                     }
                 };
@@ -392,7 +392,7 @@ public class Power extends AbstractOperation
                     NDConfiguration ndc1 = inputs[ 1 ].getNDConf();
                     if ( d < 0 ) return t1Idx -> Math.pow(t1_val[ndc1.indexOfIndices( t1Idx )], value);
                     else {
-                        if (d==0) return t1Idx -> value*Math.pow(t1_val[ndc1.indexOfIndices( t1Idx )], value-1);
+                        if ( d == 0 ) return t1Idx -> value*Math.pow(t1_val[ndc1.indexOfIndices( t1Idx )], value-1);
                         else return t1Idx -> Math.pow(t1_val[ndc1.indexOfIndices( t1Idx )], value)*Math.log(value);
                     }
                 };

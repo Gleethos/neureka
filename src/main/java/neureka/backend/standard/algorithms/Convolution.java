@@ -50,17 +50,17 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
 
         double[] t0_value = t0_drn.value64();
 
-        while (i < end)//drnSze)
+        while ( i < end )
         {//increment on drain accordingly:
-            int ri=0;
-            while (ri < rank) {
-                if (t1Idx.shape( ri ) == t2Idx.shape( ri )) {
+            int ri = 0;
+            while ( ri < rank ) {
+                if ( t1Idx.shape( ri ) == t2Idx.shape( ri ) ) {
                     t1Idx.set( ri, t0Idx.get( ri ) );
                     t2Idx.set( ri, t0Idx.get( ri ) );
-                } else if (t1Idx.shape( ri ) > t2Idx.shape( ri )) {
+                } else if ( t1Idx.shape( ri ) > t2Idx.shape( ri ) ) {
                     t1Idx.set( ri, t0Idx.get( ri ) );
                     t2Idx.set( ri, 0 );
-                } else if (t1Idx.shape( ri ) < t2Idx.shape( ri )) {
+                } else if ( t1Idx.shape( ri ) < t2Idx.shape( ri ) ) {
                     t1Idx.set( ri, 0 );
                     t2Idx.set( ri, t0Idx.get( ri ) );
                 }
@@ -72,24 +72,24 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
             boolean running = true;
             boolean incrementing = false;
             while ( running ) {
-                ri = (ri == rank) ? 0 : ri;
-                if (!incrementing) {
+                ri = ( ri == rank ) ? 0 : ri;
+                if ( !incrementing ) {
                     value += operation.execute( t0Idx, t1Idx, t2Idx );
                     incrementing = true;
                     ri = 0;
                 } else { // incrementing:
-                    if (t1Idx.get( ri ) < t1Idx.shape( ri ) && t2Idx.get( ri ) < t2Idx.shape( ri )) {
+                    if ( t1Idx.get( ri ) < t1Idx.shape( ri ) && t2Idx.get( ri ) < t2Idx.shape( ri ) ) {
                         t1Idx.set( ri, t1Idx.get( ri ) + 1 );
                         t2Idx.set( ri, t2Idx.get( ri ) + 1 );
-                        if (t1Idx.get( ri ) == t1Idx.shape( ri ) || t2Idx.get( ri ) == t2Idx.shape( ri )) {
+                        if ( t1Idx.get( ri ) == t1Idx.shape( ri ) || t2Idx.get( ri ) == t2Idx.shape( ri )) {
                             running = (ri != rank - 1);
-                            if (t1Idx.shape( ri ) == t2Idx.shape( ri )) {
+                            if ( t1Idx.shape( ri ) == t2Idx.shape( ri ) ) {
                                 t1Idx.set( ri, t0Idx.get( ri ) );
                                 t2Idx.set( ri, t0Idx.get( ri ) );
-                            } else if (t1Idx.shape( ri ) > t2Idx.shape( ri )) {
+                            } else if ( t1Idx.shape( ri ) > t2Idx.shape( ri ) ) {
                                 t1Idx.set( ri, t0Idx.get( ri ) );
                                 t2Idx.set( ri, 0 );
-                            } else if (t1Idx.shape( ri ) < t2Idx.shape( ri )) {
+                            } else if ( t1Idx.shape( ri ) < t2Idx.shape( ri ) ) {
                                 t1Idx.set( ri, 0 );
                                 t2Idx.set( ri, t0Idx.get( ri ) );
                             }
@@ -98,7 +98,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
                     } else ri++;
                 }
             }//setInto value in drn:
-            t0_value[t0Idx.i()] = value;
+            t0_value[ t0Idx.i() ] = value;
             //increment on drain:
             t0Idx.increment();
             //NDConfiguration.Utility.increment(t0Idx, t0Shp);
@@ -121,16 +121,18 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
         double[] t0_value = t0_drn.value64();
 
         // Incrementing if 'i>0' so that all indexes match:
-        for(int ii=0; ii<i; ii++ ) {
+        for ( int ii = 0; ii < i; ii++ ) {
             int ri = 0;
-            while (ri < rank) {
-                if (t2Idx.get( ri ) == t2Idx.shape( ri )) {
+            while ( ri < rank ) {
+                if ( t2Idx.get( ri ) == t2Idx.shape( ri ) ) {
                     t1Idx.set( ri, t0Idx.get( ri ) );
                     t2Idx.set( ri, 0 );
                 } else {
-                    t1Idx.set( ri , (t0Idx.shape( ri ) > t1Idx.shape( ri ))
-                            ? (t0Idx.get( ri ) - t2Idx.get( ri ))
-                            : (t0Idx.get( ri ) + t2Idx.get( ri ))
+                    t1Idx.set(
+                            ri ,
+                            t0Idx.shape( ri ) > t1Idx.shape( ri )
+                                ? (t0Idx.get( ri ) - t2Idx.get( ri ))
+                                : (t0Idx.get( ri ) + t2Idx.get( ri ))
                     );
                 }
                 ri++;
@@ -138,10 +140,10 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
         }
 
         // Looping through given range :
-        while (i < end) {//increment on drain accordingly:
+        while ( i < end ) {//increment on drain accordingly:
             int ri=0;
-            while (ri < rank) {
-                if (t2Idx.get( ri ) == t2Idx.shape( ri )) {//setting 0
+            while ( ri < rank ) {
+                if ( t2Idx.get( ri ) == t2Idx.shape( ri ) ) {//setting 0
                     t1Idx.set( ri, t0Idx.get( ri ) );
                     t2Idx.set( ri, 0 );
                 } else {
@@ -156,9 +158,9 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
             double value = 0;
             boolean running = true;
             boolean incrementing = false;
-            while (running) {
-                ri = (ri == rank) ? 0 : ri;
-                if (!incrementing) {// := testing for match and applying operation:
+            while ( running ) {
+                ri = ( ri == rank ? 0 : ri );
+                if ( !incrementing ) {// := testing for match and applying operation:
                     boolean isMatch = true;
                     for ( int rii = 0; rii < rank; rii++ ) {
                         isMatch = (t1Idx.get( rii ) < t1Idx.shape( rii ) && t1Idx.get( rii ) >= 0) && isMatch;
@@ -167,17 +169,19 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
                     incrementing = true;
                     ri = 0;
                 } else { // incrementing:
-                    if (t2Idx.get( ri ) < t2Idx.shape( ri )) {
+                    if ( t2Idx.get( ri ) < t2Idx.shape( ri ) ) {
                         t2Idx.set( ri, t2Idx.get( ri ) + 1 );
-                        if (t2Idx.get( ri ) == t2Idx.shape( ri )) {
+                        if ( t2Idx.get( ri ) == t2Idx.shape( ri ) ) {
                             running = (ri != rank - 1);
                             t1Idx.set( ri, t0Idx.get( ri ) );
                             t2Idx.set( ri, 0 );
                             ri++;
                         } else {
-                            t1Idx.set( ri, (t0Idx.shape( ri ) > t1Idx.shape( ri ))
-                                    ? (t0Idx.get( ri ) - t2Idx.get( ri ))
-                                    : (t0Idx.get( ri ) + t2Idx.get( ri ))
+                            t1Idx.set(
+                                    ri,
+                                    t0Idx.shape( ri ) > t1Idx.shape( ri )
+                                        ? (t0Idx.get( ri ) - t2Idx.get( ri ))
+                                        : (t0Idx.get( ri ) + t2Idx.get( ri ))
                             );
                             incrementing = false;
                         }
@@ -185,7 +189,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
                 }
             }
             //set value in drn:
-            t0_value[t0Idx.i()] = value;
+            t0_value[ t0Idx.i() ] = value;
             //increment on drain:
             t0Idx.increment();
             //NDConfiguration.Utility.increment(t0Idx, t0Shp);
@@ -225,17 +229,17 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
         int[] t2Idx = new int[ rank ];
         double[] t0_value = (double[]) t0_drn.getData();
 
-        while (i < end)//drnSze)
+        while ( i < end )
         {//increment on drain accordingly:
             int ri=0;
-            while (ri < rank) {
-                if (t1Shp[ri] == t2Shp[ri]) {
+            while ( ri < rank ) {
+                if ( t1Shp[ri] == t2Shp[ri] ) {
                     t1Idx[ri] = t0Idx[ri];
                     t2Idx[ri] = t0Idx[ri];
-                } else if (t1Shp[ri] > t2Shp[ri]) {
+                } else if ( t1Shp[ri] > t2Shp[ri] ) {
                     t1Idx[ri] = t0Idx[ri];
                     t2Idx[ri] = 0;
-                } else if (t1Shp[ri] < t2Shp[ri]) {
+                } else if ( t1Shp[ri] < t2Shp[ri] ) {
                     t1Idx[ri] = 0;
                     t2Idx[ri] = t0Idx[ri];
                 }
@@ -246,25 +250,25 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
             double value = 0;
             boolean running = true;
             boolean incrementing = false;
-            while (running) {
-                ri = (ri == rank) ? 0 : ri;
-                if (!incrementing) {
+            while ( running ) {
+                ri = ( ri == rank ? 0 : ri );
+                if ( !incrementing ) {
                     value += operation.execute( t0Idx, t1Idx, t2Idx );
                     incrementing = true;
                     ri = 0;
                 } else {//incrementing:
-                    if (t1Idx[ri] < t1Shp[ri] && t2Idx[ri] < t2Shp[ri]) {
+                    if ( t1Idx[ri] < t1Shp[ri] && t2Idx[ri] < t2Shp[ri] ) {
                         t1Idx[ri]++;
                         t2Idx[ri]++;
-                        if (t1Idx[ri] == t1Shp[ri] || t2Idx[ri] == t2Shp[ri]) {
+                        if ( t1Idx[ri] == t1Shp[ri] || t2Idx[ri] == t2Shp[ri] ) {
                             running = (ri != rank - 1);
-                            if (t1Shp[ri] == t2Shp[ri]) {
+                            if ( t1Shp[ri] == t2Shp[ri] ) {
                                 t1Idx[ri] = t0Idx[ri];
                                 t2Idx[ri] = t0Idx[ri];
-                            } else if (t1Shp[ri] > t2Shp[ri]) {
+                            } else if ( t1Shp[ri] > t2Shp[ri] ) {
                                 t1Idx[ri] = t0Idx[ri];
                                 t2Idx[ri] = 0;
-                            } else if (t1Shp[ri] < t2Shp[ri]) {
+                            } else if ( t1Shp[ri] < t2Shp[ri] ) {
                                 t1Idx[ri] = 0;
                                 t2Idx[ri] = t0Idx[ri];
                             }
@@ -273,9 +277,9 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
                     } else ri++;
                 }
             }//setInto _value in drn:
-            t0_value[ndc0.indexOfIndices(t0Idx)] = value;
+            t0_value[ ndc0.indexOfIndices(t0Idx) ] = value;
             //increment on drain:
-            NDConfiguration.Utility.increment(t0Idx, t0Shp);
+            NDConfiguration.Utility.increment( t0Idx, t0Shp );
 
             i++;
         }
@@ -303,7 +307,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
         for(int ii=0; ii<i; ii++ ) {
             int ri = 0;
             while (ri < rank) {
-                if (t2Idx[ri] == t2Shp[ri]) {
+                if ( t2Idx[ri] == t2Shp[ri] ) {
                     t1Idx[ri] = t0Idx[ri];
                     t2Idx[ri] = 0;
                 } else {
@@ -319,7 +323,7 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
         while (i < end) {//increment on drain accordingly:
             int ri=0;
             while (ri < rank) {
-                if (t2Idx[ri] == t2Shp[ri]) {//setting 0
+                if ( t2Idx[ri] == t2Shp[ri] ) {//setting 0
                     t1Idx[ri] = t0Idx[ri];
                     t2Idx[ri] = 0;
                 } else {
@@ -344,9 +348,9 @@ public class Convolution extends AbstractFunctionalAlgorithm< Convolution >
                     incrementing = true;
                     ri = 0;
                 } else {//incrementing:
-                    if (t2Idx[ri] < t2Shp[ri]) {
+                    if ( t2Idx[ri] < t2Shp[ri] ) {
                         t2Idx[ri]++;
-                        if (t2Idx[ri] == t2Shp[ri]) {
+                        if ( t2Idx[ri] == t2Shp[ri] ) {
                             running = (ri != rank - 1);
                             t1Idx[ri] = t0Idx[ri];
                             t2Idx[ri] = 0;

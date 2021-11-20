@@ -27,7 +27,7 @@
 
         unsigned int i = get_global_id( 0 );
 
-        if(d<0){
+        if ( d < 0 ) {
 //-=<OPERATION>=-//
             drn[_i_of_i(i, prv_drn_cfg, rank)] = src1[_i_of_i(i, prv_src1_cfg, rank)] + src2[_i_of_i(i, prv_src2_cfg, rank)];
 //-=<OPERATION>=-//

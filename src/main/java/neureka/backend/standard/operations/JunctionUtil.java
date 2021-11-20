@@ -63,37 +63,37 @@ public class JunctionUtil
             ExecutionCall<? extends Device<?>> call,
             CallExecutor goDeeperWith
     ) {
-        Tsr<?>[] tsrs = call.getTensors();
+        Tsr<?>[] tensors = call.getTensors();
         Device<?> device = call.getDevice();
         int d = call.getValOf( Arg.DerivIdx.class );
         Operation type = call.getOperation();
 
         Tsr<?> alternative = null;
-        if (tsrs.length > 3) {
+        if ( tensors.length > 3 ) {
             if ( d < 0 ) {
-                Tsr<?>[] reduction = new Tsr[]{ tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ] };
+                Tsr<?>[] reduction = new Tsr[]{ tensors[ 0 ], tensors[ 1 ], tensors[ 2 ] };
                 alternative = goDeeperWith.execute(
                         ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
                 );
-                tsrs[ 0 ] = reduction[ 0 ];
+                tensors[ 0 ] = reduction[ 0 ];
 
-                reduction = Operation.Utility.offsetted(tsrs, 1);
+                reduction = Operation.Utility.offsetted(tensors, 1);
                 alternative = goDeeperWith.execute(
                         ExecutionCall.of(reduction).andArgs(Arg.DerivIdx.of(d)).running(type).on(device)
                 );
-                tsrs[ 0 ] = reduction[ 0 ];
+                tensors[ 0 ] = reduction[ 0 ];
             } else {
-                Tsr<?>[] reduction = Operation.Utility.without(tsrs, 1+d);
+                Tsr<?>[] reduction = Operation.Utility.without(tensors, 1+d);
                 if ( reduction.length > 2 ) {
-                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tsrs[ 1 ]) : reduction[ 0 ];
+                    reduction[ 0 ] = ( reduction[ 0 ] == null ) ? Tsr.Create.newTsrLike(tensors[ 1 ]) : reduction[ 0 ];
                     alternative = goDeeperWith.execute(
                             ExecutionCall.of(reduction)
                                             .andArgs( Arg.DerivIdx.of( -1 ) )
                                             .running( Neureka.get().backend().getOperation("*") )
                                             .on( device )
                     );
-                    tsrs[ 0 ] = reduction[ 0 ];
-                } else tsrs[ 0 ] = reduction[ 1 ];
+                    tensors[ 0 ] = reduction[ 0 ];
+                } else tensors[ 0 ] = reduction[ 1 ];
             }
             return alternative;
         } else
@@ -203,7 +203,7 @@ public class JunctionUtil
         Operation operation = call.getOperation();
 
         Tsr<?> alternative = null;
-        if (tsrs.length > 3) {
+        if ( tsrs.length > 3 ) {
             if ( d < 0 ) {
                 Tsr<?>[] reduction = new Tsr[]{tsrs[ 0 ], tsrs[ 1 ], tsrs[ 2 ]};
                 alternative = goDeeperWith.execute(

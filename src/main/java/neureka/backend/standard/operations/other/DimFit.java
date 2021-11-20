@@ -73,7 +73,7 @@ public class DimFit extends AbstractOperation
 
                                         for ( int i=0; i<inputs.length; i++)
                                         {
-                                            if (inputs[ i ].rank()!=largest)
+                                            if ( inputs[ i ].rank()!=largest)
                                             {
                                                 int[] oldShape = inputs[ i ].getNDConf().shape();
                                                 int[] newReshape = new int[largest];

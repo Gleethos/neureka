@@ -63,7 +63,7 @@ public class Modulo extends AbstractOperation {
                     if ( d < 0 ) return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] % t2_val[ndc2.indexOfIndices( t1Idx )];
                     else {
                         return t1Idx -> {
-                            if (d == 0) {
+                            if ( d == 0 ) {
                                 return 1 / t2_val[ndc2.indexOfIndices( t1Idx )];
                             } else {
                                 return -(t1_val[ndc1.indexOfIndices( t1Idx )] / Math.pow(t2_val[ndc2.indexOfIndices( t1Idx )], 2));
@@ -177,7 +177,7 @@ public class Modulo extends AbstractOperation {
                         return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ ndc1.indexOfIndices( t1Idx ) ] % t2_val[ ndc2.indexOfIndices(t2Idx) ];
                     } else {
                         return ( t0Idx, t1Idx, t2Idx ) -> {
-                            if (d == 0)
+                            if ( d == 0 )
                                 return 1 / t2_val[ ndc2.indexOfIndices( t2Idx ) ];
                             else
                                 return -( t1_val[ ndc1.indexOfIndices( t1Idx ) ] / Math.pow(t2_val[ ndc2.indexOfIndices( t2Idx ) ], 2) );
@@ -255,7 +255,7 @@ public class Modulo extends AbstractOperation {
                                 .kernelSource( broadcast.getKernelSource() )
                                 .activationSource( "value = ((int)src1) % ((int)src2);\n" )
                                 .differentiationSource(
-                                        "if (d==0) {\n" +
+                                        "if ( d == 0 ) {\n" +
                                         "    value += (1/handle) * drain;\n" +//TODO: this is probably wrong!
                                         "} else {\n" +
                                         "    value += (-(handle /(float)pow(target, (float)2)) ) * drain;\n" +
@@ -288,7 +288,7 @@ public class Modulo extends AbstractOperation {
                     if ( d < 0 )
                         return t1Idx -> t1_val[ t1Idx.i() ] % value;
                     else {
-                        if (d == 0) return t1Idx -> 1 / value;
+                        if ( d == 0 ) return t1Idx -> 1 / value;
                         else return t1Idx -> -value / Math.pow(t1_val[ t1Idx.i() ], 2);
                     }
                 };
@@ -300,7 +300,7 @@ public class Modulo extends AbstractOperation {
                     if ( d < 0 )
                         return t1Idx -> t1_val[ndc1.indexOfIndices( t1Idx )] % value;
                     else {
-                        if (d == 0) return t1Idx -> 1 / value;
+                        if ( d == 0 ) return t1Idx -> 1 / value;
                         else return t1Idx -> - value / Math.pow(t1_val[ndc1.indexOfIndices( t1Idx )], 2);
                     }
                 };
@@ -360,7 +360,7 @@ public class Modulo extends AbstractOperation {
                                 .kernelSource( scalarization.getKernelSource() )
                                 .activationSource( "output = ((int)input1) % ((int)value);     \n" )
                                 .differentiationSource(
-                                        "if (d==0) {                               \n" +
+                                        "if ( d == 0 ) {                               \n" +
                                         "    output = 1/value;                           \n" +
                                         "} else {                                        \n" +
                                         "    output = -value /(float)pow(input1, 2.0f);  \n" +

@@ -36,7 +36,7 @@ public class XConv extends AbstractOperation
                         return ( t0Idx, t1Idx, t2Idx ) -> t1_val[ t1Idx.i() ] * t2_val[t2Idx.i()];
                     } else {
                         return ( t0Idx, t1Idx, t2Idx ) -> {
-                            if (d == 0) return t2_val[t2Idx.i()];
+                            if ( d == 0 ) return t2_val[t2Idx.i()];
                             else return t1_val[ t1Idx.i() ];
                         };
                     }
@@ -49,7 +49,7 @@ public class XConv extends AbstractOperation
                         return ( t0Idx, t1Idx, t2Idx ) -> t1_val[inputs[ 1 ].indexOfIndices( t1Idx )] * t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
                     } else {
                         return ( t0Idx, t1Idx, t2Idx ) -> {
-                            if (d == 0) return t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
+                            if ( d == 0 ) return t2_val[inputs[ 2 ].indexOfIndices(t2Idx)];
                             else return t1_val[inputs[ 1 ].indexOfIndices( t1Idx )];
                         };
                     }

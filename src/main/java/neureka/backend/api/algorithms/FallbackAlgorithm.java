@@ -68,7 +68,7 @@ public final class FallbackAlgorithm extends AbstractBaseAlgorithm<FallbackAlgor
                                         }
                                     );
                             }
-                            else if (typeClass == String.class && call.getOperation().getFunction().equals("add"))
+                            else if ( typeClass == String.class && call.getOperation().getFunction().equals("add") )
                             {
                                 call.getDevice()
                                     .getExecutor()

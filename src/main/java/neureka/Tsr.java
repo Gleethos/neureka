@@ -982,7 +982,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             // Virtual and actual tensors require a different mapping from a given index to the underlying data..
             // Therefore we need to re-initialize the NDConfiguration object:
             createConstructionAPI().configureFromNewShape( getNDConf().shape(), isVirtual, getData() == null );
-            if( isVirtual ) {
+            if ( isVirtual ) {
                 Relation<V> relation = get( Relation.class );
                 if ( relation!=null )
                     relation.foreachChild( c -> {
@@ -2361,7 +2361,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
             The following code check the validity of the slice shape ranges with
             respect to the 'parentTensor' of this new slice.
          */
-        if( parentTensor.rank() != newShape.length || rootTensor != parentTensor ) {
+        if ( parentTensor.rank() != newShape.length || rootTensor != parentTensor ) {
             // TODO! This requires some more thought about how to check this!
             // THIS CASE HAS NOT YET BEEN THOUGHT TROUGH!
             _LOG.warn(
@@ -2664,7 +2664,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
                     String failMessage = "Conversion to type "+typeClass+" not yet supported.";
                     if ( Number.class.isAssignableFrom(typeClass) ) {
                         java.util.function.Function<Integer, Number> access = null;
-                        if (this.getValueClass() == Integer.class) {
+                        if ( this.getValueClass() == Integer.class ) {
                             int[] sourceData = (int[]) this.getData();
                             access = (i -> (Number) mapper.apply((V) Integer.valueOf(sourceData[i])));
                         } else if (this.getValueClass() == Double.class) {

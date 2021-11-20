@@ -12,9 +12,9 @@ public class Utility {
             BufferedReader br = new BufferedReader(new InputStreamReader(stream));//new FileInputStream(fileName)));
             StringBuffer sb = new StringBuffer();
             String line = "";
-            while (line!=null) {
+            while ( line != null ) {
                 line = br.readLine();
-                if (line != null) sb.append(line).append("\n");
+                if ( line != null ) sb.append(line).append("\n");
             }
             return sb.toString();
         } catch (IOException e) {

@@ -112,7 +112,7 @@ public final class Logarithm extends AbstractOperation
 
     @Override
     public String asDerivative( Function[] children, int derivationIndex) {
-        if (children.length != 1) throw new IllegalStateException("Natual logarithm does not support more than 1 argument.");
+        if ( children.length != 1 ) throw new IllegalStateException("Natual logarithm does not support more than 1 argument.");
         return children[0].getDerivative(derivationIndex)+" / "+children[0].toString();
     }
 

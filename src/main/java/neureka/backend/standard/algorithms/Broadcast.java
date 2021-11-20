@@ -151,10 +151,10 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
             while ( i < end ) {//increment on drain accordingly:
                 int ri = 0;
                 while ( ri < rank ) {
-                    if (t0Shp[ri] == t1Shp[ri]) {
+                    if ( t0Shp[ri] == t1Shp[ri] ) {
                         t1Idx.set( ri, t0Idx.get( ri ) );//all shapes are equal -> shape index can be inherited from origin!
                         t2Idx.set( ri, t0Idx.get( ri ) );
-                    } else if (t0Shp[ri] > t1Shp[ri]) {
+                    } else if ( t0Shp[ri] > t1Shp[ri] ) {
                         t1Idx.set( ri, 0 );//Current origin index is larger: index can be inherited!
                         t2Idx.set( ri, t0Idx.get( ri ) );
                     }
@@ -175,7 +175,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                         if ( t0Shp[ri] < t1Shp[ri] ) {//Only if origin shape is smaller than handle and drain!
                             t1Idx.set( ri, t1Idx.get( ri ) + 1 );
                             t2Idx.set( ri, t2Idx.get( ri ) + 1 );
-                            if (t1Idx.get( ri ) == t1Shp[ri]) {
+                            if ( t1Idx.get( ri ) == t1Shp[ri] ) {
                                 t1Idx.set( ri, 0 );
                                 t2Idx.set( ri, 0 );
                                 running = (ri != rank - 1);
@@ -190,7 +190,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                     }
                 }
                 //set value in drn:
-                t0_value[t0Idx.i()] = value;
+                t0_value[ t0Idx.i() ] = value;
                 //increment on drain:
                 t0Idx.increment();
                 //NDConfiguration.Utility.increment(t0Idx, t0Shp);
@@ -211,7 +211,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
         NDConfiguration ndc1 = t1_src.getNDConf();
         int[] t0Shp = ndc0.shape();//Tsr t0_origin, Tsr t1_handle, Tsr t2_drain ... when d>=0
         int[] t1Shp = ndc1.shape();
-        int[] t2Shp = (t2_src != null) ? t2_src.getNDConf().shape() : t1Shp;
+        int[] t2Shp = ( t2_src != null ? t2_src.getNDConf().shape() : t1Shp ) ;
         int rank = t0Shp.length;
         int[] t0Idx = ndc0.indicesOfIndex( i );
         int[] t1Idx = new int[ rank ];
@@ -246,7 +246,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
             while ( i < end ) {//increment on drain accordingly:
                 int ri = 0;
                 while ( ri < rank ) {
-                    if (t0Shp[ri] == t1Shp[ri]) {
+                    if ( t0Shp[ri] == t1Shp[ri] ) {
                         t1Idx[ri] = t0Idx[ri];//all shapes are equal -> shape index can be inherited from origin!
                         t2Idx[ri] = t0Idx[ri];
                     } else if ( t0Shp[ri] > t1Shp[ri] ) {
@@ -270,7 +270,7 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                         if ( t0Shp[ri] < t1Shp[ri] ) {//Only if origin shape is smaller than handle and drain!
                             t1Idx[ri]++;
                             t2Idx[ri]++;
-                            if (t1Idx[ri] == t1Shp[ri]) {
+                            if ( t1Idx[ri] == t1Shp[ri] ) {
                                 t1Idx[ri] = 0;
                                 t2Idx[ri] = 0;
                                 running = (ri != rank - 1);
@@ -279,15 +279,15 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                                 incrementing = false;//return to calculation!
                             }
                         } else {
-                            running = (ri != rank - 1);
+                            running = ( ri != rank - 1 );
                             ri++;
                         }
                     }
                 }
                 //set value in drn:
-                t0_value[ndc0.indexOfIndices(t0Idx)] = value;
+                t0_value[ ndc0.indexOfIndices(t0Idx) ] = value;
                 //increment on drain:
-                NDConfiguration.Utility.increment(t0Idx, t0Shp);
+                NDConfiguration.Utility.increment( t0Idx, t0Shp );
                 i++;
             }
         }
