@@ -29,8 +29,10 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
             ) return SuitabilityPredicate.UNSUITABLE;
             Tsr<?>[] tensors = call.getTensors();
             int size = tensors[ tensors.length - 1 ].size();
-            if ( size != 1 || tensors.length != 2 ) return SuitabilityPredicate.UNSUITABLE;
-            return SuitabilityPredicate.GOOD;
+            if ( (size != 1 && !tensors[1].isVirtual() ) || tensors.length != 3 )
+                return SuitabilityPredicate.UNSUITABLE;
+            else
+                return SuitabilityPredicate.GOOD;
         });
         setCallPreparation(
                 call -> {
