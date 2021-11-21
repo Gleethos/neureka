@@ -11,6 +11,8 @@ import neureka.ndim.config.NDConfiguration;
 import neureka.ndim.iterators.NDIterator;
 import org.jetbrains.annotations.Contract;
 
+import java.util.Objects;
+
 public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
 {
 
@@ -22,29 +24,29 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
             if (
                     !call.validate()
                             .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
-                            .first( t -> t == null )
+                            .first(Objects::isNull)
                             .isValid()
             ) return SuitabilityPredicate.UNSUITABLE;
-            Tsr[] tsrs = call.getTensors();
-            int size = tsrs[tsrs.length-1].size();
-            if ( size != 1 || tsrs.length != 2 ) return SuitabilityPredicate.UNSUITABLE;
+            Tsr<?>[] tensors = call.getTensors();
+            int size = tensors[ tensors.length - 1 ].size();
+            if ( size != 1 || tensors.length != 2 ) return SuitabilityPredicate.UNSUITABLE;
             return SuitabilityPredicate.GOOD;
         });
         setCallPreparation(
                 call -> {
-                    Tsr[] tsrs = call.getTensors();
-                    Device device = call.getDevice();
-                    assert tsrs[ 0 ] == null;  // Creating a new tensor:
+                    Tsr<?>[] tensors = call.getTensors();
+                    Device<Number> device = call.getDeviceFor(Number.class);
+                    assert tensors[ 0 ] == null;  // Creating a new tensor:
 
-                    int[] shp = tsrs[ 1 ].getNDConf().shape();
-                    Tsr output = Tsr.of( shp, 0.0 );
+                    int[] shp = tensors[ 1 ].getNDConf().shape();
+                    Tsr<Double> output = Tsr.of( shp, 0.0 );
                     output.setIsVirtual( false );
                     try {
                         device.store( output );
                     } catch( Exception e ) {
                         e.printStackTrace();
                     }
-                    tsrs[ 0 ] = output;
+                    tensors[ 0 ] = output;
 
                     return call;
                 }
@@ -59,17 +61,17 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
 
     @Contract(pure = true)
     public static void scalarize (
-            Tsr t0_drn,
+            Tsr<?> t0_drn,
             int i, int end,
             Operation.PrimaryNDIConsumer operation
     ) {
         NDIterator t0Idx = NDIterator.of( t0_drn );
         t0Idx.set( t0_drn.IndicesOfIndex( i ) );
         double[] t0_value = t0_drn.value64();
-        while (i < end) // increment on drain accordingly:
+        while ( i < end ) // increment on drain accordingly:
         {
             // setInto _value in drn:
-            t0_value[t0Idx.i()] = operation.execute( t0Idx );
+            t0_value[ t0Idx.i() ] = operation.execute( t0Idx );
             // increment on drain:
             t0Idx.increment();
             //NDConfiguration.Utility.increment(t0Idx, t0Shp);
@@ -79,17 +81,17 @@ public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
 
     @Contract(pure = true)
     public static void scalarize (
-            Tsr t0_drn,
+            Tsr<?> t0_drn,
             int i, int end,
             Operation.PrimaryNDAConsumer operation
     ) {
         int[] t0Shp = t0_drn.getNDConf().shape();
         int[] t0Idx = t0_drn.IndicesOfIndex( i );
         double[] t0_value = t0_drn.value64();
-        while (i < end) // increment on drain accordingly:
+        while ( i < end ) // increment on drain accordingly:
         {
             // setInto _value in drn:
-            t0_value[t0_drn.indexOfIndices(t0Idx)] = operation.execute( t0Idx );
+            t0_value[ t0_drn.indexOfIndices(t0Idx) ] = operation.execute( t0Idx );
             // increment on drain:
             NDConfiguration.Utility.increment(t0Idx, t0Shp);
             i++;

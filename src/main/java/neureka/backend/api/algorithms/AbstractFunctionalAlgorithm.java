@@ -11,11 +11,13 @@ import neureka.calculus.Function;
 import neureka.calculus.RecursiveExecutor;
 import neureka.calculus.implementations.FunctionNode;
 import neureka.devices.Device;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  This is the base class for implementations of the {@link Algorithm} interface.
  *  The class implements a basic component system, as is implicitly expected by said interface.
- *  Additionally it contains useful methods used to process passed arguments of {@link ExecutionCall}
+ *  Additionally, it contains useful methods used to process passed arguments of {@link ExecutionCall}
  *  as well as an implementation of the {@link Algorithm} interface which allows its methods to
  *  be implemented in a functional programming style, meaning that instances of concrete implementations
  *  extending this abstract class have setters for lambdas representing the {@link Algorithm} methods.
@@ -34,12 +36,15 @@ import neureka.devices.Device;
  */
 public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extends AbstractBaseAlgorithm<C>
 {
+    private static final Logger _LOG = LoggerFactory.getLogger( AbstractFunctionalAlgorithm.class );
+
     private SuitabilityPredicate _isSuitableFor;
     private ForwardADPredicate   _canPerformForwardADFor;
     private BackwardADPredicate  _canPerformBackwardADFor;
     private ADAgentSupplier      _supplyADAgentFor;
     private ExecutionDispatcher  _handleInsteadOfDevice;
     private ExecutionPreparation _instantiateNewTensorsForExecutionIn;
+    private boolean _isFullyBuilt = false;
 
     public AbstractFunctionalAlgorithm( String name ) { super(name); }
 
@@ -93,7 +98,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  This method receives an {@link ExecutionDispatcher} lambda which
      *  is the final execution procedure responsible for electing an {@link neureka.backend.api.ImplementationFor}
      *  the chosen {@link Device} in a given {@link ExecutionCall}.
-     *  However the  {@link ExecutionDispatcher} does not have to select a device specific implementation.
+     *  However, the  {@link ExecutionDispatcher} does not have to select a device specific implementation.
      *  It can also occupy the rest of the execution without any other steps being taken.
      *  For example, a {@link neureka.backend.api.ImplementationFor} or a {@link RecursiveExecutor}
      *  would not be used if not explicitly called.
@@ -125,7 +130,42 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
 
     //---
 
-    public C buildFunAlgorithm() { return (C) this; }
+    public C buildFunAlgorithm() {
+        if (
+            _isSuitableFor == null ||
+            _canPerformForwardADFor == null ||
+            _canPerformBackwardADFor == null ||
+            _supplyADAgentFor == null ||
+            _handleInsteadOfDevice == null ||
+            _instantiateNewTensorsForExecutionIn == null
+        ) {
+            throw new IllegalStateException(
+                    "Instance '"+getClass().getSimpleName()+"' only partially built!"
+            );
+        }
+
+        _isFullyBuilt = true;
+        return (C) this;
+    }
+
+    /**
+     *  Neureka is supposed to be extremely modular and in a sense its backend should be "hackable" to a degree.
+     *  However, this comes with a lot of risk, because it requires us to expose mutable state, which is not good.
+     *  This class is semi-immutable, by simply warning us about any mutations after building was completed!
+     *
+     * @param o The state which will be set.
+     * @param <T> The type of the thing which is supposed to be set.
+     * @return The checked thing.
+     */
+    private <T> T _checked(T o) {
+        if ( _isFullyBuilt ) {
+            _LOG.warn(
+                "Modification of operation '"+this+"' occurred! " +
+                "Trying to redefine implementation of '" + o.getClass().getSimpleName() + "'."
+            );
+        }
+        return o;
+    }
 
     /**
      *  The {@link SuitabilityPredicate}
@@ -136,7 +176,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setIsSuitableFor( SuitabilityPredicate isSuitableFor ) {
-        _isSuitableFor = isSuitableFor;
+        _isSuitableFor = _checked(isSuitableFor);
         return this;
     }
 
@@ -148,7 +188,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setCanPerformForwardADFor( ForwardADPredicate canPerformForwardADFor ) {
-        _canPerformForwardADFor = canPerformForwardADFor;
+        _canPerformForwardADFor = _checked(canPerformForwardADFor);
         return this;
     }
 
@@ -156,11 +196,10 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  A {@link BackwardADPredicate} lambda checks if this
      *  {@link Algorithm} can perform backward AD for a given {@link ExecutionCall}.
      *
-     * @param canPerformBackwardADFor
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setCanPerformBackwardADFor( BackwardADPredicate canPerformBackwardADFor ) {
-        _canPerformBackwardADFor = canPerformBackwardADFor;
+        _canPerformBackwardADFor = _checked(canPerformBackwardADFor);
         return this;
     }
 
@@ -168,11 +207,10 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  This method receives a {@link neureka.backend.api.algorithms.fun.ADAgentSupplier} which will supply
      *  {@link ADAgent} instances which can perform backward and forward auto differentiation.
      *
-     * @param supplyADAgentFor
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setSupplyADAgentFor( ADAgentSupplier supplyADAgentFor ) {
-        _supplyADAgentFor = supplyADAgentFor;
+        _supplyADAgentFor = _checked(supplyADAgentFor);
         return this;
     }
 
@@ -194,7 +232,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  {@link ExecutionCall} instance better.
      */
     public AbstractFunctionalAlgorithm<C> setExecutionDispatcher(ExecutionDispatcher handleInsteadOfDevice ) {
-        _handleInsteadOfDevice = handleInsteadOfDevice;
+        _handleInsteadOfDevice = _checked(handleInsteadOfDevice);
         return this;
     }
 
@@ -211,7 +249,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  linear operation like for example a broadcast operation will require a very different approach...
      */
     public AbstractFunctionalAlgorithm<C> setCallPreparation( ExecutionPreparation instantiateNewTensorsForExecutionIn ) {
-        _instantiateNewTensorsForExecutionIn = instantiateNewTensorsForExecutionIn;
+        _instantiateNewTensorsForExecutionIn = _checked(instantiateNewTensorsForExecutionIn);
         return this;
     }
 

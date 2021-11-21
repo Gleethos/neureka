@@ -165,6 +165,11 @@ public class OperationBuilder
                 public double calculate( double[] inputs, int j, int d, Function[] src ) {
                     return src[ 0 ].call( inputs, j );
                 }
+
+                @Override
+                public String toString() {
+                    return "Anonymous" + super.toString();
+                }
             };
     }
 }
