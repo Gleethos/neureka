@@ -123,42 +123,48 @@ class Calculus_Scalar_Spec extends Specification
 
         where : 'The following parameters are used :'
             equation                         | inputs               | index || expected
-            "6/2*(1+2)"                      | []                   | null  ||   9
-            "sumJs(Ij)"                      | [2, 3.2, 6]          | null  ||  11.2
-            "prod(Ij)"                       | [0.5, 0.5, 100]      | null  ||  25
-            "prod(prod(Ij))"                 | [0.5, 0.5, 10]       | null  || (2.5 * 2.5 * 2.5)
-            "I3/i[1]-I0+2+i2"                | [5, 4, 3, 12]        | null  ||   3
-            "i3*i1/(i4-i0-2)-sig(0)+tanh(0)" | [-4, -2, 6, -3, -8]  | null  ||  -1.5
-            "(i0*i1)*i2"                     | [2, 3, -2]           | 0     || -6
-            "softplus(i0*i1)*i2"             | [2, 3, -2]           | 0     || -5.985164261060192
-            "prod(ij)"                       | [2, 3, -2]           | 1     || -4
-            "relu(prod(ij))"                 | [2, 3, -2]           | null  || -0.12
-            "relu(prod(ij))"                 | [2, 3, -2]           | 1     || -0.04
-            "quad(prod(ij)+6)"               | [2, 3, -2]           | null  || 36
-            "quad(prod(ij)+6)"               | [2, 3, -2]           | 1     || -12*-4
-            "quad(abs(prod(ij))-6)"          | [2, 3, -2]           | null  || 36
-            "quad(abs(prod(ij))-6)"          | [2, 3, -2]           | 1     || -12*-4
-            "sumJs(ij)"                      | [2, 3, -2]           | null  || 3
-            "sumJs(ij)"                      | [2, 3, -2]           | 1     || 1
-            "sumJs(ij^1)"                    | [2, 3, -2]           | null  || 3
-            "sumJs(ij^1)"                    | [2, 3, -2]           | 1     || 1
-            "I[1]^2"                         | [2, 3, -2]           | null  || 9
-            "I[1]^2"                         | [2, 3, -2]           | 1     || 6
-            "sumJs(ij^2)"                    | [2, 3, -2]           | null  || 17
-            "sumJs(ij^2)"                    | [2, 3, -2]           | 1     || 6
-            "2^I[1]"                         | [2, 3, -2]           | null  || 8
-            "2^I[0]"                         | [2, 3, -2]           | null  || 4
-            "2^I[2]"                         | [2, 3, -2]           | null  || 0.25
-            "2^I[1]"                         | [2, 3, -2]           | 1     || 5.545177444479562
-            "sumJs(2^I[j])"                  | [2, 3, -2]           | null  || 12.25
-            "sumJs(2^I[j])"                  | [2, 3, -2]           | 1     || 5.545177444479562
-            "I[1]%2"                         | [2, 3, -2]           | null  || 1
-            "I[1]%2"                         | [2, 3, -2]           | 1     || 1
-            "I[2]%2"                         | [2, 3, -5]           | null  || -1
-            "I[2]%2"                         | [2, 3, -5]           | 2     || 1
-            "I[2]%2"                         | [2, 3, -5]           | 1     || 0
-            "7%I[1]"                         | [2, 4, -5]           | null  || 3
-            "7%I[1]"                         | [2, 4, -5]           | 1     || 0 // This is in fact undefined... but let's keep things differentiable
+             "6/2*(1+2)"                      | []                   | null  ||   9
+             "sumJs(Ij)"                      | [2, 3.2, 6]          | null  ||  11.2
+             "prod(Ij)"                       | [0.5, 0.5, 100]      | null  ||  25
+             "prod(prod(Ij))"                 | [0.5, 0.5, 10]       | null  || (2.5 * 2.5 * 2.5)
+             "I3/i[1]-I0+2+i2"                | [5, 4, 3, 12]        | null  ||   3
+             "i3*i1/(i4-i0-2)-sig(0)+tanh(0)" | [-4, -2, 6, -3, -8]  | null  ||  -1.5
+             "(i0*i1)*i2"                     | [2, 3, -2]           | 0     || -6
+             "softplus(i0*i1)*i2"             | [2, 3, -2]           | 0     || -5.985164261060192
+             "prod(ij)"                       | [2, 3, -2]           | 1     || -4
+             "relu(prod(ij))"                 | [2, 3, -2]           | null  || -0.12
+             "relu(prod(ij))"                 | [2, 3, -2]           | 1     || -0.04
+             "quad(prod(ij)+6)"               | [2, 3, -2]           | null  || 36
+             "quad(prod(ij)+6)"               | [2, 3, -2]           | 1     || -12*-4
+             "quad(abs(prod(ij))-6)"          | [2, 3, -2]           | null  || 36
+             "quad(abs(prod(ij))-6)"          | [2, 3, -2]           | 1     || -12*-4
+             "sumJs(ij)"                      | [2, 3, -2]           | null  || 3
+             "sumJs(ij)"                      | [2, 3, -2]           | 1     || 1
+             "sumJs(ij^1)"                    | [2, 3, -2]           | null  || 3
+             "sumJs(ij^1)"                    | [2, 3, -2]           | 1     || 1
+             "I[1]^2"                         | [2, 3, -2]           | null  || 9
+             "I[1]^2"                         | [2, 3, -2]           | 1     || 6
+             "sumJs(ij^2)"                    | [2, 3, -2]           | null  || 17
+             "sumJs(ij^2)"                    | [2, 3, -2]           | 1     || 6
+             "2^I[1]"                         | [2, 3, -2]           | null  || 8
+             "2^I[0]"                         | [2, 3, -2]           | null  || 4
+             "2^I[2]"                         | [2, 3, -2]           | null  || 0.25
+             "2^I[1]"                         | [2, 3, -2]           | 1     || 5.545177444479562
+             "sumJs(2^I[j])"                  | [2, 3, -2]           | null  || 12.25
+             "sumJs(2^I[j])"                  | [2, 3, -2]           | 1     || 5.545177444479562
+             "I[1]%2"                         | [2, 3, -2]           | null  || 1
+             "I[1]%2"                         | [2, 3, -2]           | 1     || 1
+             "I[2]%2"                         | [2, 3, -5]           | null  || -1
+             "I[2]%2"                         | [2, 3, -5]           | 2     || 1
+             "I[2]%2"                         | [2, 3, -5]           | 1     || 0
+             "7%I[1]"                         | [2, 4, -5]           | null  || 3
+             "7%I[1]"                         | [2, 4, -5]           | 1     || 0 // This is in fact undefined... but let's keep things differentiable
+             "sum(7%i0)"                      | [2, 3,  4]           | null  || 3
+             "sum(7%ij)"                      | [2, 3,  4]           | null  || 5
+             "sum(7%i0)"                      | [2, 3,  4]           | 2     || 0 // This is in fact undefined... but let's keep things differentiable
+             "sum(7%ij)"                      | [2, 3,  4]           | 2     || 0 // This is in fact undefined... but let's keep things differentiable
+             "sum(i0%3)"                      | [2, 3,  4]           | 0     || 1
+             "sum(ij%3)"                      | [2, 3,  4]           | 2     || 1
     }
 
 

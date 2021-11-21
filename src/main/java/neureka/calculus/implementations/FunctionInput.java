@@ -111,7 +111,12 @@ public class FunctionInput implements Function, GradientProvider
     public double derive( final double[] inputs, final int index ) { return ( index == index() ) ? 1 : 0; }
 
     @Override
-    public double derive( double[] inputs, int index, int j ) { return derive( inputs, index ); }
+    public double derive( double[] inputs, int index, int j ) {
+        if ( j < 0 || j == index() )
+            return derive( inputs, index );
+        else
+            return 0;
+    }
 
     //------------------------------------------------------------------------------------------------------------------
 

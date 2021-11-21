@@ -430,9 +430,9 @@ public class Modulo extends AbstractOperation {
                 result %= current;
             }
             return result;
-        } else {
-            return src[ 0 ].derive( inputs, d, j );// j ?
         }
+        else
+            return src[ 0 ].derive( inputs, d, j );
     }
 
 
