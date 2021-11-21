@@ -165,6 +165,11 @@ class Calculus_Scalar_Spec extends Specification
              "sum(7%ij)"                      | [2, 3,  4]           | 2     || 0 // This is in fact undefined... but let's keep things differentiable
              "sum(i0%3)"                      | [2, 3,  4]           | 0     || 1
              "sum(ij%3)"                      | [2, 3,  4]           | 2     || 1
+             "sum(ij-3)"                      | [1, 2,  4]           | null  || -2
+             "sum(ij-3)"                      | [1, 2,  4]           | 1     || 1
+             "sum(3-ij)"                      | [1, 2,  4]           | null  || 2
+             "sum(3-ij)"                      | [1, 2,  4]           | 1     || -1
+             "sum(3-ij-ij)"                   | [1, 2,  4]           | 1     || -2
     }
 
 
