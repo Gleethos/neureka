@@ -38,13 +38,22 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
 {
     private static final Logger _LOG = LoggerFactory.getLogger( AbstractFunctionalAlgorithm.class );
 
+    /*
+        Consider the following lambdas as effectively immutable because this
+        class will warn us if any field variable is set for a second time.
+        This makes the backend somewhat hackable, but also manageable with respect to complexity.
+     */
     private SuitabilityPredicate _isSuitableFor;
     private ForwardADPredicate   _canPerformForwardADFor;
     private BackwardADPredicate  _canPerformBackwardADFor;
     private ADAgentSupplier      _supplyADAgentFor;
     private ExecutionDispatcher  _handleInsteadOfDevice;
     private ExecutionPreparation _instantiateNewTensorsForExecutionIn;
+    /*
+        This flag will ensure that we can warn the user that the state has been illegally modified.
+     */
     private boolean _isFullyBuilt = false;
+
 
     public AbstractFunctionalAlgorithm( String name ) { super(name); }
 
@@ -56,6 +65,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      */
     @Override
     public float isSuitableFor( ExecutionCall<? extends Device<?>> call ) {
+        _checkReadiness();
         return _isSuitableFor.isSuitableFor(call);
     }
 
@@ -66,6 +76,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      */
     @Override
     public boolean canPerformForwardADFor( ExecutionCall<? extends Device<?>> call ) {
+        _checkReadiness();
         return _canPerformForwardADFor.canPerformForwardADFor(call);
     }
 
@@ -76,6 +87,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      */
     @Override
     public boolean canPerformBackwardADFor( ExecutionCall<? extends Device<?>> call ) {
+        _checkReadiness();
         return _canPerformBackwardADFor.canPerformBackwardADFor( call );
     }
 
@@ -91,6 +103,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      */
     @Override
     public ADAgent supplyADAgentFor(Function function, ExecutionCall<? extends Device<?>> call, boolean forward ) {
+        _checkReadiness();
         return _supplyADAgentFor.supplyADAgentFor(function, call, forward );
     }
 
@@ -116,6 +129,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      */
     @Override
     public Tsr<?> dispatch( FunctionNode caller, ExecutionCall<? extends Device<?>> call ) {
+        _checkReadiness();
         return _handleInsteadOfDevice.dispatch( caller, call );
     }
 
@@ -125,6 +139,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      */
     @Override
     public ExecutionCall<? extends Device<?>> prepare( ExecutionCall<? extends Device<?>> call ) {
+        _checkReadiness();
         return _instantiateNewTensorsForExecutionIn.prepare( call );
     }
 
@@ -140,7 +155,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
             _instantiateNewTensorsForExecutionIn == null
         ) {
             throw new IllegalStateException(
-                    "Instance '"+getClass().getSimpleName()+"' only partially built!"
+                    "Instance '"+getClass().getSimpleName()+"' incomplete!"
             );
         }
 
@@ -148,23 +163,37 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
         return (C) this;
     }
 
+    private void _checkReadiness() {
+        if ( !_isFullyBuilt ) {
+            throw new IllegalStateException(
+                "Trying use an instance of '"+this.getClass().getSimpleName()+"' with name '" + getName() + "' " +
+                "which was not fully built!"
+            );
+        }
+    }
+
     /**
      *  Neureka is supposed to be extremely modular and in a sense its backend should be "hackable" to a degree.
      *  However, this comes with a lot of risk, because it requires us to expose mutable state, which is not good.
      *  This class is semi-immutable, by simply warning us about any mutations after building was completed!
      *
-     * @param o The state which will be set.
+     * @param newState The state which will be set.
      * @param <T> The type of the thing which is supposed to be set.
+     * @param current The state which is currently set.
      * @return The checked thing.
      */
-    private <T> T _checked(T o) {
+    private <T> T _checked( T newState, T current, Class<T> type ) {
         if ( _isFullyBuilt ) {
             _LOG.warn(
-                "Modification of operation '"+this+"' occurred! " +
-                "Trying to redefine implementation of '" + o.getClass().getSimpleName() + "'."
+                "Implementation '" + type.getSimpleName() + "' in algorithm '"+this+"' was modified! " +
+                "Please consider only modifying the standard backend state of Neureka for experimental reasons."
+            );
+        } else if ( current != null && newState == null ) {
+            throw new IllegalArgumentException(
+                "Trying set an already specified implementation of lambda '"+current.getClass().getSimpleName()+"' to null!"
             );
         }
-        return o;
+        return newState;
     }
 
     /**
@@ -176,7 +205,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setIsSuitableFor( SuitabilityPredicate isSuitableFor ) {
-        _isSuitableFor = _checked(isSuitableFor);
+        _isSuitableFor = _checked(isSuitableFor, _isSuitableFor, SuitabilityPredicate.class);
         return this;
     }
 
@@ -188,7 +217,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setCanPerformForwardADFor( ForwardADPredicate canPerformForwardADFor ) {
-        _canPerformForwardADFor = _checked(canPerformForwardADFor);
+        _canPerformForwardADFor = _checked(canPerformForwardADFor, _canPerformForwardADFor, ForwardADPredicate.class);
         return this;
     }
 
@@ -199,7 +228,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setCanPerformBackwardADFor( BackwardADPredicate canPerformBackwardADFor ) {
-        _canPerformBackwardADFor = _checked(canPerformBackwardADFor);
+        _canPerformBackwardADFor = _checked(canPerformBackwardADFor, _canPerformBackwardADFor, BackwardADPredicate.class);
         return this;
     }
 
@@ -210,7 +239,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      * @return This very instance to enable method chaining.
      */
     public AbstractFunctionalAlgorithm<C> setSupplyADAgentFor( ADAgentSupplier supplyADAgentFor ) {
-        _supplyADAgentFor = _checked(supplyADAgentFor);
+        _supplyADAgentFor = _checked(supplyADAgentFor, _supplyADAgentFor, ADAgentSupplier.class);
         return this;
     }
 
@@ -219,7 +248,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  is the most ipoortant procedure within an {@link Algorithm}, which is responsible for
      *  electing an {@link neureka.backend.api.ImplementationFor}
      *  the chosen {@link Device} in a given {@link ExecutionCall} passed to the {@link ExecutionDispatcher}.
-     *  However the  {@link ExecutionDispatcher} does not have to select a device specific implementation.
+     *  However, the  {@link ExecutionDispatcher} does not have to select a device specific implementation.
      *  It can also occupy the rest of the execution without any other steps being taken.
      *  For example, a {@link neureka.backend.api.ImplementationFor} or a {@link RecursiveExecutor}
      *  would not be used if not explicitly called.
@@ -232,7 +261,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  {@link ExecutionCall} instance better.
      */
     public AbstractFunctionalAlgorithm<C> setExecutionDispatcher(ExecutionDispatcher handleInsteadOfDevice ) {
-        _handleInsteadOfDevice = _checked(handleInsteadOfDevice);
+        _handleInsteadOfDevice = _checked(handleInsteadOfDevice, _handleInsteadOfDevice, ExecutionDispatcher.class);
         return this;
     }
 
@@ -249,7 +278,7 @@ public abstract class AbstractFunctionalAlgorithm<C extends Algorithm<C>> extend
      *  linear operation like for example a broadcast operation will require a very different approach...
      */
     public AbstractFunctionalAlgorithm<C> setCallPreparation( ExecutionPreparation instantiateNewTensorsForExecutionIn ) {
-        _instantiateNewTensorsForExecutionIn = _checked(instantiateNewTensorsForExecutionIn);
+        _instantiateNewTensorsForExecutionIn = _checked(instantiateNewTensorsForExecutionIn, _instantiateNewTensorsForExecutionIn, ExecutionPreparation.class);
         return this;
     }
 

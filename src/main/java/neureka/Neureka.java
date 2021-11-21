@@ -50,6 +50,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
 
@@ -103,16 +104,23 @@ public final class Neureka
             _backend = new BackendContext();
             // loading operations!
             ServiceLoader<Operation> serviceLoader = ServiceLoader.load( Operation.class );
+            Iterator<Operation> operationIterator = serviceLoader.iterator();
 
-            //checking if load was successful
-            for ( Operation operation : serviceLoader ) {
-                assert operation.getFunction() != null;
-                assert operation.getOperator() != null;
-                if ( operation.getFunction() == null ) _LOG.error(Messages.Operations.illegalStateFor( "function" ) );
-                if ( operation.getOperator() == null ) _LOG.error(Messages.Operations.illegalStateFor( "operator" ) );
-                _backend.addOperation(operation);
-                _LOG.debug( Messages.Operations.loaded(operation) );
+            // Iterating and logging if load was successful or not:
+            while ( operationIterator.hasNext() ) {
+                try {
+                    Operation operation = operationIterator.next();
+                    assert operation.getFunction() != null;
+                    assert operation.getOperator() != null;
+                    if ( operation.getFunction() == null ) _LOG.error(Messages.Operations.illegalStateFor( "function" ) );
+                    if ( operation.getOperator() == null ) _LOG.error(Messages.Operations.illegalStateFor( "operator" ) );
+                    _backend.addOperation(operation);
+                    _LOG.debug( Messages.Operations.loaded(operation) );
+                } catch ( Exception e ) {
+                    _LOG.error("Failed to load operations!", e);
+                }
             }
+
             if ( _OPENCL_AVAILABLE )
                 _backend.set( new CLContext() );
             else

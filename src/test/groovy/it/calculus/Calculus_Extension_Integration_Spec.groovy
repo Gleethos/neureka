@@ -127,6 +127,7 @@ class Calculus_Extension_Integration_Spec extends Specification
                                                                 }
                                                             )
                                                 )
+                                                .buildFunAlgorithm()
                                 )
                 )
             }

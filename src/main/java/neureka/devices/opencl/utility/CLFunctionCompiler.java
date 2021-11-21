@@ -98,6 +98,7 @@ public class CLFunctionCompiler {
                                         OpenCLDevice.class,
                                         this::_adHocKernelFor
                                 )
+                                .buildFunAlgorithm()
                 );
     }
 
