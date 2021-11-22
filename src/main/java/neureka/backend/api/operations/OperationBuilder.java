@@ -127,19 +127,17 @@ public class OperationBuilder
         return this;
     }
 
-    public void dispose() {
-        _disposed = true;
-    }
+    public void dispose() { _disposed = true; }
 
     private List<String> _listOfMissingProperties() {
         List<String> missing = new ArrayList<>();
-        if ( _function == null ) missing.add( "function" );
-        if ( _operator == null ) missing.add( "operator" );
-        if ( _arity == null ) missing.add( "arity" );
-        if ( _isOperator == null ) missing.add( "isOperator" );
-        if ( _isIndexer == null ) missing.add( "isIndexer" );
+        if ( _function         == null ) missing.add( "function" );
+        if ( _operator         == null ) missing.add( "operator" );
+        if ( _arity            == null ) missing.add( "arity" );
+        if ( _isOperator       == null ) missing.add( "isOperator" );
+        if ( _isIndexer        == null ) missing.add( "isIndexer" );
         if ( _isDifferentiable == null ) missing.add( "isDifferentiable" );
-        if ( _isInline == null ) missing.add( "isInline" );
+        if ( _isInline         == null ) missing.add( "isInline" );
         return missing;
     }
 

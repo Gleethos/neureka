@@ -46,15 +46,14 @@ class CLFunctionCompiler_Integration_Spec extends Specification {
         then : 'Initially we expect that the device does not contain the "ad hoc" kernel with the following signature...'
             !device.hasAdHocKernel("my_test_fun_F32\$1_F32\$1_F32\$1_F32\$1")
 
-        when :
+        when : 'We test the optimized function by calling it with three arguments...'
             Tsr result = optimized( t1, t2, t3 )
 
-        then :
+        then : '...the result should look as follows:'
             result.toString() == "(1):[1.6E0]"
 
-        and :
+        and : 'We expect that the device has an underlying kernel with the following name:'
             device.hasAdHocKernel("my_test_fun_F32\$1_F32\$1_F32\$1_F32\$1")
-
     }
 
 
@@ -90,7 +89,6 @@ class CLFunctionCompiler_Integration_Spec extends Specification {
         device.hasAdHocKernel("my_test_fun_F32\$1_F32\$1_F32\$1_F32\$1")
 
     }
-
      */
 
 }

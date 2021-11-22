@@ -192,10 +192,9 @@ public abstract class AbstractOperation implements Operation
                 }
             }
         }
-
         float defaultSuitability = _defaultAlgorithm.isSuitableFor( call );
 
-        if ( defaultSuitability > bestScore || ( bestImpl == null && defaultSuitability > 0 ) ) {
+        if ( defaultSuitability > bestScore || ( bestImpl == null && defaultSuitability > 0f ) ) {
             _LOG.debug("Default algorithm picked for call targeting operation '"+call.getOperation()+"'.");
             return (Algorithm<T>) _defaultAlgorithm;
         }
@@ -221,27 +220,32 @@ public abstract class AbstractOperation implements Operation
         return _isOperator;
     }
 
-
+    @Override
     public String getFunction() {
         return _function;
     }
 
+    @Override
     public String getOperator() {
         return _operator;
     }
 
+    @Override
     public int getArity() {
         return _arity;
     }
 
+    @Override
     public boolean isIndexer() {
         return _isIndexer;
     }
 
+    @Override
     public boolean isDifferentiable() {
         return _isDifferentiable;
     }
 
+    @Override
     public boolean isInline() {
         return _isInline;
     }

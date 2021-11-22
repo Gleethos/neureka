@@ -40,7 +40,7 @@ public class Call<D> {
     protected final Args _arguments = new Args();
 
 
-    protected Call(Tsr<?>[] tensors, D device, List<Arg> arguments ) {
+    protected Call( Tsr<?>[] tensors, D device, List<Arg> arguments ) {
         _tensors = tensors;
         _device = device;
         for ( Arg<?> arg : arguments ) _arguments.set(arg);
@@ -61,7 +61,7 @@ public class Call<D> {
         }
     }
 
-    public <T> Device<T> getDeviceFor(Class<T> supportCheck ) {
+    public <T> Device<T> getDeviceFor( Class<T> supportCheck ) {
         // TODO: Make it possible to query device for type support!
         return (Device<T>) this.getDevice();
     }
@@ -103,9 +103,7 @@ public class Call<D> {
         return (Tsr<V>) tensors[ i ];
     }
 
-    public Validator validate() {
-        return new Validator();
-    }
+    public Validator validate() { return new Validator(); }
 
     public static class Builder<V, T extends Device<V>>
     {
@@ -116,7 +114,7 @@ public class Call<D> {
         private Builder( T device ) { _device = device; }
 
         @SafeVarargs
-        public final <N extends V> Builder<V,T> with(Tsr<N>... tensors) {
+        public final <N extends V> Builder<V,T> with( Tsr<N>... tensors ) {
             _tensors = (Tsr<V>[]) tensors;
             return this;
         }
@@ -131,7 +129,7 @@ public class Call<D> {
         }
 
         public Call<T> get() {
-            return new Call<T>( _tensors, _device, _arguments.getAll(Arg.class) );
+            return new Call<T>( _tensors, _device, _arguments.getAll( Arg.class ) );
         }
 
     }
@@ -176,8 +174,8 @@ public class Call<D> {
             return this;
         }
 
-        public Validator tensors( Predicate<Tsr<?>[]> condition ) {
-            if ( _isValid && !condition.test( getTensors() ) ) _isValid = false;
+        public Validator tensors( TensorsCondition condition ) {
+            if ( _isValid && !condition.check( getTensors() ) ) _isValid = false;
             return this;
         }
 
@@ -254,14 +252,14 @@ public class Call<D> {
 
             private float _estimation;
 
-            public Estimator(boolean isValid) {
+            public Estimator( boolean isValid ) {
                 _estimation = ( isValid ? SuitabilityPredicate.OKAY : SuitabilityPredicate.UNSUITABLE );
             }
 
-            private void _mod(float f) {
-                f = Math.max(-1f, f);
-                f = Math.min( 1f, f);
-                _estimation *= ( 1 + (f * (1-_estimation)) );
+            private void _mod( float f ) {
+                f = Math.max( -1f, f );
+                f = Math.min(  1f, f );
+                _estimation *= ( 1 + ( f * ( 1 - _estimation ) ) );
             }
 
             public Estimator goodIfAll( TensorCondition condition ) { if ( _allMatch( condition ) ) _mod(0.5f); return this; }
@@ -280,16 +278,14 @@ public class Call<D> {
 
             public Estimator badIfAll( TensorCompare condition ) { if ( _allMatch( condition ) ) _mod(-0.5f); return this; }
 
-            public float getEstimation() {
-                return _estimation;
-            }
-
+            public float getEstimation() { return _estimation; }
         }
 
     }
 
-    public interface TensorCondition    { boolean check( Tsr<?> tensor ); }
     public interface TensorCompare      { boolean check( Tsr<?> first, Tsr<?> second ); }
+    public interface TensorsCondition   { boolean check( Tsr<?>[] tensors ); }
+    public interface TensorCondition    { boolean check( Tsr<?> tensor ); }
     public interface DeviceCondition    { boolean check( Device<?> device ); }
     public interface OperationCondition { boolean check( Operation type ); }
 
