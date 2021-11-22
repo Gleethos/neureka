@@ -249,6 +249,13 @@ public class BackendContext implements Cloneable
     }
 
     /**
+     *  Returns all {@link BackendExtension} instances.
+     */
+    public List<BackendExtension> getExtensions() {
+        return extensions.getAll( BackendExtension.class );
+    }
+
+    /**
      *  Registers the provided {@link BackendExtension} instance
      *  which can then be accessed via {@link #get(Class)}.
      */

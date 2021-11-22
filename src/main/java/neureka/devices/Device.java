@@ -36,6 +36,8 @@ SOFTWARE.
 
 package neureka.devices;
 
+import neureka.backend.api.BackendExtension;
+import neureka.calculus.assembly.ParseUtil;
 import neureka.common.composition.Component;
 import neureka.Neureka;
 import neureka.Tsr;
@@ -44,14 +46,9 @@ import neureka.backend.api.Operation;
 import neureka.backend.api.BackendContext;
 import neureka.calculus.Function;
 import neureka.calculus.assembly.FunctionBuilder;
-import neureka.calculus.assembly.ParseUtil;
 import neureka.devices.host.CPU;
-import neureka.devices.opencl.CLContext;
-import neureka.devices.opencl.OpenCLDevice;
-import neureka.devices.opencl.OpenCLPlatform;
 
 import java.util.*;
-import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -76,48 +73,53 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
     /**
      * This method returns {@link Device} instances matching
      * the given search parameter.
-     * @param name The search parameter and name of the requested {@link Device} instance.
+     * @param searchKeys The search parameter and name of the requested {@link Device} instance.
      * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
      */
-    static Device<?> find( String name )
+    static Device<?> find( String... searchKeys )
     {
-        String search = name.toLowerCase();
-        boolean probablyWantsGPU = Stream.of("gpu", "nvidia", "amd", "intel", "opencl", "fpga", "radeon")
-                                            .anyMatch(search::contains);
+        return find( Device.class, searchKeys );
+    }
 
-        if ( !Neureka.get().canAccessOpenCL() ) {
-            if ( probablyWantsGPU ) {
-                return null; // User wants OpenCL but cannot have it :/
+    /**
+     * This method returns {@link Device} instances matching
+     * the given search parameter.
+     * @param searchKeys The search parameter and name of the requested {@link Device} instance.
+     * @return The found {@link Device} instance or simply the {@link CPU} instance by default.
+     */
+    static <T, D extends Device<T>> D find( Class<D> deviceType, String... searchKeys )
+    {
+        if ( deviceType == CPU.class ) return (D) CPU.get();
+        String key;
+        if ( searchKeys.length == 0 ) key = "";
+        else key = String.join(" ", searchKeys).toLowerCase();
+
+        boolean probablyWantsGPU = Stream.of(
+                                        "gpu", "nvidia", "amd", "intel", "opencl", "fpga", "radeon", "cuda", "apu", "graphics"
+                                    )
+                                    .anyMatch(key::contains);
+
+        double desireForCPU = Stream.of("jvm","native","host","cpu","threaded")
+                                    .mapToDouble( word -> ParseUtil.similarity( word, key ) )
+                                    .max()
+                                    .orElse(0);
+
+        if ( probablyWantsGPU ) desireForCPU /= 10; // CPU instance is most likely not meant!
+
+        for ( BackendExtension extension : Neureka.get().backend().getExtensions() ) {
+            BackendExtension.DeviceOption found = extension.find( key );
+            if ( found != null && (deviceType.isAssignableFrom( found.device().getClass() )) ) {
+                if ( found.confidence() > desireForCPU )
+                    return (D) found.device();
             }
-            else return CPU.get();
         }
 
-        Device<Number> result = CPU.get();
-        double score = ParseUtil.similarity( "jvm native host cpu threaded", search );
-        if ( probablyWantsGPU ) score /= 10; // CPU instance is most likely not meant!
-
-        for ( OpenCLPlatform p : Neureka.get().backend().get(CLContext.class).getPlatforms() ) {
-            for ( OpenCLDevice d : p.getDevices() ) {
-                String str = ("opencl | "+d.type()+" | "+d.name()+" | "+d.vendor()).toLowerCase();
-                double similarity = ParseUtil.similarity( str, search );
-                if ( similarity > score || str.contains(search) ) {
-                    result = d;
-                    score = similarity;
-                }
-            }
-        }
-        if ( result == CPU.get() && name.equals("first") ) {
-            Device<Number> first = Neureka.get()
-                                            .backend()
-                                            .get(CLContext.class)
-                                            .getPlatforms()
-                                            .get( 0 )
-                                            .getDevices()
-                                            .get( 0 );
-
-            if ( first != null ) result = first;
-        }
-        return result;
+        if ( probablyWantsGPU )
+            return null; // User wants OpenCL but cannot have it :/
+        else if ( deviceType.isAssignableFrom( CPU.class ) )
+            return (D) CPU.get();
+        else
+            return null; // We don't know what the user wants, but we do not have it :/
     }
 
     /**

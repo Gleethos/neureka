@@ -1,9 +1,13 @@
 package neureka.devices.opencl;
 
+import neureka.Neureka;
 import neureka.backend.api.BackendContext;
 import neureka.backend.api.BackendExtension;
 import neureka.backend.api.Extensions;
+import neureka.calculus.assembly.ParseUtil;
 import neureka.common.composition.Component;
+import neureka.devices.Device;
+import neureka.devices.host.CPU;
 import neureka.utility.Messages;
 import org.jocl.cl_platform_id;
 import org.slf4j.Logger;
@@ -12,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.jocl.CL.clGetPlatformIDs;
 
@@ -101,6 +106,40 @@ public class CLContext implements BackendExtension
             _LOG.warn( Messages.OpenCL.clContextCouldNotFindAnyDevices() );
         }
         return loadedPlatforms;
+    }
+
+    @Override
+    public DeviceOption find( String searchKey ) {
+
+        if ( searchKey.equals("first") ) {
+            Device<Number> first = Neureka.get()
+                                            .backend()
+                                            .get(CLContext.class)
+                                            .getPlatforms()
+                                            .get( 0 )
+                                            .getDevices()
+                                            .get( 0 );
+
+            if ( first != null ) return new DeviceOption(first, 1f);
+        }
+
+        Device<Number> result = null;
+        double score = 0;
+        for ( OpenCLPlatform p : Neureka.get().backend().get(CLContext.class).getPlatforms() ) {
+            for ( OpenCLDevice d : p.getDevices() ) {
+                double similarity = Stream.of("opencl",d.type(),d.name(),d.vendor())
+                                            .mapToDouble( word -> ParseUtil.similarity( word, searchKey ) )
+                                            .max()
+                                            .orElse(0);
+                if ( similarity > score ) {
+                    result = d;
+                    score = similarity;
+                    if ( score == 1 )
+                        return new DeviceOption(result, score);
+                }
+            }
+        }
+        return new DeviceOption(result, score);
     }
 
     @Override
