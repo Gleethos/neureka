@@ -67,15 +67,14 @@ public abstract class AbstractOperation implements Operation
 
     /**
      *  Certain operations are not differentiable, meaning they cannot participate
-     *  in neither forward- or reverse- mode differentiation.
-     *  In order to avoid error prone behaviour trying involve
+     *  in neither forward nor reverse mode differentiation.
+     *  In order to avoid error-prone behaviour trying to involve
      *  non- differentiable operations will yield proper exceptions.
      */
     protected final boolean _isDifferentiable;
 
     /**
      *  Inline operations are operations which change the state of the arguments passed to them.
-     *
      */
     protected final boolean _isInline;
     protected final boolean _isOperator;
@@ -89,7 +88,7 @@ public abstract class AbstractOperation implements Operation
      *
      *  The default algorithm assumes an operation that is either a function or operator.
      *  Meaning that it assumes that the operation is also differentiable.
-     *  Therefore it contains functionality that goes alongside this assumption,
+     *  Therefore, it contains functionality that goes alongside this assumption,
      *  just to name a few :                                                                                            <br>
      *                                                                                                                  <br>
      *  - An ADAgent supplier returning ADAgent instances capable of performing both forward- and reverse- mode AD.     <br>

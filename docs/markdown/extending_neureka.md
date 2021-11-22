@@ -2,8 +2,8 @@
 
 Neureka is a lightweight library, meaning that by its default backend operations only 
 support `double` based tensors on the CPU and `float` based tensors on the GPU.
-However, the backend of this library adheres to a standardized API
-based on which you can easily extend the existing backend through a common library context!
+However, the existing backend of this library adheres to a standardized API
+based on which you can easily extend it through a common library context!
 <br>
  
 First we need the following 3 little imports:
@@ -12,7 +12,7 @@ import neureka.Neureka;
 import neureka.backend.api.BackendContext;
 import neureka.backend.api.Operation;
 ```
-Then we can start extending the backend 
+Then we can start diving towards the backend
 by first accessing the thread local library context:
 ```java   
 Neureka library = Neureka.get();

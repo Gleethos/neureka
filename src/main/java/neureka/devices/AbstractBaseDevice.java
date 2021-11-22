@@ -68,11 +68,6 @@ public abstract class AbstractBaseDevice<V> implements Device<V>
     public Iterator<Tsr<V>> iterator() { return this.getTensors().iterator(); }
 
     @Override
-    public <T> T[] toArray( IntFunction<T[]> generator ) {
-        return null; // this.getTensors().toArray( generator );
-    }
-
-    @Override
     public Spliterator<Tsr<V>> spliterator() { return getTensors().spliterator(); }
 
 }

@@ -157,17 +157,6 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
 
     Collection<Tsr<V>> getTensors();
 
-    /**
-     *  This method has the same signature of the Collection interface in Java 11,
-     *  however in order to enable Java 8 support as well
-     *  the method below is a substitution.
-     *
-     * @param generator
-     * @param <T>
-     * @return
-     */
-    <T> T[] toArray( IntFunction<T[]> generator );
-
     Operation optimizedOperationOf( Function function, String name );
 
     default Function optimizedFunctionOf( Function function, String name ) {
