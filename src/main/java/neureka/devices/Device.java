@@ -94,6 +94,8 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         if ( searchKeys.length == 0 ) key = "";
         else key = String.join(" ", searchKeys).toLowerCase();
 
+        boolean justTakeFirstOne = key.equals("first");
+
         boolean probablyWantsGPU = Stream.of(
                                         "gpu", "nvidia", "amd", "intel", "opencl", "fpga", "radeon", "cuda", "apu", "graphics"
                                     )
@@ -109,7 +111,7 @@ public interface Device<V> extends Component<Tsr<V>>, Storage<V>, Iterable<Tsr<V
         for ( BackendExtension extension : Neureka.get().backend().getExtensions() ) {
             BackendExtension.DeviceOption found = extension.find( key );
             if ( found != null && (deviceType.isAssignableFrom( found.device().getClass() )) ) {
-                if ( found.confidence() > desireForCPU )
+                if ( found.confidence() > desireForCPU || justTakeFirstOne )
                     return (D) found.device();
             }
         }

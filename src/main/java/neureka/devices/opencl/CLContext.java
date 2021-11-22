@@ -110,22 +110,9 @@ public class CLContext implements BackendExtension
 
     @Override
     public DeviceOption find( String searchKey ) {
-
-        if ( searchKey.equals("first") ) {
-            Device<Number> first = Neureka.get()
-                                            .backend()
-                                            .get(CLContext.class)
-                                            .getPlatforms()
-                                            .get( 0 )
-                                            .getDevices()
-                                            .get( 0 );
-
-            if ( first != null ) return new DeviceOption(first, 1f);
-        }
-
         Device<Number> result = null;
         double score = 0;
-        for ( OpenCLPlatform p : Neureka.get().backend().get(CLContext.class).getPlatforms() ) {
+        for ( OpenCLPlatform p : getPlatforms() ) {
             for ( OpenCLDevice d : p.getDevices() ) {
                 double similarity = Stream.of("opencl",d.type(),d.name(),d.vendor())
                                             .mapToDouble( word -> ParseUtil.similarity( word, searchKey ) )
