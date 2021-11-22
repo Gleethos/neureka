@@ -8,6 +8,7 @@ import neureka.devices.Device;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -166,13 +167,23 @@ public class Call<D> {
         public Estimator getEstimator() { return new Estimator( _isValid ); }
 
         public Validator first( TensorCondition condition ) {
-            if ( !condition.check( getTensors()[ 0 ] ) ) _isValid = false;
+            if ( _isValid && !condition.check( getTensors()[ 0 ] ) ) _isValid = false;
+            return this;
+        }
+
+        public Validator last( TensorCondition condition ) {
+            if ( _isValid && !condition.check( getTensors()[ getTensors().length - 1 ] ) ) _isValid = false;
+            return this;
+        }
+
+        public Validator tensors( Predicate<Tsr<?>[]> condition ) {
+            if ( _isValid && !condition.test( getTensors() ) ) _isValid = false;
             return this;
         }
 
         public Validator any( TensorCondition condition )
         {
-            if ( !_anyMatch( condition ) ) _isValid = false;
+            if ( _isValid && !_anyMatch( condition ) ) _isValid = false;
             return this;
         }
 
@@ -211,7 +222,7 @@ public class Call<D> {
 
         public Validator allNotNull( TensorCondition condition )
         {
-            if ( !_allNotNullMatch( condition ) ) _isValid = false;
+            if ( _isValid && !_allNotNullMatch( condition ) ) _isValid = false;
             return this;
         }
 
@@ -225,7 +236,7 @@ public class Call<D> {
 
         public Validator all( TensorCompare compare )
         {
-            if ( !_allMatch( compare ) ) _isValid = false;
+            if ( _isValid && !_allMatch( compare ) ) _isValid = false;
             return this;
         }
 

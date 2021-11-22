@@ -15,25 +15,18 @@ import java.util.Objects;
 
 public class Scalarization extends AbstractFunctionalAlgorithm< Scalarization >
 {
-
     public Scalarization() {
         super("scalarization");
         setCanPerformBackwardADFor( call -> true );
         setCanPerformForwardADFor( call -> true );
-        setIsSuitableFor( call -> {
-            if (
-                    !call.validate()
-                            .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
-                            .first(Objects::isNull)
-                            .isValid()
-            ) return SuitabilityPredicate.UNSUITABLE;
-            Tsr<?>[] tensors = call.getTensors();
-            int size = tensors[ tensors.length - 1 ].size();
-            if ( (size != 1 && !tensors[1].isVirtual() ) || tensors.length != 3 )
-                return SuitabilityPredicate.UNSUITABLE;
-            else
-                return SuitabilityPredicate.GOOD;
-        });
+        setIsSuitableFor( call ->
+                                call.validate()
+                                        .allNotNull( t -> t.getDataType().typeClassImplements(NumericType.class) )
+                                        .first( Objects::isNull )
+                                        .tensors( tensors -> tensors.length == 3 )
+                                        .tensors( tensors -> tensors[2].size() == 1 || tensors[2].isVirtual() )
+                                        .estimation()
+        );
         setCallPreparation(
                 call -> {
                     Tsr<?>[] tensors = call.getTensors();
