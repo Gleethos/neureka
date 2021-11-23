@@ -28,6 +28,7 @@ Neureka.configure {
                     (TsrAsString.Should.HAVE_ROW_LIMIT_OF)   : 50,
                     (TsrAsString.Should.BE_COMPACT)          : true,
                     (TsrAsString.Should.BE_FORMATTED)        : true,
+                    (TsrAsString.Should.HAVE_SLIM_NUMBERS)   : true,
                     (TsrAsString.Should.HAVE_GRADIENT)       : true,
                     (TsrAsString.Should.HAVE_PADDING_OF)     : 6,
                     (TsrAsString.Should.HAVE_VALUE)          : true,

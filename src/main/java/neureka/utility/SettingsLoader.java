@@ -79,6 +79,7 @@ public class SettingsLoader
                     .checkAndAssign("view.TsrAsString.Should.BE_COMPACT"           , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.BE_COMPACT          , v))//~= true,
                     .checkAndAssign("view.TsrAsString.Should.BE_FORMATTED"         , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.BE_FORMATTED        , v))//~= true,
                     .checkAndAssign("view.TsrAsString.Should.HAVE_GRADIENT"        , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_GRADIENT       , v))//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_SLIM_NUMBERS"    , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_SLIM_NUMBERS   , v))//~= false,
                     .checkAndAssign("view.TsrAsString.Should.HAVE_PADDING_OF"      , Integer.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_PADDING_OF     , v))//~= 6,
                     .checkAndAssign("view.TsrAsString.Should.HAVE_VALUE"           , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_VALUE          , v))//~= true,
                     .checkAndAssign("view.TsrAsString.Should.HAVE_RECURSIVE_GRAPH" , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_RECURSIVE_GRAPH, v))//~= false,

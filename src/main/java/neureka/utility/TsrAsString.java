@@ -62,11 +62,14 @@ public final class TsrAsString
     private boolean _hasGradient = true;
     private boolean _isCompact = true;
     private boolean _isFormatted = true;
+    private boolean _haveSlimNumbers = false;
     private boolean _hasValue = true;
     private boolean _hasShape = true;
     private boolean _hasRecursiveGraph = false;
     private boolean _hasDerivatives = false;
     private boolean _isCellBound = false;
+    private String _prefix = "";
+    private String _postfix = "";
 
     private int[] _shape;
     private Tsr<?> _tensor;
@@ -78,6 +81,7 @@ public final class TsrAsString
     public enum Should {
         BE_COMPACT,
         BE_FORMATTED,
+        HAVE_SLIM_NUMBERS,
         HAVE_PADDING_OF,
         HAVE_ROW_LIMIT_OF,
         HAVE_SHAPE,
@@ -152,6 +156,9 @@ public final class TsrAsString
         if ( settings.containsKey( Should.BE_FORMATTED ) )
             _isFormatted = (boolean) settings.get( Should.BE_FORMATTED );
 
+        if ( settings.containsKey( Should.HAVE_SLIM_NUMBERS ) )
+            _haveSlimNumbers = (boolean) settings.get( Should.HAVE_SLIM_NUMBERS );
+
         if ( settings.containsKey( Should.HAVE_VALUE ) )
             _hasValue = (boolean) settings.get( Should.HAVE_VALUE );
 
@@ -166,6 +173,12 @@ public final class TsrAsString
 
         if ( settings.containsKey( Should.BE_CELL_BOUND ) )
             _isCellBound = (boolean) settings.get( Should.BE_CELL_BOUND );
+
+        if ( settings.containsKey( Should.HAVE_POSTFIX ) )
+            _postfix = settings.get( Should.HAVE_POSTFIX ).toString();
+
+        if ( settings.containsKey( Should.HAVE_PREFIX ) )
+            _prefix =  settings.get( Should.HAVE_PREFIX ).toString();
     }
 
     /**
@@ -237,31 +250,31 @@ public final class TsrAsString
     {
         if ( data instanceof double[] )
             return i -> ( isCompact )
-                    ? Util.formatFP( ( (double[]) data )[ i ])
+                    ? formatFP( ( (double[]) data )[ i ])
                     : String.valueOf( ( (double[] ) data )[ i ] );
         else if ( data instanceof float[] )
             return i -> ( isCompact )
-                    ? Util.formatFP( ( (float[]) data )[ i ] )
+                    ? formatFP( ( (float[]) data )[ i ] )
                     : String.valueOf( ( (float[]) data )[ i ] );
         else if ( data instanceof short[] )
             return i -> ( isCompact )
-                    ? Util.formatFP( ( (short[]) data )[ i ] )
+                    ? formatFP( ( (short[]) data )[ i ] )
                     : String.valueOf( ( (short[]) data )[ i ] );
         else if ( data instanceof int[] )
             return i -> ( isCompact )
-                    ? Util.formatFP( ( (int[]) data )[ i ] )
+                    ? formatFP( ( (int[]) data )[ i ] )
                     : String.valueOf( ( (int[]) data )[ i ] );
         else if ( data instanceof byte[] )
             return i -> ( isCompact )
-                    ? Util.formatFP( ( (byte[]) data )[ i ] )
+                    ? formatFP( ( (byte[]) data )[ i ] )
                     : String.valueOf( ( (byte[]) data )[ i ] );
         else if ( data instanceof long[] )
             return i -> ( isCompact )
-                    ? Util.formatFP( ( (long[]) data )[ i ] )
+                    ? formatFP( ( (long[]) data )[ i ] )
                     : String.valueOf( ( (long[]) data )[ i ] );
         else if ( data == null )
             return i -> ( isCompact )
-                    ? Util.formatFP( _tensor.value64( i ) )
+                    ? formatFP( _tensor.value64( i ) )
                     : String.valueOf( _tensor.value64( i ) );
         else
             return i -> String.valueOf( ( (Object[]) data )[ i ] );
@@ -343,8 +356,7 @@ public final class TsrAsString
         if ( asString.endsWith(",") )
             asString = asString.substring(0, asString.length()-1);
 
-        asString = _config.get(Should.HAVE_PREFIX).toString() + asString;
-        asString = asString + _config.get(Should.HAVE_POSTFIX).toString();
+        asString = _prefix + asString + _postfix;
 
         return asString;
     }
@@ -498,6 +510,32 @@ public final class TsrAsString
         _$( legacy ? "]" : ")" );
     }
 
+    @Contract( pure = true )
+    public String formatFP( double v )
+    {
+        DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols( Locale.UK );
+        DecimalFormat formatter = new DecimalFormat("##0.0##E0", formatSymbols);
+        String vStr = String.valueOf( v );
+        final int offset = 0;
+        if ( vStr.length() > ( 7 - offset ) ) {
+            if ( vStr.startsWith("0.") )
+                vStr = vStr.substring( 0, 7 - offset ) + "E0";
+            else if ( vStr.startsWith( "-0." ) )
+                vStr = vStr.substring( 0, 8 - offset ) + "E0";
+            else {
+                vStr = formatter.format( v );
+                vStr = !vStr.contains(".0E0") ? vStr : vStr.replace(".0E0",".0");
+                vStr =  vStr.contains(".")    ? vStr : vStr.replace("E0",".0");
+            }
+        }
+        if ( _haveSlimNumbers ) {
+            if ( vStr.endsWith("E0") ) vStr = vStr.substring( 0, vStr.length() - 2 );
+            if ( vStr.endsWith(".0") ) vStr = vStr.substring( 0, vStr.length() - 2 );
+            if ( vStr.startsWith("0.") ) vStr = vStr.substring( 1, vStr.length() );
+        }
+        return vStr;
+    }
+
     /**
      *  A builder interface providing multiple different options for building
      *  a {@link TsrAsString} instance in a fluent way.
@@ -562,27 +600,6 @@ public final class TsrAsString
         }
 
         @Contract( pure = true )
-        public static String formatFP( double v )
-        {
-            DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols( Locale.US );
-            DecimalFormat formatter = new DecimalFormat("##0.0##E0", formatSymbols);
-            String vStr = String.valueOf( v );
-            final int offset = 0;
-            if ( vStr.length() > ( 7 - offset ) ) {
-                if ( vStr.startsWith("0.") )
-                    vStr = vStr.substring( 0, 7 - offset ) + "E0";
-                else if ( vStr.startsWith( "-0." ) )
-                    vStr = vStr.substring( 0, 8 - offset ) + "E0";
-                else {
-                    vStr = formatter.format( v );
-                    vStr = !vStr.contains(".0E0") ? vStr : vStr.replace(".0E0",".0");
-                    vStr =  vStr.contains(".")    ? vStr : vStr.replace("E0",".0");
-                }
-            }
-            return vStr;
-        }
-
-        @Contract( pure = true )
         public static Map<Should, Object> configFromCode( String modes )
         {
             if ( modes == null || modes.trim().isEmpty() )
@@ -601,6 +618,7 @@ public final class TsrAsString
             conf.put( Should.BE_CELL_BOUND,        modes.contains( "b" )                                      );
             conf.put( Should.HAVE_POSTFIX,         ""                                                         );
             conf.put( Should.HAVE_PREFIX,          ""                                                         );
+            conf.put( Should.HAVE_SLIM_NUMBERS,    false                                                      );
             return conf;
         }
     }

@@ -70,6 +70,23 @@ class Tensor_State_Spec extends Specification
             ]) == "START<|(2x3):[salty Apple, sweet Tofu, ... + 4 more]|>END"
     }
 
+
+    def 'Numeric tensors as String can be formatted on an entry based level.'()
+    {
+        given : 'A new tensor of rank 2 storing floats:'
+            Tsr t = Tsr.of(DataType.of(Float.class), [2, 3], (i, indices) -> (i%4)/3 as float )
+
+        expect : 'When we convert the tensor to a String via the flag "f" (formatted).'
+        t.toString() == "(2x3):[0.0, 0.33333E0, 0.66666E0, 1.0, 0.0, 0.33333E0]"
+        and : 'Whe can use a map of configuration configuration enums as keys and fitting objects as values:'
+        t.toString([
+                (TsrAsString.Should.HAVE_SLIM_NUMBERS) : true,
+                (TsrAsString.Should.BE_COMPACT) : true
+        ]) == "(2x3):[0, .33333, .66666, 1, 0, .33333]"
+
+    }
+
+
     def 'Tensors as String can be formatted depending on shape.'(
             String mode, List<Integer> shape, String expected
     ){

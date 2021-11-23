@@ -1,8 +1,12 @@
 package testutility;
 
 import neureka.utility.TsrAsString;
+import org.jetbrains.annotations.Contract;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 
 public class UnitTester
 {
@@ -156,8 +160,8 @@ public class UnitTester
             return "null";
         }
         StringBuilder result = new StringBuilder();
-        for(double ai : a) {
-            result.append(TsrAsString.Util.formatFP(ai)).append(", ");
+        for( double ai : a ) {
+            result.append(formatFP(ai)).append(", ");
         }
         return result.toString();
     }
@@ -185,6 +189,27 @@ public class UnitTester
     }
     protected void println(String message){
         _session +=message+"\n";
+    }
+
+    @Contract( pure = true )
+    public static String formatFP( double v )
+    {
+        DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols( Locale.US );
+        DecimalFormat formatter = new DecimalFormat("##0.0##E0", formatSymbols);
+        String vStr = String.valueOf( v );
+        final int offset = 0;
+        if ( vStr.length() > ( 7 - offset ) ) {
+            if ( vStr.startsWith("0.") )
+                vStr = vStr.substring( 0, 7 - offset ) + "E0";
+            else if ( vStr.startsWith( "-0." ) )
+                vStr = vStr.substring( 0, 8 - offset ) + "E0";
+            else {
+                vStr = formatter.format( v );
+                vStr = !vStr.contains(".0E0") ? vStr : vStr.replace(".0E0",".0");
+                vStr =  vStr.contains(".")    ? vStr : vStr.replace("E0",".0");
+            }
+        }
+        return vStr;
     }
 
 }
