@@ -333,16 +333,20 @@ public final class TsrAsString
                 });
             }
         }
-        String str =  _asStr
-                        .toString()
-                        .trim(); // We need to get rid of line breaks
-        if ( str.endsWith(",") )
-            str = str.substring(0, str.length()-1);
+        return _postProcessed( _asStr.toString() );
+    }
 
-        return
-                _config.get(Should.HAVE_PREFIX).toString() +
-                        str +
-                _config.get(Should.HAVE_POSTFIX).toString();
+    private String _postProcessed( String asString )
+    {
+        asString =  asString.trim(); // We need to get rid of line breaks
+
+        if ( asString.endsWith(",") )
+            asString = asString.substring(0, asString.length()-1);
+
+        asString = _config.get(Should.HAVE_PREFIX).toString() + asString;
+        asString = asString + _config.get(Should.HAVE_POSTFIX).toString();
+
+        return asString;
     }
 
     private void _stringifyAllValues()
