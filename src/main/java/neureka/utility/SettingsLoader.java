@@ -85,6 +85,8 @@ public class SettingsLoader
                     .checkAndAssign("view.TsrAsString.Should.HAVE_DERIVATIVES"     , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_DERIVATIVES    , v))//~= false,
                     .checkAndAssign("view.TsrAsString.Should.HAVE_SHAPE"           , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_SHAPE          , v))//~= true,
                     .checkAndAssign("view.TsrAsString.Should.BE_CELL_BOUND"        , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.BE_CELL_BOUND       , v))//~= false
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_POSTFIX"         , String.class,  v -> s.view().getAsString().put(TsrAsString.Should.HAVE_POSTFIX        , v))//~= ""
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_PREFIX"          , String.class,  v -> s.view().getAsString().put(TsrAsString.Should.HAVE_PREFIX         , v))//~= ""
                     .checkAndAssign("ndim.isOnlyUsingDefaultNDConfiguration"       , Boolean.class, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)                      )//~= false
                     .checkAndAssign("dtype.defaultDataTypeClass"                   , Class.class,   v -> s.dtype().setDefaultDataTypeClass(v)                                  )
                     .checkAndAssign("dtype.isAutoConvertingExternalDataToJVMTypes" , Boolean.class, v -> s.dtype().setIsAutoConvertingExternalDataToJVMTypes(v)                );

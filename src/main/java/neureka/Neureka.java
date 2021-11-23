@@ -528,15 +528,18 @@ public final class Neureka
 
             View(){
                 _asString = new HashMap<>();
-                _asString.put( TsrAsString.Should.BE_SHORTENED_BY,      50    );
                 _asString.put( TsrAsString.Should.BE_COMPACT,           true  );
                 _asString.put( TsrAsString.Should.BE_FORMATTED,         true  );
-                _asString.put( TsrAsString.Should.HAVE_GRADIENT,        true  );
                 _asString.put( TsrAsString.Should.HAVE_PADDING_OF,      6     );
-                _asString.put( TsrAsString.Should.HAVE_VALUE,           true  );
-                _asString.put( TsrAsString.Should.HAVE_RECURSIVE_GRAPH, false );
-                _asString.put( TsrAsString.Should.HAVE_DERIVATIVES,     false );
+                _asString.put( TsrAsString.Should.BE_SHORTENED_BY,      50    );
                 _asString.put( TsrAsString.Should.HAVE_SHAPE,           true  );
+                _asString.put( TsrAsString.Should.HAVE_VALUE,           true  );
+                _asString.put( TsrAsString.Should.HAVE_GRADIENT,        true  );
+                _asString.put( TsrAsString.Should.HAVE_DERIVATIVES,     false );
+                _asString.put( TsrAsString.Should.HAVE_RECURSIVE_GRAPH, false );
+                _asString.put( TsrAsString.Should.BE_CELL_BOUND,        false );
+                _asString.put( TsrAsString.Should.HAVE_POSTFIX,         ""    );
+                _asString.put( TsrAsString.Should.HAVE_PREFIX,          ""    );
             }
 
             public boolean isUsingLegacyView() { return _isUsingLegacyView; }

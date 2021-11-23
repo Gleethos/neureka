@@ -76,16 +76,18 @@ public final class TsrAsString
     private Map<Should, Object> _config;
 
     public enum Should {
+        BE_COMPACT,
         BE_FORMATTED,
         HAVE_PADDING_OF,
-        BE_COMPACT,
-        HAVE_GRADIENT,
         BE_SHORTENED_BY,
-        HAVE_VALUE,
         HAVE_SHAPE,
+        HAVE_VALUE,
+        HAVE_GRADIENT,
         HAVE_DERIVATIVES,
         HAVE_RECURSIVE_GRAPH,
-        BE_CELL_BOUND
+        BE_CELL_BOUND,
+        HAVE_POSTFIX,
+        HAVE_PREFIX
     }
 
     /**
@@ -337,7 +339,10 @@ public final class TsrAsString
         if ( str.endsWith(",") )
             str = str.substring(0, str.length()-1);
 
-        return str;
+        return
+                _config.get(Should.HAVE_PREFIX).toString() +
+                        str +
+                _config.get(Should.HAVE_POSTFIX).toString();
     }
 
     private void _stringifyAllValues()
@@ -590,6 +595,8 @@ public final class TsrAsString
             conf.put( Should.HAVE_DERIVATIVES,     modes.contains( "d" )                                      );
             conf.put( Should.HAVE_SHAPE,           !modes.contains( "v" )                                     );
             conf.put( Should.BE_CELL_BOUND,        modes.contains( "b" )                                      );
+            conf.put( Should.HAVE_POSTFIX,         ""                                                         );
+            conf.put( Should.HAVE_PREFIX,          ""                                                         );
             return conf;
         }
     }
