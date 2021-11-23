@@ -70,8 +70,7 @@ class Tensor_Slicing_Integration_Spec extends Specification
                           [   1.0 ,   2.0 ,   3.0  ],
                           [   4.0 ,   5.0 ,   6.0  ]
                        ]
-                    ]
-                    """
+                    ]"""
 
         and : 'As already shown by the printed view, the tensor as the expected shape:'
             s.shape() == [2, 2, 3]
@@ -114,8 +113,7 @@ class Tensor_Slicing_Integration_Spec extends Specification
                           [  -9.0 ,  -8.0  ],
                           [  -5.0 ,  -4.0  ]
                        ]
-                    ]
-                    """
+                    ]"""
 
         and : 'The "at" method sliced a single axis point whereas the "from" & "to" sliced from 1 to 2.'
             s.shape() == [1, 3, 2]
@@ -160,8 +158,7 @@ class Tensor_Slicing_Integration_Spec extends Specification
                           [  -9.0 ,  -8.0  ],
                           [  -5.0 ,  -4.0  ]
                        ]
-                    ]
-                    """
+                    ]"""
 
         and : 'The the slice will have the following shape'
             s.shape() == [1, 3, 2]
@@ -202,8 +199,7 @@ class Tensor_Slicing_Integration_Spec extends Specification
                           [  -9.0 ,  -8.0  ],
                           [  -5.0 ,  -4.0  ]
                        ]
-                    ]
-                    """
+                    ]"""
 
         and : 'The the slice will have the following shape'
             s.shape() == [1, 3, 2]
@@ -240,13 +236,11 @@ class Tensor_Slicing_Integration_Spec extends Specification
             s.shape().sum() == t.shape().sum() - 6
 
         and : 'This new slice will be displayed as follows when printed (with adjusted indent):'
-            s.toString().replace('\n', '\n'+" "*20) ==
-                """(1x1x2):[
-                       [
-                          [  -11.0,  -9.0  ]
-                       ]
-                    ]
-                    """
+            s.toString() == """(1x1x2):[
+   [
+      [  -11.0,  -9.0  ]
+   ]
+]"""
 
         and : 'The the slice will have the following shape'
             s.shape() == [1, 1, 2]

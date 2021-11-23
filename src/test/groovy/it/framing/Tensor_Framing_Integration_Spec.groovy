@@ -133,7 +133,7 @@ class Tensor_Framing_Integration_Spec extends Specification
                                       "   (   1.0 ,   2.0 ,   3.0 ,   4.0  ):[ 1 ],\n" +
                                       "   (   9.0 ,   8.0 ,   6.0 ,   5.0  ):[ 2 ],\n" +
                                       "   (   4.0 ,   5.0 ,   6.0 ,   7.0  ):[ 3 ]\n" +
-                                      ")\n"
+                                      ")"
 
         when: 'We use a label for slicing a row from the tensor (which is also a matrix in this case).'
             Tsr x = t["2", 1..2]
@@ -202,7 +202,7 @@ class Tensor_Framing_Integration_Spec extends Specification
                                       "      (  -6.0 ,  -5.0 ,  -4.0 ,  -3.0  ):[ b ],\n" +
                                       "      (  -2.0 ,  -1.0 ,   0.0 ,   1.0  ):[ y ]\n" +
                                       "   )\n" +
-                                      ")\n"
+                                      ")"
 
         when : 'Creating a slice by passing a single label, a range of labels and a range with stride...'
             Tsr x = t["2", "b".."y", [["tim","tanya"]:2]]
@@ -217,7 +217,7 @@ class Tensor_Framing_Integration_Spec extends Specification
                                       "      (  -6.0 ,  -4.0  ),\n" +
                                       "      (  -2.0 ,   0.0  )\n" +
                                       "   )\n" +
-                                      ")\n"
+                                      ")"
         and: 'The tensor "x" is of course a slice:'
             x.isSlice()
         and: 'The original tensor "t" is a "parent":'
@@ -236,7 +236,7 @@ class Tensor_Framing_Integration_Spec extends Specification
                                       "      (  -6.0 ,  -4.0  ),\n" +
                                       "      (  -2.0 ,   0.0  )\n" +
                                       "   )\n" +
-                                      ")\n"
+                                      ")"
             !x.isVirtual() // This might change if possible (technically difficult)
             x.isSlice()
             t.isSliceParent()
@@ -251,7 +251,7 @@ class Tensor_Framing_Integration_Spec extends Specification
                                       "      (  -6.0 ,  -4.0  ),\n" +
                                       "      (  -2.0 ,   0.0  )\n" +
                                       "   )\n" +
-                                      ")\n"
+                                      ")"
             !x.isVirtual() // This might change if possible (technically difficult)
             x.isSlice()
             t.isSliceParent()
@@ -279,7 +279,7 @@ class Tensor_Framing_Integration_Spec extends Specification
                                       "      (  -6.0 ,  -4.0  ),\n" +
                                       "      (  -2.0 ,   0.0  )\n" +
                                       "   )\n" +
-                                      ")\n"
+                                      ")"
             !x.isVirtual() // This might change if possible (technically difficult)
             x.isSlice()
             t.isSliceParent()

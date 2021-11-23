@@ -331,7 +331,13 @@ public final class TsrAsString
                 });
             }
         }
-        return _asStr.toString();
+        String str =  _asStr
+                        .toString()
+                        .trim(); // We need to get rid of line breaks
+        if ( str.endsWith(",") )
+            str = str.substring(0, str.length()-1);
+
+        return str;
     }
 
     private void _stringifyAllValues()

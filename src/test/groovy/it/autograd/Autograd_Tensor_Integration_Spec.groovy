@@ -44,7 +44,7 @@ class Autograd_Tensor_Integration_Spec extends Specification
         when: 'A new tensor is being calculated by the equation "((i0+i1)*i2)^2".'
             Tsr y = Tsr.of("((i0+i1)*i2)^2", x, b, w)
         then: 'The resulting tensor should contain "[1]:(4.0); ->d[1]:(-8.0), " where the last part is a derivative.'
-            y.toString().contains("[1]:(4.0); ->d[1]:(-8.0), ")
+            y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
         when: 'We call the "backward" method on this tensor...'
             y.backward(Tsr.of(2))
@@ -54,7 +54,7 @@ class Autograd_Tensor_Integration_Spec extends Specification
         when : 'We create a new tensor via the same equation but applied in a different way...'
             y = Tsr.of("(","(",x,"+",b,")","*",w,")^2")
         then : 'The will produce the same result once again.'
-            y.toString().contains("[1]:(4.0); ->d[1]:(-8.0), ")
+            y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
         when : 'Whe also call the "backward" method again...'
             y.backward(Tsr.of(1))
@@ -64,7 +64,7 @@ class Autograd_Tensor_Integration_Spec extends Specification
         when : 'We execute the same equation once more...'
             y = Tsr.of("((",x,"+",b,")*",w,")^2")
         then : 'The result will be as expected.'
-            y.toString().contains("[1]:(4.0); ->d[1]:(-8.0), ")
+            y.toString().contains("[1]:(4.0); ->d[1]:(-8.0)")
 
         when : 'We call "backward" with -1 as error...'
             y.backward(Tsr.of(-1))
@@ -144,7 +144,7 @@ class Autograd_Tensor_Integration_Spec extends Specification
         y = Tsr.of("(2^i0^i1^i2^2", x, b, w)
         then :
             y.toString().contains("[1]:(4.0);")
-            y.toString().contains(" ->d[1]:(1.38629E0), ")
+            y.toString().contains(" ->d[1]:(1.38629E0)")
         //===
         //TODO: add tests using more then 1 function and check if the graph is being built correctly!
     }
