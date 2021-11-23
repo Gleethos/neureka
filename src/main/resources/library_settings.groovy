@@ -34,7 +34,9 @@ Neureka.configure {
                     (TsrAsString.Should.HAVE_RECURSIVE_GRAPH): false,
                     (TsrAsString.Should.HAVE_DERIVATIVES)    : false,
                     (TsrAsString.Should.HAVE_SHAPE)          : true,
-                    (TsrAsString.Should.BE_CELL_BOUND)       : false
+                    (TsrAsString.Should.BE_CELL_BOUND)       : false,
+                    (TsrAsString.Should.HAVE_POSTFIX)        : "",
+                    (TsrAsString.Should.HAVE_PREFIX)         : ""
             ]
         }
 
