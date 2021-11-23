@@ -223,31 +223,32 @@ class Autograd_NN_Spec extends Specification
             and :
                 graph.contains("""
 ]
-]    0»1»(BRANCH): [NODE]:<(  fsig(I[0]) => (3):[0.54268E0, 0.60176E0, 0.56483E0]  )>
+]    0»1» GraphNode[ sig(I[0]) => (3):[0.54268E0, 0.60176E0, 0.56483E0], type='BRANCH'] 
 ]       \\
-]        0»1»(BRANCH): [NODE]:<(  fdimtrim(I[0]) => (3):[0.17116E0, 0.41280E0, 0.26080E0]  )>
+]        0»1» GraphNode[ dimtrim(I[0]) => (3):[0.17116E0, 0.41280E0, 0.26080E0], type='BRANCH'] 
 ]           \\
-]            0»2»(BRANCH): [NODE]:<(  f(I[0] x I[1]) => (3x1x1x1):[0.17116E0, 0.41280E0, 0.26080E0]  )>
+]            0»2» GraphNode[ (I[0] x I[1]) => (3x1x1x1):[0.17116E0, 0.41280E0, 0.26080E0], type='BRANCH'] 
 ]               \\
-]                0»1»(BRANCH): [NODE]:<(  f([0,1,2,-1]:(I[0])) => (3x1x3x1):[0.15178E0, 0.25131E0, 0.32789E0, ... + 6 more]  )>
+]                0»1» GraphNode[ ([0,1,2,-1]:(I[0])) => (3x1x3x1):[0.15178E0, 0.25131E0, 0.32789E0, ... + 6 more], type='BRANCH'] 
 ]                |  \\
-]                |   0»1»(BRANCH): [NODE]:<(  fsig(I[0]) => (3x1x3):[0.15178E0, 0.25131E0, 0.32789E0, ... + 6 more]  )>
+]                |   0»1» GraphNode[ sig(I[0]) => (3x1x3):[0.15178E0, 0.25131E0, 0.32789E0, ... + 6 more], type='BRANCH'] 
 ]                |      \\
-]                |       0»1»(BRANCH): [NODE]:<(  fdimtrim(I[0]) => (3x1x3):[-1.72064E0, -1.09161E0, -0.71770E0, ... + 6 more]  )>
+]                |       0»1» GraphNode[ dimtrim(I[0]) => (3x1x3):[-1.72064E0, -1.09161E0, -0.71770E0, ... + 6 more], type='BRANCH'] 
 ]                |          \\
-]                |           0»2»(BRANCH): [NODE]:<(  f(I[0] x I[1]) => (3x1x3):[-1.72064E0, -1.09161E0, -0.71770E0, ... + 6 more]  )>
+]                |           0»2» GraphNode[ (I[0] x I[1]) => (3x1x3):[-1.72064E0, -1.09161E0, -0.71770E0, ... + 6 more], type='BRANCH'] 
 ]                |              \\
-]                |               0»1»(BRANCH): [NODE]:<(  f([0,1,-1]:(I[0])) => (3x2x1):[0.6667, 1.0, 0.3333, ... + 3 more]  )>
+]                |               0»1» GraphNode[ ([0,1,-1]:(I[0])) => (3x2x1):[0.6667, 1.0, 0.3333, ... + 3 more], type='BRANCH'] 
 ]                |               |  \\
-]                |               |   0»0»(LEAVE): [NODE]:<(  f(NONE) => (3x2):[0.6667, 1.0, 0.3333, ... + 3 more]  )>
+]                |               |   0»0» GraphNode[ (3x2):[0.6667, 1.0, 0.3333, ... + 3 more], type='LEAVE'] 
 ]                |               |
-]                |               1»1»(BRANCH): [NODE]:<(  f([-1,0,1]:(I[0])) => (1x2x3):[-0.88023E0, -0.03096E0, -1.67769E0, ... + 3 more]  )>
+]                |               1»1» GraphNode[ ([-1,0,1]:(I[0])) => (1x2x3):[-0.88023E0, -0.03096E0, -1.67769E0, ... + 3 more], type='BRANCH'] 
 ]                |                  \\
-]                |                   0»0»(LEAVE RQS GRADIENT): [NODE]:<(  f(NONE) => (2x3):[-0.88023E0, -0.03096E0, -1.67769E0, ... + 3 more]  )>
+]                |                   0»0» GraphNode[ (2x3):[-0.88023E0, -0.03096E0, -1.67769E0, ... + 3 more], type='LEAVE RQS GRADIENT'] 
 ]                |
-]                1»1»(BRANCH): [NODE]:<(  f([-1,-1,0,1]:(I[0])) => (1x1x3x1):[2.14504E0, 0.17962E0, -0.43376E0]  )>
+]                1»1» GraphNode[ ([-1,-1,0,1]:(I[0])) => (1x1x3x1):[2.14504E0, 0.17962E0, -0.43376E0], type='BRANCH'] 
 ]                   \\
-]                    0»0»(LEAVE RQS GRADIENT): [NODE]:<(  f(NONE) => (3x1):[2.14504E0, 0.17962E0, -0.43376E0]  )>
+]                    0»0» GraphNode[ (3x1):[2.14504E0, 0.17962E0, -0.43376E0], type='LEAVE RQS GRADIENT'] 
+]
 """)
         where :
             useIteratorBasedIndexing << [true, false]

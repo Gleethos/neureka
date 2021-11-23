@@ -931,14 +931,13 @@ public class GraphNode<V> implements Component<Tsr<V>>
             String flags = m.replace( "g", "" );
             return "]> LOCK: " + getLock() + " |> GRAPH:\n]\n" + _toString( "]    0", true, flags ) + "\n]\n]|END|>";
         }
-        String nid = ( m.contains( "n" ) ? "NID:" + Long.toHexString( getNodeID() ) : "NODE" );
+        String nid = this.getClass().getSimpleName() + ( m.contains( "n" ) ? "#" + Long.toHexString( getNodeID() ) : "" );
         if ( m.contains( "v" ) ) {
-            return "(" + this.type() + "): [" + nid + "]:<(  "
-                    + "f" +
-                    (
-                            ( _function == null ) ? "(NONE)" : _function
-                    )
-                    + " => " + ( (payload == null ) ? "NULL" : payload.toString( "cs" ) ) + "  )>";
+            return " " + nid + "[ "
+                    + ( _function == null ? "" : _function + " => " )
+                    + ( (payload == null ) ? "?" : payload.toString( "cs" ) ) + ", "
+                    + "type='" + this.type() + "'" +
+                    "] ";
         } else
             return
                     "[" + nid + "]:( " + (
