@@ -124,22 +124,22 @@ class Autograd_NN_Spec extends Specification
 
         and :
             graph.contains("""
-                ]
-                ]    0»1» GraphNode[ sig(I[0]) => (3x1):[0.54268E0, 0.60176E0, 0.56483E0], type='BRANCH'] 
-                ]       \\
-                ]        0»2» GraphNode[ (I[0] @ I[1]) => (3x1):[0.17116E0, 0.41280E0, 0.26080E0], type='BRANCH'] 
-                ]           \\
-                ]            0»1» GraphNode[ sig(I[0]) => (3x3):[0.15178E0, 0.25131E0, 0.32789E0, ... + 6 more], type='BRANCH'] 
-                ]            |  \\
-                ]            |   0»2» GraphNode[ (I[0] @ I[1]) => (3x3):[-1.72064E0, -1.09161E0, -0.71770E0, ... + 6 more], type='BRANCH'] 
-                ]            |      \\
-                ]            |       0»0» GraphNode[ (3x2):[0.6667, 1.0, 0.3333, ... + 3 more], type='LEAVE'] 
-                ]            |       |
-                ]            |       1»0» GraphNode[ (2x3):[-0.88023E0, -0.03096E0, -1.67769E0, ... + 3 more], type='LEAVE RQS GRADIENT'] 
-                ]            |
-                ]            1»0» GraphNode[ (3x1):[2.14504E0, 0.17962E0, -0.43376E0], type='LEAVE RQS GRADIENT'] 
-                ]
-                """.stripIndent())
+]
+]    0»1» GraphNode[ sig(I[0]) => (3x1):[0.54268E0, 0.60176E0, 0.56483E0], type='BRANCH'] 
+]       \\
+]        0»2» GraphNode[ (I[0] @ I[1]) => (3x1):[0.17116E0, 0.41280E0, 0.26080E0], type='BRANCH'] 
+]           \\
+]            0»1» GraphNode[ sig(I[0]) => (3x3):[0.15178E0, 0.25131E0, 0.32789E0, ... + 6 more], type='BRANCH'] 
+]            |  \\
+]            |   0»2» GraphNode[ (I[0] @ I[1]) => (3x3):[-1.72064E0, -1.09161E0, -0.71770E0, ... + 6 more], type='BRANCH'] 
+]            |      \\
+]            |       0»0» GraphNode[ (3x2):[0.6667, 1.0, 0.3333, ... + 3 more], type='LEAVE'] 
+]            |       |
+]            |       1»0» GraphNode[ (2x3):[-0.88023E0, -0.03096E0, -1.67769E0, ... + 3 more], type='LEAVE RQS GRADIENT'] 
+]            |
+]            1»0» GraphNode[ (3x1):[2.14504E0, 0.17962E0, -0.43376E0], type='LEAVE RQS GRADIENT'] 
+]
+""")
 
     }
 

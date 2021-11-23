@@ -43,25 +43,31 @@ class Tensor_State_Spec extends Specification
         given : 'A new tensor of rank 2 storing Strings:'
             Tsr t = Tsr.of(DataType.of(String.class), [2, 3], (i, indices) -> {
                 return ["sweet", "salty", "blue", "spinning", "confused", "shining"].get( (i + 17**i)%6 ) + ' ' +
-                    ["Saitan", "Apple", "Tofu",  "Strawberry", "Almond", "Salad"].get( (i + 7**i)%6 )
+                       ["Saitan", "Apple", "Tofu",  "Strawberry", "Almond", "Salad"].get( (i + 7**i)%6 )
             })
 
         expect: 'When we convert the tensor to a String via the flags "b" (cell bound) and "f" (formatted).'
             t.toString('bf') == "(2x3):[\n" +
-                                    "   [ sal.., swe.., spi.. ],\n" +
-                                    "   [ blu.., shi.., con.. ]\n" +
-                                    "]"
+                                      "   [ sal.., swe.., spi.. ],\n" +
+                                      "   [ blu.., shi.., con.. ]\n" +
+                                      "]"
         and: 'When additionally supplying the flag "p" (padding) then most String entries will be printed fully.'
             t.toString('bfp') == "(2x3):[\n" +
-                    "   [   salty Apple  ,    sweet Tofu  , spinning Stra.. ],\n" +
-                    "   [   blue Almond  ,  shining Salad , confused Saitan ]\n" +
-                    "]"
-        and: 'When supplying the "p" and "b" flags manually then the result is as expected:'
+                                       "   [   salty Apple  ,    sweet Tofu  , spinning Stra.. ],\n" +
+                                       "   [   blue Almond  ,  shining Salad , confused Saitan ]\n" +
+                                       "]"
+        and: 'Whe can use a map of configuration configuration enums as keys and fitting objects as values:'
             t.toString([
                     (TsrAsString.Should.BE_CELL_BOUND) : true,
                     (TsrAsString.Should.HAVE_PADDING_OF) : 4
             ]) == "(2x3):[salty Ap.., sweet Tofu, spinning.., blue Alm.., shining .., confused..]"
 
+        and: 'This way we can also configure a postfix and prefix as well as limit the number of entries in a row:'
+            t.toString([
+                    (TsrAsString.Should.HAVE_PREFIX) : 'START<|',
+                    (TsrAsString.Should.HAVE_POSTFIX) : '|>END',
+                    (TsrAsString.Should.HAVE_ROW_LIMIT_OF): 2
+            ]) == "START<|(2x3):[salty Apple, sweet Tofu, ... + 4 more]|>END"
     }
 
     def 'Tensors as String can be formatted depending on shape.'(

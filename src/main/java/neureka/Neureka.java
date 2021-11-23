@@ -531,7 +531,7 @@ public final class Neureka
                 _asString.put( TsrAsString.Should.BE_COMPACT,           true  );
                 _asString.put( TsrAsString.Should.BE_FORMATTED,         true  );
                 _asString.put( TsrAsString.Should.HAVE_PADDING_OF,      6     );
-                _asString.put( TsrAsString.Should.BE_SHORTENED_BY,      50    );
+                _asString.put( TsrAsString.Should.HAVE_ROW_LIMIT_OF,      50    );
                 _asString.put( TsrAsString.Should.HAVE_SHAPE,           true  );
                 _asString.put( TsrAsString.Should.HAVE_VALUE,           true  );
                 _asString.put( TsrAsString.Should.HAVE_GRADIENT,        true  );

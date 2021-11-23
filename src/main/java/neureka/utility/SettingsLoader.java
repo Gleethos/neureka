@@ -75,7 +75,7 @@ public class SettingsLoader
                     .checkAndAssign("autograd.isApplyingGradientWhenRequested"     , Boolean.class, v -> s.autograd().setIsApplyingGradientWhenRequested(v)                    )//~= true
                     .checkAndAssign("indexing.isUsingArrayBasedIndexing"           , Boolean.class, v -> s.indexing().setIsUsingArrayBasedIndexing(v)                          )//~= true
                     .checkAndAssign("view.isUsingLegacyView"                       , Boolean.class, v -> s.view().setIsUsingLegacyView(v)                                      )//~= false
-                    .checkAndAssign("view.TsrAsString.Should.BE_SHORTENED_BY"      , Integer.class, v -> s.view().getAsString().put(TsrAsString.Should.BE_SHORTENED_BY     , v))//~= 50,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_ROW_LIMIT_OF"    , Integer.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_ROW_LIMIT_OF   , v))//~= 50,
                     .checkAndAssign("view.TsrAsString.Should.BE_COMPACT"           , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.BE_COMPACT          , v))//~= true,
                     .checkAndAssign("view.TsrAsString.Should.BE_FORMATTED"         , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.BE_FORMATTED        , v))//~= true,
                     .checkAndAssign("view.TsrAsString.Should.HAVE_GRADIENT"        , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_GRADIENT       , v))//~= true,

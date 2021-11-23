@@ -79,7 +79,7 @@ public final class TsrAsString
         BE_COMPACT,
         BE_FORMATTED,
         HAVE_PADDING_OF,
-        BE_SHORTENED_BY,
+        HAVE_ROW_LIMIT_OF,
         HAVE_SHAPE,
         HAVE_VALUE,
         HAVE_GRADIENT,
@@ -140,8 +140,8 @@ public final class TsrAsString
         if ( settings.containsKey( Should.BE_COMPACT ) )
             _isCompact = (boolean) settings.get( Should.BE_COMPACT );
 
-        if ( settings.containsKey( Should.BE_SHORTENED_BY ) )
-            _shortage = (int) settings.get( Should.BE_SHORTENED_BY );
+        if ( settings.containsKey( Should.HAVE_ROW_LIMIT_OF) )
+            _shortage = (int) settings.get( Should.HAVE_ROW_LIMIT_OF);
 
         if ( settings.containsKey( Should.HAVE_PADDING_OF ) )
             _padding = (int) settings.get( Should.HAVE_PADDING_OF );
@@ -589,7 +589,7 @@ public final class TsrAsString
                 return new TreeMap<>(Neureka.get().settings().view().getAsString());
 
             Map< Should, Object > conf = new HashMap<>();
-            conf.put( Should.BE_SHORTENED_BY,      modes.contains( "s" ) ? 3 : 50                             );
+            conf.put( Should.HAVE_ROW_LIMIT_OF,      modes.contains( "s" ) ? 3 : 50                             );
             conf.put( Should.BE_COMPACT,           modes.contains( "c" )                                      );
             conf.put( Should.BE_FORMATTED,         modes.contains( "f" )                                      );
             conf.put( Should.HAVE_GRADIENT,        modes.contains( "g" )                                      );
