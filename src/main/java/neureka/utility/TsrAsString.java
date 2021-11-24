@@ -57,41 +57,70 @@ import java.util.*;
  */
 public final class TsrAsString
 {
-    private int _padding = 6;
-    private int _shortage = 50;
-    private boolean _hasGradient = true;
-    private boolean _isCompact = true;
-    private boolean _isFormatted = true;
-    private boolean _haveSlimNumbers = false;
-    private boolean _hasValue = true;
-    private boolean _hasShape = true;
-    private boolean _hasRecursiveGraph = false;
-    private boolean _hasDerivatives = false;
-    private boolean _isCellBound = false;
-    private String _prefix = "";
-    private String _postfix = "";
+    private final int     _padding;
+    private final int     _shortage;
+    private final boolean _hasGradient;
+    private final boolean _isCompact;
+    private final boolean _isFormatted;
+    private final boolean _haveSlimNumbers;
+    private final boolean _hasValue;
+    private final boolean _hasShape;
+    private final boolean _hasRecursiveGraph;
+    private final boolean _hasDerivatives;
+    private final boolean _isCellBound;
+    private final String  _prefix;
+    private final String  _postfix;
 
-    private int[] _shape;
-    private Tsr<?> _tensor;
-    private StringBuilder _asStr;
+    private final int[] _shape;
+    private final Tsr<?> _tensor;
     private final boolean _legacy = Neureka.get().settings().view().isUsingLegacyView();
 
-    private Map<Should, Object> _config;
+    private final Map<Should, Object> _config;
+    private StringBuilder _asStr;
 
     public enum Should {
-        BE_COMPACT,
-        BE_FORMATTED,
-        HAVE_SLIM_NUMBERS,
-        HAVE_PADDING_OF,
-        HAVE_ROW_LIMIT_OF,
-        HAVE_SHAPE,
-        HAVE_VALUE,
-        HAVE_GRADIENT,
-        HAVE_DERIVATIVES,
-        HAVE_RECURSIVE_GRAPH,
-        BE_CELL_BOUND,
-        HAVE_POSTFIX,
-        HAVE_PREFIX
+
+        BE_COMPACT(Boolean.class),
+        BE_FORMATTED(Boolean.class),
+        HAVE_SLIM_NUMBERS(Boolean.class),
+        HAVE_PADDING_OF(Integer.class),
+        HAVE_ROW_LIMIT_OF(Integer.class),
+        HAVE_SHAPE(Boolean.class),
+        HAVE_VALUE(Boolean.class),
+        HAVE_GRADIENT(Boolean.class),
+        HAVE_DERIVATIVES(Boolean.class),
+        HAVE_RECURSIVE_GRAPH(Boolean.class),
+        BE_CELL_BOUND(Boolean.class),
+        HAVE_POSTFIX(String.class),
+        HAVE_PREFIX(String.class);
+
+        private final Class<?> _valueTypeClass;
+
+        Should( Class<?> valueTypeClass ) { _valueTypeClass = valueTypeClass; }
+
+        /**
+         *  Enums cannot have type parameters! Therefore, we do some type checking to make this saver.
+         *
+         * @param value The value which was assigned to the current enum instance and should be checked for type safety!
+         * @return The received object
+         */
+        private Object _typeCheck(Object value ) {
+            if ( value == null )
+               throw new IllegalArgumentException("Tensor view configuration does not accept null values!");
+            else if ( value.getClass() != _valueTypeClass )
+                throw new IllegalArgumentException(
+                        "Tensor view configuration entry '"+name()+"' expects '"+_valueTypeClass.getSimpleName()+"' " +
+                        "as value class! Encountered object of type '"+value.getClass().getSimpleName()+"' instead."
+                );
+            return value;
+        }
+
+        public <T> T readFrom(Map<Should, Object> config, T defaultValue ) {
+            Object o = config.get( this );
+            if ( o == null ) return defaultValue;
+            else return (T) this._typeCheck(o);
+        }
+
     }
 
     /**
@@ -105,80 +134,48 @@ public final class TsrAsString
              * @return A new {@link TsrAsString} based on the provided configuration.
              */
             @Override
-            public TsrAsString withConfig( Map<Should, Object> configMap ) { return new TsrAsString( t, configMap ); }
+            public TsrAsString withConfig( Map<Should, Object> configMap ) {
+                Map<Should, Object> copy = Util.configFromCode( "" );
+                copy.putAll( configMap );
+                return new TsrAsString( t, copy );
+            }
             /**
              * @param config The configuration used as basis for turning the wrapped {@link Tsr} to a {@link String}.
              * @return A new {@link TsrAsString} based on the provided configuration.
              */
             @Override
-            public TsrAsString withConfig( String config ) { return new TsrAsString( t, config ); }
+            public TsrAsString withConfig( String config ) { return new TsrAsString( t, Util.configFromCode( config ) ); }
             /**
              * @return A new {@link TsrAsString} based on the default configuration.
              */
             @Override
-            public TsrAsString byDefaults() { return new TsrAsString(t); }
+            public TsrAsString byDefaults() { return new TsrAsString( t, Util.configFromCode( null ) ); }
         };
     }
 
     private TsrAsString( Tsr<?> tensor, Map<Should, Object> settings ) {
-        Map<Should, Object> copy = Util.configFromCode( "" );
-        for ( Should s : Should.values() )
-            if ( settings.containsKey( s ) ) copy.put( s, settings.get( s ) );
-        _construct( tensor, copy );
-    }
 
-    private TsrAsString( Tsr<?> tensor, String modes ) {
-        _construct( tensor, Util.configFromCode( modes ) );
-    }
+        if ( tensor.getNDConf() != null )
+            _shape = tensor.getNDConf().shape();
+        else
+            _shape = new int[0];
 
-    private TsrAsString( Tsr<?> tensor ) {
-        _construct( tensor, Util.configFromCode( null ) );
-    }
-
-    private void _construct( Tsr<?> tensor, Map< Should, Object > settings )
-    {
-        if ( tensor.getNDConf() != null ) _shape = tensor.getNDConf().shape();
-        _config = settings;
+        _config = Collections.unmodifiableMap(settings);
         _tensor = tensor;
-        // TODO: Add some asserts!
-        if ( settings.containsKey( Should.BE_COMPACT ) )
-            _isCompact = (boolean) settings.get( Should.BE_COMPACT );
 
-        if ( settings.containsKey( Should.HAVE_ROW_LIMIT_OF) )
-            _shortage = (int) settings.get( Should.HAVE_ROW_LIMIT_OF);
-
-        if ( settings.containsKey( Should.HAVE_PADDING_OF ) )
-            _padding = (int) settings.get( Should.HAVE_PADDING_OF );
-
-        if ( settings.containsKey( Should.HAVE_GRADIENT ) )
-            _hasGradient = (boolean) settings.get( Should.HAVE_GRADIENT );
-
-        if ( settings.containsKey( Should.BE_FORMATTED ) )
-            _isFormatted = (boolean) settings.get( Should.BE_FORMATTED );
-
-        if ( settings.containsKey( Should.HAVE_SLIM_NUMBERS ) )
-            _haveSlimNumbers = (boolean) settings.get( Should.HAVE_SLIM_NUMBERS );
-
-        if ( settings.containsKey( Should.HAVE_VALUE ) )
-            _hasValue = (boolean) settings.get( Should.HAVE_VALUE );
-
-        if ( settings.containsKey( Should.HAVE_SHAPE ) )
-            _hasShape = (boolean) settings.get( Should.HAVE_SHAPE );
-
-        if ( settings.containsKey( Should.HAVE_RECURSIVE_GRAPH) )
-            _hasRecursiveGraph = (boolean) settings.get( Should.HAVE_RECURSIVE_GRAPH);
-
-        if ( settings.containsKey( Should.HAVE_DERIVATIVES) )
-            _hasDerivatives = (boolean) settings.get( Should.HAVE_DERIVATIVES);
-
-        if ( settings.containsKey( Should.BE_CELL_BOUND ) )
-            _isCellBound = (boolean) settings.get( Should.BE_CELL_BOUND );
-
-        if ( settings.containsKey( Should.HAVE_POSTFIX ) )
-            _postfix = settings.get( Should.HAVE_POSTFIX ).toString();
-
-        if ( settings.containsKey( Should.HAVE_PREFIX ) )
-            _prefix =  settings.get( Should.HAVE_PREFIX ).toString();
+        _isCompact         = Should.BE_COMPACT           .readFrom( _config, true );
+        _shortage          = Should.HAVE_ROW_LIMIT_OF    .readFrom( _config, 50   );
+        _padding           = Should.HAVE_PADDING_OF      .readFrom( _config, 6    );
+        _hasGradient       = Should.HAVE_GRADIENT        .readFrom( _config, true );
+        _isFormatted       = Should.BE_FORMATTED         .readFrom( _config, true );
+        _haveSlimNumbers   = Should.HAVE_SLIM_NUMBERS    .readFrom( _config, false );
+        _hasValue          = Should.HAVE_VALUE           .readFrom( _config, true );
+        _hasShape          = Should.HAVE_SHAPE           .readFrom( _config, true );
+        _hasRecursiveGraph = Should.HAVE_RECURSIVE_GRAPH .readFrom( _config, false );
+        _hasDerivatives    = Should.HAVE_DERIVATIVES     .readFrom( _config, false );
+        _isCellBound       = Should.BE_CELL_BOUND        .readFrom( _config, false );
+        _postfix           = Should.HAVE_POSTFIX         .readFrom( _config, ""    );
+        _prefix            = Should.HAVE_PREFIX          .readFrom( _config, ""    );
     }
 
     /**
@@ -606,7 +603,7 @@ public final class TsrAsString
                 return new TreeMap<>(Neureka.get().settings().view().getAsString());
 
             Map< Should, Object > conf = new HashMap<>();
-            conf.put( Should.HAVE_ROW_LIMIT_OF,      modes.contains( "s" ) ? 3 : 50                             );
+            conf.put( Should.HAVE_ROW_LIMIT_OF,    modes.contains( "s" ) ? 3 : 50                             );
             conf.put( Should.BE_COMPACT,           modes.contains( "c" )                                      );
             conf.put( Should.BE_FORMATTED,         modes.contains( "f" )                                      );
             conf.put( Should.HAVE_GRADIENT,        modes.contains( "g" )                                      );
