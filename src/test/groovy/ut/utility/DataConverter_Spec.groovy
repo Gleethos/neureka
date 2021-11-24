@@ -1,6 +1,6 @@
 package ut.utility
 
-import neureka.utility.DataConverter
+import neureka.internal.common.utility.DataConverter
 import spock.lang.Specification
 
 class DataConverter_Spec extends Specification

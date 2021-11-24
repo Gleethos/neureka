@@ -1,14 +1,12 @@
 package neureka.devices.opencl;
 
-import neureka.Neureka;
 import neureka.backend.api.BackendContext;
 import neureka.backend.api.BackendExtension;
 import neureka.backend.api.Extensions;
 import neureka.calculus.assembly.ParseUtil;
-import neureka.common.composition.Component;
+import neureka.internal.common.composition.Component;
 import neureka.devices.Device;
-import neureka.devices.host.CPU;
-import neureka.utility.Messages;
+import neureka.internal.common.utility.Messages;
 import org.jocl.cl_platform_id;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

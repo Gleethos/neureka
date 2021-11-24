@@ -40,9 +40,9 @@ import neureka.backend.api.BackendContext;
 import neureka.backend.api.Operation;
 import neureka.devices.opencl.CLContext;
 import neureka.dtype.custom.F64;
-import neureka.utility.Messages;
-import neureka.utility.SettingsLoader;
-import neureka.utility.TsrAsString;
+import neureka.internal.common.utility.Messages;
+import neureka.internal.common.utility.SettingsLoader;
+import neureka.internal.view.TsrAsString;
 import org.slf4j.Logger;
 
 import java.io.BufferedReader;

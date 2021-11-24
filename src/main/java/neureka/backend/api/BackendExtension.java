@@ -1,6 +1,6 @@
 package neureka.backend.api;
 
-import neureka.common.composition.Component;
+import neureka.internal.common.composition.Component;
 import neureka.devices.Device;
 
 /**

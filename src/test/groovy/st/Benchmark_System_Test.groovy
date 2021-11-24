@@ -4,7 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.CPU
-import neureka.utility.SettingsLoader
+import neureka.internal.common.utility.SettingsLoader
 import org.slf4j.Logger
 import spock.lang.Specification
 import testutility.Utility

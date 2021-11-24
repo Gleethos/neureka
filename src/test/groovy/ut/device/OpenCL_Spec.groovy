@@ -1,12 +1,12 @@
 package ut.device
 
-import neureka.common.composition.Component
+import neureka.internal.common.composition.Component
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.opencl.OpenCLDevice
 import neureka.devices.opencl.utility.DeviceQuery
-import neureka.framing.Relation
+import neureka.internal.framing.Relation
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 

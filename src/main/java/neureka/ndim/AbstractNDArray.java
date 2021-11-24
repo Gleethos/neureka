@@ -41,8 +41,8 @@ import neureka.Tsr;
 import neureka.dtype.DataType;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;
-import neureka.utility.DataConverter;
-import neureka.common.composition.AbstractComponentOwner;
+import neureka.internal.common.utility.DataConverter;
+import neureka.internal.common.composition.AbstractComponentOwner;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 

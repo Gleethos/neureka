@@ -5,7 +5,7 @@ import neureka.Tsr
 import neureka.calculus.assembly.FunctionBuilder
 import neureka.devices.Device
 import neureka.devices.host.CPU
-import neureka.utility.SettingsLoader
+import neureka.internal.common.utility.SettingsLoader
 import spock.lang.Specification
 
 import java.util.function.BiFunction

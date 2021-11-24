@@ -35,7 +35,7 @@ SOFTWARE.
 
 package neureka.optimization;
 
-import neureka.common.composition.Component;
+import neureka.internal.common.composition.Component;
 import neureka.Tsr;
 
 public interface Optimizer<V> extends Component<Tsr<V>>, Optimization<V>

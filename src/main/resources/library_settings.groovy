@@ -1,6 +1,6 @@
 import neureka.Neureka
 import neureka.dtype.custom.F64
-import neureka.utility.TsrAsString
+import neureka.internal.view.TsrAsString
 
 Neureka.configure {
 
