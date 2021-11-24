@@ -51,7 +51,7 @@ import java.util.*;
  *  This class is in essence a simple wrapper class for a tensor and a StringBuilder
  *  Methods in this class use the builder in order to construct a String representation
  *  for said tensor.
- *  These method adjust this String building based on a set of certain
+ *  These methods perform the String building based on a set of certain
  *  configurations which are represented by the "Should" enum.
  *
  */
@@ -73,7 +73,7 @@ public final class TsrAsString
 
     private final int[] _shape;
     private final Tsr<?> _tensor;
-    private final boolean _legacy = Neureka.get().settings().view().isUsingLegacyView();
+    private final boolean _legacy;
 
     private final Map<Should, Object> _config;
     private StringBuilder _asStr;
@@ -115,10 +115,12 @@ public final class TsrAsString
             return value;
         }
 
-        public <T> T readFrom(Map<Should, Object> config, T defaultValue ) {
+        public <T> T readFrom( Map<Should, Object> config, Map<Should, Object> defaults ) {
             Object o = config.get( this );
-            if ( o == null ) return defaultValue;
-            else return (T) this._typeCheck(o);
+            if ( o == null )
+                return (T) defaults.get(this);
+            else
+                return (T) this._typeCheck(o);
         }
 
     }
@@ -162,20 +164,23 @@ public final class TsrAsString
 
         _config = Collections.unmodifiableMap(settings);
         _tensor = tensor;
+        _legacy = Neureka.get().settings().view().isUsingLegacyView();
 
-        _isCompact         = Should.BE_COMPACT           .readFrom( _config, true );
-        _shortage          = Should.HAVE_ROW_LIMIT_OF    .readFrom( _config, 50   );
-        _padding           = Should.HAVE_PADDING_OF      .readFrom( _config, 6    );
-        _hasGradient       = Should.HAVE_GRADIENT        .readFrom( _config, true );
-        _isFormatted       = Should.BE_FORMATTED         .readFrom( _config, true );
-        _haveSlimNumbers   = Should.HAVE_SLIM_NUMBERS    .readFrom( _config, false );
-        _hasValue          = Should.HAVE_VALUE           .readFrom( _config, true );
-        _hasShape          = Should.HAVE_SHAPE           .readFrom( _config, true );
-        _hasRecursiveGraph = Should.HAVE_RECURSIVE_GRAPH .readFrom( _config, false );
-        _hasDerivatives    = Should.HAVE_DERIVATIVES     .readFrom( _config, false );
-        _isCellBound       = Should.BE_CELL_BOUND        .readFrom( _config, false );
-        _postfix           = Should.HAVE_POSTFIX         .readFrom( _config, ""    );
-        _prefix            = Should.HAVE_PREFIX          .readFrom( _config, ""    );
+        Map<Should, Object> defaults = Neureka.get().settings().view().getAsString();
+
+        _isCompact         = Should.BE_COMPACT           .readFrom( _config, defaults );
+        _shortage          = Should.HAVE_ROW_LIMIT_OF    .readFrom( _config, defaults );
+        _padding           = Should.HAVE_PADDING_OF      .readFrom( _config, defaults );
+        _hasGradient       = Should.HAVE_GRADIENT        .readFrom( _config, defaults );
+        _isFormatted       = Should.BE_FORMATTED         .readFrom( _config, defaults );
+        _haveSlimNumbers   = Should.HAVE_SLIM_NUMBERS    .readFrom( _config, defaults );
+        _hasValue          = Should.HAVE_VALUE           .readFrom( _config, defaults );
+        _hasShape          = Should.HAVE_SHAPE           .readFrom( _config, defaults );
+        _hasRecursiveGraph = Should.HAVE_RECURSIVE_GRAPH .readFrom( _config, defaults );
+        _hasDerivatives    = Should.HAVE_DERIVATIVES     .readFrom( _config, defaults );
+        _isCellBound       = Should.BE_CELL_BOUND        .readFrom( _config, defaults );
+        _postfix           = Should.HAVE_POSTFIX         .readFrom( _config, defaults );
+        _prefix            = Should.HAVE_PREFIX          .readFrom( _config, defaults );
     }
 
     /**
@@ -528,7 +533,7 @@ public final class TsrAsString
         if ( _haveSlimNumbers ) {
             if ( vStr.endsWith("E0") ) vStr = vStr.substring( 0, vStr.length() - 2 );
             if ( vStr.endsWith(".0") ) vStr = vStr.substring( 0, vStr.length() - 2 );
-            if ( vStr.startsWith("0.") ) vStr = vStr.substring( 1, vStr.length() );
+            if ( vStr.startsWith("0.") ) vStr = vStr.substring( 1 );
         }
         return vStr;
     }
@@ -542,7 +547,7 @@ public final class TsrAsString
          * @param configMap The configuration map used as basis for turning the wrapped {@link Tsr} to a {@link String}.
          * @return A new {@link TsrAsString} based on the provided configuration.
          */
-        TsrAsString withConfig(Map< Should, Object > configMap );
+        TsrAsString withConfig( Map< Should, Object > configMap );
 
         /**
          * @param config The configuration used as basis for turning the wrapped {@link Tsr} to a {@link String}.
