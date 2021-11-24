@@ -4,7 +4,7 @@ package neureka.devices.file.heads;
 import neureka.Tsr;
 import neureka.devices.Storage;
 import neureka.dtype.DataType;
-import neureka.internal.framing.NDFrame;
+import neureka.framing.NDFrame;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;

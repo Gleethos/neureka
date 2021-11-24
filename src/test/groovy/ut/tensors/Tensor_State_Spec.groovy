@@ -4,7 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.dtype.DataType
 import neureka.dtype.custom.I8
-import neureka.internal.view.TsrAsString
+import neureka.view.TsrAsString
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title

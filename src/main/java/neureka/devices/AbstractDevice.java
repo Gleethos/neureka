@@ -34,13 +34,13 @@ SOFTWARE.
 
 package neureka.devices;
 
-import neureka.internal.common.composition.Component;
+import neureka.common.composition.Component;
 import neureka.Tsr;
 import neureka.backend.api.Algorithm;
 import neureka.backend.api.ExecutionCall;
 import neureka.backend.api.Operation;
 import neureka.calculus.args.Arg;
-import neureka.internal.framing.Relation;
+import neureka.framing.Relation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

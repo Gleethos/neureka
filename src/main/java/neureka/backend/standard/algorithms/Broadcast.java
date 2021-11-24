@@ -7,7 +7,6 @@ import neureka.backend.api.algorithms.AbstractFunctionalAlgorithm;
 import neureka.backend.api.algorithms.fun.SuitabilityPredicate;
 import neureka.calculus.CalcUtil;
 import neureka.calculus.RecursiveExecutor;
-import neureka.calculus.args.Arg;
 import neureka.devices.Device;
 import neureka.dtype.NumericType;
 import neureka.ndim.config.NDConfiguration;

@@ -14,7 +14,7 @@ import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
 import neureka.calculus.assembly.FunctionBuilder;
 import neureka.devices.Device;
-import neureka.internal.framing.Relation;
+import neureka.framing.Relation;
 import neureka.ndim.AbstractNDArray;
 import neureka.ndim.config.NDConfiguration;
 

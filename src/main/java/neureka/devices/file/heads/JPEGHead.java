@@ -6,7 +6,7 @@ import neureka.devices.host.CPU;
 import neureka.dtype.DataType;
 import neureka.dtype.custom.I16;
 import neureka.dtype.custom.UI8;
-import neureka.internal.common.utility.DataConverter;
+import neureka.common.utility.DataConverter;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;

@@ -44,7 +44,7 @@ import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;
 import neureka.calculus.Function;
 import neureka.calculus.args.Arg;
-import neureka.internal.common.composition.Component;
+import neureka.common.composition.Component;
 import neureka.devices.Device;
 import neureka.devices.opencl.utility.WeakTensorReference;
 import org.slf4j.Logger;

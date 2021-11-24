@@ -1,6 +1,6 @@
 package ut.utility
 
-import neureka.internal.common.utility.ListReader
+import neureka.common.utility.ListReader
 import spock.lang.Specification
 
 class ListReader_Exception_Spec extends Specification

@@ -38,7 +38,7 @@ package neureka.devices;
 
 import neureka.backend.api.BackendExtension;
 import neureka.calculus.assembly.ParseUtil;
-import neureka.internal.common.composition.Component;
+import neureka.common.composition.Component;
 import neureka.Neureka;
 import neureka.Tsr;
 import neureka.backend.api.ExecutionCall;

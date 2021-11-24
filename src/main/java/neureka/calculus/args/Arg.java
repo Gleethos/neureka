@@ -1,6 +1,6 @@
 package neureka.calculus.args;
 
-import neureka.internal.common.composition.Component;
+import neureka.common.composition.Component;
 import neureka.Tsr;
 import neureka.devices.Device;
 

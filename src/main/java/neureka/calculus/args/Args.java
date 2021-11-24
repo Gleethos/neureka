@@ -1,7 +1,7 @@
 package neureka.calculus.args;
 
-import neureka.internal.common.composition.Component;
-import neureka.internal.common.composition.AbstractComponentOwner;
+import neureka.common.composition.Component;
+import neureka.common.composition.AbstractComponentOwner;
 
 public class Args extends AbstractComponentOwner<Args> {
 

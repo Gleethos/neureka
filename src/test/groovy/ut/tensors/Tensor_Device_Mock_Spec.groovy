@@ -1,6 +1,6 @@
 package ut.tensors
 
-import neureka.internal.common.composition.Component
+import neureka.common.composition.Component
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device

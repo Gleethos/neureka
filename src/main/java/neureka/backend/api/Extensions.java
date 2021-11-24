@@ -1,7 +1,7 @@
 package neureka.backend.api;
 
-import neureka.internal.common.composition.AbstractComponentOwner;
-import neureka.internal.common.composition.Component;
+import neureka.common.composition.AbstractComponentOwner;
+import neureka.common.composition.Component;
 
 /**
  *  This is an internal class for managin gthe extension of any given {@link BackendContext} class.

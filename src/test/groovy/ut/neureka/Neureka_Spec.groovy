@@ -11,8 +11,8 @@ import neureka.devices.CustomDeviceCleaner
 import neureka.devices.host.CPU
 import neureka.devices.opencl.CLContext
 import neureka.dtype.DataType
-import neureka.internal.framing.Relation
-import neureka.internal.common.utility.SettingsLoader
+import neureka.framing.Relation
+import neureka.common.utility.SettingsLoader
 import spock.lang.*
 
 import java.util.regex.Pattern
