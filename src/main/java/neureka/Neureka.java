@@ -42,7 +42,7 @@ import neureka.devices.opencl.CLContext;
 import neureka.dtype.custom.F64;
 import neureka.common.utility.Messages;
 import neureka.common.utility.SettingsLoader;
-import neureka.view.Configuration;
+import neureka.view.TsrStringSettings;
 import neureka.view.TsrAsString;
 import org.slf4j.Logger;
 
@@ -50,9 +50,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.function.Function;
 
@@ -524,25 +522,22 @@ public final class Neureka
         public class View
         {
             private boolean _isUsingLegacyView = false;
-
-            //private Map<TsrAsString.Should, Object> _asString;
-            private Configuration _asString;
-
+            private TsrStringSettings _settings;
 
             View(){
-                _asString = new Configuration();
-                _asString.setIsCompact        ( true  );
-                _asString.setIsFormatted        ( true  );
-                _asString.setPadding     ( 6     );
-                _asString.setShortage   (   50  );
-                _asString.setHasShape          ( true  );
-                _asString.setHasValue          ( true  );
-                _asString.setHasGradient       ( true  );
-                _asString.setHasDerivatives    ( false );
-                _asString.setHasRecursiveGraph( false );
-                _asString.setIsCellBound       ( false );
-                _asString.setPostfix        ( ""    );
-                _asString.setPrefix         ( ""    );
+                _settings = new TsrStringSettings();
+                _settings.isCompact( true  );
+                _settings.isFormatted( true  );
+                _settings.padding( 6     );
+                _settings.rowLimit(   50  );
+                _settings.hasShape( true  );
+                _settings.hasValue( true  );
+                _settings.hasGradient( true  );
+                _settings.hasDerivatives( false );
+                _settings.hasRecursiveGraph( false );
+                _settings.isCellBound( false );
+                _settings.postfix( ""    );
+                _settings.prefix( ""    );
             }
 
             public boolean isUsingLegacyView() { return _isUsingLegacyView; }
@@ -552,10 +547,14 @@ public final class Neureka
                 _isUsingLegacyView = enabled;
             }
 
-            public Configuration getAsString() { return _asString; }
+            public void tensor( Object closure ) {
+                SettingsLoader.tryGroovyClosureOn( closure, _settings );
+            }
 
-            public void setAsString( Function<Configuration, Configuration> should ) {
-                _asString = should.apply(_asString);
+            public TsrStringSettings getTensorSettings() { return _settings; }
+
+            public void setAsString( Function<TsrStringSettings, TsrStringSettings> should ) {
+                _settings = should.apply(_settings);
             }
 
             public void setAsString( String modes ) { setAsString( conf -> TsrAsString.Util.configFromCode( modes ) ); }
@@ -563,7 +562,7 @@ public final class Neureka
             public String toString() {
                 return "Neureka.Settings.View[" +
                             "isUsingLegacyView=" + this.isUsingLegacyView() + "," +
-                            "asString=" + this.getAsString() +
+                            "asString=" + this.getTensorSettings() +
                         "]";
             }
         }

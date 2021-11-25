@@ -110,7 +110,7 @@ import neureka.ndim.iterators.NDIterator;
 import neureka.optimization.Optimizer;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.ListReader;
-import neureka.view.Configuration;
+import neureka.view.TsrStringSettings;
 import neureka.view.TsrAsString;
 import neureka.fluent.building.TensorBuilder;
 import neureka.fluent.building.states.WithShapeOrScalarOrVector;
@@ -2884,12 +2884,12 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return _toString( mode, ( mode.contains( "f" ) ) ? "    " : null );
     }
 
-    public String toString( Configuration config, String indent ) {
+    public String toString(TsrStringSettings config, String indent ) {
         return TsrAsString.representing( this ).withConfig( config ).toString( indent );
     }
 
-    public String toString( Consumer<Configuration> config ) {
-        Configuration defaults = Neureka.get().settings().view().getAsString().clone();
+    public String toString( Consumer<TsrStringSettings> config ) {
+        TsrStringSettings defaults = Neureka.get().settings().view().getTensorSettings().clone();
         config.accept(defaults);
         return TsrAsString.representing( this ).withConfig( defaults ).toString();
     }

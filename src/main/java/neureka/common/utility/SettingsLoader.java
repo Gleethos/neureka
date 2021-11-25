@@ -37,7 +37,6 @@ SOFTWARE.
 package neureka.common.utility;
 
 import neureka.Neureka;
-import neureka.view.TsrAsString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,19 +75,19 @@ public class SettingsLoader
                     .checkAndAssign("autograd.isApplyingGradientWhenRequested"     , Boolean.class, v -> s.autograd().setIsApplyingGradientWhenRequested(v)                    )//~= true
                     .checkAndAssign("indexing.isUsingArrayBasedIndexing"           , Boolean.class, v -> s.indexing().setIsUsingArrayBasedIndexing(v)                          )//~= true
                     .checkAndAssign("view.isUsingLegacyView"                       , Boolean.class, v -> s.view().setIsUsingLegacyView(v)                                      )//~= false
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_ROW_LIMIT_OF"    , Integer.class, v -> s.view().getAsString().setShortage(v)                              )//~= 50,
-                    .checkAndAssign("view.TsrAsString.Should.BE_COMPACT"           , Boolean.class, v -> s.view().getAsString().setIsCompact(v)                              )//~= true,
-                    .checkAndAssign("view.TsrAsString.Should.BE_FORMATTED"         , Boolean.class, v -> s.view().getAsString().setIsFormatted(v)                        )//~= true,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_GRADIENT"        , Boolean.class, v -> s.view().getAsString().setHasGradient(v)                        )//~= true,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_SLIM_NUMBERS"    , Boolean.class, v -> s.view().getAsString().sethaveSlimNumbers(v)              )//~= false,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_PADDING_OF"      , Integer.class, v -> s.view().getAsString().setPadding(v)                             )//~= 6,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_VALUE"           , Boolean.class, v -> s.view().getAsString().setHasValue(v)                           )//~= true,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_RECURSIVE_GRAPH" , Boolean.class, v -> s.view().getAsString().setHasRecursiveGraph(v)                  )//~= false,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_DERIVATIVES"     , Boolean.class, v -> s.view().getAsString().setHasDerivatives(v)                           )//~= false,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_SHAPE"           , Boolean.class, v -> s.view().getAsString().setHasShape(v)                                 )//~= true,
-                    .checkAndAssign("view.TsrAsString.Should.BE_CELL_BOUND"        , Boolean.class, v -> s.view().getAsString().setIsCellBound(v)                              )//~= false
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_POSTFIX"         , String.class,  v -> s.view().getAsString().setPostfix(v)                                  )//~= ""
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_PREFIX"          , String.class,  v -> s.view().getAsString().setPrefix(v)                                   )//~= ""
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_ROW_LIMIT_OF"    , Integer.class, v -> s.view().getTensorSettings().rowLimit(v)                              )//~= 50,
+                    .checkAndAssign("view.TsrAsString.Should.BE_COMPACT"           , Boolean.class, v -> s.view().getTensorSettings().isCompact(v)                              )//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.BE_FORMATTED"         , Boolean.class, v -> s.view().getTensorSettings().isFormatted(v)                        )//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_GRADIENT"        , Boolean.class, v -> s.view().getTensorSettings().hasGradient(v)                        )//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_SLIM_NUMBERS"    , Boolean.class, v -> s.view().getTensorSettings().hasSlimNumbers(v)              )//~= false,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_PADDING_OF"      , Integer.class, v -> s.view().getTensorSettings().padding(v)                             )//~= 6,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_VALUE"           , Boolean.class, v -> s.view().getTensorSettings().hasValue(v)                           )//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_RECURSIVE_GRAPH" , Boolean.class, v -> s.view().getTensorSettings().hasRecursiveGraph(v)                  )//~= false,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_DERIVATIVES"     , Boolean.class, v -> s.view().getTensorSettings().hasDerivatives(v)                           )//~= false,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_SHAPE"           , Boolean.class, v -> s.view().getTensorSettings().hasShape(v)                                 )//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.BE_CELL_BOUND"        , Boolean.class, v -> s.view().getTensorSettings().isCellBound(v)                              )//~= false
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_POSTFIX"         , String.class,  v -> s.view().getTensorSettings().postfix(v)                                  )//~= ""
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_PREFIX"          , String.class,  v -> s.view().getTensorSettings().prefix(v)                                   )//~= ""
                     .checkAndAssign("ndim.isOnlyUsingDefaultNDConfiguration"       , Boolean.class, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)                      )//~= false
                     .checkAndAssign("dtype.defaultDataTypeClass"                   , Class.class,   v -> s.dtype().setDefaultDataTypeClass(v)                                  )
                     .checkAndAssign("dtype.isAutoConvertingExternalDataToJVMTypes" , Boolean.class, v -> s.dtype().setIsAutoConvertingExternalDataToJVMTypes(v)                );

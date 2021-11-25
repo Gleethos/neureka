@@ -75,7 +75,7 @@ public final class TsrAsString
     private final Tsr<?> _tensor;
     private final boolean _legacy;
 
-    Configuration _config;
+    TsrStringSettings _config;
     private StringBuilder _asStr;
 
     /**
@@ -89,7 +89,7 @@ public final class TsrAsString
              * @return A new {@link TsrAsString} based on the provided configuration.
              */
             @Override
-            public TsrAsString withConfig( Configuration configMap ) {
+            public TsrAsString withConfig( TsrStringSettings configMap ) {
                 return new TsrAsString( t, configMap.clone() );
             }
             /**
@@ -106,7 +106,7 @@ public final class TsrAsString
         };
     }
 
-    private TsrAsString( Tsr<?> tensor, Configuration settings ) {
+    private TsrAsString( Tsr<?> tensor, TsrStringSettings settings ) {
 
         if ( tensor.getNDConf() != null )
             _shape = tensor.getNDConf().shape();
@@ -120,9 +120,9 @@ public final class TsrAsString
         //Configuration defaults = Neureka.get().settings().view().getAsString();
 
         _isCompact          = _config.isCompact() ;//= Should.BE_COMPACT           .readFrom( _config, defaults );
-        _shortage           = _config.getShortage() ;//= Should.HAVE_ROW_LIMIT_OF    .readFrom( _config, defaults );
+        _shortage           = _config.rowLimit() ;//= Should.HAVE_ROW_LIMIT_OF    .readFrom( _config, defaults );
         _padding            = _config.getPadding() ;//= Should.HAVE_PADDING_OF      .readFrom( _config, defaults );
-        _hasGradient        = _config.isHasGradient() ;//= Should.HAVE_GRADIENT        .readFrom( _config, defaults );
+        _hasGradient        = _config.hasGradient() ;//= Should.HAVE_GRADIENT        .readFrom( _config, defaults );
         _isFormatted        = _config.isFormatted() ;//= Should.BE_FORMATTED         .readFrom( _config, defaults );
         _haveSlimNumbers    = _config.hasSlimNumbers() ;//= Should.HAVE_SLIM_NUMBERS    .readFrom( _config, defaults );
         _hasValue           = _config.hasValue() ;//= Should.HAVE_VALUE           .readFrom( _config, defaults );
@@ -130,8 +130,8 @@ public final class TsrAsString
         _hasRecursiveGraph  = _config.hasRecursiveGraph() ;//= Should.HAVE_RECURSIVE_GRAPH .readFrom( _config, defaults );
         _hasDerivatives     = _config.hasDerivatives() ;//= Should.HAVE_DERIVATIVES     .readFrom( _config, defaults );
         _isCellBound        = _config.isCellBound() ;//= Should.BE_CELL_BOUND        .readFrom( _config, defaults );
-        _postfix            = _config.getPostfix() ;//= Should.HAVE_POSTFIX         .readFrom( _config, defaults );
-        _prefix             = _config.getPrefix() ;//= Should.HAVE_PREFIX          .readFrom( _config, defaults );
+        _postfix            = _config.postfix() ;//= Should.HAVE_POSTFIX         .readFrom( _config, defaults );
+        _prefix             = _config.prefix() ;//= Should.HAVE_PREFIX          .readFrom( _config, defaults );
     }
 
     /**
@@ -498,7 +498,7 @@ public final class TsrAsString
          * @param configMap The configuration map used as basis for turning the wrapped {@link Tsr} to a {@link String}.
          * @return A new {@link TsrAsString} based on the provided configuration.
          */
-        TsrAsString withConfig( Configuration configMap );
+        TsrAsString withConfig( TsrStringSettings configMap );
 
         /**
          * @param config The configuration used as basis for turning the wrapped {@link Tsr} to a {@link String}.
@@ -553,25 +553,25 @@ public final class TsrAsString
         }
 
         @Contract( pure = true )
-        public static Configuration configFromCode( String modes )
+        public static TsrStringSettings configFromCode(String modes )
         {
             if ( modes == null || modes.trim().isEmpty() )
-                return Neureka.get().settings().view().getAsString().clone();
+                return Neureka.get().settings().view().getTensorSettings().clone();
 
-            Configuration conf = new Configuration();
-            conf.setShortage(  modes.contains( "s" ) ? 3 : 50                             );
-            conf.setIsCompact(  modes.contains( "c" )                                      );
-            conf.setIsFormatted(  modes.contains( "f" )                                      );
-            conf.setHasGradient(  modes.contains( "g" )                                      );
-            conf.setPadding(  modes.contains( "p" ) ? 6 : modes.contains( "f" ) ? 2 : 1  );
-            conf.setHasValue( !(modes.contains( "shp" ) || modes.contains("shape"))       );
-            conf.setHasRecursiveGraph( modes.contains( "r" )                                      );
-            conf.setHasDerivatives(  modes.contains( "d" )                                      );
-            conf.setHasShape(  !modes.contains( "v" )                                     );
-            conf.setIsCellBound(  modes.contains( "b" )                                      );
-            conf.setPostfix(  ""                                                         );
-            conf.setPrefix(  ""                                                         );
-            conf.sethaveSlimNumbers(  false                                                      );
+            TsrStringSettings conf = new TsrStringSettings();
+            conf.rowLimit(  modes.contains( "s" ) ? 3 : 50                             );
+            conf.isCompact(  modes.contains( "c" )                                      );
+            conf.isFormatted(  modes.contains( "f" )                                      );
+            conf.hasGradient(  modes.contains( "g" )                                      );
+            conf.padding(  modes.contains( "p" ) ? 6 : modes.contains( "f" ) ? 2 : 1  );
+            conf.hasValue( !(modes.contains( "shp" ) || modes.contains("shape"))       );
+            conf.hasRecursiveGraph( modes.contains( "r" )                                      );
+            conf.hasDerivatives(  modes.contains( "d" )                                      );
+            conf.hasShape(  !modes.contains( "v" )                                     );
+            conf.isCellBound(  modes.contains( "b" )                                      );
+            conf.postfix(  ""                                                         );
+            conf.prefix(  ""                                                         );
+            conf.hasSlimNumbers(  false                                                      );
             return conf;
         }
     }

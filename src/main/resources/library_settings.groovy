@@ -1,7 +1,6 @@
 import neureka.Neureka
 import neureka.dtype.custom.F64
-import neureka.view.Configuration
-import neureka.view.TsrAsString
+import neureka.view.TsrStringSettings
 
 Neureka.configure {
 
@@ -25,22 +24,22 @@ Neureka.configure {
         view {
             it.isUsingLegacyView = false
 
-            it.asString = {
-                Configuration settings ->
+            tensor {
+                TsrStringSettings settings ->
                                     settings
-                                    .setShortage(50)
-                                    .setIsCompact(true)
-                                    .setIsFormatted(true)
-                                    .sethaveSlimNumbers(true)
-                                    .setHasGradient(true)
-                                    .setPadding(6)
-                                    .setHasValue(true)
-                                    .setHasRecursiveGraph(false)
-                                    .setHasDerivatives(false)
-                                    .setHasShape(true)
-                                    .setIsCellBound(false)
-                                    .setPostfix("")
-                                    .setPrefix("")
+                                    .rowLimit(50)
+                                    .isCompact(true)
+                                    .isFormatted(true)
+                                    .hasSlimNumbers(true)
+                                    .hasGradient(true)
+                                    .padding(6)
+                                    .hasValue(true)
+                                    .hasRecursiveGraph(false)
+                                    .hasDerivatives(false)
+                                    .hasShape(true)
+                                    .isCellBound(false)
+                                    .postfix("")
+                                    .prefix("")
             }
         }
 

@@ -1,9 +1,9 @@
 package neureka.view;
 
-public class Configuration {
+public class TsrStringSettings {
 
     private int     _padding;
-    private int     _shortage;
+    private int     _rowLimit;
     private boolean _hasGradient;
     private boolean _isCompact;
     private boolean _isFormatted;
@@ -17,19 +17,19 @@ public class Configuration {
     private String  _postfix;
     private boolean _legacy;
 
-    public Configuration() {
+    public TsrStringSettings() {
 
     }
 
-    public Configuration clone() {
-        Configuration clone = new Configuration();
+    public TsrStringSettings clone() {
+        TsrStringSettings clone = new TsrStringSettings();
         this._imposeOn(clone);
         return clone;
     }
 
-    private void _imposeOn(Configuration other) {
+    private void _imposeOn(TsrStringSettings other) {
         other._padding = _padding;
-        other._shortage = _shortage;
+        other._rowLimit = _rowLimit;
         other._hasGradient = _hasGradient;
         other._isCompact = _isCompact;
         other._isFormatted = _isFormatted;
@@ -48,25 +48,25 @@ public class Configuration {
         return _padding;
     }
 
-    public Configuration setPadding(int padding) {
+    public TsrStringSettings padding(int padding) {
         _padding = padding;
         return this;
     }
 
-    public int getShortage() {
-        return _shortage;
+    public int rowLimit() {
+        return _rowLimit;
     }
 
-    public Configuration setShortage(int shortage) {
-        _shortage = shortage;
+    public TsrStringSettings rowLimit(int shortage) {
+        _rowLimit = shortage;
         return this;
     }
 
-    public boolean isHasGradient() {
+    public boolean hasGradient() {
         return _hasGradient;
     }
 
-    public Configuration setHasGradient(boolean hasGradient) {
+    public TsrStringSettings hasGradient(boolean hasGradient) {
         _hasGradient = hasGradient;
         return this;
     }
@@ -75,7 +75,7 @@ public class Configuration {
         return _isCompact;
     }
 
-    public Configuration setIsCompact(boolean isCompact) {
+    public TsrStringSettings isCompact(boolean isCompact) {
         _isCompact = isCompact;
         return this;
     }
@@ -84,7 +84,7 @@ public class Configuration {
         return _isFormatted;
     }
 
-    public Configuration setIsFormatted(boolean isFormatted) {
+    public TsrStringSettings isFormatted(boolean isFormatted) {
         _isFormatted = isFormatted;
         return this;
     }
@@ -93,7 +93,7 @@ public class Configuration {
         return _haveSlimNumbers;
     }
 
-    public Configuration sethaveSlimNumbers(boolean haveSlimNumbers) {
+    public TsrStringSettings hasSlimNumbers(boolean haveSlimNumbers) {
         _haveSlimNumbers = haveSlimNumbers;
         return this;
     }
@@ -102,7 +102,7 @@ public class Configuration {
         return _hasValue;
     }
 
-    public Configuration setHasValue(boolean hasValue) {
+    public TsrStringSettings hasValue(boolean hasValue) {
         _hasValue = hasValue;
         return this;
     }
@@ -111,7 +111,7 @@ public class Configuration {
         return _hasShape;
     }
 
-    public Configuration setHasShape(boolean hasShape) {
+    public TsrStringSettings hasShape(boolean hasShape) {
         _hasShape = hasShape;
         return this;
     }
@@ -120,7 +120,7 @@ public class Configuration {
         return _hasRecursiveGraph;
     }
 
-    public Configuration setHasRecursiveGraph(boolean hasRecursiveGraph) {
+    public TsrStringSettings hasRecursiveGraph(boolean hasRecursiveGraph) {
         _hasRecursiveGraph = hasRecursiveGraph;
         return this;
     }
@@ -129,7 +129,7 @@ public class Configuration {
         return _hasDerivatives;
     }
 
-    public Configuration setHasDerivatives(boolean hasDerivatives) {
+    public TsrStringSettings hasDerivatives(boolean hasDerivatives) {
         _hasDerivatives = hasDerivatives;
         return this;
     }
@@ -138,25 +138,25 @@ public class Configuration {
         return _isCellBound;
     }
 
-    public Configuration setIsCellBound(boolean isCellBound) {
+    public TsrStringSettings isCellBound(boolean isCellBound) {
         _isCellBound = isCellBound;
         return this;
     }
 
-    public String getPrefix() {
+    public String prefix() {
         return _prefix;
     }
 
-    public Configuration setPrefix(String prefix) {
+    public TsrStringSettings prefix(String prefix) {
         _prefix = prefix;
         return this;
     }
 
-    public String getPostfix() {
+    public String postfix() {
         return _postfix;
     }
 
-    public Configuration setPostfix(String postfix) {
+    public TsrStringSettings postfix(String postfix) {
         _postfix = postfix;
         return this;
     }
@@ -165,7 +165,7 @@ public class Configuration {
         return _legacy;
     }
 
-    public Configuration setLegacy(boolean legacy) {
+    public TsrStringSettings legacy(boolean legacy) {
         _legacy = legacy;
         return this;
     }
