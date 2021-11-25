@@ -30,7 +30,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().asString = "dgc"
+        Neureka.get().settings().view().tensors = "dgc"
     }
 
     def 'Slices can be created using the SliceBuilder.'(

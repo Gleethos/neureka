@@ -35,7 +35,7 @@ class Tensor_State_Spec extends Specification
     {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().asString = "dgc"
+        Neureka.get().settings().view().tensors = "dgc"
     }
 
     def 'Tensors as String can be formatted on an entry based level.'()
@@ -58,12 +58,12 @@ class Tensor_State_Spec extends Specification
                                        "]"
         and: 'Whe can use a map of configuration configuration enums as keys and fitting objects as values:'
             t.toString(
-                    { TsrStringSettings it -> it.isCellBound(true).padding(4)}
+                    { TsrStringSettings it -> it.cellBound(true).withPadding(4)}
             ) == "(2x3):[salty Ap.., sweet Tofu, spinning.., blue Alm.., shining .., confused..]"
 
         and: 'This way we can also configure a postfix and prefix as well as limit the number of entries in a row:'
             t.toString(
-                    { TsrStringSettings it -> it.prefix('START<|').postfix('|>END').rowLimit(2) }
+                    { TsrStringSettings it -> it.withPrefix('START<|').withPostfix('|>END').withRowLimit(2) }
             ) == "START<|(2x3):[salty Apple, sweet Tofu, ... + 4 more]|>END"
     }
 
@@ -77,7 +77,7 @@ class Tensor_State_Spec extends Specification
         t.toString() == "(2x3):[0.0, 0.33333E0, 0.66666E0, 1.0, 0.0, 0.33333E0]"
         and : 'Whe can use a map of configuration configuration enums as keys and fitting objects as values:'
         t.toString(
-                { TsrStringSettings it -> it.hasSlimNumbers(true).isCompact(true) }
+                { TsrStringSettings it -> it.withSlimNumbers(true).scientific(true) }
                 ) == "(2x3):[0, .33333, .66666, 1, 0, .33333]"
 
     }

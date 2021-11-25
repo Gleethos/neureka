@@ -16,7 +16,7 @@ class Tensor_As_Container_Integration_Spec extends Specification
                          
         """
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().asString = "dgc"
+        Neureka.get().settings().view().tensors = "dgc"
     }
 
 

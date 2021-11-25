@@ -46,6 +46,7 @@ import org.jetbrains.annotations.Contract;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  *  This class is in essence a simple wrapper class for a tensor and a StringBuilder
@@ -119,11 +120,11 @@ public final class TsrAsString
 
         //Configuration defaults = Neureka.get().settings().view().getAsString();
 
-        _isCompact          = _config.isCompact() ;//= Should.BE_COMPACT           .readFrom( _config, defaults );
+        _isCompact          = _config.isScientific() ;//= Should.BE_COMPACT           .readFrom( _config, defaults );
         _shortage           = _config.rowLimit() ;//= Should.HAVE_ROW_LIMIT_OF    .readFrom( _config, defaults );
         _padding            = _config.getPadding() ;//= Should.HAVE_PADDING_OF      .readFrom( _config, defaults );
         _hasGradient        = _config.hasGradient() ;//= Should.HAVE_GRADIENT        .readFrom( _config, defaults );
-        _isFormatted        = _config.isFormatted() ;//= Should.BE_FORMATTED         .readFrom( _config, defaults );
+        _isFormatted        = _config.isMultiline() ;//= Should.BE_FORMATTED         .readFrom( _config, defaults );
         _haveSlimNumbers    = _config.hasSlimNumbers() ;//= Should.HAVE_SLIM_NUMBERS    .readFrom( _config, defaults );
         _hasValue           = _config.hasValue() ;//= Should.HAVE_VALUE           .readFrom( _config, defaults );
         _hasShape           = _config.hasShape() ;//= Should.HAVE_SHAPE           .readFrom( _config, defaults );
@@ -201,14 +202,23 @@ public final class TsrAsString
      */
     private ValStringifier _createBasicStringifierFor( Object data, boolean isCompact )
     {
+        Function<String, String> slim = vStr -> {
+            if ( _haveSlimNumbers ) {
+                if ( vStr.endsWith("E0")   ) vStr = vStr.substring( 0, vStr.length() - 2 );
+                if ( vStr.endsWith(".0")   ) vStr = vStr.substring( 0, vStr.length() - 2 );
+                if ( vStr.startsWith("0.") ) vStr = vStr.substring( 1 );
+            }
+            return vStr;
+        };
+
         if ( data instanceof double[] )
             return i -> ( isCompact )
-                    ? formatFP( ( (double[]) data )[ i ])
-                    : String.valueOf( ( (double[] ) data )[ i ] );
+                    ? slim.apply( formatFP( ( (double[]) data )[ i ]) )
+                    : slim.apply( String.valueOf( ( (double[] ) data )[ i ] ) );
         else if ( data instanceof float[] )
             return i -> ( isCompact )
-                    ? formatFP( ( (float[]) data )[ i ] )
-                    : String.valueOf( ( (float[]) data )[ i ] );
+                    ? slim.apply( formatFP( ( (float[]) data )[ i ] ) )
+                    : slim.apply( String.valueOf( ( (float[]) data )[ i ] ) );
         else if ( data instanceof short[] )
             return i -> ( isCompact )
                     ? formatFP( ( (short[]) data )[ i ] )
@@ -464,7 +474,7 @@ public final class TsrAsString
     }
 
     @Contract( pure = true )
-    public String formatFP( double v )
+    private static String formatFP( double v )
     {
         DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols( Locale.UK );
         DecimalFormat formatter = new DecimalFormat("##0.0##E0", formatSymbols);
@@ -480,11 +490,6 @@ public final class TsrAsString
                 vStr = !vStr.contains(".0E0") ? vStr : vStr.replace(".0E0",".0");
                 vStr =  vStr.contains(".")    ? vStr : vStr.replace("E0",".0");
             }
-        }
-        if ( _haveSlimNumbers ) {
-            if ( vStr.endsWith("E0") ) vStr = vStr.substring( 0, vStr.length() - 2 );
-            if ( vStr.endsWith(".0") ) vStr = vStr.substring( 0, vStr.length() - 2 );
-            if ( vStr.startsWith("0.") ) vStr = vStr.substring( 1 );
         }
         return vStr;
     }
@@ -559,19 +564,19 @@ public final class TsrAsString
                 return Neureka.get().settings().view().getTensorSettings().clone();
 
             TsrStringSettings conf = new TsrStringSettings();
-            conf.rowLimit(  modes.contains( "s" ) ? 3 : 50                             );
-            conf.isCompact(  modes.contains( "c" )                                      );
-            conf.isFormatted(  modes.contains( "f" )                                      );
-            conf.hasGradient(  modes.contains( "g" )                                      );
-            conf.padding(  modes.contains( "p" ) ? 6 : modes.contains( "f" ) ? 2 : 1  );
-            conf.hasValue( !(modes.contains( "shp" ) || modes.contains("shape"))       );
-            conf.hasRecursiveGraph( modes.contains( "r" )                                      );
-            conf.hasDerivatives(  modes.contains( "d" )                                      );
-            conf.hasShape(  !modes.contains( "v" )                                     );
-            conf.isCellBound(  modes.contains( "b" )                                      );
-            conf.postfix(  ""                                                         );
-            conf.prefix(  ""                                                         );
-            conf.hasSlimNumbers(  false                                                      );
+            conf.withRowLimit(  modes.contains( "s" ) ? 3 : 50                             );
+            conf.scientific(  modes.contains( "c" )                                      );
+            conf.multiline(  modes.contains( "f" )                                      );
+            conf.withGradient(  modes.contains( "g" )                                      );
+            conf.withPadding(  modes.contains( "p" ) ? 6 : modes.contains( "f" ) ? 2 : 1  );
+            conf.withValue( !(modes.contains( "shp" ) || modes.contains("shape"))       );
+            conf.withRecursiveGraph( modes.contains( "r" )                                      );
+            conf.withDerivatives(  modes.contains( "d" )                                      );
+            conf.withShape(  !modes.contains( "v" )                                     );
+            conf.cellBound(  modes.contains( "b" )                                      );
+            conf.withPostfix(  ""                                                         );
+            conf.withPrefix(  ""                                                         );
+            conf.withSlimNumbers(  false                                                      );
             return conf;
         }
     }

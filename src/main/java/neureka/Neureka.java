@@ -526,18 +526,18 @@ public final class Neureka
 
             View(){
                 _settings = new TsrStringSettings();
-                _settings.isCompact( true  );
-                _settings.isFormatted( true  );
-                _settings.padding( 6     );
-                _settings.rowLimit(   50  );
-                _settings.hasShape( true  );
-                _settings.hasValue( true  );
-                _settings.hasGradient( true  );
-                _settings.hasDerivatives( false );
-                _settings.hasRecursiveGraph( false );
-                _settings.isCellBound( false );
-                _settings.postfix( ""    );
-                _settings.prefix( ""    );
+                _settings.scientific( true  );
+                _settings.multiline( true  );
+                _settings.withPadding( 6     );
+                _settings.withRowLimit(   50  );
+                _settings.withShape( true  );
+                _settings.withValue( true  );
+                _settings.withGradient( true  );
+                _settings.withDerivatives( false );
+                _settings.withRecursiveGraph( false );
+                _settings.cellBound( false );
+                _settings.withPostfix( ""    );
+                _settings.withPrefix( ""    );
             }
 
             public boolean isUsingLegacyView() { return _isUsingLegacyView; }
@@ -547,17 +547,19 @@ public final class Neureka
                 _isUsingLegacyView = enabled;
             }
 
-            public void tensor( Object closure ) {
+            public void tensors( Object closure ) {
                 SettingsLoader.tryGroovyClosureOn( closure, _settings );
             }
 
             public TsrStringSettings getTensorSettings() { return _settings; }
 
-            public void setAsString( Function<TsrStringSettings, TsrStringSettings> should ) {
+            public void tensors( Function<TsrStringSettings, TsrStringSettings> should ) {
                 _settings = should.apply(_settings);
             }
 
-            public void setAsString( String modes ) { setAsString( conf -> TsrAsString.Util.configFromCode( modes ) ); }
+            public void setTensors( String modes ) { tensors(conf -> TsrAsString.Util.configFromCode( modes ) ); }
+
+            public void tensors( String modes ) { tensors(conf -> TsrAsString.Util.configFromCode( modes ) ); }
 
             public String toString() {
                 return "Neureka.Settings.View[" +

@@ -48,7 +48,7 @@ public class TsrStringSettings {
         return _padding;
     }
 
-    public TsrStringSettings padding(int padding) {
+    public TsrStringSettings withPadding(int padding) {
         _padding = padding;
         return this;
     }
@@ -57,7 +57,7 @@ public class TsrStringSettings {
         return _rowLimit;
     }
 
-    public TsrStringSettings rowLimit(int shortage) {
+    public TsrStringSettings withRowLimit(int shortage) {
         _rowLimit = shortage;
         return this;
     }
@@ -66,25 +66,25 @@ public class TsrStringSettings {
         return _hasGradient;
     }
 
-    public TsrStringSettings hasGradient(boolean hasGradient) {
+    public TsrStringSettings withGradient(boolean hasGradient) {
         _hasGradient = hasGradient;
         return this;
     }
 
-    public boolean isCompact() {
+    public boolean isScientific() {
         return _isCompact;
     }
 
-    public TsrStringSettings isCompact(boolean isCompact) {
+    public TsrStringSettings scientific(boolean isCompact) {
         _isCompact = isCompact;
         return this;
     }
 
-    public boolean isFormatted() {
+    public boolean isMultiline() {
         return _isFormatted;
     }
 
-    public TsrStringSettings isFormatted(boolean isFormatted) {
+    public TsrStringSettings multiline(boolean isFormatted) {
         _isFormatted = isFormatted;
         return this;
     }
@@ -93,7 +93,7 @@ public class TsrStringSettings {
         return _haveSlimNumbers;
     }
 
-    public TsrStringSettings hasSlimNumbers(boolean haveSlimNumbers) {
+    public TsrStringSettings withSlimNumbers(boolean haveSlimNumbers) {
         _haveSlimNumbers = haveSlimNumbers;
         return this;
     }
@@ -102,7 +102,7 @@ public class TsrStringSettings {
         return _hasValue;
     }
 
-    public TsrStringSettings hasValue(boolean hasValue) {
+    public TsrStringSettings withValue(boolean hasValue) {
         _hasValue = hasValue;
         return this;
     }
@@ -111,7 +111,7 @@ public class TsrStringSettings {
         return _hasShape;
     }
 
-    public TsrStringSettings hasShape(boolean hasShape) {
+    public TsrStringSettings withShape(boolean hasShape) {
         _hasShape = hasShape;
         return this;
     }
@@ -120,7 +120,7 @@ public class TsrStringSettings {
         return _hasRecursiveGraph;
     }
 
-    public TsrStringSettings hasRecursiveGraph(boolean hasRecursiveGraph) {
+    public TsrStringSettings withRecursiveGraph(boolean hasRecursiveGraph) {
         _hasRecursiveGraph = hasRecursiveGraph;
         return this;
     }
@@ -129,7 +129,7 @@ public class TsrStringSettings {
         return _hasDerivatives;
     }
 
-    public TsrStringSettings hasDerivatives(boolean hasDerivatives) {
+    public TsrStringSettings withDerivatives(boolean hasDerivatives) {
         _hasDerivatives = hasDerivatives;
         return this;
     }
@@ -138,7 +138,7 @@ public class TsrStringSettings {
         return _isCellBound;
     }
 
-    public TsrStringSettings isCellBound(boolean isCellBound) {
+    public TsrStringSettings cellBound(boolean isCellBound) {
         _isCellBound = isCellBound;
         return this;
     }
@@ -147,7 +147,7 @@ public class TsrStringSettings {
         return _prefix;
     }
 
-    public TsrStringSettings prefix(String prefix) {
+    public TsrStringSettings withPrefix(String prefix) {
         _prefix = prefix;
         return this;
     }
@@ -156,7 +156,7 @@ public class TsrStringSettings {
         return _postfix;
     }
 
-    public TsrStringSettings postfix(String postfix) {
+    public TsrStringSettings withPostfix(String postfix) {
         _postfix = postfix;
         return this;
     }

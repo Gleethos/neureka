@@ -9,7 +9,7 @@ class StandaloneBenchmark {
 
 		Neureka.get().reset()
 		// Configure printing of tensors to be more compact:
-		Neureka.get().settings().view().asString = "dgc"
+		Neureka.get().settings().view().tensors = "dgc"
 
 		def configuration = [ "iterations":1, "sample_size":20, "difficulty":15, "intensifier":0 ]
 

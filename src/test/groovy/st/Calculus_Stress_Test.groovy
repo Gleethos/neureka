@@ -11,7 +11,7 @@ class Calculus_Stress_Test extends Specification
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().asString = "dgc"
+        Neureka.get().settings().view().tensors = "dgc"
     }
 
     def 'Stress test runs error free and produces expected result'(

@@ -12,7 +12,7 @@ class AD_And_Computation_Graph_Integration_Spec extends Specification{
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().asString = "dgc"
+        Neureka.get().settings().view().tensors = "dgc"
     }
 
     def "Reshaping produces expected computation graph and also works with reverse mode AD."(){

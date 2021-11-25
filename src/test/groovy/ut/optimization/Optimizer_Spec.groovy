@@ -16,7 +16,7 @@ class Optimizer_Spec extends Specification
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().asString = "dgc"
+        Neureka.get().settings().view().tensors = "dgc"
     }
 
     // WIP! : not yet completed! // FIXME: Not working in CI

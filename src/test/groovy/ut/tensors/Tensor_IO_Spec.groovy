@@ -39,7 +39,7 @@ class Tensor_IO_Spec extends Specification
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().asString = "dgc"
+        Neureka.get().settings().view().tensors = "dgc"
     }
 
     def 'Tensors can be instantiated with String seed.'()

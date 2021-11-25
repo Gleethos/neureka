@@ -28,7 +28,7 @@ class ADAM_Spec extends Specification
         Neureka.get().reset()
         w.set(o)
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().asString = "dgc"
+        Neureka.get().settings().view().tensors = "dgc"
     }
 
 

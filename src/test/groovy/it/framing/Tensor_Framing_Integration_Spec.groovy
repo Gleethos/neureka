@@ -21,7 +21,7 @@ class Tensor_Framing_Integration_Spec extends Specification
             """
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().asString = "dgc"
+        Neureka.get().settings().view().tensors = "dgc"
     }
 
     def 'Added labels to tensors are accessible through the "index()" method.'()

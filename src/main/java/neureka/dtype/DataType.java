@@ -67,23 +67,23 @@ public final class DataType<Type>
      * @param typeClass The type class whose "actual" / representation ought to be determined.
      * @return The true representation or simply itself if no NumericType representation has been found.
      */
-    private static Class<?> _numericTypeRepresentationOf(Class<?> typeClass ) {
+    private static Class<?> _numericTypeRepresentationOf( Class<?> typeClass ) {
         Class<?> realTypeClass = typeClass;
-        if ( typeClass == Double.class ) realTypeClass = F64.class;
-        else if ( typeClass == Float.class ) realTypeClass = F32.class;
-        else if ( typeClass == Integer.class ) realTypeClass = I32.class;
-        else if ( typeClass == Short.class ) realTypeClass = I16.class;
-        else if ( typeClass == Long.class ) realTypeClass = I64.class;
-        else if ( typeClass == Byte.class ) realTypeClass = I8.class;
-        else if ( typeClass == byte[].class ) realTypeClass = I8.class;
-        else if ( typeClass == int[].class ) realTypeClass = I32.class;
-        else if ( typeClass == float[].class ) realTypeClass = F32.class;
-        else if ( typeClass == double[].class ) realTypeClass = F64.class;
-        else if ( typeClass == long[].class ) realTypeClass = I64.class;
+        if      ( typeClass == Double.class                                               ) realTypeClass = F64.class;
+        else if ( typeClass == Float.class   || typeClass.getSimpleName().equals("float") ) realTypeClass = F32.class;
+        else if ( typeClass == Integer.class                                              ) realTypeClass = I32.class;
+        else if ( typeClass == Short.class                                                ) realTypeClass = I16.class;
+        else if ( typeClass == Long.class                                                 ) realTypeClass = I64.class;
+        else if ( typeClass == Byte.class                                                 ) realTypeClass = I8.class;
+        else if ( typeClass == byte[].class                                               ) realTypeClass = I8.class;
+        else if ( typeClass == int[].class                                                ) realTypeClass = I32.class;
+        else if ( typeClass == float[].class                                              ) realTypeClass = F32.class;
+        else if ( typeClass == double[].class                                             ) realTypeClass = F64.class;
+        else if ( typeClass == long[].class                                              ) realTypeClass = I64.class;
         return realTypeClass;
     }
 
-    public static <T> DataType<T> of(Class<T> typeClass )
+    public static <T> DataType<T> of( Class<T> typeClass )
     {
         Class<?> realTypeClass = _numericTypeRepresentationOf( typeClass );
 

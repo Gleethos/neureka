@@ -24,22 +24,22 @@ Neureka.configure {
         view {
             it.isUsingLegacyView = false
 
-            tensor {
+            tensors {
                 TsrStringSettings settings ->
                                     settings
-                                    .rowLimit(50)
-                                    .isCompact(true)
-                                    .isFormatted(true)
-                                    .hasSlimNumbers(true)
-                                    .hasGradient(true)
-                                    .padding(6)
-                                    .hasValue(true)
-                                    .hasRecursiveGraph(false)
-                                    .hasDerivatives(false)
-                                    .hasShape(true)
-                                    .isCellBound(false)
-                                    .postfix("")
-                                    .prefix("")
+                                    .withRowLimit(50)
+                                    .scientific(true)
+                                    .multiline(true)
+                                    .withSlimNumbers(true)
+                                    .withGradient(true)
+                                    .withPadding(6)
+                                    .withValue(true)
+                                    .withRecursiveGraph(false)
+                                    .withDerivatives(false)
+                                    .withShape(true)
+                                    .cellBound(false)
+                                    .withPostfix("")
+                                    .withPrefix("")
             }
         }
 

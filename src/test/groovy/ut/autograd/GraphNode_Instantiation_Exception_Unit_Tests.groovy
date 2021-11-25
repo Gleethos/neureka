@@ -31,7 +31,7 @@ class GraphNode_Instantiation_Exception_Unit_Tests extends Specification
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().asString = "dgc"
+        Neureka.get().settings().view().tensors = "dgc"
     }
 
     def 'GraphNode throws exception when trying to instantiate with the wrong context.'()

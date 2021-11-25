@@ -75,19 +75,19 @@ public class SettingsLoader
                     .checkAndAssign("autograd.isApplyingGradientWhenRequested"     , Boolean.class, v -> s.autograd().setIsApplyingGradientWhenRequested(v)                    )//~= true
                     .checkAndAssign("indexing.isUsingArrayBasedIndexing"           , Boolean.class, v -> s.indexing().setIsUsingArrayBasedIndexing(v)                          )//~= true
                     .checkAndAssign("view.isUsingLegacyView"                       , Boolean.class, v -> s.view().setIsUsingLegacyView(v)                                      )//~= false
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_ROW_LIMIT_OF"    , Integer.class, v -> s.view().getTensorSettings().rowLimit(v)                              )//~= 50,
-                    .checkAndAssign("view.TsrAsString.Should.BE_COMPACT"           , Boolean.class, v -> s.view().getTensorSettings().isCompact(v)                              )//~= true,
-                    .checkAndAssign("view.TsrAsString.Should.BE_FORMATTED"         , Boolean.class, v -> s.view().getTensorSettings().isFormatted(v)                        )//~= true,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_GRADIENT"        , Boolean.class, v -> s.view().getTensorSettings().hasGradient(v)                        )//~= true,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_SLIM_NUMBERS"    , Boolean.class, v -> s.view().getTensorSettings().hasSlimNumbers(v)              )//~= false,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_PADDING_OF"      , Integer.class, v -> s.view().getTensorSettings().padding(v)                             )//~= 6,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_VALUE"           , Boolean.class, v -> s.view().getTensorSettings().hasValue(v)                           )//~= true,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_RECURSIVE_GRAPH" , Boolean.class, v -> s.view().getTensorSettings().hasRecursiveGraph(v)                  )//~= false,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_DERIVATIVES"     , Boolean.class, v -> s.view().getTensorSettings().hasDerivatives(v)                           )//~= false,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_SHAPE"           , Boolean.class, v -> s.view().getTensorSettings().hasShape(v)                                 )//~= true,
-                    .checkAndAssign("view.TsrAsString.Should.BE_CELL_BOUND"        , Boolean.class, v -> s.view().getTensorSettings().isCellBound(v)                              )//~= false
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_POSTFIX"         , String.class,  v -> s.view().getTensorSettings().postfix(v)                                  )//~= ""
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_PREFIX"          , String.class,  v -> s.view().getTensorSettings().prefix(v)                                   )//~= ""
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_ROW_LIMIT_OF"    , Integer.class, v -> s.view().getTensorSettings().withRowLimit(v)                              )//~= 50,
+                    .checkAndAssign("view.TsrAsString.Should.BE_COMPACT"           , Boolean.class, v -> s.view().getTensorSettings().scientific(v)                              )//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.BE_FORMATTED"         , Boolean.class, v -> s.view().getTensorSettings().multiline(v)                        )//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_GRADIENT"        , Boolean.class, v -> s.view().getTensorSettings().withGradient(v)                        )//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_SLIM_NUMBERS"    , Boolean.class, v -> s.view().getTensorSettings().withSlimNumbers(v)              )//~= false,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_PADDING_OF"      , Integer.class, v -> s.view().getTensorSettings().withPadding(v)                             )//~= 6,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_VALUE"           , Boolean.class, v -> s.view().getTensorSettings().withValue(v)                           )//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_RECURSIVE_GRAPH" , Boolean.class, v -> s.view().getTensorSettings().withRecursiveGraph(v)                  )//~= false,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_DERIVATIVES"     , Boolean.class, v -> s.view().getTensorSettings().withDerivatives(v)                           )//~= false,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_SHAPE"           , Boolean.class, v -> s.view().getTensorSettings().withShape(v)                                 )//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.BE_CELL_BOUND"        , Boolean.class, v -> s.view().getTensorSettings().cellBound(v)                              )//~= false
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_POSTFIX"         , String.class,  v -> s.view().getTensorSettings().withPostfix(v)                                  )//~= ""
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_PREFIX"          , String.class,  v -> s.view().getTensorSettings().withPrefix(v)                                   )//~= ""
                     .checkAndAssign("ndim.isOnlyUsingDefaultNDConfiguration"       , Boolean.class, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)                      )//~= false
                     .checkAndAssign("dtype.defaultDataTypeClass"                   , Class.class,   v -> s.dtype().setDefaultDataTypeClass(v)                                  )
                     .checkAndAssign("dtype.isAutoConvertingExternalDataToJVMTypes" , Boolean.class, v -> s.dtype().setIsAutoConvertingExternalDataToJVMTypes(v)                );

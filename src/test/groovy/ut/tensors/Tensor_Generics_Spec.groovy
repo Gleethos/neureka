@@ -23,7 +23,7 @@ class Tensor_Generics_Spec extends Specification
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().asString = "dgc"
+        Neureka.get().settings().view().tensors = "dgc"
     }
 
     def 'Anonymous tensor instance has the default datatype class as defined in Neureka settings.'() {

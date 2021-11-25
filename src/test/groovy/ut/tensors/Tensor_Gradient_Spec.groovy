@@ -32,7 +32,7 @@ class Tensor_Gradient_Spec extends Specification
             """
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().asString = "dgc"
+        Neureka.get().settings().view().tensors = "dgc"
     }
 
     def 'Tensors can have gradients but not require them.'()

@@ -17,7 +17,7 @@ class Tensor_Operation_Integration_Spec extends Specification
         // The following is similar to Neureka.get().reset() however it uses a groovy script for library settings:
         SettingsLoader.tryGroovyScriptsOn(Neureka.get(), script -> new GroovyShell(getClass().getClassLoader()).evaluate(script))
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().asString = "dgc"
+        Neureka.get().settings().view().tensors = "dgc"
     }
 
     def 'Test "x-mul" operator produces expected results. (Not on device)'(

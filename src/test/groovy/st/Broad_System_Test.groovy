@@ -9,7 +9,7 @@ class Broad_System_Test extends Specification
     def setupSpec() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().asString = "dgc"
+        Neureka.get().settings().view().tensors = "dgc"
     }
 
     def 'Test integration broadly.'()
