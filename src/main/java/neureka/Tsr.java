@@ -110,6 +110,7 @@ import neureka.ndim.iterators.NDIterator;
 import neureka.optimization.Optimizer;
 import neureka.common.utility.DataConverter;
 import neureka.common.utility.ListReader;
+import neureka.view.Configuration;
 import neureka.view.TsrAsString;
 import neureka.fluent.building.TensorBuilder;
 import neureka.fluent.building.states.WithShapeOrScalarOrVector;
@@ -120,6 +121,7 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 
@@ -2882,12 +2884,14 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
         return _toString( mode, ( mode.contains( "f" ) ) ? "    " : null );
     }
 
-    public String toString( Map<TsrAsString.Should, Object> config, String indent ) {
+    public String toString( Configuration config, String indent ) {
         return TsrAsString.representing( this ).withConfig( config ).toString( indent );
     }
 
-    public String toString( Map<TsrAsString.Should, Object> config ) {
-        return TsrAsString.representing( this ).withConfig( config ).toString();
+    public String toString( Consumer<Configuration> config ) {
+        Configuration defaults = Neureka.get().settings().view().getAsString().clone();
+        config.accept(defaults);
+        return TsrAsString.representing( this ).withConfig( defaults ).toString();
     }
 
 

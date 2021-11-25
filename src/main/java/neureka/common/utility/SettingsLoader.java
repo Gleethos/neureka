@@ -76,19 +76,19 @@ public class SettingsLoader
                     .checkAndAssign("autograd.isApplyingGradientWhenRequested"     , Boolean.class, v -> s.autograd().setIsApplyingGradientWhenRequested(v)                    )//~= true
                     .checkAndAssign("indexing.isUsingArrayBasedIndexing"           , Boolean.class, v -> s.indexing().setIsUsingArrayBasedIndexing(v)                          )//~= true
                     .checkAndAssign("view.isUsingLegacyView"                       , Boolean.class, v -> s.view().setIsUsingLegacyView(v)                                      )//~= false
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_ROW_LIMIT_OF"    , Integer.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_ROW_LIMIT_OF   , v))//~= 50,
-                    .checkAndAssign("view.TsrAsString.Should.BE_COMPACT"           , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.BE_COMPACT          , v))//~= true,
-                    .checkAndAssign("view.TsrAsString.Should.BE_FORMATTED"         , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.BE_FORMATTED        , v))//~= true,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_GRADIENT"        , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_GRADIENT       , v))//~= true,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_SLIM_NUMBERS"    , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_SLIM_NUMBERS   , v))//~= false,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_PADDING_OF"      , Integer.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_PADDING_OF     , v))//~= 6,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_VALUE"           , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_VALUE          , v))//~= true,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_RECURSIVE_GRAPH" , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_RECURSIVE_GRAPH, v))//~= false,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_DERIVATIVES"     , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_DERIVATIVES    , v))//~= false,
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_SHAPE"           , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.HAVE_SHAPE          , v))//~= true,
-                    .checkAndAssign("view.TsrAsString.Should.BE_CELL_BOUND"        , Boolean.class, v -> s.view().getAsString().put(TsrAsString.Should.BE_CELL_BOUND       , v))//~= false
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_POSTFIX"         , String.class,  v -> s.view().getAsString().put(TsrAsString.Should.HAVE_POSTFIX        , v))//~= ""
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_PREFIX"          , String.class,  v -> s.view().getAsString().put(TsrAsString.Should.HAVE_PREFIX         , v))//~= ""
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_ROW_LIMIT_OF"    , Integer.class, v -> s.view().getAsString().setShortage(v)                              )//~= 50,
+                    .checkAndAssign("view.TsrAsString.Should.BE_COMPACT"           , Boolean.class, v -> s.view().getAsString().setIsCompact(v)                              )//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.BE_FORMATTED"         , Boolean.class, v -> s.view().getAsString().setIsFormatted(v)                        )//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_GRADIENT"        , Boolean.class, v -> s.view().getAsString().setHasGradient(v)                        )//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_SLIM_NUMBERS"    , Boolean.class, v -> s.view().getAsString().sethaveSlimNumbers(v)              )//~= false,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_PADDING_OF"      , Integer.class, v -> s.view().getAsString().setPadding(v)                             )//~= 6,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_VALUE"           , Boolean.class, v -> s.view().getAsString().setHasValue(v)                           )//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_RECURSIVE_GRAPH" , Boolean.class, v -> s.view().getAsString().setHasRecursiveGraph(v)                  )//~= false,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_DERIVATIVES"     , Boolean.class, v -> s.view().getAsString().setHasDerivatives(v)                           )//~= false,
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_SHAPE"           , Boolean.class, v -> s.view().getAsString().setHasShape(v)                                 )//~= true,
+                    .checkAndAssign("view.TsrAsString.Should.BE_CELL_BOUND"        , Boolean.class, v -> s.view().getAsString().setIsCellBound(v)                              )//~= false
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_POSTFIX"         , String.class,  v -> s.view().getAsString().setPostfix(v)                                  )//~= ""
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_PREFIX"          , String.class,  v -> s.view().getAsString().setPrefix(v)                                   )//~= ""
                     .checkAndAssign("ndim.isOnlyUsingDefaultNDConfiguration"       , Boolean.class, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)                      )//~= false
                     .checkAndAssign("dtype.defaultDataTypeClass"                   , Class.class,   v -> s.dtype().setDefaultDataTypeClass(v)                                  )
                     .checkAndAssign("dtype.isAutoConvertingExternalDataToJVMTypes" , Boolean.class, v -> s.dtype().setIsAutoConvertingExternalDataToJVMTypes(v)                );

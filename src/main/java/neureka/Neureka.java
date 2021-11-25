@@ -42,6 +42,7 @@ import neureka.devices.opencl.CLContext;
 import neureka.dtype.custom.F64;
 import neureka.common.utility.Messages;
 import neureka.common.utility.SettingsLoader;
+import neureka.view.Configuration;
 import neureka.view.TsrAsString;
 import org.slf4j.Logger;
 
@@ -53,6 +54,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.function.Function;
 
 /**
  *    {@link Neureka} is the key access point for thread local / global library settings ( see{@link Settings})
@@ -523,23 +525,24 @@ public final class Neureka
         {
             private boolean _isUsingLegacyView = false;
 
-            private Map<TsrAsString.Should, Object> _asString;
+            //private Map<TsrAsString.Should, Object> _asString;
+            private Configuration _asString;
 
 
             View(){
-                _asString = new HashMap<>();
-                _asString.put( TsrAsString.Should.BE_COMPACT,           true  );
-                _asString.put( TsrAsString.Should.BE_FORMATTED,         true  );
-                _asString.put( TsrAsString.Should.HAVE_PADDING_OF,      6     );
-                _asString.put( TsrAsString.Should.HAVE_ROW_LIMIT_OF,      50    );
-                _asString.put( TsrAsString.Should.HAVE_SHAPE,           true  );
-                _asString.put( TsrAsString.Should.HAVE_VALUE,           true  );
-                _asString.put( TsrAsString.Should.HAVE_GRADIENT,        true  );
-                _asString.put( TsrAsString.Should.HAVE_DERIVATIVES,     false );
-                _asString.put( TsrAsString.Should.HAVE_RECURSIVE_GRAPH, false );
-                _asString.put( TsrAsString.Should.BE_CELL_BOUND,        false );
-                _asString.put( TsrAsString.Should.HAVE_POSTFIX,         ""    );
-                _asString.put( TsrAsString.Should.HAVE_PREFIX,          ""    );
+                _asString = new Configuration();
+                _asString.setIsCompact        ( true  );
+                _asString.setIsFormatted        ( true  );
+                _asString.setPadding     ( 6     );
+                _asString.setShortage   (   50  );
+                _asString.setHasShape          ( true  );
+                _asString.setHasValue          ( true  );
+                _asString.setHasGradient       ( true  );
+                _asString.setHasDerivatives    ( false );
+                _asString.setHasRecursiveGraph( false );
+                _asString.setIsCellBound       ( false );
+                _asString.setPostfix        ( ""    );
+                _asString.setPrefix         ( ""    );
             }
 
             public boolean isUsingLegacyView() { return _isUsingLegacyView; }
@@ -549,11 +552,13 @@ public final class Neureka
                 _isUsingLegacyView = enabled;
             }
 
-            public Map<TsrAsString.Should, Object> getAsString() { return _asString; }
+            public Configuration getAsString() { return _asString; }
 
-            public void setAsString( Map<TsrAsString.Should, Object> should ) { _asString = should; }
+            public void setAsString( Function<Configuration, Configuration> should ) {
+                _asString = should.apply(_asString);
+            }
 
-            public void setAsString( String modes ) { setAsString( TsrAsString.Util.configFromCode( modes ) ); }
+            public void setAsString( String modes ) { setAsString( conf -> TsrAsString.Util.configFromCode( modes ) ); }
 
             public String toString() {
                 return "Neureka.Settings.View[" +

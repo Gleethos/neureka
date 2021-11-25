@@ -1,5 +1,6 @@
 import neureka.Neureka
 import neureka.dtype.custom.F64
+import neureka.view.Configuration
 import neureka.view.TsrAsString
 
 Neureka.configure {
@@ -23,22 +24,24 @@ Neureka.configure {
 
         view {
             it.isUsingLegacyView = false
-            
-            it.asString = [
-                    (TsrAsString.Should.HAVE_ROW_LIMIT_OF)   : 50,
-                    (TsrAsString.Should.BE_COMPACT)          : true,
-                    (TsrAsString.Should.BE_FORMATTED)        : true,
-                    (TsrAsString.Should.HAVE_SLIM_NUMBERS)   : true,
-                    (TsrAsString.Should.HAVE_GRADIENT)       : true,
-                    (TsrAsString.Should.HAVE_PADDING_OF)     : 6,
-                    (TsrAsString.Should.HAVE_VALUE)          : true,
-                    (TsrAsString.Should.HAVE_RECURSIVE_GRAPH): false,
-                    (TsrAsString.Should.HAVE_DERIVATIVES)    : false,
-                    (TsrAsString.Should.HAVE_SHAPE)          : true,
-                    (TsrAsString.Should.BE_CELL_BOUND)       : false,
-                    (TsrAsString.Should.HAVE_POSTFIX)        : "",
-                    (TsrAsString.Should.HAVE_PREFIX)         : ""
-            ]
+
+            it.asString = {
+                Configuration settings ->
+                                    settings
+                                    .setShortage(50)
+                                    .setIsCompact(true)
+                                    .setIsFormatted(true)
+                                    .sethaveSlimNumbers(true)
+                                    .setHasGradient(true)
+                                    .setPadding(6)
+                                    .setHasValue(true)
+                                    .setHasRecursiveGraph(false)
+                                    .setHasDerivatives(false)
+                                    .setHasShape(true)
+                                    .setIsCellBound(false)
+                                    .setPostfix("")
+                                    .setPrefix("")
+            }
         }
 
         ndim {

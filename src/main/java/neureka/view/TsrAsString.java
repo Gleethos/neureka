@@ -75,55 +75,8 @@ public final class TsrAsString
     private final Tsr<?> _tensor;
     private final boolean _legacy;
 
-    private final Map<Should, Object> _config;
+    Configuration _config;
     private StringBuilder _asStr;
-
-    public enum Should {
-
-        BE_COMPACT(Boolean.class),
-        BE_FORMATTED(Boolean.class),
-        HAVE_SLIM_NUMBERS(Boolean.class),
-        HAVE_PADDING_OF(Integer.class),
-        HAVE_ROW_LIMIT_OF(Integer.class),
-        HAVE_SHAPE(Boolean.class),
-        HAVE_VALUE(Boolean.class),
-        HAVE_GRADIENT(Boolean.class),
-        HAVE_DERIVATIVES(Boolean.class),
-        HAVE_RECURSIVE_GRAPH(Boolean.class),
-        BE_CELL_BOUND(Boolean.class),
-        HAVE_POSTFIX(String.class),
-        HAVE_PREFIX(String.class);
-
-        private final Class<?> _valueTypeClass;
-
-        Should( Class<?> valueTypeClass ) { _valueTypeClass = valueTypeClass; }
-
-        /**
-         *  Enums cannot have type parameters! Therefore, we do some type checking to make this saver.
-         *
-         * @param value The value which was assigned to the current enum instance and should be checked for type safety!
-         * @return The received object
-         */
-        private Object _typeCheck(Object value ) {
-            if ( value == null )
-               throw new IllegalArgumentException("Tensor view configuration does not accept null values!");
-            else if ( value.getClass() != _valueTypeClass )
-                throw new IllegalArgumentException(
-                        "Tensor view configuration entry '"+name()+"' expects '"+_valueTypeClass.getSimpleName()+"' " +
-                        "as value class! Encountered object of type '"+value.getClass().getSimpleName()+"' instead."
-                );
-            return value;
-        }
-
-        public <T> T readFrom( Map<Should, Object> config, Map<Should, Object> defaults ) {
-            Object o = config.get( this );
-            if ( o == null )
-                return (T) defaults.get(this);
-            else
-                return (T) this._typeCheck(o);
-        }
-
-    }
 
     /**
      *  A builder providing multiple different configuration options for building
@@ -136,10 +89,8 @@ public final class TsrAsString
              * @return A new {@link TsrAsString} based on the provided configuration.
              */
             @Override
-            public TsrAsString withConfig( Map<Should, Object> configMap ) {
-                Map<Should, Object> copy = Util.configFromCode( "" );
-                copy.putAll( configMap );
-                return new TsrAsString( t, copy );
+            public TsrAsString withConfig( Configuration configMap ) {
+                return new TsrAsString( t, configMap.clone() );
             }
             /**
              * @param config The configuration used as basis for turning the wrapped {@link Tsr} to a {@link String}.
@@ -155,32 +106,32 @@ public final class TsrAsString
         };
     }
 
-    private TsrAsString( Tsr<?> tensor, Map<Should, Object> settings ) {
+    private TsrAsString( Tsr<?> tensor, Configuration settings ) {
 
         if ( tensor.getNDConf() != null )
             _shape = tensor.getNDConf().shape();
         else
             _shape = new int[0];
 
-        _config = Collections.unmodifiableMap(settings);
+        _config = settings.clone();// Collections.unmodifiableMap(settings);
         _tensor = tensor;
         _legacy = Neureka.get().settings().view().isUsingLegacyView();
 
-        Map<Should, Object> defaults = Neureka.get().settings().view().getAsString();
+        //Configuration defaults = Neureka.get().settings().view().getAsString();
 
-        _isCompact         = Should.BE_COMPACT           .readFrom( _config, defaults );
-        _shortage          = Should.HAVE_ROW_LIMIT_OF    .readFrom( _config, defaults );
-        _padding           = Should.HAVE_PADDING_OF      .readFrom( _config, defaults );
-        _hasGradient       = Should.HAVE_GRADIENT        .readFrom( _config, defaults );
-        _isFormatted       = Should.BE_FORMATTED         .readFrom( _config, defaults );
-        _haveSlimNumbers   = Should.HAVE_SLIM_NUMBERS    .readFrom( _config, defaults );
-        _hasValue          = Should.HAVE_VALUE           .readFrom( _config, defaults );
-        _hasShape          = Should.HAVE_SHAPE           .readFrom( _config, defaults );
-        _hasRecursiveGraph = Should.HAVE_RECURSIVE_GRAPH .readFrom( _config, defaults );
-        _hasDerivatives    = Should.HAVE_DERIVATIVES     .readFrom( _config, defaults );
-        _isCellBound       = Should.BE_CELL_BOUND        .readFrom( _config, defaults );
-        _postfix           = Should.HAVE_POSTFIX         .readFrom( _config, defaults );
-        _prefix            = Should.HAVE_PREFIX          .readFrom( _config, defaults );
+        _isCompact          = _config.isCompact() ;//= Should.BE_COMPACT           .readFrom( _config, defaults );
+        _shortage           = _config.getShortage() ;//= Should.HAVE_ROW_LIMIT_OF    .readFrom( _config, defaults );
+        _padding            = _config.getPadding() ;//= Should.HAVE_PADDING_OF      .readFrom( _config, defaults );
+        _hasGradient        = _config.isHasGradient() ;//= Should.HAVE_GRADIENT        .readFrom( _config, defaults );
+        _isFormatted        = _config.isFormatted() ;//= Should.BE_FORMATTED         .readFrom( _config, defaults );
+        _haveSlimNumbers    = _config.hasSlimNumbers() ;//= Should.HAVE_SLIM_NUMBERS    .readFrom( _config, defaults );
+        _hasValue           = _config.hasValue() ;//= Should.HAVE_VALUE           .readFrom( _config, defaults );
+        _hasShape           = _config.hasShape() ;//= Should.HAVE_SHAPE           .readFrom( _config, defaults );
+        _hasRecursiveGraph  = _config.hasRecursiveGraph() ;//= Should.HAVE_RECURSIVE_GRAPH .readFrom( _config, defaults );
+        _hasDerivatives     = _config.hasDerivatives() ;//= Should.HAVE_DERIVATIVES     .readFrom( _config, defaults );
+        _isCellBound        = _config.isCellBound() ;//= Should.BE_CELL_BOUND        .readFrom( _config, defaults );
+        _postfix            = _config.getPostfix() ;//= Should.HAVE_POSTFIX         .readFrom( _config, defaults );
+        _prefix             = _config.getPrefix() ;//= Should.HAVE_PREFIX          .readFrom( _config, defaults );
     }
 
     /**
@@ -547,7 +498,7 @@ public final class TsrAsString
          * @param configMap The configuration map used as basis for turning the wrapped {@link Tsr} to a {@link String}.
          * @return A new {@link TsrAsString} based on the provided configuration.
          */
-        TsrAsString withConfig( Map< Should, Object > configMap );
+        TsrAsString withConfig( Configuration configMap );
 
         /**
          * @param config The configuration used as basis for turning the wrapped {@link Tsr} to a {@link String}.
@@ -602,25 +553,25 @@ public final class TsrAsString
         }
 
         @Contract( pure = true )
-        public static Map<Should, Object> configFromCode( String modes )
+        public static Configuration configFromCode( String modes )
         {
             if ( modes == null || modes.trim().isEmpty() )
-                return new TreeMap<>(Neureka.get().settings().view().getAsString());
+                return Neureka.get().settings().view().getAsString().clone();
 
-            Map< Should, Object > conf = new HashMap<>();
-            conf.put( Should.HAVE_ROW_LIMIT_OF,    modes.contains( "s" ) ? 3 : 50                             );
-            conf.put( Should.BE_COMPACT,           modes.contains( "c" )                                      );
-            conf.put( Should.BE_FORMATTED,         modes.contains( "f" )                                      );
-            conf.put( Should.HAVE_GRADIENT,        modes.contains( "g" )                                      );
-            conf.put( Should.HAVE_PADDING_OF,      modes.contains( "p" ) ? 6 : modes.contains( "f" ) ? 2 : 1  );
-            conf.put( Should.HAVE_VALUE,          !(modes.contains( "shp" ) || modes.contains("shape"))       );
-            conf.put( Should.HAVE_RECURSIVE_GRAPH, modes.contains( "r" )                                      );
-            conf.put( Should.HAVE_DERIVATIVES,     modes.contains( "d" )                                      );
-            conf.put( Should.HAVE_SHAPE,           !modes.contains( "v" )                                     );
-            conf.put( Should.BE_CELL_BOUND,        modes.contains( "b" )                                      );
-            conf.put( Should.HAVE_POSTFIX,         ""                                                         );
-            conf.put( Should.HAVE_PREFIX,          ""                                                         );
-            conf.put( Should.HAVE_SLIM_NUMBERS,    false                                                      );
+            Configuration conf = new Configuration();
+            conf.setShortage(  modes.contains( "s" ) ? 3 : 50                             );
+            conf.setIsCompact(  modes.contains( "c" )                                      );
+            conf.setIsFormatted(  modes.contains( "f" )                                      );
+            conf.setHasGradient(  modes.contains( "g" )                                      );
+            conf.setPadding(  modes.contains( "p" ) ? 6 : modes.contains( "f" ) ? 2 : 1  );
+            conf.setHasValue( !(modes.contains( "shp" ) || modes.contains("shape"))       );
+            conf.setHasRecursiveGraph( modes.contains( "r" )                                      );
+            conf.setHasDerivatives(  modes.contains( "d" )                                      );
+            conf.setHasShape(  !modes.contains( "v" )                                     );
+            conf.setIsCellBound(  modes.contains( "b" )                                      );
+            conf.setPostfix(  ""                                                         );
+            conf.setPrefix(  ""                                                         );
+            conf.sethaveSlimNumbers(  false                                                      );
             return conf;
         }
     }

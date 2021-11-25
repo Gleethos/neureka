@@ -4,6 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.dtype.DataType
 import neureka.dtype.custom.I8
+import neureka.view.Configuration
 import neureka.view.TsrAsString
 import spock.lang.Narrative
 import spock.lang.Specification
@@ -57,17 +58,14 @@ class Tensor_State_Spec extends Specification
                                        "   [   blue Almond  ,  shining Salad , confused Saitan ]\n" +
                                        "]"
         and: 'Whe can use a map of configuration configuration enums as keys and fitting objects as values:'
-            t.toString([
-                    (TsrAsString.Should.BE_CELL_BOUND) : true,
-                    (TsrAsString.Should.HAVE_PADDING_OF) : 4
-            ]) == "(2x3):[salty Ap.., sweet Tofu, spinning.., blue Alm.., shining .., confused..]"
+            t.toString(
+                    {Configuration it -> it.setIsCellBound(true).setPadding(4)}
+            ) == "(2x3):[salty Ap.., sweet Tofu, spinning.., blue Alm.., shining .., confused..]"
 
         and: 'This way we can also configure a postfix and prefix as well as limit the number of entries in a row:'
-            t.toString([
-                    (TsrAsString.Should.HAVE_PREFIX) : 'START<|',
-                    (TsrAsString.Should.HAVE_POSTFIX) : '|>END',
-                    (TsrAsString.Should.HAVE_ROW_LIMIT_OF): 2
-            ]) == "START<|(2x3):[salty Apple, sweet Tofu, ... + 4 more]|>END"
+            t.toString(
+                    { Configuration it -> it.setPrefix('START<|').setPostfix('|>END').setShortage(2) }
+            ) == "START<|(2x3):[salty Apple, sweet Tofu, ... + 4 more]|>END"
     }
 
 
@@ -79,10 +77,9 @@ class Tensor_State_Spec extends Specification
         expect : 'When we convert the tensor to a String via the flag "f" (formatted).'
         t.toString() == "(2x3):[0.0, 0.33333E0, 0.66666E0, 1.0, 0.0, 0.33333E0]"
         and : 'Whe can use a map of configuration configuration enums as keys and fitting objects as values:'
-        t.toString([
-                (TsrAsString.Should.HAVE_SLIM_NUMBERS) : true,
-                (TsrAsString.Should.BE_COMPACT) : true
-        ]) == "(2x3):[0, .33333, .66666, 1, 0, .33333]"
+        t.toString(
+                { Configuration it -> it.sethaveSlimNumbers(true).setIsCompact(true) }
+                ) == "(2x3):[0, .33333, .66666, 1, 0, .33333]"
 
     }
 
