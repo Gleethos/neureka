@@ -7,12 +7,12 @@ import neureka.autograd.JITProp
 import neureka.backend.api.ExecutionCall
 import neureka.backend.api.Operation
 import neureka.calculus.Function
+import neureka.common.utility.SettingsLoader
 import neureka.devices.CustomDeviceCleaner
 import neureka.devices.host.CPU
 import neureka.devices.opencl.CLContext
 import neureka.dtype.DataType
 import neureka.framing.Relation
-import neureka.common.utility.SettingsLoader
 import spock.lang.*
 
 import java.util.regex.Pattern
@@ -83,7 +83,7 @@ class Neureka_Spec extends Specification
     }
 
     def 'Neureka settings class can be locked.'(
-        boolean value, def getter, def setter
+            boolean value, def getter, def setter
     ) {
         given :
             def set = { it -> setter(Neureka.get().settings(), it) }
@@ -109,15 +109,15 @@ class Neureka_Spec extends Specification
             set(value)
 
         where :
-            value | getter                                              | setter
-            false | {it.view().getTensorSettings().isLegacy()}          | {s, v -> s.view().getTensorSettings().legacy(v)}
-            //false | {it.ndim().isOnlyUsingDefaultNDConfiguration()}     | {s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}
-            //false | {it.debug().isKeepingDerivativeTargetPayloads()}    | {s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}
-            //true  | {it.autograd().isPreventingInlineOperations()}      | {s, v -> s.autograd().setIsPreventingInlineOperations(v)}
-            //true  | {it.autograd().isRetainingPendingErrorForJITProp()} | {s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}
-            //true  | {it.autograd().isApplyingGradientWhenTensorIsUsed()}| {s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}
-            //true  | {it.autograd().isApplyingGradientWhenRequested()}   | {s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}
-            //true  | {it.indexing().isUsingArrayBasedIndexing()}         | {s, v -> s.indexing().setIsUsingArrayBasedIndexing(v)}
+            value | getter                                                                       | setter
+            false | { Neureka.Settings it -> it.view().getTensorSettings().isLegacy()}           | { Neureka.Settings s, v -> s.view().getTensorSettings().legacy(v)}
+            false | { Neureka.Settings it -> it.ndim().isOnlyUsingDefaultNDConfiguration()}      | { Neureka.Settings s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}
+            false | { Neureka.Settings it -> it.debug().isKeepingDerivativeTargetPayloads()}     | { Neureka.Settings s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}
+            true  | { Neureka.Settings it -> it.autograd().isPreventingInlineOperations()}       | { Neureka.Settings s, v -> s.autograd().setIsPreventingInlineOperations(v)}
+            true  | { Neureka.Settings it -> it.autograd().isRetainingPendingErrorForJITProp()}  | { Neureka.Settings s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}
+            true  | { Neureka.Settings it -> it.autograd().isApplyingGradientWhenTensorIsUsed()} | { Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}
+            true  | { Neureka.Settings it -> it.autograd().isApplyingGradientWhenRequested()}    | { Neureka.Settings s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}
+            true  | { Neureka.Settings it -> it.indexing().isUsingArrayBasedIndexing()}          | { Neureka.Settings s, v -> s.indexing().setIsUsingArrayBasedIndexing(v)}
     }
 
 
