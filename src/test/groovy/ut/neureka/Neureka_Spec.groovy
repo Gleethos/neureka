@@ -111,6 +111,9 @@ class Neureka_Spec extends Specification
         where :
             value | getter                                                                       | setter
             false | { Neureka.Settings it -> it.view().getTensorSettings().isLegacy()}           | { Neureka.Settings s, v -> s.view().getTensorSettings().legacy(v)}
+            true  | { Neureka.Settings it -> it.view().getTensorSettings().hasGradient()}        | { Neureka.Settings s, v -> s.view().getTensorSettings().withGradient(v)}
+            false | { Neureka.Settings it -> it.view().getTensorSettings().hasSlimNumbers()}     | { Neureka.Settings s, v -> s.view().getTensorSettings().withSlimNumbers(v)}
+            true  | { Neureka.Settings it -> it.view().getTensorSettings().isScientific()}       | { Neureka.Settings s, v -> s.view().getTensorSettings().scientific(v)}
             false | { Neureka.Settings it -> it.ndim().isOnlyUsingDefaultNDConfiguration()}      | { Neureka.Settings s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}
             false | { Neureka.Settings it -> it.debug().isKeepingDerivativeTargetPayloads()}     | { Neureka.Settings s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}
             true  | { Neureka.Settings it -> it.autograd().isPreventingInlineOperations()}       | { Neureka.Settings s, v -> s.autograd().setIsPreventingInlineOperations(v)}
