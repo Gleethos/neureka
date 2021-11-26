@@ -12,7 +12,7 @@ public class BroadSystemTest
 
     public static boolean on()
     {
-        Neureka.get().settings().view().setIsUsingLegacyView(true);
+        Neureka.get().settings().view().getTensorSettings().legacy(true);
 
         UnitTester_Tensor tester = new UnitTester_Tensor("Testing core tensor functionality");
 

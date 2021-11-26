@@ -110,14 +110,14 @@ class Neureka_Spec extends Specification
 
         where :
             value | getter                                              | setter
-            false | {it.view().isUsingLegacyView()}                     | {s, v -> s.view().setIsUsingLegacyView(v)}
-            false | {it.ndim().isOnlyUsingDefaultNDConfiguration()}     | {s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}
-            false | {it.debug().isKeepingDerivativeTargetPayloads()}    | {s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}
-            true  | {it.autograd().isPreventingInlineOperations()}      | {s, v -> s.autograd().setIsPreventingInlineOperations(v)}
-            true  | {it.autograd().isRetainingPendingErrorForJITProp()} | {s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}
-            true  | {it.autograd().isApplyingGradientWhenTensorIsUsed()}| {s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}
-            true  | {it.autograd().isApplyingGradientWhenRequested()}   | {s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}
-            true  | {it.indexing().isUsingArrayBasedIndexing()}         | {s, v -> s.indexing().setIsUsingArrayBasedIndexing(v)}
+            false | {it.view().getTensorSettings().isLegacy()}          | {s, v -> s.view().getTensorSettings().legacy(v)}
+            //false | {it.ndim().isOnlyUsingDefaultNDConfiguration()}     | {s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}
+            //false | {it.debug().isKeepingDerivativeTargetPayloads()}    | {s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}
+            //true  | {it.autograd().isPreventingInlineOperations()}      | {s, v -> s.autograd().setIsPreventingInlineOperations(v)}
+            //true  | {it.autograd().isRetainingPendingErrorForJITProp()} | {s, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)}
+            //true  | {it.autograd().isApplyingGradientWhenTensorIsUsed()}| {s, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)}
+            //true  | {it.autograd().isApplyingGradientWhenRequested()}   | {s, v -> s.autograd().setIsApplyingGradientWhenRequested(v)}
+            //true  | {it.indexing().isUsingArrayBasedIndexing()}         | {s, v -> s.indexing().setIsUsingArrayBasedIndexing(v)}
     }
 
 

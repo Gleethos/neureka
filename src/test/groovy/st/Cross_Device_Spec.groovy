@@ -40,7 +40,7 @@ class Cross_Device_Spec extends Specification
             Device device = ( deviceType == "CPU" ) ? CPU.get() : Device.find('first')
             Neureka.get().reset()
             Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true
-            Neureka.get().settings().view().isUsingLegacyView = true
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
 
         and : 'Two tensors, one requiring gradients and the other one does not.'
             def tensor1 = Tsr.of(new int[]{2, 2, 1}, new double[]{
@@ -82,7 +82,7 @@ class Cross_Device_Spec extends Specification
         given : 'A given device of any type and the settings configured for testing.'
             Device device = ( deviceType == "CPU" ) ? CPU.get() : Device.find('first')
             Neureka.get().settings().debug().isKeepingDerivativeTargetPayloads = true
-            Neureka.get().settings().view().isUsingLegacyView = true
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
 
         expect : 'The integration test runs successful.'
             CrossDeviceSystemTest.on(device)
@@ -95,7 +95,7 @@ class Cross_Device_Spec extends Specification
     @IgnoreIf({!Neureka.get().canAccessOpenCL() && (device instanceof OpenCLDevice)})
     def 'Test simple NN implementation with manual backprop'(Device device) {
         given:
-            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
 
         expect:
             new SimpleNNSystemTest(SimpleNNSystemTest.Mode.CONVOLUTION).on(device)
@@ -113,7 +113,7 @@ class Cross_Device_Spec extends Specification
     ) {
         // Some more asserts:
         given : 'We use the legacy representation of tensors for this little test!'
-            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
         and : 'We create a small matrix of 4 fours which requires a gradient and is stored on the provided device!'
             Tsr t = Tsr.of([2, 2], 4).setRqsGradient(true).to(device)
         when : 'We now call the backward method on the tensor directly without having done any operations...'

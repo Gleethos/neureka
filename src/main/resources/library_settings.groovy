@@ -21,9 +21,7 @@ Neureka.configure {
             it.isUsingArrayBasedIndexing = true
         }
 
-        view {
-            it.isUsingLegacyView = false
-
+        view { 
             tensors {
                 TsrStringSettings settings ->
                                     settings
@@ -40,6 +38,7 @@ Neureka.configure {
                                     .cellBound(false)
                                     .withPostfix("")
                                     .withPrefix("")
+                                    .legacy(false)
             }
         }
 

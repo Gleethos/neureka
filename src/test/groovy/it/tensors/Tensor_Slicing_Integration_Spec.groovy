@@ -33,7 +33,7 @@ class Tensor_Slicing_Integration_Spec extends Specification
 
     def setup() {
         Neureka.get().reset()
-        Neureka.get().settings().view().setIsUsingLegacyView(false)
+        Neureka.get().settings().view().getTensorSettings().legacy(false)
     }
 
     def 'When Slicing only one axis using the SliceBuilder API, the other axis will be sliced implicitly.' (

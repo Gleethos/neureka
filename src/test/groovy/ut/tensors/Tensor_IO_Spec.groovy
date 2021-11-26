@@ -143,7 +143,7 @@ class Tensor_IO_Spec extends Specification
     def 'Indexing after reshaping works as expected.'()
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
-            Neureka.get().settings().view().isUsingLegacyView = true
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
 
         and : 'A new tensor instance with the shape (4x3).'
             Tsr t1 = Tsr.of([4, 3], 1..12)
@@ -189,7 +189,7 @@ class Tensor_IO_Spec extends Specification
     def 'Tensor value type can not be changed by passing float or double arrays to it.'()
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
-            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
         and : 'A new tensor instance.'
             Tsr x = Tsr.of(3)
 
@@ -248,7 +248,7 @@ class Tensor_IO_Spec extends Specification
     def 'Tensors value type can be changed by calling "to64()" and "to32()".'()
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
-            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
             Tsr x = Tsr.of(3)
 
         when : x.toType( Float.class )
@@ -268,7 +268,7 @@ class Tensor_IO_Spec extends Specification
     def 'A tensor produced by a function has expected properties.'()
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
-            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
         and : 'A simple scalar tensor containing the number "4".'
             Tsr x = Tsr.of(4)
 
@@ -285,7 +285,7 @@ class Tensor_IO_Spec extends Specification
     def 'A tensor produced by the static "Tsr.Create.newRandom(shape)" has expected "random" value.'()
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
-            Neureka.get().settings().view().isUsingLegacyView = true
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
 
         when : 'Creating a simple shape array...'
             int[] shape = new int[1]
@@ -305,7 +305,7 @@ class Tensor_IO_Spec extends Specification
     void 'Tensor values can be manipulated via static method calls within the "Tsr.IO" class.'()
     {
         given : 'We are using the legacy view for tensors where bracket types are swapped, just because...'
-            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
         and : 'Two tensors which will be used for testing IO.'
             Tsr t = Tsr.of([2, 2], [
                     1.0, 4.0,

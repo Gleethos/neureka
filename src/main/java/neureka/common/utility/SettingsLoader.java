@@ -73,8 +73,7 @@ public class SettingsLoader
                     .checkAndAssign("autograd.isRetainingPendingErrorForJITProp"   , Boolean.class, v -> s.autograd().setIsRetainingPendingErrorForJITProp(v)                  )//~= true
                     .checkAndAssign("autograd.isApplyingGradientWhenTensorIsUsed"  , Boolean.class, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)                 )//~= true
                     .checkAndAssign("autograd.isApplyingGradientWhenRequested"     , Boolean.class, v -> s.autograd().setIsApplyingGradientWhenRequested(v)                    )//~= true
-                    .checkAndAssign("indexing.isUsingArrayBasedIndexing"           , Boolean.class, v -> s.indexing().setIsUsingArrayBasedIndexing(v)                          )//~= true
-                    .checkAndAssign("view.isUsingLegacyView"                       , Boolean.class, v -> s.view().setIsUsingLegacyView(v)                                      )//~= false
+                    .checkAndAssign("indexing.isUsingArrayBasedIndexing"           , Boolean.class, v -> s.indexing().setIsUsingArrayBasedIndexing(v)                               )//~= false
                     .checkAndAssign("view.TsrAsString.Should.HAVE_ROW_LIMIT_OF"    , Integer.class, v -> s.view().getTensorSettings().withRowLimit(v)                              )//~= 50,
                     .checkAndAssign("view.TsrAsString.Should.BE_COMPACT"           , Boolean.class, v -> s.view().getTensorSettings().scientific(v)                              )//~= true,
                     .checkAndAssign("view.TsrAsString.Should.BE_FORMATTED"         , Boolean.class, v -> s.view().getTensorSettings().multiline(v)                        )//~= true,
@@ -87,7 +86,8 @@ public class SettingsLoader
                     .checkAndAssign("view.TsrAsString.Should.HAVE_SHAPE"           , Boolean.class, v -> s.view().getTensorSettings().withShape(v)                                 )//~= true,
                     .checkAndAssign("view.TsrAsString.Should.BE_CELL_BOUND"        , Boolean.class, v -> s.view().getTensorSettings().cellBound(v)                              )//~= false
                     .checkAndAssign("view.TsrAsString.Should.HAVE_POSTFIX"         , String.class,  v -> s.view().getTensorSettings().withPostfix(v)                                  )//~= ""
-                    .checkAndAssign("view.TsrAsString.Should.HAVE_PREFIX"          , String.class,  v -> s.view().getTensorSettings().withPrefix(v)                                   )//~= ""
+                    .checkAndAssign("view.TsrAsString.Should.HAVE_PREFIX"          , String.class,  v -> s.view().getTensorSettings().withPrefix(v)                                  )//~= ""
+                    .checkAndAssign("view.TsrAsString.Should.LEGACY"               , Boolean.class, v -> s.view().getTensorSettings().legacy(v)                                 )//~= ""
                     .checkAndAssign("ndim.isOnlyUsingDefaultNDConfiguration"       , Boolean.class, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)                      )//~= false
                     .checkAndAssign("dtype.defaultDataTypeClass"                   , Class.class,   v -> s.dtype().setDefaultDataTypeClass(v)                                  )
                     .checkAndAssign("dtype.isAutoConvertingExternalDataToJVMTypes" , Boolean.class, v -> s.dtype().setIsAutoConvertingExternalDataToJVMTypes(v)                );
@@ -101,41 +101,41 @@ public class SettingsLoader
 
         private final Properties _properties;
 
-        TypeChecker(Properties properties) { _properties = properties; }
+        TypeChecker( Properties properties ) { _properties = properties; }
 
-        public <T> TypeChecker checkAndAssign(String key, Class<T> typeClass, Consumer<T> assignment) {
-            Object value = _properties.get(key);
+        public <T> TypeChecker checkAndAssign( String key, Class<T> typeClass, Consumer<T> assignment ) {
+            Object value = _properties.get( key );
             if ( value == null || value.getClass() != String.class ) {
                 _LOG.warn("Illegal value '"+value+"' found for property name '"+key+"' in library settings.");
                 return this;
             }
             String asString = (String) value;
             T toBeAssigned = null;
-            if (typeClass == Class.class) {
+            if ( typeClass == Class.class ) {
                 try {
                     try { getClass().getClassLoader().loadClass("neureka.dtype.custom."+asString); } catch (Exception e) {}
                     toBeAssigned = (T) Class.forName("neureka.dtype.custom."+asString);
                 }
-                catch (ClassNotFoundException e) {
+                catch ( ClassNotFoundException e ) {
                     _LOG.warn("Failed to find class '"+asString+"' for property name '"+key+"'.");
                     return this;
                 }
             }
-            else if (typeClass == Boolean.class) {
+            else if ( typeClass == Boolean.class ) {
                 try { toBeAssigned = (T) Boolean.valueOf(Boolean.parseBoolean(asString)); }
-                catch (Exception e) {
+                catch ( Exception e ) {
                     _LOG.warn("Failed to parse boolean from value '"+asString+"' for property name '"+key+"'.");
                     return this;
                 }
             }
-            else if (typeClass == Integer.class) {
+            else if ( typeClass == Integer.class ) {
                 try { toBeAssigned = (T) Integer.valueOf(Integer.parseInt(asString)); }
-                catch (Exception e) {
+                catch ( Exception e ) {
                     _LOG.warn("Failed to parse integer from value '"+asString+"' for property name '"+key+"'.");
                     return this;
                 }
             }
-            else if (typeClass == String.class) {
+            else if ( typeClass == String.class ) {
                 toBeAssigned = (T) asString;
             }
             assignment.accept(toBeAssigned);

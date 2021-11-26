@@ -215,7 +215,6 @@ public final class Neureka
             settings().autograd().setIsApplyingGradientWhenRequested( true );
             settings().indexing().setIsUsingArrayBasedIndexing( true );
             settings().debug().setIsKeepingDerivativeTargetPayloads( false );
-            settings().view().setIsUsingLegacyView( false );
         }
     }
 
@@ -521,40 +520,18 @@ public final class Neureka
         
         public class View
         {
-            private boolean _isUsingLegacyView = false;
-            private TsrStringSettings _settings;
+            private final TsrStringSettings _settings;
 
-            View(){
-                _settings = new TsrStringSettings();
-                _settings.scientific( true  );
-                _settings.multiline( true  );
-                _settings.withPadding( 6     );
-                _settings.withRowLimit(   50  );
-                _settings.withShape( true  );
-                _settings.withValue( true  );
-                _settings.withGradient( true  );
-                _settings.withDerivatives( false );
-                _settings.withRecursiveGraph( false );
-                _settings.cellBound( false );
-                _settings.withPostfix( ""    );
-                _settings.withPrefix( ""    );
+            View() {
+                _settings = new TsrStringSettings(Settings.this::notModifiable);
             }
 
-            public boolean isUsingLegacyView() { return _isUsingLegacyView; }
-
-            public void setIsUsingLegacyView(boolean enabled) {
-                if ( notModifiable() ) return;
-                _isUsingLegacyView = enabled;
-            }
-
-            public void tensors( Object closure ) {
-                SettingsLoader.tryGroovyClosureOn( closure, _settings );
-            }
+            public void tensors( Object closure ) { SettingsLoader.tryGroovyClosureOn( closure, _settings ); }
 
             public TsrStringSettings getTensorSettings() { return _settings; }
 
             public void tensors( Function<TsrStringSettings, TsrStringSettings> should ) {
-                _settings = should.apply(_settings);
+                _settings.with(should.apply(_settings));
             }
 
             public void setTensors( String modes ) { tensors(conf -> TsrAsString.Util.configFromCode( modes ) ); }
@@ -563,8 +540,7 @@ public final class Neureka
 
             public String toString() {
                 return "Neureka.Settings.View[" +
-                            "isUsingLegacyView=" + this.isUsingLegacyView() + "," +
-                            "asString=" + this.getTensorSettings() +
+                            "tensors=" + this.getTensorSettings() +
                         "]";
             }
         }

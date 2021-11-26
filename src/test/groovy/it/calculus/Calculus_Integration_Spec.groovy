@@ -85,7 +85,7 @@ class Calculus_Integration_Spec extends Specification
     def 'Reshaping on 3D tensors works by instantiate a Function instance built from a String.'()
     {
         given :
-            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
             Function f = Function.of("[2, 0, 1]:(I[0])")
 
         when : Tsr t = Tsr.of([3, 4, 2], 1..5)

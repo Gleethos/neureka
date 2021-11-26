@@ -31,7 +31,7 @@ class Autograd_Tensor_Integration_Spec extends Specification
         given: 'Gradient auto apply for tensors in ue is set to false.'
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
         and: 'Tensor legacy view is set to true.'
-            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
 
         and: 'Three scalar tensors "x", "b", "w" are being instantiated, and "x" requires gradients.'
             Tsr x = Tsr.of(new int[]{1}, 3).setRqsGradient(true)
@@ -77,7 +77,7 @@ class Autograd_Tensor_Integration_Spec extends Specification
         given : 'Gradient auto apply for tensors in ue is set to false.'
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
         and: 'Tensor legacy view is set to true.'
-            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
         when :
             def x = Tsr.ofDoubles()
                             .withShape(3, 3)

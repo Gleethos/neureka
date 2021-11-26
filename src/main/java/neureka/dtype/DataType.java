@@ -68,10 +68,10 @@ public final class DataType<Type>
      * @return The true representation or simply itself if no NumericType representation has been found.
      */
     private static Class<?> _numericTypeRepresentationOf( Class<?> typeClass ) {
-        Class<?> realTypeClass = typeClass;
-        if      ( typeClass == Double.class                                               ) realTypeClass = F64.class;
+        Class<?> realTypeClass = typeClass; // The or case is for kotlin!
+        if      ( typeClass == Double.class  || typeClass.getSimpleName().equals("double")) realTypeClass = F64.class;
         else if ( typeClass == Float.class   || typeClass.getSimpleName().equals("float") ) realTypeClass = F32.class;
-        else if ( typeClass == Integer.class                                              ) realTypeClass = I32.class;
+        else if ( typeClass == Integer.class || typeClass.getSimpleName().equals("int")   ) realTypeClass = I32.class;
         else if ( typeClass == Short.class                                                ) realTypeClass = I16.class;
         else if ( typeClass == Long.class                                                 ) realTypeClass = I64.class;
         else if ( typeClass == Byte.class                                                 ) realTypeClass = I8.class;

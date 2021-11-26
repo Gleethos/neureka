@@ -39,7 +39,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
     given :
         if ( device == null ) return
         Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
-        Neureka.get().settings().view().setIsUsingLegacyView(false)
+        Neureka.get().settings().view().getTensorSettings().legacy(false)
         if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
     and: 'A tensor which ought to be sliced:'
@@ -99,7 +99,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         given :
             if ( device == null ) return
             Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
-            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
             if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
         when :

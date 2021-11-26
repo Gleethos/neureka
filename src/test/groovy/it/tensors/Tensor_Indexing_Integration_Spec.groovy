@@ -16,7 +16,7 @@ class Tensor_Indexing_Integration_Spec extends Specification
     void 'Test convolution with legacy indexing.'()
     {
         given : 'The following library configuration is being used.'
-            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
 
         when : 'The following calculations are being executed...'
@@ -81,7 +81,7 @@ class Tensor_Indexing_Integration_Spec extends Specification
     def 'Convolution using legacy indexing works as expected.'()
     {
         given :
-            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
 
         when :

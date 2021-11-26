@@ -141,7 +141,7 @@ Kotlin_Compatibility_Unit_Testing {
     }
 
     @Test
-    fun settings_API_for_formatting_tensors_is_convinient_in_kotlin() {
+    fun settings_API_for_formatting_tensors_is_convenient_in_kotlin() {
 
         // Given:
         val viewSettings = Neureka.get().settings().view()
@@ -165,22 +165,23 @@ Kotlin_Compatibility_Unit_Testing {
                         .andWhere { i, index -> index.sum().toFloat()/i  }
 
         // Then :
+        print(t.toString())
         assert(t.toString() == """
-                    §:[
-                       [
-                          [    NaN  ,    1.0  ,    1.0   ],
-                          [ 0.3333..,    0.5  , 0.6000.. ],
-                          [ 0.3333.., 0.4285..,    0.5   ],
-                          [ 0.3333.., 0.4000.., 0.4545.. ]
-                       ],
-                       [
-                          [ 0.0833.., 0.1538.., 0.2142.. ],
-                          [ 0.1333..,  0.1875 , 0.2352.. ],
-                          [ 0.1666.., 0.2105..,   0.25   ],
-                          [ 0.1904.., 0.2272.., 0.2608.. ]
-                       ]
-                    ]!
-        """.trimIndent())
+                                        §:(
+                                           (
+                                              (    NaN  ,    1.0  ,    1.0   ),
+                                              ( 0.3333..,    0.5  , 0.6000.. ),
+                                              ( 0.3333.., 0.4285..,    0.5   ),
+                                              ( 0.3333.., 0.4000.., 0.4545.. )
+                                           ),
+                                           (
+                                              ( 0.0833.., 0.1538.., 0.2142.. ),
+                                              ( 0.1333..,  0.1875 , 0.2352.. ),
+                                              ( 0.1666.., 0.2105..,   0.25   ),
+                                              ( 0.1904.., 0.2272.., 0.2608.. )
+                                           )
+                                        )!
+                                """.trimIndent())
 
         // When :
         viewSettings.tensors {
@@ -198,12 +199,28 @@ Kotlin_Compatibility_Unit_Testing {
         }
 
         // Then :
-        assert(t.toString() == """
-                    ..(2x4x3):[ NaN,   1 ,   1 , .3..,  .5 , .6.., ... + 18 more]°°
-                """.trimIndent())
+        assert(t.toString() == "..(2x4x3):[ NaN,   1 ,   1 , .3..,  .5 , .6.., ... + 18 more]°°")
 
+        // When :
         Neureka.get().reset()
 
+        // Then :
+        print(t.toString())
+        assert(t.toString() == """
+            (2x4x3):[
+               [
+                  [   NaN ,   1.0 ,   1.0  ],
+                  [ 0.33333E0,   0.5 , 0.60000E0 ],
+                  [ 0.33333E0, 0.42857E0,   0.5  ],
+                  [ 0.33333E0, 0.40000E0, 0.45454E0 ]
+               ],
+               [
+                  [ 0.08333E0, 0.15384E0, 0.21428E0 ],
+                  [ 0.13333E0, 0.1875, 0.23529E0 ],
+                  [ 0.16666E0, 0.21052E0,  0.25  ],
+                  [ 0.19047E0, 0.22727E0, 0.26086E0 ]
+               ]
+            ]""".trimIndent())
 
 
     }

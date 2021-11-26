@@ -116,9 +116,6 @@ public final class TsrAsString
 
         _config = settings.clone();// Collections.unmodifiableMap(settings);
         _tensor = tensor;
-        _legacy = Neureka.get().settings().view().isUsingLegacyView();
-
-        //Configuration defaults = Neureka.get().settings().view().getAsString();
 
         _isCompact          = _config.isScientific() ;//= Should.BE_COMPACT           .readFrom( _config, defaults );
         _shortage           = _config.rowLimit() ;//= Should.HAVE_ROW_LIMIT_OF    .readFrom( _config, defaults );
@@ -133,6 +130,7 @@ public final class TsrAsString
         _isCellBound        = _config.isCellBound() ;//= Should.BE_CELL_BOUND        .readFrom( _config, defaults );
         _postfix            = _config.postfix() ;//= Should.HAVE_POSTFIX         .readFrom( _config, defaults );
         _prefix             = _config.prefix() ;//= Should.HAVE_PREFIX          .readFrom( _config, defaults );
+        _legacy             = _config.isLegacy();
     }
 
     /**
@@ -278,7 +276,13 @@ public final class TsrAsString
             _$( ":g" );
             Tsr<?> gradient = _tensor.getGradient();
             if ( gradient != null )
-                _$( gradient.toString( "cv" ) );
+                _$(
+                        gradient.toString(
+                                t -> t.with(_config)
+                                        .withShape(false)
+                                        .scientific(true)
+                        )
+                );
             else
                 _$( ( ( _legacy ) ? ":(null)" : ":[null]" ) );
         }
@@ -464,7 +468,7 @@ public final class TsrAsString
      */
     private void _strShape()
     {
-        boolean legacy = Neureka.get().settings().view().isUsingLegacyView();
+        boolean legacy = _legacy;
         _$( legacy ? "[" : "(" );
         for ( int i = 0; i < _shape.length; i++ ) {
             _$( _shape[ i ] );
@@ -563,7 +567,7 @@ public final class TsrAsString
             if ( modes == null || modes.trim().isEmpty() )
                 return Neureka.get().settings().view().getTensorSettings().clone();
 
-            TsrStringSettings conf = new TsrStringSettings();
+            TsrStringSettings conf = Neureka.get().settings().view().getTensorSettings().clone();
             conf.withRowLimit(  modes.contains( "s" ) ? 3 : 50                             );
             conf.scientific(  modes.contains( "c" )                                      );
             conf.multiline(  modes.contains( "f" )                                      );

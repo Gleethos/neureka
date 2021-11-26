@@ -1,12 +1,15 @@
 package neureka.view;
 
+import java.util.function.Supplier;
+
 public class TsrStringSettings {
 
+    private final Supplier<Boolean> _notModifyable;
     private int     _padding;
     private int     _rowLimit;
     private boolean _hasGradient;
     private boolean _isCompact;
-    private boolean _isFormatted;
+    private boolean _multiline;
     private boolean _haveSlimNumbers;
     private boolean _hasValue;
     private boolean _hasShape;
@@ -17,22 +20,39 @@ public class TsrStringSettings {
     private String  _postfix;
     private boolean _legacy;
 
-    public TsrStringSettings() {
-
+    public TsrStringSettings(Supplier<Boolean> notModifiable) {
+        _notModifyable = notModifiable;
+        this.scientific( true  );
+        this.multiline( true  );
+        this.withPadding( 6     );
+        this.withRowLimit(   50  );
+        this.withShape( true  );
+        this.withValue( true  );
+        this.withGradient( true  );
+        this.withDerivatives( false );
+        this.withRecursiveGraph( false );
+        this.cellBound( false );
+        this.withPostfix( ""    );
+        this.withPrefix( ""    );
     }
 
     public TsrStringSettings clone() {
-        TsrStringSettings clone = new TsrStringSettings();
+        TsrStringSettings clone = new TsrStringSettings(() -> false);
         this._imposeOn(clone);
         return clone;
     }
 
-    private void _imposeOn(TsrStringSettings other) {
+    public TsrStringSettings with( TsrStringSettings other ) {
+        other._imposeOn( this );
+        return this;
+    }
+
+    private void _imposeOn( TsrStringSettings other ) {
         other._padding = _padding;
         other._rowLimit = _rowLimit;
         other._hasGradient = _hasGradient;
         other._isCompact = _isCompact;
-        other._isFormatted = _isFormatted;
+        other._multiline = _multiline;
         other._haveSlimNumbers = _haveSlimNumbers;
         other._hasValue = _hasValue;
         other._hasShape = _hasShape;
@@ -49,6 +69,7 @@ public class TsrStringSettings {
     }
 
     public TsrStringSettings withPadding(int padding) {
+        if ( _notModifyable.get() ) return this;
         _padding = padding;
         return this;
     }
@@ -58,6 +79,7 @@ public class TsrStringSettings {
     }
 
     public TsrStringSettings withRowLimit(int shortage) {
+        if ( _notModifyable.get() ) return this;
         _rowLimit = shortage;
         return this;
     }
@@ -67,6 +89,7 @@ public class TsrStringSettings {
     }
 
     public TsrStringSettings withGradient(boolean hasGradient) {
+        if ( _notModifyable.get() ) return this;
         _hasGradient = hasGradient;
         return this;
     }
@@ -76,16 +99,18 @@ public class TsrStringSettings {
     }
 
     public TsrStringSettings scientific(boolean isCompact) {
+        if ( _notModifyable.get() ) return this;
         _isCompact = isCompact;
         return this;
     }
 
     public boolean isMultiline() {
-        return _isFormatted;
+        return _multiline;
     }
 
     public TsrStringSettings multiline(boolean isFormatted) {
-        _isFormatted = isFormatted;
+        if ( _notModifyable.get() ) return this;
+        _multiline = isFormatted;
         return this;
     }
 
@@ -94,6 +119,7 @@ public class TsrStringSettings {
     }
 
     public TsrStringSettings withSlimNumbers(boolean haveSlimNumbers) {
+        if ( _notModifyable.get() ) return this;
         _haveSlimNumbers = haveSlimNumbers;
         return this;
     }
@@ -103,6 +129,7 @@ public class TsrStringSettings {
     }
 
     public TsrStringSettings withValue(boolean hasValue) {
+        if ( _notModifyable.get() ) return this;
         _hasValue = hasValue;
         return this;
     }
@@ -112,6 +139,7 @@ public class TsrStringSettings {
     }
 
     public TsrStringSettings withShape(boolean hasShape) {
+        if ( _notModifyable.get() ) return this;
         _hasShape = hasShape;
         return this;
     }
@@ -121,6 +149,7 @@ public class TsrStringSettings {
     }
 
     public TsrStringSettings withRecursiveGraph(boolean hasRecursiveGraph) {
+        if ( _notModifyable.get() ) return this;
         _hasRecursiveGraph = hasRecursiveGraph;
         return this;
     }
@@ -130,6 +159,7 @@ public class TsrStringSettings {
     }
 
     public TsrStringSettings withDerivatives(boolean hasDerivatives) {
+        if ( _notModifyable.get() ) return this;
         _hasDerivatives = hasDerivatives;
         return this;
     }
@@ -139,6 +169,7 @@ public class TsrStringSettings {
     }
 
     public TsrStringSettings cellBound(boolean isCellBound) {
+        if ( _notModifyable.get() ) return this;
         _isCellBound = isCellBound;
         return this;
     }
@@ -148,6 +179,7 @@ public class TsrStringSettings {
     }
 
     public TsrStringSettings withPrefix(String prefix) {
+        if ( _notModifyable.get() ) return this;
         _prefix = prefix;
         return this;
     }
@@ -157,6 +189,7 @@ public class TsrStringSettings {
     }
 
     public TsrStringSettings withPostfix(String postfix) {
+        if ( _notModifyable.get() ) return this;
         _postfix = postfix;
         return this;
     }
@@ -166,6 +199,7 @@ public class TsrStringSettings {
     }
 
     public TsrStringSettings legacy(boolean legacy) {
+        if ( _notModifyable.get() ) return this;
         _legacy = legacy;
         return this;
     }

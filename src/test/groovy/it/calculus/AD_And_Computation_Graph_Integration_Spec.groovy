@@ -18,7 +18,7 @@ class AD_And_Computation_Graph_Integration_Spec extends Specification{
     def "Reshaping produces expected computation graph and also works with reverse mode AD."(){
 
         given :
-            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
             Tsr a = Tsr.of([2, 3], [
                     1, 2, 3,
                     4, 5, 6

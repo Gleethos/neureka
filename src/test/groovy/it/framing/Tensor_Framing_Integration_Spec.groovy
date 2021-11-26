@@ -115,7 +115,7 @@ class Tensor_Framing_Integration_Spec extends Specification
     void 'Rank 2 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.'()
     {
         given: 'Tensor printing is set to "legacy" for this test.'
-            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
         and: 'And a labeled tensor of rank 2 is being created.'
             Tsr t = Tsr.of([3, 4], [
                     1, 2, 3, 4,
@@ -179,7 +179,7 @@ class Tensor_Framing_Integration_Spec extends Specification
     def 'Rank 3 tensors can be labeled and their labels can be used to extract slices / subsets of tensors.' ()
     {
         given: 'Tensor printing is set to "legacy" for this test.'
-            Neureka.get().settings().view().setIsUsingLegacyView(true)
+            Neureka.get().settings().view().getTensorSettings().legacy(true)
         and: 'And a labeled tensor of rank 3 is being created.'
             Tsr t = Tsr.of([2, 3, 4], -7..7)
             t.label( 'My Tensor', [
