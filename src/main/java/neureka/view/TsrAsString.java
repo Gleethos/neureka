@@ -53,8 +53,7 @@ import java.util.function.Function;
  *  Methods in this class use the builder in order to construct a String representation
  *  for said tensor.
  *  These methods perform the String building based on a set of certain
- *  configurations which are represented by the "Should" enum.
- *
+ *  configurations provided by the {@link TsrStringSettings}!
  */
 public final class TsrAsString
 {
@@ -72,11 +71,11 @@ public final class TsrAsString
     private final String  _prefix;
     private final String  _postfix;
 
-    private final int[] _shape;
-    private final Tsr<?> _tensor;
+    private final int[]   _shape;
+    private final Tsr<?>  _tensor;
     private final boolean _legacy;
 
-    TsrStringSettings _config;
+    TsrStringSettings     _config;
     private StringBuilder _asStr;
 
     /**
@@ -91,19 +90,19 @@ public final class TsrAsString
              */
             @Override
             public TsrAsString withConfig( TsrStringSettings configMap ) {
-                return new TsrAsString( t, configMap.clone() );
+                return new TsrAsString( t, configMap );
             }
             /**
              * @param config The configuration used as basis for turning the wrapped {@link Tsr} to a {@link String}.
              * @return A new {@link TsrAsString} based on the provided configuration.
              */
             @Override
-            public TsrAsString withConfig( String config ) { return new TsrAsString( t, Util.configFromCode( config ) ); }
+            public TsrAsString withConfig( String config ) { return withConfig( Neureka.get().settings().view().getTensorSettings().clone().with(config) ); }
             /**
              * @return A new {@link TsrAsString} based on the default configuration.
              */
             @Override
-            public TsrAsString byDefaults() { return new TsrAsString( t, Util.configFromCode( null ) ); }
+            public TsrAsString byDefaults() { return withConfig( Neureka.get().settings().view().getTensorSettings() ); }
         };
     }
 
@@ -114,22 +113,22 @@ public final class TsrAsString
         else
             _shape = new int[0];
 
-        _config = settings.clone();// Collections.unmodifiableMap(settings);
+        _config = settings.clone();
         _tensor = tensor;
 
-        _isCompact          = _config.isScientific() ;//= Should.BE_COMPACT           .readFrom( _config, defaults );
-        _shortage           = _config.rowLimit() ;//= Should.HAVE_ROW_LIMIT_OF    .readFrom( _config, defaults );
-        _padding            = _config.getPadding() ;//= Should.HAVE_PADDING_OF      .readFrom( _config, defaults );
-        _hasGradient        = _config.hasGradient() ;//= Should.HAVE_GRADIENT        .readFrom( _config, defaults );
-        _isFormatted        = _config.isMultiline() ;//= Should.BE_FORMATTED         .readFrom( _config, defaults );
-        _haveSlimNumbers    = _config.hasSlimNumbers() ;//= Should.HAVE_SLIM_NUMBERS    .readFrom( _config, defaults );
-        _hasValue           = _config.hasValue() ;//= Should.HAVE_VALUE           .readFrom( _config, defaults );
-        _hasShape           = _config.hasShape() ;//= Should.HAVE_SHAPE           .readFrom( _config, defaults );
-        _hasRecursiveGraph  = _config.hasRecursiveGraph() ;//= Should.HAVE_RECURSIVE_GRAPH .readFrom( _config, defaults );
-        _hasDerivatives     = _config.hasDerivatives() ;//= Should.HAVE_DERIVATIVES     .readFrom( _config, defaults );
-        _isCellBound        = _config.isCellBound() ;//= Should.BE_CELL_BOUND        .readFrom( _config, defaults );
-        _postfix            = _config.postfix() ;//= Should.HAVE_POSTFIX         .readFrom( _config, defaults );
-        _prefix             = _config.prefix() ;//= Should.HAVE_PREFIX          .readFrom( _config, defaults );
+        _isCompact          = _config.isScientific() ;
+        _shortage           = _config.rowLimit() ;
+        _padding            = _config.getPadding() ;
+        _hasGradient        = _config.hasGradient() ;
+        _isFormatted        = _config.isMultiline() ;
+        _haveSlimNumbers    = _config.hasSlimNumbers() ;
+        _hasValue           = _config.hasValue() ;
+        _hasShape           = _config.hasShape() ;
+        _hasRecursiveGraph  = _config.hasRecursiveGraph() ;
+        _hasDerivatives     = _config.hasDerivatives() ;
+        _isCellBound        = _config.isCellBound() ;
+        _postfix            = _config.postfix() ;
+        _prefix             = _config.prefix() ;
         _legacy             = _config.isLegacy();
     }
 
@@ -562,12 +561,12 @@ public final class TsrAsString
         }
 
         @Contract( pure = true )
-        public static TsrStringSettings configFromCode(String modes )
+        public static TsrStringSettings configFromCode( String modes, TsrStringSettings template )
         {
             if ( modes == null || modes.trim().isEmpty() )
-                return Neureka.get().settings().view().getTensorSettings().clone();
+                return template.clone();
 
-            TsrStringSettings conf = Neureka.get().settings().view().getTensorSettings().clone();
+            TsrStringSettings conf = template.clone();
             conf.withRowLimit(  modes.contains( "s" ) ? 3 : 50                             );
             conf.scientific(  modes.contains( "c" )                                      );
             conf.multiline(  modes.contains( "f" )                                      );

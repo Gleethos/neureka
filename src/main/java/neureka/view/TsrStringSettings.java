@@ -1,5 +1,7 @@
 package neureka.view;
 
+import org.jetbrains.annotations.Contract;
+
 import java.util.function.Supplier;
 
 public class TsrStringSettings {
@@ -202,6 +204,29 @@ public class TsrStringSettings {
         if ( _notModifyable.get() ) return this;
         _legacy = legacy;
         return this;
+    }
+
+
+    public TsrStringSettings with( String modes )
+    {
+        if ( modes == null || modes.trim().isEmpty() )
+            return this;
+
+        TsrStringSettings conf = this;
+        conf.withRowLimit(  modes.contains( "s" ) ? 3 : 50                             );
+        conf.scientific(  modes.contains( "c" )                                      );
+        conf.multiline(  modes.contains( "f" )                                      );
+        conf.withGradient(  modes.contains( "g" )                                      );
+        conf.withPadding(  modes.contains( "p" ) ? 6 : modes.contains( "f" ) ? 2 : 1  );
+        conf.withValue( !(modes.contains( "shp" ) || modes.contains("shape"))       );
+        conf.withRecursiveGraph( modes.contains( "r" )                                      );
+        conf.withDerivatives(  modes.contains( "d" )                                      );
+        conf.withShape(  !modes.contains( "v" )                                     );
+        conf.cellBound(  modes.contains( "b" )                                      );
+        conf.withPostfix(  ""                                                         );
+        conf.withPrefix(  ""                                                         );
+        conf.withSlimNumbers(  false                                                      );
+        return conf;
     }
 
 

@@ -531,12 +531,12 @@ public final class Neureka
             public TsrStringSettings getTensorSettings() { return _settings; }
 
             public void tensors( Function<TsrStringSettings, TsrStringSettings> should ) {
-                _settings.with(should.apply(_settings));
+                _settings.with( should.apply(_settings) );
             }
 
-            public void setTensors( String modes ) { tensors(conf -> TsrAsString.Util.configFromCode( modes ) ); }
+            public void setTensors( String modes ) { tensors(conf -> _settings.with( modes ) ); }
 
-            public void tensors( String modes ) { tensors(conf -> TsrAsString.Util.configFromCode( modes ) ); }
+            public void tensors( String modes ) { tensors(conf -> _settings.with( modes ) ); }
 
             public String toString() {
                 return "Neureka.Settings.View[" +
