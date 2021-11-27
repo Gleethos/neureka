@@ -333,7 +333,7 @@ public final class TsrAsString
         ValStringifier getter = _createValStringifierAndFormatter( _tensor.getData() );
         int size = _tensor.size();
         int trim = ( size - max );
-        size = ( trim > 0 ) ? max : size;
+        size = ( trim > 0 ? max : size );
         for ( int i = 0; i < size; i++ ) {
             String vStr = getter.stringify( ( _tensor.isVirtual() ) ? 0 : _tensor.indexOfIndex( i ) );
             _$( vStr );
@@ -357,11 +357,11 @@ public final class TsrAsString
             int trimStart, int trimEnd, int trimSize, int[] indices, NDValStringifier stringifier, String delimiter
     ) {
         for ( int i = 0; i < _shape[ _shape.length - 1 ]; i++ ) {
-            if ( i < trimStart || i >= trimEnd ) {
+            if ( i <= trimStart || i > trimEnd ) {
                 _$( stringifier.stringify( indices ) );
                 if ( i < _shape[ _shape.length - 1 ] - 1 ) _$( delimiter );
             }
-            else if ( i == trimStart ) _$( "... " )._$( trimSize )._$( " more ..., " );
+            else if ( i == trimStart + 1 ) _$( ".." )._$( trimSize )._$( " more.., " );
 
             NDConfiguration.Utility.increment( indices, _shape );
         }
