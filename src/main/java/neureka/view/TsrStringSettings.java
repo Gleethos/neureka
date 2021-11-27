@@ -1,7 +1,5 @@
 package neureka.view;
 
-import org.jetbrains.annotations.Contract;
-
 import java.util.function.Supplier;
 
 public class TsrStringSettings {
@@ -20,6 +18,7 @@ public class TsrStringSettings {
     private boolean _isCellBound;
     private String  _prefix;
     private String  _postfix;
+    private String  _indent;
     private boolean _legacy;
 
     public TsrStringSettings(Supplier<Boolean> notModifiable) {
@@ -36,6 +35,7 @@ public class TsrStringSettings {
         this.cellBound( false );
         this.withPostfix( ""    );
         this.withPrefix( ""    );
+        this.withIndent( "    "    );
     }
 
     public TsrStringSettings clone() {
@@ -193,6 +193,16 @@ public class TsrStringSettings {
     public TsrStringSettings withPostfix(String postfix) {
         if ( _notModifyable.get() ) return this;
         _postfix = postfix;
+        return this;
+    }
+
+    public String indent() {
+        return _indent;
+    }
+
+    public TsrStringSettings withIndent(String indent) {
+        if ( _notModifyable.get() ) return this;
+        _indent = indent;
         return this;
     }
 

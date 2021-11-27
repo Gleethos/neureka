@@ -87,6 +87,7 @@ public class SettingsLoader
                     .checkAndAssign("view.tensors.BE_CELL_BOUND"        , Boolean.class, v -> s.view().getTensorSettings().cellBound(v)                              )//~= false
                     .checkAndAssign("view.tensors.HAVE_POSTFIX"         , String.class,  v -> s.view().getTensorSettings().withPostfix(v)                                  )//~= ""
                     .checkAndAssign("view.tensors.HAVE_PREFIX"          , String.class,  v -> s.view().getTensorSettings().withPrefix(v)                                  )//~= ""
+                    .checkAndAssign("view.tensors.indent"               , String.class,  v -> s.view().getTensorSettings().withIndent(v)                                 )//~= ""
                     .checkAndAssign("view.tensors.LEGACY"               , Boolean.class, v -> s.view().getTensorSettings().legacy(v)                                 )//~= ""
                     .checkAndAssign("ndim.isOnlyUsingDefaultNDConfiguration"       , Boolean.class, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)                      )//~= false
                     .checkAndAssign("dtype.defaultDataTypeClass"                   , Class.class,   v -> s.dtype().setDefaultDataTypeClass(v)                                  )
@@ -136,6 +137,8 @@ public class SettingsLoader
                 }
             }
             else if ( typeClass == String.class ) {
+                if ( asString.matches("^\"(.*)\"$|^'(.*)'$") ) // Quotes will be trimmed!
+                    asString = asString.substring(1, asString.length()-1);
                 toBeAssigned = (T) asString;
             }
             assignment.accept(toBeAssigned);

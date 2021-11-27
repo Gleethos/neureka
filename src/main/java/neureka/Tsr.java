@@ -2881,7 +2881,7 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public String toString( String mode ) {
-        return _toString( mode, ( mode.contains( "f" ) ) ? "    " : null );
+        return _toString( mode, ( mode.contains( "f" ) ? "    " : null ) );
     }
 
     public String toString(TsrStringSettings config, String indent ) {

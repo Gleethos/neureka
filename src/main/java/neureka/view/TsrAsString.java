@@ -61,7 +61,7 @@ public final class TsrAsString
     private final int     _shortage;
     private final boolean _hasGradient;
     private final boolean _isCompact;
-    private final boolean _isFormatted;
+    private final boolean _isMultiline;
     private final boolean _haveSlimNumbers;
     private final boolean _hasValue;
     private final boolean _hasShape;
@@ -70,6 +70,7 @@ public final class TsrAsString
     private final boolean _isCellBound;
     private final String  _prefix;
     private final String  _postfix;
+    private final String  _indent;
 
     private final int[]   _shape;
     private final Tsr<?>  _tensor;
@@ -120,7 +121,7 @@ public final class TsrAsString
         _shortage           = _config.rowLimit() ;
         _padding            = _config.getPadding() ;
         _hasGradient        = _config.hasGradient() ;
-        _isFormatted        = _config.isMultiline() ;
+        _isMultiline = _config.isMultiline() ;
         _haveSlimNumbers    = _config.hasSlimNumbers() ;
         _hasValue           = _config.hasValue() ;
         _hasShape           = _config.hasShape() ;
@@ -129,6 +130,7 @@ public final class TsrAsString
         _isCellBound        = _config.isCellBound() ;
         _postfix            = _config.postfix() ;
         _prefix             = _config.prefix() ;
+        _indent             = _config.indent();
         _legacy             = _config.isLegacy();
     }
 
@@ -245,7 +247,7 @@ public final class TsrAsString
      */
     private int _typeAdjustedPadding() {
         if ( _tensor.getDataType().getTypeClass() == String.class )
-            return  (int)(_padding * 2.5);
+            return  (int) ( _padding * 2.5 );
         else
             return  _padding;
     }
@@ -257,14 +259,14 @@ public final class TsrAsString
         if ( _tensor.isEmpty() ) return "empty";
         else if ( _tensor.isUndefined() ) return "undefined";
         _asStr = new StringBuilder();
-        String base      = ( indent == null ? ""   : "\n" + indent      );
-        String delimiter = ( indent == null ? ""   : "    "            );
-        String half      = ( indent == null ? ""   : "  "              );
-        String deeper    = ( indent == null ? null : indent + delimiter );
+        String base      = ( !_isMultiline ? ""   : "\n" + indent      );
+        String delimiter = ( !_isMultiline ? ""   : "    "            );
+        String half      = ( !_isMultiline ? ""   : "  "              );
+        String deeper    = ( !_isMultiline ? null : indent + delimiter );
         if ( _hasShape ) _strShape();
         if ( !_hasValue ) return _asStr.toString();
         _$( ":" );
-        if ( _isFormatted ) _recursiveFormatting( new int[ _tensor.rank() ], -1 );
+        if ( _isMultiline ) _recursiveFormatting( new int[ _tensor.rank() ], -1 );
         else {
             _$( _legacy ? "(" : "[" );
             _stringifyAllValues();
@@ -560,28 +562,6 @@ public final class TsrAsString
             return s + String.join("", Collections.nCopies( right, " " ));
         }
 
-        @Contract( pure = true )
-        public static TsrStringSettings configFromCode( String modes, TsrStringSettings template )
-        {
-            if ( modes == null || modes.trim().isEmpty() )
-                return template.clone();
-
-            TsrStringSettings conf = template.clone();
-            conf.withRowLimit(  modes.contains( "s" ) ? 3 : 50                             );
-            conf.scientific(  modes.contains( "c" )                                      );
-            conf.multiline(  modes.contains( "f" )                                      );
-            conf.withGradient(  modes.contains( "g" )                                      );
-            conf.withPadding(  modes.contains( "p" ) ? 6 : modes.contains( "f" ) ? 2 : 1  );
-            conf.withValue( !(modes.contains( "shp" ) || modes.contains("shape"))       );
-            conf.withRecursiveGraph( modes.contains( "r" )                                      );
-            conf.withDerivatives(  modes.contains( "d" )                                      );
-            conf.withShape(  !modes.contains( "v" )                                     );
-            conf.cellBound(  modes.contains( "b" )                                      );
-            conf.withPostfix(  ""                                                         );
-            conf.withPrefix(  ""                                                         );
-            conf.withSlimNumbers(  false                                                      );
-            return conf;
-        }
     }
 
 
