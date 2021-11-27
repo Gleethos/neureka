@@ -258,7 +258,6 @@ Kotlin_Compatibility_Unit_Testing {
         o.backward(2.0)
 
         // Then :
-        print(t.toString())
         assert(t.toString() == """
                                     START
                                     (2x3x9):[

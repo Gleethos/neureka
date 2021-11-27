@@ -338,37 +338,49 @@ class Tensor_Operation_Integration_Spec extends Specification
 
 
     def 'Auto reshaping and broadcasting works and the result can be back propagated.'(// TODO: Cover more broadcasting operations!
-            boolean indexing, boolean gradRequire,
-            BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String expectedResult, String expectedGradient
+            boolean indexing, boolean gradRequire, List<Integer> bShape,
+            BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String cValue, String wGradient
     ) {
         given :
-            String expectedShape = otherShape.join("x")
-            String expectedValue = "8.0" + ( otherShape.inject(1, {x,y->x*y}) > 1 ? ", 9.0" : "" )
-
-        and :
             Neureka.get().settings().indexing().setIsUsingArrayBasedIndexing(indexing)
             Neureka.get().settings().view().getTensorSettings().legacy(true)
-            Tsr a = Tsr.of([2,2], 1..5).setRqsGradient(!gradRequire)
-            Tsr b = Tsr.of(otherShape, 8..9).setRqsGradient(gradRequire)
-
+        and :
+            String wValue = gradRequire
+                                ? "8.0" + ( bShape.inject(1, {x,y->x*y}) > 1 ? ", 9.0" : "" )
+                                : "1.0, 2.0, 3.0, 4.0"
+        and :
+            def aShape = [2, 2]
+        and :
+            Tsr a = Tsr.of(aShape, 1..5).setRqsGradient(!gradRequire)
+            Tsr b = Tsr.of(bShape, 8..9).setRqsGradient(gradRequire)
+        and :
+            String wShape = ( gradRequire ? bShape : aShape ).join("x")
+            Tsr    w      = ( gradRequire ? b      : a      )
 
         when :
-            Tsr t1 = operation.apply(a, b)
+            Tsr c = operation.apply(a, b)
+        then :
+            c.toString().startsWith("[2x2]:($cValue)")
+            w.toString() == "[$wShape]:($wValue):g:(null)"
 
-        then :
-            t1.toString().contains("[2x2]:($expectedResult)")
-            b.toString() == "[$expectedShape]:($expectedValue):g:(null)"
         when :
-            t1.backward(Tsr.of([2, 2], [5, -2, 7, 3]))
+            c.backward(Tsr.of([2, 2], [5, -2, 7, 3]))
         then :
-            b.toString() == "[$expectedShape]:($expectedValue):g:($expectedGradient)"
+            w.toString() == "[$wShape]:($wValue):g:($wGradient)"
+
         when :
             Neureka.get().settings().view().getTensorSettings().legacy(false)
         then :
-            t1.toString() == "(2x2):[$expectedResult]"
+            c.toString() == "(2x2):[$cValue]"
 
         where:
-            indexing | gradRequire | otherShape |    operation      ||     expectedResult      | expectedGradient
+            indexing | gradRequire |   bShape   |    operation      ||     cValue              | wGradient
+
+             true    |    false    |    [1]     | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "5.0, -2.0, 7.0, 3.0"
+             false   |    false    |    [1]     | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "5.0, -2.0, 7.0, 3.0"
+
+             true    |    false    |    [1]     | { x, y -> x * y } || "8.0, 16.0, 24.0, 32.0" | "40.0, -16.0, 56.0, 24.0"
+             false   |    false    |    [1]     | { x, y -> x * y } || "8.0, 16.0, 24.0, 32.0" | "40.0, -16.0, 56.0, 24.0"
 
              true    |    true     |    [2,1]   | { x, y -> x + y } || "9.0, 10.0, 12.0, 13.0" | "3.0, 10.0"
              true    |    true     |    [1]     | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "13.0"

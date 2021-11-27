@@ -208,6 +208,11 @@ public class MatMul extends AbstractOperation
             if ( !(tensors[i].getNDConf() instanceof SimpleD2Configuration) ) {
                 _LOG.warn("Auto cloning a tensor which does not have a simple ND configuration...");
                 tensors[i] = tensors[i].clone();
+                /*
+                    The user should do cloning explicitly because using slices
+                    will cause the backend to perform aut cloning every time the
+                    slice is being used for operations like this one...
+                 */
             }
         }
     }

@@ -23,19 +23,19 @@ public class TsrStringSettings {
 
     public TsrStringSettings(Supplier<Boolean> notModifiable) {
         _notModifyable = notModifiable;
-        this.scientific( true  );
-        this.multiline( true  );
-        this.withPadding( 6     );
-        this.withRowLimit(   50  );
-        this.withShape( true  );
-        this.withValue( true  );
-        this.withGradient( true  );
-        this.withDerivatives( false );
-        this.withRecursiveGraph( false );
-        this.cellBound( false );
-        this.withPostfix( ""    );
-        this.withPrefix( ""    );
-        this.withIndent( "    "    );
+        _isScientific = true;
+        _multiline = true;
+        _padding = 6;
+        _rowLimit = 50;
+        _hasShape = true;
+        _hasValue = true;
+        _hasGradient = true;
+        _hasDerivatives = false;
+        _hasRecursiveGraph = false;
+        _isCellBound = false;
+        _postfix = "";
+        _prefix = "";
+        _indent = "    ";
     }
 
     public TsrStringSettings clone() {
