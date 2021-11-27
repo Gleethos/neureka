@@ -153,6 +153,8 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                     if ( t0Shp[ri] == t1Shp[ri] ) {
                         t1Idx.set( ri, t0Idx.get( ri ) );//all shapes are equal -> shape index can be inherited from origin!
                         t2Idx.set( ri, t0Idx.get( ri ) );
+                        if ( t2Shp[ri] == 1 ) t2Idx.set( ri, 0 );
+                        else t2Idx.set( ri, t0Idx.get( ri ) );
                     } else if ( t0Shp[ri] > t1Shp[ri] ) {
                         t1Idx.set( ri, 0 );//Current origin index is larger: index can be inherited!
                         t2Idx.set( ri, t0Idx.get( ri ) );
@@ -247,7 +249,8 @@ public class Broadcast extends AbstractFunctionalAlgorithm<Broadcast>
                 while ( ri < rank ) {
                     if ( t0Shp[ri] == t1Shp[ri] ) {
                         t1Idx[ri] = t0Idx[ri];//all shapes are equal -> shape index can be inherited from origin!
-                        t2Idx[ri] = t0Idx[ri];
+                        if ( t2Shp[ri] == 1 ) t2Idx[ri] = 0;
+                        else t2Idx[ri] = t0Idx[ri];
                     } else if ( t0Shp[ri] > t1Shp[ri] ) {
                         t1Idx[ri] = 0;//Current origin index is larger: index can be inherited!
                         t2Idx[ri] = t0Idx[ri];

@@ -242,16 +242,17 @@ Kotlin_Compatibility_Unit_Testing {
                 .withShape(true)
                 .withPadding(6)
                 .withRowLimit(5)
+                .withDerivatives(true)
                 .withRecursiveGraph(true)
         }
         // When :
-        val t = Tsr.of(Float::class.java)
+        val t = Tsr.of(Double::class.java)
                     .withShape(2, 3, 9)
-                    .andWhere { i, index -> index.sum().toFloat()/i  }
+                    .andWhere { i, index -> index.sum().toDouble()/i  }
                     .setRqsGradient(true)
 
         // And :
-        val o = t * 6f
+        val o = t * Tsr.of(6.0)
 
         // And :
         o.backward(2.0)
@@ -264,7 +265,7 @@ Kotlin_Compatibility_Unit_Testing {
                                        [
                                           [   NaN , ... 6 more ...,    1  ,    1   ],
                                           [ .11111, ... 6 more ...,   .5  , .52941 ],
-                                          [ .11111, ... 6 more ..., .36000, .38461 ]
+                                          [ .11111, ... 6 more ...,   .36 , .38461 ]
                                        ],
                                        [
                                           [ .03703, ... 6 more ..., .23529, .25714 ],

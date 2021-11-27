@@ -338,47 +338,57 @@ class Tensor_Operation_Integration_Spec extends Specification
 
 
     def 'Auto reshaping and broadcasting works and the result can be back propagated.'(// TODO: Cover more broadcasting operations!
-            boolean indexing, BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String expectedResult, String expectedGradient
+            boolean indexing, boolean gradRequire,
+            BiFunction<Tsr<?>, Tsr<?>, Tsr<?>> operation, String expectedResult, String expectedGradient
     ) {
         given :
+            String expectedShape = otherShape.join("x")
+            String expectedValue = "8.0" + ( otherShape.inject(1, {x,y->x*y}) > 1 ? ", 9.0" : "" )
+
+        and :
             Neureka.get().settings().indexing().setIsUsingArrayBasedIndexing(indexing)
             Neureka.get().settings().view().getTensorSettings().legacy(true)
-            Tsr a = Tsr.of([2,2], 1..5)
-            Tsr b = Tsr.of(( autoReshaping ? [2] : [1, 2]), 8..9).setRqsGradient(true)
+            Tsr a = Tsr.of([2,2], 1..5).setRqsGradient(!gradRequire)
+            Tsr b = Tsr.of(otherShape, 8..9).setRqsGradient(gradRequire)
+
 
         when :
             Tsr t1 = operation.apply(a, b)
 
         then :
             t1.toString().contains("[2x2]:($expectedResult)")
-            b.toString() == "["+( autoReshaping ? "2" : "1x2")+"]:(8.0, 9.0):g:(null)"
+            b.toString() == "[$expectedShape]:($expectedValue):g:(null)"
         when :
             t1.backward(Tsr.of([2, 2], [5, -2, 7, 3]))
         then :
-            b.toString() == "["+( autoReshaping ? "2" : "1x2")+"]:(8.0, 9.0):g:($expectedGradient)"
+            b.toString() == "[$expectedShape]:($expectedValue):g:($expectedGradient)"
         when :
             Neureka.get().settings().view().getTensorSettings().legacy(false)
         then :
             t1.toString() == "(2x2):[$expectedResult]"
 
         where:
-            indexing | autoReshaping |    operation      ||     expectedResult      | expectedGradient
+            indexing | gradRequire | otherShape |    operation      ||     expectedResult      | expectedGradient
 
-             true    |    false      | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-             true    |    true       | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-             false   |    false      | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
-             false   |    true       | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
+             true    |    true     |    [2,1]   | { x, y -> x + y } || "9.0, 10.0, 12.0, 13.0" | "3.0, 10.0"
+             true    |    true     |    [1]     | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "13.0"
+             false   |    true     |    [2,1]   | { x, y -> x + y } || "9.0, 10.0, 12.0, 13.0" | "3.0, 10.0"
+             false   |    true     |    [1]     | { x, y -> x + y } || "9.0, 10.0, 11.0, 12.0" | "13.0"
 
-             false   |    false      | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
-             false   |    true       | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
-             true    |    false      | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
-             true    |    true       | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
+             true    |    true     |    [1,2]   | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
+             true    |    true     |    [2]     | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
+             false   |    true     |    [1,2]   | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
+             false   |    true     |    [2]     | { x, y -> x + y } || "9.0, 11.0, 11.0, 13.0" | "12.0, 1.0"
 
-             false   |    false      | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
-             false   |    true       | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
-             true    |    false      | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
-             true    |    true       | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
+             false   |    true     |    [1,2]   | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
+             false   |    true     |    [2]     | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
+             true    |    true     |    [1,2]   | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
+             true    |    true     |    [2]     | { x, y -> x - y } || "-7.0, -7.0, -5.0, -5.0"| "-12.0, -1.0"
 
+             false   |    true     |    [1,2]   | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
+             false   |    true     |    [2]     | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
+             true    |    true     |    [1,2]   | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
+             true    |    true     |    [2]     | { x, y -> y - x } || "7.0, 7.0, 5.0, 5.0"    | "12.0, 1.0"
     }
 
 

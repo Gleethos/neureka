@@ -190,7 +190,7 @@ public class Multiplication extends AbstractOperation
 
         Broadcast broadcast = new Broadcast( JunctionUtil::forMultiplications )
                 .setCanPerformBackwardADFor( call -> true )
-                .setCanPerformForwardADFor( call -> true )
+                .setCanPerformForwardADFor( call -> false )
                 .setSupplyADAgentFor(
                     ( Function f, ExecutionCall<? extends Device<?>> call, boolean forward ) ->
                     {
