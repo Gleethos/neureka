@@ -2037,7 +2037,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
      */
     public Tsr<V> mean() {
         Tsr<V> ones = new Tsr<>( this.getNDConf().shape(), 1 );
+        assert ones != null;
         Tsr<V> sum = Neureka.get().backend().getAutogradFunction().conv().call( this, ones );
+        assert sum != null;
         return Neureka.get().backend().getAutogradFunction().div().call( sum, new Tsr<>( this.size() ) );
     }
 
@@ -2881,11 +2883,11 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public String toString( String mode ) {
-        return _toString( mode, ( mode.contains( "f" ) ? "    " : null ) );
+        return _toString( mode );
     }
 
-    public String toString(TsrStringSettings config, String indent ) {
-        return TsrAsString.representing( this ).withConfig( config ).toString( indent );
+    public String toString( TsrStringSettings config ) {
+        return TsrAsString.representing( this ).withConfig( config ).toString();
     }
 
     public String toString( Consumer<TsrStringSettings> config ) {
@@ -2895,9 +2897,9 @@ public class Tsr<V> extends AbstractNDArray<Tsr<V>, V> implements Component<Tsr<
     }
 
 
-    protected String _toString( String config, String indent )
+    protected String _toString( String config )
     {
-        return TsrAsString.representing( this ).withConfig( config ).toString( indent );
+        return TsrAsString.representing( this ).withConfig( config ).toString();
     }
 
     @Override

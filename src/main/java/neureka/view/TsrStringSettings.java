@@ -8,7 +8,7 @@ public class TsrStringSettings {
     private int     _padding;
     private int     _rowLimit;
     private boolean _hasGradient;
-    private boolean _isCompact;
+    private boolean _isScientific;
     private boolean _multiline;
     private boolean _haveSlimNumbers;
     private boolean _hasValue;
@@ -53,7 +53,7 @@ public class TsrStringSettings {
         other._padding = _padding;
         other._rowLimit = _rowLimit;
         other._hasGradient = _hasGradient;
-        other._isCompact = _isCompact;
+        other._isScientific = _isScientific;
         other._multiline = _multiline;
         other._haveSlimNumbers = _haveSlimNumbers;
         other._hasValue = _hasValue;
@@ -97,12 +97,12 @@ public class TsrStringSettings {
     }
 
     public boolean isScientific() {
-        return _isCompact;
+        return _isScientific;
     }
 
     public TsrStringSettings scientific(boolean isCompact) {
         if ( _notModifyable.get() ) return this;
-        _isCompact = isCompact;
+        _isScientific = isCompact;
         return this;
     }
 

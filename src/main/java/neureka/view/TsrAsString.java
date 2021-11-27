@@ -252,17 +252,14 @@ public final class TsrAsString
             return  _padding;
     }
 
-    public String toString() { return toString(""); }
-
-    public String toString( String indent )
-    {
+    public String toString() {
         if ( _tensor.isEmpty() ) return "empty";
         else if ( _tensor.isUndefined() ) return "undefined";
         _asStr = new StringBuilder();
-        String base      = ( !_isMultiline ? ""   : "\n" + indent      );
+        String base      = ( !_isMultiline ? ""   : "\n" + "    "      );
         String delimiter = ( !_isMultiline ? ""   : "    "            );
         String half      = ( !_isMultiline ? ""   : "  "              );
-        String deeper    = ( !_isMultiline ? null : indent + delimiter );
+        String deeper    = ( !_isMultiline ? ""   : "    " + delimiter );
         if ( _hasShape ) _strShape();
         if ( !_hasValue ) return _asStr.toString();
         _$( ":" );
@@ -279,9 +276,10 @@ public final class TsrAsString
             if ( gradient != null )
                 _$(
                         gradient.toString(
-                                t -> t.with(_config)
-                                        .withShape(false)
-                                        .scientific(true)
+                                t -> t.with( _config )
+                                        .withPrefix("").withPostfix("")
+                                        .withShape( false )
+                                        .scientific( true )
                         )
                 );
             else
@@ -295,10 +293,10 @@ public final class TsrAsString
                 else {
                     _$(
                                     base + "=>d|[ " +
-                                    base + delimiter + agent.derivative().toString( _config, deeper ) + " " +
+                                    base + delimiter + agent.derivative().toString( _config.clone().withPrefix("").withPostfix("") ) + " " +
                                     base + half + "]|:t{ " +
                                     base + delimiter + (
-                                    ( t.getPayload() != null ) ? t.getPayload().toString( _config, deeper ) : t.toString("")
+                                    ( t.getPayload() != null ) ? t.getPayload().toString( _config.clone().withPrefix("").withPostfix("") ) : t.toString("")
                             ) + " " + base + half + "}, "
                     );
                 }
@@ -310,7 +308,7 @@ public final class TsrAsString
                 _$( "; " );
                 node.forEachDerivative( ( t, agent ) -> {
                     if ( agent.derivative() == null ) _$( "->d(" )._$( agent.toString() )._$( "), " );
-                    else _$( "->d" )._$( agent.derivative().toString( _config, deeper ) )._$( ", " );
+                    else _$( "->d" )._$( agent.derivative().toString( _config.clone().withPrefix("").withPostfix("") ) )._$( ", " );
                 });
             }
         }
@@ -446,7 +444,7 @@ public final class TsrAsString
         }
         int i = dim - 1;
         if ( i >= 0 && i < indices.length && indices[ i ] != 0 ) _$( "," );
-        _$( "\n" );
+        if ( i >= 0 ) _$( "\n" );
     }
 
     private TsrAsString _buildSingleLabel( NDFrame<?> alias, int dim, int[] indices ) {

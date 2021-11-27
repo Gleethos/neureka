@@ -205,7 +205,6 @@ Kotlin_Compatibility_Unit_Testing {
         Neureka.get().reset()
 
         // Then :
-        print(t.toString())
         assert(t.toString() == """
             (2x4x3):[
                [
@@ -221,8 +220,71 @@ Kotlin_Compatibility_Unit_Testing {
                   [ 0.19047E0, 0.22727E0, 0.26086E0 ]
                ]
             ]""".trimIndent())
+    }
 
 
+
+    @Test
+    fun settings_API_for_formatting_tensors_allows_us_to_configure_the_indent() {
+
+        // Given:
+        val viewSettings = Neureka.get().settings().view()
+        // And :
+        viewSettings.tensors {
+            it.cellBound(true)
+                .withSlimNumbers(true)
+                .withPrefix("START\n")
+                .withPostfix("\nEND")
+                .multiline(true)
+                .scientific(true)
+                .legacy(false)
+                .withGradient(true)
+                .withShape(true)
+                .withPadding(6)
+                .withRowLimit(5)
+                .withRecursiveGraph(true)
+        }
+        // When :
+        val t = Tsr.of(Float::class.java)
+                    .withShape(2, 3, 9)
+                    .andWhere { i, index -> index.sum().toFloat()/i  }
+                    .setRqsGradient(true)
+
+        // And :
+        val o = t * 6f
+
+        // And :
+        o.backward(2.0)
+
+        // Then :
+        print(t.toString())
+        assert(t.toString() == """
+                                    START
+                                    (2x3x9):[
+                                       [
+                                          [   NaN , ... 6 more ...,    1  ,    1   ],
+                                          [ .11111, ... 6 more ...,   .5  , .52941 ],
+                                          [ .11111, ... 6 more ..., .36000, .38461 ]
+                                       ],
+                                       [
+                                          [ .03703, ... 6 more ..., .23529, .25714 ],
+                                          [ .05555, ... 6 more ..., .20930, .22727 ],
+                                          [ .06666, ... 6 more ..., .19230, .20754 ]
+                                       ]
+                                    ]:g:[
+                                       [
+                                          [   12  , ... 6 more ...,   12  ,   12   ],
+                                          [   12  , ... 6 more ...,   12  ,   12   ],
+                                          [   12  , ... 6 more ...,   12  ,   12   ]
+                                       ],
+                                       [
+                                          [   12  , ... 6 more ...,   12  ,   12   ],
+                                          [   12  , ... 6 more ...,   12  ,   12   ],
+                                          [   12  , ... 6 more ...,   12  ,   12   ]
+                                       ]
+                                    ]
+                                    END
+                                """.trimIndent())
     }
 
 }
