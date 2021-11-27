@@ -100,9 +100,9 @@ public class TsrStringSettings {
         return _isScientific;
     }
 
-    public TsrStringSettings scientific(boolean isCompact) {
+    public TsrStringSettings scientific( boolean isScientific ) {
         if ( _notModifyable.get() ) return this;
-        _isScientific = isCompact;
+        _isScientific = isScientific;
         return this;
     }
 
@@ -110,9 +110,9 @@ public class TsrStringSettings {
         return _multiline;
     }
 
-    public TsrStringSettings multiline(boolean isFormatted) {
+    public TsrStringSettings multiline( boolean isMultiline ) {
         if ( _notModifyable.get() ) return this;
-        _multiline = isFormatted;
+        _multiline = isMultiline;
         return this;
     }
 
@@ -120,7 +120,7 @@ public class TsrStringSettings {
         return _haveSlimNumbers;
     }
 
-    public TsrStringSettings withSlimNumbers(boolean haveSlimNumbers) {
+    public TsrStringSettings withSlimNumbers( boolean haveSlimNumbers ) {
         if ( _notModifyable.get() ) return this;
         _haveSlimNumbers = haveSlimNumbers;
         return this;
@@ -223,7 +223,7 @@ public class TsrStringSettings {
             return this;
 
         TsrStringSettings conf = this;
-        conf.withRowLimit(  modes.contains( "s" ) ? 3 : 50                             );
+        if ( modes.contains( "s" ) ) conf.withRowLimit(  3  );
         conf.scientific(  modes.contains( "c" )                                      );
         conf.multiline(  modes.contains( "f" )                                      );
         conf.withGradient(  modes.contains( "g" )                                      );

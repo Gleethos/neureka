@@ -322,7 +322,7 @@ class Tensor_Operation_Integration_Spec extends Specification
 
         when :
             Tsr rowconvol = x + y
-            String rcAsStr = rowconvol.toString()
+            String rcAsStr = rowconvol.toString({it.withRowLimit(50)})
 
         then :
             assert rcAsStr.contains("(9x11):[17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, " +

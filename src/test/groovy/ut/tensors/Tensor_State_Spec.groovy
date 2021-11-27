@@ -86,13 +86,14 @@ class Tensor_State_Spec extends Specification
     def 'Tensors as String can be formatted depending on shape.'(
             String mode, List<Integer> shape, String expected
     ){
-        given: 'Four tensors of various data types:'
+        given:
+            Neureka.get().settings().view().tensors({TsrStringSettings it -> it.withRowLimit(32)})
+        and : 'Four tensors of various data types:'
             Tsr t1 = Tsr.of( Float.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
             Tsr t2 = Tsr.of( shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
             Tsr t3 = Tsr.of( Integer.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
             Tsr t4 = Tsr.of( Short.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
             Tsr t5 = Tsr.of( Byte.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
-            println(t1.toString(mode))
 
         expect: 'The first tensor has the expected internals and produces the correct String representation.'
             t1.toString(mode) == expected

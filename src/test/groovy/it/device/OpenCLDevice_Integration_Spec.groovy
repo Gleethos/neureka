@@ -310,7 +310,7 @@ class OpenCLDevice_Integration_Spec extends Specification
                     .call( global, local )
 
         then :
-            C.toString() == expected
+            C.toString({it.withRowLimit(50)}) == expected
 
         where :
              regSize | locSize | M  | K  | N  || expected
@@ -397,7 +397,7 @@ class OpenCLDevice_Integration_Spec extends Specification
                     .call( global, local )
 
         then :
-            C.toString() == expected
+            C.toString({it.withRowLimit(50)}) == expected
 
         where :
             seed | M   | K   | N  || expected

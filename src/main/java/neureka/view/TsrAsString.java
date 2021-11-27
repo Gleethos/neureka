@@ -58,7 +58,7 @@ import java.util.function.Function;
 public final class TsrAsString
 {
     private final int     _padding;
-    private final int     _shortage;
+    private final int _rowLimit;
     private final boolean _hasGradient;
     private final boolean _isCompact;
     private final boolean _isMultiline;
@@ -118,7 +118,7 @@ public final class TsrAsString
         _tensor = tensor;
 
         _isCompact          = _config.isScientific() ;
-        _shortage           = _config.rowLimit() ;
+        _rowLimit = _config.rowLimit() ;
         _padding            = _config.getPadding() ;
         _hasGradient        = _config.hasGradient() ;
         _isMultiline = _config.isMultiline() ;
@@ -329,7 +329,7 @@ public final class TsrAsString
 
     private void _stringifyAllValues()
     {
-        int max = _shortage;
+        int max = _rowLimit;
         ValStringifier getter = _createValStringifierAndFormatter( _tensor.getData() );
         int size = _tensor.size();
         int trim = ( size - max );
@@ -381,13 +381,13 @@ public final class TsrAsString
      */
     private void _recursiveFormatting( int[] indices, int dim )
     {
-        int max = ( _shortage * 32 / 50 );
         dim = Math.max( dim, 0 );
-        int trimSize = ( _shape[ dim ] - max );
+        int trimSize = ( _shape[ dim ] - _rowLimit );
         trimSize = Math.max( trimSize, 0 );
         int trimStart = ( _shape[ dim ] / 2 - trimSize / 2 );
         int trimEnd = ( _shape[ dim ] / 2 + trimSize / 2 );
-        assert trimEnd - trimStart == trimSize;
+        trimEnd += ( trimSize % 2 );
+        if ( _shape[ dim ] > _rowLimit ) assert (_shape[ dim ] - (trimEnd - trimStart)) == _rowLimit;
         NDFrame<?> alias = _tensor.get( NDFrame.class );
         if ( dim == indices.length - 1 ) {
             if (
