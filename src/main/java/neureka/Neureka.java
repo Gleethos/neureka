@@ -533,10 +533,6 @@ public final class Neureka
 
             public void tensors( Consumer<TsrStringSettings> should ) { should.accept(_settings); }
 
-            public void setTensors( String modes ) { _settings.with( _settings.with( modes ) ); }
-
-            public void tensors( String modes ) { _settings.with( _settings.with( modes ) ); }
-
             public String toString() {
                 return "Neureka.Settings.View[" +
                             "tensors=" + this.getTensorSettings() +

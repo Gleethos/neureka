@@ -22,7 +22,20 @@ Kotlin_Compatibility_Unit_Testing {
         Neureka.get().reset()
 
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors("dgc")
+        Neureka.get().settings().view().tensors {
+            it.isScientific = true
+            it.isMultiline = false
+            it.hasGradient = true
+            it.cellSize = 1
+            it.hasValue = true
+            it.hasRecursiveGraph = false
+            it.hasDerivatives = true
+            it.hasShape = true
+            it.isCellBound = false
+            it.postfix = ""
+            it.prefix = ""
+            it.hasSlimNumbers = false
+        }
     }
 
     @Test
