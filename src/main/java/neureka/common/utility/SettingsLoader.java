@@ -79,7 +79,7 @@ public class SettingsLoader
                     .checkAndAssign("view.tensors.BE_FORMATTED"         , Boolean.class, v -> s.view().getTensorSettings().multiline(v)                        )//~= true,
                     .checkAndAssign("view.tensors.HAVE_GRADIENT"        , Boolean.class, v -> s.view().getTensorSettings().withGradient(v)                        )//~= true,
                     .checkAndAssign("view.tensors.HAVE_SLIM_NUMBERS"    , Boolean.class, v -> s.view().getTensorSettings().withSlimNumbers(v)              )//~= false,
-                    .checkAndAssign("view.tensors.HAVE_PADDING_OF"      , Integer.class, v -> s.view().getTensorSettings().withPadding(v)                             )//~= 6,
+                    .checkAndAssign("view.tensors.HAVE_PADDING_OF"      , Integer.class, v -> s.view().getTensorSettings().withCellSize(v)                             )//~= 6,
                     .checkAndAssign("view.tensors.HAVE_VALUE"           , Boolean.class, v -> s.view().getTensorSettings().withValue(v)                           )//~= true,
                     .checkAndAssign("view.tensors.HAVE_RECURSIVE_GRAPH" , Boolean.class, v -> s.view().getTensorSettings().withRecursiveGraph(v)                  )//~= false,
                     .checkAndAssign("view.tensors.HAVE_DERIVATIVES"     , Boolean.class, v -> s.view().getTensorSettings().withDerivatives(v)                           )//~= false,

@@ -57,8 +57,8 @@ import java.util.function.Function;
  */
 public final class TsrAsString
 {
-    private final int     _padding;
-    private final int _rowLimit;
+    private final int     _cellSize;
+    private final int     _rowLimit;
     private final boolean _hasGradient;
     private final boolean _isCompact;
     private final boolean _isMultiline;
@@ -118,10 +118,10 @@ public final class TsrAsString
         _tensor = tensor;
 
         _isCompact          = _config.isScientific() ;
-        _rowLimit = _config.rowLimit() ;
-        _padding            = _config.getPadding() ;
+        _rowLimit           = _config.rowLimit() ;
+        _cellSize           = _config.getCellSize() ;
         _hasGradient        = _config.hasGradient() ;
-        _isMultiline = _config.isMultiline() ;
+        _isMultiline        = _config.isMultiline() ;
         _haveSlimNumbers    = _config.hasSlimNumbers() ;
         _hasValue           = _config.hasValue() ;
         _hasShape           = _config.hasShape() ;
@@ -144,7 +144,9 @@ public final class TsrAsString
      * @param toBeAppended The String which ought to be appended to this builder.
      * @return This very instance in order to enable method-chaining.
      */
-    private TsrAsString _$( String toBeAppended ) { _asStr.append( toBeAppended ); return this; }
+    private TsrAsString _$( String toBeAppended ) {
+        _asStr.append( toBeAppended ); return this;
+    }
 
     /**
      *  This method is a wrapper for the _asStr.append() call.
@@ -171,11 +173,11 @@ public final class TsrAsString
     private ValStringifier _createValStringifierAndFormatter( Object data )
     {
         final ValStringifier function = _createBasicStringifierFor( data, _isCompact );
-        int pad = _typeAdjustedPadding();
+        int cellSize = _typeAdjustedCellSize();
         final ValStringifier postProcessing;
-        if ( pad >= 3 ) postProcessing = i -> {
+        if ( cellSize >= 3 ) postProcessing = i -> {
             String s = function.stringify( i );
-            int margin = pad - s.length();
+            int margin = cellSize - s.length();
             int right = ( margin % 2 == 0 ) ? margin / 2 : ( margin-1 ) / 2;
             if ( margin > 0 ) s = Util.pad( margin - right, Util.pad( s, right ) );
             return s;
@@ -185,8 +187,8 @@ public final class TsrAsString
         final ValStringifier finalProcessing;
         if ( _isCellBound ) finalProcessing = i -> {
             String s = postProcessing.stringify( i );
-            int margin =  s.length() - pad;
-            if ( margin > 0 ) s = s.substring( 0, pad - 2 ) + "..";
+            int margin =  s.length() - cellSize;
+            if ( margin > 0 ) s = s.substring( 0, cellSize - 2 ) + "..";
             return s;
         };
         else finalProcessing = postProcessing;
@@ -245,11 +247,11 @@ public final class TsrAsString
     /**
      * @return A potentially modified version of the configured padding to better suite certain types.
      */
-    private int _typeAdjustedPadding() {
-        if ( _tensor.getDataType().getTypeClass() == String.class )
-            return  (int) ( _padding * 2.5 );
-        else
-            return  _padding;
+    private int _typeAdjustedCellSize() {
+        //if ( _tensor.getDataType().getTypeClass() == String.class )
+        //    return  (int) ( _cellSize * 2.5 );
+        //else
+            return _cellSize;
     }
 
     public String toString() {

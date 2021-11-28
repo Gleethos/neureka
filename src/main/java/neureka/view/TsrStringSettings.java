@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 public class TsrStringSettings {
 
     private final Supplier<Boolean> _notModifyable;
-    private int     _padding;
+    private int _cellSize;
     private int     _rowLimit;
     private boolean _hasGradient;
     private boolean _isScientific;
@@ -25,7 +25,7 @@ public class TsrStringSettings {
         _notModifyable = notModifiable;
         _isScientific = true;
         _multiline = true;
-        _padding = 6;
+        _cellSize = 6;
         _rowLimit = 50;
         _hasShape = true;
         _hasValue = true;
@@ -50,7 +50,7 @@ public class TsrStringSettings {
     }
 
     private void _imposeOn( TsrStringSettings other ) {
-        other._padding = _padding;
+        other._cellSize = _cellSize;
         other._rowLimit = _rowLimit;
         other._hasGradient = _hasGradient;
         other._isScientific = _isScientific;
@@ -66,13 +66,13 @@ public class TsrStringSettings {
         other._legacy = _legacy;
     }
 
-    public int getPadding() {
-        return _padding;
+    public int getCellSize() {
+        return _cellSize;
     }
 
-    public TsrStringSettings withPadding(int padding) {
+    public TsrStringSettings withCellSize( int cellSize ) {
         if ( _notModifyable.get() ) return this;
-        _padding = padding;
+        _cellSize = cellSize;
         return this;
     }
 
@@ -227,7 +227,7 @@ public class TsrStringSettings {
         conf.scientific(  modes.contains( "c" )                                      );
         conf.multiline(  modes.contains( "f" )                                      );
         conf.withGradient(  modes.contains( "g" )                                      );
-        conf.withPadding(  modes.contains( "p" ) ? 6 : modes.contains( "f" ) ? 2 : 1  );
+        conf.withCellSize(  modes.contains( "p" ) ? 6 : modes.contains( "f" ) ? 2 : 1  );
         conf.withValue( !(modes.contains( "shp" ) || modes.contains("shape"))       );
         conf.withRecursiveGraph( modes.contains( "r" )                                      );
         conf.withDerivatives(  modes.contains( "d" )                                      );

@@ -36,6 +36,7 @@ class Tensor_State_Spec extends Specification
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().tensors = "dgc"
+        Neureka.get().settings().view().tensors({ TsrStringSettings it -> it.withCellSize(15) })
     }
 
     def 'Tensors as String can be formatted on an entry based level.'()
@@ -47,23 +48,35 @@ class Tensor_State_Spec extends Specification
             })
 
         expect: 'When we convert the tensor to a String via the flags "b" (cell bound) and "f" (formatted).'
-            t.toString('bf') == "(2x3):[\n" +
-                                      "   [ sal.., swe.., spi.. ],\n" +
-                                      "   [ blu.., shi.., con.. ]\n" +
-                                      "]"
+            t.toString({ TsrStringSettings it ->
+                                    it.withSlimNumbers(false)
+                                            .scientific(true)
+                                            .cellBound(true)
+                                            .multiline(true)
+                                            .withCellSize(5)
+                                })  == "(2x3):[\n" +
+                                         "   [ sal.., swe.., spi.. ],\n" +
+                                         "   [ blu.., shi.., con.. ]\n" +
+                                         "]"
         and: 'When additionally supplying the flag "p" (padding) then most String entries will be printed fully.'
-            t.toString('bfp') == "(2x3):[\n" +
+            t.toString({ TsrStringSettings it ->
+                        it.withSlimNumbers(false)
+                                .scientific(true)
+                                .cellBound(true)
+                                .multiline(true)
+                                .withCellSize(15)
+                    }) == "(2x3):[\n" +
                                        "   [   salty Apple  ,    sweet Tofu  , spinning Stra.. ],\n" +
                                        "   [   blue Almond  ,  shining Salad , confused Saitan ]\n" +
                                        "]"
         and: 'Whe can use a map of configuration configuration enums as keys and fitting objects as values:'
             t.toString(
-                    { TsrStringSettings it -> it.cellBound(true).withPadding(4)}
+                    { TsrStringSettings it -> it.cellBound(true).withCellSize(10)}
             ) == "(2x3):[salty Ap.., sweet Tofu, spinning.., blue Alm.., shining .., confused..]"
 
         and: 'This way we can also configure a postfix and prefix as well as limit the number of entries in a row:'
-            t.toString(
-                    { TsrStringSettings it -> it.withPrefix('START<|').withPostfix('|>END').withRowLimit(2) }
+            t.toString({ TsrStringSettings it ->
+                                        it.withPrefix('START<|').withPostfix('|>END').withCellSize(0).cellBound(false).withRowLimit(2) }
             ) == "START<|(2x3):[salty Apple, sweet Tofu, ... + 4 more]|>END"
     }
 
@@ -74,10 +87,12 @@ class Tensor_State_Spec extends Specification
             Tsr t = Tsr.of(DataType.of(Float.class), [2, 3], (i, indices) -> (i%4)/3 as float )
 
         expect : 'When we convert the tensor to a String via the flag "f" (formatted).'
-        t.toString() == "(2x3):[0.0, 0.33333E0, 0.66666E0, 1.0, 0.0, 0.33333E0]"
+            t.toString(
+                    { TsrStringSettings it -> it.withSlimNumbers(false).scientific(true).cellBound(false).multiline(false).withCellSize(3) }
+            ) == "(2x3):[0.0, 0.33333E0, 0.66666E0, 1.0, 0.0, 0.33333E0]"
         and : 'Whe can use a map of configuration configuration enums as keys and fitting objects as values:'
-        t.toString(
-                { TsrStringSettings it -> it.withSlimNumbers(true).scientific(true) }
+            t.toString(
+                { TsrStringSettings it -> it.withSlimNumbers(true).scientific(true).withCellSize(0) }
                 ) == "(2x3):[0, .33333, .66666, 1, 0, .33333]"
 
     }

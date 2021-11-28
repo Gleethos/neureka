@@ -156,7 +156,7 @@ Kotlin_Compatibility_Unit_Testing {
                             .legacy(true)
                             .withGradient(true)
                             .withShape(false)
-                            .withPadding(8)
+                            .withCellSize(8)
                             .withRowLimit(30)
                 }
         // When :
@@ -194,7 +194,7 @@ Kotlin_Compatibility_Unit_Testing {
                 .legacy(false)
                 .withGradient(true)
                 .withShape(true)
-                .withPadding(4)
+                .withCellSize(4)
                 .withRowLimit(6)
         }
 
@@ -240,7 +240,7 @@ Kotlin_Compatibility_Unit_Testing {
                 .legacy(false)
                 .withGradient(true)
                 .withShape(true)
-                .withPadding(6)
+                .withCellSize(6)
                 .withRowLimit(5)
                 .withDerivatives(true)
                 .withRecursiveGraph(true)

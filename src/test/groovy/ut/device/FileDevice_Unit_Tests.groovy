@@ -8,6 +8,7 @@ import neureka.devices.file.heads.*
 import neureka.dtype.DataType
 import neureka.dtype.custom.F64
 import neureka.dtype.custom.I16
+import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
 class FileDevice_Unit_Tests extends Specification
@@ -29,6 +30,7 @@ class FileDevice_Unit_Tests extends Specification
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().tensors = "dgc"
+        Neureka.get().settings().view().tensors({ TsrStringSettings it -> it.withCellSize(15) })
     }
 
     def 'A file device stores tensors in idx files by default.'(
@@ -113,7 +115,7 @@ class FileDevice_Unit_Tests extends Specification
 
     def 'The file device can load known files in a directory.'()
     {
-        given :
+        given:
             def device = FileDevice.at( 'build/resources/test/csv' )
         expect :
             device.loadable.toSet() == ['biostats-without-head.csv', 'biostats.csv'].toSet() // If this fails: consider deleting the build folder!!
@@ -125,7 +127,14 @@ class FileDevice_Unit_Tests extends Specification
         then :
             device.loadable == ['biostats.csv']
             device.loaded == ['biostats-without-head.csv']
-            t.toString('fp') == '(18x5):[\n' +
+            t.toString({ TsrStringSettings it ->
+                        it.withSlimNumbers(false)
+                          .scientific(true)
+                          .cellBound(false)
+                          .multiline(true)
+                          .withCellSize(15)
+                    }
+            ) == '(18x5):[\n' +
                                       '   (        a       )(       b       )(       c       )(       d       )(       e        ):( biostats-without-head )\n' +
                                       '   [      "Alex"    ,           "M"  ,         41     ,           74   ,          170    ]:( 0 ),\n' +
                                       '   [      "Bert"    ,           "M"  ,         42     ,           68   ,          166    ]:( 1 ),\n' +
@@ -153,7 +162,13 @@ class FileDevice_Unit_Tests extends Specification
         then :
             device.loadable == []
             device.loaded == ['biostats-without-head.csv', 'biostats.csv']
-            t.toString('fp') == '(18x5):[\n' +
+            t.toString({ TsrStringSettings it ->
+                        it.withSlimNumbers(false)
+                                .scientific(true)
+                                .cellBound(false)
+                                .multiline(true)
+                                .withCellSize(15)
+                    }) == '(18x5):[\n' +
                     '   (      "Name"    )(        "Sex"  )(      "Age"    )(  "Height (in)")( "Weight (lbs)" ):( biostats )\n' +
                     '   [      "Alex"    ,           "M"  ,         41     ,           74   ,          170    ]:( 0 ),\n' +
                     '   [      "Bert"    ,           "M"  ,         42     ,           68   ,          166    ]:( 1 ),\n' +

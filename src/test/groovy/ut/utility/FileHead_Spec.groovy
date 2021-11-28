@@ -10,6 +10,7 @@ import neureka.dtype.NumericType
 import neureka.dtype.custom.F64
 import neureka.dtype.custom.I16
 import neureka.dtype.custom.UI8
+import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
 class FileHead_Spec extends Specification
@@ -29,6 +30,7 @@ class FileHead_Spec extends Specification
 
     def setup() {
         Neureka.get().reset()
+        Neureka.get().settings().view().tensors({ TsrStringSettings it -> it.withCellSize(15) })
 
         File dir = new File( "build/test-can" )
         if ( ! dir.exists() ) dir.mkdirs()

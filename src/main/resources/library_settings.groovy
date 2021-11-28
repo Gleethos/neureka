@@ -30,7 +30,7 @@ Neureka.configure {
                                     .multiline(true)
                                     .withSlimNumbers(true)
                                     .withGradient(true)
-                                    .withPadding(6)
+                                    .withCellSize(6)
                                     .withValue(true)
                                     .withRecursiveGraph(false)
                                     .withDerivatives(false)
