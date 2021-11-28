@@ -30,20 +30,19 @@ class FileDevice_Unit_Tests extends Specification
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().tensors({ TsrStringSettings it ->
-            it.scientific( true )
-            it.multiline( false )
-            it.withGradient( true )
-            it.withCellSize( 1 )
-            it.withValue( true )
-            it.withRecursiveGraph( false )
-            it.withDerivatives( true )
-            it.withShape( true )
-            it.cellBound( false )
-            it.withPostfix(  "" )
-            it.withPrefix(  ""  )
-            it.withSlimNumbers(  false )  
+            it.isScientific      = true
+            it.isMultiline       = false
+            it.hasGradient       = true
+            it.cellSize          = 15
+            it.hasValue          = true
+            it.hasRecursiveGraph = false
+            it.hasDerivatives    = true
+            it.hasShape          = true
+            it.isCellBound       = false
+            it.postfix           = ""
+            it.prefix            = ""
+            it.hasSlimNumbers    = false
         })
-        Neureka.get().settings().view().tensors({ TsrStringSettings it -> it.withCellSize(15) })
     }
 
     def 'A file device stores tensors in idx files by default.'(
@@ -141,11 +140,11 @@ class FileDevice_Unit_Tests extends Specification
             device.loadable == ['biostats.csv']
             device.loaded == ['biostats-without-head.csv']
             t.toString({ TsrStringSettings it ->
-                        it.withSlimNumbers(false)
-                          .scientific(true)
-                          .cellBound(false)
-                          .multiline(true)
-                          .withCellSize(15)
+                        it.setHasSlimNumbers(false)
+                          .setIsScientific(true)
+                          .setIsCellBound(false)
+                          .setIsMultiline(true)
+                          .setCellSize(15)
                     }
             ) == '(18x5):[\n' +
                                       '   (        a       )(       b       )(       c       )(       d       )(       e        ):( biostats-without-head )\n' +
@@ -176,11 +175,11 @@ class FileDevice_Unit_Tests extends Specification
             device.loadable == []
             device.loaded == ['biostats-without-head.csv', 'biostats.csv']
             t.toString({ TsrStringSettings it ->
-                        it.withSlimNumbers(false)
-                                .scientific(true)
-                                .cellBound(false)
-                                .multiline(true)
-                                .withCellSize(15)
+                        it.setHasSlimNumbers(false)
+                                .setIsScientific(true)
+                                .setIsCellBound(false)
+                                .setIsMultiline(true)
+                                .setCellSize(15)
                     }) == '(18x5):[\n' +
                     '   (      "Name"    )(        "Sex"  )(      "Age"    )(  "Height (in)")( "Weight (lbs)" ):( biostats )\n' +
                     '   [      "Alex"    ,           "M"  ,         41     ,           74   ,          170    ]:( 0 ),\n' +

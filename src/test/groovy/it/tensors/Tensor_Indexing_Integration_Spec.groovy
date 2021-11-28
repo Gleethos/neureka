@@ -12,25 +12,25 @@ class Tensor_Indexing_Integration_Spec extends Specification
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().tensors({ TsrStringSettings it ->
-            it.scientific( true )
-            it.multiline( false )
-            it.withGradient( true )
-            it.withCellSize( 1 )
-            it.withValue( true )
-            it.withRecursiveGraph( false )
-            it.withDerivatives( true )
-            it.withShape( true )
-            it.cellBound( false )
-            it.withPostfix(  "" )
-            it.withPrefix(  ""  )
-            it.withSlimNumbers(  false )  
+            it.isScientific      = true
+            it.isMultiline       = false
+            it.hasGradient       = true
+            it.cellSize          = 1
+            it.hasValue          = true
+            it.hasRecursiveGraph = false
+            it.hasDerivatives    = true
+            it.hasShape          = true
+            it.isCellBound       = false
+            it.postfix           = ""
+            it.prefix            = ""
+            it.hasSlimNumbers    = false
         })
     }
 
     void 'Test convolution with legacy indexing.'()
     {
         given : 'The following library configuration is being used.'
-            Neureka.get().settings().view().getTensorSettings().legacy(true)
+            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
 
         when : 'The following calculations are being executed...'
@@ -95,7 +95,7 @@ class Tensor_Indexing_Integration_Spec extends Specification
     def 'Convolution using legacy indexing works as expected.'()
     {
         given :
-            Neureka.get().settings().view().getTensorSettings().legacy(true)
+            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
             Neureka.get().settings().autograd().setIsApplyingGradientWhenRequested(false)
 
         when :

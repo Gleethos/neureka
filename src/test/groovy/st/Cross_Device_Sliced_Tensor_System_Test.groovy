@@ -32,18 +32,18 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().tensors({ TsrStringSettings it ->
-            it.scientific( true )
-            it.multiline( false )
-            it.withGradient( true )
-            it.withCellSize( 1 )
-            it.withValue( true )
-            it.withRecursiveGraph( false )
-            it.withDerivatives( true )
-            it.withShape( true )
-            it.cellBound( false )
-            it.withPostfix(  "" )
-            it.withPrefix(  ""  )
-            it.withSlimNumbers(  false )  
+            it.isScientific      = true
+            it.isMultiline       = false
+            it.hasGradient       = true
+            it.cellSize          = 1
+            it.hasValue          = true
+            it.hasRecursiveGraph = false
+            it.hasDerivatives    = true
+            it.hasShape          = true
+            it.isCellBound       = false
+            it.postfix           = ""
+            it.prefix            = ""
+            it.hasSlimNumbers    = false
         })
     }
 
@@ -53,7 +53,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
     given :
         if ( device == null ) return
         Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
-        Neureka.get().settings().view().getTensorSettings().legacy(false)
+        Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
         if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
     and: 'A tensor which ought to be sliced:'
@@ -113,7 +113,7 @@ class Cross_Device_Sliced_Tensor_System_Test extends Specification
         given :
             if ( device == null ) return
             Neureka.get().settings().autograd().isApplyingGradientWhenTensorIsUsed = false
-            Neureka.get().settings().view().getTensorSettings().legacy(true)
+            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
             if ( device instanceof OpenCLDevice && !Neureka.get().canAccessOpenCL() ) return
 
         when :

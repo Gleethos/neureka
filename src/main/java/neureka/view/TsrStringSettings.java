@@ -70,37 +70,37 @@ public class TsrStringSettings {
         return _cellSize;
     }
 
-    public TsrStringSettings withCellSize( int cellSize ) {
+    public TsrStringSettings setCellSize( int cellSize ) {
         if ( _notModifyable.get() ) return this;
         _cellSize = cellSize;
         return this;
     }
 
-    public int rowLimit() {
+    public int getRowLimit() {
         return _rowLimit;
     }
 
-    public TsrStringSettings withRowLimit(int shortage) {
+    public TsrStringSettings setRowLimit( int shortage ) {
         if ( _notModifyable.get() ) return this;
         _rowLimit = shortage;
         return this;
     }
 
-    public boolean hasGradient() {
+    public boolean getHasGradient() {
         return _hasGradient;
     }
 
-    public TsrStringSettings withGradient(boolean hasGradient) {
+    public TsrStringSettings setHasGradient( boolean hasGradient ) {
         if ( _notModifyable.get() ) return this;
         _hasGradient = hasGradient;
         return this;
     }
 
-    public boolean isScientific() {
+    public boolean getIsScientific() {
         return _isScientific;
     }
 
-    public TsrStringSettings scientific( boolean isScientific ) {
+    public TsrStringSettings setIsScientific( boolean isScientific ) {
         if ( _notModifyable.get() ) return this;
         _isScientific = isScientific;
         return this;
@@ -110,107 +110,107 @@ public class TsrStringSettings {
         return _multiline;
     }
 
-    public TsrStringSettings multiline( boolean isMultiline ) {
+    public TsrStringSettings setIsMultiline( boolean isMultiline ) {
         if ( _notModifyable.get() ) return this;
         _multiline = isMultiline;
         return this;
     }
 
-    public boolean hasSlimNumbers() {
+    public boolean getHasSlimNumbers() {
         return _haveSlimNumbers;
     }
 
-    public TsrStringSettings withSlimNumbers( boolean haveSlimNumbers ) {
+    public TsrStringSettings setHasSlimNumbers( boolean haveSlimNumbers ) {
         if ( _notModifyable.get() ) return this;
         _haveSlimNumbers = haveSlimNumbers;
         return this;
     }
 
-    public boolean hasValue() {
+    public boolean getHasValue() {
         return _hasValue;
     }
 
-    public TsrStringSettings withValue(boolean hasValue) {
+    public TsrStringSettings setHasValue( boolean hasValue ) {
         if ( _notModifyable.get() ) return this;
         _hasValue = hasValue;
         return this;
     }
 
-    public boolean hasShape() {
+    public boolean getHasShape() {
         return _hasShape;
     }
 
-    public TsrStringSettings withShape(boolean hasShape) {
+    public TsrStringSettings setHasShape( boolean hasShape ) {
         if ( _notModifyable.get() ) return this;
         _hasShape = hasShape;
         return this;
     }
 
-    public boolean hasRecursiveGraph() {
+    public boolean getHasRecursiveGraph() {
         return _hasRecursiveGraph;
     }
 
-    public TsrStringSettings withRecursiveGraph(boolean hasRecursiveGraph) {
+    public TsrStringSettings setHasRecursiveGraph( boolean hasRecursiveGraph ) {
         if ( _notModifyable.get() ) return this;
         _hasRecursiveGraph = hasRecursiveGraph;
         return this;
     }
 
-    public boolean hasDerivatives() {
+    public boolean getHasDerivatives() {
         return _hasDerivatives;
     }
 
-    public TsrStringSettings withDerivatives(boolean hasDerivatives) {
+    public TsrStringSettings setHasDerivatives( boolean hasDerivatives ) {
         if ( _notModifyable.get() ) return this;
         _hasDerivatives = hasDerivatives;
         return this;
     }
 
-    public boolean isCellBound() {
+    public boolean getIsCellBound() {
         return _isCellBound;
     }
 
-    public TsrStringSettings cellBound(boolean isCellBound) {
+    public TsrStringSettings setIsCellBound( boolean isCellBound ) {
         if ( _notModifyable.get() ) return this;
         _isCellBound = isCellBound;
         return this;
     }
 
-    public String prefix() {
+    public String getPrefix() {
         return _prefix;
     }
 
-    public TsrStringSettings withPrefix(String prefix) {
+    public TsrStringSettings setPrefix( String prefix ) {
         if ( _notModifyable.get() ) return this;
         _prefix = prefix;
         return this;
     }
 
-    public String postfix() {
+    public String getPostfix() {
         return _postfix;
     }
 
-    public TsrStringSettings withPostfix(String postfix) {
+    public TsrStringSettings setPostfix( String postfix ) {
         if ( _notModifyable.get() ) return this;
         _postfix = postfix;
         return this;
     }
 
-    public String indent() {
+    public String getIndent() {
         return _indent;
     }
 
-    public TsrStringSettings withIndent(String indent) {
+    public TsrStringSettings setIndent( String indent ) {
         if ( _notModifyable.get() ) return this;
         _indent = indent;
         return this;
     }
 
-    public boolean isLegacy() {
+    public boolean getIsLegacy() {
         return _legacy;
     }
 
-    public TsrStringSettings legacy(boolean legacy) {
+    public TsrStringSettings setIsLegacy( boolean legacy ) {
         if ( _notModifyable.get() ) return this;
         _legacy = legacy;
         return this;
@@ -223,19 +223,19 @@ public class TsrStringSettings {
             return this;
 
         TsrStringSettings conf = this;
-        if ( modes.contains( "s" ) ) conf.withRowLimit(  3  );
-        conf.scientific(  modes.contains( "c" )                                      );
-        conf.multiline(  modes.contains( "f" )                                      );
-        conf.withGradient(  modes.contains( "g" )                                      );
-        conf.withCellSize(  modes.contains( "p" ) ? 6 : modes.contains( "f" ) ? 2 : 1  );
-        conf.withValue( !(modes.contains( "shp" ) || modes.contains("shape"))       );
-        conf.withRecursiveGraph( modes.contains( "r" )                                      );
-        conf.withDerivatives(  modes.contains( "d" )                                      );
-        conf.withShape(  !modes.contains( "v" )                                     );
-        conf.cellBound(  modes.contains( "b" )                                      );
-        conf.withPostfix(  ""                                                         );
-        conf.withPrefix(  ""                                                         );
-        conf.withSlimNumbers(  false                                                      );
+        if ( modes.contains( "s" ) ) conf.setRowLimit(  3  );
+        conf.setIsScientific(  modes.contains( "c" )                                      );
+        conf.setIsMultiline(  modes.contains( "f" )                                      );
+        conf.setHasGradient(  modes.contains( "g" )                                      );
+        conf.setCellSize(  modes.contains( "p" ) ? 6 : modes.contains( "f" ) ? 2 : 1  );
+        conf.setHasValue( !(modes.contains( "shp" ) || modes.contains("shape"))       );
+        conf.setHasRecursiveGraph( modes.contains( "r" )                                      );
+        conf.setHasDerivatives(  modes.contains( "d" )                                      );
+        conf.setHasShape(  !modes.contains( "v" )                                     );
+        conf.setIsCellBound(  modes.contains( "b" )                                      );
+        conf.setPostfix(  ""                                                         );
+        conf.setPrefix(  ""                                                         );
+        conf.setHasSlimNumbers(  false                                                      );
         return conf;
     }
 

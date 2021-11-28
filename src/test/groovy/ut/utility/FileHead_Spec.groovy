@@ -30,7 +30,7 @@ class FileHead_Spec extends Specification
 
     def setup() {
         Neureka.get().reset()
-        Neureka.get().settings().view().tensors({ TsrStringSettings it -> it.withCellSize(15) })
+        Neureka.get().settings().view().tensors({ TsrStringSettings it -> it.setCellSize(15) })
 
         File dir = new File( "build/test-can" )
         if ( ! dir.exists() ) dir.mkdirs()
@@ -41,18 +41,18 @@ class FileHead_Spec extends Specification
     ) {
         given:
             Neureka.get().settings().view().tensors({ TsrStringSettings it ->
-            it.scientific( true )
-            it.multiline( false )
-            it.withGradient( true )
-            it.withCellSize( 1 )
-            it.withValue( true )
-            it.withRecursiveGraph( false )
-            it.withDerivatives( false )
-            it.withShape( true )
-            it.cellBound( false )
-            it.withPostfix(  "" )
-            it.withPrefix(  ""  )
-            it.withSlimNumbers(  false )  
+            it.setIsScientific( true )
+            it.setIsMultiline( false )
+            it.setHasGradient( true )
+            it.setCellSize( 1 )
+            it.setHasValue( true )
+            it.setHasRecursiveGraph( false )
+            it.setHasDerivatives( false )
+            it.setHasShape( true )
+            it.setIsCellBound( false )
+            it.setPostfix(  "" )
+            it.setPrefix(  ""  )
+            it.setHasSlimNumbers(  false )
         })
 
         when : 'A new IDX file handle for the given filename is being instantiated.'

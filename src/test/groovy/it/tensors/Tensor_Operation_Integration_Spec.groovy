@@ -19,18 +19,18 @@ class Tensor_Operation_Integration_Spec extends Specification
         SettingsLoader.tryGroovyScriptsOn(Neureka.get(), script -> new GroovyShell(getClass().getClassLoader()).evaluate(script))
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().tensors({ TsrStringSettings it ->
-            it.scientific( true )
-            it.multiline( false )
-            it.withGradient( true )
-            it.withCellSize( 1 )
-            it.withValue( true )
-            it.withRecursiveGraph( false )
-            it.withDerivatives( true )
-            it.withShape( true )
-            it.cellBound( false )
-            it.withPostfix(  "" )
-            it.withPrefix(  ""  )
-            it.withSlimNumbers(  false )  
+            it.isScientific      = true
+            it.isMultiline       = false
+            it.hasGradient       = true
+            it.cellSize          = 1
+            it.hasValue          = true
+            it.hasRecursiveGraph = false
+            it.hasDerivatives    = true
+            it.hasShape          = true
+            it.isCellBound       = false
+            it.postfix           = ""
+            it.prefix            = ""
+            it.hasSlimNumbers    = false
         })
     }
 
@@ -44,7 +44,7 @@ class Tensor_Operation_Integration_Spec extends Specification
         given: 'Gradient auto apply for tensors in ue is set to false.'
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
         and: 'Tensor legacy view is set to true.'
-            Neureka.get().settings().view().getTensorSettings().legacy(true)
+            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
         and: 'Two new 3D tensor instances with the shapes: [2x3x1] & [1x3x2].'
             //Same test again but this time with reversed indexing:
             def x = Tsr.of(
@@ -147,7 +147,7 @@ class Tensor_Operation_Integration_Spec extends Specification
             String code, String expected
     ) {
         given :
-            Neureka.get().settings().view().getTensorSettings().legacy(true)
+            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
             Tsr a = Tsr.of(5)
             Tsr b = Tsr.of(3)
             Binding binding = new Binding()
@@ -180,7 +180,7 @@ class Tensor_Operation_Integration_Spec extends Specification
     def 'Overloaded operation methods on tensors produce expected results when called.'()
     {
         given :
-            Neureka.get().settings().view().getTensorSettings().legacy(true)
+            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
             Tsr a = Tsr.of(2).setRqsGradient(true)
             Tsr b = Tsr.of(-4)
             Tsr c = Tsr.of(3).setRqsGradient(true)
@@ -199,7 +199,7 @@ class Tensor_Operation_Integration_Spec extends Specification
     def 'Manual convolution produces expected result.'()
     {
         given :
-            Neureka.get().settings().view().getTensorSettings().legacy(false)
+            Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
             Tsr a = Tsr.of([100, 100], 3..19)
             Tsr x = a[1..-2,0..-1]
             Tsr y = a[0..-3,0..-1]
@@ -257,7 +257,7 @@ class Tensor_Operation_Integration_Spec extends Specification
          Device device
     ) {
         given :
-            Neureka.get().settings().view().getTensorSettings().legacy(false)
+            Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
             Tsr a = Tsr.of([4, 4], 0..16).to( device )
 
             Tsr x = a[1..-2,0..-1]
@@ -329,14 +329,14 @@ class Tensor_Operation_Integration_Spec extends Specification
             Device device
     ) {
         given :
-            Neureka.get().settings().view().getTensorSettings().legacy(false)
+            Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
             Tsr a = Tsr.of([11, 11], 3..19).to( device )
             Tsr x = a[1..-2,0..-1]
             Tsr y = a[0..-3,0..-1]
 
         when :
             Tsr rowconvol = x + y
-            String rcAsStr = rowconvol.toString({it.withRowLimit(50)})
+            String rcAsStr = rowconvol.toString({it.setRowLimit(50)})
 
         then :
             assert rcAsStr.contains("(9x11):[17.0, 19.0, 21.0, 23.0, 25.0, 27.0, 12.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, " +
@@ -357,7 +357,7 @@ class Tensor_Operation_Integration_Spec extends Specification
     ) {
         given :
             Neureka.get().settings().indexing().setIsUsingArrayBasedIndexing(indexing)
-            Neureka.get().settings().view().getTensorSettings().legacy(true)
+            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
         and :
             String wValue = gradRequire
                                 ? "8.0" + ( bShape.inject(1, {x,y->x*y}) > 1 ? ", 9.0" : "" )
@@ -383,7 +383,7 @@ class Tensor_Operation_Integration_Spec extends Specification
             w.toString() == "[$wShape]:($wValue):g:($wGradient)"
 
         when :
-            Neureka.get().settings().view().getTensorSettings().legacy(false)
+            Neureka.get().settings().view().getTensorSettings().setIsLegacy(false)
         then :
             c.toString() == "(2x2):[$cValue]"
 
@@ -421,7 +421,7 @@ class Tensor_Operation_Integration_Spec extends Specification
     void 'A new transposed version of a given tensor will be returned by the "T()" method.'()
     {
         given :
-            Neureka.get().settings().view().getTensorSettings().legacy(true)
+            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 
         when : 'A three by two matrix is being transposed...'
             Tsr t = Tsr.of([2, 3], [
@@ -436,7 +436,7 @@ class Tensor_Operation_Integration_Spec extends Specification
     def 'Operators "+,*,**,^" produce expected results with gradients which can be accessed via a "Ig[0]" Function instance'()
     {
         given : 'Neurekas view is set to legacy and three tensors of which one requires gradients.'
-            Neureka.get().settings().view().getTensorSettings().legacy(true)
+            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
             Tsr x = Tsr.of(3).setRqsGradient(true)
             Tsr b = Tsr.of(-4)
             Tsr w = Tsr.of(2)

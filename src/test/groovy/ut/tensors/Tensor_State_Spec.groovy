@@ -36,20 +36,19 @@ class Tensor_State_Spec extends Specification
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().tensors({ TsrStringSettings it ->
-            it.scientific( true )
-            it.multiline( false )
-            it.withGradient( true )
-            it.withCellSize( 1 )
-            it.withValue( true )
-            it.withRecursiveGraph( false )
-            it.withDerivatives( true )
-            it.withShape( true )
-            it.cellBound( false )
-            it.withPostfix(  "" )
-            it.withPrefix(  ""  )
-            it.withSlimNumbers(  false )  
+            it.isScientific      = true
+            it.isMultiline       = false
+            it.hasGradient       = true
+            it.cellSize          = 15
+            it.hasValue          = true
+            it.hasRecursiveGraph = false
+            it.hasDerivatives    = true
+            it.hasShape          = true
+            it.isCellBound       = false
+            it.postfix           = ""
+            it.prefix            = ""
+            it.hasSlimNumbers    = false
         })
-        Neureka.get().settings().view().tensors({ TsrStringSettings it -> it.withCellSize(15) })
     }
 
     def 'Tensors as String can be formatted on an entry based level.'()
@@ -62,34 +61,34 @@ class Tensor_State_Spec extends Specification
 
         expect: 'When we convert the tensor to a String via the flags "b" (cell bound) and "f" (formatted).'
             t.toString({ TsrStringSettings it ->
-                                    it.withSlimNumbers(false)
-                                            .scientific(true)
-                                            .cellBound(true)
-                                            .multiline(true)
-                                            .withCellSize(5)
+                                    it.setHasSlimNumbers(false)
+                                            .setIsScientific(true)
+                                            .setIsCellBound(true)
+                                            .setIsMultiline(true)
+                                            .setCellSize(5)
                                 })  == "(2x3):[\n" +
                                          "   [ sal.., swe.., spi.. ],\n" +
                                          "   [ blu.., shi.., con.. ]\n" +
                                          "]"
         and: 'When additionally supplying the flag "p" (padding) then most String entries will be printed fully.'
             t.toString({ TsrStringSettings it ->
-                        it.withSlimNumbers(false)
-                                .scientific(true)
-                                .cellBound(true)
-                                .multiline(true)
-                                .withCellSize(15)
+                        it.setHasSlimNumbers(false)
+                                .setIsScientific(true)
+                                .setIsCellBound(true)
+                                .setIsMultiline(true)
+                                .setCellSize(15)
                     }) == "(2x3):[\n" +
                                        "   [   salty Apple  ,    sweet Tofu  , spinning Stra.. ],\n" +
                                        "   [   blue Almond  ,  shining Salad , confused Saitan ]\n" +
                                        "]"
         and: 'Whe can use a map of configuration configuration enums as keys and fitting objects as values:'
             t.toString(
-                    { TsrStringSettings it -> it.cellBound(true).withCellSize(10)}
+                    { TsrStringSettings it -> it.setIsCellBound(true).setCellSize(10)}
             ) == "(2x3):[salty Ap.., sweet Tofu, spinning.., blue Alm.., shining .., confused..]"
 
         and: 'This way we can also configure a postfix and prefix as well as limit the number of entries in a row:'
             t.toString({ TsrStringSettings it ->
-                                        it.withPrefix('START<|').withPostfix('|>END').withCellSize(0).cellBound(false).withRowLimit(2) }
+                                        it.setPrefix('START<|').setPostfix('|>END').setCellSize(0).setIsCellBound(false).setRowLimit(2) }
             ) == "START<|(2x3):[salty Apple, sweet Tofu, ... + 4 more]|>END"
     }
 
@@ -101,11 +100,11 @@ class Tensor_State_Spec extends Specification
 
         expect : 'When we convert the tensor to a String via the flag "f" (formatted).'
             t.toString(
-                    { TsrStringSettings it -> it.withSlimNumbers(false).scientific(true).cellBound(false).multiline(false).withCellSize(3) }
+                    { TsrStringSettings it -> it.setHasSlimNumbers(false).setIsScientific(true).setIsCellBound(false).setIsMultiline(false).setCellSize(3) }
             ) == "(2x3):[0.0, 0.33333E0, 0.66666E0, 1.0, 0.0, 0.33333E0]"
         and : 'Whe can use a map of configuration configuration enums as keys and fitting objects as values:'
             t.toString(
-                { TsrStringSettings it -> it.withSlimNumbers(true).scientific(true).withCellSize(0) }
+                { TsrStringSettings it -> it.setHasSlimNumbers(true).setIsScientific(true).setCellSize(0) }
                 ) == "(2x3):[0, .33333, .66666, 1, 0, .33333]"
 
     }
@@ -115,7 +114,7 @@ class Tensor_State_Spec extends Specification
             String mode, List<Integer> shape, String expected
     ){
         given:
-            Neureka.get().settings().view().tensors({TsrStringSettings it -> it.withRowLimit(32)})
+            Neureka.get().settings().view().tensors({TsrStringSettings it -> it.setRowLimit(32)})
         and : 'Four tensors of various data types:'
             Tsr t1 = Tsr.of( Float.class, shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )
             Tsr t2 = Tsr.of( shape, -4..5 ).set( Tsr.of( shape, -7..3 ) )

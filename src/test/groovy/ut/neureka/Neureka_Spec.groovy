@@ -62,18 +62,18 @@ class Neureka_Spec extends Specification
         SettingsLoader.tryGroovyScriptsOn(Neureka.get(), script -> new GroovyShell(getClass().getClassLoader()).evaluate(script))
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().tensors({ TsrStringSettings it ->
-            it.scientific( true )
-            it.multiline( false )
-            it.withGradient( true )
-            it.withCellSize( 1 )
-            it.withValue( true )
-            it.withRecursiveGraph( false )
-            it.withDerivatives( true )
-            it.withShape( true )
-            it.cellBound( false )
-            it.withPostfix(  "" )
-            it.withPrefix(  ""  )
-            it.withSlimNumbers(  false )  
+            it.isScientific      = true
+            it.isMultiline       = false
+            it.hasGradient       = true
+            it.cellSize          = 1
+            it.hasValue          = true
+            it.hasRecursiveGraph = false
+            it.hasDerivatives    = true
+            it.hasShape          = true
+            it.isCellBound       = false
+            it.postfix           = ""
+            it.prefix            = ""
+            it.hasSlimNumbers    = false
         })
     }
 
@@ -124,10 +124,10 @@ class Neureka_Spec extends Specification
 
         where :
             value | getter                                                                       | setter
-            false | { Neureka.Settings it -> it.view().getTensorSettings().isLegacy()}           | { Neureka.Settings s, v -> s.view().getTensorSettings().legacy(v)}
-            true  | { Neureka.Settings it -> it.view().getTensorSettings().hasGradient()}        | { Neureka.Settings s, v -> s.view().getTensorSettings().withGradient(v)}
-            false | { Neureka.Settings it -> it.view().getTensorSettings().hasSlimNumbers()}     | { Neureka.Settings s, v -> s.view().getTensorSettings().withSlimNumbers(v)}
-            true  | { Neureka.Settings it -> it.view().getTensorSettings().isScientific()}       | { Neureka.Settings s, v -> s.view().getTensorSettings().scientific(v)}
+            false | { Neureka.Settings it -> it.view().getTensorSettings().getIsLegacy()} | { Neureka.Settings s, v -> s.view().getTensorSettings().setIsLegacy(v)}
+            true  | { Neureka.Settings it -> it.view().getTensorSettings().getHasGradient()} | { Neureka.Settings s, v -> s.view().getTensorSettings().setHasGradient(v)}
+            false | { Neureka.Settings it -> it.view().getTensorSettings().getHasSlimNumbers()} | { Neureka.Settings s, v -> s.view().getTensorSettings().setHasSlimNumbers(v)}
+            true  | { Neureka.Settings it -> it.view().getTensorSettings().getIsScientific()} | { Neureka.Settings s, v -> s.view().getTensorSettings().setIsScientific(v)}
             false | { Neureka.Settings it -> it.ndim().isOnlyUsingDefaultNDConfiguration()}      | { Neureka.Settings s, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)}
             false | { Neureka.Settings it -> it.debug().isKeepingDerivativeTargetPayloads()}     | { Neureka.Settings s, v -> s.debug().setIsKeepingDerivativeTargetPayloads(v)}
             true  | { Neureka.Settings it -> it.autograd().isPreventingInlineOperations()}       | { Neureka.Settings s, v -> s.autograd().setIsPreventingInlineOperations(v)}

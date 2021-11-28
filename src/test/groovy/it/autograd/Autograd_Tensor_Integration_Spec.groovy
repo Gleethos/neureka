@@ -25,18 +25,18 @@ class Autograd_Tensor_Integration_Spec extends Specification
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
         Neureka.get().settings().view().tensors({ TsrStringSettings it ->
-            it.scientific( true )
-            it.multiline( false )
-            it.withGradient( true )
-            it.withCellSize( 1 )
-            it.withValue( true )
-            it.withRecursiveGraph( false )
-            it.withDerivatives( true )
-            it.withShape( true )
-            it.cellBound( false )
-            it.withPostfix(  "" )
-            it.withPrefix(  ""  )
-            it.withSlimNumbers(  false )  
+            it.isScientific      = true
+            it.isMultiline       = false
+            it.hasGradient       = true
+            it.cellSize          = 1
+            it.hasValue          = true
+            it.hasRecursiveGraph = false
+            it.hasDerivatives    = true
+            it.hasShape          = true
+            it.isCellBound       = false
+            it.postfix           = ""
+            it.prefix            = ""
+            it.hasSlimNumbers    = false
         })
     }
 
@@ -45,7 +45,7 @@ class Autograd_Tensor_Integration_Spec extends Specification
         given: 'Gradient auto apply for tensors in ue is set to false.'
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
         and: 'Tensor legacy view is set to true.'
-            Neureka.get().settings().view().getTensorSettings().legacy(true)
+            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
 
         and: 'Three scalar tensors "x", "b", "w" are being instantiated, and "x" requires gradients.'
             Tsr x = Tsr.of(new int[]{1}, 3).setRqsGradient(true)
@@ -91,7 +91,7 @@ class Autograd_Tensor_Integration_Spec extends Specification
         given : 'Gradient auto apply for tensors in ue is set to false.'
             Neureka.get().settings().autograd().setIsApplyingGradientWhenTensorIsUsed(false)
         and: 'Tensor legacy view is set to true.'
-            Neureka.get().settings().view().getTensorSettings().legacy(true)
+            Neureka.get().settings().view().getTensorSettings().setIsLegacy(true)
         when :
             def x = Tsr.ofDoubles()
                             .withShape(3, 3)

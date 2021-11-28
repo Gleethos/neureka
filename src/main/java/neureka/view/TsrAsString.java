@@ -117,21 +117,21 @@ public final class TsrAsString
         _config = settings.clone();
         _tensor = tensor;
 
-        _isCompact          = _config.isScientific() ;
-        _rowLimit           = _config.rowLimit() ;
+        _isCompact          = _config.getIsScientific() ;
+        _rowLimit           = _config.getRowLimit() ;
         _cellSize           = _config.getCellSize() ;
-        _hasGradient        = _config.hasGradient() ;
+        _hasGradient        = _config.getHasGradient() ;
         _isMultiline        = _config.isMultiline() ;
-        _haveSlimNumbers    = _config.hasSlimNumbers() ;
-        _hasValue           = _config.hasValue() ;
-        _hasShape           = _config.hasShape() ;
-        _hasRecursiveGraph  = _config.hasRecursiveGraph() ;
-        _hasDerivatives     = _config.hasDerivatives() ;
-        _isCellBound        = _config.isCellBound() ;
-        _postfix            = _config.postfix() ;
-        _prefix             = _config.prefix() ;
-        _indent             = _config.indent();
-        _legacy             = _config.isLegacy();
+        _haveSlimNumbers    = _config.getHasSlimNumbers() ;
+        _hasValue           = _config.getHasValue() ;
+        _hasShape           = _config.getHasShape() ;
+        _hasRecursiveGraph  = _config.getHasRecursiveGraph() ;
+        _hasDerivatives     = _config.getHasDerivatives() ;
+        _isCellBound        = _config.getIsCellBound() ;
+        _postfix            = _config.getPostfix() ;
+        _prefix             = _config.getPrefix() ;
+        _indent             = _config.getIndent();
+        _legacy             = _config.getIsLegacy();
     }
 
     /**
@@ -279,9 +279,9 @@ public final class TsrAsString
                 _$(
                         gradient.toString(
                                 t -> t.with( _config )
-                                        .withPrefix("").withPostfix("")
-                                        .withShape( false )
-                                        .scientific( true )
+                                        .setPrefix("").setPostfix("")
+                                        .setHasShape( false )
+                                        .setIsScientific( true )
                         )
                 );
             else
@@ -295,10 +295,10 @@ public final class TsrAsString
                 else {
                     _$(
                                     base + "=>d|[ " +
-                                    base + delimiter + agent.derivative().toString( _config.clone().withPrefix("").withPostfix("") ) + " " +
+                                    base + delimiter + agent.derivative().toString( _config.clone().setPrefix("").setPostfix("") ) + " " +
                                     base + half + "]|:t{ " +
                                     base + delimiter + (
-                                    ( t.getPayload() != null ) ? t.getPayload().toString( _config.clone().withPrefix("").withPostfix("") ) : t.toString("")
+                                    ( t.getPayload() != null ) ? t.getPayload().toString( _config.clone().setPrefix("").setPostfix("") ) : t.toString("")
                             ) + " " + base + half + "}, "
                     );
                 }
@@ -310,7 +310,7 @@ public final class TsrAsString
                 _$( "; " );
                 node.forEachDerivative( ( t, agent ) -> {
                     if ( agent.derivative() == null ) _$( "->d(" )._$( agent.toString() )._$( "), " );
-                    else _$( "->d" )._$( agent.derivative().toString( _config.clone().withPrefix("").withPostfix("") ) )._$( ", " );
+                    else _$( "->d" )._$( agent.derivative().toString( _config.clone().setPrefix("").setPostfix("") ) )._$( ", " );
                 });
             }
         }

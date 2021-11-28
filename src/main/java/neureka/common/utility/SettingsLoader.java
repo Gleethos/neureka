@@ -74,21 +74,21 @@ public class SettingsLoader
                     .checkAndAssign("autograd.isApplyingGradientWhenTensorIsUsed"  , Boolean.class, v -> s.autograd().setIsApplyingGradientWhenTensorIsUsed(v)                 )//~= true
                     .checkAndAssign("autograd.isApplyingGradientWhenRequested"     , Boolean.class, v -> s.autograd().setIsApplyingGradientWhenRequested(v)                    )//~= true
                     .checkAndAssign("indexing.isUsingArrayBasedIndexing"           , Boolean.class, v -> s.indexing().setIsUsingArrayBasedIndexing(v)                               )//~= false
-                    .checkAndAssign("view.tensors.HAVE_ROW_LIMIT_OF"    , Integer.class, v -> s.view().getTensorSettings().withRowLimit(v)                              )//~= 50,
-                    .checkAndAssign("view.tensors.BE_COMPACT"           , Boolean.class, v -> s.view().getTensorSettings().scientific(v)                              )//~= true,
-                    .checkAndAssign("view.tensors.BE_FORMATTED"         , Boolean.class, v -> s.view().getTensorSettings().multiline(v)                        )//~= true,
-                    .checkAndAssign("view.tensors.HAVE_GRADIENT"        , Boolean.class, v -> s.view().getTensorSettings().withGradient(v)                        )//~= true,
-                    .checkAndAssign("view.tensors.HAVE_SLIM_NUMBERS"    , Boolean.class, v -> s.view().getTensorSettings().withSlimNumbers(v)              )//~= false,
-                    .checkAndAssign("view.tensors.HAVE_PADDING_OF"      , Integer.class, v -> s.view().getTensorSettings().withCellSize(v)                             )//~= 6,
-                    .checkAndAssign("view.tensors.HAVE_VALUE"           , Boolean.class, v -> s.view().getTensorSettings().withValue(v)                           )//~= true,
-                    .checkAndAssign("view.tensors.HAVE_RECURSIVE_GRAPH" , Boolean.class, v -> s.view().getTensorSettings().withRecursiveGraph(v)                  )//~= false,
-                    .checkAndAssign("view.tensors.HAVE_DERIVATIVES"     , Boolean.class, v -> s.view().getTensorSettings().withDerivatives(v)                           )//~= false,
-                    .checkAndAssign("view.tensors.HAVE_SHAPE"           , Boolean.class, v -> s.view().getTensorSettings().withShape(v)                                 )//~= true,
-                    .checkAndAssign("view.tensors.BE_CELL_BOUND"        , Boolean.class, v -> s.view().getTensorSettings().cellBound(v)                              )//~= false
-                    .checkAndAssign("view.tensors.HAVE_POSTFIX"         , String.class,  v -> s.view().getTensorSettings().withPostfix(v)                                  )//~= ""
-                    .checkAndAssign("view.tensors.HAVE_PREFIX"          , String.class,  v -> s.view().getTensorSettings().withPrefix(v)                                  )//~= ""
-                    .checkAndAssign("view.tensors.indent"               , String.class,  v -> s.view().getTensorSettings().withIndent(v)                                 )//~= ""
-                    .checkAndAssign("view.tensors.LEGACY"               , Boolean.class, v -> s.view().getTensorSettings().legacy(v)                                 )//~= ""
+                    .checkAndAssign("view.tensors.HAVE_ROW_LIMIT_OF"    , Integer.class, v -> s.view().getTensorSettings().setRowLimit(v)                              )//~= 50,
+                    .checkAndAssign("view.tensors.BE_COMPACT"           , Boolean.class, v -> s.view().getTensorSettings().setIsScientific(v)                              )//~= true,
+                    .checkAndAssign("view.tensors.BE_FORMATTED"         , Boolean.class, v -> s.view().getTensorSettings().setIsMultiline(v)                        )//~= true,
+                    .checkAndAssign("view.tensors.HAVE_GRADIENT"        , Boolean.class, v -> s.view().getTensorSettings().setHasGradient(v)                        )//~= true,
+                    .checkAndAssign("view.tensors.HAVE_SLIM_NUMBERS"    , Boolean.class, v -> s.view().getTensorSettings().setHasSlimNumbers(v)              )//~= false,
+                    .checkAndAssign("view.tensors.HAVE_PADDING_OF"      , Integer.class, v -> s.view().getTensorSettings().setCellSize(v)                             )//~= 6,
+                    .checkAndAssign("view.tensors.HAVE_VALUE"           , Boolean.class, v -> s.view().getTensorSettings().setHasValue(v)                           )//~= true,
+                    .checkAndAssign("view.tensors.HAVE_RECURSIVE_GRAPH" , Boolean.class, v -> s.view().getTensorSettings().setHasRecursiveGraph(v)                  )//~= false,
+                    .checkAndAssign("view.tensors.HAVE_DERIVATIVES"     , Boolean.class, v -> s.view().getTensorSettings().setHasDerivatives(v)                           )//~= false,
+                    .checkAndAssign("view.tensors.HAVE_SHAPE"           , Boolean.class, v -> s.view().getTensorSettings().setHasShape(v)                                 )//~= true,
+                    .checkAndAssign("view.tensors.BE_CELL_BOUND"        , Boolean.class, v -> s.view().getTensorSettings().setIsCellBound(v)                              )//~= false
+                    .checkAndAssign("view.tensors.HAVE_POSTFIX"         , String.class,  v -> s.view().getTensorSettings().setPostfix(v)                                  )//~= ""
+                    .checkAndAssign("view.tensors.HAVE_PREFIX"          , String.class,  v -> s.view().getTensorSettings().setPrefix(v)                                  )//~= ""
+                    .checkAndAssign("view.tensors.indent"               , String.class,  v -> s.view().getTensorSettings().setIndent(v)                                 )//~= ""
+                    .checkAndAssign("view.tensors.LEGACY"               , Boolean.class, v -> s.view().getTensorSettings().setIsLegacy(v)                                 )//~= ""
                     .checkAndAssign("ndim.isOnlyUsingDefaultNDConfiguration"       , Boolean.class, v -> s.ndim().setIsOnlyUsingDefaultNDConfiguration(v)                      )//~= false
                     .checkAndAssign("dtype.defaultDataTypeClass"                   , Class.class,   v -> s.dtype().setDefaultDataTypeClass(v)                                  )
                     .checkAndAssign("dtype.isAutoConvertingExternalDataToJVMTypes" , Boolean.class, v -> s.dtype().setIsAutoConvertingExternalDataToJVMTypes(v)                );

@@ -147,17 +147,17 @@ Kotlin_Compatibility_Unit_Testing {
         val viewSettings = Neureka.get().settings().view()
         // And :
         viewSettings.tensors {
-                        it.cellBound(true)
-                            .withSlimNumbers(false)
-                            .withPrefix("§")
-                            .withPostfix("!")
-                            .multiline(true)
-                            .scientific(true)
-                            .legacy(true)
-                            .withGradient(true)
-                            .withShape(false)
-                            .withCellSize(8)
-                            .withRowLimit(30)
+                        it.setIsCellBound(true)
+                            .setHasSlimNumbers(false)
+                            .setPrefix("§")
+                            .setPostfix("!")
+                            .setIsMultiline(true)
+                            .setIsScientific(true)
+                            .setIsLegacy(true)
+                            .setHasGradient(true)
+                            .setHasShape(false)
+                            .setCellSize(8)
+                            .setRowLimit(30)
                 }
         // When :
         val t = Tsr.of(Float::class.java)
@@ -185,17 +185,17 @@ Kotlin_Compatibility_Unit_Testing {
 
         // When :
         viewSettings.tensors {
-            it.cellBound(true)
-                .withSlimNumbers(true)
-                .withPrefix("..")
-                .withPostfix("°°")
-                .multiline(false)
-                .scientific(true)
-                .legacy(false)
-                .withGradient(true)
-                .withShape(true)
-                .withCellSize(4)
-                .withRowLimit(6)
+            it.setIsCellBound(true)
+                .setHasSlimNumbers(true)
+                .setPrefix("..")
+                .setPostfix("°°")
+                .setIsMultiline(false)
+                .setIsScientific(true)
+                .setIsLegacy(false)
+                .setHasGradient(true)
+                .setHasShape(true)
+                .setCellSize(4)
+                .setRowLimit(6)
         }
 
         // Then :
@@ -231,19 +231,19 @@ Kotlin_Compatibility_Unit_Testing {
         val viewSettings = Neureka.get().settings().view()
         // And :
         viewSettings.tensors {
-            it.cellBound(true)
-                .withSlimNumbers(true)
-                .withPrefix("START\n")
-                .withPostfix("\nEND")
-                .multiline(true)
-                .scientific(true)
-                .legacy(false)
-                .withGradient(true)
-                .withShape(true)
-                .withCellSize(6)
-                .withRowLimit(5)
-                .withDerivatives(true)
-                .withRecursiveGraph(true)
+            it.isCellBound = true
+            it.hasSlimNumbers = true
+            it.prefix = "START\n"
+            it.postfix = "\nEND"
+            it.isScientific = true
+            it.isLegacy = false
+            it.hasGradient = true
+            it.hasShape = true
+            it.cellSize = 6
+            it.rowLimit = 5
+            it.hasDerivatives = true
+            it.hasRecursiveGraph = true
+            it.setIsMultiline(true)
         }
         // When :
         val t = Tsr.of(Double::class.java)
