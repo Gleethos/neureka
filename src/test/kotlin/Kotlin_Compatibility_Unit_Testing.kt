@@ -147,18 +147,18 @@ Kotlin_Compatibility_Unit_Testing {
         val viewSettings = Neureka.get().settings().view()
         // And :
         viewSettings.tensors {
-                        it.setIsCellBound(true)
-                            .setHasSlimNumbers(false)
-                            .setPrefix("§")
-                            .setPostfix("!")
-                            .setIsMultiline(true)
-                            .setIsScientific(true)
-                            .setIsLegacy(true)
-                            .setHasGradient(true)
-                            .setHasShape(false)
-                            .setCellSize(8)
-                            .setRowLimit(30)
-                }
+                        it.isCellBound = true
+                        it.hasSlimNumbers = false
+                        it.prefix = "§"
+                        it.postfix = "!"
+                        it.isMultiline = true
+                        it.isScientific = true
+                        it.isLegacy = true
+                        it.hasGradient = true
+                        it.hasShape = false
+                        it.cellSize = 8
+                        it.rowLimit = 30
+                    }
         // When :
         val t = Tsr.of(Float::class.java)
                         .withShape(2, 4, 3)
@@ -185,17 +185,17 @@ Kotlin_Compatibility_Unit_Testing {
 
         // When :
         viewSettings.tensors {
-            it.setIsCellBound(true)
-                .setHasSlimNumbers(true)
-                .setPrefix("..")
-                .setPostfix("°°")
-                .setIsMultiline(false)
-                .setIsScientific(true)
-                .setIsLegacy(false)
-                .setHasGradient(true)
-                .setHasShape(true)
-                .setCellSize(4)
-                .setRowLimit(6)
+            it.isCellBound = true
+            it.hasSlimNumbers = true
+            it.prefix = ".."
+            it.postfix = "°°"
+            it.isMultiline = false
+            it.isScientific = true
+            it.isLegacy = false
+            it.hasGradient = true
+            it.hasShape = true
+            it.cellSize = 4
+            it.rowLimit = 6
         }
 
         // Then :
