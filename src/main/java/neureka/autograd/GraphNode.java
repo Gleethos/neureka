@@ -935,8 +935,26 @@ public class GraphNode<V> implements Component<Tsr<V>>
         if ( m.contains( "v" ) ) {
             return " " + nid + "[ "
                     + ( _function == null ? "" : _function + " => " )
-                    + ( (payload == null ) ? "?" : payload.toString( "cs" ) ) + ", "
-                    + "type='" + this.type() + "'" +
+                    + (
+                            payload == null
+                                ? "?"
+                                : payload.toString(
+                                    settings -> settings
+                                                .setRowLimit(  3  )
+                                                .setIsScientific(  true   )
+                                                .setIsMultiline(  false  )
+                                                .setHasGradient(  false    )
+                                                .setCellSize(  1  )
+                                                .setHasValue( true )
+                                                .setHasRecursiveGraph( false   )
+                                                .setHasDerivatives(  false      )
+                                                .setHasShape( true            )
+                                                .setIsCellBound(  false       )
+                                                .setPostfix(  ""      )
+                                                .setPrefix(  ""      )
+                                                .setHasSlimNumbers(  false      )
+                                )
+                    ) + ", type='" + this.type() + "'" +
                     "] ";
         } else
             return
@@ -944,8 +962,8 @@ public class GraphNode<V> implements Component<Tsr<V>>
                             ( payload == null )
                                     ? "NULL"
                                     : payload.toString(
-                                        conf ->
-                                            conf.setRowLimit(  3  )
+                                        settings -> settings
+                                             .setRowLimit(  3  )
                                              .setIsScientific(  true   )
                                              .setIsMultiline(  false  )
                                              .setHasGradient(  false    )

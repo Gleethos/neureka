@@ -222,21 +222,21 @@ public class TsrStringSettings {
         if ( modes == null || modes.trim().isEmpty() )
             return this;
 
-        TsrStringSettings conf = this;
-        if ( modes.contains( "s" ) ) conf.setRowLimit(  3  );
-        conf.setIsScientific(  modes.contains( "c" )                                      );
-        conf.setIsMultiline(  modes.contains( "f" )                                      );
-        conf.setHasGradient(  modes.contains( "g" )                                      );
-        conf.setCellSize(  modes.contains( "p" ) ? 6 : modes.contains( "f" ) ? 2 : 1  );
-        conf.setHasValue( !(modes.contains( "shp" ) || modes.contains("shape"))       );
-        conf.setHasRecursiveGraph( modes.contains( "r" )                                      );
-        conf.setHasDerivatives(  modes.contains( "d" )                                      );
-        conf.setHasShape(  !modes.contains( "v" )                                     );
-        conf.setIsCellBound(  modes.contains( "b" )                                      );
-        conf.setPostfix(  ""                                                         );
-        conf.setPrefix(  ""                                                         );
-        conf.setHasSlimNumbers(  false                                                      );
-        return conf;
+        TsrStringSettings settings = this;
+        if ( modes.contains( "s" ) ) settings.setRowLimit(  3  );
+        settings.setIsScientific(  modes.contains( "c" )                                      )
+        .setIsMultiline(  modes.contains( "f" )                                      )
+        .setHasGradient(  modes.contains( "g" )                                      )
+        .setCellSize(  modes.contains( "p" ) ? 6 : modes.contains( "f" ) ? 2 : 1  )
+        .setHasValue( !(modes.contains( "shp" ) || modes.contains("shape"))       )
+        .setHasRecursiveGraph( modes.contains( "r" )                                      )
+        .setHasDerivatives(  modes.contains( "d" )                                      )
+        .setHasShape(  !modes.contains( "v" )                                     )
+        .setIsCellBound(  modes.contains( "b" )                                      )
+        .setPostfix(  ""                                                         )
+        .setPrefix(  ""                                                         )
+        .setHasSlimNumbers(  false                                                      );
+        return settings;
     }
 
 
