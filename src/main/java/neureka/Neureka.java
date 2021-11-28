@@ -52,6 +52,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.ServiceLoader;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -530,13 +531,11 @@ public final class Neureka
 
             public TsrStringSettings getTensorSettings() { return _settings; }
 
-            public void tensors( Function<TsrStringSettings, TsrStringSettings> should ) {
-                _settings.with( should.apply(_settings) );
-            }
+            public void tensors( Consumer<TsrStringSettings> should ) { should.accept(_settings); }
 
-            public void setTensors( String modes ) { tensors(conf -> _settings.with( modes ) ); }
+            public void setTensors( String modes ) { _settings.with( _settings.with( modes ) ); }
 
-            public void tensors( String modes ) { tensors(conf -> _settings.with( modes ) ); }
+            public void tensors( String modes ) { _settings.with( _settings.with( modes ) ); }
 
             public String toString() {
                 return "Neureka.Settings.View[" +
