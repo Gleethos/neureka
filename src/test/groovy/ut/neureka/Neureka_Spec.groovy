@@ -13,6 +13,7 @@ import neureka.devices.host.CPU
 import neureka.devices.opencl.CLContext
 import neureka.dtype.DataType
 import neureka.framing.Relation
+import neureka.view.TsrStringSettings
 import spock.lang.*
 
 import java.util.regex.Pattern
@@ -60,7 +61,20 @@ class Neureka_Spec extends Specification
         // The following is similar to Neureka.get().reset() however it uses a groovy script for library settings:
         SettingsLoader.tryGroovyScriptsOn(Neureka.get(), script -> new GroovyShell(getClass().getClassLoader()).evaluate(script))
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors = "dgc"
+        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+            it.scientific( true )
+            it.multiline( false )
+            it.withGradient( true )
+            it.withCellSize( 1 )
+            it.withValue( true )
+            it.withRecursiveGraph( false )
+            it.withDerivatives( true )
+            it.withShape( true )
+            it.cellBound( false )
+            it.withPostfix(  "" )
+            it.withPrefix(  ""  )
+            it.withSlimNumbers(  false )  
+        })
     }
 
 

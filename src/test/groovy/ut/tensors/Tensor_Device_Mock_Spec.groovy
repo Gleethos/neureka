@@ -4,6 +4,7 @@ import neureka.common.composition.Component
 import neureka.Neureka
 import neureka.Tsr
 import neureka.devices.Device
+import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
 class Tensor_Device_Mock_Spec extends Specification
@@ -22,7 +23,20 @@ class Tensor_Device_Mock_Spec extends Specification
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors = "dgc"
+        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+            it.scientific( true )
+            it.multiline( false )
+            it.withGradient( true )
+            it.withCellSize( 1 )
+            it.withValue( true )
+            it.withRecursiveGraph( false )
+            it.withDerivatives( true )
+            it.withShape( true )
+            it.cellBound( false )
+            it.withPostfix(  "" )
+            it.withPrefix(  ""  )
+            it.withSlimNumbers(  false )  
+        })
     }
 
     def 'Tensors try to migrate themselves to a device that is being added to them as component.'()

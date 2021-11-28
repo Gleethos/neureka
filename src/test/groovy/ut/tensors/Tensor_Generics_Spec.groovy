@@ -3,6 +3,7 @@ package ut.tensors
 import neureka.Neureka
 import neureka.Tsr
 import neureka.dtype.DataType
+import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
 class Tensor_Generics_Spec extends Specification
@@ -23,7 +24,20 @@ class Tensor_Generics_Spec extends Specification
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors = "dgc"
+        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+            it.scientific( true )
+            it.multiline( false )
+            it.withGradient( true )
+            it.withCellSize( 1 )
+            it.withValue( true )
+            it.withRecursiveGraph( false )
+            it.withDerivatives( true )
+            it.withShape( true )
+            it.cellBound( false )
+            it.withPostfix(  "" )
+            it.withPrefix(  ""  )
+            it.withSlimNumbers(  false )  
+        })
     }
 
     def 'Anonymous tensor instance has the default datatype class as defined in Neureka settings.'() {

@@ -2,6 +2,7 @@ package it.framing
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
 import java.lang.ref.WeakReference
@@ -21,7 +22,20 @@ class Tensor_Framing_Integration_Spec extends Specification
             """
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors = "dgc"
+        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+            it.scientific( true )
+            it.multiline( false )
+            it.withGradient( true )
+            it.withCellSize( 1 )
+            it.withValue( true )
+            it.withRecursiveGraph( false )
+            it.withDerivatives( true )
+            it.withShape( true )
+            it.cellBound( false )
+            it.withPostfix(  "" )
+            it.withPrefix(  ""  )
+            it.withSlimNumbers(  false )  
+        })
     }
 
     def 'Added labels to tensors are accessible through the "index()" method.'()

@@ -5,6 +5,7 @@ import neureka.Tsr
 import neureka.calculus.Function
 import neureka.calculus.assembly.ParseUtil
 import neureka.ndim.config.types.views.SimpleReshapeView
+import neureka.view.TsrStringSettings
 import spock.lang.Ignore
 
 //import org.junit.Test
@@ -16,7 +17,20 @@ class Optimizer_Spec extends Specification
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors = "dgc"
+        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+            it.scientific( true )
+            it.multiline( false )
+            it.withGradient( true )
+            it.withCellSize( 1 )
+            it.withValue( true )
+            it.withRecursiveGraph( false )
+            it.withDerivatives( true )
+            it.withShape( true )
+            it.cellBound( false )
+            it.withPostfix(  "" )
+            it.withPrefix(  ""  )
+            it.withSlimNumbers(  false )  
+        })
     }
 
     // WIP! : not yet completed! // FIXME: Not working in CI

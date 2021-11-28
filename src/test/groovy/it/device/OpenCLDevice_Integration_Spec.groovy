@@ -7,6 +7,7 @@ import neureka.devices.host.CPU
 import neureka.devices.opencl.CLContext
 import neureka.devices.opencl.utility.DispatchUtility
 import neureka.dtype.DataType
+import neureka.view.TsrStringSettings
 import spock.lang.IgnoreIf
 import spock.lang.Narrative
 import spock.lang.Specification
@@ -39,7 +40,20 @@ class OpenCLDevice_Integration_Spec extends Specification
         """
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors = "dgc"
+        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+            it.scientific( true )
+            it.multiline( false )
+            it.withGradient( true )
+            it.withCellSize( 1 )
+            it.withValue( true )
+            it.withRecursiveGraph( false )
+            it.withDerivatives( true )
+            it.withShape( true )
+            it.cellBound( false )
+            it.withPostfix(  "" )
+            it.withPrefix(  ""  )
+            it.withSlimNumbers(  false )  
+        })
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!

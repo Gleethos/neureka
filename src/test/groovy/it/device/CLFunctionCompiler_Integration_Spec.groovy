@@ -4,6 +4,7 @@ import neureka.Neureka
 import neureka.Tsr
 import neureka.calculus.Function
 import neureka.devices.opencl.CLContext
+import neureka.view.TsrStringSettings
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
@@ -24,7 +25,20 @@ class CLFunctionCompiler_Integration_Spec extends Specification {
     def setup() {
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors = "dgc"
+        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+            it.scientific( true )
+            it.multiline( false )
+            it.withGradient( true )
+            it.withCellSize( 1 )
+            it.withValue( true )
+            it.withRecursiveGraph( false )
+            it.withDerivatives( true )
+            it.withShape( true )
+            it.cellBound( false )
+            it.withPostfix(  "" )
+            it.withPrefix(  ""  )
+            it.withSlimNumbers(  false )  
+        })
     }
 
     @IgnoreIf({ !Neureka.get().canAccessOpenCL() }) // We need to assure that this system supports OpenCL!

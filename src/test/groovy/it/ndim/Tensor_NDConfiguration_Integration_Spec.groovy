@@ -6,6 +6,7 @@ import neureka.ndim.config.types.complex.ComplexD1Configuration
 import neureka.ndim.config.types.complex.ComplexScalarConfiguration
 import neureka.ndim.config.types.simple.SimpleD1Configuration
 import neureka.ndim.config.types.simple.SimpleScalarConfiguration
+import neureka.view.TsrStringSettings
 import spock.lang.Specification
 
 class Tensor_NDConfiguration_Integration_Spec extends Specification
@@ -24,7 +25,20 @@ class Tensor_NDConfiguration_Integration_Spec extends Specification
         """
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors = "dgc"
+        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+            it.scientific( true )
+            it.multiline( false )
+            it.withGradient( true )
+            it.withCellSize( 1 )
+            it.withValue( true )
+            it.withRecursiveGraph( false )
+            it.withDerivatives( true )
+            it.withShape( true )
+            it.cellBound( false )
+            it.withPostfix(  "" )
+            it.withPrefix(  ""  )
+            it.withSlimNumbers(  false )  
+        })
     }
 
     def 'NDConfiguration instances of tensors have expected state.'()

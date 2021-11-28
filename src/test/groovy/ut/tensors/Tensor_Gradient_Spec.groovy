@@ -2,6 +2,7 @@ package ut.tensors
 
 import neureka.Neureka
 import neureka.Tsr
+import neureka.view.TsrStringSettings
 import spock.lang.Narrative
 import spock.lang.Specification
 import spock.lang.Title
@@ -32,7 +33,20 @@ class Tensor_Gradient_Spec extends Specification
             """
         Neureka.get().reset()
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors = "dgc"
+        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+            it.scientific( true )
+            it.multiline( false )
+            it.withGradient( true )
+            it.withCellSize( 1 )
+            it.withValue( true )
+            it.withRecursiveGraph( false )
+            it.withDerivatives( true )
+            it.withShape( true )
+            it.cellBound( false )
+            it.withPostfix(  "" )
+            it.withPrefix(  ""  )
+            it.withSlimNumbers(  false )  
+        })
     }
 
     def 'Tensors can have gradients but not require them.'()

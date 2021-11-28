@@ -5,6 +5,7 @@ import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.common.utility.SettingsLoader
+import neureka.view.TsrStringSettings
 import org.slf4j.Logger
 import spock.lang.Specification
 import testutility.Utility
@@ -16,7 +17,20 @@ class Benchmark_System_Test extends Specification
         // The following is similar to Neureka.get().reset() however it uses a groovy script for library settings:
         SettingsLoader.tryGroovyScriptsOn(Neureka.get(), script -> new GroovyShell(getClass().getClassLoader()).evaluate(script))
         // Configure printing of tensors to be more compact:
-        Neureka.get().settings().view().tensors = "dgc"
+        Neureka.get().settings().view().tensors({ TsrStringSettings it ->
+            it.scientific( true )
+            it.multiline( false )
+            it.withGradient( true )
+            it.withCellSize( 1 )
+            it.withValue( true )
+            it.withRecursiveGraph( false )
+            it.withDerivatives( true )
+            it.withShape( true )
+            it.cellBound( false )
+            it.withPostfix(  "" )
+            it.withPrefix(  ""  )
+            it.withSlimNumbers(  false )  
+        })
     }
 
     def 'Tensor can be constructed by passing List instances.'()
