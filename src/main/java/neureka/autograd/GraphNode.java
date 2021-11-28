@@ -943,7 +943,22 @@ public class GraphNode<V> implements Component<Tsr<V>>
                     "[" + nid + "]:( " + (
                             ( payload == null )
                                     ? "NULL"
-                                    : payload.toString("cs")
+                                    : payload.toString(
+                                        conf ->
+                                            conf.setRowLimit(  3  )
+                                             .setIsScientific(  true   )
+                                             .setIsMultiline(  false  )
+                                             .setHasGradient(  false    )
+                                             .setCellSize(  1  )
+                                             .setHasValue( true )
+                                             .setHasRecursiveGraph( false   )
+                                             .setHasDerivatives(  false      )
+                                             .setHasShape( true            )
+                                             .setIsCellBound(  false       )
+                                             .setPostfix(  ""      )
+                                             .setPrefix(  ""      )
+                                             .setHasSlimNumbers(  false      )
+                                    )
                     ) + " )";
     }
 
