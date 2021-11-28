@@ -233,6 +233,7 @@ Kotlin_Compatibility_Unit_Testing {
         viewSettings.tensors {
             it.isCellBound = true
             it.hasSlimNumbers = true
+            it.isMultiline = true
             it.prefix = "START\n"
             it.postfix = "\nEND"
             it.isScientific = true
@@ -243,7 +244,6 @@ Kotlin_Compatibility_Unit_Testing {
             it.rowLimit = 5
             it.hasDerivatives = true
             it.hasRecursiveGraph = true
-            it.setIsMultiline(true)
         }
         // When :
         val t = Tsr.of(Double::class.java)

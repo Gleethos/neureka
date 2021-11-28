@@ -106,7 +106,7 @@ public class TsrStringSettings {
         return this;
     }
 
-    public boolean isMultiline() {
+    public boolean getIsMultiline() {
         return _multiline;
     }
 

@@ -121,7 +121,7 @@ public final class TsrAsString
         _rowLimit           = _config.getRowLimit() ;
         _cellSize           = _config.getCellSize() ;
         _hasGradient        = _config.getHasGradient() ;
-        _isMultiline        = _config.isMultiline() ;
+        _isMultiline        = _config.getIsMultiline() ;
         _haveSlimNumbers    = _config.getHasSlimNumbers() ;
         _hasValue           = _config.getHasValue() ;
         _hasShape           = _config.getHasShape() ;

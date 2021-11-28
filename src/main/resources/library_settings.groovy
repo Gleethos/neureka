@@ -24,21 +24,20 @@ Neureka.configure {
         view { 
             tensors {
                 TsrStringSettings settings ->
-                                    settings
-                                    .setRowLimit(50)
-                                    .setIsScientific(true)
-                                    .setIsMultiline(true)
-                                    .setHasSlimNumbers(true)
-                                    .setHasGradient(true)
-                                    .setCellSize(6)
-                                    .setHasValue(true)
-                                    .setHasRecursiveGraph(false)
-                                    .setHasDerivatives(false)
-                                    .setHasShape(true)
-                                    .setIsCellBound(false)
-                                    .setPostfix("")
-                                    .setPrefix("")
-                                    .setIsLegacy(false)
+                                    settings.rowLimit          = 50
+                                    settings.isScientific      = true
+                                    settings.isMultiline       = true
+                                    settings.hasSlimNumbers    = true
+                                    settings.hasGradient       = true
+                                    settings.cellSize          = 6
+                                    settings.hasValue          = true
+                                    settings.hasRecursiveGraph = false
+                                    settings.hasDerivatives    = false
+                                    settings.hasShape          = true
+                                    settings.isCellBound       = false
+                                    settings.postfix           = ""
+                                    settings.prefix            = ""
+                                    settings.isLegacy          = false
             }
         }
 
