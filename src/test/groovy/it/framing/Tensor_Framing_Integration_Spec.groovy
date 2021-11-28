@@ -142,12 +142,26 @@ class Tensor_Framing_Integration_Spec extends Specification
             ])
 
         expect:
-            t.toString('fp') == "[3x4]:(\n" +
-                                      "   [    a  ][   b  ][   y  ][   z   ]\n" +
-                                      "   (   1.0 ,   2.0 ,   3.0 ,   4.0  ):[ 1 ],\n" +
-                                      "   (   9.0 ,   8.0 ,   6.0 ,   5.0  ):[ 2 ],\n" +
-                                      "   (   4.0 ,   5.0 ,   6.0 ,   7.0  ):[ 3 ]\n" +
-                                      ")"
+            t.toString({
+                        it.rowLimit = 15
+                        it.isScientific = false
+                        it.isMultiline = true
+                        it.hasGradient = false
+                        it.cellSize = 6
+                        it.hasValue = true
+                        it.hasRecursiveGraph = false
+                        it.hasDerivatives = false
+                        it.hasShape =  true
+                        it.isCellBound = false
+                        it.postfix = ""
+                        it.prefix = ""
+                        it.hasSlimNumbers = false
+            }) == "[3x4]:(\n" +
+                  "   [    a  ][   b  ][   y  ][   z   ]\n" +
+                  "   (   1.0 ,   2.0 ,   3.0 ,   4.0  ):[ 1 ],\n" +
+                  "   (   9.0 ,   8.0 ,   6.0 ,   5.0  ):[ 2 ],\n" +
+                  "   (   4.0 ,   5.0 ,   6.0 ,   7.0  ):[ 3 ]\n" +
+                  ")"
 
         when: 'We use a label for slicing a row from the tensor (which is also a matrix in this case).'
             Tsr x = t["2", 1..2]
@@ -203,20 +217,34 @@ class Tensor_Framing_Integration_Spec extends Specification
             ])
 
         expect: 'When the tensor is converted to a String then the labels will be included:'
-            t.toString('fp') == "[2x3x4]:(\n" +
-                                      "   [ 1 ]:(\n" +
-                                      "      [   tim ][  tom ][ tina ][ tanya ]:[ My Tensor ]\n" +
-                                      "      (  -7.0 ,  -6.0 ,  -5.0 ,  -4.0  ):[ a ],\n" +
-                                      "      (  -3.0 ,  -2.0 ,  -1.0 ,   0.0  ):[ b ],\n" +
-                                      "      (   1.0 ,   2.0 ,   3.0 ,   4.0  ):[ y ]\n" +
-                                      "   ),\n" +
-                                      "   [ 2 ]:(\n" +
-                                      "      [   tim ][  tom ][ tina ][ tanya ]:[ My Tensor ]\n" +
-                                      "      (   5.0 ,   6.0 ,   7.0 ,  -7.0  ):[ a ],\n" +
-                                      "      (  -6.0 ,  -5.0 ,  -4.0 ,  -3.0  ):[ b ],\n" +
-                                      "      (  -2.0 ,  -1.0 ,   0.0 ,   1.0  ):[ y ]\n" +
-                                      "   )\n" +
-                                      ")"
+            t.toString({
+                it.rowLimit = 15
+                it.isScientific = false
+                it.isMultiline = true
+                it.hasGradient = false
+                it.cellSize = 6
+                it.hasValue = true
+                it.hasRecursiveGraph = false
+                it.hasDerivatives = false
+                it.hasShape =  true
+                it.isCellBound = false
+                it.postfix = ""
+                it.prefix = ""
+                it.hasSlimNumbers = false
+            }) == "[2x3x4]:(\n" +
+                  "   [ 1 ]:(\n" +
+                  "      [   tim ][  tom ][ tina ][ tanya ]:[ My Tensor ]\n" +
+                  "      (  -7.0 ,  -6.0 ,  -5.0 ,  -4.0  ):[ a ],\n" +
+                  "      (  -3.0 ,  -2.0 ,  -1.0 ,   0.0  ):[ b ],\n" +
+                  "      (   1.0 ,   2.0 ,   3.0 ,   4.0  ):[ y ]\n" +
+                  "   ),\n" +
+                  "   [ 2 ]:(\n" +
+                  "      [   tim ][  tom ][ tina ][ tanya ]:[ My Tensor ]\n" +
+                  "      (   5.0 ,   6.0 ,   7.0 ,  -7.0  ):[ a ],\n" +
+                  "      (  -6.0 ,  -5.0 ,  -4.0 ,  -3.0  ):[ b ],\n" +
+                  "      (  -2.0 ,  -1.0 ,   0.0 ,   1.0  ):[ y ]\n" +
+                  "   )\n" +
+                  ")"
 
         when : 'Creating a slice by passing a single label, a range of labels and a range with stride...'
             Tsr x = t["2", "b".."y", [["tim","tanya"]:2]]
@@ -226,12 +254,26 @@ class Tensor_Framing_Integration_Spec extends Specification
         and: 'Calling the "contains" method will also return true.'
             t.contains(x)
         and: 'The String representation is as expected.'
-            x.toString('fp') == "[1x2x2]:(\n" +
-                                      "   (\n" +
-                                      "      (  -6.0 ,  -4.0  ),\n" +
-                                      "      (  -2.0 ,   0.0  )\n" +
-                                      "   )\n" +
-                                      ")"
+            x.toString({
+                it.rowLimit = 15
+                it.isScientific = false
+                it.isMultiline = true
+                it.hasGradient = false
+                it.cellSize = 6
+                it.hasValue = true
+                it.hasRecursiveGraph = false
+                it.hasDerivatives = false
+                it.hasShape =  true
+                it.isCellBound = false
+                it.postfix = ""
+                it.prefix = ""
+                it.hasSlimNumbers = false
+            }) == "[1x2x2]:(\n" +
+                  "   (\n" +
+                  "      (  -6.0 ,  -4.0  ),\n" +
+                  "      (  -2.0 ,   0.0  )\n" +
+                  "   )\n" +
+                  ")"
         and: 'The tensor "x" is of course a slice:'
             x.isSlice()
         and: 'The original tensor "t" is a "parent":'
@@ -245,12 +287,26 @@ class Tensor_Framing_Integration_Spec extends Specification
         then :
             x in t
             t.contains(x)
-            x.toString('fp') == "[1x2x2]:(\n" +
-                                      "   (\n" +
-                                      "      (  -6.0 ,  -4.0  ),\n" +
-                                      "      (  -2.0 ,   0.0  )\n" +
-                                      "   )\n" +
-                                      ")"
+            x.toString({
+                it.rowLimit = 15
+                it.isScientific = false
+                it.isMultiline = true
+                it.hasGradient = false
+                it.cellSize = 6
+                it.hasValue = true
+                it.hasRecursiveGraph = false
+                it.hasDerivatives = false
+                it.hasShape =  true
+                it.isCellBound = false
+                it.postfix = ""
+                it.prefix = ""
+                it.hasSlimNumbers = false
+            }) == "[1x2x2]:(\n" +
+                  "   (\n" +
+                  "      (  -6.0 ,  -4.0  ),\n" +
+                  "      (  -2.0 ,   0.0  )\n" +
+                  "   )\n" +
+                  ")"
             !x.isVirtual() // This might change if possible (technically difficult)
             x.isSlice()
             t.isSliceParent()
@@ -260,12 +316,26 @@ class Tensor_Framing_Integration_Spec extends Specification
         then :
             x in t
             t.contains(x)
-            x.toString('fp') == "[1x2x2]:(\n" +
-                                      "   (\n" +
-                                      "      (  -6.0 ,  -4.0  ),\n" +
-                                      "      (  -2.0 ,   0.0  )\n" +
-                                      "   )\n" +
-                                      ")"
+            x.toString({
+                it.rowLimit = 15
+                it.isScientific = false
+                it.isMultiline = true
+                it.hasGradient = false
+                it.cellSize = 6
+                it.hasValue = true
+                it.hasRecursiveGraph = false
+                it.hasDerivatives = false
+                it.hasShape =  true
+                it.isCellBound = false
+                it.postfix = ""
+                it.prefix = ""
+                it.hasSlimNumbers = false
+            }) == "[1x2x2]:(\n" +
+                  "   (\n" +
+                  "      (  -6.0 ,  -4.0  ),\n" +
+                  "      (  -2.0 ,   0.0  )\n" +
+                  "   )\n" +
+                  ")"
             !x.isVirtual() // This might change if possible (technically difficult)
             x.isSlice()
             t.isSliceParent()
@@ -284,16 +354,30 @@ class Tensor_Framing_Integration_Spec extends Specification
         then :
             x in t
             t.contains(x)
-            x.toString('fp') == "[2x2x2]:(\n" +
-                                      "   (\n" +
-                                      "      (  -3.0 ,  -1.0  ),\n" +
-                                      "      (   1.0 ,   3.0  )\n" +
-                                      "   ),\n" +
-                                      "   (\n" +
-                                      "      (  -6.0 ,  -4.0  ),\n" +
-                                      "      (  -2.0 ,   0.0  )\n" +
-                                      "   )\n" +
-                                      ")"
+            x.toString({
+                        it.rowLimit = 15
+                        it.isScientific = false
+                        it.isMultiline = true
+                        it.hasGradient = false
+                        it.cellSize = 6
+                        it.hasValue = true
+                        it.hasRecursiveGraph = false
+                        it.hasDerivatives = false
+                        it.hasShape =  true
+                        it.isCellBound = false
+                        it.postfix = ""
+                        it.prefix = ""
+                        it.hasSlimNumbers = false
+                    }) == "[2x2x2]:(\n" +
+                          "   (\n" +
+                          "      (  -3.0 ,  -1.0  ),\n" +
+                          "      (   1.0 ,   3.0  )\n" +
+                          "   ),\n" +
+                          "   (\n" +
+                          "      (  -6.0 ,  -4.0  ),\n" +
+                          "      (  -2.0 ,   0.0  )\n" +
+                          "   )\n" +
+                          ")"
             !x.isVirtual() // This might change if possible (technically difficult)
             x.isSlice()
             t.isSliceParent()

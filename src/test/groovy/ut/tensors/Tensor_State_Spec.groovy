@@ -119,6 +119,7 @@ class Tensor_State_Spec extends Specification
                             .settings()
                             .view()
                             .getTensorSettings()
+                            .clone()
                             .setRowLimit(  mode.contains( "s" ) ? 3 : 32 )
                             .setIsScientific( mode.contains( "c" )  )
                             .setIsMultiline( mode.contains( "f" ) )

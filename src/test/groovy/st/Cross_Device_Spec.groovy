@@ -70,8 +70,21 @@ class Cross_Device_Spec extends Specification
         and :
             Tsr product = Tsr.of("i0xi1", tensor1, tensor2)
             product.backward( Tsr.of(new int[]{2, 1, 2}, new double[]{1, 1, 1, 1}) )
-            String result = product.toString("rc")
-
+            String result = product.toString({
+                it.rowLimit = 15 // "rc"
+                it.isScientific = false
+                it.isMultiline = false
+                it.hasGradient = false
+                it.cellSize = 1
+                it.hasValue = true
+                it.hasRecursiveGraph = true
+                it.hasDerivatives = false
+                it.hasShape =  true
+                it.isCellBound = false
+                it.postfix = ""
+                it.prefix = ""
+                it.hasSlimNumbers = false
+            })
 
         expect :
             result.contains(
