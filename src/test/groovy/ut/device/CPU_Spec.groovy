@@ -5,8 +5,19 @@ import neureka.Tsr
 import neureka.devices.Device
 import neureka.devices.host.CPU
 import neureka.view.TsrStringSettings
+import spock.lang.Narrative
 import spock.lang.Specification
+import spock.lang.Title
 
+@Title("The CPU device, an API for CPU based execution")
+@Narrative('''
+
+    The CPU class, one of many implementations of the Device interface, 
+    is simply supposed to be an API for dispatching threaded workloads onto the CPU.
+    Contrary to other types of device, the CPU will host tensor data by default, simply
+    because the tensors will be stored in RAM if no device was specified.
+
+''')
 class CPU_Spec extends Specification
 {
     def setupSpec()
@@ -59,7 +70,7 @@ class CPU_Spec extends Specification
             cpu != null
             cpu instanceof CPU
         when : 'Accessing the executor of the cpu device...'
-        CPU.JVMExecutor exec = ( (CPU) cpu ).getExecutor()
+            CPU.JVMExecutor exec = ( (CPU) cpu ).getExecutor()
         then : 'The executor is not null as well as its internal thread pool!'
             exec != null
             exec.getPool() != null
@@ -76,7 +87,7 @@ class CPU_Spec extends Specification
                     }
                 })
                 t.start()
-                Tsr c = (a / b) * 3
+                Tsr c = ( a / b ) * 3
                 assert c.shape() == [100,60,60,2]
                 int result = min[0]
                 try {
@@ -87,7 +98,6 @@ class CPU_Spec extends Specification
                 }
                 assert result <= (exec.getPool().getCorePoolSize() / 2)
             }
-
     }
 
 

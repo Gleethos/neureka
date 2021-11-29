@@ -49,11 +49,12 @@ class GraphNode_Instantiation_Unit_Tests extends Specification
     def 'GraphNode instantiation works as expected when the context argument is a GraphLock.'()
     {
         given : 'Mocked arguments used to call the GraphNode constructor.'
-            Tsr payload = Mock( Tsr )
+            Tsr           payload  = Mock( Tsr )
             Supplier<Tsr> supplier = () -> payload
-            Function function = Mock( Function )
-            Object context = Mock( GraphLock )
-            Device device = Mock( Device )
+            Function      function = Mock( Function )
+            Object        context = Mock( GraphLock )
+            Device        device = Mock( Device )
+        and : 'We set the payload up so that it return the mocked device!'
             payload.getDevice() >> device
 
         when : 'We try to instantiate a GraphNode...'

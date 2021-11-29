@@ -19,8 +19,12 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- *  This is a singleton class which simply represents the CPU as a {@link Device}.
- *  Tensors stored on the {@link CPU} simply reside in the JVM heap.
+ *  The CPU class, one of many implementations of the {@link Device} interface,
+ *  is simply supposed to be an API for dispatching threaded workloads onto the CPU.
+ *  Contrary to other types of devices, the CPU will host tensor data by default, simply
+ *  because the tensors will be stored in RAM (JVM heap) by default if no device was specified.
+ *  This means that they are implicitly "stored" on the {@link CPU} device.
+ *  The class is also a singleton instead of being part of a {@link neureka.backend.api.BackendExtension}.
  */
 public class CPU extends AbstractDevice<Number>
 {
